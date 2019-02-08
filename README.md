@@ -2,17 +2,13 @@
 
 > A JavaScript interface for allowing tokenisation and authorisation of payments through SecureTrading.
 
-## Code Style, Naming convention
-
-> - [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript)
-> - [Gitflow](https://pl.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow)
-> - DRY, SOLID, KISS, YAGNI
-
 ## API Reference
 
 > - [API documentation](https://docs.securetrading.com/document/api/getting-started/)
 
 ## Mock-ups, graphics
+
+Not specified yet
 
 ## Technology Stack:
 
@@ -43,12 +39,6 @@
 > - [Jest](https://jestjs.io/) for unit testing
 > - [Selenium (Java)](https://www.seleniumhq.org/) + [BrowserSync](https://www.browsersync.io/) for UI testing
 
-##### Repository:
-
-> - [GitHub](https://github.com/orgs/SecureTrading/teams/js-payments-team)
-
-## Repository structure
-
 ## Browser compatibility:
 
 > - Internet Explorer 10
@@ -61,4 +51,3 @@
 ## License
 
 > - [MIT](https://opensource.org/licenses/MIT)
-
