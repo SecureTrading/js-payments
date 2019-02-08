@@ -21,6 +21,7 @@
 > - [TypeScript](https://www.typescriptlang.org/)
 > - [ES6](https://developer.mozilla.org/en-US/docs/Web/JavaScript) + [Babel](https://babeljs.io/)
 > - [Webpack](https://webpack.js.org/)
+> - [npm](https://www.npmjs.com/)
 > - [Sass (SCSS + BEM)](https://sass-lang.com/)
 > - [PostCSS](https://postcss.org/)
 > - [Prettier](https://prettier.io/)
