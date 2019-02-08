@@ -1,11 +1,12 @@
-const path = require('path')
-const webpack = require('webpack')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const CleanWebpackPlugin = require('clean-webpack-plugin')
-const ManifestPlugin = require('webpack-manifest-plugin')
-const StyleLintPlugin = require('stylelint-webpack-plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const TypedocWebpackPlugin = require('typedoc-webpack-plugin')
+const path = require('path');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const ManifestPlugin = require('webpack-manifest-plugin');
+const StyleLintPlugin = require('stylelint-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const TypedocWebpackPlugin = require('typedoc-webpack-plugin');
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
 module.exports = {
   optimization: {
@@ -38,6 +39,7 @@ module.exports = {
     }),
     new ManifestPlugin(),
     new StyleLintPlugin(),
+    new FriendlyErrorsWebpackPlugin(),
     new TypedocWebpackPlugin({}),
     new webpack.HotModuleReplacementPlugin(),
   ],
@@ -71,4 +73,4 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.js'],
   },
-}
+};
