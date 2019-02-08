@@ -31,7 +31,7 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(['dist']),
     new HtmlWebpackPlugin({
-      title: 'Output Management',
+      title: 'JS Library',
     }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
