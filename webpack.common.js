@@ -5,6 +5,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin')
 const ManifestPlugin = require('webpack-manifest-plugin')
 const StyleLintPlugin = require('stylelint-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const TypedocWebpackPlugin = require('typedoc-webpack-plugin')
 
 module.exports = {
   optimization: {
@@ -37,13 +38,19 @@ module.exports = {
     }),
     new ManifestPlugin(),
     new StyleLintPlugin(),
+    new TypedocWebpackPlugin({}),
     new webpack.HotModuleReplacementPlugin(),
   ],
   module: {
     rules: [
       {
         test: /\.scss$/,
-        use: ['style-loader', 'css-loader', 'sass-loader'],
+        use: [
+          'style-loader',
+          { loader: 'css-loader', options: { importLoaders: 1 } },
+          'postcss-loader',
+          'sass-loader',
+        ],
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
