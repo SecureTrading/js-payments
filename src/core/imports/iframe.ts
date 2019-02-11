@@ -4,7 +4,7 @@ const iframesEndpoints = {
   expirationDate: '//localhost:8081/expirationDate.html',
 };
 
-const styleForIframe = {
+const styleForIframe: any = {
   border: 'none',
   margin: '0',
   padding: '0',
