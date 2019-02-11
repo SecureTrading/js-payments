@@ -1,0 +1,19 @@
+.credit-card-number {
+  &__label {
+  }
+
+  &__input {
+    padding-left: 44px;
+  }
+
+  &__logo {
+    position: absolute;
+    left: 6px;
+    margin-bottom: 10px;
+    max-width: 35px;
+    top: 12px;
+  }
+
+  &__submit {
+  }
+}

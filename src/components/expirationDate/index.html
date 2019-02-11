@@ -7,7 +7,7 @@
   </head>
   <body>
     <form id="st-expiration-date">
-      <label for="expiration-date" class="credit-card-number__label">
+      <label for="expiration-date" class="expiration-date__label">
         Expiration date:
       </label>
       <input
@@ -17,16 +17,16 @@
         class="expiration-date__input"
         placeholder="XXXX XXXX XXXX XXXX"
         value=""
-        style="padding-left: 44px"
         required
       />
-      <img
-        src="https://image.flaticon.com/icons/svg/138/138286.svg"
-        id="expiration-date-logo"
-        style="position: absolute;left: 6px;margin-bottom: 10px;max-width: 35px;top: 12px;"
-      />
       <p id="received-message"></p>
-      <button type="submit" id="expiration-date-submit">Pay</button>
+      <button
+        type="submit"
+        id="expiration-date-submit"
+        class="expiration-date__submit"
+      >
+        Pay
+      </button>
     </form>
   </body>
 </html>

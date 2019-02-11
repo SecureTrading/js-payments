@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
   </head>
   <body>
-    <form id="st-security-code">
+    <form id="st-security-code" class="security-code">
       <label for="security-code" class="security-code__label">
         Security code:
       </label>
@@ -17,16 +17,16 @@
         class="security-code__input"
         placeholder="XXXX XXXX XXXX XXXX"
         value=""
-        style="padding-left: 44px"
         required
       />
-      <img
-        src="https://image.flaticon.com/icons/svg/138/138286.svg"
-        id="security-code-logo"
-        style="position: absolute;left: 6px;margin-bottom: 10px;max-width: 35px;top: 12px;"
-      />
       <p id="received-message"></p>
-      <button type="submit" id="security-code-submit">Pay</button>
+      <button
+        type="submit"
+        id="security-code-submit"
+        class="security-code__submit"
+      >
+        Pay
+      </button>
     </form>
   </body>
 </html>

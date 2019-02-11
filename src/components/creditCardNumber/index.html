@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
   </head>
   <body>
-    <form id="st-credit-card-number">
+    <form id="st-credit-card-number" class="credit-card-number">
       <label for="credit-card-number" class="credit-card-number__label">
         Card number:
       </label>
@@ -17,16 +17,21 @@
         class="credit-card-number__input"
         placeholder="XXXX XXXX XXXX XXXX"
         value=""
-        style="padding-left: 44px"
         required
       />
       <img
         src="https://image.flaticon.com/icons/svg/138/138286.svg"
         id="credit-card-logo"
-        style="position: absolute;left: 6px;margin-bottom: 10px;max-width: 35px;top: 12px;"
+        class="credit-card-number__logo"
       />
       <p id="received-message"></p>
-      <button type="submit" id="credit-card-number-submit">Pay</button>
+      <button
+        type="submit"
+        id="credit-card-number-submit"
+        class="credit-card-number__submit"
+      >
+        Pay
+      </button>
     </form>
   </body>
 </html>
