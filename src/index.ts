@@ -7,17 +7,6 @@ const createElement = () => {
   document.body.appendChild(element);
 };
 
-const registerFields = (fields: [HTMLIFrameElement], form: string) => {
-  const formContainer = document.getElementById(form);
-  const promise1 = new Promise((resolve, reject) => {
-    fields.forEach(item => {
-      formContainer.appendChild(item);
-    });
-    resolve('sukces');
-    reject('something went wrong');
-  });
-};
-
 (() => {
   createElement();
 
@@ -36,6 +25,5 @@ const registerFields = (fields: [HTMLIFrameElement], form: string) => {
   });
 
   const cardNumberMounted = cardNumber.mount('st-card-number');
-
-  registerFields([cardNumberMounted], 'st-form');
+  cardNumber.register([cardNumberMounted], 'st-form');
 })();

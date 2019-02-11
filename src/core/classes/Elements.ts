@@ -72,4 +72,15 @@ export class Elements {
     Object.assign(iframe.style, styleForIframe);
     return iframe;
   }
+
+  register(fields: [HTMLIFrameElement], form: string) {
+    const formContainer = document.getElementById(form);
+    const promise1 = new Promise((resolve, reject) => {
+      fields.forEach(item => {
+        formContainer.appendChild(item);
+      });
+      resolve('sukces');
+      reject('something went wrong');
+    });
+  }
 }
