@@ -41,7 +41,7 @@ Not specified yet
 
 ## Browser compatibility:
 
-> - Internet Explorer 10
+> - Internet Explorer 10 or later
 > - Latest versions of the following:
 >   - Chrome
 >   - Firefox
