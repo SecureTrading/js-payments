@@ -59,6 +59,11 @@ module.exports = {
         use: ['file-loader'],
       },
       {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+      {
         test: /\.ts$/,
         enforce: 'pre',
         use: [
@@ -67,6 +72,7 @@ module.exports = {
             options: {},
           },
         ],
+        exclude: /node_modules/,
       },
     ],
   },
