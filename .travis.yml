@@ -14,7 +14,7 @@ jobs:
       script: npm run prod
     - stage: "Test"
       name: "Unit tests"
-      script: npm test && cat ./coverage/lcov.info | coveralls
+      script: npm run coverage && cat ./coverage/lcov.info | coveralls
 after_script:
 - greenkeeper-lockfile-upload
 addons:
