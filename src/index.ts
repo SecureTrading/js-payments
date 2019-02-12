@@ -22,6 +22,10 @@ const createElement = () => {
         fontSmoothing: 'antialiased',
         fontWeight: 600,
       },
+      invalid: {
+        color: '#fa755a',
+        iconColor: '#fa755a',
+      },
     },
   });
 
