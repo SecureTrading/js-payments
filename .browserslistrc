@@ -1,8 +1,8 @@
 # Browsers that we support
 
-'> 1%',
-'ie 10',
-'last 2 Firefox major versions',
-'last 2 Chrome major versions',
-'last 2 Edge major versions',
-'last 2 Safari major versions'
+> 1%
+ie 10
+last 2 Firefox major versions
+last 2 Chrome major versions
+last 2 Edge major versions
+last 2 Safari major versions
