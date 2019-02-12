@@ -21,6 +21,6 @@
 > - `test: jest --watch`
 > - `coverage: jest --coverage`
 > - `dev: webpack --config webpack.dev.js`
-> - `prod: webpack --config webpack.prod.js)`
+> - `prod: webpack --config webpack.prod.js`
 > - `start: webpack-dev-server --color --progress --open --hot --config webpack.dev.js`
-> - `hot: npm-run-all dev start)`
+> - `hot: npm-run-all dev start`
