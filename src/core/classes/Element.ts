@@ -45,7 +45,7 @@ export class Element {
   static getComponentAdress(name: string) {
     if (name === 'cardNumber') {
       return cardNumber;
-    } else if (name === 'secureCode') {
+    } else if (name === 'securityCode') {
       return cardVerificationCode;
     } else if (name === 'expirationDate') {
       return expirationDate;
@@ -73,7 +73,7 @@ export class Element {
     return iframe;
   }
 
-  register(fields: [HTMLIFrameElement], form: string) {
+  register(fields: HTMLElement[], form: string) {
     const formContainer = document.getElementById(form);
     const promise1 = new Promise((resolve, reject) => {
       fields.forEach(item => {

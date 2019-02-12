@@ -30,8 +30,21 @@ module.exports = {
   },
   plugins: [
     new CleanWebpackPlugin(['dist']),
+    new HtmlWebpackPlugin(),
     new HtmlWebpackPlugin({
-      title: 'JS Library',
+      filename: 'creditCard.html',
+      template: 'src/components/creditCardNumber/index.html',
+      chunks: ['creditCard'],
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'expirationDate.html',
+      template: 'src/components/expirationDate/index.html',
+      chunks: ['expirationDate'],
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'securityCode.html',
+      template: 'src/components/securityCode/index.html',
+      chunks: ['securityCode'],
     }),
     new MiniCssExtractPlugin({
       filename: '[name].css',

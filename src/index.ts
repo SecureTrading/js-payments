@@ -1,5 +1,6 @@
 import { Element } from './core/classes/Element';
 import './style.scss';
+import './components/creditCardNumber/style.scss';
 import { getStylesFromUrl } from './core/validation/iframe/iframe.ts';
 
 const createElement = () => {
@@ -12,6 +13,8 @@ const createElement = () => {
   createElement();
 
   const cardNumber = new Element();
+  const securityCode = new Element();
+  const expirationDate = new Element();
 
   cardNumber.create('cardNumber', {
     style: {
@@ -29,8 +32,45 @@ const createElement = () => {
     },
   });
 
+  securityCode.create('securityCode', {
+    style: {
+      base: {
+        color: '#fff',
+        fontFamily: 'Quicksand, Open Sans, Segoe UI, sans-serif',
+        fontSize: '16px',
+        fontSmoothing: 'antialiased',
+        fontWeight: 600,
+      },
+      invalid: {
+        color: '#fa755a',
+        iconColor: '#fa755a',
+      },
+    },
+  });
+
+  expirationDate.create('expirationDate', {
+    style: {
+      base: {
+        color: '#fff',
+        fontFamily: 'Quicksand, Open Sans, Segoe UI, sans-serif',
+        fontSize: '16px',
+        fontSmoothing: 'antialiased',
+        fontWeight: 600,
+      },
+      invalid: {
+        color: '#fa755a',
+        iconColor: '#fa755a',
+      },
+    },
+  });
+
   const cardNumberMounted = cardNumber.mount('st-card-number');
-  cardNumber.register([cardNumberMounted], 'st-form');
+  const securityCodeMounted = securityCode.mount('st-security-code');
+  const expirationDateMounted = expirationDate.mount('st-expiration-date');
+  cardNumber.register(
+    [cardNumberMounted, securityCodeMounted, expirationDateMounted],
+    'st-form'
+  );
 
   getStylesFromUrl(
     '//localhost:8081/cardNumber.html?"style[border]=none&style[margin]=0&style[padding]=0&style[width]=1px&style[minWidth]=100%&style[overflow]=hidden&style[display]=block&style[height]=120px'
