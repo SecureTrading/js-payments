@@ -4,7 +4,7 @@ const cardNumber = '\\d{4} \\d{4} \\d{4} \\d{4}';
 const cardNumberRegexp = new RegExp(cardNumber);
 const expiryDateRegexp = new RegExp(expiryDate);
 
-const creditCardBlocks: { [key: string]: string[] } = {
+const creditCardBlocks: { [key: string]: number[] } = {
   uatp: [4, 5, 6],
   amex: [4, 6, 5],
   diners: [4, 6, 4],

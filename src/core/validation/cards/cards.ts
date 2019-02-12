@@ -9,7 +9,7 @@
 
 import { creditCardRegexes, creditCardBlocks } from './regex';
 
-export const creditCardValidation = (cardNumber: string) => {
+const creditCardValidation = (cardNumber: string) => {
   const arry = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
   let len = cardNumber.length,
     bit = 1,
@@ -24,7 +24,7 @@ export const creditCardValidation = (cardNumber: string) => {
   return sum && sum % 10 === 0;
 };
 
-export const getCardLogo = (brand: string) => {
+const getCardLogo = (brand: string) => {
   if (brand === 'amex') {
     return 'https://s3-eu-central-1.amazonaws.com/centaur-wp/designweek/prod/content/uploads/2018/04/10121846/am_amex_06.jpg';
   } else if (brand === 'dankort') {
@@ -56,7 +56,7 @@ export const getCardLogo = (brand: string) => {
   }
 };
 
-export const getInfo = (value: string) => {
+const getInfo = (value: string) => {
   for (var key in creditCardRegexes) {
     if (creditCardRegexes[key].test(value)) {
       var block;
@@ -73,3 +73,5 @@ export const getInfo = (value: string) => {
     blocks: creditCardBlocks.general,
   };
 };
+
+export { getCardLogo, getInfo, creditCardValidation };

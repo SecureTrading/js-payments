@@ -2,7 +2,7 @@ import { iframesEndpoints, styleForIframe } from '../imports/iframe';
 
 const { cardNumber, cardVerificationCode, expirationDate } = iframesEndpoints;
 
-export class Elements {
+export class Element {
   private _name: string;
   private _iframeSrc: string;
   private _style: object;
@@ -55,7 +55,7 @@ export class Elements {
   create(elementName: string, attributes: any) {
     this._name = elementName;
     this._style = attributes;
-    this._iframeSrc = Elements.getComponentAdress(elementName);
+    this._iframeSrc = Element.getComponentAdress(elementName);
   }
 
   mount(fieldId: string) {

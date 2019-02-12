@@ -1,5 +1,6 @@
 import { Element } from './core/classes/Element';
 import './style.scss';
+import { getStylesFromUrl } from './core/validation/iframe/iframe.ts';
 
 const createElement = () => {
   const element = document.createElement('form');
@@ -26,4 +27,8 @@ const createElement = () => {
 
   const cardNumberMounted = cardNumber.mount('st-card-number');
   cardNumber.register([cardNumberMounted], 'st-form');
+
+  getStylesFromUrl(
+    '//localhost:8081/cardNumber.html?"style[border]=none&style[margin]=0&style[padding]=0&style[width]=1px&style[minWidth]=100%&style[overflow]=hidden&style[display]=block&style[height]=120px'
+  );
 })();
