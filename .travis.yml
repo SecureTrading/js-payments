@@ -11,7 +11,7 @@ jobs:
   include:
     - stage: "Build"
       name: "Compile for distribution"
-      script: npm run build
+      script: npm run prod
     - stage: "Test"
       name: "Unit tests"
       script: npm test && cat ./coverage/lcov.info | coveralls
