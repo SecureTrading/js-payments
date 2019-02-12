@@ -14,7 +14,7 @@ jobs:
       script: npm run prod
     - stage: "Test"
       name: "Unit tests"
-      script: npm run coverage && cat ./coverage/lcov.info | coveralls
+      script: npm run coverage # && cat ./coverage/lcov.info | coveralls # TODO comment this back in to enable coveralls once coverage is not 0/0
 after_script:
 - greenkeeper-lockfile-upload
 addons:
