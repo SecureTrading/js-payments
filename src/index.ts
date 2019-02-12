@@ -1,4 +1,4 @@
-import { Elements } from './core/classes/Elements';
+import { Element } from './core/classes/Element';
 import './style.scss';
 
 const createElement = () => {
@@ -10,7 +10,7 @@ const createElement = () => {
 (() => {
   createElement();
 
-  const cardNumber = new Elements();
+  const cardNumber = new Element();
 
   cardNumber.create('cardNumber', {
     style: {
