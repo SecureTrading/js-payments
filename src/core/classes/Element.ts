@@ -1,6 +1,6 @@
 import { iframesEndpoints, styleForIframe } from '../imports/iframe';
 
-const { cardNumber, cardVerificationCode, expirationDate } = iframesEndpoints;
+const { cardNumber, secuirityCode, expirationDate } = iframesEndpoints;
 
 export class Element {
   private _name: string;
@@ -46,7 +46,7 @@ export class Element {
     if (name === 'cardNumber') {
       return cardNumber;
     } else if (name === 'securityCode') {
-      return cardVerificationCode;
+      return secuirityCode;
     } else if (name === 'expirationDate') {
       return expirationDate;
     }
