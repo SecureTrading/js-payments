@@ -32,8 +32,8 @@ Not specified yet
 > - [Greenkeeper](https://greenkeeper.io/)
 > - [Snyk](https://snyk.io/)
 > - [Coveralls](https://coveralls.io/)
-> - [BrowserStack](https://www.browserstack.com/) [<img alt="BrowserStack" src="browserstack-logo.png" width="300" />](https://www.browserstack.com/)
 > - [Travis CI](https://travis-ci.org/)
+> - [<img alt="BrowserStack" src="browserstack-logo.png" width="300" />](https://www.browserstack.com/)
 
 ##### Automated tests:
 
