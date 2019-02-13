@@ -1,7 +1,7 @@
-import { Element } from './core/classes/Element';
+import Element from './core/classes/Element.class';
 import './style.scss';
 import './components/creditCardNumber/style.scss';
-import { getStylesFromUrl } from './core/validation/iframe/iframe.ts';
+import { getStylesFromUrl } from './core/validation/iframe/iframe';
 
 const createElement = () => {
   const element = document.createElement('form');

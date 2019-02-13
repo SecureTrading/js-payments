@@ -1,8 +1,8 @@
 import { iframesEndpoints, styleForIframe } from '../imports/iframe';
 
-const { cardNumber, secuirityCode, expirationDate } = iframesEndpoints;
+const { cardNumber, securityCode, expirationDate } = iframesEndpoints;
 
-export class Element {
+class Element {
   private _name: string;
   private _iframeSrc: string;
   private _style: object;
@@ -46,7 +46,7 @@ export class Element {
     if (name === 'cardNumber') {
       return cardNumber;
     } else if (name === 'securityCode') {
-      return secuirityCode;
+      return securityCode;
     } else if (name === 'expirationDate') {
       return expirationDate;
     }
@@ -79,8 +79,10 @@ export class Element {
       fields.forEach(item => {
         formContainer.appendChild(item);
       });
-      resolve('sukces');
-      reject('something went wrong');
+      resolve('well done !');
+      reject('something went wrong :(');
     });
   }
 }
+
+export default Element;

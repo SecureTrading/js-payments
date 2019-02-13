@@ -16,11 +16,12 @@ module.exports = {
     },
   },
   entry: {
-    app: './src/index.ts',
+    client: './src/client.ts',
+    server: './src/server.ts',
   },
   output: {
     filename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.join(__dirname, 'dist'),
     publicPath: '/',
   },
   devServer: {
