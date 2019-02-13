@@ -1,6 +1,7 @@
 import Element from './core/classes/Element.class';
 import './style.scss';
 import './components/creditCardNumber/style.scss';
+import ST from './core/classes/ST.class';
 
 const createElement = () => {
   const element = document.createElement('form');
@@ -70,4 +71,6 @@ const createElement = () => {
     [cardNumberMounted, securityCodeMounted, expirationDateMounted],
     'st-form'
   );
+
+  const st = new ST('thisissupersecretidforaclient12344321');
 })();

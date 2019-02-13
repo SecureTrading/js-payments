@@ -27,7 +27,7 @@ class Validation {
    * if sum of those above is divisible by ten, YOU HAVE VALID CARD !
    */
 
-  creditCardValidation(cardNumber: string) {
+  validateCreditCard(cardNumber: string) {
     const arry = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
     let len = cardNumber.length,
       bit = 1,
