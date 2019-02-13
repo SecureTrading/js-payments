@@ -1,5 +1,5 @@
-import { creditCardRegexes, creditCardBlocks } from './../imports/regex';
-import { cardsLogos } from '../imports/images';
+import { creditCardRegexes, creditCardBlocks } from '../../imports/regex';
+import { cardsLogos } from '../../imports/images';
 
 const {
   amex,
