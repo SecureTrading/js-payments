@@ -4,12 +4,14 @@ class Payment {
 
   constructor(payments: string[]) {
     this._payments = payments;
+    this._availablePayments = ['ApplePay', 'VisaCheckout'];
+    this.isPaymentAvailable();
   }
 
   isPaymentAvailable() {
     this._payments.map(item => {
       if (!this._availablePayments.includes(item)) {
-        console.log(`${item} payment type is not available !`);
+        alert(`${item} payment type is not available !`);
       }
     });
     // will return wheter indicated payment is available or not

@@ -1,6 +1,7 @@
 import Element from './core/classes/Element.class';
 import './style.scss';
 import './components/creditCardNumber/style.scss';
+import Payment from './core/classes/Payment.class';
 import ST from './core/classes/ST.class';
 
 const createElement = () => {
@@ -73,4 +74,5 @@ const createElement = () => {
   );
 
   const st = new ST('thisissupersecretidforaclient12344321');
+  const payment = new Payment(['ApplePay', 'GooglePay']);
 })();
