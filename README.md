@@ -32,7 +32,7 @@ Not specified yet
 > - [Greenkeeper](https://greenkeeper.io/)
 > - [Snyk](https://snyk.io/)
 > - [Coveralls](https://coveralls.io/)
-> - [BrowserStack](https://www.browserstack.com/) [![BrowserStack](browserstack-logo.png)](https://www.browserstack.com/)
+> - [BrowserStack](https://www.browserstack.com/) [![BrowserStack](browserstack-logo.png | width=300)](https://www.browserstack.com/)
 > - [Travis CI](https://travis-ci.org/)
 
 ##### Automated tests:
