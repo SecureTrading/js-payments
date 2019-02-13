@@ -4,12 +4,9 @@
   "description": "> A JavaScript interface for allowing tokenisation and authorisation of payments through SecureTrading.",
   "private": true,
   "browserslist": [
-    "> 1%",
-    "ie 10",
-    "last 2 Firefox major versions",
-    "last 2 Chrome major versions",
-    "last 2 Edge major versions",
-    "last 2 Safari major versions"
+    "> 0.2% and last 2 versions",
+    "not dead",
+    "IE 10"
   ],
   "scripts": {
     "test": "jest --watch",
