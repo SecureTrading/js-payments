@@ -5,21 +5,40 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <script async src="./server.bundle.js"></script>
+    <style>
+      .expiration-date__input {
+        border: none;
+        border-bottom: 1px solid #32325d;
+        height: 35px;
+        color: #32325d;
+        padding-left: 25px;
+      }
+
+      .expiration-date__input:focus {
+        outline: none;
+      }
+
+      .expiration-date__group {
+        position: relative;
+      }
+    </style>
   </head>
   <body>
     <form id="st-expiration-date">
       <label for="expiration-date" class="expiration-date__label">
         Expiration date:
       </label>
-      <input
-        type="text"
-        id="expiration-date"
-        name="expiration-date"
-        class="expiration-date__input"
-        placeholder="XX/XX"
-        value=""
-        required
-      />
+      <div class="expiration-date__group">
+        <input
+          type="text"
+          id="expiration-date"
+          name="expiration-date"
+          class="expiration-date__input"
+          placeholder="XX/XX"
+          value=""
+          required
+        />
+      </div>
       <p id="received-message"></p>
       <button
         type="submit"

@@ -1,7 +1,6 @@
 import Element from './core/classes/Element.class';
 import './style.scss';
 import './components/creditCardNumber/style.scss';
-import { getStylesFromUrl } from './core/validation/iframe/iframe';
 
 const createElement = () => {
   const element = document.createElement('form');
@@ -70,9 +69,5 @@ const createElement = () => {
   cardNumber.register(
     [cardNumberMounted, securityCodeMounted, expirationDateMounted],
     'st-form'
-  );
-
-  getStylesFromUrl(
-    '//localhost:8081/cardNumber.html?"style[border]=none&style[margin]=0&style[padding]=0&style[width]=1px&style[minWidth]=100%&style[overflow]=hidden&style[display]=block&style[height]=120px'
   );
 })();
