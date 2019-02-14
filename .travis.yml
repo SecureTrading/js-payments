@@ -9,12 +9,20 @@ before_script:
 - greenkeeper-lockfile-update
 jobs:
   include:
-    - stage: "Build"
-      name: "Compile for distribution"
-      script: npm run prod
+    # - stage: "Build"
+    #   name: "Compile for distribution"
+    #   script: npm run prod
+    # - stage: "Test"
+    #   name: "Unit tests"
+    #   script: npm run coverage
     - stage: "Test"
-      name: "Unit tests"
-      script: npm run coverage
+      name: "Behavioural test"
+      script:
+        - npm run prod
+        - git clone js-payments-testing
+        - cd js-payments-testing
+        - make test_chrome_68_w10
+
 after_success:
 - cat ./coverage/lcov.info | coveralls
 after_script:
