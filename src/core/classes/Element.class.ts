@@ -86,7 +86,7 @@ class Element {
     iframeStyles = iframeStyles.join('&');
     iframe.setAttribute(
       'src',
-      `${this._iframeSrc}?${JSON.stringify(iframeStyles)}`
+      `${this._iframeSrc}?${JSON.stringify(iframeStyles)}`,
     );
     iframe.setAttribute('id', fieldId);
     Object.assign(iframe.style, styleForIframe);

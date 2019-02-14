@@ -5,7 +5,4 @@
 document.addEventListener('DOMContentLoaded', () => {
   let test = document.createElement('button');
   document.getElementById('st-security-code').appendChild(test);
-  console.log('server  side');
 });
-
-alert('dsadsadsadsadsadas');

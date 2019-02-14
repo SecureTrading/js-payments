@@ -1,0 +1,32 @@
+h1 {
+  color: #e71b5a;
+}
+
+input.st-error {
+  border: 1px solid red;
+}
+
+input::placeholder {
+  color: #dcd8ee;
+}
+
+iframe {
+  font-family: "Roboto", sans-serif;
+  border: none !important;
+  display: block;
+  height: 120px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.st-error-message {
+  margin: 0 0 15px 5px;
+  color: red;
+}
+
+.st-error-message:before {
+  content: "\0021";
+  margin-right: 5px;
+  color: red;
+  font-weight: bold;
+}

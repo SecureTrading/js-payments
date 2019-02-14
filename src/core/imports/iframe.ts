@@ -1,7 +1,7 @@
 const iframesEndpoints = {
   cardNumber: '//localhost:8081/',
-  securityCode: '//localhost:8080/securityCode.html',
-  expirationDate: '//localhost:8080/expirationDate.html',
+  securityCode: '//localhost:8082',
+  expirationDate: '//localhost:8083',
 };
 
 const styleForIframe: any = {
