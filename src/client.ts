@@ -3,6 +3,7 @@ import './style.scss';
 import './components/creditCardNumber/style.scss';
 import Payment from './core/classes/Payment.class';
 import ST from './core/classes/ST.class';
+import { createElement } from './example';
 
 const elementStyles = {
   style: {
@@ -32,12 +33,6 @@ const elementClasses = {
   focus: 'focus',
   empty: 'empty',
   invalid: 'invalid',
-};
-
-const createElement = () => {
-  const element = document.createElement('form');
-  element.setAttribute('id', 'st-form');
-  document.body.appendChild(element);
 };
 
 (() => {
