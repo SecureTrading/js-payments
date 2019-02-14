@@ -1,5 +1,6 @@
 # JS Library
 
+[![BrowserStack Status](https://www.browserstack.com/automate/badge.svg?badge_key=eVhLS2ZRY1hqcnJhQXZYVVVZeGhBZnNZL2U4S0ZuNzFDSVk5WFd6MnQvTT0tLVZXd0diVnBPU1RURXJ4S2VrakpuUlE9PQ==--8df058f3f39c1ace5b4d83d27b8c3b46fc3bd90d)](https://www.browserstack.com/automate/public-build/eVhLS2ZRY1hqcnJhQXZYVVVZeGhBZnNZL2U4S0ZuNzFDSVk5WFd6MnQvTT0tLVZXd0diVnBPU1RURXJ4S2VrakpuUlE9PQ==--8df058f3f39c1ace5b4d83d27b8c3b46fc3bd90d)
 > A JavaScript interface for allowing tokenisation and authorisation of payments through SecureTrading.
 
 ## API Reference
@@ -31,8 +32,8 @@ Not specified yet
 > - [Greenkeeper](https://greenkeeper.io/)
 > - [Snyk](https://snyk.io/)
 > - [Coveralls](https://coveralls.io/)
-> - [BrowserStack](https://www.browserstack.com/)
 > - [Travis CI](https://travis-ci.org/)
+> - [<img alt="BrowserStack" src="browserstack-logo.png" width="300" />](https://www.browserstack.com/)
 
 ##### Automated tests:
 
