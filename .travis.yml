@@ -19,7 +19,7 @@ jobs:
       name: "Behavioural test"
       script:
         - npm run prod
-        - git clone js-payments-testing
+        - git clone https://github.com/SecureTrading/js-payments-testing
         - cd js-payments-testing
         - make test_chrome_68_w10
 
