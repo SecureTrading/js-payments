@@ -16,12 +16,12 @@ jobs:
     #   name: "Unit tests"
     #   script: npm run coverage
     - stage: "Test"
-      name: "Behavioural test"
+      name: "Behavioural test: chrome 68"
       script:
         - npm run prod
+        - npm run server
         - git clone https://github.com/SecureTrading/js-payments-testing
         - cd js-payments-testing
-        - git checkout feature/ST-82-automated-tests-framework
         - make test_chrome_68_w10
 after_success:
 - cat ./coverage/lcov.info | coveralls
