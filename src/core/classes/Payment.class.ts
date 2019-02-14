@@ -1,3 +1,5 @@
+import { availablePayments } from '../imports/payments';
+
 class Payment {
   private _payments: string[];
   private _codes: string[];
@@ -6,17 +8,19 @@ class Payment {
   constructor(payments: string[], codes: string[]) {
     this._payments = payments;
     this._codes = codes;
-    this._availablePayments = ['ApplePay', 'VisaCheckout'];
+    this._availablePayments = [...availablePayments];
     this.arePaymentsAvailable();
   }
 
+  // will return wheter indicated payment is available or not
   arePaymentsAvailable() {
     this._payments.map(item => {
       if (!this._availablePayments.includes(item)) {
-        alert(`${item} payment type is not available !`);
+        console.error(`${item} payment type is not available !`);
+        return false;
       }
+      return true;
     });
-    // will return wheter indicated payment is available or not
   }
 
   setAvailablePayments() {

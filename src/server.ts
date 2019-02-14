@@ -7,3 +7,5 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('st-security-code').appendChild(test);
   console.log('server  side');
 });
+
+alert('dsadsadsadsadsadas');
