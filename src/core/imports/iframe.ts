@@ -1,5 +1,5 @@
 const iframesEndpoints = {
-  cardNumber: '//localhost:8080/creditCard.html',
+  cardNumber: '//localhost:8081/',
   securityCode: '//localhost:8080/securityCode.html',
   expirationDate: '//localhost:8080/expirationDate.html',
 };

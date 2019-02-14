@@ -1,5 +1,4 @@
 import { Element, RegisterElements } from './core/classes/Element.class';
-import './style.scss';
 import './components/creditCardNumber/style.scss';
 import Payment from './core/classes/Payment.class';
 import ST from './core/classes/ST.class';
