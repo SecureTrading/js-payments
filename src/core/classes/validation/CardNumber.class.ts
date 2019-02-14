@@ -1,4 +1,4 @@
-import { creditCardBlocks, creditCardRegexes } from '../../imports/regex';
+import { creditCardBlocks, creditCardRegexes } from '../../imports/cards';
 import { cardsLogos } from '../../imports/images';
 import Validation from './Validation.class';
 

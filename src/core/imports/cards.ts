@@ -1,6 +1,3 @@
-const expiryDate = '(1[0-2]|0[1-9])/dd';
-const expiryDateRegexp = new RegExp(expiryDate);
-
 const creditCardBlocks: { [key: string]: RegExp } = {
   amex: /(\\d{1,4})(\\d{1,6})?(\\d+)?/,
   astropaycard: /(\\d{1,4})(\\d{1,4})?(\\d{1,4})?(\\d+)?/,
@@ -41,10 +38,4 @@ const creditCardRegexes: { [key: string]: RegExp } = {
   visa: /^4\d{0,15}/,
 };
 
-export {
-  creditCardBlocks,
-  creditCardRegexes,
-  expiryDateRegexp,
-  expiryDate,
-  creditCardSecurityCodeLength,
-};
+export { creditCardBlocks, creditCardRegexes, creditCardSecurityCodeLength };
