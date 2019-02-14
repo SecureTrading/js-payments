@@ -5,7 +5,12 @@
 const createElement = () => {
   const element = document.createElement('form');
   element.setAttribute('id', 'st-form');
+  const button = document.createElement('button');
+  button.setAttribute('type', 'submit');
+  button.innerHTML = 'Pay securely';
   document.body.appendChild(element);
+  const form = document.getElementById('st-form');
+  form.appendChild(button);
 };
 const elementStyles = {
   style: {

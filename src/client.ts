@@ -3,12 +3,14 @@ import './components/creditCardNumber/style.scss';
 import Payment from './core/classes/Payment.class';
 import ST from './core/classes/ST.class';
 import { createElement, elementStyles, elementClasses } from './example';
+import { submitListener } from './core/helpers/listeners';
 
 (() => {
   const st = new ST('thisissupersecretidforaclient12344321');
   const payment = new Payment(['ApplePay', 'GooglePay'], ['133456', '546565']);
 
   createElement();
+  submitListener();
 
   const cardNumber = new Element();
   const securityCode = new Element();
@@ -34,6 +36,6 @@ import { createElement, elementStyles, elementClasses } from './example';
 
   RegisterElements(
     [cardNumberMounted, securityCodeMounted, expirationDateMounted],
-    'st-form'
+    'st-form',
   );
 })();
