@@ -20,8 +20,8 @@ jobs:
       script:
         - npm run prod
         - git clone https://github.com/SecureTrading/js-payments-testing
-        - git checkout feature/ST-82-automated-tests-framework
         - cd js-payments-testing
+        - git checkout feature/ST-82-automated-tests-framework
         - make test_chrome_68_w10
 
 after_success:
