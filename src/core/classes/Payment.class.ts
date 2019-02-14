@@ -23,10 +23,9 @@ class Payment {
     });
   }
 
-  setAvailablePayments() {
-    // load script / payment library url,
-    // load initial config with  user key supported
-  }
+  // load script / payment library url,
+  // load initial config with  user key supported
+  setAvailablePayments() {}
 }
 
 export default Payment;

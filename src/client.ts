@@ -1,41 +1,14 @@
-import Element from './core/classes/Element.class';
+import { Element, RegisterElements } from './core/classes/Element.class';
 import './style.scss';
 import './components/creditCardNumber/style.scss';
 import Payment from './core/classes/Payment.class';
 import ST from './core/classes/ST.class';
-import { createElement } from './example';
-
-const elementStyles = {
-  style: {
-    base: {
-      color: '#fff',
-      fontFamily: 'Quicksand, Open Sans, Segoe UI, sans-serif',
-      fontSize: '16px',
-      fontSmoothing: 'antialiased',
-      fontWeight: 600,
-    },
-    invalid: {
-      color: '#fa755a',
-      iconColor: '#fa755a',
-    },
-  },
-  invalid: {
-    color: '#fff',
-    ':focus': {
-      color: '#FA755A',
-    },
-    '::placeholder': {
-      color: '#FFCCA5',
-    },
-  },
-};
-const elementClasses = {
-  focus: 'focus',
-  empty: 'empty',
-  invalid: 'invalid',
-};
+import { createElement, elementStyles, elementClasses } from './example';
 
 (() => {
+  const st = new ST('thisissupersecretidforaclient12344321');
+  const payment = new Payment(['ApplePay', 'GooglePay'], ['133456', '546565']);
+
   createElement();
 
   const cardNumber = new Element();
@@ -60,11 +33,8 @@ const elementClasses = {
   });
   const expirationDateMounted = expirationDate.mount('st-expiration-date');
 
-  cardNumber.register(
+  RegisterElements(
     [cardNumberMounted, securityCodeMounted, expirationDateMounted],
     'st-form'
   );
-
-  const st = new ST('thisissupersecretidforaclient12344321');
-  const payment = new Payment(['ApplePay', 'GooglePay'], ['133456', '546565']);
 })();

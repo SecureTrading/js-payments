@@ -2,6 +2,17 @@ import { iframesEndpoints, styleForIframe } from '../imports/iframe';
 
 const { cardNumber, securityCode, expirationDate } = iframesEndpoints;
 
+const RegisterElements = (fields: HTMLElement[], form: string) => {
+  const formContainer = document.getElementById(form);
+  const promise1 = new Promise((resolve, reject) => {
+    fields.forEach(item => {
+      formContainer.appendChild(item);
+    });
+    resolve('well done !');
+    reject('something went wrong :(');
+  });
+};
+
 class Element {
   private _name: string;
   private _iframeSrc: string;
@@ -81,17 +92,6 @@ class Element {
     Object.assign(iframe.style, styleForIframe);
     return iframe;
   }
-
-  register(fields: HTMLElement[], form: string) {
-    const formContainer = document.getElementById(form);
-    const promise1 = new Promise((resolve, reject) => {
-      fields.forEach(item => {
-        formContainer.appendChild(item);
-      });
-      resolve('well done !');
-      reject('something went wrong :(');
-    });
-  }
 }
 
-export default Element;
+export { Element, RegisterElements };
