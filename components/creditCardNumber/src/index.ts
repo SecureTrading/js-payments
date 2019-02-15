@@ -22,6 +22,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   }, true);
+
+  creditCardInput.addEventListener('keyup', (event) => {
+    //@ts-ignore
+    creditCardInput.value = formatCreditCard(event.target.value);
+  });
 });
 
 const getStylesFromUrl = () => {
@@ -29,4 +34,24 @@ const getStylesFromUrl = () => {
   query = decodeURI(query).replace(/&/g, '","').replace(/=/g, '":"').replace('http://localhost:8081/?', '');
   console.log(JSON.parse(query));
   return JSON.parse(query);
+};
+
+const formatCreditCard = (cc) => {
+  // @ts-ignore
+  let v = cc.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+  let matches = v.match(/\d{4,16}/g);
+  let match = matches && matches[0] || '';
+  let parts = [];
+  for (let i = 0, len = match.length; i < len; i += 4) {
+    parts.push(match.substring(i, i + 4));
+  }
+  if (parts.length) {
+    console.log(parts);
+    return parts.join(' ');
+  } else {
+    // @ts-ignore
+    console.log(cc);
+    // @ts-ignore
+    return cc;
+  }
 };
