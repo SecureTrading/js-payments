@@ -14,7 +14,7 @@
     "dev": "webpack --config webpack.dev.js",
     "prod": "webpack --config webpack.prod.js",
     "start": "webpack-dev-server --color --progress --open --hot --config webpack.dev.js",
-    "hot": "npm-run-all dev start",
+    "hot": "npm-run-all dev start"
   },
   "repository": {
     "type": "git",
@@ -67,6 +67,6 @@
     "webpack-cli": "^3.2.3",
     "webpack-dev-server": "^3.1.14",
     "webpack-manifest-plugin": "^2.0.4",
-    "webpack-merge": "^4.2.1",
+    "webpack-merge": "^4.2.1"
   }
 }
