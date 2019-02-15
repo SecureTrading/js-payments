@@ -12,14 +12,13 @@ jobs:
     # - stage: "Build"
     #   name: "Compile for distribution"
     #   script: npm run prod
-    # - stage: "Test"
-    #   name: "Unit tests"
-    #   script: npm run coverage
     - stage: "Test"
-      name: "Behavioural test: chrome 68"
+      name: "Unit tests"
+      script: npm run coverage
+    - name: "Behavioural test: chrome 68"
       script:
         - npm run prod
-        - npm run server
+        - npm run start &
         - git clone https://github.com/SecureTrading/js-payments-testing
         - cd js-payments-testing
         - make test_chrome_68_w10
