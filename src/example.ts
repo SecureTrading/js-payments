@@ -15,11 +15,18 @@ const createElement = () => {
 const elementStyles = {
   style: {
     base: {
-      color: '#fff',
-      fontFamily: 'Quicksand, Open Sans, Segoe UI, sans-serif',
+      color: '#495057',
+      fontFamily: 'Montserrat, Open Sans, Segoe UI, sans-serif',
       fontSize: '16px',
       fontSmoothing: 'antialiased',
-      fontWeight: 600,
+      fontWeight: 700,
+      borderWidth: '1px',
+      borderStyle: 'solid',
+      borderRadius: '4px',
+      borderColor: '#ced4da',
+      padding: '6px 12px 6px 20px',
+      lineHeight: '1.5',
+      backgroundColor: '#fff',
     },
     invalid: {
       color: '#fa755a',

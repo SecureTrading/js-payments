@@ -1,7 +1,9 @@
+const appEndpoint = 'http://localhost:8080';
+
 const iframesEndpoints = {
-  cardNumber: '//localhost:8081',
-  securityCode: '//localhost:8082',
-  expirationDate: '//localhost:8083',
+  cardNumber: 'http://localhost:8081',
+  securityCode: 'http://localhost:8082',
+  expirationDate: 'http://localhost:8083',
 };
 
 const styleForIframe: any = {
@@ -15,4 +17,4 @@ const styleForIframe: any = {
   height: '120px',
 };
 
-export { iframesEndpoints, styleForIframe };
+export { appEndpoint, iframesEndpoints, styleForIframe };

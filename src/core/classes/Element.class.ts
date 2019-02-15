@@ -45,11 +45,11 @@ class Element {
   constructor() {
     this._name = '';
     this._style = {
-      color: '#fff',
-      fontWeight: 600,
-      fontFamily: 'Lato, sans-serif',
-      fontSize: '16px',
-      fontSmoothing: 'antialiased',
+      "color": '#fff',
+      "fontWeight": "600",
+      "fontFamily": 'Lato, sans-serif',
+      "fontSize": '16px',
+      "fontSmoothing": 'antialiased',
     };
   }
 
@@ -86,7 +86,7 @@ class Element {
     iframeStyles = iframeStyles.join('&');
     iframe.setAttribute(
       'src',
-      `${this._iframeSrc}?${JSON.stringify(iframeStyles)}`,
+      `${this._iframeSrc}?${JSON.stringify(this._style)}`,
     );
     iframe.setAttribute('id', fieldId);
     Object.assign(iframe.style, styleForIframe);

@@ -5,6 +5,12 @@ import ST from './core/classes/ST.class';
 import { createElement, elementStyles, elementClasses } from './example';
 import { submitListener } from './core/helpers/listeners';
 
+document.addEventListener('DOMContentLoaded', () => {
+  const error = document.createElement('p');
+  error.setAttribute('id', 'received-message');
+  document.getElementById('st-form').appendChild(error);
+});
+
 (() => {
   const st = new ST('thisissupersecretidforaclient12344321');
   const payment = new Payment(['ApplePay', 'GooglePay'], ['133456', '546565']);
@@ -38,4 +44,5 @@ import { submitListener } from './core/helpers/listeners';
     [cardNumberMounted, securityCodeMounted, expirationDateMounted],
     'st-form',
   );
+
 })();

@@ -11,7 +11,6 @@ class ST {
 
   constructor(id: string) {
     this._id = id;
-    console.log(this._id);
   }
 
   verifyClientId() {}
