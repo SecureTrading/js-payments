@@ -38,6 +38,9 @@ const getStylesFromUrl = () => {
 
 const formatCreditCard = (cc) => {
   // @ts-ignore
+  if (event.keyCode < 47 || event.keyCode > 57) {
+    event.preventDefault();
+  }
   let v = cc.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
   let matches = v.match(/\d{4,16}/g);
   let match = matches && matches[0] || '';
@@ -45,13 +48,5 @@ const formatCreditCard = (cc) => {
   for (let i = 0, len = match.length; i < len; i += 4) {
     parts.push(match.substring(i, i + 4));
   }
-  if (parts.length) {
-    console.log(parts);
-    return parts.join(' ');
-  } else {
-    // @ts-ignore
-    console.log(cc);
-    // @ts-ignore
-    return cc;
-  }
+  return parts.length ? parts.join(' ') : cc;
 };
