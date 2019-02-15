@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Example 1</title>
+</head>
+<body>
+<form>
+  <fieldset>
+    <div class="row">
+      <label for="example-1-name">Name</label>
+      <input id="example-1-name" type="text" placeholder="John Doe" required="" autocomplete="name">
+    </div>
+    <div class="row">
+      <label for="example-1-email">Email</label>
+      <input id="example-1-email" type="email" placeholder="test@gmail.com" required="" autocomplete="email">
+    </div>
+    <div class="row">
+      <label for="example-1-phone">Phone</label>
+      <input id="example-1-phone" type="tel" placeholder="+48713545689" required="" autocomplete="tel">
+    </div>
+  </fieldset>
+  <fieldset>
+    <div class="row">
+      <div id="example-1-card" class="st-form"></div>
+    </div>
+  </fieldset>
+  <button type="submit">Pay</button>
+  <div class="error" role="alert"></div>
+</form>
+</body>
+</html>
