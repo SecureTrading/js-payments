@@ -5,8 +5,6 @@ before_install:
 - npm install -g npm@latest
 install:
 - npm install
-before_script:
-- greenkeeper-lockfile-update
 jobs:
   include:
     - stage: "Build"
@@ -14,11 +12,11 @@ jobs:
       script: npm run prod
     - stage: "Test"
       name: "Unit tests"
-      script: npm run coverage
+      script: 
+        - npm run coverage
+        - npm run snyk
 after_success:
 - cat ./coverage/lcov.info | coveralls
-after_script:
-- greenkeeper-lockfile-upload
 addons:
   browserstack:
     forcelocal: true
