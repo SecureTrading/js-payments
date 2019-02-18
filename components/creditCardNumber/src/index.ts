@@ -1,8 +1,10 @@
 import './style.scss';
 import {
-  iframesEndpoints,
   appEndpoint,
+  iframesEndpoints,
+  getStylesFromUrl,
 } from '../../../src/core/imports/iframe';
+import { formatCreditCard } from './../../../src/core/imports/cards';
 
 const { cardNumber } = iframesEndpoints;
 
@@ -40,28 +42,3 @@ document.addEventListener('DOMContentLoaded', () => {
     creditCardInput.value = formatCreditCard(event.target.value);
   });
 });
-
-const getStylesFromUrl = () => {
-  let query = window.location.href;
-  query = decodeURI(query)
-    .replace(/&/g, '","')
-    .replace(/=/g, '":"')
-    .replace('http://localhost:8081/?', '');
-  console.log(JSON.parse(query));
-  return JSON.parse(query);
-};
-
-const formatCreditCard = (cc: string) => {
-  // @ts-ignore
-  if (event.keyCode < 47 || event.keyCode > 57) {
-    event.preventDefault();
-  }
-  let v = cc.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-  let matches = v.match(/\d{4,16}/g);
-  let match = (matches && matches[0]) || '';
-  let parts = [];
-  for (let i = 0, len = match.length; i < len; i += 4) {
-    parts.push(match.substring(i, i + 4));
-  }
-  return parts.length ? parts.join(' ') : cc;
-};
