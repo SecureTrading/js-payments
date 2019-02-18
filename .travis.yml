@@ -1,22 +1,22 @@
 language: node_js
 node_js:
-- '10'
+  - '10'
 before_install:
-- npm install -g npm@latest
+  - npm install -g npm@latest
 install:
-- npm install
+  - npm install
 jobs:
   include:
-    - stage: "Build"
-      name: "Compile for distribution"
+    - stage: 'Build'
+      name: 'Compile for distribution'
       script: npm run prod
-    - stage: "Test"
-      name: "Unit tests"
-      script: 
+    - stage: 'Test'
+      name: 'Unit tests'
+      script:
         - npm run coverage
         - npm run snyk
 after_success:
-- cat ./coverage/lcov.info | coveralls
+  - cat ./coverage/lcov.info | coveralls
 addons:
   browserstack:
     forcelocal: true
