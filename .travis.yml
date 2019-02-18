@@ -6,13 +6,13 @@ before_install:
 install:
 - npm install
 - npm run prod
-before_script:
-- greenkeeper-lockfile-update
 jobs:
   include:
     - stage: "Test"
       name: "Unit tests"
-      script: npm run coverage
+      script:
+        - npm run coverage
+        - npm run snyk
     - name: "Behavioural test: chrome 68"
       script:
         - npm run start &
@@ -57,8 +57,6 @@ jobs:
         - make test_safari_11_osxhs
 after_success:
 - cat ./coverage/lcov.info | coveralls
-after_script:
-- greenkeeper-lockfile-upload
 addons:
   browserstack:
     forcelocal: true
