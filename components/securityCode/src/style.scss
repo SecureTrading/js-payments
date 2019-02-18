@@ -1,0 +1,30 @@
+.security-code {
+  &__input {
+    border: none;
+    border-bottom: 1px solid #32325d;
+    height: 35px;
+    color: #32325d;
+    padding-left: 25px;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &__group {
+    position: relative;
+  }
+
+  &__logo {
+    position: absolute;
+    top: 33%;
+
+    img {
+      max-width: 20px;
+    }
+  }
+
+  &__submit {
+    opacity: 0;
+  }
+}
