@@ -43,6 +43,8 @@ describe('Index placeholder test', () => {
       securityCodeUrl
     );
   });
+
+  // then
   it('should create new element', () => {
     element = new Element();
     element.create('newTestObjectName', {
