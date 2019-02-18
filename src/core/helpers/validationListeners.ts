@@ -15,7 +15,7 @@ const submitListener = () => {
   window.addEventListener('message', event => {
     if (event.origin !== 'http://localhost:8080') {
       document.getElementById(
-        'received-message'
+        'st-form__received-message'
       ).textContent = returnErrorMessage(event.data);
     }
   });

@@ -1,12 +1,9 @@
-const createElement = () => {
-  const element = document.createElement('form');
-  element.setAttribute('id', 'st-form');
-  const button = document.createElement('button');
-  button.setAttribute('type', 'submit');
-  button.innerHTML = 'Pay securely';
-  document.body.appendChild(element);
-  const form = document.getElementById('st-form');
-  form.appendChild(button);
+const createFormElement = (type: string, id: string, text?: string) => {
+  const element = document.createElement(type);
+  element.setAttribute('id', id);
+  element.setAttribute('class', id);
+  element.innerHTML = text ? text : '';
+  return element;
 };
 const elementStyles = {
   style: {
@@ -45,4 +42,4 @@ const elementClasses = {
   invalid: 'invalid',
 };
 
-export { createElement, elementStyles, elementClasses };
+export { createFormElement, elementStyles, elementClasses };

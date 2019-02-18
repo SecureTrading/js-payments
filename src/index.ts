@@ -1,21 +1,27 @@
+import '../examples/example.scss';
 import { Element, RegisterElements } from './core/classes/Element.class';
 import Payment from './core/classes/Payment.class';
 import ST from './core/classes/ST.class';
-import { createElement, elementStyles, elementClasses } from './example';
+import {
+  createFormElement,
+  elementStyles,
+  elementClasses,
+} from '../examples/example';
 import { submitListener } from './core/helpers/validationListeners';
 
 document.addEventListener('DOMContentLoaded', () => {
-  const error = document.createElement('p');
-  error.setAttribute('id', 'received-message');
-  document.getElementById('st-form').appendChild(error);
+  submitListener();
 });
 
 (() => {
   const st = new ST('thisissupersecretidforaclient12344321');
   const payment = new Payment(['ApplePay', 'GooglePay'], ['133456', '546565']);
-
-  createElement();
-  submitListener();
+  document.body.appendChild(createFormElement('form', 'st-form'));
+  document
+    .getElementById('st-form')
+    .appendChild(
+      createFormElement('h1', 'st-form__title', 'Secure Trading Example Form')
+    );
 
   const cardNumber = new Element();
   const securityCode = new Element();
@@ -43,4 +49,12 @@ document.addEventListener('DOMContentLoaded', () => {
     [cardNumberMounted, securityCodeMounted, expirationDateMounted],
     'st-form'
   );
+  document
+    .getElementById('st-form')
+    .appendChild(createFormElement('p', 'st-form__received-message'));
+  document
+    .getElementById('st-form')
+    .appendChild(
+      createFormElement('button', 'st-form__submit', 'Pay Securely')
+    );
 })();
