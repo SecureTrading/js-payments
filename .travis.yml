@@ -6,6 +6,7 @@ before_install:
 install:
 - npm install
 - npm run prod
+- npm run start &
 jobs:
   include:
     - stage: "Test"
