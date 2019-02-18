@@ -45,11 +45,11 @@ class Element {
   constructor() {
     this._name = '';
     this._style = {
-      "color": '#fff',
-      "fontWeight": "600",
-      "fontFamily": 'Lato, sans-serif',
-      "fontSize": '16px',
-      "fontSmoothing": 'antialiased',
+      color: '#fff',
+      fontWeight: '600',
+      fontFamily: 'Lato, sans-serif',
+      fontSize: '16px',
+      fontSmoothing: 'antialiased',
     };
   }
 
@@ -63,15 +63,6 @@ class Element {
     }
   }
 
-  getStylesFromUrl(url: string) {
-    let urlAndParams = url.split('?');
-    urlAndParams.shift();
-    let params = urlAndParams[0].split('&');
-    params = params.map(item => item.replace('style[', ''));
-    params = params.map(item => item.replace(']=', ':'));
-    return params;
-  }
-
   create(elementName: string, attributes: any) {
     this._name = elementName;
     this._style = attributes;
@@ -80,13 +71,9 @@ class Element {
 
   mount(fieldId: string) {
     let iframe = document.createElement('iframe');
-    let iframeStyles: any = Object.keys(styleForIframe).map(item => {
-      return `style[${item}]=${styleForIframe[item]}`;
-    });
-    iframeStyles = iframeStyles.join('&');
     iframe.setAttribute(
       'src',
-      `${this._iframeSrc}?${JSON.stringify(this._style)}`,
+      `${this._iframeSrc}?${JSON.stringify(this._style)}`
     );
     iframe.setAttribute('id', fieldId);
     Object.assign(iframe.style, styleForIframe);
