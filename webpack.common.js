@@ -17,7 +17,6 @@ module.exports = {
   },
   entry: {
     client: './src/client.ts',
-    server: './src/server.ts',
   },
   output: {
     filename: '[name].bundle.js',

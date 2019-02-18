@@ -53,9 +53,4 @@ const formatCreditCard = (cc: string) => {
   return parts.length ? parts.join(' ') : cc;
 };
 
-export {
-  creditCardBlocks,
-  creditCardRegexes,
-  creditCardSecurityCodeLength,
-  formatCreditCard,
-};
+export { creditCardBlocks, creditCardRegexes, formatCreditCard };
