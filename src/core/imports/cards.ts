@@ -38,4 +38,24 @@ const creditCardRegexes: { [key: string]: RegExp } = {
   visa: /^4\d{0,15}/,
 };
 
-export { creditCardBlocks, creditCardRegexes, creditCardSecurityCodeLength };
+const formatCreditCard = (cc: string) => {
+  // @ts-ignore
+  if (event.keyCode < 47 || event.keyCode > 57) {
+    event.preventDefault();
+  }
+  let v = cc.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+  let matches = v.match(/\d{4,16}/g);
+  let match = (matches && matches[0]) || '';
+  let parts = [];
+  for (let i = 0, len = match.length; i < len; i += 4) {
+    parts.push(match.substring(i, i + 4));
+  }
+  return parts.length ? parts.join(' ') : cc;
+};
+
+export {
+  creditCardBlocks,
+  creditCardRegexes,
+  creditCardSecurityCodeLength,
+  formatCreditCard,
+};

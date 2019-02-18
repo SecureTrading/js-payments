@@ -17,4 +17,13 @@ const styleForIframe: any = {
   height: '120px',
 };
 
-export { appEndpoint, iframesEndpoints, styleForIframe };
+const getStylesFromUrl = () => {
+  let query = window.location.href;
+  query = decodeURI(query)
+    .replace(/&/g, '","')
+    .replace(/=/g, '":"')
+    .replace('http://localhost:8081/?', '');
+  return JSON.parse(query);
+};
+
+export { appEndpoint, iframesEndpoints, styleForIframe, getStylesFromUrl };
