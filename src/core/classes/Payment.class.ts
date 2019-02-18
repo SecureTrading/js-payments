@@ -12,7 +12,6 @@ class Payment {
     this.arePaymentsAvailable();
   }
 
-  // will return wheter indicated payment is available or not
   arePaymentsAvailable() {
     this._payments.map(item => {
       if (!this._availablePayments.includes(item)) {
@@ -23,8 +22,6 @@ class Payment {
     });
   }
 
-  // load script / payment library url,
-  // load initial config with  user key supported
   setAvailablePayments() {}
 }
 
