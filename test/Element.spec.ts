@@ -2,12 +2,36 @@ import { Element, RegisterElements } from '../src/core/classes/Element.class';
 // given
 describe('Index placeholder test', () => {
   //when
-  let element;
-  beforeEach(() => {});
+  let element, mockObject: object;
+  beforeEach(() => {
+    mockObject = {
+      _name: '',
+      _style: {
+        color: '#fff',
+        fontWeight: '600',
+        fontFamily: 'Lato, sans-serif',
+        fontSize: '16px',
+        fontSmoothing: 'antialiased',
+      },
+    };
+  });
 
   //then
   it('should have initial settings ', () => {
     element = new Element();
-    expect(element._name).toEqual('');
+    expect(element).toMatchObject(mockObject);
+  });
+
+  // then
+  it('should return proper iframe endpoints', () => {
+    expect(Element.getComponentAdress('cardNumber')).toEqual(
+      'http://localhost:8081'
+    );
+    expect(Element.getComponentAdress('securityCode')).toEqual(
+      'http://localhost:8082'
+    );
+    expect(Element.getComponentAdress('expirationDate')).toEqual(
+      'http://localhost:8083'
+    );
   });
 });
