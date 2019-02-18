@@ -1,6 +1,6 @@
 const returnErrorMessage = (errors: any) => {
   if (errors.isEmpty) {
-    return 'Pole jest puste';
+    return 'Field is empty';
   }
 };
 

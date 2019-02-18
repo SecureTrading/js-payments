@@ -3,7 +3,7 @@ import './components/creditCardNumber/style.scss';
 import Payment from './core/classes/Payment.class';
 import ST from './core/classes/ST.class';
 import { createElement, elementStyles, elementClasses } from './example';
-import { submitListener } from './core/helpers/listeners';
+import { submitListener } from './core/helpers/validationListeners';
 
 document.addEventListener('DOMContentLoaded', () => {
   const error = document.createElement('p');
@@ -42,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   RegisterElements(
     [cardNumberMounted, securityCodeMounted, expirationDateMounted],
-    'st-form',
+    'st-form'
   );
-
 })();
