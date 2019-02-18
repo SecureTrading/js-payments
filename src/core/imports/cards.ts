@@ -39,8 +39,8 @@ const creditCardRegexes: { [key: string]: RegExp } = {
 };
 
 const formatCreditCard = (cc: string) => {
-  // @ts-ignore
-  if (event.keyCode < 47 || event.keyCode > 57) {
+  let keyUp = event as KeyboardEvent;
+  if (keyUp.keyCode < 47 || keyUp.keyCode > 57) {
     event.preventDefault();
   }
   let v = cc.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
