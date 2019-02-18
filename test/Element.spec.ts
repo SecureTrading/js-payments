@@ -1,8 +1,12 @@
-import { Element, RegisterElements } from '../src/core/classes/Element.class';
+import { Element } from '../src/core/classes/Element.class';
 // given
 describe('Index placeholder test', () => {
   //when
-  let element, mockObject: object;
+  let element, mockObject: object, createNewElement: object;
+  const cardNumberUrl = 'http://localhost:8081',
+    expirationDateUrl = 'http://localhost:8082',
+    securityCodeUrl = 'http://localhost:8083';
+
   beforeEach(() => {
     mockObject = {
       _name: '',
@@ -12,6 +16,13 @@ describe('Index placeholder test', () => {
         fontFamily: 'Lato, sans-serif',
         fontSize: '16px',
         fontSmoothing: 'antialiased',
+      },
+    };
+    createNewElement = {
+      _name: 'newTestObjectName',
+      _style: {
+        color: '#eee',
+        fontWeight: '100',
       },
     };
   });
@@ -24,29 +35,20 @@ describe('Index placeholder test', () => {
 
   // then
   it('should return proper iframe endpoints', () => {
-    expect(Element.getComponentAdress('cardNumber')).toEqual(
-      'http://localhost:8081'
-    );
+    expect(Element.getComponentAdress('cardNumber')).toEqual(cardNumberUrl);
     expect(Element.getComponentAdress('securityCode')).toEqual(
-      'http://localhost:8082'
+      expirationDateUrl
     );
     expect(Element.getComponentAdress('expirationDate')).toEqual(
-      'http://localhost:8083'
+      securityCodeUrl
     );
   });
   it('should create new element', () => {
-    const mockObject = {
-      _name: 'newTestObjectName',
-      _style: {
-        color: '#eee',
-        fontWeight: '100',
-      },
-    };
     element = new Element();
     element.create('newTestObjectName', {
       color: '#eee',
       fontWeight: '100',
     });
-    expect(element).toMatchObject(mockObject);
+    expect(element).toMatchObject(createNewElement);
   });
 });
