@@ -14,7 +14,7 @@ const styleForIframe: any = {
   minWidth: '100%',
   overflow: 'hidden',
   display: 'block',
-  height: '120px',
+  height: '130px',
 };
 
 const getStylesFromUrl = () => {
