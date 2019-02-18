@@ -34,4 +34,19 @@ describe('Index placeholder test', () => {
       'http://localhost:8083'
     );
   });
+  it('should create new element', () => {
+    const mockObject = {
+      _name: 'newTestObjectName',
+      _style: {
+        color: '#eee',
+        fontWeight: '100',
+      },
+    };
+    element = new Element();
+    element.create('newTestObjectName', {
+      color: '#eee',
+      fontWeight: '100',
+    });
+    expect(element).toMatchObject(mockObject);
+  });
 });
