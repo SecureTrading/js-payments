@@ -17,13 +17,25 @@ const styleForIframe: any = {
   height: '130px',
 };
 
-const getStylesFromUrl = () => {
+const getStylesFromUrl = (endpoint: string) => {
   let query = window.location.href;
   query = decodeURI(query)
     .replace(/&/g, '","')
     .replace(/=/g, '":"')
-    .replace('http://localhost:8081/?', '');
+    .replace(endpoint, '');
   return JSON.parse(query);
 };
 
-export { appEndpoint, iframesEndpoints, styleForIframe, getStylesFromUrl };
+const applyStylesToIframe = (id: string, endpoint: string) => {
+  let input = <HTMLInputElement>document.getElementById(id);
+  let styles = getStylesFromUrl(endpoint);
+  Object.assign(input.style, styles.style.style.base);
+};
+
+export {
+  appEndpoint,
+  iframesEndpoints,
+  styleForIframe,
+  getStylesFromUrl,
+  applyStylesToIframe,
+};

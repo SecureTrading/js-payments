@@ -1,7 +1,7 @@
 import { formatCreditCard } from '../imports/cards';
 import {
   appEndpoint,
-  getStylesFromUrl,
+  applyStylesToIframe,
   iframesEndpoints,
 } from '../imports/iframe';
 
@@ -15,8 +15,7 @@ const creditCardDOMListener = () => {
     let creditCardInput = <HTMLInputElement>(
       document.getElementById('credit-card-number')
     );
-    let styles = getStylesFromUrl();
-    Object.assign(creditCardInput.style, styles.style.style.base);
+    applyStylesToIframe('credit-card-number', 'http://localhost:8081/?');
 
     window.addEventListener(
       'message',
