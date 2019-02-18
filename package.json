@@ -15,7 +15,9 @@
     "dev": "webpack --config webpack.dev.js",
     "prod": "webpack --config webpack.prod.js",
     "start": "webpack-dev-server --color --progress --open --hot --config webpack.dev.js",
-    "hot": "npm-run-all dev start"
+    "hot": "npm-run-all dev start",
+    "testframework": "git clone https://github.com/SecureTrading/js-payments-testing; cd js-payments-testing",
+    "behave": "npm run start & && npm run testframework && cd js-payments-testing && make"
   },
   "repository": {
     "type": "git",

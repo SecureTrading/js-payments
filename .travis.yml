@@ -15,46 +15,25 @@ jobs:
         - npm run snyk
     - name: "Behavioural test: chrome 68"
       script:
-        - npm run start &
-        - git clone https://github.com/SecureTrading/js-payments-testing
-        - cd js-payments-testing
-        - make test_chrome_68_w10
+        - npm run behave -- test_chrome_68_w10
     - name: "Behavioural test: firefox 61"
       script:
-        - npm run start &
-        - git clone https://github.com/SecureTrading/js-payments-testing
-        - cd js-payments-testing
-        - make test_firefox_61_w10
+        - npm run behave -- test_firefox_61_w10
     - name: "Behavioural test: edge 17"
       script:
-        - npm run start &
-        - git clone https://github.com/SecureTrading/js-payments-testing
-        - cd js-payments-testing
-        - make test_edge_17_w10
+        - npm run behave -- test_edge_17_w10
     - name: "Behavioural test: ie 9"
       script:
-        - npm run start &
-        - git clone https://github.com/SecureTrading/js-payments-testing
-        - cd js-payments-testing
-        - make test_ie_9_w7
+        - npm run behave -- test_ie_9_w7
     - name: "Behavioural test: ie 10"
       script:
-        - npm run start &
-        - git clone https://github.com/SecureTrading/js-payments-testing
-        - cd js-payments-testing
-        - make test_ie_10_w8
+        - npm run behave -- test_ie_10_w8
     - name: "Behavioural test: ie 11"
       script:
-        - npm run start &
-        - git clone https://github.com/SecureTrading/js-payments-testing
-        - cd js-payments-testing
-        - make test_ie_11_w8
+        - npm run behave -- test_ie_11_w8
     - name: "Behavioural test: safari 11"
       script:
-        - npm run start &
-        - git clone https://github.com/SecureTrading/js-payments-testing
-        - cd js-payments-testing
-        - make test_safari_11_osxhs
+        - npm run behave -- test_safari_11_osxhs
 after_success:
 - cat ./coverage/lcov.info | coveralls
 addons:
