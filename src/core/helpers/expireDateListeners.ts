@@ -1,12 +1,16 @@
 import { applyStylesToIframe } from '../imports/iframe';
 import ExpireDate from './../classes/validation/ExpireDate.class';
+import { iframesEndpoints } from '../imports/iframe';
 
 const expireDateDOMListener = () => {
   document.addEventListener('DOMContentLoaded', () => {
     let expirationDateInput = <HTMLInputElement>(
       document.getElementById('expiration-date')
     );
-    applyStylesToIframe('expiration-date', 'http://localhost:8082/?');
+    applyStylesToIframe(
+      'expiration-date',
+      `${iframesEndpoints.securityCode}/?`
+    );
     expirationDateInput.addEventListener('keyup', (event: Event) => {
       let value = (<HTMLInputElement>event.target).value;
       if (value.length > 10) {
