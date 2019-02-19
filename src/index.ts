@@ -4,8 +4,8 @@ import Payment from './core/classes/Payment.class';
 import ST from './core/classes/ST.class';
 import {
   createFormElement,
-  elementStyles,
   elementClasses,
+  elementStyles,
 } from '../examples/example';
 import { submitListener } from './core/helpers/validationListeners';
 

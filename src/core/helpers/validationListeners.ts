@@ -36,7 +36,6 @@ const submitListener = () => {
   });
 
   window.addEventListener('message', event => {
-    console.log('submitted');
     if (event.origin !== appEndpoint) {
       document.getElementById(
         'st-form__received-message'
