@@ -1,6 +1,12 @@
 import Validation from './Validation.class';
 
 class ExpireDate extends Validation {
+  static KEYBOARD_CODES_FOR_DIGITS = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57];
+  static MONTH_KEYBOARD_CODE_FIRST_CHAR = [48, 49];
+  static DATE_MAX_LENGTH = 5;
+  static DATE_SLASH_PLACE = 2;
+  static DATE_EMPTY = 0;
+
   constructor() {
     super();
   }
@@ -8,24 +14,20 @@ class ExpireDate extends Validation {
   dateInputMask(element: HTMLInputElement) {
     element.addEventListener('keyup', (event: any) => {
       let length = element.value.length;
-      if (length < 5) {
-        if (event.keyCode < 47 || event.keyCode > 57) {
+      if (length < ExpireDate.DATE_MAX_LENGTH) {
+        if (!ExpireDate.KEYBOARD_CODES_FOR_DIGITS.includes(event.keyCode)) {
           event.preventDefault();
         }
 
-        if (length === 0) {
-          if (event.keyCode !== 48 && event.keyCode !== 49) {
+        if (length === ExpireDate.DATE_EMPTY) {
+          if (
+            ExpireDate.MONTH_KEYBOARD_CODE_FIRST_CHAR.includes(event.keyCode)
+          ) {
             event.preventDefault();
           }
         }
 
-        if (length !== 1) {
-          if (event.keyCode == 47) {
-            event.preventDefault();
-          }
-        }
-
-        if (length === 2) {
+        if (length === ExpireDate.DATE_SLASH_PLACE) {
           element.value += '/';
         }
       } else {
