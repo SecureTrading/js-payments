@@ -1,5 +1,10 @@
 import { availablePayments } from '../imports/payments';
 
+/***
+ * Class for Payment types definitions.
+ * Defines also APM's
+ */
+
 class Payment {
   private _payments: string[];
   private _codes: string[];
@@ -12,6 +17,9 @@ class Payment {
     this.arePaymentsAvailable();
   }
 
+  /***
+   * Checks if inficated by client payments are available for him.
+   */
   arePaymentsAvailable() {
     this._payments.map(item => {
       if (!this._availablePayments.includes(item)) {
@@ -22,6 +30,9 @@ class Payment {
     });
   }
 
+  /***
+   * Sets available payments and establishes connection with APM's
+   */
   setAvailablePayments() {}
 }
 
