@@ -13,26 +13,26 @@ const submitListener = () => {
     let cardNumberIframe = document.getElementById(
       'st-card-number'
     ) as HTMLIFrameElement;
-    let expirationDateIframe = document.getElementById(
-      'st-expiration-date'
-    ) as HTMLIFrameElement;
     let securityCodeIframe = document.getElementById(
       'st-security-code'
     ) as HTMLIFrameElement;
+    let expirationDateIframe = document.getElementById(
+      'st-expiration-date'
+    ) as HTMLIFrameElement;
     let cardNumberIframeContent = cardNumberIframe.contentWindow;
-    let expirationDateIframeContent = expirationDateIframe.contentWindow;
     let securityCodeIframeContent = securityCodeIframe.contentWindow;
+    let expirationDateIframeContent = expirationDateIframe.contentWindow;
     cardNumberIframeContent.postMessage(
       'Post Card Number',
       iframesEndpoints.cardNumber
     );
-    expirationDateIframeContent.postMessage(
-      'Post expiration Date',
-      iframesEndpoints.expirationDate
-    );
     securityCodeIframeContent.postMessage(
       'Post Security Code',
       iframesEndpoints.securityCode
+    );
+    expirationDateIframeContent.postMessage(
+      'Post expiration Date',
+      iframesEndpoints.expirationDate
     );
   });
 

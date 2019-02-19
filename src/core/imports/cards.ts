@@ -12,7 +12,7 @@ const creditCardBlocks: { [key: string]: RegExp } = {
   general: /(\\d{1,4})(\\d{1,4})?(\\d{1,4})?(\\d+)?/,
 };
 
-const creditCardSecurityCodeLength = {
+const creditCardSecurityCodeLength: { [key: string]: number } = {
   amex: 4,
   astropaycard: 4,
   diners: 3,
