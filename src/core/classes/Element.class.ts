@@ -13,6 +13,11 @@ const RegisterElements = (fields: HTMLElement[], form: string) => {
   });
 };
 
+/***
+ * Defines input with iframe source
+ * Can be styled by predefined JSON.
+ */
+
 class Element {
   private _name: string;
   private _iframeSrc: string;
@@ -53,6 +58,11 @@ class Element {
     };
   }
 
+  /***
+   * Function which defines iframe src attribute
+   * @param name Component name
+   * @returns URL of input iframe
+   */
   static getComponentAdress(name: string) {
     if (name === 'cardNumber') {
       return cardNumber;
@@ -63,11 +73,22 @@ class Element {
     }
   }
 
+  /***
+   * Method for creating element in iframe
+   * @param elementName Name of input which we want to create
+   * @param attributes Additional attributes like styles and classes
+   */
+
   create(elementName: string, attributes: any) {
     this._name = elementName;
     this._style = attributes;
     this._iframeSrc = Element.getComponentAdress(elementName);
   }
+
+  /***
+   * Method for mounting iframe transformed input into clients form
+   * @param fieldId ID of field on which iframe input field will be mounted
+   */
 
   mount(fieldId: string) {
     let iframe = document.createElement('iframe');
