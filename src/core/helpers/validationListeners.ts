@@ -1,6 +1,7 @@
 import { iframesEndpoints, appEndpoint } from '../imports/iframe';
 
 const returnErrorMessage = (errors: any) => {
+  console.log(errors);
   if (errors.isEmpty) {
     return 'Field is empty';
   }
