@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
   );
   document
     .getElementById('st-form')
-    .appendChild(createFormElement('p', 'st-form__received-message'));
+    .appendChild(createFormElement('div', 'st-form__received-message'));
   document
     .getElementById('st-form')
     .appendChild(

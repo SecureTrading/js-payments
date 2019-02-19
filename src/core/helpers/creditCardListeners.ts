@@ -15,7 +15,7 @@ const creditCardDOMListener = () => {
     let creditCardInput = <HTMLInputElement>(
       document.getElementById('credit-card-number')
     );
-    applyStylesToIframe('credit-card-number', 'http://localhost:8081/?');
+    applyStylesToIframe('credit-card-number', `${cardNumber}/?`);
 
     window.addEventListener(
       'message',
