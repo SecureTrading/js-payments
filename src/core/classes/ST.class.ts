@@ -1,3 +1,6 @@
+/***
+ * Establishes connection with ST, defines client.
+ */
 class ST {
   private _id: string;
 
@@ -13,6 +16,10 @@ class ST {
     this._id = id;
   }
 
+  /***
+   * Method for verifying Client ID
+   * It connects with backend and verifies client
+   */
   verifyClientId() {}
 }
 
