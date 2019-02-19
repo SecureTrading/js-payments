@@ -13,13 +13,13 @@ class ExpireDate extends Validation {
 
   dateInputMask(element: HTMLInputElement) {
     element.addEventListener('keyup', (event: any) => {
-      let length = element.value.length;
-      if (length < ExpireDate.DATE_MAX_LENGTH) {
+      let inputValueLength = element.value.length;
+      if (inputValueLength < ExpireDate.DATE_MAX_LENGTH) {
         if (!ExpireDate.KEYBOARD_CODES_FOR_DIGITS.includes(event.keyCode)) {
           event.preventDefault();
         }
 
-        if (length === ExpireDate.DATE_EMPTY) {
+        if (inputValueLength === ExpireDate.DATE_EMPTY) {
           if (
             ExpireDate.MONTH_KEYBOARD_CODE_FIRST_CHAR.includes(event.keyCode)
           ) {
@@ -27,7 +27,7 @@ class ExpireDate extends Validation {
           }
         }
 
-        if (length === ExpireDate.DATE_SLASH_PLACE) {
+        if (inputValueLength === ExpireDate.DATE_SLASH_PLACE) {
           element.value += '/';
         }
       } else {
