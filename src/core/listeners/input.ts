@@ -1,5 +1,5 @@
 import { appEndpoint, iframesEndpoints } from '../imports/iframe';
-import { applyStylesToElement } from '../helpers/domHelpers';
+import { applyStylesToElement } from '../helpers/dom';
 
 const { cardNumber, securityCode, expirationDate } = iframesEndpoints;
 

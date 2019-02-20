@@ -2,16 +2,17 @@ import '../examples/example.scss'; // this is loaded only for example purposes
 import Element from './core/classes/Element.class';
 import Payment from './core/classes/Payment.class';
 import ST from './core/classes/ST.class';
-import { RegisterElements } from './core/helpers/mountHelpers';
+import { RegisterElements } from './core/helpers/mount';
 import {
   elementClasses,
   elementStyles,
   exampleElementsPage,
 } from '../examples/example';
+import { submitListener } from './core/listeners/submit';
 
 (() => {
   exampleElementsPage(); // this is loaded only for example purposes
-
+  submitListener(['st-card-number']);
   const st = new ST('thisissupersecretidforaclient12344321');
   const payment = new Payment(['ApplePay', 'GooglePay'], ['133456', '546565']);
 

@@ -1,4 +1,4 @@
-import { createFormElement } from '../src/core/helpers/domHelpers';
+import { createFormElement } from '../src/core/helpers/dom';
 
 const elementStyles = {
   style: {

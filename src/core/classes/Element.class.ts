@@ -1,5 +1,5 @@
 import { iframesEndpoints, defaultIframeStyle } from '../imports/iframe';
-import { createFormElement } from '../helpers/domHelpers';
+import { createFormElement } from '../helpers/dom';
 
 const { cardNumber, securityCode, expirationDate } = iframesEndpoints;
 

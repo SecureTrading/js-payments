@@ -1,4 +1,4 @@
-import { createFormElement } from './domHelpers';
+import { createFormElement } from './dom';
 
 /**
  * Method for Registering element in specified clients form

@@ -1,23 +1,24 @@
 import { iframesEndpoints, appEndpoint } from '../imports/iframe';
 
 const returnErrorMessage = (errors: any) => {
-  console.log(errors);
   if (errors.isEmpty) {
     return 'Field is empty';
   }
 };
 
-const submitListener = (iframeId: string) => {
+const submitListener = (iframes: string[]) => {
   document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('submit', event => {
       event.preventDefault();
-      let iframe = document.getElementById(iframeId) as HTMLIFrameElement;
-      let iframeContentWindow = iframe.contentWindow;
+      iframes.forEach(iframe => {
+        let singleIframe = document.getElementById(iframe) as HTMLIFrameElement;
+        let iframeContentWindow = singleIframe.contentWindow;
 
-      iframeContentWindow.postMessage(
-        'Post Card Number',
-        iframesEndpoints.cardNumber
-      );
+        iframeContentWindow.postMessage(
+          'Post Card Number',
+          iframesEndpoints.cardNumber
+        );
+      });
     });
 
     window.addEventListener('message', event => {
