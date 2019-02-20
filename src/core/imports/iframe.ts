@@ -6,7 +6,7 @@ const iframesEndpoints = {
   securityCode: 'http://localhost:8083',
 };
 
-const styleForIframe: any = {
+const defaultIframeStyle: any = {
   border: 'none',
   margin: '0',
   padding: '0',
@@ -35,7 +35,7 @@ const applyStylesToIframe = (id: string, endpoint: string) => {
 export {
   appEndpoint,
   iframesEndpoints,
-  styleForIframe,
+  defaultIframeStyle,
   getStylesFromUrl,
   applyStylesToIframe,
 };

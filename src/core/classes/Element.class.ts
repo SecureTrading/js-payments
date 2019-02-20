@@ -1,17 +1,7 @@
-import { iframesEndpoints, styleForIframe } from '../imports/iframe';
+import { iframesEndpoints, defaultIframeStyle } from '../imports/iframe';
+import { createFormElement } from '../helpers/domHelpers';
 
 const { cardNumber, securityCode, expirationDate } = iframesEndpoints;
-
-const RegisterElements = (fields: HTMLElement[], form: string) => {
-  const formContainer = document.getElementById(form);
-  const promise1 = new Promise((resolve, reject) => {
-    fields.forEach(item => {
-      formContainer.appendChild(item);
-    });
-    resolve('well done !');
-    reject('something went wrong :(');
-  });
-};
 
 /***
  * Defines input with iframe source
@@ -86,20 +76,19 @@ class Element {
   }
 
   /***
-   * Method for mounting iframe transformed input into clients form
+   * Method returns 'iframed input', styled and ready to be registered in clients form
    * @param fieldId ID of field on which iframe input field will be mounted
    */
 
   mount(fieldId: string) {
-    let iframe = document.createElement('iframe');
+    let iframe = createFormElement('iframe', fieldId);
+    Object.assign(iframe.style, defaultIframeStyle);
     iframe.setAttribute(
       'src',
       `${this._iframeSrc}?${JSON.stringify(this._style)}`
     );
-    iframe.setAttribute('id', fieldId);
-    Object.assign(iframe.style, styleForIframe);
     return iframe;
   }
 }
 
-export { Element, RegisterElements };
+export default Element;

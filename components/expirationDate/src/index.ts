@@ -1,4 +1,9 @@
 import './style.scss';
-import { expireDateDOMListener } from '../../../src/core/listeners/expirationDateListeners';
+import { inputListener } from '../../../src/core/listeners/inputListener';
 
-expireDateDOMListener();
+inputListener(
+  'expirationDate',
+  'st-expiration-date',
+  'expiration-date',
+  'expiration-date'
+);

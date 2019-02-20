@@ -1,5 +1,6 @@
 import '../examples/example.scss';
-import { Element, RegisterElements } from './core/classes/Element.class';
+import { Element } from './core/classes/Element.class';
+import { RegisterElements } from './core/helpers/mountHelpers';
 import Payment from './core/classes/Payment.class';
 import ST from './core/classes/ST.class';
 import {
@@ -7,10 +8,10 @@ import {
   elementClasses,
   elementStyles,
 } from '../examples/example';
-import { submitListener } from './core/listeners/validationListeners';
+import { submitListener } from './core/listeners/submitListeners';
 
 document.addEventListener('DOMContentLoaded', () => {
-  submitListener();
+  submitListener('st-card-number');
 });
 
 (() => {
@@ -49,12 +50,4 @@ document.addEventListener('DOMContentLoaded', () => {
     [cardNumberMounted, securityCodeMounted, expirationDateMounted],
     'st-form'
   );
-  document
-    .getElementById('st-form')
-    .appendChild(createFormElement('div', 'st-form__received-message'));
-  document
-    .getElementById('st-form')
-    .appendChild(
-      createFormElement('button', 'st-form__submit', 'Pay Securely')
-    );
 })();
