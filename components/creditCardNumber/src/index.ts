@@ -1,4 +1,4 @@
 import './style.scss';
-import { creditCardDOMListener } from '../../../src/core/helpers/creditCardListeners';
+import { creditCardDOMListener } from '../../../src/core/listeners/creditCardListeners';
 
 creditCardDOMListener();

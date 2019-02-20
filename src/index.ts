@@ -7,7 +7,7 @@ import {
   elementClasses,
   elementStyles,
 } from '../examples/example';
-import { submitListener } from './core/helpers/validationListeners';
+import { submitListener } from './core/listeners/validationListeners';
 
 document.addEventListener('DOMContentLoaded', () => {
   submitListener();

@@ -43,8 +43,6 @@ const expireDateDOMListener = () => {
         '$1/$2'
       );
     });
-    let date = new ExpireDate();
-    date.dateInputMask(expirationDateInput);
   });
 };
 

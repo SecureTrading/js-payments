@@ -1,4 +1,3 @@
-import { formatCreditCard } from '../imports/cards';
 import {
   appEndpoint,
   applyStylesToIframe,
@@ -36,12 +35,6 @@ const creditCardDOMListener = () => {
       },
       true
     );
-
-    creditCardInput.addEventListener('keyup', event => {
-      creditCardInput.value = formatCreditCard(
-        (<HTMLInputElement>event.target).value
-      );
-    });
   });
 };
 
