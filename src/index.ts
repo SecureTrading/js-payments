@@ -15,7 +15,7 @@ import { submitListener } from './core/listeners/submit';
   exampleElementsPage(); // this is loaded only for example purposes
   submitListener('st-card-number', iframesEndpoints.cardNumber);
   submitListener('st-security-code', iframesEndpoints.securityCode);
-  submitListener('st-expiration-date', iframesEndpoints.expirationDate);
+  // submitListener('st-expiration-date', iframesEndpoints.expirationDate);
 
   const st = new ST('thisissupersecretidforaclient12344321');
   const payment = new Payment(

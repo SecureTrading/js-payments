@@ -20,6 +20,7 @@ const inputListener = (inputName: string, formId: string, fieldId: string) => {
       event => {
         if (event.origin !== cardNumber) {
           let isFormValid = Object.values(input.validity).some(item => item);
+          console.log(input);
           if (isFormValid) {
             form.submit();
           } else {
