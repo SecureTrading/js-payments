@@ -1,10 +1,5 @@
-const createFormElement = (type: string, id: string, text?: string) => {
-  const element = document.createElement(type);
-  element.setAttribute('id', id);
-  element.setAttribute('class', id);
-  element.innerHTML = text ? text : '';
-  return element;
-};
+import { createFormElement } from '../src/core/helpers/domHelpers';
+
 const elementStyles = {
   style: {
     base: {
@@ -42,4 +37,13 @@ const elementClasses = {
   invalid: 'invalid',
 };
 
-export { createFormElement, elementStyles, elementClasses };
+const exampleElementsPage = () => {
+  document.body.appendChild(createFormElement('form', 'st-form'));
+  document
+    .getElementById('st-form')
+    .appendChild(
+      createFormElement('h1', 'st-form__title', 'Secure Trading Example Form')
+    );
+};
+
+export { elementStyles, elementClasses, exampleElementsPage };

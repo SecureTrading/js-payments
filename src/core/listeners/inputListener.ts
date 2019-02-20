@@ -1,8 +1,5 @@
-import {
-  appEndpoint,
-  applyStylesToIframe,
-  iframesEndpoints,
-} from '../imports/iframe';
+import { appEndpoint, iframesEndpoints } from '../imports/iframe';
+import { applyStylesToElement } from '../helpers/domHelpers';
 
 const { cardNumber, securityCode, expirationDate } = iframesEndpoints;
 
@@ -16,11 +13,11 @@ const inputListener = (
     let form = document.getElementById(formId) as HTMLFormElement;
     let input = <HTMLInputElement>document.getElementById(fieldId);
     if (inputName === 'cardNumber') {
-      applyStylesToIframe(iframeId, `${cardNumber}/?`);
+      applyStylesToElement(iframeId, `${cardNumber}/?`);
     } else if (inputName === 'securityCode') {
-      applyStylesToIframe(iframeId, `${securityCode}/?`);
+      applyStylesToElement(iframeId, `${securityCode}/?`);
     } else if (inputName === 'expirationDate') {
-      applyStylesToIframe(iframeId, `${expirationDate}/?`);
+      applyStylesToElement(iframeId, `${expirationDate}/?`);
     }
 
     window.addEventListener(

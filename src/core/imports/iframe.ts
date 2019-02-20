@@ -17,25 +17,4 @@ const defaultIframeStyle: any = {
   height: '130px',
 };
 
-const getStylesFromUrl = (endpoint: string) => {
-  let query = window.location.href;
-  query = decodeURI(query)
-    .replace(/&/g, '","')
-    .replace(/=/g, '":"')
-    .replace(endpoint, '');
-  return JSON.parse(query);
-};
-
-const applyStylesToIframe = (id: string, endpoint: string) => {
-  let input = <HTMLInputElement>document.getElementById(id);
-  let styles = getStylesFromUrl(endpoint);
-  Object.assign(input.style, styles.style.style.base);
-};
-
-export {
-  appEndpoint,
-  iframesEndpoints,
-  defaultIframeStyle,
-  getStylesFromUrl,
-  applyStylesToIframe,
-};
+export { appEndpoint, iframesEndpoints, defaultIframeStyle };

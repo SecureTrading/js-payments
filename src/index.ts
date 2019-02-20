@@ -1,28 +1,19 @@
-import '../examples/example.scss';
-import { Element } from './core/classes/Element.class';
-import { RegisterElements } from './core/helpers/mountHelpers';
+import '../examples/example.scss'; // this is loaded only for example purposes
+import Element from './core/classes/Element.class';
 import Payment from './core/classes/Payment.class';
 import ST from './core/classes/ST.class';
+import { RegisterElements } from './core/helpers/mountHelpers';
 import {
-  createFormElement,
   elementClasses,
   elementStyles,
+  exampleElementsPage,
 } from '../examples/example';
-import { submitListener } from './core/listeners/submitListeners';
-
-document.addEventListener('DOMContentLoaded', () => {
-  submitListener('st-card-number');
-});
 
 (() => {
+  exampleElementsPage(); // this is loaded only for example purposes
+
   const st = new ST('thisissupersecretidforaclient12344321');
   const payment = new Payment(['ApplePay', 'GooglePay'], ['133456', '546565']);
-  document.body.appendChild(createFormElement('form', 'st-form'));
-  document
-    .getElementById('st-form')
-    .appendChild(
-      createFormElement('h1', 'st-form__title', 'Secure Trading Example Form')
-    );
 
   const cardNumber = new Element();
   const securityCode = new Element();
