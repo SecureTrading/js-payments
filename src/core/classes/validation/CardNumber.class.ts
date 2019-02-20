@@ -1,6 +1,7 @@
-import { creditCardBlocks, creditCardRegexes } from '../../imports/cards';
+import { BrandDetailsType } from '../../imports/cardtype';
 import { cardsLogos } from '../../imports/images';
 import Validation from './Validation.class';
+import BinLookup from './BinLookup.class';
 
 const {
   amex,
@@ -17,26 +18,48 @@ const {
 } = cardsLogos;
 
 class CardNumber extends Validation {
+  binLookup: BinLookup;
+  brand: BrandDetailsType;
   constructor() {
     super();
+    this.binLookup = new BinLookup();
+    this.brand = null;
+  }
+
+  /**
+   * Validate a card number
+   * @param cardNumber The card nuber to validate
+   * @return whether the card number is valid
+   */
+  validateCreditCard(cardNumber: string) {
+    const brand = this.binLookup.binLookup(cardNumber);
+    if (brand.type === null) {
+      return true;
+    }
+    this.brand = brand;
+    let result = true;
+    if (brand.luhn) {
+      result = this.luhnCheck(cardNumber);
+    }
+    return result;
   }
 
   /**
    * Luhn Algorith
-   * sum of odd places = 48
-   * double even places = 52
-   * if it is greater than 9 -> sum both digits
-   * if sum of those above is divisible by ten, YOU HAVE VALID CARD !
+   * From the right:
+   *   take the value of this digit
+   *     if the offset from the end is even
+   *       double the value, then sum the digits
+   * if sum of those above is divisible by ten, YOU PASS THE LUHN !
    */
-  validateCreditCard(cardNumber: string) {
+  luhnCheck(cardNumber: string) {
     const arry = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
     let len = cardNumber.length,
       bit = 1,
-      sum = 0,
-      val;
+      sum = 0;
 
     while (len) {
-      val = parseInt(cardNumber.charAt(--len), 10);
+      const val = parseInt(cardNumber.charAt(--len), 10);
       sum += (bit ^= 1) ? arry[val] : val;
     }
 
@@ -67,24 +90,6 @@ class CardNumber extends Validation {
     } else {
       return chip;
     }
-  }
-
-  getInfo(value: string) {
-    for (var key in creditCardRegexes) {
-      if (creditCardRegexes[key].test(value)) {
-        var block;
-        block = creditCardBlocks[key];
-        return {
-          type: key,
-          blocks: block,
-        };
-      }
-    }
-
-    return {
-      type: 'unknown',
-      blocks: creditCardBlocks.general,
-    };
   }
 }
 

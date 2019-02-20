@@ -5,7 +5,7 @@ import {
   cardTree,
   brandMapping,
 } from '../../../../src/core/imports/cardtype';
-import { BinLookup } from '../../../../src/core/classes/validation/BinLookup.class';
+import BinLookup from '../../../../src/core/classes/validation/BinLookup.class';
 
 const fs = require('fs');
 const readline = require('readline');
