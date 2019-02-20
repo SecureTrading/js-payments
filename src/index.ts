@@ -18,7 +18,10 @@ import { submitListener } from './core/listeners/submit';
   submitListener('st-expiration-date', iframesEndpoints.expirationDate);
 
   const st = new ST('thisissupersecretidforaclient12344321');
-  const payment = new Payment(['ApplePay', 'GooglePay'], ['133456', '546565']);
+  const payment = new Payment(
+    ['ApplePay', 'Visa Checkout'],
+    ['133456', '546565']
+  );
 
   const cardNumber = new Element();
   const securityCode = new Element();
