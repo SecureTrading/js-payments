@@ -13,11 +13,11 @@ const inputListener = (
     let form = document.getElementById(formId) as HTMLFormElement;
     let input = <HTMLInputElement>document.getElementById(fieldId);
     if (inputName === 'cardNumber') {
-      applyStylesToElement(iframeId, `${cardNumber}/?`);
+      applyStylesToElement(fieldId, `${cardNumber}/?`);
     } else if (inputName === 'securityCode') {
-      applyStylesToElement(iframeId, `${securityCode}/?`);
+      applyStylesToElement(fieldId, `${securityCode}/?`);
     } else if (inputName === 'expirationDate') {
-      applyStylesToElement(iframeId, `${expirationDate}/?`);
+      applyStylesToElement(fieldId, `${expirationDate}/?`);
     }
 
     window.addEventListener(
