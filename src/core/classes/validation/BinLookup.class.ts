@@ -11,7 +11,7 @@ type BinLookupConfigType = {
   minMatch?: number;
   maxMatch?: number;
   supported?: string[];
-  defaultCardTree?: string;
+  defaultCardType?: string;
 };
 
 export class BinLookup {
@@ -37,7 +37,7 @@ export class BinLookup {
     }
 
     this.default =
-      'defaultCardTree' in config ? this.getCard(config.defaultCardTree) : null;
+      'defaultCardType' in config ? this.getCard(config.defaultCardType) : null;
   }
 
   forEachBreakBrands<returnType>(
@@ -56,8 +56,6 @@ export class BinLookup {
   getAllBrands(): string[] {
     // this cannot use foreachBreakBrands since it's used to set up this.supported
     const result: string[] = [];
-    console.log(brandMapping);
-    console.log(Object.values(brandMapping));
     forEachBreak(Object.values(brandMapping), (card: BrandDetailsType) => {
       result.push(card.type);
     });
