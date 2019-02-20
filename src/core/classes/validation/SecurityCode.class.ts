@@ -12,7 +12,7 @@ class SecurityCode extends Validation {
   }
 
   /**
-   *
+   * Method for validating length
    * @param length Length of indicated code
    * @param cardType
    */
@@ -29,6 +29,10 @@ class SecurityCode extends Validation {
     return false;
   }
 
+  /**
+   * Method for preventing inserting non digits
+   * @param field Field on which we fire event
+   */
   isCharNumber(field: HTMLElement) {
     field.addEventListener('keypress', event => {
       if (
