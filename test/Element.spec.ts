@@ -35,8 +35,10 @@ describe('Index placeholder test', () => {
   // then
   it('should return proper iframe endpoints', () => {
     expect(Element.getComponentAdress('cardNumber')).toEqual(cardNumber);
-    expect(Element.getComponentAdress('securityCode')).toEqual(expirationDate);
-    expect(Element.getComponentAdress('expirationDate')).toEqual(securityCode);
+    expect(Element.getComponentAdress('securityCode')).toEqual(securityCode);
+    expect(Element.getComponentAdress('expirationDate')).toEqual(
+      expirationDate
+    );
   });
 
   // then
