@@ -3,12 +3,7 @@ import { applyStylesToElement } from '../helpers/dom';
 
 const { cardNumber, securityCode, expirationDate } = iframesEndpoints;
 
-const inputListener = (
-  inputName: string,
-  formId: string,
-  fieldId: string,
-  iframeId: string
-) => {
+const inputListener = (inputName: string, formId: string, fieldId: string) => {
   document.addEventListener('DOMContentLoaded', () => {
     let form = document.getElementById(formId) as HTMLFormElement;
     let input = <HTMLInputElement>document.getElementById(fieldId);
