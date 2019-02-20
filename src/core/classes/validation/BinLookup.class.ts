@@ -1,11 +1,17 @@
-import { Brand, CardTreeNode, BrandDetailsType, cardTree, brandMapping } from "../../imports/cardtype";
-import { inArray, forEachBreak } from "../../helpers/utils";
+import {
+  Brand,
+  CardTreeNode,
+  BrandDetailsType,
+  cardTree,
+  brandMapping,
+} from '../../imports/cardtype';
+import { inArray, forEachBreak } from '../../helpers/utils';
 
 type BinLookupConfigType = {
-  minMatch?: number,
-  maxMatch?: number,
-  supported?: string[],
-  defaultCardTree?: string,
+  minMatch?: number;
+  maxMatch?: number;
+  supported?: string[];
+  defaultCardTree?: string;
 };
 
 export class BinLookup {
@@ -15,33 +21,40 @@ export class BinLookup {
   default: BrandDetailsType;
   constructor(config?: BinLookupConfigType) {
     config = config || {};
-    this.minMatch = "minMatch" in config ? config.minMatch : 0;
-    this.maxMatch = "maxMatch" in config ? config.maxMatch : 6;
+    this.minMatch = 'minMatch' in config ? config.minMatch : 0;
+    this.maxMatch = 'maxMatch' in config ? config.maxMatch : 6;
 
     this.supported = this.getAllBrands();
-    if ("supported" in config) {
+    if ('supported' in config) {
       const support = config.supported;
       for (let i in support) {
         const type = support[i];
         if (!this.isSupported(type)) {
-          throw "unsupported cardTree " + type;
+          throw 'unsupported cardTree ' + type;
         }
       }
       this.supported = support;
     }
 
-    this.default = "defaultCardTree" in config ? this.getCard(config.defaultCardTree) : null;
+    this.default =
+      'defaultCardTree' in config ? this.getCard(config.defaultCardTree) : null;
   }
 
-  forEachBreakBrands<returnType>(callback: (card: BrandDetailsType) => returnType): returnType {
-    return forEachBreak(Object.values(brandMapping), (card: BrandDetailsType) => {
-      if (this.isSupported(card)) {
-        return callback(card);
+  forEachBreakBrands<returnType>(
+    callback: (card: BrandDetailsType) => returnType
+  ): returnType {
+    return forEachBreak(
+      Object.values(brandMapping),
+      (card: BrandDetailsType) => {
+        if (this.isSupported(card)) {
+          return callback(card);
+        }
       }
-    });
+    );
   }
 
-  getAllBrands(): string[] {// this cannot use foreachBreakBrands since it's used to set up this.supported
+  getAllBrands(): string[] {
+    // this cannot use foreachBreakBrands since it's used to set up this.supported
     const result: string[] = [];
     console.log(brandMapping);
     console.log(Object.values(brandMapping));
@@ -59,22 +72,22 @@ export class BinLookup {
   }
 
   getCard(type: string): BrandDetailsType {
-    return this.forEachBreakBrands((card) => {
-      if (card["type"] === type) {
+    return this.forEachBreakBrands(card => {
+      if (card['type'] === type) {
         return card;
       }
     });
   }
 
   binLookup(number: string): BrandDetailsType {
-    let result: BrandDetailsType = {type: null};
+    let result: BrandDetailsType = { type: null };
     if (number.length >= this.minMatch) {
       const tmp = brandMapping[this._lookup(number, cardTree)];
       if (this.isSupported(tmp)) {
         result = tmp;
       }
     }
-    if ((!result.type) && this.default && number.length <= this.maxMatch) {
+    if (!result.type && this.default && number.length <= this.maxMatch) {
       result = this.default;
     }
     return result;
@@ -83,8 +96,8 @@ export class BinLookup {
   matchKey(number: string, key: string): boolean {
     let n = number.substring(0, key.length);
     let result = n == key;
-    if (!result && inArray(key, "-")) {
-      const keys = key.split("-");
+    if (!result && inArray(key, '-')) {
+      const keys = key.split('-');
       let n = parseInt(number.substring(0, keys[1].length));
       if (parseInt(keys[0]) <= n && n <= parseInt(keys[1])) {
         result = true;
@@ -106,8 +119,15 @@ export class BinLookup {
     found.sort((a: string, b: string) => {
       return a.length - b.length;
     });
-    return forEachBreak(found, (key: string): Brand => {
-      return this._lookup(number, tree[key]);
-    }) || tree.D || null;
+    return (
+      forEachBreak(
+        found,
+        (key: string): Brand => {
+          return this._lookup(number, tree[key]);
+        }
+      ) ||
+      tree.D ||
+      null
+    );
   }
 }
