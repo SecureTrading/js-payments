@@ -8,11 +8,15 @@ import {
   elementStyles,
   exampleElementsPage,
 } from '../examples/example';
+import { iframesEndpoints } from './core/imports/iframe';
 import { submitListener } from './core/listeners/submit';
 
 (() => {
   exampleElementsPage(); // this is loaded only for example purposes
-  submitListener(['st-card-number']);
+  submitListener('st-card-number', iframesEndpoints.cardNumber);
+  submitListener('st-security-code', iframesEndpoints.securityCode);
+  submitListener('st-expiration-date', iframesEndpoints.expirationDate);
+
   const st = new ST('thisissupersecretidforaclient12344321');
   const payment = new Payment(['ApplePay', 'GooglePay'], ['133456', '546565']);
 

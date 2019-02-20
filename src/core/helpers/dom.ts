@@ -10,6 +10,16 @@ const applyStylesToElement = (id: string, domain: string) => {
 };
 
 /**
+ *
+ * @param id Id of element
+ * @param attribute Attribute content
+ */
+const addAttributeToElement = (id: string, attribute: any) => {
+  let element = <HTMLInputElement>document.getElementById(id);
+  element.setAttribute(id, attribute);
+};
+
+/**
  * Method for creating DOM elements
  * @param type Type of element which we are creating
  * @param id ID of element
@@ -36,4 +46,4 @@ const getStylesFromUrl = (domain: string) => {
   return JSON.parse(query);
 };
 
-export { createFormElement, applyStylesToElement };
+export { addAttributeToElement, createFormElement, applyStylesToElement };

@@ -1,4 +1,4 @@
-import { iframesEndpoints, appEndpoint } from '../imports/iframe';
+import { appEndpoint } from '../imports/iframe';
 
 const returnErrorMessage = (errors: any) => {
   if (errors.isEmpty) {
@@ -6,19 +6,15 @@ const returnErrorMessage = (errors: any) => {
   }
 };
 
-const submitListener = (iframes: string[]) => {
+const submitListener = (id: string, url: string) => {
   document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('submit', event => {
       event.preventDefault();
-      iframes.forEach(iframe => {
-        let singleIframe = document.getElementById(iframe) as HTMLIFrameElement;
-        let iframeContentWindow = singleIframe.contentWindow;
 
-        iframeContentWindow.postMessage(
-          'Post Card Number',
-          iframesEndpoints.cardNumber
-        );
-      });
+      let singleIframe = document.getElementById(id) as HTMLIFrameElement;
+      let iframeContentWindow = singleIframe.contentWindow;
+
+      iframeContentWindow.postMessage('Post Card Number', url);
     });
 
     window.addEventListener('message', event => {
