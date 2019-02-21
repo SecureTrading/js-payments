@@ -47,6 +47,6 @@ import { submitListener } from './core/listeners/submit';
 
   RegisterElements(
     [cardNumberMounted, securityCodeMounted, expirationDateMounted],
-    'st-form'
+    ['st-card-number', 'st-security-code', 'st-expiration-date']
   );
 })();
