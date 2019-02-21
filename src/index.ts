@@ -3,19 +3,14 @@ import Element from './core/classes/Element.class';
 import Payment from './core/classes/Payment.class';
 import ST from './core/classes/ST.class';
 import { RegisterElements } from './core/helpers/mount';
-import {
-  elementClasses,
-  elementStyles,
-  exampleElementsPage,
-} from '../examples/example';
+import { elementClasses, elementStyles } from '../examples/example';
 import { iframesEndpoints } from './core/imports/iframe';
 import { submitListener } from './core/listeners/submit';
 
 (() => {
-  exampleElementsPage(); // this is loaded only for example purposes
-  submitListener('st-card-number', iframesEndpoints.cardNumber);
-  submitListener('st-security-code', iframesEndpoints.securityCode);
-  // submitListener('st-expiration-date', iframesEndpoints.expirationDate);
+  submitListener('st-card-number-iframe', iframesEndpoints.cardNumber);
+  submitListener('st-security-code-iframe', iframesEndpoints.securityCode);
+  submitListener('st-expiration-date-iframe', iframesEndpoints.expirationDate);
 
   const st = new ST('thisissupersecretidforaclient12344321');
   const payment = new Payment(
@@ -31,22 +26,24 @@ import { submitListener } from './core/listeners/submit';
     style: elementStyles,
     classes: elementClasses,
   });
-  const cardNumberMounted = cardNumber.mount('st-card-number');
+  const cardNumberMounted = cardNumber.mount('st-card-number-iframe');
 
   securityCode.create('securityCode', {
     style: elementStyles,
     classes: elementClasses,
   });
-  const securityCodeMounted = securityCode.mount('st-security-code');
+  const securityCodeMounted = securityCode.mount('st-security-code-iframe');
 
   expirationDate.create('expirationDate', {
     style: elementStyles,
     classes: elementClasses,
   });
-  const expirationDateMounted = expirationDate.mount('st-expiration-date');
+  const expirationDateMounted = expirationDate.mount(
+    'st-expiration-date-iframe'
+  );
 
   RegisterElements(
     [cardNumberMounted, securityCodeMounted, expirationDateMounted],
-    'st-form'
+    ['st-card-number', 'st-security-code', 'st-expiration-date']
   );
 })();

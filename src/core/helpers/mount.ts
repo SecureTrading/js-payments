@@ -1,25 +1,16 @@
-import { createFormElement } from './dom';
-
 /**
- * Method for Registering element in specified clients form
- * @param fields
- * @param form
- * @constructor
+ * Method is appending created iframes into containers specified by merchant
+ * @param fields - Iframes ready to mount
+ * @param targets - ids of fields created by merchant in which iframes will be insterted
  */
-const RegisterElements = (fields: HTMLElement[], form: string) => {
-  const formContainer = document.getElementById(form);
-  const promise1 = new Promise((resolve, reject) => {
-    fields.forEach(item => {
-      formContainer.appendChild(item);
+const RegisterElements = (fields: HTMLElement[], targets: string[]) => {
+  new Promise((resolve, reject) => {
+    targets.map((item, index) => {
+      let itemToChange = document.getElementById(item);
+      itemToChange.appendChild(fields[index]);
     });
-    formContainer.appendChild(
-      createFormElement('div', 'st-form__received-message')
-    );
-    formContainer.appendChild(
-      createFormElement('button', 'st-form__submit', 'Pay Securely')
-    );
-    resolve('well done !');
-    reject('something went wrong :(');
+    resolve('Iframes has been succesfully registered!');
+    reject('Something went wrong');
   });
 };
 

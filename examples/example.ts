@@ -1,5 +1,3 @@
-import { createFormElement } from '../src/core/helpers/dom';
-
 const elementStyles = {
   style: {
     base: {
@@ -37,13 +35,4 @@ const elementClasses = {
   invalid: 'invalid',
 };
 
-const exampleElementsPage = () => {
-  document.body.appendChild(createFormElement('form', 'st-form'));
-  document
-    .getElementById('st-form')
-    .appendChild(
-      createFormElement('h1', 'st-form__title', 'Secure Trading Example Form')
-    );
-};
-
-export { elementStyles, elementClasses, exampleElementsPage };
+export { elementStyles, elementClasses };

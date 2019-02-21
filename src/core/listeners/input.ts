@@ -3,36 +3,63 @@ import { applyStylesToElement } from '../helpers/dom';
 
 const { cardNumber, securityCode, expirationDate } = iframesEndpoints;
 
-const inputListener = (inputName: string, formId: string, fieldId: string) => {
-  document.addEventListener('DOMContentLoaded', () => {
-    let form = document.getElementById(formId) as HTMLFormElement;
-    let input = <HTMLInputElement>document.getElementById(fieldId);
-    if (inputName === 'cardNumber') {
-      applyStylesToElement(fieldId, `${cardNumber}/?`);
-    } else if (inputName === 'securityCode') {
-      applyStylesToElement(fieldId, `${securityCode}/?`);
-    } else if (inputName === 'expirationDate') {
-      applyStylesToElement(fieldId, `${expirationDate}/?`);
-    }
+/**
+ * Method returns specific endpoint for each input
+ * @param inputName
+ */
+const returnInputEndpoint = (inputName: string) => {
+  if (inputName === 'cardNumber') {
+    return `${cardNumber}/?`;
+  } else if (inputName === 'securityCode') {
+    return `${securityCode}/?`;
+  } else if (inputName === 'expirationDate') {
+    return `${expirationDate}/?`;
+  }
+};
 
-    window.addEventListener(
-      'message',
-      event => {
-        if (event.origin !== cardNumber) {
-          let isFormValid = Object.values(input.validity).some(item => item);
-          console.log(input);
-          if (isFormValid) {
-            form.submit();
-          } else {
-            parent.postMessage(
-              { isEmpty: input.validity.valueMissing },
-              appEndpoint
-            );
-          }
+/**
+ * Method for checking validity object and sending response to parent node
+ * @param fieldId ID of field which is validated
+ */
+const inputValueListener = (fieldId: string) => {
+  let input = <HTMLInputElement>document.getElementById(fieldId);
+  let errorContainer = <HTMLElement>document.getElementById('received-message');
+  window.addEventListener(
+    'message',
+    event => {
+      if (
+        event.origin !== cardNumber &&
+        event.origin !== securityCode &&
+        event.origin !== expirationDate
+      ) {
+        let isFormValid = input.validity.valid;
+        if (isFormValid) {
+          parent.postMessage(true, appEndpoint);
+        } else {
+          errorContainer.innerText = 'Field is required';
         }
-      },
-      true
-    );
+      }
+    },
+    true
+  );
+};
+
+/**
+ * Method aggregating applying styles and validating field
+ * @param inputName
+ * @param formId
+ * @param fieldId
+ * @param iframeId
+ */
+const inputListener = (
+  inputName: string,
+  formId: string,
+  fieldId: string,
+  iframeId: string
+) => {
+  document.addEventListener('DOMContentLoaded', () => {
+    applyStylesToElement(iframeId, returnInputEndpoint(inputName));
+    inputValueListener(fieldId);
   });
 };
 
