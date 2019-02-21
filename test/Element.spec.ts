@@ -1,4 +1,4 @@
-import { Element } from '../src/core/classes/Element.class';
+import Element from '../src/core/classes/Element.class';
 import { iframesEndpoints } from '../src/core/imports/iframe';
 // given
 describe('Index placeholder test', () => {
