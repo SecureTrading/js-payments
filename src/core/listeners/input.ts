@@ -23,6 +23,7 @@ const returnInputEndpoint = (inputName: string) => {
  */
 const inputValueListener = (fieldId: string) => {
   let input = <HTMLInputElement>document.getElementById(fieldId);
+  let errorContainer = <HTMLElement>document.getElementById('received-message');
   window.addEventListener(
     'message',
     event => {
@@ -35,7 +36,7 @@ const inputValueListener = (fieldId: string) => {
         if (isFormValid) {
           parent.postMessage(true, appEndpoint);
         } else {
-          parent.postMessage({ isValid: input.validity.valid }, appEndpoint);
+          errorContainer.innerText = 'Field is required';
         }
       }
     },
