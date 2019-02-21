@@ -1,47 +1,47 @@
 import Validation from './Validation.class';
 
 class SecurityCode extends Validation {
-  static AMEX_CARD_NAME = 'AMEX';
   static AMEX_SECURITY_CODE_LENGTH = 4;
-  static NONAMEX_SECURITY_CODE_LENGTH = 3;
+  static NON_AMEX_SECURITY_CODE_LENGTH = 3;
   static KEYCODES_DIGIT = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57];
-  static KEYCODES_NUMPAD = [96, 97, 98, 99, 100, 101, 102, 103, 104, 105];
+
+  public securityCodeLength: number;
 
   constructor() {
     super();
+    this.securityCodeLength = 3;
   }
 
   /**
-   * Method for validating length
-   * @param length Length of indicated code
-   * @param cardType
+   * Method for validating length based on html attributes max and minlength
+   * @param validity Validation object of form
    */
-  isLengthCorrect(length: number, cardType: string) {
-    if (cardType === SecurityCode.AMEX_CARD_NAME) {
-      if (length === SecurityCode.AMEX_SECURITY_CODE_LENGTH) {
-        return true;
-      }
-    } else {
-      if (length === SecurityCode.NONAMEX_SECURITY_CODE_LENGTH) {
-        return true;
-      }
+  isLengthCorrect(validity: object) {
+    if (validity.tooShort) {
+      return 'Security code is too short';
+    } else if (validity.tooLong) {
+      return 'Security code is too long';
     }
-    return false;
   }
 
   /**
    * Method for preventing inserting non digits
-   * @param field Field on which we fire event
+   * @param event Keypress event
    */
-  isCharNumber(field: HTMLElement) {
-    field.addEventListener('keypress', event => {
-      if (
-        !SecurityCode.KEYCODES_DIGIT.includes(event.keyCode) ||
-        !SecurityCode.KEYCODES_NUMPAD.includes(event.keyCode)
-      ) {
-        event.preventDefault();
-      }
-    });
+  isCharNumber(event: Event) {
+    if (!SecurityCode.KEYCODES_DIGIT.includes(event.keyCode)) {
+      event.preventDefault();
+    }
+  }
+
+  /**
+   * Returns number of digits which security code has to have (due to be AMEX or not)
+   * @param isCreditCardAmex: Gets boolean with information if indicated card is AMEX or not
+   */
+  getSecurityCodeLength(isCreditCardAmex: boolean) {
+    return isCreditCardAmex
+      ? SecurityCode.AMEX_SECURITY_CODE_LENGTH
+      : SecurityCode.NON_AMEX_SECURITY_CODE_LENGTH;
   }
 }
 

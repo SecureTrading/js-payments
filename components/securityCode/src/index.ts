@@ -10,4 +10,10 @@ inputListener(
 );
 
 const sc = new SecurityCode();
-sc.isCharNumber(document.getElementById('security-code'));
+const securityCodeField = document.getElementById('security-code');
+
+securityCodeField.addEventListener('keypress', event => {
+  const { validity } = event.target;
+  sc.isCharNumber(event);
+  sc.isLengthCorrect(validity);
+});
