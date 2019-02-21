@@ -1,19 +1,16 @@
-import { createFormElement } from './dom';
-
 /**
  * Method for Registering element in specified clients form
  * @param fields
- * @param form
- * @constructor
+ * @param targets
  */
 const RegisterElements = (fields: HTMLElement[], targets: string[]) => {
-  const promise1 = new Promise((resolve, reject) => {
+  new Promise((resolve, reject) => {
     targets.map((item, index) => {
-      let obj = document.getElementById(item);
-      obj.appendChild(fields[index]);
+      let itemToChange = document.getElementById(item);
+      itemToChange.appendChild(fields[index]);
     });
-    resolve('well done !');
-    reject('something went wrong :(');
+    resolve('Iframes has been succesfully registered!');
+    reject('Something went wrong');
   });
 };
 
