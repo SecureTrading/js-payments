@@ -13,6 +13,7 @@ each([
 
 each([
   ['', 0],
+  ['0000000000000000', 0], // Strictly any number of 0s should pass the luhn, but it shouldn't ever be a valid card so this is okay
   ['4111111111111111', true],
   ['79927398713', true],
   ['6759555555555555', false],
