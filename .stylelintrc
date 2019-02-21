@@ -33,11 +33,11 @@
       }
     ],
     "unit-whitelist": [
-      "em",
       "rem",
+      "em",
       "%",
       "s",
-      "px"
+      "deg"
     ]
   }
 }
