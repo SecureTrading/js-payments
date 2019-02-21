@@ -1,7 +1,7 @@
 /**
- * Method for Registering element in specified clients form
- * @param fields
- * @param targets
+ * Method is appending created iframes into containers specified by merchant
+ * @param fields - Iframes ready to mount
+ * @param targets - ids of fields created by merchant in which iframes will be insterted
  */
 const RegisterElements = (fields: HTMLElement[], targets: string[]) => {
   new Promise((resolve, reject) => {
