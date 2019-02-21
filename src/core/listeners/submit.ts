@@ -17,6 +17,7 @@ const returnedErrorMessageListener = () => {
   window.addEventListener('message', event => {
     const { origin, data } = event;
     const errorContainer = document.getElementById('st-form__received-message');
+    console.log(data);
     if (origin !== appEndpoint) {
       errorContainer.textContent = returnErrorMessage(data);
     }

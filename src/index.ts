@@ -3,16 +3,11 @@ import Element from './core/classes/Element.class';
 import Payment from './core/classes/Payment.class';
 import ST from './core/classes/ST.class';
 import { RegisterElements } from './core/helpers/mount';
-import {
-  elementClasses,
-  elementStyles,
-  exampleElementsPage,
-} from '../examples/example';
+import { elementClasses, elementStyles } from '../examples/example';
 import { iframesEndpoints } from './core/imports/iframe';
 import { submitListener } from './core/listeners/submit';
 
 (() => {
-  exampleElementsPage(); // this is loaded only for example purposes
   submitListener('st-card-number-iframe', iframesEndpoints.cardNumber);
   submitListener('st-security-code-iframe', iframesEndpoints.securityCode);
   submitListener('st-expiration-date-iframe', iframesEndpoints.expirationDate);
