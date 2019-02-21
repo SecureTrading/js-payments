@@ -1,5 +1,8 @@
 import Validation from './Validation.class';
 
+/**
+ * Definition of security code validation
+ */
 class SecurityCode extends Validation {
   static AMEX_SECURITY_CODE_LENGTH = 4;
   static NON_AMEX_SECURITY_CODE_LENGTH = 3;
@@ -16,7 +19,7 @@ class SecurityCode extends Validation {
    * Method for validating length based on html attributes max and minlength
    * @param validity Validation object of form
    */
-  isLengthCorrect(validity: object) {
+  static isLengthCorrect(validity: object) {
     if (validity.tooShort) {
       return 'Security code is too short';
     } else if (validity.tooLong) {
@@ -28,7 +31,7 @@ class SecurityCode extends Validation {
    * Method for preventing inserting non digits
    * @param event Keypress event
    */
-  isCharNumber(event: Event) {
+  static isCharNumber(event: Event) {
     if (!SecurityCode.KEYCODES_DIGIT.includes(event.keyCode)) {
       event.preventDefault();
     }
@@ -38,7 +41,7 @@ class SecurityCode extends Validation {
    * Returns number of digits which security code has to have (due to be AMEX or not)
    * @param isCreditCardAmex: Gets boolean with information if indicated card is AMEX or not
    */
-  getSecurityCodeLength(isCreditCardAmex: boolean) {
+  static getSecurityCodeLength(isCreditCardAmex: boolean) {
     return isCreditCardAmex
       ? SecurityCode.AMEX_SECURITY_CODE_LENGTH
       : SecurityCode.NON_AMEX_SECURITY_CODE_LENGTH;

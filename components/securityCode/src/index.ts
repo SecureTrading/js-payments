@@ -9,11 +9,10 @@ inputListener(
   'security-code'
 );
 
-const sc = new SecurityCode();
 const securityCodeField = document.getElementById('security-code');
 
 securityCodeField.addEventListener('keypress', event => {
   const { validity } = event.target;
-  sc.isCharNumber(event);
-  sc.isLengthCorrect(validity);
+  SecurityCode.isCharNumber(event);
+  SecurityCode.isLengthCorrect(validity);
 });
