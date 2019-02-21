@@ -16,11 +16,11 @@ module.exports = {
     },
   },
   entry: {
-    app: './src/index.ts',
+    client: './src/index.ts',
   },
   output: {
     filename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.join(__dirname, 'dist'),
     publicPath: '/',
   },
   devServer: {
@@ -30,9 +30,7 @@ module.exports = {
   },
   plugins: [
     new CleanWebpackPlugin(['dist']),
-    new HtmlWebpackPlugin({
-      title: 'JS Library',
-    }),
+    new HtmlWebpackPlugin(),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css',
