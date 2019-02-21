@@ -35,10 +35,7 @@ const inputValueListener = (fieldId: string) => {
         if (isFormValid) {
           parent.postMessage(true, appEndpoint);
         } else {
-          parent.postMessage(
-            { isEmpty: input.validity.valueMissing },
-            appEndpoint
-          );
+          parent.postMessage({ isValid: input.validity.valid }, appEndpoint);
         }
       }
     },
