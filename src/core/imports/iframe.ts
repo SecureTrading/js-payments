@@ -2,8 +2,8 @@ const appEndpoint = 'http://localhost:8080';
 
 const iframesEndpoints = {
   cardNumber: 'http://localhost:8081',
-  securityCode: 'http://localhost:8082',
-  expirationDate: 'http://localhost:8083',
+  expirationDate: 'http://localhost:8082',
+  securityCode: 'http://localhost:8083',
 };
 
 const styleForIframe: any = {

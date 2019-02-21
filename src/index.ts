@@ -4,14 +4,9 @@ import Payment from './core/classes/Payment.class';
 import ST from './core/classes/ST.class';
 import {
   createFormElement,
-  elementStyles,
   elementClasses,
+  elementStyles,
 } from '../examples/example';
-import { submitListener } from './core/helpers/validationListeners';
-
-document.addEventListener('DOMContentLoaded', () => {
-  submitListener();
-});
 
 (() => {
   const st = new ST('thisissupersecretidforaclient12344321');
@@ -51,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
   );
   document
     .getElementById('st-form')
-    .appendChild(createFormElement('p', 'st-form__received-message'));
+    .appendChild(createFormElement('div', 'st-form__received-message'));
   document
     .getElementById('st-form')
     .appendChild(

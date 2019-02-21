@@ -3,20 +3,6 @@ import { cardsLogos } from '../../imports/images';
 import Validation from './Validation.class';
 import BinLookup from './BinLookup.class';
 
-const {
-  amex,
-  astropaycard,
-  chip,
-  diners,
-  discover,
-  jcb,
-  laser,
-  maestro,
-  mastercard,
-  piba,
-  visa,
-} = cardsLogos;
-
 class CardNumber extends Validation {
   binLookup: BinLookup;
   brand: BrandDetailsType;

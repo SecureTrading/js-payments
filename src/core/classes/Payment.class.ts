@@ -2,7 +2,7 @@ import { availablePayments } from '../imports/payments';
 
 /***
  * Class for Payment types definitions.
- * Defines also APM's
+ * Defines APM's
  */
 
 class Payment {
