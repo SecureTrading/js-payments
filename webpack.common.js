@@ -30,7 +30,10 @@ module.exports = {
   },
   plugins: [
     new CleanWebpackPlugin(['dist']),
-    new HtmlWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      title: 'Custom template',
+      template: './examples/example.html',
+    }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css',
