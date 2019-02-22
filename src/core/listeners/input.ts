@@ -1,3 +1,4 @@
+import Language from '../classes/Language.class';
 import SecurityCode from '../classes/validation/SecurityCode.class';
 import { appEndpoint, iframesEndpoints } from '../imports/iframe';
 import { applyStylesToElement } from '../helpers/dom';
@@ -39,7 +40,8 @@ const submitFormListener = (fieldInstance: HTMLInputElement) => {
           parent.postMessage(true, appEndpoint);
           errorContainer.innerText = '';
         } else {
-          errorContainer.innerText = 'Field is required';
+          errorContainer.innerText =
+            Language.translations.VALIDATION_ERROR_FIELD_IS_REQUIRED;
         }
       }
     },
