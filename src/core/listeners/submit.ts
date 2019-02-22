@@ -31,10 +31,8 @@ const submitListener = (id: string, url: string) => {
   document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('submit', event => {
       event.preventDefault();
-
-      let singleIframe = document.getElementById(id) as HTMLIFrameElement;
-      let iframeContentWindow = singleIframe.contentWindow;
-
+      const singleIframe = document.getElementById(id) as HTMLIFrameElement;
+      const iframeContentWindow = singleIframe.contentWindow;
       iframeContentWindow.postMessage('Post Data', url);
     });
     returnedErrorMessageListener();

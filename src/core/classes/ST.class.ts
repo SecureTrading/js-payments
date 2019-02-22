@@ -15,12 +15,6 @@ class ST {
   constructor(id: string) {
     this._id = id;
   }
-
-  /***
-   * Method for verifying Client ID
-   * It connects with backend and verifies client
-   */
-  verifyClientId() {}
 }
 
 export default ST;

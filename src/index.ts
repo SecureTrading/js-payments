@@ -1,9 +1,9 @@
+import { elementClasses, elementStyles } from '../examples/example';
 import '../examples/example.scss'; // this is loaded only for example purposes
 import Element from './core/classes/Element.class';
 import Payment from './core/classes/Payment.class';
 import ST from './core/classes/ST.class';
 import { RegisterElements } from './core/helpers/mount';
-import { elementClasses, elementStyles } from '../examples/example';
 import { iframesEndpoints } from './core/imports/iframe';
 import { submitListener } from './core/listeners/submit';
 
@@ -23,20 +23,20 @@ import { submitListener } from './core/listeners/submit';
   const expirationDate = new Element();
 
   cardNumber.create('cardNumber', {
-    style: elementStyles,
     classes: elementClasses,
+    style: elementStyles
   });
   const cardNumberMounted = cardNumber.mount('st-card-number-iframe');
 
   securityCode.create('securityCode', {
-    style: elementStyles,
     classes: elementClasses,
+    style: elementStyles
   });
   const securityCodeMounted = securityCode.mount('st-security-code-iframe');
 
   expirationDate.create('expirationDate', {
-    style: elementStyles,
     classes: elementClasses,
+    style: elementStyles
   });
   const expirationDateMounted = expirationDate.mount(
     'st-expiration-date-iframe'

@@ -4,8 +4,8 @@
  * @param domain - Name of domain from which we get URL
  */
 const applyStylesToElement = (id: string, domain: string) => {
-  let input = <HTMLInputElement>document.getElementById(id);
-  let styles = getStylesFromUrl(domain);
+  const input = document.getElementById(id) as HTMLInputElement;
+  const styles = getStylesFromUrl(domain);
   Object.assign(input.style, styles.style.style.base);
 };
 
