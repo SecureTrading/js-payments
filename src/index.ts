@@ -1,4 +1,4 @@
-import '../examples/example.scss';
+import '../example/style.scss';
 import { Element, RegisterElements } from './core/classes/Element.class';
 import Payment from './core/classes/Payment.class';
 import ST from './core/classes/ST.class';
@@ -6,7 +6,7 @@ import {
   createFormElement,
   elementClasses,
   elementStyles,
-} from '../examples/example';
+} from '../example';
 import { submitListener } from './core/helpers/validationListeners';
 
 document.addEventListener('DOMContentLoaded', () => {

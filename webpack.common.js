@@ -13,24 +13,47 @@ module.exports = {
     usedExports: true,
     splitChunks: {
       chunks: 'all',
+      name: true,
     },
   },
   entry: {
-    client: './src/index.ts',
+    main: './src/index.ts',
+    stjs: './src/stjs.ts',
+    example: './example/index.ts',
   },
   output: {
     filename: '[name].bundle.js',
     path: path.join(__dirname, 'dist'),
-    publicPath: '/',
-  },
-  devServer: {
-    contentBase: './dist',
-    hot: true,
-    port: 8080,
+    publicPath: '',
   },
   plugins: [
     new CleanWebpackPlugin(['dist']),
-    new HtmlWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      filename: 'credit-card-number.html',
+      template: './src/index.html',
+      templateParameters: {
+        partial: 'creditCardNumber',
+      }
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'expiration-date.html',
+      template: './src/index.html',
+      templateParameters: {
+        partial: 'expirationDate',
+      },
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'security-code.html',
+      template: './src/index.html',
+      templateParameters: {
+        partial: 'securityCode',
+      },
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: './example/index.html',
+      chunks: ['example'],
+    }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css',
