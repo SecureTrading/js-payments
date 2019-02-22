@@ -1,3 +1,4 @@
+import Language from '../classes/Language.class';
 import { appEndpoint } from '../imports/iframe';
 
 /**
@@ -6,7 +7,7 @@ import { appEndpoint } from '../imports/iframe';
  */
 const returnErrorMessage = (errors: any) => {
   if (errors.isValid) {
-    return 'Field is empty';
+    return Language.translations.VALIDATION_ERROR_FIELD_IS_EMPTY;
   }
 };
 
