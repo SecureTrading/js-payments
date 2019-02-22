@@ -1,3 +1,4 @@
+import Language from '../Language.class';
 import Validation from './Validation.class';
 
 /**
@@ -22,9 +23,9 @@ class SecurityCode extends Validation {
   static isLengthCorrect(fieldInstance: HTMLInputElement) {
     const { validity } = fieldInstance;
     if (validity.tooShort) {
-      return 'Security code is too short';
+      return Language.translations.VALIDATION_ERROR_SECURITY_CODE_TOO_SHORT;
     } else if (validity.tooLong) {
-      return 'Security code is too long';
+      return Language.translations.VALIDATION_ERROR_SECURITY_CODE_TOO_SHORT;
     }
   }
 
