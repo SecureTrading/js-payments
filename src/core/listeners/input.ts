@@ -1,4 +1,5 @@
 import Language from '../classes/Language.class';
+import ExpirationDate from '../classes/validation/ExpirationDate.class';
 import SecurityCode from '../classes/validation/SecurityCode.class';
 import { appEndpoint, iframesEndpoints } from '../imports/iframe';
 import { applyStylesToElement } from '../helpers/dom';
@@ -56,6 +57,9 @@ const inputValidationListener = (
     if (inputName === 'securityCode') {
       SecurityCode.isCharNumber(event);
       SecurityCode.isLengthCorrect(fieldInstance);
+    } else if (inputName === 'expirationDate') {
+      ExpirationDate.isDateValid(fieldInstance);
+      ExpirationDate.dateInputMask(fieldInstance, event);
     }
   });
 };
