@@ -14,7 +14,7 @@ class Element {
    * @param name Component name
    * @returns URL of input iframe
    */
-  public static getComponentAdress(name: string) {
+  public static getComponentAddress(name: string) {
     if (name === 'cardNumber') {
       return cardNumber;
     } else if (name === 'securityCode') {
@@ -72,7 +72,7 @@ class Element {
   public create(elementName: string, attributes: any) {
     this._name = elementName;
     this._style = attributes;
-    this._iframeSrc = Element.getComponentAdress(elementName);
+    this._iframeSrc = Element.getComponentAddress(elementName);
   }
 
   /***
