@@ -7,11 +7,6 @@ import {
   elementClasses,
   elementStyles,
 } from '../example';
-import { submitListener } from './core/helpers/validationListeners';
-
-document.addEventListener('DOMContentLoaded', () => {
-  submitListener();
-});
 
 (() => {
   const st = new ST('thisissupersecretidforaclient12344321');
