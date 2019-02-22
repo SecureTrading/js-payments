@@ -19,7 +19,7 @@ class SecurityCode extends Validation {
    * Method for validating length based on html attributes max and minlength
    * @param validity Validation object of form
    */
-  static isLengthCorrect(validity: object) {
+  static isLengthCorrect(validity: ValidityState) {
     if (validity.tooShort) {
       return 'Security code is too short';
     } else if (validity.tooLong) {
@@ -31,7 +31,7 @@ class SecurityCode extends Validation {
    * Method for preventing inserting non digits
    * @param event Keypress event
    */
-  static isCharNumber(event: Event) {
+  static isCharNumber(event: KeyboardEvent) {
     if (!SecurityCode.KEYCODES_DIGIT.includes(event.keyCode)) {
       event.preventDefault();
     }
