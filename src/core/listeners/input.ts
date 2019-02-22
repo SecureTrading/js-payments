@@ -1,3 +1,4 @@
+import SecurityCode from '../classes/validation/SecurityCode.class';
 import { appEndpoint, iframesEndpoints } from '../imports/iframe';
 import { applyStylesToElement } from '../helpers/dom';
 
@@ -19,11 +20,12 @@ const returnInputEndpoint = (inputName: string) => {
 
 /**
  * Method for checking validity object and sending response to parent node
- * @param fieldId ID of field which is validated
+ * @param fieldInstance Instance of field which is validated
  */
-const inputValueListener = (fieldId: string) => {
-  let input = <HTMLInputElement>document.getElementById(fieldId);
-  let errorContainer = <HTMLElement>document.getElementById('received-message');
+const submitFormListener = (fieldInstance: HTMLInputElement) => {
+  const errorContainer = document.getElementById(
+    'received-message'
+  ) as HTMLElement;
   window.addEventListener(
     'message',
     event => {
@@ -32,9 +34,10 @@ const inputValueListener = (fieldId: string) => {
         event.origin !== securityCode &&
         event.origin !== expirationDate
       ) {
-        let isFormValid = input.validity.valid;
+        let isFormValid = fieldInstance.validity.valid;
         if (isFormValid) {
           parent.postMessage(true, appEndpoint);
+          errorContainer.innerText = '';
         } else {
           errorContainer.innerText = 'Field is required';
         }
@@ -42,6 +45,17 @@ const inputValueListener = (fieldId: string) => {
     },
     true
   );
+};
+const inputValidationListener = (
+  fieldInstance: HTMLInputElement,
+  inputName: string
+) => {
+  fieldInstance.addEventListener('keypress', event => {
+    if (inputName === 'securityCode') {
+      SecurityCode.isCharNumber(event);
+      SecurityCode.isLengthCorrect(event);
+    }
+  });
 };
 
 /**
@@ -58,8 +72,10 @@ const inputListener = (
   iframeId: string
 ) => {
   document.addEventListener('DOMContentLoaded', () => {
+    const fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
+    inputValidationListener(fieldInstance, inputName);
     applyStylesToElement(iframeId, returnInputEndpoint(inputName));
-    inputValueListener(fieldId);
+    submitFormListener(fieldInstance);
   });
 };
 

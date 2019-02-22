@@ -17,9 +17,12 @@ class SecurityCode extends Validation {
 
   /**
    * Method for validating length based on html attributes max and minlength
-   * @param validity Validation object of form
+   * @param event Event object of input
    */
-  static isLengthCorrect(validity: ValidityState) {
+  static isLengthCorrect(event: Event) {
+    // @ts-ignore
+    const { validity } = event.target as EventTarget;
+    console.log(validity);
     if (validity.tooShort) {
       return 'Security code is too short';
     } else if (validity.tooLong) {
