@@ -1,5 +1,6 @@
 import each from 'jest-each';
 import CardNumber from '../../../../src/core/classes/validation/CardNumber.class';
+import { cardsLogos } from '../../../../src/core/imports/images';
 
 each([
   ['', true], // Couldn't identify the brand
@@ -20,4 +21,14 @@ each([
 ]).test('CardNumber.luhnCheck', (cardNumber, expected) => {
   const cn = new CardNumber();
   expect(cn.luhnCheck(cardNumber)).toEqual(expected);
+});
+
+each([
+  [null, cardsLogos.chip],
+  [{ type: 'fred' }, cardsLogos.chip],
+  [{ type: 'AMEX' }, cardsLogos.amex],
+]).test('CardNumber.getCardLogo', (brand, expected) => {
+  const cn = new CardNumber();
+  cn.brand = brand;
+  expect(cn.getCardLogo()).toEqual(expected);
 });

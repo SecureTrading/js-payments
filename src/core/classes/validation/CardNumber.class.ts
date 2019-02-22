@@ -52,30 +52,15 @@ class CardNumber extends Validation {
     return sum && sum % 10 === 0;
   }
 
-  getCardLogo(brand: string) {
-    if (brand === 'amex') {
-      return amex;
-    } else if (brand === 'astropaycard') {
-      return astropaycard;
-    } else if (brand === 'diners') {
-      return diners;
-    } else if (brand === 'discover') {
-      return discover;
-    } else if (brand === 'jcb') {
-      return jcb;
-    } else if (brand === 'laser') {
-      return laser;
-    } else if (brand === 'maestro') {
-      return maestro;
-    } else if (brand === 'mastercard') {
-      return mastercard;
-    } else if (brand === 'piba') {
-      return piba;
-    } else if (brand === 'visa') {
-      return visa;
-    } else {
-      return chip;
+  getCardLogo() {
+    let key = "chip"
+    if (this.brand && this.brand.type) {
+      const brandName = this.brand.type.toLowerCase();
+      if (cardsLogos[brandName]) {
+        key = brandName;
+      }
     }
+    return cardsLogos[key];
   }
 }
 
