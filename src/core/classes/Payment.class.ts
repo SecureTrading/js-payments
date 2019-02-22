@@ -20,7 +20,7 @@ class Payment {
   /***
    * Checks if inficated by client payments are available for him.
    */
-  arePaymentsAvailable() {
+  public arePaymentsAvailable() {
     this._payments.map(item => {
       if (!this._availablePayments.includes(item)) {
         console.error(`${item} payment type is not available !`);
@@ -29,11 +29,6 @@ class Payment {
       return true;
     });
   }
-
-  /***
-   * Sets available payments and establishes connection with APM's
-   */
-  setAvailablePayments() {}
 }
 
 export default Payment;

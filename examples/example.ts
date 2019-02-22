@@ -1,5 +1,14 @@
 const elementStyles = {
   style: {
+    invalid: {
+      color: '#fff',
+      '::placeholder': {
+        color: '#FFCCA5',
+      },
+      ':focus': {
+        color: '#FA755A',
+      },
+    },
     base: {
       color: '#495057',
       fontFamily: 'Montserrat, Open Sans, Segoe UI, sans-serif',
@@ -17,15 +26,6 @@ const elementStyles = {
     invalid: {
       color: '#fa755a',
       iconColor: '#fa755a',
-    },
-  },
-  invalid: {
-    color: '#fff',
-    ':focus': {
-      color: '#FA755A',
-    },
-    '::placeholder': {
-      color: '#FFCCA5',
     },
   },
 };

@@ -1,7 +1,7 @@
-import { iframesEndpoints, defaultIframeStyle } from '../imports/iframe';
 import { createFormElement } from '../helpers/dom';
+import { defaultIframeStyle, iframesEndpoints } from '../imports/iframe';
 
-const { cardNumber, securityCode, expirationDate } = iframesEndpoints;
+const { cardNumber, expirationDate, securityCode } = iframesEndpoints;
 
 /***
  * Defines input with iframe source
@@ -9,6 +9,21 @@ const { cardNumber, securityCode, expirationDate } = iframesEndpoints;
  */
 
 class Element {
+  /***
+   * Function which defines iframe src attribute
+   * @param name Component name
+   * @returns URL of input iframe
+   */
+  private static getComponentAdress(name: string) {
+    if (name === 'cardNumber') {
+      return cardNumber;
+    } else if (name === 'securityCode') {
+      return securityCode;
+    } else if (name === 'expirationDate') {
+      return expirationDate;
+    }
+  }
+
   private _name: string;
   private _iframeSrc: string;
   private _style: object;
@@ -41,26 +56,11 @@ class Element {
     this._name = '';
     this._style = {
       color: '#fff',
-      fontWeight: '600',
       fontFamily: 'Lato, sans-serif',
       fontSize: '16px',
       fontSmoothing: 'antialiased',
+      fontWeight: '600',
     };
-  }
-
-  /***
-   * Function which defines iframe src attribute
-   * @param name Component name
-   * @returns URL of input iframe
-   */
-  static getComponentAdress(name: string) {
-    if (name === 'cardNumber') {
-      return cardNumber;
-    } else if (name === 'securityCode') {
-      return securityCode;
-    } else if (name === 'expirationDate') {
-      return expirationDate;
-    }
   }
 
   /***
@@ -69,7 +69,7 @@ class Element {
    * @param attributes Additional attributes like styles and classes
    */
 
-  create(elementName: string, attributes: any) {
+  public create(elementName: string, attributes: any) {
     this._name = elementName;
     this._style = attributes;
     this._iframeSrc = Element.getComponentAdress(elementName);
@@ -80,8 +80,8 @@ class Element {
    * @param fieldId ID of field on which iframe input field will be mounted
    */
 
-  mount(fieldId: string) {
-    let iframe = createFormElement('iframe', fieldId);
+  public mount(fieldId: string) {
+    const iframe = createFormElement('iframe', fieldId);
     Object.assign(iframe.style, defaultIframeStyle);
     iframe.setAttribute(
       'src',
