@@ -34,7 +34,7 @@ const submitFormListener = (fieldInstance: HTMLInputElement) => {
         event.origin !== securityCode &&
         event.origin !== expirationDate
       ) {
-        let isFormValid = fieldInstance.validity.valid;
+        const isFormValid = fieldInstance.validity.valid;
         if (isFormValid) {
           parent.postMessage(true, appEndpoint);
           errorContainer.innerText = '';
