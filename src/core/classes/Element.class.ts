@@ -14,7 +14,7 @@ class Element {
    * @param name Component name
    * @returns URL of input iframe
    */
-  private static getComponentAdress(name: string) {
+  public static getComponentAdress(name: string) {
     if (name === 'cardNumber') {
       return cardNumber;
     } else if (name === 'securityCode') {
@@ -59,7 +59,7 @@ class Element {
       fontFamily: 'Lato, sans-serif',
       fontSize: '16px',
       fontSmoothing: 'antialiased',
-      fontWeight: '600',
+      fontWeight: '600'
     };
   }
 
