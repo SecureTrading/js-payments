@@ -17,9 +17,10 @@ class SecurityCode extends Validation {
 
   /**
    * Method for validating length based on html attributes max and minlength
-   * @param validity Validation object of form
+   * @param fieldInstance Instance of field
    */
-  static isLengthCorrect(validity: ValidityState) {
+  static isLengthCorrect(fieldInstance: HTMLInputElement) {
+    const { validity } = fieldInstance;
     if (validity.tooShort) {
       return 'Security code is too short';
     } else if (validity.tooLong) {
