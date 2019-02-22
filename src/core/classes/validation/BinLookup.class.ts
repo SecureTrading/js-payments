@@ -15,25 +15,28 @@ type BinLookupConfigType = {
 };
 
 class BinLookup {
-  minMatch: number;
-  maxMatch: number;
-  supported: string[];
-  default: BrandDetailsType;
+  static DEFAULT_MIN_MATCH = 0;
+  static DEFAULT_MAX_MATCH = 6;
+  private minMatch: number;
+  private maxMatch: number;
+  private supported: string[];
+  private default: BrandDetailsType;
+
   constructor(config?: BinLookupConfigType) {
     config = config || {};
-    this.minMatch = 'minMatch' in config ? config.minMatch : 0;
-    this.maxMatch = 'maxMatch' in config ? config.maxMatch : 6;
+    this.minMatch = 'minMatch' in config ? config.minMatch : BinLookup.DEFAULT_MIN_MATCH;
+    this.maxMatch = 'maxMatch' in config ? config.maxMatch : BinLookup.DEFAULT_MAX_MATCH;
 
     this.supported = this.getAllBrands();
     if ('supported' in config) {
-      const support = config.supported;
-      for (let i in support) {
-        const type = support[i];
+      const {supported} = config;
+      for (let i in supported) {
+        const type = supported[i];
         if (!this.isSupported(type)) {
-          throw 'unsupported cardTree ' + type;
+          throw `unsupported cardTree ${type}`;
         }
       }
-      this.supported = support;
+      this.supported = supported;
     }
 
     this.default =

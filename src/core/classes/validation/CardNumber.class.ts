@@ -4,9 +4,9 @@ import Validation from './Validation.class';
 import BinLookup from './BinLookup.class';
 
 class CardNumber extends Validation {
-  static KEYS_DIGIT = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
-  binLookup: BinLookup;
-  brand: BrandDetailsType;
+  private binLookup: BinLookup;
+  public brand: BrandDetailsType;
+
   constructor() {
     super();
     this.binLookup = new BinLookup();
@@ -62,16 +62,6 @@ class CardNumber extends Validation {
       }
     }
     return cardsLogos[key];
-  }
-
-  /**
-   * Method for preventing inserting non digits
-   * @param event Keypress event
-   */
-  static isCharNumber(event: KeyboardEvent) {
-    if (!CardNumber.KEYS_DIGIT.includes(event.key)) {
-      event.preventDefault();
-    }
   }
 }
 
