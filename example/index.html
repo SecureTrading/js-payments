@@ -10,46 +10,48 @@
     <title>Secure Trading</title>
   </head>
   <body>
-    <form>
-      <fieldset>
-        <div class="row">
-          <label for="example-1-name">Name</label>
-          <input
-            id="example-1-name"
-            type="text"
-            placeholder="John Doe"
-            required=""
-            autocomplete="name"
-          />
-        </div>
-        <div class="row">
-          <label for="example-1-email">Email</label>
-          <input
-            id="example-1-email"
-            type="email"
-            placeholder="test@gmail.com"
-            required=""
-            autocomplete="email"
-          />
-        </div>
-        <div class="row">
-          <label for="example-1-phone">Phone</label>
-          <input
-            id="example-1-phone"
-            type="tel"
-            placeholder="+48713545689"
-            required=""
-            autocomplete="tel"
-          />
-        </div>
-      </fieldset>
-      <fieldset>
-        <div class="row">
-          <div id="example-1-card" class="st-form"></div>
-        </div>
-      </fieldset>
-      <button type="submit">Pay</button>
-      <div class="error" role="alert"></div>
+    <form class="st-form">
+      <h1>Secure Trading Example Form</h1>
+      <div class="row">
+        <label for="example-1-name">Name</label>
+        <input
+          id="example-1-name"
+          type="text"
+          placeholder="John Doe"
+          required=""
+          autocomplete="name"
+        />
+      </div>
+      <div class="row">
+        <label for="example-1-email">Email</label>
+        <input
+          id="example-1-email"
+          type="email"
+          placeholder="test@gmail.com"
+          required=""
+          autocomplete="email"
+        />
+      </div>
+      <div class="row">
+        <label for="example-1-phone">Phone</label>
+        <input
+          id="example-1-phone"
+          type="tel"
+          placeholder="+48713545689"
+          required=""
+          autocomplete="tel"
+        />
+      </div>
+      <div id="st-card-number" class="st-card-number"></div>
+      <div id="st-security-code" class="st-security-code"></div>
+      <div id="st-expiration-date" class="st-expiration-date"></div>
+      <div
+        id="st-form__received-message"
+        class="st-form__received-message"
+      ></div>
+      <button type="submit" id="st-form__submit" class="st-form__submit">
+        Pay securely
+      </button>
     </form>
   </body>
 </html>

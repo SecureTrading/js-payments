@@ -1,17 +1,7 @@
-import { iframesEndpoints, styleForIframe } from '../imports/iframe';
+import { createFormElement } from '../helpers/dom';
+import { defaultIframeStyle, iframesEndpoints } from '../imports/iframe';
 
-const { cardNumber, securityCode, expirationDate } = iframesEndpoints;
-
-const RegisterElements = (fields: HTMLElement[], form: string) => {
-  const formContainer = document.getElementById(form);
-  const promise1 = new Promise((resolve, reject) => {
-    fields.forEach(item => {
-      formContainer.appendChild(item);
-    });
-    resolve('well done !');
-    reject('something went wrong :(');
-  });
-};
+const { cardNumber, expirationDate, securityCode } = iframesEndpoints;
 
 /***
  * Defines input with iframe source
@@ -19,6 +9,21 @@ const RegisterElements = (fields: HTMLElement[], form: string) => {
  */
 
 class Element {
+  /***
+   * Function which defines iframe src attribute
+   * @param name Component name
+   * @returns URL of input iframe
+   */
+  public static getComponentAddress(name: string) {
+    if (name === 'cardNumber') {
+      return cardNumber;
+    } else if (name === 'securityCode') {
+      return securityCode;
+    } else if (name === 'expirationDate') {
+      return expirationDate;
+    }
+  }
+
   private _name: string;
   private _iframeSrc: string;
   private _style: object;
@@ -51,26 +56,11 @@ class Element {
     this._name = '';
     this._style = {
       color: '#fff',
-      fontWeight: '600',
       fontFamily: 'Lato, sans-serif',
       fontSize: '16px',
       fontSmoothing: 'antialiased',
+      fontWeight: '600'
     };
-  }
-
-  /***
-   * Function which defines iframe src attribute
-   * @param name Component name
-   * @returns URL of input iframe
-   */
-  static getComponentAdress(name: string) {
-    if (name === 'cardNumber') {
-      return cardNumber;
-    } else if (name === 'securityCode') {
-      return securityCode;
-    } else if (name === 'expirationDate') {
-      return expirationDate;
-    }
   }
 
   /***
@@ -79,27 +69,26 @@ class Element {
    * @param attributes Additional attributes like styles and classes
    */
 
-  create(elementName: string, attributes: any) {
+  public create(elementName: string, attributes: any) {
     this._name = elementName;
     this._style = attributes;
-    this._iframeSrc = Element.getComponentAdress(elementName);
+    this._iframeSrc = Element.getComponentAddress(elementName);
   }
 
   /***
-   * Method for mounting iframe transformed input into clients form
+   * Method returns 'iframed input', styled and ready to be registered in clients form
    * @param fieldId ID of field on which iframe input field will be mounted
    */
 
-  mount(fieldId: string) {
-    let iframe = document.createElement('iframe');
+  public mount(fieldId: string) {
+    const iframe = createFormElement('iframe', fieldId);
+    Object.assign(iframe.style, defaultIframeStyle);
     iframe.setAttribute(
       'src',
       `${this._iframeSrc}?${JSON.stringify(this._style)}`
     );
-    iframe.setAttribute('id', fieldId);
-    Object.assign(iframe.style, styleForIframe);
     return iframe;
   }
 }
 
-export { Element, RegisterElements };
+export default Element;

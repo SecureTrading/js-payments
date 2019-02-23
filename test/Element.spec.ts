@@ -1,4 +1,4 @@
-import { Element } from '../src/core/classes/Element.class';
+import Element from '../src/core/classes/Element.class';
 import { iframesEndpoints } from '../src/core/imports/iframe';
 // given
 describe('Index placeholder test', () => {
@@ -14,15 +14,15 @@ describe('Index placeholder test', () => {
         fontWeight: '600',
         fontFamily: 'Lato, sans-serif',
         fontSize: '16px',
-        fontSmoothing: 'antialiased',
-      },
+        fontSmoothing: 'antialiased'
+      }
     };
     createNewElement = {
       _name: 'newTestObjectName',
       _style: {
         color: '#eee',
-        fontWeight: '100',
-      },
+        fontWeight: '100'
+      }
     };
   });
 
@@ -34,9 +34,9 @@ describe('Index placeholder test', () => {
 
   // then
   it('should return proper iframe endpoints', () => {
-    expect(Element.getComponentAdress('cardNumber')).toEqual(cardNumber);
-    expect(Element.getComponentAdress('securityCode')).toEqual(securityCode);
-    expect(Element.getComponentAdress('expirationDate')).toEqual(
+    expect(Element.getComponentAddress('cardNumber')).toEqual(cardNumber);
+    expect(Element.getComponentAddress('securityCode')).toEqual(securityCode);
+    expect(Element.getComponentAddress('expirationDate')).toEqual(
       expirationDate
     );
   });
@@ -46,7 +46,7 @@ describe('Index placeholder test', () => {
     element = new Element();
     element.create('newTestObjectName', {
       color: '#eee',
-      fontWeight: '100',
+      fontWeight: '100'
     });
     expect(element).toMatchObject(createNewElement);
   });

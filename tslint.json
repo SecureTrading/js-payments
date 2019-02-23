@@ -1,6 +1,7 @@
 {
   "extends": "tslint:recommended",
   "rules": {
+    "arrow-parens": [true, "ban-single-arg-parens"],
     "max-line-length": {
       "options": [120]
     },
@@ -13,7 +14,14 @@
       "severity": "warning",
       "options": ["debug", "info", "log", "time", "timeEnd", "trace"]
     },
-    "quotemark": [true, "single"]
+    "quotemark": [true, "single"],
+    "trailing-comma": false,
+    "variable-name": [
+      true,
+      "check-format",
+      "allow-leading-underscore",
+      "allow-pascal-case"
+    ]
   },
   "jsRules": {
     "max-line-length": {
