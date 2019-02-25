@@ -15,7 +15,9 @@
     "dev": "webpack --config webpack.dev.js",
     "prod": "webpack --config webpack.prod.js",
     "start": "webpack-dev-server --color --progress --open --hot --config webpack.dev.js",
-    "hot": "npm-run-all dev start"
+    "hot": "npm-run-all dev start",
+    "testframework": "git clone https://github.com/SecureTrading/js-payments-testing; cd js-payments-testing",
+    "behave": "npm run testframework && cd js-payments-testing && make"
   },
   "repository": {
     "type": "git",
@@ -43,6 +45,8 @@
     "friendly-errors-webpack-plugin": "^1.7.0",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^24.1.0",
+    "jest-each": "^24.0.0",
+    "@types/jest-each": "^0.3.4",
     "mini-css-extract-plugin": "^0.5.0",
     "node-sass": "^4.11.0",
     "npm-run-all": "^4.1.5",

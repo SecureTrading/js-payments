@@ -1,52 +1,23 @@
-import Language from '../Language.class';
 import Validation from './Validation.class';
 
 /**
  * Definition of security code validation
  */
 class SecurityCode extends Validation {
-  static AMEX_SECURITY_CODE_LENGTH = 4;
-  static NON_AMEX_SECURITY_CODE_LENGTH = 3;
   static KEYCODES_DIGIT = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57];
-
-  public securityCodeLength: number;
 
   constructor() {
     super();
-    this.securityCodeLength = 3;
-  }
-
-  /**
-   * Method for validating length based on html attributes max and minlength
-   * @param fieldInstance Instance of field
-   */
-  static isLengthCorrect(fieldInstance: HTMLInputElement) {
-    const { validity } = fieldInstance;
-    if (validity.tooShort) {
-      return Language.translations.VALIDATION_ERROR_SECURITY_CODE_TOO_SHORT;
-    } else if (validity.tooLong) {
-      return Language.translations.VALIDATION_ERROR_SECURITY_CODE_TOO_SHORT;
-    }
   }
 
   /**
    * Method for preventing inserting non digits
-   * @param event Keypress event
+   * @param event - Keypress event
    */
   static isCharNumber(event: KeyboardEvent) {
     if (!SecurityCode.KEYCODES_DIGIT.includes(event.keyCode)) {
       event.preventDefault();
     }
-  }
-
-  /**
-   * Returns number of digits which security code has to have (due to be AMEX or not)
-   * @param isCreditCardAmex: Gets boolean with information if indicated card is AMEX or not
-   */
-  static getSecurityCodeLength(isCreditCardAmex: boolean) {
-    return isCreditCardAmex
-      ? SecurityCode.AMEX_SECURITY_CODE_LENGTH
-      : SecurityCode.NON_AMEX_SECURITY_CODE_LENGTH;
   }
 }
 

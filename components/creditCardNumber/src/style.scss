@@ -1,10 +1,10 @@
 .credit-card-number {
   &__input {
     border: none;
-    border-bottom: 1px solid #32325d;
+    border-bottom: 0.1rem solid #32325d;
     color: #32325d;
-    height: 35px;
-    padding-left: 25px;
+    height: 3.5rem;
+    padding-left: 2.5rem;
 
     &:focus {
       outline: none;
@@ -20,7 +20,7 @@
     top: 33%;
 
     img {
-      max-width: 20px;
+      max-width: 2rem;
     }
   }
 
