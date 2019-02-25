@@ -3,7 +3,7 @@ interface IValidation {
 }
 
 class Validation implements IValidation {
-  static KEYS_DIGIT = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+  static KEYCODES_DIGIT = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
   _isValid: any = {};
 
   constructor() {
@@ -24,6 +24,16 @@ class Validation implements IValidation {
 
   isFormValid() {
     this._isValid.some((field: boolean) => field === true);
+  }
+
+  /**
+   * Method for preventing inserting non digits
+   * @param event - Keypress event
+   */
+  static isCharNumber(event: KeyboardEvent) {
+    if (!Validation.KEYCODES_DIGIT.includes(event.key)) {
+      event.preventDefault();
+    }
   }
 }
 
