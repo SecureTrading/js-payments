@@ -1,5 +1,8 @@
 import Validation from './Validation.class';
 
+/**
+ * Defines specific Expiration Date validation methods aand attributes
+ */
 class ExpirationDate extends Validation {
   private static DATE_MAX_LENGTH = 5;
   private static DATE_SLASH_PLACE = 2;
@@ -32,6 +35,10 @@ class ExpirationDate extends Validation {
     }
   }
 
+  /**
+   * Checks wheaer date has valid format (MMM/YY)
+   * @param fieldInstance
+   */
   public static isDateValid(fieldInstance: HTMLInputElement) {
     const { value } = fieldInstance;
     const dateRegexp = new RegExp(ExpirationDate.EXPIRATION_DATE_REGEXP);
