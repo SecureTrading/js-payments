@@ -36,7 +36,7 @@ class ExpirationDate extends Validation {
   }
 
   /**
-   * Checks whether date has valid format (MMM/YY)
+   * Checks whether date has valid format (MM/YY)
    * @param fieldInstance
    */
   public static isDateValid(fieldInstance: HTMLInputElement) {
