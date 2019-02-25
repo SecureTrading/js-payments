@@ -1,18 +1,6 @@
 import Validation from './Validation.class';
 
 class ExpirationDate extends Validation {
-  private static KEYBOARD_CODES_FOR_DIGITS = [
-    48,
-    49,
-    50,
-    51,
-    52,
-    53,
-    54,
-    55,
-    56,
-    57
-  ];
   private static DATE_MAX_LENGTH = 5;
   private static DATE_SLASH_PLACE = 2;
   private static EXPIRATION_DATE_REGEXP = '^(0[1-9]|1[0-2])\\/([0-9]{2})$';
@@ -32,7 +20,7 @@ class ExpirationDate extends Validation {
   ) {
     const length = fieldInstance.value.length;
     if (length < ExpirationDate.DATE_MAX_LENGTH) {
-      if (!ExpirationDate.KEYBOARD_CODES_FOR_DIGITS.includes(event.keyCode)) {
+      if (!Validation.KEYCODES_DIGIT.includes(event.key)) {
         event.preventDefault();
       }
 

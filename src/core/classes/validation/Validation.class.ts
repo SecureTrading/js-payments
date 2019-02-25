@@ -30,7 +30,7 @@ class Validation implements IValidation {
    * Method for preventing inserting non digits
    * @param event - Keypress event
    */
-  static isCharNumber(event: KeyboardEvent) {
+  public static isCharNumber(event: KeyboardEvent) {
     if (!Validation.KEYCODES_DIGIT.includes(event.key)) {
       event.preventDefault();
     }
