@@ -55,7 +55,6 @@ const inputValidationListener = (
   fieldInstance.addEventListener('keypress', event => {
     if (inputName === 'securityCode') {
       SecurityCode.isCharNumber(event);
-      SecurityCode.isLengthCorrect(fieldInstance);
     }
   });
 };
