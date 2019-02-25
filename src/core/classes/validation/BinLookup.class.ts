@@ -3,7 +3,7 @@ import {
   CardTreeNode,
   BrandDetailsType,
   cardTree,
-  brandMapping,
+  brandMapping
 } from '../../imports/cardtype';
 import { inArray, forEachBreak } from '../../helpers/utils';
 
@@ -24,12 +24,14 @@ class BinLookup {
 
   constructor(config?: BinLookupConfigType) {
     config = config || {};
-    this.minMatch = 'minMatch' in config ? config.minMatch : BinLookup.DEFAULT_MIN_MATCH;
-    this.maxMatch = 'maxMatch' in config ? config.maxMatch : BinLookup.DEFAULT_MAX_MATCH;
+    this.minMatch =
+      'minMatch' in config ? config.minMatch : BinLookup.DEFAULT_MIN_MATCH;
+    this.maxMatch =
+      'maxMatch' in config ? config.maxMatch : BinLookup.DEFAULT_MAX_MATCH;
 
     this.supported = this.getAllBrands();
     if ('supported' in config) {
-      const {supported} = config;
+      const { supported } = config;
       for (let i in supported) {
         const type = supported[i];
         if (!this.isSupported(type)) {
@@ -66,7 +68,9 @@ class BinLookup {
    * @return array of all text brand names
    */
   getAllBrands(): string[] {
-    return Object.values(brandMapping).map(brand => brand.type).sort();
+    return Object.values(brandMapping)
+      .map(brand => brand.type)
+      .sort();
   }
 
   /**
