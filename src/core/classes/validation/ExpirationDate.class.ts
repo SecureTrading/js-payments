@@ -23,9 +23,7 @@ class ExpirationDate extends Validation {
   ) {
     const length = fieldInstance.value.length;
     if (length < ExpirationDate.DATE_MAX_LENGTH) {
-      if (!Validation.KEYCODES_DIGIT.includes(event.key)) {
-        event.preventDefault();
-      }
+      Validation.isCharNumber(event);
 
       if (length === ExpirationDate.DATE_SLASH_PLACE) {
         fieldInstance.value += '/';
