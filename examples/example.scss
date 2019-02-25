@@ -15,6 +15,12 @@ html {
     color: red;
   }
 
+  .st-card-number,
+  .st-expiration-date,
+  .st-security-code {
+    width: 100%;
+  }
+
   &__submit {
     background-color: #e71b5a;
     color: #fff;
