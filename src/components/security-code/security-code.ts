@@ -1,4 +1,9 @@
 import './security-code.scss';
-import { securityCodeDOMListener } from '../../core/helpers/securityCodeListeners';
+import { inputListener } from '../../core/listeners/input';
 
-securityCodeDOMListener();
+inputListener(
+  'securityCode',
+  'st-security-code',
+  'security-code',
+  'security-code'
+);

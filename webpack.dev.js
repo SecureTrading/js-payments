@@ -7,6 +7,6 @@ module.exports = merge(common, {
   devServer: {
     contentBase: './dist',
     port: 8080,
-    writeToDisk: true,
-  },
+    writeToDisk: true
+  }
 });

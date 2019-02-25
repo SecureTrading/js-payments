@@ -1,2 +1,2 @@
-const availablePayments = ['ApplePay', 'VisaCheckout'];
+const availablePayments = ['ApplePay', 'Visa Checkout'];
 export { availablePayments };

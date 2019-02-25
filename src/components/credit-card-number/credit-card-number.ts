@@ -1,4 +1,9 @@
 import './credit-card-number.scss';
-import { creditCardDOMListener } from '../../core/helpers/creditCardListeners';
+import { inputListener } from '../../core/listeners/input';
 
-creditCardDOMListener();
+inputListener(
+  'cardNumber',
+  'st-credit-card-number',
+  'credit-card-number',
+  'credit-card-number'
+);
