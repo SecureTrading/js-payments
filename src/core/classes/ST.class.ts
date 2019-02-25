@@ -15,6 +15,14 @@ class ST {
   constructor(id: string) {
     this._id = id;
   }
+
+  sendRequest(requestObject: object) {
+    return fetch(self._apiUrl, {
+      method: 'post',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestObject)
+    }).then(responseJson => responseJson.json());
+  }
 }
 
 export default ST;
