@@ -1,7 +1,7 @@
 import Validation from './Validation.class';
 
 /**
- * Defines specific Expiration Date validation methods aand attributes
+ * Defines specific Expiration Date validation methods and attributes
  */
 class ExpirationDate extends Validation {
   private static DATE_MAX_LENGTH = 5;
