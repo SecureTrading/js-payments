@@ -91,6 +91,6 @@ function elementFixture() {
 }
 
 function eventFixture(eventType: string, eventKeyValue: string) {
-  const event = new KeyboardEvent('keypress', { key: eventKeyValue });
+  const event = new KeyboardEvent(eventType, { key: eventKeyValue });
   return { event };
 }
