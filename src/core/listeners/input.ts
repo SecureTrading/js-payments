@@ -55,7 +55,9 @@ const inputValidationListener = (
 ) => {
   fieldInstance.addEventListener('keypress', event => {
     if (inputName === 'securityCode') {
-      SecurityCode.isCharNumber(event);
+      if (!SecurityCode.isCharNumber(event)) {
+        event.preventDefault();
+      }
     } else if (inputName === 'expirationDate') {
       ExpirationDate.isDateValid(fieldInstance);
       ExpirationDate.dateInputMask(fieldInstance, event);

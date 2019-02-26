@@ -3,7 +3,7 @@ interface IValidation {
 }
 
 class Validation implements IValidation {
-  static KEYCODES_DIGIT = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+  private static ONLY_DIGITS_REGEXP = '^\\d+$';
   _isValid: any = {};
 
   constructor() {
@@ -31,9 +31,9 @@ class Validation implements IValidation {
    * @param event - Keypress event
    */
   public static isCharNumber(event: KeyboardEvent) {
-    if (!Validation.KEYCODES_DIGIT.includes(event.key)) {
-      event.preventDefault();
-    }
+    let key: string = event.key;
+    const regex = new RegExp(Validation.ONLY_DIGITS_REGEXP);
+    return regex.test(key);
   }
 }
 
