@@ -4,6 +4,12 @@ import Language from './Language.class';
  */
 class ST {
   public static API_URL = 'https://webservices.securetrading.net';
+  public static CONTENT_TYPE = 'application/json';
+  public static HEADERS = {
+    'Accept': ST.CONTENT_TYPE,
+    'Content-Type': ST.CONTENT_TYPE
+  };
+  public static REQUEST_METHOD = 'post';
   public static TIMEOUT = 60000;
   private _id: string;
 
@@ -25,11 +31,8 @@ class ST {
   public sendRequest(requestObject: object) {
     return this.fetchTimeout(ST.API_URL, {
       body: JSON.stringify(requestObject),
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      method: 'post'
+      headers: ST.HEADERS,
+      method: ST.REQUEST_METHOD
     }).then(responseJson => {
       if ('json' in responseJson) {
         return responseJson.json();
