@@ -1,5 +1,5 @@
-import { elementClasses, elementStyles } from '../examples/example';
-import '../examples/example.scss'; // this is loaded only for example purposes
+import { elementClasses, elementStyles } from '../example';
+import '../example/style.scss'; // this is loaded only for example purposes
 import Element from './core/classes/Element.class';
 import Payment from './core/classes/Payment.class';
 import ST from './core/classes/ST.class';

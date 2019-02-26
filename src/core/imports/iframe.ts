@@ -1,9 +1,9 @@
 const appEndpoint = 'http://localhost:8080';
 
 const iframesEndpoints = {
-  cardNumber: 'http://localhost:8081',
-  expirationDate: 'http://localhost:8082',
-  securityCode: 'http://localhost:8083'
+  cardNumber: `${appEndpoint}/credit-card-number.html`,
+  expirationDate: `${appEndpoint}/expiration-date.html`,
+  securityCode: `${appEndpoint}/security-code.html`
 };
 
 const defaultIframeStyle: any = {

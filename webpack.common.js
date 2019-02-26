@@ -13,36 +13,58 @@ module.exports = {
     usedExports: true,
     splitChunks: {
       chunks: 'all',
+      name: true,
     },
   },
   entry: {
-    client: './src/index.ts',
+    main: './src/index.ts',
+    stjs: './src/stjs.ts',
+    example: './example/index.ts',
+    creditCardNumber: './src/components/credit-card-number/credit-card-number',
+    expirationDate: './src/components/expiration-date/expiration-date',
+    securityCode: './src/components/security-code/security-code'
   },
   output: {
     filename: '[name].bundle.js',
     path: path.join(__dirname, 'dist'),
-    publicPath: '/',
-  },
-  devServer: {
-    contentBase: './dist',
-    hot: true,
-    port: 8080,
+    publicPath: '',
   },
   plugins: [
     new CleanWebpackPlugin(['dist']),
     new HtmlWebpackPlugin({
-      title: 'Custom template',
-      template: './examples/example.html',
+      filename: 'credit-card-number.html',
+      template: './src/index.html',
+      templateParameters: {
+        partial: 'creditCardNumber'
+      }
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'expiration-date.html',
+      template: './src/index.html',
+      templateParameters: {
+        partial: 'expirationDate'
+      }
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'security-code.html',
+      template: './src/index.html',
+      templateParameters: {
+        partial: 'securityCode'
+      }
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: './example/index.html'
     }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
-      chunkFilename: '[id].css',
+      chunkFilename: '[id].css'
     }),
     new ManifestPlugin(),
     new StyleLintPlugin(),
     new FriendlyErrorsWebpackPlugin(),
     new TypedocWebpackPlugin({}),
-    new webpack.HotModuleReplacementPlugin(),
+    new webpack.HotModuleReplacementPlugin()
   ],
   module: {
     rules: [
@@ -52,17 +74,17 @@ module.exports = {
           'style-loader',
           { loader: 'css-loader', options: { importLoaders: 1 } },
           'postcss-loader',
-          'sass-loader',
-        ],
+          'sass-loader'
+        ]
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
-        use: ['file-loader'],
+        use: ['file-loader']
       },
       {
         test: /\.tsx?$/,
         use: 'ts-loader',
-        exclude: /node_modules/,
+        exclude: /node_modules/
       },
       {
         test: /\.ts$/,
@@ -70,14 +92,14 @@ module.exports = {
         use: [
           {
             loader: 'tslint-loader',
-            options: {},
-          },
+            options: {}
+          }
         ],
-        exclude: /node_modules/,
-      },
-    ],
+        exclude: /node_modules/
+      }
+    ]
   },
   resolve: {
-    extensions: ['.ts', '.js'],
-  },
+    extensions: ['.ts', '.js']
+  }
 };

@@ -1,5 +1,5 @@
-import './style.scss';
-import { inputListener } from '../../../src/core/listeners/input';
+import './expiration-date.scss';
+import { inputListener } from '../../core/listeners/input';
 
 inputListener(
   'expirationDate',
