@@ -3,7 +3,7 @@ import { inArray } from '../../../../src/core/helpers/utils';
 import {
   BrandDetailsType,
   cardTree,
-  brandMapping,
+  brandMapping
 } from '../../../../src/core/imports/cardtype';
 import BinLookup from '../../../../src/core/classes/validation/BinLookup.class';
 
@@ -29,23 +29,23 @@ each([
         'MAESTRO',
         'MASTERCARD',
         'PIBA',
-        'VISA',
-      ],
-    },
+        'VISA'
+      ]
+    }
   ],
   [{ supported: ['DELTA'] }, 'unsupported cardTree DELTA'],
   [
     { minMatch: 3, maxMatch: 20, supported: ['VISA'] },
-    { default: null, minMatch: 3, maxMatch: 20, supported: ['VISA'] },
+    { default: null, minMatch: 3, maxMatch: 20, supported: ['VISA'] }
   ],
   [
     { defaultCardType: 'AMEX', supported: ['AMEX', 'MASTERCARD'] },
-    { default: brandMapping['4'], supported: ['AMEX', 'MASTERCARD'] },
+    { default: brandMapping['4'], supported: ['AMEX', 'MASTERCARD'] }
   ],
   [
     { defaultCardType: 'AMEX', supported: ['VISA', 'MASTERCARD'] },
-    { default: null, supported: ['VISA', 'MASTERCARD'] },
-  ],
+    { default: null, supported: ['VISA', 'MASTERCARD'] }
+  ]
 ]).test(
   'BinLookup.constructor', // Check different options get set on config correctly
   (testConfig, expected) => {
@@ -72,7 +72,7 @@ test('BinLookup.getAllBrands', () => {
     'MAESTRO',
     'MASTERCARD',
     'PIBA',
-    'VISA',
+    'VISA'
   ]);
 });
 
@@ -86,7 +86,7 @@ each([
   ['', false],
   [undefined, false],
   [null, false],
-  [{}, false],
+  [{}, false]
 ]).test('BinLookup.isSupported', (cardTree, expected) => {
   const bl = new BinLookup();
   expect(bl.isSupported(cardTree)).toBe(expected);
@@ -95,7 +95,7 @@ each([
 each([
   ['VISA', { type: 'VISA', length: [13, 16, 19] }],
   ['MASTERCARD', { type: 'MASTERCARD', length: [16] }],
-  ['AMEX', { type: 'AMEX', length: [15] }],
+  ['AMEX', { type: 'AMEX', length: [15] }]
 ]).test('BinLookup.getCard', (type, expected) => {
   const bl = new BinLookup();
   expect(bl.getCard(type)).toMatchObject(expected); // WARNING: toMatchObject only tests the keys in the expected are a subset of the actual - to test against {} we MUST use toEqual
@@ -104,7 +104,7 @@ each([
     'format',
     'length',
     'luhn',
-    'type',
+    'type'
   ]);
 });
 
@@ -114,7 +114,7 @@ each([
   ['18', '180', false],
   ['3088', '3088-3094', true],
   ['3090', '3088-3094', true],
-  ['3096', '3088-3094', false],
+  ['3096', '3088-3094', false]
 ]).test('BinLookup.matchKey', (number, key, expected) => {
   const bl = new BinLookup();
   expect(bl.matchKey(number, key)).toBe(expected);
@@ -130,9 +130,9 @@ each([
     { defaultCardType: 'AMEX', supported: ['AMEX'] },
     '',
     '1',
-    brandMapping['4'],
+    brandMapping['4']
   ],
-  [{ defaultCardType: 'MASTERCARD', maxMatch: 3 }, '3456', null, nullType],
+  [{ defaultCardType: 'MASTERCARD', maxMatch: 3 }, '3456', null, nullType]
 ]).test(
   'BinLookup._lookup_withDefaults',
   (config, number, lookupResult, expected) => {
@@ -179,29 +179,29 @@ each([
             '60110': 8,
             '60112-60114': 8,
             '60118-60119': { '601186-601199': 8 },
-            '60117': { '601177-601179': 8, '601174': 8 },
+            '60117': { '601177-601179': 8, '601174': 8 }
           },
-          '6012': { '601281': 6 },
+          '6012': { '601281': 6 }
         },
         '62': {
           '622': { '622126-622925': 8 },
           '628': { '6282-6288': 8 },
-          '624-626': 8,
+          '624-626': 8
         },
         '63': {
           '630': {
             '63048': { '630487': 9, '630485': 9 },
-            '63049': { '630493-630494': 9, '630498': 9 },
-          },
+            '63049': { '630493-630494': 9, '630498': 9 }
+          }
         },
         '64': { '644-649': 8 },
         '65': 8,
-        '67': { '675': { '6759': { D: 7 } } },
-      },
+        '67': { '675': { '6759': { D: 7 } } }
+      }
     },
     8,
-    5,
-  ],
+    5
+  ]
 ]).test('BinLookup._lookup', (number, tree, expected, depth) => {
   const bl = new BinLookup();
   bl._lookup = jest.fn(bl._lookup); // mock the function as itself (so that we can spy how deep it has recursed)

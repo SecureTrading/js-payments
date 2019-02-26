@@ -13,8 +13,7 @@ const defaultIframeStyle: any = {
   margin: '0',
   minWidth: '100%',
   overflow: 'hidden',
-  padding: '0',
-  width: '1px'
+  padding: '0'
 };
 
 export { appEndpoint, iframesEndpoints, defaultIframeStyle };

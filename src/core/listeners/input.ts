@@ -1,3 +1,6 @@
+import Language from '../classes/Language.class';
+import ExpirationDate from '../classes/validation/ExpirationDate.class';
+import SecurityCode from '../classes/validation/SecurityCode.class';
 import { appEndpoint, iframesEndpoints } from '../imports/iframe';
 import { applyStylesToElement } from '../helpers/dom';
 
@@ -19,10 +22,12 @@ const returnInputEndpoint = (inputName: string) => {
 
 /**
  * Method for checking validity object and sending response to parent node
- * @param fieldId ID of field which is validated
+ * @param fieldInstance Instance of field which is validated
  */
-const inputValueListener = (fieldId: string) => {
-  let input = <HTMLInputElement>document.getElementById(fieldId);
+const submitFormListener = (fieldInstance: HTMLInputElement) => {
+  const errorContainer = document.getElementById(
+    'received-message'
+  ) as HTMLElement;
   window.addEventListener(
     'message',
     event => {
@@ -31,16 +36,33 @@ const inputValueListener = (fieldId: string) => {
         event.origin !== securityCode &&
         event.origin !== expirationDate
       ) {
-        let isFormValid = input.validity.valid;
+        const isFormValid = fieldInstance.validity.valid;
         if (isFormValid) {
           parent.postMessage(true, appEndpoint);
+          errorContainer.innerText = '';
         } else {
-          parent.postMessage({ isValid: input.validity.valid }, appEndpoint);
+          errorContainer.innerText =
+            Language.translations.VALIDATION_ERROR_FIELD_IS_REQUIRED;
         }
       }
     },
     true
   );
+};
+const inputValidationListener = (
+  fieldInstance: HTMLInputElement,
+  inputName: string
+) => {
+  fieldInstance.addEventListener('keypress', event => {
+    if (inputName === 'securityCode') {
+      if (!SecurityCode.isCharNumber(event)) {
+        event.preventDefault();
+      }
+    } else if (inputName === 'expirationDate') {
+      ExpirationDate.isDateValid(fieldInstance);
+      ExpirationDate.dateInputMask(fieldInstance, event);
+    }
+  });
 };
 
 /**
@@ -57,8 +79,10 @@ const inputListener = (
   iframeId: string
 ) => {
   document.addEventListener('DOMContentLoaded', () => {
+    const fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
+    inputValidationListener(fieldInstance, inputName);
     applyStylesToElement(iframeId, returnInputEndpoint(inputName));
-    inputValueListener(fieldId);
+    submitFormListener(fieldInstance);
   });
 };
 

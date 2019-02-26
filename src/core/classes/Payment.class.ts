@@ -1,4 +1,5 @@
 import { availablePayments } from '../imports/payments';
+import Language from './Language.class';
 
 /***
  * Class for Payment types definitions.
@@ -23,7 +24,11 @@ class Payment {
   public arePaymentsAvailable() {
     this._payments.map(item => {
       if (!this._availablePayments.includes(item)) {
-        console.error(`${item} payment type is not available !`);
+        console.error(
+          `${item} ${
+            Language.translations.VALIDATION_ERROR_PAYMENT_IS_NOT_AVAILABLE
+          }`
+        );
         return false;
       }
       return true;
