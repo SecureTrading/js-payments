@@ -15,10 +15,19 @@ html {
     color: red;
   }
 
-  .st-card-number,
-  .st-expiration-date,
-  .st-security-code {
-    width: 100%;
+  &__input {
+    color: rgb(73, 80, 87);
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    border-width: 0.1rem;
+    border-style: solid;
+    border-radius: 0.4rem;
+    border-color: rgb(206, 212, 218);
+    padding: 0.6rem 1.2rem 0.6rem 2rem;
+    line-height: 1.5;
+    background-color: rgb(255, 255, 255);
+    margin-left: 1rem;
   }
 
   &__submit {
@@ -26,7 +35,7 @@ html {
     color: #fff;
     background-image: none;
     border: none;
-    border-radius: 0.7rem;
+    border-radius: 0.4rem;
     padding: 0.8rem 1.2rem;
   }
 }
