@@ -3,15 +3,13 @@ import ExpirationDate from './../../../../src/core/classes/validation/Expiration
 
 // given
 describe('ExpirationDate class', () => {
-  let instance: object, expirationDateClass: any, validationClass: any;
+  let instance: object;
 
   // given
   describe('Class ExpirationDate instance', () => {
     // when
     beforeEach(() => {
       instance = new ExpirationDate();
-      expirationDateClass = ExpirationDate;
-      validationClass = Validation;
     });
     // then
     it('should new object be an instance od ExpirationDate and Validation class', () => {
