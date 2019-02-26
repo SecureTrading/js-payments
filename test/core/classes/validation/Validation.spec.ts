@@ -2,13 +2,10 @@ import each from 'jest-each';
 import CardNumber from '../../../../src/core/classes/validation/CardNumber.class';
 
 each([
-  [new KeyboardEvent('keypress', { key: 'a' }), 1],
-  [new KeyboardEvent('keypress', { key: '0' }), 0],
-  [new KeyboardEvent('keypress', { key: '"' }), 1],
-  [new KeyboardEvent('keypress', { key: 'Shift' }), 1]
-]).test('CardNumber.isCharNumber', (event, expected) => {
-  const cn = new CardNumber();
-  event.preventDefault = jest.fn();
-  CardNumber.isCharNumber(event);
-  expect(event.preventDefault).toHaveBeenCalledTimes(expected);
+  [new KeyboardEvent('keypress', { key: 'a' }), false],
+  [new KeyboardEvent('keypress', { key: '0' }), true],
+  [new KeyboardEvent('keypress', { key: '"' }), false],
+  [new KeyboardEvent('keypress', { key: 'Shift' }), false]
+]).test('CardNumber.isCharNumber', (event: KeyboardEvent, expected: any) => {
+  expect(CardNumber.isCharNumber(event)).toBe(expected);
 });
