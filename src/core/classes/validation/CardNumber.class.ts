@@ -42,7 +42,7 @@ class CardNumber extends Validation {
     );
     fieldInstance.addEventListener('keypress', (event: KeyboardEvent) => {
       if (CardNumber.isCharNumber(event)) {
-        return this.validateCreditCard(event.key);
+        fieldInstance.value = this.cardNumberFormat(fieldInstance.value);
       } else {
         event.preventDefault();
         return false;
@@ -50,9 +50,16 @@ class CardNumber extends Validation {
     });
   }
 
+  /**
+   *  Format input value of card number field due to card type regex
+   * @param cardNumber
+   */
   private cardNumberFormat(cardNumber: string) {
-    const regex = new RegExp(this.brand.format);
-    return regex.test(cardNumber);
+    const brand = this.binLookup.binLookup(cardNumber);
+    if (brand.format) {
+      const regex = new RegExp(brand.format);
+      return cardNumber.replace(regex, '$1 $1 $1 $1');
+    }
   }
 
   /**
