@@ -2,7 +2,7 @@ import { elementClasses, elementStyles } from '../examples/example';
 import '../examples/example.scss'; // this is loaded only for example purposes
 import Element from './core/classes/Element.class';
 import Payment from './core/classes/Payment.class';
-import ST from './core/classes/ST.class';
+import StTransport from './core/classes/StTransport.class';
 import { RegisterElements } from './core/helpers/mount';
 import { iframesEndpoints } from './core/imports/iframe';
 import { submitListener } from './core/listeners/submit';
@@ -12,7 +12,7 @@ import { submitListener } from './core/listeners/submit';
   submitListener('st-security-code-iframe', iframesEndpoints.securityCode);
   submitListener('st-expiration-date-iframe', iframesEndpoints.expirationDate);
 
-  const st = new ST('thisissupersecretidforaclient12344321');
+  const st = new StTransport({ jwt: 'thisissupersecretidforaclient12344321' });
   const payment = new Payment(
     ['ApplePay', 'Visa Checkout'],
     ['133456', '546565']
