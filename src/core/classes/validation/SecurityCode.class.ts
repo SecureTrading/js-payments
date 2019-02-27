@@ -1,5 +1,4 @@
 import Validation from './Validation.class';
-import { appEndpoint } from '../../imports/iframe';
 
 /**
  * Definition of security code validation
@@ -29,7 +28,7 @@ class SecurityCode extends Validation {
   private inputValidationListener(fieldId: string) {
     const fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
     SecurityCode.setMaxLengthAttribute(fieldInstance, this.securityCodeLength);
-    fieldInstance.addEventListener('keypress', event => {
+    fieldInstance.addEventListener('keypress', (event: KeyboardEvent) => {
       if (!SecurityCode.isCharNumber(event)) {
         event.preventDefault();
       }
@@ -37,19 +36,13 @@ class SecurityCode extends Validation {
   }
 
   /**
-   * Checks whether security code has proper length and its value corresponds with last N chars of credit card number
-   * It communicates with app on merchant side and it's local storage to check the status of security code
+   * Sets security code properties in localStorage
+   *
    * @param securityCode
    */
-  private isSecurityCodeValid(securityCode: string) {
-    const securityCodeProperties = {
-      length: securityCode.length,
-      value: securityCode
-    };
-    window.postMessage(securityCodeProperties, appEndpoint);
-    window.addEventListener('message', event => {
-      return event;
-    });
+  private static setSecurityCodeProperties(securityCode: string) {
+    localStorage.setItem('securityCodeValue', securityCode);
+    localStorage.setItem('securityCodeLength', String(securityCode.length));
   }
 }
 

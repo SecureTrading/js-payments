@@ -1,7 +1,5 @@
 import Language from '../classes/Language.class';
-import CardNumber from '../classes/validation/CardNumber.class';
 import ExpirationDate from '../classes/validation/ExpirationDate.class';
-import SecurityCode from '../classes/validation/SecurityCode.class';
 import { appEndpoint, iframesEndpoints } from '../imports/iframe';
 import { applyStylesToElement } from '../helpers/dom';
 
@@ -54,22 +52,12 @@ const inputValidationListener = (
   fieldInstance: HTMLInputElement,
   inputName: string
 ) => {
-  fieldInstance.addEventListener('keypress', event => {
+  fieldInstance.addEventListener('keypress', (event: KeyboardEvent) => {
     if (inputName === 'expirationDate') {
       ExpirationDate.isDateValid(fieldInstance);
       ExpirationDate.dateInputMask(fieldInstance, event);
-    } else if (inputName === 'cardNumber') {
-      const card = new CardNumber();
-      if (CardNumber.isCharNumber(event)) {
-        if (!card.validateCreditCard(fieldInstance.value)) {
-          fieldInstance.setAttribute(
-            'maxlength',
-            `${card.cardLength.slice(-1).pop()}`
-          );
-        }
-      } else {
-        event.preventDefault();
-      }
+    } else {
+      event.preventDefault();
     }
   });
 };

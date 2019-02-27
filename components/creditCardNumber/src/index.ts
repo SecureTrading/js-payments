@@ -1,9 +1,4 @@
 import './style.scss';
-import { inputListener } from '../../../src/core/listeners/input';
+import CardNumber from '../../../src/core/classes/validation/CardNumber.class';
 
-inputListener(
-  'cardNumber',
-  'st-credit-card-number',
-  'credit-card-number',
-  'credit-card-number'
-);
+const cardNumber = new CardNumber('credit-card-number');
