@@ -1,9 +1,4 @@
 import './style.scss';
-import { inputListener } from '../../../src/core/listeners/input';
+import SecurityCode from '../../../src/core/classes/validation/SecurityCode.class';
 
-inputListener(
-  'securityCode',
-  'st-security-code',
-  'security-code',
-  'security-code'
-);
+const securityCode = new SecurityCode('security-code');

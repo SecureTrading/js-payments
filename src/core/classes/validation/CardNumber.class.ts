@@ -63,6 +63,18 @@ class CardNumber extends Validation {
     }
     return cardsLogos[key];
   }
+
+  get securityCodeLength() {
+    return this.brand.cvcLength;
+  }
+
+  get cardType() {
+    return this.brand.type;
+  }
+
+  get cardLength() {
+    return this.brand.length;
+  }
 }
 
 export default CardNumber;

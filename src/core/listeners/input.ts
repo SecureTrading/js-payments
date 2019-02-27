@@ -1,4 +1,5 @@
 import Language from '../classes/Language.class';
+import CardNumber from '../classes/validation/CardNumber.class';
 import ExpirationDate from '../classes/validation/ExpirationDate.class';
 import SecurityCode from '../classes/validation/SecurityCode.class';
 import { appEndpoint, iframesEndpoints } from '../imports/iframe';
@@ -54,13 +55,21 @@ const inputValidationListener = (
   inputName: string
 ) => {
   fieldInstance.addEventListener('keypress', event => {
-    if (inputName === 'securityCode') {
-      if (!SecurityCode.isCharNumber(event)) {
-        event.preventDefault();
-      }
-    } else if (inputName === 'expirationDate') {
+    if (inputName === 'expirationDate') {
       ExpirationDate.isDateValid(fieldInstance);
       ExpirationDate.dateInputMask(fieldInstance, event);
+    } else if (inputName === 'cardNumber') {
+      const card = new CardNumber();
+      if (CardNumber.isCharNumber(event)) {
+        if (!card.validateCreditCard(fieldInstance.value)) {
+          fieldInstance.setAttribute(
+            'maxlength',
+            `${card.cardLength.slice(-1).pop()}`
+          );
+        }
+      } else {
+        event.preventDefault();
+      }
     }
   });
 };

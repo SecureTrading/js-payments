@@ -14,14 +14,6 @@ class Validation implements IValidation {
     };
   }
 
-  getValidity(fieldName: string) {
-    return this._isValid[fieldName];
-  }
-
-  setValidityOfField(fieldName: string) {
-    this._isValid[fieldName] = !this._isValid[fieldName];
-  }
-
   isFormValid() {
     this._isValid.some((field: boolean) => field === true);
   }
@@ -34,6 +26,23 @@ class Validation implements IValidation {
     let key: string = event.key;
     const regex = new RegExp(Validation.ONLY_DIGITS_REGEXP);
     return regex.test(key);
+  }
+
+  /**
+   * Returns last N chars of given input
+   * @param cardNumber
+   * @param securityCodeLength
+   */
+
+  public getLastNChars(cardNumber: string, securityCodeLength: number) {
+    return cardNumber.slice(-securityCodeLength);
+  }
+
+  public static setMaxLengthAttribute(
+    fieldInstance: HTMLInputElement,
+    length: number
+  ) {
+    fieldInstance.setAttribute('maxlength', String(length));
   }
 }
 
