@@ -1,5 +1,4 @@
 import Language from '../classes/Language.class';
-import ExpirationDate from '../classes/validation/ExpirationDate.class';
 import { appEndpoint, iframesEndpoints } from '../imports/iframe';
 import { applyStylesToElement } from '../helpers/dom';
 
@@ -48,39 +47,3 @@ const submitFormListener = (fieldInstance: HTMLInputElement) => {
     true
   );
 };
-const inputValidationListener = (
-  fieldInstance: HTMLInputElement,
-  inputName: string
-) => {
-  fieldInstance.addEventListener('keypress', (event: KeyboardEvent) => {
-    if (inputName === 'expirationDate') {
-      ExpirationDate.isDateValid(fieldInstance);
-      ExpirationDate.dateInputMask(fieldInstance, event);
-    } else {
-      event.preventDefault();
-    }
-  });
-};
-
-/**
- * Method aggregating applying styles and validating field
- * @param inputName
- * @param formId
- * @param fieldId
- * @param iframeId
- */
-const inputListener = (
-  inputName: string,
-  formId: string,
-  fieldId: string,
-  iframeId: string
-) => {
-  document.addEventListener('DOMContentLoaded', () => {
-    const fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
-    inputValidationListener(fieldInstance, inputName);
-    applyStylesToElement(iframeId, returnInputEndpoint(inputName));
-    submitFormListener(fieldInstance);
-  });
-};
-
-export { inputListener };

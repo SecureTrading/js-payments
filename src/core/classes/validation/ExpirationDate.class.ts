@@ -1,4 +1,5 @@
 import Validation from './Validation.class';
+import { appEndpoint } from '../../imports/iframe';
 
 /**
  * Defines specific Expiration Date validation methods and attributes
@@ -8,8 +9,25 @@ class ExpirationDate extends Validation {
   private static DATE_SLASH_PLACE = 2;
   private static EXPIRATION_DATE_REGEXP = '^(0[1-9]|1[0-2])\\/([0-9]{2})$';
 
-  constructor() {
+  constructor(fieldId: string) {
     super();
+    this.inputValidationListener(fieldId);
+  }
+
+  /**
+   * Listens to keypress action on credit card field and attach validation methods
+   * @param fieldId
+   */
+  private inputValidationListener(fieldId: string) {
+    const fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
+    fieldInstance.addEventListener('keypress', (event: KeyboardEvent) => {
+      ExpirationDate.dateInputMask(fieldInstance, event);
+    });
+    window.addEventListener('submit', () => {
+      if (ExpirationDate.isDateValid(fieldInstance)) {
+        window.postMessage(fieldInstance.value, appEndpoint);
+      }
+    });
   }
 
   /**
@@ -25,7 +43,6 @@ class ExpirationDate extends Validation {
     if (length < ExpirationDate.DATE_MAX_LENGTH) {
       if (!ExpirationDate.isCharNumber(event)) {
         event.preventDefault();
-        return false;
       }
 
       if (length === ExpirationDate.DATE_SLASH_PLACE) {
@@ -33,7 +50,6 @@ class ExpirationDate extends Validation {
       }
     } else {
       event.preventDefault();
-      return false;
     }
   }
 
