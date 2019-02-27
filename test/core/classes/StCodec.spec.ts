@@ -1,13 +1,14 @@
 import each from 'jest-each';
-import StRequest from '../../../src/core/classes/StRequest.class';
+import Language from '../../../src/core/classes/Language.class';
+import { StCodec } from '../../../src/core/classes/StCodec.class';
 
-describe('StRequest class', () => {
+describe('StCodec class', () => {
   const requestid = expect.stringMatching(/^J-[\da-z]{8}$/);
-  let str: StRequest;
+  let str: StCodec;
 
   describe('Method _createRequestId', () => {
     beforeEach(() => {
-      str = new StRequest('');
+      str = new StCodec('');
     });
     it('generates a request id', () => {
       expect(str._createRequestId()).toEqual(requestid);
@@ -25,20 +26,7 @@ describe('StRequest class', () => {
   describe('Method buildRequestObject', () => {
     const jwt = 'j.w.t';
     beforeEach(() => {
-      str = new StRequest(jwt);
-    });
-
-    it('should refuse to build a request with no data', () => {
-      expect(str.buildRequestObject({}, 'AUTH')).toEqual(false);
-    });
-
-    it('should refuse to build a request with an invalid rtd', () => {
-      expect(
-        str.buildRequestObject(
-          { pan: '4111111111111111' },
-          'LARGEHADRONCOLLIDER'
-        )
-      ).toEqual(false);
+      str = new StCodec(jwt);
     });
 
     each([
@@ -50,21 +38,39 @@ describe('StRequest class', () => {
         {
           jwt: '1.2.3',
           requestid: 'number1',
-          requesttypedescription: 'CHACHETOKENISE'
+          requesttypedescription: 'CACHETOKENISE'
         },
-        {}
+        { requesttypedescription: 'CACHETOKENISE' }
       ]
     ]).it(
       'should build the request for a valid object',
       (requestObject, expected) => {
-        const requesttypedescription = 'AUTH';
-        expect(
-          str.buildRequestObject(requestObject, requesttypedescription)
-        ).toEqual({
-          request: [{ jwt, requestid, requesttypedescription, ...expected }],
-          version: StRequest.VERSION
+        expect(str.buildRequestObject(requestObject)).toEqual({
+          request: [{ jwt, requestid, ...expected }],
+          version: StCodec.VERSION
         });
       }
     );
   });
+
+  describe('Method encode', () => {
+    it('should refuse to build a request with no data', () => {
+      expect(() => str.encode({ requesttypedescription: 'AUTH' })).toThrow(
+        Error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST)
+      );
+    });
+
+    it('should refuse to build a request with an invalid rtd', () => {
+      expect(() =>
+        str.encode({
+          pan: '4111111111111111',
+          requesttypedescription: 'LARGEHADRONCOLLIDER'
+        })
+      ).toThrow(
+        Error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST)
+      );
+    });
+  });
+
+  describe('Method decode', () => {});
 });

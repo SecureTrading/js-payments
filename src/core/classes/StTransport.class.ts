@@ -1,53 +1,56 @@
 import Language from './Language.class';
+import { IStRequest, StCodec } from './StCodec.class';
+
+interface IStTransportParams {
+  jwt: string;
+  gatewayUrl?: string;
+}
+
 /***
  * Establishes connection with ST, defines client.
  */
-class ST {
-  public static API_URL = 'https://webservices.securetrading.net';
-  public static CONTENT_TYPE = 'application/json';
-  public static HEADERS = {
-    'Accept': ST.CONTENT_TYPE,
-    'Content-Type': ST.CONTENT_TYPE
+class StTransport {
+  public static GATEWAY_URL = 'https://webservices.securetrading.net';
+  public static DEFAULT_FETCH_OPTIONS = {
+    headers: {
+      'Accept': StCodec.CONTENT_TYPE,
+      'Content-Type': StCodec.CONTENT_TYPE
+    },
+    method: 'post'
   };
-  public static REQUEST_METHOD = 'post';
   public static TIMEOUT = 60000;
-  private _id: string;
+  private gatewayUrl: string;
+  private _codec: StCodec;
 
-  get id(): string {
-    return this._id;
+  public get codec() {
+    return this._codec;
   }
 
-  set id(value: string) {
-    this._id = value;
-  }
-
-  constructor(id: string) {
-    this._id = id;
+  constructor(params: IStTransportParams) {
+    this.gatewayUrl =
+      'gatewayUrl' in params ? params.gatewayUrl : StTransport.GATEWAY_URL;
+    this._codec = new StCodec(params.jwt);
   }
 
   /**
    * Perform a JSON API request with ST
    */
-  public sendRequest(requestObject: object) {
-    return this.fetchTimeout(ST.API_URL, {
-      body: JSON.stringify(requestObject),
-      headers: ST.HEADERS,
-      method: ST.REQUEST_METHOD
-    }).then(responseJson => {
-      if ('json' in responseJson) {
-        return responseJson.json();
-      }
-      throw new Error(
-        Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE
-      );
-    });
+  public sendRequest(requestObject: IStRequest) {
+    return this.fetchTimeout(this.gatewayUrl, {
+      ...StTransport.DEFAULT_FETCH_OPTIONS,
+      body: this._codec.encode(requestObject)
+    }).then(responseObject => this._codec.decode(responseObject));
   }
 
   /**
    * Fetch with a timeout to reject the request
    * We probably want to update this to use an AbortControllor once this is standardised in the future
    */
-  public fetchTimeout(url: string, options: object, timeout = ST.TIMEOUT) {
+  public fetchTimeout(
+    url: string,
+    options: object,
+    timeout = StTransport.TIMEOUT
+  ) {
     return Promise.race([
       fetch(url, options),
       new Promise((_, reject) =>
@@ -63,4 +66,4 @@ class ST {
   }
 }
 
-export default ST;
+export default StTransport;

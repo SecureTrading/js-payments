@@ -5,16 +5,18 @@ const customGlobal: GlobalWithFetchMock = global as GlobalWithFetchMock;
 customGlobal.fetch = require('jest-fetch-mock');
 customGlobal.fetchMock = customGlobal.fetch;
 import Language from '../../../src/core/classes/Language.class';
-import ST from '../../../src/core/classes/ST.class';
+import StTransport from '../../../src/core/classes/StTransport.class';
 
-describe('ST class', () => {
+describe('StTransport class', () => {
+  const DEFAULT_PARAMS = { jwt: 'j.w.t' };
   describe('Method sendRequest', () => {
-    let st: ST;
+    let st: StTransport;
     let mockFT: jest.Mock;
 
     beforeEach(() => {
-      st = new ST('id');
+      st = new StTransport(DEFAULT_PARAMS);
       st.fetchTimeout = jest.fn();
+      st.codec.encode = jest.fn(x => JSON.stringify(x));
       mockFT = st.fetchTimeout as jest.Mock;
     });
 
@@ -24,16 +26,17 @@ describe('ST class', () => {
         mockFT.mockReturnValue(
           resolvingPromise({
             json: () => {
-              errorcode: 0;
+              return {
+                errorcode: 0
+              };
             }
           })
         );
         await st.sendRequest(requestObject);
         expect(st.fetchTimeout).toHaveBeenCalledTimes(1);
-        expect(st.fetchTimeout).toHaveBeenCalledWith(ST.API_URL, {
-          body: JSON.stringify(requestObject),
-          headers: ST.HEADERS,
-          method: ST.REQUEST_METHOD
+        expect(st.fetchTimeout).toHaveBeenCalledWith(StTransport.GATEWAY_URL, {
+          ...StTransport.DEFAULT_FETCH_OPTIONS,
+          body: JSON.stringify(requestObject)
         });
       }
     );
@@ -46,7 +49,9 @@ describe('ST class', () => {
       [rejectingPromise(TimeoutError), TimeoutError]
     ]).it('should reject invalid responses', async (mockFetch, expected) => {
       mockFT.mockReturnValue(mockFetch);
-      await expect(st.sendRequest({})).rejects.toEqual(expected);
+      await expect(
+        st.sendRequest({ requesttypedescription: 'AUTH' })
+      ).rejects.toEqual(expected);
     });
 
     each([
@@ -62,15 +67,17 @@ describe('ST class', () => {
       ]
     ]).it('should decode the json response', async (mockFetch, expected) => {
       mockFT.mockReturnValue(mockFetch);
-      await expect(st.sendRequest({})).resolves.toEqual(expected);
+      await expect(
+        st.sendRequest({ requesttypedescription: 'AUTH' })
+      ).resolves.toEqual(expected);
     });
   });
 
   describe('Method fetchTimeout', () => {
-    let st: ST;
+    let st: StTransport;
 
     beforeEach(() => {
-      st = new ST('id');
+      st = new StTransport(DEFAULT_PARAMS);
     });
     afterEach(() => {
       fetchMock.resetMocks();
