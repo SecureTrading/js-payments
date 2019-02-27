@@ -31,7 +31,7 @@ class StCodec {
     );
   }
 
-  public buildRequestObject(requestData: object) {
+  public buildRequestObject(requestData: object): object {
     return {
       request: [
         {

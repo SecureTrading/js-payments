@@ -39,7 +39,7 @@ class StTransport {
     return this.fetchTimeout(this.gatewayUrl, {
       ...StTransport.DEFAULT_FETCH_OPTIONS,
       body: this._codec.encode(requestObject)
-    }).then(responseObject => this._codec.decode(responseObject));
+    }).then(this._codec.decode);
   }
 
   /**

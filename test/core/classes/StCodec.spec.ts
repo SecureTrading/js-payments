@@ -4,12 +4,14 @@ import { StCodec } from '../../../src/core/classes/StCodec.class';
 
 describe('StCodec class', () => {
   const requestid = expect.stringMatching(/^J-[\da-z]{8}$/);
+  const jwt = 'j.w.t';
   let str: StCodec;
 
   describe('Method _createRequestId', () => {
     beforeEach(() => {
-      str = new StCodec('');
+      str = new StCodec(jwt);
     });
+
     it('generates a request id', () => {
       expect(str._createRequestId()).toEqual(requestid);
     });
@@ -24,7 +26,6 @@ describe('StCodec class', () => {
   });
 
   describe('Method buildRequestObject', () => {
-    const jwt = 'j.w.t';
     beforeEach(() => {
       str = new StCodec(jwt);
     });
@@ -54,6 +55,22 @@ describe('StCodec class', () => {
   });
 
   describe('Method encode', () => {
+    beforeEach(() => {
+      str = new StCodec(jwt);
+    });
+
+    each([
+      [
+        { pan: '4111111111111111', requesttypedescription: 'AUTH' },
+        expect.stringMatching(
+          /^{"request":\[{"pan":"4111111111111111","requesttypedescription":"AUTH","jwt":"j.w.t","requestid":"J-[\da-z]{8}"}\],"version":"1.00"}$/
+        )
+      ]
+    ]).it('should encode valid data', (request, expected) => {
+      str.buildRequestObject = jest.fn(str.buildRequestObject);
+      expect(str.encode(request)).toEqual(expected);
+      expect(str.buildRequestObject).toHaveBeenCalledWith(request);
+    });
     it('should refuse to build a request with no data', () => {
       expect(() => str.encode({ requesttypedescription: 'AUTH' })).toThrow(
         Error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST)
@@ -72,5 +89,25 @@ describe('StCodec class', () => {
     });
   });
 
-  describe('Method decode', () => {});
+  describe('Method decode', () => {
+    beforeEach(() => {
+      str = new StCodec(jwt);
+    });
+
+    it('should decode a valid response', () => {
+      expect(
+        str.decode({
+          json: () => {
+            return { errorcode: 0 };
+          }
+        })
+      ).toEqual({ errorcode: 0 });
+    });
+
+    it('should error an invalid response', () => {
+      expect(str.decode({})).toThrow(
+        Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE)
+      );
+    });
+  });
 });
