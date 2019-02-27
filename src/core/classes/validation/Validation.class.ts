@@ -34,7 +34,7 @@ class Validation implements IValidation {
    * @param securityCodeLength
    */
 
-  public getLastNChars(cardNumber: string, securityCodeLength: number) {
+  public static getLastNChars(cardNumber: string, securityCodeLength: number) {
     return cardNumber.slice(-securityCodeLength);
   }
 

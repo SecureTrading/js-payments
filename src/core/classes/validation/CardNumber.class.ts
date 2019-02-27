@@ -2,7 +2,6 @@ import { BrandDetailsType } from '../../imports/cardtype';
 import { cardsLogos } from '../../imports/images';
 import Validation from './Validation.class';
 import BinLookup from './BinLookup.class';
-import { appEndpoint } from '../../imports/iframe';
 
 /**
  * Card number validation class
@@ -42,12 +41,13 @@ class CardNumber extends Validation {
     );
     fieldInstance.addEventListener('keypress', (event: KeyboardEvent) => {
       if (CardNumber.isCharNumber(event)) {
-        fieldInstance.value = this.cardNumberFormat(fieldInstance.value);
+        return this.cardNumberFormat(fieldInstance.value);
       } else {
         event.preventDefault();
         return false;
       }
     });
+    this.cardNumberSecurityCodeMatch(fieldInstance.value);
   }
 
   /**
@@ -116,18 +116,26 @@ class CardNumber extends Validation {
     return cardsLogos[key];
   }
 
-  private getSecurityCodeLength() {
-    return this.brand.cvcLength;
-  }
-
+  /**
+   * Method triggered on submit whole form - checks if cardNumber is valid and checks whether security code corresponds with card number
+   * @param cardNumber
+   */
   public cardNumberSecurityCodeMatch(cardNumber: string) {
-    const cardNumberProperties = {
-      cardNumber,
-      securityCodeLength: this.brand.cvcLength
-    };
-    window.postMessage(cardNumberProperties, appEndpoint);
-    window.addEventListener('Card number and security code', event => {
-      console.log(event);
+    window.addEventListener('submit', () => {
+      if (this.validateCreditCard(cardNumber)) {
+        const securityCode = localStorage.getItem('securityCode');
+        const cardNumberLastChars = CardNumber.getLastNChars(
+          cardNumber,
+          this.brand.cvcLength[0]
+        );
+        if (
+          securityCode.length === this.brand.cvcLength[0] &&
+          securityCode === cardNumberLastChars
+        ) {
+          return true;
+        }
+      }
+      return false;
     });
   }
 }

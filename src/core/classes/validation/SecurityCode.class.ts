@@ -31,6 +31,8 @@ class SecurityCode extends Validation {
     fieldInstance.addEventListener('keypress', (event: KeyboardEvent) => {
       if (!SecurityCode.isCharNumber(event)) {
         event.preventDefault();
+      } else {
+        SecurityCode.setSecurityCodeProperties(fieldInstance.value);
       }
     });
   }
@@ -41,8 +43,7 @@ class SecurityCode extends Validation {
    * @param securityCode
    */
   private static setSecurityCodeProperties(securityCode: string) {
-    localStorage.setItem('securityCodeValue', securityCode);
-    localStorage.setItem('securityCodeLength', String(securityCode.length));
+    localStorage.setItem('securityCode', securityCode);
   }
 }
 
