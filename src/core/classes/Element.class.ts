@@ -43,14 +43,6 @@ class Element {
     this._name = value;
   }
 
-  get iframeSrc(): string {
-    return this._iframeSrc;
-  }
-
-  set iframeSrc(value: string) {
-    this._iframeSrc = value;
-  }
-
   /**
    * Method for creating DOM elements
    * @param type Type of element which we are creating
