@@ -26,7 +26,17 @@ class CardNumber extends Validation {
     super();
     this.binLookup = new BinLookup();
     this.brand = null;
+    const fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
+    CardNumber.setMaxLengthAttribute(
+      fieldInstance,
+      CardNumber.DEFAULT_CARD_LENGTH
+    );
+    this.inputValidation(fieldId);
+  }
+
+  private inputValidation(fieldId: string) {
     this.inputValidationListener(fieldId);
+    this.postMessageEventListener(fieldId);
   }
 
   /**
@@ -35,19 +45,31 @@ class CardNumber extends Validation {
    */
   private inputValidationListener(fieldId: string) {
     const fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
-    CardNumber.setMaxLengthAttribute(
-      fieldInstance,
-      CardNumber.DEFAULT_CARD_LENGTH
-    );
     fieldInstance.addEventListener('keypress', (event: KeyboardEvent) => {
-      if (CardNumber.isCharNumber(event)) {
-        return this.cardNumberFormat(fieldInstance.value);
-      } else {
+      if (!CardNumber.isCharNumber(event)) {
         event.preventDefault();
         return false;
       }
+      return true;
     });
-    this.cardNumberSecurityCodeMatch(fieldInstance.value);
+  }
+
+  private postMessageEventListener(fieldId: string) {
+    const fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
+    window.addEventListener(
+      'message',
+      () => {
+        if (CardNumber.setErrorMessage(fieldInstance)) {
+          if (this.validateCreditCard(fieldInstance.value)) {
+            localStorage.setItem('cardNumber', fieldInstance.value);
+            fieldInstance.classList.remove('error');
+          } else {
+            console.log('Card number is invalid');
+          }
+        }
+      },
+      false
+    );
   }
 
   /**
