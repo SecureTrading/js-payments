@@ -44,6 +44,41 @@ class Validation implements IValidation {
   ) {
     fieldInstance.setAttribute('maxlength', String(length));
   }
+
+  public static setErrorMessage(fieldInstance: HTMLInputElement) {
+    let {
+      valueMissing,
+      patternMismatch,
+      tooShort,
+      valid
+    } = fieldInstance.validity;
+    if (!valid) {
+      fieldInstance.classList.add('error');
+      let errorContainer = document.createElement('div');
+      errorContainer.setAttribute('id', 'st-form__error');
+      if (valueMissing) {
+        errorContainer.innerText = 'Value missing';
+        fieldInstance.parentNode.insertBefore(
+          errorContainer,
+          fieldInstance.nextSibling
+        );
+      } else if (patternMismatch) {
+        errorContainer.innerText = 'Pattern mismatch';
+        fieldInstance.parentNode.insertBefore(
+          errorContainer,
+          fieldInstance.nextSibling
+        );
+      } else if (tooShort) {
+        errorContainer.innerText = 'Value too short';
+        fieldInstance.parentNode.insertBefore(
+          errorContainer,
+          fieldInstance.nextSibling
+        );
+      }
+    } else {
+      return true;
+    }
+  }
 }
 
 export default Validation;

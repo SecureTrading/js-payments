@@ -11,6 +11,7 @@ class ExpirationDate extends Validation {
   constructor(fieldId: string) {
     super();
     this.inputValidation(fieldId);
+    localStorage.setItem('expirationDateValidity', 'false');
   }
 
   /**
@@ -19,6 +20,10 @@ class ExpirationDate extends Validation {
    */
   private inputValidation(fieldId: string) {
     const fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
+    fieldInstance.setAttribute(
+      'pattern',
+      ExpirationDate.EXPIRATION_DATE_REGEXP
+    );
     this.keypressEventListener(fieldInstance);
     this.postMessageEventListener(fieldInstance);
   }
@@ -41,11 +46,9 @@ class ExpirationDate extends Validation {
     window.addEventListener(
       'message',
       () => {
-        if (ExpirationDate.isDateValid(fieldInstance)) {
+        if (ExpirationDate.setErrorMessage(fieldInstance)) {
           localStorage.setItem('expirationDate', fieldInstance.value);
           fieldInstance.classList.remove('error');
-        } else {
-          fieldInstance.classList.add('error');
         }
       },
       false
@@ -76,16 +79,6 @@ class ExpirationDate extends Validation {
       event.preventDefault();
       return false;
     }
-  }
-
-  /**
-   * Checks whether date has valid format (MM/YY)
-   * @param fieldInstance
-   */
-  public static isDateValid(fieldInstance: HTMLInputElement) {
-    const { value } = fieldInstance;
-    const dateRegexp = new RegExp(ExpirationDate.EXPIRATION_DATE_REGEXP);
-    return dateRegexp.test(value);
   }
 }
 

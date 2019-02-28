@@ -121,19 +121,19 @@ class CardNumber extends Validation {
    * @param cardNumber
    */
   public cardNumberSecurityCodeMatch(cardNumber: string) {
-    window.addEventListener('submit', () => {
+    window.addEventListener('message', () => {
       if (this.validateCreditCard(cardNumber)) {
         const securityCode = localStorage.getItem('securityCode');
-        const cardNumberLastChars = CardNumber.getLastNChars(
-          cardNumber,
-          this.brand.cvcLength[0]
-        );
-        if (
-          securityCode.length === this.brand.cvcLength[0] &&
-          securityCode === cardNumberLastChars
-        ) {
-          return true;
-        }
+        // const cardNumberLastChars = CardNumber.getLastNChars(
+        //   cardNumber,
+        //   this.brand.cvcLength[0]
+        // );
+        // if (
+        //   securityCode.length === this.brand.cvcLength[0] &&
+        //   securityCode === cardNumberLastChars
+        // ) {
+        //   return true;
+        // }
       }
       return false;
     });

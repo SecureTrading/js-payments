@@ -17,7 +17,9 @@ class SecurityCode extends Validation {
 
   constructor(fieldId: string) {
     super();
+    const fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
     this.securityCodeLength = SecurityCode.DEFAULT_SECURITY_CODE_LENGTH;
+    fieldInstance.setAttribute('minlength', String(this.securityCodeLength));
     this.inputValidationListener(fieldId);
   }
 
@@ -32,7 +34,10 @@ class SecurityCode extends Validation {
       if (!SecurityCode.isCharNumber(event)) {
         event.preventDefault();
       } else {
-        SecurityCode.setSecurityCodeProperties(fieldInstance.value);
+        if (SecurityCode.setErrorMessage(fieldInstance)) {
+          SecurityCode.setSecurityCodeProperties(fieldInstance.value);
+          fieldInstance.classList.remove('error');
+        }
       }
     });
   }
