@@ -51,17 +51,6 @@ class Element {
     this._iframeSrc = value;
   }
 
-  constructor() {
-    this._name = '';
-    this._style = {
-      color: '#fff',
-      fontFamily: 'Lato, sans-serif',
-      fontSize: '16px',
-      fontSmoothing: 'antialiased',
-      fontWeight: '600'
-    };
-  }
-
   /**
    * Method for creating DOM elements
    * @param type Type of element which we are creating
@@ -73,6 +62,17 @@ class Element {
     element.setAttribute('class', id);
     return element;
   };
+
+  constructor() {
+    this._name = '';
+    this._style = {
+      color: '#fff',
+      fontFamily: 'Lato, sans-serif',
+      fontSize: '16px',
+      fontSmoothing: 'antialiased',
+      fontWeight: '600'
+    };
+  }
 
   /***
    * Method for creating element in iframe
