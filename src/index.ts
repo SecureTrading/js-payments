@@ -1,14 +1,8 @@
 import Element from './core/classes/Element.class';
-import Payment from './core/classes/Payment.class';
 import ST from './core/classes/ST.class';
 
 (() => {
   const st = new ST();
-  const payment = new Payment(
-    ['ApplePay', 'Visa Checkout'],
-    ['133456', '546565']
-  );
-
   const cardNumber = new Element();
   const securityCode = new Element();
   const expirationDate = new Element();

@@ -64,7 +64,6 @@ class Element extends ST {
 
   public create(elementName: string) {
     this._name = elementName;
-    console.log(Element.getComponentAddress(elementName));
     this._iframeSrc = Element.getComponentAddress(elementName);
   }
 
