@@ -13,6 +13,8 @@ class CardNumber extends Validation {
   private _cardType: string;
   private _cardLength: [];
   private static DEFAULT_CARD_LENGTH = 16;
+  private static STANDARD_CARD_FORMAT =
+    '(\\d{1,4})(\\d{1,4})?(\\d{1,4})?(\\d+)?';
 
   get cardType(): string {
     return this._cardType;
@@ -27,9 +29,15 @@ class CardNumber extends Validation {
     this.binLookup = new BinLookup();
     this.brand = null;
     const fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
-    CardNumber.setMaxLengthAttribute(
+    CardNumber.setValidationAttribute(
       fieldInstance,
-      CardNumber.DEFAULT_CARD_LENGTH
+      'maxlength',
+      String(CardNumber.DEFAULT_CARD_LENGTH)
+    );
+    CardNumber.setValidationAttribute(
+      fieldInstance,
+      'minlength',
+      String(CardNumber.DEFAULT_CARD_LENGTH)
     );
     this.inputValidation(fieldId);
   }
@@ -49,8 +57,10 @@ class CardNumber extends Validation {
       if (!CardNumber.isCharNumber(event)) {
         event.preventDefault();
         return false;
+      } else {
+        fieldInstance.setAttribute('value', this.cardNumberFormat(event.key));
+        return true;
       }
-      return true;
     });
   }
 
@@ -59,7 +69,9 @@ class CardNumber extends Validation {
     window.addEventListener(
       'message',
       () => {
-        if (CardNumber.setErrorMessage(fieldInstance, 'card-number-error')) {
+        if (
+          CardNumber.setInputErrorMessage(fieldInstance, 'card-number-error')
+        ) {
           if (this.validateCreditCard(fieldInstance.value)) {
             localStorage.setItem('cardNumber', fieldInstance.value);
             fieldInstance.classList.remove('error');
@@ -82,8 +94,13 @@ class CardNumber extends Validation {
   private cardNumberFormat(cardNumber: string) {
     const brand = this.binLookup.binLookup(cardNumber);
     if (brand.format) {
-      const regex = new RegExp(brand.format);
-      return cardNumber.replace(regex, '$1 $1 $1 $1');
+      return cardNumber
+        .replace(/\W/gi, '')
+        .replace(new RegExp(brand.format), '$1 ');
+    } else {
+      return cardNumber
+        .replace(/\W/gi, '')
+        .replace(new RegExp(CardNumber.STANDARD_CARD_FORMAT), '$1 ');
     }
   }
 

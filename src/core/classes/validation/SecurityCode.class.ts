@@ -30,13 +30,25 @@ class SecurityCode extends Validation {
    */
   private inputValidationListener(fieldId: string) {
     const fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
-    SecurityCode.setMaxLengthAttribute(fieldInstance, this.securityCodeLength);
+    SecurityCode.setValidationAttribute(
+      fieldInstance,
+      'maxlength',
+      String(this.securityCodeLength)
+    );
+    SecurityCode.setValidationAttribute(
+      fieldInstance,
+      'minlength',
+      String(this.securityCodeLength)
+    );
     fieldInstance.addEventListener('keypress', (event: KeyboardEvent) => {
       if (!SecurityCode.isCharNumber(event)) {
         event.preventDefault();
       } else {
         if (
-          SecurityCode.setErrorMessage(fieldInstance, 'security-code-error')
+          SecurityCode.setInputErrorMessage(
+            fieldInstance,
+            'security-code-error'
+          )
         ) {
           SecurityCode.setSecurityCodeProperties(fieldInstance.value);
           fieldInstance.classList.remove('error');
@@ -54,7 +66,10 @@ class SecurityCode extends Validation {
           localStorage.getItem('securityCodeLength')
         );
         if (
-          SecurityCode.setErrorMessage(fieldInstance, 'security-code-error')
+          SecurityCode.setInputErrorMessage(
+            fieldInstance,
+            'security-code-error'
+          )
         ) {
           if (
             SecurityCode.cardNumberSecurityCodeMatch(

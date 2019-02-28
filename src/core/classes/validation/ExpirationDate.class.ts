@@ -47,7 +47,10 @@ class ExpirationDate extends Validation {
       'message',
       () => {
         if (
-          ExpirationDate.setErrorMessage(fieldInstance, 'expiration-date-error')
+          ExpirationDate.setInputErrorMessage(
+            fieldInstance,
+            'expiration-date-error'
+          )
         ) {
           localStorage.setItem('expirationDate', fieldInstance.value);
           fieldInstance.classList.remove('error');

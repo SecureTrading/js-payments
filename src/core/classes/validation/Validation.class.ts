@@ -1,3 +1,11 @@
+import Language from './../Language.class';
+
+const {
+  VALIDATION_ERROR_FIELD_IS_REQUIRED,
+  VALIDATION_ERROR_VALUE_TOO_SHORT,
+  VALIDATION_ERROR_PATTERN_MISMATCH
+} = Language.translations;
+
 class Validation {
   private static ONLY_DIGITS_REGEXP = '^\\d+$';
 
@@ -16,19 +24,30 @@ class Validation {
    * @param cardNumber
    * @param securityCodeLength
    */
-
   public static getLastNChars(cardNumber: string, securityCodeLength: number) {
     return cardNumber.slice(-securityCodeLength);
   }
 
-  public static setMaxLengthAttribute(
+  /**
+   * Method
+   * @param fieldInstance
+   * @param attribute
+   * @param value
+   */
+  public static setValidationAttribute(
     fieldInstance: HTMLInputElement,
-    length: number
+    attribute: string,
+    value: string
   ) {
-    fieldInstance.setAttribute('maxlength', String(length));
+    fieldInstance.setAttribute(attribute, value);
   }
 
-  public static setErrorMessage(
+  /**
+   *
+   * @param fieldInstance
+   * @param errorContainerId
+   */
+  public static setInputErrorMessage(
     fieldInstance: HTMLInputElement,
     errorContainerId: string
   ) {
@@ -38,25 +57,47 @@ class Validation {
       tooShort,
       valid
     } = fieldInstance.validity;
+
     if (!valid) {
-      fieldInstance.classList.add('error');
-      let errorContainer = document.getElementById(errorContainerId);
       if (valueMissing) {
-        errorContainer.innerText = 'Value missing';
+        Validation.setErrorMessage(
+          errorContainerId,
+          VALIDATION_ERROR_FIELD_IS_REQUIRED
+        );
       }
       if (patternMismatch) {
-        errorContainer.innerText = 'Pattern mismatch';
+        Validation.setErrorMessage(
+          errorContainerId,
+          VALIDATION_ERROR_PATTERN_MISMATCH
+        );
       }
       if (tooShort) {
-        errorContainer.innerText = 'Value too short';
+        Validation.setErrorMessage(
+          errorContainerId,
+          VALIDATION_ERROR_VALUE_TOO_SHORT
+        );
       }
     } else {
-      let errorContainer = document.getElementById(errorContainerId);
-      errorContainer.innerText = '';
+      Validation.setErrorMessage(errorContainerId, '');
       return true;
     }
   }
 
+  /**
+   *
+   * @param containerId
+   * @param messageText
+   */
+  private static setErrorMessage(containerId: string, messageText: string) {
+    const errorContainer = document.getElementById(containerId);
+    errorContainer.innerText = messageText;
+  }
+
+  /**
+   *
+   * @param messageContent
+   * @param errorContainerId
+   */
   public static customErrorMessage(
     messageContent: string,
     errorContainerId: string
