@@ -10,18 +10,34 @@ class ExpirationDate extends Validation {
 
   constructor(fieldId: string) {
     super();
-    this.inputValidationListener(fieldId);
+    this.inputValidation(fieldId);
   }
 
   /**
-   * Listens to keypress action on credit card field and attach validation methods
+   * Aggregates keypress and postMessage events listeners
    * @param fieldId
    */
-  private inputValidationListener(fieldId: string) {
+  private inputValidation(fieldId: string) {
     const fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
+    this.keypressEventListener(fieldInstance);
+    this.postMessageEventListener(fieldInstance);
+  }
+
+  /**
+   * Listens to keypress action on credit card field and attaches mask method
+   * @param fieldInstance
+   */
+  private keypressEventListener(fieldInstance: HTMLInputElement) {
     fieldInstance.addEventListener('keypress', (event: KeyboardEvent) => {
       ExpirationDate.dateInputMask(fieldInstance, event);
     });
+  }
+
+  /**
+   * Listens to postMessage event and attaches validation methods
+   * @param fieldInstance
+   */
+  private postMessageEventListener(fieldInstance: HTMLInputElement) {
     window.addEventListener(
       'message',
       () => {
@@ -49,13 +65,16 @@ class ExpirationDate extends Validation {
     if (length < ExpirationDate.DATE_MAX_LENGTH) {
       if (!ExpirationDate.isCharNumber(event)) {
         event.preventDefault();
+        return false;
       }
 
       if (length === ExpirationDate.DATE_SLASH_PLACE) {
         fieldInstance.value += '/';
       }
+      return true;
     } else {
       event.preventDefault();
+      return false;
     }
   }
 
