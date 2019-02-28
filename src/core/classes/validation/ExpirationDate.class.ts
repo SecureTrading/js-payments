@@ -1,5 +1,4 @@
 import Validation from './Validation.class';
-import { appEndpoint } from '../../imports/iframe';
 
 /**
  * Defines specific Expiration Date validation methods and attributes
@@ -23,11 +22,18 @@ class ExpirationDate extends Validation {
     fieldInstance.addEventListener('keypress', (event: KeyboardEvent) => {
       ExpirationDate.dateInputMask(fieldInstance, event);
     });
-    window.addEventListener('submit', () => {
-      if (ExpirationDate.isDateValid(fieldInstance)) {
-        window.postMessage(fieldInstance.value, appEndpoint);
-      }
-    });
+    window.addEventListener(
+      'message',
+      () => {
+        if (ExpirationDate.isDateValid(fieldInstance)) {
+          localStorage.setItem('expirationDate', fieldInstance.value);
+          fieldInstance.classList.remove('error');
+        } else {
+          fieldInstance.classList.add('error');
+        }
+      },
+      false
+    );
   }
 
   /**
