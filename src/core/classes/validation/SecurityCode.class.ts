@@ -21,6 +21,7 @@ class SecurityCode extends Validation {
     this.securityCodeLength = SecurityCode.DEFAULT_SECURITY_CODE_LENGTH;
     fieldInstance.setAttribute('minlength', String(this.securityCodeLength));
     this.inputValidationListener(fieldId);
+    this.postMessageEventListener(fieldInstance);
   }
 
   /**
@@ -40,6 +41,19 @@ class SecurityCode extends Validation {
         }
       }
     });
+  }
+
+  private postMessageEventListener(fieldInstance: HTMLInputElement) {
+    window.addEventListener(
+      'message',
+      () => {
+        if (SecurityCode.setErrorMessage(fieldInstance)) {
+          localStorage.setItem('expirationDate', fieldInstance.value);
+          fieldInstance.classList.remove('error');
+        }
+      },
+      false
+    );
   }
 
   /**
