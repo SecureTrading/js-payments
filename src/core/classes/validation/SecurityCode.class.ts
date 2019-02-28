@@ -58,6 +58,10 @@ class SecurityCode extends Validation {
     });
   }
 
+  /**
+   *
+   * @param fieldInstance
+   */
   private postMessageEventListener(fieldInstance: HTMLInputElement) {
     window.addEventListener(
       'message',

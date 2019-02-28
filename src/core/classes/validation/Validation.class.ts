@@ -25,6 +25,8 @@ class Validation {
    * @param securityCodeLength
    */
   public static getLastNChars(cardNumber: string, securityCodeLength: number) {
+    console.log(cardNumber);
+    console.log(securityCodeLength);
     return cardNumber.slice(-securityCodeLength);
   }
 

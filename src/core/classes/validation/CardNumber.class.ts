@@ -114,7 +114,7 @@ class CardNumber extends Validation {
    * @param cardNumber the card number to validate
    * @return whether the card number is valid
    */
-  private validateCreditCard(cardNumber: string) {
+  public validateCreditCard(cardNumber: string) {
     const brand = this.binLookup.binLookup(cardNumber);
     if (brand.type === null) {
       return true;
@@ -135,7 +135,7 @@ class CardNumber extends Validation {
    *    Step 3: double the value, then sum the digits
    *    Step 4: if sum of those above is divisible by ten, YOU PASS THE LUHN !
    */
-  private static luhnCheck(cardNumber: string) {
+  public static luhnCheck(cardNumber: string) {
     const arry = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
     let len = cardNumber.length,
       bit = 1,
@@ -152,7 +152,7 @@ class CardNumber extends Validation {
   /**
    * Returns card logo due to brand type setting, if no brand has been specified, returns standard 'chip' card
    */
-  private getCardLogo() {
+  public getCardLogo() {
     let key = 'chip';
     if (this.brand && this.brand.type) {
       const brandName = this.brand.type.toLowerCase();
