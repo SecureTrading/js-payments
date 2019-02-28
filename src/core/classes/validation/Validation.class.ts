@@ -45,7 +45,10 @@ class Validation implements IValidation {
     fieldInstance.setAttribute('maxlength', String(length));
   }
 
-  public static setErrorMessage(fieldInstance: HTMLInputElement) {
+  public static setErrorMessage(
+    fieldInstance: HTMLInputElement,
+    errorContainerId: string
+  ) {
     let {
       valueMissing,
       patternMismatch,
@@ -54,29 +57,27 @@ class Validation implements IValidation {
     } = fieldInstance.validity;
     if (!valid) {
       fieldInstance.classList.add('error');
-      let errorContainer = document.createElement('div');
-      errorContainer.setAttribute('id', 'st-form__error');
+      let errorContainer = document.getElementById(errorContainerId);
       if (valueMissing) {
         errorContainer.innerText = 'Value missing';
-        fieldInstance.parentNode.insertBefore(
-          errorContainer,
-          fieldInstance.nextSibling
-        );
-      } else if (patternMismatch) {
+      }
+      if (patternMismatch) {
         errorContainer.innerText = 'Pattern mismatch';
-        fieldInstance.parentNode.insertBefore(
-          errorContainer,
-          fieldInstance.nextSibling
-        );
-      } else if (tooShort) {
+      }
+      if (tooShort) {
         errorContainer.innerText = 'Value too short';
-        fieldInstance.parentNode.insertBefore(
-          errorContainer,
-          fieldInstance.nextSibling
-        );
       }
     } else {
       return true;
+    }
+  }
+
+  public static customErrorMessage(
+    messageContent: string,
+    errorContainerId: string
+  ) {
+    if (document.getElementById(errorContainerId).innerText === '') {
+      document.getElementById(errorContainerId).innerText = messageContent;
     }
   }
 }

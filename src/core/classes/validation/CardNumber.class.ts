@@ -59,12 +59,15 @@ class CardNumber extends Validation {
     window.addEventListener(
       'message',
       () => {
-        if (CardNumber.setErrorMessage(fieldInstance)) {
+        if (CardNumber.setErrorMessage(fieldInstance, 'card-number-error')) {
           if (this.validateCreditCard(fieldInstance.value)) {
             localStorage.setItem('cardNumber', fieldInstance.value);
             fieldInstance.classList.remove('error');
           } else {
-            console.log('Card number is invalid');
+            CardNumber.customErrorMessage(
+              'card number is invalid',
+              'card-number-error'
+            );
           }
         }
       },

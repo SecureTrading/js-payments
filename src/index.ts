@@ -1,11 +1,10 @@
 import { elementClasses, elementStyles } from '../examples/example';
-import '../examples/example.scss'; // this is loaded only for example purposes
 import Element from './core/classes/Element.class';
 import Payment from './core/classes/Payment.class';
 import ST from './core/classes/ST.class';
 
 (() => {
-  const st = new ST('thisissupersecretidforaclient12344321');
+  const st = new ST();
   const payment = new Payment(
     ['ApplePay', 'Visa Checkout'],
     ['133456', '546565']

@@ -35,7 +35,9 @@ class SecurityCode extends Validation {
       if (!SecurityCode.isCharNumber(event)) {
         event.preventDefault();
       } else {
-        if (SecurityCode.setErrorMessage(fieldInstance)) {
+        if (
+          SecurityCode.setErrorMessage(fieldInstance, 'security-code-error')
+        ) {
           SecurityCode.setSecurityCodeProperties(fieldInstance.value);
           fieldInstance.classList.remove('error');
         }
@@ -47,7 +49,9 @@ class SecurityCode extends Validation {
     window.addEventListener(
       'message',
       () => {
-        if (SecurityCode.setErrorMessage(fieldInstance)) {
+        if (
+          SecurityCode.setErrorMessage(fieldInstance, 'security-code-error')
+        ) {
           localStorage.setItem('expirationDate', fieldInstance.value);
           fieldInstance.classList.remove('error');
         }

@@ -4,21 +4,11 @@
 import { iframesEndpoints } from '../imports/iframe';
 
 class ST {
-  private _id: string;
   private static _iframeCreditCardId: string = 'st-card-number-iframe';
   private static _iframeSecurityCodeId: string = 'st-security-code-iframe';
   private static _iframeExpirationDateId: string = 'st-expiration-date-iframe';
 
-  get id(): string {
-    return this._id;
-  }
-
-  set id(value: string) {
-    this._id = value;
-  }
-
-  constructor(id: string) {
-    this._id = id;
+  constructor() {
     this.submitListener();
   }
 
