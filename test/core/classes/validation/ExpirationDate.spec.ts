@@ -3,13 +3,16 @@ import ExpirationDate from './../../../../src/core/classes/validation/Expiration
 
 // given
 describe('ExpirationDate class', () => {
-  let instance: object, expirationDateClass: any, validationClass: any;
+  let instance: object;
+  let expirationDateClass: any;
+  let validationClass: any;
+  const fieldId: string = 'expiration-date';
 
   // given
   describe('Class ExpirationDate instance', () => {
     // when
     beforeEach(() => {
-      instance = new ExpirationDate();
+      instance = new ExpirationDate(fieldId);
       expirationDateClass = ExpirationDate;
       validationClass = Validation;
     });
@@ -23,9 +26,9 @@ describe('ExpirationDate class', () => {
   // given
   describe('Method dateInputMask', () => {
     // when
-    let expectedValueWithSlash: string,
-      keyPressedValue: string,
-      keyPressedValueIncorrect: string;
+    let expectedValueWithSlash: string;
+    let keyPressedValue: string;
+    let keyPressedValueIncorrect: string;
 
     beforeEach(() => {
       expectedValueWithSlash = '55/';

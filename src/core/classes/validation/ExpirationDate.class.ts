@@ -8,8 +8,48 @@ class ExpirationDate extends Validation {
   private static DATE_SLASH_PLACE = 2;
   private static EXPIRATION_DATE_REGEXP = '^(0[1-9]|1[0-2])\\/([0-9]{2})$';
 
-  constructor() {
+  constructor(fieldId: string) {
     super();
+    this.inputValidation(fieldId);
+  }
+
+  /**
+   * Aggregates keypress and postMessage events listeners
+   * @param fieldId
+   */
+  private inputValidation(fieldId: string) {
+    const fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
+    this.keypressEventListener(fieldInstance);
+    this.postMessageEventListener(fieldInstance);
+  }
+
+  /**
+   * Listens to keypress action on credit card field and attaches mask method
+   * @param fieldInstance
+   */
+  private keypressEventListener(fieldInstance: HTMLInputElement) {
+    fieldInstance.addEventListener('keypress', (event: KeyboardEvent) => {
+      ExpirationDate.dateInputMask(fieldInstance, event);
+    });
+  }
+
+  /**
+   * Listens to postMessage event and attaches validation methods
+   * @param fieldInstance
+   */
+  private postMessageEventListener(fieldInstance: HTMLInputElement) {
+    window.addEventListener(
+      'message',
+      () => {
+        if (ExpirationDate.isDateValid(fieldInstance)) {
+          localStorage.setItem('expirationDate', fieldInstance.value);
+          fieldInstance.classList.remove('error');
+        } else {
+          fieldInstance.classList.add('error');
+        }
+      },
+      false
+    );
   }
 
   /**
@@ -31,6 +71,7 @@ class ExpirationDate extends Validation {
       if (length === ExpirationDate.DATE_SLASH_PLACE) {
         fieldInstance.value += '/';
       }
+      return true;
     } else {
       event.preventDefault();
       return false;

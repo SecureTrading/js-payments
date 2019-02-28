@@ -1,4 +1,3 @@
-import { createFormElement } from '../helpers/dom';
 import { defaultIframeStyle, iframesEndpoints } from '../imports/iframe';
 
 const { cardNumber, expirationDate, securityCode } = iframesEndpoints;
@@ -52,6 +51,18 @@ class Element {
     this._iframeSrc = value;
   }
 
+  /**
+   * Method for creating DOM elements
+   * @param type Type of element which we are creating
+   * @param id ID of element
+   */
+  private static createFormElement = (type: string, id: string) => {
+    const element = document.createElement(type);
+    element.setAttribute('id', id);
+    element.setAttribute('class', id);
+    return element;
+  };
+
   constructor() {
     this._name = '';
     this._style = {
@@ -81,7 +92,7 @@ class Element {
    */
 
   public mount(fieldId: string) {
-    const iframe = createFormElement('iframe', fieldId);
+    const iframe = Element.createFormElement('iframe', fieldId);
     Object.assign(iframe.style, defaultIframeStyle);
     iframe.setAttribute(
       'src',

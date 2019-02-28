@@ -3,15 +3,8 @@ import '../examples/example.scss'; // this is loaded only for example purposes
 import Element from './core/classes/Element.class';
 import Payment from './core/classes/Payment.class';
 import ST from './core/classes/ST.class';
-import { RegisterElements } from './core/helpers/mount';
-import { iframesEndpoints } from './core/imports/iframe';
-import { submitListener } from './core/listeners/submit';
 
 (() => {
-  submitListener('st-card-number-iframe', iframesEndpoints.cardNumber);
-  submitListener('st-security-code-iframe', iframesEndpoints.securityCode);
-  submitListener('st-expiration-date-iframe', iframesEndpoints.expirationDate);
-
   const st = new ST('thisissupersecretidforaclient12344321');
   const payment = new Payment(
     ['ApplePay', 'Visa Checkout'],
@@ -42,7 +35,7 @@ import { submitListener } from './core/listeners/submit';
     'st-expiration-date-iframe'
   );
 
-  RegisterElements(
+  st.registerElements(
     [cardNumberMounted, securityCodeMounted, expirationDateMounted],
     ['st-card-number', 'st-security-code', 'st-expiration-date']
   );
