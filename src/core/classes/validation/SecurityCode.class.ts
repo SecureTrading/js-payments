@@ -22,6 +22,7 @@ class SecurityCode extends Validation {
     fieldInstance.setAttribute('minlength', String(this.securityCodeLength));
     this.inputValidationListener(fieldId);
     this.postMessageEventListener(fieldInstance);
+    localStorage.setItem('securityCodeValidity', 'false');
   }
 
   /**

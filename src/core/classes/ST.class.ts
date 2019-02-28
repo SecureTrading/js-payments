@@ -1,12 +1,14 @@
 /***
  * Establishes connection with ST, defines client.
  */
-import { iframesEndpoints } from '../imports/iframe';
-
 class ST {
   private static _iframeCreditCardId: string = 'st-card-number-iframe';
   private static _iframeSecurityCodeId: string = 'st-security-code-iframe';
   private static _iframeExpirationDateId: string = 'st-expiration-date-iframe';
+
+  public static cardNumberComponent = 'http://localhost:8081/';
+  public static expirationDateComponent = 'http://localhost:8082/';
+  public static securityCodeComponent = 'http://localhost:8083/';
 
   constructor() {
     this.submitListener();
@@ -31,17 +33,14 @@ class ST {
         const creditCardContentWindow = creditCardIframe.contentWindow;
         const securityCodeContentWindow = securityCodeIframe.contentWindow;
         const expirationDateContentWindow = expirationDateIframe.contentWindow;
-        creditCardContentWindow.postMessage(
-          'message',
-          iframesEndpoints.cardNumber
-        );
+        creditCardContentWindow.postMessage('message', ST.cardNumberComponent);
         securityCodeContentWindow.postMessage(
           'message',
-          iframesEndpoints.securityCode
+          ST.securityCodeComponent
         );
         expirationDateContentWindow.postMessage(
           'message',
-          iframesEndpoints.expirationDate
+          ST.expirationDateComponent
         );
       });
     });

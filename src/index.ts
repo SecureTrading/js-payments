@@ -1,4 +1,3 @@
-import { elementClasses, elementStyles } from '../examples/example';
 import Element from './core/classes/Element.class';
 import Payment from './core/classes/Payment.class';
 import ST from './core/classes/ST.class';
@@ -14,22 +13,13 @@ import ST from './core/classes/ST.class';
   const securityCode = new Element();
   const expirationDate = new Element();
 
-  cardNumber.create('cardNumber', {
-    classes: elementClasses,
-    style: elementStyles
-  });
+  cardNumber.create('cardNumber');
   const cardNumberMounted = cardNumber.mount('st-card-number-iframe');
 
-  securityCode.create('securityCode', {
-    classes: elementClasses,
-    style: elementStyles
-  });
+  securityCode.create('securityCode');
   const securityCodeMounted = securityCode.mount('st-security-code-iframe');
 
-  expirationDate.create('expirationDate', {
-    classes: elementClasses,
-    style: elementStyles
-  });
+  expirationDate.create('expirationDate');
   const expirationDateMounted = expirationDate.mount(
     'st-expiration-date-iframe'
   );

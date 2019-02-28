@@ -40,6 +40,7 @@ class CardNumber extends Validation {
       String(CardNumber.DEFAULT_CARD_LENGTH)
     );
     this.inputValidation(fieldId);
+    localStorage.setItem('cardNumberValidity', 'false');
   }
 
   private inputValidation(fieldId: string) {
@@ -64,6 +65,10 @@ class CardNumber extends Validation {
     });
   }
 
+  /**
+   *
+   * @param fieldId
+   */
   private postMessageEventListener(fieldId: string) {
     const fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
     window.addEventListener(

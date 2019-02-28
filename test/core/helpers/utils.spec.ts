@@ -1,5 +1,5 @@
 import each from 'jest-each';
-import { inArray, forEachBreak } from '../../../src/core/helpers/utils';
+import Utils from './../../../src/core/classes/Utils.class';
 
 each([
   [[], '', false],
@@ -9,7 +9,7 @@ each([
   [[1, 2, 3, 4, 5, 6, 7, 8, 9, 0], 9, true],
   ['30-31', '-', true]
 ]).test('utils.inArray', (array, item, expected) => {
-  expect(inArray(array, item)).toBe(expected);
+  expect(Utils.inArray(array, item)).toBe(expected);
 });
 
 each([
@@ -24,6 +24,6 @@ each([
       return item;
     }
   );
-  expect(forEachBreak(iterable, callback)).toBe(expected);
+  expect(Utils.forEachBreak(iterable, callback)).toBe(expected);
   expect(callback).toHaveBeenCalledTimes(timesCalledBack);
 });
