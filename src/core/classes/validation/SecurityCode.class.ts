@@ -49,11 +49,27 @@ class SecurityCode extends Validation {
     window.addEventListener(
       'message',
       () => {
+        const cardNumber = localStorage.getItem('cardNumber');
+        const securityCodeLength = Number(
+          localStorage.getItem('securityCodeLength')
+        );
         if (
           SecurityCode.setErrorMessage(fieldInstance, 'security-code-error')
         ) {
-          localStorage.setItem('expirationDate', fieldInstance.value);
-          fieldInstance.classList.remove('error');
+          if (
+            SecurityCode.cardNumberSecurityCodeMatch(
+              cardNumber,
+              securityCodeLength
+            )
+          ) {
+            localStorage.setItem('securityCode', fieldInstance.value);
+            fieldInstance.classList.remove('error');
+          } else {
+            SecurityCode.customErrorMessage(
+              'Security code doesnt match card number',
+              'security-code-error'
+            );
+          }
         }
       },
       false
@@ -67,6 +83,28 @@ class SecurityCode extends Validation {
    */
   private static setSecurityCodeProperties(securityCode: string) {
     localStorage.setItem('securityCode', securityCode);
+  }
+
+  /**
+   *
+   * @param cardNumber
+   * @param securityCodeLength
+   */
+  public static cardNumberSecurityCodeMatch(
+    cardNumber: string,
+    securityCodeLength: number
+  ) {
+    const cardNumberLastChars = SecurityCode.getLastNChars(
+      cardNumber,
+      securityCodeLength
+    );
+    if (
+      localStorage.getItem('securityCode').length === securityCodeLength &&
+      cardNumberLastChars === localStorage.getItem('securityCode')
+    ) {
+      return true;
+    }
+    return false;
   }
 }
 

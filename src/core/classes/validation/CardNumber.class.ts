@@ -140,29 +140,6 @@ class CardNumber extends Validation {
     }
     return cardsLogos[key];
   }
-
-  /**
-   * Method triggered on submit whole form - checks if cardNumber is valid and checks whether security code corresponds with card number
-   * @param cardNumber
-   */
-  public cardNumberSecurityCodeMatch(cardNumber: string) {
-    window.addEventListener('message', () => {
-      if (this.validateCreditCard(cardNumber)) {
-        const securityCode = localStorage.getItem('securityCode');
-        // const cardNumberLastChars = CardNumber.getLastNChars(
-        //   cardNumber,
-        //   this.brand.cvcLength[0]
-        // );
-        // if (
-        //   securityCode.length === this.brand.cvcLength[0] &&
-        //   securityCode === cardNumberLastChars
-        // ) {
-        //   return true;
-        // }
-      }
-      return false;
-    });
-  }
 }
 
 export default CardNumber;

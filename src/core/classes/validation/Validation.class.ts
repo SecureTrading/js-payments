@@ -1,22 +1,5 @@
-interface IValidation {
-  _isValid: any;
-}
-
-class Validation implements IValidation {
+class Validation {
   private static ONLY_DIGITS_REGEXP = '^\\d+$';
-  _isValid: any = {};
-
-  constructor() {
-    this._isValid = {
-      creditCard: false,
-      expireDate: false,
-      securityCode: false
-    };
-  }
-
-  isFormValid() {
-    this._isValid.some((field: boolean) => field === true);
-  }
 
   /**
    * Method for preventing inserting non digits
@@ -68,6 +51,8 @@ class Validation implements IValidation {
         errorContainer.innerText = 'Value too short';
       }
     } else {
+      let errorContainer = document.getElementById(errorContainerId);
+      errorContainer.innerText = '';
       return true;
     }
   }
