@@ -8,9 +8,19 @@ interface IStTransportParams {
 
 /***
  * Establishes connection with ST, defines client.
+ * example usage:
+ *   st.sendRequest({
+ *     accounttypedescription: 'ECOM',
+ *     expirydate: '01/20',
+ *     pan: '4111111111111111',
+ *     requesttypedescription: 'AUTH',
+ *     securitycode: '123',
+ *     sitereference: 'test_james38641'
+ *   }).then(console.log);
  */
 class StTransport {
-  public static GATEWAY_URL = 'https://webservices.securetrading.net';
+  public static GATEWAY_URL =
+    'https://webservices.securetrading.net/public/json/';
   public static DEFAULT_FETCH_OPTIONS = {
     headers: {
       'Accept': StCodec.CONTENT_TYPE,

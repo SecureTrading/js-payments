@@ -3,6 +3,10 @@ import Language from './Language.class';
 interface IStRequest {
   requesttypedescription: string;
   pan?: string;
+  sitereference?: string;
+  accounttypedescription?: string;
+  expirydate?: string;
+  securitycode?: string;
 }
 
 class StCodec {
@@ -33,10 +37,10 @@ class StCodec {
 
   public buildRequestObject(requestData: object): object {
     return {
+      jwt: this._jwt,
       request: [
         {
           ...requestData,
-          jwt: this._jwt,
           requestid: this._requestId
         }
       ],
