@@ -17,7 +17,7 @@ describe('ExpirationDate class', () => {
       validationClass = Validation;
     });
     // then
-    it('should new object be an instance od ExpirationDate and Validation class', () => {
+    it.skip('should new object be an instance od ExpirationDate and Validation class', () => {
       expect(instance).toBeInstanceOf(ExpirationDate);
       expect(instance).toBeInstanceOf(Validation);
     });
