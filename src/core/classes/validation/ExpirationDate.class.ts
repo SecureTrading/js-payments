@@ -25,6 +25,7 @@ class ExpirationDate extends Validation {
     if (length < ExpirationDate.DATE_MAX_LENGTH) {
       if (!ExpirationDate.isCharNumber(event)) {
         event.preventDefault();
+        return false;
       }
 
       if (length === ExpirationDate.DATE_SLASH_PLACE) {
@@ -32,6 +33,7 @@ class ExpirationDate extends Validation {
       }
     } else {
       event.preventDefault();
+      return false;
     }
   }
 
