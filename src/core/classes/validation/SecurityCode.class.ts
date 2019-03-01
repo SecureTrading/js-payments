@@ -12,16 +12,20 @@ class SecurityCode extends Validation {
     this._securityCodeLength = value;
   }
 
+  private _fieldInstance: HTMLInputElement;
   private _securityCodeLength: number;
   private static DEFAULT_SECURITY_CODE_LENGTH = 4;
 
   constructor(fieldId: string) {
     super();
-    const fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
+    this._fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
     this.securityCodeLength = SecurityCode.DEFAULT_SECURITY_CODE_LENGTH;
-    fieldInstance.setAttribute('minlength', String(this.securityCodeLength));
-    this.inputValidationListener(fieldId);
-    this.postMessageEventListener(fieldInstance);
+    this._fieldInstance.setAttribute(
+      'minlength',
+      String(this.securityCodeLength)
+    );
+    this.inputValidationListener();
+    this.postMessageEventListener();
     localStorage.setItem('securityCodeValidity', 'false');
   }
 
@@ -29,40 +33,39 @@ class SecurityCode extends Validation {
    * Listener on security code field which check validation
    * @param fieldId
    */
-  private inputValidationListener(fieldId: string) {
-    const fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
+  private inputValidationListener() {
     SecurityCode.setValidationAttribute(
-      fieldInstance,
+      this._fieldInstance,
       'maxlength',
       String(this.securityCodeLength)
     );
     SecurityCode.setValidationAttribute(
-      fieldInstance,
+      this._fieldInstance,
       'minlength',
       String(this.securityCodeLength)
     );
-    fieldInstance.addEventListener('keypress', (event: KeyboardEvent) => {
+    this._fieldInstance.addEventListener('keypress', (event: KeyboardEvent) => {
       if (!SecurityCode.isCharNumber(event)) {
         event.preventDefault();
+        return false;
       } else {
         if (
           SecurityCode.setInputErrorMessage(
-            fieldInstance,
+            this._fieldInstance,
             'security-code-error'
           )
         ) {
-          SecurityCode.setSecurityCodeProperties(fieldInstance.value);
-          fieldInstance.classList.remove('error');
+          SecurityCode.setSecurityCodeProperties(this._fieldInstance.value);
+          this._fieldInstance.classList.remove('error');
         }
       }
     });
   }
 
   /**
-   *
-   * @param fieldInstance
+   * Listens to postMessage event from Form
    */
-  private postMessageEventListener(fieldInstance: HTMLInputElement) {
+  private postMessageEventListener() {
     window.addEventListener(
       'message',
       () => {
@@ -72,7 +75,7 @@ class SecurityCode extends Validation {
         );
         if (
           SecurityCode.setInputErrorMessage(
-            fieldInstance,
+            this._fieldInstance,
             'security-code-error'
           )
         ) {
@@ -82,8 +85,8 @@ class SecurityCode extends Validation {
               securityCodeLength
             )
           ) {
-            localStorage.setItem('securityCode', fieldInstance.value);
-            fieldInstance.classList.remove('error');
+            localStorage.setItem('securityCode', this._fieldInstance.value);
+            this._fieldInstance.classList.remove('error');
           } else {
             SecurityCode.customErrorMessage(
               'Security code doesnt match card number',
@@ -98,7 +101,6 @@ class SecurityCode extends Validation {
 
   /**
    * Sets security code properties in localStorage
-   *
    * @param securityCode
    */
   private static setSecurityCodeProperties(securityCode: string) {
@@ -106,7 +108,7 @@ class SecurityCode extends Validation {
   }
 
   /**
-   *
+   * Matches Security Code with card number
    * @param cardNumber
    * @param securityCodeLength
    */
