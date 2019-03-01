@@ -29,9 +29,13 @@ class StTransport {
     method: 'post'
   };
   public static TIMEOUT = 60000;
+
   private gatewayUrl: string;
   private _codec: StCodec;
 
+  /**
+   * Getter for the codec
+   */
   public get codec() {
     return this._codec;
   }
@@ -44,6 +48,8 @@ class StTransport {
 
   /**
    * Perform a JSON API request with ST
+   * @param requestObject A request object to send to ST
+   * @return A Promise object that resolves the gateway response
    */
   public sendRequest(requestObject: IStRequest) {
     return this.fetchTimeout(this.gatewayUrl, {
@@ -55,6 +61,10 @@ class StTransport {
   /**
    * Fetch with a timeout to reject the request
    * We probably want to update this to use an AbortControllor once this is standardised in the future
+   * @param url The URL to be passed to the fetch request
+   * @param options The options object to be passed to the fetch request
+   * @param timeout The time (ms) after which to time out
+   * @return A Promise that resolves to a fetch response or rejects with a timeout
    */
   public fetchTimeout(
     url: string,

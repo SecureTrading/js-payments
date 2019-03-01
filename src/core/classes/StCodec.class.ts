@@ -9,6 +9,9 @@ interface IStRequest {
   securitycode?: string;
 }
 
+/***
+ * Encodes and Decodes a request for the ST gateway
+ */
 class StCodec {
   public static CONTENT_TYPE = 'application/json';
   public static VERSION = '1.00';
@@ -19,22 +22,36 @@ class StCodec {
     'CACHETOKENISE',
     'AUTH'
   ];
+
   private _requestId: string;
   private _jwt: string;
+
   constructor(jwt: string) {
     this._requestId = this._createRequestId();
     this._jwt = jwt;
   }
 
-  public _createRequestId(length = 8) {
+  /**
+   * Generate a unique ID for a request
+   * (this is informational. it doesn't need to be cryptographically random since one of those is allocated server-side)
+   * @param length The total length of the Request ID
+   *   (since we prepend 'J-' the random section will be 2 char shorter)
+   * @return A newly generated random request ID
+   */
+  public _createRequestId(length = 10) {
     return (
       'J-' +
       Math.random()
         .toString(36)
-        .substring(2, 2 + length)
+        .substring(2, length)
     );
   }
 
+  /**
+   * Add the wrapper data to the request object
+   * @param requestData The data to be contained in this request
+   * @return A JSON object ready to be encoded
+   */
   public buildRequestObject(requestData: object): object {
     return {
       jwt: this._jwt,
@@ -48,6 +65,12 @@ class StCodec {
     };
   }
 
+  /**
+   * Encode the request to send to the gateway
+   * includes simple validation so we don't send utterly invalid requests
+   * @param requestObject The data to be contained in the request
+   * @return A JSON string for the fetch request body
+   */
   public encode(requestObject: IStRequest) {
     if (
       Object.keys(requestObject).length < 2 ||
@@ -62,6 +85,11 @@ class StCodec {
     return JSON.stringify(this.buildRequestObject(requestObject));
   }
 
+  /**
+   * Decode the Json body from the fetch response
+   * @Param responseObject The response object from the fetch promise
+   * @return A Promise that resolves the body content (or raise an error casing the fetch to be rejected)
+   */
   public decode(responseObject: Response | {}) {
     if ('json' in responseObject) {
       return responseObject.json();
