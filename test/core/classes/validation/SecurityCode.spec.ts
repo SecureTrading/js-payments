@@ -3,7 +3,7 @@ import SecurityCode from './../../../../src/core/classes/validation/SecurityCode
 // given
 describe('Class Security Code', () => {
   const fieldId = 'security-code';
-  let securityCodeInstance = new SecurityCode(fieldId);
+  // let securityCodeInstance = new SecurityCode(fieldId);
 
   // when
   beforeEach(() => {});
