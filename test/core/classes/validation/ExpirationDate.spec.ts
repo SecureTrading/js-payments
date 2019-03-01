@@ -6,14 +6,20 @@ describe('ExpirationDate class', () => {
   let instance: object;
   let expirationDateClass: any;
   let validationClass: any;
-  const fieldId: string = 'expiration-date';
 
   // given
   describe('Class ExpirationDate instance', () => {
     // when
-    beforeEach(() => {});
+    beforeEach(() => {
+      instance = new ExpirationDate();
+      expirationDateClass = ExpirationDate;
+      validationClass = Validation;
+    });
     // then
-    it('should new object be an instance od ExpirationDate and Validation class', () => {});
+    it('should new object be an instance od ExpirationDate and Validation class', () => {
+      expect(instance).toBeInstanceOf(ExpirationDate);
+      expect(instance).toBeInstanceOf(Validation);
+    });
   });
 
   // given
@@ -30,19 +36,45 @@ describe('ExpirationDate class', () => {
     });
 
     // then
-    it('should prevent from exceed max length of date', () => {});
+    it('should prevent from exceed max length of date', () => {
+      let { elementWithExceededValue } = elementFixture();
+      const { event } = eventFixture('keypress', keyPressedValue);
+      expect(
+        ExpirationDate.dateInputMask(elementWithExceededValue, event)
+      ).toBe(false);
+    });
 
     // then
-    it('should indicate slash at third place of indicated string', () => {});
+    it('should indicate slash at third place of indicated string', () => {
+      let { element } = elementFixture();
+      const { event } = eventFixture('keypress', keyPressedValue);
+      ExpirationDate.dateInputMask(element, event);
+      expect(element.value).toBe(expectedValueWithSlash);
+    });
 
     // then
-    it('should prevent from enter char except digit', () => {});
+    it('should prevent from enter char except digit', () => {
+      let { element } = elementFixture();
+      let { event } = eventFixture('keypress', keyPressedValueIncorrect);
+      let expirationDateResult = ExpirationDate.dateInputMask(element, event);
+      expect(expirationDateResult).toBe(false);
+    });
   });
 
   // given
-  describe('Method inputValidation', () => {
+  describe('Method isDateValid', () => {
+    //when
+    const { element, elementWithError } = elementFixture();
+
     // then
-    it('should set pattern attribute for date input', () => {});
+    it('should return false if non-digit expression is indicated', () => {
+      expect(ExpirationDate.isDateValid(elementWithError)).toEqual(false);
+    });
+
+    // then
+    it('should return true if digit expression is indicated', () => {
+      expect(ExpirationDate.isDateValid(element)).toEqual(false);
+    });
   });
 });
 
@@ -61,6 +93,6 @@ function elementFixture() {
 }
 
 function eventFixture(eventType: string, eventKeyValue: string) {
-  const event = new KeyboardEvent('keypress', { key: eventKeyValue });
+  const event = new KeyboardEvent(eventType, { key: eventKeyValue });
   return { event };
 }
