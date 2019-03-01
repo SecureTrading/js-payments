@@ -1,30 +1,30 @@
+@import '../../core/styles/variables';
+@import '../../core/styles/placeholder';
+@import '../../core/styles/core';
+
 .security-code {
-  &__input {
-    border: none;
-    border-bottom: 0.1rem solid #32325d;
-    height: 3.5rem;
-    color: #32325d;
-    padding-left: 2.5rem;
+}
 
-    &:focus {
-      outline: none;
-    }
-  }
+.security-code__label {
+  @extend %label;
+}
 
-  &__group {
-    position: relative;
-  }
+.security-code__label--required {
+  @extend %label--required;
+}
 
-  &__logo {
-    position: absolute;
-    top: 33%;
+.security-code__input {
+  @extend %input;
+}
 
-    img {
-      max-width: 2rem;
-    }
-  }
+.security-code__input--error {
+  @extend %input--error;
+}
 
-  &__submit {
-    opacity: 0;
-  }
+.security-code__message {
+  @extend %message;
+}
+
+.security-code__message--error {
+  @extend %message--error;
 }

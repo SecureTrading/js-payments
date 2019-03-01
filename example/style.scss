@@ -1,36 +1,36 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto');
-
-html {
-  font-size: 62.5%;
-}
-
-body {
-  font-size: 1.6rem;
-}
-
-.st-form {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  font-family: 'Roboto', sans-serif;
-
-  &__received-message {
-    color: red;
-  }
-
-  .st-card-number,
-  .st-expiration-date,
-  .st-security-code {
-    width: 100%;
-  }
-
-  &__submit {
-    background-color: #e71b5a;
-    color: #fff;
-    background-image: none;
-    border: none;
-    border-radius: 0.7rem;
-    padding: 0.8rem 1.2rem;
-  }
-}
+//@import url('https://fonts.googleapis.com/css?family=Roboto');
+//
+//html {
+//  font-size: 62.5%;
+//}
+//
+//body {
+//  font-size: 1.6rem;
+//}
+//
+//.st-form {
+//  display: flex;
+//  flex-direction: column;
+//  justify-content: center;
+//  align-items: center;
+//  font-family: 'Roboto', sans-serif;
+//
+//  &__received-message {
+//    color: red;
+//  }
+//
+//  .st-card-number,
+//  .st-expiration-date,
+//  .st-security-code {
+//    width: 100%;
+//  }
+//
+//  &__submit {
+//    background-color: #e71b5a;
+//    color: #fff;
+//    background-image: none;
+//    border: none;
+//    border-radius: 0.7rem;
+//    padding: 0.8rem 1.2rem;
+//  }
+//}

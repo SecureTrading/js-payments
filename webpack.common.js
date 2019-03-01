@@ -1,33 +1,28 @@
 const path = require('path');
-const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const TypedocWebpackPlugin = require('typedoc-webpack-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
 module.exports = {
-  optimization: {
-    usedExports: true,
-    splitChunks: {
-      chunks: 'all',
-      name: true,
-    },
-  },
+  // optimization: {
+  //   usedExports: true,
+  //   splitChunks: {
+  //     chunks: 'all',
+  //     name: true
+  //   }
+  // },
   entry: {
     main: './src/index.ts',
     stjs: './src/stjs.ts',
-    example: './example/index.ts',
-    creditCardNumber: './src/components/credit-card-number/credit-card-number',
-    expirationDate: './src/components/expiration-date/expiration-date',
-    securityCode: './src/components/security-code/security-code'
+    example: './example/index.ts'
   },
   output: {
     filename: '[name].bundle.js',
     path: path.join(__dirname, 'dist'),
-    publicPath: '',
+    publicPath: ''
   },
   plugins: [
     new CleanWebpackPlugin(['dist']),
@@ -36,25 +31,29 @@ module.exports = {
       template: './src/index.html',
       templateParameters: {
         partial: 'creditCardNumber'
-      }
+      },
+      chunks: ['main']
     }),
     new HtmlWebpackPlugin({
       filename: 'expiration-date.html',
       template: './src/index.html',
       templateParameters: {
         partial: 'expirationDate'
-      }
+      },
+      chunks: ['main']
     }),
     new HtmlWebpackPlugin({
       filename: 'security-code.html',
       template: './src/index.html',
       templateParameters: {
         partial: 'securityCode'
-      }
+      },
+      chunks: ['main']
     }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
-      template: './example/index.html'
+      template: './example/index.html',
+      chunks: ['stjs', 'example']
     }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
@@ -62,9 +61,7 @@ module.exports = {
     }),
     new ManifestPlugin(),
     new StyleLintPlugin(),
-    new FriendlyErrorsWebpackPlugin(),
-    new TypedocWebpackPlugin({}),
-    new webpack.HotModuleReplacementPlugin()
+    new FriendlyErrorsWebpackPlugin()
   ],
   module: {
     rules: [
