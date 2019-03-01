@@ -3,7 +3,8 @@ import Language from '../../../src/core/classes/Language.class';
 import { StCodec } from '../../../src/core/classes/StCodec.class';
 
 describe('StCodec class', () => {
-  const requestid = expect.stringMatching(/^J-[\da-z]{8}$/);
+  const ridRegex = 'J-[\\da-z]{8}';
+  const requestid = expect.stringMatching(new RegExp('^' + ridRegex + '$'));
   const jwt = 'j.w.t';
   let str: StCodec;
 
@@ -37,7 +38,6 @@ describe('StCodec class', () => {
       ],
       [
         {
-          jwt: '1.2.3',
           requestid: 'number1',
           requesttypedescription: 'CACHETOKENISE'
         },
@@ -47,7 +47,8 @@ describe('StCodec class', () => {
       'should build the request for a valid object',
       (requestObject, expected) => {
         expect(str.buildRequestObject(requestObject)).toEqual({
-          request: [{ jwt, requestid, ...expected }],
+          jwt,
+          request: [{ requestid, ...expected }],
           version: StCodec.VERSION
         });
       }
@@ -63,7 +64,11 @@ describe('StCodec class', () => {
       [
         { pan: '4111111111111111', requesttypedescription: 'AUTH' },
         expect.stringMatching(
-          /^{"request":\[{"pan":"4111111111111111","requesttypedescription":"AUTH","jwt":"j.w.t","requestid":"J-[\da-z]{8}"}\],"version":"1.00"}$/
+          new RegExp(
+            '^{"jwt":"j.w.t","request":\\[{"pan":"4111111111111111","requesttypedescription":"AUTH","requestid":"' +
+              ridRegex +
+              '"}\\],"version":"1.00"}$'
+          )
         )
       ]
     ]).it('should encode valid data', (request, expected) => {
@@ -105,7 +110,7 @@ describe('StCodec class', () => {
     });
 
     it('should error an invalid response', () => {
-      expect(str.decode({})).toThrow(
+      expect(() => str.decode({})).toThrow(
         Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE)
       );
     });
