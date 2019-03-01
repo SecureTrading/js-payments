@@ -22,7 +22,7 @@ class ExpirationDate extends Validation {
    * @param fieldId
    */
   public inputValidation(fieldId: string) {
-    this._fieldInstance.setAttribute('pattern', ExpirationDate.EXPIRATION_DATE_REGEXP);
+    ExpirationDate.setValidationAttribute(this._fieldInstance, 'pattern', ExpirationDate.EXPIRATION_DATE_REGEXP);
     this.keypressEventListener();
     this.postMessageEventListener();
   }

@@ -21,7 +21,8 @@ class SecurityCode extends Validation {
     localStorage.setItem('securityCodeValidity', 'false');
     this._fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
     this.securityCodeLength = SecurityCode.DEFAULT_SECURITY_CODE_LENGTH;
-    this._fieldInstance.setAttribute('minlength', this.securityCodeLength);
+    SecurityCode.setValidationAttribute(this._fieldInstance, 'minlength', this.securityCodeLength);
+    SecurityCode.setValidationAttribute(this._fieldInstance, 'maxlength', this.securityCodeLength);
     this.inputValidationListener();
     this.postMessageEventListener();
   }
