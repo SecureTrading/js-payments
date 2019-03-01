@@ -1,4 +1,5 @@
 import Validation from './Validation.class';
+import Language from './../Language.class';
 
 /**
  * Definition of security code validation
@@ -21,14 +22,16 @@ class SecurityCode extends Validation {
     localStorage.setItem('securityCodeValidity', 'false');
     this._fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
     this.securityCodeLength = SecurityCode.DEFAULT_SECURITY_CODE_LENGTH;
-    SecurityCode.setValidationAttribute(this._fieldInstance, 'minlength', this.securityCodeLength);
-    SecurityCode.setValidationAttribute(this._fieldInstance, 'maxlength', this.securityCodeLength);
     this.inputValidationListener();
     this.postMessageEventListener();
   }
 
   /**
-   * Listener on security code field which check validation
+   * Listener on security code field.
+   * 1. Sets max and minlength of field.
+   * 2. Checks if indicated character is number
+   * 3. If it is, checks if there are some errors in indicated expression, if yes
+   *    it sets error message if not it removes error.
    */
   private inputValidationListener() {
     SecurityCode.setValidationAttribute(this._fieldInstance, 'maxlength', String(this.securityCodeLength));
@@ -41,6 +44,7 @@ class SecurityCode extends Validation {
         if (SecurityCode.setInputErrorMessage(this._fieldInstance, 'security-code-error')) {
           SecurityCode.setSecurityCodeProperties(this._fieldInstance.value);
           this._fieldInstance.classList.remove('error');
+          return true;
         }
       }
     });
@@ -60,7 +64,10 @@ class SecurityCode extends Validation {
             localStorage.setItem('securityCode', this._fieldInstance.value);
             this._fieldInstance.classList.remove('error');
           } else {
-            SecurityCode.customErrorMessage('Security code doesnt match card number', 'security-code-error');
+            SecurityCode.customErrorMessage(
+              Language.translations.VALIDATION_ERROR_CARD_AND_CODE,
+              'security-code-error'
+            );
           }
         }
       },
