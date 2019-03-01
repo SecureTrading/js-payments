@@ -1,5 +1,5 @@
-import Element from '../src/core/classes/Element.class';
-import ST from '../src/core/classes/ST.class';
+import Element from '../../../src/core/classes/Element.class';
+import ST from '../../../src/core/classes/ST.class';
 // given
 describe('Index placeholder test', () => {
   //when
@@ -22,15 +22,9 @@ describe('Index placeholder test', () => {
 
   // then
   it('should return proper iframe endpoints', () => {
-    expect(Element.getComponentAddress('cardNumber')).toEqual(
-      ST.cardNumberComponent
-    );
-    expect(Element.getComponentAddress('securityCode')).toEqual(
-      ST.securityCodeComponent
-    );
-    expect(Element.getComponentAddress('expirationDate')).toEqual(
-      ST.expirationDateComponent
-    );
+    expect(Element.getComponentAddress('cardNumber')).toEqual(ST.cardNumberComponent);
+    expect(Element.getComponentAddress('securityCode')).toEqual(ST.securityCodeComponent);
+    expect(Element.getComponentAddress('expirationDate')).toEqual(ST.expirationDateComponent);
   });
 
   // then
