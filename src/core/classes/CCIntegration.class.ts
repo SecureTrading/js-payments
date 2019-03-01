@@ -33,6 +33,8 @@ class CCIntegration {
 
   /**
    * Method on successful initialization after calling Cardinal.setup()
+   * CAUTION ! this will not be triggered if an error occured during Cardinal.setup() call.
+   * This includes a failed JWT authentication.
    */
   private static _onPaymentSetupComplete() {
     Cardinal.on('payments.setupComplete', function(setupCompleteData: any) {
@@ -40,6 +42,9 @@ class CCIntegration {
     });
   }
 
+  /**
+   * Triggered when the transaction has been finished.
+   */
   private static _onPaymentValidation() {
     Cardinal.on('payments.validated', (data: any, jwt: any) => {
       switch (data.ActionCode) {
