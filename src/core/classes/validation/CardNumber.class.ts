@@ -10,11 +10,11 @@ class CardNumber extends Validation {
   private binLookup: BinLookup;
   public brand: BrandDetailsType;
 
+  private _fieldInstance: HTMLInputElement;
   private _cardType: string;
   private _cardLength: [];
   private static DEFAULT_CARD_LENGTH = 16;
-  private static STANDARD_CARD_FORMAT =
-    '(\\d{1,4})(\\d{1,4})?(\\d{1,4})?(\\d+)?';
+  private static STANDARD_CARD_FORMAT = '(\\d{1,4})(\\d{1,4})?(\\d{1,4})?(\\d+)?';
 
   get cardType(): string {
     return this._cardType;
@@ -28,17 +28,9 @@ class CardNumber extends Validation {
     super();
     this.binLookup = new BinLookup();
     this.brand = null;
-    const fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
-    CardNumber.setValidationAttribute(
-      fieldInstance,
-      'maxlength',
-      String(CardNumber.DEFAULT_CARD_LENGTH)
-    );
-    CardNumber.setValidationAttribute(
-      fieldInstance,
-      'minlength',
-      String(CardNumber.DEFAULT_CARD_LENGTH)
-    );
+    this._fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
+    CardNumber.setValidationAttribute(this._fieldInstance, 'maxlength', String(CardNumber.DEFAULT_CARD_LENGTH));
+    CardNumber.setValidationAttribute(this._fieldInstance, 'minlength', String(CardNumber.DEFAULT_CARD_LENGTH));
     this.inputValidation(fieldId);
     localStorage.setItem('cardNumberValidity', 'false');
   }
@@ -53,13 +45,12 @@ class CardNumber extends Validation {
    * @param fieldId
    */
   private inputValidationListener(fieldId: string) {
-    const fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
-    fieldInstance.addEventListener('keypress', (event: KeyboardEvent) => {
+    this._fieldInstance.addEventListener('keypress', (event: KeyboardEvent) => {
       if (!CardNumber.isCharNumber(event)) {
         event.preventDefault();
         return false;
       } else {
-        fieldInstance.setAttribute('value', this.cardNumberFormat(event.key));
+        this._fieldInstance.setAttribute('value', this.cardNumberFormat(event.key));
         return true;
       }
     });
@@ -70,21 +61,15 @@ class CardNumber extends Validation {
    * @param fieldId
    */
   private postMessageEventListener(fieldId: string) {
-    const fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
     window.addEventListener(
       'message',
       () => {
-        if (
-          CardNumber.setInputErrorMessage(fieldInstance, 'card-number-error')
-        ) {
-          if (this.validateCreditCard(fieldInstance.value)) {
-            localStorage.setItem('cardNumber', fieldInstance.value);
-            fieldInstance.classList.remove('error');
+        if (CardNumber.setInputErrorMessage(this._fieldInstance, 'card-number-error')) {
+          if (this.validateCreditCard(this._fieldInstance.value)) {
+            localStorage.setItem('cardNumber', this._fieldInstance.value);
+            this._fieldInstance.classList.remove('error');
           } else {
-            CardNumber.customErrorMessage(
-              'card number is invalid',
-              'card-number-error'
-            );
+            CardNumber.customErrorMessage('card number is invalid', 'card-number-error');
           }
         }
       },
@@ -99,13 +84,9 @@ class CardNumber extends Validation {
   private cardNumberFormat(cardNumber: string) {
     const brand = this.binLookup.binLookup(cardNumber);
     if (brand.format) {
-      return cardNumber
-        .replace(/\W/gi, '')
-        .replace(new RegExp(brand.format), '$1 ');
+      return cardNumber.replace(/\W/gi, '').replace(new RegExp(brand.format), '$1 ');
     } else {
-      return cardNumber
-        .replace(/\W/gi, '')
-        .replace(new RegExp(CardNumber.STANDARD_CARD_FORMAT), '$1 ');
+      return cardNumber.replace(/\W/gi, '').replace(new RegExp(CardNumber.STANDARD_CARD_FORMAT), '$1 ');
     }
   }
 

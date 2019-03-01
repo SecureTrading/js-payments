@@ -1,10 +1,5 @@
 import each from 'jest-each';
-import { inArray } from '../../../../src/core/helpers/utils';
-import {
-  BrandDetailsType,
-  cardTree,
-  brandMapping
-} from '../../../../src/core/imports/cardtype';
+import { BrandDetailsType, cardTree, brandMapping } from '../../../../src/core/imports/cardtype';
 import BinLookup from '../../../../src/core/classes/validation/BinLookup.class';
 
 const fs = require('fs');
@@ -19,18 +14,7 @@ each([
       default: null,
       minMatch: 0,
       maxMatch: 6,
-      supported: [
-        'AMEX',
-        'ASTROPAYCARD',
-        'DINERS',
-        'DISCOVER',
-        'JCB',
-        'LASER',
-        'MAESTRO',
-        'MASTERCARD',
-        'PIBA',
-        'VISA'
-      ]
+      supported: ['AMEX', 'ASTROPAYCARD', 'DINERS', 'DISCOVER', 'JCB', 'LASER', 'MAESTRO', 'MASTERCARD', 'PIBA', 'VISA']
     }
   ],
   [{ supported: ['DELTA'] }, 'unsupported cardTree DELTA'],
@@ -42,10 +26,7 @@ each([
     { defaultCardType: 'AMEX', supported: ['AMEX', 'MASTERCARD'] },
     { default: brandMapping['4'], supported: ['AMEX', 'MASTERCARD'] }
   ],
-  [
-    { defaultCardType: 'AMEX', supported: ['VISA', 'MASTERCARD'] },
-    { default: null, supported: ['VISA', 'MASTERCARD'] }
-  ]
+  [{ defaultCardType: 'AMEX', supported: ['VISA', 'MASTERCARD'] }, { default: null, supported: ['VISA', 'MASTERCARD'] }]
 ]).test(
   'BinLookup.constructor', // Check different options get set on config correctly
   (testConfig, expected) => {
@@ -99,13 +80,7 @@ each([
 ]).test('BinLookup.getCard', (type, expected) => {
   const bl = new BinLookup();
   expect(bl.getCard(type)).toMatchObject(expected); // WARNING: toMatchObject only tests the keys in the expected are a subset of the actual - to test against {} we MUST use toEqual
-  expect(Object.keys(bl.getCard(type)).sort()).toEqual([
-    'cvcLength',
-    'format',
-    'length',
-    'luhn',
-    'type'
-  ]);
+  expect(Object.keys(bl.getCard(type)).sort()).toEqual(['cvcLength', 'format', 'length', 'luhn', 'type']);
 });
 
 each([
@@ -126,29 +101,18 @@ each([
   [{ supported: ['AMEX'] }, '', '2', nullType],
   [{ defaultCardType: 'MASTERCARD' }, '', null, brandMapping['2']],
   [{ defaultCardType: 'AMEX', minMatch: 3 }, '34', '1', brandMapping['4']],
-  [
-    { defaultCardType: 'AMEX', supported: ['AMEX'] },
-    '',
-    '1',
-    brandMapping['4']
-  ],
+  [{ defaultCardType: 'AMEX', supported: ['AMEX'] }, '', '1', brandMapping['4']],
   [{ defaultCardType: 'MASTERCARD', maxMatch: 3 }, '3456', null, nullType]
-]).test(
-  'BinLookup._lookup_withDefaults',
-  (config, number, lookupResult, expected) => {
-    const bl = new BinLookup(config);
-    bl._lookup = jest.fn();
-    (<jest.Mock>bl._lookup).mockReturnValue(lookupResult);
-    expect(bl.binLookup(number)).toEqual(expected);
-  }
-);
+]).test('BinLookup._lookup_withDefaults', (config, number, lookupResult, expected) => {
+  const bl = new BinLookup(config);
+  bl._lookup = jest.fn();
+  (<jest.Mock>bl._lookup).mockReturnValue(lookupResult);
+  expect(bl.binLookup(number)).toEqual(expected);
+});
 
 test('BinLookup._lookup_allMappings', () => {
   const bl = new BinLookup();
-  const mappings = Object.assign(
-    { 198: nullType, null: nullType },
-    brandMapping
-  );
+  const mappings = Object.assign({ 198: nullType, null: nullType }, brandMapping);
   for (let result in mappings) {
     bl._lookup = jest.fn();
     (<jest.Mock>bl._lookup).mockReturnValue(result);
