@@ -4,57 +4,40 @@ import Validation from './Validation.class';
  * Definition of security code validation
  */
 class SecurityCode extends Validation {
-  get securityCodeLength(): number {
+  get securityCodeLength(): string {
     return this._securityCodeLength;
   }
 
-  set securityCodeLength(value: number) {
+  set securityCodeLength(value: string) {
     this._securityCodeLength = value;
   }
 
   private _fieldInstance: HTMLInputElement;
-  private _securityCodeLength: number;
-  private static DEFAULT_SECURITY_CODE_LENGTH = 4;
+  private _securityCodeLength: string;
+  private static DEFAULT_SECURITY_CODE_LENGTH = '3';
 
   constructor(fieldId: string) {
     super();
+    localStorage.setItem('securityCodeValidity', 'false');
     this._fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
     this.securityCodeLength = SecurityCode.DEFAULT_SECURITY_CODE_LENGTH;
-    this._fieldInstance.setAttribute(
-      'minlength',
-      String(this.securityCodeLength)
-    );
+    this._fieldInstance.setAttribute('minlength', this.securityCodeLength);
     this.inputValidationListener();
     this.postMessageEventListener();
-    localStorage.setItem('securityCodeValidity', 'false');
   }
 
   /**
    * Listener on security code field which check validation
-   * @param fieldId
    */
   private inputValidationListener() {
-    SecurityCode.setValidationAttribute(
-      this._fieldInstance,
-      'maxlength',
-      String(this.securityCodeLength)
-    );
-    SecurityCode.setValidationAttribute(
-      this._fieldInstance,
-      'minlength',
-      String(this.securityCodeLength)
-    );
+    SecurityCode.setValidationAttribute(this._fieldInstance, 'maxlength', String(this.securityCodeLength));
+    SecurityCode.setValidationAttribute(this._fieldInstance, 'minlength', String(this.securityCodeLength));
     this._fieldInstance.addEventListener('keypress', (event: KeyboardEvent) => {
       if (!SecurityCode.isCharNumber(event)) {
         event.preventDefault();
         return false;
       } else {
-        if (
-          SecurityCode.setInputErrorMessage(
-            this._fieldInstance,
-            'security-code-error'
-          )
-        ) {
+        if (SecurityCode.setInputErrorMessage(this._fieldInstance, 'security-code-error')) {
           SecurityCode.setSecurityCodeProperties(this._fieldInstance.value);
           this._fieldInstance.classList.remove('error');
         }
@@ -70,28 +53,13 @@ class SecurityCode extends Validation {
       'message',
       () => {
         const cardNumber = localStorage.getItem('cardNumber');
-        const securityCodeLength = Number(
-          localStorage.getItem('securityCodeLength')
-        );
-        if (
-          SecurityCode.setInputErrorMessage(
-            this._fieldInstance,
-            'security-code-error'
-          )
-        ) {
-          if (
-            SecurityCode.cardNumberSecurityCodeMatch(
-              cardNumber,
-              securityCodeLength
-            )
-          ) {
+        const securityCodeLength = Number(localStorage.getItem('securityCodeLength'));
+        if (SecurityCode.setInputErrorMessage(this._fieldInstance, 'security-code-error')) {
+          if (SecurityCode.cardNumberSecurityCodeMatch(cardNumber, securityCodeLength)) {
             localStorage.setItem('securityCode', this._fieldInstance.value);
             this._fieldInstance.classList.remove('error');
           } else {
-            SecurityCode.customErrorMessage(
-              'Security code doesnt match card number',
-              'security-code-error'
-            );
+            SecurityCode.customErrorMessage('Security code doesnt match card number', 'security-code-error');
           }
         }
       },
@@ -112,21 +80,12 @@ class SecurityCode extends Validation {
    * @param cardNumber
    * @param securityCodeLength
    */
-  public static cardNumberSecurityCodeMatch(
-    cardNumber: string,
-    securityCodeLength: number
-  ) {
-    const cardNumberLastChars = SecurityCode.getLastNChars(
-      cardNumber,
-      securityCodeLength
+  public static cardNumberSecurityCodeMatch(cardNumber: string, securityCodeLength: number) {
+    const cardNumberLastChars = SecurityCode.getLastNChars(cardNumber, securityCodeLength);
+    const securityCodeLengthRequired = localStorage.getItem('securityCode');
+    return (
+      securityCodeLengthRequired.length === securityCodeLength && cardNumberLastChars === securityCodeLengthRequired
     );
-    if (
-      localStorage.getItem('securityCode').length === securityCodeLength &&
-      cardNumberLastChars === localStorage.getItem('securityCode')
-    ) {
-      return true;
-    }
-    return false;
   }
 }
 

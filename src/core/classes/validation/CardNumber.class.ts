@@ -26,13 +26,13 @@ class CardNumber extends Validation {
 
   constructor(fieldId: string) {
     super();
+    localStorage.setItem('cardNumberValidity', 'false');
     this.binLookup = new BinLookup();
     this.brand = null;
     this._fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
     CardNumber.setValidationAttribute(this._fieldInstance, 'maxlength', String(CardNumber.DEFAULT_CARD_LENGTH));
     CardNumber.setValidationAttribute(this._fieldInstance, 'minlength', String(CardNumber.DEFAULT_CARD_LENGTH));
     this.inputValidation(fieldId);
-    localStorage.setItem('cardNumberValidity', 'false');
   }
 
   private inputValidation(fieldId: string) {

@@ -12,9 +12,9 @@ class ExpirationDate extends Validation {
 
   constructor(fieldId: string) {
     super();
+    localStorage.setItem('expirationDateValidity', 'false');
     this._fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
     this.inputValidation(fieldId);
-    localStorage.setItem('expirationDateValidity', 'false');
   }
 
   /**
