@@ -1,5 +1,6 @@
 import { BrandDetailsType } from '../../imports/cardtype';
 import { cardsLogos } from '../../imports/images';
+import Language from '../Language.class';
 import Validation from './Validation.class';
 import BinLookup from './BinLookup.class';
 
@@ -35,6 +36,10 @@ class CardNumber extends Validation {
     this.inputValidation(fieldId);
   }
 
+  /**
+   * Aggregates input validation and postMessage event validation
+   * @param fieldId
+   */
   private inputValidation(fieldId: string) {
     this.inputValidationListener(fieldId);
     this.postMessageEventListener(fieldId);
@@ -57,7 +62,7 @@ class CardNumber extends Validation {
   }
 
   /**
-   *
+   * Listens to submit event from Form and validate card number field
    * @param fieldId
    */
   private postMessageEventListener(fieldId: string) {
@@ -69,7 +74,7 @@ class CardNumber extends Validation {
             localStorage.setItem('cardNumber', this._fieldInstance.value);
             this._fieldInstance.classList.remove('error');
           } else {
-            CardNumber.customErrorMessage('card number is invalid', 'card-number-error');
+            CardNumber.customErrorMessage(Language.translations.VALIDATION_ERROR_CARD, 'card-number-error');
           }
         }
       },
@@ -78,7 +83,7 @@ class CardNumber extends Validation {
   }
 
   /**
-   *  Format input value of card number field due to card type regex
+   * TODO: Format input value of card number field due to card type regex
    * @param cardNumber
    */
   private cardNumberFormat(cardNumber: string) {
@@ -91,7 +96,7 @@ class CardNumber extends Validation {
   }
 
   /**
-   * Validate a card number
+   * Card number validation based on Luhn algorithm, card length and card brand
    * @param cardNumber the card number to validate
    * @return whether the card number is valid
    */
@@ -109,7 +114,7 @@ class CardNumber extends Validation {
   }
 
   /**
-   * Luhn Algorith
+   * Luhn Algorithm
    * From the right:
    *    Step 1: take the value of this digit
    *    Step 2: if the offset from the end is even
