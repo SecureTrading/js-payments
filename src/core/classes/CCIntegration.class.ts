@@ -9,7 +9,7 @@ import {
 } from '../imports/cardinalSettings';
 
 class CCIntegration {
-  private static _jwtStringified: string = JSON.stringify(jwt);
+  private static _jwt: string = jwt;
 
   constructor() {
     CCIntegration._setConfiguration();
@@ -38,7 +38,7 @@ class CCIntegration {
    */
   private static _onPaymentSetupComplete() {
     Cardinal.on('payments.setupComplete', function(setupCompleteData: any) {
-      console.log('fdsfsdfsdfsdfsdfs');
+      console.log(setupCompleteData);
     });
   }
 
@@ -64,7 +64,8 @@ class CCIntegration {
           break;
 
         case 'ERROR':
-          console.log('ERROR');
+          console.log(`Error ${jwt}`);
+          console.log(data.ErrorDescription);
           // Handle service level error
           break;
       }
@@ -76,7 +77,7 @@ class CCIntegration {
    */
   private static _onSetup() {
     Cardinal.setup('init', {
-      jwt: jwt
+      jwt: this._jwt
     });
   }
 }
