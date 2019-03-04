@@ -3,18 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <title>Example 1</title>
-    <script type="text/javascript">
-      function onVisaCheckoutReady() {
-        V.init({
-          apikey: 'ZG50YOGQQJ0PWPPX8D7F21ELpFID5NF-W256C638eL5hNgsOc',
-          encryptionKey: 'cX8SKE8k5X#BO40elD0M4dJV65WZGqCi1+I#S$rZ',
-          paymentRequest: {
-            currencyCode: 'USD',
-            subtotal: '11.00'
-          }
-        });
-      }
-    </script>
   </head>
   <body>
     <form class="st-form">
@@ -59,7 +47,7 @@
       <button type="submit" id="st-form__submit" class="st-form__submit">
         Pay securely
       </button>
-      <div id="st-apms"></div>
+      <script src="https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js"></script>
     </form>
   </body>
 </html>
