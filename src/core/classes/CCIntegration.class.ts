@@ -64,8 +64,9 @@ class CCIntegration {
           break;
 
         case 'ERROR':
-          console.log(`Error ${jwt}`);
+          console.log(`Error ${CCIntegration._jwt}`);
           console.log(data.ErrorDescription);
+          console.log(data);
           // Handle service level error
           break;
       }
@@ -77,7 +78,7 @@ class CCIntegration {
    */
   private static _onSetup() {
     Cardinal.setup('init', {
-      jwt: this._jwt
+      jwt: CCIntegration._jwt
     });
   }
 }
