@@ -1,7 +1,6 @@
 import Cardinal from '../imports/cardinalLibrary';
 import {
   applePayConfig,
-  jwt,
   loggingConfiguration,
   paymentConfig,
   paypalConfig,
@@ -9,8 +8,6 @@ import {
 } from '../imports/cardinalSettings';
 
 class CCIntegration {
-  private static _jwt: string = jwt;
-
   constructor() {
     CCIntegration._setConfiguration();
     CCIntegration._onPaymentSetupComplete();
@@ -37,7 +34,7 @@ class CCIntegration {
    * This includes a failed JWT authentication.
    */
   private static _onPaymentSetupComplete() {
-    Cardinal.on('payments.setupComplete', function(setupCompleteData: any) {
+    Cardinal.on('payments.setupComplete', (setupCompleteData: any) => {
       console.log(setupCompleteData);
     });
   }
@@ -49,7 +46,7 @@ class CCIntegration {
     Cardinal.on('payments.validated', (data: any, jwt: any) => {
       switch (data.ActionCode) {
         case 'SUCCESS':
-          console.log('Success');
+          console.log('SUCCESS');
           // Handle successful transaction, send JWT to backend to verify
           break;
 
@@ -64,10 +61,7 @@ class CCIntegration {
           break;
 
         case 'ERROR':
-          console.log(`Error ${CCIntegration._jwt}`);
-          console.log(data.ErrorDescription);
-          console.log(data);
-          // Handle service level error
+          console.log('ERROR');
           break;
       }
     });
@@ -78,7 +72,7 @@ class CCIntegration {
    */
   private static _onSetup() {
     Cardinal.setup('init', {
-      jwt: CCIntegration._jwt
+      jwt: (document.getElementById('JWTContainer') as HTMLInputElement).value
     });
   }
 }
