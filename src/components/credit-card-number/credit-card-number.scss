@@ -4,7 +4,6 @@
     border-bottom: 0.1rem solid #32325d;
     color: #32325d;
     height: 3.5rem;
-    padding-left: 2.5rem;
 
     &:focus {
       outline: none;
@@ -15,13 +14,9 @@
     position: relative;
   }
 
-  &__logo {
-    position: absolute;
-    top: 33%;
-
-    img {
-      max-width: 2rem;
-    }
+  &__validation {
+    color: #e71b5a;
+    font-weight: bold;
   }
 
   &__submit {

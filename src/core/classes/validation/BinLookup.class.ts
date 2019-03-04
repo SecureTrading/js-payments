@@ -3,9 +3,9 @@ import {
   CardTreeNode,
   BrandDetailsType,
   cardTree,
-  brandMapping,
+  brandMapping
 } from '../../imports/cardtype';
-import { inArray, forEachBreak } from '../../helpers/utils';
+import Utils from './../Utils.class';
 
 type BinLookupConfigType = {
   minMatch?: number;
@@ -24,12 +24,14 @@ class BinLookup {
 
   constructor(config?: BinLookupConfigType) {
     config = config || {};
-    this.minMatch = 'minMatch' in config ? config.minMatch : BinLookup.DEFAULT_MIN_MATCH;
-    this.maxMatch = 'maxMatch' in config ? config.maxMatch : BinLookup.DEFAULT_MAX_MATCH;
+    this.minMatch =
+      'minMatch' in config ? config.minMatch : BinLookup.DEFAULT_MIN_MATCH;
+    this.maxMatch =
+      'maxMatch' in config ? config.maxMatch : BinLookup.DEFAULT_MAX_MATCH;
 
     this.supported = this.getAllBrands();
     if ('supported' in config) {
-      const {supported} = config;
+      const { supported } = config;
       for (let i in supported) {
         const type = supported[i];
         if (!this.isSupported(type)) {
@@ -51,7 +53,7 @@ class BinLookup {
   forEachBreakBrands<returnType>(
     callback: (card: BrandDetailsType) => returnType
   ): returnType {
-    return forEachBreak(
+    return Utils.forEachBreak(
       Object.values(brandMapping),
       (card: BrandDetailsType) => {
         if (this.isSupported(card)) {
@@ -66,7 +68,9 @@ class BinLookup {
    * @return array of all text brand names
    */
   getAllBrands(): string[] {
-    return Object.values(brandMapping).map(brand => brand.type).sort();
+    return Object.values(brandMapping)
+      .map(brand => brand.type)
+      .sort();
   }
 
   /**
@@ -78,7 +82,7 @@ class BinLookup {
     if (brand instanceof Object) {
       brand = brand.type;
     }
-    return inArray(this.supported, brand);
+    return Utils.inArray(this.supported, brand);
   }
 
   /**
@@ -122,7 +126,7 @@ class BinLookup {
   matchKey(number: string, key: string): boolean {
     let n = number.substring(0, key.length);
     let result = n == key;
-    if (!result && inArray(key, '-')) {
+    if (!result && Utils.inArray(key, '-')) {
       const keys = key.split('-');
       let n = parseInt(number.substring(0, keys[1].length));
       if (parseInt(keys[0]) <= n && n <= parseInt(keys[1])) {
@@ -146,7 +150,7 @@ class BinLookup {
       .filter(key => this.matchKey(number, key))
       .sort((a, b) => a.length - b.length);
     return (
-      forEachBreak(
+      Utils.forEachBreak(
         found,
         (key: string): Brand => {
           return this._lookup(number, tree[key]);

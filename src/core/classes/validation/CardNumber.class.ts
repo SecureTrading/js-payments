@@ -1,24 +1,106 @@
 import { BrandDetailsType } from '../../imports/cardtype';
 import { cardsLogos } from '../../imports/images';
+import Language from '../Language.class';
 import Validation from './Validation.class';
 import BinLookup from './BinLookup.class';
 
+/**
+ * Card number validation class
+ */
 class CardNumber extends Validation {
   private binLookup: BinLookup;
   public brand: BrandDetailsType;
 
-  constructor() {
+  private _fieldInstance: HTMLInputElement;
+  private _cardType: string;
+  private _cardLength: [];
+  private static DEFAULT_CARD_LENGTH = 16;
+  private static STANDARD_CARD_FORMAT = '(\\d{1,4})(\\d{1,4})?(\\d{1,4})?(\\d+)?';
+
+  get cardType(): string {
+    return this._cardType;
+  }
+
+  get cardLength(): [] {
+    return this._cardLength;
+  }
+
+  constructor(fieldId: string) {
     super();
+    localStorage.setItem('cardNumberValidity', 'false');
     this.binLookup = new BinLookup();
     this.brand = null;
+    this._fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
+    CardNumber.setValidationAttribute(this._fieldInstance, 'maxlength', String(CardNumber.DEFAULT_CARD_LENGTH));
+    CardNumber.setValidationAttribute(this._fieldInstance, 'minlength', String(CardNumber.DEFAULT_CARD_LENGTH));
+    this.inputValidation(fieldId);
   }
 
   /**
-   * Validate a card number
-   * @param cardNumber The card nuber to validate
+   * Aggregates input validation and postMessage event validation
+   * @param fieldId
+   */
+  private inputValidation(fieldId: string) {
+    this.inputValidationListener(fieldId);
+    this.postMessageEventListener(fieldId);
+  }
+
+  /**
+   * Listens to keypress action on credit card field and attach validation methods
+   * @param fieldId
+   */
+  private inputValidationListener(fieldId: string) {
+    this._fieldInstance.addEventListener('keypress', (event: KeyboardEvent) => {
+      if (!CardNumber.isCharNumber(event)) {
+        event.preventDefault();
+        return false;
+      } else {
+        this._fieldInstance.setAttribute('value', this.cardNumberFormat(event.key));
+        return true;
+      }
+    });
+  }
+
+  /**
+   * Listens to submit event from Form and validate card number field
+   * @param fieldId
+   */
+  private postMessageEventListener(fieldId: string) {
+    window.addEventListener(
+      'message',
+      () => {
+        if (CardNumber.setInputErrorMessage(this._fieldInstance, 'card-number-error')) {
+          if (this.validateCreditCard(this._fieldInstance.value)) {
+            localStorage.setItem('cardNumber', this._fieldInstance.value);
+            this._fieldInstance.classList.remove('error');
+          } else {
+            CardNumber.customErrorMessage(Language.translations.VALIDATION_ERROR_CARD, 'card-number-error');
+          }
+        }
+      },
+      false
+    );
+  }
+
+  /**
+   * TODO: Format input value of card number field due to card type regex
+   * @param cardNumber
+   */
+  private cardNumberFormat(cardNumber: string) {
+    const brand = this.binLookup.binLookup(cardNumber);
+    if (brand.format) {
+      return cardNumber.replace(/\W/gi, '').replace(new RegExp(brand.format), '$1 ');
+    } else {
+      return cardNumber.replace(/\W/gi, '').replace(new RegExp(CardNumber.STANDARD_CARD_FORMAT), '$1 ');
+    }
+  }
+
+  /**
+   * Card number validation based on Luhn algorithm, card length and card brand
+   * @param cardNumber the card number to validate
    * @return whether the card number is valid
    */
-  validateCreditCard(cardNumber: string) {
+  public validateCreditCard(cardNumber: string) {
     const brand = this.binLookup.binLookup(cardNumber);
     if (brand.type === null) {
       return true;
@@ -26,20 +108,20 @@ class CardNumber extends Validation {
     this.brand = brand;
     let result = true;
     if (brand.luhn) {
-      result = this.luhnCheck(cardNumber);
+      result = CardNumber.luhnCheck(cardNumber);
     }
     return result;
   }
 
   /**
-   * Luhn Algorith
+   * Luhn Algorithm
    * From the right:
-   *   take the value of this digit
-   *     if the offset from the end is even
-   *       double the value, then sum the digits
-   * if sum of those above is divisible by ten, YOU PASS THE LUHN !
+   *    Step 1: take the value of this digit
+   *    Step 2: if the offset from the end is even
+   *    Step 3: double the value, then sum the digits
+   *    Step 4: if sum of those above is divisible by ten, YOU PASS THE LUHN !
    */
-  luhnCheck(cardNumber: string) {
+  public static luhnCheck(cardNumber: string) {
     const arry = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
     let len = cardNumber.length,
       bit = 1,
@@ -53,7 +135,10 @@ class CardNumber extends Validation {
     return sum && sum % 10 === 0;
   }
 
-  getCardLogo() {
+  /**
+   * Returns card logo due to brand type setting, if no brand has been specified, returns standard 'chip' card
+   */
+  public getCardLogo() {
     let key = 'chip';
     if (this.brand && this.brand.type) {
       const brandName = this.brand.type.toLowerCase();

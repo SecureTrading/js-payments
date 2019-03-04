@@ -1,9 +1,4 @@
 import './expiration-date.scss';
-import { inputListener } from '../../core/listeners/input';
+import ExpirationDate from '../../../src/core/classes/validation/ExpirationDate.class';
 
-inputListener(
-  'expirationDate',
-  'st-expiration-date',
-  'expiration-date',
-  'expiration-date'
-);
+const expirationDate = new ExpirationDate('expiration-date');

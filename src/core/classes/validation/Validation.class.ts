@@ -1,38 +1,90 @@
-interface IValidation {
-  _isValid: any;
-}
+import Language from './../Language.class';
 
-class Validation implements IValidation {
-  static KEYS_DIGIT = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
-  _isValid: any = {};
+const {
+  VALIDATION_ERROR_FIELD_IS_REQUIRED,
+  VALIDATION_ERROR_VALUE_TOO_SHORT,
+  VALIDATION_ERROR_PATTERN_MISMATCH
+} = Language.translations;
 
-  constructor() {
-    this._isValid = {
-      creditCard: false,
-      expireDate: false,
-      securityCode: false,
-    };
-  }
+/**
+ * Base class for validation, aggregates common methods and attributes for all subclasses
+ */
+class Validation {
+  private static ONLY_DIGITS_REGEXP = '^\\d+$';
 
-  getValidity(fieldName: string) {
-    return this._isValid[fieldName];
-  }
-
-  setValidityOfField(fieldName: string) {
-    this._isValid[fieldName] = !this._isValid[fieldName];
-  }
-
-  isFormValid() {
-    this._isValid.some((field: boolean) => field === true);
+  /**
+   * Method for prevent inserting non digits
+   * @param event
+   */
+  public static isCharNumber(event: KeyboardEvent) {
+    const key: string = event.key;
+    const regex = new RegExp(Validation.ONLY_DIGITS_REGEXP);
+    return regex.test(key);
   }
 
   /**
-   * Method for preventing inserting non digits
-   * @param event Keypress event
+   * Returns last N chars of given input
+   * @param cardNumber
+   * @param securityCodeLength
    */
-  static isCharNumber(event: KeyboardEvent) {
-    if (!Validation.KEYS_DIGIT.includes(event.key)) {
-      event.preventDefault();
+  public static getLastNChars(cardNumber: string, securityCodeLength: number) {
+    return cardNumber.slice(-securityCodeLength);
+  }
+
+  /**
+   * Method for setting specified validation attribute like maxlength, pattern, etc.
+   * @param fieldInstance
+   * @param attribute
+   * @param value
+   */
+  public static setValidationAttribute(fieldInstance: HTMLInputElement, attribute: string, value: string) {
+    fieldInstance.setAttribute(attribute, value);
+  }
+
+  /**
+   * Method returns validation communicate based on validity object of input.
+   * If form is valid, communicate is erased.
+   * @param fieldInstance
+   * @param errorContainerId
+   */
+  public static setInputErrorMessage(fieldInstance: HTMLInputElement, errorContainerId: string) {
+    let { valueMissing, patternMismatch, tooShort, valid } = fieldInstance.validity;
+
+    if (!valid) {
+      if (valueMissing) {
+        Validation.setErrorMessage(errorContainerId, VALIDATION_ERROR_FIELD_IS_REQUIRED);
+      }
+      if (patternMismatch) {
+        Validation.setErrorMessage(errorContainerId, VALIDATION_ERROR_PATTERN_MISMATCH);
+      }
+      if (tooShort) {
+        Validation.setErrorMessage(errorContainerId, VALIDATION_ERROR_VALUE_TOO_SHORT);
+      }
+      return false;
+    } else {
+      Validation.setErrorMessage(errorContainerId, '');
+      return true;
+    }
+  }
+
+  /**
+   * Method placed errorMessage inside chosen container (specified by id).
+   * @param containerId
+   * @param messageText
+   */
+  private static setErrorMessage(containerId: string, messageText: string) {
+    const errorContainer = document.getElementById(containerId);
+    errorContainer.innerText = messageText;
+  }
+
+  /**
+   * Method set custom error message, eg. when credit card is not valid.
+   * @param messageContent
+   * @param errorContainerId
+   */
+  public static customErrorMessage(messageContent: string, errorContainerId: string) {
+    if (document.getElementById(errorContainerId).innerText === '') {
+      document.getElementById(errorContainerId).innerText = messageContent;
     }
   }
 }
