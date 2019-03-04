@@ -1,4 +1,3 @@
-import { jestPreset } from 'ts-jest';
 import CCIntegration from './../../../src/core/classes/CCIntegration.class';
 import Cardinal from '../../../src/core/imports/cardinalLibrary';
 
@@ -33,11 +32,3 @@ describe('Class CCIntegration', () => {
     it('should be called once', () => {});
   });
 });
-
-function CCIntegrationFixture() {
-  let Cardinal: any;
-  Cardinal = {
-    configure: jest.fn()
-  };
-  return { Cardinal };
-}
