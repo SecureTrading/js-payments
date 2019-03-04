@@ -29,13 +29,13 @@ class CCIntegration {
   }
 
   /**
-   * Method on successful initialization after calling Cardinal.setup()
+   * Method on successful initialization after calling Cardinal.setup() - Songbird.js has been successfully initialized.
    * CAUTION ! this will not be triggered if an error occured during Cardinal.setup() call.
    * This includes a failed JWT authentication.
    */
   private static _onPaymentSetupComplete() {
     Cardinal.on('payments.setupComplete', (setupCompleteData: any) => {
-      console.log(setupCompleteData);
+      //
     });
   }
 
