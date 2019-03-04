@@ -21,27 +21,15 @@ class ST {
     document.addEventListener('DOMContentLoaded', () => {
       document.addEventListener('submit', event => {
         event.preventDefault();
-        const creditCardIframe = document.getElementById(
-          ST._iframeCreditCardId
-        ) as HTMLIFrameElement;
-        const securityCodeIframe = document.getElementById(
-          ST._iframeSecurityCodeId
-        ) as HTMLIFrameElement;
-        const expirationDateIframe = document.getElementById(
-          ST._iframeExpirationDateId
-        ) as HTMLIFrameElement;
+        const creditCardIframe = document.getElementById(ST._iframeCreditCardId) as HTMLIFrameElement;
+        const securityCodeIframe = document.getElementById(ST._iframeSecurityCodeId) as HTMLIFrameElement;
+        const expirationDateIframe = document.getElementById(ST._iframeExpirationDateId) as HTMLIFrameElement;
         const creditCardContentWindow = creditCardIframe.contentWindow;
         const securityCodeContentWindow = securityCodeIframe.contentWindow;
         const expirationDateContentWindow = expirationDateIframe.contentWindow;
         creditCardContentWindow.postMessage('message', ST.cardNumberComponent);
-        securityCodeContentWindow.postMessage(
-          'message',
-          ST.securityCodeComponent
-        );
-        expirationDateContentWindow.postMessage(
-          'message',
-          ST.expirationDateComponent
-        );
+        securityCodeContentWindow.postMessage('message', ST.securityCodeComponent);
+        expirationDateContentWindow.postMessage('message', ST.expirationDateComponent);
       });
     });
   };

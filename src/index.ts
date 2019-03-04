@@ -14,9 +14,7 @@ import ST from './core/classes/ST.class';
   const securityCodeMounted = securityCode.mount('st-security-code-iframe');
 
   expirationDate.create('expirationDate');
-  const expirationDateMounted = expirationDate.mount(
-    'st-expiration-date-iframe'
-  );
+  const expirationDateMounted = expirationDate.mount('st-expiration-date-iframe');
 
   st.registerElements(
     [cardNumberMounted, securityCodeMounted, expirationDateMounted],

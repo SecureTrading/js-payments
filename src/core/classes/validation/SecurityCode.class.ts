@@ -54,25 +54,16 @@ class SecurityCode extends Validation {
    * Listens to postMessage event from Form
    */
   private postMessageEventListener() {
-    window.addEventListener(
-      'message',
-      () => {
-        const cardNumber = localStorage.getItem('cardNumber');
-        const securityCodeLength = Number(localStorage.getItem('securityCodeLength'));
-        if (SecurityCode.setInputErrorMessage(this._fieldInstance, 'security-code-error')) {
-          if (SecurityCode.cardNumberSecurityCodeMatch(cardNumber, securityCodeLength)) {
-            localStorage.setItem('securityCode', this._fieldInstance.value);
-            this._fieldInstance.classList.remove('error');
-          } else {
-            SecurityCode.customErrorMessage(
-              Language.translations.VALIDATION_ERROR_CARD_AND_CODE,
-              'security-code-error'
-            );
-          }
-        }
-      },
-      false
-    );
+    const cardNumber = localStorage.getItem('cardNumber');
+    const securityCodeLength = Number(localStorage.getItem('securityCodeLength'));
+    if (SecurityCode.setInputErrorMessage(this._fieldInstance, 'security-code-error')) {
+      if (SecurityCode.cardNumberSecurityCodeMatch(cardNumber, securityCodeLength)) {
+        localStorage.setItem('securityCode', this._fieldInstance.value);
+        this._fieldInstance.classList.remove('error');
+      } else {
+        SecurityCode.customErrorMessage(Language.translations.VALIDATION_ERROR_CARD_AND_CODE, 'security-code-error');
+      }
+    }
   }
 
   /**

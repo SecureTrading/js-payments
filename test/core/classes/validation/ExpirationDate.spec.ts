@@ -39,9 +39,7 @@ describe('ExpirationDate class', () => {
     it('should prevent from exceed max length of date', () => {
       let { elementWithExceededValue } = elementFixture();
       const { event } = eventFixture('keypress', keyPressedValue);
-      expect(
-        ExpirationDate.dateInputMask(elementWithExceededValue, event)
-      ).toBe(false);
+      expect(ExpirationDate.dateInputMask(elementWithExceededValue, event)).toBe(false);
     });
 
     // then

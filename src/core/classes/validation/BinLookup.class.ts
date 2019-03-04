@@ -1,10 +1,4 @@
-import {
-  Brand,
-  CardTreeNode,
-  BrandDetailsType,
-  cardTree,
-  brandMapping
-} from '../../imports/cardtype';
+import { Brand, CardTreeNode, BrandDetailsType, cardTree, brandMapping } from '../../imports/cardtype';
 import Utils from './../Utils.class';
 
 type BinLookupConfigType = {
@@ -24,10 +18,8 @@ class BinLookup {
 
   constructor(config?: BinLookupConfigType) {
     config = config || {};
-    this.minMatch =
-      'minMatch' in config ? config.minMatch : BinLookup.DEFAULT_MIN_MATCH;
-    this.maxMatch =
-      'maxMatch' in config ? config.maxMatch : BinLookup.DEFAULT_MAX_MATCH;
+    this.minMatch = 'minMatch' in config ? config.minMatch : BinLookup.DEFAULT_MIN_MATCH;
+    this.maxMatch = 'maxMatch' in config ? config.maxMatch : BinLookup.DEFAULT_MAX_MATCH;
 
     this.supported = this.getAllBrands();
     if ('supported' in config) {
@@ -41,8 +33,7 @@ class BinLookup {
       this.supported = supported;
     }
 
-    this.default =
-      'defaultCardType' in config ? this.getCard(config.defaultCardType) : null;
+    this.default = 'defaultCardType' in config ? this.getCard(config.defaultCardType) : null;
   }
 
   /**
@@ -50,17 +41,12 @@ class BinLookup {
    * @param callback Callback to run over the supported brands
    * @return first truthy result of the callback or null
    */
-  forEachBreakBrands<returnType>(
-    callback: (card: BrandDetailsType) => returnType
-  ): returnType {
-    return Utils.forEachBreak(
-      Object.values(brandMapping),
-      (card: BrandDetailsType) => {
-        if (this.isSupported(card)) {
-          return callback(card);
-        }
+  forEachBreakBrands<returnType>(callback: (card: BrandDetailsType) => returnType): returnType {
+    return Utils.forEachBreak(Object.values(brandMapping), (card: BrandDetailsType) => {
+      if (this.isSupported(card)) {
+        return callback(card);
       }
-    );
+    });
   }
 
   /**
