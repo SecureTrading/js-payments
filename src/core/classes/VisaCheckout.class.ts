@@ -1,13 +1,32 @@
+/**
+ *  Visa checkout configuration class
+ */
 class VisaCheckout {
-  private static _visaCheckoutButtonURL: string =
-    'https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png';
-  private static _visaCheckoutButtonProps: object = {
+  private apiKey = 'ZG50YOGQQJ0PWPPX8D7F21ELpFID5NF-W256C638eL5hNgsOc';
+  private encryptionKey = 'cX8SKE8k5X#BO40elD0M4dJV65WZGqCi1+I#S$rZ';
+  private static _visaCheckoutButtonProps: any = {
     alt: 'Visa Checkout',
     class: 'v-button',
-    role: 'button'
+    role: 'button',
+    url:
+      'https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png'
   };
 
-  constructor() {}
+  constructor() {
+    window.addEventListener('DOMContentLoaded', () => {
+      let body = document.getElementsByTagName('body')[0];
+      body.appendChild(this.createVisaButton());
+    });
+  }
+
+  private createVisaButton() {
+    let button = document.createElement('img');
+    button.setAttribute('url', VisaCheckout._visaCheckoutButtonProps.url);
+    button.setAttribute('class', VisaCheckout._visaCheckoutButtonProps.class);
+    button.setAttribute('role', VisaCheckout._visaCheckoutButtonProps.role);
+    button.setAttribute('alt', VisaCheckout._visaCheckoutButtonProps.alt);
+    return button;
+  }
 
   private _onVisaCheckoutReady() {
     V.init({
