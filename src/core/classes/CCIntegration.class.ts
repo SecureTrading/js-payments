@@ -75,6 +75,15 @@ class CCIntegration {
       jwt: (document.getElementById('JWTContainer') as HTMLInputElement).value
     });
   }
+
+  /**
+   * CMPI Lookup request
+   */
+  private cmpiLookup() {}
+
+  private _onContinue() {
+    Cardinal.continue();
+  }
 }
 
 export default CCIntegration;
