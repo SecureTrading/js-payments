@@ -1,15 +1,15 @@
 import { elementClasses, elementStyles } from '../examples/example';
 import '../examples/example.scss'; // this is loaded only for example purposes
+import CardinalCommerce from './core/classes/CardinalCommerce.class';
 import Element from './core/classes/Element.class';
 import Payment from './core/classes/Payment.class';
 import ST from './core/classes/ST.class';
 import { RegisterElements } from './core/helpers/mount';
 import { iframesEndpoints } from './core/imports/iframe';
 import { submitListener } from './core/listeners/submit';
-import CCIntegration from './core/classes/CardinalCommerce.class';
 
 (() => {
-  const ccintegration = new CCIntegration();
+  const ccintegration = new CardinalCommerce();
   submitListener('st-card-number-iframe', iframesEndpoints.cardNumber);
   submitListener('st-security-code-iframe', iframesEndpoints.securityCode);
   submitListener('st-expiration-date-iframe', iframesEndpoints.expirationDate);

@@ -2,31 +2,45 @@ import Cardinal from '../imports/cardinalLibrary';
 import {
   applePayConfig,
   loggingConfiguration,
+  mockDataFromBackend,
   paymentConfig,
   paypalConfig,
   visaCheckoutConfig
 } from '../imports/cardinalSettings';
 
-const mockDataFromBackend = {};
-
-class CCIntegration {
-  constructor() {
-    CCIntegration._setConfiguration();
-    CCIntegration._onPaymentSetupComplete();
-    CCIntegration._onPaymentValidation();
-    CCIntegration._onSetup();
-  }
-
+class CardinalCommerce {
   /**
    * Method for passing configuration object
+   * @private
    */
   private static _setConfiguration() {
     Cardinal.configure({
+      applePayConfig,
       loggingConfiguration,
       paymentConfig,
-      applePayConfig,
       paypalConfig,
       visaCheckoutConfig
+    });
+  }
+  private _jwt: string;
+  private _jwtChanged: string;
+  private _validationData: any;
+  private _sessionId: string;
+  private _orderDetails: object = {
+    OrderDetails: {
+      Cart: ['Detail one', 'Detail two'],
+      TransactionId: this._sessionId ? this._sessionId : ''
+    }
+  };
+
+  constructor() {
+    this._getJwt();
+    CardinalCommerce._setConfiguration();
+    this._onPaymentSetupComplete();
+    this._onPaymentValidation();
+    this._onSetup();
+    window.addEventListener('submit', () => {
+      this._onContinue();
     });
   }
 
@@ -35,73 +49,91 @@ class CCIntegration {
    * CAUTION ! this will not be triggered if an error occured during Cardinal.setup() call.
    * This includes a failed JWT authentication.
    */
-  private static _onPaymentSetupComplete() {
+  private _onPaymentSetupComplete() {
     Cardinal.on('payments.setupComplete', (setupCompleteData: any) => {
-      console.log(setupCompleteData);
+      this._sessionId = setupCompleteData.sessionId;
     });
   }
 
   /**
    * Triggered when the transaction has been finished.
    */
-  private static _onPaymentValidation() {
-    Cardinal.on('payments.validated', (data: any, jwt: any) => {
+  private _onPaymentValidation() {
+    Cardinal.on('payments.validated', (data: any, jwt: string) => {
       switch (data.ActionCode) {
         case 'SUCCESS':
-          console.log('SUCCESS');
           // Handle successful transaction, send JWT to backend to verify
+          this._retrieveValidationData(data, jwt);
           break;
 
         case 'NOACTION':
-          console.log('NOACTION');
-          // Handle no actionable outcome
+          this._retrieveValidationData(data);
           break;
 
         case 'FAILURE':
-          console.log('FAILURE');
-          // Handle failed transaction attempt
+          this._retrieveValidationData(data);
           break;
 
         case 'ERROR':
-          console.log('ERROR');
-          console.log(data);
+          this._retrieveValidationData(data);
           break;
       }
     });
   }
 
   /**
-   * Setup method with given JWT passed from backend
+   * Initialize Cardinal Commerce mechanism with given JWT (by merchant).
+   * @private
    */
-  private static _onSetup() {
+  private _onSetup() {
     Cardinal.setup('init', {
-      jwt: (document.getElementById('JWTContainer') as HTMLInputElement).value
+      jwt: this._jwt
     });
   }
 
   /**
-   * CMPI Lookup request
+   * On submit action, this method will have been mocked till the backend in ST Webservice will be finished
+   * @private
    */
   private _onSubmit() {
-    return;
+    return mockDataFromBackend;
   }
 
+  /**
+   * Handles continue action from Cardinal Commerce, retrieve overlay with iframe which target is on AcsUrl
+   * and handles the rest of process.
+   * @private
+   */
   private _onContinue() {
     Cardinal.continue(
       'cca',
-      {
-        AcsUrl:
-          'https://testcustomer34.cardinalcommerce.com/merchantacsfrontend/pareq.jsp?vaa=b&gold=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
-        Payload:
-          'eNpVUU1zgjAQvedXOE7PJHxKnTUzVNvRqVK1eGhvTEwLo4AmINpf3wSh2tu+3X3Je28hSgTnk3fOKsEpLLiU8TfvpdtR/ysMWfBK5kVg74NpvZj5Y9KnsAzW/EjhxIVMi5yaBjEswB1E6gnBkjgvKcTs+DQLqWnZjusNfMBtA0HGxWxyN7hiBHmccRoVF7muJOAGIWBFlZfiQn2HAO4AgkrsaVKWBznEuK5ro1Q0UUmDFRkGrKcI8E3MstKVVB7P6ZZ+7ty3D/IyXzyfT6solKtNYkebnbP6CUaA9QaCbVxyahHTIx4xe6Y/dK2h4wBu+gjiTEuhD6ZrECWshQgO+qPgikxXj+47yk4lBM9Z56dDCPj5UORc7ag4/2rl4aZ8PNWhslJl9ThwPNfUkTawYacqF4sQu6GnTUhYU3B7MtxeV1X/rv4LkFCmLA=='
-      },
-      {
-        OrderDetails: {
-          TransactionId: 'O9J65gievSH6CYPJCuB0'
-        }
-      }
+      this._onSubmit(),
+      this._orderDetails,
+      this._jwtChanged
     );
+  }
+
+  /**
+   * Retrieves jwt from hidden input
+   * @private
+   */
+  private _getJwt() {
+    this._jwt = (document.getElementById(
+      'JWTContainer'
+    ) as HTMLInputElement).value;
+  }
+
+  /**
+   * Retrieves validation data and assign it to class fields
+   * @param validationData
+   * @param jwt
+   * @private
+   */
+  private _retrieveValidationData(validationData: string, jwt?: string) {
+    this._validationData = validationData;
+    this._jwtChanged = jwt ? jwt : this._jwt;
+    console.log(this._validationData);
   }
 }
 
-export default CCIntegration;
+export default CardinalCommerce;
