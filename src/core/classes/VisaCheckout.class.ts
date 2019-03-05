@@ -40,6 +40,12 @@ class VisaCheckout {
     body.appendChild(VisaCheckout._createVisaButton());
   }
 
+  private static _paymentStatusHandler(event: string) {
+    event === 'payment.error'
+      ? V.on(event, (payment: object) => payment)
+      : V.on(event, (payment: object, error: object) => ({ payment, error }));
+  }
+
   private initConfiguration: object = {
     apikey: VisaCheckout.API_KEY,
     encryptionKey: VisaCheckout.ENCRYPTION_KEY
@@ -55,39 +61,9 @@ class VisaCheckout {
    */
   private _onVisaCheckoutReady() {
     V.init(this.initConfiguration);
-    this._onPaymentSuccess();
-    this._onPaymentCancel();
-    this._onPaymentError();
-  }
-
-  /**
-   * Method listens to success success event
-   */
-  private _onPaymentSuccess() {
-    V.on('payment.success', (payment: object) => {
-      alert(JSON.stringify(payment));
-      return payment;
-    });
-  }
-
-  /**
-   * Method listens to success cancel event
-   */
-  private _onPaymentCancel() {
-    V.on('payment.cancel', (payment: object) => {
-      alert(JSON.stringify(payment));
-      return payment;
-    });
-  }
-
-  /**
-   * Method listens to success error event
-   */
-  private _onPaymentError() {
-    V.on('payment.error', (payment: object, error: object) => {
-      alert(JSON.stringify(error));
-      return error;
-    });
+    VisaCheckout._paymentStatusHandler('payment.success');
+    VisaCheckout._paymentStatusHandler('payment.cancel');
+    VisaCheckout._paymentStatusHandler('payment.error');
   }
 }
 
