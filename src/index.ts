@@ -6,7 +6,7 @@ import ST from './core/classes/ST.class';
 import { RegisterElements } from './core/helpers/mount';
 import { iframesEndpoints } from './core/imports/iframe';
 import { submitListener } from './core/listeners/submit';
-import CCIntegration from './core/classes/CCIntegration.class';
+import CCIntegration from './core/classes/CardinalCommerce.class';
 
 (() => {
   const ccintegration = new CCIntegration();

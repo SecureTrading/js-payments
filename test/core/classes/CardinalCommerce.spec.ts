@@ -1,4 +1,4 @@
-import CCIntegration from './../../../src/core/classes/CCIntegration.class';
+import CCIntegration from './../../../src/core/classes/CardinalCommerce.class';
 import Cardinal from '../../../src/core/imports/cardinalLibrary';
 
 jest.mock('../../../src/core/imports/cardinalLibrary');
