@@ -1,4 +1,4 @@
-import V from './../imports/visaCheckout';
+const V = (window as any).V;
 
 /**
  *  Visa checkout configuration class
@@ -33,22 +33,46 @@ class VisaCheckout {
   }
 
   /**
+   * Attach SDK from Visa Checkout as html markup (temporary unused due to malfunction with scripts)
+   * @private
+   */
+  private static _attachVisaSDK() {
+    const script = document.createElement('script');
+    script.src =
+      'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js';
+    document.head.appendChild(script);
+  }
+
+  /**
    * Attaches Visa Button to body element - optionally we can change this method to attach it somewhere else
+   * @private
    */
   private static _attachVisaButton() {
     const body = document.getElementsByTagName('body')[0];
     body.appendChild(VisaCheckout._createVisaButton());
   }
 
+  /**
+   * Simple handler used to simplify handling payment events; returns the JSON object with details of payment
+   * @param event
+   * @private
+   */
   private static _paymentStatusHandler(event: string) {
     event === 'payment.error'
       ? V.on(event, (payment: object) => payment)
       : V.on(event, (payment: object, error: object) => ({ payment, error }));
   }
 
+  /**
+   * Init configuration (temporary with some test data)
+   */
   private _initConfiguration: object = {
     apikey: VisaCheckout.API_KEY,
-    encryptionKey: VisaCheckout.ENCRYPTION_KEY
+    encryptionKey: VisaCheckout.ENCRYPTION_KEY,
+    paymentRequest: {
+      currencyCode: 'GBP',
+      subtotal: '10.00'
+    }
   };
 
   constructor() {
