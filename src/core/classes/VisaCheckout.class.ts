@@ -46,7 +46,7 @@ class VisaCheckout {
       : V.on(event, (payment: object, error: object) => ({ payment, error }));
   }
 
-  private initConfiguration: object = {
+  private _initConfiguration: object = {
     apikey: VisaCheckout.API_KEY,
     encryptionKey: VisaCheckout.ENCRYPTION_KEY
   };
@@ -60,7 +60,7 @@ class VisaCheckout {
    * Loads Visa Checkout configuration as soon as script is loaded and button attached to DOM
    */
   private _onVisaCheckoutReady() {
-    V.init(this.initConfiguration);
+    V.init(this._initConfiguration);
     VisaCheckout._paymentStatusHandler('payment.success');
     VisaCheckout._paymentStatusHandler('payment.cancel');
     VisaCheckout._paymentStatusHandler('payment.error');

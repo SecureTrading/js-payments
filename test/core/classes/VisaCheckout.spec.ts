@@ -1,10 +1,15 @@
 import VisaCheckout from '../../../src/core/classes/VisaCheckout.class';
 
+const V = (window as any).V;
+
 // given
 describe('Visa Checkout class', () => {
   let instance;
   // when
   beforeEach(() => {
+    (global as any).V = jest.fn();
+    (global as any).V.init = jest.fn();
+    // V.mockClear();
     // instance = new VisaCheckout();
   });
 
