@@ -17,6 +17,7 @@ describe('StTransport class', () => {
       st = new StTransport(DEFAULT_PARAMS);
       st.fetchTimeout = jest.fn();
       st.codec.encode = jest.fn(x => JSON.stringify(x));
+      st.codec.verifyResponseObject = jest.fn(x => x);
       mockFT = st.fetchTimeout as jest.Mock;
     });
 
@@ -25,11 +26,10 @@ describe('StTransport class', () => {
       async requestObject => {
         mockFT.mockReturnValue(
           resolvingPromise({
-            json: () => {
-              return {
+            json: () =>
+              resolvingPromise({
                 errorcode: 0
-              };
-            }
+              })
           })
         );
         await st.sendRequest(requestObject);
@@ -57,11 +57,15 @@ describe('StTransport class', () => {
     each([
       [
         resolvingPromise({
-          json: () => {
-            return {
-              errorcode: 0
-            };
-          }
+          json: () =>
+            resolvingPromise({
+              response: [
+                {
+                  errorcode: 0
+                }
+              ],
+              version: '1.00'
+            })
         }),
         { errorcode: 0 }
       ]

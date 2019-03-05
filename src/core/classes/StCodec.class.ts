@@ -86,15 +86,51 @@ class StCodec {
   }
 
   /**
+   * Verify the response from the gateway
+   * @param responseData The response from the gateway
+   * @return The content of the response that can be used in the following processes
+   */
+  public verifyResponseObject(responseData: any): object {
+    // Ought we keep hold of the requestreference (eg. log it to console)
+    // So that we can link these requests up with the gateway?
+    if (
+      !(
+        responseData &&
+        responseData.version === StCodec.VERSION &&
+        responseData.response &&
+        responseData.response.length === 1
+      )
+    ) {
+      throw new Error(
+        Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE
+      );
+    }
+    const responseContent = responseData.response[0];
+    if (responseContent.errorcode !== '0') {
+      // Should this be a custom error type which can also take a field that is at fault
+      // so that errordata can be sent up to highlight the field?
+      throw new Error(responseContent.errormessage);
+    }
+    return responseContent;
+  }
+
+  /**
    * Decode the Json body from the fetch response
    * @Param responseObject The response object from the fetch promise
    * @return A Promise that resolves the body content (or raise an error casing the fetch to be rejected)
    */
-  public decode(responseObject: Response | {}) {
-    if ('json' in responseObject) {
-      return responseObject.json();
-    }
-    throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
+  public decode(responseObject: Response | {}): Promise<object> {
+    return new Promise((resolve, reject) => {
+      if ('json' in responseObject) {
+        responseObject.json().then(responseData => {
+          resolve(this.verifyResponseObject(responseData));
+        });
+      } else {
+        reject(
+          new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE)
+        );
+      }
+    });
   }
 }
 

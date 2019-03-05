@@ -51,7 +51,7 @@ class StTransport {
    * @param requestObject A request object to send to ST
    * @return A Promise object that resolves the gateway response
    */
-  public sendRequest(requestObject: IStRequest) {
+  public async sendRequest(requestObject: IStRequest) {
     return this.fetchTimeout(this.gatewayUrl, {
       ...StTransport.DEFAULT_FETCH_OPTIONS,
       body: this._codec.encode(requestObject)

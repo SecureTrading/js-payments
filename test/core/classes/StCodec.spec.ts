@@ -7,6 +7,43 @@ describe('StCodec class', () => {
   const requestid = expect.stringMatching(new RegExp('^' + ridRegex + '$'));
   const jwt = 'j.w.t';
   let str: StCodec;
+  const fullResponse = {
+    requestreference: 'W33-0rm0gcyx',
+    response: [
+      {
+        accounttypedescription: 'ECOM',
+        acquirerresponsecode: '00',
+        authcode: 'TEST56',
+        baseamount: '100',
+        currencyiso3a: 'GBP',
+        dccenabled: '0',
+        errorcode: '0',
+        errormessage: 'Ok',
+        issuer: 'SecureTrading Test Issuer1',
+        issuercountryiso2a: 'US',
+        livestatus: '0',
+        maskedpan: '411111######0211',
+        merchantcountryiso2a: 'GB',
+        merchantname: 'webservice UNICODE merchantname',
+        merchantnumber: '00000000',
+        operatorname: 'webservices@securetrading.com',
+        orderreference: 'AUTH_VISA_POST-PASS-JSON-JSON',
+        paymenttypedescription: 'VISA',
+        requesttypedescription: 'AUTH',
+        securityresponseaddress: '2',
+        securityresponsepostcode: '2',
+        securityresponsesecuritycode: '2',
+        settleduedate: '2019-02-21',
+        settlestatus: '0',
+        splitfinalnumber: '1',
+        tid: '27882788',
+        transactionreference: '33-9-80168',
+        transactionstartedtimestamp: '2019-02-21 10:06:35'
+      }
+    ],
+    secrand: 'ZKAVMskWQ',
+    version: '1.00'
+  };
 
   describe('Method _createRequestId', () => {
     beforeEach(() => {
@@ -94,23 +131,55 @@ describe('StCodec class', () => {
     });
   });
 
+  describe('Method verifyResponseObject', () => {
+    beforeEach(() => {
+      str = new StCodec(jwt);
+    });
+
+    each([
+      [{}],
+      [{ version: '3.02' }],
+      [{ version: '1.00', response: [] }],
+      [{ version: '1.00', response: [{}, {}] }]
+    ]).it('should verify the version and number of responses', responseData => {
+      expect(() => str.verifyResponseObject(responseData)).toThrow(
+        Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE)
+      );
+    });
+
+    each([
+      [
+        {
+          response: [{ errorcode: 30000, errormessage: 'Field error' }],
+          version: '1.00'
+        }
+      ]
+    ]).it('should verify the gateway error response', responseData => {
+      expect(() => str.verifyResponseObject(responseData)).toThrow(
+        Error(responseData.response[0].errormessage)
+      );
+    });
+  });
+
   describe('Method decode', () => {
     beforeEach(() => {
       str = new StCodec(jwt);
     });
 
-    it('should decode a valid response', () => {
-      expect(
+    it('should decode a valid response', async () => {
+      str.verifyResponseObject = jest.fn(str.verifyResponseObject);
+      await expect(
         str.decode({
           json: () => {
-            return { errorcode: 0 };
+            return new Promise(resolve => resolve(fullResponse));
           }
         })
-      ).toEqual({ errorcode: 0 });
+      ).resolves.toEqual(str.verifyResponseObject(fullResponse));
+      expect(str.verifyResponseObject).toHaveBeenCalledWith(fullResponse);
     });
 
-    it('should error an invalid response', () => {
-      expect(() => str.decode({})).toThrow(
+    it('should error an invalid response', async () => {
+      await expect(str.decode({})).rejects.toThrow(
         Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE)
       );
     });
