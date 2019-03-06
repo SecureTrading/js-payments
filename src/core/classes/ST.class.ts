@@ -1,19 +1,18 @@
 /***
  * Establishes connection with ST, defines client.
  */
-class ST {
-  private _id: string;
+import VisaCheckout from './VisaCheckout.class';
 
-  get id(): string {
-    return this._id;
-  }
+class ST extends VisaCheckout {
+  private _jwt: string;
+  private _style: object;
+  public payments: object[];
 
-  set id(value: string) {
-    this._id = value;
-  }
-
-  constructor(id: string) {
-    this._id = id;
+  constructor(jwt: string, style: object, payments: object[]) {
+    super();
+    this._jwt = jwt;
+    this._style = style;
+    this.payments = payments;
   }
 }
 
