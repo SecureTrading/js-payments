@@ -116,7 +116,23 @@ class CardinalCommerce {
    * @private
    */
   private _onSubmit() {
-    return mockDataFromBackend;
+    fetch('https://webservices.securetrading.net/public/json/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        cardNumber: 111111111111,
+        expirationDate: '12/20',
+        securityCode: 1111
+      })
+    })
+      .then(response => {
+        return response.json();
+      })
+      .then(response => {
+        console.log(response);
+      });
   }
 
   /**
@@ -142,6 +158,18 @@ class CardinalCommerce {
   private _retrieveValidationData(validationData: string, jwt?: string) {
     this._validationData = validationData;
     this._jwtChanged = jwt ? jwt : this._jwt;
+  }
+
+  /**
+   * Gather all the information needed to be posted
+   * @private
+   */
+  private _collectDataToPost() {
+    return {
+      cardNumber: localStorage.getItem('cardNumberValue'),
+      expirationDate: localStorage.getItem('expirationDateValue'),
+      securityCode: localStorage.getItem('securityCode')
+    };
   }
 }
 
