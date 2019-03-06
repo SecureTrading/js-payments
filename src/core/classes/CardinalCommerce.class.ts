@@ -8,7 +8,24 @@ import {
   visaCheckoutConfig
 } from '../imports/cardinalSettings';
 
+/**
+ * Cardinal Commerce class:
+ * Defines integration with Cardinal Commerce and flow of transaction with this supplier.
+ */
 class CardinalCommerce {
+  private static PAYMENT_EVENTS = {
+    INIT: 'init',
+    SETUP_COMPLETE: 'payments.setupComplete',
+    VALIDATED: 'payments.validated'
+  };
+
+  private static VALIDATION_EVENTS = {
+    ERROR: 'ERROR',
+    FAILURE: 'FAILURE',
+    NOACTION: 'NOACTION',
+    SUCCESS: 'SUCCESS'
+  };
+
   /**
    * Method for passing configuration object
    * @private
@@ -22,7 +39,10 @@ class CardinalCommerce {
       visaCheckoutConfig
     });
   }
-  private _jwt: string;
+
+  private _jwt: string = (document.getElementById(
+    'JWTContainer'
+  ) as HTMLInputElement).value;
   private _jwtChanged: string;
   private _validationData: any;
   private _sessionId: string;
@@ -34,7 +54,6 @@ class CardinalCommerce {
   };
 
   constructor() {
-    this._getJwt();
     CardinalCommerce._setConfiguration();
     this._onPaymentSetupComplete();
     this._onPaymentValidation();
@@ -50,35 +69,41 @@ class CardinalCommerce {
    * This includes a failed JWT authentication.
    */
   private _onPaymentSetupComplete() {
-    Cardinal.on('payments.setupComplete', (setupCompleteData: any) => {
-      this._sessionId = setupCompleteData.sessionId;
-    });
+    Cardinal.on(
+      CardinalCommerce.PAYMENT_EVENTS.SETUP_COMPLETE,
+      (setupCompleteData: any) => {
+        this._sessionId = setupCompleteData.sessionId;
+      }
+    );
   }
 
   /**
    * Triggered when the transaction has been finished.
    */
   private _onPaymentValidation() {
-    Cardinal.on('payments.validated', (data: any, jwt: string) => {
-      switch (data.ActionCode) {
-        case 'SUCCESS':
-          // Handle successful transaction, send JWT to backend to verify
-          this._retrieveValidationData(data, jwt);
-          break;
+    Cardinal.on(
+      CardinalCommerce.PAYMENT_EVENTS.VALIDATED,
+      (data: any, jwt: string) => {
+        switch (data.ActionCode) {
+          case CardinalCommerce.VALIDATION_EVENTS.SUCCESS:
+            // Handle successful transaction, send JWT to backend to verify
+            this._retrieveValidationData(data, jwt);
+            break;
 
-        case 'NOACTION':
-          this._retrieveValidationData(data);
-          break;
+          case CardinalCommerce.VALIDATION_EVENTS.NOACTION:
+            this._retrieveValidationData(data);
+            break;
 
-        case 'FAILURE':
-          this._retrieveValidationData(data);
-          break;
+          case CardinalCommerce.VALIDATION_EVENTS.FAILURE:
+            this._retrieveValidationData(data);
+            break;
 
-        case 'ERROR':
-          this._retrieveValidationData(data);
-          break;
+          case CardinalCommerce.VALIDATION_EVENTS.ERROR:
+            this._retrieveValidationData(data);
+            break;
+        }
       }
-    });
+    );
   }
 
   /**
@@ -86,7 +111,7 @@ class CardinalCommerce {
    * @private
    */
   private _onSetup() {
-    Cardinal.setup('init', {
+    Cardinal.setup(CardinalCommerce.PAYMENT_EVENTS.INIT, {
       jwt: this._jwt
     });
   }
@@ -114,16 +139,6 @@ class CardinalCommerce {
   }
 
   /**
-   * Retrieves jwt from hidden input
-   * @private
-   */
-  private _getJwt() {
-    this._jwt = (document.getElementById(
-      'JWTContainer'
-    ) as HTMLInputElement).value;
-  }
-
-  /**
    * Retrieves validation data and assign it to class fields
    * @param validationData
    * @param jwt
@@ -133,6 +148,7 @@ class CardinalCommerce {
     this._validationData = validationData;
     this._jwtChanged = jwt ? jwt : this._jwt;
     console.log(this._validationData);
+    console.log(this._jwt);
   }
 }
 
