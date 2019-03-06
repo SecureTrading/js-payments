@@ -52,20 +52,19 @@ class CardinalCommerce {
       TransactionId: this._sessionId ? this._sessionId : ''
     }
   };
+  private _paymentBrand: string = 'cca';
 
   constructor() {
     CardinalCommerce._setConfiguration();
     this._onPaymentSetupComplete();
     this._onPaymentValidation();
     this._onSetup();
-    window.addEventListener('submit', () => {
-      this._onContinue();
-    });
+    window.addEventListener('submit', () => this._onContinue());
   }
 
   /**
    * Method on successful initialization after calling Cardinal.setup() - Songbird.js has been successfully initialized.
-   * CAUTION ! this will not be triggered if an error occured during Cardinal.setup() call.
+   * CAUTION ! this will not be triggered if an error occurred during Cardinal.setup() call.
    * This includes a failed JWT authentication.
    */
   private _onPaymentSetupComplete() {
@@ -86,18 +85,14 @@ class CardinalCommerce {
       (data: any, jwt: string) => {
         switch (data.ActionCode) {
           case CardinalCommerce.VALIDATION_EVENTS.SUCCESS:
-            // Handle successful transaction, send JWT to backend to verify
             this._retrieveValidationData(data, jwt);
             break;
-
           case CardinalCommerce.VALIDATION_EVENTS.NOACTION:
             this._retrieveValidationData(data);
             break;
-
           case CardinalCommerce.VALIDATION_EVENTS.FAILURE:
             this._retrieveValidationData(data);
             break;
-
           case CardinalCommerce.VALIDATION_EVENTS.ERROR:
             this._retrieveValidationData(data);
             break;
@@ -131,7 +126,7 @@ class CardinalCommerce {
    */
   private _onContinue() {
     Cardinal.continue(
-      'cca',
+      this._paymentBrand,
       this._onSubmit(),
       this._orderDetails,
       this._jwtChanged
@@ -147,8 +142,6 @@ class CardinalCommerce {
   private _retrieveValidationData(validationData: string, jwt?: string) {
     this._validationData = validationData;
     this._jwtChanged = jwt ? jwt : this._jwt;
-    console.log(this._validationData);
-    console.log(this._jwt);
   }
 }
 

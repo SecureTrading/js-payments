@@ -1,15 +1,18 @@
 import CardinalCommerce from './../../../src/core/classes/CardinalCommerce.class';
+import Cardinal from '../../../src/core/imports/cardinalLibrary';
 
-const globalAny: any = global;
-globalAny.Cardinal = {
-  configure: jest.fn()
-};
+(global as any).Cardinal = Cardinal;
 
 // given
 describe('Class CCIntegration', () => {
-  let ccIntegration: any;
+  let instance: any;
+  let { jwt, validationData } = CardinalCommerceFixture();
 
-  beforeEach(() => {});
+  // when
+  beforeEach(() => {
+    document.body.innerHTML = `<input id='JWTContainer' value="${jwt}" />`;
+    instance = new CardinalCommerce();
+  });
   // given
   describe('Method _setConfiguration', () => {
     // then
@@ -37,11 +40,6 @@ describe('Class CCIntegration', () => {
   // given
   describe('Method _retrieveValidationData', () => {
     // then
-    beforeEach(() => {
-      const { jwt } = CardinalCommerceFixture();
-      document.body.innerHTML = `<input id='JWTContainer' value="${jwt}" />`;
-      const instance = new CardinalCommerce();
-    });
     it('should be called once', () => {});
   });
 });
