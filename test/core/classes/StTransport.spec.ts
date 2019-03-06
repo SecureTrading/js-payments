@@ -9,15 +9,21 @@ import StTransport from '../../../src/core/classes/StTransport.class';
 
 describe('StTransport class', () => {
   const DEFAULT_PARAMS = { jwt: 'j.w.t' };
-  describe('Method sendRequest', () => {
+  describe('Method sendRequest', async () => {
     let st: StTransport;
     let mockFT: jest.Mock;
 
     beforeEach(() => {
       st = new StTransport(DEFAULT_PARAMS);
       st.fetchTimeout = jest.fn();
+      // This effectively creates a MVP codec so that we aren't testing all that here
       st.codec.encode = jest.fn(x => JSON.stringify(x));
-      st.codec.verifyResponseObject = jest.fn(x => x);
+      st.codec.decode = jest.fn(x => {
+        if ('json' in x) {
+          return x.json();
+        }
+        throw new Error('codec error');
+      });
       mockFT = st.fetchTimeout as jest.Mock;
     });
 
@@ -42,10 +48,7 @@ describe('StTransport class', () => {
     );
 
     each([
-      [
-        resolvingPromise({}),
-        Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE)
-      ],
+      [resolvingPromise({}), Error('codec error')],
       [rejectingPromise(TimeoutError), TimeoutError]
     ]).it('should reject invalid responses', async (mockFetch, expected) => {
       mockFT.mockReturnValue(mockFetch);
@@ -67,13 +70,16 @@ describe('StTransport class', () => {
               version: '1.00'
             })
         }),
-        { errorcode: 0 }
+        { response: [{ errorcode: 0 }], version: '1.00' }
       ]
     ]).it('should decode the json response', async (mockFetch, expected) => {
       mockFT.mockReturnValue(mockFetch);
       await expect(
         st.sendRequest({ requesttypedescription: 'AUTH' })
       ).resolves.toEqual(expected);
+      expect(st.codec.decode).toHaveBeenCalledWith({
+        json: expect.any(Function)
+      });
     });
   });
 
