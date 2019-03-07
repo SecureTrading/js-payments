@@ -3,16 +3,23 @@
  */
 import VisaCheckout from './VisaCheckout.class';
 
-class ST extends VisaCheckout {
-  private _jwt: string;
-  private _style: object;
+class ST {
+  public jwt: string;
+  public style: object;
   public payments: object[];
 
   constructor(jwt: string, style: object, payments: object[]) {
-    super();
-    this._jwt = jwt;
-    this._style = style;
+    this.jwt = jwt;
+    this.style = style;
     this.payments = payments;
+    const visa = new VisaCheckout(this._getPayments());
+  }
+
+  private _getPayments() {
+    return Object.values(this.payments).find(
+      // @ts-ignore
+      item => item.name === 'VISA'
+    );
   }
 }
 

@@ -67,23 +67,30 @@ class VisaCheckout {
    * Init configuration (temporary with some test data)
    */
   private _initConfiguration: object = {
-    apikey: VisaCheckout.API_KEY,
-    encryptionKey: VisaCheckout.ENCRYPTION_KEY,
-    paymentRequest: {
-      currencyCode: 'GBP',
-      subtotal: '10.00'
-    }
+    apikey: '',
+    encryptionKey: ''
   };
 
-  constructor() {
-    VisaCheckout._attachVisaButton();
-    this._onVisaCheckoutReady();
+  private config: object;
+
+  constructor(config: object) {
+    // @ts-ignore
+    const { props } = config;
+    console.log(props);
+    this.config = props;
+    // @ts-ignore
+    this._initConfiguration.apiKey = this.config.apikey;
+    // @ts-ignore
+    this._initConfiguration.encryptionKey = this.config.encryptionKey;
+    console.log(this._initConfiguration);
+    this._setConfiguration();
   }
 
   /**
    * Loads Visa Checkout configuration as soon as script is loaded and button attached to DOM
    */
-  private _onVisaCheckoutReady() {
+  private _setConfiguration() {
+    VisaCheckout._attachVisaButton();
     V.init(this._initConfiguration);
     VisaCheckout._paymentStatusHandler('payment.success');
     VisaCheckout._paymentStatusHandler('payment.cancel');
