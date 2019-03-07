@@ -7,10 +7,8 @@ describe('Visa Checkout class', () => {
   let instance;
   // when
   beforeEach(() => {
-    (global as any).V = jest.fn();
-    (global as any).V.init = jest.fn();
-    // V.mockClear();
-    // instance = new VisaCheckout();
+    const { config } = VisaCheckoutFixture();
+    instance = new VisaCheckout(config);
   });
 
   // given
@@ -29,20 +27,31 @@ describe('Visa Checkout class', () => {
   });
 
   // given
-  describe('Method _onVisaCheckoutReady', () => {
+  describe('Method _attachVisaSDK', () => {
     // then
     it('should init script on button', () => {});
   });
 
   // given
-  describe('Method __attachVisaButton', () => {
+  describe('Method _paymentStatusHandler', () => {
     // then
     it('should attach Visa Checkout button into body', () => {});
   });
 
   // given
-  describe('Method __attachVisaButton', () => {
+  describe('Method _setConfiguration', () => {
     // then
     it('should attach Visa Checkout button into body', () => {});
   });
 });
+
+function VisaCheckoutFixture() {
+  const config = {
+    name: 'VISA',
+    props: {
+      apikey: '2ig278`13b123872121h31h20e',
+      encryptionKey: 'sad78dsadtas8das8das87dyas87dsad'
+    }
+  };
+  return { config };
+}
