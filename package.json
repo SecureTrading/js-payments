@@ -9,12 +9,13 @@
     "IE 10"
   ],
   "scripts": {
-    "test": "jest --watch",
-    "coverage": "jest --coverage",
-    "snyk": "snyk test",
     "build": "webpack --config webpack.prod.js",
     "start": "webpack-dev-server --color --progress --config webpack.dev.js",
     "example": "live-server ./dist --port=9090 --host=localhost --no-browser",
+    "prod": "npm run build",
+    "test": "jest --watch",
+    "coverage": "jest --coverage",
+    "snyk": "snyk test",
     "testframework": "git clone https://github.com/SecureTrading/js-payments-testing; cd js-payments-testing",
     "behave": "npm run testframework && cd js-payments-testing && make"
   },
