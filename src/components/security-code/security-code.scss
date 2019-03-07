@@ -1,8 +1,9 @@
 @import '../../core/styles/variables';
-@import '../../core/styles/placeholder';
+@import '../../core/styles/placeholders';
 @import '../../core/styles/core';
 
 .security-code {
+  @extend %block;
 }
 
 .security-code__label {
@@ -17,14 +18,6 @@
   @extend %input;
 }
 
-.security-code__input--error {
-  @extend %input--error;
-}
-
 .security-code__message {
   @extend %message;
-}
-
-.security-code__message--error {
-  @extend %message--error;
 }

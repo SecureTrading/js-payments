@@ -1,57 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
     <meta
       name="viewport"
       content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
     />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Secure Trading</title>
+    <title>Secure Trading Example Form</title>
   </head>
   <body>
-    <form class="st-form">
-      <h1>Secure Trading Example Form</h1>
-      <div class="row">
-        <label for="example-1-name">Name</label>
+    <form class="example-form">
+      <h1 class="example-form__title">Secure Trading<span>Example Form</span></h1>
+      <div class="example-form__group">
+        <label for="example-form-name" class="example-form__label example-form__label--required">NAME</label>
         <input
-          id="example-1-name"
+          id="example-form-name"
+          class="example-form__input"
           type="text"
           placeholder="John Doe"
-          required=""
           autocomplete="name"
         />
       </div>
-      <div class="row">
-        <label for="example-1-email">Email</label>
+      <div class="example-form__group">
+        <label for="example-form-email" class="example-form__label example-form__label--required">E-MAIL</label>
         <input
-          id="example-1-email"
+          id="example-form-email"
+          class="example-form__input"
           type="email"
-          placeholder="test@gmail.com"
-          required=""
+          placeholder="test@mail.com"
           autocomplete="email"
         />
       </div>
-      <div class="row">
-        <label for="example-1-phone">Phone</label>
+      <div class="example-form__group">
+        <label for="example-form-phone" class="example-form__label example-form__label--required">PHONE</label>
         <input
-          id="example-1-phone"
+          id="example-form-phone"
+          class="example-form__input"
           type="tel"
-          placeholder="+48713545689"
-          required=""
+          placeholder="+00 000 000 000"
           autocomplete="tel"
         />
       </div>
-      <div id="st-card-number" class="st-card-number"></div>
-      <div id="st-security-code" class="st-security-code"></div>
-      <div id="st-expiration-date" class="st-expiration-date"></div>
-      <div
-        id="st-form__received-message"
-        class="st-form__received-message"
-      ></div>
-      <button type="submit" id="st-form__submit" class="st-form__submit">
-        Pay securely
-      </button>
+      <div class="example-form__spacer"></div>
+      <div id="st-card-number" class="example-form__group"></div>
+      <div id="st-expiration-date" class="example-form__group"></div>
+      <div id="st-security-code" class="example-form__group"></div>
+      <div class="example-form__spacer"></div>
+      <div class="example-form__group">
+        <button class="example-form__button" type="submit">PAY</button>
+      </div>
     </form>
   </body>
 </html>

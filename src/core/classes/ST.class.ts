@@ -6,9 +6,9 @@ class ST {
   private static _iframeSecurityCodeId: string = 'st-security-code-iframe';
   private static _iframeExpirationDateId: string = 'st-expiration-date-iframe';
 
-  public static cardNumberComponent = 'http://localhost:8081/';
-  public static expirationDateComponent = 'http://localhost:8082/';
-  public static securityCodeComponent = 'http://localhost:8083/';
+  public static cardNumberComponent = '/credit-card-number.html';
+  public static expirationDateComponent = '/expiration-date.html';
+  public static securityCodeComponent = '/security-code.html';
 
   constructor() {
     this.submitListener();
@@ -21,27 +21,15 @@ class ST {
     document.addEventListener('DOMContentLoaded', () => {
       document.addEventListener('submit', event => {
         event.preventDefault();
-        const creditCardIframe = document.getElementById(
-          ST._iframeCreditCardId
-        ) as HTMLIFrameElement;
-        const securityCodeIframe = document.getElementById(
-          ST._iframeSecurityCodeId
-        ) as HTMLIFrameElement;
-        const expirationDateIframe = document.getElementById(
-          ST._iframeExpirationDateId
-        ) as HTMLIFrameElement;
+        const creditCardIframe = document.getElementById(ST._iframeCreditCardId) as HTMLIFrameElement;
+        const securityCodeIframe = document.getElementById(ST._iframeSecurityCodeId) as HTMLIFrameElement;
+        const expirationDateIframe = document.getElementById(ST._iframeExpirationDateId) as HTMLIFrameElement;
         const creditCardContentWindow = creditCardIframe.contentWindow;
         const securityCodeContentWindow = securityCodeIframe.contentWindow;
         const expirationDateContentWindow = expirationDateIframe.contentWindow;
         creditCardContentWindow.postMessage('message', ST.cardNumberComponent);
-        securityCodeContentWindow.postMessage(
-          'message',
-          ST.securityCodeComponent
-        );
-        expirationDateContentWindow.postMessage(
-          'message',
-          ST.expirationDateComponent
-        );
+        securityCodeContentWindow.postMessage('message', ST.securityCodeComponent);
+        expirationDateContentWindow.postMessage('message', ST.expirationDateComponent);
       });
     });
   };

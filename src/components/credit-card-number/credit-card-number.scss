@@ -1,25 +1,23 @@
-.credit-card-number {
-  &__input {
-    border: none;
-    border-bottom: 0.1rem solid #32325d;
-    color: #32325d;
-    height: 3.5rem;
+@import '../../core/styles/variables';
+@import '../../core/styles/placeholders';
+@import '../../core/styles/core';
 
-    &:focus {
-      outline: none;
-    }
-  }
+.card-number {
+  @extend %block;
+}
 
-  &__group {
-    position: relative;
-  }
+.card-number__label {
+  @extend %label;
+}
 
-  &__validation {
-    color: #e71b5a;
-    font-weight: bold;
-  }
+.card-number__label--required {
+  @extend %label--required;
+}
 
-  &__submit {
-    opacity: 0;
-  }
+.card-number__input {
+  @extend %input;
+}
+
+.card-number__message {
+  @extend %message;
 }

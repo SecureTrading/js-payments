@@ -1,19 +1,14 @@
-<form id="st-security-code" class="security-code">
-  <label
-    for="security-code"
-    class="security-code__label security-code__label--required"
-  >
+<form id="st-security-code" class="security-code" novalidate>
+  <label for="st-security-code-input" class="security-code__label security-code__label--required">
     SECURITY CODE
   </label>
   <input
-    id="security-code"
+    id="st-security-code-input"
     class="security-code__input"
     type="text"
-    name="security-code"
-    placeholder="0000 1234 5678 9876"
+    placeholder="123"
+    autocomplete="off"
     required
   />
-  <p class="security-code__message">
-    Error message
-  </p>
+  <p id="st-security-code-message" class="security-code__message"></p>
 </form>

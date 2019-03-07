@@ -1,5 +1,4 @@
 import { BrandDetailsType } from '../../imports/cardtype';
-import { cardsLogos } from '../../imports/images';
 import Language from '../Language.class';
 import Validation from './Validation.class';
 import BinLookup from './BinLookup.class';
@@ -16,6 +15,7 @@ class CardNumber extends Validation {
   private _cardLength: [];
   private static DEFAULT_CARD_LENGTH = 16;
   private static STANDARD_CARD_FORMAT = '(\\d{1,4})(\\d{1,4})?(\\d{1,4})?(\\d+)?';
+  private static MESSAGE_ELEMENT_ID = 'st-card-number-message';
 
   get cardType(): string {
     return this._cardType;
@@ -27,29 +27,22 @@ class CardNumber extends Validation {
 
   constructor(fieldId: string) {
     super();
-    localStorage.setItem('cardNumberValidity', 'false');
+
     this.binLookup = new BinLookup();
     this.brand = null;
     this._fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
+
+    this.setValidityAttributes();
+    this.setValidityListener();
+    this.setValidity();
+  }
+
+  private setValidityAttributes() {
     CardNumber.setValidationAttribute(this._fieldInstance, 'maxlength', String(CardNumber.DEFAULT_CARD_LENGTH));
     CardNumber.setValidationAttribute(this._fieldInstance, 'minlength', String(CardNumber.DEFAULT_CARD_LENGTH));
-    this.inputValidation(fieldId);
   }
 
-  /**
-   * Aggregates input validation and postMessage event validation
-   * @param fieldId
-   */
-  private inputValidation(fieldId: string) {
-    this.inputValidationListener(fieldId);
-    this.postMessageEventListener(fieldId);
-  }
-
-  /**
-   * Listens to keypress action on credit card field and attach validation methods
-   * @param fieldId
-   */
-  private inputValidationListener(fieldId: string) {
+  private setValidityListener() {
     this._fieldInstance.addEventListener('keypress', (event: KeyboardEvent) => {
       if (!CardNumber.isCharNumber(event)) {
         event.preventDefault();
@@ -61,25 +54,15 @@ class CardNumber extends Validation {
     });
   }
 
-  /**
-   * Listens to submit event from Form and validate card number field
-   * @param fieldId
-   */
-  private postMessageEventListener(fieldId: string) {
-    window.addEventListener(
-      'message',
-      () => {
-        if (CardNumber.setInputErrorMessage(this._fieldInstance, 'card-number-error')) {
-          if (this.validateCreditCard(this._fieldInstance.value)) {
-            localStorage.setItem('cardNumber', this._fieldInstance.value);
-            this._fieldInstance.classList.remove('error');
-          } else {
-            CardNumber.customErrorMessage(Language.translations.VALIDATION_ERROR_CARD, 'card-number-error');
-          }
-        }
-      },
-      false
-    );
+  private setValidity() {
+    CardNumber.setInputErrorMessage(this._fieldInstance, CardNumber.MESSAGE_ELEMENT_ID);
+    localStorage.setItem('cardNumberValidity', 'false');
+
+    if (this.validateCreditCard(this._fieldInstance.value)) {
+      localStorage.setItem('cardNumber', this._fieldInstance.value);
+    } else {
+      CardNumber.customErrorMessage(Language.translations.VALIDATION_ERROR_CARD, CardNumber.MESSAGE_ELEMENT_ID);
+    }
   }
 
   /**
@@ -133,20 +116,6 @@ class CardNumber extends Validation {
     }
 
     return sum && sum % 10 === 0;
-  }
-
-  /**
-   * Returns card logo due to brand type setting, if no brand has been specified, returns standard 'chip' card
-   */
-  public getCardLogo() {
-    let key = 'chip';
-    if (this.brand && this.brand.type) {
-      const brandName = this.brand.type.toLowerCase();
-      if (cardsLogos[brandName]) {
-        key = brandName;
-      }
-    }
-    return cardsLogos[key];
   }
 }
 

@@ -1,35 +1,23 @@
+@import '../../core/styles/variables';
+@import '../../core/styles/placeholders';
+@import '../../core/styles/core';
+
 .expiration-date {
-  &__input {
-    border: none;
-    border-bottom: 0.1rem solid #32325d;
-    height: 3.5rem;
-    color: #32325d;
-    padding-left: 2.5rem;
+  @extend %block;
+}
 
-    &:focus {
-      outline: none;
-    }
-  }
+.expiration-date__label {
+  @extend %label;
+}
 
-  &__group {
-    position: relative;
-  }
+.expiration-date__label--required {
+  @extend %label--required;
+}
 
-  &__logo {
-    position: absolute;
-    top: 33%;
+.expiration-date__input {
+  @extend %input;
+}
 
-    img {
-      max-width: 2rem;
-    }
-  }
-
-  &__validation {
-    color: #e71b5a;
-    font-weight: bold;
-  }
-
-  &__submit {
-    opacity: 0;
-  }
+.expiration-date__message {
+  @extend %message;
 }

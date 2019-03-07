@@ -1,9 +1,6 @@
 import './security-code.scss';
-// import { inputListener } from '../../core/listeners/input';
-//
-// inputListener(
-//   'securityCode',
-//   'st-security-code',
-//   'security-code',
-//   'security-code'
-// );
+import SecurityCode from '../../../src/core/classes/validation/SecurityCode.class';
+
+if (document.getElementById('st-security-code-input')) {
+  new SecurityCode('st-security-code-input');
+}

@@ -9,7 +9,6 @@ module.exports = merge(common, {
     contentBase: './dist',
     port: 8080,
     hot: true
-    // writeToDisk: true
   },
   plugins: [new webpack.HotModuleReplacementPlugin()]
 });

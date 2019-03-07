@@ -4,39 +4,46 @@ $font-size-body: 1.6rem;
 $font-size-input: 1.5rem;
 $font-size-label: 1.2rem;
 $font-size-message: 1.3rem;
+$font-size-button: 1.5rem;
 
 $line-height-body: 1.6rem;
 $line-height-input: $line-height-body;
 $line-height-label: $line-height-body;
 $line-height-message: $line-height-body;
+$line-height-button: $line-height-body;
 
 $color-body: #333;
-$color-input: $color-body;
-//$color-input-disabled: #000;
-$color-input-placeholder: #b6b6b6;
-$color-label: $color-body;
 $color-error: #ff4545;
 
-//$background-color-input: #000;
+$color-input: $color-body;
+$color-input-error: $color-body;
+$color-input-placeholder: #b6b6b6;
+$color-label: $color-body;
+$color-message: $color-error;
+$color-button: $color-body;
+
 $background-color-input-error: #fff5f5;
+$background-color-button: #ffffff;
+$background-color-button-hover: #f1f1f1;
 
 $border-size-input: 0.1rem;
+$border-size-button: 0.1rem;
 
 $border-color-input: #6d6d6d;
-//$border-color-input-disabled: #000;
-//$border-color-input-error: #000;
-//$border-color-input-hover: #000;
+$border-color-input-error: $color-error;
+$border-color-button: #6d6d6d;
 
 $border-radius-input: 0.4rem;
+$border-radius-button: 0.4rem;
 
 $space-xs: 0.4rem;
 $space-s: 0.8rem;
 $space-m: 1.2rem;
-//$space-l: 3.2rem;
-//$space-xl: 6.4rem;
+$space-l: 1.6rem;
 
 $space-inset-input: ($space-m - $border-size-input) $space-s;
+$space-inset-button: ($space-m - $border-size-button) ($space-l - $border-size-button);
 
-$space-outset-input: 0;
+$space-outset-input: 0 0 ($line-height-input + $space-xs);
 $space-outset-label: 0 0 $space-xs;
 $space-outset-message: $space-xs 0 0;

@@ -1,4 +1,6 @@
-@import 'variables';
+%block {
+  position: relative;
+}
 
 %label {
   display: $display-label; // @param
@@ -19,7 +21,7 @@
     right: -$space-m;
     font-size: 1.5em;
     font-weight: bold;
-    color: $color-error;
+    color: $color-error; // @param
   }
 }
 
@@ -35,21 +37,36 @@
   margin: $space-outset-input; // @param
 
   &::placeholder {
-    color: $color-input-placeholder;
+    color: $color-input-placeholder; // @param
   }
-}
 
-%input--error {
-  border-color: $color-error; // @param
-  background-color: $background-color-input-error; // @param
+  &:invalid {
+    color: $color-input-error; // @param
+    border-color: $color-error; // @param
+    background-color: $background-color-input-error; // @param
+  }
 }
 
 %message {
   font-size: $font-size-message; // @param
   line-height: $line-height-message; // @param
   margin: $space-outset-message; // @param
+  color: $color-error; // @param
+  position: absolute;
+  bottom: 0;
 }
 
-%message--error {
-  color: $color-error; // @param
+%button {
+  font-size: $font-size-button; // @param
+  line-height: $line-height-button; // @param
+  color: $color-button; // @param
+  border: $border-size-button solid $border-color-button; // @param
+  border-radius: $border-radius-button; // @param
+  background-color: $background-color-button; // @param
+  padding: $space-inset-button; // @param
+  cursor: pointer;
+
+  &:hover {
+    background-color: $background-color-button-hover; // @param
+  }
 }

@@ -7,70 +7,62 @@ class ExpirationDate extends Validation {
   private static DATE_MAX_LENGTH = 5;
   private static DATE_SLASH_PLACE = 2;
   private static EXPIRATION_DATE_REGEXP = '^(0[1-9]|1[0-2])\\/([0-9]{2})$';
+  private static MESSAGE_ELEMENT_ID = 'st-expiration-date-message';
 
   private readonly _fieldInstance: HTMLInputElement;
 
   constructor(fieldId: string) {
     super();
-    localStorage.setItem('expirationDateValidity', 'false');
+
     this._fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
-    this.inputValidation(fieldId);
+
+    this.setValidityAttributes();
+    this.setValidityListener();
+    this.setValidity();
   }
 
-  /**
-   * Aggregates keypress and postMessage events listeners
-   * @param fieldId
-   */
-  public inputValidation(fieldId: string) {
+  private setValidityAttributes() {
     ExpirationDate.setValidationAttribute(this._fieldInstance, 'pattern', ExpirationDate.EXPIRATION_DATE_REGEXP);
-    this.keypressEventListener();
-    this.postMessageEventListener();
+    ExpirationDate.setValidationAttribute(this._fieldInstance, 'maxlength', String(ExpirationDate.DATE_MAX_LENGTH));
   }
 
-  /**
-   * Listens to keypress action on credit card field and attaches mask method
-   */
-  private keypressEventListener() {
+  private setValidityListener() {
+    this._fieldInstance.addEventListener('paste', (event: ClipboardEvent) => {
+      event.preventDefault();
+    });
+
     this._fieldInstance.addEventListener('keypress', (event: KeyboardEvent) => {
-      this.dateInputMask(event);
+      if (!ExpirationDate.isCharNumber(event)) {
+        event.preventDefault();
+      }
+    });
+
+    this._fieldInstance.addEventListener('input', () => {
+      this.maskValue();
+      this.setValidity();
     });
   }
 
-  /**
-   * Listens to postMessage event and attaches validation methods
-   */
-  private postMessageEventListener() {
-    window.addEventListener(
-      'message',
-      () => {
-        if (ExpirationDate.setInputErrorMessage(this._fieldInstance, 'expiration-date-error')) {
-          localStorage.setItem('expirationDate', this._fieldInstance.value);
-          this._fieldInstance.classList.remove('error');
-        }
-      },
-      false
-    );
+  private maskValue() {
+    if (/^\d\d$/.test(this._fieldInstance.value)) {
+      this._fieldInstance.value += '/';
+      return;
+    }
+
+    if (/^\d\d\/$/.test(this._fieldInstance.value)) {
+      this._fieldInstance.value = this._fieldInstance.value.replace('/', '');
+      return;
+    }
   }
 
-  /**
-   * Method for masking expiration date in format MM/YY
-   * @param event
-   */
-  public dateInputMask(event: KeyboardEvent) {
-    const length = this._fieldInstance.value.length;
-    if (length < ExpirationDate.DATE_MAX_LENGTH) {
-      if (!ExpirationDate.isCharNumber(event)) {
-        event.preventDefault();
-        return false;
-      }
+  private setValidity() {
+    let isValid: boolean = this._fieldInstance.checkValidity();
 
-      if (length === ExpirationDate.DATE_SLASH_PLACE) {
-        this._fieldInstance.value += '/';
-      }
-      return true;
-    } else {
-      event.preventDefault();
-      return false;
+    ExpirationDate.setInputErrorMessage(this._fieldInstance, ExpirationDate.MESSAGE_ELEMENT_ID);
+    localStorage.setItem('expirationDateValidity', isValid.toString());
+
+    if (isValid) {
+      localStorage.setItem('expirationDate', this._fieldInstance.value);
     }
   }
 }

@@ -5,53 +5,57 @@ import Language from './../Language.class';
  * Definition of security code validation
  */
 class SecurityCode extends Validation {
-  get securityCodeLength(): string {
-    return this._securityCodeLength;
-  }
-
-  set securityCodeLength(value: string) {
-    this._securityCodeLength = value;
-  }
-
-  private _fieldInstance: HTMLInputElement;
+  private static DEFAULT_SECURITY_CODE_LENGTH: string = '3';
+  private static MESSAGE_ELEMENT_ID = 'st-security-code-message';
+  private readonly _fieldInstance: HTMLInputElement;
   private _securityCodeLength: string;
-  private static DEFAULT_SECURITY_CODE_LENGTH = '3';
 
   constructor(fieldId: string) {
     super();
-    localStorage.setItem('securityCodeValidity', 'false');
+
     this._fieldInstance = document.getElementById(fieldId) as HTMLInputElement;
-    this.securityCodeLength = SecurityCode.DEFAULT_SECURITY_CODE_LENGTH;
-    this.inputValidationListener();
-    this.postMessageEventListener();
+    this._securityCodeLength = SecurityCode.DEFAULT_SECURITY_CODE_LENGTH;
+
+    this.setValidityAttributes();
+    this.setValidityListener();
+    this.setValidity();
   }
 
-  /**
-   * Listener on security code field.
-   * 1. Sets max and minlength of field.
-   * 2. Checks if indicated character is number
-   * 3. If it is, checks if there are some errors in indicated expression, if yes
-   *    it sets error message if not it removes error.
-   */
-  private inputValidationListener() {
-    SecurityCode.setValidationAttribute(this._fieldInstance, 'maxlength', String(this.securityCodeLength));
-    SecurityCode.setValidationAttribute(this._fieldInstance, 'minlength', String(this.securityCodeLength));
+  private setValidityAttributes() {
+    SecurityCode.setValidationAttribute(this._fieldInstance, 'maxlength', String(this._securityCodeLength));
+    SecurityCode.setValidationAttribute(this._fieldInstance, 'minlength', String(this._securityCodeLength));
+  }
+
+  private setValidityListener() {
+    this._fieldInstance.addEventListener('paste', (event: ClipboardEvent) => {
+      event.preventDefault();
+    });
+
     this._fieldInstance.addEventListener('keypress', (event: KeyboardEvent) => {
       if (!SecurityCode.isCharNumber(event)) {
         event.preventDefault();
-        return false;
-      } else {
-        if (SecurityCode.setInputErrorMessage(this._fieldInstance, 'security-code-error')) {
-          SecurityCode.setSecurityCodeProperties(this._fieldInstance.value);
-          this._fieldInstance.classList.remove('error');
-          return true;
-        }
       }
     });
+
+    this._fieldInstance.addEventListener('input', () => {
+      this.setValidity();
+    });
+  }
+
+  private setValidity() {
+    let isValid: boolean = this._fieldInstance.checkValidity();
+
+    SecurityCode.setInputErrorMessage(this._fieldInstance, SecurityCode.MESSAGE_ELEMENT_ID);
+    localStorage.setItem('securityCodeValidity', isValid.toString());
+
+    if (isValid) {
+      SecurityCode.setSecurityCodeProperties(this._fieldInstance.value);
+    }
   }
 
   /**
    * Listens to postMessage event from Form
+   * @deprecated
    */
   private postMessageEventListener() {
     window.addEventListener(
@@ -62,7 +66,6 @@ class SecurityCode extends Validation {
         if (SecurityCode.setInputErrorMessage(this._fieldInstance, 'security-code-error')) {
           if (SecurityCode.cardNumberSecurityCodeMatch(cardNumber, securityCodeLength)) {
             localStorage.setItem('securityCode', this._fieldInstance.value);
-            this._fieldInstance.classList.remove('error');
           } else {
             SecurityCode.customErrorMessage(
               Language.translations.VALIDATION_ERROR_CARD_AND_CODE,

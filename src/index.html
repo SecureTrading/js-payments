@@ -11,11 +11,8 @@
   </head>
   <body>
     <% var template = { creditCardNumber:
-    require('html-loader!./components/credit-card-number/credit-card-number.html'),
-    expirationDate:
-    require('html-loader!./components/expiration-date/expiration-date.html'),
-    securityCode:
-    require('html-loader!./components/security-code/security-code.html') } %>
-    <%= template[partial] %>
+    require('html-loader!./components/credit-card-number/credit-card-number.html'), expirationDate:
+    require('html-loader!./components/expiration-date/expiration-date.html'), securityCode:
+    require('html-loader!./components/security-code/security-code.html') } %> <%= template[partial] %>
   </body>
 </html>

@@ -7,13 +7,6 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
 module.exports = {
-  // optimization: {
-  //   usedExports: true,
-  //   splitChunks: {
-  //     chunks: 'all',
-  //     name: true
-  //   }
-  // },
   entry: {
     main: './src/index.ts',
     stjs: './src/stjs.ts',
@@ -67,12 +60,7 @@ module.exports = {
     rules: [
       {
         test: /\.scss$/,
-        use: [
-          'style-loader',
-          { loader: 'css-loader', options: { importLoaders: 1 } },
-          'postcss-loader',
-          'sass-loader'
-        ]
+        use: ['style-loader', { loader: 'css-loader', options: { importLoaders: 1 } }, 'postcss-loader', 'sass-loader']
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
