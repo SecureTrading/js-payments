@@ -15,7 +15,7 @@ describe('StTransport class', () => {
 
     beforeEach(() => {
       st = new StTransport(DEFAULT_PARAMS);
-      st.fetchTimeout = jest.fn();
+      st.fetchRetry = jest.fn();
       // This effectively creates a MVP codec so that we aren't testing all that here
       st.codec.encode = jest.fn(x => JSON.stringify(x));
       st.codec.decode = jest.fn(x => {
@@ -24,7 +24,7 @@ describe('StTransport class', () => {
         }
         throw new Error('codec error');
       });
-      mockFT = st.fetchTimeout as jest.Mock;
+      mockFT = st.fetchRetry as jest.Mock;
     });
 
     each([[{ requesttypedescription: 'AUTH' }]]).it(
@@ -39,8 +39,8 @@ describe('StTransport class', () => {
           })
         );
         await st.sendRequest(requestObject);
-        expect(st.fetchTimeout).toHaveBeenCalledTimes(1);
-        expect(st.fetchTimeout).toHaveBeenCalledWith(StTransport.GATEWAY_URL, {
+        expect(st.fetchRetry).toHaveBeenCalledTimes(1);
+        expect(st.fetchRetry).toHaveBeenCalledWith(StTransport.GATEWAY_URL, {
           ...StTransport.DEFAULT_FETCH_OPTIONS,
           body: JSON.stringify(requestObject)
         });
@@ -83,32 +83,8 @@ describe('StTransport class', () => {
     });
   });
 
-  describe('Method fetchTimeout', () => {
-    let st: StTransport;
-
-    beforeEach(() => {
-      st = new StTransport(DEFAULT_PARAMS);
-    });
-    afterEach(() => {
-      fetchMock.resetMocks();
-    });
-
-    it('should return promise if fetched successfully', async () => {
-      fetchMock.mockResponse('{"errorcode": 0}');
-      await expect(st.fetchTimeout('', {})).resolves.toEqual(
-        new Response('{"errorcode": 0}')
-      );
-    });
-
-    it('should timeout if the request takes too long', async () => {
-      fetchMock.mockResponse(
-        () =>
-          new Promise(resolve =>
-            setTimeout(() => resolve({ body: '{"errorcode": 0}' }), 10)
-          )
-      );
-      await expect(st.fetchTimeout('', {}, 2)).rejects.toEqual(TimeoutError);
-    });
+  describe('fetchRetry', () => {
+    // No need to test this since it's only a wrapper for some tools from utils
   });
 });
 

@@ -1,3 +1,4 @@
+import { promiseWithTimeout, retryPromise } from '../helpers/utils';
 import Language from './Language.class';
 import { IStRequest, StCodec } from './StCodec.class';
 
@@ -18,7 +19,13 @@ interface IStTransportParams {
  *     sitereference: 'test_james38641'
  *   }).then(console.log);
  */
-class StTransport {
+export default class StTransport {
+  /**
+   * Getter for the codec
+   */
+  public get codec() {
+    return this._codec;
+  }
   public static GATEWAY_URL =
     'https://webservices.securetrading.net/public/json/';
   public static DEFAULT_FETCH_OPTIONS = {
@@ -28,17 +35,13 @@ class StTransport {
     },
     method: 'post'
   };
-  public static TIMEOUT = 60000;
+  public static TIMEOUT = 10000;
+  public static DELAY = 1000;
+  public static RETRY_LIMIT = 5;
+  public static RETRY_TIMEOUT = 10000;
 
   private gatewayUrl: string;
   private _codec: StCodec;
-
-  /**
-   * Getter for the codec
-   */
-  public get codec() {
-    return this._codec;
-  }
 
   constructor(params: IStTransportParams) {
     this.gatewayUrl =
@@ -52,38 +55,37 @@ class StTransport {
    * @return A Promise object that resolves the gateway response
    */
   public async sendRequest(requestObject: IStRequest) {
-    return this.fetchTimeout(this.gatewayUrl, {
+    return this.fetchRetry(this.gatewayUrl, {
       ...StTransport.DEFAULT_FETCH_OPTIONS,
       body: this._codec.encode(requestObject)
     }).then(this._codec.decode);
   }
 
   /**
-   * Fetch with a timeout to reject the request
+   * Fetch with timeout and retry
    * We probably want to update this to use an AbortControllor once this is standardised in the future
    * @param url The URL to be passed to the fetch request
    * @param options The options object to be passed to the fetch request
-   * @param timeout The time (ms) after which to time out
-   * @return A Promise that resolves to a fetch response or rejects with a timeout
+   * @param connectTimeout The time (ms) after which to time out
+   * @param delay The delay for the retry
+   * @param retries The number of retries
+   * @param retryTimeout The longest amount of time to spend retrying
+   * @return A Promise that resolves to a fetch response or rejects with an error
    */
-  public fetchTimeout(
+  public fetchRetry(
     url: string,
     options: object,
-    timeout = StTransport.TIMEOUT
+    connectTimeout = StTransport.TIMEOUT,
+    delay = StTransport.DELAY,
+    retries = StTransport.RETRY_LIMIT,
+    retryTimeout = StTransport.RETRY_TIMEOUT
   ) {
-    return Promise.race([
-      fetch(url, options),
-      new Promise((_, reject) =>
-        setTimeout(
-          () =>
-            reject(
-              new Error(Language.translations.COMMUNICATION_ERROR_TIMEOUT)
-            ),
-          timeout
-        )
-      )
-    ]);
+    return retryPromise(
+      () =>
+        promiseWithTimeout<Response>(() => fetch(url, options), connectTimeout),
+      delay,
+      retries,
+      retryTimeout
+    );
   }
 }
-
-export default StTransport;

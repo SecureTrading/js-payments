@@ -50,7 +50,7 @@ class StCodec {
   /**
    * Add the wrapper data to the request object
    * @param requestData The data to be contained in this request
-   * @return A JSON object ready to be encoded
+   * @return A JS object ready to be encoded
    */
   public buildRequestObject(requestData: object): object {
     return {
