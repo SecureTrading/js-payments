@@ -12,6 +12,14 @@ import {
  * Defines integration with Cardinal Commerce and flow of transaction with this supplier.
  */
 class CardinalCommerce {
+  private static WEBSERVICE_URL: string =
+    'https://webservices.securetrading.net/public/json/';
+  private static FETCH_CONFIG: object = {
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    method: 'POST'
+  };
   private static PAYMENT_EVENTS = {
     INIT: 'init',
     SETUP_COMPLETE: 'payments.setupComplete',
@@ -118,15 +126,24 @@ class CardinalCommerce {
    * @private
    */
   private _onSubmit() {
-    fetch('https://webservices.securetrading.net/public/json/', {
-      method: 'POST',
+    fetch(CardinalCommerce.WEBSERVICE_URL, {
       headers: {
         'Content-Type': 'application/json'
       },
+      method: 'POST',
       body: JSON.stringify({
-        cardNumber: 111111111111,
-        expirationDate: '12/20',
-        securityCode: 1111
+        jwt: this._jwt,
+        request: [
+          {
+            sitereference: 'live2', // This will eventually come from the merchant config
+            requesttypedescription: 'THREEDQUERY', // for other requests this could be THREEDINIT, CACHETOKENISE or AUTH
+            pan: '4111111111111111', // this is cardNumber
+            expirydate: '12/20',
+            securitycode: '123'
+            // Any other fields you're submitting would go in here too
+          }
+        ],
+        version: '1.00'
       })
     })
       .then(response => {
@@ -160,6 +177,8 @@ class CardinalCommerce {
   private _retrieveValidationData(validationData: string, jwt?: string) {
     this._validationData = validationData;
     this._jwtChanged = jwt ? jwt : this._jwt;
+    console.log(validationData);
+    console.log(this._jwt);
   }
 
   /**
