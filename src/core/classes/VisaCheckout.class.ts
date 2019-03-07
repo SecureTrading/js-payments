@@ -4,14 +4,23 @@ const V = (window as any).V;
  *  Visa checkout configuration class
  */
 class VisaCheckout {
-  private static API_KEY = 'ZG50YOGQQJ0PWPPX8D7F21ELpFID5NF-W256C638eL5hNgsOc';
-  private static ENCRYPTION_KEY = 'cX8SKE8k5X#BO40elD0M4dJV65WZGqCi1+I#S$rZ';
   private static VISA_CHECKOUT_BUTTON_PROPS: any = {
     alt: 'Visa Checkout',
     className: 'v-button',
     role: 'button',
     src:
       'https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png'
+  };
+  private static SDK_ADDRESS: string =
+    'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js';
+
+  /**
+   * Possible status of payment in VISA Checkout
+   */
+  private static VISA_PAYMENT_STATUS = {
+    CANCEL: 'payment.cancel',
+    ERROR: 'payment.error',
+    SUCCESS: 'payment.success'
   };
 
   /**
@@ -34,12 +43,12 @@ class VisaCheckout {
 
   /**
    * Attach SDK from Visa Checkout as html markup (temporary unused due to malfunction with scripts)
+   * TODO: Change attaching script via markup to this function
    * @private
    */
   private static _attachVisaSDK() {
     const script = document.createElement('script');
-    script.src =
-      'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js';
+    script.src = VisaCheckout.SDK_ADDRESS;
     document.head.appendChild(script);
   }
 
@@ -58,7 +67,7 @@ class VisaCheckout {
    * @private
    */
   private static _paymentStatusHandler(event: string) {
-    event === 'payment.error'
+    event === VisaCheckout.VISA_PAYMENT_STATUS.ERROR
       ? V.on(event, (payment: object) => payment)
       : V.on(event, (payment: object, error: object) => ({ payment, error }));
   }
@@ -66,23 +75,18 @@ class VisaCheckout {
   /**
    * Init configuration (temporary with some test data)
    */
-  private _initConfiguration: object = {
-    apikey: '',
-    encryptionKey: ''
+  private _initConfiguration = {
+    apikey: '' as string,
+    encryptionKey: '' as string
   };
 
-  private config: object;
-
-  constructor(config: object) {
-    // @ts-ignore
-    const { props } = config;
-    console.log(props);
-    this.config = props;
-    // @ts-ignore
-    this._initConfiguration.apiKey = this.config.apikey;
-    // @ts-ignore
-    this._initConfiguration.encryptionKey = this.config.encryptionKey;
-    console.log(this._initConfiguration);
+  constructor(config: {}) {
+    const {
+      // @ts-ignore
+      props: { apikey, encryptionKey }
+    } = config;
+    this._initConfiguration.apikey = apikey;
+    this._initConfiguration.encryptionKey = encryptionKey;
     this._setConfiguration();
   }
 
@@ -92,9 +96,11 @@ class VisaCheckout {
   private _setConfiguration() {
     VisaCheckout._attachVisaButton();
     V.init(this._initConfiguration);
-    VisaCheckout._paymentStatusHandler('payment.success');
-    VisaCheckout._paymentStatusHandler('payment.cancel');
-    VisaCheckout._paymentStatusHandler('payment.error');
+    VisaCheckout._paymentStatusHandler(
+      VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS
+    );
+    VisaCheckout._paymentStatusHandler(VisaCheckout.VISA_PAYMENT_STATUS.CANCEL);
+    VisaCheckout._paymentStatusHandler(VisaCheckout.VISA_PAYMENT_STATUS.ERROR);
   }
 }
 

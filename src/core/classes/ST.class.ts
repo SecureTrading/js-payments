@@ -1,6 +1,9 @@
 /***
  * Establishes connection with ST, defines client.
  */
+import { elementClasses, elementStyles } from '../../../examples/example';
+import { RegisterElements } from '../helpers/mount';
+import Element from './Element.class';
 import VisaCheckout from './VisaCheckout.class';
 
 class ST {
@@ -12,13 +15,47 @@ class ST {
     this.jwt = jwt;
     this.style = style;
     this.payments = payments;
-    const visa = new VisaCheckout(this._getPayments());
+
+    const cardNumber = new Element();
+    const securityCode = new Element();
+    const expirationDate = new Element();
+
+    cardNumber.create('cardNumber', {
+      classes: elementClasses,
+      style: elementStyles
+    });
+    const cardNumberMounted = cardNumber.mount('st-card-number-iframe');
+
+    securityCode.create('securityCode', {
+      classes: elementClasses,
+      style: elementStyles
+    });
+    const securityCodeMounted = securityCode.mount('st-security-code-iframe');
+
+    expirationDate.create('expirationDate', {
+      classes: elementClasses,
+      style: elementStyles
+    });
+    const expirationDateMounted = expirationDate.mount(
+      'st-expiration-date-iframe'
+    );
+
+    RegisterElements(
+      [cardNumberMounted, securityCodeMounted, expirationDateMounted],
+      ['st-card-number', 'st-security-code', 'st-expiration-date']
+    );
+
+    const visa = new VisaCheckout(this._getAPMConfig('VISA'));
   }
 
-  private _getPayments() {
+  /**
+   * Gets APM config according to given apmName
+   * @param apmName - name of payment
+   * @private
+   */
+  private _getAPMConfig(apmName: string) {
     return Object.values(this.payments).find(
-      // @ts-ignore
-      item => item.name === 'VISA'
+      (item: { name: string }) => item.name === apmName
     );
   }
 }
