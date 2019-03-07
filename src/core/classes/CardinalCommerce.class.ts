@@ -2,7 +2,6 @@ import Cardinal from '../imports/cardinalLibrary';
 import {
   applePayConfig,
   loggingConfiguration,
-  mockDataFromBackend,
   paymentConfig,
   paypalConfig,
   visaCheckoutConfig
@@ -59,7 +58,10 @@ class CardinalCommerce {
     this._onPaymentSetupComplete();
     this._onPaymentValidation();
     this._onSetup();
-    window.addEventListener('submit', () => this._onContinue());
+    window.addEventListener('submit', event => {
+      event.preventDefault();
+      this._onContinue();
+    });
   }
 
   /**

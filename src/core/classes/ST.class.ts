@@ -1,19 +1,51 @@
+import { elementClasses, elementStyles } from '../../../examples/example';
+import { RegisterElements } from '../helpers/mount';
+import CardinalCommerce from './CardinalCommerce.class';
+import Element from './Element.class';
+
 /***
  * Establishes connection with ST, defines client.
  */
 class ST {
-  private _id: string;
+  public jwt: string;
+  public style: object;
+  public payments: object[];
 
-  get id(): string {
-    return this._id;
-  }
+  constructor(jwt: string, style: object, payments: object[]) {
+    this.jwt = jwt;
+    this.style = style;
+    this.payments = payments;
 
-  set id(value: string) {
-    this._id = value;
-  }
+    const cardNumber = new Element();
+    const securityCode = new Element();
+    const expirationDate = new Element();
 
-  constructor(id: string) {
-    this._id = id;
+    cardNumber.create('cardNumber', {
+      classes: elementClasses,
+      style: elementStyles
+    });
+    const cardNumberMounted = cardNumber.mount('st-card-number-iframe');
+
+    securityCode.create('securityCode', {
+      classes: elementClasses,
+      style: elementStyles
+    });
+    const securityCodeMounted = securityCode.mount('st-security-code-iframe');
+
+    expirationDate.create('expirationDate', {
+      classes: elementClasses,
+      style: elementStyles
+    });
+    const expirationDateMounted = expirationDate.mount(
+      'st-expiration-date-iframe'
+    );
+
+    RegisterElements(
+      [cardNumberMounted, securityCodeMounted, expirationDateMounted],
+      ['st-card-number', 'st-security-code', 'st-expiration-date']
+    );
+
+    const ccIntegration = new CardinalCommerce();
   }
 }
 
