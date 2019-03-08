@@ -1,6 +1,8 @@
 /***
  * Establishes connection with ST, defines client.
  */
+import ApplePay from './ApplePay.class';
+
 class ST {
   private _id: string;
 
@@ -14,6 +16,7 @@ class ST {
 
   constructor(id: string) {
     this._id = id;
+    new ApplePay('merchant.net.securetrading.test');
   }
 }
 
