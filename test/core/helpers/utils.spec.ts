@@ -42,13 +42,15 @@ describe('timeoutPromise', () => {
     }
   );
 
-  each([[5], [10]]).it(
+  each([[500], [10]]).it(
     'should reject after the specified time',
     async timeout => {
       const before = Date.now();
       let after = before;
       await timeoutPromise(timeout).catch(e => (after = Date.now()));
-      expect(after - before).toEqual(timeout);
+      // toBeCloseTo is intended to check N significant figures of floats
+      // but by using -1 we can check it's within 5s of the set value
+      expect(after - before).toBeCloseTo(timeout, -1);
     }
   );
 });
