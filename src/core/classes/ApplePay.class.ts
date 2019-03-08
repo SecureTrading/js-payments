@@ -24,61 +24,53 @@ class ApplePay {
 
   constructor(merchantIdentifier: string) {
     this._merchantIdentifier = merchantIdentifier;
-    this.setUpApplePayButton();
+    this.setUpApplePayProcess();
   }
 
   /**
    * Checks whether ApplePay is available on current device
-   * canMakePayments() - check ONLY if page supports Apple payments
    */
   public checkApplePayAvailability = () =>
     ApplePaySession && ApplePaySession.canMakePayments();
 
   /**
-   * canMakePaymentsWithActiveCard() - checks same as canMakePayments,but checks also if it us at least one active card in Wallet
+   * Checks whether ApplePay is available on current device and also if it us at least one active card in Wallet
    */
-  public setUpApplePayButton() {
+  public checkApplePayWalletCardAvailability = () =>
+    ApplePaySession.canMakePaymentsWithActiveCard(this._merchantIdentifier);
+
+  /**
+   * Sets Apple Pay button and begins Apple Pay flow
+   */
+  public setUpApplePayProcess() {
     if (this.checkApplePayAvailability()) {
-      const promise = ApplePaySession.canMakePaymentsWithActiveCard(
-        this._merchantIdentifier
-      );
-      promise.then((canMakePayments: any) => {
-        if (canMakePayments) {
-        } else {
-          // Check for the existence of the openPaymentSetup method.
-          if (ApplePaySession.openPaymentSetup) {
-            // Display the Set up Apple Pay Button here…
+      this.checkApplePayWalletCardAvailability().then(
+        (canMakePayments: boolean) => {
+          if (canMakePayments) {
             this.paymentSetup();
+          } else {
+            return 'Apple payment is not available';
           }
         }
-      });
+      );
     } else {
-      console.log('Nope');
+      return 'Apple payment is not available';
     }
   }
 
+  /**
+   * Defines Apple Pay session details and begins payment flow.
+   */
   public paymentSetup() {
-    ApplePaySession.openPaymentSetup(this._merchantIdentifier)
-      .then((success: any) => {
-        if (success) {
-          const session = new ApplePaySession(
-            this._applePayVersionNumber,
-            this._paymentRequestData
-          );
-          session.begin();
-          session.onvalidatemerchant = function(event) {
-            console.log(event);
-          };
-          console.log(success);
-        } else {
-          // setup failed
-          console.log('Setup failed');
-        }
-      })
-      .catch((e: any) => {
-        // Open payment setup error handling
-        console.log(`Setup failed ${e}`);
-      });
+    const session = new ApplePaySession(
+      this._applePayVersionNumber,
+      this._paymentRequestData
+    );
+    session.begin();
+    session.onvalidatemerchant = (event: any) => {
+      console.log(event);
+      return event;
+    };
   }
 }
 
