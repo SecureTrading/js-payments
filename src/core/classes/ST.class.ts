@@ -4,14 +4,17 @@
 import { elementClasses, elementStyles } from '../../../examples/example';
 import { RegisterElements } from '../helpers/mount';
 import Element from './Element.class';
+import StTransport from './StTransport.class';
 import VisaCheckout from './VisaCheckout.class';
 
-class ST {
+class ST extends StTransport {
   public jwt: string;
   public style: object;
   public payments: object[];
 
   constructor(jwt: string, style: object, payments: object[]) {
+    const gatewayUrl = ST.GATEWAY_URL;
+    super({ jwt, gatewayUrl });
     this.jwt = jwt;
     this.style = style;
     this.payments = payments;
