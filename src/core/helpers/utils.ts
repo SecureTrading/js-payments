@@ -27,3 +27,66 @@ export function forEachBreak<inputType, returnType>(
   }
   return result || null;
 }
+
+/**
+ * Helper function to return a Promise<never> which rejects after a specified time
+ * @param timeout The time until the promise rejects
+ * @param err The error with which to reject
+ * @return The rejecting Promise
+ */
+export function timeoutPromise(
+  timeout: number,
+  err = new Error()
+): Promise<never> {
+  return new Promise((_, reject) => setTimeout(() => reject(err), timeout));
+}
+
+/**
+ * Helper function to time out waiting for a promise to resolve
+ * @param promissory The callback which generates the wanted promise
+ * @param timeout The time until the promise is rejected instead - WARNING this will not cancel a fetch request
+ * @param err The error with which to reject
+ * @return The timeout or the wanted promise
+ */
+export function promiseWithTimeout<T>(
+  promissory: () => Promise<T>,
+  timeout = 10,
+  err = new Error()
+): Promise<T> {
+  return Promise.race([promissory(), timeoutPromise(timeout, err)]);
+}
+
+/**
+ * Helper function to retry a rejected promise
+ * @param promissory The callback which generates the wanted promise
+ * @param delay The ammount of time to separate retries by
+ * @param retries The maximum number of retries to attempt
+ * @param retryTimeout The maximum time to spend retrying connections
+ * @param err The error with which to reject
+ * @return A much more likely to be resolved promise
+ */
+export function retryPromise<T>(
+  promissory: () => Promise<T>,
+  delay = 0,
+  retries = 5,
+  retryTimeout = 20
+): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const endtime = Date.now() + retryTimeout;
+    let error: Error;
+    function attempt() {
+      if (retries > 0 && Date.now() < endtime) {
+        promissory()
+          .then(resolve)
+          .catch(e => {
+            retries--;
+            error = e;
+            setTimeout(() => attempt(), delay);
+          });
+      } else {
+        reject(error);
+      }
+    }
+    attempt();
+  });
+}
