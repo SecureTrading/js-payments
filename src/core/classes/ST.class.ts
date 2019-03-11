@@ -2,16 +2,19 @@ import { elementClasses, elementStyles } from '../../../examples/example';
 import { RegisterElements } from '../helpers/mount';
 import CardinalCommerce from './CardinalCommerce.class';
 import Element from './Element.class';
+import StTransport from './StTransport.class';
 
 /***
  * Establishes connection with ST, defines client.
  */
-class ST {
+class ST extends StTransport {
   public jwt: string;
   public style: object;
   public payments: object[];
 
   constructor(jwt: string, style: object, payments: object[]) {
+    const gatewayUrl = ST.GATEWAY_URL;
+    super({ jwt, gatewayUrl });
     this.jwt = jwt;
     this.style = style;
     this.payments = payments;
@@ -19,6 +22,7 @@ class ST {
     const cardNumber = new Element();
     const securityCode = new Element();
     const expirationDate = new Element();
+    const cc = new CardinalCommerce();
 
     cardNumber.create('cardNumber', {
       classes: elementClasses,
@@ -44,8 +48,6 @@ class ST {
       [cardNumberMounted, securityCodeMounted, expirationDateMounted],
       ['st-card-number', 'st-security-code', 'st-expiration-date']
     );
-
-    const ccIntegration = new CardinalCommerce();
   }
 }
 
