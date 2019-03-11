@@ -30,7 +30,7 @@ export default class StTransport {
     'https://webservices.securetrading.net/public/json/';
   public static DEFAULT_FETCH_OPTIONS = {
     headers: {
-      'Accept': StCodec.CONTENT_TYPE,
+      Accept: StCodec.CONTENT_TYPE,
       'Content-Type': StCodec.CONTENT_TYPE
     },
     method: 'post'

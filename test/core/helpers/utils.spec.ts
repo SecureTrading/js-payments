@@ -57,7 +57,7 @@ describe('timeoutPromise', () => {
 
 describe('promiseWithTimeout', () => {
   each([[{}, '42']]).it(
-    'should resolve with the promissory\'s value if it finishes first',
+    "should resolve with the promissory's value if it finishes first",
     async value => {
       function promissory() {
         return new Promise(resolve => resolve(value));
@@ -67,7 +67,7 @@ describe('promiseWithTimeout', () => {
   );
 
   each([[Error(), Error('Communication timeout')]]).it(
-    'should reject with the promissory\'s error if it finishes first',
+    "should reject with the promissory's error if it finishes first",
     async err => {
       function promissory() {
         return new Promise((_, reject) => reject(err));
