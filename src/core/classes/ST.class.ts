@@ -48,7 +48,9 @@ class ST extends StTransport {
       ['st-card-number', 'st-security-code', 'st-expiration-date']
     );
 
-    const visa = new VisaCheckout(this._getAPMConfig('VISA'));
+    if (this._getAPMConfig('VISA')) {
+      new VisaCheckout(this._getAPMConfig('VISA'));
+    }
   }
 
   /**
