@@ -1,4 +1,4 @@
-const V = (window as any).V;
+declare const V: any;
 
 /**
  *  Visa checkout configuration class
@@ -43,20 +43,16 @@ class VisaCheckout {
 
   /**
    * Attach SDK from Visa Checkout as html markup (temporary unused due to malfunction with scripts)
-   * TODO: Change attaching script via markup to this function
    * @private
    */
   private _attachVisaSDK() {
     const body = document.getElementsByTagName('body')[0];
     const script = document.createElement('script');
     body.appendChild(script);
-    // script.onload = () => {
-    //   this._setConfiguration();
-    // };
+    script.addEventListener('load', () => {
+      this._setConfiguration();
+    });
     script.src = VisaCheckout.SDK_ADDRESS;
-    // script.addEventListener('load', () => {
-    //   this._setConfiguration();
-    // });
   }
 
   /**
@@ -89,9 +85,8 @@ class VisaCheckout {
     encryptionKey: '' as string
   };
 
-  constructor(config: {}) {
+  constructor(config: { props: { apikey: string; encryptionKey: string } }) {
     const {
-      // @ts-ignore
       props: { apikey, encryptionKey }
     } = config;
     this._initConfiguration.apikey = apikey;
