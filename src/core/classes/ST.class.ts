@@ -22,7 +22,8 @@ class ST extends StTransport {
     const cardNumber = new Element();
     const securityCode = new Element();
     const expirationDate = new Element();
-    const cc = new CardinalCommerce();
+    new CardinalCommerce(jwt, gatewayUrl);
+    new StTransport({ jwt, gatewayUrl });
 
     cardNumber.create('cardNumber', {
       classes: elementClasses,

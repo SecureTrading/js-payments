@@ -6,12 +6,13 @@ import {
   paypalConfig,
   visaCheckoutConfig
 } from '../imports/cardinalSettings';
+import StTransport from './StTransport.class';
 
 /**
  * Cardinal Commerce class:
  * Defines integration with Cardinal Commerce and flow of transaction with this supplier.
  */
-class CardinalCommerce {
+class CardinalCommerce extends StTransport {
   private static WEBSERVICE_URL: string =
     'https://webservices.securetrading.net/public/json/';
   private static FETCH_CONFIG: object = {
@@ -37,11 +38,14 @@ class CardinalCommerce {
     const head = document.getElementsByTagName('head')[0];
     const script = document.createElement('script');
     head.appendChild(script);
-    script.src =
-      'https://songbirdstag.cardinalcommerce.com/cardinalcruise/v1/songbird.js';
     script.addEventListener('load', () => {
       CardinalCommerce._setConfiguration();
+      this._onPaymentSetupComplete();
+      this._onPaymentValidation();
+      this._onSetup();
     });
+    script.src =
+      'https://songbirdstag.cardinalcommerce.com/cardinalcruise/v1/songbird.js';
   }
 
   /**
@@ -72,20 +76,23 @@ class CardinalCommerce {
   };
   private _paymentBrand: string = 'cca';
 
-  constructor() {
+  constructor(jwt: string, gatewayUrl: string) {
+    super({ jwt, gatewayUrl });
     this._insertCardinalCommerceSongbird();
-    this._onPaymentSetupComplete();
-    this._onPaymentValidation();
-    this._onSetup();
+    this.threedeinitRequest();
     window.addEventListener('submit', event => {
       event.preventDefault();
-      this._onContinue();
-    });
-    document
-      .getElementById('threedequery')
-      .addEventListener('click', response => {
-        this.threedeinitRequest();
+      this.sendRequest({
+        accounttypedescription: 'ECOM',
+        pan: '4111111111111111',
+        sitereference: 'test_james38641',
+        expirydate: '01/20',
+        requesttypedescription: 'AUTH',
+        securitycode: '123'
+      }).then(response => {
+        console.log(response);
       });
+    });
   }
 
   /**
@@ -98,6 +105,7 @@ class CardinalCommerce {
       CardinalCommerce.PAYMENT_EVENTS.SETUP_COMPLETE,
       (setupCompleteData: any) => {
         this._sessionId = setupCompleteData.sessionId;
+        console.log(`Session ID is: ${this._sessionId}`);
       }
     );
   }
@@ -152,6 +160,9 @@ class CardinalCommerce {
         request: [
           {
             sitereference: 'live2', // This will eventually come from the merchant config
+            currencyiso3a: 'GBP', // ISO currency code of the payment
+            baseamount: '1000', // amount of the payment
+            accounttypedescription: 'ECOM', // Don't worry about this field for now
             requesttypedescription: 'THREEDQUERY', // for other requests this could be THREEDINIT, CACHETOKENISE or AUTH
             pan: '4111111111111111', // this is cardNumber
             expirydate: '12/20',
@@ -180,7 +191,7 @@ class CardinalCommerce {
       this._paymentBrand,
       this._onSubmit(),
       this._orderDetails,
-      this._jwtChanged
+      this._jwt
     );
   }
 
@@ -210,30 +221,33 @@ class CardinalCommerce {
   }
 
   public threedeinitRequest() {
-    fetch('https://webservices.securetrading.net/public/json/', {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      method: 'POST',
-      body: JSON.stringify({
-        request: [
-          {
-            sitereference: 'live2', // This will eventually come from the merchant config
-            currencyiso3a: 'GBP', // ISO currency code of the payment
-            baseamount: '1000', // amount of the payment
-            accounttypedescription: 'ECOM', // Don't worry about this field for now
-            requesttypedescription: 'THREEDINIT' // for other requests this could be THREEDINIT, CACHETOKENISE or AUTH
-          }
-        ],
-        version: '1.00'
+    const jwtGenerator = document.getElementById('threedequery');
+    jwtGenerator.addEventListener('click', () => {
+      fetch('https://webservices.securetrading.net/public/json/', {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST',
+        body: JSON.stringify({
+          request: [
+            {
+              sitereference: 'live2', // This will eventually come from the merchant config
+              currencyiso3a: 'GBP', // ISO currency code of the payment
+              baseamount: '1000', // amount of the payment
+              accounttypedescription: 'ECOM', // Don't worry about this field for now
+              requesttypedescription: 'THREEDINIT' // for other requests this could be THREEDINIT, CACHETOKENISE or AUTH
+            }
+          ],
+          version: '1.00'
+        })
       })
-    })
-      .then(response => {
-        return response.json();
-      })
-      .then(response => {
-        console.log(response);
-      });
+        .then(response => {
+          return response.json();
+        })
+        .then(response => {
+          console.log(response);
+        });
+    });
   }
 }
 
