@@ -1,4 +1,4 @@
-import Cardinal from '../imports/cardinalLibrary';
+declare const Cardinal: any;
 import {
   applePayConfig,
   loggingConfiguration,
@@ -33,6 +33,17 @@ class CardinalCommerce {
     SUCCESS: 'SUCCESS'
   };
 
+  private _insertCardinalCommerceSongbird() {
+    const head = document.getElementsByTagName('head')[0];
+    const script = document.createElement('script');
+    head.appendChild(script);
+    script.src =
+      'https://songbirdstag.cardinalcommerce.com/cardinalcruise/v1/songbird.js';
+    script.addEventListener('load', () => {
+      CardinalCommerce._setConfiguration();
+    });
+  }
+
   /**
    * Method for passing configuration object
    * @private
@@ -62,7 +73,7 @@ class CardinalCommerce {
   private _paymentBrand: string = 'cca';
 
   constructor() {
-    CardinalCommerce._setConfiguration();
+    this._insertCardinalCommerceSongbird();
     this._onPaymentSetupComplete();
     this._onPaymentValidation();
     this._onSetup();
@@ -70,6 +81,11 @@ class CardinalCommerce {
       event.preventDefault();
       this._onContinue();
     });
+    document
+      .getElementById('threedequery')
+      .addEventListener('click', response => {
+        this.threedeinitRequest();
+      });
   }
 
   /**
@@ -191,6 +207,33 @@ class CardinalCommerce {
       expirationDate: localStorage.getItem('expirationDateValue'),
       securityCode: localStorage.getItem('securityCode')
     };
+  }
+
+  public threedeinitRequest() {
+    fetch('https://webservices.securetrading.net/public/json/', {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: 'POST',
+      body: JSON.stringify({
+        request: [
+          {
+            sitereference: 'live2', // This will eventually come from the merchant config
+            currencyiso3a: 'GBP', // ISO currency code of the payment
+            baseamount: '1000', // amount of the payment
+            accounttypedescription: 'ECOM', // Don't worry about this field for now
+            requesttypedescription: 'THREEDINIT' // for other requests this could be THREEDINIT, CACHETOKENISE or AUTH
+          }
+        ],
+        version: '1.00'
+      })
+    })
+      .then(response => {
+        return response.json();
+      })
+      .then(response => {
+        console.log(response);
+      });
   }
 }
 
