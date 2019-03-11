@@ -46,10 +46,17 @@ class VisaCheckout {
    * TODO: Change attaching script via markup to this function
    * @private
    */
-  private static _attachVisaSDK() {
+  private _attachVisaSDK() {
+    const body = document.getElementsByTagName('body')[0];
     const script = document.createElement('script');
+    body.appendChild(script);
+    // script.onload = () => {
+    //   this._setConfiguration();
+    // };
     script.src = VisaCheckout.SDK_ADDRESS;
-    document.head.appendChild(script);
+    // script.addEventListener('load', () => {
+    //   this._setConfiguration();
+    // });
   }
 
   /**
@@ -73,7 +80,9 @@ class VisaCheckout {
   }
 
   /**
-   * Init configuration (temporary with some test data)
+   * Init configuration (temporary with some test data).
+   * apikey and encryptionKey will authenticate merchant.
+   * Eventually in config, there'll be merchant credentials provided, now there are some test credentials.
    */
   private _initConfiguration = {
     apikey: '' as string,
@@ -87,7 +96,7 @@ class VisaCheckout {
     } = config;
     this._initConfiguration.apikey = apikey;
     this._initConfiguration.encryptionKey = encryptionKey;
-    this._setConfiguration();
+    this._attachVisaSDK();
   }
 
   /**
