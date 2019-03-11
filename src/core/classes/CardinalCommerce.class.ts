@@ -245,7 +245,7 @@ class CardinalCommerce extends StTransport {
           return response.json();
         })
         .then(response => {
-          console.log(response);
+          console.log(response.response[0].jwt);
         });
     });
   }

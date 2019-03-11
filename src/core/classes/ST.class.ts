@@ -12,8 +12,10 @@ class ST extends StTransport {
   public style: object;
   public payments: object[];
 
-  constructor(jwt: string, style: object, payments: object[]) {
+  constructor(style: object, payments: object[]) {
     const gatewayUrl = ST.GATEWAY_URL;
+    const jwt = (document.getElementById('JWTContainer') as HTMLInputElement)
+      .value;
     super({ jwt, gatewayUrl });
     this.jwt = jwt;
     this.style = style;
