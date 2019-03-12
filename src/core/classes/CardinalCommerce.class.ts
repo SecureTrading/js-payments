@@ -45,6 +45,7 @@ class CardinalCommerce extends StTransport {
   };
   private _paymentBrand: string = 'cca';
   private _validationData: any;
+  private _cardinalPayload: any;
 
   set payload(value: IStRequest) {
     this._payload = value;
@@ -59,9 +60,11 @@ class CardinalCommerce extends StTransport {
         accounttypedescription: 'ECOM',
         expirydate: '01/20',
         pan: '4111111111111111',
-        requesttypedescription: 'AUTH',
-        sitereference: 'test_james38641',
-        securitycode: '123'
+        requesttypedescription: 'THREEDQUERY',
+        sitereference: 'live2',
+        securitycode: '123',
+        // TODO termurl isn't needed on CC integration we should be able to remove this after 153 release
+        termurl: 'http://something.com'
       };
       this._triggerLookupRequest();
     });
@@ -109,9 +112,13 @@ class CardinalCommerce extends StTransport {
   private _triggerLookupRequest() {
     window.addEventListener('submit', event => {
       event.preventDefault();
-      this.sendRequest(this._payload).then(response => {
+      this.sendRequest(this._payload).then((response: any) => {
         console.log(response);
-        // this._onContinue();
+        this._cardinalPayload = {
+          AcsUrl: response.acsurl,
+          Payload: response.pareq // TODO this should be threedresponse not pareq but the server needs updating
+        };
+        this._onContinue();
       });
     });
   }
@@ -187,10 +194,8 @@ class CardinalCommerce extends StTransport {
    */
   private _onContinue() {
     Cardinal.continue(
-      this._paymentBrand,
-      this._payload,
-      this._orderDetails,
-      this._merchantJWT
+      this._paymentBrand, // TODO should this be in PAYMENT_EVENT rather than a separate variable?
+      this._cardinalPayload
     );
   }
 }

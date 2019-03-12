@@ -7,6 +7,7 @@ interface IStRequest {
   accounttypedescription?: string;
   expirydate?: string;
   securitycode?: string;
+  termurl?: string; // TODO shouldn't be needed for CC request but this needs to wait for 153 release
 }
 
 /***
