@@ -8,7 +8,7 @@ const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
 module.exports = {
   entry: {
-    main: './src/index.ts',
+    main: './src/components/index.ts',
     stjs: './src/stjs.ts',
     example: './example/index.ts'
   },
@@ -20,8 +20,8 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(['dist']),
     new HtmlWebpackPlugin({
-      filename: 'credit-card-number.html',
-      template: './src/index.html',
+      filename: 'card-number.html',
+      template: './src/components/index.html',
       templateParameters: {
         partial: 'creditCardNumber'
       },
@@ -29,7 +29,7 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       filename: 'expiration-date.html',
-      template: './src/index.html',
+      template: './src/components/index.html',
       templateParameters: {
         partial: 'expirationDate'
       },
@@ -37,7 +37,7 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       filename: 'security-code.html',
-      template: './src/index.html',
+      template: './src/components/index.html',
       templateParameters: {
         partial: 'securityCode'
       },

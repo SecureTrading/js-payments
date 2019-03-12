@@ -1,5 +1,5 @@
-import { Brand, CardTreeNode, BrandDetailsType, cardTree, brandMapping } from '../../imports/cardtype';
-import Utils from './../Utils.class';
+import { Brand, CardTreeNode, BrandDetailsType, cardTree, brandMapping } from '../imports/cardtype';
+import Utils from './Utils';
 
 type BinLookupConfigType = {
   minMatch?: number;

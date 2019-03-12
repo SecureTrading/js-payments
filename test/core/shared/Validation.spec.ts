@@ -1,5 +1,5 @@
 import each from 'jest-each';
-import CardNumber from '../../../../src/core/classes/validation/CardNumber.class';
+import Validation from '../../../src/core/shared/Validation';
 
 each([
   [new KeyboardEvent('keypress', { key: 'a' }), false],
@@ -7,5 +7,5 @@ each([
   [new KeyboardEvent('keypress', { key: '"' }), false],
   [new KeyboardEvent('keypress', { key: 'Shift' }), false]
 ]).test('CardNumber.isCharNumber', (event: KeyboardEvent, expected: any) => {
-  expect(CardNumber.isCharNumber(event)).toBe(expected);
+  expect(Validation.isCharNumber(event)).toBe(expected);
 });

@@ -1,6 +1,6 @@
 import each from 'jest-each';
-import CardNumber from '../../../../src/core/classes/validation/CardNumber.class';
-import { cardsLogos } from '../../../../src/core/imports/images';
+import CardNumber from '../../../src/components/card-number/CardNumber';
+import { cardsLogos } from '../../../src/core/imports/images';
 
 each([
   ['', true], // Couldn't identify the brand

@@ -6,7 +6,7 @@ class ST {
   private static _iframeSecurityCodeId: string = 'st-security-code-iframe';
   private static _iframeExpirationDateId: string = 'st-expiration-date-iframe';
 
-  public static cardNumberComponent = '/credit-card-number.html';
+  public static cardNumberComponent = '/card-number.html';
   public static expirationDateComponent = '/expiration-date.html';
   public static securityCodeComponent = '/security-code.html';
 

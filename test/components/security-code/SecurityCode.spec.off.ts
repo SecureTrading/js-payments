@@ -1,4 +1,4 @@
-import SecurityCode from './../../../../src/core/classes/validation/SecurityCode.class';
+import SecurityCode from '../../../src/components/security-code/SecurityCode';
 
 // given
 describe('Class Security Code', () => {

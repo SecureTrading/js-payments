@@ -2,7 +2,7 @@
  * STJS Client.
  * This code contains all logic responsible for creating ST fields on merchant's site.
  */
-import Element from './core/classes/Element.class';
-import ST from './core/classes/ST.class';
+import Element from './core/Element';
+import ST from './core/ST';
 
 export { Element, ST };

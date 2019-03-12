@@ -1,5 +1,5 @@
-import Element from '../../../src/core/classes/Element.class';
-import ST from '../../../src/core/classes/ST.class';
+import Element from '../../src/core/Element';
+import ST from '../../src/core/ST';
 // given
 describe('Index placeholder test', () => {
   //when

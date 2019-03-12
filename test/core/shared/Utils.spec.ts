@@ -1,5 +1,5 @@
 import each from 'jest-each';
-import Utils from './../../../src/core/classes/Utils.class';
+import Utils from '../../../src/core/shared/Utils';
 
 each([
   [[], '', false],

@@ -1,4 +1,4 @@
-import ST from './ST.class';
+import ST from './ST';
 
 /***
  * Defines input with iframe source

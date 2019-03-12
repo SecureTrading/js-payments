@@ -1,6 +1,4 @@
 import './expiration-date.scss';
-import ExpirationDate from '../../../src/core/classes/validation/ExpirationDate.class';
+import ExpirationDate from './ExpirationDate';
 
-if (document.getElementById('st-expiration-date-input')) {
-  new ExpirationDate('st-expiration-date-input');
-}
+ExpirationDate.ifFieldExists() && new ExpirationDate();
