@@ -146,7 +146,12 @@ class CardinalCommerce extends StTransport {
    */
   private _retrieveValidationData(validationData: string, jwt?: string) {
     this._validationData = validationData;
-    this._cardinalCommerceJWT = jwt ? jwt : this._merchantJWT;
+    this._cardinalCommerceJWT = jwt ? jwt : '';
+    if (this._cardinalCommerceJWT) {
+      this.sendRequest(this._payload).then(response => {
+        console.log(response);
+      });
+    }
     console.log(validationData);
     console.log(this._merchantJWT);
     return { jwt, validationData };
@@ -207,6 +212,7 @@ class CardinalCommerce extends StTransport {
   /**
    * Handles continue action from Cardinal Commerce, retrieve overlay with iframe which target is on AcsUrl
    * and handles the rest of process.
+   * Cardinal.continue(PAYMENT_BRAND, CONTINUE_DATA, ORDER_OBJECT, NEW_JWT)
    * @private
    */
   private _onContinue() {
