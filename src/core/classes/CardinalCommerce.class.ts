@@ -1,7 +1,7 @@
 declare const Cardinal: any;
 import { cardinalCommerceConfig } from '../imports/cardinalSettings';
-import StTransport from './StTransport.class';
 import { IStRequest } from './StCodec.class';
+import StTransport from './StTransport.class';
 
 /**
  * Cardinal Commerce class:
@@ -52,8 +52,8 @@ class CardinalCommerce extends StTransport {
 
   constructor(jwt: string, gatewayUrl: string) {
     super({ jwt, gatewayUrl });
-    this.threedeinitRequest().then(response => {
-      this._cardinalCommerceJWT = response;
+    this.threedeinitRequest().then((response: any) => {
+      this._cardinalCommerceJWT = response.jwt;
       this._insertSongbird();
       this.payload = {
         accounttypedescription: 'ECOM',
@@ -68,34 +68,13 @@ class CardinalCommerce extends StTransport {
   }
 
   /**
-   * This is temporary function for generating Merchant JWT
-   * TODO: delete after development
+   * Perform a THREEDINIT with ST in order to generate the Cardinal songbird JWT
    */
   public threedeinitRequest() {
-    return fetch(CardinalCommerce.GATEWAY_URL, {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      method: 'POST',
-      body: JSON.stringify({
-        request: [
-          {
-            sitereference: 'live2', // This will eventually come from the merchant config
-            currencyiso3a: 'GBP', // ISO currency code of the payment
-            baseamount: '1000', // amount of the payment
-            accounttypedescription: 'ECOM', // Don't worry about this field for now
-            requesttypedescription: 'THREEDINIT' // for other requests this could be THREEDINIT, CACHETOKENISE or AUTH
-          }
-        ],
-        version: '1.00'
-      })
-    })
-      .then(response => {
-        return response.json();
-      })
-      .then(response => {
-        return response.response[0].jwt;
-      });
+    return this.sendRequest({
+      sitereference: 'live2',
+      requesttypedescription: 'THREEDINIT'
+    });
   }
 
   /**
@@ -132,7 +111,7 @@ class CardinalCommerce extends StTransport {
       event.preventDefault();
       this.sendRequest(this._payload).then(response => {
         console.log(response);
-        //this._onContinue();
+        // this._onContinue();
       });
     });
   }
