@@ -49,7 +49,7 @@ class ST extends StTransport {
     );
 
     if (this._getAPMConfig('VISA')) {
-      new VisaCheckout(this._getAPMConfig('VISA'));
+      const visa = new VisaCheckout(this._getAPMConfig('VISA'));
     }
   }
 

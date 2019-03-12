@@ -11,9 +11,6 @@ class VisaCheckout {
     src:
       'https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png'
   };
-  private static SDK_ADDRESS: string =
-    'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js';
-
   /**
    * Possible status of payment in VISA Checkout
    */
@@ -22,11 +19,13 @@ class VisaCheckout {
     ERROR: 'payment.error',
     SUCCESS: 'payment.success'
   };
+  private static SDK_ADDRESS: string =
+    'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js';
 
   /**
    * Creates html image element which will be transformed into interactive button by SDK.
    */
-  private static _createVisaButton() {
+  public static _createVisaButton() {
     const button = document.createElement('img');
     const {
       alt,
@@ -70,10 +69,12 @@ class VisaCheckout {
    * @private
    */
   private static _paymentStatusHandler(event: string) {
-    event === VisaCheckout.VISA_PAYMENT_STATUS.ERROR
+    return event === VisaCheckout.VISA_PAYMENT_STATUS.ERROR
       ? V.on(event, (payment: object) => payment)
       : V.on(event, (payment: object, error: object) => ({ payment, error }));
   }
+
+  public returnPaymentStatus() {}
 
   /**
    * Init configuration (temporary with some test data).
@@ -82,10 +83,14 @@ class VisaCheckout {
    */
   private _initConfiguration = {
     apikey: '' as string,
-    encryptionKey: '' as string
+    encryptionKey: '' as string,
+    paymentRequest: {
+      currencyCode: 'USD' as string,
+      subtotal: '11.00' as string
+    }
   };
 
-  constructor(config: { props: { apikey: string; encryptionKey: string } }) {
+  constructor(config: any) {
     const {
       props: { apikey, encryptionKey }
     } = config;
@@ -95,11 +100,19 @@ class VisaCheckout {
   }
 
   /**
+   * Init configuration and payment data
+   * @private
+   */
+  private _initPaymentConfiguration() {
+    V.init(this._initConfiguration);
+  }
+
+  /**
    * Loads Visa Checkout configuration as soon as script is loaded and button attached to DOM
    */
   private _setConfiguration() {
     VisaCheckout._attachVisaButton();
-    V.init(this._initConfiguration);
+    this._initPaymentConfiguration();
     VisaCheckout._paymentStatusHandler(
       VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS
     );

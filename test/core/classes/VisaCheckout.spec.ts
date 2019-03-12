@@ -1,7 +1,5 @@
 import VisaCheckout from '../../../src/core/classes/VisaCheckout.class';
 
-const V = (window as any).V;
-
 // given
 describe('Visa Checkout class', () => {
   let instance;
@@ -13,8 +11,11 @@ describe('Visa Checkout class', () => {
 
   // given
   describe('Method _createVisaButton', () => {
+    beforeEach(() => {});
     // then
-    it('should return img markup', () => {});
+    it('should return img markup', () => {
+      expect(VisaCheckout._createVisaButton()).toBe(true);
+    });
 
     // then
     it('should img markup have certain attributes', () => {});
@@ -53,5 +54,6 @@ function VisaCheckoutFixture() {
       encryptionKey: 'sad78dsadtas8das8das87dyas87dsad'
     }
   };
-  return { config };
+  const fakeVisaButton = {};
+  return { config, fakeVisaButton };
 }
