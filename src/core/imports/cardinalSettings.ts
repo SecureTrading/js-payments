@@ -37,10 +37,12 @@ const visaCheckoutConfig = {
   }
 };
 
-export {
+const cardinalCommerceConfig = {
   applePayConfig,
   loggingConfiguration,
   paymentConfig,
   paypalConfig,
   visaCheckoutConfig
 };
+
+export { cardinalCommerceConfig };
