@@ -52,17 +52,19 @@ class CardinalCommerce extends StTransport {
 
   constructor(jwt: string, gatewayUrl: string) {
     super({ jwt, gatewayUrl });
-    this._insertSongbird();
-    this.threedeinitRequest();
-    this.payload = {
-      accounttypedescription: 'ECOM',
-      expirydate: '01/20',
-      pan: '4111111111111111',
-      requesttypedescription: 'AUTH',
-      sitereference: 'test_james38641',
-      securitycode: '123'
-    };
-    this._triggerLookupRequest();
+    this.threedeinitRequest().then(response => {
+      this._cardinalCommerceJWT = response;
+      this._insertSongbird();
+      this.payload = {
+        accounttypedescription: 'ECOM',
+        expirydate: '01/20',
+        pan: '4111111111111111',
+        requesttypedescription: 'AUTH',
+        sitereference: 'test_james38641',
+        securitycode: '123'
+      };
+      this._triggerLookupRequest();
+    });
   }
 
   /**
@@ -70,33 +72,30 @@ class CardinalCommerce extends StTransport {
    * TODO: delete after development
    */
   public threedeinitRequest() {
-    const jwtGenerator = document.getElementById('threedequery');
-    jwtGenerator.addEventListener('click', () => {
-      fetch(CardinalCommerce.GATEWAY_URL, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        method: 'POST',
-        body: JSON.stringify({
-          request: [
-            {
-              sitereference: 'live2', // This will eventually come from the merchant config
-              currencyiso3a: 'GBP', // ISO currency code of the payment
-              baseamount: '1000', // amount of the payment
-              accounttypedescription: 'ECOM', // Don't worry about this field for now
-              requesttypedescription: 'THREEDINIT' // for other requests this could be THREEDINIT, CACHETOKENISE or AUTH
-            }
-          ],
-          version: '1.00'
-        })
+    return fetch(CardinalCommerce.GATEWAY_URL, {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: 'POST',
+      body: JSON.stringify({
+        request: [
+          {
+            sitereference: 'live2', // This will eventually come from the merchant config
+            currencyiso3a: 'GBP', // ISO currency code of the payment
+            baseamount: '1000', // amount of the payment
+            accounttypedescription: 'ECOM', // Don't worry about this field for now
+            requesttypedescription: 'THREEDINIT' // for other requests this could be THREEDINIT, CACHETOKENISE or AUTH
+          }
+        ],
+        version: '1.00'
       })
-        .then(response => {
-          return response.json();
-        })
-        .then(response => {
-          console.log(response.response[0].jwt);
-        });
-    });
+    })
+      .then(response => {
+        return response.json();
+      })
+      .then(response => {
+        return response.response[0].jwt;
+      });
   }
 
   /**
@@ -133,7 +132,7 @@ class CardinalCommerce extends StTransport {
       event.preventDefault();
       this.sendRequest(this._payload).then(response => {
         console.log(response);
-        this._onContinue();
+        //this._onContinue();
       });
     });
   }
@@ -146,14 +145,6 @@ class CardinalCommerce extends StTransport {
    */
   private _retrieveValidationData(validationData: string, jwt?: string) {
     this._validationData = validationData;
-    this._cardinalCommerceJWT = jwt ? jwt : '';
-    if (this._cardinalCommerceJWT) {
-      this.sendRequest(this._payload).then(response => {
-        console.log(response);
-      });
-    }
-    console.log(validationData);
-    console.log(this._merchantJWT);
     return { jwt, validationData };
   }
 
@@ -205,7 +196,7 @@ class CardinalCommerce extends StTransport {
    */
   private _onSetup() {
     Cardinal.setup(CardinalCommerce.PAYMENT_EVENTS.INIT, {
-      jwt: this._merchantJWT
+      jwt: this._cardinalCommerceJWT
     });
   }
 
