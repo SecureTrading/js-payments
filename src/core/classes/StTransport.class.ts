@@ -1,5 +1,4 @@
 import { promiseWithTimeout, retryPromise } from '../helpers/utils';
-import Language from './Language.class';
 import { IStRequest, StCodec } from './StCodec.class';
 
 interface IStTransportParams {
