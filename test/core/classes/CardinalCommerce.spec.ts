@@ -1,4 +1,4 @@
-import CardinalCommerce from './../../../src/core/classes/CardinalCommerce.class';
+import CardinalCommerce from '../../../src/core/classes/CardinalCommerce';
 import Cardinal from '../../../src/core/imports/cardinalLibrary';
 
 (global as any).Cardinal = Cardinal;
