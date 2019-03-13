@@ -1,4 +1,4 @@
-import Language from './Language.class';
+import Language from '../shared/Language';
 
 interface IStRequest {
   requesttypedescription: string;

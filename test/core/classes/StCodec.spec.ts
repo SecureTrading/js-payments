@@ -1,5 +1,5 @@
 import each from 'jest-each';
-import Language from '../../../src/core/classes/Language.class';
+import Language from '../../../src/core/shared/Language';
 import { StCodec } from '../../../src/core/classes/StCodec.class';
 
 describe('StCodec class', () => {
@@ -80,16 +80,13 @@ describe('StCodec class', () => {
         },
         { requesttypedescription: 'CACHETOKENISE' }
       ]
-    ]).it(
-      'should build the request for a valid object',
-      (requestObject, expected) => {
-        expect(str.buildRequestObject(requestObject)).toEqual({
-          jwt,
-          request: [{ requestid, ...expected }],
-          version: StCodec.VERSION
-        });
-      }
-    );
+    ]).it('should build the request for a valid object', (requestObject, expected) => {
+      expect(str.buildRequestObject(requestObject)).toEqual({
+        jwt,
+        request: [{ requestid, ...expected }],
+        version: StCodec.VERSION
+      });
+    });
   });
 
   describe('Method encode', () => {
@@ -125,9 +122,7 @@ describe('StCodec class', () => {
           pan: '4111111111111111',
           requesttypedescription: 'LARGEHADRONCOLLIDER'
         })
-      ).toThrow(
-        Error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST)
-      );
+      ).toThrow(Error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST));
     });
   });
 
@@ -155,9 +150,7 @@ describe('StCodec class', () => {
         }
       ]
     ]).it('should verify the gateway error response', responseData => {
-      expect(() => str.verifyResponseObject(responseData)).toThrow(
-        Error(responseData.response[0].errormessage)
-      );
+      expect(() => str.verifyResponseObject(responseData)).toThrow(Error(responseData.response[0].errormessage));
     });
   });
 
@@ -179,9 +172,7 @@ describe('StCodec class', () => {
     });
 
     it('should error an invalid response', async () => {
-      await expect(str.decode({})).rejects.toThrow(
-        Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE)
-      );
+      await expect(str.decode({})).rejects.toThrow(Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
     });
   });
 });

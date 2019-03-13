@@ -1,5 +1,5 @@
-import { promiseWithTimeout, retryPromise } from '../helpers/utils';
-import Language from './Language.class';
+import Utils from '../shared/Utils';
+import Language from '../shared/Language';
 import { IStRequest, StCodec } from './StCodec.class';
 
 interface IStTransportParams {
@@ -80,9 +80,9 @@ export default class StTransport {
     retries = StTransport.RETRY_LIMIT,
     retryTimeout = StTransport.RETRY_TIMEOUT
   ) {
-    return retryPromise(
+    return Utils.retryPromise(
       () =>
-        promiseWithTimeout<Response>(() => fetch(url, options), connectTimeout),
+        Utils.promiseWithTimeout<Response>(() => fetch(url, options), connectTimeout),
       delay,
       retries,
       retryTimeout

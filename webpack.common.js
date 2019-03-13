@@ -1,38 +1,52 @@
 const path = require('path');
-const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const TypedocWebpackPlugin = require('typedoc-webpack-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
 module.exports = {
-  optimization: {
-    usedExports: true,
-    splitChunks: {
-      chunks: 'all'
-    }
-  },
   entry: {
-    client: './src/index.ts'
+    main: './src/components/index.ts',
+    stjs: './src/stjs.ts',
+    example: './example/index.ts'
   },
   output: {
     filename: '[name].bundle.js',
     path: path.join(__dirname, 'dist'),
-    publicPath: '/'
-  },
-  devServer: {
-    contentBase: './dist',
-    hot: true,
-    port: 8080
+    publicPath: ''
   },
   plugins: [
     new CleanWebpackPlugin(['dist']),
     new HtmlWebpackPlugin({
-      title: 'Custom template',
-      template: './examples/example.html'
+      filename: 'card-number.html',
+      template: './src/components/index.html',
+      templateParameters: {
+        partial: 'creditCardNumber'
+      },
+      chunks: ['main']
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'expiration-date.html',
+      template: './src/components/index.html',
+      templateParameters: {
+        partial: 'expirationDate'
+      },
+      chunks: ['main']
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'security-code.html',
+      template: './src/components/index.html',
+      templateParameters: {
+        partial: 'securityCode'
+      },
+      chunks: ['main']
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: './example/index.html',
+      chunks: ['stjs', 'example']
     }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
@@ -40,20 +54,13 @@ module.exports = {
     }),
     new ManifestPlugin(),
     new StyleLintPlugin(),
-    new FriendlyErrorsWebpackPlugin(),
-    new TypedocWebpackPlugin({}),
-    new webpack.HotModuleReplacementPlugin()
+    new FriendlyErrorsWebpackPlugin()
   ],
   module: {
     rules: [
       {
         test: /\.scss$/,
-        use: [
-          'style-loader',
-          { loader: 'css-loader', options: { importLoaders: 1 } },
-          'postcss-loader',
-          'sass-loader'
-        ]
+        use: ['style-loader', { loader: 'css-loader', options: { importLoaders: 1 } }, 'postcss-loader', 'sass-loader']
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
