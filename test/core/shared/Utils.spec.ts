@@ -27,3 +27,67 @@ each([
   expect(Utils.forEachBreak(iterable, callback)).toBe(expected);
   expect(callback).toHaveBeenCalledTimes(timesCalledBack);
 });
+
+describe('timeoutPromise', () => {
+  each([[Error()], [Error('Communication timeout')]]).it('should reject with the specified error', async error => {
+    await expect(Utils.timeoutPromise(0, error)).rejects.toThrow(error);
+  });
+
+  each([[500], [10]]).it('should reject after the specified time', async timeout => {
+    const before = Date.now();
+    let after = before;
+    await Utils.timeoutPromise(timeout).catch(e => (after = Date.now()));
+    // toBeCloseTo is intended to check N significant figures of floats
+    // but by using -1 we can check it's within 5s of the set value
+    expect(after - before).toBeCloseTo(timeout, -1);
+  });
+});
+
+describe('promiseWithTimeout', () => {
+  each([[{}, '42']]).it("should resolve with the promissory's value if it finishes first", async value => {
+    function promissory() {
+      return new Promise(resolve => resolve(value));
+    }
+    await expect(Utils.promiseWithTimeout(promissory)).resolves.toEqual(value);
+  });
+
+  each([[Error(), Error('Communication timeout')]]).it(
+    "should reject with the promissory's error if it finishes first",
+    async err => {
+      function promissory() {
+        return new Promise((_, reject) => reject(err));
+      }
+      await expect(Utils.promiseWithTimeout(promissory)).rejects.toEqual(err);
+    }
+  );
+
+  it('should reject with the timeout if it times out', async () => {
+    const err = new Error('Timeout error');
+    await expect(Utils.promiseWithTimeout(() => Utils.timeoutPromise(10), 5, err)).rejects.toEqual(err);
+  });
+});
+
+describe('retryPromise', () => {
+  each([[0], [1]]).it('should resolve as soon as the first promise does so', async rejects => {
+    const value = {};
+    let promises = rejects;
+    const promissory = jest.fn(() => {
+      if (promises > 0) {
+        promises--;
+        return Promise.reject();
+      }
+      return new Promise(resolve => resolve(value));
+    });
+    await expect(Utils.retryPromise(promissory)).resolves.toEqual(value);
+    expect(promissory).toHaveBeenCalledTimes(rejects + 1);
+  });
+
+  each([[0, 5, Error()], [900, 1, Error('Connection timeout')]]).it(
+    'should reject with the last error after max retries or time',
+    async (timeout, attempts, error) => {
+      const promissory = jest.fn(() => Utils.timeoutPromise(timeout, error));
+      await expect(Utils.retryPromise(promissory)).rejects.toThrow(error);
+      expect(promissory).toHaveBeenCalledTimes(attempts);
+    }
+  );
+});
