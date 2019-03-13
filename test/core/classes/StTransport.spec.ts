@@ -4,7 +4,7 @@ import { GlobalWithFetchMock } from 'jest-fetch-mock';
 const customGlobal: GlobalWithFetchMock = global as GlobalWithFetchMock;
 customGlobal.fetch = require('jest-fetch-mock');
 customGlobal.fetchMock = customGlobal.fetch;
-import Language from '../../../src/core/classes/Language.class';
+import Language from '../../../src/core/shared/Language';
 import StTransport from '../../../src/core/classes/StTransport.class';
 
 describe('StTransport class', () => {
@@ -27,35 +27,30 @@ describe('StTransport class', () => {
       mockFT = st.fetchRetry as jest.Mock;
     });
 
-    each([[{ requesttypedescription: 'AUTH' }]]).it(
-      'should build the fetch options',
-      async requestObject => {
-        mockFT.mockReturnValue(
-          resolvingPromise({
-            json: () =>
-              resolvingPromise({
-                errorcode: 0
-              })
-          })
-        );
-        await st.sendRequest(requestObject);
-        expect(st.fetchRetry).toHaveBeenCalledTimes(1);
-        expect(st.fetchRetry).toHaveBeenCalledWith(StTransport.GATEWAY_URL, {
-          ...StTransport.DEFAULT_FETCH_OPTIONS,
-          body: JSON.stringify(requestObject)
-        });
+    each([[{ requesttypedescription: 'AUTH' }]]).it('should build the fetch options', async requestObject => {
+      mockFT.mockReturnValue(
+        resolvingPromise({
+          json: () =>
+            resolvingPromise({
+              errorcode: 0
+            })
+        })
+      );
+      await st.sendRequest(requestObject);
+      expect(st.fetchRetry).toHaveBeenCalledTimes(1);
+      expect(st.fetchRetry).toHaveBeenCalledWith(StTransport.GATEWAY_URL, {
+        ...StTransport.DEFAULT_FETCH_OPTIONS,
+        body: JSON.stringify(requestObject)
+      });
+    });
+
+    each([[resolvingPromise({}), Error('codec error')], [rejectingPromise(TimeoutError), TimeoutError]]).it(
+      'should reject invalid responses',
+      async (mockFetch, expected) => {
+        mockFT.mockReturnValue(mockFetch);
+        await expect(st.sendRequest({ requesttypedescription: 'AUTH' })).rejects.toEqual(expected);
       }
     );
-
-    each([
-      [resolvingPromise({}), Error('codec error')],
-      [rejectingPromise(TimeoutError), TimeoutError]
-    ]).it('should reject invalid responses', async (mockFetch, expected) => {
-      mockFT.mockReturnValue(mockFetch);
-      await expect(
-        st.sendRequest({ requesttypedescription: 'AUTH' })
-      ).rejects.toEqual(expected);
-    });
 
     each([
       [
@@ -74,9 +69,7 @@ describe('StTransport class', () => {
       ]
     ]).it('should decode the json response', async (mockFetch, expected) => {
       mockFT.mockReturnValue(mockFetch);
-      await expect(
-        st.sendRequest({ requesttypedescription: 'AUTH' })
-      ).resolves.toEqual(expected);
+      await expect(st.sendRequest({ requesttypedescription: 'AUTH' })).resolves.toEqual(expected);
       expect(st.codec.decode).toHaveBeenCalledWith({
         json: expect.any(Function)
       });

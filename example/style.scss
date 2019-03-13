@@ -1,0 +1,61 @@
+@import '../src/core/styles/variables';
+@import '../src/core/styles/placeholders';
+@import '../src/core/styles/core';
+
+%iframe {
+  height: 8.1rem;
+  width: 100%;
+  border: 0;
+}
+
+body {
+  padding: 4rem 16rem;
+}
+
+.example-form__title {
+  font-size: 2rem;
+  font-weight: normal;
+  border-bottom: 0.1rem solid $color-input-placeholder;
+  padding: 0 0 $space-m;
+  margin: 0 0 $space-m * 3;
+
+  span {
+    float: right;
+    font-size: 1.2rem;
+    color: $color-input-placeholder;
+    text-transform: uppercase;
+    margin: 0.2rem 0 0;
+  }
+}
+
+.example-form__group {
+  margin: 0 0 $space-xs;
+
+  iframe {
+    @extend %iframe;
+  }
+}
+
+.example-form__spacer {
+  height: $space-l * 2;
+}
+
+.example-form__label {
+  @extend %label;
+}
+
+.security-code__label--required {
+  @extend %label--required;
+}
+
+.example-form__input {
+  @extend %input;
+}
+
+.example-form__message {
+  @extend %message;
+}
+
+.example-form__button {
+  @extend %button;
+}

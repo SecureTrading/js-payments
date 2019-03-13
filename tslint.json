@@ -14,6 +14,7 @@
       "severity": "warning",
       "options": ["debug", "info", "log", "time", "timeEnd", "trace"]
     },
+    "one-variable-per-declaration": true,
     "quotemark": [true, "single"],
     "trailing-comma": false,
     "variable-name": [

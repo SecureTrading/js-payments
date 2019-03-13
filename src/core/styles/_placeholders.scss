@@ -1,0 +1,72 @@
+%block {
+  position: relative;
+}
+
+%label {
+  display: $display-label; // @param
+  font-size: $font-size-label; // @param
+  line-height: $line-height-label; // @param
+  color: $color-label; // @param
+  margin: $space-outset-label; // @param
+}
+
+%label--required {
+  position: relative;
+
+  &:after {
+    content: '*';
+    display: inline;
+    position: absolute;
+    top: 0;
+    right: -$space-m;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: $color-error; // @param
+  }
+}
+
+%input {
+  box-sizing: border-box;
+  width: 100%;
+  font-size: $font-size-input; // @param
+  line-height: $line-height-input; // @param
+  color: $color-input; // @param
+  border: $border-size-input solid $border-color-input; // @param
+  border-radius: $border-radius-input; // @param
+  padding: $space-inset-input; // @param
+  margin: $space-outset-input; // @param
+
+  &::placeholder {
+    color: $color-input-placeholder; // @param
+  }
+
+  &:invalid {
+    color: $color-input-error; // @param
+    border-color: $color-error; // @param
+    background-color: $background-color-input-error; // @param
+  }
+}
+
+%message {
+  font-size: $font-size-message; // @param
+  line-height: $line-height-message; // @param
+  margin: $space-outset-message; // @param
+  color: $color-error; // @param
+  position: absolute;
+  bottom: 0;
+}
+
+%button {
+  font-size: $font-size-button; // @param
+  line-height: $line-height-button; // @param
+  color: $color-button; // @param
+  border: $border-size-button solid $border-color-button; // @param
+  border-radius: $border-radius-button; // @param
+  background-color: $background-color-button; // @param
+  padding: $space-inset-button; // @param
+  cursor: pointer;
+
+  &:hover {
+    background-color: $background-color-button-hover; // @param
+  }
+}
