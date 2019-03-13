@@ -54,8 +54,7 @@ function VisaCheckoutFixture() {
     alt: 'Visa Checkout',
     class: 'v-button',
     role: 'button',
-    src:
-      'https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png'
+    src: 'https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png'
   };
   const config = {
     name: 'VISA',

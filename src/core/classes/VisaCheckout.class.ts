@@ -9,8 +9,7 @@ class VisaCheckout {
     alt: 'Visa Checkout',
     className: 'v-button',
     role: 'button',
-    src:
-      'https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png'
+    src: 'https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png'
   };
   private static VISA_PAYMENT_STATUS = {
     CANCEL: 'payment.cancel',
@@ -25,12 +24,7 @@ class VisaCheckout {
    */
   public static _createVisaButton() {
     const button = document.createElement('img');
-    const {
-      alt,
-      className,
-      role,
-      src
-    } = VisaCheckout.VISA_CHECKOUT_BUTTON_PROPS;
+    const { alt, className, role, src } = VisaCheckout.VISA_CHECKOUT_BUTTON_PROPS;
     button.setAttribute('src', src);
     button.setAttribute('class', className);
     button.setAttribute('role', role);
