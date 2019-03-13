@@ -32,7 +32,6 @@ class CardinalCommerce extends StTransport {
 
   private _cardinalCommerceJWT: string;
   private _payload: IStRequest;
-  private _merchantJWT: string = (document.getElementById('JWTContainer') as HTMLInputElement).value;
   private _sessionId: string;
   private _orderDetails: object = {
     OrderDetails: {
