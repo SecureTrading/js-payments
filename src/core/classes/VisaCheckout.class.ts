@@ -41,15 +41,23 @@ class VisaCheckout {
   }
 
   /**
-   * Attach SDK from Visa Checkout as html markup (temporary unused due to malfunction with scripts)
+   * Initialize Visa Checkout and sets handlers on every payment event.
+   * 1. Adds Visa Checkout SDK.
+   * 2. Attaches Visa Checkout button
+   * 3. Initialize payment configuration
+   * 4. Sets handlers on payment events.
    * @private
    */
-  private _attachVisaSDK() {
+  private _initVisaConfiguration() {
     const body = document.getElementsByTagName('body')[0];
     const script = document.createElement('script');
     body.appendChild(script);
     script.addEventListener('load', () => {
-      this._setConfiguration();
+      VisaCheckout._attachVisaButton();
+      this._initPaymentConfiguration();
+      this._paymentStatusHandler(VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS);
+      this._paymentStatusHandler(VisaCheckout.VISA_PAYMENT_STATUS.CANCEL);
+      this._paymentStatusHandler(VisaCheckout.VISA_PAYMENT_STATUS.ERROR);
     });
     script.src = VisaCheckout.SDK_ADDRESS;
   }
@@ -64,17 +72,20 @@ class VisaCheckout {
   }
 
   /**
-   * Simple handler used to simplify handling payment events; returns the JSON object with details of payment
+   * Handler used to simplify handling payment events; returns the JSON object with details of payment
    * @param event
    * @private
    */
-  private static _paymentStatusHandler(event: string) {
-    return event === VisaCheckout.VISA_PAYMENT_STATUS.ERROR
-      ? V.on(event, (payment: object) => payment)
-      : V.on(event, (payment: object, error: object) => ({ payment, error }));
+  private _paymentStatusHandler(event: string) {
+    V.on(event, (payment: object, error?: object) => {
+      this.paymentStatus = event;
+      this.paymentDetails = payment;
+      this.paymentError = error ? error : {};
+      console.log(this._paymentError);
+      console.log(this.paymentStatus);
+      console.log(this.paymentDetails);
+    });
   }
-
-  public returnPaymentStatus() {}
 
   /**
    * Init configuration (temporary with some test data).
@@ -83,20 +94,42 @@ class VisaCheckout {
    */
   private _initConfiguration = {
     apikey: '' as string,
-    encryptionKey: '' as string,
     paymentRequest: {
       currencyCode: 'USD' as string,
       subtotal: '11.00' as string
     }
   };
 
+  private _paymentStatus: string;
+  private _paymentDetails: object;
+  private _paymentError: object;
+
+  set paymentDetails(value: object) {
+    this._paymentDetails = value;
+  }
+
+  get paymentStatus(): string {
+    return this._paymentStatus;
+  }
+
+  set paymentStatus(value: string) {
+    this._paymentStatus = value;
+  }
+
+  get paymentError(): object {
+    return this._paymentError;
+  }
+
+  set paymentError(value: object) {
+    this._paymentError = value;
+  }
+
   constructor(config: any) {
     const {
-      props: { apikey, encryptionKey }
+      props: { apikey }
     } = config;
     this._initConfiguration.apikey = apikey;
-    this._initConfiguration.encryptionKey = encryptionKey;
-    this._attachVisaSDK();
+    this._initVisaConfiguration();
   }
 
   /**
@@ -105,19 +138,6 @@ class VisaCheckout {
    */
   private _initPaymentConfiguration() {
     V.init(this._initConfiguration);
-  }
-
-  /**
-   * Loads Visa Checkout configuration as soon as script is loaded and button attached to DOM
-   */
-  private _setConfiguration() {
-    VisaCheckout._attachVisaButton();
-    this._initPaymentConfiguration();
-    VisaCheckout._paymentStatusHandler(
-      VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS
-    );
-    VisaCheckout._paymentStatusHandler(VisaCheckout.VISA_PAYMENT_STATUS.CANCEL);
-    VisaCheckout._paymentStatusHandler(VisaCheckout.VISA_PAYMENT_STATUS.ERROR);
   }
 }
 

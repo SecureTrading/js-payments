@@ -50,8 +50,7 @@ function VisaCheckoutFixture() {
   const config = {
     name: 'VISA',
     props: {
-      apikey: '2ig278`13b123872121h31h20e',
-      encryptionKey: 'sad78dsadtas8das8das87dyas87dsad'
+      apikey: '2ig278`13b123872121h31h20e'
     }
   };
   const fakeVisaButton = {};
