@@ -1,7 +1,8 @@
 declare const V: any;
 
 /**
- *  Visa checkout configuration class
+ *  Visa Checkout configuration class; sets up VC APM.
+ *  The only data which merchant have to provide is apikey, rest of the configuration is setting automatically.
  */
 class VisaCheckout {
   private static VISA_CHECKOUT_BUTTON_PROPS: any = {
@@ -11,9 +12,6 @@ class VisaCheckout {
     src:
       'https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png'
   };
-  /**
-   * Possible status of payment in VISA Checkout
-   */
   private static VISA_PAYMENT_STATUS = {
     CANCEL: 'payment.cancel',
     ERROR: 'payment.error',
@@ -43,8 +41,8 @@ class VisaCheckout {
   /**
    * Initialize Visa Checkout and sets handlers on every payment event.
    * 1. Adds Visa Checkout SDK.
-   * 2. Attaches Visa Checkout button
-   * 3. Initialize payment configuration
+   * 2. Attaches Visa Checkout button.
+   * 3. Initialize payment configuration.
    * 4. Sets handlers on payment events.
    * @private
    */

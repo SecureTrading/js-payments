@@ -11,14 +11,17 @@ describe('Visa Checkout class', () => {
 
   // given
   describe('Method _createVisaButton', () => {
-    beforeEach(() => {});
+    const { fakeVisaButton } = VisaCheckoutFixture();
+
     // then
-    it('should return img markup', () => {
-      expect(VisaCheckout._createVisaButton()).toBe(true);
+    it('should be defined', () => {
+      expect(VisaCheckout._createVisaButton()).toBeDefined();
     });
 
     // then
-    it('should img markup have certain attributes', () => {});
+    it('should img markup have certain attributes', () => {
+      expect(VisaCheckout._createVisaButton()).toMatchObject(fakeVisaButton);
+    });
   });
 
   // given
@@ -47,12 +50,24 @@ describe('Visa Checkout class', () => {
 });
 
 function VisaCheckoutFixture() {
+  const visaButttonProps = {
+    alt: 'Visa Checkout',
+    class: 'v-button',
+    role: 'button',
+    src:
+      'https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png'
+  };
   const config = {
     name: 'VISA',
     props: {
       apikey: '2ig278`13b123872121h31h20e'
     }
   };
-  const fakeVisaButton = {};
+  const fakeVisaButton = document.createElement('img');
+  fakeVisaButton.setAttribute('src', visaButttonProps.src);
+  fakeVisaButton.setAttribute('class', visaButttonProps.class);
+  fakeVisaButton.setAttribute('role', visaButttonProps.role);
+  fakeVisaButton.setAttribute('alt', visaButttonProps.alt);
+
   return { config, fakeVisaButton };
 }
