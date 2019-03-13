@@ -1,4 +1,4 @@
-import VisaCheckout from '../../../src/core/classes/VisaCheckout.class';
+import VisaCheckout from '../../../src/core/classes/VisaCheckout';
 
 // given
 describe('Visa Checkout class', () => {

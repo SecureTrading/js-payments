@@ -1,5 +1,5 @@
 import StTransport from './classes/StTransport.class';
-import VisaCheckout from './classes/VisaCheckout.class';
+import VisaCheckout from './classes/VisaCheckout';
 import Element from './Element';
 
 /***
