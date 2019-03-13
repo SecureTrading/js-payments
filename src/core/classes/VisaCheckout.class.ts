@@ -81,9 +81,7 @@ class VisaCheckout {
       this.paymentStatus = event;
       this.paymentDetails = payment;
       this.paymentError = error ? error : {};
-      console.log(this._paymentError);
-      console.log(this.paymentStatus);
-      console.log(this.paymentDetails);
+      return { event, payment, error };
     });
   }
 
@@ -108,16 +106,8 @@ class VisaCheckout {
     this._paymentDetails = value;
   }
 
-  get paymentStatus(): string {
-    return this._paymentStatus;
-  }
-
   set paymentStatus(value: string) {
     this._paymentStatus = value;
-  }
-
-  get paymentError(): object {
-    return this._paymentError;
   }
 
   set paymentError(value: object) {
