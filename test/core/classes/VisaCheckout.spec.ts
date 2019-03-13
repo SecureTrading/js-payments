@@ -2,11 +2,13 @@ import VisaCheckout from '../../../src/core/classes/VisaCheckout';
 
 // given
 describe('Visa Checkout class', () => {
-  let instance;
+  let instance: any;
+  let body: object;
   // when
   beforeEach(() => {
     const { config } = VisaCheckoutFixture();
     instance = new VisaCheckout(config);
+    body = document.body;
   });
 
   // given
@@ -27,25 +29,45 @@ describe('Visa Checkout class', () => {
   // given
   describe('Method __attachVisaButton', () => {
     // then
-    it('should attach Visa Checkout button into body', () => {});
+    it('should retrn ', () => {
+      expect(instance._attachVisaButton()).toEqual(body);
+    });
   });
 
   // given
-  describe('Method _attachVisaSDK', () => {
+  describe('Method _initVisaConfiguration', () => {
     // then
-    it('should init script on button', () => {});
+    let sdkMarkup: object;
+    beforeEach(() => {
+      sdkMarkup = VisaCheckoutFixture().sdkMarkup;
+    });
+    it('should init script on button', () => {
+      expect(instance._initVisaConfiguration()).toEqual(sdkMarkup);
+    });
   });
 
   // given
   describe('Method _paymentStatusHandler', () => {
     // then
-    it('should attach Visa Checkout button into body', () => {});
+    it('should return proper cancel status when cancel event is triggered', () => {
+      expect(instance._paymentStatusHandler('payment.cancel').toEqual());
+    });
+
+    // then
+    it('should return proper success status when success event is triggered', () => {
+      expect(instance._paymentStatusHandler('payment.cancel').toEqual());
+    });
+
+    // then
+    it('should return proper error status when error event is triggered', () => {
+      expect(instance._paymentStatusHandler('payment.cancel').toEqual());
+    });
   });
 
   // given
-  describe('Method _setConfiguration', () => {
+  describe('Method _initPaymentConfiguration', () => {
     // then
-    it('should attach Visa Checkout button into body', () => {});
+    it('should trigger V.init function with proper configuration', () => {});
   });
 });
 
@@ -68,5 +90,11 @@ function VisaCheckoutFixture() {
   fakeVisaButton.setAttribute('role', visaButttonProps.role);
   fakeVisaButton.setAttribute('alt', visaButttonProps.alt);
 
-  return { config, fakeVisaButton };
+  const sdkMarkup = document.createElement('script');
+  sdkMarkup.setAttribute(
+    'src',
+    'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js'
+  );
+
+  return { config, fakeVisaButton, sdkMarkup };
 }

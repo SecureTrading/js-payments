@@ -45,22 +45,24 @@ class VisaCheckout {
     const script = document.createElement('script');
     body.appendChild(script);
     script.addEventListener('load', () => {
-      VisaCheckout._attachVisaButton();
+      this._attachVisaButton();
       this._initPaymentConfiguration();
       this._paymentStatusHandler(VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS);
       this._paymentStatusHandler(VisaCheckout.VISA_PAYMENT_STATUS.CANCEL);
       this._paymentStatusHandler(VisaCheckout.VISA_PAYMENT_STATUS.ERROR);
     });
     script.src = VisaCheckout.SDK_ADDRESS;
+    return script;
   }
 
   /**
    * Attaches Visa Button to body element - optionally we can change this method to attach it somewhere else
    * @private
    */
-  private static _attachVisaButton() {
+  private _attachVisaButton() {
     const body = document.getElementsByTagName('body')[0];
     body.appendChild(VisaCheckout._createVisaButton());
+    return body;
   }
 
   /**
