@@ -2,8 +2,8 @@ import { BrandDetailsType } from '../../core/imports/cardtype';
 import Language from '../../core/shared/Language';
 import Validation from '../../core/shared/Validation';
 import BinLookup from '../../core/shared/BinLookup';
-import FormField from "../../core/shared/FormField";
-import Selectors from "../../core/shared/Selectors";
+import FormField from '../../core/shared/FormField';
+import Selectors from '../../core/shared/Selectors';
 
 /**
  * Card number validation class
