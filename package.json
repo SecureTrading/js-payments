@@ -65,7 +65,7 @@
     "stylelint-webpack-plugin": "^0.10.5",
     "ts-jest": "^24.0.0",
     "ts-loader": "^5.3.3",
-    "tslint": "^5.13.1",
+    "tslint": "^5.14.0",
     "tslint-loader": "^3.5.4",
     "typedoc": "^0.14.2",
     "typedoc-webpack-plugin": "^1.1.4",
