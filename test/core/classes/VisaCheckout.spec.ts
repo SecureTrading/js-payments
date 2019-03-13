@@ -16,7 +16,7 @@ describe('Visa Checkout class', () => {
     const { fakeVisaButton } = VisaCheckoutFixture();
 
     // then
-    it('should be defined', () => {
+    it('should button be defined', () => {
       expect(VisaCheckout._createVisaButton()).toBeDefined();
     });
 
@@ -29,7 +29,7 @@ describe('Visa Checkout class', () => {
   // given
   describe('Method __attachVisaButton', () => {
     // then
-    it('should retrn ', () => {
+    it('should prepared structure be equal to real document object ', () => {
       expect(instance._attachVisaButton()).toEqual(body);
     });
   });
@@ -44,6 +44,11 @@ describe('Visa Checkout class', () => {
     it('should init script on button', () => {
       expect(instance._initVisaConfiguration()).toEqual(sdkMarkup);
     });
+    // then
+    it('should triggers _paymentStatusHandler three times', () => {
+      instance._initVisaConfiguration();
+      expect(instance._paymentStatusHandler()).toBeCalledTimes(3);
+    });
   });
 
   // given
@@ -55,12 +60,12 @@ describe('Visa Checkout class', () => {
 
     // then
     it('should return proper success status when success event is triggered', () => {
-      expect(instance._paymentStatusHandler('payment.cancel').toEqual());
+      expect(instance._paymentStatusHandler('payment.success').toEqual());
     });
 
     // then
     it('should return proper error status when error event is triggered', () => {
-      expect(instance._paymentStatusHandler('payment.cancel').toEqual());
+      expect(instance._paymentStatusHandler('payment.error').toEqual());
     });
   });
 
