@@ -12,6 +12,14 @@ each([
 });
 
 each([
+  [{ value: '123', length: 1 }, '3'],
+  [{ value: '123', length: 2 }, '23'],
+  [{ value: '123', length: 4 }, '123']
+]).test('Validation.getLastNChars', (data, expected) => {
+  expect(Validation.getLastNChars(data.value, data.length)).toBe(expected);
+});
+
+each([
   [{ valid: true, valueMissing: false }, ''],
   [{ valid: false, valueMissing: true }, Language.translations.VALIDATION_ERROR_FIELD_IS_REQUIRED],
   [{ valid: false, patternMismatch: true }, Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH],

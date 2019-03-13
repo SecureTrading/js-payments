@@ -1,6 +1,30 @@
 import each from 'jest-each';
 import CardNumber from '../../../src/components/card-number/CardNumber';
 import { cardsLogos } from '../../../src/core/imports/images';
+import Selectors from "../../../src/core/shared/Selectors";
+import FormField from "../../../src/core/shared/FormField";
+
+describe('CardNumber', () => {
+  let cardNumber: CardNumber;
+
+  beforeAll(() => {
+    let inputElement = document.createElement('input');
+    let messageElement = document.createElement('p');
+
+    inputElement.id = Selectors.CARD_NUMBER_INPUT_SELECTOR;
+    messageElement.id = Selectors.CARD_NUMBER_MESSAGE_SELECTOR;
+
+    document.body.appendChild(inputElement);
+    document.body.appendChild(messageElement);
+
+    cardNumber = new CardNumber();
+  });
+
+  it('should create instance of classes CardNumber and FormField representing form field', () => {
+    expect(cardNumber).toBeInstanceOf(CardNumber);
+    expect(cardNumber).toBeInstanceOf(FormField);
+  });
+});
 
 each([
   ['', true], // Couldn't identify the brand
