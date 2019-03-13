@@ -7,7 +7,7 @@ import ST from './core/classes/ST.class';
       {
         name: 'VISA',
         props: {
-          apikey: 'ZG50YOGQQJ0PWPPX8D7F21ELpFID5NF-W256C638eL5hNgsOc'
+          apikey: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4'
         }
       }
     ]
