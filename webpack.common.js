@@ -18,7 +18,7 @@ module.exports = {
     publicPath: ''
   },
   plugins: [
-    new CleanWebpackPlugin(['dist']),
+    new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       filename: 'card-number.html',
       template: './src/components/index.html',
@@ -57,10 +57,14 @@ module.exports = {
     new FriendlyErrorsWebpackPlugin()
   ],
   module: {
-    rules: [
-      {
+    rules: [{
         test: /\.scss$/,
-        use: ['style-loader', { loader: 'css-loader', options: { importLoaders: 1 } }, 'postcss-loader', 'sass-loader']
+        use: ['style-loader', {
+          loader: 'css-loader',
+          options: {
+            importLoaders: 1
+          }
+        }, 'postcss-loader', 'sass-loader']
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
@@ -74,12 +78,10 @@ module.exports = {
       {
         test: /\.ts$/,
         enforce: 'pre',
-        use: [
-          {
-            loader: 'tslint-loader',
-            options: {}
-          }
-        ],
+        use: [{
+          loader: 'tslint-loader',
+          options: {}
+        }],
         exclude: /node_modules/
       }
     ]
