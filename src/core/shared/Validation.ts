@@ -31,16 +31,6 @@ export default class Validation {
     return cardNumber.slice(-securityCodeLength);
   }
 
-  /**
-   * Method for setting specified validation attribute like maxlength, pattern, etc.
-   * @param fieldInstance
-   * @param attribute
-   * @param value
-   */
-  public static setValidationAttribute(fieldInstance: HTMLInputElement, attribute: string, value: string) {
-    fieldInstance.setAttribute(attribute, value);
-  }
-
   public static getValidationMessage(validityState: ValidityState): string {
     let validationMessage: string = '';
 

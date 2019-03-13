@@ -17,28 +17,6 @@ describe('FormField', () => {
     formField = new FormField('st-form-field-input', 'st-form-field-message');
   });
 
-  // describe('constructor', () => {
-  //   it('should store a reference to an input element and attach event listeners', () => {
-  //
-  //
-  //
-  //
-  //     // expect(formField._htmlElement).toBe(inputElement);
-  //   });
-  // });
-
-  // describe('onPaste()', () => {
-  //   it('should update input with numeric value (non-numeric characters should be removed)', () => {
-  //     // let data: DataTransfer = new global.DataTransfer();
-  //     // let event: ClipboardEvent;
-  //     //
-  //     // data.setData('text/plain', ' abc 123 abc ');
-  //     // event = new ClipboardEvent('paste');
-  //     //
-  //     // formField.onPaste(event);
-  //   });
-  // });
-
   describe('setAttributes()', () => {
     it('should set attributes to HTML input element', () => {
       let inputAttributes = {

@@ -1,24 +1,27 @@
 import ExpirationDate from '../../../src/components/expiration-date/ExpirationDate';
-import Validation from '../../../src/core/shared/Validation';
+import FormField from '../../../src/core/shared/FormField';
+import Selectors from "../../../src/core/shared/Selectors";
 
 describe('ExpirationDate', () => {
   let expirationDate: ExpirationDate;
 
   beforeAll(() => {
+    let inputElement = document.createElement('input');
+    let messageElement = document.createElement('p');
+
+    inputElement.id = Selectors.EXPIRATION_DATE_INPUT_SELECTOR;
+    messageElement.id = Selectors.EXPIRATION_DATE_MESSAGE_SELECTOR;
+
+    document.body.appendChild(inputElement);
+    document.body.appendChild(messageElement);
+
     expirationDate = new ExpirationDate();
-
-    console.log(expirationDate);
   });
 
-  it('should create instance of classes ExpirationDate and Validation representing form field', () => {
+  it('should create instance of classes ExpirationDate and FormField representing form field', () => {
     expect(expirationDate).toBeInstanceOf(ExpirationDate);
-    expect(expirationDate).toBeInstanceOf(Validation);
+    expect(expirationDate).toBeInstanceOf(FormField);
   });
-
-  // it('', () => {
-  //
-  // });
-
 
   // // given
   // describe('Class ExpirationDate instance', () => {
