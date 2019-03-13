@@ -78,15 +78,6 @@ class ST extends StTransport {
       itemToChange.appendChild(fields[index]);
     });
   }
-
-  /**
-   * Gets APM config according to given apmName
-   * @param apmName - name of payment
-   * @private
-   */
-  private _getAPMConfig(apmName: string) {
-    return Object.values(this.payments).find((item: { name: string }) => item.name === apmName);
-  }
 }
 
 export default ST;
