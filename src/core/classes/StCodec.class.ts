@@ -1,4 +1,4 @@
-import Language from './Language.class';
+import Language from '../shared/Language';
 
 interface IStRequest {
   requesttypedescription: string;
@@ -16,13 +16,7 @@ interface IStRequest {
 class StCodec {
   public static CONTENT_TYPE = 'application/json';
   public static VERSION = '1.00';
-  public static SUPPORTED_REQUEST_TYPES = [
-    'WALLETVERIFY',
-    'THREEDINIT',
-    'THREEDQUERY',
-    'CACHETOKENISE',
-    'AUTH'
-  ];
+  public static SUPPORTED_REQUEST_TYPES = ['WALLETVERIFY', 'THREEDINIT', 'THREEDQUERY', 'CACHETOKENISE', 'AUTH'];
 
   private _requestId: string;
   private _jwt: string;
@@ -75,13 +69,9 @@ class StCodec {
   public encode(requestObject: IStRequest) {
     if (
       Object.keys(requestObject).length < 2 ||
-      !StCodec.SUPPORTED_REQUEST_TYPES.includes(
-        requestObject.requesttypedescription
-      )
+      !StCodec.SUPPORTED_REQUEST_TYPES.includes(requestObject.requesttypedescription)
     ) {
-      throw new Error(
-        Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST
-      );
+      throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST);
     }
     return JSON.stringify(this.buildRequestObject(requestObject));
   }
@@ -102,9 +92,7 @@ class StCodec {
         responseData.response.length === 1
       )
     ) {
-      throw new Error(
-        Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE
-      );
+      throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
     }
     const responseContent = responseData.response[0];
     if (responseContent.errorcode !== '0') {
@@ -127,9 +115,7 @@ class StCodec {
           resolve(StCodec.verifyResponseObject(responseData));
         });
       } else {
-        reject(
-          new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE)
-        );
+        reject(new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
       }
     });
   }

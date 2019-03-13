@@ -14,8 +14,7 @@ class ST extends StTransport {
 
   constructor(style: object, payments: object[]) {
     const gatewayUrl = ST.GATEWAY_URL;
-    const jwt = (document.getElementById('JWTContainer') as HTMLInputElement)
-      .value;
+    const jwt = (document.getElementById('JWTContainer') as HTMLInputElement).value;
     super({ jwt, gatewayUrl });
     this.jwt = jwt;
     this.style = style;
@@ -43,9 +42,7 @@ class ST extends StTransport {
       classes: elementClasses,
       style: elementStyles
     });
-    const expirationDateMounted = expirationDate.mount(
-      'st-expiration-date-iframe'
-    );
+    const expirationDateMounted = expirationDate.mount('st-expiration-date-iframe');
 
     RegisterElements(
       [cardNumberMounted, securityCodeMounted, expirationDateMounted],

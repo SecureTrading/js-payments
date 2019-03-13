@@ -1,4 +1,5 @@
-import { promiseWithTimeout, retryPromise } from '../helpers/utils';
+import Utils from '../shared/Utils';
+import Language from '../shared/Language';
 import { IStRequest, StCodec } from './StCodec.class';
 
 interface IStTransportParams {
@@ -42,8 +43,7 @@ export default class StTransport {
   private _codec: StCodec;
 
   constructor(params: IStTransportParams) {
-    this.gatewayUrl =
-      'gatewayUrl' in params ? params.gatewayUrl : StTransport.GATEWAY_URL;
+    this.gatewayUrl = 'gatewayUrl' in params ? params.gatewayUrl : StTransport.GATEWAY_URL;
     this._codec = new StCodec(params.jwt);
   }
 
@@ -78,9 +78,8 @@ export default class StTransport {
     retries = StTransport.RETRY_LIMIT,
     retryTimeout = StTransport.RETRY_TIMEOUT
   ) {
-    return retryPromise(
-      () =>
-        promiseWithTimeout<Response>(() => fetch(url, options), connectTimeout),
+    return Utils.retryPromise(
+      () => Utils.promiseWithTimeout<Response>(() => fetch(url, options), connectTimeout),
       delay,
       retries,
       retryTimeout

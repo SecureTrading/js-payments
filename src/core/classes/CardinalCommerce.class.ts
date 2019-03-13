@@ -21,8 +21,7 @@ class CardinalCommerce extends StTransport {
     VALIDATED: 'payments.validated'
   };
 
-  private static SONGBIRD_URL =
-    'https://songbirdstag.cardinalcommerce.com/cardinalcruise/v1/songbird.js';
+  private static SONGBIRD_URL = 'https://songbirdstag.cardinalcommerce.com/cardinalcruise/v1/songbird.js';
 
   private static VALIDATION_EVENTS = {
     ERROR: 'ERROR',
@@ -33,9 +32,7 @@ class CardinalCommerce extends StTransport {
 
   private _cardinalCommerceJWT: string;
   private _payload: IStRequest;
-  private _merchantJWT: string = (document.getElementById(
-    'JWTContainer'
-  ) as HTMLInputElement).value;
+  private _merchantJWT: string = (document.getElementById('JWTContainer') as HTMLInputElement).value;
   private _sessionId: string;
   private _orderDetails: object = {
     OrderDetails: {
@@ -140,14 +137,11 @@ class CardinalCommerce extends StTransport {
    * This includes a failed JWT authentication.
    */
   private _onPaymentSetupComplete() {
-    Cardinal.on(
-      CardinalCommerce.PAYMENT_EVENTS.SETUP_COMPLETE,
-      (setupCompleteData: any) => {
-        this._sessionId = setupCompleteData.sessionId;
-        console.log(`Session ID is: ${this._sessionId}`);
-        return setupCompleteData.sessionId;
-      }
-    );
+    Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.SETUP_COMPLETE, (setupCompleteData: any) => {
+      this._sessionId = setupCompleteData.sessionId;
+      console.log(`Session ID is: ${this._sessionId}`);
+      return setupCompleteData.sessionId;
+    });
   }
 
   /**
@@ -155,25 +149,22 @@ class CardinalCommerce extends StTransport {
    * @private
    */
   private _onPaymentValidation() {
-    Cardinal.on(
-      CardinalCommerce.PAYMENT_EVENTS.VALIDATED,
-      (data: any, jwt: string) => {
-        switch (data.ActionCode) {
-          case CardinalCommerce.VALIDATION_EVENTS.SUCCESS:
-            this._retrieveValidationData(data, jwt);
-            break;
-          case CardinalCommerce.VALIDATION_EVENTS.NOACTION:
-            this._retrieveValidationData(data);
-            break;
-          case CardinalCommerce.VALIDATION_EVENTS.FAILURE:
-            this._retrieveValidationData(data);
-            break;
-          case CardinalCommerce.VALIDATION_EVENTS.ERROR:
-            this._retrieveValidationData(data);
-            break;
-        }
+    Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.VALIDATED, (data: any, jwt: string) => {
+      switch (data.ActionCode) {
+        case CardinalCommerce.VALIDATION_EVENTS.SUCCESS:
+          this._retrieveValidationData(data, jwt);
+          break;
+        case CardinalCommerce.VALIDATION_EVENTS.NOACTION:
+          this._retrieveValidationData(data);
+          break;
+        case CardinalCommerce.VALIDATION_EVENTS.FAILURE:
+          this._retrieveValidationData(data);
+          break;
+        case CardinalCommerce.VALIDATION_EVENTS.ERROR:
+          this._retrieveValidationData(data);
+          break;
       }
-    );
+    });
   }
 
   /**
