@@ -4,6 +4,10 @@
  */
 
 class Element {
+  private static CARD_NUMBER_COMPONENT: string = '/card-number.html';
+  private static SECURITY_CODE__COMPONENT: string = '/expiration-date.html';
+  private static EXPIRATION_DATE_COMPONENT: string = '/security-code.html';
+
   /***
    * Function which defines iframe src attribute
    * @param name Component name
@@ -11,11 +15,11 @@ class Element {
    */
   public static getComponentAddress(name: string) {
     if (name === 'cardNumber') {
-      return '/card-number.html';
+      return Element.CARD_NUMBER_COMPONENT;
     } else if (name === 'securityCode') {
-      return '/expiration-date.html';
+      return Element.SECURITY_CODE__COMPONENT;
     } else if (name === 'expirationDate') {
-      return '/security-code.html';
+      return Element.EXPIRATION_DATE_COMPONENT;
     }
   }
 
