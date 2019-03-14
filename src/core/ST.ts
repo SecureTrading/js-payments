@@ -40,8 +40,8 @@ class ST {
       ['st-card-number', 'st-security-code', 'st-expiration-date']
     );
 
-    if (this._getAPMConfig('VISA')) {
-      const visa = new VisaCheckout(this._getAPMConfig('VISA'));
+    if (this._getAPMConfig('VISACHECKOUT')) {
+      const visa = new VisaCheckout(this._getAPMConfig('VISACHECKOUT'));
     }
   }
 
