@@ -128,10 +128,11 @@ class VisaCheckout {
   }
 
   constructor(config: any) {
-    const { props, livestatus, buttonProps } = config;
-    this._initConfiguration = props;
+    const {
+      props: { apikey, livestatus }
+    } = config;
+    this._initConfiguration.apikey = apikey;
     this._initConfiguration.livestatus = livestatus;
-    this._visaCheckoutButtonProps.src = `${this._visaCheckoutButtonProps.src}?color=${buttonProps.color}`;
     this._checkLiveStatus();
     this._initVisaConfiguration();
   }
