@@ -75,6 +75,8 @@ class VisaCheckout {
       this.paymentStatus = event;
       this.paymentDetails = payment;
       this.paymentError = error ? error : {};
+      // TODO: we have to decide how will show status message to customer, for now there is some silly alert.
+      alert(`Status of payment: ${event}`);
       return { event, payment, error };
     });
   }
