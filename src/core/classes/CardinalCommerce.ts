@@ -33,11 +33,10 @@ class CardinalCommerce extends StTransport {
   private _cardinalCommerceJWT: string;
   private _payload: IStRequest;
   private _sessionId: string;
+  private _transactionId: string;
   private _orderDetails: object = {
-    OrderDetails: {
-      Cart: ['Detail one', 'Detail two'],
-      TransactionId: this._sessionId ? this._sessionId : ''
-    }
+    Cart: ['Detail one', 'Detail two'],
+    TransactionId: this._sessionId ? this._sessionId : ''
   };
   private _paymentBrand: string = 'cca';
   private _validationData: any;
@@ -114,6 +113,7 @@ class CardinalCommerce extends StTransport {
           AcsUrl: response.acsurl,
           Payload: response.pareq // TODO this should be threedresponse not pareq but the server needs updating
         };
+        this._transactionId = response.acquirerresponsemessage;
         this._onContinue();
       });
     });
@@ -127,6 +127,7 @@ class CardinalCommerce extends StTransport {
    */
   private _retrieveValidationData(validationData: string, jwt?: string) {
     this._validationData = validationData;
+    console.log(validationData);
     return { jwt, validationData };
   }
 
@@ -184,8 +185,13 @@ class CardinalCommerce extends StTransport {
    */
   private _onContinue() {
     Cardinal.continue(
-      this._paymentBrand, // TODO should this be in PAYMENT_EVENT rather than a separate variable?
-      this._cardinalPayload
+      'cca',
+      this._cardinalPayload,
+      {
+        Cart: [],
+        OrderDetails: { TransactionId: this._transactionId }
+      },
+      this._cardinalCommerceJWT
     );
   }
 }
