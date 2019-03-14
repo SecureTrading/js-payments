@@ -1,7 +1,13 @@
+import ApplePay from './classes/ApplePay.class';
+import Element from './Element';
+
 /***
  * Establishes connection with ST, defines client.
  */
 class ST {
+  public style: object;
+  public payments: object[];
+
   private static _iframeCreditCardId: string = 'st-card-number-iframe';
   private static _iframeSecurityCodeId: string = 'st-security-code-iframe';
   private static _iframeExpirationDateId: string = 'st-expiration-date-iframe';
@@ -10,8 +16,33 @@ class ST {
   public static expirationDateComponent = '/expiration-date.html';
   public static securityCodeComponent = '/security-code.html';
 
-  constructor() {
+  constructor(style: object, payments: object[]) {
+    this.style = style;
+    this.payments = payments;
+    const cardNumber = new Element();
+
+    const securityCode = new Element();
+    const expirationDate = new Element();
+    cardNumber.create('cardNumber');
+
     this.submitListener();
+
+    const cardNumberMounted = cardNumber.mount('st-card-number-iframe');
+
+    securityCode.create('securityCode');
+    const securityCodeMounted = securityCode.mount('st-security-code-iframe');
+
+    expirationDate.create('expirationDate');
+    const expirationDateMounted = expirationDate.mount('st-expiration-date-iframe');
+
+    ST.registerElements(
+      [cardNumberMounted, securityCodeMounted, expirationDateMounted],
+      ['st-card-number', 'st-security-code', 'st-expiration-date']
+    );
+
+    if (this._getAPMConfig('Apple Pay')) {
+      const applePay = new ApplePay('merchant.net.securetrading.test');
+    }
   }
 
   /**
@@ -39,11 +70,20 @@ class ST {
    * @param fields
    * @param targets
    */
-  public registerElements(fields: HTMLElement[], targets: string[]) {
+  public static registerElements(fields: HTMLElement[], targets: string[]) {
     targets.map((item, index) => {
       const itemToChange = document.getElementById(item);
       itemToChange.appendChild(fields[index]);
     });
+  }
+
+  /**
+   * Gets APM config according to given apmName
+   * @param apmName - name of payment
+   * @private
+   */
+  private _getAPMConfig(apmName: string) {
+    return Object.values(this.payments).find((item: { name: string }) => item.name === apmName);
   }
 }
 

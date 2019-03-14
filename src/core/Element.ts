@@ -1,11 +1,13 @@
-import ST from './ST';
-
 /***
  * Defines input with iframe source
  * Can be styled by predefined JSON.
  */
 
-class Element extends ST {
+class Element {
+  private static CARD_NUMBER_COMPONENT: string = '/card-number.html';
+  private static SECURITY_CODE__COMPONENT: string = '/security-code.html';
+  private static EXPIRATION_DATE_COMPONENT: string = '/expiration-date.html';
+
   /***
    * Function which defines iframe src attribute
    * @param name Component name
@@ -13,11 +15,11 @@ class Element extends ST {
    */
   public static getComponentAddress(name: string) {
     if (name === 'cardNumber') {
-      return Element.cardNumberComponent;
+      return Element.CARD_NUMBER_COMPONENT;
     } else if (name === 'securityCode') {
-      return Element.securityCodeComponent;
+      return Element.SECURITY_CODE__COMPONENT;
     } else if (name === 'expirationDate') {
-      return Element.expirationDateComponent;
+      return Element.EXPIRATION_DATE_COMPONENT;
     }
   }
 
@@ -53,7 +55,6 @@ class Element extends ST {
   };
 
   constructor() {
-    super();
     this._name = '';
   }
 
