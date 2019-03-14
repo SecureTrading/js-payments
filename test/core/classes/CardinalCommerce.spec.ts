@@ -1,7 +1,4 @@
 import CardinalCommerce from '../../../src/core/classes/CardinalCommerce';
-import Cardinal from '../../../src/core/imports/cardinalLibrary';
-
-(global as any).Cardinal = Cardinal;
 
 // given
 describe('Class CCIntegration', () => {
@@ -11,7 +8,7 @@ describe('Class CCIntegration', () => {
   // when
   beforeEach(() => {
     document.body.innerHTML = `<input id='JWTContainer' value="${jwt}" />`;
-    instance = new CardinalCommerce();
+    instance = new CardinalCommerce('somejwt', 'https://webservices.securetrading.net/jwt/');
   });
   // given
   describe('Method _setConfiguration', () => {
