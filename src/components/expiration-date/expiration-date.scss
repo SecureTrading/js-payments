@@ -1,0 +1,23 @@
+@import '../../core/styles/variables';
+@import '../../core/styles/placeholders';
+@import '../../core/styles/core';
+
+.expiration-date {
+  @extend %block;
+}
+
+.expiration-date__label {
+  @extend %label;
+}
+
+.expiration-date__label--required {
+  @extend %label--required;
+}
+
+.expiration-date__input {
+  @extend %input;
+}
+
+.expiration-date__message {
+  @extend %message;
+}

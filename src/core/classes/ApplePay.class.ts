@@ -30,8 +30,7 @@ class ApplePay {
   /**
    * Checks whether ApplePay is available on current device
    */
-  public checkApplePayAvailability = () =>
-    ApplePaySession && ApplePaySession.canMakePayments();
+  public checkApplePayAvailability = () => ApplePaySession && ApplePaySession.canMakePayments();
 
   /**
    * Checks whether ApplePay is available on current device and also if it us at least one active card in Wallet
@@ -44,15 +43,13 @@ class ApplePay {
    */
   public setUpApplePayProcess() {
     if (this.checkApplePayAvailability()) {
-      this.checkApplePayWalletCardAvailability().then(
-        (canMakePayments: boolean) => {
-          if (canMakePayments) {
-            this.paymentSetup();
-          } else {
-            return 'Apple payment is not available';
-          }
+      this.checkApplePayWalletCardAvailability().then((canMakePayments: boolean) => {
+        if (canMakePayments) {
+          this.paymentSetup();
+        } else {
+          return 'Apple payment is not available';
         }
-      );
+      });
     } else {
       return 'Apple payment is not available';
     }
@@ -62,10 +59,7 @@ class ApplePay {
    * Defines Apple Pay session details and begins payment flow.
    */
   public paymentSetup() {
-    const session = new ApplePaySession(
-      this._applePayVersionNumber,
-      this._paymentRequestData
-    );
+    const session = new ApplePaySession(this._applePayVersionNumber, this._paymentRequestData);
     session.begin();
     session.onvalidatemerchant = (event: any) => {
       console.log(event);
