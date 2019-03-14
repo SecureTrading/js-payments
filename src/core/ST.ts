@@ -1,12 +1,10 @@
-import StTransport from './classes/StTransport.class';
 import VisaCheckout from './classes/VisaCheckout';
 import Element from './Element';
 
 /***
  * Establishes connection with ST, defines client.
  */
-class ST extends StTransport {
-  public jwt: string;
+class ST {
   public style: object;
   public payments: object[];
 
@@ -18,11 +16,7 @@ class ST extends StTransport {
   public static expirationDateComponent = '/expiration-date.html';
   public static securityCodeComponent = '/security-code.html';
 
-  // @ts-ignore
-  constructor(jwt: string, style: object, payments: object[]) {
-    const gatewayUrl = ST.GATEWAY_URL;
-    super({ jwt, gatewayUrl });
-    this.jwt = jwt;
+  constructor(style: object, payments: object[]) {
     this.style = style;
     this.payments = payments;
     const cardNumber = new Element();
