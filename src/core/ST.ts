@@ -29,7 +29,6 @@ class ST extends StTransport {
 
     const securityCode = new Element();
     const expirationDate = new Element();
-    // @ts-ignore
     cardNumber.create('cardNumber');
 
     this.submitListener();

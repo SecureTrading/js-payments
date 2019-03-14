@@ -5,8 +5,8 @@
 
 class Element {
   private static CARD_NUMBER_COMPONENT: string = '/card-number.html';
-  private static SECURITY_CODE__COMPONENT: string = '/expiration-date.html';
-  private static EXPIRATION_DATE_COMPONENT: string = '/security-code.html';
+  private static SECURITY_CODE__COMPONENT: string = '/security-code.html';
+  private static EXPIRATION_DATE_COMPONENT: string = '/expiration-date.html';
 
   /***
    * Function which defines iframe src attribute
