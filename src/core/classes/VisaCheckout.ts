@@ -5,26 +5,31 @@ declare const V: any;
  *  The only data which merchant have to provide is apikey, rest of the configuration is setting automatically.
  */
 class VisaCheckout {
-  private static VISA_CHECKOUT_BUTTON_PROPS: any = {
-    alt: 'Visa Checkout',
-    className: 'v-button',
-    role: 'button',
-    src: 'https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png'
-  };
+  private static PROD_BUTTON_URL: string = 'https://secure.checkout.visa.com/wallet-services-web/xo/button.png';
+  private static PROD_SDK: string =
+    'https://secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js';
+  private static DEV_BUTTON_URL: string = 'https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png';
+  private static DEV_SDK: string =
+    'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js';
   private static VISA_PAYMENT_STATUS = {
     CANCEL: 'payment.cancel',
     ERROR: 'payment.error',
     SUCCESS: 'payment.success'
   };
-  private static SDK_ADDRESS: string =
-    'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js';
+  private _visaCheckoutButtonProps: any = {
+    alt: 'Visa Checkout',
+    className: 'v-button',
+    role: 'button',
+    src: VisaCheckout.DEV_BUTTON_URL
+  };
+  private _sdkAddress: string = VisaCheckout.DEV_SDK;
 
   /**
    * Creates html image element which will be transformed into interactive button by SDK.
    */
-  public static _createVisaButton() {
+  public _createVisaButton() {
     const button = document.createElement('img');
-    const { alt, className, role, src } = VisaCheckout.VISA_CHECKOUT_BUTTON_PROPS;
+    const { alt, className, role, src } = this._visaCheckoutButtonProps;
     button.setAttribute('src', src);
     button.setAttribute('class', className);
     button.setAttribute('role', role);
@@ -51,7 +56,7 @@ class VisaCheckout {
       this._paymentStatusHandler(VisaCheckout.VISA_PAYMENT_STATUS.CANCEL);
       this._paymentStatusHandler(VisaCheckout.VISA_PAYMENT_STATUS.ERROR);
     });
-    script.src = VisaCheckout.SDK_ADDRESS;
+    script.src = this._sdkAddress;
     return script;
   }
 
@@ -61,8 +66,19 @@ class VisaCheckout {
    */
   private _attachVisaButton() {
     const body = document.getElementsByTagName('body')[0];
-    body.appendChild(VisaCheckout._createVisaButton());
+    body.appendChild(this._createVisaButton());
     return body;
+  }
+
+  /**
+   * Checks if we are on production or not
+   * @private
+   */
+  private _checkLiveStatus() {
+    if (this._initConfiguration.livestatus) {
+      this._visaCheckoutButtonProps.src = VisaCheckout.PROD_BUTTON_URL;
+      this._sdkAddress = VisaCheckout.PROD_SDK;
+    }
   }
 
   /**
@@ -91,7 +107,8 @@ class VisaCheckout {
     paymentRequest: {
       currencyCode: 'USD' as string,
       subtotal: '11.00' as string
-    }
+    },
+    livestatus: 0
   };
 
   private _paymentStatus: string;
@@ -112,9 +129,11 @@ class VisaCheckout {
 
   constructor(config: any) {
     const {
-      props: { apikey }
+      props: { apikey, livestatus }
     } = config;
     this._initConfiguration.apikey = apikey;
+    this._initConfiguration.livestatus = livestatus;
+    this._checkLiveStatus();
     this._initVisaConfiguration();
   }
 
