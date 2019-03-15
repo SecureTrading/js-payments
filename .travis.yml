@@ -1,6 +1,8 @@
 language: node_js
 node_js:
   - '10'
+services:
+  - docker
 before_install:
   - npm install -g npm@latest
 install:
@@ -14,12 +16,17 @@ jobs:
       script:
         - npm run coverage
         - npm run snyk
-    # - name: 'Behavioural test: chrome 68'
-    #   script:
-    #     - npm run behave -- test_chrome_68_w10
-    # - name: 'Behavioural test: firefox 61'
-    #   script:
-    #     - npm run behave -- test_firefox_61_w10
+    - stage: 'Behavioural test'
+      name: 'Behavioural test: chrome 68'
+      install:
+        - git clone https://github.com/SecureTrading/js-payments-testing.git
+        - cd js-payments-testing
+        - docker build . --tag securetrading1/js-payments-testing
+      script:
+        - npm run behave -- test_chrome_68_w10
+    - name: 'Behavioural test: firefox 61'
+      script:
+        - npm run behave -- test_firefox_61_w10
     # - name: 'Behavioural test: edge 17'
     #   script:
     #     - npm run behave -- test_edge_17_w10
