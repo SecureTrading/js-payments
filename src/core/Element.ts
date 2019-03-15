@@ -4,10 +4,6 @@
  */
 
 class Element {
-  private static CARD_NUMBER_COMPONENT: string = '/card-number.html';
-  private static SECURITY_CODE__COMPONENT: string = '/security-code.html';
-  private static EXPIRATION_DATE_COMPONENT: string = '/expiration-date.html';
-
   /***
    * Function which defines iframe src attribute
    * @param name Component name
@@ -22,6 +18,22 @@ class Element {
       return Element.EXPIRATION_DATE_COMPONENT;
     }
   }
+
+  private static CARD_NUMBER_COMPONENT: string = '/card-number.html';
+  private static SECURITY_CODE__COMPONENT: string = '/security-code.html';
+  private static EXPIRATION_DATE_COMPONENT: string = '/expiration-date.html';
+
+  /**
+   * Method for creating DOM elements
+   * @param type Type of element which we are creating
+   * @param id ID of element
+   */
+  private static createFormElement = (type: string, id: string) => {
+    const element = document.createElement(type);
+    element.setAttribute('id', id);
+    element.setAttribute('class', id);
+    return element;
+  };
 
   private _name: string;
   private _iframeSrc: string;
@@ -41,18 +53,6 @@ class Element {
   set name(value: string) {
     this._name = value;
   }
-
-  /**
-   * Method for creating DOM elements
-   * @param type Type of element which we are creating
-   * @param id ID of element
-   */
-  private static createFormElement = (type: string, id: string) => {
-    const element = document.createElement(type);
-    element.setAttribute('id', id);
-    element.setAttribute('class', id);
-    return element;
-  };
 
   constructor() {
     this._name = '';

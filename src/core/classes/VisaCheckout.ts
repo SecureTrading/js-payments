@@ -22,6 +22,45 @@ class VisaCheckout {
     src: VisaCheckout.DEV_BUTTON_URL
   };
   private _sdkAddress: string = VisaCheckout.DEV_SDK;
+  private _paymentStatus: string;
+  private _paymentDetails: object;
+  private _paymentError: object;
+
+  set paymentDetails(value: object) {
+    this._paymentDetails = value;
+  }
+
+  set paymentStatus(value: string) {
+    this._paymentStatus = value;
+  }
+
+  set paymentError(value: object) {
+    this._paymentError = value;
+  }
+
+  /**
+   * Init configuration (temporary with some test data).
+   * apikey and encryptionKey will authenticate merchant.
+   * Eventually in config, there'll be merchant credentials provided, now there are some test credentials.
+   */
+  private _initConfiguration = {
+    apikey: '' as string,
+    livestatus: 0,
+    paymentRequest: {
+      currencyCode: 'USD' as string,
+      subtotal: '11.00' as string
+    }
+  };
+
+  constructor(config: any) {
+    const {
+      props: { apikey, livestatus }
+    } = config;
+    this._initConfiguration.apikey = apikey;
+    this._initConfiguration.livestatus = livestatus;
+    this._checkLiveStatus();
+    this._initVisaConfiguration();
+  }
 
   /**
    * Creates html image element which will be transformed into interactive button by SDK.
@@ -93,46 +132,6 @@ class VisaCheckout {
       alert(`Status of payment: ${event}`);
       return { event, payment, error };
     });
-  }
-
-  /**
-   * Init configuration (temporary with some test data).
-   * apikey and encryptionKey will authenticate merchant.
-   * Eventually in config, there'll be merchant credentials provided, now there are some test credentials.
-   */
-  private _initConfiguration = {
-    apikey: '' as string,
-    paymentRequest: {
-      currencyCode: 'USD' as string,
-      subtotal: '11.00' as string
-    },
-    livestatus: 0
-  };
-
-  private _paymentStatus: string;
-  private _paymentDetails: object;
-  private _paymentError: object;
-
-  set paymentDetails(value: object) {
-    this._paymentDetails = value;
-  }
-
-  set paymentStatus(value: string) {
-    this._paymentStatus = value;
-  }
-
-  set paymentError(value: object) {
-    this._paymentError = value;
-  }
-
-  constructor(config: any) {
-    const {
-      props: { apikey, livestatus }
-    } = config;
-    this._initConfiguration.apikey = apikey;
-    this._initConfiguration.livestatus = livestatus;
-    this._checkLiveStatus();
-    this._initVisaConfiguration();
   }
 
   /**

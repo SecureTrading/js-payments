@@ -1,5 +1,5 @@
-import './style.scss';
 import { ST } from '../src/stjs';
+import './style.scss';
 
 (() => {
   const st = new ST({}, [
