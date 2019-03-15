@@ -49,6 +49,8 @@ class ST extends StTransport {
       [cardNumberMounted, securityCodeMounted, expirationDateMounted],
       ['st-card-number', 'st-security-code', 'st-expiration-date']
     );
+
+    this._createMessageContainer();
   }
 
   /**
@@ -81,6 +83,17 @@ class ST extends StTransport {
       const itemToChange = document.getElementById(item);
       itemToChange.appendChild(fields[index]);
     });
+  }
+
+  /**
+   * Creates div for error or info messages
+   * @private
+   */
+  private _createMessageContainer() {
+    const div = document.createElement('div');
+    const body = document.getElementsByTagName('body')[0];
+    div.setAttribute('id', 'st-messages');
+    body.appendChild(div);
   }
 }
 

@@ -65,7 +65,7 @@ class Element {
 
   public create(elementName: string) {
     this._name = elementName;
-    this._iframeSrc = Element.getComponentAddress(elementName);
+    this.iframeSrc = Element.getComponentAddress(elementName);
   }
 
   /***
@@ -74,7 +74,7 @@ class Element {
    */
   public mount(fieldId: string) {
     const iframe = Element.createFormElement('iframe', fieldId);
-    iframe.setAttribute('src', this._iframeSrc);
+    iframe.setAttribute('src', this.iframeSrc);
     return iframe;
   }
 }

@@ -15,14 +15,14 @@ import StTransport from './StTransport.class';
  * 6.Cardinal.on('pauments.validated) - process auth or return failure
  */
 class CardinalCommerce extends StTransport {
+  private static MESSAGE_CONTAINER_ID: string = 'st-messages';
+  private static PAYMENT_BRAND: string = 'cca';
   private static PAYMENT_EVENTS = {
     INIT: 'init',
     SETUP_COMPLETE: 'payments.setupComplete',
     VALIDATED: 'payments.validated'
   };
-
-  private static SONGBIRD_URL = 'https://songbirdstag.cardinalcommerce.com/cardinalcruise/v1/songbird.js';
-
+  private static SONGBIRD_URL: string = 'https://songbirdstag.cardinalcommerce.com/cardinalcruise/v1/songbird.js';
   private static VALIDATION_EVENTS = {
     ERROR: 'ERROR',
     FAILURE: 'FAILURE',
@@ -31,36 +31,30 @@ class CardinalCommerce extends StTransport {
   };
 
   private _cardinalCommerceJWT: string;
-  private _payload: IStRequest;
+  private _cardinalPayload: any;
+  private _cart: string[] = [];
+  private _payload: IStRequest = {
+    accounttypedescription: 'ECOM',
+    expirydate: '01/20',
+    pan: '4111111111111111',
+    requesttypedescription: 'THREEDQUERY',
+    sitereference: 'live2',
+    securitycode: '123',
+    termurl: 'http://something.com'
+  };
+  private _threedeinitRequestObject: IStRequest = {
+    sitereference: 'live2',
+    requesttypedescription: 'THREEDINIT'
+  };
   private _sessionId: string;
   private _transactionId: string;
-  private _orderDetails: object = {
-    Cart: ['Detail one', 'Detail two'],
-    TransactionId: this._sessionId ? this._sessionId : ''
-  };
-  private _paymentBrand: string = 'cca';
   private _validationData: any;
-  private _cardinalPayload: any;
-
-  set payload(value: IStRequest) {
-    this._payload = value;
-  }
 
   constructor(jwt: string, gatewayUrl: string) {
     super({ jwt, gatewayUrl });
-    this.threedeinitRequest().then((response: any) => {
+    this._threedeinitRequest().then((response: any) => {
       this._cardinalCommerceJWT = response.jwt;
       this._insertSongbird();
-      this.payload = {
-        accounttypedescription: 'ECOM',
-        expirydate: '01/20',
-        pan: '4111111111111111',
-        requesttypedescription: 'THREEDQUERY',
-        sitereference: 'live2',
-        securitycode: '123',
-        // TODO termurl isn't needed on CC integration we should be able to remove this after 153 release
-        termurl: 'http://something.com'
-      };
       this._triggerLookupRequest();
     });
   }
@@ -68,12 +62,9 @@ class CardinalCommerce extends StTransport {
   /**
    * Perform a THREEDINIT with ST in order to generate the Cardinal songbird JWT
    */
-  public threedeinitRequest() {
-    return this.sendRequest({
-      sitereference: 'live2',
-      requesttypedescription: 'THREEDINIT'
-    });
-  }
+  private _threedeinitRequest = () => this.sendRequest(this._threedeinitRequestObject);
+
+  private _authCallToST = (authRequest: any) => this.sendRequest(authRequest);
 
   /**
    * Add Cardinal Commerce Songbird.js library to merchants page.
@@ -125,10 +116,35 @@ class CardinalCommerce extends StTransport {
    * @param jwt
    * @private
    */
-  private _retrieveValidationData(validationData: string, jwt?: string) {
+  private _retrieveValidationData(validationData: any, jwt?: string) {
     this._validationData = validationData;
     console.log(validationData);
+    console.log(jwt);
+    if (validationData.ActionCode === 'SUCCESS') {
+      this._authCallToST({
+        accounttypedescription: 'ECOM',
+        expirydate: '01/20',
+        pan: '4111111111111111',
+        requesttypedescription: 'AUTH',
+        sitereference: 'live2',
+        securitycode: '123',
+        termurl: 'http://something.com',
+        threedresponse: jwt
+      }).then((response: any) => {
+        this._appendMessageToContainer(response.errormessage);
+      });
+    }
     return { jwt, validationData };
+  }
+
+  /**
+   * Append response from backend to message container
+   * @param message
+   * @private
+   */
+  private _appendMessageToContainer(message: string) {
+    const container = document.getElementById(CardinalCommerce.MESSAGE_CONTAINER_ID);
+    container.appendChild(document.createTextNode(message));
   }
 
   /**
@@ -139,7 +155,6 @@ class CardinalCommerce extends StTransport {
   private _onPaymentSetupComplete() {
     Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.SETUP_COMPLETE, (setupCompleteData: any) => {
       this._sessionId = setupCompleteData.sessionId;
-      console.log(`Session ID is: ${this._sessionId}`);
       return setupCompleteData.sessionId;
     });
   }
@@ -185,10 +200,10 @@ class CardinalCommerce extends StTransport {
    */
   private _onContinue() {
     Cardinal.continue(
-      'cca',
+      CardinalCommerce.PAYMENT_BRAND,
       this._cardinalPayload,
       {
-        Cart: [],
+        Cart: this._cart,
         OrderDetails: { TransactionId: this._transactionId }
       },
       this._cardinalCommerceJWT
