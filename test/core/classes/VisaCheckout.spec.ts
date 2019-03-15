@@ -2,8 +2,8 @@ import VisaCheckout from '../../../src/core/classes/VisaCheckout';
 
 // given
 describe('Visa Checkout class', () => {
-  let instance: any;
   let body: object;
+  let instance: any;
   // when
   beforeEach(() => {
     const { config } = VisaCheckoutFixture();
@@ -17,20 +17,12 @@ describe('Visa Checkout class', () => {
 
     // then
     it('should button be defined', () => {
-      expect(VisaCheckout._createVisaButton()).toBeDefined();
+      expect(instance._createVisaButton()).toBeDefined();
     });
 
     // then
     it('should img markup have certain attributes', () => {
-      expect(VisaCheckout._createVisaButton()).toMatchObject(fakeVisaButton);
-    });
-  });
-
-  // given
-  describe('Method __attachVisaButton', () => {
-    // then
-    it('should prepared structure be equal to real document object ', () => {
-      expect(instance._attachVisaButton()).toEqual(body);
+      expect(instance._createVisaButton()).toMatchObject(fakeVisaButton);
     });
   });
 
@@ -49,15 +41,34 @@ describe('Visa Checkout class', () => {
   });
 
   // given
+  describe('Method __attachVisaButton', () => {
+    // then
+    it('should prepared structure be equal to real document object ', () => {
+      expect(instance._attachVisaButton()).toEqual(body);
+    });
+  });
+
+  // given
+  describe('Method _checkLiveStatus', () => {
+    // then
+    it('should set sandbox assets when application is not live', () => {
+      const { sandboxAssets } = VisaCheckoutFixture();
+      instance._checkLiveStatus();
+      expect(instance._visaCheckoutButtonProps.src).toEqual(sandboxAssets.buttonImg);
+      expect(instance._sdkAddress).toEqual(sandboxAssets.sdk);
+    });
+    it('should set production assets when application is live', () => {
+      const { productionAssets } = VisaCheckoutFixture();
+      instance._initConfiguration.livestatus = 1;
+      instance._checkLiveStatus();
+      expect(instance._visaCheckoutButtonProps.src).toEqual(productionAssets.buttonImg);
+      expect(instance._sdkAddress).toEqual(productionAssets.sdk);
+    });
+  });
+
   describe('Method _paymentStatusHandler', () => {
     // then
-    it('should return proper cancel status when cancel event is triggered', () => {});
-
-    // then
-    it('should return proper success status when success event is triggered', () => {});
-
-    // then
-    it('should return proper error status when error event is triggered', () => {});
+    it('should trigger V.init function with proper configuration', () => {});
   });
 
   // given
@@ -68,6 +79,15 @@ describe('Visa Checkout class', () => {
 });
 
 function VisaCheckoutFixture() {
+  const productionAssets = {
+    sdk: 'https://secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js',
+    buttonImg: 'https://secure.checkout.visa.com/wallet-services-web/xo/button.png'
+  };
+  const sandboxAssets = {
+    sdk: 'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js',
+    buttonImg: 'https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png'
+  };
+
   const visaButttonProps = {
     alt: 'Visa Checkout',
     class: 'v-button',
@@ -76,6 +96,7 @@ function VisaCheckoutFixture() {
   };
   const config = {
     name: 'VISA',
+    livestatus: 0,
     props: {
       apikey: '2ig278`13b123872121h31h20e'
     }
@@ -92,5 +113,5 @@ function VisaCheckoutFixture() {
     'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js'
   );
 
-  return { config, fakeVisaButton, sdkMarkup };
+  return { config, fakeVisaButton, sdkMarkup, productionAssets, sandboxAssets };
 }

@@ -46,11 +46,11 @@ class VisaCheckout {
   private _initConfiguration = {
     apikey: '' as string,
     livestatus: 0,
-    placement: 'body',
     paymentRequest: {
       currencyCode: 'USD' as string,
       subtotal: '11.00' as string
-    }
+    },
+    placement: 'body'
   };
 
   constructor(config: any) {
