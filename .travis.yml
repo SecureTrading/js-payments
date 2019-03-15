@@ -11,22 +11,19 @@ install:
   - npm run start &
 jobs:
   include:
+    - stage: 'Docker build'
+      script:
+        - docker build . --tag "securetrading1/js-payments:$TRAVIS_BRANCH"
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        - docker push "securetrading1/js-payments:$TRAVIS_BRANCH"
     - stage: 'Test'
       name: 'Unit tests'
       script:
         - npm run coverage
         - npm run snyk
-    - stage: 'Behavioural test'
-      name: 'Behavioural test: chrome 68'
-      install:
-        - docker build . --tag securetrading1/js-payments
-        - git clone https://github.com/SecureTrading/js-payments-testing.git
-        - cd js-payments-testing
-        - git checkout feature/ST-142-improved-docker
-        - docker build . --tag securetrading1/js-payments-testing
-        - docker run -d -p 8443:8443 -p 8760:8760 -it securetrading1/js-payments-testing
+    - name: 'Behavioural test: chrome 68'
       script:
-        - npm run behave -- test_chrome_68_w10
+        - npm run behave test_chrome_68_w10
     - name: 'Behavioural test: firefox 61'
       script:
         - npm run behave -- test_firefox_61_w10
