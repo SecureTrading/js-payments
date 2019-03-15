@@ -15,7 +15,6 @@ import StTransport from './StTransport.class';
  * 6.Cardinal.on('pauments.validated) - process auth or return failure
  */
 class CardinalCommerce extends StTransport {
-  private static MESSAGE_CONTAINER_ID: string = 'st-messages';
   private static PAYMENT_BRAND: string = 'cca';
   private static PAYMENT_EVENTS = {
     INIT: 'init',
@@ -118,33 +117,30 @@ class CardinalCommerce extends StTransport {
    */
   private _retrieveValidationData(validationData: any, jwt?: string) {
     this._validationData = validationData;
+    const { ActionCode } = validationData;
     console.log(validationData);
     console.log(jwt);
-    if (validationData.ActionCode === 'SUCCESS') {
-      this._authCallToST({
-        accounttypedescription: 'ECOM',
-        expirydate: '01/20',
-        pan: '4111111111111111',
-        requesttypedescription: 'AUTH',
-        sitereference: 'live2',
-        securitycode: '123',
-        termurl: 'http://something.com',
-        threedresponse: jwt
-      }).then((response: any) => {
-        this._appendMessageToContainer(response.errormessage);
-      });
+    let authRequest = {
+      accounttypedescription: 'ECOM',
+      expirydate: '01/20',
+      pan: '4111111111111111',
+      requesttypedescription: 'AUTH',
+      sitereference: 'live2',
+      securitycode: '123',
+      termurl: 'http://something.com'
+    };
+    if (ActionCode === CardinalCommerce.VALIDATION_EVENTS.SUCCESS) {
+      Object.defineProperty(authRequest, 'threedresponse', { value: jwt, writable: false });
+      this._authCallToST(authRequest).then((response: any) => alert(response.errormessage));
+    } else if (
+      ActionCode === CardinalCommerce.VALIDATION_EVENTS.FAILURE ||
+      ActionCode === CardinalCommerce.VALIDATION_EVENTS.NOACTION
+    ) {
+      this._authCallToST(authRequest).then((response: any) => alert(response.errormessage));
+    } else if (ActionCode === CardinalCommerce.VALIDATION_EVENTS.ERROR) {
+      alert(CardinalCommerce.VALIDATION_EVENTS.ERROR);
     }
     return { jwt, validationData };
-  }
-
-  /**
-   * Append response from backend to message container
-   * @param message
-   * @private
-   */
-  private _appendMessageToContainer(message: string) {
-    const container = document.getElementById(CardinalCommerce.MESSAGE_CONTAINER_ID);
-    container.appendChild(document.createTextNode(message));
   }
 
   /**
@@ -164,22 +160,9 @@ class CardinalCommerce extends StTransport {
    * @private
    */
   private _onPaymentValidation() {
-    Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.VALIDATED, (data: any, jwt: string) => {
-      switch (data.ActionCode) {
-        case CardinalCommerce.VALIDATION_EVENTS.SUCCESS:
-          this._retrieveValidationData(data, jwt);
-          break;
-        case CardinalCommerce.VALIDATION_EVENTS.NOACTION:
-          this._retrieveValidationData(data);
-          break;
-        case CardinalCommerce.VALIDATION_EVENTS.FAILURE:
-          this._retrieveValidationData(data);
-          break;
-        case CardinalCommerce.VALIDATION_EVENTS.ERROR:
-          this._retrieveValidationData(data);
-          break;
-      }
-    });
+    Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.VALIDATED, (data: any, jwt?: string) =>
+      this._retrieveValidationData(data, jwt)
+    );
   }
 
   /**
