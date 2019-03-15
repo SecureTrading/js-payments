@@ -16,7 +16,7 @@
     "test": "jest --watch",
     "coverage": "jest --coverage",
     "snyk": "snyk test",
-    "testframework": "git clone https://github.com/SecureTrading/js-payments-testing; cd js-payments-testing, git checkout feature/ST-142-improved-docker && docker build . --build-arg \"CODE_VERSION=$TRAVIS_BRANCH\" --tag securetrading1/js-payments-testing",
+    "testframework": "git clone https://github.com/SecureTrading/js-payments-testing; cd js-payments-testing, git checkout feature/ST-142-improved-docker && docker build . --build-arg \"CODE_VERSION=$DOCKER_BRANCH\" --tag securetrading1/js-payments-testing",
     "behave": "npm run testframework && cd js-payments-testing && docker run -d -p 8443:8443 -p 8760:8760 -it securetrading1/js-payments-testing && make"
   },
   "repository": {
