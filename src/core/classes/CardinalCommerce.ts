@@ -47,7 +47,6 @@ class CardinalCommerce extends StTransport {
   };
   private _sessionId: string;
   private _transactionId: string;
-  private _validationData: any;
 
   constructor(jwt: string, gatewayUrl: string) {
     super({ jwt, gatewayUrl });
@@ -98,7 +97,6 @@ class CardinalCommerce extends StTransport {
     window.addEventListener('submit', event => {
       event.preventDefault();
       this.sendRequest(this._payload).then((response: any) => {
-        console.log(response);
         this._cardinalPayload = {
           AcsUrl: response.acsurl,
           Payload: response.pareq // TODO this should be threedresponse not pareq but the server needs updating
@@ -116,19 +114,8 @@ class CardinalCommerce extends StTransport {
    * @private
    */
   private _retrieveValidationData(validationData: any, jwt?: string) {
-    this._validationData = validationData;
     const { ActionCode } = validationData;
-    console.log(validationData);
-    console.log(jwt);
-    let authRequest = {
-      accounttypedescription: 'ECOM',
-      expirydate: '01/20',
-      pan: '4111111111111111',
-      requesttypedescription: 'AUTH',
-      sitereference: 'live2',
-      securitycode: '123',
-      termurl: 'http://something.com'
-    };
+    const authRequest = { ...this._payload };
     if (ActionCode === CardinalCommerce.VALIDATION_EVENTS.SUCCESS) {
       Object.defineProperty(authRequest, 'threedresponse', { value: jwt, writable: false });
       this._authCallToST(authRequest).then((response: any) => alert(response.errormessage));
