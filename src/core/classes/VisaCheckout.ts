@@ -1,8 +1,7 @@
 declare const V: any;
 
 /**
- *  Visa Checkout configuration class; sets up VC APM.
- *  The only data which merchant have to provide is apikey, rest of the configuration is setting automatically.
+ *  Visa Checkout configuration class; sets up Visa e-wallet
  */
 class VisaCheckout {
   private static PROD_BUTTON_URL: string = 'https://secure.checkout.visa.com/wallet-services-web/xo/button.png';
@@ -91,7 +90,6 @@ class VisaCheckout {
       this.paymentStatus = event;
       this.paymentDetails = payment;
       this.paymentError = error ? error : {};
-      // TODO: we have to decide how will show status message to customer, for now there is some silly alert.
       alert(`Status of payment: ${event}`);
       return { event, payment, error };
     });

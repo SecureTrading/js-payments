@@ -1,5 +1,6 @@
 import VisaCheckout from './classes/VisaCheckout';
 import Element from './Element';
+import { apmsNames } from './imports/apms';
 
 /***
  * Establishes connection with ST, defines client.
@@ -40,8 +41,8 @@ class ST {
       ['st-card-number', 'st-security-code', 'st-expiration-date']
     );
 
-    if (this._getAPMConfig('VISACHECKOUT')) {
-      const visa = new VisaCheckout(this._getAPMConfig('VISACHECKOUT'));
+    if (this._getAPMConfig(apmsNames.visaCheckout)) {
+      const visa = new VisaCheckout(this._getAPMConfig(apmsNames.visaCheckout));
     }
   }
 
