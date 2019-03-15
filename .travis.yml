@@ -19,9 +19,12 @@ jobs:
     - stage: 'Behavioural test'
       name: 'Behavioural test: chrome 68'
       install:
+        - docker build . --tag securetrading1/js-payments
         - git clone https://github.com/SecureTrading/js-payments-testing.git
         - cd js-payments-testing
+        - git checkout feature/ST-142-improved-docker
         - docker build . --tag securetrading1/js-payments-testing
+        - docker run -d -p 8443:8443 -p 8760:8760 -it securetrading1/js-payments-testing
       script:
         - npm run behave -- test_chrome_68_w10
     - name: 'Behavioural test: firefox 61'
