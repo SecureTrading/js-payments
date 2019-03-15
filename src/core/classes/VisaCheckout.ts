@@ -46,6 +46,7 @@ class VisaCheckout {
   private _initConfiguration = {
     apikey: '' as string,
     livestatus: 0,
+    placement: 'body',
     paymentRequest: {
       currencyCode: 'USD' as string,
       subtotal: '11.00' as string
@@ -54,10 +55,11 @@ class VisaCheckout {
 
   constructor(config: any) {
     const {
-      props: { apikey, livestatus }
+      props: { apikey, livestatus, placement }
     } = config;
     this._initConfiguration.apikey = apikey;
     this._initConfiguration.livestatus = livestatus;
+    this._initConfiguration.placement = placement;
     this._checkLiveStatus();
     this._initVisaConfiguration();
   }
@@ -99,13 +101,15 @@ class VisaCheckout {
   }
 
   /**
-   * Attaches Visa Button to body element - optionally we can change this method to attach it somewhere else
+   * Attaches Visa Button to specified element, if element is undefined Visa Checkout button is appended to body
    * @private
    */
   private _attachVisaButton() {
-    const body = document.getElementsByTagName('body')[0];
-    body.appendChild(this._createVisaButton());
-    return body;
+    const element = document.getElementById(this._initConfiguration.placement)
+      ? document.getElementById(this._initConfiguration.placement)
+      : document.getElementsByTagName('body')[0];
+    element.appendChild(this._createVisaButton());
+    return element;
   }
 
   /**
