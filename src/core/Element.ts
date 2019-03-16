@@ -6,6 +6,9 @@ import ST from './ST';
  */
 
 class Element extends ST {
+  private _name: string;
+  private _iframeSrc: string;
+
   /***
    * Function which defines iframe src attribute
    * @param name Component name
@@ -18,26 +21,9 @@ class Element extends ST {
       return Element.securityCodeComponent;
     } else if (name === 'expirationDate') {
       return Element.expirationDateComponent;
+    } else if (name === 'controlFrame') {
+      return Element.controlFrameComponent;
     }
-  }
-
-  private _name: string;
-  private _iframeSrc: string;
-
-  get iframeSrc(): string {
-    return this._iframeSrc;
-  }
-
-  set iframeSrc(value: string) {
-    this._iframeSrc = value;
-  }
-
-  get name(): string {
-    return this._name;
-  }
-
-  set name(value: string) {
-    this._name = value;
   }
 
   /**

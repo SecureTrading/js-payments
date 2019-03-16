@@ -14,11 +14,14 @@ $line-height-button: $line-height-body;
 
 $color-body: #333;
 $color-error: #ff4545;
+$color-placeholder: #b6b6b6;
 
 $color-input: $color-body;
 $color-input-error: $color-body;
-$color-input-placeholder: #b6b6b6;
+$color-input-placeholder: $color-placeholder;
+$color-input-readonly: $color-placeholder;
 $color-label: $color-body;
+$color-label-readonly: $color-placeholder;
 $color-message: $color-error;
 $color-button: $color-body;
 
@@ -31,6 +34,7 @@ $border-size-button: 0.1rem;
 
 $border-color-input: #6d6d6d;
 $border-color-input-error: $color-error;
+$border-color-input-readonly: $color-placeholder;
 $border-color-button: #6d6d6d;
 
 $border-radius-input: 0.4rem;

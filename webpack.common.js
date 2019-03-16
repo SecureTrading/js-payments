@@ -44,9 +44,18 @@ module.exports = {
       chunks: ['main']
     }),
     new HtmlWebpackPlugin({
+      filename: 'control-frame.html',
+      template: './src/components/index.html',
+      templateParameters: {
+        partial: 'controlFrame'
+      },
+      chunks: ['main']
+    }),
+    new HtmlWebpackPlugin({
       filename: 'index.html',
       template: './example/index.html',
-      chunks: ['stjs', 'example']
+      chunks: ['stjs', 'example'],
+      favicon: './favicon.ico'
     }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
@@ -57,14 +66,20 @@ module.exports = {
     new FriendlyErrorsWebpackPlugin()
   ],
   module: {
-    rules: [{
+    rules: [
+      {
         test: /\.scss$/,
-        use: ['style-loader', {
-          loader: 'css-loader',
-          options: {
-            importLoaders: 1
-          }
-        }, 'postcss-loader', 'sass-loader']
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1
+            }
+          },
+          'postcss-loader',
+          'sass-loader'
+        ]
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
@@ -78,10 +93,12 @@ module.exports = {
       {
         test: /\.ts$/,
         enforce: 'pre',
-        use: [{
-          loader: 'tslint-loader',
-          options: {}
-        }],
+        use: [
+          {
+            loader: 'tslint-loader',
+            options: {}
+          }
+        ],
         exclude: /node_modules/
       }
     ]

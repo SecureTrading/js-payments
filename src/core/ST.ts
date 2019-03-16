@@ -9,6 +9,7 @@ class ST {
   public static cardNumberComponent = '/card-number.html';
   public static expirationDateComponent = '/expiration-date.html';
   public static securityCodeComponent = '/security-code.html';
+  public static controlFrameComponent = '/control-frame.html';
 
   constructor() {
     this.submitListener();
@@ -16,6 +17,7 @@ class ST {
 
   /**
    * Listens to submit and gives iframes a sign that post has been done
+   * @deprecated
    */
   public submitListener = () => {
     document.addEventListener('DOMContentLoaded', () => {
