@@ -10,6 +10,23 @@ describe('Class CCIntegration', () => {
     document.body.innerHTML = `<input id='JWTContainer' value="${jwt}" />`;
     instance = new CardinalCommerce('somejwt', 'https://webservices.securetrading.net/jwt/');
   });
+
+  // given
+  describe('Method _threedeinitRequest', () => {
+    // then
+    let sendRequestSpy: any;
+    let threedeinitRequest;
+    beforeEach(() => {
+      sendRequestSpy = jest.spyOn(instance, 'sendRequest');
+      threedeinitRequest = instance._threedeinitRequest();
+    });
+
+    // then
+    it('should be call _sendRequest: 2 time(s)', () => {
+      expect(sendRequestSpy).toHaveBeenCalledTimes(1);
+    });
+  });
+
   // given
   describe('Method _setConfiguration', () => {
     // then
