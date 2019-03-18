@@ -21,19 +21,20 @@ class NotificationFrame {
   /**
    * Returns proper class for every type of incoming message
    * @param messageType
-   * @private
    */
-  private static _getMessageClass(messageType: string) {
+  public static _getMessageClass(messageType: string) {
     if (messageType === 'error') {
       return NotificationFrame.ELEMENT_CLASSES.error;
     } else if (messageType === 'success') {
       return NotificationFrame.ELEMENT_CLASSES.success;
     } else if (messageType === 'cancel') {
       return NotificationFrame.ELEMENT_CLASSES.cancel;
+    } else {
+      return '';
     }
   }
 
-  private _message: { type: messageTypes; content: string };
+  public _message: { type: messageTypes; content: string };
 
   constructor() {
     this._errorMessageListener();
@@ -41,11 +42,19 @@ class NotificationFrame {
 
   /**
    * Inserts content of incoming text info into div
-   * @private
    */
-  private _insertContent() {
+  public insertContent() {
     if (NotificationFrame._getElement(NotificationFrame.ELEMENT_ID)) {
       NotificationFrame._getElement(NotificationFrame.ELEMENT_ID).textContent = this._message.content;
+    }
+  }
+
+  /**
+   * Sets proper class to message container
+   * @private
+   */
+  public setAttributeClass() {
+    if (NotificationFrame._getElement(NotificationFrame.ELEMENT_ID)) {
       NotificationFrame._getElement(NotificationFrame.ELEMENT_ID).setAttribute(
         'class',
         NotificationFrame._getMessageClass(this._message.type)
@@ -55,14 +64,14 @@ class NotificationFrame {
 
   /**
    * Listens to postMessage event, receives message from it and triggers method for inserting content into div
-   * @private
    */
-  private _errorMessageListener() {
+  public _errorMessageListener() {
     window.addEventListener(
       'message',
       ({ data }) => {
         this._message = data;
-        this._insertContent();
+        this.insertContent();
+        this.setAttributeClass();
       },
       false
     );
