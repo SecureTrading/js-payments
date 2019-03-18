@@ -1,0 +1,21 @@
+.notification-frame {
+  background-color: #fff5f5;
+  border: 0.1rem solid #ff4545;
+  border-radius: 0.4rem;
+
+  &__content {
+    color: #333;
+
+    &--error {
+      color: red;
+    }
+
+    &--success {
+      color: green;
+    }
+
+    &--cancel {
+      color: yellow;
+    }
+  }
+}

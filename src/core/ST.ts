@@ -11,6 +11,7 @@ const jwt: string = document.getElementById('JWTContainer').value;
 class ST extends StTransport {
   public jwt: string;
   public style: object;
+  public errorContainerId: string;
   public payments: object[];
 
   private static _iframeCreditCardId: string = 'st-card-number-iframe';
@@ -22,15 +23,17 @@ class ST extends StTransport {
   public static securityCodeComponent = '/security-code.html';
 
   // @ts-ignore
-  constructor(style: object, payments: object[]) {
+  constructor(style: object, errorContainerId: string, payments: object[]) {
     const gatewayUrl = ST.GATEWAY_URL;
     super({ jwt, gatewayUrl });
     this.style = style;
     this.payments = payments;
+    this.errorContainerId = errorContainerId;
     const cardNumber = new Element();
 
     const securityCode = new Element();
     const expirationDate = new Element();
+    const notificationFrame = new Element();
     new CardinalCommerce(jwt, gatewayUrl);
     // @ts-ignore
     cardNumber.create('cardNumber');
@@ -45,12 +48,13 @@ class ST extends StTransport {
     expirationDate.create('expirationDate');
     const expirationDateMounted = expirationDate.mount('st-expiration-date-iframe');
 
-    ST.registerElements(
-      [cardNumberMounted, securityCodeMounted, expirationDateMounted],
-      ['st-card-number', 'st-security-code', 'st-expiration-date']
-    );
+    notificationFrame.create('notificationFrame');
+    const notificationFrameMounted = notificationFrame.mount('st-notification-frame-iframe');
 
-    this._createMessageContainer();
+    ST.registerElements(
+      [cardNumberMounted, securityCodeMounted, expirationDateMounted, notificationFrameMounted],
+      ['st-card-number', 'st-security-code', 'st-expiration-date', this.errorContainerId]
+    );
   }
 
   /**
@@ -66,6 +70,7 @@ class ST extends StTransport {
         const creditCardContentWindow = creditCardIframe.contentWindow;
         const securityCodeContentWindow = securityCodeIframe.contentWindow;
         const expirationDateContentWindow = expirationDateIframe.contentWindow;
+
         creditCardContentWindow.postMessage('message', ST.cardNumberComponent);
         securityCodeContentWindow.postMessage('message', ST.securityCodeComponent);
         expirationDateContentWindow.postMessage('message', ST.expirationDateComponent);
@@ -83,17 +88,6 @@ class ST extends StTransport {
       const itemToChange = document.getElementById(item);
       itemToChange.appendChild(fields[index]);
     });
-  }
-
-  /**
-   * Creates div for error or info messages
-   * @private
-   */
-  private _createMessageContainer() {
-    const div = document.createElement('div');
-    const body = document.getElementsByTagName('body')[0];
-    div.setAttribute('id', 'st-messages');
-    body.appendChild(div);
   }
 }
 

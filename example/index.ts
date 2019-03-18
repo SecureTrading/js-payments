@@ -7,5 +7,5 @@ import './style.scss';
 import { ST } from '../src/stjs';
 
 (() => {
-  const st = new ST({}, [{}]);
+  const st = new ST({}, 'error-container', [{}]);
 })();
