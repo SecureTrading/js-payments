@@ -59,7 +59,7 @@ class ST extends StTransport {
       const notify = document.getElementById('st-notification-frame-iframe') as HTMLIFrameElement;
       const notificationContentWindow = notify.contentWindow;
       notificationContentWindow.postMessage(
-        { type: 'cancel', content: 'There is some test message' },
+        { type: 'error', content: 'There is some test message' },
         'http://localhost:8080/notification-frame.html'
       );
     });
