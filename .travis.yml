@@ -15,9 +15,6 @@ install:
   - npm install
   - npm run prod
   - npm run start &
-before_script:
-  - docker pull "securetrading1/js-payments-testing:$DOCKER_BRANCH"
-  - docker run -d -p 8443:8443 -p 8760:8760 -it "securetrading1/js-payments-testing:$DOCKER_BRANCH"
 jobs:
   include:
     - stage: 'Docker build'
