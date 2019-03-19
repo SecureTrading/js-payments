@@ -1,15 +1,10 @@
 declare const V: any;
+import { VISA_CHECKOUT_URLS } from './../imports/apms';
 
 /**
  *  Visa Checkout configuration class; sets up Visa e-wallet
  */
 class VisaCheckout {
-  private static PROD_BUTTON_URL: string = 'https://secure.checkout.visa.com/wallet-services-web/xo/button.png';
-  private static PROD_SDK: string =
-    'https://secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js';
-  private static DEV_BUTTON_URL: string = 'https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png';
-  private static DEV_SDK: string =
-    'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js';
   private static VISA_PAYMENT_STATUS = {
     CANCEL: 'payment.cancel',
     ERROR: 'payment.error',
@@ -19,9 +14,9 @@ class VisaCheckout {
     alt: 'Visa Checkout',
     className: 'v-button',
     role: 'button',
-    src: VisaCheckout.DEV_BUTTON_URL
+    src: VISA_CHECKOUT_URLS.DEV_BUTTON_URL
   };
-  private _sdkAddress: string = VisaCheckout.DEV_SDK;
+  private _sdkAddress: string = VISA_CHECKOUT_URLS.DEV_SDK;
   private _paymentStatus: string;
   private _paymentDetails: object;
   private _paymentError: object;
@@ -118,8 +113,8 @@ class VisaCheckout {
    */
   private _checkLiveStatus() {
     if (this._initConfiguration.livestatus) {
-      this._visaCheckoutButtonProps.src = VisaCheckout.PROD_BUTTON_URL;
-      this._sdkAddress = VisaCheckout.PROD_SDK;
+      this._visaCheckoutButtonProps.src = VISA_CHECKOUT_URLS.PROD_BUTTON_URL;
+      this._sdkAddress = VISA_CHECKOUT_URLS.PROD_SDK;
     }
   }
 
