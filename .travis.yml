@@ -31,9 +31,9 @@ jobs:
     - name: 'Behavioural test: chrome 68'
       script:
         - npm run behave -- test_chrome_68_w10
-    - name: 'Behavioural test: firefox 61'
-      script:
-        - npm run behave -- test_firefox_61_w10
+    #- name: 'Behavioural test: firefox 61'
+    #  script:
+    #    - npm run behave -- test_firefox_61_w10
     # - name: 'Behavioural test: edge 17'
     #   script:
     #     - npm run behave -- test_edge_17_w10

@@ -24,3 +24,16 @@
 > - `prod: webpack --config webpack.prod.js`
 > - `start: webpack-dev-server --color --progress --open --hot --config webpack.dev.js`
 > - `hot: npm-run-all dev start`
+
+## How to launch docker ?
+
+If you wish to run the docker container which hosts the same distribution files as the npm run prod you can run the following:
+> - `docker build . --build-arg "CODE_VERSION=<BRANCH NAME>" --tag securetrading1/js-payments-testing
+> - `docker run -d -p 8443:8443 -p 8760:8760 -it securetrading1/js-payments-testing
+
+## How to run behavioural tests ?
+
+Travis will automatically run behavioural tests on all push/pull commits, however to run this locally please follow the below commands:
+> - Set the environment variables $BROWSERSTACK_USERNAME, $BROWSERSTACK_ACCESS_KEY and $BROWSERSTACK_LOCAL_IDENTIFIER to valid BrowserStack credentials
+> - Download and start the BrowserStackLocal binary file (available from BrowserStack) with --key and --local-identifier set to the same values as the environment
+> - Run the behave tests with the command `npm run behave`
