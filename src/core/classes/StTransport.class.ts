@@ -26,7 +26,7 @@ export default class StTransport {
   public get codec() {
     return this._codec;
   }
-  public static GATEWAY_URL = 'https://webservices.securetrading.net/public/json/';
+  public static GATEWAY_URL = 'https://webservices.securetrading.net/jwt/';
   public static DEFAULT_FETCH_OPTIONS = {
     headers: {
       Accept: StCodec.CONTENT_TYPE,
