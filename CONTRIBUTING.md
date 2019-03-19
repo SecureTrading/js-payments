@@ -28,8 +28,8 @@
 ## How to launch docker ?
 
 If you wish to run the docker container which hosts the same distribution files as the npm run prod you can run the following:
-> - `docker build . --build-arg "CODE_VERSION=<BRANCH NAME>" --tag securetrading1/js-payments-testing
-> - `docker run -d -p 8443:8443 -p 8760:8760 -it securetrading1/js-payments-testing
+> - `docker build . --build-arg "CODE_VERSION=<BRANCH NAME>" --tag securetrading1/js-payments-testing`
+> - `docker run -d -p 8443:8443 -p 8760:8760 -it securetrading1/js-payments-testing`
 
 ## How to run behavioural tests ?
 
