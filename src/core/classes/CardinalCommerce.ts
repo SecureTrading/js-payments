@@ -2,6 +2,7 @@ declare const Cardinal: any;
 import { cardinalCommerceConfig } from '../imports/cardinalSettings';
 import { IStRequest } from './StCodec.class';
 import StTransport from './StTransport.class';
+import { IStTransportParams } from './StTransport.class';
 
 /**
  * Cardinal Commerce class:
@@ -14,7 +15,7 @@ import StTransport from './StTransport.class';
  * 5.Cardinal.continue + required payload from cmpi_lookup response
  * 6.Cardinal.on('pauments.validated) - process auth or return failure
  */
-class CardinalCommerce extends StTransport {
+class CardinalCommerce {
   private static PAYMENT_BRAND: string = 'cca';
   private static PAYMENT_EVENTS = {
     INIT: 'init',
@@ -47,9 +48,19 @@ class CardinalCommerce extends StTransport {
   };
   private _sessionId: string;
   private _transactionId: string;
+  private _stTrasportParams: IStTransportParams = {
+    jwt: '',
+    gatewayUrl: ''
+  };
+
+  public stTransport: any;
 
   constructor(jwt: string, gatewayUrl: string) {
-    super({ jwt, gatewayUrl });
+    this._stTrasportParams = {
+      jwt: jwt,
+      gatewayUrl: gatewayUrl
+    };
+    this.stTransport = new StTransport(this._stTrasportParams);
     this._threedeinitRequest().then((response: any) => {
       this._cardinalCommerceJWT = response.jwt;
       this._insertSongbird();
@@ -60,9 +71,9 @@ class CardinalCommerce extends StTransport {
   /**
    * Perform a THREEDINIT with ST in order to generate the Cardinal songbird JWT
    */
-  private _threedeinitRequest = () => this.sendRequest(this._threedeinitRequestObject);
+  private _threedeinitRequest = () => this.stTransport.sendRequest(this._threedeinitRequestObject);
 
-  private _authCallToST = (authRequest: any) => this.sendRequest(authRequest);
+  private _authCallToST = (authRequest: any) => this.stTransport.sendRequest(authRequest);
 
   /**
    * Add Cardinal Commerce Songbird.js library to merchants page.
@@ -96,7 +107,7 @@ class CardinalCommerce extends StTransport {
   private _triggerLookupRequest() {
     window.addEventListener('submit', event => {
       event.preventDefault();
-      this.sendRequest(this._payload).then((response: any) => {
+      this.stTransport.sendRequest(this._payload).then((response: any) => {
         this._cardinalPayload = {
           AcsUrl: response.acsurl,
           Payload: response.pareq // TODO this should be threedresponse not pareq but the server needs updating
