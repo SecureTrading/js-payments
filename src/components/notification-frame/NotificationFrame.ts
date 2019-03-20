@@ -20,6 +20,8 @@ class NotificationFrame {
 
   private static ELEMENT_ID: string = 'st-notification-frame';
 
+  private _notificationFrameElement = NotificationFrame._getElement(NotificationFrame.ELEMENT_ID);
+
   /**
    * Returns proper class for every type of incoming message
    * @param messageType
@@ -48,8 +50,8 @@ class NotificationFrame {
    * Inserts content of incoming text info into div
    */
   public insertContent() {
-    if (NotificationFrame._getElement(NotificationFrame.ELEMENT_ID)) {
-      NotificationFrame._getElement(NotificationFrame.ELEMENT_ID).textContent = this._message.content;
+    if (this._notificationFrameElement) {
+      this._notificationFrameElement.textContent = this._message.content;
     }
   }
 
@@ -58,11 +60,8 @@ class NotificationFrame {
    * @private
    */
   public setAttributeClass() {
-    if (NotificationFrame._getElement(NotificationFrame.ELEMENT_ID)) {
-      NotificationFrame._getElement(NotificationFrame.ELEMENT_ID).setAttribute(
-        'class',
-        NotificationFrame._getMessageClass(this._message.type)
-      );
+    if (this._notificationFrameElement) {
+      this._notificationFrameElement.setAttribute('class', NotificationFrame._getMessageClass(this._message.type));
     }
   }
 
