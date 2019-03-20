@@ -24,7 +24,10 @@ class NotificationFrame {
     warning: 'notification-frame--cancel',
     info: 'notification-frame--info'
   };
-  public static _getElement = (elementId: string) => document.getElementById(elementId);
+  public static getElement = (elementId: string) => document.getElementById(elementId);
+
+  public static ifFieldExists = (): HTMLInputElement =>
+    document.getElementById(NotificationFrame.ELEMENT_ID) as HTMLInputElement;
 
   private static ELEMENT_ID: string = 'st-notification-frame';
 
@@ -52,7 +55,7 @@ class NotificationFrame {
 
   constructor() {
     this._errorMessageListener();
-    this.notificationFrameElement = NotificationFrame._getElement(NotificationFrame.ELEMENT_ID);
+    this.notificationFrameElement = NotificationFrame.getElement(NotificationFrame.ELEMENT_ID);
   }
 
   /**

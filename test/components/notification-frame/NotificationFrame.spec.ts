@@ -12,7 +12,7 @@ describe('Component NotificationFrame', () => {
     });
     // then
     it('should return DOM element instance', () => {
-      expect(NotificationFrame._getElement(elementId)).toBeTruthy();
+      expect(NotificationFrame.getElement(elementId)).toBeTruthy();
     });
   });
 
