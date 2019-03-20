@@ -1,20 +1,34 @@
 import ApplePay from './classes/ApplePay.class';
+import VisaCheckout from './classes/VisaCheckout';
 import Element from './Element';
+import { apmsNames } from './imports/apms';
 
 /***
  * Establishes connection with ST, defines client.
  */
 class ST {
-  public style: object;
-  public payments: object[];
+  public static cardNumberComponent = '/card-number.html';
+  public static expirationDateComponent = '/expiration-date.html';
+  public static securityCodeComponent = '/security-code.html';
+
+  /**
+   * Register fields in clients form
+   * @param fields
+   * @param targets
+   */
+  public static registerElements(fields: HTMLElement[], targets: string[]) {
+    targets.map((item, index) => {
+      const itemToChange = document.getElementById(item);
+      itemToChange.appendChild(fields[index]);
+    });
+  }
 
   private static _iframeCreditCardId: string = 'st-card-number-iframe';
   private static _iframeSecurityCodeId: string = 'st-security-code-iframe';
   private static _iframeExpirationDateId: string = 'st-expiration-date-iframe';
 
-  public static cardNumberComponent = '/card-number.html';
-  public static expirationDateComponent = '/expiration-date.html';
-  public static securityCodeComponent = '/security-code.html';
+  public style: object;
+  public payments: object[];
 
   constructor(style: object, payments: object[]) {
     this.style = style;
@@ -40,6 +54,9 @@ class ST {
       ['st-card-number', 'st-security-code', 'st-expiration-date']
     );
 
+    if (this._getAPMConfig(apmsNames.visaCheckout)) {
+      const visa = new VisaCheckout(this._getAPMConfig(apmsNames.visaCheckout));
+    }
     if (this._getAPMConfig('Apple Pay')) {
       const applePay = new ApplePay('merchant.net.securetrading.test');
     }
@@ -64,18 +81,6 @@ class ST {
       });
     });
   };
-
-  /**
-   * Register fields in clients form
-   * @param fields
-   * @param targets
-   */
-  public static registerElements(fields: HTMLElement[], targets: string[]) {
-    targets.map((item, index) => {
-      const itemToChange = document.getElementById(item);
-      itemToChange.appendChild(fields[index]);
-    });
-  }
 
   /**
    * Gets APM config according to given apmName
