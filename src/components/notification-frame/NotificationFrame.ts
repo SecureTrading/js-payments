@@ -52,7 +52,7 @@ class NotificationFrame {
   private _notificationFrameElement: HTMLElement;
 
   constructor() {
-    this._errorMessageListener();
+    this.errorMessageListener();
     this.notificationFrameElement = NotificationFrame.getElement(NotificationFrame.ELEMENT_ID);
   }
 
@@ -78,11 +78,12 @@ class NotificationFrame {
   /**
    * Listens to postMessage event, receives message from it and triggers method for inserting content into div
    */
-  public _errorMessageListener() {
+  public errorMessageListener() {
     window.addEventListener(
       'message',
       ({ data }) => {
         this._message = data;
+        console.log(data);
         this.insertContent();
         this.setAttributeClass();
       },

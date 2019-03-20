@@ -74,7 +74,7 @@ describe('Component NotificationFrame', () => {
     const functionCalls = 1;
 
     beforeEach(() => {
-      instance._errorMessageListener();
+      instance.errorMessageListener();
       insertContentSpy = jest.spyOn(instance, 'insertContent');
       setAttributeClassSpy = jest.spyOn(instance, 'setAttributeClass');
       insertContentMethod = instance.insertContent();
@@ -101,10 +101,10 @@ describe('Component NotificationFrame', () => {
 function NotificationFrameFixture() {
   const instance = new NotificationFrame();
   const messageTypes = {
-    error: 'error',
-    success: 'success',
-    warning: 'warning',
-    info: 'info'
+    error: 'ERROR',
+    success: 'SUCCESS',
+    warning: 'WARNING',
+    info: 'INFO'
   };
 
   const errorMessage = { type: 'error', content: 'Some example error' };
