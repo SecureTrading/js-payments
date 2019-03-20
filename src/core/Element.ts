@@ -1,25 +1,42 @@
-import ST from './ST';
-
 /***
  * Defines input with iframe source
  * Can be styled by predefined JSON.
  */
 
-class Element extends ST {
+class Element {
   /***
    * Function which defines iframe src attribute
    * @param name Component name
    * @returns URL of input iframe
    */
   public static getComponentAddress(name: string) {
-    if (name === 'cardNumber') {
-      return Element.cardNumberComponent;
-    } else if (name === 'securityCode') {
-      return Element.securityCodeComponent;
-    } else if (name === 'expirationDate') {
-      return Element.expirationDateComponent;
+    if (name === Element.CARD_NUMBER_COMPONENT_NAME) {
+      return Element.CARD_NUMBER_COMPONENT;
+    } else if (name === Element.SECURITY_CODE_COMPONENT_NAME) {
+      return Element.SECURITY_CODE__COMPONENT;
+    } else if (name === Element.EXPIRATION_DATE_COMPONENT_NAME) {
+      return Element.EXPIRATION_DATE_COMPONENT;
     }
   }
+
+  private static CARD_NUMBER_COMPONENT_NAME: string = 'cardNumber';
+  private static SECURITY_CODE_COMPONENT_NAME: string = 'securityCode';
+  private static EXPIRATION_DATE_COMPONENT_NAME: string = 'expirationDate';
+  private static CARD_NUMBER_COMPONENT: string = '/card-number.html';
+  private static SECURITY_CODE__COMPONENT: string = '/security-code.html';
+  private static EXPIRATION_DATE_COMPONENT: string = '/expiration-date.html';
+
+  /**
+   * Method for creating DOM elements
+   * @param type Type of element which we are creating
+   * @param id ID of element
+   */
+  private static createFormElement = (type: string, id: string) => {
+    const element = document.createElement(type);
+    element.setAttribute('id', id);
+    element.setAttribute('class', id);
+    return element;
+  };
 
   private _name: string;
   private _iframeSrc: string;
@@ -40,20 +57,7 @@ class Element extends ST {
     this._name = value;
   }
 
-  /**
-   * Method for creating DOM elements
-   * @param type Type of element which we are creating
-   * @param id ID of element
-   */
-  private static createFormElement = (type: string, id: string) => {
-    const element = document.createElement(type);
-    element.setAttribute('id', id);
-    element.setAttribute('class', id);
-    return element;
-  };
-
   constructor() {
-    super();
     this._name = '';
   }
 
@@ -64,7 +68,7 @@ class Element extends ST {
 
   public create(elementName: string) {
     this._name = elementName;
-    this._iframeSrc = Element.getComponentAddress(elementName);
+    this.iframeSrc = Element.getComponentAddress(elementName);
   }
 
   /***
@@ -73,7 +77,7 @@ class Element extends ST {
    */
   public mount(fieldId: string) {
     const iframe = Element.createFormElement('iframe', fieldId);
-    iframe.setAttribute('src', this._iframeSrc);
+    iframe.setAttribute('src', this.iframeSrc);
     return iframe;
   }
 }

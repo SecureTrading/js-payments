@@ -1,6 +1,6 @@
 import ExpirationDate from '../../../src/components/expiration-date/ExpirationDate';
 import FormField from '../../../src/core/shared/FormField';
-import Selectors from "../../../src/core/shared/Selectors";
+import Selectors from '../../../src/core/shared/Selectors';
 
 describe('ExpirationDate', () => {
   let expirationDate: ExpirationDate;

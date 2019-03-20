@@ -1,6 +1,6 @@
 import SecurityCode from '../../../src/components/security-code/SecurityCode';
-import Selectors from "../../../src/core/shared/Selectors";
-import FormField from "../../../src/core/shared/FormField";
+import Selectors from '../../../src/core/shared/Selectors';
+import FormField from '../../../src/core/shared/FormField';
 
 describe('SecurityCode', () => {
   let securityCode: SecurityCode;
