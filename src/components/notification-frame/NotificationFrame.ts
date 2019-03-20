@@ -29,8 +29,10 @@ class NotificationFrame {
       return NotificationFrame.ELEMENT_CLASSES.error;
     } else if (messageType === 'success') {
       return NotificationFrame.ELEMENT_CLASSES.success;
-    } else if (messageType === 'cancel') {
+    } else if (messageType === 'cancel' || messageType === 'warning') {
       return NotificationFrame.ELEMENT_CLASSES.warning;
+    } else if (messageType === 'info') {
+      return NotificationFrame.ELEMENT_CLASSES.info;
     } else {
       return '';
     }
