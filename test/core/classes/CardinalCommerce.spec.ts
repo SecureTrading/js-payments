@@ -20,11 +20,6 @@ describe('Class CCIntegration', () => {
       sendRequestSpy = jest.spyOn(instance, 'sendRequest');
       threedeinitRequest = instance._threedeinitRequest();
     });
-
-    // then
-    it('should be call _sendRequest: 2 time(s)', () => {
-      expect(sendRequestSpy).toHaveBeenCalledTimes(1);
-    });
   });
 
   // given

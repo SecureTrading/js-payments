@@ -1,11 +1,15 @@
-/**
- * STJS Example.
- * This is code fired on merchant's side.
- * It can be treated as a reference for merchants how to integrate with STJS.
- */
-import './style.scss';
 import { ST } from '../src/stjs';
+import './style.scss';
 
 (() => {
-  const st = new ST({}, 'st-notification-frame', [{}]);
+  const st = new ST({}, 'st-notification-frame', [
+    {
+      name: 'VISACHECKOUT',
+      props: {
+        apikey: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4',
+        livestatus: 0,
+        placement: 'visa-checkout-button'
+      }
+    }
+  ]);
 })();

@@ -4,27 +4,42 @@
  */
 
 class Element {
-  public static CARD_NUMBER_COMPONENT: string = '/card-number.html';
-  public static SECURITY_CODE_COMPONENT: string = '/security-code.html';
-  public static EXPIRATION_DATE_COMPONENT: string = '/expiration-date.html';
-  public static NOTIFICATION_FRAME_COMPONENT: string = '/notification-frame.html';
-
   /***
    * Function which defines iframe src attribute
    * @param name Component name
    * @returns URL of input iframe
    */
   public static getComponentAddress(name: string) {
-    if (name === 'cardNumber') {
+    if (name === Element.CARD_NUMBER_COMPONENT_NAME) {
       return Element.CARD_NUMBER_COMPONENT;
-    } else if (name === 'securityCode') {
-      return Element.SECURITY_CODE_COMPONENT;
-    } else if (name === 'expirationDate') {
+    } else if (name === Element.SECURITY_CODE_COMPONENT_NAME) {
+      return Element.SECURITY_CODE__COMPONENT;
+    } else if (name === Element.EXPIRATION_DATE_COMPONENT_NAME) {
       return Element.EXPIRATION_DATE_COMPONENT;
     } else if (name === 'notificationFrame') {
       return Element.NOTIFICATION_FRAME_COMPONENT;
     }
   }
+
+  private static CARD_NUMBER_COMPONENT_NAME: string = 'cardNumber';
+  private static SECURITY_CODE_COMPONENT_NAME: string = 'securityCode';
+  private static EXPIRATION_DATE_COMPONENT_NAME: string = 'expirationDate';
+  private static CARD_NUMBER_COMPONENT: string = '/card-number.html';
+  private static SECURITY_CODE__COMPONENT: string = '/security-code.html';
+  private static EXPIRATION_DATE_COMPONENT: string = '/expiration-date.html';
+  private static NOTIFICATION_FRAME_COMPONENT: string = '/notification-frame.html';
+
+  /**
+   * Method for creating DOM elements
+   * @param type Type of element which we are creating
+   * @param id ID of element
+   */
+  private static createFormElement = (type: string, id: string) => {
+    const element = document.createElement(type);
+    element.setAttribute('id', id);
+    element.setAttribute('class', id);
+    return element;
+  };
 
   private _name: string;
   private _iframeSrc: string;
@@ -44,18 +59,6 @@ class Element {
   set name(value: string) {
     this._name = value;
   }
-
-  /**
-   * Method for creating DOM elements
-   * @param type Type of element which we are creating
-   * @param id ID of element
-   */
-  private static createFormElement = (type: string, id: string) => {
-    const element = document.createElement(type);
-    element.setAttribute('id', id);
-    element.setAttribute('class', id);
-    return element;
-  };
 
   constructor() {
     this._name = '';
