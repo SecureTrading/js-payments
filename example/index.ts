@@ -2,7 +2,7 @@ import { ST } from '../src/stjs';
 import './style.scss';
 
 (() => {
-  const st = new ST({}, 'st-notification-frame', [
+  const st = new ST({}, 'example-error-container', [
     {
       name: 'VISACHECKOUT',
       props: {
