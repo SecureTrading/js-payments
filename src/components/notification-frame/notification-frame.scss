@@ -15,9 +15,16 @@
     visibility: visible;
   }
 
-  &--cancel {
+  &--warning {
     background-color: #ffc23a;
     border: 0.1rem solid #ffc23a;
+    visibility: visible;
+  }
+
+  &--info {
+    background-color: #fff;
+    border: 0.1rem solid #9ca4ab;
+    color: #9ca4ab;
     visibility: visible;
   }
 }
