@@ -29,36 +29,37 @@ class CardinalCommerce {
     NOACTION: 'NOACTION',
     SUCCESS: 'SUCCESS'
   };
-
+  public stTransport: any;
   private _cardinalCommerceJWT: string;
   private _cardinalPayload: any;
   private _cart: string[] = [];
-  private _payload: IStRequest = {
+  private _payload = {
     accounttypedescription: 'ECOM',
     expirydate: '01/20',
     pan: '4111111111111111',
     requesttypedescription: 'THREEDQUERY',
-    sitereference: 'live2',
     securitycode: '123',
+    sitereference: '',
     termurl: 'http://something.com'
   };
   private _threedeinitRequestObject: IStRequest = {
-    sitereference: 'live2',
-    requesttypedescription: 'THREEDINIT'
+    requesttypedescription: 'THREEDINIT',
+    sitereference: ''
   };
   private _sessionId: string;
-  private _transactionId: string;
   private _stTrasportParams: IStTransportParams = {
-    jwt: '',
-    gatewayUrl: ''
+    gatewayUrl: '',
+    jwt: ''
   };
 
-  public stTransport: any;
+  private _transactionId: string;
 
-  constructor(jwt: string, gatewayUrl: string) {
+  constructor(jwt: string, sitereference: string, gatewayUrl: string) {
+    this._payload.sitereference = sitereference;
+    this._threedeinitRequestObject.sitereference = sitereference;
     this._stTrasportParams = {
-      jwt: jwt,
-      gatewayUrl: gatewayUrl
+      gatewayUrl,
+      jwt
     };
     this.stTransport = new StTransport(this._stTrasportParams);
     this._threedeinitRequest().then((response: any) => {

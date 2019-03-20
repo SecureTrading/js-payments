@@ -2,7 +2,7 @@ import { ST } from '../src/stjs';
 import './style.scss';
 
 (() => {
-  const st = new ST({}, [
+  const st = new ST({}, 'live2', [
     {
       name: 'VISACHECKOUT',
       props: {

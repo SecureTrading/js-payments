@@ -11,6 +11,7 @@ const jwt: string = (document.getElementById('JWTContainer') as HTMLInputElement
  */
 class ST {
   public jwt: string;
+  public sitereference: string;
   public style: object;
   public payments: object[];
 
@@ -34,16 +35,17 @@ class ST {
   private static _iframeSecurityCodeId: string = 'st-security-code-iframe';
   private static _iframeExpirationDateId: string = 'st-expiration-date-iframe';
 
-  constructor(style: object, payments: object[]) {
+  constructor(style: object, sitereference: string, payments: object[]) {
     const gatewayUrl = GATEWAY_URL;
     this.style = style;
     this.payments = payments;
+    this.sitereference = sitereference;
 
     const cardNumber = new Element();
     const securityCode = new Element();
     const expirationDate = new Element();
 
-    new CardinalCommerce(jwt, gatewayUrl);
+    new CardinalCommerce(jwt, sitereference, gatewayUrl);
 
     cardNumber.create('cardNumber');
     this.submitListener();
