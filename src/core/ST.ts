@@ -4,8 +4,6 @@ import { apmsNames } from './imports/apms';
 import CardinalCommerce from './classes/CardinalCommerce';
 import { GATEWAY_URL } from './imports/cardinalSettings';
 
-const jwt: string = (document.getElementById('JWTContainer') as HTMLInputElement).value;
-
 /***
  * Establishes connection with ST, defines client.
  */
@@ -35,7 +33,7 @@ class ST {
   private static _iframeSecurityCodeId: string = 'st-security-code-iframe';
   private static _iframeExpirationDateId: string = 'st-expiration-date-iframe';
 
-  constructor(style: object, sitereference: string, payments: object[]) {
+  constructor(style: object, jwt: string, sitereference: string, payments: object[]) {
     const gatewayUrl = GATEWAY_URL;
     this.style = style;
     this.payments = payments;
