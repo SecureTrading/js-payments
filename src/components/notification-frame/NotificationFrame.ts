@@ -10,6 +10,14 @@ enum messageTypes {
  */
 
 class NotificationFrame {
+  get notificationFrameElement(): HTMLElement {
+    return this._notificationFrameElement;
+  }
+
+  set notificationFrameElement(value: HTMLElement) {
+    this._notificationFrameElement = value;
+  }
+
   public static ELEMENT_CLASSES = {
     error: 'notification-frame--error',
     success: 'notification-frame--success',
@@ -20,7 +28,7 @@ class NotificationFrame {
 
   private static ELEMENT_ID: string = 'st-notification-frame';
 
-  private _notificationFrameElement = NotificationFrame._getElement(NotificationFrame.ELEMENT_ID);
+  private _notificationFrameElement: HTMLElement;
 
   /**
    * Returns proper class for every type of incoming message
@@ -44,14 +52,15 @@ class NotificationFrame {
 
   constructor() {
     this._errorMessageListener();
+    this.notificationFrameElement = NotificationFrame._getElement(NotificationFrame.ELEMENT_ID);
   }
 
   /**
    * Inserts content of incoming text info into div
    */
   public insertContent() {
-    if (this._notificationFrameElement) {
-      this._notificationFrameElement.textContent = this._message.content;
+    if (this.notificationFrameElement) {
+      this.notificationFrameElement.textContent = this._message.content;
     }
   }
 
@@ -60,8 +69,8 @@ class NotificationFrame {
    * @private
    */
   public setAttributeClass() {
-    if (this._notificationFrameElement) {
-      this._notificationFrameElement.setAttribute('class', NotificationFrame._getMessageClass(this._message.type));
+    if (this.notificationFrameElement) {
+      this.notificationFrameElement.setAttribute('class', NotificationFrame._getMessageClass(this._message.type));
     }
   }
 
