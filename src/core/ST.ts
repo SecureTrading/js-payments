@@ -1,5 +1,7 @@
-import CardinalCommerce from './classes/CardinalCommerce';
+import VisaCheckout from './classes/VisaCheckout';
 import Element from './Element';
+import { apmsNames } from './imports/apms';
+import CardinalCommerce from './classes/CardinalCommerce';
 import { GATEWAY_URL } from './imports/cardinalSettings';
 
 const jwt: string = (document.getElementById('JWTContainer') as HTMLInputElement).value;
@@ -12,26 +14,38 @@ class ST {
   public style: object;
   public payments: object[];
 
-  private static _iframeCreditCardId: string = 'st-card-number-iframe';
-  private static _iframeSecurityCodeId: string = 'st-security-code-iframe';
-  private static _iframeExpirationDateId: string = 'st-expiration-date-iframe';
-
   public static cardNumberComponent = '/card-number.html';
   public static expirationDateComponent = '/expiration-date.html';
   public static securityCodeComponent = '/security-code.html';
+
+  /**
+   * Register fields in clients form
+   * @param fields
+   * @param targets
+   */
+  public static registerElements(fields: HTMLElement[], targets: string[]) {
+    targets.map((item, index) => {
+      const itemToChange = document.getElementById(item);
+      itemToChange.appendChild(fields[index]);
+    });
+  }
+
+  private static _iframeCreditCardId: string = 'st-card-number-iframe';
+  private static _iframeSecurityCodeId: string = 'st-security-code-iframe';
+  private static _iframeExpirationDateId: string = 'st-expiration-date-iframe';
 
   constructor(style: object, payments: object[]) {
     const gatewayUrl = GATEWAY_URL;
     this.style = style;
     this.payments = payments;
-    const cardNumber = new Element();
 
+    const cardNumber = new Element();
     const securityCode = new Element();
     const expirationDate = new Element();
+
     new CardinalCommerce(jwt, gatewayUrl);
 
     cardNumber.create('cardNumber');
-
     this.submitListener();
 
     const cardNumberMounted = cardNumber.mount('st-card-number-iframe');
@@ -46,6 +60,10 @@ class ST {
       [cardNumberMounted, securityCodeMounted, expirationDateMounted],
       ['st-card-number', 'st-security-code', 'st-expiration-date']
     );
+
+    if (this._getAPMConfig(apmsNames.visaCheckout)) {
+      const visa = new VisaCheckout(this._getAPMConfig(apmsNames.visaCheckout));
+    }
   }
 
   /**
@@ -69,15 +87,12 @@ class ST {
   };
 
   /**
-   * Register fields in clients form
-   * @param fields
-   * @param targets
+   * Gets APM config according to given apmName
+   * @param apmName - name of payment
+   * @private
    */
-  public static registerElements(fields: HTMLElement[], targets: string[]) {
-    targets.map((item, index) => {
-      const itemToChange = document.getElementById(item);
-      itemToChange.appendChild(fields[index]);
-    });
+  private _getAPMConfig(apmName: string) {
+    return Object.values(this.payments).find((item: { name: string }) => item.name === apmName);
   }
 }
 

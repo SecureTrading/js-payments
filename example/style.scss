@@ -12,6 +12,17 @@ body {
   padding: 4rem 16rem;
 }
 
+.example-form {
+  display: grid;
+  grid-template-columns: 50% 50%;
+
+  &__apms {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
 .example-form__title {
   font-size: 2rem;
   font-weight: normal;

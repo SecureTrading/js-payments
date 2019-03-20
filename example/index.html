@@ -11,44 +11,49 @@
   </head>
   <body>
     <form class="example-form">
-      <h1 class="example-form__title">Secure Trading<span>Example Form</span></h1>
-      <div class="example-form__group">
-        <label for="example-form-name" class="example-form__label example-form__label--required">NAME</label>
-        <input
-          id="example-form-name"
-          class="example-form__input"
-          type="text"
-          placeholder="John Doe"
-          autocomplete="name"
-        />
+      <div class="example-form__card-payment">
+        <h1 class="example-form__title">Secure Trading<span>Example Form</span></h1>
+        <div class="example-form__group">
+          <label for="example-form-name" class="example-form__label example-form__label--required">NAME</label>
+          <input
+            id="example-form-name"
+            class="example-form__input"
+            type="text"
+            placeholder="John Doe"
+            autocomplete="name"
+          />
+        </div>
+        <div class="example-form__group">
+          <label for="example-form-email" class="example-form__label example-form__label--required">E-MAIL</label>
+          <input
+            id="example-form-email"
+            class="example-form__input"
+            type="email"
+            placeholder="test@mail.com"
+            autocomplete="email"
+          />
+        </div>
+        <div class="example-form__group">
+          <label for="example-form-phone" class="example-form__label example-form__label--required">PHONE</label>
+          <input
+            id="example-form-phone"
+            class="example-form__input"
+            type="tel"
+            placeholder="+00 000 000 000"
+            autocomplete="tel"
+          />
+        </div>
+        <div class="example-form__spacer"></div>
+        <div id="st-card-number" class="example-form__group"></div>
+        <div id="st-expiration-date" class="example-form__group"></div>
+        <div id="st-security-code" class="example-form__group"></div>
+        <div class="example-form__spacer"></div>
+        <div class="example-form__group">
+          <button class="example-form__button" type="submit">PAY</button>
+        </div>
       </div>
-      <div class="example-form__group">
-        <label for="example-form-email" class="example-form__label example-form__label--required">E-MAIL</label>
-        <input
-          id="example-form-email"
-          class="example-form__input"
-          type="email"
-          placeholder="test@mail.com"
-          autocomplete="email"
-        />
-      </div>
-      <div class="example-form__group">
-        <label for="example-form-phone" class="example-form__label example-form__label--required">PHONE</label>
-        <input
-          id="example-form-phone"
-          class="example-form__input"
-          type="tel"
-          placeholder="+00 000 000 000"
-          autocomplete="tel"
-        />
-      </div>
-      <div class="example-form__spacer"></div>
-      <div id="st-card-number" class="example-form__group"></div>
-      <div id="st-expiration-date" class="example-form__group"></div>
-      <div id="st-security-code" class="example-form__group"></div>
-      <div class="example-form__spacer"></div>
-      <div class="example-form__group">
-        <button class="example-form__button" type="submit">PAY</button>
+      <div class="example-form__apms">
+        <div id="visa-checkout-button"></div>
       </div>
       <input
         type="hidden"
