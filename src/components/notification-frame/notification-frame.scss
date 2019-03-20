@@ -4,11 +4,11 @@
   background-color: $bgr;
   border: $border;
   visibility: visible;
+  color: $color;
 }
 
 .notification-frame {
   border-radius: $border-radius-input;
-  color: $background-color-button;
   visibility: hidden;
 
   &--error {

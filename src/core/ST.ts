@@ -82,16 +82,12 @@ class ST {
         const creditCardIframe = document.getElementById(ST._iframeCreditCardId) as HTMLIFrameElement;
         const securityCodeIframe = document.getElementById(ST._iframeSecurityCodeId) as HTMLIFrameElement;
         const expirationDateIframe = document.getElementById(ST._iframeExpirationDateId) as HTMLIFrameElement;
-        const testn = document.getElementById('st-notification-frame-iframe') as HTMLIFrameElement;
         const creditCardContentWindow = creditCardIframe.contentWindow;
         const securityCodeContentWindow = securityCodeIframe.contentWindow;
         const expirationDateContentWindow = expirationDateIframe.contentWindow;
-        const test1 = testn.contentWindow;
         creditCardContentWindow.postMessage('message', ST.cardNumberComponent);
         securityCodeContentWindow.postMessage('message', ST.securityCodeComponent);
         expirationDateContentWindow.postMessage('message', ST.expirationDateComponent);
-
-        test1.postMessage({ type: 'ERROR', content: 'some content' }, '/notification-frame.html');
       });
     });
   };
