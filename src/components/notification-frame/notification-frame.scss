@@ -1,32 +1,29 @@
 @import './../../core/styles/variables';
 
+@mixin messageType($bgr, $border, $color) {
+  background-color: $bgr;
+  border: $border;
+  visibility: visible;
+}
+
 .notification-frame {
   border-radius: $border-radius-input;
   color: $background-color-button;
   visibility: hidden;
 
   &--error {
-    background-color: $color-error;
-    border: $border-size-input solid $color-error;
-    visibility: visible;
+    @include messageType($color-error, $border-size-input solid $color-error, $background-color-button);
   }
 
   &--success {
-    background-color: $color-success;
-    border: $border-size-input solid $color-success;
-    visibility: visible;
+    @include messageType($color-success, $border-size-input solid $color-success, $background-color-button);
   }
 
   &--warning {
-    background-color: $color-warning;
-    border: $border-size-input solid $color-warning;
-    visibility: visible;
+    @include messageType($color-warning, $border-size-input solid $color-warning, $background-color-button);
   }
 
   &--info {
-    background-color: $background-color-button;
-    border: $border-size-input solid $color-info;
-    color: $color-info;
-    visibility: visible;
+    @include messageType($background-color-button, $border-size-input solid $color-info, $color-info);
   }
 }
