@@ -6,9 +6,9 @@ enum messageTypes {
 }
 
 /**
+ * NotificationFrame class
  * Defines component for displaying payment status messages
  */
-
 class NotificationFrame {
   get notificationFrameElement(): HTMLElement {
     return this._notificationFrameElement;
@@ -20,38 +20,36 @@ class NotificationFrame {
 
   public static ELEMENT_CLASSES = {
     error: 'notification-frame--error',
+    info: 'notification-frame--info',
     success: 'notification-frame--success',
-    warning: 'notification-frame--warning',
-    info: 'notification-frame--info'
+    warning: 'notification-frame--warning'
   };
   public static getElement = (elementId: string) => document.getElementById(elementId);
 
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(NotificationFrame.ELEMENT_ID) as HTMLInputElement;
 
-  private static ELEMENT_ID: string = 'st-notification-frame';
-
-  private _notificationFrameElement: HTMLElement;
-
   /**
    * Returns proper class for every type of incoming message
    * @param messageType
    */
   public static _getMessageClass(messageType: string) {
-    if (messageType === 'error') {
+    if (messageType === messageTypes.error) {
       return NotificationFrame.ELEMENT_CLASSES.error;
-    } else if (messageType === 'success') {
+    } else if (messageType === messageTypes.success) {
       return NotificationFrame.ELEMENT_CLASSES.success;
-    } else if (messageType === 'cancel' || messageType === 'warning') {
+    } else if (messageType === messageTypes.warning) {
       return NotificationFrame.ELEMENT_CLASSES.warning;
-    } else if (messageType === 'info') {
+    } else if (messageType === messageTypes.info) {
       return NotificationFrame.ELEMENT_CLASSES.info;
     } else {
       return '';
     }
   }
 
+  private static ELEMENT_ID: string = 'st-notification-frame';
   public _message: { type: messageTypes; content: string };
+  private _notificationFrameElement: HTMLElement;
 
   constructor() {
     this._errorMessageListener();
