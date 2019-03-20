@@ -21,7 +21,7 @@ class NotificationFrame {
   public static ELEMENT_CLASSES = {
     error: 'notification-frame--error',
     success: 'notification-frame--success',
-    warning: 'notification-frame--cancel',
+    warning: 'notification-frame--warning',
     info: 'notification-frame--info'
   };
   public static getElement = (elementId: string) => document.getElementById(elementId);

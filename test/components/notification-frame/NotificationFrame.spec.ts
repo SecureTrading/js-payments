@@ -32,8 +32,13 @@ describe('Component NotificationFrame', () => {
     });
 
     // then
-    it(`should return ${messageClasses.cancelMessage} class when input type is: ${messageTypes.cancel}`, () => {
-      expect(NotificationFrame._getMessageClass(messageTypes.cancel)).toEqual(messageClasses.cancelMessage);
+    it(`should return ${messageClasses.warningMessage} class when input type is: ${messageTypes.warning}`, () => {
+      expect(NotificationFrame._getMessageClass(messageTypes.warning)).toEqual(messageClasses.warningMessage);
+    });
+
+    // then
+    it(`should return ${messageClasses.infoMessage} class when input type is: ${messageTypes.info}`, () => {
+      expect(NotificationFrame._getMessageClass(messageTypes.info)).toEqual(messageClasses.infoMessage);
     });
 
     // then
@@ -60,23 +65,6 @@ describe('Component NotificationFrame', () => {
     });
   });
 
-  // given
-  describe('Method setAttributeClass', () => {
-    let { errorMessage, messageClasses } = NotificationFrameFixture();
-    // when
-    beforeEach(() => {
-      document.body.innerHTML = '<div id="st-notification-frame" class="notification-frame">Some example error</div>';
-      // @ts-ignore
-      instance._message = errorMessage;
-      instance.setAttributeClass();
-    });
-
-    // then
-    it('should set proper class to message container', () => {
-      const elementClass: string = (document.getElementById(elementId) as HTMLElement).getAttribute('class');
-      expect(elementClass).toEqual(messageClasses.errorMessage);
-    });
-  });
   // given
   describe('Method _errorMessageListener', () => {
     let insertContentSpy: any;
@@ -115,15 +103,17 @@ function NotificationFrameFixture() {
   const messageTypes = {
     error: 'error',
     success: 'success',
-    cancel: 'cancel'
+    warning: 'warning',
+    info: 'info'
   };
 
-  const errorMessage = { type: 'error', content: 'some error content' };
+  const errorMessage = { type: 'error', content: 'Some example error' };
 
   const messageClasses = {
     errorMessage: 'notification-frame--error',
     successMessage: 'notification-frame--success',
-    cancelMessage: 'notification-frame--cancel'
+    warningMessage: 'notification-frame--warning',
+    infoMessage: 'notification-frame--info'
   };
   const notificationFrameHtml = '<div id="st-notification-frame" class="notification-frame">Some example error</div>';
   const elementId = 'st-notification-frame';
