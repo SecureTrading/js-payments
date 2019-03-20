@@ -1,5 +1,3 @@
-import ST from './ST';
-
 /***
  * Defines input with iframe source
  * Can be styled by predefined JSON.
@@ -60,7 +58,6 @@ class Element {
   }
 
   constructor() {
-    super();
     this._name = '';
   }
 
