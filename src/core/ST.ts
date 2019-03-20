@@ -1,14 +1,13 @@
 import CardinalCommerce from './classes/CardinalCommerce';
-import StTransport from './classes/StTransport.class';
 import Element from './Element';
+import { GATEWAY_URL } from './imports/cardinalSettings';
 
-// @ts-ignore
-const jwt: string = document.getElementById('JWTContainer').value;
+const jwt: string = (document.getElementById('JWTContainer') as HTMLInputElement).value;
 
 /***
  * Establishes connection with ST, defines client.
  */
-class ST extends StTransport {
+class ST {
   public jwt: string;
   public style: object;
   public errorContainerId: string;
@@ -24,8 +23,7 @@ class ST extends StTransport {
 
   // @ts-ignore
   constructor(style: object, errorContainerId: string, payments: object[]) {
-    const gatewayUrl = ST.GATEWAY_URL;
-    super({ jwt, gatewayUrl });
+    const gatewayUrl = GATEWAY_URL;
     this.style = style;
     this.payments = payments;
     this.errorContainerId = errorContainerId;
@@ -35,7 +33,7 @@ class ST extends StTransport {
     const expirationDate = new Element();
     const notificationFrame = new Element();
     new CardinalCommerce(jwt, gatewayUrl);
-    // @ts-ignore
+
     cardNumber.create('cardNumber');
 
     this.submitListener();
