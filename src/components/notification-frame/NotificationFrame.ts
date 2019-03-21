@@ -83,7 +83,6 @@ class NotificationFrame {
       'message',
       ({ data }) => {
         this._message = data;
-        console.log(data);
         this.insertContent();
         this.setAttributeClass();
       },

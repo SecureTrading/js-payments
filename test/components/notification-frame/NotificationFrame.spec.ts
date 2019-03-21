@@ -72,6 +72,7 @@ describe('Component NotificationFrame', () => {
     let insertContentMethod;
     let setAttributeClassMethod;
     const functionCalls = 1;
+    const { errorMessage } = NotificationFrameFixture();
 
     beforeEach(() => {
       instance.errorMessageListener();
@@ -82,7 +83,10 @@ describe('Component NotificationFrame', () => {
     });
 
     // then
-    it('should set message data', () => {});
+    it('should set message data', () => {
+      instance.errorMessageListener();
+      expect(instance._message).toMatchObject(errorMessage);
+    });
 
     // then
     it(`should call insertContent(): ${functionCalls} time(s)`, () => {
