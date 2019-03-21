@@ -1,24 +1,46 @@
 import FormField from '../../core/shared/FormField';
 import Selectors from '../../core/shared/Selectors';
+import MessageBus from '../../core/shared/MessageBus';
 
 /**
  * Definition of security code validation
  */
-class SecurityCode extends FormField {
+export default class SecurityCode extends FormField {
   private static INPUT_LENGTH: number = 3;
+  private messageBus: MessageBus;
 
   constructor() {
     super(Selectors.SECURITY_CODE_INPUT_SELECTOR, Selectors.SECURITY_CODE_MESSAGE_SELECTOR);
+
+    this.messageBus = new MessageBus();
 
     this.setAttributes({
       maxlength: SecurityCode.INPUT_LENGTH,
       minlength: SecurityCode.INPUT_LENGTH
     });
+
+    if (this._inputElement.value) {
+      this.sendState();
+    }
   }
 
   static ifFieldExists(): HTMLInputElement {
     // @ts-ignore
     return document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR);
+  }
+
+  private sendState() {
+    let formFieldState: FormFieldState = this.getState();
+    let messageBusEvent: MessageBusPublishEvent = {
+      type: MessageBus.EVENTS.SECURITY_CODE_CHANGE,
+      data: formFieldState
+    };
+    this.messageBus.publish(messageBusEvent);
+  }
+
+  onInput(event: Event) {
+    super.onInput(event);
+    this.sendState();
   }
 
   // /**
@@ -59,5 +81,3 @@ class SecurityCode extends FormField {
   //   );
   // }
 }
-
-export default SecurityCode;

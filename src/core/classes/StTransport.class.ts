@@ -26,11 +26,10 @@ export default class StTransport {
   public get codec() {
     return this._codec;
   }
-  public static GATEWAY_URL =
-    'https://webservices.securetrading.net/public/json/';
+  public static GATEWAY_URL = 'https://webservices.securetrading.net/jwt/';
   public static DEFAULT_FETCH_OPTIONS = {
     headers: {
-      'Accept': StCodec.CONTENT_TYPE,
+      Accept: StCodec.CONTENT_TYPE,
       'Content-Type': StCodec.CONTENT_TYPE
     },
     method: 'post'
@@ -44,8 +43,7 @@ export default class StTransport {
   private _codec: StCodec;
 
   constructor(params: IStTransportParams) {
-    this.gatewayUrl =
-      'gatewayUrl' in params ? params.gatewayUrl : StTransport.GATEWAY_URL;
+    this.gatewayUrl = 'gatewayUrl' in params ? params.gatewayUrl : StTransport.GATEWAY_URL;
     this._codec = new StCodec(params.jwt);
   }
 
@@ -81,8 +79,7 @@ export default class StTransport {
     retryTimeout = StTransport.RETRY_TIMEOUT
   ) {
     return Utils.retryPromise(
-      () =>
-        Utils.promiseWithTimeout<Response>(() => fetch(url, options), connectTimeout),
+      () => Utils.promiseWithTimeout<Response>(() => fetch(url, options), connectTimeout),
       delay,
       retries,
       retryTimeout

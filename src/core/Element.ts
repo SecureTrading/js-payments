@@ -4,8 +4,7 @@ import ST from './ST';
  * Defines input with iframe source
  * Can be styled by predefined JSON.
  */
-
-class Element extends ST {
+class Element {
   private _name: string;
   private _iframeSrc: string;
 
@@ -16,13 +15,13 @@ class Element extends ST {
    */
   public static getComponentAddress(name: string) {
     if (name === 'cardNumber') {
-      return Element.cardNumberComponent;
+      return ST.cardNumberComponent;
     } else if (name === 'securityCode') {
-      return Element.securityCodeComponent;
+      return ST.securityCodeComponent;
     } else if (name === 'expirationDate') {
-      return Element.expirationDateComponent;
+      return ST.expirationDateComponent;
     } else if (name === 'controlFrame') {
-      return Element.controlFrameComponent;
+      return ST.controlFrameComponent;
     }
   }
 
@@ -39,7 +38,6 @@ class Element extends ST {
   };
 
   constructor() {
-    super();
     this._name = '';
   }
 
