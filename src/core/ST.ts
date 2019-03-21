@@ -1,11 +1,23 @@
 import VisaCheckout from './classes/VisaCheckout';
 import Element from './Element';
 import { apmsNames } from './imports/apms';
+import *  as JwtDecode from 'jwt-decode';
+
+interface JwtPayload {
+  [key: string]: string;
+}
+
+interface Jwt {
+  payload: JwtPayload;
+}
+
 
 /***
  * Establishes connection with ST, defines client.
  */
 class ST {
+  public jwtPayload: JwtPayload;
+
   public static cardNumberComponent = '/card-number.html';
   public static expirationDateComponent = '/expiration-date.html';
   public static securityCodeComponent = '/security-code.html';
@@ -29,7 +41,11 @@ class ST {
   public style: object;
   public payments: object[];
 
-  constructor(style: object, payments: object[]) {
+  constructor(style: object, jwt: string, payments: object[]) {
+
+    const decodedJwt = JwtDecode<Jwt>(jwt);
+    this.jwtPayload = decodedJwt.payload;
+
     this.style = style;
     this.payments = payments;
     const cardNumber = new Element();
