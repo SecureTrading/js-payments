@@ -12,6 +12,7 @@ class ST {
   public sitereference: string;
   public style: object;
   public payments: object[];
+  public fieldsIds: any;
 
   public static cardNumberComponent = '/card-number.html';
   public static expirationDateComponent = '/expiration-date.html';
@@ -33,11 +34,12 @@ class ST {
   private static _iframeSecurityCodeId: string = 'st-security-code-iframe';
   private static _iframeExpirationDateId: string = 'st-expiration-date-iframe';
 
-  constructor(style: object, jwt: string, sitereference: string, payments: object[]) {
+  constructor(style: object, jwt: string, fieldsIds: any, sitereference: string, payments: object[]) {
     const gatewayUrl = GATEWAY_URL;
     this.style = style;
     this.payments = payments;
     this.sitereference = sitereference;
+    this.fieldsIds = fieldsIds;
 
     const cardNumber = new Element();
     const securityCode = new Element();
@@ -58,7 +60,7 @@ class ST {
 
     ST.registerElements(
       [cardNumberMounted, securityCodeMounted, expirationDateMounted],
-      ['st-card-number', 'st-security-code', 'st-expiration-date']
+      [this.fieldsIds.cardNumber, this.fieldsIds.securityCode, this.fieldsIds.expirationDate]
     );
 
     if (this._getAPMConfig(apmsNames.visaCheckout)) {
