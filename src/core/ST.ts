@@ -36,6 +36,7 @@ class ST {
 
     const securityCode = new Element();
     const expirationDate = new Element();
+    const animatedCard = new Element();
     cardNumber.create('cardNumber');
 
     this.submitListener();
@@ -48,9 +49,12 @@ class ST {
     expirationDate.create('expirationDate');
     const expirationDateMounted = expirationDate.mount('st-expiration-date-iframe');
 
+    animatedCard.create('animatedCard');
+    const animatedCardMounted = animatedCard.mount('st-animated-card-iframe');
+
     ST.registerElements(
-      [cardNumberMounted, securityCodeMounted, expirationDateMounted],
-      ['st-card-number', 'st-security-code', 'st-expiration-date']
+      [cardNumberMounted, securityCodeMounted, expirationDateMounted, animatedCardMounted],
+      ['st-card-number', 'st-security-code', 'st-expiration-date', 'st-animated-card']
     );
 
     if (this._getAPMConfig(apmsNames.visaCheckout)) {

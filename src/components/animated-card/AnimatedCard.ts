@@ -5,13 +5,29 @@ import { cardsLogos } from './animated-card-logos';
  *
  */
 class AnimatedCard {
-  private _pan: string = '4444444444444444';
-  private _expirationDate: string = '12/24';
-  private _securityCode: string = '444';
+  public cardDetails: any = {
+    type: 'MASTERCARD',
+    pan: '4444444444444444',
+    expirationDate: '12/24',
+    securityCode: '444'
+  };
+  public cardElement: HTMLElement;
+  public notFlippedCards = ['AMEX'];
 
   constructor() {
-    console.log(`${this._pan} ${this._expirationDate} ${this._securityCode}`);
-    this.setImage('st-payment-logo', cardsLogos.amex);
+    this.setProperty('src', cardsLogos.amex, 'st-payment-logo');
+    this.setProperty('src', cardsLogos.chip, 'st-chip-logo');
+    this.cardElement = document.getElementById(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
+
+    window.addEventListener('click', () => {
+      this.flipCard();
+    });
+  }
+
+  public setProperty(attr: string, value: string, elementId: string) {
+    const element = document.getElementById(elementId);
+    element.setAttribute(attr, value);
+    return element;
   }
 
   static ifCardExists(): HTMLInputElement {
@@ -19,12 +35,16 @@ class AnimatedCard {
     return document.getElementById(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
   }
 
-  public setImage(id: string, base: string) {
-    const image = document.getElementById(id);
-    image.setAttribute('src', base);
-    console.log(image);
-    return image;
+  /**
+   * Checks if given card should not be flipped
+   */
+  public shouldFlipCard = () => this.notFlippedCards.includes(this.cardDetails.type);
+
+  public flipCard() {
+    this.setProperty('class', 'flip', Selectors.ANIMATED_CARD_INPUT_SELECTOR);
   }
+
+  public testRotate() {}
 }
 
 export default AnimatedCard;

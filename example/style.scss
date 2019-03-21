@@ -20,6 +20,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
   }
 }
 
@@ -69,4 +70,15 @@ body {
 
 .example-form__button {
   @extend %button;
+}
+
+#st-animated-card {
+  width: 36rem;
+  height: 22.73rem;
+
+  .st-animated-card-iframe {
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+  }
 }

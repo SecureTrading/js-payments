@@ -16,15 +16,19 @@ class Element {
       return Element.SECURITY_CODE__COMPONENT;
     } else if (name === Element.EXPIRATION_DATE_COMPONENT_NAME) {
       return Element.EXPIRATION_DATE_COMPONENT;
+    } else if (name === Element.ANIMATED_CARD_COMPONENT_NAME) {
+      return Element.ANIMATED_CARD_COMPONENT;
     }
   }
 
   private static CARD_NUMBER_COMPONENT_NAME: string = 'cardNumber';
   private static SECURITY_CODE_COMPONENT_NAME: string = 'securityCode';
   private static EXPIRATION_DATE_COMPONENT_NAME: string = 'expirationDate';
+  private static ANIMATED_CARD_COMPONENT_NAME: string = 'animatedCard';
   private static CARD_NUMBER_COMPONENT: string = '/card-number.html';
   private static SECURITY_CODE__COMPONENT: string = '/security-code.html';
   private static EXPIRATION_DATE_COMPONENT: string = '/expiration-date.html';
+  private static ANIMATED_CARD_COMPONENT: string = '/animated-card.html';
 
   /**
    * Method for creating DOM elements
