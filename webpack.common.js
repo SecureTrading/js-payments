@@ -52,6 +52,14 @@ module.exports = {
       chunks: ['main']
     }),
     new HtmlWebpackPlugin({
+      filename: 'notification-frame.html',
+      template: './src/components/index.html',
+      templateParameters: {
+        partial: 'notificationFrame'
+      },
+      chunks: ['main']
+    }),
+    new HtmlWebpackPlugin({
       filename: 'index.html',
       template: './example/index.html',
       chunks: ['stjs', 'example']

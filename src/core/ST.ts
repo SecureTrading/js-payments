@@ -1,11 +1,21 @@
 import VisaCheckout from './classes/VisaCheckout';
 import Element from './Element';
 import { apmsNames } from './imports/apms';
+import CardinalCommerce from './classes/CardinalCommerce';
+import { GATEWAY_URL } from './imports/cardinalSettings';
 
 /***
  * Establishes connection with ST, defines client.
  */
 class ST {
+  public jwt: string;
+  public sitereference: string;
+  public style: object;
+  public errorContainerId: string;
+  public animatedCardContainerId: string;
+  public payments: object[];
+  public fieldsIds: any;
+
   public static cardNumberComponent = '/card-number.html';
   public static expirationDateComponent = '/expiration-date.html';
   public static securityCodeComponent = '/security-code.html';
@@ -26,19 +36,32 @@ class ST {
   private static _iframeSecurityCodeId: string = 'st-security-code-iframe';
   private static _iframeExpirationDateId: string = 'st-expiration-date-iframe';
 
-  public style: object;
-  public payments: object[];
-
-  constructor(style: object, payments: object[]) {
+  constructor(
+    style: object,
+    errorContainerId: string,
+    animatedCardContainerId: string,
+    jwt: string,
+    fieldsIds: any,
+    sitereference: string,
+    payments: object[]
+  ) {
+    const gatewayUrl = GATEWAY_URL;
     this.style = style;
     this.payments = payments;
-    const cardNumber = new Element();
+    this.sitereference = sitereference;
+    this.fieldsIds = fieldsIds;
+    this.errorContainerId = errorContainerId;
+    this.animatedCardContainerId = animatedCardContainerId;
 
+    const cardNumber = new Element();
     const securityCode = new Element();
     const expirationDate = new Element();
     const animatedCard = new Element();
-    cardNumber.create('cardNumber');
+    const notificationFrame = new Element();
 
+    new CardinalCommerce(jwt, sitereference, gatewayUrl);
+
+    cardNumber.create('cardNumber');
     this.submitListener();
 
     const cardNumberMounted = cardNumber.mount('st-card-number-iframe');
@@ -49,12 +72,21 @@ class ST {
     expirationDate.create('expirationDate');
     const expirationDateMounted = expirationDate.mount('st-expiration-date-iframe');
 
+    notificationFrame.create('notificationFrame');
+    const notificationFrameMounted = notificationFrame.mount('st-notification-frame-iframe');
+
     animatedCard.create('animatedCard');
     const animatedCardMounted = animatedCard.mount('st-animated-card-iframe');
 
     ST.registerElements(
-      [cardNumberMounted, securityCodeMounted, expirationDateMounted, animatedCardMounted],
-      ['st-card-number', 'st-security-code', 'st-expiration-date', 'st-animated-card']
+      [cardNumberMounted, securityCodeMounted, expirationDateMounted, notificationFrameMounted, animatedCardMounted],
+      [
+        this.fieldsIds.cardNumber,
+        this.fieldsIds.securityCode,
+        this.fieldsIds.expirationDate,
+        this.errorContainerId,
+        this.animatedCardContainerId
+      ]
     );
 
     if (this._getAPMConfig(apmsNames.visaCheckout)) {
