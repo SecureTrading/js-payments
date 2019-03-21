@@ -13,18 +13,21 @@ class Element {
     if (name === Element.CARD_NUMBER_COMPONENT_NAME) {
       return Element.CARD_NUMBER_COMPONENT;
     } else if (name === Element.SECURITY_CODE_COMPONENT_NAME) {
-      return Element.SECURITY_CODE__COMPONENT;
+      return Element.SECURITY_CODE_COMPONENT;
     } else if (name === Element.EXPIRATION_DATE_COMPONENT_NAME) {
       return Element.EXPIRATION_DATE_COMPONENT;
+    } else if (name === 'notificationFrame') {
+      return Element.NOTIFICATION_FRAME_COMPONENT;
     }
   }
 
-  private static CARD_NUMBER_COMPONENT_NAME: string = 'cardNumber';
-  private static SECURITY_CODE_COMPONENT_NAME: string = 'securityCode';
-  private static EXPIRATION_DATE_COMPONENT_NAME: string = 'expirationDate';
-  private static CARD_NUMBER_COMPONENT: string = '/card-number.html';
-  private static SECURITY_CODE__COMPONENT: string = '/security-code.html';
-  private static EXPIRATION_DATE_COMPONENT: string = '/expiration-date.html';
+  public static CARD_NUMBER_COMPONENT_NAME: string = 'cardNumber';
+  public static SECURITY_CODE_COMPONENT_NAME: string = 'securityCode';
+  public static EXPIRATION_DATE_COMPONENT_NAME: string = 'expirationDate';
+  public static CARD_NUMBER_COMPONENT: string = '/card-number.html';
+  public static SECURITY_CODE_COMPONENT: string = '/security-code.html';
+  public static EXPIRATION_DATE_COMPONENT: string = '/expiration-date.html';
+  public static NOTIFICATION_FRAME_COMPONENT: string = '/notification-frame.html';
 
   /**
    * Method for creating DOM elements

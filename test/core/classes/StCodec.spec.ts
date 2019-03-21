@@ -137,7 +137,7 @@ describe('StCodec class', () => {
       [{ version: '1.00', response: [] }],
       [{ version: '1.00', response: [{}, {}] }]
     ]).it('should verify the version and number of responses', responseData => {
-      expect(() => str.verifyResponseObject(responseData)).toThrow(
+      expect(() => StCodec.verifyResponseObject(responseData)).toThrow(
         Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE)
       );
     });
@@ -150,7 +150,7 @@ describe('StCodec class', () => {
         }
       ]
     ]).it('should verify the gateway error response', responseData => {
-      expect(() => str.verifyResponseObject(responseData)).toThrow(Error(responseData.response[0].errormessage));
+      expect(() => StCodec.verifyResponseObject(responseData)).toThrow(Error(responseData.response[0].errormessage));
     });
   });
 
@@ -160,15 +160,15 @@ describe('StCodec class', () => {
     });
 
     it('should decode a valid response', async () => {
-      str.verifyResponseObject = jest.fn(str.verifyResponseObject);
+      StCodec.verifyResponseObject = jest.fn(StCodec.verifyResponseObject);
       await expect(
         str.decode({
           json: () => {
             return new Promise(resolve => resolve(fullResponse));
           }
         })
-      ).resolves.toEqual(str.verifyResponseObject(fullResponse));
-      expect(str.verifyResponseObject).toHaveBeenCalledWith(fullResponse);
+      ).resolves.toEqual(StCodec.verifyResponseObject(fullResponse));
+      expect(StCodec.verifyResponseObject).toHaveBeenCalledWith(fullResponse);
     });
 
     it('should error an invalid response', async () => {

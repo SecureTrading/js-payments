@@ -7,6 +7,7 @@ interface IStRequest {
   accounttypedescription?: string;
   expirydate?: string;
   securitycode?: string;
+  termurl?: string; // TODO shouldn't be needed for CC request but this needs to wait for 153 release
 }
 
 /***
@@ -80,7 +81,7 @@ class StCodec {
    * @param responseData The response from the gateway
    * @return The content of the response that can be used in the following processes
    */
-  public verifyResponseObject(responseData: any): object {
+  public static verifyResponseObject(responseData: any): object {
     // Ought we keep hold of the requestreference (eg. log it to console)
     // So that we can link these requests up with the gateway?
     if (
@@ -111,7 +112,7 @@ class StCodec {
     return new Promise((resolve, reject) => {
       if ('json' in responseObject) {
         responseObject.json().then(responseData => {
-          resolve(this.verifyResponseObject(responseData));
+          resolve(StCodec.verifyResponseObject(responseData));
         });
       } else {
         reject(new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
