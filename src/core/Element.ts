@@ -18,7 +18,7 @@ class Element {
       return Element.EXPIRATION_DATE_COMPONENT;
     } else if (name === Element.ANIMATED_CARD_COMPONENT_NAME) {
       return Element.ANIMATED_CARD_COMPONENT;
-    } else if (name === 'notificationFrame') {
+    } else if (name === Element.NOTIFICATION_FRAME_COMPONENT_NAME) {
       return Element.NOTIFICATION_FRAME_COMPONENT;
     }
   }
@@ -26,12 +26,13 @@ class Element {
   public static CARD_NUMBER_COMPONENT_NAME: string = 'cardNumber';
   public static SECURITY_CODE_COMPONENT_NAME: string = 'securityCode';
   public static EXPIRATION_DATE_COMPONENT_NAME: string = 'expirationDate';
+  public static NOTIFICATION_FRAME_COMPONENT_NAME: string = 'notificationFrame';
   private static ANIMATED_CARD_COMPONENT_NAME: string = 'animatedCard';
   public static CARD_NUMBER_COMPONENT: string = '/card-number.html';
   public static SECURITY_CODE_COMPONENT: string = '/security-code.html';
   public static EXPIRATION_DATE_COMPONENT: string = '/expiration-date.html';
-  public static NOTIFICATION_FRAME_COMPONENT: string = '/notification-frame.html';
   private static ANIMATED_CARD_COMPONENT: string = '/animated-card.html';
+  public static NOTIFICATION_FRAME_COMPONENT: string = '/notification-frame.html';
 
   /**
    * Method for creating DOM elements

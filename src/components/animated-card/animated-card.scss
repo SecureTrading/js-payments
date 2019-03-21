@@ -1,44 +1,4 @@
-$visa-background-color-1: #3c62b7;
-$visa-background-color-2: #1c3380;
-$visa-font-color: #cdcdcd;
-$visa-font-color-2: #333;
-
-$discover-background-color-1: #2b5b8f;
-$discover-background-color-2: #0d1a51;
-
-$diners-background-color-1: #2b5b8f;
-$diners-background-color-2: #0d1a51;
-
-$mastercard-background-color-1: #333;
-$mastercard-background-color-2: #000;
-
-$astropay-background-color-1: #333;
-$astropay-background-color-2: #000;
-
-$amex-background-color-1: #3ca2b7;
-$amex-background-color-2: #16343c;
-
-$premierinn-background-color-1: #461259;
-$premierinn-background-color-2: #6b2c6f;
-
-$maestro-background-color-1: #3c62b7;
-$maestro-background-color-2: #1c3380;
-
-$jcb-background-color-1: #3c62b7;
-$jcb-background-color-2: #1c3380;
-
-$visa-gradient: radial-gradient(circle, $visa-background-color-1 0%, $visa-background-color-2 100%);
-$discover-gradient: linear-gradient(222.64deg, $discover-background-color-1 0%, $discover-background-color-2 100%);
-$diners-gradient: linear-gradient(222.64deg, $diners-background-color-1 0%, $diners-background-color-2 100%);
-$master-card-gradient: radial-gradient(circle, $mastercard-background-color-1 0%, $mastercard-background-color-2 100%);
-$astro-pay-gradient: radial-gradient(circle, $astropay-background-color-1 0%, $astropay-background-color-2 100%);
-$amex-gradient: radial-gradient(circle, $amex-background-color-1 0%, $amex-background-color-2 100%);
-$premier-inn-gradient: radial-gradient(circle, $premierinn-background-color-1 0%, $premierinn-background-color-2 100%);
-$maestro-gradient: radial-gradient(circle, $maestro-background-color-1 0%, $maestro-background-color-2 100%);
-$jcb-gradient: radial-gradient(circle, $jcb-background-color-1 0%, $jcb-background-color-2 100%);
-
-$card-data-font: 'Courier New', Courier, monospace;
-$card-font: Helvetica, sans-serif;
+@import './variables.scss';
 
 html,
 body {
@@ -49,7 +9,9 @@ body {
 }
 
 .st-animated-card {
-  &__header {
+  width: 100%;
+
+  &__logos {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -66,7 +28,7 @@ body {
 
   &__front {
     background: #ccc;
-    background: radial-gradient(circle, #3c62b7 0%, #1c3380 100%);
+    background: $visa-gradient;
     color: #999;
     border-radius: 1.5rem;
     height: 100%;
