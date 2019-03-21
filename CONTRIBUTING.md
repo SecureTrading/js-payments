@@ -24,3 +24,14 @@
 > - `prod: webpack --config webpack.prod.js`
 > - `start: webpack-dev-server --color --progress --open --hot --config webpack.dev.js`
 > - `hot: npm-run-all dev start`
+
+## How to launch docker ?
+
+If you wish to run the docker container which hosts the same distribution files as the npm run prod you can run the following:
+> - `docker build . --tag securetrading1/js-payments`
+> - `docker run -d -p 8443:8443 -p 8760:8760 -it securetrading1/js-payments`
+
+## How to run behavioural tests ?
+
+Travis will automatically run behavioural tests on all push/pull commits - these must pass before any PR will be accepted
+
