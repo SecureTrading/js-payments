@@ -4,16 +4,16 @@ import { apmsNames } from './imports/apms';
 import CardinalCommerce from './classes/CardinalCommerce';
 import { GATEWAY_URL } from './imports/cardinalSettings';
 
-const jwt: string = (document.getElementById('JWTContainer') as HTMLInputElement).value;
-
 /***
  * Establishes connection with ST, defines client.
  */
 class ST {
   public jwt: string;
+  public sitereference: string;
   public style: object;
   public errorContainerId: string;
   public payments: object[];
+  public fieldsIds: any;
 
   public static cardNumberComponent = '/card-number.html';
   public static expirationDateComponent = '/expiration-date.html';
@@ -35,18 +35,27 @@ class ST {
   private static _iframeSecurityCodeId: string = 'st-security-code-iframe';
   private static _iframeExpirationDateId: string = 'st-expiration-date-iframe';
 
-  constructor(style: object, errorContainerId: string, payments: object[]) {
+  constructor(
+    style: object,
+    errorContainerId: string,
+    jwt: string,
+    fieldsIds: any,
+    sitereference: string,
+    payments: object[]
+  ) {
     const gatewayUrl = GATEWAY_URL;
     this.style = style;
     this.payments = payments;
-
+    this.sitereference = sitereference;
+    this.fieldsIds = fieldsIds;
     this.errorContainerId = errorContainerId;
+
     const cardNumber = new Element();
     const securityCode = new Element();
     const expirationDate = new Element();
-
     const notificationFrame = new Element();
-    new CardinalCommerce(jwt, gatewayUrl);
+
+    new CardinalCommerce(jwt, sitereference, gatewayUrl);
 
     cardNumber.create('cardNumber');
     this.submitListener();
@@ -64,7 +73,7 @@ class ST {
 
     ST.registerElements(
       [cardNumberMounted, securityCodeMounted, expirationDateMounted, notificationFrameMounted],
-      ['st-card-number', 'st-security-code', 'st-expiration-date', this.errorContainerId]
+      [this.fieldsIds.cardNumber, this.fieldsIds.securityCode, this.fieldsIds.expirationDate, this.errorContainerId]
     );
 
     if (this._getAPMConfig(apmsNames.visaCheckout)) {

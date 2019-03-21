@@ -3,6 +3,7 @@ import { cardinalCommerceConfig } from '../imports/cardinalSettings';
 import { IStRequest } from './StCodec.class';
 import StTransport from './StTransport.class';
 import { IStTransportParams } from './StTransport.class';
+import DomMethods from './../shared/DomMethods';
 
 /**
  * Cardinal Commerce class:
@@ -29,41 +30,44 @@ class CardinalCommerce {
     NOACTION: 'NOACTION',
     SUCCESS: 'SUCCESS'
   };
-
+  public stTransport: any;
   private _cardinalCommerceJWT: string;
   private _cardinalPayload: any;
   private _cart: string[] = [];
-  private _payload: IStRequest = {
+  private _payload = {
     accounttypedescription: 'ECOM',
     expirydate: '01/20',
     pan: '4111111111111111',
     requesttypedescription: 'THREEDQUERY',
-    sitereference: 'live2',
     securitycode: '123',
+    sitereference: '',
     termurl: 'http://something.com'
   };
   private _threedeinitRequestObject: IStRequest = {
-    sitereference: 'live2',
-    requesttypedescription: 'THREEDINIT'
+    requesttypedescription: 'THREEDINIT',
+    sitereference: ''
   };
   private _sessionId: string;
-  private _transactionId: string;
   private _stTrasportParams: IStTransportParams = {
-    jwt: '',
-    gatewayUrl: ''
+    gatewayUrl: '',
+    jwt: ''
   };
 
-  public stTransport: any;
+  private _transactionId: string;
 
-  constructor(jwt: string, gatewayUrl: string) {
+  constructor(jwt: string, sitereference: string, gatewayUrl: string) {
+    this._payload.sitereference = sitereference;
+    this._threedeinitRequestObject.sitereference = sitereference;
     this._stTrasportParams = {
-      jwt: jwt,
-      gatewayUrl: gatewayUrl
+      gatewayUrl,
+      jwt
     };
     this.stTransport = new StTransport(this._stTrasportParams);
     this._threedeinitRequest().then((response: any) => {
       this._cardinalCommerceJWT = response.jwt;
-      this._insertSongbird();
+      DomMethods.insertScript('head', CardinalCommerce.SONGBIRD_URL).addEventListener('load', () =>
+        this._setConfiguration()
+      );
       this._triggerLookupRequest();
     });
   }
@@ -74,20 +78,6 @@ class CardinalCommerce {
   private _threedeinitRequest = () => this.stTransport.sendRequest(this._threedeinitRequestObject);
 
   private _authCallToST = (authRequest: any) => this.stTransport.sendRequest(authRequest);
-
-  /**
-   * Add Cardinal Commerce Songbird.js library to merchants page.
-   * When library is loaded then it triggers configuration of Cardinal Commerce
-   * @private
-   */
-  private _insertSongbird() {
-    const head = document.getElementsByTagName('head')[0];
-    const script = document.createElement('script');
-    head.appendChild(script);
-    script.addEventListener('load', () => this._setConfiguration());
-    script.src = CardinalCommerce.SONGBIRD_URL;
-    return script;
-  }
 
   /**
    * Initiate configuration of Cardinal Commerce
