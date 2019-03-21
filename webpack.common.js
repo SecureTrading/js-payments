@@ -44,6 +44,14 @@ module.exports = {
       chunks: ['main']
     }),
     new HtmlWebpackPlugin({
+      filename: 'animated-card.html',
+      template: './src/components/index.html',
+      templateParameters: {
+        partial: 'animatedCard'
+      },
+      chunks: ['main']
+    }),
+    new HtmlWebpackPlugin({
       filename: 'index.html',
       template: './example/index.html',
       chunks: ['stjs', 'example']
