@@ -1,9 +1,11 @@
 import Selectors from '../../core/shared/Selectors';
 import MessageBus from '../../core/shared/MessageBus';
+import Payment from '../../core/shared/Payment';
 
 export default class ControlFrame {
   private _buttonElement: HTMLButtonElement;
   private messageBus: MessageBus;
+  private payment: Payment;
   private formFields = {
     cardNumber: {
       validity: '',
@@ -23,6 +25,7 @@ export default class ControlFrame {
     // @ts-ignore
     this._buttonElement = ControlFrame.ifFieldExists();
     this.messageBus = new MessageBus();
+    this.payment = new Payment();
     this.onInit();
   }
 
@@ -36,7 +39,13 @@ export default class ControlFrame {
     this.initSubscriptions();
   }
 
-  private onClick() {}
+  private onClick() {
+    this.payment.cacheTokenize({
+      pan: this.formFields.cardNumber.value,
+      expirydate: this.formFields.expirationDate.value,
+      securitycode: this.formFields.securityCode.value
+    });
+  }
 
   private initSubscriptions() {
     this.messageBus.subscribe(MessageBus.EVENTS.CARD_NUMBER_CHANGE, (data: any) => {

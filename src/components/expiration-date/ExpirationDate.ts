@@ -45,6 +45,11 @@ export default class ExpirationDate extends FormField {
     this.sendState();
   }
 
+  onPaste(event: ClipboardEvent) {
+    super.onPaste(event);
+    this.sendState();
+  }
+
   format(data: string) {
     let dataFormatted = Formatter.maskExpirationDate(data);
     this.setValue(dataFormatted);

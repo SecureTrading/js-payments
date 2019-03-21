@@ -66,6 +66,11 @@ export default class CardNumber extends FormField {
     this.sendState();
   }
 
+  onPaste(event: ClipboardEvent) {
+    super.onPaste(event);
+    this.sendState();
+  }
+
   // private setValidity() {
   //   CardNumber.setInputErrorMessage(this._fieldInstance, CardNumber.MESSAGE_ELEMENT_ID);
   //   localStorage.setItem('cardNumberValidity', 'false');
