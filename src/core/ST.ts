@@ -11,6 +11,7 @@ class ST {
   public jwt: string;
   public sitereference: string;
   public style: object;
+  public errorContainerId: string;
   public payments: object[];
   public fieldsIds: any;
 
@@ -34,16 +35,25 @@ class ST {
   private static _iframeSecurityCodeId: string = 'st-security-code-iframe';
   private static _iframeExpirationDateId: string = 'st-expiration-date-iframe';
 
-  constructor(style: object, jwt: string, fieldsIds: any, sitereference: string, payments: object[]) {
+  constructor(
+    style: object,
+    errorContainerId: string,
+    jwt: string,
+    fieldsIds: any,
+    sitereference: string,
+    payments: object[]
+  ) {
     const gatewayUrl = GATEWAY_URL;
     this.style = style;
     this.payments = payments;
     this.sitereference = sitereference;
     this.fieldsIds = fieldsIds;
+    this.errorContainerId = errorContainerId;
 
     const cardNumber = new Element();
     const securityCode = new Element();
     const expirationDate = new Element();
+    const notificationFrame = new Element();
 
     new CardinalCommerce(jwt, sitereference, gatewayUrl);
 
@@ -58,9 +68,12 @@ class ST {
     expirationDate.create('expirationDate');
     const expirationDateMounted = expirationDate.mount('st-expiration-date-iframe');
 
+    notificationFrame.create('notificationFrame');
+    const notificationFrameMounted = notificationFrame.mount('st-notification-frame-iframe');
+
     ST.registerElements(
-      [cardNumberMounted, securityCodeMounted, expirationDateMounted],
-      [this.fieldsIds.cardNumber, this.fieldsIds.securityCode, this.fieldsIds.expirationDate]
+      [cardNumberMounted, securityCodeMounted, expirationDateMounted, notificationFrameMounted],
+      [this.fieldsIds.cardNumber, this.fieldsIds.securityCode, this.fieldsIds.expirationDate, this.errorContainerId]
     );
 
     if (this._getAPMConfig(apmsNames.visaCheckout)) {

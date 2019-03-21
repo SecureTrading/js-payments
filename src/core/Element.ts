@@ -16,6 +16,8 @@ class Element {
       return Element.SECURITY_CODE_COMPONENT;
     } else if (name === Element.EXPIRATION_DATE_COMPONENT_NAME) {
       return Element.EXPIRATION_DATE_COMPONENT;
+    } else if (name === 'notificationFrame') {
+      return Element.NOTIFICATION_FRAME_COMPONENT;
     }
   }
 
@@ -25,6 +27,7 @@ class Element {
   public static CARD_NUMBER_COMPONENT: string = '/card-number.html';
   public static SECURITY_CODE_COMPONENT: string = '/security-code.html';
   public static EXPIRATION_DATE_COMPONENT: string = '/expiration-date.html';
+  public static NOTIFICATION_FRAME_COMPONENT: string = '/notification-frame.html';
 
   /**
    * Method for creating DOM elements
