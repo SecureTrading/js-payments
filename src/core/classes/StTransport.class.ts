@@ -2,7 +2,7 @@ import Utils from '../shared/Utils';
 import Language from '../shared/Language';
 import { IStRequest, StCodec } from './StCodec.class';
 
-interface IStTransportParams {
+export interface IStTransportParams {
   jwt: string;
   gatewayUrl?: string;
 }
