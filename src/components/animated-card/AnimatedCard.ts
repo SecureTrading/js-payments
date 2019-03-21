@@ -15,7 +15,6 @@ class AnimatedCard {
   public notFlippedCards = ['AMEX'];
 
   constructor() {
-    this.testRotate();
     this.setProperty('src', cardsLogos.amex, 'st-payment-logo');
     this.setProperty('src', cardsLogos.chip, 'st-chip-logo');
     this.cardElement = document.getElementById(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
@@ -40,12 +39,6 @@ class AnimatedCard {
   public flipCard() {
     const card = document.getElementById(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
     card.classList.add('flip');
-  }
-
-  public testRotate() {
-    window.addEventListener('click', () => {
-      this.flipCard();
-    });
   }
 
   public createCard() {}

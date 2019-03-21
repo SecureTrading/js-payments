@@ -10,6 +10,42 @@ body {
 
 .st-animated-card {
   width: 100%;
+  perspective: 600px;
+
+  &:hover &__content,
+  &.hover &__content {
+    transform: rotateY(-180deg);
+  }
+
+  &__content,
+  &__front,
+  &__back {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+  }
+
+  &__front,
+  &__back {
+    backface-visibility: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: $visa-gradient;
+    color: #999;
+    border-radius: 1.5rem;
+    box-shadow: 0 0 2rem 0 rgba(0, 0, 0, 0.24);
+    padding: 1.5rem 2.5rem;
+    box-sizing: border-box;
+    z-index: 2;
+  }
+
+  &__content {
+    transition: 0.6s;
+    transform-style: preserve-3d;
+    position: relative;
+  }
 
   &__logos {
     display: flex;
@@ -27,26 +63,7 @@ body {
   }
 
   &__front {
-    background: #ccc;
-    background: $visa-gradient;
-    color: #999;
-    border-radius: 1.5rem;
-    height: 100%;
-    width: 100%;
-    box-shadow: 0 0 2rem 0 rgba(0, 0, 0, 0.24);
-    transition: transform 1s;
-    transform-style: preserve-3d;
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-    position: absolute;
-    visibility: visible;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    width: 100%;
-    padding: 1.5rem 2.5rem;
-    box-sizing: border-box;
-    z-index: 2;
+    transform: rotateY(0deg);
   }
 
   &__payment-logo {
@@ -79,16 +96,8 @@ body {
     margin-bottom: 1.25rem;
   }
 
-  &__side {
-    transition: transform 1s;
-    transform-style: preserve-3d;
-  }
-
   &__back {
-    backface-visibility: visible;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
+    transform: rotateY(180deg);
   }
 
   &__signature {
