@@ -10,11 +10,12 @@ body {
 
 .st-animated-card {
   width: 100%;
-  perspective: 600px;
+  perspective: 60rem;
+  overflow: hidden;
 
   &:hover &__content,
   &.hover &__content {
-    transform: rotateY(-180deg);
+    @include flipY(-180deg);
   }
 
   &__content,
@@ -28,29 +29,28 @@ body {
 
   &__front,
   &__back {
-    backface-visibility: hidden;
     position: absolute;
     top: 0;
     left: 0;
     background: $visa-gradient;
-    color: #999;
+    backface-visibility: hidden;
     border-radius: 1.5rem;
-    box-shadow: 0 0 2rem 0 rgba(0, 0, 0, 0.24);
-    padding: 1.5rem 2.5rem;
+    box-shadow: $card-box-shadow;
     box-sizing: border-box;
     z-index: 2;
+    padding: 1.5rem 2.5rem;
   }
 
   &__content {
-    transition: 0.6s;
-    transform-style: preserve-3d;
     position: relative;
+    transition: 1200ms;
+    transform-style: preserve-3d;
   }
 
   &__logos {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
     height: 50%;
   }
 
@@ -63,7 +63,35 @@ body {
   }
 
   &__front {
-    transform: rotateY(0deg);
+    @include flipY(0deg);
+
+    &::after,
+    &::before {
+      position: absolute;
+      content: '';
+      opacity: 0.1;
+      background: $before-after-oval-gradient;
+    }
+
+    &::after {
+      height: 18rem;
+      width: 10rem;
+      bottom: 0;
+      left: 0;
+      border-radius: 0 60rem 0 0;
+    }
+
+    &::before {
+      height: 26rem;
+      width: 55rem;
+      border-radius: 165rem 0 0 0;
+      left: 3rem;
+      top: 6rem;
+    }
+  }
+
+  &__back {
+    @include flipY(180deg);
   }
 
   &__payment-logo {
@@ -75,20 +103,20 @@ body {
 
   &__label {
     font-family: $card-font;
-    font-size: 1rem;
-    font-weight: 700;
-    line-height: 1.1rem;
-    color: #bababa;
+    font-size: $card-label-font-size;
+    font-weight: bold;
+    color: $card-label-font-color;
     text-transform: uppercase;
+    line-height: 1.1rem;
   }
 
   &__value {
     font-family: $card-data-font;
-    font-weight: 700;
-    font-size: 2rem;
-    color: #cdcdcd;
-    line-height: 2rem;
+    font-size: $card-value-font-size;
+    font-weight: bold;
+    color: $card-value-font-color;
     text-shadow: -0.1rem 0.1rem 0.4rem rgba(0, 0, 0, 0.5);
+    line-height: 2rem;
     margin-top: 0.75rem;
   }
 
@@ -96,27 +124,26 @@ body {
     margin-bottom: 1.25rem;
   }
 
-  &__back {
-    transform: rotateY(180deg);
-  }
-
   &__signature {
     height: 10rem;
     width: 100%;
-    background-color: rgba(172, 172, 172, 0.25);
-    font-family: $card-data-font;
+    background-color: $signature-field-color;
     border-radius: 1rem;
+    margin-bottom: 2rem;
   }
 
   &__security-code {
-    background-color: #fff;
+    background-color: $security-code-field-color;
     height: 4rem;
     width: 23rem;
-    font-family: $card-data-font;
-    border-radius: 0.8rem;
+    font-family: $card-font;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    padding-left: 2rem;
   }
 }
 
 .flip {
-  transform: rotateY(-180deg);
+  @include flipY(-180deg);
 }
