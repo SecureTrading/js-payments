@@ -3,16 +3,7 @@ import Element from './Element';
 import { apmsNames } from './imports/apms';
 import CardinalCommerce from './classes/CardinalCommerce';
 import { GATEWAY_URL } from './imports/cardinalSettings';
-import *  as JwtDecode from 'jwt-decode';
-
-interface JwtPayload {
-  [key: string]: string;
-}
-
-interface Jwt {
-  payload: JwtPayload;
-}
-
+import { JwtPayload, Jwt } from "./shared/Jwt";
 
 /***
  * Establishes connection with ST, defines client.
@@ -61,8 +52,7 @@ class ST {
     this.fieldsIds = fieldsIds;
     this.errorContainerId = errorContainerId;
     
-    const decodedJwt = JwtDecode<Jwt>(jwt);
-    this.jwtPayload = decodedJwt.payload;
+    this.jwtPayload = new Jwt(jwt).getPayload();
 
     const cardNumber = new Element();
     const securityCode = new Element();
@@ -91,7 +81,7 @@ class ST {
     );
 
     if (this._getAPMConfig(apmsNames.visaCheckout)) {
-      const visa = new VisaCheckout(this._getAPMConfig(apmsNames.visaCheckout));
+      const visa = new VisaCheckout(this._getAPMConfig(apmsNames.visaCheckout), this.jwtPayload);
     }
   }
 
