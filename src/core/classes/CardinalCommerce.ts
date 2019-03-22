@@ -4,6 +4,7 @@ import { IStRequest } from './StCodec.class';
 import StTransport from './StTransport.class';
 import { IStTransportParams } from './StTransport.class';
 import DomMethods from './../shared/DomMethods';
+import { Jwt } from "./../shared/Jwt";
 
 /**
  * Cardinal Commerce class:
@@ -35,12 +36,11 @@ class CardinalCommerce {
   private _cardinalPayload: any;
   private _cart: string[] = [];
   private _payload = {
-    accounttypedescription: 'ECOM',
+    sitereference: '',
     expirydate: '01/20',
     pan: '4111111111111111',
     requesttypedescription: 'THREEDQUERY',
     securitycode: '123',
-    sitereference: '',
     termurl: 'http://something.com'
   };
   private _threedeinitRequestObject: IStRequest = {
@@ -55,9 +55,10 @@ class CardinalCommerce {
 
   private _transactionId: string;
 
-  constructor(jwt: string, sitereference: string, gatewayUrl: string) {
-    this._payload.sitereference = sitereference;
-    this._threedeinitRequestObject.sitereference = sitereference;
+  constructor(jwt: string, gatewayUrl: string) {
+    const stJwt = new Jwt(jwt);
+    this._payload.sitereference = stJwt.get("sitereference");
+    this._threedeinitRequestObject.sitereference = stJwt.get("sitereference");
     this._stTrasportParams = {
       gatewayUrl,
       jwt

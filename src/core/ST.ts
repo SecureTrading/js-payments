@@ -3,15 +3,12 @@ import Element from './Element';
 import { apmsNames } from './imports/apms';
 import CardinalCommerce from './classes/CardinalCommerce';
 import { GATEWAY_URL } from './imports/cardinalSettings';
-import { JwtPayload, Jwt } from "./shared/Jwt";
 
 /***
  * Establishes connection with ST, defines client.
  */
 class ST {
-  public jwtPayload: JwtPayload;
   public jwt: string;
-  public sitereference: string;
   public style: object;
   public errorContainerId: string;
   public payments: object[];
@@ -42,24 +39,20 @@ class ST {
     errorContainerId: string,
     jwt: string,
     fieldsIds: any,
-    sitereference: string,
     payments: object[]
   ) {
     const gatewayUrl = GATEWAY_URL;
     this.style = style;
     this.payments = payments;
-    this.sitereference = sitereference;
     this.fieldsIds = fieldsIds;
     this.errorContainerId = errorContainerId;
     
-    this.jwtPayload = new Jwt(jwt).getPayload();
-
     const cardNumber = new Element();
     const securityCode = new Element();
     const expirationDate = new Element();
     const notificationFrame = new Element();
 
-    new CardinalCommerce(jwt, sitereference, gatewayUrl);
+    new CardinalCommerce(jwt, gatewayUrl);
 
     cardNumber.create('cardNumber');
     this.submitListener();
@@ -81,7 +74,7 @@ class ST {
     );
 
     if (this._getAPMConfig(apmsNames.visaCheckout)) {
-      const visa = new VisaCheckout(this._getAPMConfig(apmsNames.visaCheckout), this.jwtPayload);
+      const visa = new VisaCheckout(this._getAPMConfig(apmsNames.visaCheckout), jwt);
     }
   }
 

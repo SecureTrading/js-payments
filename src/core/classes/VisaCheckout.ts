@@ -1,6 +1,7 @@
 declare const V: any;
 import { VISA_CHECKOUT_URLS } from './../imports/apms';
-import { JwtPayload } from "./../shared/Jwt";
+import { Jwt } from "./../shared/Jwt";
+
 /**
  *  Visa Checkout configuration class; sets up Visa e-wallet
  */
@@ -42,19 +43,22 @@ class VisaCheckout {
     apikey: '' as string,
     livestatus: 0,
     paymentRequest: {
-      currencyCode: 'USD' as string,
-      subtotal: '11.00' as string
+      currencyCode: '' as string,
+      subtotal: '' as string
     },
     placement: 'body'
   };
 
-  constructor(config: any, jwtPayload: JwtPayload) {
+  constructor(config: any, jwt: string) {
     const {
       props: { apikey, livestatus, placement }
     } = config;
+    const stJwt = new Jwt(jwt);
     this._initConfiguration.apikey = apikey;
     this._initConfiguration.livestatus = livestatus;
     this._initConfiguration.placement = placement;
+    this._initConfiguration.paymentRequest.currencyCode = stJwt.get("currencyiso3a");
+    this._initConfiguration.paymentRequest.subtotal = stJwt.get("baseamount"); // TODO is subtotal base or main units - perhaps put into Jwt to map from one to the other?
     this._checkLiveStatus();
     this._initVisaConfiguration();
   }

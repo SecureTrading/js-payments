@@ -2,9 +2,8 @@ import Language from '../shared/Language';
 
 interface IStRequest {
   requesttypedescription: string;
+  sitereference: string;
   pan?: string;
-  sitereference?: string;
-  accounttypedescription?: string;
   expirydate?: string;
   securitycode?: string;
   termurl?: string; // TODO shouldn't be needed for CC request but this needs to wait for 153 release
