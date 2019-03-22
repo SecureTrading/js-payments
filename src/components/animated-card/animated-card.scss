@@ -41,27 +41,6 @@ body {
     padding: 1.5rem 2.5rem;
   }
 
-  &__content {
-    position: relative;
-    transition: 1200ms;
-    transform-style: preserve-3d;
-  }
-
-  &__logos {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 50%;
-  }
-
-  &__chip-logo {
-    align-self: center;
-
-    img {
-      max-width: 5rem;
-    }
-  }
-
   &__front {
     @include flipY(0deg);
 
@@ -92,6 +71,31 @@ body {
 
   &__back {
     @include flipY(180deg);
+  }
+
+  &__flip-card {
+    @include flipY(-180deg);
+  }
+
+  &__content {
+    position: relative;
+    transition: 1200ms;
+    transform-style: preserve-3d;
+  }
+
+  &__logos {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 50%;
+  }
+
+  &__chip-logo {
+    align-self: center;
+
+    img {
+      max-width: 5rem;
+    }
   }
 
   &__payment-logo {
@@ -142,8 +146,4 @@ body {
     align-items: center;
     padding-left: 2rem;
   }
-}
-
-.flip {
-  @include flipY(-180deg);
 }

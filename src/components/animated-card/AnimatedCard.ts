@@ -38,7 +38,7 @@ class AnimatedCard {
 
   public flipCard() {
     const card = document.getElementById(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
-    card.classList.add('flip');
+    card.classList.add('st-animated-card__flip-card');
   }
 
   public createCard() {}
