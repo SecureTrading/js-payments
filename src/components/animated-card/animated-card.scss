@@ -41,6 +41,46 @@ body {
     padding: 1.5rem 2.5rem;
   }
 
+  &__amex {
+    background: $amex-gradient;
+  }
+
+  &__astropaycard {
+    background: $astro-pay-gradient;
+  }
+
+  &__diners {
+    background: $diners-gradient;
+  }
+
+  &__discover {
+    background: $discover-gradient;
+  }
+
+  &__jcb {
+    background: $jcb-gradient;
+  }
+
+  &__laser {
+    background: $laser-gradient;
+  }
+
+  &__maestro {
+    background: $maestro-gradient;
+  }
+
+  &__mastercard {
+    background: $master-card-gradient;
+  }
+
+  &__piba {
+    background: $piba-gradient;
+  }
+
+  &__visa {
+    background: $visa-gradient;
+  }
+
   &__front {
     @include flipY(0deg);
 
@@ -79,7 +119,7 @@ body {
 
   &__content {
     position: relative;
-    transition: 1200ms;
+    transition: 1.2s;
     transform-style: preserve-3d;
   }
 
@@ -92,17 +132,20 @@ body {
 
   &__chip-logo {
     align-self: center;
-
-    img {
-      max-width: 5rem;
-    }
   }
 
   &__payment-logo {
     align-self: flex-start;
-    height: 100%;
-    border-top-left-radius: 100%;
-    border-bottom-left-radius: 100%;
+    height: 12rem;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #fff;
+    border-radius: 0 0 0 10rem;
+    width: 12rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   &__label {

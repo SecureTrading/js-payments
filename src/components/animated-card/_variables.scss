@@ -18,8 +18,8 @@ $astropay-background-color-2: #000;
 $amex-background-color-1: #3ca2b7;
 $amex-background-color-2: #16343c;
 
-$premierinn-background-color-1: #461259;
-$premierinn-background-color-2: #6b2c6f;
+$piba-background-color-1: #461259;
+$piba-background-color-2: #6b2c6f;
 
 $maestro-background-color-1: #3c62b7;
 $maestro-background-color-2: #1c3380;
@@ -36,9 +36,10 @@ $diners-gradient: linear-gradient(222.64deg, $diners-background-color-1 0%, $din
 $master-card-gradient: radial-gradient(circle, $mastercard-background-color-1 0%, $mastercard-background-color-2 100%);
 $astro-pay-gradient: radial-gradient(circle, $astropay-background-color-1 0%, $astropay-background-color-2 100%);
 $amex-gradient: radial-gradient(circle, $amex-background-color-1 0%, $amex-background-color-2 100%);
-$premier-inn-gradient: radial-gradient(circle, $premierinn-background-color-1 0%, $premierinn-background-color-2 100%);
+$piba-gradient: radial-gradient(circle, $piba-background-color-1 0%, $piba-background-color-2 100%);
 $maestro-gradient: radial-gradient(circle, $maestro-background-color-1 0%, $maestro-background-color-2 100%);
 $jcb-gradient: radial-gradient(circle, $jcb-background-color-1 0%, $jcb-background-color-2 100%);
+$laser-gradient: radial-gradient(circle, #970082 0%, #312E9A 100%);
 
 $before-after-oval-gradient: linear-gradient(180deg, #333 0%, #222 100%);
 

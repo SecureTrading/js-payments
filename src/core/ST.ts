@@ -19,6 +19,7 @@ class ST {
   public static cardNumberComponent = '/card-number.html';
   public static expirationDateComponent = '/expiration-date.html';
   public static securityCodeComponent = '/security-code.html';
+  public static animatedCardComponent = 'http://localhost:8080/animated-card.html';
 
   /**
    * Register fields in clients form
@@ -35,6 +36,7 @@ class ST {
   private static _iframeCreditCardId: string = 'st-card-number-iframe';
   private static _iframeSecurityCodeId: string = 'st-security-code-iframe';
   private static _iframeExpirationDateId: string = 'st-expiration-date-iframe';
+  private static _iframeAnimatedCardId: string = 'st-animated-card-iframe';
 
   constructor(
     style: object,
@@ -92,6 +94,21 @@ class ST {
     if (this._getAPMConfig(apmsNames.visaCheckout)) {
       const visa = new VisaCheckout(this._getAPMConfig(apmsNames.visaCheckout));
     }
+
+    document.getElementById('test-button').addEventListener('click', () => {
+      const anmatedCardIframe = document.getElementById(ST._iframeAnimatedCardId) as HTMLIFrameElement;
+      const animatedCardContentWindow = anmatedCardIframe.contentWindow;
+      animatedCardContentWindow.postMessage(
+        {
+          //@ts-ignore
+          type: document.getElementById('animated-card-number-brand').value,
+          name: 'cardNumber',
+          //@ts-ignore
+          value: document.getElementById('animated-card-number').value
+        },
+        ST.animatedCardComponent
+      );
+    });
   }
 
   /**
@@ -104,12 +121,14 @@ class ST {
         const creditCardIframe = document.getElementById(ST._iframeCreditCardId) as HTMLIFrameElement;
         const securityCodeIframe = document.getElementById(ST._iframeSecurityCodeId) as HTMLIFrameElement;
         const expirationDateIframe = document.getElementById(ST._iframeExpirationDateId) as HTMLIFrameElement;
+        const anmatedCardIframe = document.getElementById(ST._iframeAnimatedCardId) as HTMLIFrameElement;
         const creditCardContentWindow = creditCardIframe.contentWindow;
         const securityCodeContentWindow = securityCodeIframe.contentWindow;
         const expirationDateContentWindow = expirationDateIframe.contentWindow;
-        creditCardContentWindow.postMessage('message', ST.cardNumberComponent);
-        securityCodeContentWindow.postMessage('message', ST.securityCodeComponent);
-        expirationDateContentWindow.postMessage('message', ST.expirationDateComponent);
+        const animatedCardContentWindow = anmatedCardIframe.contentWindow;
+        // creditCardContentWindow.postMessage('message', ST.cardNumberComponent);
+        // securityCodeContentWindow.postMessage('message', ST.securityCodeComponent);
+        // expirationDateContentWindow.postMessage('message', ST.expirationDateComponent);
       });
     });
   };
