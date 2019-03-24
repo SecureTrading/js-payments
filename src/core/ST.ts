@@ -10,15 +10,10 @@ import { GATEWAY_URL } from './imports/cardinalSettings';
 export default class ST {
   public jwt: string;
   public sitereference: string;
-  public style: object;
-  public errorContainerId: string;
-  public payments: object[];
   public fieldsIds: any;
-
-  public static cardNumberComponent = '/card-number.html';
-  public static expirationDateComponent = '/expiration-date.html';
-  public static securityCodeComponent = '/security-code.html';
-  public static controlFrameComponent = '/control-frame.html';
+  public errorContainerId: string;
+  public style: object;
+  public payments: object[];
 
   /**
    * Register fields in clients form
@@ -32,16 +27,12 @@ export default class ST {
     });
   }
 
-  private static _iframeCreditCardId: string = 'st-card-number-iframe';
-  private static _iframeSecurityCodeId: string = 'st-security-code-iframe';
-  private static _iframeExpirationDateId: string = 'st-expiration-date-iframe';
-
   constructor(
-    style: object,
-    errorContainerId: string,
     jwt: string,
-    fieldsIds: any,
     sitereference: string,
+    fieldsIds: any,
+    errorContainerId: string,
+    style: object,
     payments: object[]
   ) {
     const gatewayUrl = GATEWAY_URL;
@@ -55,24 +46,34 @@ export default class ST {
     const securityCode = new Element();
     const expirationDate = new Element();
     const notificationFrame = new Element();
+    const controlFrame = new Element();
 
     new CardinalCommerce(jwt, sitereference, gatewayUrl);
 
-    cardNumber.create('cardNumber');
-    const cardNumberMounted = cardNumber.mount('st-card-number-iframe');
+    cardNumber.create(Element.CARD_NUMBER_COMPONENT_NAME);
+    const cardNumberMounted = cardNumber.mount(Element.CARD_NUMBER_COMPONENT_FRAME);
 
-    securityCode.create('securityCode');
-    const securityCodeMounted = securityCode.mount('st-security-code-iframe');
+    securityCode.create(Element.SECURITY_CODE_COMPONENT_NAME);
+    const securityCodeMounted = securityCode.mount(Element.SECURITY_CODE_COMPONENT_FRAME);
 
-    expirationDate.create('expirationDate');
-    const expirationDateMounted = expirationDate.mount('st-expiration-date-iframe');
+    expirationDate.create(Element.EXPIRATION_DATE_COMPONENT_NAME);
+    const expirationDateMounted = expirationDate.mount(Element.EXPIRATION_DATE_COMPONENT_FRAME);
 
-    notificationFrame.create('notificationFrame');
-    const notificationFrameMounted = notificationFrame.mount('st-notification-frame-iframe');
+    notificationFrame.create(Element.NOTIFICATION_FRAME_COMPONENT_NAME);
+    const notificationFrameMounted = notificationFrame.mount(Element.NOTIFICATION_FRAME_COMPONENT_FRAME);
+
+    controlFrame.create(Element.CONTROL_FRAME_COMPONENT_NAME);
+    const controlFrameMounted = controlFrame.mount(Element.CONTROL_FRAME_COMPONENT_FRAME);
 
     ST.registerElements(
-      [cardNumberMounted, securityCodeMounted, expirationDateMounted, notificationFrameMounted],
-      [this.fieldsIds.cardNumber, this.fieldsIds.securityCode, this.fieldsIds.expirationDate, this.errorContainerId]
+      [cardNumberMounted, securityCodeMounted, expirationDateMounted, notificationFrameMounted, controlFrameMounted],
+      [
+        this.fieldsIds.cardNumber,
+        this.fieldsIds.securityCode,
+        this.fieldsIds.expirationDate,
+        this.errorContainerId,
+        this.fieldsIds.controlFrame
+      ]
     );
 
     if (this._getAPMConfig(apmsNames.visaCheckout)) {

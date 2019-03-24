@@ -22,7 +22,6 @@ export default class ControlFrame {
   };
 
   constructor() {
-    // @ts-ignore
     this._buttonElement = ControlFrame.ifFieldExists();
     this._messageBus = new MessageBus();
     this._payment = new Payment();
