@@ -1,12 +1,18 @@
-import ST from './ST';
-
 /***
  * Defines input with iframe source
  * Can be styled by predefined JSON.
  */
-class Element {
+export default class Element {
   private _name: string;
   private _iframeSrc: string;
+
+  public static CARD_NUMBER_COMPONENT_NAME: string = 'cardNumber';
+  public static SECURITY_CODE_COMPONENT_NAME: string = 'securityCode';
+  public static EXPIRATION_DATE_COMPONENT_NAME: string = 'expirationDate';
+  public static CARD_NUMBER_COMPONENT: string = '/card-number.html';
+  public static SECURITY_CODE_COMPONENT: string = '/security-code.html';
+  public static EXPIRATION_DATE_COMPONENT: string = '/expiration-date.html';
+  public static NOTIFICATION_FRAME_COMPONENT: string = '/notification-frame.html';
 
   /***
    * Function which defines iframe src attribute
@@ -14,14 +20,14 @@ class Element {
    * @returns URL of input iframe
    */
   public static getComponentAddress(name: string) {
-    if (name === 'cardNumber') {
-      return ST.cardNumberComponent;
-    } else if (name === 'securityCode') {
-      return ST.securityCodeComponent;
-    } else if (name === 'expirationDate') {
-      return ST.expirationDateComponent;
-    } else if (name === 'controlFrame') {
-      return ST.controlFrameComponent;
+    if (name === Element.CARD_NUMBER_COMPONENT_NAME) {
+      return Element.CARD_NUMBER_COMPONENT;
+    } else if (name === Element.SECURITY_CODE_COMPONENT_NAME) {
+      return Element.SECURITY_CODE_COMPONENT;
+    } else if (name === Element.EXPIRATION_DATE_COMPONENT_NAME) {
+      return Element.EXPIRATION_DATE_COMPONENT;
+    } else if (name === 'notificationFrame') {
+      return Element.NOTIFICATION_FRAME_COMPONENT;
     }
   }
 
@@ -62,5 +68,3 @@ class Element {
     return iframe;
   }
 }
-
-export default Element;

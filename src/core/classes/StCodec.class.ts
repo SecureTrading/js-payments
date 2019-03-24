@@ -7,6 +7,7 @@ interface IStRequest {
   accounttypedescription?: string;
   expirydate?: string;
   securitycode?: string;
+  termurl?: string; // TODO shouldn't be needed for CC request but this needs to wait for 153 release
 }
 
 /***
@@ -15,13 +16,7 @@ interface IStRequest {
 class StCodec {
   public static CONTENT_TYPE = 'application/json';
   public static VERSION = '1.00';
-  public static SUPPORTED_REQUEST_TYPES = [
-    'WALLETVERIFY',
-    'THREEDINIT',
-    'THREEDQUERY',
-    'CACHETOKENISE',
-    'AUTH'
-  ];
+  public static SUPPORTED_REQUEST_TYPES = ['WALLETVERIFY', 'THREEDINIT', 'THREEDQUERY', 'CACHETOKENISE', 'AUTH'];
 
   private _requestId: string;
   private _jwt: string;
@@ -74,13 +69,9 @@ class StCodec {
   public encode(requestObject: IStRequest) {
     if (
       Object.keys(requestObject).length < 2 ||
-      !StCodec.SUPPORTED_REQUEST_TYPES.includes(
-        requestObject.requesttypedescription
-      )
+      !StCodec.SUPPORTED_REQUEST_TYPES.includes(requestObject.requesttypedescription)
     ) {
-      throw new Error(
-        Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST
-      );
+      throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST);
     }
     return JSON.stringify(this.buildRequestObject(requestObject));
   }
@@ -90,7 +81,7 @@ class StCodec {
    * @param responseData The response from the gateway
    * @return The content of the response that can be used in the following processes
    */
-  public verifyResponseObject(responseData: any): object {
+  public static verifyResponseObject(responseData: any): object {
     // Ought we keep hold of the requestreference (eg. log it to console)
     // So that we can link these requests up with the gateway?
     if (
@@ -101,9 +92,7 @@ class StCodec {
         responseData.response.length === 1
       )
     ) {
-      throw new Error(
-        Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE
-      );
+      throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
     }
     const responseContent = responseData.response[0];
     if (responseContent.errorcode !== '0') {
@@ -123,12 +112,10 @@ class StCodec {
     return new Promise((resolve, reject) => {
       if ('json' in responseObject) {
         responseObject.json().then(responseData => {
-          resolve(this.verifyResponseObject(responseData));
+          resolve(StCodec.verifyResponseObject(responseData));
         });
       } else {
-        reject(
-          new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE)
-        );
+        reject(new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
       }
     });
   }

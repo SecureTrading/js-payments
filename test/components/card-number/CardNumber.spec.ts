@@ -1,8 +1,8 @@
 import each from 'jest-each';
 import CardNumber from '../../../src/components/card-number/CardNumber';
 import { cardsLogos } from '../../../src/core/imports/images';
-import Selectors from "../../../src/core/shared/Selectors";
-import FormField from "../../../src/core/shared/FormField";
+import Selectors from '../../../src/core/shared/Selectors';
+import FormField from '../../../src/core/shared/FormField';
 
 describe('CardNumber', () => {
   let cardNumber: CardNumber;
