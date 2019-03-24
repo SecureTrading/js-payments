@@ -21,6 +21,8 @@ class VisaCheckout {
   private _paymentStatus: string;
   private _paymentDetails: object;
   private _paymentError: object;
+  private _livestatus: number = 0;
+  private _placement: string = 'body';
 
   set paymentDetails(value: object) {
     this._paymentDetails = value;
@@ -41,12 +43,10 @@ class VisaCheckout {
    */
   private _initConfiguration = {
     apikey: '' as string,
-    livestatus: 0,
     paymentRequest: {
       currencyCode: '' as string,
       subtotal: '' as string
-    },
-    placement: 'body'
+    }
   };
 
   constructor(config: any, jwt: string) {
@@ -54,11 +54,11 @@ class VisaCheckout {
       props: { apikey, livestatus, placement }
     } = config;
     const stJwt = new Jwt(jwt);
+    this._livestatus = livestatus;
+    this._placement = placement;
     this._initConfiguration.apikey = apikey;
-    this._initConfiguration.livestatus = livestatus;
-    this._initConfiguration.placement = placement;
-    this._initConfiguration.paymentRequest.currencyCode = stJwt.get("currencyiso3a");
-    this._initConfiguration.paymentRequest.subtotal = stJwt.get("baseamount"); // TODO is subtotal base or main units - perhaps put into Jwt to map from one to the other?
+    this._initConfiguration.paymentRequest.currencyCode = stJwt.currencyiso3a;
+    this._initConfiguration.paymentRequest.subtotal = stJwt.mainamount;
     this._checkLiveStatus();
     this._initVisaConfiguration();
   }
@@ -104,8 +104,8 @@ class VisaCheckout {
    * @private
    */
   private _attachVisaButton() {
-    const element = document.getElementById(this._initConfiguration.placement)
-      ? document.getElementById(this._initConfiguration.placement)
+    const element = document.getElementById(this._placement)
+      ? document.getElementById(this._placement)
       : document.getElementsByTagName('body')[0];
     element.appendChild(this._createVisaButton());
     return element;
@@ -116,7 +116,7 @@ class VisaCheckout {
    * @private
    */
   private _checkLiveStatus() {
-    if (this._initConfiguration.livestatus) {
+    if (this._livestatus) {
       this._visaCheckoutButtonProps.src = VISA_CHECKOUT_URLS.PROD_BUTTON_URL;
       this._sdkAddress = VISA_CHECKOUT_URLS.PROD_SDK;
     }
