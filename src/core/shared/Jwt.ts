@@ -1,4 +1,4 @@
-import *  as JwtDecode from 'jwt-decode';
+import * as JwtDecode from 'jwt-decode';
 import { Money, Currencies } from 'ts-money';
 
 // TODO docstrings
