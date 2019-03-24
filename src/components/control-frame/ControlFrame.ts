@@ -4,9 +4,9 @@ import Payment from '../../core/shared/Payment';
 
 export default class ControlFrame {
   private _buttonElement: HTMLButtonElement;
-  private messageBus: MessageBus;
-  private payment: Payment;
-  private formFields = {
+  private _messageBus: MessageBus;
+  private _payment: Payment;
+  private _formFields = {
     cardNumber: {
       validity: '',
       value: ''
@@ -24,8 +24,8 @@ export default class ControlFrame {
   constructor() {
     // @ts-ignore
     this._buttonElement = ControlFrame.ifFieldExists();
-    this.messageBus = new MessageBus();
-    this.payment = new Payment();
+    this._messageBus = new MessageBus();
+    this._payment = new Payment();
     this.onInit();
   }
 
@@ -40,38 +40,38 @@ export default class ControlFrame {
   }
 
   private onClick() {
-    this.payment.cacheTokenize({
-      pan: this.formFields.cardNumber.value,
-      expirydate: this.formFields.expirationDate.value,
-      securitycode: this.formFields.securityCode.value
+    this._payment.cacheTokenize({
+      pan: this._formFields.cardNumber.value,
+      expirydate: this._formFields.expirationDate.value,
+      securitycode: this._formFields.securityCode.value
     });
   }
 
   private initSubscriptions() {
-    this.messageBus.subscribe(MessageBus.EVENTS.CARD_NUMBER_CHANGE, (data: any) => {
+    this._messageBus.subscribe(MessageBus.EVENTS.CARD_NUMBER_CHANGE, (data: any) => {
       this.onCardNumberStateChange(data);
     });
-    this.messageBus.subscribe(MessageBus.EVENTS.EXPIRATION_DATE_CHANGE, (data: any) => {
+    this._messageBus.subscribe(MessageBus.EVENTS.EXPIRATION_DATE_CHANGE, (data: any) => {
       this.onExpirationDateStateChange(data);
     });
-    this.messageBus.subscribe(MessageBus.EVENTS.SECURITY_CODE_CHANGE, (data: any) => {
+    this._messageBus.subscribe(MessageBus.EVENTS.SECURITY_CODE_CHANGE, (data: any) => {
       this.onSecurityCodeStateChange(data);
     });
   }
 
   private onCardNumberStateChange(data: any) {
-    this.formFields.cardNumber.validity = data.validity;
-    this.formFields.cardNumber.value = data.value;
+    this._formFields.cardNumber.validity = data.validity;
+    this._formFields.cardNumber.value = data.value;
   }
 
   private onExpirationDateStateChange(data: any) {
-    this.formFields.expirationDate.validity = data.validity;
-    this.formFields.expirationDate.value = data.value;
+    this._formFields.expirationDate.validity = data.validity;
+    this._formFields.expirationDate.value = data.value;
   }
 
   private onSecurityCodeStateChange(data: any) {
-    this.formFields.securityCode.validity = data.validity;
-    this.formFields.securityCode.value = data.value;
+    this._formFields.securityCode.validity = data.validity;
+    this._formFields.securityCode.value = data.value;
   }
 
   private initEventListeners() {

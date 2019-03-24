@@ -1,5 +1,3 @@
-import MessageBus from './shared/MessageBus';
-
 /***
  * Establishes connection with ST, defines client.
  */
@@ -9,11 +7,7 @@ export default class ST {
   public static securityCodeComponent = '/security-code.html';
   public static controlFrameComponent = '/control-frame.html';
 
-  private readonly messageBus: MessageBus;
-
-  constructor() {
-    this.messageBus = new MessageBus();
-  }
+  constructor() {}
 
   /**
    * Register fields in clients form

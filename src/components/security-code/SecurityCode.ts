@@ -7,12 +7,12 @@ import MessageBus from '../../core/shared/MessageBus';
  */
 export default class SecurityCode extends FormField {
   private static INPUT_LENGTH: number = 3;
-  private messageBus: MessageBus;
+  private _messageBus: MessageBus;
 
   constructor() {
     super(Selectors.SECURITY_CODE_INPUT_SELECTOR, Selectors.SECURITY_CODE_MESSAGE_SELECTOR);
 
-    this.messageBus = new MessageBus();
+    this._messageBus = new MessageBus();
 
     this.setAttributes({
       maxlength: SecurityCode.INPUT_LENGTH,
@@ -31,11 +31,11 @@ export default class SecurityCode extends FormField {
 
   private sendState() {
     let formFieldState: FormFieldState = this.getState();
-    let messageBusEvent: MessageBusPublishEvent = {
+    let messageBusEvent: MessageBusEvent = {
       type: MessageBus.EVENTS.SECURITY_CODE_CHANGE,
       data: formFieldState
     };
-    this.messageBus.publish(messageBusEvent);
+    this._messageBus.publish(messageBusEvent);
   }
 
   onInput(event: Event) {

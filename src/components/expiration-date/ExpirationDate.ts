@@ -9,12 +9,12 @@ import MessageBus from '../../core/shared/MessageBus';
 export default class ExpirationDate extends FormField {
   private static INPUT_MAX_LENGTH: number = 5;
   private static INPUT_PATTERN: string = '^(0[1-9]|1[0-2])\\/([0-9]{2})$';
-  private messageBus: MessageBus;
+  private _messageBus: MessageBus;
 
   constructor() {
     super(Selectors.EXPIRATION_DATE_INPUT_SELECTOR, Selectors.EXPIRATION_DATE_MESSAGE_SELECTOR);
 
-    this.messageBus = new MessageBus();
+    this._messageBus = new MessageBus();
 
     this.setAttributes({
       maxlength: ExpirationDate.INPUT_MAX_LENGTH,
@@ -33,11 +33,11 @@ export default class ExpirationDate extends FormField {
 
   private sendState() {
     let formFieldState: FormFieldState = this.getState();
-    let messageBusEvent: MessageBusPublishEvent = {
+    let messageBusEvent: MessageBusEvent = {
       type: MessageBus.EVENTS.EXPIRATION_DATE_CHANGE,
       data: formFieldState
     };
-    this.messageBus.publish(messageBusEvent);
+    this._messageBus.publish(messageBusEvent);
   }
 
   onInput(event: Event) {

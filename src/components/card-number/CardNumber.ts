@@ -10,15 +10,15 @@ import MessageBus from '../../core/shared/MessageBus';
  * Card number validation class
  */
 export default class CardNumber extends FormField {
-  private binLookup: BinLookup;
-  public brand: BrandDetailsType;
-
-  private _cardType: string;
-  private _cardLength: [];
   private static DEFAULT_CARD_LENGTH = 16;
   private static STANDARD_CARD_FORMAT = '(\\d{1,4})(\\d{1,4})?(\\d{1,4})?(\\d+)?';
   private static MESSAGE_ELEMENT_ID = 'st-card-number-message';
-  private messageBus: MessageBus;
+  private _binLookup: BinLookup;
+  private _cardType: string;
+  private _cardLength: [];
+  private _messageBus: MessageBus;
+
+  public brand: BrandDetailsType;
 
   get cardType(): string {
     return this._cardType;
@@ -31,7 +31,7 @@ export default class CardNumber extends FormField {
   constructor() {
     super(Selectors.CARD_NUMBER_INPUT_SELECTOR, Selectors.CARD_NUMBER_MESSAGE_SELECTOR);
 
-    this.messageBus = new MessageBus();
+    this._messageBus = new MessageBus();
 
     this.setAttributes({
       maxlength: CardNumber.DEFAULT_CARD_LENGTH,
@@ -53,12 +53,12 @@ export default class CardNumber extends FormField {
 
   private sendState() {
     let formFieldState: FormFieldState = this.getState();
-    let messageBusEvent: MessageBusPublishEvent = {
+    let messageBusEvent: MessageBusEvent = {
       type: MessageBus.EVENTS.CARD_NUMBER_CHANGE,
       data: formFieldState
     };
 
-    this.messageBus.publish(messageBusEvent);
+    this._messageBus.publish(messageBusEvent);
   }
 
   onInput(event: Event) {

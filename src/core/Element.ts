@@ -58,6 +58,7 @@ class Element {
   public mount(fieldId: string) {
     const iframe = Element.createFormElement('iframe', fieldId);
     iframe.setAttribute('src', this._iframeSrc);
+    iframe.setAttribute('name', fieldId);
     return iframe;
   }
 }
