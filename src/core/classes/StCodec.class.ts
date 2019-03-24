@@ -1,5 +1,5 @@
 import Language from '../shared/Language';
-import { Jwt } from "./../shared/Jwt";
+import { StJwt } from "../shared/StJwt";
 
 interface IStRequest {
   requesttypedescription: string;
@@ -53,7 +53,7 @@ class StCodec {
         {
           ...requestData,
           requestid: this._requestId,
-          sitereference: new Jwt(this._jwt).sitereference
+          sitereference: new StJwt(this._jwt).sitereference
         }
       ],
       version: StCodec.VERSION

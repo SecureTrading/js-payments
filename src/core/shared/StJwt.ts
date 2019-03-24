@@ -3,21 +3,21 @@ import { Money, Currencies } from 'ts-money';
 
 // TODO docstrings
 
-export interface JwtPayload {
+export interface StJwtPayload {
     [key: string]: string;
 }
 
-export interface JwtObj {
-    payload: JwtPayload;
+export interface StJwtObj {
+    payload: StJwtPayload;
 }
 
-export class Jwt {
+export class StJwt {
 
-    private _decodedJwt: JwtObj;
-    public payload: JwtPayload;
+    private _decodedJwt: StJwtObj;
+    public payload: StJwtPayload;
 
     constructor(jwt: string) {
-        this._decodedJwt = JwtDecode<JwtObj>(jwt);
+        this._decodedJwt = JwtDecode<StJwtObj>(jwt);
         this.payload = this._decodedJwt.payload;
     }
 

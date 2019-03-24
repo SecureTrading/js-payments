@@ -1,6 +1,6 @@
 declare const V: any;
 import { VISA_CHECKOUT_URLS } from './../imports/apms';
-import { Jwt } from "./../shared/Jwt";
+import { StJwt } from "../shared/StJwt";
 
 /**
  *  Visa Checkout configuration class; sets up Visa e-wallet
@@ -53,7 +53,7 @@ class VisaCheckout {
     const {
       props: { apikey, livestatus, placement }
     } = config;
-    const stJwt = new Jwt(jwt);
+    const stJwt = new StJwt(jwt);
     this._livestatus = livestatus;
     this._placement = placement;
     this._initConfiguration.apikey = apikey;
