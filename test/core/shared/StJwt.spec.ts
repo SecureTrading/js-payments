@@ -14,8 +14,8 @@ describe('StJwt', () => {
         [mainamountUsdJwt, "example12345", "USD", "1234567.89"],
       ]).test('StJwt contents', (jwt, expectedSite, expectedCurrency, expectedMainamount) => {
           let testJwt = new StJwt(jwt);
-          expect(testJwt.payload.sitereference).toBe(expectedSite);
-          expect(testJwt.payload.currencyiso3a).toBe(expectedCurrency);
+          expect(testJwt.sitereference).toBe(expectedSite);
+          expect(testJwt.currencyiso3a).toBe(expectedCurrency);
           expect(testJwt.mainamount).toBe(expectedMainamount);
       });
 });
