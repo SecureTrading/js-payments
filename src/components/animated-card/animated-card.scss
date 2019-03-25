@@ -13,11 +13,6 @@ body {
   perspective: 60rem;
   overflow: hidden;
 
-  &:hover &__content,
-  &.hover &__content {
-    @include flipY(-180deg);
-  }
-
   &__content,
   &__front,
   &__back {
@@ -35,50 +30,93 @@ body {
     background: $visa-gradient;
     backface-visibility: hidden;
     border-radius: 1.5rem;
-    box-shadow: $card-box-shadow;
     box-sizing: border-box;
     z-index: 2;
     padding: 1.5rem 2.5rem;
   }
 
+  .st-animated-card__payment-logo-img {
+    @include centerLogo(4rem, 1.5rem);
+  }
+
   &__amex {
     background: $amex-gradient;
+
+    .st-animated-card__payment-logo-img {
+      @include centerLogo(2rem, 1.5rem);
+    }
   }
 
   &__astropaycard {
     background: $astro-pay-gradient;
+
+    .st-animated-card__payment-logo-img {
+      @include centerLogo(3rem, 2rem);
+    }
   }
 
   &__diners {
     background: $diners-gradient;
+
+    .st-animated-card__payment-logo-img {
+      @include centerLogo(2rem, 1rem);
+    }
   }
 
   &__discover {
     background: $discover-gradient;
+
+    .st-animated-card__payment-logo-img {
+      @include centerLogo(2rem, 1rem);
+    }
   }
 
   &__jcb {
     background: $jcb-gradient;
+
+    .st-animated-card__payment-logo-img {
+      @include centerLogo(2rem, 1rem);
+    }
   }
 
   &__laser {
     background: $laser-gradient;
+
+    .st-animated-card__payment-logo-img {
+      @include centerLogo(2rem, 2rem);
+    }
   }
 
   &__maestro {
     background: $maestro-gradient;
+
+    .st-animated-card__payment-logo-img {
+      @include centerLogo(2rem, 1rem);
+    }
   }
 
   &__mastercard {
     background: $master-card-gradient;
+
+    .st-animated-card__payment-logo-img {
+      @include centerLogo(2rem, 1.5rem);
+    }
   }
 
   &__piba {
     background: $piba-gradient;
+
+    .st-animated-card__payment-logo-img {
+      @include centerLogo(1rem, 1rem);
+    }
   }
 
   &__visa {
     background: $visa-gradient;
+
+    .st-animated-card__payment-logo-img {
+      @include centerLogo(4rem, 1.5rem);
+    }
   }
 
   &__front {
@@ -113,7 +151,7 @@ body {
     @include flipY(180deg);
   }
 
-  &__flip-card {
+  &__flip-card &__content {
     @include flipY(-180deg);
   }
 
@@ -168,6 +206,7 @@ body {
   }
 
   &__pan {
+    height: 4rem;
     margin-bottom: 1.25rem;
   }
 

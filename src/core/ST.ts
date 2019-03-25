@@ -112,7 +112,6 @@ export default class ST {
       );
     });
 
-    console.log(animatedCardNumber);
     animatedCardNumber.addEventListener('input', () => {
       animatedCardContentWindow.postMessage(
         {

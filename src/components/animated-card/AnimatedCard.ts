@@ -74,31 +74,46 @@ class AnimatedCard {
     let themeObject;
     switch (this.cardDetails.type) {
       case AnimatedCard.CARD_BRANDS.AMEX:
-        themeObject = [AnimatedCard.returnThemeClass('amex'), cardsLogos.amex];
+        themeObject = [AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.AMEX.toLowerCase()), cardsLogos.amex];
         break;
       case AnimatedCard.CARD_BRANDS.ASTROPAYCARD:
-        themeObject = [AnimatedCard.returnThemeClass('astropaycard'), cardsLogos.astropaycard];
+        themeObject = [
+          AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.ASTROPAYCARD.toLowerCase()),
+          cardsLogos.astropaycard
+        ];
         break;
       case AnimatedCard.CARD_BRANDS.DINERS:
-        themeObject = [AnimatedCard.returnThemeClass('diners'), cardsLogos.diners];
+        themeObject = [AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.DINERS.toLowerCase()), cardsLogos.diners];
         break;
       case AnimatedCard.CARD_BRANDS.DISCOVER:
-        themeObject = [AnimatedCard.returnThemeClass('discover'), cardsLogos.discover];
+        themeObject = [
+          AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.DISCOVER.toLowerCase()),
+          cardsLogos.discover
+        ];
+        break;
+      case AnimatedCard.CARD_BRANDS.JCB:
+        themeObject = [AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.JCB.toLowerCase()), cardsLogos.jcb];
         break;
       case AnimatedCard.CARD_BRANDS.LASER:
-        themeObject = [AnimatedCard.returnThemeClass('laser'), cardsLogos.laser];
+        themeObject = [AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.LASER.toLowerCase()), cardsLogos.laser];
         break;
       case AnimatedCard.CARD_BRANDS.MAESTRO:
-        themeObject = [AnimatedCard.returnThemeClass('maestro'), cardsLogos.maestro];
+        themeObject = [
+          AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.MAESTRO.toLowerCase()),
+          cardsLogos.maestro
+        ];
         break;
       case AnimatedCard.CARD_BRANDS.MASTERCARD:
-        themeObject = [AnimatedCard.returnThemeClass('mastercard'), cardsLogos.mastercard];
+        themeObject = [
+          AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.MASTERCARD.toLowerCase()),
+          cardsLogos.mastercard
+        ];
         break;
       case AnimatedCard.CARD_BRANDS.PIBA:
-        themeObject = [AnimatedCard.returnThemeClass('piba'), cardsLogos.piba];
+        themeObject = [AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.PIBA.toLowerCase()), cardsLogos.piba];
         break;
       case AnimatedCard.CARD_BRANDS.VISA:
-        themeObject = [AnimatedCard.returnThemeClass('visa'), cardsLogos.visa];
+        themeObject = [AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.VISA.toLowerCase()), cardsLogos.visa];
         break;
       default:
         themeObject = ['st-animated-card', cardsLogos.visa];
@@ -112,15 +127,19 @@ class AnimatedCard {
    */
   public setValueOnCard(name: string) {
     let element;
-    if (name === AnimatedCard.COMPONENTS_IDS.CARD_NUMBER) {
-      element = document.getElementById(AnimatedCard.ANIMATED_CARD_FIELDS_IDS.CREDIT_CARD_ID);
-      element.textContent = this.cardDetails.cardNumber;
-    } else if (name === AnimatedCard.COMPONENTS_IDS.EXPIRATION_DATE) {
-      element = document.getElementById(AnimatedCard.ANIMATED_CARD_FIELDS_IDS.EXPIRATION_DATE_ID);
-      element.textContent = this.cardDetails.expirationDate;
-    } else if (name === AnimatedCard.COMPONENTS_IDS.SECURITY_CODE) {
-      element = document.getElementById(AnimatedCard.ANIMATED_CARD_FIELDS_IDS.SECURITY_CODE_ID);
-      element.textContent = this.cardDetails.securityCode;
+    switch (name) {
+      case AnimatedCard.COMPONENTS_IDS.CARD_NUMBER:
+        element = document.getElementById(AnimatedCard.ANIMATED_CARD_FIELDS_IDS.CREDIT_CARD_ID);
+        element.textContent = this.cardDetails.cardNumber;
+        break;
+      case AnimatedCard.COMPONENTS_IDS.EXPIRATION_DATE:
+        element = document.getElementById(AnimatedCard.ANIMATED_CARD_FIELDS_IDS.EXPIRATION_DATE_ID);
+        element.textContent = this.cardDetails.expirationDate;
+        break;
+      case AnimatedCard.COMPONENTS_IDS.SECURITY_CODE:
+        element = document.getElementById(AnimatedCard.ANIMATED_CARD_FIELDS_IDS.SECURITY_CODE_ID);
+        element.textContent = this.cardDetails.securityCode;
+        break;
     }
   }
 
@@ -131,10 +150,10 @@ class AnimatedCard {
    * Checks if given card should not be flipped
    */
   public shouldFlipCard(type: string) {
-    if (AnimatedCard.NOT_FLIPPED_CARDS.includes(type)) {
-      this.flipCard();
-    } else {
-      this.flipCardBack();
+    if (!AnimatedCard.NOT_FLIPPED_CARDS.includes(type)) {
+      if (!this.cardElement.classList.contains(AnimatedCard.CLASS_FOR_ANIMATION)) {
+        this.flipCard();
+      }
     }
   }
 
@@ -146,8 +165,12 @@ class AnimatedCard {
   /**
    * Flips back card by clearing classes
    */
-  public flipCardBack() {
-    this.cardElement.setAttribute('class', Selectors.ANIMATED_CARD_INPUT_SELECTOR);
+  public flipCardBack(type: string) {
+    if (!AnimatedCard.NOT_FLIPPED_CARDS.includes(type)) {
+      if (this.cardElement.classList.contains(AnimatedCard.CLASS_FOR_ANIMATION)) {
+        this.cardElement.setAttribute('class', Selectors.ANIMATED_CARD_INPUT_SELECTOR);
+      }
+    }
   }
 
   /**
@@ -161,17 +184,23 @@ class AnimatedCard {
   public valuesListener() {
     window.addEventListener('message', event => {
       const { name, value, type } = event.data;
-      if (name === AnimatedCard.COMPONENTS_IDS.CARD_NUMBER) {
-        this.cardDetails.cardNumber = value;
-        this.setCardTheme();
-      } else if (name === AnimatedCard.COMPONENTS_IDS.SECURITY_CODE) {
-        this.shouldFlipCard(type);
-        this.cardDetails.securityCode = value;
-        this.setCardTheme();
-      } else if (name === AnimatedCard.COMPONENTS_IDS.EXPIRATION_DATE) {
-        this.cardDetails.expirationDate = value;
-        this.setCardTheme();
+      this.cardDetails.type = type;
+      switch (name) {
+        case AnimatedCard.COMPONENTS_IDS.CARD_NUMBER:
+          this.flipCardBack(type);
+          this.cardDetails.cardNumber = value;
+          break;
+        case AnimatedCard.COMPONENTS_IDS.SECURITY_CODE:
+          this.shouldFlipCard(type);
+          this.cardDetails.securityCode = value;
+          break;
+        case AnimatedCard.COMPONENTS_IDS.EXPIRATION_DATE:
+          this.flipCardBack(type);
+          this.cardDetails.expirationDate = value;
+          break;
       }
+
+      this.setCardTheme();
       this.setValueOnCard(name);
     });
   }

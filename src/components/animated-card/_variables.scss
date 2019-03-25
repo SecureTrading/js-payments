@@ -57,3 +57,9 @@ $card-value-font-size: 2rem;
 @mixin flipY($deg) {
   transform: rotateY($deg);
 }
+
+@mixin centerLogo($top, $right) {
+  position: absolute;
+  top: $top;
+  right: $right;
+}

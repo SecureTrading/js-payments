@@ -14,3 +14,17 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
   Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
 }
+
+iframe#animatedCard {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+#animated-card-container {
+  width: 42rem;
+  height: 26.73rem;
+  display: flex;
+  align-content: center;
+  align-items: center;
+}
