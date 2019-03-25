@@ -11,7 +11,7 @@ export default class Element {
   public static EXPIRATION_DATE_COMPONENT_NAME: string = 'expirationDate';
   public static NOTIFICATION_FRAME_COMPONENT_NAME: string = 'notificationFrame';
   public static CONTROL_FRAME_COMPONENT_NAME: string = 'controlFrame';
-  private static ANIMATED_CARD_COMPONENT_NAME: string = 'animatedCard';
+  public static ANIMATED_CARD_COMPONENT_NAME: string = 'animatedCard';
 
   public static CARD_NUMBER_COMPONENT_FRAME: string = 'st-card-number-iframe';
   public static SECURITY_CODE_COMPONENT_FRAME: string = 'st-security-code-iframe';
@@ -47,14 +47,6 @@ export default class Element {
     }
   }
 
-  public static CARD_NUMBER_COMPONENT_NAME: string = 'cardNumber';
-  public static SECURITY_CODE_COMPONENT_NAME: string = 'securityCode';
-  public static EXPIRATION_DATE_COMPONENT_NAME: string = 'expirationDate';
-  public static CARD_NUMBER_COMPONENT: string = '/card-number.html';
-  public static SECURITY_CODE_COMPONENT: string = '/security-code.html';
-  public static EXPIRATION_DATE_COMPONENT: string = '/expiration-date.html';
-  public static NOTIFICATION_FRAME_COMPONENT: string = '/notification-frame.html';
-
   /**
    * Method for creating DOM elements
    * @param type Type of element which we are creating
@@ -66,9 +58,6 @@ export default class Element {
     element.setAttribute('class', id);
     return element;
   };
-
-  private _name: string;
-  private _iframeSrc: string;
 
   get iframeSrc(): string {
     return this._iframeSrc;

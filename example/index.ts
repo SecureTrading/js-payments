@@ -17,7 +17,6 @@ import { ST } from '../src/stjs';
       securityCode: 'st-security-code',
       controlFrame: 'st-control-frame'
     },
-    'st-notification-frame',
     {},
     [
       {

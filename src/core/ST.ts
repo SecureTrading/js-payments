@@ -14,10 +14,6 @@ export default class ST {
   public style: object;
   public animatedCardContainerId: string;
   public payments: object[];
-
-  public static cardNumberComponent = '/card-number.html';
-  public static expirationDateComponent = '/expiration-date.html';
-  public static securityCodeComponent = '/security-code.html';
   public static animatedCardComponent = 'http://localhost:8080/animated-card.html';
 
   /**
@@ -32,16 +28,11 @@ export default class ST {
     });
   }
 
-  private static _iframeCreditCardId: string = 'st-card-number-iframe';
-  private static _iframeSecurityCodeId: string = 'st-security-code-iframe';
-  private static _iframeExpirationDateId: string = 'st-expiration-date-iframe';
-  private static _iframeAnimatedCardId: string = 'st-animated-card-iframe';
-
   constructor(
+    errorContainerId: string,
     animatedCardContainerId: string,
     jwt: string,
     fieldsIds: any,
-    errorContainerId: string,
     style: object,
     payments: object[]
   ) {
@@ -76,8 +67,8 @@ export default class ST {
     controlFrame.create(Element.CONTROL_FRAME_COMPONENT_NAME);
     const controlFrameMounted = controlFrame.mount(Element.CONTROL_FRAME_COMPONENT_FRAME);
 
-    animatedCard.create('animatedCard');
-    const animatedCardMounted = animatedCard.mount('st-animated-card-iframe');
+    animatedCard.create(Element.ANIMATED_CARD_COMPONENT_NAME);
+    const animatedCardMounted = animatedCard.mount(Element.ANIMATED_CARD_COMPONENT_NAME);
 
     ST.registerElements(
       [
@@ -102,9 +93,13 @@ export default class ST {
       const visa = new VisaCheckout(this._getAPMConfig(apmsNames.visaCheckout), jwt);
     }
 
+    const animatedCardNumber = document.getElementById('animated-card-number');
+    const animatedSecurityCode = document.getElementById('animated-card-security-code');
+    const animatedExpirationDate = document.getElementById('animated-card-expiration-date');
+    const anmatedCardIframe = document.getElementById('animatedCard') as HTMLIFrameElement;
+    const animatedCardContentWindow = anmatedCardIframe.contentWindow;
+
     document.getElementById('test-button').addEventListener('click', () => {
-      const anmatedCardIframe = document.getElementById(ST._iframeAnimatedCardId) as HTMLIFrameElement;
-      const animatedCardContentWindow = anmatedCardIframe.contentWindow;
       animatedCardContentWindow.postMessage(
         {
           //@ts-ignore
@@ -112,6 +107,44 @@ export default class ST {
           name: 'cardNumber',
           //@ts-ignore
           value: document.getElementById('animated-card-number').value
+        },
+        ST.animatedCardComponent
+      );
+    });
+
+    console.log(animatedCardNumber);
+    animatedCardNumber.addEventListener('input', () => {
+      animatedCardContentWindow.postMessage(
+        {
+          //@ts-ignore
+          type: document.getElementById('animated-card-number-brand').value,
+          name: 'cardNumber',
+          //@ts-ignore
+          value: document.getElementById('animated-card-number').value
+        },
+        ST.animatedCardComponent
+      );
+    });
+    animatedSecurityCode.addEventListener('input', () => {
+      animatedCardContentWindow.postMessage(
+        {
+          //@ts-ignore
+          type: document.getElementById('animated-card-number-brand').value,
+          name: 'securityCode',
+          //@ts-ignore
+          value: document.getElementById('animated-card-security-code').value
+        },
+        ST.animatedCardComponent
+      );
+    });
+    animatedExpirationDate.addEventListener('input', () => {
+      animatedCardContentWindow.postMessage(
+        {
+          //@ts-ignore
+          type: document.getElementById('animated-card-number-brand').value,
+          name: 'expirationDate',
+          //@ts-ignore
+          value: document.getElementById('animated-card-expiration-date').value
         },
         ST.animatedCardComponent
       );

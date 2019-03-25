@@ -10,6 +10,18 @@ class DomMethods {
     script.src = src;
     return script;
   }
+
+  /**
+   * Sets defined property in DOM
+   * @param attr
+   * @param value
+   * @param elementId
+   */
+  public static setProperty(attr: string, value: string, elementId: string) {
+    const element = document.getElementById(elementId);
+    element.setAttribute(attr, value);
+    return element;
+  }
 }
 
 export default DomMethods;
