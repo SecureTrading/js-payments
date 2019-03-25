@@ -10,7 +10,7 @@ export interface StJwtObj {
 }
 
 /***
- * Decodes a ST Jwt passed in my a merchant
+ * Decodes a ST Jwt passed in by a merchant
  * Does not verify it as this will be done by the server
  */
 export class StJwt {
