@@ -83,7 +83,14 @@ export default class ST {
     const animatedCardMounted = animatedCard.mount('st-animated-card-iframe');
 
     ST.registerElements(
-      [cardNumberMounted, securityCodeMounted, expirationDateMounted, notificationFrameMounted, controlFrameMounted, animatedCardMounted],
+      [
+        cardNumberMounted,
+        securityCodeMounted,
+        expirationDateMounted,
+        notificationFrameMounted,
+        controlFrameMounted,
+        animatedCardMounted
+      ],
       [
         this.fieldsIds.cardNumber,
         this.fieldsIds.securityCode,
