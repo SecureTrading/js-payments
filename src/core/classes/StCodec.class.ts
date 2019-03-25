@@ -1,10 +1,9 @@
 import Language from '../shared/Language';
+import { StJwt } from "../shared/StJwt";
 
 interface IStRequest {
   requesttypedescription: string;
   pan?: string;
-  sitereference?: string;
-  accounttypedescription?: string;
   expirydate?: string;
   securitycode?: string;
   termurl?: string; // TODO shouldn't be needed for CC request but this needs to wait for 153 release
@@ -53,7 +52,8 @@ class StCodec {
       request: [
         {
           ...requestData,
-          requestid: this._requestId
+          requestid: this._requestId,
+          sitereference: new StJwt(this._jwt).sitereference
         }
       ],
       version: StCodec.VERSION

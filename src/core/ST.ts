@@ -9,7 +9,6 @@ import { GATEWAY_URL } from './imports/cardinalSettings';
  */
 export default class ST {
   public jwt: string;
-  public sitereference: string;
   public fieldsIds: any;
   public errorContainerId: string;
   public style: object;
@@ -41,7 +40,6 @@ export default class ST {
   constructor(
     animatedCardContainerId: string,
     jwt: string,
-    sitereference: string,
     fieldsIds: any,
     errorContainerId: string,
     style: object,
@@ -50,7 +48,6 @@ export default class ST {
     const gatewayUrl = GATEWAY_URL;
     this.style = style;
     this.payments = payments;
-    this.sitereference = sitereference;
     this.fieldsIds = fieldsIds;
     this.errorContainerId = errorContainerId;
     this.animatedCardContainerId = animatedCardContainerId;
@@ -62,7 +59,7 @@ export default class ST {
     const notificationFrame = new Element();
     const controlFrame = new Element();
 
-    new CardinalCommerce(jwt, sitereference, gatewayUrl);
+    new CardinalCommerce(jwt, gatewayUrl);
 
     cardNumber.create(Element.CARD_NUMBER_COMPONENT_NAME);
     const cardNumberMounted = cardNumber.mount(Element.CARD_NUMBER_COMPONENT_FRAME);
@@ -102,7 +99,7 @@ export default class ST {
     );
 
     if (this._getAPMConfig(apmsNames.visaCheckout)) {
-      const visa = new VisaCheckout(this._getAPMConfig(apmsNames.visaCheckout));
+      const visa = new VisaCheckout(this._getAPMConfig(apmsNames.visaCheckout), jwt);
     }
 
     document.getElementById('test-button').addEventListener('click', () => {
