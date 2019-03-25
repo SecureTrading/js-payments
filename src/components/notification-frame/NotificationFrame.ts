@@ -9,7 +9,7 @@ enum messageTypes {
  * NotificationFrame class
  * Defines component for displaying payment status messages
  */
-class NotificationFrame {
+export default class NotificationFrame {
   get notificationFrameElement(): HTMLElement {
     return this._notificationFrameElement;
   }
@@ -24,6 +24,7 @@ class NotificationFrame {
     success: 'notification-frame--success',
     warning: 'notification-frame--warning'
   };
+
   public static getElement = (elementId: string) => document.getElementById(elementId);
 
   public static ifFieldExists = (): HTMLInputElement =>
@@ -90,5 +91,3 @@ class NotificationFrame {
     );
   }
 }
-
-export default NotificationFrame;

@@ -1,29 +1,58 @@
 @import './../../core/styles/variables';
+@import './../../core/styles/core';
 
-@mixin messageType($bgr, $border, $color) {
-  background-color: $bgr;
-  border: $border;
-  visibility: visible;
+@mixin messageType($bgColor, $borderColor, $color) {
+  background-color: $bgColor;
+  border-color: $borderColor;
   color: $color;
 }
 
 .notification-frame {
-  border-radius: $border-radius-input;
+  font-size: $font-size-notification;
+  line-height: $line-height-notification;
+  color: $color-notification;
+  border: $border-size-notification solid;
+  border-radius: $border-radius-notification;
+  padding: $space-inset-notification;
   visibility: hidden;
 
-  &--error {
-    @include messageType($color-error, $border-size-input solid $color-error, $background-color-button);
+  &--error,
+  &--warning,
+  &--success,
+  &--info {
+    visibility: visible;
   }
 
-  &--success {
-    @include messageType($color-success, $border-size-input solid $color-success, $background-color-button);
+  &--error {
+    @include messageType(
+      $background-color-notification-error,
+      $border-color-notification-error,
+      $color-notification-error
+    );
   }
 
   &--warning {
-    @include messageType($color-warning, $border-size-input solid $color-warning, $background-color-button);
+    @include messageType(
+      $background-color-notification-warning,
+      $border-color-notification-warning,
+      $color-notification-warning
+    );
   }
 
+  &--success {
+    @include messageType(
+      $background-color-notification-success,
+      $border-color-notification-success,
+      $color-notification-success
+    );
+  }
+
+  &,
   &--info {
-    @include messageType($background-color-button, $border-size-input solid $color-info, $color-info);
+    @include messageType(
+      $background-color-notification-info,
+      $border-color-notification-info,
+      $color-notification-info
+    );
   }
 }

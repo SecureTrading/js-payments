@@ -6,3 +6,4 @@ import './card-number/card-number';
 import './expiration-date/expiration-date';
 import './security-code/security-code';
 import './notification-frame/notification-frame';
+import './control-frame/control-frame';
