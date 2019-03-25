@@ -35,17 +35,14 @@ class CardinalCommerce {
   private _cardinalPayload: any;
   private _cart: string[] = [];
   private _payload = {
-    accounttypedescription: 'ECOM',
     expirydate: '01/20',
     pan: '4111111111111111',
     requesttypedescription: 'THREEDQUERY',
     securitycode: '123',
-    sitereference: '',
     termurl: 'http://something.com'
   };
   private _threedeinitRequestObject: IStRequest = {
-    requesttypedescription: 'THREEDINIT',
-    sitereference: ''
+    requesttypedescription: 'THREEDINIT'
   };
   private _sessionId: string;
   private _stTrasportParams: IStTransportParams = {
@@ -55,9 +52,7 @@ class CardinalCommerce {
 
   private _transactionId: string;
 
-  constructor(jwt: string, sitereference: string, gatewayUrl: string) {
-    this._payload.sitereference = sitereference;
-    this._threedeinitRequestObject.sitereference = sitereference;
+  constructor(jwt: string, gatewayUrl: string) {
     this._stTrasportParams = {
       gatewayUrl,
       jwt

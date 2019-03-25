@@ -1,5 +1,6 @@
 declare const V: any;
 import { VISA_CHECKOUT_URLS } from './../imports/apms';
+import { StJwt } from "../shared/StJwt";
 
 /**
  *  Visa Checkout configuration class; sets up Visa e-wallet
@@ -20,6 +21,8 @@ class VisaCheckout {
   private _paymentStatus: string;
   private _paymentDetails: object;
   private _paymentError: object;
+  private _livestatus: number = 0;
+  private _placement: string = 'body';
 
   set paymentDetails(value: object) {
     this._paymentDetails = value;
@@ -40,21 +43,22 @@ class VisaCheckout {
    */
   private _initConfiguration = {
     apikey: '' as string,
-    livestatus: 0,
     paymentRequest: {
-      currencyCode: 'USD' as string,
-      subtotal: '11.00' as string
-    },
-    placement: 'body'
+      currencyCode: '' as string,
+      subtotal: '' as string
+    }
   };
 
-  constructor(config: any) {
+  constructor(config: any, jwt: string) {
     const {
       props: { apikey, livestatus, placement }
     } = config;
+    const stJwt = new StJwt(jwt);
+    this._livestatus = livestatus;
+    this._placement = placement;
     this._initConfiguration.apikey = apikey;
-    this._initConfiguration.livestatus = livestatus;
-    this._initConfiguration.placement = placement;
+    this._initConfiguration.paymentRequest.currencyCode = stJwt.currencyiso3a;
+    this._initConfiguration.paymentRequest.subtotal = stJwt.mainamount;
     this._checkLiveStatus();
     this._initVisaConfiguration();
   }
@@ -100,8 +104,8 @@ class VisaCheckout {
    * @private
    */
   private _attachVisaButton() {
-    const element = document.getElementById(this._initConfiguration.placement)
-      ? document.getElementById(this._initConfiguration.placement)
+    const element = document.getElementById(this._placement)
+      ? document.getElementById(this._placement)
       : document.getElementsByTagName('body')[0];
     element.appendChild(this._createVisaButton());
     return element;
@@ -112,7 +116,7 @@ class VisaCheckout {
    * @private
    */
   private _checkLiveStatus() {
-    if (this._initConfiguration.livestatus) {
+    if (this._livestatus) {
       this._visaCheckoutButtonProps.src = VISA_CHECKOUT_URLS.PROD_BUTTON_URL;
       this._sdkAddress = VISA_CHECKOUT_URLS.PROD_SDK;
     }

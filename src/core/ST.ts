@@ -9,7 +9,6 @@ import { GATEWAY_URL } from './imports/cardinalSettings';
  */
 export default class ST {
   public jwt: string;
-  public sitereference: string;
   public fieldsIds: any;
   public errorContainerId: string;
   public style: object;
@@ -29,7 +28,6 @@ export default class ST {
 
   constructor(
     jwt: string,
-    sitereference: string,
     fieldsIds: any,
     errorContainerId: string,
     style: object,
@@ -38,17 +36,16 @@ export default class ST {
     const gatewayUrl = GATEWAY_URL;
     this.style = style;
     this.payments = payments;
-    this.sitereference = sitereference;
     this.fieldsIds = fieldsIds;
     this.errorContainerId = errorContainerId;
-
+    
     const cardNumber = new Element();
     const securityCode = new Element();
     const expirationDate = new Element();
     const notificationFrame = new Element();
     const controlFrame = new Element();
 
-    new CardinalCommerce(jwt, sitereference, gatewayUrl);
+    new CardinalCommerce(jwt, gatewayUrl);
 
     cardNumber.create(Element.CARD_NUMBER_COMPONENT_NAME);
     const cardNumberMounted = cardNumber.mount(Element.CARD_NUMBER_COMPONENT_FRAME);
@@ -77,7 +74,7 @@ export default class ST {
     );
 
     if (this._getAPMConfig(apmsNames.visaCheckout)) {
-      const visa = new VisaCheckout(this._getAPMConfig(apmsNames.visaCheckout));
+      const visa = new VisaCheckout(this._getAPMConfig(apmsNames.visaCheckout), jwt);
     }
   }
 

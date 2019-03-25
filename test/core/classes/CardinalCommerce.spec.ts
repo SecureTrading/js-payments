@@ -8,7 +8,7 @@ describe('Class CCIntegration', () => {
   // when
   beforeEach(() => {
     document.body.innerHTML = `<input id='JWTContainer' value="${jwt}" />`;
-    instance = new CardinalCommerce('somejwt', 'test2', 'https://webservices.securetrading.net/jwt/');
+    instance = new CardinalCommerce('somejwt', 'https://webservices.securetrading.net/jwt/');
   });
 
   // given
