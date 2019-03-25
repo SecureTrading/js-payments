@@ -1,6 +1,6 @@
 declare const V: any;
 import { VISA_CHECKOUT_URLS } from './../imports/apms';
-import { StJwt } from "../shared/StJwt";
+import { StJwt } from '../shared/StJwt';
 
 /**
  *  Visa Checkout configuration class; sets up Visa e-wallet
