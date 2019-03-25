@@ -28,10 +28,10 @@ class AnimatedCard {
     SECURITY_CODE_ID: 'st-animated-card-security-code'
   };
   public cardDetails: any = {
-    type: 'MASTERCARD',
-    cardNumber: '4444444444444444',
-    expirationDate: '12/24',
-    securityCode: '444'
+    type: 'VISA',
+    cardNumber: '',
+    expirationDate: '',
+    securityCode: ''
   };
   public cardElement: HTMLElement;
   public notFlippedCards = ['AMEX'];
