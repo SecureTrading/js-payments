@@ -1,6 +1,6 @@
+import DOMMethods from '../../core/shared/DomMethods';
 import Selectors from '../../core/shared/Selectors';
 import { cardsLogos } from './animated-card-logos';
-import DOMMethods from '../../core/shared/DomMethods';
 
 /**
  * Defines animated card, it's 'stateless' component which only receives data validated previously by other components.
@@ -24,7 +24,14 @@ class AnimatedCard {
     VISA: 'VISA'
   };
   public static CHIP_LOGO_ID: string = 'st-chip-logo';
-  public static CLASS_FOR_ANIMATION: string = 'st-animated-card__flip-card';
+  public static CARD_CLASSES = {
+    CLASS_MAIN: 'st-animated-card',
+    CLASS_BACK: 'st-animated-card__back',
+    CLASS_FOR_ANIMATION: 'st-animated-card__flip-card',
+    CLASS_FRONT: 'st-animated-card__front',
+    CLASS_SIDE: 'st-animated-card__side'
+  };
+
   public static COMPONENTS_IDS = {
     CARD_NUMBER: 'cardNumber',
     EXPIRATION_DATE: 'expirationDate',
@@ -32,93 +39,110 @@ class AnimatedCard {
   };
   public static NOT_FLIPPED_CARDS = ['AMEX'];
   public static PAYMENT_LOGO_ID: string = 'st-payment-logo';
-  public cardDetails: any = {
-    type: 'VISA',
-    cardNumber: '',
-    expirationDate: '',
-    securityCode: ''
-  };
+
+  // @ts-ignore
+  public static ifCardExists = (): HTMLInputElement => document.getElementById(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
+
+  /**
+   * Returns theme class for specified theme
+   * @param theme
+   */
+  public static returnThemeClass = (theme: string) => `st-animated-card__${theme}`;
 
   public animatedCardBack: HTMLElement = document.getElementById('st-animated-card-side-back');
   public animatedCardFront: HTMLElement = document.getElementById('st-animated-card-side-front');
+  public cardDetails: any = {
+    cardNumber: '.... .... .... ....',
+    expirationDate: 'MM/YY',
+    securityCode: '...',
+    type: 'VISA'
+  };
   public cardElement: HTMLElement;
 
   constructor() {
     DOMMethods.setProperty.apply(this, ['src', cardsLogos.visa, AnimatedCard.PAYMENT_LOGO_ID]);
     DOMMethods.setProperty.apply(this, ['src', cardsLogos.chip, AnimatedCard.CHIP_LOGO_ID]);
     this.cardElement = document.getElementById(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
-    this.valuesListener();
+    this.getCardData();
   }
 
-  public backToDefaultTheme() {
-    this.animatedCardFront.setAttribute('class', 'st-animated-card__side st-animated-card__front');
-    this.animatedCardBack.setAttribute('class', 'st-animated-card__side st-animated-card__back');
+  /**
+   * Resets styles on both sides of credit card to default theme
+   */
+  public resetToDefaultTheme() {
+    this.animatedCardFront.setAttribute(
+      'class',
+      `${AnimatedCard.CARD_CLASSES.CLASS_SIDE} ${AnimatedCard.CARD_CLASSES.CLASS_FRONT}`
+    );
+    this.animatedCardBack.setAttribute(
+      'class',
+      `${AnimatedCard.CARD_CLASSES.CLASS_SIDE} ${AnimatedCard.CARD_CLASSES.CLASS_BACK}`
+    );
   }
 
-  public setThemeClasses(themeClass: string, cardLogo: string) {
-    this.animatedCardFront.classList.add(themeClass);
-    this.animatedCardBack.classList.add(themeClass);
-    DOMMethods.setProperty.apply(this, ['src', cardLogo, AnimatedCard.PAYMENT_LOGO_ID]);
-  }
-
-  public static returnThemeClass(theme: string) {
-    let baseClass = 'st-animated-card';
-    return `${baseClass}__${theme}`;
+  /**
+   * Sets theme properties: css settings and card type
+   * @param themeObject
+   */
+  public setThemeProperties(themeObject: { type: string; logo: string }) {
+    const { logo, type } = themeObject;
+    this.animatedCardFront.classList.add(type);
+    this.animatedCardBack.classList.add(type);
+    DOMMethods.setProperty.apply(this, ['src', logo, AnimatedCard.PAYMENT_LOGO_ID]);
   }
 
   /**
    * Sets card theme according to card brand
    */
   public setCardTheme() {
-    this.backToDefaultTheme();
-    let themeObject;
+    this.resetToDefaultTheme();
+    let themeObject = { type: '', logo: '' };
     switch (this.cardDetails.type) {
       case AnimatedCard.CARD_BRANDS.AMEX:
-        themeObject = [AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.AMEX.toLowerCase()), cardsLogos.amex];
+        themeObject.type = AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.AMEX.toLowerCase());
+        themeObject.logo = cardsLogos.amex;
         break;
       case AnimatedCard.CARD_BRANDS.ASTROPAYCARD:
-        themeObject = [
-          AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.ASTROPAYCARD.toLowerCase()),
-          cardsLogos.astropaycard
-        ];
+        themeObject.type = AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.ASTROPAYCARD.toLowerCase());
+        themeObject.logo = cardsLogos.astropaycard;
         break;
       case AnimatedCard.CARD_BRANDS.DINERS:
-        themeObject = [AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.DINERS.toLowerCase()), cardsLogos.diners];
+        themeObject.type = AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.DINERS.toLowerCase());
+        themeObject.logo = cardsLogos.diners;
         break;
       case AnimatedCard.CARD_BRANDS.DISCOVER:
-        themeObject = [
-          AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.DISCOVER.toLowerCase()),
-          cardsLogos.discover
-        ];
+        themeObject.type = AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.DISCOVER.toLowerCase());
+        themeObject.logo = cardsLogos.discover;
         break;
       case AnimatedCard.CARD_BRANDS.JCB:
-        themeObject = [AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.JCB.toLowerCase()), cardsLogos.jcb];
+        themeObject.type = AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.JCB.toLowerCase());
+        themeObject.logo = cardsLogos.jcb;
         break;
       case AnimatedCard.CARD_BRANDS.LASER:
-        themeObject = [AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.LASER.toLowerCase()), cardsLogos.laser];
+        themeObject.type = AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.LASER.toLowerCase());
+        themeObject.logo = cardsLogos.laser;
         break;
       case AnimatedCard.CARD_BRANDS.MAESTRO:
-        themeObject = [
-          AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.MAESTRO.toLowerCase()),
-          cardsLogos.maestro
-        ];
+        themeObject.type = AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.MAESTRO.toLowerCase());
+        themeObject.logo = cardsLogos.maestro;
         break;
       case AnimatedCard.CARD_BRANDS.MASTERCARD:
-        themeObject = [
-          AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.MASTERCARD.toLowerCase()),
-          cardsLogos.mastercard
-        ];
+        themeObject.type = AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.MASTERCARD.toLowerCase());
+        themeObject.logo = cardsLogos.mastercard;
         break;
       case AnimatedCard.CARD_BRANDS.PIBA:
-        themeObject = [AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.PIBA.toLowerCase()), cardsLogos.piba];
+        themeObject.type = AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.PIBA.toLowerCase());
+        themeObject.logo = cardsLogos.piba;
         break;
       case AnimatedCard.CARD_BRANDS.VISA:
-        themeObject = [AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.VISA.toLowerCase()), cardsLogos.visa];
+        themeObject.type = AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.VISA.toLowerCase());
+        themeObject.logo = cardsLogos.visa;
         break;
       default:
-        themeObject = ['st-animated-card', cardsLogos.visa];
+        themeObject.type = AnimatedCard.CARD_CLASSES.CLASS_MAIN;
+        themeObject.logo = cardsLogos.visa;
     }
-    this.setThemeClasses(themeObject[0], themeObject[1]);
+    this.setThemeProperties(themeObject);
   }
 
   /**
@@ -143,15 +167,12 @@ class AnimatedCard {
     }
   }
 
-  //@ts-ignore
-  public static ifCardExists = (): HTMLInputElement => document.getElementById(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
-
   /**
    * Checks if given card should not be flipped
    */
   public shouldFlipCard(type: string) {
     if (!AnimatedCard.NOT_FLIPPED_CARDS.includes(type)) {
-      if (!this.cardElement.classList.contains(AnimatedCard.CLASS_FOR_ANIMATION)) {
+      if (!this.cardElement.classList.contains(AnimatedCard.CARD_CLASSES.CLASS_FOR_ANIMATION)) {
         this.flipCard();
       }
     }
@@ -160,14 +181,14 @@ class AnimatedCard {
   /**
    * Flips card to see details on revers
    */
-  public flipCard = () => this.cardElement.classList.add(AnimatedCard.CLASS_FOR_ANIMATION);
+  public flipCard = () => this.cardElement.classList.add(AnimatedCard.CARD_CLASSES.CLASS_FOR_ANIMATION);
 
   /**
    * Flips back card by clearing classes
    */
   public flipCardBack(type: string) {
     if (!AnimatedCard.NOT_FLIPPED_CARDS.includes(type)) {
-      if (this.cardElement.classList.contains(AnimatedCard.CLASS_FOR_ANIMATION)) {
+      if (this.cardElement.classList.contains(AnimatedCard.CARD_CLASSES.CLASS_FOR_ANIMATION)) {
         this.cardElement.setAttribute('class', Selectors.ANIMATED_CARD_INPUT_SELECTOR);
       }
     }
@@ -181,7 +202,7 @@ class AnimatedCard {
    * name: Name of component from which came value
    * value: Value passed from component
    */
-  public valuesListener() {
+  public getCardData() {
     window.addEventListener('message', event => {
       const { name, value, type } = event.data;
       this.cardDetails.type = type;

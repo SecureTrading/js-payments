@@ -14,7 +14,6 @@ export default class ST {
   public style: object;
   public animatedCardContainerId: string;
   public payments: object[];
-  public static animatedCardComponent = 'http://localhost:8080/animated-card.html';
 
   /**
    * Register fields in clients form
@@ -90,64 +89,8 @@ export default class ST {
     );
 
     if (this._getAPMConfig(apmsNames.visaCheckout)) {
-      const visa = new VisaCheckout(this._getAPMConfig(apmsNames.visaCheckout), jwt);
+      new VisaCheckout(this._getAPMConfig(apmsNames.visaCheckout), jwt);
     }
-
-    const animatedCardNumber = document.getElementById('animated-card-number');
-    const animatedSecurityCode = document.getElementById('animated-card-security-code');
-    const animatedExpirationDate = document.getElementById('animated-card-expiration-date');
-    const anmatedCardIframe = document.getElementById('animatedCard') as HTMLIFrameElement;
-    const animatedCardContentWindow = anmatedCardIframe.contentWindow;
-
-    document.getElementById('test-button').addEventListener('click', () => {
-      animatedCardContentWindow.postMessage(
-        {
-          //@ts-ignore
-          type: document.getElementById('animated-card-number-brand').value,
-          name: 'cardNumber',
-          //@ts-ignore
-          value: document.getElementById('animated-card-number').value
-        },
-        ST.animatedCardComponent
-      );
-    });
-
-    animatedCardNumber.addEventListener('input', () => {
-      animatedCardContentWindow.postMessage(
-        {
-          //@ts-ignore
-          type: document.getElementById('animated-card-number-brand').value,
-          name: 'cardNumber',
-          //@ts-ignore
-          value: document.getElementById('animated-card-number').value
-        },
-        ST.animatedCardComponent
-      );
-    });
-    animatedSecurityCode.addEventListener('input', () => {
-      animatedCardContentWindow.postMessage(
-        {
-          //@ts-ignore
-          type: document.getElementById('animated-card-number-brand').value,
-          name: 'securityCode',
-          //@ts-ignore
-          value: document.getElementById('animated-card-security-code').value
-        },
-        ST.animatedCardComponent
-      );
-    });
-    animatedExpirationDate.addEventListener('input', () => {
-      animatedCardContentWindow.postMessage(
-        {
-          //@ts-ignore
-          type: document.getElementById('animated-card-number-brand').value,
-          name: 'expirationDate',
-          //@ts-ignore
-          value: document.getElementById('animated-card-expiration-date').value
-        },
-        ST.animatedCardComponent
-      );
-    });
   }
 
   /**

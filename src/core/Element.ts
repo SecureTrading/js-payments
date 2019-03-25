@@ -24,7 +24,7 @@ export default class Element {
   public static EXPIRATION_DATE_COMPONENT: string = '/expiration-date.html';
   public static NOTIFICATION_FRAME_COMPONENT: string = '/notification-frame.html';
   public static CONTROL_FRAME_COMPONENT: string = '/control-frame.html';
-  private static ANIMATED_CARD_COMPONENT: string = '/animated-card.html';
+  public static ANIMATED_CARD_COMPONENT: string = '/animated-card.html';
 
   /***
    * Function which defines iframe src attribute
@@ -79,23 +79,22 @@ export default class Element {
     this._name = '';
   }
 
-  /***
+  /**
    * Method for creating element in iframe
    * @param elementName Name of input which we want to create
    */
-
   public create(elementName: string) {
     this._name = elementName;
-    this._iframeSrc = Element.getComponentAddress(elementName);
+    this.iframeSrc = Element.getComponentAddress(elementName);
   }
 
-  /***
+  /**
    * Method returns 'iframed input', styled and ready to be registered in clients form
    * @param fieldId ID of field on which iframe input field will be mounted
    */
   public mount(fieldId: string) {
     const iframe = Element.createFormElement('iframe', fieldId);
-    iframe.setAttribute('src', this._iframeSrc);
+    iframe.setAttribute('src', this.iframeSrc);
     iframe.setAttribute('name', fieldId);
     return iframe;
   }
