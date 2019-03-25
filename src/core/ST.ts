@@ -7,16 +7,12 @@ import { GATEWAY_URL } from './imports/cardinalSettings';
 /***
  * Establishes connection with ST, defines client.
  */
-class ST {
+export default class ST {
   public jwt: string;
-  public style: object;
-  public errorContainerId: string;
-  public payments: object[];
   public fieldsIds: any;
-
-  public static cardNumberComponent = '/card-number.html';
-  public static expirationDateComponent = '/expiration-date.html';
-  public static securityCodeComponent = '/security-code.html';
+  public errorContainerId: string;
+  public style: object;
+  public payments: object[];
 
   /**
    * Register fields in clients form
@@ -30,15 +26,11 @@ class ST {
     });
   }
 
-  private static _iframeCreditCardId: string = 'st-card-number-iframe';
-  private static _iframeSecurityCodeId: string = 'st-security-code-iframe';
-  private static _iframeExpirationDateId: string = 'st-expiration-date-iframe';
-
   constructor(
-    style: object,
-    errorContainerId: string,
     jwt: string,
     fieldsIds: any,
+    errorContainerId: string,
+    style: object,
     payments: object[]
   ) {
     const gatewayUrl = GATEWAY_URL;
@@ -51,52 +43,40 @@ class ST {
     const securityCode = new Element();
     const expirationDate = new Element();
     const notificationFrame = new Element();
+    const controlFrame = new Element();
 
     new CardinalCommerce(jwt, gatewayUrl);
 
-    cardNumber.create('cardNumber');
-    this.submitListener();
+    cardNumber.create(Element.CARD_NUMBER_COMPONENT_NAME);
+    const cardNumberMounted = cardNumber.mount(Element.CARD_NUMBER_COMPONENT_FRAME);
 
-    const cardNumberMounted = cardNumber.mount('st-card-number-iframe');
+    securityCode.create(Element.SECURITY_CODE_COMPONENT_NAME);
+    const securityCodeMounted = securityCode.mount(Element.SECURITY_CODE_COMPONENT_FRAME);
 
-    securityCode.create('securityCode');
-    const securityCodeMounted = securityCode.mount('st-security-code-iframe');
+    expirationDate.create(Element.EXPIRATION_DATE_COMPONENT_NAME);
+    const expirationDateMounted = expirationDate.mount(Element.EXPIRATION_DATE_COMPONENT_FRAME);
 
-    expirationDate.create('expirationDate');
-    const expirationDateMounted = expirationDate.mount('st-expiration-date-iframe');
+    notificationFrame.create(Element.NOTIFICATION_FRAME_COMPONENT_NAME);
+    const notificationFrameMounted = notificationFrame.mount(Element.NOTIFICATION_FRAME_COMPONENT_FRAME);
 
-    notificationFrame.create('notificationFrame');
-    const notificationFrameMounted = notificationFrame.mount('st-notification-frame-iframe');
+    controlFrame.create(Element.CONTROL_FRAME_COMPONENT_NAME);
+    const controlFrameMounted = controlFrame.mount(Element.CONTROL_FRAME_COMPONENT_FRAME);
 
     ST.registerElements(
-      [cardNumberMounted, securityCodeMounted, expirationDateMounted, notificationFrameMounted],
-      [this.fieldsIds.cardNumber, this.fieldsIds.securityCode, this.fieldsIds.expirationDate, this.errorContainerId]
+      [cardNumberMounted, securityCodeMounted, expirationDateMounted, notificationFrameMounted, controlFrameMounted],
+      [
+        this.fieldsIds.cardNumber,
+        this.fieldsIds.securityCode,
+        this.fieldsIds.expirationDate,
+        this.errorContainerId,
+        this.fieldsIds.controlFrame
+      ]
     );
 
     if (this._getAPMConfig(apmsNames.visaCheckout)) {
       const visa = new VisaCheckout(this._getAPMConfig(apmsNames.visaCheckout), jwt);
     }
   }
-
-  /**
-   * Listens to submit and gives iframes a sign that post has been done
-   */
-  public submitListener = () => {
-    document.addEventListener('DOMContentLoaded', () => {
-      document.addEventListener('submit', event => {
-        event.preventDefault();
-        const creditCardIframe = document.getElementById(ST._iframeCreditCardId) as HTMLIFrameElement;
-        const securityCodeIframe = document.getElementById(ST._iframeSecurityCodeId) as HTMLIFrameElement;
-        const expirationDateIframe = document.getElementById(ST._iframeExpirationDateId) as HTMLIFrameElement;
-        const creditCardContentWindow = creditCardIframe.contentWindow;
-        const securityCodeContentWindow = securityCodeIframe.contentWindow;
-        const expirationDateContentWindow = expirationDateIframe.contentWindow;
-        creditCardContentWindow.postMessage('message', ST.cardNumberComponent);
-        securityCodeContentWindow.postMessage('message', ST.securityCodeComponent);
-        expirationDateContentWindow.postMessage('message', ST.expirationDateComponent);
-      });
-    });
-  };
 
   /**
    * Gets APM config according to given apmName
@@ -107,5 +87,3 @@ class ST {
     return Object.values(this.payments).find((item: { name: string }) => item.name === apmName);
   }
 }
-
-export default ST;

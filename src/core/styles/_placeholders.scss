@@ -25,6 +25,14 @@
   }
 }
 
+%label--readonly {
+  color: $color-label-readonly; // @param
+
+  &:after {
+    color: $color-placeholder; // @param
+  }
+}
+
 %input {
   box-sizing: border-box;
   width: 100%;
@@ -45,6 +53,11 @@
     border-color: $color-error; // @param
     background-color: $background-color-input-error; // @param
   }
+}
+
+%input--readonly {
+  color: $color-input-readonly; // @param
+  border-color: $border-color-input-readonly; // @param
 }
 
 %message {
