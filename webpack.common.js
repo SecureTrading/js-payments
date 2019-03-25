@@ -60,9 +60,18 @@ module.exports = {
       chunks: ['main']
     }),
     new HtmlWebpackPlugin({
+      filename: 'control-frame.html',
+      template: './src/components/index.html',
+      templateParameters: {
+        partial: 'controlFrame'
+      },
+      chunks: ['main']
+    }),
+    new HtmlWebpackPlugin({
       filename: 'index.html',
       template: './example/index.html',
-      chunks: ['stjs', 'example']
+      chunks: ['stjs', 'example'],
+      favicon: './favicon.ico'
     }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
@@ -77,7 +86,7 @@ module.exports = {
       {
         test: /\.scss$/,
         use: [
-          'style-loader',
+          MiniCssExtractPlugin.loader,
           {
             loader: 'css-loader',
             options: {

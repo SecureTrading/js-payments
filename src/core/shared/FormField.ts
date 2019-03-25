@@ -27,6 +27,13 @@ export default class FormField {
     });
   }
 
+  protected getState(): FormFieldState {
+    return {
+      validity: this._inputElement.validity.valid,
+      value: this._inputElement.value
+    };
+  }
+
   onKeyPress(event: KeyboardEvent) {
     if (!Validation.isCharNumber(event)) {
       event.preventDefault();

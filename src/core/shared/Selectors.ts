@@ -9,4 +9,6 @@ export default class Selectors {
   public static readonly SECURITY_CODE_MESSAGE_SELECTOR: string = 'st-security-code-message';
 
   public static readonly ANIMATED_CARD_INPUT_SELECTOR: string = 'st-animated-card';
+
+  public static readonly CONTROL_FRAME_BUTTON_SELECTOR: string = 'st-control-frame-button';
 }
