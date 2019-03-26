@@ -1,5 +1,4 @@
 import Element from '../../src/core/Element';
-import ST from '../../src/core/ST';
 // given
 describe('Index placeholder test', () => {
   //when
@@ -22,9 +21,9 @@ describe('Index placeholder test', () => {
 
   // then
   it('should return proper iframe endpoints', () => {
-    expect(Element.getComponentAddress('cardNumber')).toEqual(ST.cardNumberComponent);
-    expect(Element.getComponentAddress('securityCode')).toEqual(ST.securityCodeComponent);
-    expect(Element.getComponentAddress('expirationDate')).toEqual(ST.expirationDateComponent);
+    expect(Element.getComponentAddress('cardNumber')).toEqual(Element.CARD_NUMBER_COMPONENT);
+    expect(Element.getComponentAddress('securityCode')).toEqual(Element.SECURITY_CODE_COMPONENT);
+    expect(Element.getComponentAddress('expirationDate')).toEqual(Element.EXPIRATION_DATE_COMPONENT);
   });
 
   // then

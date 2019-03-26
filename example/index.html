@@ -11,8 +11,11 @@
   </head>
   <body>
     <form class="example-form">
-      <div class="example-form__card-payment">
-        <h1 class="example-form__title">Secure Trading<span>Example Form</span></h1>
+      <h1 class="example-form__title">
+        Secure Trading<span>AMOUNT: <strong>100 GBP</strong></span>
+      </h1>
+
+      <div class="example-form__section example-form__section--horizontal">
         <div class="example-form__group">
           <label for="example-form-name" class="example-form__label example-form__label--required">NAME</label>
           <input
@@ -43,17 +46,20 @@
             autocomplete="tel"
           />
         </div>
-        <div class="example-form__spacer"></div>
+      </div>
+
+      <div class="example-form__spacer"></div>
+
+      <div class="example-form__section">
+        <div id="st-notification-frame" class="example-form__group"></div>
         <div id="st-card-number" class="example-form__group"></div>
         <div id="st-expiration-date" class="example-form__group"></div>
         <div id="st-security-code" class="example-form__group"></div>
-        <div class="example-form__spacer"></div>
-        <div class="example-form__group">
-          <button class="example-form__button" type="submit">PAY</button>
-        </div>
       </div>
-      <div class="example-form__apms">
-        <div id="visa-checkout-button"></div>
+
+      <div class="example-form__section example-form__section--horizontal">
+        <div id="st-control-frame" class="example-form__group"></div>
+        <div id="st-visa-checkout" class="example-form__group"></div>
       </div>
     </form>
   </body>

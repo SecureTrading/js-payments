@@ -9,7 +9,7 @@ import StTransport from '../../../src/core/classes/StTransport.class';
 
 describe('StTransport class', () => {
   const DEFAULT_PARAMS = { jwt: 'j.w.t' };
-  describe('Method sendRequest', async () => {
+  describe('Method sendRequest', () => {
     let st: StTransport;
     let mockFT: jest.Mock;
 

@@ -2,8 +2,28 @@
  * Defines input with iframe source
  * Can be styled by predefined JSON.
  */
+export default class Element {
+  private _name: string;
+  private _iframeSrc: string;
 
-class Element {
+  public static CARD_NUMBER_COMPONENT_NAME: string = 'cardNumber';
+  public static SECURITY_CODE_COMPONENT_NAME: string = 'securityCode';
+  public static EXPIRATION_DATE_COMPONENT_NAME: string = 'expirationDate';
+  public static NOTIFICATION_FRAME_COMPONENT_NAME: string = 'notificationFrame';
+  public static CONTROL_FRAME_COMPONENT_NAME: string = 'controlFrame';
+
+  public static CARD_NUMBER_COMPONENT_FRAME: string = 'st-card-number-iframe';
+  public static SECURITY_CODE_COMPONENT_FRAME: string = 'st-security-code-iframe';
+  public static EXPIRATION_DATE_COMPONENT_FRAME: string = 'st-expiration-date-iframe';
+  public static NOTIFICATION_FRAME_COMPONENT_FRAME: string = 'st-notification-frame-iframe';
+  public static CONTROL_FRAME_COMPONENT_FRAME: string = 'st-control-frame-iframe';
+
+  public static CARD_NUMBER_COMPONENT: string = '/card-number.html';
+  public static SECURITY_CODE_COMPONENT: string = '/security-code.html';
+  public static EXPIRATION_DATE_COMPONENT: string = '/expiration-date.html';
+  public static NOTIFICATION_FRAME_COMPONENT: string = '/notification-frame.html';
+  public static CONTROL_FRAME_COMPONENT: string = '/control-frame.html';
+
   /***
    * Function which defines iframe src attribute
    * @param name Component name
@@ -13,18 +33,15 @@ class Element {
     if (name === Element.CARD_NUMBER_COMPONENT_NAME) {
       return Element.CARD_NUMBER_COMPONENT;
     } else if (name === Element.SECURITY_CODE_COMPONENT_NAME) {
-      return Element.SECURITY_CODE__COMPONENT;
+      return Element.SECURITY_CODE_COMPONENT;
     } else if (name === Element.EXPIRATION_DATE_COMPONENT_NAME) {
       return Element.EXPIRATION_DATE_COMPONENT;
+    } else if (name === Element.NOTIFICATION_FRAME_COMPONENT_NAME) {
+      return Element.NOTIFICATION_FRAME_COMPONENT;
+    } else if (name === Element.CONTROL_FRAME_COMPONENT_NAME) {
+      return Element.CONTROL_FRAME_COMPONENT;
     }
   }
-
-  private static CARD_NUMBER_COMPONENT_NAME: string = 'cardNumber';
-  private static SECURITY_CODE_COMPONENT_NAME: string = 'securityCode';
-  private static EXPIRATION_DATE_COMPONENT_NAME: string = 'expirationDate';
-  private static CARD_NUMBER_COMPONENT: string = '/card-number.html';
-  private static SECURITY_CODE__COMPONENT: string = '/security-code.html';
-  private static EXPIRATION_DATE_COMPONENT: string = '/expiration-date.html';
 
   /**
    * Method for creating DOM elements
@@ -38,25 +55,6 @@ class Element {
     return element;
   };
 
-  private _name: string;
-  private _iframeSrc: string;
-
-  get iframeSrc(): string {
-    return this._iframeSrc;
-  }
-
-  set iframeSrc(value: string) {
-    this._iframeSrc = value;
-  }
-
-  get name(): string {
-    return this._name;
-  }
-
-  set name(value: string) {
-    this._name = value;
-  }
-
   constructor() {
     this._name = '';
   }
@@ -68,7 +66,7 @@ class Element {
 
   public create(elementName: string) {
     this._name = elementName;
-    this.iframeSrc = Element.getComponentAddress(elementName);
+    this._iframeSrc = Element.getComponentAddress(elementName);
   }
 
   /***
@@ -77,9 +75,8 @@ class Element {
    */
   public mount(fieldId: string) {
     const iframe = Element.createFormElement('iframe', fieldId);
-    iframe.setAttribute('src', this.iframeSrc);
+    iframe.setAttribute('src', this._iframeSrc);
+    iframe.setAttribute('name', fieldId);
     return iframe;
   }
 }
-
-export default Element;

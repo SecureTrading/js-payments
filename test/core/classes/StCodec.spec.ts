@@ -5,7 +5,7 @@ import { StCodec } from '../../../src/core/classes/StCodec.class';
 describe('StCodec class', () => {
   const ridRegex = 'J-[\\da-z]{8}';
   const requestid = expect.stringMatching(new RegExp('^' + ridRegex + '$'));
-  const jwt = 'j.w.t';
+  const jwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
   let str: StCodec;
   const fullResponse = {
     requestreference: 'W33-0rm0gcyx',
@@ -71,14 +71,16 @@ describe('StCodec class', () => {
     each([
       [
         { pan: '4111111111111111', expirydate: '12/12', securitycode: '321' },
-        { pan: '4111111111111111', expirydate: '12/12', securitycode: '321' }
+        { pan: '4111111111111111', expirydate: '12/12', securitycode: '321', sitereference: 'live2' }
       ],
       [
         {
           requestid: 'number1',
           requesttypedescription: 'CACHETOKENISE'
         },
-        { requesttypedescription: 'CACHETOKENISE' }
+        { requesttypedescription: 'CACHETOKENISE',
+          sitereference: "live2"
+        }
       ]
     ]).it('should build the request for a valid object', (requestObject, expected) => {
       expect(str.buildRequestObject(requestObject)).toEqual({
@@ -99,9 +101,10 @@ describe('StCodec class', () => {
         { pan: '4111111111111111', requesttypedescription: 'AUTH' },
         expect.stringMatching(
           new RegExp(
-            '^{"jwt":"j.w.t","request":\\[{"pan":"4111111111111111","requesttypedescription":"AUTH","requestid":"' +
+            '^{"jwt":"' + jwt +
+              '","request":\\[{"pan":"4111111111111111","requesttypedescription":"AUTH","requestid":"' +
               ridRegex +
-              '"}\\],"version":"1.00"}$'
+              '","sitereference":"live2"}\\],"version":"1.00"}$'
           )
         )
       ]
@@ -137,7 +140,7 @@ describe('StCodec class', () => {
       [{ version: '1.00', response: [] }],
       [{ version: '1.00', response: [{}, {}] }]
     ]).it('should verify the version and number of responses', responseData => {
-      expect(() => str.verifyResponseObject(responseData)).toThrow(
+      expect(() => StCodec.verifyResponseObject(responseData)).toThrow(
         Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE)
       );
     });
@@ -150,7 +153,7 @@ describe('StCodec class', () => {
         }
       ]
     ]).it('should verify the gateway error response', responseData => {
-      expect(() => str.verifyResponseObject(responseData)).toThrow(Error(responseData.response[0].errormessage));
+      expect(() => StCodec.verifyResponseObject(responseData)).toThrow(Error(responseData.response[0].errormessage));
     });
   });
 
@@ -160,15 +163,15 @@ describe('StCodec class', () => {
     });
 
     it('should decode a valid response', async () => {
-      str.verifyResponseObject = jest.fn(str.verifyResponseObject);
+      StCodec.verifyResponseObject = jest.fn(StCodec.verifyResponseObject);
       await expect(
         str.decode({
           json: () => {
             return new Promise(resolve => resolve(fullResponse));
           }
         })
-      ).resolves.toEqual(str.verifyResponseObject(fullResponse));
-      expect(str.verifyResponseObject).toHaveBeenCalledWith(fullResponse);
+      ).resolves.toEqual(StCodec.verifyResponseObject(fullResponse));
+      expect(StCodec.verifyResponseObject).toHaveBeenCalledWith(fullResponse);
     });
 
     it('should error an invalid response', async () => {
