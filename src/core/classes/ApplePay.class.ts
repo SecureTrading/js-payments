@@ -12,18 +12,21 @@ const ApplePaySession = (window as any).ApplePaySession;
  * 7. In onvalidatemerchant handler catch object to pass to completeMerchantValidation
  */
 class ApplePay {
-  private _applePayVersionNumber: number = 3;
-  private _merchantIdentifier: string;
-  private _paymentRequestData: any = {
-    countryCode: 'US',
-    currencyCode: 'USD',
-    supportedNetworks: ['visa', 'masterCard', 'amex', 'discover'],
-    merchantCapabilities: ['supports3DS'],
-    total: { label: 'Your Merchant Name', amount: '10.00' }
-  };
+  set config(value: any) {
+    this._config = value;
+  }
 
-  constructor(merchantIdentifier: string) {
-    this._merchantIdentifier = merchantIdentifier;
+  set jwt(value: string) {
+    this._jwt = value;
+  }
+
+  private _applePayVersionNumber: number = 3;
+  private _config: any;
+  private _jwt: string;
+
+  constructor(config: any, jwt: string) {
+    this.config = config;
+    this.jwt = jwt;
     this.setUpApplePayProcess();
   }
 
@@ -35,8 +38,11 @@ class ApplePay {
   /**
    * Checks whether ApplePay is available on current device and also if it us at least one active card in Wallet
    */
-  public checkApplePayWalletCardAvailability = () =>
-    ApplePaySession.canMakePaymentsWithActiveCard(this._merchantIdentifier);
+  public checkApplePayWalletCardAvailability = () => {
+    if (this._config.merchantId) {
+      return ApplePaySession.canMakePaymentsWithActiveCard(this._config.merchantId);
+    }
+  };
 
   /**
    * Sets Apple Pay button and begins Apple Pay flow
@@ -59,7 +65,7 @@ class ApplePay {
    * Defines Apple Pay session details and begins payment flow.
    */
   public paymentSetup() {
-    const session = new ApplePaySession(this._applePayVersionNumber, this._paymentRequestData);
+    const session = new ApplePaySession(this._applePayVersionNumber, this._config);
     session.begin();
     session.onvalidatemerchant = (event: any) => {
       console.log(event);

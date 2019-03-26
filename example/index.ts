@@ -19,9 +19,20 @@ import { ST } from '../src/stjs';
     {},
     [
       {
-        name: 'Apple Pay',
+        name: 'APPLEPAY',
         props: {
-          merchantIdentifier: 'merchant.net.securetrading'
+          sitereference: 'test_site',
+          paymentRequest: {
+            total: { label: 'Your Merchant Name', amount: '10.00' },
+            countryCode: 'US',
+            currencyCode: 'USD',
+            merchantCapabilities: ['supports3DS', 'supportsCredit', 'supportsDebit'],
+            requiredBillingContactFields: ['postalAddress'],
+            requiredShippingContactFields: ['postalAddress', 'name', 'phone', 'email'],
+            supportedNetworks: ['visa', 'masterCard', 'amex', 'discover']
+          },
+          merchantId: 'merchant.net.securetrading',
+          sitesecurity: 'gABC123DEFABC'
         }
       },
       {

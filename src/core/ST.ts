@@ -72,7 +72,7 @@ export default class ST {
       const visa = new VisaCheckout(this._getAPMConfig(apmsNames.visaCheckout), jwt);
     }
     if (this._getAPMConfig('Apple Pay')) {
-      const applePay = new ApplePay('merchant.net.securetrading.test');
+      const applePay = new ApplePay(this._getAPMConfig(apmsNames.visaCheckout), jwt);
     }
   }
 
