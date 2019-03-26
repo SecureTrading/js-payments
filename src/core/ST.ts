@@ -27,19 +27,13 @@ export default class ST {
     });
   }
 
-  constructor(
-    jwt: string,
-    fieldsIds: any,
-    errorContainerId: string,
-    style: object,
-    payments: object[]
-  ) {
+  constructor(jwt: string, fieldsIds: any, errorContainerId: string, style: object, payments: object[]) {
     const gatewayUrl = GATEWAY_URL;
     this.style = style;
     this.payments = payments;
     this.fieldsIds = fieldsIds;
     this.errorContainerId = errorContainerId;
-    
+
     const cardNumber = new Element();
     const securityCode = new Element();
     const expirationDate = new Element();
