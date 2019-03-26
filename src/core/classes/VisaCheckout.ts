@@ -1,7 +1,8 @@
 declare const V: any;
-import { VISA_CHECKOUT_URLS } from './../imports/apms';
+import { environment } from '../../environments/environment';
+import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
-import DomMethods from './../shared/DomMethods;
+import DomMethods from './../shared/DomMethods';
 import Language from './../shared/Language';
 
 /**
@@ -24,9 +25,9 @@ class VisaCheckout {
     alt: 'Visa Checkout',
     className: 'v-button',
     role: 'button',
-    src: VISA_CHECKOUT_URLS.DEV_BUTTON_URL
+    src: environment.VISA_CHECKOUT_URLS.DEV_BUTTON_URL
   };
-  private _sdkAddress: string = VISA_CHECKOUT_URLS.DEV_SDK;
+  private _sdkAddress: string = environment.VISA_CHECKOUT_URLS.DEV_SDK;
   private _paymentStatus: string;
   private _paymentDetails: object;
   private _livestatus: number = 0;
@@ -70,14 +71,14 @@ class VisaCheckout {
   /**
    * Creates html image element which will be transformed into interactive button by SDK.
    */
-  public _createVisaButton() {
-    const button = document.createElement('img');
-    const { alt, className, role, src } = this._visaCheckoutButtonProps;
-    button.setAttribute('src', src);
-    button.setAttribute('class', className);
-    button.setAttribute('role', role);
-    button.setAttribute('alt', alt);
-    return button;
+  public _createVisaButton = () => DomMethods.setMultipleAttributes.apply(this, [this._visaCheckoutButtonProps, 'img']);
+
+  /**
+   * Init configuration and payment data
+   * @private
+   */
+  private _initPaymentConfiguration() {
+    V.init(this._initConfiguration);
   }
 
   /**
@@ -89,18 +90,12 @@ class VisaCheckout {
    * @private
    */
   private _initVisaConfiguration() {
-    DomMethods.insertScript.call()
-    const body = document.getElementsByTagName('body')[0];
-    const script = document.createElement('script');
-    body.appendChild(script);
-    script.addEventListener('load', () => {
+    return DomMethods.insertScript.apply(this, ['body', this._sdkAddress]).addEventListener('load', () => {
       this._attachVisaButton();
       this._initPaymentConfiguration();
       this._paymentStatusHandler();
       this.getResponseMessage(this.paymentStatus);
     });
-    script.src = this._sdkAddress;
-    return script;
   }
 
   /**
@@ -121,32 +116,39 @@ class VisaCheckout {
    */
   private _checkLiveStatus() {
     if (this._livestatus) {
-      this._visaCheckoutButtonProps.src = VISA_CHECKOUT_URLS.PROD_BUTTON_URL;
-      this._sdkAddress = VISA_CHECKOUT_URLS.PROD_SDK;
+      this._visaCheckoutButtonProps.src = environment.VISA_CHECKOUT_URLS.PROD_BUTTON_URL;
+      this._sdkAddress = environment.VISA_CHECKOUT_URLS.PROD_SDK;
     }
+  }
+
+  public setNotification(type: string, content: string) {
+    DomMethods.getIframeContentWindow
+      .call(this, Selectors.NOTIFICATION_FRAME_COMPONENT_FRAME)
+      .postMessage({ type: type, content }, Selectors.NOTIFICATION_FRAME_COMPONENT);
   }
 
   private getResponseMessage(type: string) {
     let messageType;
     let content;
-    if (type === VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS) {
-      messageType = VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.SUCCESS;
-      content = Language.translations.PAYMENT_SUCCESS;
+
+    switch (type) {
+      case VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS: {
+        messageType = VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.SUCCESS;
+        content = Language.translations.PAYMENT_SUCCESS;
+        break;
+      }
+      case VisaCheckout.VISA_PAYMENT_STATUS.CANCEL: {
+        messageType = VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.CANCEL;
+        content = Language.translations.PAYMENT_CANCEL;
+        break;
+      }
+      case VisaCheckout.VISA_PAYMENT_STATUS.ERROR: {
+        messageType = VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.ERROR;
+        content = Language.translations.PAYMENT_ERROR;
+        break;
+      }
     }
-    if (type === VisaCheckout.VISA_PAYMENT_STATUS.ERROR) {
-      messageType = VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.ERROR;
-      content = Language.translations.PAYMENT_ERROR;
-    }
-    if (type === VisaCheckout.VISA_PAYMENT_STATUS.CANCEL) {
-      messageType = VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.CANCEL;
-      content = Language.translations.PAYMENT_CANCEL;
-    }
-    const notifictionFrame = document.getElementById('st-notification-frame-iframe') as HTMLIFrameElement;
-    const notificationFramrContentWindow = notifictionFrame.contentWindow;
-    notificationFramrContentWindow.postMessage(
-      { type: messageType, content },
-      'http://localhost:8080/notification-frame.html'
-    );
+    this.setNotification(messageType, content);
   }
 
   /**
@@ -168,14 +170,6 @@ class VisaCheckout {
       this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.CANCEL;
       this.getResponseMessage(this._paymentStatus);
     });
-  }
-
-  /**
-   * Init configuration and payment data
-   * @private
-   */
-  private _initPaymentConfiguration() {
-    V.init(this._initConfiguration);
   }
 }
 
