@@ -1,6 +1,8 @@
 declare const V: any;
 import { VISA_CHECKOUT_URLS } from './../imports/apms';
-import { StJwt } from "../shared/StJwt";
+import { StJwt } from '../shared/StJwt';
+import DomMethods from './../shared/DomMethods;
+import Language from './../shared/Language';
 
 /**
  *  Visa Checkout configuration class; sets up Visa e-wallet
@@ -11,6 +13,13 @@ class VisaCheckout {
     ERROR: 'payment.error',
     SUCCESS: 'payment.success'
   };
+
+  private static VISA_PAYMENT_RESPONSE_TYPES = {
+    CANCEL: 'CANCEL',
+    ERROR: 'ERROR',
+    SUCCESS: 'SUCCESS'
+  };
+
   private _visaCheckoutButtonProps: any = {
     alt: 'Visa Checkout',
     className: 'v-button',
@@ -20,7 +29,6 @@ class VisaCheckout {
   private _sdkAddress: string = VISA_CHECKOUT_URLS.DEV_SDK;
   private _paymentStatus: string;
   private _paymentDetails: object;
-  private _paymentError: object;
   private _livestatus: number = 0;
   private _placement: string = 'body';
 
@@ -30,10 +38,6 @@ class VisaCheckout {
 
   set paymentStatus(value: string) {
     this._paymentStatus = value;
-  }
-
-  set paymentError(value: object) {
-    this._paymentError = value;
   }
 
   /**
@@ -85,15 +89,15 @@ class VisaCheckout {
    * @private
    */
   private _initVisaConfiguration() {
+    DomMethods.insertScript.call()
     const body = document.getElementsByTagName('body')[0];
     const script = document.createElement('script');
     body.appendChild(script);
     script.addEventListener('load', () => {
       this._attachVisaButton();
       this._initPaymentConfiguration();
-      this._paymentStatusHandler(VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS);
-      this._paymentStatusHandler(VisaCheckout.VISA_PAYMENT_STATUS.CANCEL);
-      this._paymentStatusHandler(VisaCheckout.VISA_PAYMENT_STATUS.ERROR);
+      this._paymentStatusHandler();
+      this.getResponseMessage(this.paymentStatus);
     });
     script.src = this._sdkAddress;
     return script;
@@ -122,18 +126,47 @@ class VisaCheckout {
     }
   }
 
+  private getResponseMessage(type: string) {
+    let messageType;
+    let content;
+    if (type === VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS) {
+      messageType = VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.SUCCESS;
+      content = Language.translations.PAYMENT_SUCCESS;
+    }
+    if (type === VisaCheckout.VISA_PAYMENT_STATUS.ERROR) {
+      messageType = VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.ERROR;
+      content = Language.translations.PAYMENT_ERROR;
+    }
+    if (type === VisaCheckout.VISA_PAYMENT_STATUS.CANCEL) {
+      messageType = VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.CANCEL;
+      content = Language.translations.PAYMENT_CANCEL;
+    }
+    const notifictionFrame = document.getElementById('st-notification-frame-iframe') as HTMLIFrameElement;
+    const notificationFramrContentWindow = notifictionFrame.contentWindow;
+    notificationFramrContentWindow.postMessage(
+      { type: messageType, content },
+      'http://localhost:8080/notification-frame.html'
+    );
+  }
+
   /**
    * Handler used to simplify handling payment events; returns the JSON object with details of payment
-   * @param event
    * @private
    */
-  private _paymentStatusHandler(event: string) {
-    V.on(event, (payment: object, error?: object) => {
-      this.paymentStatus = event;
+  private _paymentStatusHandler() {
+    V.on(VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS, (payment: object) => {
+      this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
       this.paymentDetails = payment;
-      this.paymentError = error ? error : {};
-      alert(`Status of payment: ${event}`);
-      return { event, payment, error };
+      this.getResponseMessage(this._paymentStatus);
+    });
+    V.on(VisaCheckout.VISA_PAYMENT_STATUS.ERROR, () => {
+      this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
+      this.getResponseMessage(this._paymentStatus);
+    });
+
+    V.on(VisaCheckout.VISA_PAYMENT_STATUS.CANCEL, () => {
+      this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.CANCEL;
+      this.getResponseMessage(this._paymentStatus);
     });
   }
 

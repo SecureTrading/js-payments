@@ -1,5 +1,5 @@
 import Language from '../shared/Language';
-import { StJwt } from "../shared/StJwt";
+import { StJwt } from '../shared/StJwt';
 
 interface IStRequest {
   requesttypedescription: string;
