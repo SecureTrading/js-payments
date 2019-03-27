@@ -1,3 +1,5 @@
+import Environment = jest.Environment;
+
 declare const V: any;
 import { environment } from '../../environments/environment';
 import Selectors from '../shared/Selectors';
@@ -103,16 +105,14 @@ class VisaCheckout {
   }
 
   /**
-   * Retrieves data from Wiremock
+   * Retrieves data from mocked data endpoint
    * @private
    */
   private _setMockedData() {
-    const mockedData = {
-      payment: {},
-      status: ''
-    };
-    this.paymentDetails = mockedData.payment;
-    this.paymentStatus = mockedData.status;
+    fetch(environment.VISA_CHECKOUT_URLS.MOCK_DATA_URL).then((data: any) => {
+      this.paymentDetails = data.payment;
+      this.paymentStatus = data.status;
+    });
   }
 
   /**
