@@ -1,5 +1,4 @@
 declare const V: any;
-import { mocked } from 'ts-jest';
 import { environment } from '../../environments/environment';
 import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
@@ -10,8 +9,24 @@ import Language from './../shared/Language';
  *  Visa Checkout configuration class; sets up Visa e-wallet
  */
 class VisaCheckout {
+  set paymentDetails(value: object) {
+    this._paymentDetails = value;
+  }
+
   get paymentStatus(): string {
     return this._paymentStatus;
+  }
+
+  set paymentStatus(value: string) {
+    this._paymentStatus = value;
+  }
+
+  get responseMessage(): string {
+    return this._responseMessage;
+  }
+
+  set responseMessage(value: string) {
+    this._responseMessage = value;
   }
 
   private static VISA_PAYMENT_STATUS = {
@@ -38,22 +53,6 @@ class VisaCheckout {
   private _responseMessage: string;
   private _livestatus: number = 0;
   private _placement: string = 'body';
-
-  set paymentDetails(value: object) {
-    this._paymentDetails = value;
-  }
-
-  set paymentStatus(value: string) {
-    this._paymentStatus = value;
-  }
-
-  get responseMessage(): string {
-    return this._responseMessage;
-  }
-
-  set responseMessage(value: string) {
-    this._responseMessage = value;
-  }
 
   /**
    * Init configuration (temporary with some test data).
@@ -93,13 +92,24 @@ class VisaCheckout {
   public _createVisaButton = () => DomMethods.setMultipleAttributes.apply(this, [this._visaCheckoutButtonProps, 'img']);
 
   /**
+   * Send postMessage to notificationFrame component, to inform user about payment status
+   * @param type
+   * @param content
+   */
+  public setNotification(type: string, content: string) {
+    DomMethods.getIframeContentWindow
+      .call(this, Selectors.NOTIFICATION_FRAME_COMPONENT_FRAME)
+      .postMessage({ type, content }, Selectors.NOTIFICATION_FRAME_COMPONENT);
+  }
+
+  /**
    * Retrieves data from Wiremock
    * @private
    */
   private _setMockedData() {
     const mockedData = {
-      status: '',
-      payment: {}
+      payment: {},
+      status: ''
     };
     this.paymentDetails = mockedData.payment;
     this.paymentStatus = mockedData.status;
@@ -157,17 +167,6 @@ class VisaCheckout {
       this._visaCheckoutButtonProps.src = environment.VISA_CHECKOUT_URLS.PROD_BUTTON_URL;
       this._sdkAddress = environment.VISA_CHECKOUT_URLS.PROD_SDK;
     }
-  }
-
-  /**
-   * Send postMessage to notificationFrame component, to inform user about payment status
-   * @param type
-   * @param content
-   */
-  public setNotification(type: string, content: string) {
-    DomMethods.getIframeContentWindow
-      .call(this, Selectors.NOTIFICATION_FRAME_COMPONENT_FRAME)
-      .postMessage({ type: type, content }, Selectors.NOTIFICATION_FRAME_COMPONENT);
   }
 
   /**
