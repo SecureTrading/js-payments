@@ -1,4 +1,5 @@
 declare const V: any;
+import { mocked } from 'ts-jest';
 import { environment } from '../../environments/environment';
 import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
@@ -9,6 +10,10 @@ import Language from './../shared/Language';
  *  Visa Checkout configuration class; sets up Visa e-wallet
  */
 class VisaCheckout {
+  get paymentStatus(): string {
+    return this._paymentStatus;
+  }
+
   private static VISA_PAYMENT_STATUS = {
     CANCEL: 'payment.cancel',
     ERROR: 'payment.error',
@@ -23,13 +28,14 @@ class VisaCheckout {
 
   private _visaCheckoutButtonProps: any = {
     alt: 'Visa Checkout',
-    className: 'v-button',
+    class: 'v-button',
     role: 'button',
     src: environment.VISA_CHECKOUT_URLS.DEV_BUTTON_URL
   };
   private _sdkAddress: string = environment.VISA_CHECKOUT_URLS.DEV_SDK;
   private _paymentStatus: string;
   private _paymentDetails: object;
+  private _responseMessage: string;
   private _livestatus: number = 0;
   private _placement: string = 'body';
 
@@ -39,6 +45,14 @@ class VisaCheckout {
 
   set paymentStatus(value: string) {
     this._paymentStatus = value;
+  }
+
+  get responseMessage(): string {
+    return this._responseMessage;
+  }
+
+  set responseMessage(value: string) {
+    this._responseMessage = value;
   }
 
   /**
@@ -64,14 +78,34 @@ class VisaCheckout {
     this._initConfiguration.apikey = apikey;
     this._initConfiguration.paymentRequest.currencyCode = stJwt.currencyiso3a;
     this._initConfiguration.paymentRequest.subtotal = stJwt.mainamount;
-    this._checkLiveStatus();
-    this._initVisaConfiguration();
+    if (environment.production) {
+      this._getMockedData();
+      this._proceedFlowWithMockedData();
+    } else {
+      this._setLiveStatus();
+      this._initVisaFlow();
+    }
   }
 
   /**
    * Creates html image element which will be transformed into interactive button by SDK.
    */
   public _createVisaButton = () => DomMethods.setMultipleAttributes.apply(this, [this._visaCheckoutButtonProps, 'img']);
+
+  /**
+   * Retrieves data from Wiremock
+   * @private
+   */
+  private _getMockedData() {
+    const mockedData = {};
+    return mockedData;
+  }
+
+  /**
+   * Proceeds payment flow with mocked data
+   * @private
+   */
+  private _proceedFlowWithMockedData() {}
 
   /**
    * Init configuration and payment data
@@ -82,15 +116,16 @@ class VisaCheckout {
   }
 
   /**
-   * Initialize Visa Checkout and sets handlers on every payment event.
+   * Initialize Visa Checkout flow:
    * 1. Adds Visa Checkout SDK.
    * 2. Attaches Visa Checkout button.
    * 3. Initialize payment configuration.
    * 4. Sets handlers on payment events.
+   * 5. Get response from Visa Checkout and sets notification
    * @private
    */
-  private _initVisaConfiguration() {
-    return DomMethods.insertScript.apply(this, ['body', this._sdkAddress]).addEventListener('load', () => {
+  private _initVisaFlow() {
+    return DomMethods.insertScript('body', this._sdkAddress).addEventListener('load', () => {
       this._attachVisaButton();
       this._initPaymentConfiguration();
       this._paymentStatusHandler();
@@ -103,72 +138,77 @@ class VisaCheckout {
    * @private
    */
   private _attachVisaButton() {
-    const element = document.getElementById(this._placement)
-      ? document.getElementById(this._placement)
-      : document.getElementsByTagName('body')[0];
-    element.appendChild(this._createVisaButton());
-    return element;
+    DomMethods.appendChildIntoDOM(this._placement, this._createVisaButton());
   }
 
   /**
    * Checks if we are on production or not
    * @private
    */
-  private _checkLiveStatus() {
+  private _setLiveStatus() {
     if (this._livestatus) {
       this._visaCheckoutButtonProps.src = environment.VISA_CHECKOUT_URLS.PROD_BUTTON_URL;
       this._sdkAddress = environment.VISA_CHECKOUT_URLS.PROD_SDK;
     }
   }
 
+  /**
+   * Send postMessage to notificationFrame component, to inform user about payment status
+   * @param type
+   * @param content
+   */
   public setNotification(type: string, content: string) {
     DomMethods.getIframeContentWindow
       .call(this, Selectors.NOTIFICATION_FRAME_COMPONENT_FRAME)
       .postMessage({ type: type, content }, Selectors.NOTIFICATION_FRAME_COMPONENT);
   }
 
+  /**
+   * Gets translated response message based on response communicate
+   * @param type
+   */
   private getResponseMessage(type: string) {
-    let messageType;
-    let content;
-
     switch (type) {
-      case VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS: {
-        messageType = VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.SUCCESS;
-        content = Language.translations.PAYMENT_SUCCESS;
+      case VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.SUCCESS: {
+        this.responseMessage = Language.translations.PAYMENT_SUCCESS;
         break;
       }
-      case VisaCheckout.VISA_PAYMENT_STATUS.CANCEL: {
-        messageType = VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.CANCEL;
-        content = Language.translations.PAYMENT_CANCEL;
+      case VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.CANCEL: {
+        this.responseMessage = Language.translations.PAYMENT_CANCEL;
         break;
       }
-      case VisaCheckout.VISA_PAYMENT_STATUS.ERROR: {
-        messageType = VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.ERROR;
-        content = Language.translations.PAYMENT_ERROR;
+      case VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.ERROR: {
+        this.responseMessage = Language.translations.PAYMENT_ERROR;
         break;
       }
     }
-    this.setNotification(messageType, content);
   }
 
   /**
-   * Handler used to simplify handling payment events; returns the JSON object with details of payment
+   * Handles all of 3 types of responses from Visa Checkout:
+   * - SUCCESS
+   * - ERROR
+   * - CANCEL
+   * Then sets payment status and details (if payment succeeded), gets response message and sets notification.
    * @private
    */
   private _paymentStatusHandler() {
     V.on(VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS, (payment: object) => {
-      this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
       this.paymentDetails = payment;
-      this.getResponseMessage(this._paymentStatus);
+      this.paymentStatus = VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.SUCCESS;
+      this.getResponseMessage(this.paymentStatus);
+      this.setNotification(this.paymentStatus, this.responseMessage);
     });
     V.on(VisaCheckout.VISA_PAYMENT_STATUS.ERROR, () => {
-      this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
-      this.getResponseMessage(this._paymentStatus);
+      this.paymentStatus = VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.ERROR;
+      this.getResponseMessage(this.paymentStatus);
+      this.setNotification(this.paymentStatus, this.responseMessage);
     });
 
     V.on(VisaCheckout.VISA_PAYMENT_STATUS.CANCEL, () => {
-      this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.CANCEL;
-      this.getResponseMessage(this._paymentStatus);
+      this.paymentStatus = VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.CANCEL;
+      this.getResponseMessage(this.paymentStatus);
+      this.setNotification(this.paymentStatus, this.responseMessage);
     });
   }
 }

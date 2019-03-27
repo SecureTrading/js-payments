@@ -14,16 +14,20 @@ class DomMethods {
   public static getIframeContentWindow = (id: string) =>
     (document.getElementById(id) as HTMLIFrameElement).contentWindow;
 
-  public static createElement = (markup: string) => document.createElement(markup);
-
   public static setMultipleAttributes = (attributes: any, markup: string) => {
-    const element = DomMethods.createElement(markup);
+    const element = document.createElement(markup);
     // @ts-ignore
-    Object.keys(attributes).map(item => {
-      element.setAttribute(item, attributes[item]);
-    });
+    Object.keys(attributes).map(item => element.setAttribute(item, attributes[item]));
     return element;
   };
+
+  public static appendChildIntoDOM(target: string, child: HTMLElement) {
+    const element = document.getElementById(target)
+      ? document.getElementById(target)
+      : document.getElementsByTagName('body')[0];
+    element.appendChild(child);
+    return element;
+  }
 }
 
 export default DomMethods;
