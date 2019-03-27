@@ -23,7 +23,7 @@ import { ST } from '../src/stjs';
         props: {
           sitereference: 'test_site',
           paymentRequest: {
-            total: { label: 'Your Merchant Name', amount: '10.00' },
+            total: { label: 'Your Merchant Name', amount: '' },
             countryCode: 'US',
             currencyCode: 'USD',
             merchantCapabilities: ['supports3DS', 'supportsCredit', 'supportsDebit'],

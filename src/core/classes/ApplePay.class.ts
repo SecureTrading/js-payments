@@ -1,3 +1,6 @@
+import { StJwt } from '../shared/StJwt';
+import Language from './../shared/Language';
+
 const ApplePaySession = (window as any).ApplePaySession;
 
 /**
@@ -27,6 +30,9 @@ class ApplePay {
   constructor(config: any, jwt: string) {
     this.config = config;
     this.jwt = jwt;
+    const stJwt = new StJwt(jwt);
+    this.config.paymentRequest.total.amount = stJwt.mainamount;
+    this.config.paymentRequest.currencyCode = stJwt.currencyiso3a;
     this.setUpApplePayProcess();
   }
 
@@ -53,11 +59,11 @@ class ApplePay {
         if (canMakePayments) {
           this.paymentSetup();
         } else {
-          return 'Apple payment is not available';
+          return Language.translations.APPLE_PAY_NOT_AVAILABLE;
         }
       });
     } else {
-      return 'Apple payment is not available';
+      return Language.translations.APPLE_PAY_NOT_AVAILABLE;
     }
   }
 

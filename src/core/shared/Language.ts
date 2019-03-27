@@ -4,6 +4,7 @@
 
 class Language {
   private static _translations = {
+    APPLE_PAY_NOT_AVAILABLE: 'Apple pay is not available',
     COMMUNICATION_ERROR_INVALID_REQUEST: 'Invalid request',
     COMMUNICATION_ERROR_INVALID_RESPONSE: 'Invalid response',
     COMMUNICATION_ERROR_TIMEOUT: 'Timeout',
@@ -20,6 +21,7 @@ class Language {
     VALIDATION_ERROR_VALUE_TOO_SHORT: 'Value is too short'
   };
   static get translations(): {
+    APPLE_PAY_NOT_AVAILABLE: string;
     COMMUNICATION_ERROR_INVALID_REQUEST: string;
     COMMUNICATION_ERROR_INVALID_RESPONSE: string;
     COMMUNICATION_ERROR_TIMEOUT: string;

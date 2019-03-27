@@ -69,11 +69,11 @@ export default class ST {
       ]
     );
 
+    if (this._getAPMConfig(environment.APM_NAMES.APPLE_PAY)) {
+      new ApplePay(this._getAPMConfig(environment.APM_NAMES.APPLE_PAY), jwt);
+    }
     if (this._getAPMConfig(environment.APM_NAMES.VISA_CHECKOUT)) {
       new VisaCheckout(this._getAPMConfig(environment.APM_NAMES.VISA_CHECKOUT), jwt);
-    }
-    if (this._getAPMConfig('Apple Pay')) {
-      const applePay = new ApplePay(this._getAPMConfig(apmsNames.visaCheckout), jwt);
     }
   }
 
