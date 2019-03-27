@@ -44,6 +44,7 @@ class VisaCheckout {
   private _visaCheckoutButtonProps: any = {
     alt: 'Visa Checkout',
     class: 'v-button',
+    id: 'v-button',
     role: 'button',
     src: environment.VISA_CHECKOUT_URLS.DEV_BUTTON_URL
   };
@@ -68,9 +69,9 @@ class VisaCheckout {
   };
 
   constructor(config: any, jwt: string) {
-    if (environment.testEnvironment) {
-      this._setMockedData();
-      this._proceedFlowWithMockedData();
+    if (!environment.testEnvironment) {
+      this._attachVisaButton();
+      this._setActionOnMockedButton();
     } else {
       const {
         props: { apikey, livestatus, placement }
@@ -100,6 +101,17 @@ class VisaCheckout {
     DomMethods.getIframeContentWindow
       .call(this, Selectors.NOTIFICATION_FRAME_COMPONENT_FRAME)
       .postMessage({ type, content }, Selectors.NOTIFICATION_FRAME_COMPONENT);
+  }
+
+  /**
+   * Sets action on appended mocked Visa Checkout button
+   * @private
+   */
+  private _setActionOnMockedButton() {
+    DomMethods.addListener(this._visaCheckoutButtonProps.id, 'click', () => {
+      this._setMockedData();
+      this._proceedFlowWithMockedData();
+    });
   }
 
   /**

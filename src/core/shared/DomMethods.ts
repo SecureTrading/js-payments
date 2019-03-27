@@ -28,6 +28,10 @@ class DomMethods {
     element.appendChild(child);
     return element;
   }
+
+  public static addListener(targetId: string, listenerType: string, callback: any) {
+    document.getElementById(targetId).addEventListener(listenerType, callback);
+  }
 }
 
 export default DomMethods;
