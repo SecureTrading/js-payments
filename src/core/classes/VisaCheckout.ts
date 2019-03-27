@@ -69,19 +69,19 @@ class VisaCheckout {
   };
 
   constructor(config: any, jwt: string) {
-    const {
-      props: { apikey, livestatus, placement }
-    } = config;
-    const stJwt = new StJwt(jwt);
-    this._livestatus = livestatus;
-    this._placement = placement;
-    this._initConfiguration.apikey = apikey;
-    this._initConfiguration.paymentRequest.currencyCode = stJwt.currencyiso3a;
-    this._initConfiguration.paymentRequest.subtotal = stJwt.mainamount;
     if (environment.production) {
-      this._getMockedData();
+      this._setMockedData();
       this._proceedFlowWithMockedData();
     } else {
+      const {
+        props: { apikey, livestatus, placement }
+      } = config;
+      const stJwt = new StJwt(jwt);
+      this._livestatus = livestatus;
+      this._placement = placement;
+      this._initConfiguration.apikey = apikey;
+      this._initConfiguration.paymentRequest.currencyCode = stJwt.currencyiso3a;
+      this._initConfiguration.paymentRequest.subtotal = stJwt.mainamount;
       this._setLiveStatus();
       this._initVisaFlow();
     }
@@ -96,16 +96,23 @@ class VisaCheckout {
    * Retrieves data from Wiremock
    * @private
    */
-  private _getMockedData() {
-    const mockedData = {};
-    return mockedData;
+  private _setMockedData() {
+    const mockedData = {
+      status: '',
+      payment: {}
+    };
+    this.paymentDetails = mockedData.payment;
+    this.paymentStatus = mockedData.status;
   }
 
   /**
    * Proceeds payment flow with mocked data
    * @private
    */
-  private _proceedFlowWithMockedData() {}
+  private _proceedFlowWithMockedData() {
+    this.getResponseMessage(this.paymentStatus);
+    this.setNotification(this.paymentStatus, this.responseMessage);
+  }
 
   /**
    * Init configuration and payment data
