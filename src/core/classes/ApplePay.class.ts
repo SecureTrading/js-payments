@@ -33,7 +33,7 @@ class ApplePay {
     const stJwt = new StJwt(jwt);
     this.config.paymentRequest.total.amount = stJwt.mainamount;
     this.config.paymentRequest.currencyCode = stJwt.currencyiso3a;
-    this.setUpApplePayProcess();
+    this.initAppleFlow();
   }
 
   /**
@@ -53,7 +53,7 @@ class ApplePay {
   /**
    * Sets Apple Pay button and begins Apple Pay flow
    */
-  public setUpApplePayProcess() {
+  public initAppleFlow() {
     if (this.checkApplePayAvailability()) {
       this.checkApplePayWalletCardAvailability().then((canMakePayments: boolean) => {
         if (canMakePayments) {
