@@ -7,7 +7,7 @@ class Language {
     COMMUNICATION_ERROR_INVALID_REQUEST: 'Invalid request',
     COMMUNICATION_ERROR_INVALID_RESPONSE: 'Invalid response',
     COMMUNICATION_ERROR_TIMEOUT: 'Timeout',
-    PAYMENT_SUCCESS: 'Payment has been succesfully ',
+    PAYMENT_SUCCESS: 'Payment has been successfully proceeded',
     PAYMENT_ERROR: 'An error occurred',
     PAYMENT_CANCEL: 'Payment has been canceled',
     VALIDATION_ERROR_CARD: 'Card number is invalid',
