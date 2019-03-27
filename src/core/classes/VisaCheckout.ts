@@ -1,5 +1,3 @@
-import Environment = jest.Environment;
-
 declare const V: any;
 import { environment } from '../../environments/environment';
 import Selectors from '../shared/Selectors';
