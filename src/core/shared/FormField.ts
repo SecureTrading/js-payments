@@ -1,5 +1,7 @@
 import Formatter from './Formatter';
 import Validation from './Validation';
+import { Styler } from './Styler';
+
 
 export default class FormField {
   protected _inputElement: HTMLInputElement;
@@ -11,7 +13,18 @@ export default class FormField {
     // @ts-ignore
     this._messageElement = document.getElementById(messageSelector);
     this.setInputListeners();
+
+    const styles = {input:{"background-color": "blue", 
+                             color: "white",
+                            },
+                    label: {color: "green"
+                            },
+                   };
+
+    new Styler().inject(styles);
   }
+
+ 
 
   private setInputListeners() {
     this._inputElement.addEventListener('paste', (event: ClipboardEvent) => {
