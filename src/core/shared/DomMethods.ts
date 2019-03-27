@@ -10,6 +10,28 @@ class DomMethods {
     script.src = src;
     return script;
   }
+
+  public static getIframeContentWindow = (id: string) =>
+    (document.getElementById(id) as HTMLIFrameElement).contentWindow;
+
+  public static setMultipleAttributes = (attributes: any, markup: string) => {
+    const element = document.createElement(markup);
+    // @ts-ignore
+    Object.keys(attributes).map(item => element.setAttribute(item, attributes[item]));
+    return element;
+  };
+
+  public static appendChildIntoDOM(target: string, child: HTMLElement) {
+    const element = document.getElementById(target)
+      ? document.getElementById(target)
+      : document.getElementsByTagName('body')[0];
+    element.appendChild(child);
+    return element;
+  }
+
+  public static addListener(targetId: string, listenerType: string, callback: any) {
+    document.getElementById(targetId).addEventListener(listenerType, callback);
+  }
 }
 
 export default DomMethods;

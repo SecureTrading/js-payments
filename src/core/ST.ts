@@ -1,9 +1,10 @@
 import ApplePay from './classes/ApplePay.class';
 import VisaCheckout from './classes/VisaCheckout';
 import Element from './Element';
-import { apmsNames } from './imports/apms';
+import { environment } from '../environments/environment';
 import CardinalCommerce from './classes/CardinalCommerce';
 import { GATEWAY_URL } from './imports/cardinalSettings';
+import Selectors from './shared/Selectors';
 
 /***
  * Establishes connection with ST, defines client.
@@ -42,20 +43,20 @@ export default class ST {
 
     new CardinalCommerce(jwt, gatewayUrl);
 
-    cardNumber.create(Element.CARD_NUMBER_COMPONENT_NAME);
-    const cardNumberMounted = cardNumber.mount(Element.CARD_NUMBER_COMPONENT_FRAME);
+    cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME);
+    const cardNumberMounted = cardNumber.mount(Selectors.CARD_NUMBER_COMPONENT_FRAME);
 
-    securityCode.create(Element.SECURITY_CODE_COMPONENT_NAME);
-    const securityCodeMounted = securityCode.mount(Element.SECURITY_CODE_COMPONENT_FRAME);
+    securityCode.create(Selectors.SECURITY_CODE_COMPONENT_NAME);
+    const securityCodeMounted = securityCode.mount(Selectors.SECURITY_CODE_COMPONENT_FRAME);
 
-    expirationDate.create(Element.EXPIRATION_DATE_COMPONENT_NAME);
-    const expirationDateMounted = expirationDate.mount(Element.EXPIRATION_DATE_COMPONENT_FRAME);
+    expirationDate.create(Selectors.EXPIRATION_DATE_COMPONENT_NAME);
+    const expirationDateMounted = expirationDate.mount(Selectors.EXPIRATION_DATE_COMPONENT_FRAME);
 
-    notificationFrame.create(Element.NOTIFICATION_FRAME_COMPONENT_NAME);
-    const notificationFrameMounted = notificationFrame.mount(Element.NOTIFICATION_FRAME_COMPONENT_FRAME);
+    notificationFrame.create(Selectors.NOTIFICATION_FRAME_COMPONENT_NAME);
+    const notificationFrameMounted = notificationFrame.mount(Selectors.NOTIFICATION_FRAME_COMPONENT_FRAME);
 
-    controlFrame.create(Element.CONTROL_FRAME_COMPONENT_NAME);
-    const controlFrameMounted = controlFrame.mount(Element.CONTROL_FRAME_COMPONENT_FRAME);
+    controlFrame.create(Selectors.CONTROL_FRAME_COMPONENT_NAME);
+    const controlFrameMounted = controlFrame.mount(Selectors.CONTROL_FRAME_COMPONENT_FRAME);
 
     ST.registerElements(
       [cardNumberMounted, securityCodeMounted, expirationDateMounted, notificationFrameMounted, controlFrameMounted],
@@ -68,8 +69,8 @@ export default class ST {
       ]
     );
 
-    if (this._getAPMConfig(apmsNames.visaCheckout)) {
-      const visa = new VisaCheckout(this._getAPMConfig(apmsNames.visaCheckout), jwt);
+    if (this._getAPMConfig(environment.APM_NAMES.VISA_CHECKOUT)) {
+      new VisaCheckout(this._getAPMConfig(environment.APM_NAMES.VISA_CHECKOUT), jwt);
     }
     if (this._getAPMConfig('Apple Pay')) {
       const applePay = new ApplePay(this._getAPMConfig(apmsNames.visaCheckout), jwt);
