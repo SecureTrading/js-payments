@@ -1,10 +1,10 @@
 export const environment = {
-  production: true,
-  testEnvironment: false,
+  production: false,
+  testEnvironment: true,
   GATEWAY_URL: 'https://webservices.securetrading.net/jwt/',
   SONGBIRD_URL: 'https://songbirdstag.cardinalcommerce.com/cardinalcruise/v1/songbird.js',
   CARDINAL_COMMERCE_CONFIG: {
-    logging: { level: 'off' }
+    logging: { level: 'on' }
   },
   APM_NAMES: {
     APPLE_PAY: 'APPLEPAY',

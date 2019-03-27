@@ -68,7 +68,7 @@ class VisaCheckout {
   };
 
   constructor(config: any, jwt: string) {
-    if (environment.production) {
+    if (environment.testEnvironment) {
       this._setMockedData();
       this._proceedFlowWithMockedData();
     } else {
