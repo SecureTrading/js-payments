@@ -1,4 +1,5 @@
 import DOMMethods from '../../core/shared/DomMethods';
+import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
 import { cardsLogos } from './animated-card-logos';
 
@@ -203,26 +204,26 @@ class AnimatedCard {
    * value: Value passed from component
    */
   public getCardData() {
-    window.addEventListener('message', event => {
-      const { name, value, type } = event.data;
-      this.cardDetails.type = type;
-      switch (name) {
-        case AnimatedCard.COMPONENTS_IDS.CARD_NUMBER:
-          this.flipCardBack(type);
-          this.cardDetails.cardNumber = value;
-          break;
-        case AnimatedCard.COMPONENTS_IDS.SECURITY_CODE:
-          this.shouldFlipCard(type);
-          this.cardDetails.securityCode = value;
-          break;
-        case AnimatedCard.COMPONENTS_IDS.EXPIRATION_DATE:
-          this.flipCardBack(type);
-          this.cardDetails.expirationDate = value;
-          break;
-      }
-
+    const messageBus = new MessageBus();
+    const type = 'VISA';
+    messageBus.subscribe(MessageBus.EVENTS.CARD_NUMBER_CHANGE, (data: any) => {
+      this.flipCardBack(type);
+      this.cardDetails.cardNumber = data.value;
       this.setCardTheme();
-      this.setValueOnCard(name);
+      this.setValueOnCard(AnimatedCard.COMPONENTS_IDS.CARD_NUMBER);
+    });
+    messageBus.subscribe(MessageBus.EVENTS.EXPIRATION_DATE_CHANGE, (data: any) => {
+      this.flipCardBack(type);
+      this.cardDetails.expirationDate = data.value;
+      this.setCardTheme();
+      this.setValueOnCard(AnimatedCard.COMPONENTS_IDS.EXPIRATION_DATE);
+    });
+
+    messageBus.subscribe(MessageBus.EVENTS.SECURITY_CODE_CHANGE, (data: any) => {
+      this.shouldFlipCard(type);
+      this.cardDetails.securityCode = data.value;
+      this.setCardTheme();
+      this.setValueOnCard(AnimatedCard.COMPONENTS_IDS.SECURITY_CODE);
     });
   }
 }
