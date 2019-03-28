@@ -69,7 +69,7 @@ class VisaCheckout {
   };
 
   constructor(config: any, jwt: string) {
-    if (!environment.testEnvironment) {
+    if (environment.testEnvironment) {
       this._attachVisaButton();
       this._setActionOnMockedButton();
     } else {
