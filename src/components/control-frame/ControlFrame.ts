@@ -1,8 +1,9 @@
 import Selectors from '../../core/shared/Selectors';
 import MessageBus from '../../core/shared/MessageBus';
 import Payment from '../../core/shared/Payment';
+import Frame from '../../core/shared/Frame';
 
-export default class ControlFrame {
+export default class ControlFrame extends Frame {
   private _buttonElement: HTMLButtonElement;
   private _messageBus: MessageBus;
   private _payment: Payment;
@@ -22,6 +23,7 @@ export default class ControlFrame {
   };
 
   constructor() {
+    super();
     this._buttonElement = ControlFrame.ifFieldExists();
     this._messageBus = new MessageBus();
     this._payment = new Payment();
@@ -33,9 +35,19 @@ export default class ControlFrame {
     return document.getElementById(Selectors.CONTROL_FRAME_BUTTON_SELECTOR);
   }
 
-  private onInit() {
+  protected onInit() {
+    super.onInit();
     this.initEventListeners();
     this.initSubscriptions();
+  }
+
+  protected _getAllowedStyles () {
+    let allowed = super._getAllowedStyles();
+    allowed = { ...allowed,
+                "font-size-button": [{property: "font-size", selector: "#st-control-frame-button"}],
+                "line-height-button": [{property: "line-height", selector: "#st-control-frame-button"}],
+              }
+    return allowed;
   }
 
   private onClick() {

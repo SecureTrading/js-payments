@@ -2,12 +2,19 @@ export interface SubStyles {
     [key: string]: string;
 }
 
-export interface Styles {
+export interface GroupedStyles {
     [key: string]: SubStyles;
 }
 
+export interface Styles {
+    [identifier: string]: string;
+}
+
 export interface AllowedStyles {
-    [identifier: string]: Array<string>;
+    [identifier: string]: [{
+        selector: string,
+        property: string,
+    }]
 }
 
 /***
@@ -17,42 +24,51 @@ export interface AllowedStyles {
 export class Styler {
     private _allowed: AllowedStyles;
 
-    constructor(allowed?: AllowedStyles) {
-        if (allowed == undefined) {
-            allowed = {input: ['font-size', 'background-color', 'color'],
-                       label: ['color']
-                      };
-        }
+    constructor(allowed: AllowedStyles) {
         this._allowed = allowed;
     }
 
    /**
    * Validates that the provided styles will only allow the expected values to be overridden
    */
-    private _validate(styles: Styles) {
-        for (let tag in styles) {
-            if (!(this._allowed.hasOwnProperty(tag))) {
-                throw Error("Tag " + tag + " cannot have its style overridden");
-            }
-            for (let style in styles[tag]) {
-                let allowedStyles = this._allowed[tag];
-                if (!(allowedStyles.includes(style))) {
-                    throw Error("Invalid style " + style + " defined for tag " + tag);
-                }
+    private _filter(styles: Styles) {
+        let filtered: Styles = {};
+        for (let style in styles) {
+            if (this._allowed.hasOwnProperty(style)) {
+                filtered[style] = styles[style];
             }
         }
+        return filtered;
+    }
+
+    private _group(styles: Styles) {
+        let grouped: GroupedStyles = {};
+        let i;
+        for(let style in styles) {
+            let alloweds = this._allowed[style];
+            for (i = 0; i < alloweds.length; i++) {
+                let allowed = alloweds[i];
+                if (!grouped.hasOwnProperty(allowed.selector)) {
+                    grouped[allowed.selector] = {};
+                }
+                grouped[allowed.selector][allowed.property] = styles[style];
+            }
+        }
+        return grouped;
     }
 
     public inject(styles: Styles) {
-        this._validate(styles);
-        let tag, elements, element: any, i;
-        for (tag in styles) {
-            elements = document.getElementsByTagName(tag);
-            for (i = 0; i < elements.length; i++) {
-                element = elements[i];
-                element.style = this._getTagStyles(styles[tag]);
-            }
+        styles = this._filter(styles);
+        let groupedStyles = this._group(styles);
+        let tag;
+        let template = `body { display: block; }`;
+        for (tag in groupedStyles) {
+            let tagStyle = this._getTagStyles(groupedStyles[tag]);
+            template += `${tag} { ${tagStyle} }`;
         }
+        let style = document.createElement("style");
+        style.innerHTML = template;
+        document.head.appendChild(style);
     }
 
     private _getTagStyles(styles: SubStyles) {

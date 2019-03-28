@@ -1,3 +1,7 @@
+%frame-body {
+  display: none; // Don't display frame until override styles are applied
+}
+
 %block {
   position: relative;
 }

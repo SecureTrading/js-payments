@@ -1,3 +1,5 @@
+import Frame from "../../core/shared/Frame";
+
 enum messageTypes {
   error = 'ERROR',
   info = 'INFO',
@@ -9,7 +11,7 @@ enum messageTypes {
  * NotificationFrame class
  * Defines component for displaying payment status messages
  */
-export default class NotificationFrame {
+export default class NotificationFrame extends Frame {
   get notificationFrameElement(): HTMLElement {
     return this._notificationFrameElement;
   }
@@ -48,13 +50,24 @@ export default class NotificationFrame {
     }
   }
 
+  protected _getAllowedStyles () {
+    let allowed = super._getAllowedStyles();
+    allowed = { ...allowed,
+                "font-size-notification": [{property: "font-size", selector: "#st-notification-frame"}],
+                "line-height-notification": [{property: "line-height", selector: "#st-notification-frame"}],
+              }
+    return allowed;
+  }
+
   private static ELEMENT_ID: string = 'st-notification-frame';
   public _message: { type: messageTypes; content: string };
   private _notificationFrameElement: HTMLElement;
 
   constructor() {
+    super();
     this.errorMessageListener();
     this.notificationFrameElement = NotificationFrame.getElement(NotificationFrame.ELEMENT_ID);
+    this.onInit();
   }
 
   /**
