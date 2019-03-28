@@ -205,22 +205,22 @@ class AnimatedCard {
    */
   public getCardData() {
     const messageBus = new MessageBus();
-    const type = 'VISA';
     messageBus.subscribe(MessageBus.EVENTS.CARD_NUMBER_CHANGE, (data: any) => {
-      this.flipCardBack(type);
+      this.flipCardBack(data.name.type);
       this.cardDetails.cardNumber = data.value;
+      this.cardDetails.type = data.name.type;
       this.setCardTheme();
       this.setValueOnCard(AnimatedCard.COMPONENTS_IDS.CARD_NUMBER);
     });
     messageBus.subscribe(MessageBus.EVENTS.EXPIRATION_DATE_CHANGE, (data: any) => {
-      this.flipCardBack(type);
+      this.flipCardBack(data.name.type);
       this.cardDetails.expirationDate = data.value;
       this.setCardTheme();
       this.setValueOnCard(AnimatedCard.COMPONENTS_IDS.EXPIRATION_DATE);
     });
 
     messageBus.subscribe(MessageBus.EVENTS.SECURITY_CODE_CHANGE, (data: any) => {
-      this.shouldFlipCard(type);
+      this.shouldFlipCard(data.name.type);
       this.cardDetails.securityCode = data.value;
       this.setCardTheme();
       this.setValueOnCard(AnimatedCard.COMPONENTS_IDS.SECURITY_CODE);
