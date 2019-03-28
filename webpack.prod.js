@@ -8,7 +8,7 @@ module.exports = merge(common, {
   devtool: 'source-map',
   plugins: [
     new webpack.NormalModuleReplacementPlugin(
-      './src/environments/environment.ts',
+      /src\/environments\/environment\.ts/,
       './src/environments/environment.prod.ts'
     ),
     new TypedocWebpackPlugin({})
