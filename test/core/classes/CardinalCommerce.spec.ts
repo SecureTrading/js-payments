@@ -8,17 +8,17 @@ describe('Class CCIntegration', () => {
   // when
   beforeEach(() => {
     document.body.innerHTML = `<input id='JWTContainer' value="${jwt}" />`;
-    instance = new CardinalCommerce('somejwt', 'https://webservices.securetrading.net/jwt/');
+    instance = new CardinalCommerce('somejwt');
   });
 
   // given
-  describe('Method _threedeinitRequest', () => {
+  describe('Method _3DInitRequest', () => {
     // then
     let sendRequestSpy: any;
     let threedeinitRequest;
     beforeEach(() => {
       sendRequestSpy = jest.spyOn(instance, 'sendRequest');
-      threedeinitRequest = instance._threedeinitRequest();
+      threedeinitRequest = instance._3DInitRequest();
     });
   });
 

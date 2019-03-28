@@ -54,7 +54,7 @@ export default class CardNumber extends FormField {
   private sendState() {
     let formFieldState: FormFieldState = this.getState();
     let messageBusEvent: MessageBusEvent = {
-      type: MessageBus.EVENTS.CARD_NUMBER_CHANGE,
+      type: MessageBus.EVENTS.CHANGE_CARD_NUMBER,
       data: formFieldState
     };
 

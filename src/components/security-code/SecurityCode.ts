@@ -32,7 +32,7 @@ export default class SecurityCode extends FormField {
   private sendState() {
     let formFieldState: FormFieldState = this.getState();
     let messageBusEvent: MessageBusEvent = {
-      type: MessageBus.EVENTS.SECURITY_CODE_CHANGE,
+      type: MessageBus.EVENTS.CHANGE_SECURITY_CODE,
       data: formFieldState
     };
     this._messageBus.publish(messageBusEvent);

@@ -1,3 +1,5 @@
+import MessageBus from '../../core/shared/MessageBus';
+
 enum messageTypes {
   error = 'ERROR',
   info = 'INFO',
@@ -5,11 +7,17 @@ enum messageTypes {
   warning = 'WARNING'
 }
 
+interface NotificationEventData {
+  message: string;
+}
+
 /**
  * NotificationFrame class
  * Defines component for displaying payment status messages
  */
 export default class NotificationFrame {
+  private _messageBus: MessageBus;
+
   get notificationFrameElement(): HTMLElement {
     return this._notificationFrameElement;
   }
@@ -53,8 +61,26 @@ export default class NotificationFrame {
   private _notificationFrameElement: HTMLElement;
 
   constructor() {
-    this.errorMessageListener();
+    this._messageBus = new MessageBus();
+
     this.notificationFrameElement = NotificationFrame.getElement(NotificationFrame.ELEMENT_ID);
+
+    this._onInit();
+  }
+
+  private _onInit() {
+    this._onMessage();
+  }
+
+  /**
+   * Listens to postMessage event, receives message from it and triggers method for inserting content into div
+   */
+  private _onMessage() {
+    this._messageBus.subscribe(MessageBus.EVENTS.NOTIFICATION_SUCCESS, (data: NotificationEventData) => {
+      this._message = { type: messageTypes.success, content: data.message };
+      this.insertContent();
+      this.setAttributeClass();
+    });
   }
 
   /**
@@ -72,22 +98,7 @@ export default class NotificationFrame {
    */
   public setAttributeClass() {
     if (this.notificationFrameElement) {
-      this.notificationFrameElement.setAttribute('class', NotificationFrame._getMessageClass(this._message.type));
+      this.notificationFrameElement.classList.add(NotificationFrame._getMessageClass(this._message.type));
     }
-  }
-
-  /**
-   * Listens to postMessage event, receives message from it and triggers method for inserting content into div
-   */
-  public errorMessageListener() {
-    window.addEventListener(
-      'message',
-      ({ data }) => {
-        this._message = data;
-        this.insertContent();
-        this.setAttributeClass();
-      },
-      false
-    );
   }
 }
