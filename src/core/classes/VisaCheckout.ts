@@ -188,7 +188,7 @@ class VisaCheckout {
         break;
       }
       case VisaCheckout.VISA_PAYMENT_STATUS.WARNING: {
-        this.responseMessage = Language.translations.PAYMENT_CANCEL;
+        this.responseMessage = Language.translations.PAYMENT_WARNING;
         break;
       }
       case VisaCheckout.VISA_PAYMENT_STATUS.ERROR: {
