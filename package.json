@@ -11,10 +11,10 @@
   "scripts": {
     "build": "webpack --config webpack.prod.js",
     "start": "webpack-dev-server --color --progress --config webpack.dev.js",
-    "automated": "webpack-dev-server --color --progress --config webpack.testdev.js",
+    "automated": "webpack-dev-server --color --progress --config webpack.test.js",
     "example": "live-server ./dist --port=9090 --host=localhost --no-browser",
     "prod": "npm run build",
-    "test": "jest --watch",
+    "test": "jest --watchAll",
     "coverage": "jest --coverage",
     "snyk": "snyk test",
     "testdocker": "docker pull \"securetrading1/js-payments-testing:$DOCKER_BRANCH\" && docker run -d -p 8443:8443 -p 8760:8760 -it \"securetrading1/js-payments-testing:$DOCKER_BRANCH\"",
