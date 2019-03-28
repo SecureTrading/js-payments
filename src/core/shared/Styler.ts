@@ -11,10 +11,10 @@ export interface Styles {
 }
 
 export interface AllowedStyles {
-    [identifier: string]: [{
+    [identifier: string]: {
         selector: string,
         property: string,
-    }]
+    }
 }
 
 /***
@@ -45,14 +45,11 @@ export class Styler {
         let grouped: GroupedStyles = {};
         let i;
         for(let style in styles) {
-            let alloweds = this._allowed[style];
-            for (i = 0; i < alloweds.length; i++) {
-                let allowed = alloweds[i];
-                if (!grouped.hasOwnProperty(allowed.selector)) {
-                    grouped[allowed.selector] = {};
-                }
-                grouped[allowed.selector][allowed.property] = styles[style];
+            let allowed = this._allowed[style];
+            if (!grouped.hasOwnProperty(allowed.selector)) {
+                grouped[allowed.selector] = {};
             }
+            grouped[allowed.selector][allowed.property] = styles[style];
         }
         return grouped;
     }
@@ -66,7 +63,7 @@ export class Styler {
             let tagStyle = this._getTagStyles(groupedStyles[tag]);
             template += `${tag} { ${tagStyle} }`;
         }
-        let style = document.createElement("style");
+        let style = document.createElement('style');
         style.innerHTML = template;
         document.head.appendChild(style);
     }
@@ -76,7 +73,7 @@ export class Styler {
         for (let style in styles) {
           results.push(`${style}: ${styles[style]};`);
         }
-        const result = results.join(" ");
+        const result = results.join(' ');
         return result;
     }
 

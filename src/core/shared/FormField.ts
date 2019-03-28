@@ -24,28 +24,38 @@ export default class FormField extends Frame {
 
   protected _getAllowedStyles () {
     let allowed = super._getAllowedStyles();
-    let input = "#"+this._inputSelector;
-    let errorInput = input + ":invalid"
-    let message = "#"+this._messageSelector;
-    let label = "label[for=" + this._inputSelector + "]";
+    let input = '#' + this._inputSelector;
+    let inputError = input + ':invalid';
+    let inputPlaceholder = input + '::placeholder';
+    let message = '#' + this._messageSelector;
+    let label = 'label[for=' + this._inputSelector + ']';
     allowed = { ...allowed,
-                "font-size-input": [{property: "font-size", selector: input}],
-                "font-size-label": [{property: "font-size", selector: label}],
-                "font-size-message": [{property: "font-size", selector: message}],
-                
-                "line-height-input": [{property: "line-height", selector: input}],
-                "line-height-label": [{property: "line-height", selector: label}],
-                "line-height-message": [{property: "line-height", selector: message}],
-                
-                "color-input": [{property: "color",selector: input}],
-                "color-label": [{property: "color", selector: label}],
-                "color-input-error": [{property: "color", selector: errorInput}],
-                "color-error": [{property: "color",selector: message}],
-                           
-                "background-color-input": [{property: "background-color",selector: input}],
-                "background-color-input-error": [{property: "background-color",selector: errorInput}],
-
-                "display-label": [{property: "display", selector: label}],
+                'display-label': {property: 'display', selector: label},
+                'font-size-input': {property: 'font-size', selector: input},
+                'font-size-input-error': {property: 'font-size', selector: inputError},
+                'font-size-label': {property: 'font-size', selector: label},
+                'font-size-message': {property: 'font-size', selector: message},
+                'line-height-input': {property: 'line-height', selector: input},
+                'line-height-input-error': {property: 'line-height', selector: inputError},
+                'line-height-label': {property: 'line-height', selector: label},
+                'line-height-message': {property: 'line-height', selector: message},
+                'color-input': {property: 'color', selector: input},
+                'color-input-error': {property: 'color', selector: inputError},
+                'color-input-placeholder': {property: 'color', selector: inputPlaceholder},
+                'color-label': {property: 'color', selector: label},
+                'color-error': {property: 'color', selector: message},
+                'background-color-input': {property: 'background-color', selector: input},
+                'background-color-input-error': {property: 'background-color', selector: inputError},
+                'border-size-input': {property: 'border-width', selector: input},
+                'border-size-input-error': {property: 'border-width', selector: inputError},
+                'border-color-input': {property: 'border-color', selector: input},
+                'border-color-input-error': {property: 'border-color', selector: inputError},
+                'border-radius-input': {property: 'border-radius', selector: input},
+                'border-radius-input-error': {property: 'border-radius', selector: inputError},
+                'space-inset-input': {property: 'padding', selector: input},
+                'space-inset-input-error': {property: 'padding', selector: inputError},
+                'space-outset-input': {property: 'margin', selector: input},
+                'space-outset-input-error': {property: 'margin', selector: inputError},
               }
     return allowed;
   }

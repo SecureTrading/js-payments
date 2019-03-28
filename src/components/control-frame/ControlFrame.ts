@@ -43,9 +43,25 @@ export default class ControlFrame extends Frame {
 
   protected _getAllowedStyles () {
     let allowed = super._getAllowedStyles();
+    let button = '#st-control-frame-button';
+    let buttonHover = button + ':hover';
     allowed = { ...allowed,
-                "font-size-button": [{property: "font-size", selector: "#st-control-frame-button"}],
-                "line-height-button": [{property: "line-height", selector: "#st-control-frame-button"}],
+                'font-size-button': {property: 'font-size', selector: button},
+                'line-height-button': {property: 'line-height', selector: button},
+                'color-button': {property: 'color', selector: button},
+                'color-button-hover': {property: 'color', selector: buttonHover},
+                'background-color-button': {property: 'background-color', selector: button},
+                'background-color-button-hover': {property: 'background-color', selector: buttonHover},
+                'border-size-button': {property: 'border-size', selector: button},
+                'border-size-button-hover': {property: 'border-size', selector: buttonHover},
+                'border-color-button': {property: 'border-color', selector: button},
+                'border-color-button-hover': {property: 'border-color', selector: buttonHover},
+                'border-radius-button': {property: 'border-radius', selector: button},
+                'border-radius-button-hover': {property: 'border-radius', selector: buttonHover},
+                'space-inset-button': {property: 'padding', selector: button},
+                'space-inset-button-hover': {property: 'padding', selector: buttonHover},
+                'space-outset-button': {property: 'margin', selector: button},
+                'space-outset-button-hover': {property: 'margin', selector: buttonHover},
               }
     return allowed;
   }
