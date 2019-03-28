@@ -67,7 +67,9 @@ class AnimatedCard {
     DOMMethods.setProperty.apply(this, ['src', cardsLogos.visa, AnimatedCard.PAYMENT_LOGO_ID]);
     DOMMethods.setProperty.apply(this, ['src', cardsLogos.chip, AnimatedCard.CHIP_LOGO_ID]);
     this.cardElement = document.getElementById(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
-    this.getCardData();
+    this.subscribeInputEvent(MessageBus.EVENTS.CARD_NUMBER_CHANGE, AnimatedCard.COMPONENTS_IDS.CARD_NUMBER);
+    this.subscribeInputEvent(MessageBus.EVENTS.SECURITY_CODE_CHANGE, AnimatedCard.COMPONENTS_IDS.SECURITY_CODE);
+    this.subscribeInputEvent(MessageBus.EVENTS.EXPIRATION_DATE_CHANGE, AnimatedCard.COMPONENTS_IDS.EXPIRATION_DATE);
   }
 
   /**
@@ -206,28 +208,27 @@ class AnimatedCard {
    * name: Name of component from which came value
    * value: Value passed from component
    */
-  public getCardData() {
+  public subscribeInputEvent(event: string, component: string) {
     const messageBus = new MessageBus();
-    messageBus.subscribe(MessageBus.EVENTS.CARD_NUMBER_CHANGE, (data: any) => {
-      //@ts-ignore
-      this.cardDetails.type = this.binLookup.binLookup(data.value).type;
-      this.flipCardBack(this.cardDetails.type);
-      this.cardDetails.cardNumber = data.value;
+    messageBus.subscribe(event, (data: any) => {
+      switch (component) {
+        case AnimatedCard.COMPONENTS_IDS.CARD_NUMBER:
+          //@ts-ignore
+          this.cardDetails.type = this.binLookup.binLookup(data.value).type;
+          this.cardDetails.cardNumber = data.value;
+          this.flipCardBack(this.cardDetails.type);
+          break;
+        case AnimatedCard.COMPONENTS_IDS.EXPIRATION_DATE:
+          this.cardDetails.expirationDate = data.value;
+          this.flipCardBack(this.cardDetails.type);
+          break;
+        case AnimatedCard.COMPONENTS_IDS.SECURITY_CODE:
+          this.cardDetails.securityCode = data.value;
+          this.shouldFlipCard(this.cardDetails.type);
+          break;
+      }
       this.setCardTheme();
-      this.setValueOnCard(AnimatedCard.COMPONENTS_IDS.CARD_NUMBER);
-    });
-    messageBus.subscribe(MessageBus.EVENTS.EXPIRATION_DATE_CHANGE, (data: any) => {
-      this.flipCardBack(this.cardDetails.type);
-      this.cardDetails.expirationDate = data.value;
-      this.setCardTheme();
-      this.setValueOnCard(AnimatedCard.COMPONENTS_IDS.EXPIRATION_DATE);
-    });
-
-    messageBus.subscribe(MessageBus.EVENTS.SECURITY_CODE_CHANGE, (data: any) => {
-      this.shouldFlipCard(this.cardDetails.type);
-      this.cardDetails.securityCode = data.value;
-      this.setCardTheme();
-      this.setValueOnCard(AnimatedCard.COMPONENTS_IDS.SECURITY_CODE);
+      this.setValueOnCard(component);
     });
   }
 }
