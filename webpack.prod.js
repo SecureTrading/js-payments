@@ -7,6 +7,7 @@ module.exports = merge(common, {
   mode: 'production',
   devtool: 'source-map',
   plugins: [
+    // TODO: not working correctly for now - missing import
     new webpack.NormalModuleReplacementPlugin(
       /src\/environments\/environment\.ts/,
       './src/environments/environment.prod.ts'

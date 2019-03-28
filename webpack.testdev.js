@@ -12,6 +12,7 @@ module.exports = merge(common, {
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
+    // TODO: not working correctly for now - missing import
     new webpack.NormalModuleReplacementPlugin(/environments\/environment/, './src/environments/environment.testdev.ts')
   ]
 });
