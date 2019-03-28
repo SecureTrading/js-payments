@@ -1,3 +1,4 @@
+import BinLookup from '../../core/shared/BinLookup';
 import DOMMethods from '../../core/shared/DomMethods';
 import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
@@ -40,6 +41,7 @@ class AnimatedCard {
   };
   public static NOT_FLIPPED_CARDS = ['AMEX'];
   public static PAYMENT_LOGO_ID: string = 'st-payment-logo';
+  public binLookup: BinLookup;
 
   // @ts-ignore
   public static ifCardExists = (): HTMLInputElement => document.getElementById(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
@@ -61,6 +63,7 @@ class AnimatedCard {
   public cardElement: HTMLElement;
 
   constructor() {
+    this.binLookup = new BinLookup();
     DOMMethods.setProperty.apply(this, ['src', cardsLogos.visa, AnimatedCard.PAYMENT_LOGO_ID]);
     DOMMethods.setProperty.apply(this, ['src', cardsLogos.chip, AnimatedCard.CHIP_LOGO_ID]);
     this.cardElement = document.getElementById(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
@@ -206,21 +209,22 @@ class AnimatedCard {
   public getCardData() {
     const messageBus = new MessageBus();
     messageBus.subscribe(MessageBus.EVENTS.CARD_NUMBER_CHANGE, (data: any) => {
-      this.flipCardBack(data.name.type);
+      //@ts-ignore
+      this.cardDetails.type = this.binLookup.binLookup(data.value).type;
+      this.flipCardBack(this.cardDetails.type);
       this.cardDetails.cardNumber = data.value;
-      this.cardDetails.type = data.name.type;
       this.setCardTheme();
       this.setValueOnCard(AnimatedCard.COMPONENTS_IDS.CARD_NUMBER);
     });
     messageBus.subscribe(MessageBus.EVENTS.EXPIRATION_DATE_CHANGE, (data: any) => {
-      this.flipCardBack(data.name.type);
+      this.flipCardBack(this.cardDetails.type);
       this.cardDetails.expirationDate = data.value;
       this.setCardTheme();
       this.setValueOnCard(AnimatedCard.COMPONENTS_IDS.EXPIRATION_DATE);
     });
 
     messageBus.subscribe(MessageBus.EVENTS.SECURITY_CODE_CHANGE, (data: any) => {
-      this.shouldFlipCard(data.name.type);
+      this.shouldFlipCard(this.cardDetails.type);
       this.cardDetails.securityCode = data.value;
       this.setCardTheme();
       this.setValueOnCard(AnimatedCard.COMPONENTS_IDS.SECURITY_CODE);
