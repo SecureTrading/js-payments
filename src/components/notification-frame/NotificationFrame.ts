@@ -1,5 +1,5 @@
 import Frame from '../../core/shared/Frame';
-import { ifError } from 'assert';
+import Selectors from '../../core/shared/Selectors';
 
 enum messageTypes {
   error = 'ERROR',
@@ -22,10 +22,10 @@ export default class NotificationFrame extends Frame {
   }
 
   public static ELEMENT_CLASSES = {
-    error: 'notification-frame--error',
-    info: 'notification-frame--info',
-    success: 'notification-frame--success',
-    warning: 'notification-frame--warning'
+    error: Selectors.NOTIFICATION_FRAME_ERROR_CLASS,
+    info: Selectors.NOTIFICATION_FRAME_INFO_CLASS,
+    success: Selectors.NOTIFICATION_FRAME_SUCCESS_CLASS,
+    warning: Selectors.NOTIFICATION_FRAME_WARNING_CLASS
   };
 
   public static getElement = (elementId: string) => document.getElementById(elementId);
@@ -100,7 +100,7 @@ export default class NotificationFrame extends Frame {
     return allowed;
   }
 
-  private static ELEMENT_ID: string = 'st-notification-frame';
+  private static ELEMENT_ID: string = Selectors.NOTIFICATION_FRAME_ID;
   public _message: { type: messageTypes; content: string };
   private _notificationFrameElement: HTMLElement;
 

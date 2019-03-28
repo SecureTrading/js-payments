@@ -43,7 +43,7 @@ export default class ControlFrame extends Frame {
 
   protected _getAllowedStyles () {
     let allowed = super._getAllowedStyles();
-    let button = '#st-control-frame-button';
+    let button = '#' + Selectors.CONTROL_FRAME_BUTTON_SELECTOR;
     let buttonHover = button + ':hover';
     allowed = { ...allowed,
                 'font-size-button': {property: 'font-size', selector: button},
