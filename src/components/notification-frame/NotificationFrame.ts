@@ -2,7 +2,7 @@ enum messageTypes {
   error = 'ERROR',
   info = 'INFO',
   success = 'SUCCESS',
-  cancel = 'CANCEL'
+  warning = 'WARNING'
 }
 
 /**
@@ -22,7 +22,7 @@ export default class NotificationFrame {
     error: 'notification-frame--error',
     info: 'notification-frame--info',
     success: 'notification-frame--success',
-    cancel: 'notification-frame--cancel'
+    warning: 'notification-frame--warning'
   };
 
   public static getElement = (elementId: string) => document.getElementById(elementId);
@@ -39,8 +39,8 @@ export default class NotificationFrame {
       return NotificationFrame.ELEMENT_CLASSES.error;
     } else if (messageType === messageTypes.success) {
       return NotificationFrame.ELEMENT_CLASSES.success;
-    } else if (messageType === messageTypes.cancel) {
-      return NotificationFrame.ELEMENT_CLASSES.cancel;
+    } else if (messageType === messageTypes.warning) {
+      return NotificationFrame.ELEMENT_CLASSES.warning;
     } else if (messageType === messageTypes.info) {
       return NotificationFrame.ELEMENT_CLASSES.info;
     } else {

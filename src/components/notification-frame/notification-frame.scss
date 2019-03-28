@@ -17,7 +17,7 @@
   visibility: hidden;
 
   &--error,
-  &--cancel,
+  &--warning,
   &--success,
   &--info {
     visibility: visible;
@@ -31,11 +31,11 @@
     );
   }
 
-  &--cancel {
+  &--warning {
     @include messageType(
-      $background-color-notification-cancel,
-      $border-color-notification-cancel,
-      $color-notification-cancel
+      $background-color-notification-warning,
+      $border-color-notification-warning,
+      $color-notification-warning
     );
   }
 
