@@ -14,7 +14,7 @@ module.exports = merge(common, {
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NormalModuleReplacementPlugin(
       /\.\.\/\.\.\/environments\/environment/,
-      '../../environments/environment.at'
+      '../../environments/environment.test'
     )
   ]
 });
