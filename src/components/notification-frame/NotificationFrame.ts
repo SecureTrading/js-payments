@@ -71,8 +71,9 @@ export default class NotificationFrame {
    * @private
    */
   public setAttributeClass() {
-    if (this.notificationFrameElement && NotificationFrame._getMessageClass(this._message.type)) {
-      this.notificationFrameElement.classList.add(NotificationFrame._getMessageClass(this._message.type));
+    const notificationElementClass = NotificationFrame._getMessageClass(this._message.type);
+    if (this.notificationFrameElement && notificationElementClass) {
+      this.notificationFrameElement.classList.add(notificationElementClass);
     }
   }
 

@@ -1,3 +1,5 @@
+import Selectors from './Selectors';
+
 /**
  * DomMethods class.
  * Gather all methods which are making operation on DOM
@@ -11,8 +13,7 @@ class DomMethods {
     return script;
   }
 
-  public static getIframeContentWindow = (id: string) =>
-    (document.getElementById(id) as HTMLIFrameElement).contentWindow;
+  public static getIframeContentWindow = (name: string) => (window as any).frames[name];
 
   public static setMultipleAttributes = (attributes: any, markup: string) => {
     const element = document.createElement(markup);
