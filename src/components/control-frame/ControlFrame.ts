@@ -35,7 +35,7 @@ export default class ControlFrame extends Frame {
     return document.getElementById(Selectors.CONTROL_FRAME_BUTTON_SELECTOR);
   }
 
-  protected onInit() {
+  public onInit() {
     super.onInit();
     this.initEventListeners();
     this.initSubscriptions();
