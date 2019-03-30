@@ -5,17 +5,21 @@ export default class Frame {
     constructor() {
     }
 
-    protected onInit() {
+    public onInit() {
         this._applyStyles();
     }
     
-    protected _applyStyles() {
+    public parseUrl() {
         var parsedUrl = new URL(window.location.href);
         const styles: Styles = {};
         parsedUrl.searchParams.forEach(function (value, param) {
             styles[param] = value;
         });
-        new Styler(this._getAllowedStyles()).inject(styles);
+        return styles;
+    }
+
+    protected _applyStyles() {
+        new Styler(this._getAllowedStyles()).inject(this.parseUrl());
     }
 
     protected _getAllowedStyles() {

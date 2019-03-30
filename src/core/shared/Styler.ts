@@ -54,17 +54,21 @@ export class Styler {
         return grouped;
     }
 
-    public inject(styles: Styles) {
+    private _getStyleString(styles: Styles) {
         styles = this._filter(styles);
         let groupedStyles = this._group(styles);
         let tag;
-        let template = `body { display: block; }`;
+        let templates = [`body { display: block; }`];
         for (tag in groupedStyles) {
             let tagStyle = this._getTagStyles(groupedStyles[tag]);
-            template += `${tag} { ${tagStyle} }`;
+            templates.push(`${tag} { ${tagStyle} }`);
         }
+        return templates.join(" ");
+    }
+
+    public inject(styles: Styles) {
         let style = document.createElement('style');
-        style.innerHTML = template;
+        style.innerHTML = this._getStyleString(styles);
         document.head.appendChild(style);
     }
 
