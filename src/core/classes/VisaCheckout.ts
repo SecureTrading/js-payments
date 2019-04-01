@@ -1,6 +1,7 @@
 declare const V: any;
 import { VISA_CHECKOUT_URLS } from './../imports/apms';
 import { StJwt } from "../shared/StJwt";
+import { config } from 'shelljs';
 
 /**
  *  Visa Checkout configuration class; sets up Visa e-wallet
@@ -61,33 +62,50 @@ class VisaCheckout {
     this._livestatus = livestatus;
     this._placement = placement;
     this._locale = stJwt.locale;
-    this._initConfiguration.apikey = apikey;
-    this._initConfiguration.settings = { locale: this._locale };
-
-    if (settings != undefined) {
-      this._initConfiguration.settings = { ...this._initConfiguration.settings,
-                                           ...settings 
-                                          };
-    }
-
-    this._initConfiguration.paymentRequest.currencyCode = stJwt.currencyiso3a;
-    this._initConfiguration.paymentRequest.subtotal = stJwt.mainamount;
-    this._initConfiguration.paymentRequest.total = stJwt.mainamount;
-    
-    if (paymentRequest != undefined) {
-      this._initConfiguration.paymentRequest = { ...this._initConfiguration.paymentRequest,
-                                                 ...paymentRequest,
-                                                 
-      };
-    }
-    this._buttonSettings = {locale: this._locale};
-    if (settings != undefined) {
-      this._buttonSettings = { ...this._buttonSettings,
-                               ...buttonSettings 
-                              };
-    }
+    this._setInitConfiguration(paymentRequest, settings, stJwt, apikey);
+    this._setButtonSettings(buttonSettings);
     this._checkLiveStatus();
     this._initVisaConfiguration();
+  }
+
+  public _setInitConfiguration(paymentRequest: any, settings: any, stJwt: StJwt, apikey: string) {
+    this._initConfiguration.apikey = apikey;
+    this._initConfiguration.paymentRequest = this._getInitPaymentRequest(paymentRequest, stJwt);
+    this._initConfiguration.settings = this._getInitSettings(settings);
+  }
+
+  public _getInitPaymentRequest(paymentRequest: any, stJwt: StJwt) {
+    let config = this._initConfiguration.paymentRequest;
+    config.currencyCode = stJwt.currencyiso3a;
+    config.subtotal = stJwt.mainamount;
+    config.total = stJwt.mainamount;
+    
+    if (paymentRequest != undefined) {
+      config = { ...config,
+                 ...paymentRequest                               
+      };
+    }
+    return config;
+  }
+
+  public _getInitSettings(settings: any) {
+    let config = { locale: this._locale };
+    if (settings != undefined) {
+      config = { ...config,
+                ...settings 
+               };
+    }
+    return config;
+  }
+
+  public _setButtonSettings(settings: any) {
+    let config = {locale: this._locale};
+    if (settings != undefined) {
+      config = { ...config,
+                 ...settings
+               };
+    }
+    this._buttonSettings = config;
   }
 
   /**
