@@ -1,3 +1,5 @@
+import DomMethods from './DomMethods';
+
 export interface SubStyles {
     [key: string]: string;
 }
@@ -67,9 +69,7 @@ export class Styler {
     }
 
     public inject(styles: Styles) {
-        let style = document.createElement('style');
-        style.innerHTML = this._getStyleString(styles);
-        document.head.appendChild(style);
+        DomMethods.insertStyle(this._getStyleString(styles));
     }
 
     private _getTagStyles(styles: SubStyles) {

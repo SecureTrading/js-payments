@@ -10,6 +10,12 @@ class DomMethods {
     script.src = src;
     return script;
   }
+
+  public static insertStyle(contents: string) {
+    let style = document.createElement('style');
+    style.innerHTML = contents;
+    document.head.appendChild(style);
+  }
 }
 
 export default DomMethods;

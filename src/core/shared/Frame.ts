@@ -2,17 +2,14 @@ import { Styler, AllowedStyles, Styles } from './Styler';
 
 export default class Frame {
 
-    constructor() {
-    }
-
     public onInit() {
         this._applyStyles();
     }
     
     public parseUrl() {
-        var parsedUrl = new URL(window.location.href);
+        const parsedUrl = new URL(window.location.href);
         const styles: Styles = {};
-        parsedUrl.searchParams.forEach(function (value, param) {
+        parsedUrl.searchParams.forEach((value, param) => {
             styles[param] = value;
         });
         return styles;
