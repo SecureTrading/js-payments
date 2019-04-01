@@ -14,6 +14,13 @@ class AnimatedCard {
     SECURITY_CODE_ID: 'st-animated-card-security-code'
   };
 
+  public static CARD_DETAILS_PLACEHOLDERS = {
+    CARD_NUMBER: '.... .... .... ....',
+    EXPIRATION_DATE_: 'MM/YY',
+    SECURITY_CODE: '...',
+    TYPE: 'VISA'
+  };
+
   public static CARD_BRANDS = {
     AMEX: 'AMEX',
     ASTROPAYCARD: 'ASTROPAYCARD',
@@ -56,10 +63,10 @@ class AnimatedCard {
   public animatedCardBack: HTMLElement = document.getElementById('st-animated-card-side-back');
   public animatedCardFront: HTMLElement = document.getElementById('st-animated-card-side-front');
   public cardDetails: any = {
-    cardNumber: '.... .... .... ....',
-    expirationDate: 'MM/YY',
-    securityCode: '...',
-    type: 'VISA'
+    cardNumber: AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER,
+    expirationDate: AnimatedCard.CARD_DETAILS_PLACEHOLDERS.EXPIRATION_DATE_,
+    securityCode: AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE,
+    type: AnimatedCard.CARD_DETAILS_PLACEHOLDERS.TYPE
   };
   public cardElement: HTMLElement;
   public animatedCardPan: HTMLElement = document.getElementById(AnimatedCard.ANIMATED_CARD_FIELDS_IDS.CREDIT_CARD_ID);
@@ -228,15 +235,27 @@ class AnimatedCard {
           //@ts-ignore
           this.cardDetails.type = this.binLookup.binLookup(data.value).type;
           DOMMethods.setProperty.apply(this, ['alt', this.cardDetails.type, AnimatedCard.PAYMENT_LOGO_ID]);
-          this.cardDetails.cardNumber = data.value;
+          if (!data.value) {
+            this.cardDetails.cardNumber = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER;
+          } else {
+            this.cardDetails.cardNumber = data.value;
+          }
           this.flipCardBack(this.cardDetails.type);
           break;
         case AnimatedCard.COMPONENTS_IDS.EXPIRATION_DATE:
-          this.cardDetails.expirationDate = data.value;
+          if (!data.value) {
+            this.cardDetails.expirationDate = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.EXPIRATION_DATE_;
+          } else {
+            this.cardDetails.expirationDate = data.value;
+          }
           this.flipCardBack(this.cardDetails.type);
           break;
         case AnimatedCard.COMPONENTS_IDS.SECURITY_CODE:
-          this.cardDetails.securityCode = data.value;
+          if (!data.value) {
+            this.cardDetails.securityCode = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
+          } else {
+            this.cardDetails.securityCode = data.value;
+          }
           this.shouldFlipCard(this.cardDetails.type);
           break;
       }
