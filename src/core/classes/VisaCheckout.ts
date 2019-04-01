@@ -23,6 +23,8 @@ class VisaCheckout {
   private _paymentError: object;
   private _livestatus: number = 0;
   private _placement: string = 'body';
+  private _buttonSettings: any;
+  private _locale: string;
 
   set paymentDetails(value: object) {
     this._paymentDetails = value;
@@ -45,20 +47,45 @@ class VisaCheckout {
     apikey: '' as string,
     paymentRequest: {
       currencyCode: '' as string,
+      total: '' as string,
       subtotal: '' as string
-    }
+    },
+    settings: {},
   };
 
   constructor(config: any, jwt: string) {
     const {
-      props: { apikey, livestatus, placement }
+      props: { apikey, livestatus, placement, settings, paymentRequest, buttonSettings }
     } = config;
     const stJwt = new StJwt(jwt);
     this._livestatus = livestatus;
     this._placement = placement;
+    this._locale = stJwt.locale;
     this._initConfiguration.apikey = apikey;
+    this._initConfiguration.settings = { locale: this._locale };
+
+    if (settings != undefined) {
+      this._initConfiguration.settings = { ...this._initConfiguration.settings,
+                                           ...settings 
+                                          };
+    }
+
     this._initConfiguration.paymentRequest.currencyCode = stJwt.currencyiso3a;
     this._initConfiguration.paymentRequest.subtotal = stJwt.mainamount;
+    this._initConfiguration.paymentRequest.total = stJwt.mainamount;
+    
+    if (paymentRequest != undefined) {
+      this._initConfiguration.paymentRequest = { ...this._initConfiguration.paymentRequest,
+                                                 ...paymentRequest,
+                                                 
+      };
+    }
+    this._buttonSettings = {locale: this._locale};
+    if (settings != undefined) {
+      this._buttonSettings = { ...this._buttonSettings,
+                               ...buttonSettings 
+                              };
+    }
     this._checkLiveStatus();
     this._initVisaConfiguration();
   }
@@ -69,7 +96,16 @@ class VisaCheckout {
   public _createVisaButton() {
     const button = document.createElement('img');
     const { alt, className, role, src } = this._visaCheckoutButtonProps;
-    button.setAttribute('src', src);
+    let url = src;
+    if (this._buttonSettings != undefined) {
+      let params = new URLSearchParams();
+      for (let param in this._buttonSettings) {
+        params.set(param, this._buttonSettings[param]);
+      }
+      url = url + "?" + params.toString();
+    }
+    
+    button.setAttribute('src', url);
     button.setAttribute('class', className);
     button.setAttribute('role', role);
     button.setAttribute('alt', alt);
