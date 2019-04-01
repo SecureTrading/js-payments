@@ -13,6 +13,7 @@ class AnimatedCard {
     EXPIRATION_DATE_ID: 'st-animated-card-expiration-date',
     SECURITY_CODE_ID: 'st-animated-card-security-code'
   };
+
   public static CARD_BRANDS = {
     AMEX: 'AMEX',
     ASTROPAYCARD: 'ASTROPAYCARD',
@@ -61,11 +62,22 @@ class AnimatedCard {
     type: 'VISA'
   };
   public cardElement: HTMLElement;
+  public animatedCardPan: HTMLElement = document.getElementById(AnimatedCard.ANIMATED_CARD_FIELDS_IDS.CREDIT_CARD_ID);
+  public animatedCardExpirationDate: HTMLElement = document.getElementById(
+    AnimatedCard.ANIMATED_CARD_FIELDS_IDS.EXPIRATION_DATE_ID
+  );
+  public animatedCardSecurityCode: HTMLElement = document.getElementById(
+    AnimatedCard.ANIMATED_CARD_FIELDS_IDS.SECURITY_CODE_ID
+  );
 
   constructor() {
     this.binLookup = new BinLookup();
     DOMMethods.setProperty.apply(this, ['src', cardsLogos.visa, AnimatedCard.PAYMENT_LOGO_ID]);
     DOMMethods.setProperty.apply(this, ['src', cardsLogos.chip, AnimatedCard.CHIP_LOGO_ID]);
+    DOMMethods.setProperty.apply(this, ['alt', this.cardDetails.type, AnimatedCard.PAYMENT_LOGO_ID]);
+    this.animatedCardPan.textContent = this.cardDetails.cardNumber;
+    this.animatedCardExpirationDate.textContent = this.cardDetails.expirationDate;
+    this.animatedCardSecurityCode.textContent = this.cardDetails.securityCode;
     this.cardElement = document.getElementById(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
     this.subscribeInputEvent(MessageBus.EVENTS.CARD_NUMBER_CHANGE, AnimatedCard.COMPONENTS_IDS.CARD_NUMBER);
     this.subscribeInputEvent(MessageBus.EVENTS.SECURITY_CODE_CHANGE, AnimatedCard.COMPONENTS_IDS.SECURITY_CODE);
@@ -215,6 +227,7 @@ class AnimatedCard {
         case AnimatedCard.COMPONENTS_IDS.CARD_NUMBER:
           //@ts-ignore
           this.cardDetails.type = this.binLookup.binLookup(data.value).type;
+          DOMMethods.setProperty.apply(this, ['alt', this.cardDetails.type, AnimatedCard.PAYMENT_LOGO_ID]);
           this.cardDetails.cardNumber = data.value;
           this.flipCardBack(this.cardDetails.type);
           break;
