@@ -1,7 +1,7 @@
 declare const V: any;
 import { VISA_CHECKOUT_URLS } from './../imports/apms';
 import { StJwt } from "../shared/StJwt";
-import { config } from 'shelljs';
+import Utils from '../shared/Utils';
 
 /**
  *  Visa Checkout configuration class; sets up Visa e-wallet
@@ -25,7 +25,6 @@ class VisaCheckout {
   private _livestatus: number = 0;
   private _placement: string = 'body';
   private _buttonSettings: any;
-  private _locale: string;
 
   set paymentDetails(value: object) {
     this._paymentDetails = value;
@@ -61,9 +60,8 @@ class VisaCheckout {
     const stJwt = new StJwt(jwt);
     this._livestatus = livestatus;
     this._placement = placement;
-    this._locale = stJwt.locale;
     this._setInitConfiguration(paymentRequest, settings, stJwt, apikey);
-    this._setButtonSettings(buttonSettings);
+    this._setButtonSettings(buttonSettings, stJwt);
     this._checkLiveStatus();
     this._initVisaConfiguration();
   }
@@ -71,7 +69,7 @@ class VisaCheckout {
   public _setInitConfiguration(paymentRequest: any, settings: any, stJwt: StJwt, apikey: string) {
     this._initConfiguration.apikey = apikey;
     this._initConfiguration.paymentRequest = this._getInitPaymentRequest(paymentRequest, stJwt);
-    this._initConfiguration.settings = this._getInitSettings(settings);
+    this._initConfiguration.settings = this._getInitSettings(settings, stJwt);
   }
 
   public _getInitPaymentRequest(paymentRequest: any, stJwt: StJwt) {
@@ -88,8 +86,8 @@ class VisaCheckout {
     return config;
   }
 
-  public _getInitSettings(settings: any) {
-    let config = { locale: this._locale };
+  public _getInitSettings(settings: any, stJwt: StJwt) {
+    let config = { locale: stJwt.locale };
     if (settings != undefined) {
       config = { ...config,
                 ...settings 
@@ -98,8 +96,8 @@ class VisaCheckout {
     return config;
   }
 
-  public _setButtonSettings(settings: any) {
-    let config = {locale: this._locale};
+  public _setButtonSettings(settings: any, stJwt: StJwt) {
+    let config = {locale: stJwt.locale};
     if (settings != undefined) {
       config = { ...config,
                  ...settings
@@ -114,16 +112,8 @@ class VisaCheckout {
   public _createVisaButton() {
     const button = document.createElement('img');
     const { alt, className, role, src } = this._visaCheckoutButtonProps;
-    let url = src;
-    if (this._buttonSettings != undefined) {
-      let params = new URLSearchParams();
-      for (let param in this._buttonSettings) {
-        params.set(param, this._buttonSettings[param]);
-      }
-      url = url + "?" + params.toString();
-    }
     
-    button.setAttribute('src', url);
+    button.setAttribute('src', Utils.addUrlParams(src, this._buttonSettings));
     button.setAttribute('class', className);
     button.setAttribute('role', role);
     button.setAttribute('alt', alt);
