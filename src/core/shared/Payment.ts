@@ -8,16 +8,11 @@ export default class Payment {
   private _stJwtDecode: any;
   private readonly _stJwtPayload: StJwtPayload;
   private _messageBus: MessageBus;
-
   private _cardinalCommerceCacheToken: string;
 
-  // @TODO: it should be replaced by value send by the merchant
-  private static readonly jwt =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzNTc5NzgyODA5LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.GA0Gd7dxtXXMqxMAmt49NiUHltRrBYPSCZPUrgKaceo';
-
-  constructor() {
-    this._stTransport = new StTransport({ jwt: Payment.jwt });
-    this._stJwtDecode = new StJwt(Payment.jwt);
+  constructor(jwt: string) {
+    this._stTransport = new StTransport({ jwt: jwt });
+    this._stJwtDecode = new StJwt(jwt);
     this._stJwtPayload = this._stJwtDecode.payload;
     this._messageBus = new MessageBus();
   }

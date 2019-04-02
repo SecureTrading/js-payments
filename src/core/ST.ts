@@ -8,6 +8,7 @@ import VisaCheckout from './classes/VisaCheckout';
  */
 export default class ST {
   public jwt: string;
+  public origin: string;
   public fieldsIds: any;
   public errorContainerId: string;
   public style: object;
@@ -25,8 +26,16 @@ export default class ST {
     });
   }
 
-  constructor(jwt: string, fieldsIds: any, errorContainerId: string, style: object, payments: object[]) {
+  constructor(
+    jwt: string,
+    origin: string,
+    fieldsIds: any,
+    errorContainerId: string,
+    style: object,
+    payments: object[]
+  ) {
     this.jwt = jwt;
+    this.origin = origin;
     this.fieldsIds = fieldsIds;
     this.errorContainerId = errorContainerId;
     this.style = style;
@@ -37,7 +46,7 @@ export default class ST {
 
   private _onInit() {
     this._initElements();
-    this._init3DSecure(this.jwt);
+    this._init3DSecure();
     this._initWallets(this.jwt);
   }
 
@@ -60,7 +69,7 @@ export default class ST {
     notificationFrame.create(Element.NOTIFICATION_FRAME_COMPONENT_NAME);
     const notificationFrameMounted = notificationFrame.mount(Element.NOTIFICATION_FRAME_COMPONENT_FRAME);
 
-    controlFrame.create(Element.CONTROL_FRAME_COMPONENT_NAME);
+    controlFrame.create(Element.CONTROL_FRAME_COMPONENT_NAME, { jwt: this.jwt, origin: this.origin });
     const controlFrameMounted = controlFrame.mount(Element.CONTROL_FRAME_COMPONENT_FRAME);
 
     ST.registerElements(
@@ -75,8 +84,8 @@ export default class ST {
     );
   }
 
-  private _init3DSecure(jwt: string) {
-    new CardinalCommerce(jwt);
+  private _init3DSecure() {
+    new CardinalCommerce();
   }
 
   private _initWallets(jwt: string) {

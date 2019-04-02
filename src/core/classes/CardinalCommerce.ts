@@ -1,8 +1,9 @@
-declare const Cardinal: any;
-
 import { environment } from '../../environments/environment';
 import DomMethods from './../shared/DomMethods';
+import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
+
+declare const Cardinal: any;
 
 interface ThreeDQueryResponse {
   acquirerresponsemessage: string;
@@ -36,46 +37,53 @@ export default class CardinalCommerce {
     SUCCESS: 'SUCCESS'
   };
 
-  private _controlFrame: Window;
-  private _controlFrameUrl: string = 'http://localhost:8080'; // @TODO: this should not be hardcoded
+  private _messageBus: MessageBus;
   private _cardinalCommerceJWT: string;
   private _cardinalCommerceCacheToken: string;
 
-  constructor(jwt: string) {
-    // @ts-ignore
-    this._controlFrame = window.frames[Selectors.CONTROL_FRAME_IFRAME_SELECTOR];
-
+  constructor() {
+    this._messageBus = new MessageBus();
     this._onInit();
   }
 
   private _onInit() {
-    // @TODO: use MessageBus
-    window.addEventListener('message', (event: MessageEvent) => {
-      let messageBusEvent: MessageBusEvent = event.data;
+    this._initSubscriptions();
+  }
 
-      switch (messageBusEvent.type) {
-        case 'LOAD_CONTROL_FRAME':
-          this._threeDInitRequest();
-          break;
-        case 'THREEDINIT':
-          this._cardinalCommerceJWT = messageBusEvent.data.jwt;
-          this._cardinalCommerceCacheToken = messageBusEvent.data.cachetoken;
-          this._threeDSetup();
-          break;
-        case 'THREEDQUERY':
-          this.onThreeDQuery(messageBusEvent.data);
-          break;
-        default:
-          break;
-      }
+  private _initSubscriptions() {
+    this._messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME, () => {
+      this._onLoadControlFrame();
     });
+    this._messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDINIT, (data: any) => {
+      this._onThreeDInitEvent(data);
+    });
+    this._messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDQUERY, (data: any) => {
+      this._onThreeDQueryEvent(data);
+    });
+  }
+
+  private _onLoadControlFrame() {
+    this._threeDInitRequest();
+  }
+
+  private _onThreeDInitEvent(data: any) {
+    this._cardinalCommerceJWT = data.jwt;
+    this._cardinalCommerceCacheToken = data.cachetoken;
+    this._threeDSetup();
+  }
+
+  private _onThreeDQueryEvent(data: any) {
+    this._threeDQueryRequest(data);
   }
 
   /**
    * Perform a THREEDINIT with ST in order to generate the Cardinal songbird JWT
    */
   private _threeDInitRequest() {
-    this._controlFrame.postMessage({ type: 'THREEDINIT' }, this._controlFrameUrl);
+    const messageBusEvent: MessageBusEvent = {
+      type: MessageBus.EVENTS_PUBLIC.THREEDINIT
+    };
+    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME_SELECTOR);
   }
 
   private _threeDSetup() {
@@ -110,8 +118,10 @@ export default class CardinalCommerce {
    * This includes a failed JWT authentication.
    */
   private _onCardinalSetupComplete() {
-    // @TODO: use MessageBus
-    this._controlFrame.postMessage({ type: 'LOAD_CARDINAL' }, this._controlFrameUrl);
+    const messageBusEvent: MessageBusEvent = {
+      type: MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL
+    };
+    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME_SELECTOR);
   }
 
   /**
@@ -125,7 +135,7 @@ export default class CardinalCommerce {
     }
   }
 
-  private onThreeDQuery(responseObject: ThreeDQueryResponse) {
+  private _threeDQueryRequest(responseObject: ThreeDQueryResponse) {
     if (this._isCardEnrolled(responseObject.enrolled)) {
       this._authenticateCard(responseObject);
     } else {
@@ -161,8 +171,11 @@ export default class CardinalCommerce {
   }
 
   private _authorizePayment(threeDResponse: string) {
-    // @TODO: use MessageBus
-    this._controlFrame.postMessage({ type: 'AUTH', data: threeDResponse }, this._controlFrameUrl);
+    const messageBusEvent: MessageBusEvent = {
+      type: MessageBus.EVENTS_PUBLIC.AUTH,
+      data: threeDResponse
+    };
+    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME_SELECTOR);
   }
 
   // /**

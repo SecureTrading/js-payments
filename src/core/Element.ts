@@ -1,3 +1,5 @@
+import { environment } from '../environments/environment';
+
 /***
  * Defines input with iframe source
  * Can be styled by predefined JSON.
@@ -18,11 +20,11 @@ export default class Element {
   public static NOTIFICATION_FRAME_COMPONENT_FRAME: string = 'st-notification-frame-iframe';
   public static CONTROL_FRAME_COMPONENT_FRAME: string = 'st-control-frame-iframe';
 
-  public static CARD_NUMBER_COMPONENT: string = '/card-number.html';
-  public static SECURITY_CODE_COMPONENT: string = '/security-code.html';
-  public static EXPIRATION_DATE_COMPONENT: string = '/expiration-date.html';
-  public static NOTIFICATION_FRAME_COMPONENT: string = '/notification-frame.html';
-  public static CONTROL_FRAME_COMPONENT: string = '/control-frame.html';
+  public static CARD_NUMBER_COMPONENT: string = `${environment.FRAME_URL}/card-number.html`;
+  public static SECURITY_CODE_COMPONENT: string = `${environment.FRAME_URL}/security-code.html`;
+  public static EXPIRATION_DATE_COMPONENT: string = `${environment.FRAME_URL}/expiration-date.html`;
+  public static NOTIFICATION_FRAME_COMPONENT: string = `${environment.FRAME_URL}/notification-frame.html`;
+  public static CONTROL_FRAME_COMPONENT: string = `${environment.FRAME_URL}/control-frame.html`;
 
   /***
    * Function which defines iframe src attribute
@@ -62,11 +64,15 @@ export default class Element {
   /***
    * Method for creating element in iframe
    * @param elementName Name of input which we want to create
+   * @param params
    */
+  public create(elementName: string, params?: object) {
+    const componentAddress = Element.getComponentAddress(elementName);
+    // @ts-ignore
+    const componentParams = new URLSearchParams(params).toString(); // @TODO: add polyfill for IE
 
-  public create(elementName: string) {
     this._name = elementName;
-    this._iframeSrc = Element.getComponentAddress(elementName);
+    this._iframeSrc = `${componentAddress}?${componentParams}`;
   }
 
   /***

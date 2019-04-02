@@ -1,4 +1,9 @@
+import { environment } from '../../environments/environment';
+import Utils from './Utils';
+
 export default class MessageBus {
+  private readonly _parentOrigin: string;
+  private readonly _frameOrigin: string;
   private _subscriptions: any = {};
 
   public static SUBSCRIBERS: string = 'ST_SUBSCRIBERS';
@@ -12,47 +17,53 @@ export default class MessageBus {
     NOTIFICATION_WARNING: 'NOTIFICATION_WARNING'
   };
   public static EVENTS_PUBLIC = {
+    AUTH: 'AUTH',
     LOAD_CARDINAL: 'LOAD_CARDINAL',
     LOAD_CONTROL_FRAME: 'LOAD_CONTROL_FRAME',
     THREEDINIT: 'THREEDINIT',
     THREEDQUERY: 'THREEDQUERY'
   };
 
-  constructor() {
+  constructor(parentOrigin?: string) {
+    this._parentOrigin = parentOrigin;
+    this._frameOrigin = environment.FRAME_URL;
     this.registerMessageListener();
   }
 
   private registerMessageListener() {
     window.addEventListener('message', (event: MessageEvent) => {
-      let messageBusEvent: MessageBusEvent;
+      let messageBusEvent: MessageBusEvent = event.data;
+      let isPublicEvent = Utils.inArray(Object.keys(MessageBus.EVENTS_PUBLIC), messageBusEvent.type);
+      let isCallbackAllowed =
+        event.origin === this._frameOrigin || (event.origin === this._parentOrigin && isPublicEvent);
 
-      if (event.origin === window.origin) {
-        messageBusEvent = event.data;
-        this._subscriptions[messageBusEvent.type] && this._subscriptions[messageBusEvent.type](messageBusEvent.data);
+      if (isCallbackAllowed && this._subscriptions[messageBusEvent.type]) {
+        this._subscriptions[messageBusEvent.type](messageBusEvent.data);
       }
     });
   }
 
-  publish(event: MessageBusEvent, isParentFrameBus?: boolean) {
-    const parentOrigin: string = 'http://localhost:8080'; // @TODO: it should come from configuration sent by the merchant
-    const frameOrigin: string = window.origin;
+  publish(event: MessageBusEvent, publishToParent?: boolean) {
     let subscribersStore;
 
-    if (isParentFrameBus) {
-      window.parent.postMessage(event, parentOrigin);
+    if (publishToParent) {
+      window.parent.postMessage(event, this._parentOrigin);
     } else {
       subscribersStore = window.sessionStorage.getItem(MessageBus.SUBSCRIBERS);
       subscribersStore = JSON.parse(subscribersStore);
 
-      // @ts-ignore
       if (subscribersStore[event.type]) {
-        // @ts-ignore
         subscribersStore[event.type].forEach((frame: string) => {
           // @ts-ignore
-          window.parent.frames[frame].postMessage(event, frameOrigin);
+          window.parent.frames[frame].postMessage(event, this._frameOrigin);
         });
       }
     }
+  }
+
+  publishFromParent(event: MessageBusEvent, frameName: string) {
+    // @ts-ignore
+    window.frames[frameName].postMessage(event, this._frameOrigin);
   }
 
   subscribe(eventType: string, callback: any) {
@@ -74,6 +85,10 @@ export default class MessageBus {
     subscribersStore = JSON.stringify(subscribers);
     window.sessionStorage.setItem(MessageBus.SUBSCRIBERS, subscribersStore);
 
+    this._subscriptions[eventType] = callback;
+  }
+
+  subscribeOnParent(eventType: string, callback: any) {
     this._subscriptions[eventType] = callback;
   }
 }

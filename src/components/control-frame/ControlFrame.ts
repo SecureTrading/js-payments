@@ -3,6 +3,7 @@ import Payment from '../../core/shared/Payment';
 import Selectors from '../../core/shared/Selectors';
 
 export default class ControlFrame {
+  private _frameParams: object;
   private _buttonElement: HTMLButtonElement;
   private _messageBus: MessageBus;
   private _payment: Payment;
@@ -29,9 +30,12 @@ export default class ControlFrame {
   }
 
   constructor() {
+    this.setFrameParams();
     this._buttonElement = ControlFrame.ifFieldExists();
-    this._messageBus = new MessageBus();
-    this._payment = new Payment();
+    // @ts-ignore
+    this._messageBus = new MessageBus(this._frameParams.origin);
+    // @ts-ignore
+    this._payment = new Payment(this._frameParams.jwt);
     this.onInit();
   }
 
@@ -39,6 +43,17 @@ export default class ControlFrame {
     this.initEventListeners();
     this.initSubscriptions();
     this.onLoad();
+  }
+
+  private setFrameParams() {
+    // @ts-ignore
+    const frameUrl = new URL(window.location);
+    const frameParams = new URLSearchParams(frameUrl.search); // @TODO: add polyfill for IE
+
+    this._frameParams = {
+      jwt: frameParams.get('jwt'),
+      origin: frameParams.get('origin')
+    };
   }
 
   private initEventListeners() {
@@ -58,30 +73,14 @@ export default class ControlFrame {
     this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: FormFieldState) => {
       this.onSecurityCodeStateChange(data);
     });
-
-    // @TODO: use MessageBus to register listeners
-    window.addEventListener('message', (event: MessageEvent) => {
-      let messageBusEvent: MessageBusEvent = event.data;
-
-      switch (messageBusEvent.type) {
-        case 'THREEDINIT':
-          this._payment.threeDInitRequest().then(responseBody => {
-            const messageBusEvent: MessageBusEvent = {
-              type: MessageBus.EVENTS_PUBLIC.THREEDINIT,
-              data: responseBody
-            };
-            this._messageBus.publish(messageBusEvent, true);
-          });
-          break;
-        case 'LOAD_CARDINAL':
-          this._isPaymentReady = true;
-          break;
-        case 'AUTH':
-          this._payment.authorizePayment(this._card, messageBusEvent.data);
-          break;
-        default:
-          break;
-      }
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
+      this.onThreeDInitEvent();
+    });
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL, () => {
+      this.onLoadCardinal();
+    });
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.AUTH, (data: any) => {
+      this.onAuthEvent(data);
     });
   }
 
@@ -92,6 +91,10 @@ export default class ControlFrame {
   private onLoad() {
     const messageBusEvent: MessageBusEvent = { type: MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME };
     this._messageBus.publish(messageBusEvent, true);
+  }
+
+  private onLoadCardinal() {
+    this._isPaymentReady = true;
   }
 
   private onCardNumberStateChange(data: FormFieldState) {
@@ -107,6 +110,28 @@ export default class ControlFrame {
   private onSecurityCodeStateChange(data: FormFieldState) {
     this._formFields.securityCode.validity = data.validity;
     this._formFields.securityCode.value = data.value;
+  }
+
+  private onThreeDInitEvent() {
+    this.requestThreeDInit();
+  }
+
+  private onAuthEvent(data: any) {
+    this.requestAuth(data);
+  }
+
+  private requestThreeDInit() {
+    this._payment.threeDInitRequest().then(responseBody => {
+      const messageBusEvent: MessageBusEvent = {
+        type: MessageBus.EVENTS_PUBLIC.THREEDINIT,
+        data: responseBody
+      };
+      this._messageBus.publish(messageBusEvent, true);
+    });
+  }
+
+  private requestAuth(data: any) {
+    this._payment.authorizePayment(this._card, data);
   }
 
   private requestPayment() {
