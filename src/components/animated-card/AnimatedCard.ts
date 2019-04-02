@@ -42,7 +42,6 @@ class AnimatedCard {
   };
   public static NOT_FLIPPED_CARDS = ['AMEX'];
   public static PAYMENT_LOGO_ID: string = 'st-payment-logo';
-  public binLookup: BinLookup;
 
   // @ts-ignore
   public static ifCardExists = (): HTMLInputElement => document.getElementById(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
@@ -53,6 +52,8 @@ class AnimatedCard {
    */
   public static returnThemeClass = (theme: string) => `st-animated-card__${theme}`;
 
+  public binLookup: BinLookup;
+  public messageBus: MessageBus;
   public animatedCardBack: HTMLElement = document.getElementById('st-animated-card-side-back');
   public animatedCardFront: HTMLElement = document.getElementById('st-animated-card-side-front');
   public cardDetails: any = {
@@ -68,27 +69,10 @@ class AnimatedCard {
 
   constructor() {
     this.binLookup = new BinLookup();
+    this.messageBus = new MessageBus();
     this._setDefaultImagesAttributes();
     this._setDefaultInputsValues();
     this._setSubscribeEvents();
-  }
-
-  private _setDefaultImagesAttributes() {
-    DOMMethods.setProperty.apply(this, ['src', cardsLogos.visa, AnimatedCard.PAYMENT_LOGO_ID]);
-    DOMMethods.setProperty.apply(this, ['src', cardsLogos.chip, AnimatedCard.CHIP_LOGO_ID]);
-    DOMMethods.setProperty.apply(this, ['alt', this.cardDetails.type, AnimatedCard.PAYMENT_LOGO_ID]);
-  }
-
-  private _setDefaultInputsValues() {
-    this.animatedCardPan.textContent = this.cardDetails.cardNumber;
-    this.animatedCardExpirationDate.textContent = this.cardDetails.expirationDate;
-    this.animatedCardSecurityCode.textContent = this.cardDetails.securityCode;
-  }
-
-  private _setSubscribeEvents() {
-    this.subscribeInputEvent(MessageBus.EVENTS.CARD_NUMBER_CHANGE, AnimatedCard.COMPONENTS_IDS.CARD_NUMBER);
-    this.subscribeInputEvent(MessageBus.EVENTS.SECURITY_CODE_CHANGE, AnimatedCard.COMPONENTS_IDS.SECURITY_CODE);
-    this.subscribeInputEvent(MessageBus.EVENTS.EXPIRATION_DATE_CHANGE, AnimatedCard.COMPONENTS_IDS.EXPIRATION_DATE);
   }
 
   /**
@@ -117,11 +101,11 @@ class AnimatedCard {
   }
 
   /**
-   * Sets card theme according to card brand
+   * Sets card theme according to card brand coming from binLookup()
    */
   public setCardTheme() {
     this.resetToDefaultTheme();
-    let themeObject = { type: '', logo: '' };
+    const themeObject = { type: '', logo: '' };
     switch (this.cardDetails.type) {
       case AnimatedCard.CARD_BRANDS.AMEX:
         themeObject.type = AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.AMEX.toLowerCase());
@@ -224,40 +208,62 @@ class AnimatedCard {
    * value: Value passed from component
    */
   public subscribeInputEvent(event: string, component: string) {
-    const messageBus = new MessageBus();
-    messageBus.subscribe(event, (data: any) => {
+    this.messageBus.subscribe(event, (data: any) => {
       switch (component) {
         case AnimatedCard.COMPONENTS_IDS.CARD_NUMBER:
-          //@ts-ignore
           this.cardDetails.type = this.binLookup.binLookup(data.value).type;
           DOMMethods.setProperty.apply(this, ['alt', this.cardDetails.type, AnimatedCard.PAYMENT_LOGO_ID]);
-          if (!data.value) {
-            this.cardDetails.cardNumber = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER;
-          } else {
-            this.cardDetails.cardNumber = data.value;
-          }
+          data.value
+            ? (this.cardDetails.cardNumber = data.value)
+            : (this.cardDetails.cardNumber = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER);
           this.flipCardBack(this.cardDetails.type);
           break;
         case AnimatedCard.COMPONENTS_IDS.EXPIRATION_DATE:
-          if (!data.value) {
-            this.cardDetails.expirationDate = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.EXPIRATION_DATE_;
-          } else {
-            this.cardDetails.expirationDate = data.value;
-          }
+          data.value
+            ? (this.cardDetails.expirationDate = data.value)
+            : (this.cardDetails.expirationDate = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.EXPIRATION_DATE_);
           this.flipCardBack(this.cardDetails.type);
           break;
         case AnimatedCard.COMPONENTS_IDS.SECURITY_CODE:
-          if (!data.value) {
-            this.cardDetails.securityCode = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
-          } else {
-            this.cardDetails.securityCode = data.value;
-          }
+          data.value
+            ? (this.cardDetails.securityCode = data.value)
+            : (this.cardDetails.securityCode = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE);
           this.shouldFlipCard(this.cardDetails.type);
           break;
       }
       this.setCardTheme();
       this.setValueOnCard(component);
     });
+  }
+
+  /**
+   * Sets default attributes for card images - card logo and chip image
+   * @private
+   */
+  private _setDefaultImagesAttributes() {
+    DOMMethods.setProperty.apply(this, ['src', cardsLogos.visa, AnimatedCard.PAYMENT_LOGO_ID]);
+    DOMMethods.setProperty.apply(this, ['src', cardsLogos.chip, AnimatedCard.CHIP_LOGO_ID]);
+    DOMMethods.setProperty.apply(this, ['alt', this.cardDetails.type, AnimatedCard.PAYMENT_LOGO_ID]);
+  }
+
+  /**
+   * Sets placeholders for each editable value on card (card number, expiration date, security code)
+   * @private
+   */
+  private _setDefaultInputsValues() {
+    this.animatedCardPan.textContent = this.cardDetails.cardNumber;
+    this.animatedCardExpirationDate.textContent = this.cardDetails.expirationDate;
+    this.animatedCardSecurityCode.textContent = this.cardDetails.securityCode;
+  }
+
+  /**
+   * Sets subscribe events on every editable field of card
+   * @private
+   */
+  private _setSubscribeEvents() {
+    this.subscribeInputEvent(MessageBus.EVENTS.CARD_NUMBER_CHANGE, AnimatedCard.COMPONENTS_IDS.CARD_NUMBER);
+    this.subscribeInputEvent(MessageBus.EVENTS.SECURITY_CODE_CHANGE, AnimatedCard.COMPONENTS_IDS.SECURITY_CODE);
+    this.subscribeInputEvent(MessageBus.EVENTS.EXPIRATION_DATE_CHANGE, AnimatedCard.COMPONENTS_IDS.EXPIRATION_DATE);
   }
 }
 
