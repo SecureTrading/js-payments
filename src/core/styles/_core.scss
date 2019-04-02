@@ -18,12 +18,13 @@ body {
 iframe#animatedCard {
   width: 100%;
   height: 100%;
+  min-height: 32rem;
   border: 0;
 }
 
 #animated-card-container {
-  width: 42rem;
-  height: 26.73rem;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-content: center;
   align-items: center;

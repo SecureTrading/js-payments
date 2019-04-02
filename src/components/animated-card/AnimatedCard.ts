@@ -8,19 +8,6 @@ import { cardsLogos } from './animated-card-logos';
  * Defines animated card, it's 'stateless' component which only receives data validated previously by other components.
  */
 class AnimatedCard {
-  public static ANIMATED_CARD_FIELDS_IDS = {
-    CREDIT_CARD_ID: 'st-animated-card-number',
-    EXPIRATION_DATE_ID: 'st-animated-card-expiration-date',
-    SECURITY_CODE_ID: 'st-animated-card-security-code'
-  };
-
-  public static CARD_DETAILS_PLACEHOLDERS = {
-    CARD_NUMBER: '.... .... .... ....',
-    EXPIRATION_DATE_: 'MM/YY',
-    SECURITY_CODE: '...',
-    TYPE: 'VISA'
-  };
-
   public static CARD_BRANDS = {
     AMEX: 'AMEX',
     ASTROPAYCARD: 'ASTROPAYCARD',
@@ -33,14 +20,20 @@ class AnimatedCard {
     PIBA: 'PIBA',
     VISA: 'VISA'
   };
-  public static CHIP_LOGO_ID: string = 'st-chip-logo';
   public static CARD_CLASSES = {
-    CLASS_MAIN: 'st-animated-card',
     CLASS_BACK: 'st-animated-card__back',
     CLASS_FOR_ANIMATION: 'st-animated-card__flip-card',
     CLASS_FRONT: 'st-animated-card__front',
+    CLASS_MAIN: 'st-animated-card',
     CLASS_SIDE: 'st-animated-card__side'
   };
+  public static CARD_DETAILS_PLACEHOLDERS = {
+    CARD_NUMBER: 'XXXX XXXX XXXX XXXX',
+    EXPIRATION_DATE_: 'MM/YY',
+    SECURITY_CODE: 'XXX',
+    TYPE: 'VISA'
+  };
+  public static CHIP_LOGO_ID: string = 'st-chip-logo';
 
   public static COMPONENTS_IDS = {
     CARD_NUMBER: 'cardNumber',
@@ -68,24 +61,31 @@ class AnimatedCard {
     securityCode: AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE,
     type: AnimatedCard.CARD_DETAILS_PLACEHOLDERS.TYPE
   };
-  public cardElement: HTMLElement;
-  public animatedCardPan: HTMLElement = document.getElementById(AnimatedCard.ANIMATED_CARD_FIELDS_IDS.CREDIT_CARD_ID);
-  public animatedCardExpirationDate: HTMLElement = document.getElementById(
-    AnimatedCard.ANIMATED_CARD_FIELDS_IDS.EXPIRATION_DATE_ID
-  );
-  public animatedCardSecurityCode: HTMLElement = document.getElementById(
-    AnimatedCard.ANIMATED_CARD_FIELDS_IDS.SECURITY_CODE_ID
-  );
+  public cardElement: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
+  public animatedCardPan: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_CREDIT_CARD_ID);
+  public animatedCardExpirationDate: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_EXPIRATION_DATE_ID);
+  public animatedCardSecurityCode: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_SECURITY_CODE_ID);
 
   constructor() {
     this.binLookup = new BinLookup();
+    this._setDefaultImagesAttributes();
+    this._setDefaultInputsValues();
+    this._setSubscribeEvents();
+  }
+
+  private _setDefaultImagesAttributes() {
     DOMMethods.setProperty.apply(this, ['src', cardsLogos.visa, AnimatedCard.PAYMENT_LOGO_ID]);
     DOMMethods.setProperty.apply(this, ['src', cardsLogos.chip, AnimatedCard.CHIP_LOGO_ID]);
     DOMMethods.setProperty.apply(this, ['alt', this.cardDetails.type, AnimatedCard.PAYMENT_LOGO_ID]);
+  }
+
+  private _setDefaultInputsValues() {
     this.animatedCardPan.textContent = this.cardDetails.cardNumber;
     this.animatedCardExpirationDate.textContent = this.cardDetails.expirationDate;
     this.animatedCardSecurityCode.textContent = this.cardDetails.securityCode;
-    this.cardElement = document.getElementById(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
+  }
+
+  private _setSubscribeEvents() {
     this.subscribeInputEvent(MessageBus.EVENTS.CARD_NUMBER_CHANGE, AnimatedCard.COMPONENTS_IDS.CARD_NUMBER);
     this.subscribeInputEvent(MessageBus.EVENTS.SECURITY_CODE_CHANGE, AnimatedCard.COMPONENTS_IDS.SECURITY_CODE);
     this.subscribeInputEvent(MessageBus.EVENTS.EXPIRATION_DATE_CHANGE, AnimatedCard.COMPONENTS_IDS.EXPIRATION_DATE);
@@ -164,7 +164,7 @@ class AnimatedCard {
         themeObject.logo = cardsLogos.visa;
         break;
       default:
-        themeObject.type = AnimatedCard.CARD_CLASSES.CLASS_MAIN;
+        themeObject.type = AnimatedCard.CARD_BRANDS.VISA;
         themeObject.logo = cardsLogos.visa;
     }
     this.setThemeProperties(themeObject);
@@ -175,19 +175,15 @@ class AnimatedCard {
    * @param name
    */
   public setValueOnCard(name: string) {
-    let element;
     switch (name) {
       case AnimatedCard.COMPONENTS_IDS.CARD_NUMBER:
-        element = document.getElementById(AnimatedCard.ANIMATED_CARD_FIELDS_IDS.CREDIT_CARD_ID);
-        element.textContent = this.cardDetails.cardNumber;
+        this.animatedCardPan.textContent = this.cardDetails.cardNumber;
         break;
       case AnimatedCard.COMPONENTS_IDS.EXPIRATION_DATE:
-        element = document.getElementById(AnimatedCard.ANIMATED_CARD_FIELDS_IDS.EXPIRATION_DATE_ID);
-        element.textContent = this.cardDetails.expirationDate;
+        this.animatedCardExpirationDate.textContent = this.cardDetails.expirationDate;
         break;
       case AnimatedCard.COMPONENTS_IDS.SECURITY_CODE:
-        element = document.getElementById(AnimatedCard.ANIMATED_CARD_FIELDS_IDS.SECURITY_CODE_ID);
-        element.textContent = this.cardDetails.securityCode;
+        this.animatedCardSecurityCode.textContent = this.cardDetails.securityCode;
         break;
     }
   }

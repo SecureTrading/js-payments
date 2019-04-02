@@ -6,14 +6,24 @@ body {
   flex: 1;
   height: 100%;
   width: 100%;
+  overflow: hidden;
 }
 
 .st-animated-card {
   width: 100%;
-  perspective: 60rem;
-  overflow: hidden;
+  perspective: 100rem;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-  &__content,
+  &__content {
+    display: flex;
+    flex-direction: column;
+    height: 23rem;
+    width: 36rem;
+  }
+
   &__front,
   &__back {
     display: flex;
@@ -139,8 +149,8 @@ body {
     }
 
     &::before {
-      height: 26rem;
-      width: 55rem;
+      height: 17rem;
+      width: 33rem;
       border-radius: 165rem 0 0 0;
       left: 3rem;
       top: 6rem;
@@ -166,6 +176,7 @@ body {
     align-items: center;
     justify-content: space-between;
     height: 50%;
+    z-index: 1;
   }
 
   &__chip-logo {
