@@ -1,7 +1,7 @@
-import Selectors from '../../core/shared/Selectors';
+import Frame from '../../core/shared/Frame';
 import MessageBus from '../../core/shared/MessageBus';
 import Payment from '../../core/shared/Payment';
-import Frame from '../../core/shared/Frame';
+import Selectors from '../../core/shared/Selectors';
 
 export default class ControlFrame extends Frame {
   private _buttonElement: HTMLButtonElement;
@@ -41,35 +41,36 @@ export default class ControlFrame extends Frame {
     this.initSubscriptions();
   }
 
-  protected _getAllowedStyles () {
+  protected _getAllowedStyles() {
     let allowed = super._getAllowedStyles();
-    let button = '#' + Selectors.CONTROL_FRAME_BUTTON_SELECTOR;
-    let buttonHover = button + ':hover';
-    allowed = { ...allowed,
-                'font-size-button': {property: 'font-size', selector: button},
-                'line-height-button': {property: 'line-height', selector: button},
-                'color-button': {property: 'color', selector: button},
-                'color-button-hover': {property: 'color', selector: buttonHover},
-                'background-color-button': {property: 'background-color', selector: button},
-                'background-color-button-hover': {property: 'background-color', selector: buttonHover},
-                'border-size-button': {property: 'border-size', selector: button},
-                'border-size-button-hover': {property: 'border-size', selector: buttonHover},
-                'border-color-button': {property: 'border-color', selector: button},
-                'border-color-button-hover': {property: 'border-color', selector: buttonHover},
-                'border-radius-button': {property: 'border-radius', selector: button},
-                'border-radius-button-hover': {property: 'border-radius', selector: buttonHover},
-                'space-inset-button': {property: 'padding', selector: button},
-                'space-inset-button-hover': {property: 'padding', selector: buttonHover},
-                'space-outset-button': {property: 'margin', selector: button},
-                'space-outset-button-hover': {property: 'margin', selector: buttonHover},
-              }
+    const button = `#${Selectors.CONTROL_FRAME_BUTTON_SELECTOR}`;
+    const buttonHover = `${button}:hover`;
+    allowed = {
+      ...allowed,
+      'background-color-button': { property: 'background-color', selector: button },
+      'background-color-button-hover': { property: 'background-color', selector: buttonHover },
+      'border-color-button': { property: 'border-color', selector: button },
+      'border-color-button-hover': { property: 'border-color', selector: buttonHover },
+      'border-radius-button': { property: 'border-radius', selector: button },
+      'border-radius-button-hover': { property: 'border-radius', selector: buttonHover },
+      'border-size-button': { property: 'border-size', selector: button },
+      'border-size-button-hover': { property: 'border-size', selector: buttonHover },
+      'color-button': { property: 'color', selector: button },
+      'color-button-hover': { property: 'color', selector: buttonHover },
+      'font-size-button': { property: 'font-size', selector: button },
+      'line-height-button': { property: 'line-height', selector: button },
+      'space-inset-button': { property: 'padding', selector: button },
+      'space-inset-button-hover': { property: 'padding', selector: buttonHover },
+      'space-outset-button': { property: 'margin', selector: button },
+      'space-outset-button-hover': { property: 'margin', selector: buttonHover }
+    };
     return allowed;
   }
 
   private onClick() {
     this._payment.cacheTokenize({
-      pan: this._formFields.cardNumber.value,
       expirydate: this._formFields.expirationDate.value,
+      pan: this._formFields.cardNumber.value,
       securitycode: this._formFields.securityCode.value
     });
   }
