@@ -119,10 +119,14 @@ class VisaCheckout {
    * @private
    */
   private _setMockedData() {
-    fetch(environment.VISA_CHECKOUT_URLS.MOCK_DATA_URL).then((data: any) => {
-      this.paymentDetails = data.payment;
-      this.paymentStatus = data.status;
-    });
+    fetch(environment.VISA_CHECKOUT_URLS.MOCK_DATA_URL)
+      .then((response: any) => {
+        return response.json();
+      })
+      .then((data: any) => {
+        this.paymentDetails = data.payment;
+        this.paymentStatus = data.status;
+      });
   }
 
   /**
