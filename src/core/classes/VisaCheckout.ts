@@ -1,6 +1,6 @@
 declare const V: any;
 import { VISA_CHECKOUT_URLS } from './../imports/apms';
-import { StJwt } from "../shared/StJwt";
+import { StJwt } from '../shared/StJwt';
 import Utils from '../shared/Utils';
 
 /**
@@ -50,7 +50,7 @@ class VisaCheckout {
       total: '' as string,
       subtotal: '' as string
     },
-    settings: {},
+    settings: {}
   };
 
   constructor(config: any, jwt: string) {
@@ -61,7 +61,7 @@ class VisaCheckout {
     this._livestatus = livestatus;
     this._placement = placement;
     this._setInitConfiguration(paymentRequest, settings, stJwt, apikey);
-    this._setButtonSettings(buttonSettings, stJwt);
+    this._buttonSettings = this.setConfiguration({ locale: stJwt.locale }, settings);
     this._checkLiveStatus();
     this._initVisaConfiguration();
   }
@@ -69,42 +69,18 @@ class VisaCheckout {
   public _setInitConfiguration(paymentRequest: any, settings: any, stJwt: StJwt, apikey: string) {
     this._initConfiguration.apikey = apikey;
     this._initConfiguration.paymentRequest = this._getInitPaymentRequest(paymentRequest, stJwt);
-    this._initConfiguration.settings = this._getInitSettings(settings, stJwt);
+    this._initConfiguration.settings = this.setConfiguration({ locale: stJwt.locale }, settings);
   }
 
   public _getInitPaymentRequest(paymentRequest: any, stJwt: StJwt) {
-    let config = this._initConfiguration.paymentRequest;
+    const config = this._initConfiguration.paymentRequest;
     config.currencyCode = stJwt.currencyiso3a;
     config.subtotal = stJwt.mainamount;
     config.total = stJwt.mainamount;
-    
-    if (paymentRequest != undefined) {
-      config = { ...config,
-                 ...paymentRequest                               
-      };
-    }
-    return config;
+    return this.setConfiguration(config, paymentRequest);
   }
 
-  public _getInitSettings(settings: any, stJwt: StJwt) {
-    let config = { locale: stJwt.locale };
-    if (settings != undefined) {
-      config = { ...config,
-                ...settings 
-               };
-    }
-    return config;
-  }
-
-  public _setButtonSettings(settings: any, stJwt: StJwt) {
-    let config = {locale: stJwt.locale};
-    if (settings != undefined) {
-      config = { ...config,
-                 ...settings
-               };
-    }
-    this._buttonSettings = config;
-  }
+  private setConfiguration = (config: any, settings: any) => (settings || config ? { ...config, ...settings } : {});
 
   /**
    * Creates html image element which will be transformed into interactive button by SDK.
@@ -112,7 +88,7 @@ class VisaCheckout {
   public _createVisaButton() {
     const button = document.createElement('img');
     const { alt, className, role, src } = this._visaCheckoutButtonProps;
-    
+
     button.setAttribute('src', Utils.addUrlParams(src, this._buttonSettings));
     button.setAttribute('class', className);
     button.setAttribute('role', role);

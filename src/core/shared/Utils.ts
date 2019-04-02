@@ -54,7 +54,7 @@ export default class Utils {
       for (let param in params) {
         urlParams.set(param, params);
       }
-      return url + "?" + urlParams.toString();
+      return `${url}?${urlParams.toString()}`;
     }
   }
 

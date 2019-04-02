@@ -8,11 +8,11 @@ describe('StJwt', () => {
     const mainamountUsdJwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0ZXN0X2p3dF9pc3N1ZXIiLCJwYXlsb2FkIjp7InNpdGVyZWZlcmVuY2UiOiJleGFtcGxlMTIzNDUiLCJtYWluYW1vdW50IjoiMTIzNDU2Ny44OSIsImN1cnJlbmN5aXNvM2EiOiJVU0QifSwiaWF0IjoxNTE2MjM5MDIyfQ.puxo-OqCBp41qTcBmFbs2STscCWbpuJdtqkyw-ykVJ0';
     const localeJwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0ZXN0X2p3dF9pc3N1ZXIiLCJwYXlsb2FkIjp7InNpdGVyZWZlcmVuY2UiOiJleGFtcGxlMTIzNDUiLCJiYXNlYW1vdW50IjoiMTAwMCIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJsb2NhbGUiOiJlc19FUyJ9LCJpYXQiOjE1MTYyMzkwMjJ9.UlcfhQi8ooypaXaQcHMa7m1XTr29Q8ku3u60aBfSkHw';
     each([
-        [gbpJwt, "example12345", "GBP", "10.00", "en_GB"],
-        [jpyJwt, "example67890", "JPY", "1100", "en_GB"],
-        [usdJwt, "example12345", "USD", "1234567.89", "en_GB"],
-        [mainamountUsdJwt, "example12345", "USD", "1234567.89", "en_GB"],
-        [localeJwt, "example12345", "GBP", "10.00", "es_ES"],
+        [gbpJwt, 'example12345', 'GBP', '10.00', 'en_GB'],
+        [jpyJwt, 'example67890', 'JPY', '1100', 'en_GB'],
+        [usdJwt, 'example12345', 'USD', '1234567.89', 'en_GB'],
+        [mainamountUsdJwt, 'example12345', 'USD', '1234567.89', 'en_GB'],
+        [localeJwt, 'example12345', 'GBP', '10.00', 'es_ES'],
       ]).test('StJwt contents', (jwt, expectedSite, expectedCurrency, expectedMainamount, expectedLocale) => {
           let testJwt = new StJwt(jwt);
           expect(testJwt.sitereference).toBe(expectedSite);
