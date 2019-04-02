@@ -10,8 +10,9 @@
   ],
   "scripts": {
     "build": "webpack --config webpack.prod.js",
+    "buildautomated": "webpack --config webpack.test.js",
     "start": "webpack-dev-server --color --progress --config webpack.dev.js",
-    "automated": "webpack-dev-server --color --progress --config webpack.test.js",
+    "automated": "npm run buildautomated",
     "example": "live-server ./dist --port=9090 --host=localhost --no-browser",
     "prod": "npm run build",
     "test": "jest --watchAll",
