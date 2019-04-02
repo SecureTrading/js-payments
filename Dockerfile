@@ -6,4 +6,4 @@ RUN npm rebuild node-sass
 # RUN git pull --ff-only
 RUN npm install -g npm && npm install && npm run automated
 EXPOSE 8080
-ENTRYPOINT ["npm", "start"]
+ENTRYPOINT ["npm", "automatedstart"]
