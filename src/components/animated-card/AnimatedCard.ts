@@ -152,6 +152,7 @@ class AnimatedCard {
         themeObject.logo = cardsLogos.visa;
     }
     this.setThemeProperties(themeObject);
+    return themeObject;
   }
 
   /**

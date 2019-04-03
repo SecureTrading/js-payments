@@ -1,4 +1,5 @@
 import each from 'jest-each';
+import MessageBus from '../../../src/core/shared/MessageBus';
 import Selectors from '../../../src/core/shared/Selectors';
 import { cardsLogos } from '../../../src/components/animated-card/animated-card-logos';
 import AnimatedCard from './../../../src/components/animated-card/AnimatedCard';
@@ -116,7 +117,39 @@ describe('Class AnimatedCard', () => {
   });
 
   // given
-  describe('Method setCardTheme', () => {});
+  describe('Method setCardTheme', () => {
+    let { instance } = animatedCardFixture();
+    // then
+    it('should resetToDefaultTheme been called once', () => {
+      const spy = jest.spyOn(instance, 'resetToDefaultTheme');
+      instance.setCardTheme();
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    // then
+    each([
+      [AnimatedCard.CARD_BRANDS.AMEX],
+      [AnimatedCard.CARD_BRANDS.ASTROPAYCARD],
+      [AnimatedCard.CARD_BRANDS.DINERS],
+      [AnimatedCard.CARD_BRANDS.DISCOVER],
+      [AnimatedCard.CARD_BRANDS.JCB],
+      [AnimatedCard.CARD_BRANDS.LASER],
+      [AnimatedCard.CARD_BRANDS.MAESTRO],
+      [AnimatedCard.CARD_BRANDS.MASTERCARD],
+      [AnimatedCard.CARD_BRANDS.PIBA],
+      [AnimatedCard.CARD_BRANDS.VISA]
+    ]).it('should set proper type of theme', (type: string) => {
+      instance.cardDetails.type = type;
+      expect(instance.setCardTheme().type).toEqual(AnimatedCard.returnThemeClass(type.toLowerCase()));
+    });
+
+    // then
+    it('should setThemeProperties been called once', () => {
+      const spy = jest.spyOn(instance, 'setThemeProperties');
+      instance.setCardTheme();
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+  });
 
   // given
   describe('Method setValueOnCard', () => {
@@ -209,7 +242,31 @@ describe('Class AnimatedCard', () => {
   });
 
   // given
-  describe('Method subscribeInputEvent', () => {});
+  describe('Method subscribeInputEvent', () => {
+    let { instance } = animatedCardFixture();
+
+    // then
+    each([
+      [MessageBus.EVENTS.CARD_NUMBER_CHANGE, AnimatedCard.COMPONENTS_IDS.CARD_NUMBER],
+      [MessageBus.EVENTS.EXPIRATION_DATE_CHANGE, AnimatedCard.COMPONENTS_IDS.EXPIRATION_DATE],
+      [MessageBus.EVENTS.SECURITY_CODE_CHANGE, AnimatedCard.COMPONENTS_IDS.SECURITY_CODE]
+    ]).it('should setCardTheme been called once', (event: string, component: string) => {
+      const spySetCardTheme = jest.spyOn(instance, 'setCardTheme');
+      const spysetValueOnCard = jest.spyOn(instance, 'setValueOnCard');
+      instance.subscribeInputEvent(event, component);
+      // TODO: to be fixed
+      // expect(spysetValueOnCard).toHaveBeenCalledTimes(1);
+    });
+
+    // then
+    it('should set card number type if Card Number component event has been triggered', () => {
+      const element = document.getElementById(AnimatedCard.PAYMENT_LOGO_ID);
+      instance.cardDetails.type = 'AMEX';
+      instance.subscribeInputEvent(MessageBus.EVENTS.CARD_NUMBER_CHANGE, AnimatedCard.COMPONENTS_IDS.CARD_NUMBER);
+      // TODO: this.messageBus.subscribe has to be mocked somehow
+      // expect(element.getAttribute('alt')).toEqual(instance.cardDetails.type);
+    });
+  });
 
   // given
   describe('Method _setDefaultImagesAttributes', () => {
