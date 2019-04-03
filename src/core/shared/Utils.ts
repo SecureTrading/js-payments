@@ -50,10 +50,7 @@ export default class Utils {
    */
   public static addUrlParams(url: string, params: any) {
     if (params != undefined) {
-      let urlParams = new URLSearchParams();
-      for (let param in params) {
-        urlParams.set(param, params);
-      }
+      let urlParams = new URLSearchParams(params);
       return `${url}?${urlParams.toString()}`;
     }
   }

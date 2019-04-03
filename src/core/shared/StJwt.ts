@@ -49,11 +49,7 @@ export class StJwt {
     * @return The locale contained inside the encoded payload or en_GB if undefined
     */
     public get locale() {
-        let locale = "en_GB";
-        if (this.payload.locale) {
-            locale = this.payload.locale;
-        }
-        return locale;
+        return this.payload.locale || 'en_GB';
     }
 
    /**
