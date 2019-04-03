@@ -31,8 +31,7 @@ class ApplePay {
     this.config = config;
     this.jwt = jwt;
     const stJwt = new StJwt(jwt);
-    this.config.paymentRequest.total.amount = stJwt.mainamount;
-    this.config.paymentRequest.currencyCode = stJwt.currencyiso3a;
+    this._config.paymentRequest = { total: { amount: stJwt.mainamount }, currencyCode: stJwt.currencyiso3a };
     this.initAppleFlow();
   }
 
