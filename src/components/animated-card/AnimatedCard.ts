@@ -109,10 +109,12 @@ class AnimatedCard {
   public setCardTheme() {
     this.resetToDefaultTheme();
     const themeObject = { type: '', logo: '' };
+    this.animatedCardSecurityCodeFront.textContent = '';
     switch (this.cardDetails.type) {
       case AnimatedCard.CARD_BRANDS.AMEX:
         themeObject.type = AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.AMEX.toLowerCase());
         themeObject.logo = cardsLogos.amex;
+        this.animatedCardSecurityCodeFront.textContent = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
         break;
       case AnimatedCard.CARD_BRANDS.ASTROPAYCARD:
         themeObject.type = AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.ASTROPAYCARD.toLowerCase());
