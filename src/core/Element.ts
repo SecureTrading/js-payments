@@ -1,3 +1,5 @@
+import { Styles } from "./shared/Styler";
+
 /***
  * Defines input with iframe source
  * Can be styled by predefined JSON.
@@ -84,9 +86,15 @@ export default class Element {
    * Method for creating element in iframe
    * @param elementName Name of input which we want to create
    */
-  public create(elementName: string) {
+
+  public create(elementName: string, styles: Styles) {
     this._name = elementName;
-    this.iframeSrc = Element.getComponentAddress(elementName);
+    let address = Element.getComponentAddress(elementName);
+    let params = new URLSearchParams();
+    for (let style in styles) {
+      params.set(style, styles[style]);
+    }
+    this._iframeSrc = address + "?" + params.toString();
   }
 
   /**

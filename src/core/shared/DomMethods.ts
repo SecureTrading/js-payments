@@ -22,6 +22,12 @@ class DomMethods {
     element.setAttribute(attr, value);
     return element;
   }
+
+  public static insertStyle(contents: string) {
+    let style = document.createElement('style');
+    style.innerHTML = contents;
+    document.head.appendChild(style);
+  }
 }
 
 export default DomMethods;

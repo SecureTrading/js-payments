@@ -15,4 +15,10 @@ export default class Selectors {
   public static readonly ANIMATED_CARD_SECURITY_CODE_FRONT_ID = 'st-animated-card-security-code-front';
 
   public static readonly CONTROL_FRAME_BUTTON_SELECTOR: string = 'st-control-frame-button';
+
+  public static readonly NOTIFICATION_FRAME_ID: string = 'st-notification-frame';
+  public static readonly NOTIFICATION_FRAME_ERROR_CLASS: string = 'notification-frame--error';
+  public static readonly NOTIFICATION_FRAME_INFO_CLASS: string = 'notification-frame--info';
+  public static readonly NOTIFICATION_FRAME_SUCCESS_CLASS: string = 'notification-frame--success';
+  public static readonly NOTIFICATION_FRAME_WARNING_CLASS: string = 'notification-frame--warning';
 }

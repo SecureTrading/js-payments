@@ -3,6 +3,7 @@ import Element from './Element';
 import { apmsNames } from './imports/apms';
 import CardinalCommerce from './classes/CardinalCommerce';
 import { GATEWAY_URL } from './imports/cardinalSettings';
+import { Styles } from './shared/Styler';
 
 /***
  * Establishes connection with ST, defines client.
@@ -11,6 +12,7 @@ export default class ST {
   public jwt: string;
   public fieldsIds: any;
   public style: object;
+  public styles: Styles;
   public payments: object[];
 
   /**
@@ -25,9 +27,15 @@ export default class ST {
     });
   }
 
-  constructor(jwt: string, fieldsIds: any, style: object, payments: object[]) {
+  constructor(
+    jwt: string,
+    fieldsIds: any,
+    errorContainerId: string,
+    styles: Styles,
+    payments: object[]
+  ) {
     const gatewayUrl = GATEWAY_URL;
-    this.style = style;
+    this.styles = styles;
     this.payments = payments;
     this.fieldsIds = fieldsIds;
 
@@ -40,22 +48,22 @@ export default class ST {
 
     new CardinalCommerce(jwt, gatewayUrl);
 
-    cardNumber.create(Element.CARD_NUMBER_COMPONENT_NAME);
+    cardNumber.create(Element.CARD_NUMBER_COMPONENT_NAME, this.styles);
     const cardNumberMounted = cardNumber.mount(Element.CARD_NUMBER_COMPONENT_FRAME);
 
-    securityCode.create(Element.SECURITY_CODE_COMPONENT_NAME);
+    securityCode.create(Element.SECURITY_CODE_COMPONENT_NAME, this.styles);
     const securityCodeMounted = securityCode.mount(Element.SECURITY_CODE_COMPONENT_FRAME);
 
-    expirationDate.create(Element.EXPIRATION_DATE_COMPONENT_NAME);
+    expirationDate.create(Element.EXPIRATION_DATE_COMPONENT_NAME, this.styles);
     const expirationDateMounted = expirationDate.mount(Element.EXPIRATION_DATE_COMPONENT_FRAME);
 
-    notificationFrame.create(Element.NOTIFICATION_FRAME_COMPONENT_NAME);
+    notificationFrame.create(Element.NOTIFICATION_FRAME_COMPONENT_NAME, this.styles);
     const notificationFrameMounted = notificationFrame.mount(Element.NOTIFICATION_FRAME_COMPONENT_FRAME);
 
-    controlFrame.create(Element.CONTROL_FRAME_COMPONENT_NAME);
+    controlFrame.create(Element.CONTRO_FRAME_COMPONENT_NAME, this.styles);
     const controlFrameMounted = controlFrame.mount(Element.CONTROL_FRAME_COMPONENT_FRAME);
 
-    animatedCard.create(Element.ANIMATED_CARD_COMPONENT_NAME);
+    animatedCard.create(Element.ANIMATED_CARD_COMPONENT_NAME, this.styles);
     const animatedCardMounted = animatedCard.mount(Element.ANIMATED_CARD_COMPONENT_FRAME);
 
     ST.registerElements(
