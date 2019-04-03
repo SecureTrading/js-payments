@@ -14,7 +14,6 @@ class AnimatedCard {
     DINERS: 'DINERS',
     DISCOVER: 'DISCOVER',
     JCB: 'JCB',
-    LASER: 'LASER',
     MAESTRO: 'MAESTRO',
     MASTERCARD: 'MASTERCARD',
     PIBA: 'PIBA',
@@ -131,10 +130,6 @@ class AnimatedCard {
       case AnimatedCard.CARD_BRANDS.JCB:
         themeObject.type = AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.JCB.toLowerCase());
         themeObject.logo = cardsLogos.jcb;
-        break;
-      case AnimatedCard.CARD_BRANDS.LASER:
-        themeObject.type = AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.LASER.toLowerCase());
-        themeObject.logo = cardsLogos.laser;
         break;
       case AnimatedCard.CARD_BRANDS.MAESTRO:
         themeObject.type = AnimatedCard.returnThemeClass(AnimatedCard.CARD_BRANDS.MAESTRO.toLowerCase());

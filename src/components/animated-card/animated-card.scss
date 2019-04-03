@@ -89,14 +89,6 @@ body {
     }
   }
 
-  &__laser {
-    background: $laser-gradient;
-
-    .st-animated-card__payment-logo-img {
-      @include centerLogo(2rem, 2rem);
-    }
-  }
-
   &__maestro {
     background: $maestro-gradient;
 
