@@ -162,14 +162,14 @@ describe('Class AnimatedCard', () => {
       [AnimatedCard.CARD_BRANDS.PIBA],
       [AnimatedCard.CARD_BRANDS.VISA]
     ]).it('should flip card if it is requested', (type: string) => {
-      instance.shouldFlipCard(type);
       const spy = jest.spyOn(instance, 'flipCard');
-      // TODO: test cannot pass but it should :/
-      // expect(spy).toHaveBeenCalledTimes(1);
+      instance.shouldFlipCard(type);
+      expect(spy).toHaveBeenCalledTimes(1);
+      instance.flipCardBack(type);
     });
     it('should not flip card if it is on no flipped list', () => {
-      instance.shouldFlipCard('AMEX');
       const spy = jest.spyOn(instance, 'flipCard');
+      instance.shouldFlipCard('AMEX');
       expect(spy).toHaveBeenCalledTimes(0);
     });
   });
@@ -214,7 +214,15 @@ describe('Class AnimatedCard', () => {
   // given
   describe('Method _setDefaultImagesAttributes', () => {});
   describe('Method _setDefaultInputsValues', () => {});
-  describe('Method _setSubscribeEvents', () => {});
+  describe('Method _setSubscribeEvents', () => {
+    let { instance } = animatedCardFixture();
+    // then
+    it('should _setSubscribeEvents been called 3 times', () => {
+      const spy = jest.spyOn(instance, 'subscribeInputEvent');
+      instance.setSubscribeEvents();
+      expect(spy).toHaveBeenCalledTimes(3);
+    });
+  });
 });
 
 function animatedCardFixture() {

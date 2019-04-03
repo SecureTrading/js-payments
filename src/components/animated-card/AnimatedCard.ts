@@ -70,9 +70,9 @@ class AnimatedCard {
   constructor() {
     this.binLookup = new BinLookup();
     this.messageBus = new MessageBus();
-    this._setDefaultImagesAttributes();
-    this._setDefaultInputsValues();
-    this._setSubscribeEvents();
+    this.setDefaultImagesAttributes();
+    this.setDefaultInputsValues();
+    this.setSubscribeEvents();
   }
 
   /**
@@ -240,7 +240,7 @@ class AnimatedCard {
    * Sets default attributes for card images - card logo and chip image
    * @private
    */
-  private _setDefaultImagesAttributes() {
+  public setDefaultImagesAttributes() {
     DOMMethods.setProperty.apply(this, ['src', cardsLogos.visa, AnimatedCard.PAYMENT_LOGO_ID]);
     DOMMethods.setProperty.apply(this, ['src', cardsLogos.chip, AnimatedCard.CHIP_LOGO_ID]);
     DOMMethods.setProperty.apply(this, ['alt', this.cardDetails.type, AnimatedCard.PAYMENT_LOGO_ID]);
@@ -250,7 +250,7 @@ class AnimatedCard {
    * Sets placeholders for each editable value on card (card number, expiration date, security code)
    * @private
    */
-  private _setDefaultInputsValues() {
+  public setDefaultInputsValues() {
     this.animatedCardPan.textContent = this.cardDetails.cardNumber;
     this.animatedCardExpirationDate.textContent = this.cardDetails.expirationDate;
     this.animatedCardSecurityCode.textContent = this.cardDetails.securityCode;
@@ -260,7 +260,7 @@ class AnimatedCard {
    * Sets subscribe events on every editable field of card
    * @private
    */
-  private _setSubscribeEvents() {
+  public setSubscribeEvents() {
     this.subscribeInputEvent(MessageBus.EVENTS.CARD_NUMBER_CHANGE, AnimatedCard.COMPONENTS_IDS.CARD_NUMBER);
     this.subscribeInputEvent(MessageBus.EVENTS.SECURITY_CODE_CHANGE, AnimatedCard.COMPONENTS_IDS.SECURITY_CODE);
     this.subscribeInputEvent(MessageBus.EVENTS.EXPIRATION_DATE_CHANGE, AnimatedCard.COMPONENTS_IDS.EXPIRATION_DATE);
