@@ -109,8 +109,9 @@ class VisaCheckout {
    */
   private _setActionOnMockedButton() {
     DomMethods.addListener(this._visaCheckoutButtonProps.id, 'click', () => {
-      this._setMockedData();
-      this._proceedFlowWithMockedData();
+      this._setMockedData().then(() => {
+        this._proceedFlowWithMockedData();
+      });
     });
   }
 
@@ -119,13 +120,14 @@ class VisaCheckout {
    * @private
    */
   private _setMockedData() {
-    fetch(environment.VISA_CHECKOUT_URLS.MOCK_DATA_URL)
+    return fetch(environment.VISA_CHECKOUT_URLS.MOCK_DATA_URL)
       .then((response: any) => {
         return response.json();
       })
       .then((data: any) => {
         this.paymentDetails = data.payment;
         this.paymentStatus = data.status;
+        return this.paymentDetails;
       });
   }
 
