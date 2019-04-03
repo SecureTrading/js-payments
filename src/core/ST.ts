@@ -27,13 +27,7 @@ export default class ST {
     });
   }
 
-  constructor(
-    jwt: string,
-    fieldsIds: any,
-    errorContainerId: string,
-    styles: Styles,
-    payments: object[]
-  ) {
+  constructor(jwt: string, fieldsIds: any, errorContainerId: string, styles: Styles, payments: object[]) {
     const gatewayUrl = GATEWAY_URL;
     this.styles = styles;
     this.payments = payments;

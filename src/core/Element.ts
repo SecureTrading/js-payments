@@ -1,4 +1,4 @@
-import { Styles } from "./shared/Styler";
+import { Styles } from './shared/Styler';
 
 /***
  * Defines input with iframe source
@@ -94,7 +94,7 @@ export default class Element {
     for (let style in styles) {
       params.set(style, styles[style]);
     }
-    this._iframeSrc = address + "?" + params.toString();
+    this._iframeSrc = address + '?' + params.toString();
   }
 
   /**
