@@ -238,5 +238,13 @@ body {
     display: flex;
     align-items: center;
     padding-left: 2rem;
+
+    &--front {
+      background-color: transparent;
+      width: 1rem;
+      height: 2rem;
+      font-family: $card-data-font;
+      color: $card-label-font-color;
+    }
   }
 }

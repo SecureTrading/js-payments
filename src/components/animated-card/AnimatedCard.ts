@@ -66,6 +66,9 @@ class AnimatedCard {
   public animatedCardPan: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_CREDIT_CARD_ID);
   public animatedCardExpirationDate: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_EXPIRATION_DATE_ID);
   public animatedCardSecurityCode: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_SECURITY_CODE_ID);
+  public animatedCardSecurityCodeFront: HTMLElement = document.getElementById(
+    Selectors.ANIMATED_CARD_SECURITY_CODE_FRONT_ID
+  );
 
   constructor() {
     this.binLookup = new BinLookup();
@@ -168,10 +171,15 @@ class AnimatedCard {
         this.animatedCardExpirationDate.textContent = this.cardDetails.expirationDate;
         break;
       case AnimatedCard.COMPONENTS_IDS.SECURITY_CODE:
-        this.animatedCardSecurityCode.textContent = this.cardDetails.securityCode;
+        this.setSecurityCodeOnProperSide().textContent = this.cardDetails.securityCode;
         break;
     }
   }
+
+  public setSecurityCodeOnProperSide = () =>
+    this.cardDetails.type === AnimatedCard.CARD_BRANDS.AMEX
+      ? this.animatedCardSecurityCodeFront
+      : this.animatedCardSecurityCode;
 
   /**
    * Checks if given card should not be flipped
@@ -254,7 +262,7 @@ class AnimatedCard {
   public setDefaultInputsValues() {
     this.animatedCardPan.textContent = this.cardDetails.cardNumber;
     this.animatedCardExpirationDate.textContent = this.cardDetails.expirationDate;
-    this.animatedCardSecurityCode.textContent = this.cardDetails.securityCode;
+    this.setSecurityCodeOnProperSide().textContent = this.cardDetails.securityCode;
   }
 
   /**
