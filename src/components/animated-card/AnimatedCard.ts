@@ -247,7 +247,6 @@ class AnimatedCard {
 
   /**
    * Sets default attributes for card images - card logo and chip image
-   * @private
    */
   public setDefaultImagesAttributes() {
     DOMMethods.setProperty.apply(this, ['src', cardsLogos.visa, AnimatedCard.PAYMENT_LOGO_ID]);
@@ -257,7 +256,6 @@ class AnimatedCard {
 
   /**
    * Sets placeholders for each editable value on card (card number, expiration date, security code)
-   * @private
    */
   public setDefaultInputsValues() {
     this.animatedCardPan.textContent = this.cardDetails.cardNumber;
@@ -267,7 +265,6 @@ class AnimatedCard {
 
   /**
    * Sets subscribe events on every editable field of card
-   * @private
    */
   public setSubscribeEvents() {
     this.subscribeInputEvent(MessageBus.EVENTS.CARD_NUMBER_CHANGE, AnimatedCard.COMPONENTS_IDS.CARD_NUMBER);

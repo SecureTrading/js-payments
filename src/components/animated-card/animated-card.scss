@@ -241,10 +241,12 @@ body {
 
     &--front {
       background-color: transparent;
-      width: 1rem;
+      width: 60%;
       height: 2rem;
       font-family: $card-data-font;
       color: $card-label-font-color;
+      display: flex;
+      justify-content: flex-end;
     }
   }
 }

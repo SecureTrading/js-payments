@@ -10,9 +10,7 @@ import { GATEWAY_URL } from './imports/cardinalSettings';
 export default class ST {
   public jwt: string;
   public fieldsIds: any;
-  public errorContainerId: string;
   public style: object;
-  public animatedCardContainerId: string;
   public payments: object[];
 
   /**
@@ -27,20 +25,11 @@ export default class ST {
     });
   }
 
-  constructor(
-    errorContainerId: string,
-    animatedCardContainerId: string,
-    jwt: string,
-    fieldsIds: any,
-    style: object,
-    payments: object[]
-  ) {
+  constructor(jwt: string, fieldsIds: any, style: object, payments: object[]) {
     const gatewayUrl = GATEWAY_URL;
     this.style = style;
     this.payments = payments;
     this.fieldsIds = fieldsIds;
-    this.errorContainerId = errorContainerId;
-    this.animatedCardContainerId = animatedCardContainerId;
 
     const cardNumber = new Element();
     const securityCode = new Element();
@@ -67,7 +56,7 @@ export default class ST {
     const controlFrameMounted = controlFrame.mount(Element.CONTROL_FRAME_COMPONENT_FRAME);
 
     animatedCard.create(Element.ANIMATED_CARD_COMPONENT_NAME);
-    const animatedCardMounted = animatedCard.mount(Element.ANIMATED_CARD_COMPONENT_NAME);
+    const animatedCardMounted = animatedCard.mount(Element.ANIMATED_CARD_COMPONENT_FRAME);
 
     ST.registerElements(
       [
@@ -82,9 +71,9 @@ export default class ST {
         this.fieldsIds.cardNumber,
         this.fieldsIds.securityCode,
         this.fieldsIds.expirationDate,
-        this.errorContainerId,
+        this.fieldsIds.notificationFrame,
         this.fieldsIds.controlFrame,
-        this.animatedCardContainerId
+        this.fieldsIds.animatedCard
       ]
     );
 

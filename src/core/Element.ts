@@ -18,6 +18,7 @@ export default class Element {
   public static EXPIRATION_DATE_COMPONENT_FRAME: string = 'st-expiration-date-iframe';
   public static NOTIFICATION_FRAME_COMPONENT_FRAME: string = 'st-notification-frame-iframe';
   public static CONTROL_FRAME_COMPONENT_FRAME: string = 'st-control-frame-iframe';
+  public static ANIMATED_CARD_COMPONENT_FRAME: string = 'st-animated-card-iframe';
 
   public static CARD_NUMBER_COMPONENT: string = '/card-number.html';
   public static SECURITY_CODE_COMPONENT: string = '/security-code.html';

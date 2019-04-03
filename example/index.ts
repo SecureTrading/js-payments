@@ -8,14 +8,14 @@ import { ST } from '../src/stjs';
 
 (() => {
   const st = new ST(
-    'st-error-container',
-    'st-animated-card',
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM',
     {
       cardNumber: 'st-card-number',
       expirationDate: 'st-expiration-date',
       securityCode: 'st-security-code',
-      controlFrame: 'st-control-frame'
+      notificationFrame: 'st-notification-frame',
+      controlFrame: 'st-control-frame',
+      animatedCard: 'st-animated-card'
     },
     {},
     [
