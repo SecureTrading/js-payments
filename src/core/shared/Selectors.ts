@@ -25,6 +25,6 @@ export default class Selectors {
   public static CARD_NUMBER_COMPONENT: string = '/card-number.html';
   public static SECURITY_CODE_COMPONENT: string = '/security-code.html';
   public static EXPIRATION_DATE_COMPONENT: string = '/expiration-date.html';
-  public static NOTIFICATION_FRAME_COMPONENT: string = 'http://localhost:8080/notification-frame.html';
+  public static NOTIFICATION_FRAME_COMPONENT: string = 'https://localhost:8443/notification-frame.html';
   public static CONTROL_FRAME_COMPONENT: string = '/control-frame.html';
 }
