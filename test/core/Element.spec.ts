@@ -2,14 +2,19 @@ import Element from '../../src/core/Element';
 // given
 describe('Index placeholder test', () => {
   //when
-  let element, mockObject: object, createNewElement: object;
+  let element, mockObject: object, createNewElement: object, createNewStyledElement: object;
 
   beforeEach(() => {
     mockObject = {
       _name: ''
     };
     createNewElement = {
-      _name: 'newTestObjectName'
+      _name: 'cardNumber',
+      _iframeSrc: "/card-number.html?"
+    };
+    createNewStyledElement = {
+      _name: 'cardNumber',
+      _iframeSrc: "/card-number.html?background-color-input=AliceBlue&color-input-error=%23721c24"
     };
   });
 
@@ -29,7 +34,16 @@ describe('Index placeholder test', () => {
   // then
   it('should create new element', () => {
     element = new Element();
-    element.create('newTestObjectName');
+    element.create('cardNumber', {});
     expect(element).toMatchObject(createNewElement);
+  });
+
+   // then
+   it('should create new element with styles', () => {
+    element = new Element();
+    element.create('cardNumber', {'background-color-input': 'AliceBlue',
+                                  'color-input-error': '#721c24',
+    });
+    expect(element).toMatchObject(createNewStyledElement);
   });
 });

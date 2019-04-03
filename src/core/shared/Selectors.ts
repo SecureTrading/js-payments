@@ -9,4 +9,10 @@ export default class Selectors {
   public static readonly SECURITY_CODE_MESSAGE_SELECTOR: string = 'st-security-code-message';
 
   public static readonly CONTROL_FRAME_BUTTON_SELECTOR: string = 'st-control-frame-button';
+
+  public static readonly NOTIFICATION_FRAME_ID: string = 'st-notification-frame';
+  public static readonly NOTIFICATION_FRAME_ERROR_CLASS: string = 'notification-frame--error';
+  public static readonly NOTIFICATION_FRAME_INFO_CLASS: string = 'notification-frame--info';
+  public static readonly NOTIFICATION_FRAME_SUCCESS_CLASS: string = 'notification-frame--success';
+  public static readonly NOTIFICATION_FRAME_WARNING_CLASS: string = 'notification-frame--warning';
 }
