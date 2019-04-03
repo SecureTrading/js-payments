@@ -212,15 +212,69 @@ describe('Class AnimatedCard', () => {
   describe('Method subscribeInputEvent', () => {});
 
   // given
-  describe('Method _setDefaultImagesAttributes', () => {});
-  describe('Method _setDefaultInputsValues', () => {});
-  describe('Method _setSubscribeEvents', () => {
+  describe('Method _setDefaultImagesAttributes', () => {
+    let { instance } = animatedCardFixture();
+    let chipImage: HTMLElement;
+    let cardTypeImage: HTMLElement;
+
+    beforeEach(() => {
+      chipImage = document.getElementById(AnimatedCard.CHIP_LOGO_ID);
+      cardTypeImage = document.getElementById(AnimatedCard.PAYMENT_LOGO_ID);
+    });
+
+    // then
+    it('should set default image to chip card image', () => {
+      instance.setDefaultImagesAttributes();
+      expect(chipImage.getAttribute('src')).toEqual(cardsLogos.chip);
+    });
+
+    // then
+    it('should set default image to card type image', () => {
+      instance.setDefaultImagesAttributes();
+      expect(cardTypeImage.getAttribute('src')).toEqual(cardsLogos.visa);
+    });
+
+    // then
+    it('should set default alt attribute to card type image', () => {
+      instance.setDefaultImagesAttributes();
+      expect(cardTypeImage.getAttribute('alt')).toEqual(AnimatedCard.CARD_DETAILS_PLACEHOLDERS.TYPE);
+    });
+  });
+
+  describe('Method _setDefaultInputsValues', () => {
     let { instance } = animatedCardFixture();
     // then
-    it('should _setSubscribeEvents been called 3 times', () => {
+    it(`should set card number on start with value: ${AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER}`, () => {
+      instance.setDefaultInputsValues();
+      expect(instance.animatedCardPan.textContent).toEqual(AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER);
+    });
+
+    // then
+    it(`should set expiration date on start with value: ${
+      AnimatedCard.CARD_DETAILS_PLACEHOLDERS.EXPIRATION_DATE_
+    }`, () => {
+      instance.setDefaultInputsValues();
+      expect(instance.animatedCardExpirationDate.textContent).toEqual(
+        AnimatedCard.CARD_DETAILS_PLACEHOLDERS.EXPIRATION_DATE_
+      );
+    });
+
+    // then
+    it(`should set security code on start with value: ${AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE}`, () => {
+      instance.setDefaultInputsValues();
+      expect(instance.animatedCardSecurityCode.textContent).toEqual(
+        AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE
+      );
+    });
+  });
+  describe('Method _setSubscribeEvents', () => {
+    let { instance } = animatedCardFixture();
+    const functionCalls = 3;
+    // then
+    it(`should _setSubscribeEvents been called ${functionCalls} times`, () => {
       const spy = jest.spyOn(instance, 'subscribeInputEvent');
       instance.setSubscribeEvents();
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(functionCalls);
     });
   });
 });
