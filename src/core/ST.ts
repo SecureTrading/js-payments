@@ -54,7 +54,7 @@ export default class ST {
     notificationFrame.create(Element.NOTIFICATION_FRAME_COMPONENT_NAME, this.styles);
     const notificationFrameMounted = notificationFrame.mount(Element.NOTIFICATION_FRAME_COMPONENT_FRAME);
 
-    controlFrame.create(Element.CONTRO_FRAME_COMPONENT_NAME, this.styles);
+    controlFrame.create(Element.CONTROL_FRAME_COMPONENT_NAME, this.styles);
     const controlFrameMounted = controlFrame.mount(Element.CONTROL_FRAME_COMPONENT_FRAME);
 
     animatedCard.create(Element.ANIMATED_CARD_COMPONENT_NAME, this.styles);
