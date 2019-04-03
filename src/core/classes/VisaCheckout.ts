@@ -1,6 +1,7 @@
 declare const V: any;
 import { VISA_CHECKOUT_URLS } from './../imports/apms';
 import { StJwt } from '../shared/StJwt';
+import Utils from '../shared/Utils';
 
 /**
  *  Visa Checkout configuration class; sets up Visa e-wallet
@@ -23,6 +24,7 @@ class VisaCheckout {
   private _paymentError: object;
   private _livestatus: number = 0;
   private _placement: string = 'body';
+  private _buttonSettings: any;
 
   set paymentDetails(value: object) {
     this._paymentDetails = value;
@@ -45,23 +47,40 @@ class VisaCheckout {
     apikey: '' as string,
     paymentRequest: {
       currencyCode: '' as string,
+      total: '' as string,
       subtotal: '' as string
-    }
+    },
+    settings: {}
   };
 
   constructor(config: any, jwt: string) {
     const {
-      props: { apikey, livestatus, placement }
+      props: { apikey, livestatus, placement, settings, paymentRequest, buttonSettings }
     } = config;
     const stJwt = new StJwt(jwt);
     this._livestatus = livestatus;
     this._placement = placement;
-    this._initConfiguration.apikey = apikey;
-    this._initConfiguration.paymentRequest.currencyCode = stJwt.currencyiso3a;
-    this._initConfiguration.paymentRequest.subtotal = stJwt.mainamount;
+    this._setInitConfiguration(paymentRequest, settings, stJwt, apikey);
+    this._buttonSettings = this.setConfiguration({ locale: stJwt.locale }, settings);
     this._checkLiveStatus();
     this._initVisaConfiguration();
   }
+
+  public _setInitConfiguration(paymentRequest: any, settings: any, stJwt: StJwt, apikey: string) {
+    this._initConfiguration.apikey = apikey;
+    this._initConfiguration.paymentRequest = this._getInitPaymentRequest(paymentRequest, stJwt);
+    this._initConfiguration.settings = this.setConfiguration({ locale: stJwt.locale }, settings);
+  }
+
+  public _getInitPaymentRequest(paymentRequest: any, stJwt: StJwt) {
+    const config = this._initConfiguration.paymentRequest;
+    config.currencyCode = stJwt.currencyiso3a;
+    config.subtotal = stJwt.mainamount;
+    config.total = stJwt.mainamount;
+    return this.setConfiguration(config, paymentRequest);
+  }
+
+  private setConfiguration = (config: any, settings: any) => (settings || config ? { ...config, ...settings } : {});
 
   /**
    * Creates html image element which will be transformed into interactive button by SDK.
@@ -69,7 +88,8 @@ class VisaCheckout {
   public _createVisaButton() {
     const button = document.createElement('img');
     const { alt, className, role, src } = this._visaCheckoutButtonProps;
-    button.setAttribute('src', src);
+
+    button.setAttribute('src', Utils.addUrlParams(src, this._buttonSettings));
     button.setAttribute('class', className);
     button.setAttribute('role', role);
     button.setAttribute('alt', alt);

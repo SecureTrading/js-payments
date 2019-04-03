@@ -24,7 +24,10 @@ import { ST } from '../src/stjs';
         props: {
           apikey: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4',
           livestatus: 0,
-          placement: 'st-visa-checkout'
+          placement: 'st-visa-checkout',
+          settings: {displayName: "My Test Site"},
+          paymentRequest: {subtotal: "20.00"},
+          buttonSettings: {size: "154"}
         }
       }
     ]

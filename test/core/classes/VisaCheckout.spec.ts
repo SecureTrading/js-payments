@@ -14,6 +14,93 @@ describe('Visa Checkout class', () => {
   });
 
   // given
+  describe('Method _setInitConfiguration', () => {
+    // then
+    it('should set _initConfiguration', () => {
+      instance._initConfiguration = { start: 'with value', paymentRequest: {} };
+      instance._setInitConfiguration(
+        { payment: 'request' },
+        { settings: 'abc' },
+        { locale: 'es_ES', mainamount: '10.00' },
+        'myapi'
+      );
+      expect(instance._initConfiguration).toMatchObject({
+        paymentRequest: { currencyCode: undefined, payment: 'request', subtotal: '10.00', total: '10.00' },
+        settings: { settings: 'abc', locale: 'es_ES' },
+        apikey: 'myapi',
+        start: 'with value'
+      });
+    });
+  });
+
+  // given
+  describe('Method _getInitPaymentRequest', () => {
+    // then
+    it('should return paymentRequest config', () => {
+      instance._initConfiguration.paymentRequest = { original: 'data', overrideMe: 'unchanged' };
+      const result = instance._getInitPaymentRequest(
+        { payment: 'request', overrideMe: 'overridden' },
+        { locale: 'es_ES', mainamount: '10.00', currencyiso3a: 'GBP' }
+      );
+      expect(result).toMatchObject({
+        currencyCode: 'GBP',
+        original: 'data',
+        overrideMe: 'overridden',
+        payment: 'request',
+        subtotal: '10.00',
+        total: '10.00'
+      });
+    });
+    //then
+    it('should handle undefined paymentRequest', () => {
+      instance._initConfiguration.paymentRequest = { original: 'data', overrideMe: 'unchanged' };
+      const result = instance._getInitPaymentRequest(undefined, {
+        currencyiso3a: 'GBP',
+        locale: 'es_ES',
+        mainamount: '10.00'
+      });
+      expect(result).toMatchObject({
+        currencyCode: 'GBP',
+        original: 'data',
+        overrideMe: 'unchanged',
+        subtotal: '10.00',
+        total: '10.00'
+      });
+    });
+  });
+
+  // given
+  describe('Method setConfiguration', () => {
+    // then
+    it('should return configuration', () => {
+      const result = instance.setConfiguration(
+        { payment: 'request', another: 'value' },
+        { locale: 'es_ES', mainamount: '10.00', currencyiso3a: 'GBP' }
+      );
+      expect(result).toMatchObject({ locale: 'es_ES', payment: 'request', another: 'value' });
+    });
+    // then
+    it('should handle undefined config', () => {
+      const result = instance.setConfiguration(undefined, {
+        currencyiso3a: 'GBP',
+        locale: 'es_ES',
+        mainamount: '10.00'
+      });
+      expect(result).toMatchObject({
+        currencyiso3a: 'GBP',
+        locale: 'es_ES',
+        mainamount: '10.00'
+      });
+    });
+
+    // then
+    it('should handle undefined settings', () => {
+      const result = instance.setConfiguration({ payment: 'request', another: 'value' }, undefined);
+      expect(result).toMatchObject({ payment: 'request', another: 'value' });
+    });
+  });
+
+  // given
   describe('Method _createVisaButton', () => {
     const { fakeVisaButton } = VisaCheckoutFixture();
 
@@ -101,7 +188,10 @@ function VisaCheckoutFixture() {
     livestatus: 0,
     props: {
       apikey: '2ig278`13b123872121h31h20e'
-    }
+    },
+    settings: { displayName: 'My Test Site' },
+    paymentRequest: { subtotal: '20.00' },
+    buttonSettings: { size: '154' }
   };
   const fakeVisaButton = document.createElement('img');
   fakeVisaButton.setAttribute('src', visaButttonProps.src);
