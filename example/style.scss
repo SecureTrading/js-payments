@@ -90,8 +90,8 @@ body {
 #st-animated-card {
   .st-animated-card-iframe {
     overflow: hidden;
-    height: 23rem;
-    width: 36rem;
+    min-height: 30rem;
+    min-width: 37rem;
     border: none;
   }
 }

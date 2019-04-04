@@ -57,7 +57,7 @@ export default class ST {
     controlFrame.create(Element.CONTROL_FRAME_COMPONENT_NAME, this.styles);
     const controlFrameMounted = controlFrame.mount(Element.CONTROL_FRAME_COMPONENT_FRAME);
 
-    animatedCard.create(Element.ANIMATED_CARD_COMPONENT_NAME, this.styles);
+    animatedCard.create(Element.ANIMATED_CARD_COMPONENT_NAME);
     const animatedCardMounted = animatedCard.mount(Element.ANIMATED_CARD_COMPONENT_FRAME);
 
     ST.registerElements(
