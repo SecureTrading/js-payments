@@ -4,7 +4,6 @@ import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import DomMethods from './../shared/DomMethods';
 import Language from './../shared/Language';
-import Utils from '../shared/Utils';
 
 /**
  *  Visa Checkout configuration class; sets up Visa e-wallet
