@@ -1,20 +1,17 @@
 import { IStRequest } from '../classes/StCodec.class';
 import { StJwt, StJwtPayload } from './StJwt';
 import StTransport from '../classes/StTransport.class';
-import MessageBus from './MessageBus';
 
 export default class Payment {
   private _stTransport: StTransport;
   private _stJwtDecode: any;
   private readonly _stJwtPayload: StJwtPayload;
-  private _messageBus: MessageBus;
   private _cardinalCommerceCacheToken: string;
 
   constructor(jwt: string) {
     this._stTransport = new StTransport({ jwt: jwt });
     this._stJwtDecode = new StJwt(jwt);
     this._stJwtPayload = this._stJwtDecode.payload;
-    this._messageBus = new MessageBus();
   }
 
   public tokenizeCard(card: Card): Promise<object> {
