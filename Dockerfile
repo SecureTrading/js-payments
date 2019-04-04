@@ -4,6 +4,6 @@ COPY . /app/js-payments
 WORKDIR /app/js-payments
 RUN npm rebuild node-sass
 # RUN git pull --ff-only
-RUN npm install -g npm && npm install && npm run automated
+RUN npm install -g npm && npm install && npm run build:automated
 EXPOSE 8080
-ENTRYPOINT ["npm", "automatedstart"]
+ENTRYPOINT ["npm", "start:automated"]
