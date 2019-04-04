@@ -52,6 +52,7 @@ body {
     );
   }
 
+  &,
   &--info {
     @include messageType(
       $background-color-notification-info,
