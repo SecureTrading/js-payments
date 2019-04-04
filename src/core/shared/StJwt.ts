@@ -43,15 +43,15 @@ export class StJwt {
     return (Currencies as any)[this.payload.currencyiso3a];
   }
 
-    /**
-    * Convenience getter for returning the locale
-    * @return The locale contained inside the encoded payload or en_GB if undefined
-    */
-    public get locale() {
-        return this.payload.locale || 'en_GB';
-    }
+  /**
+   * Convenience getter for returning the locale
+   * @return The locale contained inside the encoded payload or en_GB if undefined
+   */
+  public get locale() {
+    return this.payload.locale || 'en_GB';
+  }
 
-   /**
+  /**
    * Convenience getter for returning the amount in main units and converting from base units
    * @return The mainamount calculated using the encoded payload
    */

@@ -60,6 +60,26 @@
       <div class="example-form__section example-form__section--horizontal">
         <div id="st-control-frame" class="example-form__group"></div>
         <div id="st-visa-checkout" class="example-form__group"></div>
+        <div id="st-apple-pay" class="apple-pay-set-up-button apple-pay-setup-button-white-with-line"></div>
+        <style>
+          .apple-pay-set-up-button {
+            display: inline-block;
+            -webkit-appearance: -apple-pay-button;
+            -apple-pay-button-type: set-up;
+          }
+
+          .apple-pay-set-up-button-black {
+            -apple-pay-button-style: black;
+          }
+
+          .apple-pay-set-up-button-white {
+            -apple-pay-button-style: white;
+          }
+
+          .apple-pay-setup-button-white-with-line {
+            -apple-pay-button-style: white-outline;
+          }
+        </style>
       </div>
     </form>
   </body>

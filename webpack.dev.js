@@ -9,7 +9,8 @@ module.exports = merge(common, {
     contentBase: './dist',
     port: 8443,
     https: true,
-    hot: true
+    hot: true,
+    host: '0.0.0.0'
   },
   plugins: [new webpack.HotModuleReplacementPlugin()]
 });
