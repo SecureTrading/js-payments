@@ -11,11 +11,11 @@ describe('Index placeholder test', () => {
     };
     createNewElement = {
       _name: 'cardNumber',
-      _iframeSrc: "/card-number.html?"
+      _iframeSrc: '/card-number.html?'
     };
     createNewStyledElement = {
       _name: 'cardNumber',
-      _iframeSrc: "/card-number.html?background-color-input=AliceBlue&color-input-error=%23721c24"
+      _iframeSrc: '/card-number.html?background-color-input=AliceBlue&color-input-error=%23721c24'
     };
   });
 
@@ -39,12 +39,10 @@ describe('Index placeholder test', () => {
     expect(element).toMatchObject(createNewElement);
   });
 
-   // then
-   it('should create new element with styles', () => {
+  // then
+  it('should create new element with styles', () => {
     element = new Element();
-    element.create('cardNumber', {'background-color-input': 'AliceBlue',
-                                  'color-input-error': '#721c24',
-    });
+    element.create('cardNumber', { 'background-color-input': 'AliceBlue', 'color-input-error': '#721c24' });
     expect(element).toMatchObject(createNewStyledElement);
   });
 });
