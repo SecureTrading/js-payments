@@ -13,6 +13,12 @@ class DomMethods {
     return script;
   }
 
+  public static insertStyle(contents: string) {
+    let style = document.createElement('style');
+    style.innerHTML = contents;
+    document.head.appendChild(style);
+  }
+
   public static getIframeContentWindow = (name: string) => (window as any).frames[name];
 
   public static setMultipleAttributes = (attributes: any, markup: string) => {

@@ -2,6 +2,10 @@
 @import '../../core/styles/placeholders';
 @import '../../core/styles/core';
 
+body {
+  @extend %frame-body;
+}
+
 .security-code {
   @extend %block;
 }

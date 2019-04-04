@@ -47,9 +47,14 @@ export default class Element {
    * @param elementName Name of input which we want to create
    */
 
-  public create(elementName: string) {
+  public create(elementName: string, styles: Styles) {
     this._name = elementName;
-    this._iframeSrc = Element.getComponentAddress(elementName);
+    let address = Element.getComponentAddress(elementName);
+    let params = new URLSearchParams();
+    for (let style in styles) {
+      params.set(style, styles[style]);
+    }
+    this._iframeSrc = address + "?" + params.toString();
   }
 
   /***
