@@ -27,4 +27,10 @@ export default class Selectors {
   public static EXPIRATION_DATE_COMPONENT: string = '/expiration-date.html';
   public static NOTIFICATION_FRAME_COMPONENT: string = 'https://localhost:8443/notification-frame.html';
   public static CONTROL_FRAME_COMPONENT: string = '/control-frame.html';
+
+  public static readonly NOTIFICATION_FRAME_ID: string = 'st-notification-frame';
+  public static readonly NOTIFICATION_FRAME_ERROR_CLASS: string = 'notification-frame--error';
+  public static readonly NOTIFICATION_FRAME_INFO_CLASS: string = 'notification-frame--info';
+  public static readonly NOTIFICATION_FRAME_SUCCESS_CLASS: string = 'notification-frame--success';
+  public static readonly NOTIFICATION_FRAME_WARNING_CLASS: string = 'notification-frame--warning';
 }

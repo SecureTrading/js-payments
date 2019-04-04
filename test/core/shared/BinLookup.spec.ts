@@ -14,7 +14,7 @@ each([
       default: null,
       minMatch: 0,
       maxMatch: 6,
-      supported: ['AMEX', 'ASTROPAYCARD', 'DINERS', 'DISCOVER', 'JCB', 'LASER', 'MAESTRO', 'MASTERCARD', 'PIBA', 'VISA']
+      supported: ['AMEX', 'ASTROPAYCARD', 'DINERS', 'DISCOVER', 'JCB', 'MAESTRO', 'MASTERCARD', 'PIBA', 'VISA']
     }
   ],
   [{ supported: ['DELTA'] }, 'unsupported cardTree DELTA'],
@@ -49,7 +49,6 @@ test('BinLookup.getAllBrands', () => {
     'DINERS',
     'DISCOVER',
     'JCB',
-    'LASER',
     'MAESTRO',
     'MASTERCARD',
     'PIBA',

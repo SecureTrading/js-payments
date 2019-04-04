@@ -11,6 +11,12 @@ class DomMethods {
     return script;
   }
 
+  public static insertStyle(contents: string) {
+    let style = document.createElement('style');
+    style.innerHTML = contents;
+    document.head.appendChild(style);
+  }
+
   public static getIframeContentWindow = (id: string) =>
     (document.getElementById(id) as HTMLIFrameElement).contentWindow;
 
