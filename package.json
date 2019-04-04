@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "build": "webpack --config webpack.prod.js",
-    "buildautomated": "webpack --config webpack.test.js",
+    "build:automated": "webpack --config webpack.test.js",
     "automatedstart": "webpack-dev-server --color --progress --config webpack.test.js",
     "start": "webpack-dev-server --color --progress --config webpack.dev.js",
     "automated": "npm run buildautomated",
