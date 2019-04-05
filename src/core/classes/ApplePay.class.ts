@@ -1,5 +1,4 @@
 import { StJwt } from '../shared/StJwt';
-import StTransport from './StTransport.class';
 import Language from './../shared/Language';
 
 const ApplePaySession = (window as any).ApplePaySession;
@@ -18,25 +17,41 @@ const ApplePaySession = (window as any).ApplePaySession;
  * 9. 30 seconds to handle each event before the payment sheet times out: completePaymentMethodSelection, completeShippingMethodSelection, and completeShippingContactSelection
  */
 class ApplePay {
-  set config(value: any) {
-    this._config = value;
-  }
-
-  get config(): any {
-    return this._config;
-  }
-
   set jwt(value: string) {
     this._jwt = value;
   }
 
+  get jwt(): string {
+    return this._jwt;
+  }
+
   public static APPLE_PAY_VERSION_NUMBER: number = 3;
-  private _config: any;
+  public paymentRequest: any;
+  public merchantId: string;
+  public sitereference: string;
+  public sitesecurity: string;
   private _jwt: string;
+  private _validateMerchantOptions = {
+    url: 'endpointURL',
+    cert: 'merchIdentityCert',
+    key: 'merchIdentityCert',
+    method: 'post',
+    body: {
+      merchantIdentifier: '',
+      displayName: 'MyStore',
+      initiative: 'web',
+      initiativeContext: 'mystore.example.com'
+    },
+    json: true
+  };
 
   constructor(config: any, jwt: string) {
-    this.config = config;
+    this.paymentRequest = config.props.paymentRequest;
+    this.merchantId = config.merchantId;
+    this.sitereference = config.sitereference;
+    this.sitesecurity = config.sitesecurity;
     this.jwt = jwt;
+    this._validateMerchantOptions.body.merchantIdentifier = this.merchantId;
     this.setAmountAndCurrency(jwt);
     this.applePayFlow();
   }
@@ -45,12 +60,12 @@ class ApplePay {
    *
    */
   public setAmountAndCurrency(jwt: string) {
-    if (this.config.props.paymentRequest.total.amount && this.config.props.paymentRequest.currencyCode) {
+    if (this.paymentRequest.total.amount && this.paymentRequest.currencyCode) {
       const stJwtInstance = new StJwt(jwt);
-      this.config.props.paymentRequest.total.amount = stJwtInstance.mainamount;
-      this.config.props.paymentRequest.currencyCode = stJwtInstance.currencyiso3a;
+      this.paymentRequest.total.amount = stJwtInstance.mainamount;
+      this.paymentRequest.currencyCode = stJwtInstance.currencyiso3a;
     }
-    return this.config;
+    return this.paymentRequest;
   }
 
   public ifBrowserSupportsApplePayVersion = (version: number) => ApplePaySession.supportsVersion(version);
@@ -63,12 +78,13 @@ class ApplePay {
   /**
    * Checks whether ApplePay is available on current device and also if it us at least one active card in Wallet
    */
-  public checkApplePayWalletCardAvailability = () => {
-    if (this.config.props.merchantId) {
-      return ApplePaySession.canMakePaymentsWithActiveCard(this.config.props.merchantId);
-    }
-  };
+  public checkApplePayWalletCardAvailability = () => ApplePaySession.canMakePaymentsWithActiveCard(this.merchantId);
 
+  /**
+   *
+   * @param elementId
+   * @param event
+   */
   public applePayButtonClickHandler = (elementId: string, event: string) => {
     document.getElementById(elementId).addEventListener(event, () => {
       this.paymentSetup();
@@ -96,26 +112,29 @@ class ApplePay {
    * Defines Apple Pay session details and begins payment flow.
    */
   public paymentSetup() {
-    const { paymentRequest } = this.config.props;
-    const session = new ApplePaySession(ApplePay.APPLE_PAY_VERSION_NUMBER, paymentRequest);
+    const session = this.getApplePaySessionObject();
     session.begin();
-    // when the payment sheet is displayed
-    session.onvalidatemerchant = (event: any) => {
-      const options = {
-        url: 'endpointURL',
-        cert: 'merchIdentityCert',
-        key: 'merchIdentityCert',
-        method: 'post',
-        body: {
-          merchantIdentifier: this.config.props.merchantId,
-          displayName: 'MyStore',
-          initiative: 'web',
-          initiativeContext: 'mystore.example.com'
-        },
-        json: true
-      };
+    this.validateMerchantHandler(session);
+    this.subscribeStatusHandlers(session);
+  }
 
-      this.fetchMerchantSession(event.validationURL, options)
+  /**
+   * Function requesting merchant session object
+   * @param url
+   * @param options
+   * @return Merchant session object as JSON
+   */
+  public static fetchMerchantSession(url: string, options: {}) {
+    return fetch(url, options).then((MerchantSession: any) => {
+      return MerchantSession.json();
+    });
+  }
+
+  public getApplePaySessionObject = () => new ApplePaySession(ApplePay.APPLE_PAY_VERSION_NUMBER, this.paymentRequest);
+
+  public validateMerchantHandler(session: any) {
+    session.onvalidatemerchant = (event: any) => {
+      ApplePay.fetchMerchantSession(event.validationURL, this._validateMerchantOptions)
         .then((response: any) => {
           alert(response);
           ApplePaySession.completeMerchantValidation(response);
@@ -123,7 +142,9 @@ class ApplePay {
         })
         .catch(error => alert(`Catched an error: ${error}`));
     };
+  }
 
+  public subscribeStatusHandlers(session: any) {
     session.onpaymentmethodselected = (event: any) => {
       const { paymentMethod } = event;
       ApplePaySession.completePaymentMethodSelection(null);
@@ -139,14 +160,6 @@ class ApplePay {
       ApplePaySession.completeShippingContactSelection(null);
     };
   }
-
-  public fetchMerchantSession(url: string, options: {}) {
-    return fetch(url, options).then((MerchantSession: any) => {
-      return MerchantSession.json();
-    });
-  }
-
-  public subscribeStatusHandlers() {}
 }
 
 export default ApplePay;
