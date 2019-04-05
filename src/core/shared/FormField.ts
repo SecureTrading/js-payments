@@ -71,6 +71,14 @@ export default class FormField extends Frame {
     this._inputElement.addEventListener('input', (event: Event) => {
       this.onInput(event);
     });
+
+    this._inputElement.addEventListener('focus', (event: Event) => {
+      this.onFocus(event);
+    });
+
+    this._inputElement.addEventListener('blur', (event: Event) => {
+      this.onBlur(event);
+    });
   }
 
   protected getState(): FormFieldState {
@@ -89,6 +97,14 @@ export default class FormField extends Frame {
   onInput(event: Event) {
     this.format(this._inputElement.value);
     this.validate();
+  }
+
+  onFocus(event: Event) {
+    this.focus();
+  }
+
+  onBlur(event: Event) {
+    this.blur();
   }
 
   onPaste(event: ClipboardEvent) {
@@ -127,5 +143,13 @@ export default class FormField extends Frame {
 
   format(data: string) {
     this._inputElement.value = data;
+  }
+
+  blur() {
+    this._inputElement.blur();
+  }
+
+  focus() {
+    this._inputElement.focus();
   }
 }

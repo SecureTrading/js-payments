@@ -45,6 +45,11 @@ export default class ExpirationDate extends FormField {
     this.sendState();
   }
 
+  onFocus(event: Event) {
+    super.onFocus(event);
+    this.sendState();
+  }
+
   onPaste(event: ClipboardEvent) {
     super.onPaste(event);
     this.sendState();
