@@ -16,12 +16,13 @@ import { ST } from '../src/stjs';
       controlFrame: 'st-control-frame'
     },
     'st-notification-frame',
-    {'background-color-input': 'AliceBlue',
-     'color-input-error': '#721c24',
-     'line-height-input': '12px',
-     'font-size-input': '12px',
-     'background-color-input-error': '#f8d7da',
-     }, 
+    {
+      'background-color-input': 'AliceBlue',
+      'color-input-error': '#721c24',
+      'line-height-input': '12px',
+      'font-size-input': '12px',
+      'background-color-input-error': '#f8d7da'
+    },
     [
       {
         name: 'VISACHECKOUT',
@@ -29,9 +30,9 @@ import { ST } from '../src/stjs';
           apikey: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4',
           livestatus: 0,
           placement: 'st-visa-checkout',
-          settings: {displayName: "My Test Site"},
-          paymentRequest: {subtotal: "20.00"},
-          buttonSettings: {size: "154"}
+          settings: { displayName: 'My Test Site' },
+          paymentRequest: { subtotal: '20.00' },
+          buttonSettings: { size: '154' }
         }
       }
     ]
