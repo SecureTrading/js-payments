@@ -4,7 +4,9 @@
 
 class Language {
   private static _translations = {
-    APPLE_PAY_NOT_AVAILABLE: 'Apple pay is not available',
+    APPLE_PAY_ONLY_ON_IOS: 'Your browser does not support Apple Pay',
+    APPLE_PAY_NOT_AVAILABLE: 'This version of browser does not support Apple Pay',
+    APPLE_PAYMENT_IS_NOT_AVAILABLE: 'Something went wrong - payment is not available',
     COMMUNICATION_ERROR_INVALID_REQUEST: 'Invalid request',
     COMMUNICATION_ERROR_INVALID_RESPONSE: 'Invalid response',
     COMMUNICATION_ERROR_TIMEOUT: 'Timeout',
@@ -21,7 +23,9 @@ class Language {
     VALIDATION_ERROR_VALUE_TOO_SHORT: 'Value is too short'
   };
   static get translations(): {
+    APPLE_PAY_ONLY_ON_IOS: string;
     APPLE_PAY_NOT_AVAILABLE: string;
+    APPLE_PAYMENT_IS_NOT_AVAILABLE: string;
     COMMUNICATION_ERROR_INVALID_REQUEST: string;
     COMMUNICATION_ERROR_INVALID_RESPONSE: string;
     COMMUNICATION_ERROR_TIMEOUT: string;

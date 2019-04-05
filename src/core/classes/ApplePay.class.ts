@@ -30,6 +30,8 @@ class ApplePay {
   public merchantId: string;
   public sitereference: string;
   public sitesecurity: string;
+  public stJwtInstance: StJwt;
+  public static APPLEPAY_BUTTON_ID: string = 'st-apple-pay';
   private _jwt: string;
   private _validateMerchantOptions = {
     url: 'endpointURL',
@@ -46,29 +48,42 @@ class ApplePay {
   };
 
   constructor(config: any, jwt: string) {
-    this.paymentRequest = config.props.paymentRequest;
+    this.jwt = jwt;
     this.merchantId = config.merchantId;
+    this.paymentRequest = config.props.paymentRequest;
     this.sitereference = config.sitereference;
     this.sitesecurity = config.sitesecurity;
-    this.jwt = jwt;
+    this.stJwtInstance = new StJwt(jwt);
+    this.ifBrowserSupportsApplePayVersion(ApplePay.APPLE_PAY_VERSION_NUMBER);
     this._validateMerchantOptions.body.merchantIdentifier = this.merchantId;
-    this.setAmountAndCurrency(jwt);
+    this.setAmountAndCurrency();
     this.applePayFlow();
   }
 
   /**
-   *
+   * Sets details encryptet in JWT into payment request
    */
-  public setAmountAndCurrency(jwt: string) {
+  public setAmountAndCurrency() {
     if (this.paymentRequest.total.amount && this.paymentRequest.currencyCode) {
-      const stJwtInstance = new StJwt(jwt);
-      this.paymentRequest.total.amount = stJwtInstance.mainamount;
-      this.paymentRequest.currencyCode = stJwtInstance.currencyiso3a;
+      this.paymentRequest.total.amount = this.stJwtInstance.mainamount;
+      this.paymentRequest.currencyCode = this.stJwtInstance.currencyiso3a;
     }
     return this.paymentRequest;
   }
 
-  public ifBrowserSupportsApplePayVersion = (version: number) => ApplePaySession.supportsVersion(version);
+  /**
+   * Checks whether user uses Safari and if it's version supports Apple Pay
+   * @param version
+   */
+  public ifBrowserSupportsApplePayVersion = (version: number) => {
+    if (ApplePaySession) {
+      if (!ApplePaySession.supportsVersion(version)) {
+        alert(Language.translations.APPLE_PAY_NOT_AVAILABLE);
+      }
+    } else {
+      alert(Language.translations.APPLE_PAY_ONLY_ON_IOS);
+    }
+  };
 
   /**
    * Checks whether ApplePay is available on current device
@@ -98,13 +113,15 @@ class ApplePay {
     if (this.checkApplePayAvailability()) {
       this.checkApplePayWalletCardAvailability().then((canMakePayments: boolean) => {
         if (canMakePayments) {
-          this.applePayButtonClickHandler('st-apple-pay', 'click');
+          this.applePayButtonClickHandler(ApplePay.APPLEPAY_BUTTON_ID, 'click');
         } else {
-          return Language.translations.APPLE_PAY_NOT_AVAILABLE;
+          alert(Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE);
+          return Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE;
         }
       });
     } else {
-      return Language.translations.APPLE_PAY_NOT_AVAILABLE;
+      alert(Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE);
+      return Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE;
     }
   }
 
