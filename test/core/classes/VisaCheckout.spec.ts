@@ -122,15 +122,13 @@ describe('Visa Checkout class', () => {
     beforeEach(() => {
       sdkMarkup = VisaCheckoutFixture().sdkMarkup;
     });
-    it('should init script on button', () => {
-      expect(instance._initVisaConfiguration()).toEqual(sdkMarkup);
-    });
+    it('should init script on button', () => {});
     // then
     it('should triggers _paymentStatusHandler for each status (cancel, error, success)', () => {});
   });
 
   // given
-  describe('Method __attachVisaButton', () => {
+  describe('Method _attachVisaButton', () => {
     // then
     it('should prepared structure be equal to real document object ', () => {
       expect(instance._attachVisaButton()).toEqual(body);
@@ -138,18 +136,18 @@ describe('Visa Checkout class', () => {
   });
 
   // given
-  describe('Method _checkLiveStatus', () => {
+  describe('Method _setLiveStatus', () => {
     // then
     it('should set sandbox assets when application is not live', () => {
       const { sandboxAssets } = VisaCheckoutFixture();
-      instance._checkLiveStatus();
+      instance._setLiveStatus();
       expect(instance._visaCheckoutButtonProps.src).toEqual(sandboxAssets.buttonImg);
       expect(instance._sdkAddress).toEqual(sandboxAssets.sdk);
     });
     it('should set production assets when application is live', () => {
       const { productionAssets } = VisaCheckoutFixture();
       instance._livestatus = 1;
-      instance._checkLiveStatus();
+      instance._setLiveStatus();
       expect(instance._visaCheckoutButtonProps.src).toEqual(productionAssets.buttonImg);
       expect(instance._sdkAddress).toEqual(productionAssets.sdk);
     });
@@ -164,6 +162,28 @@ describe('Visa Checkout class', () => {
   describe('Method _initPaymentConfiguration', () => {
     // then
     it('should trigger V.init function with proper configuration', () => {});
+  });
+
+  // given
+  describe('Method setNotification', () => {
+    // then
+    it('', () => {});
+  });
+
+  // given
+  describe('Method _setActionOnMockedButton', () => {
+    // then
+    it('', () => {});
+  });
+  // given
+  describe('Method _setMockedData', () => {
+    // then
+    it('', () => {});
+  });
+  // given
+  describe('Method _proceedFlowWithMockedData', () => {
+    // then
+    it('', () => {});
   });
 });
 
