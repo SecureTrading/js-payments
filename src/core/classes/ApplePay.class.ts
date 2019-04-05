@@ -15,6 +15,7 @@ const ApplePaySession = (window as any).ApplePaySession;
  * 7. In onvalidatemerchant handler catch object to pass to completeMerchantValidation
  * 8. Handle customer's selections in the payment sheet to complete transaction cost - event handlers: onpaymentmethodselected, onshippingmethodselected, and onshippingcontactselected.
  * 9. 30 seconds to handle each event before the payment sheet times out: completePaymentMethodSelection, completeShippingMethodSelection, and completeShippingContactSelection
+ * 10. Make request call WALLETVERIFY to ST just like in Cardinal Commerce.
  */
 class ApplePay {
   set jwt(value: string) {
@@ -61,7 +62,7 @@ class ApplePay {
   }
 
   /**
-   * Sets details encryptet in JWT into payment request
+   * Sets details encrypted in JWT into payment request
    */
   public setAmountAndCurrency() {
     if (this.paymentRequest.total.amount && this.paymentRequest.currencyCode) {
@@ -96,7 +97,7 @@ class ApplePay {
   public checkApplePayWalletCardAvailability = () => ApplePaySession.canMakePaymentsWithActiveCard(this.merchantId);
 
   /**
-   *
+   * Simple handler for generated Apple Pay button
    * @param elementId
    * @param event
    */
@@ -136,7 +137,7 @@ class ApplePay {
   }
 
   /**
-   * Function requesting merchant session object
+   * Method requesting merchant session object
    * @param url
    * @param options
    * @return Merchant session object as JSON
@@ -147,8 +148,16 @@ class ApplePay {
     });
   }
 
+  /**
+   * Gets Apple Pay session object based on Apple Pay version number and ApplePayPaymentRequest
+   */
   public getApplePaySessionObject = () => new ApplePaySession(ApplePay.APPLE_PAY_VERSION_NUMBER, this.paymentRequest);
 
+  /**
+   * Make a server-to-server call to pass a payload to the Apple Pay validationURL endpoint.
+   * If successful, Apple Pay servers will return a merchant session object which will be used in response to completeMerchantValidation
+   * @param session
+   */
   public validateMerchantHandler(session: any) {
     session.onvalidatemerchant = (event: any) => {
       ApplePay.fetchMerchantSession(event.validationURL, this._validateMerchantOptions)
@@ -161,6 +170,10 @@ class ApplePay {
     };
   }
 
+  /**
+   * Sets payment sheet interactions handlers: onpaymentmethodselected, onshippingmethodselected, onshippingcontactselected
+   * @param session
+   */
   public subscribeStatusHandlers(session: any) {
     session.onpaymentmethodselected = (event: any) => {
       const { paymentMethod } = event;
