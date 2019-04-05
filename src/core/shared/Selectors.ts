@@ -1,3 +1,5 @@
+import { environment } from '../../environments/environment';
+
 export default class Selectors {
   public static readonly CARD_NUMBER_INPUT_SELECTOR: string = 'st-card-number-input';
   public static readonly CARD_NUMBER_MESSAGE_SELECTOR: string = 'st-card-number-message';
@@ -21,18 +23,21 @@ export default class Selectors {
   public static readonly EXPIRATION_DATE_COMPONENT_FRAME: string = 'st-expiration-date-iframe';
   public static readonly NOTIFICATION_FRAME_COMPONENT_FRAME: string = 'st-notification-frame-iframe';
   public static readonly CONTROL_FRAME_COMPONENT_FRAME: string = 'st-control-frame-iframe';
+  public static readonly ANIMATED_CARD_COMPONENT_FRAME: string = 'st-animated-card-iframe';
 
   public static readonly CARD_NUMBER_COMPONENT_NAME: string = 'cardNumber';
   public static readonly SECURITY_CODE_COMPONENT_NAME: string = 'securityCode';
   public static readonly EXPIRATION_DATE_COMPONENT_NAME: string = 'expirationDate';
   public static readonly NOTIFICATION_FRAME_COMPONENT_NAME: string = 'notificationFrame';
   public static readonly CONTROL_FRAME_COMPONENT_NAME: string = 'controlFrame';
+  public static readonly ANIMATED_CARD_COMPONENT_NAME: string = 'animatedCard';
 
-  public static CARD_NUMBER_COMPONENT: string = '/card-number.html';
-  public static SECURITY_CODE_COMPONENT: string = '/security-code.html';
-  public static EXPIRATION_DATE_COMPONENT: string = '/expiration-date.html';
-  public static NOTIFICATION_FRAME_COMPONENT: string = '/notification-frame.html';
-  public static CONTROL_FRAME_COMPONENT: string = '/control-frame.html';
+  public static readonly CARD_NUMBER_COMPONENT: string = `${environment.FRAME_URL}/card-number.html`;
+  public static readonly SECURITY_CODE_COMPONENT: string = `${environment.FRAME_URL}/security-code.html`;
+  public static readonly EXPIRATION_DATE_COMPONENT: string = `${environment.FRAME_URL}/expiration-date.html`;
+  public static readonly NOTIFICATION_FRAME_COMPONENT: string = `${environment.FRAME_URL}/notification-frame.html`;
+  public static readonly CONTROL_FRAME_COMPONENT: string = `${environment.FRAME_URL}/control-frame.html`;
+  public static readonly ANIMATED_CARD_COMPONENT: string = `${environment.FRAME_URL}/animated-card.html`;
 
   public static readonly NOTIFICATION_FRAME_ID: string = 'st-notification-frame';
   public static readonly NOTIFICATION_FRAME_ERROR_CLASS: string = 'notification-frame--error';

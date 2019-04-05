@@ -1,5 +1,3 @@
-import Selectors from './Selectors';
-
 /**
  * DomMethods class.
  * Gather all methods which are making operation on DOM
