@@ -14,6 +14,8 @@ const ApplePaySession = (window as any).ApplePaySession;
  * 5. Construct ApplePaySession with versionNumber and ApplePayPaymentRequest as arguments.
  * 6. Call begin() method to display the payment sheet to the customer and initiate the merchant validation process.
  * 7. In onvalidatemerchant handler catch object to pass to completeMerchantValidation
+ * 8. Handle customer's selections in the payment sheet to complete transaction cost - event handlers: onpaymentmethodselected, onshippingmethodselected, and onshippingcontactselected.
+ * 9. 30 seconds to handle each event before the payment sheet times out: completePaymentMethodSelection, completeShippingMethodSelection, and completeShippingContactSelection
  */
 class ApplePay {
   set config(value: any) {
@@ -82,19 +84,6 @@ class ApplePay {
         if (canMakePayments) {
           this.applePayButtonClickHandler('st-apple-pay', 'click');
         } else {
-          if (ApplePaySession.openPaymentSetup) {
-            ApplePaySession.openPaymentSetup(this.config.merchantId)
-              .then((success: any) => {
-                if (success) {
-                  alert(success);
-                } else {
-                  alert('Failed');
-                }
-              })
-              .catch(function(e: any) {
-                // Open payment setup error handling
-              });
-          }
           return Language.translations.APPLE_PAY_NOT_AVAILABLE;
         }
       });
@@ -112,11 +101,52 @@ class ApplePay {
     session.begin();
     // when the payment sheet is displayed
     session.onvalidatemerchant = (event: any) => {
-      console.log(event);
-      const URL = event.validationURL;
-      return event;
+      const options = {
+        url: 'endpointURL',
+        cert: 'merchIdentityCert',
+        key: 'merchIdentityCert',
+        method: 'post',
+        body: {
+          merchantIdentifier: this.config.props.merchantId,
+          displayName: 'MyStore',
+          initiative: 'web',
+          initiativeContext: 'mystore.example.com'
+        },
+        json: true
+      };
+
+      this.fetchMerchantSession(event.validationURL, options)
+        .then((response: any) => {
+          alert(response);
+          ApplePaySession.completeMerchantValidation(response);
+          return response;
+        })
+        .catch(error => alert(`Catched an error: ${error}`));
+    };
+
+    session.onpaymentmethodselected = (event: any) => {
+      const { paymentMethod } = event;
+      ApplePaySession.completePaymentMethodSelection(null);
+    };
+
+    session.onshippingmethodselected = (event: any) => {
+      const { shippingMethod } = event;
+      ApplePaySession.completeShippingMethodSelection(null);
+    };
+
+    session.onshippingcontactselected = (event: any) => {
+      const { shippingContact } = event;
+      ApplePaySession.completeShippingContactSelection(null);
     };
   }
+
+  public fetchMerchantSession(url: string, options: {}) {
+    return fetch(url, options).then((MerchantSession: any) => {
+      return MerchantSession.json();
+    });
+  }
+
+  public subscribeStatusHandlers() {}
 }
 
 export default ApplePay;

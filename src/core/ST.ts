@@ -7,7 +7,6 @@ import { GATEWAY_URL } from './imports/cardinalSettings';
 import Selectors from './shared/Selectors';
 import { Styles } from './shared/Styler';
 
-
 /***
  * Establishes connection with ST, defines client.
  */
