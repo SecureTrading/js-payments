@@ -4,8 +4,9 @@ import Element from './Element';
 import { environment } from '../environments/environment';
 import CardinalCommerce from './classes/CardinalCommerce';
 import { GATEWAY_URL } from './imports/cardinalSettings';
-import { Styles } from './shared/Styler';
 import Selectors from './shared/Selectors';
+import { Styles } from './shared/Styler';
+
 
 /***
  * Establishes connection with ST, defines client.
