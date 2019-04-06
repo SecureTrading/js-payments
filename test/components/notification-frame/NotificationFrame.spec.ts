@@ -75,7 +75,7 @@ describe('Component NotificationFrame', () => {
     const { errorMessage } = NotificationFrameFixture();
 
     beforeEach(() => {
-      instance.errorMessageListener();
+      instance._onMessage();
       insertContentSpy = jest.spyOn(instance, 'insertContent');
       setAttributeClassSpy = jest.spyOn(instance, 'setAttributeClass');
       insertContentMethod = instance.insertContent();
@@ -84,7 +84,7 @@ describe('Component NotificationFrame', () => {
 
     // then
     it('should set message data', () => {
-      instance.errorMessageListener();
+      instance._onMessage();
       expect(instance._message).toMatchObject(errorMessage);
     });
 

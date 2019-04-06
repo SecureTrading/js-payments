@@ -75,7 +75,7 @@ export default class NotificationFrame {
   /**
    * Listens to postMessage event, receives message from it and triggers method for inserting content into div
    */
-  private _onMessage() {
+  public _onMessage() {
     this._messageBus.subscribe(MessageBus.EVENTS.NOTIFICATION_SUCCESS, (data: NotificationEventData) => {
       this._message = { type: messageTypes.success, content: data.message };
       this.insertContent();
