@@ -9,5 +9,6 @@ export default class Selectors {
   public static readonly SECURITY_CODE_MESSAGE_SELECTOR: string = 'st-security-code-message';
 
   public static readonly CONTROL_FRAME_IFRAME_SELECTOR: string = 'st-control-frame-iframe';
-  public static readonly CONTROL_FRAME_BUTTON_SELECTOR: string = 'st-control-frame-button';
+
+  public static readonly MERCHANT_FORM_SELECTOR: string = 'st-form';
 }

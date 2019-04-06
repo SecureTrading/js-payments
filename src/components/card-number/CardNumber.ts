@@ -16,7 +16,6 @@ export default class CardNumber extends FormField {
   private _binLookup: BinLookup;
   private _cardType: string;
   private _cardLength: [];
-  private _messageBus: MessageBus;
 
   public brand: BrandDetailsType;
 
@@ -30,8 +29,6 @@ export default class CardNumber extends FormField {
 
   constructor() {
     super(Selectors.CARD_NUMBER_INPUT_SELECTOR, Selectors.CARD_NUMBER_MESSAGE_SELECTOR);
-
-    this._messageBus = new MessageBus();
 
     this.setAttributes({
       maxlength: CardNumber.DEFAULT_CARD_LENGTH,

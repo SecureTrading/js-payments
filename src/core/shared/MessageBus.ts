@@ -20,6 +20,7 @@ export default class MessageBus {
     AUTH: 'AUTH',
     LOAD_CARDINAL: 'LOAD_CARDINAL',
     LOAD_CONTROL_FRAME: 'LOAD_CONTROL_FRAME',
+    SUBMIT_FORM: 'SUBMIT_FORM',
     THREEDINIT: 'THREEDINIT',
     THREEDQUERY: 'THREEDQUERY'
   };
@@ -36,7 +37,10 @@ export default class MessageBus {
       let isPublicEvent = Utils.inArray(Object.keys(MessageBus.EVENTS_PUBLIC), messageBusEvent.type);
       let isCallbackAllowed =
         event.origin === this._frameOrigin || (event.origin === this._parentOrigin && isPublicEvent);
+        let subscribersStore = window.sessionStorage.getItem(MessageBus.SUBSCRIBERS);
 
+        subscribersStore = JSON.parse(subscribersStore);
+        
       if (isCallbackAllowed && this._subscriptions[messageBusEvent.type]) {
         this._subscriptions[messageBusEvent.type](messageBusEvent.data);
       }
@@ -81,10 +85,8 @@ export default class MessageBus {
       // @ts-ignore
       subscribers[eventType].push(subscriber);
     }
-
     subscribersStore = JSON.stringify(subscribers);
     window.sessionStorage.setItem(MessageBus.SUBSCRIBERS, subscribersStore);
-
     this._subscriptions[eventType] = callback;
   }
 

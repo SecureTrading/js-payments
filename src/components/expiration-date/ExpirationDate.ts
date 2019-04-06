@@ -9,12 +9,9 @@ import MessageBus from '../../core/shared/MessageBus';
 export default class ExpirationDate extends FormField {
   private static INPUT_MAX_LENGTH: number = 5;
   private static INPUT_PATTERN: string = '^(0[1-9]|1[0-2])\\/([0-9]{2})$';
-  private _messageBus: MessageBus;
 
   constructor() {
     super(Selectors.EXPIRATION_DATE_INPUT_SELECTOR, Selectors.EXPIRATION_DATE_MESSAGE_SELECTOR);
-
-    this._messageBus = new MessageBus();
 
     this.setAttributes({
       maxlength: ExpirationDate.INPUT_MAX_LENGTH,

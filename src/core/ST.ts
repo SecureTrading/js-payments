@@ -2,6 +2,9 @@ import { apmsNames } from './imports/apms';
 import Element from './Element';
 import CardinalCommerce from './classes/CardinalCommerce';
 import VisaCheckout from './classes/VisaCheckout';
+import MessageBus from './shared/MessageBus';
+import Validation from './shared/Validation';
+import Selectors from './shared/Selectors';
 
 /***
  * Establishes connection with ST, defines client.
@@ -48,6 +51,7 @@ export default class ST {
     this._initElements();
     this._init3DSecure();
     this._initWallets(this.jwt);
+    this._setFormListener();
   }
 
   private _initElements() {
@@ -94,6 +98,15 @@ export default class ST {
     if (visaCheckoutConfig) {
       new VisaCheckout(visaCheckoutConfig, jwt);
     }
+  }
+
+  private _setFormListener() {
+    document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).addEventListener('submit', (event: Event) => {
+      event.preventDefault();
+      const messageBusEvent: MessageBusEvent = { type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM };
+      const messageBus = new MessageBus();
+      messageBus.publish(messageBusEvent);
+    });
   }
 
   /**

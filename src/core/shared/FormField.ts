@@ -1,15 +1,19 @@
 import Formatter from './Formatter';
 import Validation from './Validation';
+import MessageBus from './MessageBus';
 
 export default class FormField {
   protected _inputElement: HTMLInputElement;
   protected _messageElement: HTMLParagraphElement;
+  protected _messageBus: MessageBus;
 
   constructor(inputSelector: string, messageSelector: string) {
     // @ts-ignore
     this._inputElement = document.getElementById(inputSelector);
     // @ts-ignore
     this._messageElement = document.getElementById(messageSelector);
+    // @ts-ignore
+    this._messageBus = new MessageBus();
     this.setInputListeners();
   }
 
@@ -37,6 +41,10 @@ export default class FormField {
   onKeyPress(event: KeyboardEvent) {
     if (!Validation.isCharNumber(event)) {
       event.preventDefault();
+      if (Validation.isEnter(event)) {
+        const messageBusEvent: MessageBusEvent = { type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM };
+        this._messageBus.publish(messageBusEvent);
+      }
     }
   }
 

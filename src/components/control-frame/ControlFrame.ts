@@ -4,7 +4,6 @@ import Selectors from '../../core/shared/Selectors';
 
 export default class ControlFrame {
   private _frameParams: object;
-  private _buttonElement: HTMLButtonElement;
   private _messageBus: MessageBus;
   private _payment: Payment;
   private _isPaymentReady: boolean = false;
@@ -24,14 +23,8 @@ export default class ControlFrame {
   };
   private _card: Card;
 
-  public static ifFieldExists(): HTMLButtonElement {
-    // @ts-ignore
-    return document.getElementById(Selectors.CONTROL_FRAME_BUTTON_SELECTOR);
-  }
-
   constructor() {
     this.setFrameParams();
-    this._buttonElement = ControlFrame.ifFieldExists();
     // @ts-ignore
     this._messageBus = new MessageBus(this._frameParams.origin);
     // @ts-ignore
@@ -40,7 +33,6 @@ export default class ControlFrame {
   }
 
   private onInit() {
-    this.initEventListeners();
     this.initSubscriptions();
     this.onLoad();
   }
@@ -54,13 +46,6 @@ export default class ControlFrame {
       jwt: frameParams.get('jwt'),
       origin: frameParams.get('origin')
     };
-  }
-
-  private initEventListeners() {
-    this._buttonElement.addEventListener('click', (event: Event) => {
-      event.preventDefault();
-      this.onClick();
-    });
   }
 
   private initSubscriptions() {
@@ -82,9 +67,12 @@ export default class ControlFrame {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.AUTH, (data: any) => {
       this.onAuthEvent(data);
     });
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, () => {
+      this.onSubmit();
+    });
   }
 
-  private onClick() {
+  private onSubmit() {
     this.requestPayment();
   }
 
