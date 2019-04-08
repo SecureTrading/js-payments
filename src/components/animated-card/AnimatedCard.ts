@@ -110,7 +110,8 @@ class AnimatedCard {
    */
   public static setThemeObject(type: string, logo: string) {
     const themeObject = { type: '', logo: '' };
-    themeObject.type = AnimatedCard.returnThemeClass(type.toLowerCase());
+    const typeOfCard = type.toLowerCase();
+    themeObject.type = AnimatedCard.returnThemeClass(typeOfCard);
     themeObject.logo = logo;
     return themeObject;
   }
