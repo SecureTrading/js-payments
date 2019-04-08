@@ -28,7 +28,7 @@ class AnimatedCard {
   };
   public static CARD_DETAILS_PLACEHOLDERS = {
     CARD_NUMBER: 'XXXX XXXX XXXX XXXX',
-    EXPIRATION_DATE_: 'MM/YY',
+    EXPIRATION_DATE: 'MM/YY',
     SECURITY_CODE: 'XXX',
     TYPE: 'VISA'
   };
@@ -57,7 +57,7 @@ class AnimatedCard {
   public animatedCardFront: HTMLElement = document.getElementById('st-animated-card-side-front');
   public cardDetails: any = {
     cardNumber: AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER,
-    expirationDate: AnimatedCard.CARD_DETAILS_PLACEHOLDERS.EXPIRATION_DATE_,
+    expirationDate: AnimatedCard.CARD_DETAILS_PLACEHOLDERS.EXPIRATION_DATE,
     securityCode: AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE,
     type: AnimatedCard.CARD_DETAILS_PLACEHOLDERS.TYPE
   };
@@ -250,10 +250,9 @@ class AnimatedCard {
    * value: Value passed from component
    */
   public onExpirationDateChanged(data: any) {
-    const { value } = data;
-    value
-      ? (this.cardDetails.expirationDate = value)
-      : (this.cardDetails.expirationDate = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.EXPIRATION_DATE_);
+    let { value } = data;
+    value = value ? value : AnimatedCard.CARD_DETAILS_PLACEHOLDERS.EXPIRATION_DATE;
+    this.setCardDetailValue(this.cardDetails.expirationDate, value);
     this.flipCardBack(this.cardDetails.type);
     this.setValueOnCard(AnimatedCard.COMPONENTS_IDS.EXPIRATION_DATE);
   }
@@ -267,11 +266,16 @@ class AnimatedCard {
    * value: Value passed from component
    */
   public onSecurityCodeChanged(data: any) {
-    data.value
-      ? (this.cardDetails.securityCode = data.value)
-      : (this.cardDetails.securityCode = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE);
+    let { value } = data;
+    value = value ? value : AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
+    this.setCardDetailValue(this.cardDetails.securityCode, value);
     this.shouldFlipCard(this.cardDetails.type);
     this.setValueOnCard(AnimatedCard.COMPONENTS_IDS.SECURITY_CODE);
+  }
+
+  public setCardDetailValue(detail: string, value: string) {
+    detail = value;
+    return detail;
   }
 
   /**
