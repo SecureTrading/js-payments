@@ -112,6 +112,24 @@ describe('Class AnimatedCard', () => {
     });
   });
 
+  describe('Method setThemeObject', () => {
+    // then
+    each([
+      [AnimatedCard.CARD_BRANDS.AMEX, cardsLogos.amex],
+      [AnimatedCard.CARD_BRANDS.ASTROPAYCARD, cardsLogos.astropaycard],
+      [AnimatedCard.CARD_BRANDS.DINERS, cardsLogos.diners],
+      [AnimatedCard.CARD_BRANDS.DISCOVER, cardsLogos.discover],
+      [AnimatedCard.CARD_BRANDS.JCB, cardsLogos.jcb],
+      [AnimatedCard.CARD_BRANDS.MAESTRO, cardsLogos.maestro],
+      [AnimatedCard.CARD_BRANDS.MASTERCARD, cardsLogos.mastercard],
+      [AnimatedCard.CARD_BRANDS.PIBA, cardsLogos.piba],
+      [AnimatedCard.CARD_BRANDS.VISA, cardsLogos.visa]
+    ]).it('should set themeObject based on parameters passed', (type: string, logo: string) => {
+      const themeObject = { type: AnimatedCard.returnThemeClass(type.toLowerCase()), logo };
+      expect(AnimatedCard.setThemeObject(type, logo)).toEqual(themeObject);
+    });
+  });
+
   // given
   describe('Method setCardTheme', () => {
     let { instance } = animatedCardFixture();
