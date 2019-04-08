@@ -59,7 +59,6 @@ body {
 
   &__amex {
     @include cardType($amex-gradient, 2rem, 1.5rem);
-    34
   }
 
   &__astropaycard {
