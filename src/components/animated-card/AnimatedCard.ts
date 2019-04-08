@@ -51,10 +51,15 @@ class AnimatedCard {
    */
   public static returnThemeClass = (theme: string) => `st-animated-card__${theme}`;
 
+  public animatedCardBack: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_SIDE_BACK);
+  public animatedCardExpirationDate: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_EXPIRATION_DATE_ID);
+  public animatedCardFront: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_SIDE_FRONT);
+  public animatedCardPan: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_CREDIT_CARD_ID);
+  public animatedCardSecurityCode: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_SECURITY_CODE_ID);
+  public animatedCardSecurityCodeFront: HTMLElement = document.getElementById(
+    Selectors.ANIMATED_CARD_SECURITY_CODE_FRONT_ID
+  );
   public binLookup: BinLookup;
-  public messageBus: MessageBus;
-  public animatedCardBack: HTMLElement = document.getElementById('st-animated-card-side-back');
-  public animatedCardFront: HTMLElement = document.getElementById('st-animated-card-side-front');
   public cardDetails: any = {
     cardNumber: AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER,
     expirationDate: AnimatedCard.CARD_DETAILS_PLACEHOLDERS.EXPIRATION_DATE,
@@ -62,12 +67,7 @@ class AnimatedCard {
     type: AnimatedCard.CARD_DETAILS_PLACEHOLDERS.TYPE
   };
   public cardElement: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
-  public animatedCardPan: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_CREDIT_CARD_ID);
-  public animatedCardExpirationDate: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_EXPIRATION_DATE_ID);
-  public animatedCardSecurityCode: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_SECURITY_CODE_ID);
-  public animatedCardSecurityCodeFront: HTMLElement = document.getElementById(
-    Selectors.ANIMATED_CARD_SECURITY_CODE_FRONT_ID
-  );
+  public messageBus: MessageBus;
 
   constructor() {
     this.binLookup = new BinLookup();
@@ -223,6 +223,16 @@ class AnimatedCard {
   }
 
   /**
+   * Set one of three values on animated card
+   * @param data
+   * @param placeholder
+   */
+  public static setCardDetail(data: any, placeholder: string) {
+    let { value } = data;
+    return value ? value : placeholder;
+  }
+
+  /**
    * Listens to changes coming from each 'input-component' field and sets proper class properties.
    * Receives object: { type, name, value}
    * Where:
@@ -233,9 +243,7 @@ class AnimatedCard {
   public onCardNumberChanged(data: any) {
     this.cardDetails.type = this.binLookup.binLookup(data.value).type;
     DOMMethods.setProperty.apply(this, ['alt', this.cardDetails.type, AnimatedCard.PAYMENT_LOGO_ID]);
-    data.value
-      ? (this.cardDetails.cardNumber = data.value)
-      : (this.cardDetails.cardNumber = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER);
+    this.cardDetails.cardNumber = AnimatedCard.setCardDetail(data, AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER);
     this.flipCardBack(this.cardDetails.type);
     this.setValueOnCard(AnimatedCard.COMPONENTS_IDS.CARD_NUMBER);
     this.setCardTheme();
@@ -250,9 +258,10 @@ class AnimatedCard {
    * value: Value passed from component
    */
   public onExpirationDateChanged(data: any) {
-    let { value } = data;
-    value = value ? value : AnimatedCard.CARD_DETAILS_PLACEHOLDERS.EXPIRATION_DATE;
-    this.setCardDetailValue(this.cardDetails.expirationDate, value);
+    this.cardDetails.expirationDate = AnimatedCard.setCardDetail(
+      data,
+      AnimatedCard.CARD_DETAILS_PLACEHOLDERS.EXPIRATION_DATE
+    );
     this.flipCardBack(this.cardDetails.type);
     this.setValueOnCard(AnimatedCard.COMPONENTS_IDS.EXPIRATION_DATE);
   }
@@ -266,16 +275,12 @@ class AnimatedCard {
    * value: Value passed from component
    */
   public onSecurityCodeChanged(data: any) {
-    let { value } = data;
-    value = value ? value : AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
-    this.setCardDetailValue(this.cardDetails.securityCode, value);
+    this.cardDetails.securityCode = AnimatedCard.setCardDetail(
+      data,
+      AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE
+    );
     this.shouldFlipCard(this.cardDetails.type);
     this.setValueOnCard(AnimatedCard.COMPONENTS_IDS.SECURITY_CODE);
-  }
-
-  public setCardDetailValue(detail: string, value: string) {
-    detail = value;
-    return detail;
   }
 
   /**
