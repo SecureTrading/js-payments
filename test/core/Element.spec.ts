@@ -1,5 +1,6 @@
 import Element from '../../src/core/Element';
 import Selectors from '../../src/core/shared/Selectors';
+import { environment } from './../../src/environments/environment';
 // given
 describe('Index placeholder test', () => {
   //when
@@ -11,11 +12,13 @@ describe('Index placeholder test', () => {
     };
     createNewElement = {
       _name: 'cardNumber',
-      _iframeSrc: '/card-number.html?'
+      _iframeSrc: `${environment.FRAME_URL}/card-number.html?`
     };
     createNewStyledElement = {
       _name: 'cardNumber',
-      _iframeSrc: '/card-number.html?background-color-input=AliceBlue&color-input-error=%23721c24'
+      _iframeSrc: `${
+        environment.FRAME_URL
+      }/card-number.html?background-color-input=AliceBlue&color-input-error=%23721c24`
     };
   });
 
