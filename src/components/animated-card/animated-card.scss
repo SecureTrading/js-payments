@@ -49,76 +49,49 @@ body {
     @include centerLogo(4rem, 1.5rem);
   }
 
-  &__amex {
-    background: $amex-gradient;
+  @mixin cardType($bgr, $top, $right) {
+    background: $bgr;
 
     .st-animated-card__payment-logo-img {
-      @include centerLogo(2rem, 1.5rem);
+      @include centerLogo($top, $right);
     }
+  }
+
+  &__amex {
+    @include cardType($amex-gradient, 2rem, 1.5rem);
+    34
   }
 
   &__astropaycard {
-    background: $astro-pay-gradient;
-
-    .st-animated-card__payment-logo-img {
-      @include centerLogo(3rem, 2rem);
-    }
+    @include cardType($astro-pay-gradient, 3rem, 2rem);
   }
 
   &__diners {
-    background: $diners-gradient;
-
-    .st-animated-card__payment-logo-img {
-      @include centerLogo(2rem, 1rem);
-    }
+    @include cardType($diners-gradient, 2rem, 1rem);
   }
 
   &__discover {
-    background: $discover-gradient;
-
-    .st-animated-card__payment-logo-img {
-      @include centerLogo(2rem, 1rem);
-    }
+    @include cardType($discover-gradient, 2rem, 1rem);
   }
 
   &__jcb {
-    background: $jcb-gradient;
-
-    .st-animated-card__payment-logo-img {
-      @include centerLogo(2rem, 1rem);
-    }
+    @include cardType($jcb-gradient, 2rem, 1rem);
   }
 
   &__maestro {
-    background: $maestro-gradient;
-
-    .st-animated-card__payment-logo-img {
-      @include centerLogo(2rem, 1rem);
-    }
+    @include cardType($maestro-gradient, 2rem, 1rem);
   }
 
   &__mastercard {
-    background: $master-card-gradient;
-
-    .st-animated-card__payment-logo-img {
-      @include centerLogo(2rem, 1.5rem);
-    }
+    @include cardType($master-card-gradient, 2rem, 1.5rem);
   }
 
   &__piba {
-    background: $piba-gradient;
-
-    .st-animated-card__payment-logo-img {
-      @include centerLogo(1rem, 1rem);
-    }
+    @include cardType($piba-gradient, 1rem, 1rem);
   }
 
   &__visa {
-    background: $visa-gradient;
-
-    .st-animated-card__payment-logo-img {
-      @include centerLogo(4rem, 1.5rem);
-    }
+    @include cardType($visa-gradient, 4rem, 1.5rem);
   }
 
   &__front {
