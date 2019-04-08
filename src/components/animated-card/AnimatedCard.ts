@@ -103,13 +103,15 @@ class AnimatedCard {
     DOMMethods.setProperty.apply(this, ['src', logo, AnimatedCard.PAYMENT_LOGO_ID]);
   }
 
-  public setThemeAttributes(type: string, logo: string) {
+  /**
+   * Sets theme object with theme properties: type of card and logo of card
+   * @param type
+   * @param logo
+   */
+  public static setThemeObject(type: string, logo: string) {
     const themeObject = { type: '', logo: '' };
     themeObject.type = AnimatedCard.returnThemeClass(type.toLowerCase());
     themeObject.logo = logo;
-    if (type === AnimatedCard.CARD_BRANDS.AMEX) {
-      this.animatedCardSecurityCodeFront.textContent = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
-    }
     return themeObject;
   }
 
@@ -121,57 +123,43 @@ class AnimatedCard {
     this.resetToDefaultTheme();
     switch (this.cardDetails.type) {
       case AnimatedCard.CARD_BRANDS.AMEX:
-        themeObject = this.setThemeAttributes(AnimatedCard.CARD_BRANDS.AMEX, cardsLogos.amex);
+        this.animatedCardSecurityCodeFront.textContent = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
+        themeObject = AnimatedCard.setThemeObject(AnimatedCard.CARD_BRANDS.AMEX, cardsLogos.amex);
         break;
       case AnimatedCard.CARD_BRANDS.ASTROPAYCARD:
-        themeObject = this.setThemeAttributes(AnimatedCard.CARD_BRANDS.ASTROPAYCARD, cardsLogos.astropaycard);
+        themeObject = AnimatedCard.setThemeObject(AnimatedCard.CARD_BRANDS.ASTROPAYCARD, cardsLogos.astropaycard);
         break;
       case AnimatedCard.CARD_BRANDS.DINERS:
-        themeObject = this.setThemeAttributes(AnimatedCard.CARD_BRANDS.DINERS, cardsLogos.diners);
+        themeObject = AnimatedCard.setThemeObject(AnimatedCard.CARD_BRANDS.DINERS, cardsLogos.diners);
         break;
       case AnimatedCard.CARD_BRANDS.DISCOVER:
-        themeObject = this.setThemeAttributes(AnimatedCard.CARD_BRANDS.DISCOVER, cardsLogos.discover);
+        themeObject = AnimatedCard.setThemeObject(AnimatedCard.CARD_BRANDS.DISCOVER, cardsLogos.discover);
         break;
       case AnimatedCard.CARD_BRANDS.JCB:
-        themeObject = this.setThemeAttributes(AnimatedCard.CARD_BRANDS.JCB, cardsLogos.jcb);
+        themeObject = AnimatedCard.setThemeObject(AnimatedCard.CARD_BRANDS.JCB, cardsLogos.jcb);
         break;
       case AnimatedCard.CARD_BRANDS.MAESTRO:
-        themeObject = this.setThemeAttributes(AnimatedCard.CARD_BRANDS.MAESTRO, cardsLogos.maestro);
+        themeObject = AnimatedCard.setThemeObject(AnimatedCard.CARD_BRANDS.MAESTRO, cardsLogos.maestro);
         break;
       case AnimatedCard.CARD_BRANDS.MASTERCARD:
-        themeObject = this.setThemeAttributes(AnimatedCard.CARD_BRANDS.MASTERCARD, cardsLogos.mastercard);
+        themeObject = AnimatedCard.setThemeObject(AnimatedCard.CARD_BRANDS.MASTERCARD, cardsLogos.mastercard);
         break;
       case AnimatedCard.CARD_BRANDS.PIBA:
-        themeObject = this.setThemeAttributes(AnimatedCard.CARD_BRANDS.PIBA, cardsLogos.piba);
+        themeObject = AnimatedCard.setThemeObject(AnimatedCard.CARD_BRANDS.PIBA, cardsLogos.piba);
         break;
       case AnimatedCard.CARD_BRANDS.VISA:
-        themeObject = this.setThemeAttributes(AnimatedCard.CARD_BRANDS.VISA, cardsLogos.visa);
+        themeObject = AnimatedCard.setThemeObject(AnimatedCard.CARD_BRANDS.VISA, cardsLogos.visa);
         break;
       default:
-        themeObject = this.setThemeAttributes(AnimatedCard.CARD_BRANDS.VISA, cardsLogos.visa);
+        themeObject = AnimatedCard.setThemeObject(AnimatedCard.CARD_BRANDS.VISA, cardsLogos.visa);
     }
     this.setThemeProperties(themeObject);
     return themeObject;
   }
 
   /**
-   * Sets value on animated card depends on field which has been currently edited
-   * @param name
+   * For particular type of card it sets security code on front side of card
    */
-  public setValueOnCard(name: string) {
-    switch (name) {
-      case AnimatedCard.COMPONENTS_IDS.CARD_NUMBER:
-        this.animatedCardPan.textContent = this.cardDetails.cardNumber;
-        break;
-      case AnimatedCard.COMPONENTS_IDS.EXPIRATION_DATE:
-        this.animatedCardExpirationDate.textContent = this.cardDetails.expirationDate;
-        break;
-      case AnimatedCard.COMPONENTS_IDS.SECURITY_CODE:
-        this.setSecurityCodeOnProperSide().textContent = this.cardDetails.securityCode;
-        break;
-    }
-  }
-
   public setSecurityCodeOnProperSide = () =>
     this.cardDetails.type === AnimatedCard.CARD_BRANDS.AMEX
       ? this.animatedCardSecurityCodeFront
@@ -233,28 +221,26 @@ class AnimatedCard {
   }
 
   /**
-   * Listens to changes coming from each 'input-component' field and sets proper class properties.
+   * Listens to changes coming from Card Number field and sets proper class properties.
    * Receives object: { type, name, value}
    * Where:
    * type: Type of credit card (eg. AMEX, VISA etc.)
-   * name: Name of component from which came value
    * value: Value passed from component
    */
   public onCardNumberChanged(data: any) {
-    this.cardDetails.type = this.binLookup.binLookup(data.value).type;
     DOMMethods.setProperty.apply(this, ['alt', this.cardDetails.type, AnimatedCard.PAYMENT_LOGO_ID]);
+    this.cardDetails.type = this.binLookup.binLookup(data.value).type;
     this.cardDetails.cardNumber = AnimatedCard.setCardDetail(data, AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER);
     this.flipCardBack(this.cardDetails.type);
-    this.setValueOnCard(AnimatedCard.COMPONENTS_IDS.CARD_NUMBER);
     this.setCardTheme();
+    this.animatedCardPan.textContent = this.cardDetails.cardNumber;
   }
 
   /**
-   * Listens to changes coming from each 'input-component' field and sets proper class properties.
+   * Listens to changes coming from Expiration Date field and sets proper class properties.
    * Receives object: { type, name, value}
    * Where:
    * type: Type of credit card (eg. AMEX, VISA etc.)
-   * name: Name of component from which came value
    * value: Value passed from component
    */
   public onExpirationDateChanged(data: any) {
@@ -263,15 +249,14 @@ class AnimatedCard {
       AnimatedCard.CARD_DETAILS_PLACEHOLDERS.EXPIRATION_DATE
     );
     this.flipCardBack(this.cardDetails.type);
-    this.setValueOnCard(AnimatedCard.COMPONENTS_IDS.EXPIRATION_DATE);
+    this.animatedCardExpirationDate.textContent = this.cardDetails.expirationDate;
   }
 
   /**
-   * Listens to changes coming from each 'input-component' field and sets proper class properties.
+   * Listens to changes coming from Security Code field and sets proper class properties.
    * Receives object: { type, name, value}
    * Where:
    * type: Type of credit card (eg. AMEX, VISA etc.)
-   * name: Name of component from which came value
    * value: Value passed from component
    */
   public onSecurityCodeChanged(data: any) {
@@ -280,7 +265,7 @@ class AnimatedCard {
       AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE
     );
     this.shouldFlipCard(this.cardDetails.type);
-    this.setValueOnCard(AnimatedCard.COMPONENTS_IDS.SECURITY_CODE);
+    this.setSecurityCodeOnProperSide().textContent = this.cardDetails.securityCode;
   }
 
   /**
