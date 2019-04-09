@@ -21,7 +21,7 @@ class DomMethods {
 
   public static getIframeContentWindow = (name: string) => (window as any).frames[name];
 
-  public static setMultipleAttributes = (attributes: any, markup: string) => {
+  public static createHtmlElement = (attributes: any, markup: string) => {
     const element = document.createElement(markup);
     // @ts-ignore
     Object.keys(attributes).map(item => element.setAttribute(item, attributes[item]));

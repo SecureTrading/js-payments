@@ -29,7 +29,7 @@ import { ST } from '../src/stjs';
         props: {
           sitereference: 'test_site',
           paymentRequest: {
-            total: { label: 'Your Merchant Name', amount: '10.00' },
+            total: { label: 'Secure Trading Merchant', amount: '10.00' },
             countryCode: 'US',
             currencyCode: 'USD',
             merchantCapabilities: ['supports3DS', 'supportsCredit', 'supportsDebit'],
@@ -38,7 +38,10 @@ import { ST } from '../src/stjs';
             supportedNetworks: ['visa', 'masterCard', 'amex', 'discover']
           },
           merchantId: 'merchant.net.securetrading',
-          sitesecurity: 'gABC123DEFABC'
+          sitesecurity: 'gABC123DEFABC',
+          placement: 'st-apple-pay',
+          buttonText: 'donate',
+          buttonStyle: 'white-outline'
         }
       },
       {
