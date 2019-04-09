@@ -60,7 +60,7 @@
     "postcss-scss": "^2.0.0",
     "prettier": "1.16.4",
     "sass-loader": "^7.1.0",
-    "snyk": "^1.147.0",
+    "snyk": "^1.147.4",
     "source-map-loader": "^0.2.4",
     "stylelint": "^9.10.1",
     "stylelint-webpack-plugin": "^0.10.5",
