@@ -66,7 +66,6 @@ class ApplePay {
     this.sitereference = sitereference;
     this.sitesecurity = sitesecurity;
     this.stJwtInstance = new StJwt(jwt);
-    this.session = this.getApplePaySessionObject;
     this.setApplePayVersion();
     this.setAmountAndCurrency();
     this.setApplePayButtonProps(buttonText, buttonStyle);
@@ -195,6 +194,7 @@ class ApplePay {
    * Begins Apple Pay payment flow.
    */
   public paymentProcess() {
+    this.session = this.getApplePaySessionObject();
     this.onValidateMerchantRequest();
     this.onPaymentAuthorized();
     this.session.begin();
@@ -229,7 +229,6 @@ class ApplePay {
   }
 
   public onValidateMerchantResponseSuccess(response: any) {
-    this.session = this.getApplePaySessionObject();
     const { merchantSession } = response;
     if (merchantSession) {
       this.session.completeMerchantValidation(merchantSession);
