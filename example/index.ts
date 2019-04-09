@@ -35,7 +35,7 @@ import { ST } from '../src/stjs';
             merchantCapabilities: ['supports3DS', 'supportsCredit', 'supportsDebit'],
             requiredBillingContactFields: ['postalAddress'],
             requiredShippingContactFields: ['postalAddress', 'name', 'phone', 'email'],
-            supportedNetworks: ['visa', 'masterCard', 'amex', 'discover']
+            supportedNetworks: []
           },
           merchantId: 'merchant.net.securetrading',
           sitesecurity: 'gABC123DEFABC',

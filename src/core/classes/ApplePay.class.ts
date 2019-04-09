@@ -28,9 +28,6 @@ class ApplePay {
     return this._jwt;
   }
 
-  public static APPLE_PAY_MIN_VERSION: number = 2;
-  public static APPLE_PAY_MAX_VERSION: number = 5;
-  public static APPLEPAY_BUTTON_ID: string = 'st-apple-pay';
   public applePayVersion: number;
   public paymentRequest: any;
   public merchantId: string;
@@ -41,11 +38,34 @@ class ApplePay {
   public buttonText: string;
   public buttonStyle: string;
   public session: any;
+  public requiredBillingContactFields: [];
+  public requiredShippingContactFields: [];
+
+  public static APPLE_PAY_BUTTON_ID: string = 'st-apple-pay';
+  public static APPLE_PAY_MIN_VERSION: number = 2;
+  public static APPLE_PAY_MAX_VERSION: number = 5;
   public static AVAILABLE_BUTTON_STYLES = ['black', 'white', 'white-outline'];
   public static AVAILABLE_BUTTON_TEXTS = ['plain', 'buy', 'book', 'donate', 'check-out', 'subscribe'];
+  public static BASIC_SUPPORTED_NETWORKS = [
+    'amex',
+    'chinaUnionPay',
+    'discover',
+    'interac',
+    'jcb',
+    'masterCard',
+    'privateLabel',
+    'visa'
+  ];
+  public static VERSION_4_SUPPORTED_NETWORKS = ApplePay.BASIC_SUPPORTED_NETWORKS.concat([
+    'cartesBancaires',
+    'eftpos',
+    'electron',
+    'maestro',
+    'vPay'
+  ]);
+  public static VERSION_5_SUPPORTED_NETWORKS = ApplePay.BASIC_SUPPORTED_NETWORKS.concat(['elo', 'mada']);
   private _jwt: string;
   private _applePayButtonProps: any = {};
-  public stTransport = StTransport;
 
   public validateMerchantRequestData = {
     requesttypedescription: 'WALLETVERIFY',
@@ -65,8 +85,11 @@ class ApplePay {
     this.paymentRequest = paymentRequest;
     this.sitereference = sitereference;
     this.sitesecurity = sitesecurity;
+    this.requiredShippingContactFields = paymentRequest.requiredShippingContactFields;
+    this.requiredBillingContactFields = paymentRequest.requiredBillingContactFields;
     this.stJwtInstance = new StJwt(jwt);
     this.setApplePayVersion();
+    this.setSupportedNetworks();
     this.setAmountAndCurrency();
     this.setApplePayButtonProps(buttonText, buttonStyle);
     this.addApplePayButton();
@@ -140,6 +163,19 @@ class ApplePay {
   }
 
   /**
+   * Sets supported networks based on version of Apple Pay
+   */
+  public setSupportedNetworks() {
+    if (this.applePayVersion <= 2) {
+      this.paymentRequest.supportedNetworks = ApplePay.BASIC_SUPPORTED_NETWORKS;
+    } else if (this.applePayVersion > 2 && this.applePayVersion <= 4) {
+      this.paymentRequest.supportedNetworks = ApplePay.VERSION_4_SUPPORTED_NETWORKS;
+    } else {
+      this.paymentRequest.supportedNetworks = ApplePay.VERSION_5_SUPPORTED_NETWORKS;
+    }
+  }
+
+  /**
    * Checks whether user uses Safari and if it's version supports Apple Pay
    * @param version
    */
@@ -178,7 +214,7 @@ class ApplePay {
     if (this.checkApplePayAvailability()) {
       this.checkApplePayWalletCardAvailability().then((canMakePayments: boolean) => {
         if (canMakePayments) {
-          this.applePayButtonClickHandler(ApplePay.APPLEPAY_BUTTON_ID, 'click');
+          this.applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
         } else {
           alert(canMakePayments);
           return Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE;
@@ -209,11 +245,12 @@ class ApplePay {
   public onValidateMerchantRequest() {
     this.session.onvalidatemerchant = (event: any) => {
       this.validateMerchantRequestData.walletvalidationurl = event.validationURL;
-      console.log(this.validateMerchantRequestData);
       const stt = new StTransport({ jwt: this.jwt });
+      alert(this.jwt);
       stt
         .sendRequest(this.validateMerchantRequestData)
         .then(response => {
+          alert(response);
           this.onValidateMerchantResponseSuccess(response);
         })
         .catch(error => {
