@@ -100,7 +100,7 @@ describe('Class AnimatedCard', () => {
     // then
     each(cardTypes).it('should set proper type of theme', (type: string) => {
       instance.cardDetails.type = type;
-      expect(instance.setCardTheme().type).toEqual(type.toLowerCase());
+      expect(instance.setCardTheme().type).toEqual(type);
     });
 
     // then
@@ -282,16 +282,16 @@ function animatedCardFixture() {
     securityCode: '1234'
   };
   const themeObjects = [
-    [{ type: AnimatedCard.CARD_BRANDS.AMEX.toLowerCase(), logo: cardsLogos.amex }],
-    [{ type: AnimatedCard.CARD_BRANDS.ASTROPAYCARD.toLowerCase(), logo: cardsLogos.astropaycard }],
-    [{ type: AnimatedCard.CARD_BRANDS.DEFAULT.toLowerCase(), logo: '' }],
-    [{ type: AnimatedCard.CARD_BRANDS.DINERS.toLowerCase(), logo: cardsLogos.diners }],
-    [{ type: AnimatedCard.CARD_BRANDS.DISCOVER.toLowerCase(), logo: cardsLogos.discover }],
-    [{ type: AnimatedCard.CARD_BRANDS.JCB.toLowerCase(), logo: cardsLogos.jcb }],
-    [{ type: AnimatedCard.CARD_BRANDS.MAESTRO.toLowerCase(), logo: cardsLogos.maestro }],
-    [{ type: AnimatedCard.CARD_BRANDS.MASTERCARD.toLowerCase(), logo: cardsLogos.mastercard }],
-    [{ type: AnimatedCard.CARD_BRANDS.PIBA.toLowerCase(), logo: cardsLogos.piba }],
-    [{ type: AnimatedCard.CARD_BRANDS.VISA.toLowerCase(), logo: cardsLogos.visa }]
+    [{ type: AnimatedCard.CARD_BRANDS.AMEX, logo: cardsLogos.amex }],
+    [{ type: AnimatedCard.CARD_BRANDS.ASTROPAYCARD, logo: cardsLogos.astropaycard }],
+    [{ type: AnimatedCard.CARD_BRANDS.DEFAULT, logo: '' }],
+    [{ type: AnimatedCard.CARD_BRANDS.DINERS, logo: cardsLogos.diners }],
+    [{ type: AnimatedCard.CARD_BRANDS.DISCOVER, logo: cardsLogos.discover }],
+    [{ type: AnimatedCard.CARD_BRANDS.JCB, logo: cardsLogos.jcb }],
+    [{ type: AnimatedCard.CARD_BRANDS.MAESTRO, logo: cardsLogos.maestro }],
+    [{ type: AnimatedCard.CARD_BRANDS.MASTERCARD, logo: cardsLogos.mastercard }],
+    [{ type: AnimatedCard.CARD_BRANDS.PIBA, logo: cardsLogos.piba }],
+    [{ type: AnimatedCard.CARD_BRANDS.VISA, logo: cardsLogos.visa }]
   ];
 
   const cardTypes = [

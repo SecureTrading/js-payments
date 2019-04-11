@@ -9,16 +9,16 @@ import { cardsLogos } from './animated-card-logos';
  */
 class AnimatedCard {
   public static CARD_BRANDS = {
-    AMEX: 'AMEX',
-    ASTROPAYCARD: 'ASTROPAYCARD',
-    DEFAULT: 'DEFAULT',
-    DINERS: 'DINERS',
-    DISCOVER: 'DISCOVER',
-    JCB: 'JCB',
-    MAESTRO: 'MAESTRO',
-    MASTERCARD: 'MASTERCARD',
-    PIBA: 'PIBA',
-    VISA: 'VISA'
+    AMEX: 'amex',
+    ASTROPAYCARD: 'astropaycard',
+    DEFAULT: 'default',
+    DINERS: 'diners',
+    DISCOVER: 'discover',
+    JCB: 'jcb',
+    MAESTRO: 'maestro',
+    MASTERCARD: 'mastercard',
+    PIBA: 'piba',
+    VISA: 'visa'
   };
   public static CARD_CLASSES = {
     CLASS_BACK: 'st-animated-card__back',
@@ -107,7 +107,7 @@ class AnimatedCard {
   public setThemeClasses(themeObject: { type: string }) {
     const { type } = themeObject;
 
-    if (type === 'default') {
+    if (type === AnimatedCard.CARD_BRANDS.DEFAULT) {
       DOMMethods.addClassToList(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`);
     } else {
       DOMMethods.addClassToList(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO}`);
@@ -121,7 +121,7 @@ class AnimatedCard {
   }
 
   /**
-   *
+   * Sets card logo based on created themeObject
    * @param themeObject
    */
   public setThemeLogo(themeObject: { type: string; logo: string }) {
@@ -135,9 +135,7 @@ class AnimatedCard {
    * @param logo
    */
   public static setThemeObject(type: string, logo: string) {
-    const themeObject = { type: '', logo: '' };
-    themeObject.type = type.toLowerCase();
-    themeObject.logo = logo;
+    const themeObject = { type, logo };
     return themeObject;
   }
 
