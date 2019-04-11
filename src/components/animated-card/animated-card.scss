@@ -30,6 +30,7 @@ body {
     flex-direction: column;
     height: 100%;
     width: 100%;
+    overflow: hidden;
   }
 
   &__front,
@@ -37,7 +38,7 @@ body {
     position: absolute;
     top: 0;
     left: 0;
-    background: $visa-gradient;
+    background: $default-gradient;
     backface-visibility: hidden;
     border-radius: 1.5rem;
     box-sizing: border-box;
@@ -55,6 +56,14 @@ body {
     .st-animated-card__payment-logo-img {
       @include centerLogo($top, $right);
     }
+  }
+
+  .st-animated-card__payment-logo-default {
+    background: transparent;
+  }
+
+  &__default {
+    @include cardType($default-gradient, 2rem, 1.5rem);
   }
 
   &__amex {
@@ -105,19 +114,19 @@ body {
     }
 
     &::after {
-      height: 18rem;
-      width: 10rem;
+      height: 21rem;
+      width: 12rem;
       bottom: 0;
       left: 0;
-      border-radius: 0 60rem 0 0;
+      border-radius: 0 79rem 41rem 4rem;
     }
 
     &::before {
-      height: 17rem;
-      width: 33rem;
-      border-radius: 165rem 0 0 0;
+      height: 24rem;
+      width: 38rem;
+      border-radius: 238rem 98rem 38rem 5rem;
       left: 3rem;
-      top: 6rem;
+      top: 9rem;
     }
   }
 
@@ -144,7 +153,7 @@ body {
   }
 
   &__chip-logo {
-    align-self: center;
+    align-self: flex-end;
   }
 
   &__payment-logo {

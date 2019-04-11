@@ -46,9 +46,22 @@ class DomMethods {
     return element;
   }
 
+  public static removeChildFromDOM(parentId: string, childId: string) {
+    const parent = document.getElementById(parentId);
+    const child = document.getElementById(childId);
+    if (parent && child) {
+      parent.removeChild(child);
+    }
+    return parent;
+  }
+
   public static addListener(targetId: string, listenerType: string, callback: any) {
     document.getElementById(targetId).addEventListener(listenerType, callback);
   }
+
+  public static addClassToList = (element: HTMLElement, classToAdd: string) => element.classList.add(classToAdd);
+  public static removeClassFromList = (element: HTMLElement, classToRemove: string) =>
+    element.classList.remove(classToRemove);
 }
 
 export default DomMethods;

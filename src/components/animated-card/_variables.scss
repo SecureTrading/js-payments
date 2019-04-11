@@ -1,3 +1,6 @@
+$default-background-color-1: #c1c1c1;
+$default-background-color-2: #6c6c6c;
+
 $visa-background-color-1: #3c62b7;
 $visa-background-color-2: #1c3380;
 $visa-font-color: #cdcdcd;
@@ -30,9 +33,10 @@ $jcb-background-color-2: #1c3380;
 $security-code-field-color: #fff;
 $signature-field-color: rgba(0, 0, 0, 0.25);
 
+$default-gradient: radial-gradient(circle, $default-background-color-1 0%, $default-background-color-2 100%);
 $visa-gradient: radial-gradient(circle, $visa-background-color-1 0%, $visa-background-color-2 100%);
-$discover-gradient: linear-gradient(222.64deg, $discover-background-color-1 0%, $discover-background-color-2 100%);
-$diners-gradient: linear-gradient(222.64deg, $diners-background-color-1 0%, $diners-background-color-2 100%);
+$discover-gradient: linear-gradient(circle, $discover-background-color-1 0%, $discover-background-color-2 100%);
+$diners-gradient: linear-gradient(circle, $diners-background-color-1 0%, $diners-background-color-2 100%);
 $master-card-gradient: radial-gradient(circle, $mastercard-background-color-1 0%, $mastercard-background-color-2 100%);
 $astro-pay-gradient: radial-gradient(circle, $astropay-background-color-1 0%, $astropay-background-color-2 100%);
 $amex-gradient: radial-gradient(circle, $amex-background-color-1 0%, $amex-background-color-2 100%);

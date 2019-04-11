@@ -11,6 +11,7 @@ class AnimatedCard {
   public static CARD_BRANDS = {
     AMEX: 'AMEX',
     ASTROPAYCARD: 'ASTROPAYCARD',
+    DEFAULT: 'DEFAULT',
     DINERS: 'DINERS',
     DISCOVER: 'DISCOVER',
     JCB: 'JCB',
@@ -24,13 +25,17 @@ class AnimatedCard {
     CLASS_FOR_ANIMATION: 'st-animated-card__flip-card',
     CLASS_FRONT: 'st-animated-card__front',
     CLASS_MAIN: 'st-animated-card',
-    CLASS_SIDE: 'st-animated-card__side'
+    CLASS_SIDE: 'st-animated-card__side',
+    CLASS_LOGO_WRAPPER: 'st-animated-card-payment-logo',
+    CLASS_LOGO: 'st-animated-card__payment-logo',
+    CLASS_LOGO_DEFAULT: 'st-animated-card__payment-logo-default',
+    CLASS_LOGO_IMAGE: 'st-animated-card__payment-logo-img'
   };
   public static CARD_DETAILS_PLACEHOLDERS = {
     CARD_NUMBER: 'XXXX XXXX XXXX XXXX',
     EXPIRATION_DATE: 'MM/YY',
     SECURITY_CODE: 'XXX',
-    TYPE: 'VISA'
+    TYPE: 'DEFAULT'
   };
   public static CHIP_LOGO_ID: string = 'st-chip-logo';
 
@@ -49,7 +54,7 @@ class AnimatedCard {
    * Returns theme class for specified theme
    * @param theme
    */
-  public static returnThemeClass = (theme: string) => `st-animated-card__${theme}`;
+  public returnThemeClass = (theme: string) => `st-animated-card__${theme}`;
 
   public animatedCardBack: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_SIDE_BACK);
   public animatedCardExpirationDate: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_EXPIRATION_DATE_ID);
@@ -58,6 +63,9 @@ class AnimatedCard {
   public animatedCardSecurityCode: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_SECURITY_CODE_ID);
   public animatedCardSecurityCodeFront: HTMLElement = document.getElementById(
     Selectors.ANIMATED_CARD_SECURITY_CODE_FRONT_ID
+  );
+  public animatedCardLogoBackground: HTMLElement = document.getElementById(
+    AnimatedCard.CARD_CLASSES.CLASS_LOGO_WRAPPER
   );
   public binLookup: BinLookup;
   public cardDetails: any = {
@@ -96,11 +104,29 @@ class AnimatedCard {
    * Sets theme properties: css settings and card type
    * @param themeObject
    */
-  public setThemeProperties(themeObject: { type: string; logo: string }) {
+  public setThemeClasses(themeObject: { type: string }) {
+    const { type } = themeObject;
+
+    if (type === 'default') {
+      DOMMethods.addClassToList(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`);
+    } else {
+      DOMMethods.addClassToList(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO}`);
+      DOMMethods.removeClassFromList(
+        this.animatedCardLogoBackground,
+        `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`
+      );
+    }
+    DOMMethods.addClassToList(this.animatedCardFront, this.returnThemeClass(type));
+    DOMMethods.addClassToList(this.animatedCardBack, this.returnThemeClass(type));
+  }
+
+  /**
+   *
+   * @param themeObject
+   */
+  public setThemeLogo(themeObject: { type: string; logo: string }) {
     const { logo, type } = themeObject;
-    this.animatedCardFront.classList.add(type);
-    this.animatedCardBack.classList.add(type);
-    DOMMethods.setProperty.apply(this, ['src', logo, AnimatedCard.PAYMENT_LOGO_ID]);
+    return logo ? this.addCardLogo(logo, type) : null;
   }
 
   /**
@@ -110,8 +136,7 @@ class AnimatedCard {
    */
   public static setThemeObject(type: string, logo: string) {
     const themeObject = { type: '', logo: '' };
-    const typeOfCard = type.toLowerCase();
-    themeObject.type = AnimatedCard.returnThemeClass(typeOfCard);
+    themeObject.type = type.toLowerCase();
     themeObject.logo = logo;
     return themeObject;
   }
@@ -151,10 +176,16 @@ class AnimatedCard {
       case AnimatedCard.CARD_BRANDS.VISA:
         themeObject = AnimatedCard.setThemeObject(AnimatedCard.CARD_BRANDS.VISA, cardsLogos.visa);
         break;
+      case AnimatedCard.CARD_BRANDS.DEFAULT:
+        themeObject = AnimatedCard.setThemeObject(AnimatedCard.CARD_BRANDS.DEFAULT, '');
+        this.removeCardLogo();
+        break;
       default:
-        themeObject = AnimatedCard.setThemeObject(AnimatedCard.CARD_BRANDS.VISA, cardsLogos.visa);
+        themeObject = AnimatedCard.setThemeObject(AnimatedCard.CARD_BRANDS.DEFAULT, '');
+        this.removeCardLogo();
     }
-    this.setThemeProperties(themeObject);
+    this.setThemeLogo(themeObject);
+    this.setThemeClasses(themeObject);
     return themeObject;
   }
 
@@ -194,12 +225,42 @@ class AnimatedCard {
   }
 
   /**
+   *
+   * @param logo
+   * @param type
+   */
+  public addCardLogo(logo: string, type: string) {
+    if (!document.getElementById(AnimatedCard.PAYMENT_LOGO_ID)) {
+      const element = DOMMethods.setMultipleAttributes.apply(this, [
+        { alt: type, src: logo, class: AnimatedCard.CARD_CLASSES.CLASS_LOGO_IMAGE, id: AnimatedCard.PAYMENT_LOGO_ID },
+        'img'
+      ]);
+      DOMMethods.appendChildIntoDOM(AnimatedCard.CARD_CLASSES.CLASS_LOGO_WRAPPER, element);
+      DOMMethods.setProperty.apply(this, ['src', logo, AnimatedCard.PAYMENT_LOGO_ID]);
+    } else {
+      DOMMethods.setProperty.apply(this, ['src', logo, AnimatedCard.PAYMENT_LOGO_ID]);
+    }
+  }
+
+  /**
+   * Removes cards logo when it's theme changed  to default
+   */
+  public removeCardLogo = () =>
+    DOMMethods.removeChildFromDOM.apply(this, [
+      AnimatedCard.CARD_CLASSES.CLASS_LOGO_WRAPPER,
+      AnimatedCard.PAYMENT_LOGO_ID
+    ]);
+
+  /**
    * Sets default attributes for card images - card logo and chip image
    */
   public setDefaultImagesAttributes() {
-    DOMMethods.setProperty.apply(this, ['src', cardsLogos.visa, AnimatedCard.PAYMENT_LOGO_ID]);
     DOMMethods.setProperty.apply(this, ['src', cardsLogos.chip, AnimatedCard.CHIP_LOGO_ID]);
-    DOMMethods.setProperty.apply(this, ['alt', this.cardDetails.type, AnimatedCard.PAYMENT_LOGO_ID]);
+    DOMMethods.setProperty.apply(this, [
+      'class',
+      AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT,
+      AnimatedCard.CARD_CLASSES.CLASS_LOGO_WRAPPER
+    ]);
   }
 
   /**
@@ -229,7 +290,6 @@ class AnimatedCard {
    * value: Value passed from component
    */
   public onCardNumberChanged(data: any) {
-    DOMMethods.setProperty.apply(this, ['alt', this.cardDetails.type, AnimatedCard.PAYMENT_LOGO_ID]);
     this.cardDetails.type = this.binLookup.binLookup(data.value).type;
     this.cardDetails.cardNumber = AnimatedCard.setCardDetail(data, AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER);
     this.flipCardBack(this.cardDetails.type);
