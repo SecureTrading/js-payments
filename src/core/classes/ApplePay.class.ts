@@ -1,3 +1,4 @@
+import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import Language from './../shared/Language';
 import DomMethods from './../shared/DomMethods';
@@ -70,7 +71,7 @@ class ApplePay {
   public validateMerchantRequestData = {
     requesttypedescription: 'WALLETVERIFY',
     walletsource: 'APPLEPAY',
-    walletmerchantid: this.merchantId,
+    walletmerchantid: '',
     walletvalidationurl: '',
     walletrequestdomain: window.location.hostname
   };
@@ -87,6 +88,7 @@ class ApplePay {
     this.sitesecurity = sitesecurity;
     this.requiredShippingContactFields = paymentRequest.requiredShippingContactFields;
     this.requiredBillingContactFields = paymentRequest.requiredBillingContactFields;
+    this.validateMerchantRequestData.walletmerchantid = merchantId;
     this.stJwtInstance = new StJwt(jwt);
     this.setApplePayVersion();
     this.setSupportedNetworks();
@@ -216,13 +218,11 @@ class ApplePay {
         if (canMakePayments) {
           this.applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
         } else {
-          alert(canMakePayments);
-          return Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE;
+          // this.setNotification('ERROR', Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE);
         }
       });
     } else {
-      alert(Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE);
-      return Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE;
+      //this.setNotification('ERROR', Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE);
     }
   }
 
@@ -231,9 +231,11 @@ class ApplePay {
    */
   public paymentProcess() {
     this.session = this.getApplePaySessionObject();
+    // begins merchant validate process
+    this.session.begin();
     this.onValidateMerchantRequest();
     this.onPaymentAuthorized();
-    this.session.begin();
+    this.onPaymentCanceled();
     this.subscribeStatusHandlers();
   }
 
@@ -246,14 +248,15 @@ class ApplePay {
     this.session.onvalidatemerchant = (event: any) => {
       this.validateMerchantRequestData.walletvalidationurl = event.validationURL;
       const stt = new StTransport({ jwt: this.jwt });
-      alert(this.jwt);
+      // this.setNotification('ERROR', 'dsanjdsjkadjsabdkbjsajdbjskad');
       stt
         .sendRequest(this.validateMerchantRequestData)
         .then(response => {
-          alert(response);
+          console.log(response);
           this.onValidateMerchantResponseSuccess(response);
         })
         .catch(error => {
+          console.log(error);
           this.onValidateMerchantResponseFailure(error);
         });
     };
@@ -261,7 +264,13 @@ class ApplePay {
 
   public onPaymentAuthorized() {
     this.session.onpaymentauthorized = (event: any) => {
-      alert(event);
+      console.log(event);
+    };
+  }
+
+  public onPaymentCanceled() {
+    this.session.oncancel = (event: any) => {
+      //this.setNotification('ERROR', 'Payment has been canceled');
     };
   }
 
@@ -297,6 +306,17 @@ class ApplePay {
       const { shippingContact } = event;
       ApplePaySession.completeShippingContactSelection(null);
     };
+  }
+
+  /**
+   * Send postMessage to notificationFrame component, to inform user about payment status
+   * @param type
+   * @param content
+   */
+  public setNotification(type: string, content: string) {
+    DomMethods.getIframeContentWindow
+      .call(this, Selectors.NOTIFICATION_FRAME_COMPONENT_FRAME)
+      .postMessage({ type, content }, (window as any).frames[Selectors.NOTIFICATION_FRAME_COMPONENT_FRAME]);
   }
 }
 
