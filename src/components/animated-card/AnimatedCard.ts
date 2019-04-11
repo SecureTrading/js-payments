@@ -8,7 +8,7 @@ import { cardsLogos } from './animated-card-logos';
  * Defines animated card, it's 'stateless' component which only receives data validated previously by other components.
  */
 class AnimatedCard {
-  public static CARD_BRANDS = {
+  public static CARD_TYPES = {
     AMEX: 'amex',
     ASTROPAYCARD: 'astropaycard',
     DEFAULT: 'default',
@@ -36,17 +36,15 @@ class AnimatedCard {
     CARD_NUMBER: 'XXXX XXXX XXXX XXXX',
     EXPIRATION_DATE: 'MM/YY',
     SECURITY_CODE: 'XXX',
-    TYPE: 'DEFAULT'
+    TYPE: 'default'
   };
-  public static CHIP_LOGO_ID: string = 'st-chip-logo';
 
   public static COMPONENTS_IDS = {
     CARD_NUMBER: 'cardNumber',
     EXPIRATION_DATE: 'expirationDate',
     SECURITY_CODE: 'securityCode'
   };
-  public static NOT_FLIPPED_CARDS = ['AMEX'];
-  public static PAYMENT_LOGO_ID: string = 'st-payment-logo';
+  public static NOT_FLIPPED_CARDS = ['amex'];
 
   // @ts-ignore
   public static ifCardExists = (): HTMLInputElement => document.getElementById(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
@@ -77,6 +75,7 @@ class AnimatedCard {
   };
   public cardElement: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
   public messageBus: MessageBus;
+  public themeObject: { type: string; logo: string };
 
   constructor() {
     this.binLookup = new BinLookup();
@@ -89,7 +88,7 @@ class AnimatedCard {
   /**
    * Resets styles on both sides of credit card to default theme
    */
-  public resetToDefaultTheme() {
+  public resetTheme() {
     this.animatedCardSecurityCodeFront.textContent = '';
     this.animatedCardFront.setAttribute(
       'class',
@@ -103,12 +102,11 @@ class AnimatedCard {
 
   /**
    * Sets theme properties: css settings and card type
-   * @param themeObject
    */
-  public setThemeClasses(themeObject: { type: string }) {
-    const { type } = themeObject;
+  public setThemeClasses() {
+    const { type } = this.themeObject;
 
-    if (type === AnimatedCard.CARD_BRANDS.DEFAULT) {
+    if (type === AnimatedCard.CARD_TYPES.DEFAULT) {
       DOMMethods.addClassToList(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`);
     } else {
       DOMMethods.addClassToList(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO}`);
@@ -123,84 +121,82 @@ class AnimatedCard {
 
   /**
    * Sets card logo based on created themeObject
-   * @param themeObject
    */
-  public setThemeLogo(themeObject: { type: string; logo: string }) {
-    const { logo, type } = themeObject;
-    return logo ? this.setCardLogo(logo, type) : null;
-  }
-
-  /**
-   * Sets theme object with theme properties: type of card and logo of card
-   * @param type
-   * @param logo
-   */
-  public static setThemeObject(type: string, logo: string) {
-    const themeObject = { type, logo };
-    return themeObject;
+  public setLogo() {
+    const { logo, type } = this.themeObject;
+    if (!document.getElementById(Selectors.ANIMATED_CARD_PAYMENT_LOGO_ID)) {
+      const element = DOMMethods.setMultipleAttributes.apply(this, [
+        {
+          alt: type,
+          src: logo,
+          class: AnimatedCard.CARD_CLASSES.CLASS_LOGO_IMAGE,
+          id: Selectors.ANIMATED_CARD_PAYMENT_LOGO_ID
+        },
+        'img'
+      ]);
+      DOMMethods.appendChildIntoDOM(AnimatedCard.CARD_CLASSES.CLASS_LOGO_WRAPPER, element);
+      DOMMethods.setProperty.apply(this, ['src', logo, Selectors.ANIMATED_CARD_PAYMENT_LOGO_ID]);
+    } else {
+      DOMMethods.setProperty.apply(this, ['src', logo, Selectors.ANIMATED_CARD_PAYMENT_LOGO_ID]);
+    }
+    return logo;
   }
 
   /**
    * Sets card theme according to card brand coming from binLookup()
    */
-  public setCardTheme() {
-    let themeObject;
-    this.resetToDefaultTheme();
+  public setTheme() {
     switch (this.cardDetails.type) {
-      case AnimatedCard.CARD_BRANDS.AMEX:
+      case AnimatedCard.CARD_TYPES.AMEX:
         this.animatedCardSecurityCodeFront.textContent = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
-        themeObject = AnimatedCard.setThemeObject(AnimatedCard.CARD_BRANDS.AMEX, cardsLogos.amex);
+        this.themeObject = { type: AnimatedCard.CARD_TYPES.AMEX, logo: cardsLogos.amex };
         break;
-      case AnimatedCard.CARD_BRANDS.ASTROPAYCARD:
-        themeObject = AnimatedCard.setThemeObject(AnimatedCard.CARD_BRANDS.ASTROPAYCARD, cardsLogos.astropaycard);
+      case AnimatedCard.CARD_TYPES.ASTROPAYCARD:
+        this.themeObject = { type: AnimatedCard.CARD_TYPES.ASTROPAYCARD, logo: cardsLogos.astropaycard };
         break;
-      case AnimatedCard.CARD_BRANDS.DINERS:
-        themeObject = AnimatedCard.setThemeObject(AnimatedCard.CARD_BRANDS.DINERS, cardsLogos.diners);
+      case AnimatedCard.CARD_TYPES.DINERS:
+        this.themeObject = { type: AnimatedCard.CARD_TYPES.DINERS, logo: cardsLogos.diners };
         break;
-      case AnimatedCard.CARD_BRANDS.DISCOVER:
-        themeObject = AnimatedCard.setThemeObject(AnimatedCard.CARD_BRANDS.DISCOVER, cardsLogos.discover);
+      case AnimatedCard.CARD_TYPES.DISCOVER:
+        this.themeObject = { type: AnimatedCard.CARD_TYPES.DISCOVER, logo: cardsLogos.discover };
         break;
-      case AnimatedCard.CARD_BRANDS.JCB:
-        themeObject = AnimatedCard.setThemeObject(AnimatedCard.CARD_BRANDS.JCB, cardsLogos.jcb);
+      case AnimatedCard.CARD_TYPES.JCB:
+        this.themeObject = { type: AnimatedCard.CARD_TYPES.JCB, logo: cardsLogos.jcb };
         break;
-      case AnimatedCard.CARD_BRANDS.MAESTRO:
-        themeObject = AnimatedCard.setThemeObject(AnimatedCard.CARD_BRANDS.MAESTRO, cardsLogos.maestro);
+      case AnimatedCard.CARD_TYPES.MAESTRO:
+        this.themeObject = { type: AnimatedCard.CARD_TYPES.MAESTRO, logo: cardsLogos.maestro };
         break;
-      case AnimatedCard.CARD_BRANDS.MASTERCARD:
-        themeObject = AnimatedCard.setThemeObject(AnimatedCard.CARD_BRANDS.MASTERCARD, cardsLogos.mastercard);
+      case AnimatedCard.CARD_TYPES.MASTERCARD:
+        this.themeObject = { type: AnimatedCard.CARD_TYPES.MASTERCARD, logo: cardsLogos.mastercard };
         break;
-      case AnimatedCard.CARD_BRANDS.PIBA:
-        themeObject = AnimatedCard.setThemeObject(AnimatedCard.CARD_BRANDS.PIBA, cardsLogos.piba);
+      case AnimatedCard.CARD_TYPES.PIBA:
+        this.themeObject = { type: AnimatedCard.CARD_TYPES.PIBA, logo: cardsLogos.piba };
         break;
-      case AnimatedCard.CARD_BRANDS.VISA:
-        themeObject = AnimatedCard.setThemeObject(AnimatedCard.CARD_BRANDS.VISA, cardsLogos.visa);
+      case AnimatedCard.CARD_TYPES.VISA:
+        this.themeObject = { type: AnimatedCard.CARD_TYPES.VISA, logo: cardsLogos.visa };
         break;
-      case AnimatedCard.CARD_BRANDS.DEFAULT:
-        themeObject = AnimatedCard.setThemeObject(AnimatedCard.CARD_BRANDS.DEFAULT, '');
-        this.removeCardLogo();
+      case AnimatedCard.CARD_TYPES.DEFAULT:
+        this.themeObject = { type: AnimatedCard.CARD_TYPES.DEFAULT, logo: '' };
         break;
       default:
-        themeObject = AnimatedCard.setThemeObject(AnimatedCard.CARD_BRANDS.DEFAULT, '');
-        this.removeCardLogo();
+        this.themeObject = { type: AnimatedCard.CARD_TYPES.DEFAULT, logo: '' };
     }
-    this.setThemeLogo(themeObject);
-    this.setThemeClasses(themeObject);
-    return themeObject;
+    return this.themeObject;
   }
 
   /**
    * For particular type of card it sets security code on front side of card
    */
   public setSecurityCodeOnProperSide = () =>
-    this.cardDetails.type === AnimatedCard.CARD_BRANDS.AMEX
+    this.cardDetails.type === AnimatedCard.CARD_TYPES.AMEX
       ? this.animatedCardSecurityCodeFront
       : this.animatedCardSecurityCode;
 
   /**
    * Checks if given card should not be flipped
    */
-  public shouldFlipCard(type: string) {
-    if (!AnimatedCard.NOT_FLIPPED_CARDS.includes(type)) {
+  public shouldFlipCard() {
+    if (!AnimatedCard.NOT_FLIPPED_CARDS.includes(this.cardDetails.type)) {
       if (!this.cardElement.classList.contains(AnimatedCard.CARD_CLASSES.CLASS_FOR_ANIMATION)) {
         this.flipCard();
       }
@@ -215,8 +211,8 @@ class AnimatedCard {
   /**
    * Flips back card by clearing classes
    */
-  public flipCardBack(type: string) {
-    if (!AnimatedCard.NOT_FLIPPED_CARDS.includes(type)) {
+  public flipCardBack() {
+    if (!AnimatedCard.NOT_FLIPPED_CARDS.includes(this.cardDetails.type)) {
       if (this.cardElement.classList.contains(AnimatedCard.CARD_CLASSES.CLASS_FOR_ANIMATION)) {
         this.cardElement.setAttribute('class', Selectors.ANIMATED_CARD_INPUT_SELECTOR);
       }
@@ -224,37 +220,19 @@ class AnimatedCard {
   }
 
   /**
-   * Set or add card logo depending on theme
-   * @param logo
-   * @param type
-   */
-  public setCardLogo(logo: string, type: string) {
-    if (!document.getElementById(AnimatedCard.PAYMENT_LOGO_ID)) {
-      const element = DOMMethods.setMultipleAttributes.apply(this, [
-        { alt: type, src: logo, class: AnimatedCard.CARD_CLASSES.CLASS_LOGO_IMAGE, id: AnimatedCard.PAYMENT_LOGO_ID },
-        'img'
-      ]);
-      DOMMethods.appendChildIntoDOM(AnimatedCard.CARD_CLASSES.CLASS_LOGO_WRAPPER, element);
-      DOMMethods.setProperty.apply(this, ['src', logo, AnimatedCard.PAYMENT_LOGO_ID]);
-    } else {
-      DOMMethods.setProperty.apply(this, ['src', logo, AnimatedCard.PAYMENT_LOGO_ID]);
-    }
-  }
-
-  /**
    * Removes cards logo when it's theme changed  to default
    */
-  public removeCardLogo = () =>
+  public removeLogo = () =>
     DOMMethods.removeChildFromDOM.apply(this, [
       AnimatedCard.CARD_CLASSES.CLASS_LOGO_WRAPPER,
-      AnimatedCard.PAYMENT_LOGO_ID
+      Selectors.ANIMATED_CARD_PAYMENT_LOGO_ID
     ]);
 
   /**
    * Sets default attributes for card images - card logo and chip image
    */
   public setDefaultImagesAttributes() {
-    DOMMethods.setProperty.apply(this, ['src', cardsLogos.chip, AnimatedCard.CHIP_LOGO_ID]);
+    DOMMethods.setProperty.apply(this, ['src', cardsLogos.chip, Selectors.ANIMATED_CARD_CHIP_LOGO_ID]);
     DOMMethods.setProperty.apply(this, [
       'class',
       AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT,
@@ -282,6 +260,15 @@ class AnimatedCard {
   }
 
   /**
+   * Sets card type based on binLookup request
+   * @param cardNumber
+   */
+  public setCardType(cardNumber: string) {
+    const type = this.binLookup.binLookup(cardNumber).type;
+    return type ? type.toLowerCase() : type;
+  }
+
+  /**
    * Listens to changes coming from Card Number field and sets proper class properties.
    * Receives object: { type, name, value}
    * Where:
@@ -289,11 +276,16 @@ class AnimatedCard {
    * value: Value passed from component
    */
   public onCardNumberChanged(data: any) {
-    this.cardDetails.type = this.binLookup.binLookup(data.value).type;
+    const { value } = data;
+    this.cardDetails.type = this.setCardType(value);
     this.cardDetails.cardNumber = AnimatedCard.setCardDetail(data, AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER);
-    this.flipCardBack(this.cardDetails.type);
-    this.setCardTheme();
     this.animatedCardPan.textContent = this.cardDetails.cardNumber;
+    this.flipCardBack();
+    this.resetTheme();
+    this.setTheme();
+    this.removeLogo();
+    this.setLogo();
+    this.setThemeClasses();
   }
 
   /**
@@ -308,7 +300,7 @@ class AnimatedCard {
       data,
       AnimatedCard.CARD_DETAILS_PLACEHOLDERS.EXPIRATION_DATE
     );
-    this.flipCardBack(this.cardDetails.type);
+    this.flipCardBack();
     this.animatedCardExpirationDate.textContent = this.cardDetails.expirationDate;
   }
 
@@ -324,7 +316,7 @@ class AnimatedCard {
       data,
       AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE
     );
-    this.shouldFlipCard(this.cardDetails.type);
+    this.shouldFlipCard();
     this.setSecurityCodeOnProperSide().textContent = this.cardDetails.securityCode;
   }
 

@@ -28,14 +28,14 @@ describe('Class AnimatedCard', () => {
   });
 
   // given
-  describe('Method resetToDefaultTheme', () => {
+  describe('Method resetTheme', () => {
     // given
     let { instance } = animatedCardFixture();
     const defaultFrontPageClassSet = `${AnimatedCard.CARD_CLASSES.CLASS_SIDE} ${AnimatedCard.CARD_CLASSES.CLASS_FRONT}`;
     const defaultBackPageClassSet = `${AnimatedCard.CARD_CLASSES.CLASS_SIDE} ${AnimatedCard.CARD_CLASSES.CLASS_BACK}`;
 
     beforeEach(() => {
-      instance.resetToDefaultTheme();
+      instance.resetTheme();
     });
     // then
     it('should reset front page of card to default theme', () => {
@@ -55,59 +55,38 @@ describe('Class AnimatedCard', () => {
 
     // then
     each(themeObjects).it('should set proper classes for front page of card', themeObject => {
-      instance.setThemeClasses(themeObject);
+      instance.themeObject = themeObject;
+      instance.setThemeClasses();
       expect(instance.animatedCardFront.classList.contains(themeObject.type));
     });
 
     // then
     each(themeObjects).it('should set proper classes for back page of card', themeObject => {
-      instance.setThemeClasses(themeObject);
+      instance.themeObject = themeObject;
+      instance.setThemeClasses();
       expect(instance.animatedCardBack.classList.contains(themeObject.type));
     });
   });
 
-  xdescribe('Method setThemeLogo', () => {
+  xdescribe('Method setLogo', () => {
     // when
     let { instance, themeObjects } = animatedCardFixture();
     // then
     each(themeObjects).it('should set proper logo of specified card', themeObject => {
-      instance.setThemeLogo(themeObject);
-      const img = document.getElementById(AnimatedCard.PAYMENT_LOGO_ID);
+      instance.setLogo();
+      const img = document.getElementById(Selectors.ANIMATED_CARD_PAYMENT_LOGO_ID);
       expect(img.getAttribute('src')).toEqual(String(themeObject.logo));
     });
   });
 
-  describe('Method setThemeObject', () => {
-    const { themeObjects } = animatedCardFixture();
-    // then
-    each(themeObjects).it('should set themeObject based on parameters passed', (item: any) => {
-      const { type, logo } = item;
-      const themeObject = { type, logo };
-      expect(AnimatedCard.setThemeObject(type, logo)).toEqual(themeObject);
-    });
-  });
-
   // given
-  describe('Method setCardTheme', () => {
+  describe('Method setTheme', () => {
     let { instance, cardTypes } = animatedCardFixture();
-    // then
-    it('should resetToDefaultTheme been called once', () => {
-      const spy = jest.spyOn(instance, 'resetToDefaultTheme');
-      instance.setCardTheme();
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
 
     // then
     each(cardTypes).it('should set proper type of theme', (type: string) => {
       instance.cardDetails.type = type;
-      expect(instance.setCardTheme().type).toEqual(type);
-    });
-
-    // then
-    it('should setThemeClasses been called once', () => {
-      const spy = jest.spyOn(instance, 'setThemeClasses');
-      instance.setCardTheme();
-      expect(spy).toHaveBeenCalledTimes(1);
+      expect(instance.setTheme().type).toEqual(type);
     });
   });
 
@@ -148,14 +127,15 @@ describe('Class AnimatedCard', () => {
     // then
     each(cardTypes).it('should flip card if it is requested', (type: string) => {
       const spy = jest.spyOn(instance, 'flipCard');
-      instance.shouldFlipCard(type);
+      instance.shouldFlipCard();
       expect(spy).toHaveBeenCalledTimes(1);
-      instance.flipCardBack(type);
+      instance.flipCardBack();
     });
     it('should not flip card if it is on no flipped list', () => {
       const spy = jest.spyOn(instance, 'flipCard');
-      instance.shouldFlipCard('AMEX');
-      expect(spy).toHaveBeenCalledTimes(0);
+      instance.cardDetails.type = 'AMEX';
+      instance.shouldFlipCard();
+      expect(spy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -178,7 +158,8 @@ describe('Class AnimatedCard', () => {
 
     // then
     each(cardTypes).it(`should flip back card`, (type: string) => {
-      instance.flipCardBack(type);
+      instance.cardDetails.type = type;
+      instance.flipCardBack();
       expect(instance.cardElement.getAttribute('class')).toEqual(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
     });
   });
@@ -192,8 +173,8 @@ describe('Class AnimatedCard', () => {
       [MessageBus.EVENTS.CARD_NUMBER_CHANGE, AnimatedCard.COMPONENTS_IDS.CARD_NUMBER],
       [MessageBus.EVENTS.EXPIRATION_DATE_CHANGE, AnimatedCard.COMPONENTS_IDS.EXPIRATION_DATE],
       [MessageBus.EVENTS.SECURITY_CODE_CHANGE, AnimatedCard.COMPONENTS_IDS.SECURITY_CODE]
-    ]).it('should setCardTheme been called once', (event: string, component: string) => {
-      const spySetCardTheme = jest.spyOn(instance, 'setCardTheme');
+    ]).it('should setTheme been called once', (event: string, component: string) => {
+      const spySetCardTheme = jest.spyOn(instance, 'setTheme');
       //const spysetValueOnCard = jest.spyOn(instance, 'setValueOnCard');
       // instance.subscribeInputEvent(event, component);
       // TODO: to be fixed
@@ -202,7 +183,7 @@ describe('Class AnimatedCard', () => {
 
     // then
     it('should set card number type if Card Number component event has been triggered', () => {
-      const element = document.getElementById(AnimatedCard.PAYMENT_LOGO_ID);
+      const element = document.getElementById(Selectors.ANIMATED_CARD_PAYMENT_LOGO_ID);
       instance.cardDetails.type = 'AMEX';
       // instance.subscribeInputEvent(MessageBus.EVENTS.CARD_NUMBER_CHANGE, AnimatedCard.COMPONENTS_IDS.CARD_NUMBER);
       // TODO: this.messageBus.subscribe has to be mocked somehow
@@ -217,20 +198,14 @@ describe('Class AnimatedCard', () => {
     let cardTypeImage: HTMLElement;
 
     beforeEach(() => {
-      chipImage = document.getElementById(AnimatedCard.CHIP_LOGO_ID);
-      cardTypeImage = document.getElementById(AnimatedCard.PAYMENT_LOGO_ID);
+      chipImage = document.getElementById(Selectors.ANIMATED_CARD_CHIP_LOGO_ID);
+      cardTypeImage = document.getElementById(Selectors.ANIMATED_CARD_PAYMENT_LOGO_ID);
     });
 
     // then
     it('should set default image to chip card image', () => {
       instance.setDefaultImagesAttributes();
       expect(chipImage.getAttribute('src')).toEqual(cardsLogos.chip);
-    });
-
-    // then
-    it('should set default image to card type image', () => {
-      instance.setDefaultImagesAttributes();
-      expect(cardTypeImage.getAttribute('src')).toEqual(cardsLogos.visa);
     });
   });
 
@@ -282,28 +257,28 @@ function animatedCardFixture() {
     securityCode: '1234'
   };
   const themeObjects = [
-    [{ type: AnimatedCard.CARD_BRANDS.AMEX, logo: cardsLogos.amex }],
-    [{ type: AnimatedCard.CARD_BRANDS.ASTROPAYCARD, logo: cardsLogos.astropaycard }],
-    [{ type: AnimatedCard.CARD_BRANDS.DEFAULT, logo: '' }],
-    [{ type: AnimatedCard.CARD_BRANDS.DINERS, logo: cardsLogos.diners }],
-    [{ type: AnimatedCard.CARD_BRANDS.DISCOVER, logo: cardsLogos.discover }],
-    [{ type: AnimatedCard.CARD_BRANDS.JCB, logo: cardsLogos.jcb }],
-    [{ type: AnimatedCard.CARD_BRANDS.MAESTRO, logo: cardsLogos.maestro }],
-    [{ type: AnimatedCard.CARD_BRANDS.MASTERCARD, logo: cardsLogos.mastercard }],
-    [{ type: AnimatedCard.CARD_BRANDS.PIBA, logo: cardsLogos.piba }],
-    [{ type: AnimatedCard.CARD_BRANDS.VISA, logo: cardsLogos.visa }]
+    [{ type: AnimatedCard.CARD_TYPES.AMEX, logo: cardsLogos.amex }],
+    [{ type: AnimatedCard.CARD_TYPES.ASTROPAYCARD, logo: cardsLogos.astropaycard }],
+    [{ type: AnimatedCard.CARD_TYPES.DEFAULT, logo: '' }],
+    [{ type: AnimatedCard.CARD_TYPES.DINERS, logo: cardsLogos.diners }],
+    [{ type: AnimatedCard.CARD_TYPES.DISCOVER, logo: cardsLogos.discover }],
+    [{ type: AnimatedCard.CARD_TYPES.JCB, logo: cardsLogos.jcb }],
+    [{ type: AnimatedCard.CARD_TYPES.MAESTRO, logo: cardsLogos.maestro }],
+    [{ type: AnimatedCard.CARD_TYPES.MASTERCARD, logo: cardsLogos.mastercard }],
+    [{ type: AnimatedCard.CARD_TYPES.PIBA, logo: cardsLogos.piba }],
+    [{ type: AnimatedCard.CARD_TYPES.VISA, logo: cardsLogos.visa }]
   ];
 
   const cardTypes = [
-    [AnimatedCard.CARD_BRANDS.ASTROPAYCARD],
-    [AnimatedCard.CARD_BRANDS.DEFAULT],
-    [AnimatedCard.CARD_BRANDS.DINERS],
-    [AnimatedCard.CARD_BRANDS.DISCOVER],
-    [AnimatedCard.CARD_BRANDS.JCB],
-    [AnimatedCard.CARD_BRANDS.MAESTRO],
-    [AnimatedCard.CARD_BRANDS.MASTERCARD],
-    [AnimatedCard.CARD_BRANDS.PIBA],
-    [AnimatedCard.CARD_BRANDS.VISA]
+    [AnimatedCard.CARD_TYPES.ASTROPAYCARD],
+    [AnimatedCard.CARD_TYPES.DEFAULT],
+    [AnimatedCard.CARD_TYPES.DINERS],
+    [AnimatedCard.CARD_TYPES.DISCOVER],
+    [AnimatedCard.CARD_TYPES.JCB],
+    [AnimatedCard.CARD_TYPES.MAESTRO],
+    [AnimatedCard.CARD_TYPES.MASTERCARD],
+    [AnimatedCard.CARD_TYPES.PIBA],
+    [AnimatedCard.CARD_TYPES.VISA]
   ];
   const instance = new AnimatedCard();
   return {
