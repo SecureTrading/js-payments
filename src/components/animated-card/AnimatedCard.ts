@@ -20,16 +20,17 @@ class AnimatedCard {
     PIBA: 'piba',
     VISA: 'visa'
   };
+
+  public static CARD_COMPONENT_CLASS = 'st-animated-card';
   public static CARD_CLASSES = {
-    CLASS_BACK: 'st-animated-card__back',
-    CLASS_FOR_ANIMATION: 'st-animated-card__flip-card',
-    CLASS_FRONT: 'st-animated-card__front',
-    CLASS_MAIN: 'st-animated-card',
-    CLASS_SIDE: 'st-animated-card__side',
-    CLASS_LOGO_WRAPPER: 'st-animated-card-payment-logo',
-    CLASS_LOGO: 'st-animated-card__payment-logo',
-    CLASS_LOGO_DEFAULT: 'st-animated-card__payment-logo-default',
-    CLASS_LOGO_IMAGE: 'st-animated-card__payment-logo-img'
+    CLASS_BACK: `${AnimatedCard.CARD_COMPONENT_CLASS}__back`,
+    CLASS_FOR_ANIMATION: `${AnimatedCard.CARD_COMPONENT_CLASS}__flip-card`,
+    CLASS_FRONT: `${AnimatedCard.CARD_COMPONENT_CLASS}__front`,
+    CLASS_SIDE: `${AnimatedCard.CARD_COMPONENT_CLASS}__side`,
+    CLASS_LOGO_WRAPPER: `${AnimatedCard.CARD_COMPONENT_CLASS}-payment-logo`,
+    CLASS_LOGO: `${AnimatedCard.CARD_COMPONENT_CLASS}__payment-logo`,
+    CLASS_LOGO_DEFAULT: `${AnimatedCard.CARD_COMPONENT_CLASS}__payment-logo-default`,
+    CLASS_LOGO_IMAGE: `${AnimatedCard.CARD_COMPONENT_CLASS}__payment-logo-img`
   };
   public static CARD_DETAILS_PLACEHOLDERS = {
     CARD_NUMBER: 'XXXX XXXX XXXX XXXX',
@@ -54,7 +55,7 @@ class AnimatedCard {
    * Returns theme class for specified theme
    * @param theme
    */
-  public returnThemeClass = (theme: string) => `st-animated-card__${theme}`;
+  public returnThemeClass = (theme: string) => `${AnimatedCard.CARD_COMPONENT_CLASS}__${theme}`;
 
   public animatedCardBack: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_SIDE_BACK);
   public animatedCardExpirationDate: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_EXPIRATION_DATE_ID);
