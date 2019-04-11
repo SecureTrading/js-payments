@@ -124,7 +124,7 @@ class AnimatedCard {
    */
   public setLogo() {
     const { logo, type } = this.themeObject;
-    if (!document.getElementById(Selectors.ANIMATED_CARD_PAYMENT_LOGO_ID)) {
+    if (!document.getElementById(Selectors.ANIMATED_CARD_PAYMENT_LOGO_ID) && logo) {
       const element = DOMMethods.setMultipleAttributes.apply(this, [
         {
           alt: type,
@@ -136,7 +136,7 @@ class AnimatedCard {
       ]);
       DOMMethods.appendChildIntoDOM(AnimatedCard.CARD_CLASSES.CLASS_LOGO_WRAPPER, element);
       DOMMethods.setProperty.apply(this, ['src', logo, Selectors.ANIMATED_CARD_PAYMENT_LOGO_ID]);
-    } else {
+    } else if (logo) {
       DOMMethods.setProperty.apply(this, ['src', logo, Selectors.ANIMATED_CARD_PAYMENT_LOGO_ID]);
     }
     return logo;
