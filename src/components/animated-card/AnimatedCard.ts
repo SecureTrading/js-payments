@@ -126,7 +126,7 @@ class AnimatedCard {
    */
   public setThemeLogo(themeObject: { type: string; logo: string }) {
     const { logo, type } = themeObject;
-    return logo ? this.addCardLogo(logo, type) : null;
+    return logo ? this.setCardLogo(logo, type) : null;
   }
 
   /**
@@ -225,11 +225,11 @@ class AnimatedCard {
   }
 
   /**
-   *
+   * Set or add card logo depending on theme
    * @param logo
    * @param type
    */
-  public addCardLogo(logo: string, type: string) {
+  public setCardLogo(logo: string, type: string) {
     if (!document.getElementById(AnimatedCard.PAYMENT_LOGO_ID)) {
       const element = DOMMethods.setMultipleAttributes.apply(this, [
         { alt: type, src: logo, class: AnimatedCard.CARD_CLASSES.CLASS_LOGO_IMAGE, id: AnimatedCard.PAYMENT_LOGO_ID },
