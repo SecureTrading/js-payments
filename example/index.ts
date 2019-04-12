@@ -8,7 +8,7 @@ import { ST } from '../src/stjs';
 
 (() => {
   const st = new ST(
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU1NDkxOTM3OS42Nzk3MDIsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdF9qYW1lczM4NjQxIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.Xhh2E3BDkvp4zkkQk8fDBKDRPt1l34FUQhWOYUIezDo',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU1NTA1ODQyMSwicGF5bG9hZCI6eyJiYXNlYW1vdW50IjoiMTAwMCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00ifX0.UFfHq1kQcEPgy2v8UYLtXxUfT1yCfcIW61Phsa2VD34',
     {
       cardNumber: 'st-card-number',
       expirationDate: 'st-expiration-date',
