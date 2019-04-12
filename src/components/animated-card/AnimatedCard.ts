@@ -102,16 +102,13 @@ class AnimatedCard {
     const { type } = this.themeObject;
 
     if (type === AnimatedCard.CARD_TYPES.DEFAULT) {
-      DOMMethods.addClassToList(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`);
+      DOMMethods.addClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`);
     } else {
-      DOMMethods.addClassToList(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO}`);
-      DOMMethods.removeClassFromList(
-        this.animatedCardLogoBackground,
-        `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`
-      );
+      DOMMethods.addClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO}`);
+      DOMMethods.removeClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`);
     }
-    DOMMethods.addClassToList(this.animatedCardFront, this.returnThemeClass(type));
-    DOMMethods.addClassToList(this.animatedCardBack, this.returnThemeClass(type));
+    DOMMethods.addClass(this.animatedCardFront, this.returnThemeClass(type));
+    DOMMethods.addClass(this.animatedCardBack, this.returnThemeClass(type));
   }
 
   /**

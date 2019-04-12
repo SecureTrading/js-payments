@@ -59,9 +59,8 @@ class DomMethods {
     document.getElementById(targetId).addEventListener(listenerType, callback);
   }
 
-  public static addClassToList = (element: HTMLElement, classToAdd: string) => element.classList.add(classToAdd);
-  public static removeClassFromList = (element: HTMLElement, classToRemove: string) =>
-    element.classList.remove(classToRemove);
+  public static addClass = (element: HTMLElement, classToAdd: string) => element.classList.add(classToAdd);
+  public static removeClass = (element: HTMLElement, classToRemove: string) => element.classList.remove(classToRemove);
 }
 
 export default DomMethods;
