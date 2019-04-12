@@ -39,7 +39,7 @@ class AnimatedCard {
     TYPE: 'default'
   };
 
-  public static NOT_FLIPPED_CARDS = ['amex'];
+  public static NOT_FLIPPED_CARDS = [AnimatedCard.CARD_TYPES.AMEX];
 
   // @ts-ignore
   public static ifCardExists = (): HTMLInputElement => document.getElementById(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
