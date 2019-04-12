@@ -66,11 +66,11 @@ class AnimatedCard {
     cardNumber: AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER,
     expirationDate: AnimatedCard.CARD_DETAILS_PLACEHOLDERS.EXPIRATION_DATE,
     securityCode: AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE,
-    type: AnimatedCard.CARD_DETAILS_PLACEHOLDERS.TYPE
+    type: AnimatedCard.CARD_DETAILS_PLACEHOLDERS.TYPE,
+    logo: ''
   };
   public cardElement: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
   public messageBus: MessageBus;
-  public themeObject: { type: string; logo: string };
 
   constructor() {
     this.binLookup = new BinLookup();
@@ -99,7 +99,7 @@ class AnimatedCard {
    * Sets theme properties: css settings and card type
    */
   public setThemeClasses() {
-    const { type } = this.themeObject;
+    const { type } = this.cardDetails;
 
     if (type === AnimatedCard.CARD_TYPES.DEFAULT) {
       DOMMethods.addClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`);
@@ -112,10 +112,10 @@ class AnimatedCard {
   }
 
   /**
-   * Sets card logo based on created themeObject
+   * Sets card logo based on cardDetails
    */
   public setLogo() {
-    const { logo, type } = this.themeObject;
+    const { logo, type } = this.cardDetails;
     if (!document.getElementById(Selectors.ANIMATED_CARD_PAYMENT_LOGO_ID) && logo) {
       const element = DOMMethods.setMultipleAttributes.apply(this, [
         {
@@ -134,46 +134,41 @@ class AnimatedCard {
     return logo;
   }
 
+  public static getLogo(type: string) {
+    switch (type) {
+      case AnimatedCard.CARD_TYPES.AMEX:
+        return cardsLogos.amex;
+      case AnimatedCard.CARD_TYPES.ASTROPAYCARD:
+        return cardsLogos.astropaycard;
+      case AnimatedCard.CARD_TYPES.DINERS:
+        return cardsLogos.diners;
+      case AnimatedCard.CARD_TYPES.DISCOVER:
+        return cardsLogos.discover;
+      case AnimatedCard.CARD_TYPES.JCB:
+        return cardsLogos.jcb;
+      case AnimatedCard.CARD_TYPES.MAESTRO:
+        return cardsLogos.maestro;
+      case AnimatedCard.CARD_TYPES.MASTERCARD:
+        return cardsLogos.mastercard;
+      case AnimatedCard.CARD_TYPES.PIBA:
+        return cardsLogos.piba;
+      case AnimatedCard.CARD_TYPES.VISA:
+        return cardsLogos.visa;
+      case AnimatedCard.CARD_TYPES.DEFAULT:
+        return '';
+      default:
+        return '';
+    }
+  }
+
   /**
    * Sets card theme according to card brand coming from binLookup()
    */
   public setTheme() {
-    switch (this.cardDetails.type) {
-      case AnimatedCard.CARD_TYPES.AMEX:
-        this.animatedCardSecurityCodeFront.textContent = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
-        this.themeObject = { type: AnimatedCard.CARD_TYPES.AMEX, logo: cardsLogos.amex };
-        break;
-      case AnimatedCard.CARD_TYPES.ASTROPAYCARD:
-        this.themeObject = { type: AnimatedCard.CARD_TYPES.ASTROPAYCARD, logo: cardsLogos.astropaycard };
-        break;
-      case AnimatedCard.CARD_TYPES.DINERS:
-        this.themeObject = { type: AnimatedCard.CARD_TYPES.DINERS, logo: cardsLogos.diners };
-        break;
-      case AnimatedCard.CARD_TYPES.DISCOVER:
-        this.themeObject = { type: AnimatedCard.CARD_TYPES.DISCOVER, logo: cardsLogos.discover };
-        break;
-      case AnimatedCard.CARD_TYPES.JCB:
-        this.themeObject = { type: AnimatedCard.CARD_TYPES.JCB, logo: cardsLogos.jcb };
-        break;
-      case AnimatedCard.CARD_TYPES.MAESTRO:
-        this.themeObject = { type: AnimatedCard.CARD_TYPES.MAESTRO, logo: cardsLogos.maestro };
-        break;
-      case AnimatedCard.CARD_TYPES.MASTERCARD:
-        this.themeObject = { type: AnimatedCard.CARD_TYPES.MASTERCARD, logo: cardsLogos.mastercard };
-        break;
-      case AnimatedCard.CARD_TYPES.PIBA:
-        this.themeObject = { type: AnimatedCard.CARD_TYPES.PIBA, logo: cardsLogos.piba };
-        break;
-      case AnimatedCard.CARD_TYPES.VISA:
-        this.themeObject = { type: AnimatedCard.CARD_TYPES.VISA, logo: cardsLogos.visa };
-        break;
-      case AnimatedCard.CARD_TYPES.DEFAULT:
-        this.themeObject = { type: AnimatedCard.CARD_TYPES.DEFAULT, logo: '' };
-        break;
-      default:
-        this.themeObject = { type: AnimatedCard.CARD_TYPES.DEFAULT, logo: '' };
+    if (this.cardDetails.type === AnimatedCard.CARD_TYPES.AMEX) {
+      this.animatedCardSecurityCodeFront.textContent = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
     }
-    return this.themeObject;
+    this.cardDetails.logo = AnimatedCard.getLogo(this.cardDetails.type);
   }
 
   /**
