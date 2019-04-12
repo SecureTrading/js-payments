@@ -39,11 +39,6 @@ class AnimatedCard {
     TYPE: 'default'
   };
 
-  public static COMPONENTS_IDS = {
-    CARD_NUMBER: 'cardNumber',
-    EXPIRATION_DATE: 'expirationDate',
-    SECURITY_CODE: 'securityCode'
-  };
   public static NOT_FLIPPED_CARDS = ['amex'];
 
   // @ts-ignore

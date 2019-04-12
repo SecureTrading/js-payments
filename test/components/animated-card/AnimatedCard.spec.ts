@@ -165,33 +165,6 @@ describe('Class AnimatedCard', () => {
   });
 
   // given
-  describe('Method subscribeInputEvent', () => {
-    let { instance } = animatedCardFixture();
-
-    // then
-    each([
-      [MessageBus.EVENTS.CARD_NUMBER_CHANGE, AnimatedCard.COMPONENTS_IDS.CARD_NUMBER],
-      [MessageBus.EVENTS.EXPIRATION_DATE_CHANGE, AnimatedCard.COMPONENTS_IDS.EXPIRATION_DATE],
-      [MessageBus.EVENTS.SECURITY_CODE_CHANGE, AnimatedCard.COMPONENTS_IDS.SECURITY_CODE]
-    ]).it('should setTheme been called once', (event: string, component: string) => {
-      const spySetCardTheme = jest.spyOn(instance, 'setTheme');
-      //const spysetValueOnCard = jest.spyOn(instance, 'setValueOnCard');
-      // instance.subscribeInputEvent(event, component);
-      // TODO: to be fixed
-      // expect(spysetValueOnCard).toHaveBeenCalledTimes(1);
-    });
-
-    // then
-    it('should set card number type if Card Number component event has been triggered', () => {
-      const element = document.getElementById(Selectors.ANIMATED_CARD_PAYMENT_LOGO_ID);
-      instance.cardDetails.type = 'AMEX';
-      // instance.subscribeInputEvent(MessageBus.EVENTS.CARD_NUMBER_CHANGE, AnimatedCard.COMPONENTS_IDS.CARD_NUMBER);
-      // TODO: this.messageBus.subscribe has to be mocked somehow
-      // expect(element.getAttribute('alt')).toEqual(instance.cardDetails.type);
-    });
-  });
-
-  // given
   describe('Method _setDefaultImagesAttributes', () => {
     let { instance } = animatedCardFixture();
     let chipImage: HTMLElement;
