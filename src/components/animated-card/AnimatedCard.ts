@@ -101,7 +101,7 @@ class AnimatedCard {
   public setThemeClasses() {
     const { type } = this.cardDetails;
 
-    if (type === AnimatedCard.CARD_TYPES.DEFAULT) {
+    if (type === AnimatedCard.CARD_TYPES.DEFAULT || type == undefined) {
       DOMMethods.addClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`);
     } else {
       DOMMethods.addClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO}`);
