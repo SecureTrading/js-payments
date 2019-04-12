@@ -83,15 +83,13 @@ body {
   @extend %button;
 }
 
-#st-notification-frame {
+.st-notification-frame {
   height: 6.2rem;
 }
 
-#st-animated-card {
-  .st-animated-card-iframe {
-    overflow: hidden;
-    min-height: 30rem;
-    min-width: 37rem;
-    border: none;
-  }
+.st-animated-card-iframe {
+  overflow: hidden;
+  min-height: 30rem;
+  min-width: 37rem;
+  border: none;
 }
