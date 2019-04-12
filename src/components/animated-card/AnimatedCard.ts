@@ -134,6 +134,10 @@ class AnimatedCard {
     return logo;
   }
 
+  /**
+   * Getting logo from external js file
+   * @param type
+   */
   public static getLogo(type: string) {
     switch (type) {
       case AnimatedCard.CARD_TYPES.AMEX:
