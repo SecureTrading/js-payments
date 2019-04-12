@@ -235,14 +235,34 @@ describe('Class AnimatedCard', () => {
       );
     });
   });
-  describe('Method _setSubscribeEvents', () => {
-    let { instance } = animatedCardFixture();
-    const functionCalls = 3;
+  describe('Method setSubscribeEvents', () => {
+    const functionCalls = 1;
+    let instance: any;
+    beforeEach(() => {
+      instance = animatedCardFixture().instance;
+    });
     // then
-    it(`should _setSubscribeEvents been called ${functionCalls} times`, () => {
-      // const spy = jest.spyOn(instance, 'subscribeInputEvent');
-      // instance.setSubscribeEvents();
-      // expect(spy).toHaveBeenCalledTimes(functionCalls);
+    it(`should onCardNumberChanged been called ${functionCalls} times when it's changed`, () => {
+      const spy = jest.spyOn(instance, 'onCardNumberChanged');
+      instance.animatedCardPan.onfocus = () => {
+        expect(spy).toHaveBeenCalledTimes(functionCalls);
+      };
+    });
+
+    // then
+    it(`should onExpirationDateChanged been called ${functionCalls} times when it's changed`, () => {
+      const spy = jest.spyOn(instance, 'onExpirationDateChanged');
+      instance.animatedCardExpirationDate.onfocus = () => {
+        expect(spy).toHaveBeenCalledTimes(functionCalls);
+      };
+    });
+
+    // then
+    it(`should onSecurityCodeChanged been called ${functionCalls} times when it's changed`, () => {
+      const spy = jest.spyOn(instance, 'onSecurityCodeChanged');
+      instance.animatedCardSecurityCode.onfocus = () => {
+        expect(spy).toHaveBeenCalledTimes(functionCalls);
+      };
     });
   });
 });
