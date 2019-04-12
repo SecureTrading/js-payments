@@ -194,6 +194,11 @@ body {
     margin-bottom: 1.25rem;
   }
 
+  &__expiration-date-and-security-code {
+    display: flex;
+    align-items: center;
+  }
+
   &__signature {
     height: 10rem;
     width: 100%;
@@ -214,12 +219,22 @@ body {
 
     &--front {
       background-color: transparent;
-      width: 60%;
-      height: 2rem;
+      width: 30%;
+      align-items: flex-start;
       font-family: $card-data-font;
       color: $card-label-font-color;
       display: flex;
-      justify-content: flex-end;
+      flex-direction: column;
     }
+
+    &--front-hidden {
+      visibility: hidden;
+    }
+  }
+
+  &__expiration-date {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
   }
 }

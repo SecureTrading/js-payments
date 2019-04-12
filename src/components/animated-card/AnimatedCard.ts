@@ -30,6 +30,7 @@ class AnimatedCard {
     CLASS_LOGO_WRAPPER: `${AnimatedCard.CARD_COMPONENT_CLASS}-payment-logo`,
     CLASS_LOGO: `${AnimatedCard.CARD_COMPONENT_CLASS}__payment-logo`,
     CLASS_LOGO_DEFAULT: `${AnimatedCard.CARD_COMPONENT_CLASS}__payment-logo-default`,
+    CLASS_SECURITY_CODE_HIDDEN: `${AnimatedCard.CARD_COMPONENT_CLASS}__security-code--front-hidden`,
     CLASS_LOGO_IMAGE: `${AnimatedCard.CARD_COMPONENT_CLASS}__payment-logo-img`
   };
   public static CARD_DETAILS_PLACEHOLDERS = {
@@ -58,6 +59,10 @@ class AnimatedCard {
   public animatedCardSecurityCodeFront: HTMLElement = document.getElementById(
     Selectors.ANIMATED_CARD_SECURITY_CODE_FRONT_ID
   );
+  public animatedCardSecurityCodeFrontField: HTMLElement = document.getElementById(
+    Selectors.ANIMATED_CARD_SECURITY_CODE_FRONT_FIELD_ID
+  );
+
   public animatedCardLogoBackground: HTMLElement = document.getElementById(
     AnimatedCard.CARD_CLASSES.CLASS_LOGO_WRAPPER
   );
@@ -84,7 +89,7 @@ class AnimatedCard {
    * Resets styles on both sides of credit card to default theme
    */
   public resetTheme() {
-    this.animatedCardSecurityCodeFront.textContent = '';
+    this.animatedCardSecurityCodeFrontField.textContent = '';
     this.animatedCardFront.setAttribute(
       'class',
       `${AnimatedCard.CARD_CLASSES.CLASS_SIDE} ${AnimatedCard.CARD_CLASSES.CLASS_FRONT}`
@@ -170,7 +175,7 @@ class AnimatedCard {
    */
   public setTheme() {
     if (this.cardDetails.type === AnimatedCard.CARD_TYPES.AMEX) {
-      this.animatedCardSecurityCodeFront.textContent = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
+      this.animatedCardSecurityCodeFrontField.textContent = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
     }
     this.cardDetails.logo = AnimatedCard.getLogo(this.cardDetails.type);
   }
@@ -178,10 +183,17 @@ class AnimatedCard {
   /**
    * For particular type of card it sets security code on front side of card
    */
-  public setSecurityCodeOnProperSide = () =>
-    this.cardDetails.type === AnimatedCard.CARD_TYPES.AMEX
-      ? this.animatedCardSecurityCodeFront
+  public setSecurityCodeOnProperSide = () => {
+    if (this.cardDetails.type === AnimatedCard.CARD_TYPES.AMEX) {
+      DOMMethods.removeClass(this.animatedCardSecurityCodeFront, AnimatedCard.CARD_CLASSES.CLASS_SECURITY_CODE_HIDDEN);
+    } else {
+      DOMMethods.addClass(this.animatedCardSecurityCodeFront, AnimatedCard.CARD_CLASSES.CLASS_SECURITY_CODE_HIDDEN);
+    }
+
+    return this.cardDetails.type === AnimatedCard.CARD_TYPES.AMEX
+      ? this.animatedCardSecurityCodeFrontField
       : this.animatedCardSecurityCode;
+  };
 
   /**
    * Checks if given card should not be flipped
@@ -277,6 +289,7 @@ class AnimatedCard {
     this.removeLogo();
     this.setLogo();
     this.setThemeClasses();
+    this.setSecurityCodeOnProperSide().textContent = this.cardDetails.securityCode;
   }
 
   /**
