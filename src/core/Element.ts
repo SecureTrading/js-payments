@@ -1,5 +1,5 @@
-import { environment } from '../environments/environment';
-
+import Selectors from './shared/Selectors';
+import { Styles } from './shared/Styler';
 /***
  * Defines input with iframe source
  * Can be styled by predefined JSON.
@@ -8,40 +8,22 @@ export default class Element {
   private _name: string;
   private _iframeSrc: string;
 
-  public static CARD_NUMBER_COMPONENT_NAME: string = 'cardNumber';
-  public static SECURITY_CODE_COMPONENT_NAME: string = 'securityCode';
-  public static EXPIRATION_DATE_COMPONENT_NAME: string = 'expirationDate';
-  public static NOTIFICATION_FRAME_COMPONENT_NAME: string = 'notificationFrame';
-  public static CONTROL_FRAME_COMPONENT_NAME: string = 'controlFrame';
-
-  public static CARD_NUMBER_COMPONENT_FRAME: string = 'st-card-number-iframe';
-  public static SECURITY_CODE_COMPONENT_FRAME: string = 'st-security-code-iframe';
-  public static EXPIRATION_DATE_COMPONENT_FRAME: string = 'st-expiration-date-iframe';
-  public static NOTIFICATION_FRAME_COMPONENT_FRAME: string = 'st-notification-frame-iframe';
-  public static CONTROL_FRAME_COMPONENT_FRAME: string = 'st-control-frame-iframe';
-
-  public static CARD_NUMBER_COMPONENT: string = `${environment.FRAME_URL}/card-number.html`;
-  public static SECURITY_CODE_COMPONENT: string = `${environment.FRAME_URL}/security-code.html`;
-  public static EXPIRATION_DATE_COMPONENT: string = `${environment.FRAME_URL}/expiration-date.html`;
-  public static NOTIFICATION_FRAME_COMPONENT: string = `${environment.FRAME_URL}/notification-frame.html`;
-  public static CONTROL_FRAME_COMPONENT: string = `${environment.FRAME_URL}/control-frame.html`;
-
   /***
    * Function which defines iframe src attribute
    * @param name Component name
    * @returns URL of input iframe
    */
   public static getComponentAddress(name: string) {
-    if (name === Element.CARD_NUMBER_COMPONENT_NAME) {
-      return Element.CARD_NUMBER_COMPONENT;
-    } else if (name === Element.SECURITY_CODE_COMPONENT_NAME) {
-      return Element.SECURITY_CODE_COMPONENT;
-    } else if (name === Element.EXPIRATION_DATE_COMPONENT_NAME) {
-      return Element.EXPIRATION_DATE_COMPONENT;
-    } else if (name === Element.NOTIFICATION_FRAME_COMPONENT_NAME) {
-      return Element.NOTIFICATION_FRAME_COMPONENT;
-    } else if (name === Element.CONTROL_FRAME_COMPONENT_NAME) {
-      return Element.CONTROL_FRAME_COMPONENT;
+    if (name === Selectors.CARD_NUMBER_COMPONENT_NAME) {
+      return Selectors.CARD_NUMBER_COMPONENT;
+    } else if (name === Selectors.SECURITY_CODE_COMPONENT_NAME) {
+      return Selectors.SECURITY_CODE_COMPONENT;
+    } else if (name === Selectors.EXPIRATION_DATE_COMPONENT_NAME) {
+      return Selectors.EXPIRATION_DATE_COMPONENT;
+    } else if (name === Selectors.NOTIFICATION_FRAME_COMPONENT_NAME) {
+      return Selectors.NOTIFICATION_FRAME_COMPONENT;
+    } else if (name === Selectors.CONTROL_FRAME_COMPONENT_NAME) {
+      return Selectors.CONTROL_FRAME_COMPONENT;
     }
   }
 
@@ -64,15 +46,18 @@ export default class Element {
   /***
    * Method for creating element in iframe
    * @param elementName Name of input which we want to create
+   * @param styles
    * @param params
    */
-  public create(elementName: string, params?: object) {
+  public create(elementName: string, styles?: Styles, params?: object) {
     const componentAddress = Element.getComponentAddress(elementName);
+    // @ts-ignore
+    const componentStyles = new URLSearchParams(styles).toString(); // @TODO: add polyfill for IE
     // @ts-ignore
     const componentParams = new URLSearchParams(params).toString(); // @TODO: add polyfill for IE
 
     this._name = elementName;
-    this._iframeSrc = `${componentAddress}?${componentParams}`;
+    this._iframeSrc = `${componentAddress}?${componentStyles}&${componentParams}`;
   }
 
   /***

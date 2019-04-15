@@ -8,7 +8,7 @@ import { ST } from '../src/stjs';
 
 (() => {
   const st = new ST(
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU0MTg0MTI0NzI2LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.8s6NGSYaQ_xP5LwVj1TCoOzagDuVCPXvZo1iGupCVDU',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoiMTU1NTMwNDQ1MDA3MCIsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6ImxpdmUyIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00ifX0._jy1vrny4WXzRyngWnVoj-jEWr1BcgVfhn6DcAA9ZCU',
     window.location.origin,
     {
       cardNumber: 'st-card-number',
@@ -17,14 +17,23 @@ import { ST } from '../src/stjs';
       controlFrame: 'st-control-frame'
     },
     'st-notification-frame',
-    {},
+    {
+      'background-color-input': 'AliceBlue',
+      'color-input-error': '#721c24',
+      'line-height-input': '12px',
+      'font-size-input': '12px',
+      'background-color-input-error': '#f8d7da'
+    },
     [
       {
         name: 'VISACHECKOUT',
         props: {
           apikey: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4',
           livestatus: 0,
-          placement: 'st-visa-checkout'
+          placement: 'st-visa-checkout',
+          settings: { displayName: 'My Test Site' },
+          paymentRequest: { subtotal: '20.00' },
+          buttonSettings: { size: '154' }
         }
       }
     ]

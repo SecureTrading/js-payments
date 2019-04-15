@@ -1,8 +1,9 @@
+import Frame from '../../core/shared/Frame';
 import MessageBus from '../../core/shared/MessageBus';
 import Payment from '../../core/shared/Payment';
 import Selectors from '../../core/shared/Selectors';
 
-export default class ControlFrame {
+export default class ControlFrame extends Frame {
   private _frameParams: object;
   private _messageBus: MessageBus;
   private _payment: Payment;
@@ -24,6 +25,7 @@ export default class ControlFrame {
   private _card: Card;
 
   constructor() {
+    super();
     this.setFrameParams();
     // @ts-ignore
     this._messageBus = new MessageBus(this._frameParams.origin);
@@ -32,7 +34,8 @@ export default class ControlFrame {
     this.onInit();
   }
 
-  private onInit() {
+  public onInit() {
+    super.onInit();
     this.initSubscriptions();
     this.onLoad();
   }
@@ -46,6 +49,12 @@ export default class ControlFrame {
       jwt: frameParams.get('jwt'),
       origin: frameParams.get('origin')
     };
+  }
+
+  protected _getAllowedStyles() {
+    // @TODO: remove
+    let allowed = super._getAllowedStyles();
+    return allowed;
   }
 
   private initSubscriptions() {
@@ -123,16 +132,16 @@ export default class ControlFrame {
   }
 
   private requestPayment() {
+    const isFormValid: boolean =
+      this._formFields.cardNumber.validity &&
+      this._formFields.expirationDate.validity &&
+      this._formFields.securityCode.validity;
+
     this._card = {
       expirydate: this._formFields.expirationDate.value,
       pan: this._formFields.cardNumber.value,
       securitycode: this._formFields.securityCode.value
     };
-
-    const isFormValid: boolean =
-      this._formFields.cardNumber.validity &&
-      this._formFields.expirationDate.validity &&
-      this._formFields.securityCode.validity;
 
     if (this._isPaymentReady && isFormValid) {
       this._payment.threeDQueryRequest(this._card).then(responseBody => {

@@ -48,6 +48,7 @@ describe('promiseWithTimeout', () => {
     function promissory() {
       return new Promise(resolve => resolve(value));
     }
+
     await expect(Utils.promiseWithTimeout(promissory)).resolves.toEqual(value);
   });
 
@@ -57,6 +58,7 @@ describe('promiseWithTimeout', () => {
       function promissory() {
         return new Promise((_, reject) => reject(err));
       }
+
       await expect(Utils.promiseWithTimeout(promissory)).rejects.toEqual(err);
     }
   );

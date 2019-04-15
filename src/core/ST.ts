@@ -1,10 +1,10 @@
-import { apmsNames } from './imports/apms';
+import { environment } from '../environments/environment';
 import Element from './Element';
 import CardinalCommerce from './classes/CardinalCommerce';
 import VisaCheckout from './classes/VisaCheckout';
 import MessageBus from './shared/MessageBus';
-import Validation from './shared/Validation';
 import Selectors from './shared/Selectors';
+import { Styles } from './shared/Styler';
 
 /***
  * Establishes connection with ST, defines client.
@@ -14,7 +14,7 @@ export default class ST {
   public origin: string;
   public fieldsIds: any;
   public errorContainerId: string;
-  public style: object;
+  public styles: Styles;
   public payments: object[];
 
   /**
@@ -34,14 +34,14 @@ export default class ST {
     origin: string,
     fieldsIds: any,
     errorContainerId: string,
-    style: object,
+    styles: Styles,
     payments: object[]
   ) {
     this.jwt = jwt;
     this.origin = origin;
     this.fieldsIds = fieldsIds;
     this.errorContainerId = errorContainerId;
-    this.style = style;
+    this.styles = styles;
     this.payments = payments;
 
     this._onInit();
@@ -61,20 +61,20 @@ export default class ST {
     const notificationFrame = new Element();
     const controlFrame = new Element();
 
-    cardNumber.create(Element.CARD_NUMBER_COMPONENT_NAME);
-    const cardNumberMounted = cardNumber.mount(Element.CARD_NUMBER_COMPONENT_FRAME);
+    cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, this.styles);
+    const cardNumberMounted = cardNumber.mount(Selectors.CARD_NUMBER_IFRAME_SELECTOR);
 
-    expirationDate.create(Element.EXPIRATION_DATE_COMPONENT_NAME);
-    const expirationDateMounted = expirationDate.mount(Element.EXPIRATION_DATE_COMPONENT_FRAME);
+    expirationDate.create(Selectors.EXPIRATION_DATE_COMPONENT_NAME, this.styles);
+    const expirationDateMounted = expirationDate.mount(Selectors.EXPIRATION_DATE_COMPONENT_FRAME);
 
-    securityCode.create(Element.SECURITY_CODE_COMPONENT_NAME);
-    const securityCodeMounted = securityCode.mount(Element.SECURITY_CODE_COMPONENT_FRAME);
+    securityCode.create(Selectors.SECURITY_CODE_COMPONENT_NAME, this.styles);
+    const securityCodeMounted = securityCode.mount(Selectors.SECURITY_CODE_COMPONENT_FRAME);
 
-    notificationFrame.create(Element.NOTIFICATION_FRAME_COMPONENT_NAME);
-    const notificationFrameMounted = notificationFrame.mount(Element.NOTIFICATION_FRAME_COMPONENT_FRAME);
+    notificationFrame.create(Selectors.NOTIFICATION_FRAME_COMPONENT_NAME, this.styles);
+    const notificationFrameMounted = notificationFrame.mount(Selectors.NOTIFICATION_FRAME_COMPONENT_FRAME);
 
-    controlFrame.create(Element.CONTROL_FRAME_COMPONENT_NAME, { jwt: this.jwt, origin: this.origin });
-    const controlFrameMounted = controlFrame.mount(Element.CONTROL_FRAME_COMPONENT_FRAME);
+    controlFrame.create(Selectors.CONTROL_FRAME_COMPONENT_NAME, this.styles, { jwt: this.jwt, origin: this.origin });
+    const controlFrameMounted = controlFrame.mount(Selectors.CONTROL_FRAME_COMPONENT_FRAME);
 
     ST.registerElements(
       [cardNumberMounted, expirationDateMounted, securityCodeMounted, notificationFrameMounted, controlFrameMounted],
@@ -93,7 +93,7 @@ export default class ST {
   }
 
   private _initWallets(jwt: string) {
-    let visaCheckoutConfig = this._getAPMConfig(apmsNames.visaCheckout);
+    let visaCheckoutConfig = this._getAPMConfig(environment.APM_NAMES.VISA_CHECKOUT);
 
     if (visaCheckoutConfig) {
       new VisaCheckout(visaCheckoutConfig, jwt);
@@ -105,7 +105,8 @@ export default class ST {
       event.preventDefault();
       const messageBusEvent: MessageBusEvent = { type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM };
       const messageBus = new MessageBus();
-      messageBus.publish(messageBusEvent);
+
+      messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME_SELECTOR);
     });
   }
 

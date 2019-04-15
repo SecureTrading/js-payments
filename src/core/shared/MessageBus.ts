@@ -68,6 +68,8 @@ export default class MessageBus {
   publishFromParent(event: MessageBusEvent, frameName: string) {
     // @ts-ignore
     window.frames[frameName].postMessage(event, this._frameOrigin);
+
+    console.log(event, frameName, this._frameOrigin);
   }
 
   subscribe(eventType: string, callback: any) {
