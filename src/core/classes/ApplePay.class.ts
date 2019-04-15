@@ -45,6 +45,7 @@ class ApplePay {
   public static APPLE_PAY_BUTTON_ID: string = 'st-apple-pay';
   public static APPLE_PAY_MIN_VERSION: number = 2;
   public static APPLE_PAY_MAX_VERSION: number = 5;
+  public static APPLE_PAY_VERSIONS: number[] = [ApplePay.APPLE_PAY_MIN_VERSION, 3, 4, ApplePay.APPLE_PAY_MAX_VERSION];
   public static AVAILABLE_BUTTON_STYLES = ['black', 'white', 'white-outline'];
   public static AVAILABLE_BUTTON_TEXTS = ['plain', 'buy', 'book', 'donate', 'check-out', 'subscribe'];
   public static BASIC_SUPPORTED_NETWORKS = [
@@ -90,25 +91,51 @@ class ApplePay {
     this.requiredBillingContactFields = paymentRequest.requiredBillingContactFields;
     this.validateMerchantRequestData.walletmerchantid = merchantId;
     this.stJwtInstance = new StJwt(jwt);
-    this.setApplePayVersion();
-    this.setSupportedNetworks();
-    this.setAmountAndCurrency();
-    this.setApplePayButtonProps(buttonText, buttonStyle);
-    this.addApplePayButton();
-    this.applePayFlow();
+    this._onInit(buttonText, buttonStyle);
   }
 
   /**
-   * Checks if provided button text is one of the available for Apple Pay
-   * @param buttonText
+   * Checks if ApplePaySession object is available
+   * If yes, returns ApplePaySession object, if not returns undefined.
    */
-  public ifApplePayButtonTextIsValid = (buttonText: string) => ApplePay.AVAILABLE_BUTTON_TEXTS.includes(buttonText);
+  public ifApplePayIsAvailable = () => ApplePaySession;
 
   /**
-   * Checks if provided button style is one of the available for Apple Pay
-   * @param buttonStyle
+   * Checks whether user uses Safari and if it's version supports Apple Pay
+   * @param version
    */
-  public ifApplePayButtonStyleIsValid = (buttonStyle: string) => ApplePay.AVAILABLE_BUTTON_STYLES.includes(buttonStyle);
+  public ifBrowserSupportsApplePayVersion = (version: number) => ApplePaySession.supportsVersion(version);
+
+  /**
+   * Sets the latest possible ApplePay version
+   */
+  public setApplePayVersion() {
+    for (let i = ApplePay.APPLE_PAY_MAX_VERSION; i >= ApplePay.APPLE_PAY_MIN_VERSION; --i) {
+      if (this.ifBrowserSupportsApplePayVersion(i)) {
+        this.applePayVersion = i;
+        return;
+      } else if (i === ApplePay.APPLE_PAY_MIN_VERSION) {
+        this.applePayVersion = ApplePay.APPLE_PAY_MIN_VERSION;
+        return;
+      }
+    }
+  }
+
+  /**
+   * Sets supported networks based on version of Apple Pay
+   */
+  public setSupportedNetworks() {
+    if (this.applePayVersion <= ApplePay.APPLE_PAY_MIN_VERSION) {
+      this.paymentRequest.supportedNetworks = ApplePay.BASIC_SUPPORTED_NETWORKS;
+    } else if (
+      this.applePayVersion > ApplePay.APPLE_PAY_MIN_VERSION &&
+      this.applePayVersion < ApplePay.APPLE_PAY_MAX_VERSION
+    ) {
+      this.paymentRequest.supportedNetworks = ApplePay.VERSION_4_SUPPORTED_NETWORKS;
+    } else {
+      this.paymentRequest.supportedNetworks = ApplePay.VERSION_5_SUPPORTED_NETWORKS;
+    }
+  }
 
   /**
    * Sets styles and texts provided by Merchant on init
@@ -139,6 +166,18 @@ class ApplePay {
   public addApplePayButton = () => DomMethods.appendChildIntoDOM(this.placement, this.createApplePayButton());
 
   /**
+   * Checks if provided button text is one of the available for Apple Pay
+   * @param buttonText
+   */
+  public ifApplePayButtonTextIsValid = (buttonText: string) => ApplePay.AVAILABLE_BUTTON_TEXTS.includes(buttonText);
+
+  /**
+   * Checks if provided button style is one of the available for Apple Pay
+   * @param buttonStyle
+   */
+  public ifApplePayButtonStyleIsValid = (buttonStyle: string) => ApplePay.AVAILABLE_BUTTON_STYLES.includes(buttonStyle);
+
+  /**
    * Simple handler for generated Apple Pay button
    * @param elementId
    * @param event
@@ -148,40 +187,6 @@ class ApplePay {
       this.paymentProcess();
     });
   };
-
-  /**
-   * Sets the latest possible ApplePay version
-   */
-  public setApplePayVersion() {
-    for (let i = ApplePay.APPLE_PAY_MAX_VERSION; i >= ApplePay.APPLE_PAY_MIN_VERSION; --i) {
-      if (this.ifBrowserSupportsApplePayVersion(i)) {
-        this.applePayVersion = i;
-        return;
-      } else if (i === ApplePay.APPLE_PAY_MIN_VERSION) {
-        this.applePayVersion = ApplePay.APPLE_PAY_MIN_VERSION;
-        return;
-      }
-    }
-  }
-
-  /**
-   * Sets supported networks based on version of Apple Pay
-   */
-  public setSupportedNetworks() {
-    if (this.applePayVersion <= 2) {
-      this.paymentRequest.supportedNetworks = ApplePay.BASIC_SUPPORTED_NETWORKS;
-    } else if (this.applePayVersion > 2 && this.applePayVersion <= 4) {
-      this.paymentRequest.supportedNetworks = ApplePay.VERSION_4_SUPPORTED_NETWORKS;
-    } else {
-      this.paymentRequest.supportedNetworks = ApplePay.VERSION_5_SUPPORTED_NETWORKS;
-    }
-  }
-
-  /**
-   * Checks whether user uses Safari and if it's version supports Apple Pay
-   * @param version
-   */
-  public ifBrowserSupportsApplePayVersion = (version: number) => ApplePaySession.supportsVersion(version);
 
   /**
    * Checks whether ApplePay is available on current device
@@ -210,47 +215,33 @@ class ApplePay {
   }
 
   /**
-   * Sets Apple Pay button and begins Apple Pay flow
+   *
+   * @param buttonText
+   * @param buttonStyle
+   * @private
    */
-  public applePayFlow() {
-    if (this.checkApplePayAvailability()) {
-      this.checkApplePayWalletCardAvailability().then((canMakePayments: boolean) => {
-        if (canMakePayments) {
-          this.applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
-        } else {
-          console.log('Cannot make payments');
-          // this.setNotification('ERROR', Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE);
-        }
-      });
+  private _onInit(buttonText: string, buttonStyle: string) {
+    if (this.ifApplePayIsAvailable()) {
+      this.setApplePayVersion();
+      this.setSupportedNetworks();
+      this.setAmountAndCurrency();
+      this.setApplePayButtonProps(buttonText, buttonStyle);
+      this.addApplePayButton();
+      this.applePayFlow();
     } else {
-      console.log('Dont have cards');
-      //this.setNotification('ERROR', Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE);
+      alert('Apple Pay is not available on your device');
+      // this.setNotification('ERROR', Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE);
     }
-  }
-
-  /**
-   * Begins Apple Pay payment flow.
-   */
-  public paymentProcess() {
-    this.session = this.getApplePaySessionObject();
-    // begins merchant validate process
-    this.session.begin();
-    this.onValidateMerchantRequest();
-    this.subscribeStatusHandlers();
-    this.onPaymentAuthorized();
-    this.onPaymentCanceled();
   }
 
   /**
    * Make a server-to-server call to pass a payload to the Apple Pay validationURL endpoint.
    * If successful, Apple Pay servers will return a merchant session object which will be used in response to completeMerchantValidation
-   * @param session
    */
   public onValidateMerchantRequest() {
     this.session.onvalidatemerchant = (event: any) => {
       this.validateMerchantRequestData.walletvalidationurl = event.validationURL;
       const stt = new StTransport({ jwt: this.jwt });
-      // this.setNotification('ERROR', 'dsanjdsjkadjsabdkbjsajdbjskad');
       stt
         .sendRequest(this.validateMerchantRequestData)
         .then(response => {
@@ -266,24 +257,32 @@ class ApplePay {
     };
   }
 
+  /**
+   *
+   */
   public onPaymentAuthorized() {
     this.session.onpaymentauthorized = (event: any) => {
       console.log(`onpaymentauthorized event:`);
       console.log(event);
-      // console.log(ApplePaySession.completePayment());
-      // @ts-ignore
       this.session.completePayment({ status: ApplePaySession.STATUS_SUCCESS, errors: [] });
     };
   }
 
+  /**
+   *
+   */
   public onPaymentCanceled() {
     this.session.oncancel = (event: any) => {
-      //this.setNotification('ERROR', 'Payment has been canceled');
+      // this.setNotification('ERROR', 'Payment has been canceled');
       console.log(`oncancel event:`);
       console.log(event);
     };
   }
 
+  /**
+   *
+   * @param response
+   */
   public onValidateMerchantResponseSuccess(response: any) {
     const { walletsession } = response;
     if (walletsession) {
@@ -296,6 +295,10 @@ class ApplePay {
     }
   }
 
+  /**
+   *
+   * @param error
+   */
   public onValidateMerchantResponseFailure(error: any) {
     console.log(`onValidateMerchantResponseFailure:`);
     console.log(error);
@@ -312,7 +315,7 @@ class ApplePay {
       console.log(event);
       console.log(paymentMethod);
       this.session.completePaymentMethodSelection({
-        newTotal: { label: 'Free Shipping', amount: '10.00', type: 'final' }
+        newTotal: { label: 'Free Shipping', amount: this.paymentRequest.total.amount, type: 'final' }
       });
     };
 
@@ -322,7 +325,7 @@ class ApplePay {
       console.log(paymentMethod);
       console.log(event);
       this.session.completeShippingMethodSelection({
-        newTotal: { label: 'Free Shipping', amount: '10.00', type: 'final' }
+        newTotal: { label: 'Free Shipping', amount: this.paymentRequest.total.amount, type: 'final' }
       });
     };
 
@@ -331,7 +334,7 @@ class ApplePay {
       console.log(`onshippingcontactselected event: `);
       console.log(...shippingContact);
       this.session.completeShippingContactSelection({
-        newTotal: { label: 'Free Shipping', amount: '10.00', type: 'final' }
+        newTotal: { label: 'Free Shipping', amount: this.paymentRequest.total.amount, type: 'final' }
       });
     };
   }
@@ -345,6 +348,38 @@ class ApplePay {
     DomMethods.getIframeContentWindow
       .call(this, Selectors.NOTIFICATION_FRAME_IFRAME)
       .postMessage({ type, content }, (window as any).frames[Selectors.NOTIFICATION_FRAME_IFRAME]);
+  }
+
+  /**
+   * Begins Apple Pay payment flow.
+   */
+  public paymentProcess() {
+    this.session = this.getApplePaySessionObject();
+    // begins merchant validate process
+    this.session.begin();
+    this.onValidateMerchantRequest();
+    this.subscribeStatusHandlers();
+    this.onPaymentAuthorized();
+    this.onPaymentCanceled();
+  }
+
+  /**
+   * Sets Apple Pay button and begins Apple Pay flow
+   */
+  public applePayFlow() {
+    if (this.checkApplePayAvailability()) {
+      this.checkApplePayWalletCardAvailability().then((canMakePayments: boolean) => {
+        if (canMakePayments) {
+          this.applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
+        } else {
+          console.log('Cannot make payments');
+          //this.setNotification('ERROR', Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE);
+        }
+      });
+    } else {
+      console.log('Dont have cards');
+      // this.setNotification('ERROR', Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE);
+    }
   }
 }
 
