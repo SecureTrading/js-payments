@@ -37,10 +37,10 @@ export default class MessageBus {
       let isPublicEvent = Utils.inArray(Object.keys(MessageBus.EVENTS_PUBLIC), messageBusEvent.type);
       let isCallbackAllowed =
         event.origin === this._frameOrigin || (event.origin === this._parentOrigin && isPublicEvent);
-        let subscribersStore = window.sessionStorage.getItem(MessageBus.SUBSCRIBERS);
+      let subscribersStore = window.sessionStorage.getItem(MessageBus.SUBSCRIBERS);
 
-        subscribersStore = JSON.parse(subscribersStore);
-        
+      subscribersStore = JSON.parse(subscribersStore);
+
       if (isCallbackAllowed && this._subscriptions[messageBusEvent.type]) {
         this._subscriptions[messageBusEvent.type](messageBusEvent.data);
       }
