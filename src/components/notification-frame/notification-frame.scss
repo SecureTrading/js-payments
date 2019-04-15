@@ -19,13 +19,31 @@ body {
   border: $border-size-notification solid;
   border-radius: $border-radius-notification;
   padding: $space-inset-notification;
+  position: relative;
   visibility: hidden;
 
+  &:after {
+    content: 'x';
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0.6rem;
+  }
+
+  &--info,
   &--error,
   &--warning,
-  &--success,
-  &--info {
+  &--success {
     visibility: visible;
+  }
+
+  &,
+  &--info {
+    @include messageType(
+      $background-color-notification-info,
+      $border-color-notification-info,
+      $color-notification-info
+    );
   }
 
   &--error {
@@ -49,15 +67,6 @@ body {
       $background-color-notification-success,
       $border-color-notification-success,
       $color-notification-success
-    );
-  }
-
-  &,
-  &--info {
-    @include messageType(
-      $background-color-notification-info,
-      $border-color-notification-info,
-      $color-notification-info
     );
   }
 }

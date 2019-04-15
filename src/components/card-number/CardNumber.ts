@@ -16,7 +16,6 @@ export default class CardNumber extends FormField {
   private _binLookup: BinLookup;
   private _cardType: string;
   private _cardLength: [];
-  private _messageBus: MessageBus;
 
   public brand: BrandDetailsType;
 
@@ -29,9 +28,7 @@ export default class CardNumber extends FormField {
   }
 
   constructor() {
-    super(Selectors.CARD_NUMBER_INPUT_SELECTOR, Selectors.CARD_NUMBER_MESSAGE_SELECTOR);
-
-    this._messageBus = new MessageBus();
+    super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE);
 
     this.setAttributes({
       maxlength: CardNumber.DEFAULT_CARD_LENGTH,
@@ -48,13 +45,13 @@ export default class CardNumber extends FormField {
 
   static ifFieldExists(): HTMLInputElement {
     // @ts-ignore
-    return document.getElementById(Selectors.CARD_NUMBER_INPUT_SELECTOR);
+    return document.getElementById(Selectors.CARD_NUMBER_INPUT);
   }
 
   private sendState() {
     let formFieldState: FormFieldState = this.getState();
     let messageBusEvent: MessageBusEvent = {
-      type: MessageBus.EVENTS.CARD_NUMBER_CHANGE,
+      type: MessageBus.EVENTS.CHANGE_CARD_NUMBER,
       data: formFieldState
     };
 
