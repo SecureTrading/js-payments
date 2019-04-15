@@ -57,7 +57,7 @@ export default class Element {
     const componentParams = new URLSearchParams(params).toString(); // @TODO: add polyfill for IE
 
     this._name = elementName;
-    this._iframeSrc = `${componentAddress}?${componentStyles}&${componentParams}`;
+    this._iframeSrc = `${componentAddress}?${componentStyles}${componentParams ? '&' + componentParams : ''}`;
   }
 
   /***
