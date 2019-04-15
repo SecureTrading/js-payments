@@ -28,7 +28,7 @@ export default class Validation {
    */
   public static isEnter(event: KeyboardEvent) {
     const keyCode: number = event.keyCode;
-    return (keyCode === 13);
+    return keyCode === 13;
   }
 
   /**

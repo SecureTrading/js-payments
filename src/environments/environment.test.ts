@@ -1,7 +1,7 @@
 export const environment = {
   production: false,
   testEnvironment: true,
-  FRAME_URL: '',
+  FRAME_URL: 'https://merchant.example.com:8443',
   GATEWAY_URL: 'https://webservices.securetrading.net/jwt/',
   SONGBIRD_URL: 'https://songbirdstag.cardinalcommerce.com/cardinalcruise/v1/songbird.js',
   CARDINAL_COMMERCE_CONFIG: {

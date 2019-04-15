@@ -1,6 +1,5 @@
 import each from 'jest-each';
 import CardNumber from '../../../src/components/card-number/CardNumber';
-import { cardsLogos } from '../../../src/core/imports/images';
 import Selectors from '../../../src/core/shared/Selectors';
 import FormField from '../../../src/core/shared/FormField';
 
@@ -47,11 +46,11 @@ each([
   // expect(CardNumber.luhnCheck(cardNumber)).toEqual(expected);
 });
 
-each([[null, cardsLogos.chip], [{ type: 'fred' }, cardsLogos.chip], [{ type: 'AMEX' }, cardsLogos.amex]]).test(
-  'CardNumber.getCardLogo',
-  (brand, expected) => {
-    // const cn = new CardNumber('card-number');
-    // cn.brand = brand;
-    // expect(cn.getCardLogo()).toEqual(expected);
-  }
-);
+// each([[null, cardsLogos.chip], [{ type: 'fred' }, cardsLogos.chip], [{ type: 'AMEX' }, cardsLogos.amex]]).test(
+//   'CardNumber.getCardLogo',
+//   (brand, expected) => {
+// const cn = new CardNumber('card-number');
+// cn.brand = brand;
+// expect(cn.getCardLogo()).toEqual(expected);
+//   }
+// );

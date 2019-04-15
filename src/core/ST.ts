@@ -13,7 +13,6 @@ export default class ST {
   public jwt: string;
   public origin: string;
   public fieldsIds: any;
-  public errorContainerId: string;
   public styles: Styles;
   public payments: object[];
 
@@ -29,18 +28,10 @@ export default class ST {
     });
   }
 
-  constructor(
-    jwt: string,
-    origin: string,
-    fieldsIds: any,
-    errorContainerId: string,
-    styles: Styles,
-    payments: object[]
-  ) {
+  constructor(jwt: string, origin: string, fieldsIds: any, styles: Styles, payments: object[]) {
     this.jwt = jwt;
     this.origin = origin;
     this.fieldsIds = fieldsIds;
-    this.errorContainerId = errorContainerId;
     this.styles = styles;
     this.payments = payments;
 
@@ -58,6 +49,7 @@ export default class ST {
     const cardNumber = new Element();
     const expirationDate = new Element();
     const securityCode = new Element();
+    const animatedCard = new Element();
     const notificationFrame = new Element();
     const controlFrame = new Element();
 
@@ -76,14 +68,25 @@ export default class ST {
     controlFrame.create(Selectors.CONTROL_FRAME_COMPONENT_NAME, this.styles, { jwt: this.jwt, origin: this.origin });
     const controlFrameMounted = controlFrame.mount(Selectors.CONTROL_FRAME_IFRAME);
 
+    animatedCard.create(Selectors.ANIMATED_CARD_COMPONENT_NAME);
+    const animatedCardMounted = animatedCard.mount(Selectors.ANIMATED_CARD_COMPONENT_FRAME);
+
     ST.registerElements(
-      [cardNumberMounted, expirationDateMounted, securityCodeMounted, notificationFrameMounted, controlFrameMounted],
+      [
+        cardNumberMounted,
+        expirationDateMounted,
+        securityCodeMounted,
+        notificationFrameMounted,
+        controlFrameMounted,
+        animatedCardMounted
+      ],
       [
         this.fieldsIds.cardNumber,
         this.fieldsIds.expirationDate,
         this.fieldsIds.securityCode,
-        this.errorContainerId,
-        this.fieldsIds.controlFrame
+        this.fieldsIds.notificationFrame,
+        this.fieldsIds.controlFrame,
+        this.fieldsIds.animatedCard
       ]
     );
   }

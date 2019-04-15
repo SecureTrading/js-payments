@@ -40,6 +40,16 @@ export default class SecurityCode extends FormField {
     this.sendState();
   }
 
+  onBlur(event: FocusEvent) {
+    super.onBlur(event);
+    this.sendState();
+  }
+
+  onFocus(event: FocusEvent) {
+    super.onFocus(event);
+    this.sendState();
+  }
+
   onPaste(event: ClipboardEvent) {
     super.onPaste(event);
     this.sendState();
