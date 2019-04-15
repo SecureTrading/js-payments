@@ -1,11 +1,32 @@
 import ApplePay from './../../../src/core/classes/ApplePay.class';
 
+// given
 describe('Class Apple Pay', () => {
-  beforeEach(() => {});
+  // given
+  describe('On init', () => {
+    // then
+    it('should set instance with proper settings', () => {
+      const { instance } = ApplePayFixture();
+      expect(instance).toBeTruthy();
+    });
+  });
 
-  it('should set instance with proper settings', () => {
-    const { instance } = ApplePayFixture();
-    expect(instance).toBeTruthy();
+  // given
+  describe('Method ifApplePayIsAvailable', () => {
+    // then
+    it('should return undefined if device is not Mac', () => {
+      const { instance } = ApplePayFixture();
+      expect(instance.ifApplePayIsAvailable()).toBeFalsy();
+    });
+  });
+
+  // given
+  describe('Method ifBrowserSupportsApplePayVersion', () => {
+    // then
+    it('should return undefined if device is not Mac', () => {
+      const { instance } = ApplePayFixture();
+      // expect(instance.ifBrowserSupportsApplePayVersion(3)).toBeFalsy();
+    });
   });
 });
 

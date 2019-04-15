@@ -9,11 +9,20 @@ const ApplePaySession = (window as any).ApplePaySession;
 /**
  * Sets Apple pay APM
  * Apple Pay flow:
- * 1. Checks if ApplePaySession class exists.
- * 2. Call canMakePayments() method to verify the device is capable of making Apple Pay payments.
- * 3. Call canMakePaymentsWithActiveCard(merchantID) to check if there is at least one card in Wallet.
- * 4. Display Apple Pay button.
- * 5. Construct ApplePaySession with versionNumber and ApplePayPaymentRequest as arguments.
+ * 1. Checks if ApplePaySession class exists (it must be iOS 10 and later and macOS 10.12 and later).
+ * 2. Call setApplePayVersion() to set latest available ApplePay version.
+ * 3. Call setSupportedNetworks() to set available networks which are supported in this particular version of Apple Pay.
+ * 4. Call setAmountAndCurrency() to set amount and currency hidden in provided JWT.
+ * 5. Call createApplePayButton(), setApplePayButtonProps() and addApplePayButton) to provide styled button for launching Apple Pay Process.
+ * 6. Call applePayProcess() which checks by canMakePayments() and canMakePaymentsWithActiveCard(merchantID) the capability of device for making Apple Pay payments and if there is at least one card in  users Wallet.
+ * 7. User taps / clicks ApplePayButton on page and this event triggers applePayButtonClickHandler() - this is obligatory process -it has to be triggered by users action.
+ * 8. Clicking button triggers paymentProcess() which sets ApplePaySession object.
+ * 9. Then this.session.begin() is called which begins validating merchant process and display payment sheet.
+ * 10. this.onValidateMerchantRequest();
+      this.subscribeStatusHandlers();
+        this.onPaymentAuthorized();
+        this.onPaymentCanceled();
+
  * 6. Call begin() method to display the payment sheet to the customer and initiate the merchant validation process.
  * 7. In onvalidatemerchant handler catch object to pass to completeMerchantValidation
  * 8. Handle customer's selections in the payment sheet to complete transaction cost - event handlers: onpaymentmethodselected, onshippingmethodselected, and onshippingcontactselected.
@@ -32,6 +41,7 @@ class ApplePay {
   public applePayVersion: number;
   public paymentRequest: any;
   public merchantId: string;
+  public merchantDisplayedName: string;
   public sitereference: string;
   public sitesecurity: string;
   public stJwtInstance: StJwt;
@@ -69,6 +79,9 @@ class ApplePay {
   private _jwt: string;
   private _applePayButtonProps: any = {};
 
+  /**
+   * All object properties are required for WALLETVERIFY request call to ST.
+   */
   public validateMerchantRequestData = {
     requesttypedescription: 'WALLETVERIFY',
     walletsource: 'APPLEPAY',
@@ -178,7 +191,8 @@ class ApplePay {
   public ifApplePayButtonStyleIsValid = (buttonStyle: string) => ApplePay.AVAILABLE_BUTTON_STYLES.includes(buttonStyle);
 
   /**
-   * Simple handler for generated Apple Pay button
+   * Simple handler for generated Apple Pay button.
+   * It's obligatory due to ApplePay requirements - this action needs to be triggered by user himself by tapping/clicking button 'Pay'
    * @param elementId
    * @param event
    */
@@ -210,12 +224,16 @@ class ApplePay {
     if (this.paymentRequest.total.amount && this.paymentRequest.currencyCode) {
       this.paymentRequest.total.amount = this.stJwtInstance.mainamount;
       this.paymentRequest.currencyCode = this.stJwtInstance.currencyiso3a;
+    } else {
+      console.log('Amount and currency is not set');
     }
     return this.paymentRequest;
   }
 
   /**
-   *
+   * Method which initializes:
+   *  1. All settings for ApplePay flow being launched.
+   *  2. apple pay process which is called here apple pay flow
    * @param buttonText
    * @param buttonStyle
    * @private
@@ -227,10 +245,10 @@ class ApplePay {
       this.setAmountAndCurrency();
       this.setApplePayButtonProps(buttonText, buttonStyle);
       this.addApplePayButton();
-      this.applePayFlow();
+      this.applePayProcess();
     } else {
       alert('Apple Pay is not available on your device');
-      // this.setNotification('ERROR', Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE);
+      // this.setNotification('ERROR', 'Apple Pay is not available on your device');
     }
   }
 
@@ -241,8 +259,8 @@ class ApplePay {
   public onValidateMerchantRequest() {
     this.session.onvalidatemerchant = (event: any) => {
       this.validateMerchantRequestData.walletvalidationurl = event.validationURL;
-      const stt = new StTransport({ jwt: this.jwt });
-      stt
+      const stTransport = new StTransport({ jwt: this.jwt });
+      stTransport
         .sendRequest(this.validateMerchantRequestData)
         .then(response => {
           console.log(`Send request succeded:`);
@@ -253,6 +271,7 @@ class ApplePay {
           console.log(`Send request catched:`);
           console.log(error);
           this.onValidateMerchantResponseFailure(error);
+          // this.setNotification('ERROR', 'Merchant validation failed');
         });
     };
   }
@@ -287,8 +306,11 @@ class ApplePay {
     const { walletsession } = response;
     if (walletsession) {
       const json = JSON.parse(walletsession);
-      console.log(`walletsession ready object:`);
       console.log(json);
+      // last value needed in this.validateMerchantRequestData
+      this.validateMerchantRequestData.walletmerchantid = json.merchantIdentifier;
+      this.merchantDisplayedName = json.displayName;
+      console.log(this.validateMerchantRequestData);
       this.session.completeMerchantValidation(json);
     } else {
       this.onValidateMerchantResponseFailure(response.requestid);
@@ -315,7 +337,7 @@ class ApplePay {
       console.log(event);
       console.log(paymentMethod);
       this.session.completePaymentMethodSelection({
-        newTotal: { label: 'Free Shipping', amount: this.paymentRequest.total.amount, type: 'final' }
+        newTotal: { label: this.merchantDisplayedName, amount: this.paymentRequest.total.amount, type: 'final' }
       });
     };
 
@@ -325,7 +347,7 @@ class ApplePay {
       console.log(paymentMethod);
       console.log(event);
       this.session.completeShippingMethodSelection({
-        newTotal: { label: 'Free Shipping', amount: this.paymentRequest.total.amount, type: 'final' }
+        newTotal: { label: this.merchantDisplayedName, amount: this.paymentRequest.total.amount, type: 'final' }
       });
     };
 
@@ -334,7 +356,7 @@ class ApplePay {
       console.log(`onshippingcontactselected event: `);
       console.log(...shippingContact);
       this.session.completeShippingContactSelection({
-        newTotal: { label: 'Free Shipping', amount: this.paymentRequest.total.amount, type: 'final' }
+        newTotal: { label: this.merchantDisplayedName, amount: this.paymentRequest.total.amount, type: 'final' }
       });
     };
   }
@@ -366,7 +388,7 @@ class ApplePay {
   /**
    * Sets Apple Pay button and begins Apple Pay flow
    */
-  public applePayFlow() {
+  public applePayProcess() {
     if (this.checkApplePayAvailability()) {
       this.checkApplePayWalletCardAvailability().then((canMakePayments: boolean) => {
         if (canMakePayments) {
