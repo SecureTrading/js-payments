@@ -143,32 +143,7 @@ class AnimatedCard {
    * Getting logo from external js file
    * @param type
    */
-  public static getLogo(type: string) {
-    switch (type) {
-      case AnimatedCard.CARD_TYPES.AMEX:
-        return cardsLogos.amex;
-      case AnimatedCard.CARD_TYPES.ASTROPAYCARD:
-        return cardsLogos.astropaycard;
-      case AnimatedCard.CARD_TYPES.DINERS:
-        return cardsLogos.diners;
-      case AnimatedCard.CARD_TYPES.DISCOVER:
-        return cardsLogos.discover;
-      case AnimatedCard.CARD_TYPES.JCB:
-        return cardsLogos.jcb;
-      case AnimatedCard.CARD_TYPES.MAESTRO:
-        return cardsLogos.maestro;
-      case AnimatedCard.CARD_TYPES.MASTERCARD:
-        return cardsLogos.mastercard;
-      case AnimatedCard.CARD_TYPES.PIBA:
-        return cardsLogos.piba;
-      case AnimatedCard.CARD_TYPES.VISA:
-        return cardsLogos.visa;
-      case AnimatedCard.CARD_TYPES.DEFAULT:
-        return '';
-      default:
-        return '';
-    }
-  }
+  public static getLogo = (type: string) => cardsLogos[type];
 
   /**
    * Sets card theme according to card brand coming from binLookup()
