@@ -218,10 +218,12 @@ class ApplePay {
         if (canMakePayments) {
           this.applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
         } else {
+          console.log('Cannot make payments');
           // this.setNotification('ERROR', Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE);
         }
       });
     } else {
+      console.log('Dont have cards');
       //this.setNotification('ERROR', Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE);
     }
   }
@@ -315,8 +317,8 @@ class ApplePay {
    */
   public setNotification(type: string, content: string) {
     DomMethods.getIframeContentWindow
-      .call(this, Selectors.NOTIFICATION_FRAME_COMPONENT_FRAME)
-      .postMessage({ type, content }, (window as any).frames[Selectors.NOTIFICATION_FRAME_COMPONENT_FRAME]);
+      .call(this, Selectors.NOTIFICATION_FRAME_IFRAME)
+      .postMessage({ type, content }, (window as any).frames[Selectors.NOTIFICATION_FRAME_IFRAME]);
   }
 }
 
