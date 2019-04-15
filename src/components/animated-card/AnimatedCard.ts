@@ -328,11 +328,11 @@ class AnimatedCard {
    * Sets subscribe events on every editable field of card
    */
   public setSubscribeEvents() {
-    this.messageBus.subscribe(MessageBus.EVENTS.CARD_NUMBER_CHANGE, (data: any) => this.onCardNumberChanged(data));
-    this.messageBus.subscribe(MessageBus.EVENTS.EXPIRATION_DATE_CHANGE, (data: any) =>
+    this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: any) => this.onCardNumberChanged(data));
+    this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, (data: any) =>
       this.onExpirationDateChanged(data)
     );
-    this.messageBus.subscribe(MessageBus.EVENTS.SECURITY_CODE_CHANGE, (data: any) => this.onSecurityCodeChanged(data));
+    this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: any) => this.onSecurityCodeChanged(data));
   }
 }
 

@@ -64,17 +64,18 @@ export default class Element {
   /**
    * Method for creating element in iframe
    * @param elementName Name of input which we want to create
+   * @param params
    * @param styles
    */
+  public create(elementName: string, styles?: Styles, params?: object) {
+    const componentAddress = Element.getComponentAddress(elementName);
+    // @ts-ignore
+    const componentStyles = new URLSearchParams(styles).toString(); // @TODO: add polyfill for IE
+    // @ts-ignore
+    const componentParams = new URLSearchParams(params).toString(); // @TODO: add polyfill for IE
 
-  public create(elementName: string, styles?: Styles) {
     this._name = elementName;
-    let address = Element.getComponentAddress(elementName);
-    let params = new URLSearchParams();
-    for (let style in styles) {
-      params.set(style, styles[style]);
-    }
-    this.iframeSrc = address + '?' + params.toString();
+    this._iframeSrc = `${componentAddress}?${componentStyles}${componentParams ? '&' + componentParams : ''}`;
   }
 
   /**

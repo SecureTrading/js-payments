@@ -10,9 +10,9 @@
     <title>Secure Trading Example Form</title>
   </head>
   <body>
-    <form class="example-form">
+    <form id="st-form" class="example-form">
       <h1 class="example-form__title">
-        Secure Trading <span>AMOUNT: <strong>100 GBP</strong></span>
+        Secure Trading<span>AMOUNT: <strong>10.00 GBP</strong></span>
       </h1>
 
       <div class="example-form__section example-form__section--horizontal">
@@ -59,7 +59,13 @@
         <div class="example-form__spacer"></div>
       </div>
 
-      <div class="example-form__section example-form__section--horizontal">
+      <div class="example-form__section">
+        <div class="example-form__group">
+          <button type="submit" class="example-form__button">PAY</button>
+        </div>
+      </div>
+
+      <div class="example-form__section">
         <div id="st-control-frame" class="example-form__group"></div>
         <div id="st-visa-checkout" class="example-form__group"></div>
       </div>

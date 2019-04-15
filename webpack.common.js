@@ -9,6 +9,7 @@ const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 module.exports = {
   entry: {
     main: './src/components/index.ts',
+    componentControlFrame: './src/components/control-frame/control-frame.ts',
     stjs: './src/stjs.ts',
     example: './example/index.ts'
   },
@@ -65,12 +66,12 @@ module.exports = {
       templateParameters: {
         partial: 'controlFrame'
       },
-      chunks: ['main']
+      chunks: ['componentControlFrame']
     }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: './example/index.html',
-      chunks: ['stjs', 'example'],
+      chunks: ['example'],
       favicon: './favicon.ico'
     }),
     new MiniCssExtractPlugin({

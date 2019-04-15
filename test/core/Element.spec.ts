@@ -1,6 +1,7 @@
+import { environment } from '../../src/environments/environment';
 import Element from '../../src/core/Element';
 import Selectors from '../../src/core/shared/Selectors';
-import { environment } from './../../src/environments/environment';
+
 // given
 describe('Index placeholder test', () => {
   //when
