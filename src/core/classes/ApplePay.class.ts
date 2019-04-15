@@ -236,9 +236,9 @@ class ApplePay {
     // begins merchant validate process
     this.session.begin();
     this.onValidateMerchantRequest();
+    this.subscribeStatusHandlers();
     this.onPaymentAuthorized();
     this.onPaymentCanceled();
-    this.subscribeStatusHandlers();
   }
 
   /**
@@ -267,19 +267,25 @@ class ApplePay {
   public onPaymentAuthorized() {
     this.session.onpaymentauthorized = (event: any) => {
       console.log(event);
+      // console.log(ApplePaySession.completePayment());
+      // @ts-ignore
+      this.session.completePayment({ status: ApplePaySession.STATUS_SUCCESS, errors: [] });
     };
   }
 
   public onPaymentCanceled() {
     this.session.oncancel = (event: any) => {
       //this.setNotification('ERROR', 'Payment has been canceled');
+      console.log(event);
     };
   }
 
   public onValidateMerchantResponseSuccess(response: any) {
-    const { merchantSession } = response;
-    if (merchantSession) {
-      this.session.completeMerchantValidation(merchantSession);
+    const { walletsession } = response;
+    if (walletsession) {
+      const c = JSON.parse(walletsession);
+      console.log(c);
+      this.session.completeMerchantValidation(c);
     } else {
       this.onValidateMerchantResponseFailure(response.requestid);
     }
@@ -296,17 +302,25 @@ class ApplePay {
   public subscribeStatusHandlers() {
     this.session.onpaymentmethodselected = (event: any) => {
       const { paymentMethod } = event;
-      ApplePaySession.completePaymentMethodSelection(null);
+      console.log(event);
+      this.session.completePaymentMethodSelection({
+        newTotal: { label: 'Free Shipping', amount: '10.00', type: 'final' }
+      });
     };
 
     this.session.onshippingmethodselected = (event: any) => {
       const { shippingMethod } = event;
-      ApplePaySession.completeShippingMethodSelection(null);
+      console.log(event);
+      this.session.completeShippingMethodSelection({
+        newTotal: { label: 'Free Shipping', amount: '10.00', type: 'final' }
+      });
     };
 
     this.session.onshippingcontactselected = (event: any) => {
       const { shippingContact } = event;
-      ApplePaySession.completeShippingContactSelection(null);
+      this.session.completeShippingContactSelection({
+        newTotal: { label: 'Free Shipping', amount: '10.00', type: 'final' }
+      });
     };
   }
 
