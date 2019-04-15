@@ -117,8 +117,8 @@ class VisaCheckout {
    */
   public setNotification(type: string, content: string) {
     DomMethods.getIframeContentWindow
-      .call(this, Selectors.NOTIFICATION_FRAME_COMPONENT_FRAME)
-      .postMessage({ type, content }, (window as any).frames[Selectors.NOTIFICATION_FRAME_COMPONENT_FRAME]);
+      .call(this, Selectors.NOTIFICATION_FRAME_IFRAME)
+      .postMessage({ type, content }, (window as any).frames[Selectors.NOTIFICATION_FRAME_IFRAME]);
   }
 
   /**

@@ -83,7 +83,7 @@ export default class CardinalCommerce {
     const messageBusEvent: MessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.THREEDINIT
     };
-    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME_SELECTOR);
+    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
   private _threeDSetup() {
@@ -121,7 +121,7 @@ export default class CardinalCommerce {
     const messageBusEvent: MessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL
     };
-    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME_SELECTOR);
+    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
   /**
@@ -175,7 +175,7 @@ export default class CardinalCommerce {
       type: MessageBus.EVENTS_PUBLIC.AUTH,
       data: threeDResponse
     };
-    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME_SELECTOR);
+    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
   // /**

@@ -11,7 +11,7 @@ export default class ExpirationDate extends FormField {
   private static INPUT_PATTERN: string = '^(0[1-9]|1[0-2])\\/([0-9]{2})$';
 
   constructor() {
-    super(Selectors.EXPIRATION_DATE_INPUT_SELECTOR, Selectors.EXPIRATION_DATE_MESSAGE_SELECTOR);
+    super(Selectors.EXPIRATION_DATE_INPUT, Selectors.EXPIRATION_DATE_MESSAGE);
 
     this.setAttributes({
       maxlength: ExpirationDate.INPUT_MAX_LENGTH,
@@ -25,7 +25,7 @@ export default class ExpirationDate extends FormField {
 
   static ifFieldExists(): HTMLInputElement {
     // @ts-ignore
-    return document.getElementById(Selectors.EXPIRATION_DATE_INPUT_SELECTOR);
+    return document.getElementById(Selectors.EXPIRATION_DATE_INPUT);
   }
 
   private sendState() {

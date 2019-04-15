@@ -28,7 +28,7 @@ export default class CardNumber extends FormField {
   }
 
   constructor() {
-    super(Selectors.CARD_NUMBER_INPUT_SELECTOR, Selectors.CARD_NUMBER_MESSAGE_SELECTOR);
+    super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE);
 
     this.setAttributes({
       maxlength: CardNumber.DEFAULT_CARD_LENGTH,
@@ -45,7 +45,7 @@ export default class CardNumber extends FormField {
 
   static ifFieldExists(): HTMLInputElement {
     // @ts-ignore
-    return document.getElementById(Selectors.CARD_NUMBER_INPUT_SELECTOR);
+    return document.getElementById(Selectors.CARD_NUMBER_INPUT);
   }
 
   private sendState() {

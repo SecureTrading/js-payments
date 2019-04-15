@@ -62,19 +62,19 @@ export default class ST {
     const controlFrame = new Element();
 
     cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, this.styles);
-    const cardNumberMounted = cardNumber.mount(Selectors.CARD_NUMBER_IFRAME_SELECTOR);
+    const cardNumberMounted = cardNumber.mount(Selectors.CARD_NUMBER_IFRAME);
 
     expirationDate.create(Selectors.EXPIRATION_DATE_COMPONENT_NAME, this.styles);
-    const expirationDateMounted = expirationDate.mount(Selectors.EXPIRATION_DATE_COMPONENT_FRAME);
+    const expirationDateMounted = expirationDate.mount(Selectors.EXPIRATION_DATE_IFRAME);
 
     securityCode.create(Selectors.SECURITY_CODE_COMPONENT_NAME, this.styles);
-    const securityCodeMounted = securityCode.mount(Selectors.SECURITY_CODE_COMPONENT_FRAME);
+    const securityCodeMounted = securityCode.mount(Selectors.SECURITY_CODE_IFRAME);
 
     notificationFrame.create(Selectors.NOTIFICATION_FRAME_COMPONENT_NAME, this.styles);
-    const notificationFrameMounted = notificationFrame.mount(Selectors.NOTIFICATION_FRAME_COMPONENT_FRAME);
+    const notificationFrameMounted = notificationFrame.mount(Selectors.NOTIFICATION_FRAME_IFRAME);
 
     controlFrame.create(Selectors.CONTROL_FRAME_COMPONENT_NAME, this.styles, { jwt: this.jwt, origin: this.origin });
-    const controlFrameMounted = controlFrame.mount(Selectors.CONTROL_FRAME_COMPONENT_FRAME);
+    const controlFrameMounted = controlFrame.mount(Selectors.CONTROL_FRAME_IFRAME);
 
     ST.registerElements(
       [cardNumberMounted, expirationDateMounted, securityCodeMounted, notificationFrameMounted, controlFrameMounted],
@@ -106,7 +106,7 @@ export default class ST {
       const messageBusEvent: MessageBusEvent = { type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM };
       const messageBus = new MessageBus();
 
-      messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME_SELECTOR);
+      messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
     });
   }
 

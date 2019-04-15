@@ -9,7 +9,7 @@ export default class SecurityCode extends FormField {
   private static INPUT_LENGTH: number = 3;
 
   constructor() {
-    super(Selectors.SECURITY_CODE_INPUT_SELECTOR, Selectors.SECURITY_CODE_MESSAGE_SELECTOR);
+    super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE);
 
     this.setAttributes({
       maxlength: SecurityCode.INPUT_LENGTH,
@@ -23,7 +23,7 @@ export default class SecurityCode extends FormField {
 
   static ifFieldExists(): HTMLInputElement {
     // @ts-ignore
-    return document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR);
+    return document.getElementById(Selectors.SECURITY_CODE_INPUT);
   }
 
   private sendState() {
