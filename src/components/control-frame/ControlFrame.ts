@@ -4,108 +4,153 @@ import Payment from '../../core/shared/Payment';
 import Selectors from '../../core/shared/Selectors';
 
 export default class ControlFrame extends Frame {
-  private _buttonElement: HTMLButtonElement;
+  private _frameParams: object;
   private _messageBus: MessageBus;
   private _payment: Payment;
-  private _formFields = {
+  private _isPaymentReady: boolean = false;
+  private _formFields: { cardNumber: FormFieldState; expirationDate: FormFieldState; securityCode: FormFieldState } = {
     cardNumber: {
-      validity: '',
+      validity: false,
       value: ''
     },
     expirationDate: {
-      validity: '',
+      validity: false,
       value: ''
     },
     securityCode: {
-      validity: '',
+      validity: false,
       value: ''
     }
   };
+  private _card: Card;
 
   constructor() {
     super();
-    this._buttonElement = ControlFrame.ifFieldExists();
-    this._messageBus = new MessageBus();
-    this._payment = new Payment();
-    this.onInit();
-  }
-
-  static ifFieldExists(): HTMLButtonElement {
+    this.setFrameParams();
     // @ts-ignore
-    return document.getElementById(Selectors.CONTROL_FRAME_BUTTON_SELECTOR);
+    this._messageBus = new MessageBus(this._frameParams.origin);
+    // @ts-ignore
+    this._payment = new Payment(this._frameParams.jwt);
+    this.onInit();
   }
 
   public onInit() {
     super.onInit();
-    this.initEventListeners();
     this.initSubscriptions();
+    this.onLoad();
+  }
+
+  private setFrameParams() {
+    // @ts-ignore
+    const frameUrl = new URL(window.location);
+    const frameParams = new URLSearchParams(frameUrl.search); // @TODO: add polyfill for IE
+
+    this._frameParams = {
+      jwt: frameParams.get('jwt'),
+      origin: frameParams.get('origin')
+    };
   }
 
   protected _getAllowedStyles() {
+    // @TODO: remove
     let allowed = super._getAllowedStyles();
-    const button = `#${Selectors.CONTROL_FRAME_BUTTON_SELECTOR}`;
-    const buttonHover = `${button}:hover`;
-    allowed = {
-      ...allowed,
-      'background-color-button': { property: 'background-color', selector: button },
-      'background-color-button-hover': { property: 'background-color', selector: buttonHover },
-      'border-color-button': { property: 'border-color', selector: button },
-      'border-color-button-hover': { property: 'border-color', selector: buttonHover },
-      'border-radius-button': { property: 'border-radius', selector: button },
-      'border-radius-button-hover': { property: 'border-radius', selector: buttonHover },
-      'border-size-button': { property: 'border-size', selector: button },
-      'border-size-button-hover': { property: 'border-size', selector: buttonHover },
-      'color-button': { property: 'color', selector: button },
-      'color-button-hover': { property: 'color', selector: buttonHover },
-      'font-size-button': { property: 'font-size', selector: button },
-      'line-height-button': { property: 'line-height', selector: button },
-      'space-inset-button': { property: 'padding', selector: button },
-      'space-inset-button-hover': { property: 'padding', selector: buttonHover },
-      'space-outset-button': { property: 'margin', selector: button },
-      'space-outset-button-hover': { property: 'margin', selector: buttonHover }
-    };
     return allowed;
   }
 
-  private onClick() {
-    this._payment.cacheTokenize({
-      expirydate: this._formFields.expirationDate.value,
-      pan: this._formFields.cardNumber.value,
-      securitycode: this._formFields.securityCode.value
-    });
-  }
-
   private initSubscriptions() {
-    this._messageBus.subscribe(MessageBus.EVENTS.CARD_NUMBER_CHANGE, (data: any) => {
+    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: FormFieldState) => {
       this.onCardNumberStateChange(data);
     });
-    this._messageBus.subscribe(MessageBus.EVENTS.EXPIRATION_DATE_CHANGE, (data: any) => {
+    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, (data: FormFieldState) => {
       this.onExpirationDateStateChange(data);
     });
-    this._messageBus.subscribe(MessageBus.EVENTS.SECURITY_CODE_CHANGE, (data: any) => {
+    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: FormFieldState) => {
       this.onSecurityCodeStateChange(data);
+    });
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
+      this.onThreeDInitEvent();
+    });
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL, () => {
+      this.onLoadCardinal();
+    });
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.AUTH, (data: any) => {
+      this.onAuthEvent(data);
+    });
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, () => {
+      this.onSubmit();
     });
   }
 
-  private onCardNumberStateChange(data: any) {
+  private onSubmit() {
+    this.requestPayment();
+  }
+
+  private onLoad() {
+    const messageBusEvent: MessageBusEvent = { type: MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME };
+    this._messageBus.publish(messageBusEvent, true);
+  }
+
+  private onLoadCardinal() {
+    this._isPaymentReady = true;
+  }
+
+  private onCardNumberStateChange(data: FormFieldState) {
     this._formFields.cardNumber.validity = data.validity;
     this._formFields.cardNumber.value = data.value;
   }
 
-  private onExpirationDateStateChange(data: any) {
+  private onExpirationDateStateChange(data: FormFieldState) {
     this._formFields.expirationDate.validity = data.validity;
     this._formFields.expirationDate.value = data.value;
   }
 
-  private onSecurityCodeStateChange(data: any) {
+  private onSecurityCodeStateChange(data: FormFieldState) {
     this._formFields.securityCode.validity = data.validity;
     this._formFields.securityCode.value = data.value;
   }
 
-  private initEventListeners() {
-    this._buttonElement.addEventListener('click', (event: Event) => {
-      event.preventDefault();
-      this.onClick();
+  private onThreeDInitEvent() {
+    this.requestThreeDInit();
+  }
+
+  private onAuthEvent(data: any) {
+    this.requestAuth(data);
+  }
+
+  private requestThreeDInit() {
+    this._payment.threeDInitRequest().then(responseBody => {
+      const messageBusEvent: MessageBusEvent = {
+        type: MessageBus.EVENTS_PUBLIC.THREEDINIT,
+        data: responseBody
+      };
+      this._messageBus.publish(messageBusEvent, true);
     });
+  }
+
+  private requestAuth(data: any) {
+    this._payment.authorizePayment(this._card, data);
+  }
+
+  private requestPayment() {
+    const isFormValid: boolean =
+      this._formFields.cardNumber.validity &&
+      this._formFields.expirationDate.validity &&
+      this._formFields.securityCode.validity;
+
+    this._card = {
+      expirydate: this._formFields.expirationDate.value,
+      pan: this._formFields.cardNumber.value,
+      securitycode: this._formFields.securityCode.value
+    };
+
+    if (this._isPaymentReady && isFormValid) {
+      this._payment.threeDQueryRequest(this._card).then(responseBody => {
+        const messageBusEvent: MessageBusEvent = {
+          type: MessageBus.EVENTS_PUBLIC.THREEDQUERY,
+          data: responseBody
+        };
+        this._messageBus.publish(messageBusEvent, true);
+      });
+    }
   }
 }

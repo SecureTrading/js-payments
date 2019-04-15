@@ -23,6 +23,15 @@ export default class Validation {
   }
 
   /**
+   * Method to determine whether enter key is pressed
+   * @param event
+   */
+  public static isEnter(event: KeyboardEvent) {
+    const keyCode: number = event.keyCode;
+    return (keyCode === 13);
+  }
+
+  /**
    * Returns last N chars of given input
    * @param cardNumber
    * @param securityCodeLength

@@ -11,8 +11,8 @@ describe('CardNumber', () => {
     let inputElement = document.createElement('input');
     let messageElement = document.createElement('p');
 
-    inputElement.id = Selectors.CARD_NUMBER_INPUT_SELECTOR;
-    messageElement.id = Selectors.CARD_NUMBER_MESSAGE_SELECTOR;
+    inputElement.id = Selectors.CARD_NUMBER_INPUT;
+    messageElement.id = Selectors.CARD_NUMBER_MESSAGE;
 
     document.body.appendChild(inputElement);
     document.body.appendChild(messageElement);

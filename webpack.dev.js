@@ -10,7 +10,8 @@ module.exports = merge(common, {
     port: 8443,
     https: true,
     hot: true,
-    host: '0.0.0.0'
+    host: '0.0.0.0',
+    writeToDisk: true
   },
   plugins: [new webpack.HotModuleReplacementPlugin()]
 });

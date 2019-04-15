@@ -9,8 +9,8 @@ describe('SecurityCode', () => {
     let inputElement = document.createElement('input');
     let messageElement = document.createElement('p');
 
-    inputElement.id = Selectors.SECURITY_CODE_INPUT_SELECTOR;
-    messageElement.id = Selectors.SECURITY_CODE_MESSAGE_SELECTOR;
+    inputElement.id = Selectors.SECURITY_CODE_INPUT;
+    messageElement.id = Selectors.SECURITY_CODE_MESSAGE;
 
     document.body.appendChild(inputElement);
     document.body.appendChild(messageElement);

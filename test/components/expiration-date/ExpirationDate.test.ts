@@ -9,8 +9,8 @@ describe('ExpirationDate', () => {
     let inputElement = document.createElement('input');
     let messageElement = document.createElement('p');
 
-    inputElement.id = Selectors.EXPIRATION_DATE_INPUT_SELECTOR;
-    messageElement.id = Selectors.EXPIRATION_DATE_MESSAGE_SELECTOR;
+    inputElement.id = Selectors.EXPIRATION_DATE_INPUT;
+    messageElement.id = Selectors.EXPIRATION_DATE_MESSAGE;
 
     document.body.appendChild(inputElement);
     document.body.appendChild(messageElement);
