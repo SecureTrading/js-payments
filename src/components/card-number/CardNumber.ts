@@ -13,9 +13,10 @@ export default class CardNumber extends FormField {
   private static DEFAULT_CARD_LENGTH = 16;
   private static STANDARD_CARD_FORMAT = '(\\d{1,4})(\\d{1,4})?(\\d{1,4})?(\\d+)?';
   private static MESSAGE_ELEMENT_ID = 'st-card-number-message';
-  private _binLookup: BinLookup;
+  public binLookup: BinLookup;
   private _cardType: string;
   private _cardLength: [];
+  private messageBus: MessageBus;
 
   public brand: BrandDetailsType;
 
@@ -60,6 +61,11 @@ export default class CardNumber extends FormField {
 
   onInput(event: Event) {
     super.onInput(event);
+    this.sendState();
+  }
+
+  onFocus(event: Event) {
+    super.onFocus(event);
     this.sendState();
   }
 

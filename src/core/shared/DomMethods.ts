@@ -1,5 +1,3 @@
-import Selectors from './Selectors';
-
 /**
  * DomMethods class.
  * Gather all methods which are making operation on DOM
@@ -11,6 +9,18 @@ class DomMethods {
     targetElement.appendChild(script);
     script.src = src;
     return script;
+  }
+
+  /**
+   * Sets defined property in DOM
+   * @param attr
+   * @param value
+   * @param elementId
+   */
+  public static setProperty(attr: string, value: string, elementId: string) {
+    const element = document.getElementById(elementId);
+    element.setAttribute(attr, value);
+    return element;
   }
 
   public static insertStyle(contents: string) {
@@ -36,9 +46,21 @@ class DomMethods {
     return element;
   }
 
+  public static removeChildFromDOM(parentId: string, childId: string) {
+    const parent = document.getElementById(parentId);
+    const child = document.getElementById(childId);
+    if (parent && child) {
+      parent.removeChild(child);
+    }
+    return parent;
+  }
+
   public static addListener(targetId: string, listenerType: string, callback: any) {
     document.getElementById(targetId).addEventListener(listenerType, callback);
   }
+
+  public static addClass = (element: HTMLElement, classToAdd: string) => element.classList.add(classToAdd);
+  public static removeClass = (element: HTMLElement, classToRemove: string) => element.classList.remove(classToRemove);
 }
 
 export default DomMethods;

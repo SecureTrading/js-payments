@@ -22,6 +22,8 @@ export default class Element {
       return Selectors.EXPIRATION_DATE_COMPONENT;
     } else if (name === Selectors.NOTIFICATION_FRAME_COMPONENT_NAME) {
       return Selectors.NOTIFICATION_FRAME_COMPONENT;
+    } else if (name === Selectors.ANIMATED_CARD_COMPONENT_NAME) {
+      return Selectors.ANIMATED_CARD_COMPONENT;
     } else if (name === Selectors.CONTROL_FRAME_COMPONENT_NAME) {
       return Selectors.CONTROL_FRAME_COMPONENT;
     }
@@ -39,15 +41,31 @@ export default class Element {
     return element;
   };
 
+  get iframeSrc(): string {
+    return this._iframeSrc;
+  }
+
+  set iframeSrc(value: string) {
+    this._iframeSrc = value;
+  }
+
+  get name(): string {
+    return this._name;
+  }
+
+  set name(value: string) {
+    this._name = value;
+  }
+
   constructor() {
     this._name = '';
   }
 
-  /***
+  /**
    * Method for creating element in iframe
    * @param elementName Name of input which we want to create
-   * @param styles
    * @param params
+   * @param styles
    */
   public create(elementName: string, styles?: Styles, params?: object) {
     const componentAddress = Element.getComponentAddress(elementName);
@@ -60,13 +78,13 @@ export default class Element {
     this._iframeSrc = `${componentAddress}?${componentStyles}${componentParams ? '&' + componentParams : ''}`;
   }
 
-  /***
+  /**
    * Method returns 'iframed input', styled and ready to be registered in clients form
    * @param fieldId ID of field on which iframe input field will be mounted
    */
   public mount(fieldId: string) {
     const iframe = Element.createFormElement('iframe', fieldId);
-    iframe.setAttribute('src', this._iframeSrc);
+    iframe.setAttribute('src', this.iframeSrc);
     iframe.setAttribute('name', fieldId);
     return iframe;
   }

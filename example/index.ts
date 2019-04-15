@@ -14,9 +14,10 @@ import { ST } from '../src/stjs';
       cardNumber: 'st-card-number',
       expirationDate: 'st-expiration-date',
       securityCode: 'st-security-code',
-      controlFrame: 'st-control-frame'
+      notificationFrame: 'st-notification-frame',
+      controlFrame: 'st-control-frame',
+      animatedCard: 'st-animated-card'
     },
-    'st-notification-frame',
     {
       'background-color-input': 'AliceBlue',
       'color-input-error': '#721c24',
