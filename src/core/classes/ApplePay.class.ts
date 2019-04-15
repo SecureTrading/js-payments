@@ -254,10 +254,12 @@ class ApplePay {
       stt
         .sendRequest(this.validateMerchantRequestData)
         .then(response => {
+          console.log(`Send request succeded:`);
           console.log(response);
           this.onValidateMerchantResponseSuccess(response);
         })
         .catch(error => {
+          console.log(`Send request catched:`);
           console.log(error);
           this.onValidateMerchantResponseFailure(error);
         });
@@ -266,6 +268,7 @@ class ApplePay {
 
   public onPaymentAuthorized() {
     this.session.onpaymentauthorized = (event: any) => {
+      console.log(`onpaymentauthorized event:`);
       console.log(event);
       // console.log(ApplePaySession.completePayment());
       // @ts-ignore
@@ -276,6 +279,7 @@ class ApplePay {
   public onPaymentCanceled() {
     this.session.oncancel = (event: any) => {
       //this.setNotification('ERROR', 'Payment has been canceled');
+      console.log(`oncancel event:`);
       console.log(event);
     };
   }
@@ -283,15 +287,17 @@ class ApplePay {
   public onValidateMerchantResponseSuccess(response: any) {
     const { walletsession } = response;
     if (walletsession) {
-      const c = JSON.parse(walletsession);
-      console.log(c);
-      this.session.completeMerchantValidation(c);
+      const json = JSON.parse(walletsession);
+      console.log(`walletsession ready object:`);
+      console.log(json);
+      this.session.completeMerchantValidation(json);
     } else {
       this.onValidateMerchantResponseFailure(response.requestid);
     }
   }
 
   public onValidateMerchantResponseFailure(error: any) {
+    console.log(`onValidateMerchantResponseFailure:`);
     console.log(error);
   }
 
@@ -302,14 +308,18 @@ class ApplePay {
   public subscribeStatusHandlers() {
     this.session.onpaymentmethodselected = (event: any) => {
       const { paymentMethod } = event;
+      console.log(`onpaymentmethodselected event:`);
       console.log(event);
+      console.log(paymentMethod);
       this.session.completePaymentMethodSelection({
         newTotal: { label: 'Free Shipping', amount: '10.00', type: 'final' }
       });
     };
 
     this.session.onshippingmethodselected = (event: any) => {
-      const { shippingMethod } = event;
+      const { paymentMethod } = event;
+      console.log(`onshippingmethodselected event:`);
+      console.log(paymentMethod);
       console.log(event);
       this.session.completeShippingMethodSelection({
         newTotal: { label: 'Free Shipping', amount: '10.00', type: 'final' }
@@ -318,6 +328,8 @@ class ApplePay {
 
     this.session.onshippingcontactselected = (event: any) => {
       const { shippingContact } = event;
+      console.log(`onshippingcontactselected event: `);
+      console.log(...shippingContact);
       this.session.completeShippingContactSelection({
         newTotal: { label: 'Free Shipping', amount: '10.00', type: 'final' }
       });
