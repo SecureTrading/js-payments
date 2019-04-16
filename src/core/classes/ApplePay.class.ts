@@ -100,9 +100,6 @@ class ApplePay {
     this.stJwtInstance = new StJwt(jwt);
     this.messageBus = new MessageBus();
     this._onInit(buttonText, buttonStyle);
-    document.getElementById('test-button').addEventListener('click', () => {
-      this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR, 'Apple Pay is not available on your device');
-    });
   }
 
   /**
