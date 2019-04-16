@@ -1,6 +1,6 @@
+import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
-import Language from './../shared/Language';
 import DomMethods from './../shared/DomMethods';
 import StTransport from './../classes/StTransport.class';
 
@@ -37,6 +37,7 @@ class ApplePay {
   public buttonText: string;
   public buttonStyle: string;
   public merchantId: string;
+  public messageBus: MessageBus;
   public paymentRequest: any;
   public placement: string;
   public requiredBillingContactFields: []; // ???
@@ -49,7 +50,6 @@ class ApplePay {
   public static APPLE_PAY_BUTTON_ID: string = 'st-apple-pay';
   public static APPLE_PAY_MIN_VERSION: number = 2;
   public static APPLE_PAY_MAX_VERSION: number = 5;
-  public static APPLE_PAY_VERSIONS: number[] = [ApplePay.APPLE_PAY_MIN_VERSION, 3, 4, ApplePay.APPLE_PAY_MAX_VERSION];
   public static AVAILABLE_BUTTON_STYLES = ['black', 'white', 'white-outline'];
   public static AVAILABLE_BUTTON_TEXTS = ['plain', 'buy', 'book', 'donate', 'check-out', 'subscribe'];
   public static BASIC_SUPPORTED_NETWORKS = [
@@ -98,7 +98,11 @@ class ApplePay {
     this.requiredBillingContactFields = paymentRequest.requiredBillingContactFields;
     this.validateMerchantRequestData.walletmerchantid = merchantId;
     this.stJwtInstance = new StJwt(jwt);
+    this.messageBus = new MessageBus();
     this._onInit(buttonText, buttonStyle);
+    document.getElementById('test-button').addEventListener('click', () => {
+      this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR, 'Apple Pay is not available on your device');
+    });
   }
 
   /**
@@ -219,7 +223,7 @@ class ApplePay {
       this.paymentRequest.total.amount = this.stJwtInstance.mainamount;
       this.paymentRequest.currencyCode = this.stJwtInstance.currencyiso3a;
     } else {
-      console.log('Amount and currency is not set');
+      console.error('Amount and currency is not set');
     }
     return this.paymentRequest;
   }
@@ -241,8 +245,7 @@ class ApplePay {
       this.addApplePayButton();
       this.applePayProcess();
     } else {
-      alert('Apple Pay is not available on your device');
-      // this.setNotification('ERROR', 'Apple Pay is not available on your device');
+      this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR, 'Apple Pay is not available on your device');
     }
   }
 
@@ -257,53 +260,47 @@ class ApplePay {
       stTransport
         .sendRequest(this.validateMerchantRequestData)
         .then(response => {
-          console.log(`Send request succeded:`);
-          console.log(response);
           this.onValidateMerchantResponseSuccess(response);
         })
         .catch(error => {
-          console.log(`Send request catched:`);
-          console.log(error);
+          const { errorcode, errormessage } = error;
           this.onValidateMerchantResponseFailure(error);
-          // this.setNotification('ERROR', 'Merchant validation failed');
+          this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR, `${errorcode}: ${errormessage}`);
         });
     };
   }
 
   /**
-   *
+   * Handles onpaymentauthorized event and completes payment
    */
   public onPaymentAuthorized() {
     this.session.onpaymentauthorized = (event: any) => {
       console.log(`onpaymentauthorized event:`);
       console.log(event);
       this.session.completePayment({ status: ApplePaySession.STATUS_SUCCESS, errors: [] });
+      this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_SUCCESS, 'Payment has been authorized');
     };
   }
 
   /**
-   *
+   * Handles oncancel event and set notification about it
    */
   public onPaymentCanceled() {
     this.session.oncancel = (event: any) => {
-      // this.setNotification('ERROR', 'Payment has been canceled');
-      console.log(`oncancel event:`);
       console.log(event);
+      this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_WARNING, 'Payment has been canceled');
     };
   }
 
   /**
-   *
+   * Handles merchant validation success response
    * @param response
    */
   public onValidateMerchantResponseSuccess(response: any) {
     const { walletsession } = response;
     if (walletsession) {
       const merchantSession = JSON.parse(walletsession);
-      console.log(merchantSession);
-      // last value needed in this.validateMerchantRequestData
       this.validateMerchantRequestData.walletmerchantid = merchantSession.merchantIdentifier;
-      console.log(this.validateMerchantRequestData);
       this.session.completeMerchantValidation(merchantSession);
     } else {
       this.onValidateMerchantResponseFailure(response.requestid);
@@ -311,26 +308,20 @@ class ApplePay {
   }
 
   /**
-   *
+   * Handles merchant validation error response
    * @param error
    */
   public onValidateMerchantResponseFailure(error: any) {
     this.session.abort();
-    // here will be an error displayed
-    console.log(`onValidateMerchantResponseFailure:`);
-    console.log(error);
+    this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR, 'Merchant validation failure');
   }
 
   /**
    * Sets payment sheet interactions handlers: onpaymentmethodselected, onshippingmethodselected, onshippingcontactselected
-   * @param session
    */
   public subscribeStatusHandlers() {
     this.session.onpaymentmethodselected = (event: any) => {
       const { paymentMethod } = event;
-      console.log(`onpaymentmethodselected event:`);
-      console.log(event);
-      console.log(paymentMethod);
       this.session.completePaymentMethodSelection({
         newTotal: { label: this.paymentRequest.total.label, amount: this.paymentRequest.total.amount, type: 'final' } // what is type ??
       });
@@ -338,9 +329,6 @@ class ApplePay {
 
     this.session.onshippingmethodselected = (event: any) => {
       const { paymentMethod } = event;
-      console.log(`onshippingmethodselected event:`);
-      console.log(paymentMethod);
-      console.log(event);
       this.session.completeShippingMethodSelection({
         newTotal: { label: this.paymentRequest.total.label, amount: this.paymentRequest.total.amount, type: 'final' }
       });
@@ -348,8 +336,6 @@ class ApplePay {
 
     this.session.onshippingcontactselected = (event: any) => {
       const { shippingContact } = event;
-      console.log(`onshippingcontactselected event: `);
-      console.log(...shippingContact);
       this.session.completeShippingContactSelection({
         newTotal: { label: this.paymentRequest.total.label, amount: this.paymentRequest.total.amount, type: 'final' }
       });
@@ -362,9 +348,11 @@ class ApplePay {
    * @param content
    */
   public setNotification(type: string, content: string) {
-    DomMethods.getIframeContentWindow
-      .call(this, Selectors.NOTIFICATION_FRAME_IFRAME)
-      .postMessage({ type, content }, (window as any).frames[Selectors.NOTIFICATION_FRAME_IFRAME]);
+    let messageBusEvent: MessageBusEvent = {
+      type: type,
+      data: content
+    };
+    this.messageBus.publishFromParent(messageBusEvent, Selectors.NOTIFICATION_FRAME_IFRAME);
   }
 
   /**
@@ -389,13 +377,11 @@ class ApplePay {
         if (canMakePayments) {
           this.applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
         } else {
-          console.log('Cannot make payments');
-          //this.setNotification('ERROR', Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE);
+          this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR, 'Cannot make payments');
         }
       });
     } else {
-      console.log('Dont have cards');
-      // this.setNotification('ERROR', Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE);
+      this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR, 'You dont have available cards');
     }
   }
 }

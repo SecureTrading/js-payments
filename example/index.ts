@@ -8,7 +8,7 @@ import { ST } from '../src/stjs';
 
 (() => {
   const st = new ST(
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU1NTQwMzM0Ni45NTY5MzA2LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSJ9fQ.COgzX337WKrPow8GKbDDvovOfEPMuMcLjYW0YJAqR4Y',
+    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU1NTQxNzU4NS4xNzU4MzQsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdF9qYW1lczM4NjQxIn19.cKziNMou_u4Qg7LQzR37TIb0PcIsggL9-GriP5yfFT8',
     window.location.origin,
     {
       cardNumber: 'st-card-number',
