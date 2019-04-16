@@ -122,7 +122,7 @@ class AnimatedCard {
   public setLogo() {
     const { logo, type } = this.cardDetails;
     if (!document.getElementById(Selectors.ANIMATED_CARD_PAYMENT_LOGO_ID) && logo) {
-      const element = DOMMethods.setMultipleAttributes.apply(this, [
+      const element = DOMMethods.createHtmlElement.apply(this, [
         {
           alt: type,
           src: logo,

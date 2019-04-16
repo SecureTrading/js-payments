@@ -7,9 +7,8 @@ import StTransport from './../classes/StTransport.class';
 const ApplePaySession = (window as any).ApplePaySession;
 
 /**
- * Sets Apple pay APM
  * Apple Pay flow:
- * 1. Checks if ApplePaySession class exists (it must be iOS 10 and later and macOS 10.12 and later).
+ * 1. Check if ApplePaySession class exists (it must be iOS 10 and later and macOS 10.12 and later).
  * 2. Call setApplePayVersion() to set latest available ApplePay version.
  * 3. Call setSupportedNetworks() to set available networks which are supported in this particular version of Apple Pay.
  * 4. Call setAmountAndCurrency() to set amount and currency hidden in provided JWT.
@@ -18,16 +17,12 @@ const ApplePaySession = (window as any).ApplePaySession;
  * 7. User taps / clicks ApplePayButton on page and this event triggers applePayButtonClickHandler() - this is obligatory process -it has to be triggered by users action.
  * 8. Clicking button triggers paymentProcess() which sets ApplePaySession object.
  * 9. Then this.session.begin() is called which begins validating merchant process and display payment sheet.
- * 10. this.onValidateMerchantRequest();
-      this.subscribeStatusHandlers();
-        this.onPaymentAuthorized();
-        this.onPaymentCanceled();
+ * 10. this.onValidateMerchantRequest() - triggers onvalidatemerchant which literally validates merchant.
+ * 11. this.subscribeStatusHandlers() - if merchant has been successfully validated, three handlers are set - onpaymentmethodselected,  onshippingmethodselected, onshippingcontactselected
+ *     to handle customer's selections in the payment sheet to complete transaction cost.
+ *     We've got 30 seconds to handle each event before the payment sheet times out: completePaymentMethodSelection, completeShippingMethodSelection, and completeShippingContactSelection
+ * 12.Then onPaymentAuthorized() or onPaymentCanceled() has been called which completes payment with this.session.completePayment function or canceled it with this.session.oncancel handler.
 
- * 6. Call begin() method to display the payment sheet to the customer and initiate the merchant validation process.
- * 7. In onvalidatemerchant handler catch object to pass to completeMerchantValidation
- * 8. Handle customer's selections in the payment sheet to complete transaction cost - event handlers: onpaymentmethodselected, onshippingmethodselected, and onshippingcontactselected.
- * 9. 30 seconds to handle each event before the payment sheet times out: completePaymentMethodSelection, completeShippingMethodSelection, and completeShippingContactSelection
- * 10. Make request call WALLETVERIFY to ST just like in Cardinal Commerce.
  */
 class ApplePay {
   set jwt(value: string) {
@@ -39,18 +34,17 @@ class ApplePay {
   }
 
   public applePayVersion: number;
-  public paymentRequest: any;
-  public merchantId: string;
-  public merchantDisplayedName: string;
-  public sitereference: string;
-  public sitesecurity: string;
-  public stJwtInstance: StJwt;
-  public placement: string;
   public buttonText: string;
   public buttonStyle: string;
+  public merchantId: string;
+  public paymentRequest: any;
+  public placement: string;
+  public requiredBillingContactFields: []; // ???
+  public requiredShippingContactFields: []; // ???
   public session: any;
-  public requiredBillingContactFields: [];
-  public requiredShippingContactFields: [];
+  public sitereference: string; // ???
+  public sitesecurity: string; // ???
+  public stJwtInstance: StJwt;
 
   public static APPLE_PAY_BUTTON_ID: string = 'st-apple-pay';
   public static APPLE_PAY_MIN_VERSION: number = 2;
@@ -305,13 +299,12 @@ class ApplePay {
   public onValidateMerchantResponseSuccess(response: any) {
     const { walletsession } = response;
     if (walletsession) {
-      const json = JSON.parse(walletsession);
-      console.log(json);
+      const merchantSession = JSON.parse(walletsession);
+      console.log(merchantSession);
       // last value needed in this.validateMerchantRequestData
-      this.validateMerchantRequestData.walletmerchantid = json.merchantIdentifier;
-      this.merchantDisplayedName = json.displayName;
+      this.validateMerchantRequestData.walletmerchantid = merchantSession.merchantIdentifier;
       console.log(this.validateMerchantRequestData);
-      this.session.completeMerchantValidation(json);
+      this.session.completeMerchantValidation(merchantSession);
     } else {
       this.onValidateMerchantResponseFailure(response.requestid);
     }
@@ -322,6 +315,8 @@ class ApplePay {
    * @param error
    */
   public onValidateMerchantResponseFailure(error: any) {
+    this.session.abort();
+    // here will be an error displayed
     console.log(`onValidateMerchantResponseFailure:`);
     console.log(error);
   }
@@ -337,7 +332,7 @@ class ApplePay {
       console.log(event);
       console.log(paymentMethod);
       this.session.completePaymentMethodSelection({
-        newTotal: { label: this.merchantDisplayedName, amount: this.paymentRequest.total.amount, type: 'final' }
+        newTotal: { label: this.paymentRequest.total.label, amount: this.paymentRequest.total.amount, type: 'final' } // what is type ??
       });
     };
 
@@ -347,7 +342,7 @@ class ApplePay {
       console.log(paymentMethod);
       console.log(event);
       this.session.completeShippingMethodSelection({
-        newTotal: { label: this.merchantDisplayedName, amount: this.paymentRequest.total.amount, type: 'final' }
+        newTotal: { label: this.paymentRequest.total.label, amount: this.paymentRequest.total.amount, type: 'final' }
       });
     };
 
@@ -356,7 +351,7 @@ class ApplePay {
       console.log(`onshippingcontactselected event: `);
       console.log(...shippingContact);
       this.session.completeShippingContactSelection({
-        newTotal: { label: this.merchantDisplayedName, amount: this.paymentRequest.total.amount, type: 'final' }
+        newTotal: { label: this.paymentRequest.total.label, amount: this.paymentRequest.total.amount, type: 'final' }
       });
     };
   }
