@@ -220,7 +220,7 @@ class ApplePay {
       this.paymentRequest.total.amount = this.stJwtInstance.mainamount;
       this.paymentRequest.currencyCode = this.stJwtInstance.currencyiso3a;
     } else {
-      console.error('Amount and currency is not set');
+      this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR, 'Amount and currency is not set');
     }
     return this.paymentRequest;
   }
@@ -272,8 +272,6 @@ class ApplePay {
    */
   public onPaymentAuthorized() {
     this.session.onpaymentauthorized = (event: any) => {
-      console.log(`onpaymentauthorized event:`);
-      console.log(event);
       this.session.completePayment({ status: ApplePaySession.STATUS_SUCCESS, errors: [] });
       this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_SUCCESS, 'Payment has been authorized');
     };
@@ -284,7 +282,6 @@ class ApplePay {
    */
   public onPaymentCanceled() {
     this.session.oncancel = (event: any) => {
-      console.log(event);
       this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_WARNING, 'Payment has been canceled');
     };
   }
