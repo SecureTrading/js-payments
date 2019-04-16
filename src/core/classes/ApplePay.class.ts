@@ -354,12 +354,11 @@ class ApplePay {
    */
   public paymentProcess() {
     this.session = this.getApplePaySessionObject();
-    // begins merchant validate process
-    this.session.begin();
     this.onValidateMerchantRequest();
     this.subscribeStatusHandlers();
     this.onPaymentAuthorized();
     this.onPaymentCanceled();
+    this.session.begin();
   }
 
   /**
