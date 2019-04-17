@@ -46,6 +46,7 @@ class ApplePay {
   public sitereference: string; // ???
   public sitesecurity: string; // ???
   public stJwtInstance: StJwt;
+  public stTransportInstance: StTransport;
 
   public static APPLE_PAY_BUTTON_ID: string = 'st-apple-pay';
   public static APPLE_PAY_MIN_VERSION: number = 2;
@@ -98,6 +99,7 @@ class ApplePay {
     this.requiredBillingContactFields = paymentRequest.requiredBillingContactFields;
     this.validateMerchantRequestData.walletmerchantid = merchantId;
     this.stJwtInstance = new StJwt(jwt);
+    this.stTransportInstance = new StTransport({ jwt });
     this.messageBus = new MessageBus();
     this._onInit(buttonText, buttonStyle);
   }
@@ -253,8 +255,7 @@ class ApplePay {
   public onValidateMerchantRequest() {
     this.session.onvalidatemerchant = (event: any) => {
       this.validateMerchantRequestData.walletvalidationurl = event.validationURL;
-      const stTransport = new StTransport({ jwt: this.jwt });
-      stTransport
+      this.stTransportInstance
         .sendRequest(this.validateMerchantRequestData)
         .then(response => {
           this.onValidateMerchantResponseSuccess(response);
