@@ -26,6 +26,13 @@ const ApplePaySession = (window as any).ApplePaySession;
 
  */
 class ApplePay {
+  get applePayButtonProps(): any {
+    return this._applePayButtonProps;
+  }
+
+  set applePayButtonProps(value: any) {
+    this._applePayButtonProps = value;
+  }
   set jwt(value: string) {
     this._jwt = value;
   }
@@ -62,7 +69,7 @@ class ApplePay {
     'privateLabel',
     'visa'
   ];
-  public static VERSION_4_SUPPORTED_NETWORKS = ApplePay.BASIC_SUPPORTED_NETWORKS.concat([
+  public static VERSION_3_4_SUPPORTED_NETWORKS = ApplePay.BASIC_SUPPORTED_NETWORKS.concat([
     'cartesBancaires',
     'eftpos',
     'electron',
@@ -138,7 +145,7 @@ class ApplePay {
       this.applePayVersion > ApplePay.APPLE_PAY_MIN_VERSION &&
       this.applePayVersion < ApplePay.APPLE_PAY_MAX_VERSION
     ) {
-      this.paymentRequest.supportedNetworks = ApplePay.VERSION_4_SUPPORTED_NETWORKS;
+      this.paymentRequest.supportedNetworks = ApplePay.VERSION_3_4_SUPPORTED_NETWORKS;
     } else {
       this.paymentRequest.supportedNetworks = ApplePay.VERSION_5_SUPPORTED_NETWORKS;
     }

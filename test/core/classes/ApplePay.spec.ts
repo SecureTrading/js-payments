@@ -1,10 +1,6 @@
-import Selectors from '../../../src/core/shared/Selectors';
 import ApplePay from './../../../src/core/classes/ApplePay.class';
-import MessageBus from './../../../src/core/shared/MessageBus';
 
-jest.mock('./../../../src/core/shared/MessageBus', () => ({
-  publishFromParent: jest.fn()
-}));
+jest.mock('./../../../src/core/shared/MessageBus');
 
 // given
 describe('Class Apple Pay', () => {
@@ -12,9 +8,6 @@ describe('Class Apple Pay', () => {
   describe('On init', () => {
     // then
     it('should set instance with proper settings', () => {
-      // const t = Selectors.NOTIFICATION_FRAME_IFRAME;
-      // @ts-ignore
-      // global.window.frames[Selectors.NOTIFICATION_FRAME_IFRAME] = window.frames[Selectors.NOTIFICATION_FRAME_IFRAME];
       const { instance } = ApplePayFixture();
       expect(instance).toBeTruthy();
     });
@@ -24,43 +17,87 @@ describe('Class Apple Pay', () => {
   describe('Method ifApplePayIsAvailable', () => {
     // then
     it('should return undefined if device is not Mac', () => {
-      // const { instance } = ApplePayFixture();
-      // // @ts-ignore
-      // global.window = window;
-      // expect(instance.ifApplePayIsAvailable()).toBeFalsy();
-    });
-  });
-
-  // given
-  describe('Method ifBrowserSupportsApplePayVersion', () => {
-    // then
-    it('should return undefined if device is not Mac', () => {
-      // const { instance } = ApplePayFixture();
-      // expect(instance.ifBrowserSupportsApplePayVersion(3)).toBeFalsy();
+      const { instance } = ApplePayFixture();
+      expect(instance.ifApplePayIsAvailable()).toBeFalsy();
     });
   });
 
   // given
   describe('Method setApplePayVersion', () => {
     // then
-    it('', () => {
-      // const { instance } = ApplePayFixture();
+    it('should set applePayVersion', () => {
+      const { instance } = ApplePayFixture();
+      instance.ifBrowserSupportsApplePayVersion = jest.fn().mockReturnValueOnce(true);
+      instance.setApplePayVersion();
+      expect(instance.applePayVersion).toEqual(5);
     });
   });
 
   // given
   describe('Method setSupportedNetworks', () => {
+    // when
+    const { instance } = ApplePayFixture();
+    const applePayVersions = [2, 3, 4, 5];
+
+    function setPropertiesForVersion(version: number, networks: string[]) {
+      instance.applePayVersion = version;
+      instance.setSupportedNetworks();
+      expect(instance.paymentRequest.supportedNetworks).toEqual(networks);
+    }
+
     // then
-    it('', () => {
-      // const { instance } = ApplePayFixture();
+    it(`should set proper networks when Apple Pay version is equal ${applePayVersions[3]}`, () => {
+      setPropertiesForVersion(applePayVersions[3], ApplePay.VERSION_5_SUPPORTED_NETWORKS);
+    });
+
+    // then
+    it(`should set proper networks when Apple Pay version is equal ${applePayVersions[2]}`, () => {
+      setPropertiesForVersion(applePayVersions[2], ApplePay.VERSION_3_4_SUPPORTED_NETWORKS);
+    });
+
+    // then
+    it(`should set proper networks when Apple Pay version is equal ${applePayVersions[1]}`, () => {
+      setPropertiesForVersion(applePayVersions[1], ApplePay.VERSION_3_4_SUPPORTED_NETWORKS);
+    });
+
+    // then
+    it(`should set proper networks when Apple Pay version is equal ${applePayVersions[0]}`, () => {
+      setPropertiesForVersion(applePayVersions[0], ApplePay.BASIC_SUPPORTED_NETWORKS);
     });
   });
 
   // given
   describe('Method setApplePayButtonProps', () => {
+    let buttonStyle: string;
+    let buttonText: string;
+    beforeEach(() => {
+      buttonStyle = 'white';
+      buttonText = 'donate';
+    });
     // then
-    it('', () => {
-      // const { instance } = ApplePayFixture();
+    it(`should set buttonText and buttonStyle if they are both from list of available values`, () => {
+      const { instance } = ApplePayFixture();
+      instance.setApplePayButtonProps(buttonText, buttonStyle);
+      expect(instance.buttonText).toEqual(buttonText);
+      expect(instance.buttonStyle).toEqual(buttonStyle);
+    });
+
+    // then
+    it('should set buttonText and buttonStyle with default values if they are both not from list of available values', () => {
+      buttonStyle = 'NavajoWhite';
+      buttonText = 'click here to pay with apple pay';
+      const { instance } = ApplePayFixture();
+      instance.setApplePayButtonProps(buttonText, buttonStyle);
+      expect(instance.buttonText).toEqual(ApplePay.AVAILABLE_BUTTON_TEXTS[0]);
+      expect(instance.buttonStyle).toEqual(ApplePay.AVAILABLE_BUTTON_STYLES[0]);
+    });
+
+    // then
+    it('should set _applePayButtonProps style value', () => {
+      const css = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${buttonText}; -applepay-button-style: ${buttonStyle}`;
+      const { instance } = ApplePayFixture();
+      instance.setApplePayButtonProps(buttonText, buttonStyle);
+      expect(instance.applePayButtonProps['style']).toEqual(css);
     });
   });
 
