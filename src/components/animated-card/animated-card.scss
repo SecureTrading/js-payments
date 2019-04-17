@@ -47,15 +47,11 @@ body {
   }
 
   .st-animated-card__payment-logo-img {
-    @include centerLogo(4rem, 1.5rem);
+    @include centerLogo(2rem, 1rem);
   }
 
-  @mixin cardType($bgr, $top, $right) {
+  @mixin cardType($bgr) {
     background: $bgr;
-
-    .st-animated-card__payment-logo-img {
-      @include centerLogo($top, $right);
-    }
   }
 
   .st-animated-card__payment-logo-default {
@@ -63,43 +59,43 @@ body {
   }
 
   &__default {
-    @include cardType($default-gradient, 2rem, 1.5rem);
+    @include cardType($default-gradient);
   }
 
   &__amex {
-    @include cardType($amex-gradient, 2rem, 1.5rem);
+    @include cardType($amex-gradient);
   }
 
   &__astropaycard {
-    @include cardType($astro-pay-gradient, 3rem, 2rem);
+    @include cardType($astro-pay-gradient);
   }
 
   &__diners {
-    @include cardType($diners-gradient, 2rem, 1rem);
+    @include cardType($diners-gradient);
   }
 
   &__discover {
-    @include cardType($discover-gradient, 2rem, 1rem);
+    @include cardType($discover-gradient);
   }
 
   &__jcb {
-    @include cardType($jcb-gradient, 2rem, 1rem);
+    @include cardType($jcb-gradient);
   }
 
   &__maestro {
-    @include cardType($maestro-gradient, 2rem, 1rem);
+    @include cardType($maestro-gradient);
   }
 
   &__mastercard {
-    @include cardType($master-card-gradient, 2rem, 1.5rem);
+    @include cardType($master-card-gradient);
   }
 
   &__piba {
-    @include cardType($piba-gradient, 1rem, 1rem);
+    @include cardType($piba-gradient);
   }
 
   &__visa {
-    @include cardType($visa-gradient, 4rem, 1.5rem);
+    @include cardType($visa-gradient);
   }
 
   &__front {
