@@ -1,3 +1,4 @@
+import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
@@ -222,7 +223,10 @@ class ApplePay {
       this.paymentRequest.total.amount = this.stJwtInstance.mainamount;
       this.paymentRequest.currencyCode = this.stJwtInstance.currencyiso3a;
     } else {
-      this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR, 'Amount and currency is not set');
+      this.setNotification(
+        MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR,
+        Language.translations.APPLE_PAY_AMOUNT_AND_CURRENCY
+      );
     }
     return this.paymentRequest;
   }
@@ -244,7 +248,7 @@ class ApplePay {
       this.addApplePayButton();
       this.applePayProcess();
     } else {
-      this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR, 'Apple Pay is not available on your device');
+      this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR, Language.translations.APPLE_PAY_ONLY_ON_IOS);
     }
   }
 
@@ -274,7 +278,7 @@ class ApplePay {
   public onPaymentAuthorized() {
     this.session.onpaymentauthorized = (event: any) => {
       this.session.completePayment({ status: ApplePaySession.STATUS_SUCCESS, errors: [] });
-      this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_SUCCESS, 'Payment has been authorized');
+      this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_SUCCESS, Language.translations.PAYMENT_AUTHORIZED);
     };
   }
 
@@ -283,7 +287,7 @@ class ApplePay {
    */
   public onPaymentCanceled() {
     this.session.oncancel = (event: any) => {
-      this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_WARNING, 'Payment has been canceled');
+      this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_WARNING, Language.translations.PAYMENT_WARNING);
     };
   }
 
@@ -308,7 +312,10 @@ class ApplePay {
    */
   public onValidateMerchantResponseFailure(error: any) {
     this.session.abort();
-    this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR, 'Merchant validation failure');
+    this.setNotification(
+      MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR,
+      Language.translations.MERCHANT_VALIDATION_FAILURE
+    );
   }
 
   /**
@@ -371,11 +378,14 @@ class ApplePay {
         if (canMakePayments) {
           this.applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
         } else {
-          this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR, 'Cannot make payments');
+          this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR, Language.translations.NO_CARDS_IN_WALLET);
         }
       });
     } else {
-      this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR, 'You dont have available cards');
+      this.setNotification(
+        MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR,
+        Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE
+      );
     }
   }
 }

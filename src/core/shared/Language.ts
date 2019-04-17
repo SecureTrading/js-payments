@@ -6,13 +6,17 @@ class Language {
   private static _translations = {
     APPLE_PAY_ONLY_ON_IOS: 'Your browser does not support Apple Pay',
     APPLE_PAY_NOT_AVAILABLE: 'This version of browser does not support Apple Pay',
-    APPLE_PAYMENT_IS_NOT_AVAILABLE: 'Something went wrong - payment is not available',
+    APPLE_PAYMENT_IS_NOT_AVAILABLE: 'Payment is not available',
+    APPLE_PAY_AMOUNT_AND_CURRENCY: 'Amount and currency are not set',
     COMMUNICATION_ERROR_INVALID_REQUEST: 'Invalid request',
     COMMUNICATION_ERROR_INVALID_RESPONSE: 'Invalid response',
     COMMUNICATION_ERROR_TIMEOUT: 'Timeout',
+    MERCHANT_VALIDATION_FAILURE: 'Merchant validation failure',
+    NO_CARDS_IN_WALLET: 'You have no cards in your wallet',
     PAYMENT_SUCCESS: 'Payment has been successfully proceeded',
     PAYMENT_ERROR: 'An error occurred',
     PAYMENT_WARNING: 'Payment has been canceled',
+    PAYMENT_AUTHORIZED: 'Payment has been authorized',
     VALIDATION_ERROR_CARD: 'Card number is invalid',
     VALIDATION_ERROR_CARD_AND_CODE: 'Security code does not match card number',
     VALIDATION_ERROR_FIELD_IS_EMPTY: 'Field is empty',
@@ -26,12 +30,16 @@ class Language {
     APPLE_PAY_ONLY_ON_IOS: string;
     APPLE_PAY_NOT_AVAILABLE: string;
     APPLE_PAYMENT_IS_NOT_AVAILABLE: string;
+    APPLE_PAY_AMOUNT_AND_CURRENCY: string;
     COMMUNICATION_ERROR_INVALID_REQUEST: string;
     COMMUNICATION_ERROR_INVALID_RESPONSE: string;
     COMMUNICATION_ERROR_TIMEOUT: string;
+    MERCHANT_VALIDATION_FAILURE: string;
+    NO_CARDS_IN_WALLET: string;
     PAYMENT_SUCCESS: string;
     PAYMENT_ERROR: string;
     PAYMENT_WARNING: string;
+    PAYMENT_AUTHORIZED: string;
     VALIDATION_ERROR_CARD: string;
     VALIDATION_ERROR_CARD_AND_CODE: string;
     VALIDATION_ERROR_FIELD_IS_REQUIRED: string;
