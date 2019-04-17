@@ -104,8 +104,15 @@ describe('Class Apple Pay', () => {
   // given
   describe('Method createApplePayButton', () => {
     // then
-    it('', () => {
-      // const { instance } = ApplePayFixture();
+    it('should return Apple Pay button with all props set', () => {
+      const { instance } = ApplePayFixture();
+      const button =
+        '<div style="-webkit-appearance: -apple-pay-button; -apple-pay-button-type: donate; -applepay-button-style: white" />';
+      instance.applePayButtonProps[
+        'style'
+      ] = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: donate; -applepay-button-style: white`;
+
+      expect(instance.createApplePayButton()).toBeTruthy();
     });
   });
 
