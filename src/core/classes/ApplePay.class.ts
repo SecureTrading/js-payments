@@ -41,11 +41,9 @@ class ApplePay {
   public messageBus: MessageBus;
   public paymentRequest: any;
   public placement: string;
-  public requiredBillingContactFields: []; // ???
-  public requiredShippingContactFields: []; // ???
   public session: any;
-  public sitereference: string; // ???
-  public sitesecurity: string; // ???
+  public sitereference: string; // possibly not needed
+  public sitesecurity: string;
   public stJwtInstance: StJwt;
   public stTransportInstance: StTransport;
 
@@ -96,8 +94,6 @@ class ApplePay {
     this.paymentRequest = paymentRequest;
     this.sitereference = sitereference;
     this.sitesecurity = sitesecurity;
-    this.requiredShippingContactFields = paymentRequest.requiredShippingContactFields;
-    this.requiredBillingContactFields = paymentRequest.requiredBillingContactFields;
     this.validateMerchantRequestData.walletmerchantid = merchantId;
     this.stJwtInstance = new StJwt(jwt);
     this.stTransportInstance = new StTransport({ jwt });

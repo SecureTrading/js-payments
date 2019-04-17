@@ -1,3 +1,4 @@
+import Selectors from '../../../src/core/shared/Selectors';
 import ApplePay from './../../../src/core/classes/ApplePay.class';
 
 // given
@@ -6,8 +7,11 @@ describe('Class Apple Pay', () => {
   describe('On init', () => {
     // then
     it('should set instance with proper settings', () => {
-      // const { instance } = ApplePayFixture();
-      // expect(instance).toBeTruthy();
+      // const t = Selectors.NOTIFICATION_FRAME_IFRAME;
+      // @ts-ignore
+      // global.window.frames[Selectors.NOTIFICATION_FRAME_IFRAME] = window.frames[Selectors.NOTIFICATION_FRAME_IFRAME];
+      const { instance } = ApplePayFixture();
+      expect(instance).toBeTruthy();
     });
   });
 

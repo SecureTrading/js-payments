@@ -35,8 +35,6 @@ import { ST } from '../src/stjs';
             countryCode: 'US',
             currencyCode: 'USD',
             merchantCapabilities: ['supports3DS', 'supportsCredit', 'supportsDebit'],
-            requiredBillingContactFields: ['postalAddress'],
-            requiredShippingContactFields: ['postalAddress', 'name', 'phone', 'email'],
             supportedNetworks: []
           },
           merchantId: 'merchant.net.securetrading',
