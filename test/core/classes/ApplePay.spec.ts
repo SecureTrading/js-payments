@@ -167,42 +167,30 @@ describe('Class Apple Pay', () => {
   });
 
   // given
-  describe('Method checkApplePayAvailability', () => {
-    // then
-    it('', () => {
-      // const { instance } = ApplePayFixture();
-    });
-  });
-
-  // given
-  describe('Method checkApplePayWalletCardAvailability', () => {
-    // then
-    it('', () => {
-      // const { instance } = ApplePayFixture();
-    });
-  });
-
-  // given
-  describe('Method getApplePaySessionObject', () => {
-    // then
-    it('', () => {
-      // const { instance } = ApplePayFixture();
-    });
-  });
-
-  // given
   describe('Method setAmountAndCurrency', () => {
     // then
-    it('', () => {
-      // const { instance } = ApplePayFixture();
+    it('should set amount depends on value in JWT', () => {
+      const { instance } = ApplePayFixture();
+      instance.setAmountAndCurrency();
+      expect(instance.paymentRequest.total.amount).toEqual(instance.stJwtInstance.mainamount);
+    });
+
+    // then
+    it('should set currency depends on value in JWT', () => {
+      const { instance } = ApplePayFixture();
+      instance.setAmountAndCurrency();
+      expect(instance.paymentRequest.currencyCode).toEqual(instance.stJwtInstance.currencyiso3a);
     });
   });
 
   // given
   describe('Method _onInit', () => {
     // then
-    it('', () => {
-      // const { instance } = ApplePayFixture();
+    it('should ', () => {
+      const { instance } = ApplePayFixture();
+      const spy = jest.spyOn(instance, 'setApplePayVersion');
+      // instance.onInit('donate', 'white');
+      // expect(spy).toHaveBeenCalled();
     });
   });
 

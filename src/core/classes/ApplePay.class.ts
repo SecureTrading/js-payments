@@ -105,7 +105,7 @@ class ApplePay {
     this.stJwtInstance = new StJwt(jwt);
     this.stTransportInstance = new StTransport({ jwt });
     this.messageBus = new MessageBus();
-    this._onInit(buttonText, buttonStyle);
+    this.onInit(buttonText, buttonStyle);
   }
 
   /**
@@ -242,7 +242,7 @@ class ApplePay {
    * @param buttonStyle
    * @private
    */
-  private _onInit(buttonText: string, buttonStyle: string) {
+  public onInit(buttonText: string, buttonStyle: string) {
     if (this.ifApplePayIsAvailable()) {
       this.setApplePayVersion();
       this.setSupportedNetworks();
