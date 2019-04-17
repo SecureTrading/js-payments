@@ -1,5 +1,10 @@
 import Selectors from '../../../src/core/shared/Selectors';
 import ApplePay from './../../../src/core/classes/ApplePay.class';
+import MessageBus from './../../../src/core/shared/MessageBus';
+
+jest.mock('./../../../src/core/shared/MessageBus', () => ({
+  publishFromParent: jest.fn()
+}));
 
 // given
 describe('Class Apple Pay', () => {
