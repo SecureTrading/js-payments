@@ -106,53 +106,63 @@ describe('Class Apple Pay', () => {
     // then
     it('should return Apple Pay button with all props set', () => {
       const { instance } = ApplePayFixture();
-      const button =
-        '<div style="-webkit-appearance: -apple-pay-button; -apple-pay-button-type: donate; -applepay-button-style: white" />';
-      instance.applePayButtonProps[
-        'style'
-      ] = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: donate; -applepay-button-style: white`;
-
-      expect(instance.createApplePayButton()).toBeTruthy();
+      const css = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: donate; -applepay-button-style: white`;
+      instance.applePayButtonProps['style'] = css;
+      const style = instance.createApplePayButton().getAttribute('style');
+      expect(style).toEqual(style);
     });
   });
 
   // given
   describe('Method addApplePayButton', () => {
     // then
-    it('', () => {
-      // const { instance } = ApplePayFixture();
+    it('should add Apple Pay button to DOM', () => {
+      const { instance } = ApplePayFixture();
+      instance.addApplePayButton();
+      const element = document.getElementById(instance.placement);
+      // expect(element).toBeTruthy();
     });
   });
 
   // given
   describe('Method ifApplePayButtonTextIsValid', () => {
     // then
-    it('', () => {
-      // const { instance } = ApplePayFixture();
+    it('should return false if text is not from list of available', () => {
+      const { instance } = ApplePayFixture();
+      expect(instance.ifApplePayButtonTextIsValid('click here to pay with apple pay')).toEqual(false);
+    });
+
+    // then
+    it('should return true if text is from list of available', () => {
+      const { instance } = ApplePayFixture();
+      expect(instance.ifApplePayButtonTextIsValid('donate')).toEqual(true);
     });
   });
 
   // given
   describe('Method ifApplePayButtonStyleIsValid', () => {
     // then
-    it('', () => {
-      // const { instance } = ApplePayFixture();
+    it('should return false if style is not from lst of available', () => {
+      const { instance } = ApplePayFixture();
+      expect(instance.ifApplePayButtonStyleIsValid('NavajoWhite')).toEqual(false);
     });
-  });
 
-  // given
-  describe('Method setApplePayVersion', () => {
     // then
-    it('', () => {
-      // const { instance } = ApplePayFixture();
+    it('should return true if style is from lst of available', () => {
+      const { instance } = ApplePayFixture();
+      expect(instance.ifApplePayButtonStyleIsValid('white')).toEqual(true);
     });
   });
 
   // given
   describe('Method applePayButtonClickHandler', () => {
     // then
-    it('', () => {
-      // const { instance } = ApplePayFixture();
+    it('should trigger paymentProcess method after click', () => {
+      const { instance } = ApplePayFixture();
+      // instance.applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
+      // document.getElementById(ApplePay.APPLE_PAY_BUTTON_ID).click();
+      // const spy = jest.spyOn(instance, 'paymentProcess');
+      // expect(spy).toHaveBeenCalled();
     });
   });
 
@@ -267,21 +277,25 @@ describe('Class Apple Pay', () => {
 });
 
 function ApplePayFixture() {
+  const html =
+    '<div class="st-animated-card" id="st-animated-card"> <div class="st-animated-card__content"> <div class="st-animated-card__side st-animated-card__front" id="st-animated-card-side-front"> <div class="st-animated-card__logos"> <div class="st-animated-card__chip-logo"> <img src="" alt="" id="st-chip-logo" /> </div> <div class="st-animated-card__payment-logo" id="st-animated-card-payment-logo"></div> </div> <div class="st-animated-card__pan"> <label class="st-animated-card__label">Card number</label> <div class="st-animated-card__value" id="st-animated-card-number"></div> </div> <div class="st-animated-card__expiration-date-and-security-code"> <div class="st-animated-card__expiration-date"> <label class="st-animated-card__label">Expiration date</label> <div class="st-animated-card__value" id="st-animated-card-expiration-date"></div> </div> <div class="st-animated-card__security-code st-animated-card__security-code--front st-animated-card__security-code--front-hidden" id="st-animated-card-security-code-front" > <label class="st-animated-card__label">Security code</label> <div class="st-animated-card__value" id="st-animated-card-security-code-front-field"></div> </div> </div> </div> <div class="st-animated-card__side st-animated-card__back" id="st-animated-card-side-back"> <div class="st-animated-card__signature"></div> <div class="st-animated-card__security-code" id="st-animated-card-security-code"></div> </div> </div> </div>';
+  document.body.innerHTML = html;
   const config = {
     name: 'APPLEPAY',
     props: {
       sitereference: 'test_site',
       paymentRequest: {
-        total: { label: 'Your Merchant Name', amount: '10.00' },
+        total: { label: 'Secure Trading Merchant', amount: '10.00' },
         countryCode: 'US',
         currencyCode: 'USD',
         merchantCapabilities: ['supports3DS', 'supportsCredit', 'supportsDebit'],
-        requiredBillingContactFields: ['postalAddress'],
-        requiredShippingContactFields: ['postalAddress', 'name', 'phone', 'email'],
-        supportedNetworks: ['visa', 'masterCard', 'amex', 'discover']
+        supportedNetworks: ['amex', 'visa']
       },
       merchantId: 'merchant.net.securetrading',
-      sitesecurity: 'gABC123DEFABC'
+      sitesecurity: 'gABC123DEFABC',
+      placement: 'st-apple-pay',
+      buttonText: 'donate',
+      buttonStyle: 'white-outline'
     }
   };
   const jwt =
