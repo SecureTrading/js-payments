@@ -13,10 +13,10 @@ class Language {
     COMMUNICATION_ERROR_TIMEOUT: 'Timeout',
     MERCHANT_VALIDATION_FAILURE: 'Merchant validation failure',
     NO_CARDS_IN_WALLET: 'You have no cards in your wallet',
-    PAYMENT_SUCCESS: 'Payment has been successfully proceeded',
-    PAYMENT_ERROR: 'An error occurred',
-    PAYMENT_WARNING: 'Payment has been canceled',
     PAYMENT_AUTHORIZED: 'Payment has been authorized',
+    PAYMENT_ERROR: 'An error occurred',
+    PAYMENT_SUCCESS: 'Payment has been successfully proceeded',
+    PAYMENT_WARNING: 'Payment has been canceled',
     VALIDATION_ERROR_CARD: 'Card number is invalid',
     VALIDATION_ERROR_CARD_AND_CODE: 'Security code does not match card number',
     VALIDATION_ERROR_FIELD_IS_EMPTY: 'Field is empty',
@@ -36,10 +36,10 @@ class Language {
     COMMUNICATION_ERROR_TIMEOUT: string;
     MERCHANT_VALIDATION_FAILURE: string;
     NO_CARDS_IN_WALLET: string;
-    PAYMENT_SUCCESS: string;
-    PAYMENT_ERROR: string;
-    PAYMENT_WARNING: string;
     PAYMENT_AUTHORIZED: string;
+    PAYMENT_ERROR: string;
+    PAYMENT_SUCCESS: string;
+    PAYMENT_WARNING: string;
     VALIDATION_ERROR_CARD: string;
     VALIDATION_ERROR_CARD_AND_CODE: string;
     VALIDATION_ERROR_FIELD_IS_REQUIRED: string;
