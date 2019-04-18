@@ -101,17 +101,11 @@ export default class ST {
     let visaCheckoutConfig = this._getAPMConfig(environment.APM_NAMES.VISA_CHECKOUT);
     let applePayConfig = this._getAPMConfig(environment.APM_NAMES.APPLE_PAY);
 
-    if (!environment.testEnvironment) {
-      if (applePayConfig) {
-        new ApplePayMock(applePayConfig, jwt);
-      }
-    } else {
-      if (applePayConfig) {
-        new ApplePay(applePayConfig, jwt);
-      }
-      if (visaCheckoutConfig) {
-        new VisaCheckout(visaCheckoutConfig, jwt);
-      }
+    if (applePayConfig) {
+      !environment.testEnvironment ? new ApplePayMock(applePayConfig, jwt) : new ApplePay(applePayConfig, jwt);
+    }
+    if (visaCheckoutConfig) {
+      new VisaCheckout(visaCheckoutConfig, jwt);
     }
   }
 
