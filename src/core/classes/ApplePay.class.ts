@@ -33,6 +33,7 @@ class ApplePay {
   set applePayButtonProps(value: any) {
     this._applePayButtonProps = value;
   }
+
   set jwt(value: string) {
     this._jwt = value;
   }

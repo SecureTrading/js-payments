@@ -1,3 +1,5 @@
+import Language from '../../../src/core/shared/Language';
+import MessageBus from '../../../src/core/shared/MessageBus';
 import ApplePay from './../../../src/core/classes/ApplePay.class';
 
 jest.mock('./../../../src/core/shared/MessageBus');
@@ -294,15 +296,58 @@ describe('Class Apple Pay', () => {
   // given
   describe('Method applePayProcess', () => {
     // then
-    it('', () => {
-      // const { instance } = ApplePayFixture();
+    it('should set notification if checkApplePayAvailability returns false', () => {
+      const { instance } = ApplePayFixture();
+      instance.checkApplePayAvailability = jest.fn().mockReturnValueOnce(false);
+      const spy = jest.spyOn(instance, 'setNotification');
+      instance.setNotification(
+        MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR,
+        Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE
+      );
+      expect(spy).toHaveBeenCalled();
+    });
+
+    // then
+    it('should call checkApplePayWalletCardAvailability if checkApplePayAvailability returns false', () => {
+      const { instance } = ApplePayFixture();
+      instance.checkApplePayAvailability = jest.fn().mockReturnValueOnce(true);
+      instance.checkApplePayWalletCardAvailability = jest.fn().mockReturnValueOnce(true);
+      const spy = jest.spyOn(instance, 'checkApplePayWalletCardAvailability');
+      instance.checkApplePayWalletCardAvailability();
+      expect(spy).toHaveBeenCalled();
+    });
+
+    // then
+    it('should call checkApplePayWalletCardAvailability and setNotification if checkApplePayAvailability returns true and canMakePayments returns false', () => {
+      const { instance } = ApplePayFixture();
+      instance.checkApplePayAvailability = jest.fn().mockReturnValueOnce(true);
+      instance.checkApplePayWalletCardAvailability = jest.fn().mockReturnValueOnce(true);
+      const spyNotification = jest.spyOn(instance, 'setNotification');
+      const spy = jest.spyOn(instance, 'checkApplePayWalletCardAvailability');
+      instance.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR, Language.translations.NO_CARDS_IN_WALLET);
+      instance.checkApplePayWalletCardAvailability();
+      expect(spy).toHaveBeenCalled();
+      expect(spyNotification).toHaveBeenCalled();
+    });
+
+    // then
+    it('should call checkApplePayWalletCardAvailability and applePayButtonClickHandler if checkApplePayAvailability returns true and canMakePayments returns true', () => {
+      const { instance } = ApplePayFixture();
+      instance.checkApplePayAvailability = jest.fn().mockReturnValueOnce(true);
+      instance.checkApplePayWalletCardAvailability = jest.fn().mockReturnValueOnce(true);
+      const spyHandler = jest.spyOn(instance, 'applePayButtonClickHandler');
+      const spy = jest.spyOn(instance, 'checkApplePayWalletCardAvailability');
+      instance.applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
+      instance.checkApplePayWalletCardAvailability();
+      expect(spy).toHaveBeenCalled();
+      expect(spyHandler).toHaveBeenCalled();
     });
   });
 });
 
 function ApplePayFixture() {
   const html =
-    '<div class="st-animated-card" id="st-animated-card"> <div class="st-animated-card__content"> <div class="st-animated-card__side st-animated-card__front" id="st-animated-card-side-front"> <div class="st-animated-card__logos"> <div class="st-animated-card__chip-logo"> <img src="" alt="" id="st-chip-logo" /> </div> <div class="st-animated-card__payment-logo" id="st-animated-card-payment-logo"></div> </div> <div class="st-animated-card__pan"> <label class="st-animated-card__label">Card number</label> <div class="st-animated-card__value" id="st-animated-card-number"></div> </div> <div class="st-animated-card__expiration-date-and-security-code"> <div class="st-animated-card__expiration-date"> <label class="st-animated-card__label">Expiration date</label> <div class="st-animated-card__value" id="st-animated-card-expiration-date"></div> </div> <div class="st-animated-card__security-code st-animated-card__security-code--front st-animated-card__security-code--front-hidden" id="st-animated-card-security-code-front" > <label class="st-animated-card__label">Security code</label> <div class="st-animated-card__value" id="st-animated-card-security-code-front-field"></div> </div> </div> </div> <div class="st-animated-card__side st-animated-card__back" id="st-animated-card-side-back"> <div class="st-animated-card__signature"></div> <div class="st-animated-card__security-code" id="st-animated-card-security-code"></div> </div> </div> </div>';
+    '<form id="st-form" class="example-form"> <h1 class="example-form__title"> Secure Trading<span>AMOUNT: <strong>10.00 GBP</strong></span> </h1> <div class="example-form__section example-form__section--horizontal"> <div class="example-form__group"> <label for="example-form-name" class="example-form__label example-form__label--required">NAME</label> <input id="example-form-name" class="example-form__input" type="text" placeholder="John Doe" autocomplete="name" /> </div> <div class="example-form__group"> <label for="example-form-email" class="example-form__label example-form__label--required">E-MAIL</label> <input id="example-form-email" class="example-form__input" type="email" placeholder="test@mail.com" autocomplete="email" /> </div> <div class="example-form__group"> <label for="example-form-phone" class="example-form__label example-form__label--required">PHONE</label> <input id="example-form-phone" class="example-form__input" type="tel" placeholder="+00 000 000 000" autocomplete="tel" /> </div> </div> <div class="example-form__spacer"></div> <div class="example-form__section"> <div id="st-notification-frame" class="example-form__group"></div> <div id="st-card-number" class="example-form__group"></div> <div id="st-expiration-date" class="example-form__group"></div> <div id="st-security-code" class="example-form__group"></div> <div id="st-error-container" class="example-form__group"></div> <div class="example-form__spacer"></div> </div> <div class="example-form__section"> <div class="example-form__group"> <button type="submit" class="example-form__button">PAY</button> </div> </div> <div class="example-form__section"> <div id="st-control-frame" class="example-form__group"></div> <div id="st-visa-checkout" class="example-form__group"></div> <div id="st-apple-pay" class="example-form__group"></div> </div> <div id="st-animated-card" class="st-animated-card-wrapper"></div> </form>';
   document.body.innerHTML = html;
   const config = {
     name: 'APPLEPAY',
