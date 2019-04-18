@@ -1,6 +1,7 @@
 import { environment } from '../environments/environment';
 import Element from './Element';
-import CardinalCommerce from './classes/CardinalCommerce';
+import CardinalCommerce from './integrations/CardinalCommerce';
+import CardinalCommerceMock from './integrations/CardinalCommerceMock';
 import VisaCheckout from './classes/VisaCheckout';
 import MessageBus from './shared/MessageBus';
 import Selectors from './shared/Selectors';
@@ -92,7 +93,7 @@ export default class ST {
   }
 
   private _init3DSecure() {
-    new CardinalCommerce();
+    environment.testEnvironment ? new CardinalCommerceMock() : new CardinalCommerce();
   }
 
   private _initWallets(jwt: string) {

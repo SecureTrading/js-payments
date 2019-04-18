@@ -1,5 +1,5 @@
 import { environment } from '../../environments/environment';
-import DomMethods from './../shared/DomMethods';
+import DomMethods from '../shared/DomMethods';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
 
@@ -87,7 +87,7 @@ export default class CardinalCommerce {
   }
 
   private _threeDSetup() {
-    DomMethods.insertScript('head', environment.SONGBIRD_URL).addEventListener('load', () => {
+    DomMethods.insertScript('head', environment.CARDINAL_COMMERCE.SONGBIRD_URL).addEventListener('load', () => {
       this._onCardinalLoad();
     });
   }
@@ -95,10 +95,10 @@ export default class CardinalCommerce {
   /**
    * Initiate configuration of Cardinal Commerce
    * Initialize Cardinal Commerce mechanism with given JWT (by merchant).
-   * @private
+   * @protected
    */
-  private _onCardinalLoad() {
-    Cardinal.configure(environment.CARDINAL_COMMERCE_CONFIG);
+  protected _onCardinalLoad() {
+    Cardinal.configure(environment.CARDINAL_COMMERCE.CONFIG);
     Cardinal.setup(CardinalCommerce.PAYMENT_EVENTS.INIT, {
       jwt: this._cardinalCommerceJWT
     });
@@ -126,9 +126,9 @@ export default class CardinalCommerce {
 
   /**
    * Triggered when the transaction has been finished.
-   * @private
+   * @protected
    */
-  private _onCardinalValidated(data: any, jwt: any) {
+  protected _onCardinalValidated(data: any, jwt: any) {
     // @TODO: handle all errors - part of STJS-25
     if (data.ActionCode === 'SUCCESS') {
       this._authorizePayment(jwt);
@@ -153,9 +153,9 @@ export default class CardinalCommerce {
    * Handles continue action from Cardinal Commerce, retrieve overlay with iframe which target is on AcsUrl
    * and handles the rest of process.
    * Cardinal.continue(PAYMENT_BRAND, CONTINUE_DATA, ORDER_OBJECT, NEW_JWT)
-   * @private
+   * @protected
    */
-  private _authenticateCard(responseObject: ThreeDQueryResponse) {
+  protected _authenticateCard(responseObject: ThreeDQueryResponse) {
     Cardinal.continue(
       CardinalCommerce.PAYMENT_BRAND,
       {
