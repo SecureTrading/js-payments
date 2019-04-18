@@ -249,9 +249,45 @@ describe('Class Apple Pay', () => {
 
   // given
   describe('Method paymentProcess', () => {
+    let sessionObjectFake: object;
+    beforeEach(() => {
+      sessionObjectFake = {};
+    });
+
     // then
-    it('', () => {
-      // const { instance } = ApplePayFixture();
+    it('should onValidateMerchantRequest has been called', () => {
+      const { instance } = ApplePayFixture();
+      instance.session = sessionObjectFake;
+      const spy = jest.spyOn(instance, 'onValidateMerchantRequest');
+      instance.onValidateMerchantRequest();
+      expect(spy).toHaveBeenCalled();
+    });
+
+    // then
+    it('should subscribeStatusHandlers has been called', () => {
+      const { instance } = ApplePayFixture();
+      instance.session = sessionObjectFake;
+      const spy = jest.spyOn(instance, 'subscribeStatusHandlers');
+      instance.subscribeStatusHandlers();
+      expect(spy).toHaveBeenCalled();
+    });
+
+    // then
+    it('should onPaymentAuthorized has been called', () => {
+      const { instance } = ApplePayFixture();
+      instance.session = sessionObjectFake;
+      const spy = jest.spyOn(instance, 'onPaymentAuthorized');
+      instance.onPaymentAuthorized();
+      expect(spy).toHaveBeenCalled();
+    });
+
+    // then
+    it('should onPaymentCanceled has been called', () => {
+      const { instance } = ApplePayFixture();
+      instance.session = sessionObjectFake;
+      const spy = jest.spyOn(instance, 'onPaymentCanceled');
+      instance.onPaymentCanceled();
+      expect(spy).toHaveBeenCalled();
     });
   });
 
