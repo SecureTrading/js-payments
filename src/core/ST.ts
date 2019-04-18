@@ -1,8 +1,9 @@
 import { environment } from '../environments/environment';
-import ApplePay from './classes/ApplePay.class';
+import ApplePay from './integrations/ApplePay.class';
 import Element from './Element';
 import CardinalCommerce from './classes/CardinalCommerce';
 import VisaCheckout from './classes/VisaCheckout';
+import ApplePayMock from './integrations/ApplePayMock.class';
 import MessageBus from './shared/MessageBus';
 import Selectors from './shared/Selectors';
 import { Styles } from './shared/Styler';
@@ -100,11 +101,17 @@ export default class ST {
     let visaCheckoutConfig = this._getAPMConfig(environment.APM_NAMES.VISA_CHECKOUT);
     let applePayConfig = this._getAPMConfig(environment.APM_NAMES.APPLE_PAY);
 
-    if (applePayConfig) {
-      new ApplePay(applePayConfig, jwt);
-    }
-    if (visaCheckoutConfig) {
-      new VisaCheckout(visaCheckoutConfig, jwt);
+    if (!environment.testEnvironment) {
+      if (applePayConfig) {
+        new ApplePayMock(applePayConfig, jwt);
+      }
+    } else {
+      if (applePayConfig) {
+        new ApplePay(applePayConfig, jwt);
+      }
+      if (visaCheckoutConfig) {
+        new VisaCheckout(visaCheckoutConfig, jwt);
+      }
     }
   }
 

@@ -2,9 +2,8 @@ import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
-import DomMethods from './../shared/DomMethods';
-import StTransport from './../classes/StTransport.class';
-import { environment } from '../../environments/environment';
+import DomMethods from '../shared/DomMethods';
+import StTransport from '../classes/StTransport.class';
 
 const ApplePaySession = (window as any).ApplePaySession;
 
@@ -31,10 +30,6 @@ class ApplePay {
     return this._applePayButtonProps;
   }
 
-  set applePayButtonProps(value: any) {
-    this._applePayButtonProps = value;
-  }
-
   set jwt(value: string) {
     this._jwt = value;
   }
@@ -50,8 +45,6 @@ class ApplePay {
   public messageBus: MessageBus;
   public paymentRequest: any;
   public placement: string;
-  public requiredBillingContactFields: []; // ???
-  public requiredShippingContactFields: []; // ???
   public session: any;
   public sitereference: string; // ???
   public sitesecurity: string; // ???
@@ -110,58 +103,6 @@ class ApplePay {
     this.stTransportInstance = new StTransport({ jwt });
     this.messageBus = new MessageBus();
     this.onInit(buttonText, buttonStyle);
-    if (environment.testEnvironment) {
-      this.attachMockButton();
-      this._setActionOnMockedButton();
-    } else {
-      this._onInit(buttonText, buttonStyle);
-    }
-  }
-
-  /** MOCK FUNCTIONS */
-  public attachMockButton() {
-    DomMethods.appendChildIntoDOM(this.placement, this._createMockButton());
-  }
-
-  public _createMockButton = () =>
-    DomMethods.createHtmlElement.apply(this, [
-      { src: environment.APPLE_PAY_URLS.BUTTON_IMAGE, id: 'applePayButton' },
-      'img'
-    ]);
-
-  /**
-   * Sets action on appended mocked Visa Checkout button
-   * @private
-   */
-  private _setActionOnMockedButton() {
-    DomMethods.addListener('applePayButton', 'click', () => {
-      this._setMockedData().then(() => {
-        this._proceedFlowWithMockedData();
-      });
-    });
-  }
-  /**
-   * Retrieves data from mocked data endpoint
-   * @private
-   */
-  private _setMockedData() {
-    return fetch(environment.VISA_CHECKOUT_URLS.MOCK_DATA_URL)
-      .then((response: any) => {
-        return response.json();
-      })
-      .then((data: any) => {
-        //this.paymentDetails = data.payment;
-        //this.paymentStatus = data.status;
-        //return this.paymentDetails;
-      });
-  }
-
-  /**
-   * Proceeds payment flow with mocked data
-   * @private
-   */
-  private _proceedFlowWithMockedData() {
-    this.setNotification('payment status', 'response');
   }
 
   /**

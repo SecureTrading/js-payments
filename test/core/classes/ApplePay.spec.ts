@@ -1,7 +1,7 @@
 const getType = require('jest-get-type');
 import Language from '../../../src/core/shared/Language';
 import MessageBus from '../../../src/core/shared/MessageBus';
-import ApplePay from './../../../src/core/classes/ApplePay.class';
+import ApplePay from '../../../src/core/integrations/ApplePay.class';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 
