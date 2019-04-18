@@ -7,7 +7,7 @@ import MessageBus from './shared/MessageBus';
 import Selectors from './shared/Selectors';
 import { Styles } from './shared/Styler';
 
-/***
+/**
  * Establishes connection with ST, defines client.
  */
 export default class ST {
