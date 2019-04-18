@@ -236,16 +236,27 @@ describe('Class Apple Pay', () => {
   // given
   describe('Method subscribeStatusHandlers', () => {
     // then
-    it('', () => {
-      // const { instance } = ApplePayFixture();
+    it('should set onpaymentmethodselected handler', () => {
+      const { instance } = ApplePayFixture();
+    });
+
+    // then
+    it('should set onpaymentmethodselected handler', () => {
+      const { instance } = ApplePayFixture();
     });
   });
 
   // given
   describe('Method setNotification', () => {
     // then
-    it('', () => {
-      // const { instance } = ApplePayFixture();
+    it('should publishFromParent has been called', () => {
+      const { instance } = ApplePayFixture();
+      const spy = jest.spyOn(instance.messageBus, 'publishFromParent');
+      instance.setNotification(
+        MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR,
+        Language.translations.MERCHANT_VALIDATION_FAILURE
+      );
+      expect(spy).toHaveBeenCalled();
     });
   });
 
