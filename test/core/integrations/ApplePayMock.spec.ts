@@ -1,5 +1,7 @@
 import ApplePayMock from './../../../src/core/integrations/ApplePayMock.class';
 
+jest.mock('./../../../src/core/shared/MessageBus');
+
 // given
 describe('Class ApplePayMock', () => {
   // given
@@ -10,23 +12,46 @@ describe('Class ApplePayMock', () => {
     let setActionOnMockedButtonSpy: any;
     beforeEach(() => {
       instance = applePayMockFixture().instance;
+      instance.ifApplePayIsAvailable = jest.fn().mockReturnValueOnce(true);
+      instance.ifBrowserSupportsApplePayVersion = jest.fn().mockReturnValueOnce(true);
       attachMockButtonSpy = jest.spyOn(instance, '_attachMockButton');
+      setActionOnMockedButtonSpy = jest.spyOn(instance, '_setActionOnMockedButton');
     });
 
-    //then
+    // then
     it('should _attachMockButton been called', () => {
       instance._onMockInit();
       expect(attachMockButtonSpy).toHaveBeenCalled();
+    });
+
+    // then
+    it('should _setActionOnMockedButton been called', () => {
+      instance._onMockInit();
+      expect(setActionOnMockedButtonSpy).toHaveBeenCalled();
     });
   });
 
   // given
   describe('_attachMockButton', () => {
     // when
-    beforeEach(() => {});
+    let instance: any;
+    let createMockedButtonSpy: any;
+    beforeEach(() => {
+      instance = applePayMockFixture().instance;
+      createMockedButtonSpy = jest.spyOn(instance, '_createMockedButton');
+    });
 
-    //then
-    it('should ...', () => {});
+    // then
+    it('should _createMockedButton been called', () => {
+      instance._attachMockButton();
+      expect(createMockedButtonSpy).toHaveBeenCalled();
+    });
+
+    // then
+    it('should button be attached', () => {
+      const button = document.getElementById('st-apple-pay');
+      expect(button).toBeTruthy();
+    });
   });
 
   // given
@@ -35,7 +60,7 @@ describe('Class ApplePayMock', () => {
     beforeEach(() => {});
 
     //then
-    it('should ...', () => {});
+    it('should ', () => {});
   });
 
   // given

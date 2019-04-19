@@ -42,6 +42,7 @@ class ApplePay {
   public buttonText: string;
   public buttonStyle: string;
   public merchantId: string;
+  public merchantSession: any;
   public messageBus: MessageBus;
   public paymentRequest: any;
   public placement: string;
@@ -278,7 +279,22 @@ class ApplePay {
   public onPaymentAuthorized() {
     this.session.onpaymentauthorized = (event: any) => {
       this.session.completePayment({ status: ApplePaySession.STATUS_SUCCESS, errors: [] });
-      this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_SUCCESS, Language.translations.PAYMENT_AUTHORIZED);
+      this.stTransportInstance
+        .sendRequest({
+          requesttypedescription: 'AUTH',
+          ...this.paymentRequest,
+          wallettoken: this.merchantSession,
+          walletsource: this.validateMerchantRequestData.walletsource,
+          walletmerchantid: this.validateMerchantRequestData.walletmerchantid,
+          walletvalidationurl: this.validateMerchantRequestData.walletvalidationurl,
+          walletrequestdomain: this.validateMerchantRequestData.walletrequestdomain
+        })
+        .then(() => {
+          this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_SUCCESS, Language.translations.PAYMENT_AUTHORIZED);
+        })
+        .catch(() => {
+          this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR, Language.translations.PAYMENT_ERROR);
+        });
     };
   }
 
@@ -298,9 +314,9 @@ class ApplePay {
   public onValidateMerchantResponseSuccess(response: any) {
     const { walletsession } = response;
     if (walletsession) {
-      const merchantSession = JSON.parse(walletsession);
-      this.validateMerchantRequestData.walletmerchantid = merchantSession.merchantIdentifier;
-      this.session.completeMerchantValidation(merchantSession);
+      this.merchantSession = JSON.parse(walletsession);
+      this.validateMerchantRequestData.walletmerchantid = this.merchantSession.merchantIdentifier;
+      this.session.completeMerchantValidation(this.merchantSession);
     } else {
       this.onValidateMerchantResponseFailure(response.requestid);
     }
@@ -325,7 +341,7 @@ class ApplePay {
     this.session.onpaymentmethodselected = (event: any) => {
       const { paymentMethod } = event;
       this.session.completePaymentMethodSelection({
-        newTotal: { label: this.paymentRequest.total.label, amount: this.paymentRequest.total.amount, type: 'final' } // what is type ??
+        newTotal: { label: this.paymentRequest.total.label, amount: this.paymentRequest.total.amount, type: 'final' }
       });
     };
 
