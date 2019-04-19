@@ -49,7 +49,7 @@ describe('Class ApplePayMock', () => {
 
     // then
     it('should button be attached', () => {
-      const button = document.getElementById('st-apple-pay');
+      const button = document.getElementById('st-apple-pay-mock');
       expect(button).toBeTruthy();
     });
   });
