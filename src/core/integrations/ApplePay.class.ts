@@ -52,12 +52,12 @@ class ApplePay {
   public stJwtInstance: StJwt;
   public stTransportInstance: StTransport;
 
-  protected static APPLE_PAY_BUTTON_ID: string = 'st-apple-pay';
+  public static APPLE_PAY_BUTTON_ID: string = 'st-apple-pay';
   private static APPLE_PAY_MIN_VERSION: number = 2;
   private static APPLE_PAY_MAX_VERSION: number = 5;
-  private static AVAILABLE_BUTTON_STYLES = ['black', 'white', 'white-outline'];
-  private static AVAILABLE_BUTTON_TEXTS = ['plain', 'buy', 'book', 'donate', 'check-out', 'subscribe'];
-  private static BASIC_SUPPORTED_NETWORKS = [
+  public static AVAILABLE_BUTTON_STYLES = ['black', 'white', 'white-outline'];
+  public static AVAILABLE_BUTTON_TEXTS = ['plain', 'buy', 'book', 'donate', 'check-out', 'subscribe'];
+  public static BASIC_SUPPORTED_NETWORKS = [
     'amex',
     'chinaUnionPay',
     'discover',
@@ -67,14 +67,14 @@ class ApplePay {
     'privateLabel',
     'visa'
   ];
-  private static VERSION_3_4_SUPPORTED_NETWORKS = ApplePay.BASIC_SUPPORTED_NETWORKS.concat([
+  public static VERSION_3_4_SUPPORTED_NETWORKS = ApplePay.BASIC_SUPPORTED_NETWORKS.concat([
     'cartesBancaires',
     'eftpos',
     'electron',
     'maestro',
     'vPay'
   ]);
-  private static VERSION_5_SUPPORTED_NETWORKS = ApplePay.BASIC_SUPPORTED_NETWORKS.concat(['elo', 'mada']);
+  public static VERSION_5_SUPPORTED_NETWORKS = ApplePay.BASIC_SUPPORTED_NETWORKS.concat(['elo', 'mada']);
   private _jwt: string;
   private _applePayButtonProps: any = {};
 
