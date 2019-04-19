@@ -237,7 +237,6 @@ class VisaCheckout {
   private _paymentStatusHandler() {
     V.on(VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.SUCCESS, (payment: object) => {
       this.paymentDetails = payment;
-      console.log(JSON.stringify(payment));
       this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
       this.getResponseMessage(this.paymentStatus);
       this._stTransport
