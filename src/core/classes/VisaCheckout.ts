@@ -1,9 +1,11 @@
 declare const V: any;
 import { environment } from '../../environments/environment';
+import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import DomMethods from './../shared/DomMethods';
 import Language from './../shared/Language';
+import StTransport from './StTransport.class';
 
 /**
  *  Visa Checkout configuration class; sets up Visa e-wallet
@@ -55,6 +57,7 @@ class VisaCheckout {
   private _livestatus: number = 0;
   private _placement: string = 'body';
   private _buttonSettings: any;
+  private _stTransport: StTransport;
 
   /**
    * Init configuration (temporary with some test data).
@@ -80,6 +83,7 @@ class VisaCheckout {
         props: { apikey, livestatus, placement, settings, paymentRequest, buttonSettings }
       } = config;
       const stJwt = new StJwt(jwt);
+      this._stTransport = new StTransport({ jwt: jwt });
       this._livestatus = livestatus;
       this._placement = placement;
       this._setInitConfiguration(paymentRequest, settings, stJwt, apikey);
@@ -233,9 +237,25 @@ class VisaCheckout {
   private _paymentStatusHandler() {
     V.on(VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.SUCCESS, (payment: object) => {
       this.paymentDetails = payment;
+      console.log(JSON.stringify(payment));
       this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
       this.getResponseMessage(this.paymentStatus);
-      this.setNotification(this.paymentStatus, this.responseMessage);
+      this._stTransport
+        .sendRequest({
+          requesttypedescription: 'AUTH',
+          // @ts-ignore
+          encpaymentdata: payment.encPaymentData
+        })
+        .then((response: object) => {
+          return response;
+        })
+        .then((data: object) => {
+          this.setNotification(MessageBus.EVENTS.NOTIFICATION_SUCCESS, this.responseMessage);
+          return data;
+        })
+        .catch(() => {
+          this.setNotification(MessageBus.EVENTS.NOTIFICATION_ERROR, this.responseMessage);
+        });
     });
     V.on(VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.ERROR, () => {
       this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
