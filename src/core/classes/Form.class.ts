@@ -49,6 +49,9 @@ class Form {
     this.registerElements(this.elementsToRegister, this.elementsTargets);
   }
 
+  /**
+   * Inits credit card and animated card fields (if merchant wanted this type of payment)
+   */
   public initCardFields() {
     const cardNumber = new Element();
     const expirationDate = new Element();
@@ -71,6 +74,9 @@ class Form {
     this.elementsToRegister.push(this.animatedCardMounted);
   }
 
+  /**
+   * Inits necessary fields - notification and control frame
+   */
   public initFormFields() {
     const notificationFrame = new Element();
     const controlFrame = new Element();
