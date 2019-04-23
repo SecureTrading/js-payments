@@ -1,7 +1,8 @@
 export const environment = {
   production: false,
   testEnvironment: false,
-  FRAME_URL: 'https://10.10.31.72:8443/',
+  // @ts-ignore
+  FRAME_URL: `https://${HOST}:8443`,
   GATEWAY_URL: 'https://webservices.securetrading.net/jwt/',
   SONGBIRD_URL: 'https://songbirdstag.cardinalcommerce.com/cardinalcruise/v1/songbird.js',
   CARDINAL_COMMERCE_CONFIG: {
