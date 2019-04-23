@@ -16,6 +16,7 @@ export default class ST {
   private readonly styles: Styles;
   private readonly wallets: object[];
   private messageBusInstance: MessageBus;
+  private messageBusEvent: MessageBusEvent;
 
   constructor(jwt: string, origin: string, onlyWallets: boolean, fieldsIds: any, styles: Styles, wallets: object[]) {
     this.jwt = jwt;
@@ -24,10 +25,13 @@ export default class ST {
     this.fieldsIds = fieldsIds;
     this.styles = styles;
     this.wallets = wallets;
-    this.messageBusInstance = new MessageBus();
     this._onInit();
   }
 
+  /**
+   * Starts library initialization
+   * @private
+   */
   private _onInit() {
     this._initForm();
     this._initWallets();
@@ -35,15 +39,34 @@ export default class ST {
     this._setFormListener();
   }
 
+  /**
+   * Inits Cardinal Commerce
+   * @private
+   */
   private static _init3DSecure = () => new CardinalCommerce();
+
+  /**
+   * Inits form fields
+   * @private
+   */
   private _initForm = () => new Form(this.jwt, this.origin, this.onlyWallets, this.fieldsIds, this.styles);
+
+  /**
+   * Inits Alternative Payment Methods
+   * @private
+   */
   private _initWallets = () => new Wallet(this.jwt, this.wallets);
 
+  /**
+   * Sets submit listener on form
+   * @private
+   */
   private _setFormListener() {
+    this.messageBusEvent = { type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM };
+    this.messageBusInstance = new MessageBus();
     document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).addEventListener('submit', (event: Event) => {
       event.preventDefault();
-      const messageBusEvent: MessageBusEvent = { type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM };
-      this.messageBusInstance.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+      this.messageBusInstance.publishFromParent(this.messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
     });
   }
 }

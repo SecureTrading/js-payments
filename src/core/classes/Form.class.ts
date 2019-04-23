@@ -2,13 +2,10 @@ import Element from '../Element';
 import Selectors from '../shared/Selectors';
 import { Styles } from '../shared/Styler';
 
+/**
+ * Defines all elements of form and their  placement on merchant site.
+ */
 class Form {
-  private cardNumberMounted: HTMLElement;
-  private expirationDateMounted: HTMLElement;
-  private securityCodeMounted: HTMLElement;
-  private animatedCardMounted: HTMLElement;
-  private notificationFrameMounted: HTMLElement;
-  private controlFrameMounted: HTMLElement;
   public styles: Styles;
   public onlyWallets: boolean;
   public elementsToRegister: HTMLElement[];
@@ -16,20 +13,36 @@ class Form {
   public fieldsIds: any;
   public jwt: any;
   public origin: any;
+  private cardNumberMounted: HTMLElement;
+  private expirationDateMounted: HTMLElement;
+  private securityCodeMounted: HTMLElement;
+  private animatedCardMounted: HTMLElement;
+  private notificationFrameMounted: HTMLElement;
+  private controlFrameMounted: HTMLElement;
+  private cardNumber: Element;
+  private expirationDate: Element;
+  private securityCode: Element;
+  private animatedCard: Element;
+  private notificationFrame: Element;
+  private controlFrame: Element;
 
   constructor(jwt: any, origin: any, onlyWallets: boolean, fieldsIds: [], styles: Styles) {
     this.styles = styles;
     this.onlyWallets = onlyWallets;
     this.fieldsIds = fieldsIds;
-    this.elementsTargets = this.getElementsFields(onlyWallets);
+    this.elementsTargets = this.setElementsFields(onlyWallets);
     this.elementsToRegister = [];
     this.jwt = jwt;
     this.origin = origin;
     this._onInit();
   }
 
-  public getElementsFields(onlyWallets: boolean) {
-    return onlyWallets
+  /**
+   * Defines form elements if merchant chooses only apms or not
+   * @param onlyWallets
+   */
+  public setElementsFields = (onlyWallets: boolean) =>
+    onlyWallets
       ? [this.fieldsIds.notificationFrame, this.fieldsIds.controlFrame]
       : [
           this.fieldsIds.cardNumber,
@@ -39,7 +52,6 @@ class Form {
           this.fieldsIds.notificationFrame,
           this.fieldsIds.controlFrame
         ];
-  }
 
   public _onInit() {
     if (!this.onlyWallets) {
@@ -53,24 +65,25 @@ class Form {
    * Inits credit card and animated card fields (if merchant wanted this type of payment)
    */
   public initCardFields() {
-    const cardNumber = new Element();
-    const expirationDate = new Element();
-    const securityCode = new Element();
-    const animatedCard = new Element();
-    cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, this.styles);
-    this.cardNumberMounted = cardNumber.mount(Selectors.CARD_NUMBER_IFRAME);
+    this.cardNumber = new Element();
+    this.expirationDate = new Element();
+    this.securityCode = new Element();
+    this.animatedCard = new Element();
+
+    this.cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, this.styles);
+    this.cardNumberMounted = this.cardNumber.mount(Selectors.CARD_NUMBER_IFRAME);
     this.elementsToRegister.push(this.cardNumberMounted);
 
-    expirationDate.create(Selectors.EXPIRATION_DATE_COMPONENT_NAME, this.styles);
-    this.expirationDateMounted = expirationDate.mount(Selectors.EXPIRATION_DATE_IFRAME);
+    this.expirationDate.create(Selectors.EXPIRATION_DATE_COMPONENT_NAME, this.styles);
+    this.expirationDateMounted = this.expirationDate.mount(Selectors.EXPIRATION_DATE_IFRAME);
     this.elementsToRegister.push(this.expirationDateMounted);
 
-    securityCode.create(Selectors.SECURITY_CODE_COMPONENT_NAME, this.styles);
-    this.securityCodeMounted = securityCode.mount(Selectors.SECURITY_CODE_IFRAME);
+    this.securityCode.create(Selectors.SECURITY_CODE_COMPONENT_NAME, this.styles);
+    this.securityCodeMounted = this.securityCode.mount(Selectors.SECURITY_CODE_IFRAME);
     this.elementsToRegister.push(this.securityCodeMounted);
 
-    animatedCard.create(Selectors.ANIMATED_CARD_COMPONENT_NAME);
-    this.animatedCardMounted = animatedCard.mount(Selectors.ANIMATED_CARD_COMPONENT_FRAME);
+    this.animatedCard.create(Selectors.ANIMATED_CARD_COMPONENT_NAME);
+    this.animatedCardMounted = this.animatedCard.mount(Selectors.ANIMATED_CARD_COMPONENT_FRAME);
     this.elementsToRegister.push(this.animatedCardMounted);
   }
 
@@ -78,15 +91,18 @@ class Form {
    * Inits necessary fields - notification and control frame
    */
   public initFormFields() {
-    const notificationFrame = new Element();
-    const controlFrame = new Element();
+    this.notificationFrame = new Element();
+    this.controlFrame = new Element();
 
-    notificationFrame.create(Selectors.NOTIFICATION_FRAME_COMPONENT_NAME, this.styles);
-    this.notificationFrameMounted = notificationFrame.mount(Selectors.NOTIFICATION_FRAME_IFRAME);
+    this.notificationFrame.create(Selectors.NOTIFICATION_FRAME_COMPONENT_NAME, this.styles);
+    this.notificationFrameMounted = this.notificationFrame.mount(Selectors.NOTIFICATION_FRAME_IFRAME);
     this.elementsToRegister.push(this.notificationFrameMounted);
 
-    controlFrame.create(Selectors.CONTROL_FRAME_COMPONENT_NAME, this.styles, { jwt: this.jwt, origin: this.origin });
-    this.controlFrameMounted = controlFrame.mount(Selectors.CONTROL_FRAME_IFRAME);
+    this.controlFrame.create(Selectors.CONTROL_FRAME_COMPONENT_NAME, this.styles, {
+      jwt: this.jwt,
+      origin: this.origin
+    });
+    this.controlFrameMounted = this.controlFrame.mount(Selectors.CONTROL_FRAME_IFRAME);
     this.elementsToRegister.push(this.controlFrameMounted);
   }
 
