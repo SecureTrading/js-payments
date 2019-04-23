@@ -1,6 +1,9 @@
 import { environment } from '../../environments/environment';
-import VisaCheckout from './VisaCheckout';
+import VisaCheckout from '../integrations/VisaCheckout';
 
+/**
+ * Sets Alternative Payment Methods available in Secure Trading and defined by merchant
+ */
 class Wallet {
   private jwt: string;
   private wallets: any;

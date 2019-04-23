@@ -1,4 +1,4 @@
-import CardinalCommerce from '../../../src/core/classes/CardinalCommerce';
+import CardinalCommerce from '../../../src/core/integrations/CardinalCommerce';
 
 // given
 describe('Class CCIntegration', () => {

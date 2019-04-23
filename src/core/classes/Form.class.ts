@@ -1,4 +1,5 @@
 import Element from '../Element';
+import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
 import { Styles } from '../shared/Styler';
 
@@ -25,6 +26,8 @@ class Form {
   private animatedCard: Element;
   private notificationFrame: Element;
   private controlFrame: Element;
+  private messageBusInstance: MessageBus;
+  private messageBusEvent: MessageBusEvent;
 
   constructor(jwt: any, origin: any, onlyWallets: boolean, fieldsIds: [], styles: Styles) {
     this.styles = styles;
@@ -56,6 +59,7 @@ class Form {
   public _onInit() {
     if (!this.onlyWallets) {
       this.initCardFields();
+      this._setFormListener();
     }
     this.initFormFields();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
@@ -115,6 +119,19 @@ class Form {
     targets.map((item, index) => {
       const itemToChange = document.getElementById(item);
       itemToChange.appendChild(fields[index]);
+    });
+  }
+
+  /**
+   * Sets submit listener on form
+   * @private
+   */
+  private _setFormListener() {
+    this.messageBusEvent = { type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM };
+    this.messageBusInstance = new MessageBus();
+    document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).addEventListener('submit', (event: Event) => {
+      event.preventDefault();
+      this.messageBusInstance.publishFromParent(this.messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
     });
   }
 }
