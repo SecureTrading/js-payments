@@ -1,5 +1,6 @@
 import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
+import { NotificationEvent, NotificationType } from '../models/NotificationEvent';
 import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import DomMethods from './../shared/DomMethods';
@@ -227,10 +228,7 @@ class ApplePay {
       this.paymentRequest.total.amount = this.stJwtInstance.mainamount;
       this.paymentRequest.currencyCode = this.stJwtInstance.currencyiso3a;
     } else {
-      this.setNotification(
-        MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR,
-        Language.translations.APPLE_PAY_AMOUNT_AND_CURRENCY
-      );
+      this.setNotification(NotificationType.Error, Language.translations.APPLE_PAY_AMOUNT_AND_CURRENCY);
     }
     return this.paymentRequest;
   }
@@ -252,7 +250,7 @@ class ApplePay {
       this.addApplePayButton();
       this.applePayProcess();
     } else {
-      this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR, Language.translations.APPLE_PAY_ONLY_ON_IOS);
+      this.setNotification(NotificationType.Error, Language.translations.APPLE_PAY_ONLY_ON_IOS);
     }
   }
 
@@ -271,7 +269,7 @@ class ApplePay {
         .catch(error => {
           const { errorcode, errormessage } = error;
           this.onValidateMerchantResponseFailure(error);
-          this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR, `${errorcode}: ${errormessage}`);
+          this.setNotification(NotificationType.Error, `${errorcode}: ${errormessage}`);
         });
     };
   }
@@ -282,7 +280,7 @@ class ApplePay {
   public onPaymentAuthorized() {
     this.session.onpaymentauthorized = (event: any) => {
       this.session.completePayment({ status: ApplePaySession.STATUS_SUCCESS, errors: [] });
-      this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_SUCCESS, Language.translations.PAYMENT_AUTHORIZED);
+      this.setNotification(NotificationType.Success, Language.translations.PAYMENT_AUTHORIZED);
     };
   }
 
@@ -291,7 +289,7 @@ class ApplePay {
    */
   public onPaymentCanceled() {
     this.session.oncancel = (event: any) => {
-      this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_WARNING, Language.translations.PAYMENT_WARNING);
+      this.setNotification(NotificationType.Warning, Language.translations.PAYMENT_WARNING);
     };
   }
 
@@ -316,10 +314,7 @@ class ApplePay {
    */
   public onValidateMerchantResponseFailure(error: any) {
     this.session.abort();
-    this.setNotification(
-      MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR,
-      Language.translations.MERCHANT_VALIDATION_FAILURE
-    );
+    this.setNotification(NotificationType.Error, Language.translations.MERCHANT_VALIDATION_FAILURE);
   }
 
   /**
@@ -354,9 +349,13 @@ class ApplePay {
    * @param content
    */
   public setNotification(type: string, content: string) {
-    let messageBusEvent: MessageBusEvent = {
+    let notificationEvent: NotificationEvent = {
       type: type,
-      data: content
+      content: content
+    };
+    let messageBusEvent: MessageBusEvent = {
+      type: MessageBus.EVENTS_PUBLIC.NOTIFICATION,
+      data: notificationEvent
     };
     this.messageBus.publishFromParent(messageBusEvent, Selectors.NOTIFICATION_FRAME_IFRAME);
   }
@@ -382,14 +381,11 @@ class ApplePay {
         if (canMakePayments) {
           this.applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
         } else {
-          this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR, Language.translations.NO_CARDS_IN_WALLET);
+          this.setNotification(NotificationType.Error, Language.translations.NO_CARDS_IN_WALLET);
         }
       });
     } else {
-      this.setNotification(
-        MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR,
-        Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE
-      );
+      this.setNotification(NotificationType.Error, Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE);
     }
   }
 }
