@@ -8,15 +8,7 @@ import DomMethods from '../shared/DomMethods';
  * Mocked version of Apple Pay setting test environment for Apple Pay automated tests.
  */
 class ApplePayMock extends ApplePay {
-  public paymentDetails: {
-    errorcode: '0';
-    errormessage: 'Ok';
-    requestid: 'J-3bhw30gu';
-    requesttypedescription: 'WALLETVERIFY';
-    transactionstartedtimestamp: '2019-04-18 12:11:26';
-    walletsession: '{"epochTimestamp":1555589486829,"expiresAt":1555593086829,"merchantSessionIdentifier":"SSH54A9E73B26674B71A27E44E4BC07E22B_916523AAED1343F5B…';
-    walletsource: 'APPLEPAY';
-  };
+  public paymentDetails: object;
 
   public paymentDetailsError: {
     errorcode: '3000';
@@ -64,7 +56,7 @@ class ApplePayMock extends ApplePay {
   private _setActionOnMockedButton() {
     DomMethods.addListener('st-apple-pay-mock', 'click', () => {
       this._getWalletverifyData().then((data: any) => {
-        console.log(data);
+        this.paymentDetails = data;
         this._proceedFlowWithMockedData();
       });
     });
@@ -90,11 +82,13 @@ class ApplePayMock extends ApplePay {
    * @private
    */
   private _proceedFlowWithMockedData() {
+    // @ts-ignore
     if (this.paymentDetails.walletsession) {
       this.onValidateMerchantResponseSuccess(this.paymentDetails);
       this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_SUCCESS, 'response');
       this._mockedPaymentAuthorization();
     } else {
+      // @ts-ignore
       const { errorcode, errormessage } = this.paymentDetails;
       this.onValidateMerchantResponseFailure(this.paymentDetails);
       this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR, `${errorcode}: ${errormessage}`);
