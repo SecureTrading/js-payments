@@ -1,17 +1,7 @@
 import Frame from '../../core/shared/Frame';
 import MessageBus from '../../core/shared/MessageBus';
+import { NotificationEvent, NotificationType } from '../../core/models/NotificationEvent';
 import Selectors from '../../core/shared/Selectors';
-
-enum messageTypes {
-  error = 'ERROR',
-  info = 'INFO',
-  success = 'SUCCESS',
-  warning = 'WARNING'
-}
-
-interface NotificationEventData {
-  message: string;
-}
 
 /**
  * NotificationFrame class
@@ -45,13 +35,13 @@ export default class NotificationFrame extends Frame {
    * @param messageType
    */
   public static _getMessageClass(messageType: string) {
-    if (messageType === messageTypes.error) {
+    if (messageType === NotificationType.Error) {
       return NotificationFrame.ELEMENT_CLASSES.error;
-    } else if (messageType === messageTypes.success) {
+    } else if (messageType === NotificationType.Success) {
       return NotificationFrame.ELEMENT_CLASSES.success;
-    } else if (messageType === messageTypes.warning) {
+    } else if (messageType === NotificationType.Warning) {
       return NotificationFrame.ELEMENT_CLASSES.warning;
-    } else if (messageType === messageTypes.info) {
+    } else if (messageType === NotificationType.Info) {
       return NotificationFrame.ELEMENT_CLASSES.info;
     } else {
       return '';
@@ -109,7 +99,7 @@ export default class NotificationFrame extends Frame {
   }
 
   private static ELEMENT_ID: string = Selectors.NOTIFICATION_FRAME_ID;
-  public _message: { type: messageTypes; content: string };
+  public _message: NotificationEvent;
   private _notificationFrameElement: HTMLElement;
 
   constructor() {
@@ -129,8 +119,8 @@ export default class NotificationFrame extends Frame {
    * Listens to postMessage event, receives message from it and triggers method for inserting content into div
    */
   public _onMessage() {
-    this._messageBus.subscribe(MessageBus.EVENTS.NOTIFICATION_SUCCESS, (data: NotificationEventData) => {
-      this._message = { type: messageTypes.success, content: data.message };
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, (data: NotificationEvent) => {
+      this._message = { type: data.type, content: data.content };
       this.insertContent();
       this.setAttributeClass();
     });

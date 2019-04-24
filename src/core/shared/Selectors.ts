@@ -45,7 +45,6 @@ export default class Selectors {
   public static readonly ANIMATED_CARD_SIDE_FRONT: string = 'st-animated-card-side-front';
   public static readonly ANIMATED_CARD_SIDE_BACK: string = 'st-animated-card-side-back';
   public static readonly ANIMATED_CARD_PAYMENT_LOGO_ID: string = 'st-payment-logo';
-  public static readonly ANIMATED_CARD_CHIP_LOGO_ID: string = 'st-chip-logo';
   public static readonly ANIMATED_CARD_COMPONENT_FRAME: string = 'st-animated-card-iframe';
   public static readonly ANIMATED_CARD_COMPONENT_NAME: string = 'animatedCard';
 }

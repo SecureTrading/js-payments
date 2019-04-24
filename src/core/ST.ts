@@ -1,4 +1,5 @@
 import { environment } from '../environments/environment';
+import ApplePay from './classes/ApplePay.class';
 import Element from './Element';
 import CardinalCommerce from './classes/CardinalCommerce';
 import VisaCheckout from './classes/VisaCheckout';
@@ -6,7 +7,7 @@ import MessageBus from './shared/MessageBus';
 import Selectors from './shared/Selectors';
 import { Styles } from './shared/Styler';
 
-/***
+/**
  * Establishes connection with ST, defines client.
  */
 export default class ST {
@@ -97,7 +98,11 @@ export default class ST {
 
   private _initWallets(jwt: string) {
     let visaCheckoutConfig = this._getAPMConfig(environment.APM_NAMES.VISA_CHECKOUT);
+    let applePayConfig = this._getAPMConfig(environment.APM_NAMES.APPLE_PAY);
 
+    if (applePayConfig) {
+      new ApplePay(applePayConfig, jwt);
+    }
     if (visaCheckoutConfig) {
       new VisaCheckout(visaCheckoutConfig, jwt);
     }

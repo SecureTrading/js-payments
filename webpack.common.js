@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
@@ -80,7 +81,10 @@ module.exports = {
     }),
     new ManifestPlugin(),
     new StyleLintPlugin(),
-    new FriendlyErrorsWebpackPlugin()
+    new FriendlyErrorsWebpackPlugin(),
+    new webpack.DefinePlugin({
+      HOST: JSON.stringify(process.env.npm_package_config_host)
+    })
   ],
   module: {
     rules: [
