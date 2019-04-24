@@ -7,8 +7,10 @@ module.exports = merge(common, {
   devtool: 'inline-source-map',
   devServer: {
     contentBase: './dist',
-    port: 8080,
+    port: 8443,
+    https: true,
     hot: true,
+    host: '0.0.0.0',
     writeToDisk: true
   },
   plugins: [new webpack.HotModuleReplacementPlugin()]

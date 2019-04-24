@@ -1,4 +1,5 @@
 import { environment } from '../../environments/environment';
+import ApplePay from '../integrations/ApplePay';
 import VisaCheckout from '../integrations/VisaCheckout';
 
 /**
@@ -29,8 +30,12 @@ class Wallet {
    * @private
    */
   private _initWallets(jwt: string) {
+    const applePayConfig = this._getWalletConfig(environment.APM_NAMES.APPLE_PAY);
     const visaCheckoutConfig = this._getWalletConfig(environment.APM_NAMES.VISA_CHECKOUT);
 
+    if (applePayConfig) {
+      new ApplePay(applePayConfig, jwt);
+    }
     if (visaCheckoutConfig) {
       new VisaCheckout(visaCheckoutConfig, jwt);
     }

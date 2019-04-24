@@ -29,7 +29,7 @@ class AnimatedCard {
     CLASS_SIDE: `${AnimatedCard.CARD_COMPONENT_CLASS}__side`,
     CLASS_LOGO_WRAPPER: `${AnimatedCard.CARD_COMPONENT_CLASS}-payment-logo`,
     CLASS_LOGO: `${AnimatedCard.CARD_COMPONENT_CLASS}__payment-logo`,
-    CLASS_LOGO_DEFAULT: `${AnimatedCard.CARD_COMPONENT_CLASS}__payment-logo-default`,
+    CLASS_LOGO_DEFAULT: `${AnimatedCard.CARD_COMPONENT_CLASS}__payment-logo--default`,
     CLASS_SECURITY_CODE_HIDDEN: `${AnimatedCard.CARD_COMPONENT_CLASS}__security-code--front-hidden`,
     CLASS_LOGO_IMAGE: `${AnimatedCard.CARD_COMPONENT_CLASS}__payment-logo-img`
   };
@@ -80,7 +80,6 @@ class AnimatedCard {
   constructor() {
     this.binLookup = new BinLookup();
     this.messageBus = new MessageBus();
-    this.setDefaultImagesAttributes();
     this.setDefaultInputsValues();
     this.setSubscribeEvents();
   }
@@ -122,7 +121,7 @@ class AnimatedCard {
   public setLogo() {
     const { logo, type } = this.cardDetails;
     if (!document.getElementById(Selectors.ANIMATED_CARD_PAYMENT_LOGO_ID) && logo) {
-      const element = DOMMethods.setMultipleAttributes.apply(this, [
+      const element = DOMMethods.createHtmlElement.apply(this, [
         {
           alt: type,
           src: logo,
@@ -205,18 +204,6 @@ class AnimatedCard {
       AnimatedCard.CARD_CLASSES.CLASS_LOGO_WRAPPER,
       Selectors.ANIMATED_CARD_PAYMENT_LOGO_ID
     ]);
-
-  /**
-   * Sets default attributes for card images - card logo and chip image
-   */
-  public setDefaultImagesAttributes() {
-    DOMMethods.setProperty.apply(this, ['src', cardsLogos.chip, Selectors.ANIMATED_CARD_CHIP_LOGO_ID]);
-    DOMMethods.setProperty.apply(this, [
-      'class',
-      AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT,
-      AnimatedCard.CARD_CLASSES.CLASS_LOGO_WRAPPER
-    ]);
-  }
 
   /**
    * Sets placeholders for each editable value on card (card number, expiration date, security code)
