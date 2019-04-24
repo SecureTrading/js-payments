@@ -1,6 +1,6 @@
 declare const V: any;
 import { environment } from '../../environments/environment';
-import MessageBus from '../shared/MessageBus';
+import { NotificationType } from '../models/NotificationEvent';
 import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import DomMethods from './../shared/DomMethods';
@@ -250,11 +250,11 @@ class VisaCheckout {
           return response;
         })
         .then((data: object) => {
-          this.setNotification(MessageBus.EVENTS.NOTIFICATION_SUCCESS, this.responseMessage);
+          this.setNotification(NotificationType.Success, this.responseMessage);
           return data;
         })
         .catch(() => {
-          this.setNotification(MessageBus.EVENTS.NOTIFICATION_ERROR, this.responseMessage);
+          this.setNotification(NotificationType.Error, this.responseMessage);
         });
     });
     V.on(VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.ERROR, () => {
