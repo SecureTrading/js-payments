@@ -96,6 +96,7 @@ class StCodec {
     }
     const responseContent = responseData.response[0];
     if (responseContent.errorcode !== '0') {
+      console.log(responseContent);
       // Should this be a custom error type which can also take a field that is at fault
       // so that errordata can be sent up to highlight the field?
       throw new Error(responseContent.errormessage);

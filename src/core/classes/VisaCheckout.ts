@@ -15,6 +15,10 @@ class VisaCheckout {
     this._paymentDetails = value;
   }
 
+  get paymentDetails(): string {
+    return this._paymentDetails;
+  }
+
   get paymentStatus(): string {
     return this._paymentStatus;
   }
@@ -58,7 +62,7 @@ class VisaCheckout {
   private _placement: string = 'body';
   private _buttonSettings: any;
   private _payment: Payment;
-  private static WALLET_SOURCE: 'VISACHECKOUT';
+  private _walletSource: string = 'VISACHECKOUT';
 
   /**
    * Init configuration (temporary with some test data).
@@ -241,7 +245,7 @@ class VisaCheckout {
       this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
       this.getResponseMessage(this.paymentStatus);
       this._payment
-        .authorizePayment({ walletsource: VisaCheckout.WALLET_SOURCE, wallettoken: this.paymentDetails })
+        .authorizePayment({ walletsource: this._walletSource, wallettoken: this.paymentDetails })
         .then((response: object) => {
           return response;
         })
