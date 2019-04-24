@@ -250,8 +250,6 @@ class ApplePay {
       this.setApplePayButtonProps(buttonText, buttonStyle);
       this.addApplePayButton();
       this.applePayProcess();
-    } else {
-      this.setNotification(NotificationType.Error, Language.translations.APPLE_PAY_ONLY_ON_IOS);
     }
   }
 
@@ -373,6 +371,7 @@ class ApplePay {
       type: MessageBus.EVENTS_PUBLIC.NOTIFICATION,
       data: notificationEvent
     };
+    console.log('inside notification');
     this.messageBus.publishFromParent(messageBusEvent, Selectors.NOTIFICATION_FRAME_IFRAME);
   }
 
@@ -396,12 +395,8 @@ class ApplePay {
       this.checkApplePayWalletCardAvailability().then((canMakePayments: boolean) => {
         if (canMakePayments) {
           this.applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
-        } else {
-          this.setNotification(NotificationType.Error, Language.translations.NO_CARDS_IN_WALLET);
         }
       });
-    } else {
-      this.setNotification(NotificationType.Error, Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE);
     }
   }
 }
