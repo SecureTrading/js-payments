@@ -1,6 +1,6 @@
 import { environment } from '../../environments/environment';
+import { NotificationType } from '../models/NotificationEvent';
 import Language from '../shared/Language';
-import MessageBus from '../shared/MessageBus';
 import ApplePay from './ApplePay.class';
 import DomMethods from '../shared/DomMethods';
 
@@ -85,13 +85,13 @@ class ApplePayMock extends ApplePay {
     // @ts-ignore
     if (this.paymentDetails.walletsession) {
       this.onValidateMerchantResponseSuccess(this.paymentDetails);
-      this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_SUCCESS, 'response');
+      this.setNotification(NotificationType.Success, 'response');
       this._mockedPaymentAuthorization();
     } else {
       // @ts-ignore
       const { errorcode, errormessage } = this.paymentDetails;
       this.onValidateMerchantResponseFailure(this.paymentDetails);
-      this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR, `${errorcode}: ${errormessage}`);
+      this.setNotification(NotificationType.Error, `${errorcode}: ${errormessage}`);
     }
   }
 
@@ -111,10 +111,10 @@ class ApplePayMock extends ApplePay {
         walletrequestdomain: this.validateMerchantRequestData.walletrequestdomain
       })
       .then(() => {
-        this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_SUCCESS, Language.translations.PAYMENT_AUTHORIZED);
+        this.setNotification(NotificationType.Success, Language.translations.PAYMENT_AUTHORIZED);
       })
       .catch(() => {
-        this.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR, Language.translations.PAYMENT_ERROR);
+        this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
       });
   }
 }
