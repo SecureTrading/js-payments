@@ -1,130 +1,54 @@
-import { environment } from '../environments/environment';
-import ApplePay from './integrations/ApplePay.class';
-import Element from './Element';
-import CardinalCommerce from './classes/CardinalCommerce';
-import VisaCheckout from './classes/VisaCheckout';
-import ApplePayMock from './integrations/ApplePayMock.class';
-import MessageBus from './shared/MessageBus';
-import Selectors from './shared/Selectors';
+import Form from './classes/Form.class';
+import CardinalCommerce from './integrations/CardinalCommerce';
+import Wallet from './classes/Wallet.class';
 import { Styles } from './shared/Styler';
 
 /**
  * Establishes connection with ST, defines client.
  */
 export default class ST {
-  public jwt: string;
-  public origin: string;
-  public fieldsIds: any;
-  public styles: Styles;
-  public payments: object[];
+  private readonly jwt: string;
+  private readonly origin: string;
+  private readonly onlyWallets: boolean;
+  private readonly fieldsIds: any;
+  private readonly styles: Styles;
+  private readonly wallets: object[];
 
-  /**
-   * Register fields in clients form
-   * @param fields
-   * @param targets
-   */
-  public static registerElements(fields: HTMLElement[], targets: string[]) {
-    targets.map((item, index) => {
-      const itemToChange = document.getElementById(item);
-      itemToChange.appendChild(fields[index]);
-    });
-  }
-
-  constructor(jwt: string, origin: string, fieldsIds: any, styles: Styles, payments: object[]) {
+  constructor(jwt: string, origin: string, onlyWallets: boolean, fieldsIds: any, styles: Styles, wallets: object[]) {
     this.jwt = jwt;
     this.origin = origin;
+    this.onlyWallets = onlyWallets;
     this.fieldsIds = fieldsIds;
     this.styles = styles;
-    this.payments = payments;
-
+    this.wallets = wallets;
     this._onInit();
   }
 
+  /**
+   * Starts library initialization
+   * @private
+   */
   private _onInit() {
-    this._initElements();
-    this._init3DSecure();
-    this._initWallets(this.jwt);
-    this._setFormListener();
-  }
-
-  private _initElements() {
-    const cardNumber = new Element();
-    const expirationDate = new Element();
-    const securityCode = new Element();
-    const animatedCard = new Element();
-    const notificationFrame = new Element();
-    const controlFrame = new Element();
-
-    cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, this.styles);
-    const cardNumberMounted = cardNumber.mount(Selectors.CARD_NUMBER_IFRAME);
-
-    expirationDate.create(Selectors.EXPIRATION_DATE_COMPONENT_NAME, this.styles);
-    const expirationDateMounted = expirationDate.mount(Selectors.EXPIRATION_DATE_IFRAME);
-
-    securityCode.create(Selectors.SECURITY_CODE_COMPONENT_NAME, this.styles);
-    const securityCodeMounted = securityCode.mount(Selectors.SECURITY_CODE_IFRAME);
-
-    notificationFrame.create(Selectors.NOTIFICATION_FRAME_COMPONENT_NAME, this.styles);
-    const notificationFrameMounted = notificationFrame.mount(Selectors.NOTIFICATION_FRAME_IFRAME);
-
-    controlFrame.create(Selectors.CONTROL_FRAME_COMPONENT_NAME, this.styles, { jwt: this.jwt, origin: this.origin });
-    const controlFrameMounted = controlFrame.mount(Selectors.CONTROL_FRAME_IFRAME);
-
-    animatedCard.create(Selectors.ANIMATED_CARD_COMPONENT_NAME);
-    const animatedCardMounted = animatedCard.mount(Selectors.ANIMATED_CARD_COMPONENT_FRAME);
-
-    ST.registerElements(
-      [
-        cardNumberMounted,
-        expirationDateMounted,
-        securityCodeMounted,
-        notificationFrameMounted,
-        controlFrameMounted,
-        animatedCardMounted
-      ],
-      [
-        this.fieldsIds.cardNumber,
-        this.fieldsIds.expirationDate,
-        this.fieldsIds.securityCode,
-        this.fieldsIds.notificationFrame,
-        this.fieldsIds.controlFrame,
-        this.fieldsIds.animatedCard
-      ]
-    );
-  }
-
-  private _init3DSecure() {
-    new CardinalCommerce();
-  }
-
-  private _initWallets(jwt: string) {
-    let visaCheckoutConfig = this._getAPMConfig(environment.APM_NAMES.VISA_CHECKOUT);
-    let applePayConfig = this._getAPMConfig(environment.APM_NAMES.APPLE_PAY);
-
-    if (applePayConfig) {
-      !environment.testEnvironment ? new ApplePayMock(applePayConfig, jwt) : new ApplePay(applePayConfig, jwt);
-    }
-    if (visaCheckoutConfig) {
-      new VisaCheckout(visaCheckoutConfig, jwt);
-    }
-  }
-
-  private _setFormListener() {
-    document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).addEventListener('submit', (event: Event) => {
-      event.preventDefault();
-      const messageBusEvent: MessageBusEvent = { type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM };
-      const messageBus = new MessageBus();
-
-      messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
-    });
+    this._initForm();
+    this._initWallets();
+    ST._init3DSecure();
   }
 
   /**
-   * Gets APM config according to given apmName
-   * @param apmName - name of payment
+   * Inits Cardinal Commerce
    * @private
    */
-  private _getAPMConfig(apmName: string) {
-    return Object.values(this.payments).find((item: { name: string }) => item.name === apmName);
-  }
+  private static _init3DSecure = () => new CardinalCommerce();
+
+  /**
+   * Inits form fields
+   * @private
+   */
+  private _initForm = () => new Form(this.jwt, this.origin, this.onlyWallets, this.fieldsIds, this.styles);
+
+  /**
+   * Inits Alternative Payment Methods
+   * @private
+   */
+  private _initWallets = () => new Wallet(this.jwt, this.wallets);
 }

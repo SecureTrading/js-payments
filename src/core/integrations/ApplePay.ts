@@ -47,19 +47,19 @@ class ApplePay {
   public buttonText: string;
   public buttonStyle: string;
   public merchantId: string;
-  public merchantSession: any;
   public messageBus: MessageBus;
   public paymentRequest: any;
   public placement: string;
   public session: any;
-  public sitereference: string; // ???
-  public sitesecurity: string; // ???
+  public merchantSession: any;
+  public sitereference: string; // possibly not needed
+  public sitesecurity: string;
   public stJwtInstance: StJwt;
   public stTransportInstance: StTransport;
 
   public static APPLE_PAY_BUTTON_ID: string = 'st-apple-pay';
-  private static APPLE_PAY_MIN_VERSION: number = 2;
-  private static APPLE_PAY_MAX_VERSION: number = 5;
+  public static APPLE_PAY_MIN_VERSION: number = 2;
+  public static APPLE_PAY_MAX_VERSION: number = 5;
   public static AVAILABLE_BUTTON_STYLES = ['black', 'white', 'white-outline'];
   public static AVAILABLE_BUTTON_TEXTS = ['plain', 'buy', 'book', 'donate', 'check-out', 'subscribe'];
   public static BASIC_SUPPORTED_NETWORKS = [
@@ -250,6 +250,8 @@ class ApplePay {
       this.setApplePayButtonProps(buttonText, buttonStyle);
       this.addApplePayButton();
       this.applePayProcess();
+    } else {
+      this.setNotification(NotificationType.Error, Language.translations.APPLE_PAY_ONLY_ON_IOS);
     }
   }
 
@@ -279,22 +281,7 @@ class ApplePay {
   public onPaymentAuthorized() {
     this.session.onpaymentauthorized = (event: any) => {
       this.session.completePayment({ status: ApplePaySession.STATUS_SUCCESS, errors: [] });
-      this.stTransportInstance
-        .sendRequest({
-          requesttypedescription: 'AUTH',
-          ...this.paymentRequest,
-          wallettoken: this.merchantSession,
-          walletsource: this.validateMerchantRequestData.walletsource,
-          walletmerchantid: this.validateMerchantRequestData.walletmerchantid,
-          walletvalidationurl: this.validateMerchantRequestData.walletvalidationurl,
-          walletrequestdomain: this.validateMerchantRequestData.walletrequestdomain
-        })
-        .then(() => {
-          this.setNotification(NotificationType.Success, Language.translations.PAYMENT_AUTHORIZED);
-        })
-        .catch(() => {
-          this.setNotification(NotificationType.Error, Language.translations.PAYMENT_AUTHORIZED);
-        });
+      this.setNotification(NotificationType.Success, Language.translations.PAYMENT_AUTHORIZED);
     };
   }
 
@@ -338,7 +325,7 @@ class ApplePay {
     this.session.onpaymentmethodselected = (event: any) => {
       const { paymentMethod } = event;
       this.session.completePaymentMethodSelection({
-        newTotal: { label: this.paymentRequest.total.label, amount: this.paymentRequest.total.amount, type: 'final' }
+        newTotal: { label: this.paymentRequest.total.label, amount: this.paymentRequest.total.amount, type: 'final' } // what is type ??
       });
     };
 
@@ -371,7 +358,6 @@ class ApplePay {
       type: MessageBus.EVENTS_PUBLIC.NOTIFICATION,
       data: notificationEvent
     };
-    console.log('inside notification');
     this.messageBus.publishFromParent(messageBusEvent, Selectors.NOTIFICATION_FRAME_IFRAME);
   }
 
@@ -395,8 +381,12 @@ class ApplePay {
       this.checkApplePayWalletCardAvailability().then((canMakePayments: boolean) => {
         if (canMakePayments) {
           this.applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
+        } else {
+          this.setNotification(NotificationType.Error, Language.translations.NO_CARDS_IN_WALLET);
         }
       });
+    } else {
+      this.setNotification(NotificationType.Error, Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE);
     }
   }
 }

@@ -1,7 +1,7 @@
 import { environment } from '../../environments/environment';
 import { NotificationType } from '../models/NotificationEvent';
 import Language from '../shared/Language';
-import ApplePay from './ApplePay.class';
+import ApplePay from './ApplePay';
 import DomMethods from '../shared/DomMethods';
 
 /**

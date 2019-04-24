@@ -1,4 +1,4 @@
-import ApplePayMock from './../../../src/core/integrations/ApplePayMock.class';
+import ApplePayMock from '../../../src/core/integrations/ApplePayMock';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 
