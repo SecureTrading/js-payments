@@ -117,7 +117,7 @@ class VisaCheckout {
   /**
    * Creates html image element which will be transformed into interactive button by SDK.
    */
-  public _createVisaButton = () => DomMethods.setMultipleAttributes.apply(this, [this._visaCheckoutButtonProps, 'img']);
+  public _createVisaButton = () => DomMethods.createHtmlElement.apply(this, [this._visaCheckoutButtonProps, 'img']);
 
   /**
    * Send postMessage to notificationFrame component, to inform user about payment status

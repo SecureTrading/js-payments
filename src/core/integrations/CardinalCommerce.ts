@@ -1,5 +1,5 @@
 import { environment } from '../../environments/environment';
-import DomMethods from './../shared/DomMethods';
+import DomMethods from '../shared/DomMethods';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
 

@@ -10,6 +10,7 @@ import { ST } from '../src/stjs';
   const st = new ST(
     'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU1NjEwNTU4MS44MTgyOTc0LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSJ9fQ.PhZ-ZVinNFUi6dmQSYK_yvVfyBnM7uBcIj6dv9QgSAc',
     window.location.origin,
+    true,
     {
       cardNumber: 'st-card-number',
       expirationDate: 'st-expiration-date',
@@ -26,6 +27,24 @@ import { ST } from '../src/stjs';
       'background-color-input-error': '#f8d7da'
     },
     [
+      {
+        name: 'APPLEPAY',
+        props: {
+          sitereference: 'test_site',
+          paymentRequest: {
+            total: { label: 'Secure Trading Merchant', amount: '10.00' },
+            countryCode: 'US',
+            currencyCode: 'USD',
+            merchantCapabilities: ['supports3DS', 'supportsCredit', 'supportsDebit'],
+            supportedNetworks: []
+          },
+          merchantId: 'merchant.net.securetrading',
+          sitesecurity: 'gABC123DEFABC',
+          placement: 'st-apple-pay',
+          buttonText: 'donate',
+          buttonStyle: 'white-outline'
+        }
+      },
       {
         name: 'VISACHECKOUT',
         props: {
