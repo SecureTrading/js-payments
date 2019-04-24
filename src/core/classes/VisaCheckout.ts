@@ -5,13 +5,13 @@ import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import DomMethods from './../shared/DomMethods';
 import Language from './../shared/Language';
-import StTransport from './StTransport.class';
+import Payment from './../shared/Payment';
 
 /**
  *  Visa Checkout configuration class; sets up Visa e-wallet
  */
 class VisaCheckout {
-  set paymentDetails(value: object) {
+  set paymentDetails(value: string) {
     this._paymentDetails = value;
   }
 
@@ -52,12 +52,13 @@ class VisaCheckout {
   };
   private _sdkAddress: string = environment.VISA_CHECKOUT_URLS.DEV_SDK;
   private _paymentStatus: string;
-  private _paymentDetails: object;
+  private _paymentDetails: string;
   private _responseMessage: string;
   private _livestatus: number = 0;
   private _placement: string = 'body';
   private _buttonSettings: any;
-  private _stTransport: StTransport;
+  private _payment: Payment;
+  private static WALLET_SOURCE: 'VISACHECKOUT';
 
   /**
    * Init configuration (temporary with some test data).
@@ -83,7 +84,7 @@ class VisaCheckout {
         props: { apikey, livestatus, placement, settings, paymentRequest, buttonSettings }
       } = config;
       const stJwt = new StJwt(jwt);
-      this._stTransport = new StTransport({ jwt: jwt });
+      this._payment = new Payment(jwt);
       this._livestatus = livestatus;
       this._placement = placement;
       this._setInitConfiguration(paymentRequest, settings, stJwt, apikey);
@@ -236,15 +237,11 @@ class VisaCheckout {
    */
   private _paymentStatusHandler() {
     V.on(VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.SUCCESS, (payment: object) => {
-      this.paymentDetails = payment;
+      this.paymentDetails = JSON.stringify(payment);
       this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
       this.getResponseMessage(this.paymentStatus);
-      this._stTransport
-        .sendRequest({
-          requesttypedescription: 'AUTH',
-          // @ts-ignore
-          encpaymentdata: payment.encPaymentData
-        })
+      this._payment
+        .authorizePayment({ walletsource: VisaCheckout.WALLET_SOURCE, wallettoken: this.paymentDetails })
         .then((response: object) => {
           return response;
         })
