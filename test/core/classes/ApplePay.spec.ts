@@ -1,7 +1,7 @@
 const getType = require('jest-get-type');
 import Language from '../../../src/core/shared/Language';
 import { NotificationType } from '../../../src/core/models/NotificationEvent';
-import ApplePay from './../../../src/core/classes/ApplePay.class';
+import ApplePay from '../../../src/core/integrations/ApplePay';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 

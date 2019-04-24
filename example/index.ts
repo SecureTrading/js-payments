@@ -10,6 +10,7 @@ import { ST } from '../src/stjs';
   const st = new ST(
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoiMTU1NjAwODM2MzQ4OSIsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6ImxpdmUyIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00ifX0.coXJ6hnL4Qh3HyUNGwoQfJgna8pkN2GZ6b5I0oW-Qes',
     window.location.origin,
+    true,
     {
       cardNumber: 'st-card-number',
       expirationDate: 'st-expiration-date',

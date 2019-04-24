@@ -3,8 +3,8 @@ import MessageBus from '../shared/MessageBus';
 import { NotificationEvent, NotificationType } from '../models/NotificationEvent';
 import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
-import DomMethods from './../shared/DomMethods';
-import StTransport from './../classes/StTransport.class';
+import DomMethods from '../shared/DomMethods';
+import StTransport from '../classes/StTransport.class';
 
 const ApplePaySession = (window as any).ApplePaySession;
 

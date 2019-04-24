@@ -2,8 +2,8 @@ declare const V: any;
 import { environment } from '../../environments/environment';
 import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
-import DomMethods from './../shared/DomMethods';
-import Language from './../shared/Language';
+import DomMethods from '../shared/DomMethods';
+import Language from '../shared/Language';
 
 /**
  *  Visa Checkout configuration class; sets up Visa e-wallet
