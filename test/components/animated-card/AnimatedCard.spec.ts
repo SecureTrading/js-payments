@@ -141,23 +141,6 @@ describe('Class AnimatedCard', () => {
   });
 
   // given
-  describe('Method _setDefaultImagesAttributes', () => {
-    let { instance } = animatedCardFixture();
-    let chipImage: HTMLElement;
-    let cardTypeImage: HTMLElement;
-
-    beforeEach(() => {
-      chipImage = document.getElementById(Selectors.ANIMATED_CARD_CHIP_LOGO_ID);
-      cardTypeImage = document.getElementById(Selectors.ANIMATED_CARD_PAYMENT_LOGO_ID);
-    });
-
-    // then
-    it('should set default image to chip card image', () => {
-      instance.setDefaultImagesAttributes();
-      expect(chipImage.getAttribute('src')).toEqual(cardsLogos.chip);
-    });
-  });
-
   describe('Method _setDefaultInputsValues', () => {
     let { instance } = animatedCardFixture();
     // then
@@ -218,7 +201,7 @@ describe('Class AnimatedCard', () => {
 
 function animatedCardFixture() {
   const html =
-    '<div class="st-animated-card" id="st-animated-card"> <div class="st-animated-card__content"> <div class="st-animated-card__side st-animated-card__front" id="st-animated-card-side-front"> <div class="st-animated-card__logos"> <div class="st-animated-card__chip-logo"> <img src="" alt="" id="st-chip-logo" /> </div> <div class="st-animated-card__payment-logo" id="st-animated-card-payment-logo"></div> </div> <div class="st-animated-card__pan"> <label class="st-animated-card__label">Card number</label> <div class="st-animated-card__value" id="st-animated-card-number"></div> </div> <div class="st-animated-card__expiration-date-and-security-code"> <div class="st-animated-card__expiration-date"> <label class="st-animated-card__label">Expiration date</label> <div class="st-animated-card__value" id="st-animated-card-expiration-date"></div> </div> <div class="st-animated-card__security-code st-animated-card__security-code--front st-animated-card__security-code--front-hidden" id="st-animated-card-security-code-front" > <label class="st-animated-card__label">Security code</label> <div class="st-animated-card__value" id="st-animated-card-security-code-front-field"></div> </div> </div> </div> <div class="st-animated-card__side st-animated-card__back" id="st-animated-card-side-back"> <div class="st-animated-card__signature"></div> <div class="st-animated-card__security-code" id="st-animated-card-security-code"></div> </div> </div> </div>';
+    '<div class="st-animated-card" id="st-animated-card"> <div class="st-animated-card__content"> <div class="st-animated-card__side st-animated-card__front" id="st-animated-card-side-front"> <div class="st-animated-card__logos"> <div class="st-animated-card__chip-logo"> <img src="" alt="" /> </div> <div class="st-animated-card__payment-logo" id="st-animated-card-payment-logo"></div> </div> <div class="st-animated-card__pan"> <label class="st-animated-card__label">Card number</label> <div class="st-animated-card__value" id="st-animated-card-number"></div> </div> <div class="st-animated-card__expiration-date-and-security-code"> <div class="st-animated-card__expiration-date"> <label class="st-animated-card__label">Expiration date</label> <div class="st-animated-card__value" id="st-animated-card-expiration-date"></div> </div> <div class="st-animated-card__security-code st-animated-card__security-code--front st-animated-card__security-code--front-hidden" id="st-animated-card-security-code-front" > <label class="st-animated-card__label">Security code</label> <div class="st-animated-card__value" id="st-animated-card-security-code-front-field"></div> </div> </div> </div> <div class="st-animated-card__side st-animated-card__back" id="st-animated-card-side-back"> <div class="st-animated-card__signature"></div> <div class="st-animated-card__security-code" id="st-animated-card-security-code"></div> </div> </div> </div>';
   document.body.innerHTML = html;
   const inputValues = {
     cardNumber: '123456789',

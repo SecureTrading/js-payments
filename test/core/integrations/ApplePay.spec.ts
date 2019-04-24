@@ -1,5 +1,6 @@
 const getType = require('jest-get-type');
 import Language from '../../../src/core/shared/Language';
+import { NotificationType } from '../../../src/core/models/NotificationEvent';
 import MessageBus from '../../../src/core/shared/MessageBus';
 import ApplePay from '../../../src/core/integrations/ApplePay.class';
 
@@ -326,10 +327,7 @@ describe('Class Apple Pay', () => {
     it('should publishFromParent has been called', () => {
       const { instance } = ApplePayFixture();
       const spy = jest.spyOn(instance.messageBus, 'publishFromParent');
-      instance.setNotification(
-        MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR,
-        Language.translations.MERCHANT_VALIDATION_FAILURE
-      );
+      instance.setNotification(NotificationType.Error, Language.translations.MERCHANT_VALIDATION_FAILURE);
       expect(spy).toHaveBeenCalled();
     });
   });
@@ -385,10 +383,7 @@ describe('Class Apple Pay', () => {
       const { instance } = ApplePayFixture();
       instance.checkApplePayAvailability = jest.fn().mockReturnValueOnce(false);
       const spy = jest.spyOn(instance, 'setNotification');
-      instance.setNotification(
-        MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR,
-        Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE
-      );
+      instance.setNotification(NotificationType.Error, Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE);
       expect(spy).toHaveBeenCalled();
     });
 
@@ -409,7 +404,7 @@ describe('Class Apple Pay', () => {
       instance.checkApplePayWalletCardAvailability = jest.fn().mockReturnValueOnce(true);
       const spyNotification = jest.spyOn(instance, 'setNotification');
       const spy = jest.spyOn(instance, 'checkApplePayWalletCardAvailability');
-      instance.setNotification(MessageBus.EVENTS_PUBLIC.NOTIFICATION_ERROR, Language.translations.NO_CARDS_IN_WALLET);
+      instance.setNotification(NotificationType.Error, Language.translations.NO_CARDS_IN_WALLET);
       instance.checkApplePayWalletCardAvailability();
       expect(spy).toHaveBeenCalled();
       expect(spyNotification).toHaveBeenCalled();

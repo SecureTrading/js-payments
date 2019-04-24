@@ -8,6 +8,9 @@
     "not dead",
     "IE 10"
   ],
+  "config": {
+    "host": "localhost"
+  },
   "scripts": {
     "build": "webpack --config webpack.prod.js",
     "build:automated": "webpack --config webpack.test.js",
