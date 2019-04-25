@@ -287,8 +287,7 @@ class ApplePay {
    */
   public onPaymentAuthorized() {
     this.session.onpaymentauthorized = (event: any) => {
-      this.paymentDetails = JSON.stringify(event);
-      console.log(this.paymentDetails);
+      this.paymentDetails = JSON.stringify(event.payment.token);
       this.session.completePayment({ status: ApplePaySession.STATUS_SUCCESS, errors: [] });
       this.payment
         .authorizePayment({
