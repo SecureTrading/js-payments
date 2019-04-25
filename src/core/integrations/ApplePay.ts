@@ -95,13 +95,12 @@ class ApplePay {
 
   constructor(config: any, jwt: string) {
     const {
-      props: { sitereference, sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId }
+      props: { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId }
     } = config;
     this.jwt = jwt;
     this.merchantId = merchantId;
     this.placement = placement;
     this.paymentRequest = paymentRequest;
-    this.sitereference = sitereference;
     this.sitesecurity = sitesecurity;
     this.validateMerchantRequestData.walletmerchantid = merchantId;
     this.stJwtInstance = new StJwt(jwt);

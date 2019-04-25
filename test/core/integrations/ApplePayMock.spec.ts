@@ -94,7 +94,6 @@ function applePayMockFixture() {
   const config = {
     name: 'APPLEPAY',
     props: {
-      sitereference: 'test_site',
       paymentRequest: {
         total: { label: 'Secure Trading Merchant', amount: '10.00' },
         countryCode: 'US',
