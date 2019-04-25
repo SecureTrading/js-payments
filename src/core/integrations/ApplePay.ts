@@ -52,7 +52,6 @@ class ApplePay {
   public placement: string;
   public session: any;
   public merchantSession: any;
-  public sitereference: string; // possibly not needed
   public sitesecurity: string;
   public stJwtInstance: StJwt;
   public stTransportInstance: StTransport;
