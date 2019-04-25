@@ -29,13 +29,13 @@ export default class Payment {
   public authorizePayment(payment: Card | Wallet, threeDResponse?: string) {
     let requestBody: IStRequest = Object.assign(
       {
-        requesttypedescription: 'AUTH',
-        threedresponse: threeDResponse
+        requesttypedescription: 'AUTH'
       },
+      threeDResponse ? { threedresponse: threeDResponse } : {},
       this._stJwtPayload,
       payment
     );
-
+    console.log(requestBody);
     return this._stTransport.sendRequest(requestBody);
   }
 
