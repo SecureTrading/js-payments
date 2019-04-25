@@ -35,7 +35,6 @@ export default class Payment {
       this._stJwtPayload,
       payment
     );
-    console.log(requestBody);
     return this._stTransport.sendRequest(requestBody);
   }
 
