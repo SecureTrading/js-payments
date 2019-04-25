@@ -255,11 +255,9 @@ class VisaCheckout {
       this.payment
         .authorizePayment({ walletsource: this._walletSource, wallettoken: this.paymentDetails })
         .then((response: object) => {
-          console.log(response);
           return response;
         })
         .then((data: object) => {
-          console.log(data);
           this.setNotification(NotificationType.Success, this.responseMessage);
           return data;
         })

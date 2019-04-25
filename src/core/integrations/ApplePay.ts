@@ -1,6 +1,7 @@
 import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
 import { NotificationEvent, NotificationType } from '../models/NotificationEvent';
+import Payment from '../shared/Payment';
 import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import DomMethods from '../shared/DomMethods';
@@ -31,6 +32,14 @@ class ApplePay {
     return this._applePayButtonProps;
   }
 
+  get payment(): Payment {
+    return this._payment;
+  }
+
+  set payment(value: Payment) {
+    this._payment = value;
+  }
+
   set applePayButtonProps(value: any) {
     this._applePayButtonProps = value;
   }
@@ -50,6 +59,7 @@ class ApplePay {
   public messageBus: MessageBus;
   public paymentRequest: any;
   public placement: string;
+  public paymentDetails: string;
   public session: any;
   public merchantSession: any;
   public sitesecurity: string;
@@ -81,12 +91,12 @@ class ApplePay {
   public static VERSION_5_SUPPORTED_NETWORKS = ApplePay.BASIC_SUPPORTED_NETWORKS.concat(['elo', 'mada']);
   private _jwt: string;
   private _applePayButtonProps: any = {};
+  private _payment: Payment;
 
   /**
    * All object properties are required for WALLETVERIFY request call to ST.
    */
   public validateMerchantRequestData = {
-    requesttypedescription: 'WALLETVERIFY',
     walletsource: 'APPLEPAY',
     walletmerchantid: '',
     walletvalidationurl: '',
@@ -100,6 +110,7 @@ class ApplePay {
     this.jwt = jwt;
     this.merchantId = merchantId;
     this.placement = placement;
+    this.payment = new Payment(jwt);
     this.paymentRequest = paymentRequest;
     this.sitesecurity = sitesecurity;
     this.validateMerchantRequestData.walletmerchantid = merchantId;
@@ -248,8 +259,6 @@ class ApplePay {
       this.setApplePayButtonProps(buttonText, buttonStyle);
       this.addApplePayButton();
       this.applePayProcess();
-    } else {
-      this.setNotification(NotificationType.Error, Language.translations.APPLE_PAY_ONLY_ON_IOS);
     }
   }
 
@@ -260,8 +269,8 @@ class ApplePay {
   public onValidateMerchantRequest() {
     this.session.onvalidatemerchant = (event: any) => {
       this.validateMerchantRequestData.walletvalidationurl = event.validationURL;
-      this.stTransportInstance
-        .sendRequest(this.validateMerchantRequestData)
+      this.payment
+        .walletVerify(this.validateMerchantRequestData)
         .then(response => {
           this.onValidateMerchantResponseSuccess(response);
         })
@@ -278,8 +287,24 @@ class ApplePay {
    */
   public onPaymentAuthorized() {
     this.session.onpaymentauthorized = (event: any) => {
+      this.paymentDetails = JSON.stringify(event);
+      console.log(this.paymentDetails);
       this.session.completePayment({ status: ApplePaySession.STATUS_SUCCESS, errors: [] });
-      this.setNotification(NotificationType.Success, Language.translations.PAYMENT_AUTHORIZED);
+      this.payment
+        .authorizePayment({
+          walletsource: this.validateMerchantRequestData.walletsource,
+          wallettoken: this.paymentDetails
+        })
+        .then((response: object) => {
+          return response;
+        })
+        .then((data: object) => {
+          this.setNotification(NotificationType.Success, Language.translations.PAYMENT_AUTHORIZED);
+          return data;
+        })
+        .catch(() => {
+          this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
+        });
     };
   }
 
@@ -379,12 +404,8 @@ class ApplePay {
       this.checkApplePayWalletCardAvailability().then((canMakePayments: boolean) => {
         if (canMakePayments) {
           this.applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
-        } else {
-          this.setNotification(NotificationType.Error, Language.translations.NO_CARDS_IN_WALLET);
         }
       });
-    } else {
-      this.setNotification(NotificationType.Error, Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE);
     }
   }
 }

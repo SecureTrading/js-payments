@@ -8,7 +8,7 @@ import DomMethods from '../shared/DomMethods';
  * Mocked version of Apple Pay setting test environment for Apple Pay automated tests.
  */
 class ApplePayMock extends ApplePay {
-  public paymentDetails: object;
+  public paymentDetails: string;
 
   public paymentDetailsError: {
     errorcode: '3000';
@@ -56,7 +56,7 @@ class ApplePayMock extends ApplePay {
   private _setActionOnMockedButton() {
     DomMethods.addListener('st-apple-pay-mock', 'click', () => {
       this._getWalletverifyData().then((data: any) => {
-        this.paymentDetails = data;
+        this.paymentDetails = JSON.stringify(data);
         this._proceedFlowWithMockedData();
       });
     });
