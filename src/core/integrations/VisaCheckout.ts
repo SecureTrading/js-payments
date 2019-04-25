@@ -1,16 +1,22 @@
 declare const V: any;
 import { environment } from '../../environments/environment';
+import { NotificationType } from '../models/NotificationEvent';
 import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
-import DomMethods from '../shared/DomMethods';
-import Language from '../shared/Language';
+import DomMethods from './../shared/DomMethods';
+import Language from './../shared/Language';
+import Payment from './../shared/Payment';
 
 /**
  *  Visa Checkout configuration class; sets up Visa e-wallet
  */
 class VisaCheckout {
-  set paymentDetails(value: object) {
+  set paymentDetails(value: string) {
     this._paymentDetails = value;
+  }
+
+  get paymentDetails(): string {
+    return this._paymentDetails;
   }
 
   get paymentStatus(): string {
@@ -50,11 +56,13 @@ class VisaCheckout {
   };
   private _sdkAddress: string = environment.VISA_CHECKOUT_URLS.DEV_SDK;
   private _paymentStatus: string;
-  private _paymentDetails: object;
+  private _paymentDetails: string;
   private _responseMessage: string;
   private _livestatus: number = 0;
   private _placement: string = 'body';
   private _buttonSettings: any;
+  private _payment: Payment;
+  private _walletSource: string = 'VISACHECKOUT';
 
   /**
    * Init configuration (temporary with some test data).
@@ -80,6 +88,7 @@ class VisaCheckout {
         props: { apikey, livestatus, placement, settings, paymentRequest, buttonSettings }
       } = config;
       const stJwt = new StJwt(jwt);
+      this._payment = new Payment(jwt);
       this._livestatus = livestatus;
       this._placement = placement;
       this._setInitConfiguration(paymentRequest, settings, stJwt, apikey);
@@ -232,10 +241,21 @@ class VisaCheckout {
    */
   private _paymentStatusHandler() {
     V.on(VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.SUCCESS, (payment: object) => {
-      this.paymentDetails = payment;
+      this.paymentDetails = JSON.stringify(payment);
       this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
       this.getResponseMessage(this.paymentStatus);
-      this.setNotification(this.paymentStatus, this.responseMessage);
+      this._payment
+        .authorizePayment({ walletsource: this._walletSource, wallettoken: this.paymentDetails })
+        .then((response: object) => {
+          return response;
+        })
+        .then((data: object) => {
+          this.setNotification(NotificationType.Success, this.responseMessage);
+          return data;
+        })
+        .catch(() => {
+          this.setNotification(NotificationType.Error, this.responseMessage);
+        });
     });
     V.on(VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.ERROR, () => {
       this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
