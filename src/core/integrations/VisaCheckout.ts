@@ -56,6 +56,8 @@ class VisaCheckout {
     WARNING: 'WARNING'
   };
 
+  public messageBus: MessageBus;
+
   private _visaCheckoutButtonProps: any = {
     alt: 'Visa Checkout',
     class: 'v-button',
@@ -63,6 +65,7 @@ class VisaCheckout {
     role: 'button',
     src: environment.VISA_CHECKOUT_URLS.DEV_BUTTON_URL
   };
+
   private _sdkAddress: string = environment.VISA_CHECKOUT_URLS.DEV_SDK;
   private _paymentStatus: string;
   private _paymentDetails: string;
@@ -72,19 +75,18 @@ class VisaCheckout {
   private _buttonSettings: any;
   private _payment: Payment;
   private _walletSource: string = 'VISACHECKOUT';
-  public messageBus: MessageBus;
 
   /**
    * Init configuration (temporary with some test data).
-   * apikey and encryptionKey will authenticate merchant.
+   * merchantId and encryptionKey will authenticate merchant.
    * Eventually in config, there'll be merchant credentials provided, now there are some test credentials.
    */
   private _initConfiguration = {
     apikey: '' as string,
     paymentRequest: {
       currencyCode: '' as string,
-      total: '' as string,
-      subtotal: '' as string
+      subtotal: '' as string,
+      total: '' as string
     },
     settings: {}
   };
@@ -95,22 +97,22 @@ class VisaCheckout {
       this._setActionOnMockedButton();
     } else {
       const {
-        props: { apikey, livestatus, placement, settings, paymentRequest, buttonSettings }
+        props: { merchantId, livestatus, placement, settings, paymentRequest, buttonSettings }
       } = config;
       const stJwt = new StJwt(jwt);
       this.payment = new Payment(jwt);
       this.messageBus = new MessageBus();
       this._livestatus = livestatus;
       this._placement = placement;
-      this._setInitConfiguration(paymentRequest, settings, stJwt, apikey);
+      this._setInitConfiguration(paymentRequest, settings, stJwt, merchantId);
       this._buttonSettings = this.setConfiguration({ locale: stJwt.locale }, settings);
       this._setLiveStatus();
       this._initVisaFlow();
     }
   }
 
-  public _setInitConfiguration(paymentRequest: any, settings: any, stJwt: StJwt, apikey: string) {
-    this._initConfiguration.apikey = apikey;
+  public _setInitConfiguration(paymentRequest: any, settings: any, stJwt: StJwt, merchantId: string) {
+    this._initConfiguration.apikey = merchantId;
     this._initConfiguration.paymentRequest = this._getInitPaymentRequest(paymentRequest, stJwt);
     this._initConfiguration.settings = this.setConfiguration({ locale: stJwt.locale }, settings);
   }
@@ -136,13 +138,13 @@ class VisaCheckout {
    * @param content
    */
   public setNotification(type: string, content: string) {
-    let notificationEvent: NotificationEvent = {
-      type: type,
-      content: content
+    const notificationEvent: NotificationEvent = {
+      content: content,
+      type: type
     };
-    let messageBusEvent: MessageBusEvent = {
-      type: MessageBus.EVENTS_PUBLIC.NOTIFICATION,
-      data: notificationEvent
+    const messageBusEvent: MessageBusEvent = {
+      data: notificationEvent,
+      type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
     };
     this.messageBus.publishFromParent(messageBusEvent, Selectors.NOTIFICATION_FRAME_IFRAME);
   }

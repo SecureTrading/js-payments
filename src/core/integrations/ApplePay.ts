@@ -40,10 +40,6 @@ class ApplePay {
     this._payment = value;
   }
 
-  set applePayButtonProps(value: any) {
-    this._applePayButtonProps = value;
-  }
-
   set jwt(value: string) {
     this._jwt = value;
   }
@@ -372,11 +368,11 @@ class ApplePay {
    * @param content
    */
   public setNotification(type: string, content: string) {
-    let notificationEvent: NotificationEvent = {
+    const notificationEvent: NotificationEvent = {
       type: type,
       content: content
     };
-    let messageBusEvent: MessageBusEvent = {
+    const messageBusEvent: MessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.NOTIFICATION,
       data: notificationEvent
     };
