@@ -1,6 +1,7 @@
 declare const V: any;
 import { environment } from '../../environments/environment';
-import { NotificationType } from '../models/NotificationEvent';
+import { NotificationEvent, NotificationType } from '../models/NotificationEvent';
+import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import DomMethods from './../shared/DomMethods';
@@ -71,6 +72,7 @@ class VisaCheckout {
   private _buttonSettings: any;
   private _payment: Payment;
   private _walletSource: string = 'VISACHECKOUT';
+  public messageBus: MessageBus;
 
   /**
    * Init configuration (temporary with some test data).
@@ -97,6 +99,7 @@ class VisaCheckout {
       } = config;
       const stJwt = new StJwt(jwt);
       this.payment = new Payment(jwt);
+      this.messageBus = new MessageBus();
       this._livestatus = livestatus;
       this._placement = placement;
       this._setInitConfiguration(paymentRequest, settings, stJwt, apikey);
@@ -133,9 +136,15 @@ class VisaCheckout {
    * @param content
    */
   public setNotification(type: string, content: string) {
-    DomMethods.getIframeContentWindow
-      .call(this, Selectors.NOTIFICATION_FRAME_IFRAME)
-      .postMessage({ type, content }, (window as any).frames[Selectors.NOTIFICATION_FRAME_IFRAME]);
+    let notificationEvent: NotificationEvent = {
+      type: type,
+      content: content
+    };
+    let messageBusEvent: MessageBusEvent = {
+      type: MessageBus.EVENTS_PUBLIC.NOTIFICATION,
+      data: notificationEvent
+    };
+    this.messageBus.publishFromParent(messageBusEvent, Selectors.NOTIFICATION_FRAME_IFRAME);
   }
 
   /**
