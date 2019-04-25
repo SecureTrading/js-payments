@@ -61,6 +61,19 @@ class DomMethods {
 
   public static addClass = (element: HTMLElement, classToAdd: string) => element.classList.add(classToAdd);
   public static removeClass = (element: HTMLElement, classToRemove: string) => element.classList.remove(classToRemove);
+
+  public static parseForm(form: HTMLElement) {
+    let selects = Array.prototype.slice.call(form.querySelectorAll('select'));
+    let inputs = Array.prototype.slice.call(form.querySelectorAll('input'));
+    let els = [...selects, ...inputs];
+    let result: any = {};
+    let i;
+    for (i = 0; i < els.length; i++) {
+      let el = els[i];
+      result[el.name] = el.value;
+    }
+    return result;
+  }
 }
 
 export default DomMethods;
