@@ -11,6 +11,14 @@ import Payment from './../shared/Payment';
  *  Visa Checkout configuration class; sets up Visa e-wallet
  */
 class VisaCheckout {
+  get payment(): Payment {
+    return this._payment;
+  }
+
+  set payment(value: Payment) {
+    this._payment = value;
+  }
+
   set paymentDetails(value: string) {
     this._paymentDetails = value;
   }
@@ -88,7 +96,7 @@ class VisaCheckout {
         props: { apikey, livestatus, placement, settings, paymentRequest, buttonSettings }
       } = config;
       const stJwt = new StJwt(jwt);
-      this._payment = new Payment(jwt);
+      this.payment = new Payment(jwt);
       this._livestatus = livestatus;
       this._placement = placement;
       this._setInitConfiguration(paymentRequest, settings, stJwt, apikey);
@@ -244,12 +252,14 @@ class VisaCheckout {
       this.paymentDetails = JSON.stringify(payment);
       this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
       this.getResponseMessage(this.paymentStatus);
-      this._payment
+      this.payment
         .authorizePayment({ walletsource: this._walletSource, wallettoken: this.paymentDetails })
         .then((response: object) => {
+          console.log(response);
           return response;
         })
         .then((data: object) => {
+          console.log(data);
           this.setNotification(NotificationType.Success, this.responseMessage);
           return data;
         })
