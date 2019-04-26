@@ -56,6 +56,11 @@ export default class CardNumber extends FormField {
       data: formFieldState
     };
 
+    const binProcessEvent: MessageBusEvent = {
+      type: MessageBus.EVENTS.BIN_PROCESS,
+      data: formFieldState.value
+    };
+    formFieldState.validity && this._messageBus.publish(binProcessEvent, true);
     this._messageBus.publish(messageBusEvent);
   }
 
