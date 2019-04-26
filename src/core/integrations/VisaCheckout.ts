@@ -92,6 +92,7 @@ class VisaCheckout {
   };
 
   constructor(config: any, jwt: string) {
+    this.messageBus = new MessageBus();
     if (environment.testEnvironment) {
       this._attachVisaButton();
       this._setActionOnMockedButton();
@@ -101,7 +102,6 @@ class VisaCheckout {
       } = config;
       const stJwt = new StJwt(jwt);
       this.payment = new Payment(jwt);
-      this.messageBus = new MessageBus();
       this._livestatus = livestatus;
       this._placement = placement;
       this._setInitConfiguration(paymentRequest, settings, stJwt, merchantId);
@@ -176,7 +176,7 @@ class VisaCheckout {
         return this.paymentDetails;
       })
       .catch(() => {
-        this.setNotification(NotificationType.Error, 'error');
+        this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
       });
   }
 
