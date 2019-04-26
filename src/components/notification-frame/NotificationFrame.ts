@@ -1,6 +1,6 @@
 import Frame from '../../core/shared/Frame';
 import MessageBus from '../../core/shared/MessageBus';
-import { NotificationEvent, NotificationType } from '../../core/models/NotificationEvent';
+import { INotificationEvent, NotificationType } from '../../core/models/NotificationEvent';
 import Selectors from '../../core/shared/Selectors';
 
 /**
@@ -99,7 +99,7 @@ export default class NotificationFrame extends Frame {
   }
 
   private static ELEMENT_ID: string = Selectors.NOTIFICATION_FRAME_ID;
-  public _message: NotificationEvent;
+  public _message: INotificationEvent;
   private _notificationFrameElement: HTMLElement;
 
   constructor() {
@@ -119,7 +119,7 @@ export default class NotificationFrame extends Frame {
    * Listens to postMessage event, receives message from it and triggers method for inserting content into div
    */
   public _onMessage() {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, (data: NotificationEvent) => {
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, (data: INotificationEvent) => {
       this._message = { type: data.type, content: data.content };
       this.insertContent();
       this.setAttributeClass();

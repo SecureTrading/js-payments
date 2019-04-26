@@ -1,7 +1,7 @@
 import Form from './classes/Form.class';
 import CardinalCommerce from './integrations/CardinalCommerce';
 import Wallet from './classes/Wallet.class';
-import { Styles } from './shared/Styler';
+import { IStyles } from './shared/Styler';
 
 /**
  * Establishes connection with ST, defines client.
@@ -11,10 +11,10 @@ export default class ST {
   private readonly origin: string;
   private readonly onlyWallets: boolean;
   private readonly fieldsIds: any;
-  private readonly styles: Styles;
+  private readonly styles: IStyles;
   private readonly wallets: object[];
 
-  constructor(jwt: string, origin: string, onlyWallets: boolean, fieldsIds: any, styles: Styles, wallets: object[]) {
+  constructor(jwt: string, origin: string, onlyWallets: boolean, fieldsIds: any, styles: IStyles, wallets: object[]) {
     this.jwt = jwt;
     this.origin = origin;
     this.onlyWallets = onlyWallets;

@@ -1,6 +1,6 @@
 import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
-import { NotificationEvent, NotificationType } from '../models/NotificationEvent';
+import { INotificationEvent, NotificationType } from '../models/NotificationEvent';
 import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import DomMethods from '../shared/DomMethods';
@@ -349,7 +349,7 @@ class ApplePay {
    * @param content
    */
   public setNotification(type: string, content: string) {
-    let notificationEvent: NotificationEvent = {
+    let notificationEvent: INotificationEvent = {
       type: type,
       content: content
     };

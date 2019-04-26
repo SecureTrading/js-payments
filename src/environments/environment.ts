@@ -1,17 +1,17 @@
 export const environment = {
   production: false,
   testEnvironment: false,
-  // @ts-ignore
-  FRAME_URL: `https://${HOST}:8443`,
-  GATEWAY_URL: 'https://webservices.securetrading.net/jwt/',
-  SONGBIRD_URL: 'https://songbirdstag.cardinalcommerce.com/cardinalcruise/v1/songbird.js',
-  CARDINAL_COMMERCE_CONFIG: {
-    logging: { level: 'on' }
-  },
   APM_NAMES: {
     APPLE_PAY: 'APPLEPAY',
     VISA_CHECKOUT: 'VISACHECKOUT'
   },
+  CARDINAL_COMMERCE_CONFIG: {
+    logging: { level: 'on' }
+  },
+  // @ts-ignore
+  FRAME_URL: `https://${HOST}:8443`,
+  GATEWAY_URL: 'https://webservices.securetrading.net/jwt/',
+  SONGBIRD_URL: 'https://songbirdstag.cardinalcommerce.com/cardinalcruise/v1/songbird.js',
   VISA_CHECKOUT_URLS: {
     DEV_BUTTON_URL: 'https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png',
     DEV_SDK: 'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js',

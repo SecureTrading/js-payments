@@ -1,13 +1,13 @@
 import Element from '../Element';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
-import { Styles } from '../shared/Styler';
+import { IStyles } from '../shared/Styler';
 
 /**
  * Defines all elements of form and their  placement on merchant site.
  */
 class Form {
-  public styles: Styles;
+  public styles: IStyles;
   public onlyWallets: boolean;
   public elementsToRegister: HTMLElement[];
   public elementsTargets: any;
@@ -29,7 +29,7 @@ class Form {
   private messageBusInstance: MessageBus;
   private messageBusEvent: MessageBusEvent;
 
-  constructor(jwt: any, origin: any, onlyWallets: boolean, fieldsIds: [], styles: Styles) {
+  constructor(jwt: any, origin: any, onlyWallets: boolean, fieldsIds: [], styles: IStyles) {
     this.styles = styles;
     this.onlyWallets = onlyWallets;
     this.fieldsIds = fieldsIds;

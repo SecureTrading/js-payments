@@ -1,7 +1,6 @@
 import Frame from '../../core/shared/Frame';
 import MessageBus from '../../core/shared/MessageBus';
 import Payment from '../../core/shared/Payment';
-import Selectors from '../../core/shared/Selectors';
 
 export default class ControlFrame extends Frame {
   private _frameParams: object;
@@ -40,6 +39,12 @@ export default class ControlFrame extends Frame {
     this.onLoad();
   }
 
+  protected _getAllowedStyles() {
+    // @TODO: remove
+    const allowed = super._getAllowedStyles();
+    return allowed;
+  }
+
   private setFrameParams() {
     // @ts-ignore
     const frameUrl = new URL(window.location);
@@ -49,12 +54,6 @@ export default class ControlFrame extends Frame {
       jwt: frameParams.get('jwt'),
       origin: frameParams.get('origin')
     };
-  }
-
-  protected _getAllowedStyles() {
-    // @TODO: remove
-    let allowed = super._getAllowedStyles();
-    return allowed;
   }
 
   private initSubscriptions() {
@@ -120,8 +119,8 @@ export default class ControlFrame extends Frame {
   private requestThreeDInit() {
     this._payment.threeDInitRequest().then(responseBody => {
       const messageBusEvent: MessageBusEvent = {
-        type: MessageBus.EVENTS_PUBLIC.THREEDINIT,
-        data: responseBody
+        data: responseBody,
+        type: MessageBus.EVENTS_PUBLIC.THREEDINIT
       };
       this._messageBus.publish(messageBusEvent, true);
     });
@@ -146,8 +145,8 @@ export default class ControlFrame extends Frame {
     if (this._isPaymentReady && isFormValid) {
       this._payment.threeDQueryRequest(this._card).then(responseBody => {
         const messageBusEvent: MessageBusEvent = {
-          type: MessageBus.EVENTS_PUBLIC.THREEDQUERY,
-          data: responseBody
+          data: responseBody,
+          type: MessageBus.EVENTS_PUBLIC.THREEDQUERY
         };
         this._messageBus.publish(messageBusEvent, true);
       });

@@ -5,7 +5,7 @@ import Selectors from '../shared/Selectors';
 
 declare const Cardinal: any;
 
-interface ThreeDQueryResponse {
+interface IThreeDQueryResponse {
   acquirerresponsemessage: string;
   acsurl: string;
   enrolled: string;
@@ -135,7 +135,7 @@ export default class CardinalCommerce {
     }
   }
 
-  private _threeDQueryRequest(responseObject: ThreeDQueryResponse) {
+  private _threeDQueryRequest(responseObject: IThreeDQueryResponse) {
     if (this._isCardEnrolled(responseObject.enrolled)) {
       this._authenticateCard(responseObject);
     } else {
@@ -155,7 +155,7 @@ export default class CardinalCommerce {
    * Cardinal.continue(PAYMENT_BRAND, CONTINUE_DATA, ORDER_OBJECT, NEW_JWT)
    * @private
    */
-  private _authenticateCard(responseObject: ThreeDQueryResponse) {
+  private _authenticateCard(responseObject: IThreeDQueryResponse) {
     Cardinal.continue(
       CardinalCommerce.PAYMENT_BRAND,
       {

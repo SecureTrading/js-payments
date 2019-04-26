@@ -4,10 +4,10 @@
 
 class Language {
   private static _translations = {
-    APPLE_PAY_ONLY_ON_IOS: 'Your browser does not support Apple Pay',
-    APPLE_PAY_NOT_AVAILABLE: 'This version of browser does not support Apple Pay',
     APPLE_PAYMENT_IS_NOT_AVAILABLE: 'Payment is not available',
     APPLE_PAY_AMOUNT_AND_CURRENCY: 'Amount and currency are not set',
+    APPLE_PAY_NOT_AVAILABLE: 'This version of browser does not support Apple Pay',
+    APPLE_PAY_ONLY_ON_IOS: 'Your browser does not support Apple Pay',
     COMMUNICATION_ERROR_INVALID_REQUEST: 'Invalid request',
     COMMUNICATION_ERROR_INVALID_RESPONSE: 'Invalid response',
     COMMUNICATION_ERROR_TIMEOUT: 'Timeout',
