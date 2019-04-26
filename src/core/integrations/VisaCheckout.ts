@@ -85,7 +85,7 @@ class VisaCheckout {
       this._setActionOnMockedButton();
     } else {
       const {
-        props: { apikey, livestatus, placement, settings, paymentRequest, buttonSettings }
+        props: { apikey, livestatus, placement, settings, paymentRequest }
       } = config;
       const stJwt = new StJwt(jwt);
       this._payment = new Payment(jwt);
