@@ -55,10 +55,14 @@ class ApplePayMock extends ApplePay {
    */
   private _setActionOnMockedButton() {
     DomMethods.addListener('st-apple-pay-mock', 'click', () => {
-      this._getWalletverifyData().then((data: any) => {
-        this.paymentDetails = JSON.stringify(data);
-        this._proceedFlowWithMockedData();
-      });
+      this._getWalletverifyData()
+        .then((data: any) => {
+          this.paymentDetails = JSON.stringify(data);
+          this._proceedFlowWithMockedData();
+        })
+        .catch(() => {
+          this.setNotification(NotificationType.Error, 'error');
+        });
     });
   }
 
