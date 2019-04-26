@@ -4,7 +4,8 @@ const MOCK_GATEWAY_URL: string = 'https://merchant.example.com:8443';
 export const environment = {
   production: false,
   testEnvironment: true,
-  FRAME_URL: 'https://merchant.example.com:8443',
+  // @ts-ignore
+  FRAME_URL: `https://${HOST}:8443`,
   GATEWAY_URL: GATEWAY_URL,
   APM_NAMES: {
     APPLE_PAY: 'APPLEPAY',

@@ -8,12 +8,15 @@
     "not dead",
     "IE 10"
   ],
+  "config": {
+    "host": "localhost"
+  },
   "scripts": {
     "build": "webpack --config webpack.prod.js",
     "build:automated": "webpack --config webpack.test.js",
     "start:automated": "webpack-dev-server --color --progress --config webpack.test.js",
     "start": "webpack-dev-server --color --progress --config webpack.dev.js",
-    "example": "live-server ./dist --port=9090 --host=localhost --no-browser",
+    "example": "ws --rewrite '/* -> /dist/$1' --https",
     "prod": "npm run build",
     "test": "jest --watchAll",
     "coverage": "jest --coverage",
@@ -60,26 +63,27 @@
     "postcss-scss": "^2.0.0",
     "prettier": "1.17.0",
     "sass-loader": "^7.1.0",
-    "snyk": "^1.150.0",
+    "snyk": "^1.153.0",
     "source-map-loader": "^0.2.4",
-    "stylelint": "^10.0.0",
+    "stylelint": "^10.0.1",
     "stylelint-webpack-plugin": "^0.10.5",
     "ts-jest": "^24.0.2",
     "ts-loader": "^5.3.3",
-    "tslint": "^5.15.0",
+    "tslint": "^5.16.0",
     "tslint-loader": "^3.5.4",
     "typedoc": "^0.14.2",
     "typedoc-webpack-plugin": "^1.1.4",
-    "typescript": "^3.4.3",
+    "typescript": "^3.4.4",
     "webpack": "^4.30.0",
     "webpack-bundle-analyzer": "^3.3.2",
-    "webpack-cli": "^3.3.0",
+    "webpack-cli": "^3.3.1",
     "webpack-dev-server": "^3.3.1",
     "webpack-manifest-plugin": "^2.0.4",
     "webpack-merge": "^4.2.1"
   },
   "dependencies": {
     "@types/jwt-decode": "^2.2.1",
+    "jest-get-type": "^24.3.0",
     "jwt-decode": "^2.2.0",
     "ts-money": "^0.4.6"
   }

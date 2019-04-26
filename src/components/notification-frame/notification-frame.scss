@@ -21,6 +21,10 @@ body {
   padding: $space-inset-notification;
   position: relative;
   visibility: hidden;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   &:after {
     content: 'x';

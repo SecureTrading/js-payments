@@ -8,7 +8,7 @@ import { ST } from '../src/stjs';
 
 (() => {
   const st = new ST(
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoiMTU1NTU2NTI4ODM3OCIsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6ImxpdmUyIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00ifX0.zNK6e0uNV8TpPw_ZDIbuHPxQ8WH6qD4Xd1YKHTFLlr4',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoiMTU1NjE5MjQxMDc0OSIsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6ImxpdmUyIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00ifX0.YPXFxhb72eEc5yUihniXmbyVEQfPtvULk9W36uKR2zg',
     window.location.origin,
     {
       cardNumber: 'st-card-number',
@@ -26,6 +26,24 @@ import { ST } from '../src/stjs';
       'background-color-input-error': '#f8d7da'
     },
     [
+      {
+        name: 'APPLEPAY',
+        props: {
+          sitereference: 'test_site',
+          paymentRequest: {
+            total: { label: 'Secure Trading Merchant', amount: '10.00' },
+            countryCode: 'US',
+            currencyCode: 'USD',
+            merchantCapabilities: ['supports3DS', 'supportsCredit', 'supportsDebit'],
+            supportedNetworks: []
+          },
+          merchantId: 'merchant.net.securetrading',
+          sitesecurity: 'gABC123DEFABC',
+          placement: 'st-apple-pay',
+          buttonText: 'donate',
+          buttonStyle: 'white-outline'
+        }
+      },
       {
         name: 'VISACHECKOUT',
         props: {
