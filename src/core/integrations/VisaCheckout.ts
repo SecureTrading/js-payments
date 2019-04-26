@@ -174,6 +174,9 @@ class VisaCheckout {
         this.paymentDetails = data.payment;
         this.paymentStatus = data.status;
         return this.paymentDetails;
+      })
+      .catch(() => {
+        this.setNotification(NotificationType.Error, 'error');
       });
   }
 
