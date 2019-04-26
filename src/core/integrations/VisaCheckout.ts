@@ -58,7 +58,7 @@ class VisaCheckout {
 
   public messageBus: MessageBus;
 
-  private _visaCheckoutButtonProps: any = {
+  protected _visaCheckoutButtonProps: any = {
     alt: 'Visa Checkout',
     class: 'v-button',
     id: 'v-button',
@@ -93,22 +93,17 @@ class VisaCheckout {
 
   constructor(config: any, jwt: string) {
     this.messageBus = new MessageBus();
-    if (environment.testEnvironment) {
-      this._attachVisaButton();
-      this._setActionOnMockedButton();
-    } else {
-      const {
-        props: { merchantId, livestatus, placement, settings, paymentRequest, buttonSettings }
-      } = config;
-      const stJwt = new StJwt(jwt);
-      this.payment = new Payment(jwt);
-      this._livestatus = livestatus;
-      this._placement = placement;
-      this._setInitConfiguration(paymentRequest, settings, stJwt, merchantId);
-      this._buttonSettings = this.setConfiguration({ locale: stJwt.locale }, settings);
-      this._setLiveStatus();
-      this._initVisaFlow();
-    }
+    const {
+      props: { merchantId, livestatus, placement, settings, paymentRequest, buttonSettings }
+    } = config;
+    const stJwt = new StJwt(jwt);
+    this.payment = new Payment(jwt);
+    this._livestatus = livestatus;
+    this._placement = placement;
+    this._setInitConfiguration(paymentRequest, settings, stJwt, merchantId);
+    this._buttonSettings = this.setConfiguration({ locale: stJwt.locale }, settings);
+    this._setLiveStatus();
+    !environment.testEnvironment && this._initVisaFlow();
   }
 
   public _setInitConfiguration(paymentRequest: any, settings: any, stJwt: StJwt, merchantId: string) {
@@ -150,46 +145,6 @@ class VisaCheckout {
   }
 
   /**
-   * Sets action on appended mocked Visa Checkout button
-   * @private
-   */
-  private _setActionOnMockedButton() {
-    DomMethods.addListener(this._visaCheckoutButtonProps.id, 'click', () => {
-      this._setMockedData().then(() => {
-        this._proceedFlowWithMockedData();
-      });
-    });
-  }
-
-  /**
-   * Retrieves data from mocked data endpoint
-   * @private
-   */
-  private _setMockedData() {
-    return fetch(environment.VISA_CHECKOUT_URLS.MOCK_DATA_URL)
-      .then((response: any) => {
-        return response.json();
-      })
-      .then((data: any) => {
-        this.paymentDetails = data.payment;
-        this.paymentStatus = data.status;
-        return this.paymentDetails;
-      })
-      .catch(() => {
-        this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
-      });
-  }
-
-  /**
-   * Proceeds payment flow with mocked data
-   * @private
-   */
-  private _proceedFlowWithMockedData() {
-    this.getResponseMessage(this.paymentStatus);
-    this.setNotification(this.paymentStatus, this.responseMessage);
-  }
-
-  /**
    * Init configuration and payment data
    * @private
    */
@@ -219,7 +174,7 @@ class VisaCheckout {
    * Attaches Visa Button to specified element, if element is undefined Visa Checkout button is appended to body
    * @private
    */
-  private _attachVisaButton = () => DomMethods.appendChildIntoDOM(this._placement, this._createVisaButton());
+  protected _attachVisaButton = () => DomMethods.appendChildIntoDOM(this._placement, this._createVisaButton());
 
   /**
    * Checks if we are on production or not
@@ -236,7 +191,7 @@ class VisaCheckout {
    * Gets translated response message based on response communicate
    * @param type
    */
-  private getResponseMessage(type: string) {
+  protected getResponseMessage(type: string) {
     switch (type) {
       case VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS: {
         this.responseMessage = Language.translations.PAYMENT_SUCCESS;
