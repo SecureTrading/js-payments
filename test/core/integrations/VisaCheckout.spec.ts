@@ -27,7 +27,7 @@ describe('Visa Checkout class', () => {
       expect(instance._initConfiguration).toMatchObject({
         paymentRequest: { currencyCode: undefined, payment: 'request', subtotal: '10.00', total: '10.00' },
         settings: { settings: 'abc', locale: 'es_ES' },
-        merchantId: 'myapi',
+        apikey: 'myapi',
         start: 'with value'
       });
     });

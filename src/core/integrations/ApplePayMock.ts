@@ -1,4 +1,5 @@
 import { environment } from '../../environments/environment';
+import { applePayButton } from '../imports/images';
 import { NotificationType } from '../models/NotificationEvent';
 import Language from '../shared/Language';
 import ApplePay from './ApplePay';
@@ -44,10 +45,7 @@ class ApplePayMock extends ApplePay {
    * @private
    */
   private _createMockedButton = () =>
-    DomMethods.createHtmlElement.apply(this, [
-      { src: environment.APPLE_PAY_URLS.BUTTON_IMAGE, id: 'st-apple-pay-mock' },
-      'img'
-    ]);
+    DomMethods.createHtmlElement.apply(this, [{ src: applePayButton, id: 'st-apple-pay-mock' }, 'img']);
 
   /**
    * Sets action on appended mocked Visa Checkout button
