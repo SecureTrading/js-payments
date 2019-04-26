@@ -35,7 +35,7 @@ class Wallet {
     const visaCheckoutConfig = this._getWalletConfig(environment.APM_NAMES.VISA_CHECKOUT);
 
     if (applePayConfig) {
-      !environment.testEnvironment ? new ApplePayMock(applePayConfig, jwt) : new ApplePay(applePayConfig, jwt);
+      environment.testEnvironment ? new ApplePayMock(applePayConfig, jwt) : new ApplePay(applePayConfig, jwt);
     }
     if (visaCheckoutConfig) {
       new VisaCheckout(visaCheckoutConfig, jwt);
