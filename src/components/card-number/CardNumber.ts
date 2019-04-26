@@ -49,6 +49,8 @@ export default class CardNumber extends FormField {
     return document.getElementById(Selectors.CARD_NUMBER_INPUT);
   }
 
+  private static getCardNumberForBinProcess = (cardNumber: string) => cardNumber.slice(0, 6);
+
   private sendState() {
     let formFieldState: FormFieldState = this.getState();
     let messageBusEvent: MessageBusEvent = {
@@ -58,7 +60,7 @@ export default class CardNumber extends FormField {
 
     const binProcessEvent: MessageBusEvent = {
       type: MessageBus.EVENTS.BIN_PROCESS,
-      data: formFieldState.value
+      data: CardNumber.getCardNumberForBinProcess(formFieldState.value)
     };
     formFieldState.validity && this._messageBus.publish(binProcessEvent, true);
     this._messageBus.publish(messageBusEvent);
