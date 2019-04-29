@@ -89,7 +89,7 @@ describe('retryPromise', () => {
     async (timeout, attempts, error) => {
       const promissory = jest.fn(() => Utils.timeoutPromise(timeout, error));
       await expect(Utils.retryPromise(promissory)).rejects.toThrow(error);
-      expect(promissory).toHaveBeenCalledTimes(attempts);
+      expect(promissory.mock.calls.length).toBeCloseTo(attempts, -1);
     }
   );
 });
