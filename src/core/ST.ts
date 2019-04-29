@@ -9,14 +9,24 @@ import { Styles } from './shared/Styler';
 export default class ST {
   private readonly jwt: string;
   private readonly origin: string;
+  private readonly stepPayment: boolean;
   private readonly onlyWallets: boolean;
   private readonly fieldsIds: any;
   private readonly styles: Styles;
   private readonly wallets: object[];
 
-  constructor(jwt: string, origin: string, onlyWallets: boolean, fieldsIds: any, styles: Styles, wallets: object[]) {
+  constructor(
+    jwt: string,
+    origin: string,
+    stepPayment: boolean,
+    onlyWallets: boolean,
+    fieldsIds: any,
+    styles: Styles,
+    wallets: object[]
+  ) {
     this.jwt = jwt;
     this.origin = origin;
+    this.stepPayment = stepPayment;
     this.onlyWallets = onlyWallets;
     this.fieldsIds = fieldsIds;
     this.styles = styles;
