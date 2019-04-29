@@ -1,4 +1,5 @@
 import Element from '../Element';
+import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
 import { Styles } from '../shared/Styler';
@@ -131,8 +132,24 @@ class Form {
     this.messageBusInstance = new MessageBus();
     document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).addEventListener('submit', (event: Event) => {
       event.preventDefault();
+      this._preloadSubmitButton();
       this.messageBusInstance.publishFromParent(this.messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
     });
+  }
+
+  private _setPreloader(element: HTMLElement, text: string, animatedIcon?: string) {
+    element.textContent = `${animatedIcon}${text}`;
+    // @ts-ignore
+    element.disabled = true;
+  }
+
+  private _preloadSubmitButton() {
+    const inputSubmit = document.querySelector('input[type="submit"]');
+    const buttonSubmit = document.querySelector('button[type="submit"]');
+    // @ts-ignore
+    inputSubmit && this._setPreloader(inputSubmit, Language.translations.PRELOADER_TEXT);
+    // @ts-ignore
+    buttonSubmit && this._setPreloader(inputSubmit, Language.translations.PRELOADER_TEXT);
   }
 }
 

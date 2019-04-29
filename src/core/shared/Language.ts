@@ -17,6 +17,7 @@ class Language {
     PAYMENT_ERROR: 'An error occurred',
     PAYMENT_SUCCESS: 'Payment has been successfully proceeded',
     PAYMENT_WARNING: 'Payment has been canceled',
+    PRELOADER_TEXT: 'Please wait ...',
     VALIDATION_ERROR_CARD: 'Card number is invalid',
     VALIDATION_ERROR_CARD_AND_CODE: 'Security code does not match card number',
     VALIDATION_ERROR_FIELD_IS_EMPTY: 'Field is empty',
@@ -40,6 +41,7 @@ class Language {
     PAYMENT_ERROR: string;
     PAYMENT_SUCCESS: string;
     PAYMENT_WARNING: string;
+    PRELOADER_TEXT: string;
     VALIDATION_ERROR_CARD: string;
     VALIDATION_ERROR_CARD_AND_CODE: string;
     VALIDATION_ERROR_FIELD_IS_REQUIRED: string;

@@ -37,12 +37,12 @@ export default class CardinalCommerce {
     SUCCESS: 'SUCCESS'
   };
 
-  private _messageBus: MessageBus;
+  public messageBus: MessageBus;
   private _cardinalCommerceJWT: string;
   private _cardinalCommerceCacheToken: string;
 
   constructor() {
-    this._messageBus = new MessageBus();
+    this.messageBus = new MessageBus();
     this._onInit();
   }
 
@@ -51,13 +51,13 @@ export default class CardinalCommerce {
   }
 
   private _initSubscriptions() {
-    this._messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME, () => {
+    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME, () => {
       this._onLoadControlFrame();
     });
-    this._messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDINIT, (data: any) => {
+    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDINIT, (data: any) => {
       this._onThreeDInitEvent(data);
     });
-    this._messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDQUERY, (data: any) => {
+    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDQUERY, (data: any) => {
       this._onThreeDQueryEvent(data);
     });
   }
@@ -83,7 +83,7 @@ export default class CardinalCommerce {
     const messageBusEvent: MessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.THREEDINIT
     };
-    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
   private _threeDSetup() {
@@ -121,7 +121,10 @@ export default class CardinalCommerce {
     const messageBusEvent: MessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL
     };
-    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BIN_PROCESS, (data: FormFieldState) => {
+      Cardinal.trigger('bin.process', data.value);
+    });
+    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
   /**
@@ -175,7 +178,7 @@ export default class CardinalCommerce {
       type: MessageBus.EVENTS_PUBLIC.AUTH,
       data: threeDResponse
     };
-    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
   // /**
