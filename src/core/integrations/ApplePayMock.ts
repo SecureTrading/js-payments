@@ -11,16 +11,6 @@ import DomMethods from '../shared/DomMethods';
 class ApplePayMock extends ApplePay {
   public paymentDetails: string;
 
-  public paymentDetailsError: {
-    errorcode: '3000';
-    errormessage: 'Invalid field';
-    requestid: 'J-3bhw30gu';
-    requesttypedescription: 'WALLETVERIFY';
-    transactionstartedtimestamp: '2019-04-18 12:11:26';
-    walletsession: '';
-    walletsource: 'APPLEPAY';
-  };
-
   constructor(config: any, jwt: string) {
     super(config, jwt);
     this._onMockInit();
@@ -53,7 +43,7 @@ class ApplePayMock extends ApplePay {
    */
   private _setActionOnMockedButton() {
     DomMethods.addListener('st-apple-pay-mock', 'click', () => {
-      this._getWalletverifyData()
+      ApplePayMock._getWalletverifyData()
         .then((data: any) => {
           this.paymentDetails = JSON.stringify(data);
           this._proceedFlowWithMockedData();
@@ -69,7 +59,7 @@ class ApplePayMock extends ApplePay {
    * @private
    */
 
-  private _getWalletverifyData() {
+  private static _getWalletverifyData() {
     return fetch(environment.APPLE_PAY_URLS.MOCK_DATA_URL)
       .then((response: any) => {
         return response.json();
@@ -102,9 +92,8 @@ class ApplePayMock extends ApplePay {
    * @private
    */
   private _mockedPaymentAuthorization() {
-    this.stTransportInstance
-      .sendRequest({
-        requesttypedescription: 'AUTH',
+    this.payment
+      .authorizePayment({
         ...this.paymentRequest,
         wallettoken: this.merchantSession,
         walletsource: this.validateMerchantRequestData.walletsource,
