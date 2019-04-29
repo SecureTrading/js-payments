@@ -8,9 +8,9 @@ import { ST } from '../src/stjs';
 
 (() => {
   const st = new ST(
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU1NjE0NDY4MC42NTIxOTcxLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSJ9fQ.Mg9k3sNFig32evH6xGPxgXqT8ishkc24zglDFjWz8L0',
+    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU1NjU0NDY0OS41MjkwOTA0LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSJ9fQ.zH8psHhs4YK6I-Jcy7iD0eDWlzwIq6jZ7iefKK5Dyh4',
     window.location.origin,
-    true,
+    false,
     {
       cardNumber: 'st-card-number',
       expirationDate: 'st-expiration-date',
@@ -30,7 +30,6 @@ import { ST } from '../src/stjs';
       {
         name: 'APPLEPAY',
         props: {
-          sitereference: 'test_site',
           paymentRequest: {
             total: { label: 'Secure Trading Merchant', amount: '10.00' },
             countryCode: 'US',
@@ -48,7 +47,7 @@ import { ST } from '../src/stjs';
       {
         name: 'VISACHECKOUT',
         props: {
-          apikey: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4',
+          merchantId: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4',
           livestatus: 0,
           placement: 'st-visa-checkout',
           settings: { displayName: 'My Test Site' },

@@ -17,7 +17,7 @@ export interface IStTransportParams {
  *     requesttypedescription: 'AUTH',
  *     securitycode: '123',
  *     sitereference: 'test_james38641'
- *   }).then(console.log);
+ *   }).then();
  */
 export default class StTransport {
   /**

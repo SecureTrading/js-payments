@@ -1,6 +1,8 @@
 import { environment } from '../../environments/environment';
 import ApplePay from '../integrations/ApplePay';
+import ApplePayMock from '../integrations/ApplePayMock';
 import VisaCheckout from '../integrations/VisaCheckout';
+import VisaCheckoutMock from '../integrations/VisaCheckoutMock';
 
 /**
  * Sets Alternative Payment Methods available in Secure Trading and defined by merchant
@@ -34,10 +36,12 @@ class Wallet {
     const visaCheckoutConfig = this._getWalletConfig(environment.APM_NAMES.VISA_CHECKOUT);
 
     if (applePayConfig) {
-      new ApplePay(applePayConfig, jwt);
+      environment.testEnvironment ? new ApplePayMock(applePayConfig, jwt) : new ApplePay(applePayConfig, jwt);
     }
     if (visaCheckoutConfig) {
-      new VisaCheckout(visaCheckoutConfig, jwt);
+      environment.testEnvironment
+        ? new VisaCheckoutMock(visaCheckoutConfig, jwt)
+        : new VisaCheckout(visaCheckoutConfig, jwt);
     }
   }
 }

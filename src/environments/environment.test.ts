@@ -15,5 +15,8 @@ export const environment = {
     DEV_BUTTON_URL: 'https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png',
     DEV_SDK: 'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js',
     MOCK_DATA_URL: 'https://merchant.example.com:8443/visaPaymentStatus'
+  },
+  APPLE_PAY_URLS: {
+    MOCK_DATA_URL: 'https://merchant.example.com:8443/applePaymentStatus'
   }
 };
