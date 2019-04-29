@@ -1,6 +1,7 @@
 declare const V: any;
 import { environment } from '../../environments/environment';
-import { NotificationType } from '../models/NotificationEvent';
+import { NotificationEvent, NotificationType } from '../models/NotificationEvent';
+import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import DomMethods from './../shared/DomMethods';
@@ -11,6 +12,14 @@ import Payment from './../shared/Payment';
  *  Visa Checkout configuration class; sets up Visa e-wallet
  */
 class VisaCheckout {
+  get payment(): Payment {
+    return this._payment;
+  }
+
+  set payment(value: Payment) {
+    this._payment = value;
+  }
+
   set paymentDetails(value: string) {
     this._paymentDetails = value;
   }
@@ -47,13 +56,16 @@ class VisaCheckout {
     WARNING: 'WARNING'
   };
 
-  private _visaCheckoutButtonProps: any = {
+  public messageBus: MessageBus;
+
+  protected _visaCheckoutButtonProps: any = {
     alt: 'Visa Checkout',
     class: 'v-button',
     id: 'v-button',
     role: 'button',
     src: environment.VISA_CHECKOUT_URLS.DEV_BUTTON_URL
   };
+
   private _sdkAddress: string = environment.VISA_CHECKOUT_URLS.DEV_SDK;
   private _paymentStatus: string;
   private _paymentDetails: string;
@@ -66,40 +78,36 @@ class VisaCheckout {
 
   /**
    * Init configuration (temporary with some test data).
-   * apikey and encryptionKey will authenticate merchant.
+   * merchantId and encryptionKey will authenticate merchant.
    * Eventually in config, there'll be merchant credentials provided, now there are some test credentials.
    */
   private _initConfiguration = {
     apikey: '' as string,
     paymentRequest: {
       currencyCode: '' as string,
-      total: '' as string,
-      subtotal: '' as string
+      subtotal: '' as string,
+      total: '' as string
     },
     settings: {}
   };
 
   constructor(config: any, jwt: string) {
-    if (environment.testEnvironment) {
-      this._attachVisaButton();
-      this._setActionOnMockedButton();
-    } else {
-      const {
-        props: { apikey, livestatus, placement, settings, paymentRequest }
-      } = config;
-      const stJwt = new StJwt(jwt);
-      this._payment = new Payment(jwt);
-      this._livestatus = livestatus;
-      this._placement = placement;
-      this._setInitConfiguration(paymentRequest, settings, stJwt, apikey);
-      this._buttonSettings = this.setConfiguration({ locale: stJwt.locale }, settings);
-      this._setLiveStatus();
-      this._initVisaFlow();
-    }
+    this.messageBus = new MessageBus();
+    const {
+      props: { merchantId, livestatus, placement, settings, paymentRequest, buttonSettings }
+    } = config;
+    const stJwt = new StJwt(jwt);
+    this.payment = new Payment(jwt);
+    this._livestatus = livestatus;
+    this._placement = placement;
+    this._setInitConfiguration(paymentRequest, settings, stJwt, merchantId);
+    this._buttonSettings = this.setConfiguration({ locale: stJwt.locale }, settings);
+    this._setLiveStatus();
+    !environment.testEnvironment && this._initVisaFlow();
   }
 
-  public _setInitConfiguration(paymentRequest: any, settings: any, stJwt: StJwt, apikey: string) {
-    this._initConfiguration.apikey = apikey;
+  public _setInitConfiguration(paymentRequest: any, settings: any, stJwt: StJwt, merchantId: string) {
+    this._initConfiguration.apikey = merchantId;
     this._initConfiguration.paymentRequest = this._getInitPaymentRequest(paymentRequest, stJwt);
     this._initConfiguration.settings = this.setConfiguration({ locale: stJwt.locale }, settings);
   }
@@ -125,46 +133,15 @@ class VisaCheckout {
    * @param content
    */
   public setNotification(type: string, content: string) {
-    DomMethods.getIframeContentWindow
-      .call(this, Selectors.NOTIFICATION_FRAME_IFRAME)
-      .postMessage({ type, content }, (window as any).frames[Selectors.NOTIFICATION_FRAME_IFRAME]);
-  }
-
-  /**
-   * Sets action on appended mocked Visa Checkout button
-   * @private
-   */
-  private _setActionOnMockedButton() {
-    DomMethods.addListener(this._visaCheckoutButtonProps.id, 'click', () => {
-      this._setMockedData().then(() => {
-        this._proceedFlowWithMockedData();
-      });
-    });
-  }
-
-  /**
-   * Retrieves data from mocked data endpoint
-   * @private
-   */
-  private _setMockedData() {
-    return fetch(environment.VISA_CHECKOUT_URLS.MOCK_DATA_URL)
-      .then((response: any) => {
-        return response.json();
-      })
-      .then((data: any) => {
-        this.paymentDetails = data.payment;
-        this.paymentStatus = data.status;
-        return this.paymentDetails;
-      });
-  }
-
-  /**
-   * Proceeds payment flow with mocked data
-   * @private
-   */
-  private _proceedFlowWithMockedData() {
-    this.getResponseMessage(this.paymentStatus);
-    this.setNotification(this.paymentStatus, this.responseMessage);
+    const notificationEvent: NotificationEvent = {
+      content: content,
+      type: type
+    };
+    const messageBusEvent: MessageBusEvent = {
+      data: notificationEvent,
+      type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
+    };
+    this.messageBus.publishFromParent(messageBusEvent, Selectors.NOTIFICATION_FRAME_IFRAME);
   }
 
   /**
@@ -197,7 +174,7 @@ class VisaCheckout {
    * Attaches Visa Button to specified element, if element is undefined Visa Checkout button is appended to body
    * @private
    */
-  private _attachVisaButton = () => DomMethods.appendChildIntoDOM(this._placement, this._createVisaButton());
+  protected _attachVisaButton = () => DomMethods.appendChildIntoDOM(this._placement, this._createVisaButton());
 
   /**
    * Checks if we are on production or not
@@ -214,7 +191,7 @@ class VisaCheckout {
    * Gets translated response message based on response communicate
    * @param type
    */
-  private getResponseMessage(type: string) {
+  protected getResponseMessage(type: string) {
     switch (type) {
       case VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS: {
         this.responseMessage = Language.translations.PAYMENT_SUCCESS;
@@ -244,7 +221,7 @@ class VisaCheckout {
       this.paymentDetails = JSON.stringify(payment);
       this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
       this.getResponseMessage(this.paymentStatus);
-      this._payment
+      this.payment
         .authorizePayment({ walletsource: this._walletSource, wallettoken: this.paymentDetails })
         .then((response: object) => {
           return response;

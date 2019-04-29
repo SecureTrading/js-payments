@@ -30,7 +30,6 @@ import { ST } from '../src/stjs';
       {
         name: 'APPLEPAY',
         props: {
-          sitereference: 'test_site',
           paymentRequest: {
             total: { label: 'Secure Trading Merchant', amount: '10.00' },
             countryCode: 'US',
@@ -48,7 +47,7 @@ import { ST } from '../src/stjs';
       {
         name: 'VISACHECKOUT',
         props: {
-          apikey: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4',
+          merchantId: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4',
           livestatus: 0,
           placement: 'st-visa-checkout',
           settings: { displayName: 'My Test Site' },
