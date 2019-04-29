@@ -97,7 +97,7 @@ describe('Class Apple Pay', () => {
 
     // then
     it('should set _applePayButtonProps style value', () => {
-      const css = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${buttonText}; -applepay-button-style: ${buttonStyle}`;
+      const css = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${buttonText}; -apple-pay-button-style: ${buttonStyle}`;
       const { instance } = ApplePayFixture();
       instance.setApplePayButtonProps(buttonText, buttonStyle);
       expect(instance.applePayButtonProps['style']).toEqual(css);
@@ -109,7 +109,7 @@ describe('Class Apple Pay', () => {
     // then
     it('should return Apple Pay button with all props set', () => {
       const { instance } = ApplePayFixture();
-      const css = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: donate; -applepay-button-style: white`;
+      const css = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: donate; -apple-pay-button-style: white`;
       instance.applePayButtonProps['style'] = css;
       const style = instance.createApplePayButton().getAttribute('style');
       expect(style).toEqual(style);
