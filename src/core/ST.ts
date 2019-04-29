@@ -18,6 +18,11 @@ export default class ST {
   public styles: Styles;
   public payments: object[];
 
+  public static APM_NAMES = {
+    APPLE_PAY: 'APPLEPAY',
+    VISA_CHECKOUT: 'VISACHECKOUT'
+  };
+
   /**
    * Register fields in clients form
    * @param fields
@@ -98,8 +103,8 @@ export default class ST {
   }
 
   private _initWallets(jwt: string) {
-    let visaCheckoutConfig = this._getAPMConfig(environment.APM_NAMES.VISA_CHECKOUT);
-    let applePayConfig = this._getAPMConfig(environment.APM_NAMES.APPLE_PAY);
+    let visaCheckoutConfig = this._getAPMConfig(ST.APM_NAMES.VISA_CHECKOUT);
+    let applePayConfig = this._getAPMConfig(ST.APM_NAMES.APPLE_PAY);
 
     if (applePayConfig) {
       new ApplePay(applePayConfig, jwt);

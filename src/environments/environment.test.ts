@@ -7,10 +7,6 @@ export const environment = {
   // @ts-ignore
   FRAME_URL: `https://${HOST}:8443`,
   GATEWAY_URL: GATEWAY_URL,
-  APM_NAMES: {
-    APPLE_PAY: 'APPLEPAY',
-    VISA_CHECKOUT: 'VISACHECKOUT'
-  },
   CARDINAL_COMMERCE: {
     CONFIG: {
       logging: { level: 'on' }

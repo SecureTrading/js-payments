@@ -6,10 +6,6 @@ export const environment = {
   testEnvironment: false,
   FRAME_URL: '',
   GATEWAY_URL: GATEWAY_URL,
-  APM_NAMES: {
-    APPLE_PAY: 'APPLEPAY',
-    VISA_CHECKOUT: 'VISACHECKOUT'
-  },
   CARDINAL_COMMERCE: {
     CONFIG: {
       logging: { level: 'off' }
