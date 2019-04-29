@@ -1,4 +1,7 @@
 import CardinalCommerce from '../../../src/core/integrations/CardinalCommerce';
+import MessageBus from '../../../src/core/shared/MessageBus';
+
+jest.mock('./../../../src/core/shared/MessageBus');
 
 // given
 describe('Class CCIntegration', () => {
@@ -23,33 +26,14 @@ describe('Class CCIntegration', () => {
   });
 
   // given
-  describe('Method _setConfiguration', () => {
+  describe('Method _onCardinalSetupComplete', () => {
     // then
-    it('should be called once', () => {});
-  });
-
-  // given
-  describe('Method _onPaymentSetupComplete', () => {
-    // then
-    it('should be called once', () => {});
-  });
-
-  // given
-  describe('Method _onPaymentValidation', () => {
-    // then
-    it('should be called once', () => {});
-  });
-
-  // given
-  describe('Method _onSetup', () => {
-    // then
-    it('should be called once', () => {});
-  });
-
-  // given
-  describe('Method _retrieveValidationData', () => {
-    // then
-    it('should be called once', () => {});
+    it('should subscribe method be called once', () => {
+      const messageBus = new MessageBus();
+      const spy = jest.spyOn(messageBus, 'subscribe');
+      instance._onCardinalSetupComplete();
+      expect(spy).toHaveBeenCalled();
+    });
   });
 });
 
