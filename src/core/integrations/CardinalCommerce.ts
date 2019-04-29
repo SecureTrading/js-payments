@@ -118,9 +118,13 @@ export default class CardinalCommerce {
    * This includes a failed JWT authentication.
    */
   private _onCardinalSetupComplete() {
+    const messageBusEvent: MessageBusEvent = {
+      type: MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL
+    };
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BIN_PROCESS, (data: FormFieldState) => {
       Cardinal.trigger('bin.process', data.value);
     });
+    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
   /**
