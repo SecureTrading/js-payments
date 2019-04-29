@@ -138,7 +138,7 @@ class Form {
   }
 
   private _setPreloader(element: HTMLElement, text: string, animatedIcon?: string) {
-    element.textContent = `${animatedIcon}${text}`;
+    element.textContent = `${animatedIcon ? animatedIcon : ''}${text}`;
     // @ts-ignore
     element.disabled = true;
   }
@@ -149,7 +149,7 @@ class Form {
     // @ts-ignore
     inputSubmit && this._setPreloader(inputSubmit, Language.translations.PRELOADER_TEXT);
     // @ts-ignore
-    buttonSubmit && this._setPreloader(inputSubmit, Language.translations.PRELOADER_TEXT);
+    buttonSubmit && this._setPreloader(buttonSubmit, Language.translations.PRELOADER_TEXT);
   }
 }
 
