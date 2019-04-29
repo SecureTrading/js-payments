@@ -174,7 +174,7 @@ class ApplePay {
 
     this._applePayButtonProps['style'] = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${
       this.buttonText
-    }; -applepay-button-style: ${this.buttonStyle}`;
+    }; -apple-pay-button-style: ${this.buttonStyle}`;
   }
 
   /**
