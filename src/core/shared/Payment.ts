@@ -26,6 +26,17 @@ export default class Payment {
     return this._stTransport.sendRequest(requestBody);
   }
 
+  public walletVerify(wallet: WalletVerify) {
+    let requestBody: IStRequest = Object.assign(
+      {
+        requesttypedescription: 'WALLETVERIFY'
+      },
+      wallet,
+      this._stJwtPayload
+    );
+    return this._stTransport.sendRequest(requestBody);
+  }
+
   public authorizePayment(payment: Card | Wallet, threeDResponse?: string) {
     let requestBody: IStRequest = Object.assign(
       {

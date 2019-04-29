@@ -207,7 +207,7 @@ function VisaCheckoutFixture() {
     name: 'VISA',
     livestatus: 0,
     props: {
-      apikey: '2ig278`13b123872121h31h20e'
+      merchantId: '2ig278`13b123872121h31h20e'
     },
     settings: { displayName: 'My Test Site' },
     paymentRequest: { subtotal: '20.00' },
