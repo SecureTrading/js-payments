@@ -1,5 +1,7 @@
+import { environment } from '../environments/environment';
 import Form from './classes/Form.class';
 import CardinalCommerce from './integrations/CardinalCommerce';
+import CardinalCommerceMock from './integrations/CardinalCommerceMock';
 import Wallet from './classes/Wallet.class';
 import { Styles } from './shared/Styler';
 
@@ -48,7 +50,8 @@ export default class ST {
    * Inits Cardinal Commerce
    * @private
    */
-  private static _init3DSecure = () => new CardinalCommerce();
+  private static _init3DSecure = () =>
+    environment.testEnvironment ? new CardinalCommerceMock() : new CardinalCommerce();
 
   /**
    * Inits form fields

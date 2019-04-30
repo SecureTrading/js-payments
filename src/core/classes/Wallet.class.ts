@@ -12,6 +12,11 @@ class Wallet {
   private step: boolean;
   private wallets: any;
 
+  public static APM_NAMES = {
+    APPLE_PAY: 'APPLEPAY',
+    VISA_CHECKOUT: 'VISACHECKOUT'
+  };
+
   constructor(jwt: string, step: boolean, wallets: any) {
     this.jwt = jwt;
     this.step = step;
@@ -34,8 +39,8 @@ class Wallet {
    * @private
    */
   private _initWallets(jwt: string) {
-    const applePayConfig = this._getWalletConfig(environment.APM_NAMES.APPLE_PAY);
-    const visaCheckoutConfig = this._getWalletConfig(environment.APM_NAMES.VISA_CHECKOUT);
+    const applePayConfig = this._getWalletConfig(Wallet.APM_NAMES.APPLE_PAY);
+    const visaCheckoutConfig = this._getWalletConfig(Wallet.APM_NAMES.VISA_CHECKOUT);
 
     if (applePayConfig) {
       environment.testEnvironment
