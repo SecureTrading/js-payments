@@ -104,11 +104,8 @@ class VisaCheckout {
     this._step = step;
     this._setInitConfiguration(paymentRequest, settings, stJwt, merchantId);
     this._buttonSettings = this.setConfiguration({ locale: stJwt.locale }, settings);
-    this._visaCheckoutButtonProps.src = `${this._visaCheckoutButtonProps.src}?color=${buttonSettings.color}&size=${
-      buttonSettings.size
-    }`;
+    this.customizeVisaButton(buttonSettings);
     this._setLiveStatus();
-
     !environment.testEnvironment && this._initVisaFlow();
   }
 
@@ -116,6 +113,23 @@ class VisaCheckout {
     this._initConfiguration.apikey = merchantId;
     this._initConfiguration.paymentRequest = this._getInitPaymentRequest(paymentRequest, stJwt);
     this._initConfiguration.settings = this.setConfiguration({ locale: stJwt.locale }, settings);
+  }
+
+  /**
+   * Adds query string to src visa button image to customize it
+   * @param properties
+   */
+  public customizeVisaButton(properties: any) {
+    const { color, size } = properties;
+    let queryString: string;
+    if (color && size) {
+      queryString = `?color=${color}&size=${size}`;
+    } else if (color && !size) {
+      queryString = `?color=${color}`;
+    } else {
+      queryString = `?size=${size}`;
+    }
+    return (this._visaCheckoutButtonProps.src = `${this._visaCheckoutButtonProps.src}${queryString}`);
   }
 
   public _getInitPaymentRequest(paymentRequest: any, stJwt: StJwt) {
