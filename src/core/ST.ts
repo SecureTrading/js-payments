@@ -43,15 +43,15 @@ export default class ST {
   private _onInit() {
     this._initForm();
     this._initWallets();
-    ST._init3DSecure();
+    this._init3DSecure();
   }
 
   /**
    * Inits Cardinal Commerce
    * @private
    */
-  private static _init3DSecure = () =>
-    environment.testEnvironment ? new CardinalCommerceMock() : new CardinalCommerce(this.step);
+  private _init3DSecure = () =>
+    environment.testEnvironment ? new CardinalCommerceMock(this.step) : new CardinalCommerce(this.step);
 
   /**
    * Inits form fields
