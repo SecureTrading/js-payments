@@ -105,9 +105,7 @@ export default class NotificationFrame extends Frame {
   constructor() {
     super();
     this._messageBus = new MessageBus();
-
     this.notificationFrameElement = NotificationFrame.getElement(NotificationFrame.ELEMENT_ID);
-
     this._onInit();
   }
 
@@ -123,8 +121,7 @@ export default class NotificationFrame extends Frame {
       this._message = { type: data.type, content: data.content };
       this.toggleNotification();
       setTimeout(() => {
-        this.notificationFrameElement.textContent = '';
-        this.notificationFrameElement.className = '';
+        this.notificationFrameElement.classList.add('notification-frame--fade');
       }, 3000);
     });
   }
