@@ -25,5 +25,10 @@ export const environment = {
   },
   APPLE_PAY_URLS: {
     MOCK_DATA_URL: 'https://merchant.example.com:8443/applePaymentStatus'
+  },
+  ST_URLS: {
+    MOCK: {
+      THREEDQUERY_URL: `${MOCK_GATEWAY_URL}/threeDQuery`
+    }
   }
 };
