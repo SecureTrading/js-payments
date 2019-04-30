@@ -132,18 +132,29 @@ class Form {
     this.messageBusInstance = new MessageBus();
     document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).addEventListener('submit', (event: Event) => {
       event.preventDefault();
-      Form._preloadSubmitButton();
+      Form._disableSubmitButton();
       this.messageBusInstance.publishFromParent(this.messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
     });
   }
 
-  private static _setPreloader(element: HTMLElement, text: string, animatedIcon?: string) {
-    element.textContent = `${animatedIcon ? animatedIcon : ''}${text}`;
+  /**
+   * Attaches to specified element text or/and icon and disables it.
+   * @param element
+   * @param text
+   * @param animatedIcon
+   * @private
+   */
+  private static _setPreloader(element: HTMLElement, text?: string, animatedIcon?: string) {
+    element.textContent = `${animatedIcon ? animatedIcon : ''}${text ? text : ''}`;
     // @ts-ignore
     element.disabled = true;
   }
 
-  private static _preloadSubmitButton() {
+  /**
+   * Finds submit button, disable it and set preloader text or / and icon.
+   * @private
+   */
+  private static _disableSubmitButton() {
     const inputSubmit = document.querySelector('input[type="submit"]');
     const buttonSubmit = document.querySelector('button[type="submit"]');
     // @ts-ignore
