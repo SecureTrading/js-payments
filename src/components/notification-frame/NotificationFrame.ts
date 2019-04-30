@@ -120,10 +120,18 @@ export default class NotificationFrame extends Frame {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, (data: NotificationEvent) => {
       this._message = { type: data.type, content: data.content };
       this.toggleNotification();
-      setTimeout(() => {
-        this.notificationFrameElement.classList.add('notification-frame--fade');
-      }, 3000);
+      this.fadeNotificationFrame(3000);
     });
+  }
+
+  /**
+   * Fades notification frame
+   * @param timeout
+   */
+  public fadeNotificationFrame(timeout: number) {
+    setTimeout(() => {
+      this.notificationFrameElement.classList.add(Selectors.NOTIFICATION_FRAME_FADE_CLASS);
+    }, timeout);
   }
 
   /**

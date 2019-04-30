@@ -23,6 +23,7 @@ export default class Selectors {
   public static readonly NOTIFICATION_FRAME_INFO_CLASS: string = 'notification-frame--info';
   public static readonly NOTIFICATION_FRAME_SUCCESS_CLASS: string = 'notification-frame--success';
   public static readonly NOTIFICATION_FRAME_WARNING_CLASS: string = 'notification-frame--warning';
+  public static readonly NOTIFICATION_FRAME_FADE_CLASS: string = 'notification-frame--fade';
 
   public static readonly CONTROL_FRAME_COMPONENT_NAME: string = 'controlFrame';
   public static readonly CONTROL_FRAME_IFRAME: string = 'st-control-frame-iframe';
