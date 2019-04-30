@@ -28,14 +28,6 @@ class VisaCheckout {
     return this._paymentDetails;
   }
 
-  get paymentStatus(): string {
-    return this._paymentStatus;
-  }
-
-  set paymentStatus(value: string) {
-    this._paymentStatus = value;
-  }
-
   get responseMessage(): string {
     return this._responseMessage;
   }
@@ -67,7 +59,6 @@ class VisaCheckout {
   };
 
   private _sdkAddress: string = environment.VISA_CHECKOUT_URLS.DEV_SDK;
-  private _paymentStatus: string;
   private _paymentDetails: string;
   private _responseMessage: string;
   private _livestatus: number = 0;
@@ -166,7 +157,6 @@ class VisaCheckout {
       this._attachVisaButton();
       this._initPaymentConfiguration();
       this._paymentStatusHandler();
-      this.getResponseMessage(this.paymentStatus);
     });
   }
 
@@ -219,31 +209,29 @@ class VisaCheckout {
   private _paymentStatusHandler() {
     V.on(VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.SUCCESS, (payment: object) => {
       this.paymentDetails = JSON.stringify(payment);
-      this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
-      this.getResponseMessage(this.paymentStatus);
       this.payment
         .authorizePayment({ walletsource: this._walletSource, wallettoken: this.paymentDetails })
         .then((response: object) => {
           return response;
         })
         .then((data: object) => {
+          this.getResponseMessage(VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS);
           this.setNotification(NotificationType.Success, this.responseMessage);
           return data;
         })
         .catch(() => {
+          this.getResponseMessage(VisaCheckout.VISA_PAYMENT_STATUS.ERROR);
           this.setNotification(NotificationType.Error, this.responseMessage);
         });
     });
     V.on(VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.ERROR, () => {
-      this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
-      this.getResponseMessage(this.paymentStatus);
-      this.setNotification(this.paymentStatus, this.responseMessage);
+      this.getResponseMessage(VisaCheckout.VISA_PAYMENT_STATUS.ERROR);
+      this.setNotification(NotificationType.Error, this.responseMessage);
     });
 
     V.on(VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.CANCEL, () => {
-      this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.WARNING;
-      this.getResponseMessage(this.paymentStatus);
-      this.setNotification(this.paymentStatus, this.responseMessage);
+      this.getResponseMessage(VisaCheckout.VISA_PAYMENT_STATUS.WARNING);
+      this.setNotification(NotificationType.Warning, this.responseMessage);
     });
   }
 }

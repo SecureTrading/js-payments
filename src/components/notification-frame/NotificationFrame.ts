@@ -121,8 +121,11 @@ export default class NotificationFrame extends Frame {
   public _onMessage() {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, (data: NotificationEvent) => {
       this._message = { type: data.type, content: data.content };
-      this.insertContent();
-      this.setAttributeClass();
+      this.toggleNotification();
+      setTimeout(() => {
+        this.notificationFrameElement.textContent = '';
+        this.notificationFrameElement.className = '';
+      }, 3000);
     });
   }
 
@@ -139,10 +142,17 @@ export default class NotificationFrame extends Frame {
    * Sets proper class to message container
    * @private
    */
-  public setAttributeClass() {
+  public toggleNotification() {
     const notificationElementClass = NotificationFrame._getMessageClass(this._message.type);
-    if (this.notificationFrameElement && notificationElementClass) {
-      this.notificationFrameElement.classList.add(notificationElementClass);
+    const frame = document.getElementById('st-notification-frame');
+    if (frame.textContent) {
+      this.notificationFrameElement.className = '';
+      this.notificationFrameElement.classList.add('notification-frame', notificationElementClass);
+    } else {
+      if (this.notificationFrameElement && notificationElementClass) {
+        this.insertContent();
+        this.notificationFrameElement.classList.add('notification-frame', notificationElementClass);
+      }
     }
   }
 }

@@ -5,6 +5,8 @@ import VisaCheckout from './VisaCheckout';
 import DomMethods from './../shared/DomMethods';
 
 class VisaCheckoutMock extends VisaCheckout {
+  public paymentStatus: string;
+
   constructor(config: any, jwt: string) {
     super(config, jwt);
     this._attachVisaButton();
