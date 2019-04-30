@@ -29,9 +29,7 @@ class VisaCheckoutMock extends VisaCheckout {
    */
   private _setMockedData() {
     return fetch(environment.VISA_CHECKOUT_URLS.MOCK_DATA_URL)
-      .then((response: any) => {
-        return response.json();
-      })
+      .then((response: any) => response.json())
       .then(({ payment, status }: any) => {
         this.paymentDetails = payment;
         this.paymentStatus = status;
@@ -49,19 +47,8 @@ class VisaCheckoutMock extends VisaCheckout {
   private _proceedFlowWithMockedData() {
     this.getResponseMessage(this.paymentStatus);
     this.setNotification(this.paymentStatus, this.responseMessage);
+    this._step ? this._cacheTokenizePayment() : this._authorizePayment();
   }
-
-  /**
-   * Mocked AUTH method
-   * @private
-   */
-  private _paymentAuthorize() {}
-
-  /**
-   * Mocked CACHETOKENISE method
-   * @private
-   */
-  private _cacheTokenizePayment() {}
 }
 
 export default VisaCheckoutMock;

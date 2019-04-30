@@ -74,7 +74,7 @@ class VisaCheckout {
   private _placement: string = 'body';
   private _responseMessage: string;
   private _sdkAddress: string = environment.VISA_CHECKOUT_URLS.DEV_SDK;
-  private _step: boolean;
+  protected _step: boolean;
   private _walletSource: string = 'VISACHECKOUT';
 
   /**
@@ -104,7 +104,11 @@ class VisaCheckout {
     this._step = step;
     this._setInitConfiguration(paymentRequest, settings, stJwt, merchantId);
     this._buttonSettings = this.setConfiguration({ locale: stJwt.locale }, settings);
+    this._visaCheckoutButtonProps.src = `${this._visaCheckoutButtonProps.src}?color=${buttonSettings.color}&size=${
+      buttonSettings.size
+    }`;
     this._setLiveStatus();
+
     !environment.testEnvironment && this._initVisaFlow();
   }
 
@@ -222,9 +226,9 @@ class VisaCheckout {
     V.on(VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.SUCCESS, (payment: object) => {
       this.paymentDetails = JSON.stringify(payment);
       this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
-      this.getResponseMessage(this.paymentStatus);
-      this._step ? this.cacheTokenizePayment() : this.authorizePayment();
+      this._step ? this._cacheTokenizePayment() : this._authorizePayment();
     });
+
     V.on(VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.ERROR, () => {
       this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
       this.getResponseMessage(this.paymentStatus);
@@ -241,17 +245,19 @@ class VisaCheckout {
   /**
    * Starts AUTH request
    */
-  private authorizePayment() {
+  protected _authorizePayment() {
     this.payment
       .authorizePayment({ walletsource: this._walletSource, wallettoken: this.paymentDetails })
-      .then((response: object) => {
-        return response;
-      })
+      .then((response: object) => response)
       .then((data: object) => {
+        this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
+        this.getResponseMessage(this.paymentStatus);
         this.setNotification(NotificationType.Success, this.responseMessage);
         return data;
       })
       .catch(() => {
+        this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
+        this.getResponseMessage(this.paymentStatus);
         this.setNotification(NotificationType.Error, this.responseMessage);
       });
   }
@@ -259,17 +265,19 @@ class VisaCheckout {
   /**
    * Starts CACHETOKENISE request
    */
-  private cacheTokenizePayment() {
+  protected _cacheTokenizePayment() {
     this.payment
       .tokenizeCard({ walletsource: this._walletSource, wallettoken: this.paymentDetails })
-      .then((response: object) => {
-        return response;
-      })
+      .then((response: object) => response)
       .then((data: object) => {
+        this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
+        this.getResponseMessage(this.paymentStatus);
         this.setNotification(NotificationType.Success, this.responseMessage);
         return data;
       })
       .catch(() => {
+        this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
+        this.getResponseMessage(this.paymentStatus);
         this.setNotification(NotificationType.Error, this.responseMessage);
       });
   }
