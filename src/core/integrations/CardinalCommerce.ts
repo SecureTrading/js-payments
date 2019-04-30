@@ -37,7 +37,7 @@ export default class CardinalCommerce {
     SUCCESS: 'SUCCESS'
   };
 
-  public _messageBus: MessageBus;
+  private _messageBus: MessageBus;
   private _cardinalCommerceJWT: string;
   private _cardinalCommerceCacheToken: string;
 
