@@ -50,6 +50,18 @@ class VisaCheckoutMock extends VisaCheckout {
     this.getResponseMessage(this.paymentStatus);
     this.setNotification(this.paymentStatus, this.responseMessage);
   }
+
+  /**
+   * Mocked AUTH method
+   * @private
+   */
+  private _paymentAuthorize() {}
+
+  /**
+   * Mocked CACHETOKENISE method
+   * @private
+   */
+  private _cacheTokenizePayment() {}
 }
 
 export default VisaCheckoutMock;
