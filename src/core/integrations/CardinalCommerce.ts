@@ -10,6 +10,7 @@ interface ThreeDQueryResponse {
   acsurl: string;
   enrolled: string;
   pareq: string;
+  transactionreference: string;
 }
 
 /**
@@ -131,7 +132,9 @@ export default class CardinalCommerce {
   protected _onCardinalValidated(data: any, jwt: any) {
     // @TODO: handle all errors - part of STJS-25
     if (data.ActionCode === 'SUCCESS') {
-      this._authorizePayment(jwt);
+      this._authorizePayment({
+        threedresponse: jwt
+      });
     }
   }
 
@@ -139,9 +142,9 @@ export default class CardinalCommerce {
     if (this._isCardEnrolled(responseObject.enrolled)) {
       this._authenticateCard(responseObject);
     } else {
-      // @TODO
-      // N - Perform an AUTH Request, including the transactionreference returned in the THREEDQUERY response.
-      // U - This typically indicates a temporary problem with the card issuer’s systems. You can configure your system to resubmit the same THREEDQUERY request. If this continues to fail, perform a standard AUTH request, including the transactionreference returned in the THREEDQUERY response.
+      this._authorizePayment({
+        transactionreference: responseObject.transactionreference
+      });
     }
   }
 
@@ -170,10 +173,10 @@ export default class CardinalCommerce {
     );
   }
 
-  private _authorizePayment(threeDResponse: string) {
+  private _authorizePayment(data: any) {
     const messageBusEvent: MessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.AUTH,
-      data: threeDResponse
+      data: data
     };
     this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
