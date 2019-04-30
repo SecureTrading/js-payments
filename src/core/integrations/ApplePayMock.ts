@@ -10,9 +10,11 @@ import DomMethods from '../shared/DomMethods';
  */
 class ApplePayMock extends ApplePay {
   public paymentDetails: string;
+  private _step: boolean;
 
-  constructor(config: any, jwt: string) {
-    super(config, jwt);
+  constructor(config: any, step: boolean, jwt: string) {
+    super(config, step, jwt);
+    this._step = step;
     this._onMockInit();
   }
 
@@ -78,7 +80,7 @@ class ApplePayMock extends ApplePay {
     if (this.paymentDetails.walletsession) {
       this.onValidateMerchantResponseSuccess(this.paymentDetails);
       this.setNotification(NotificationType.Success, 'response');
-      this._mockedPaymentAuthorization();
+      this._step ? this._mockedPaymentAuthorization() : this._mockedCachetokenisePayment();
     } else {
       // @ts-ignore
       const { errorcode, errormessage } = this.paymentDetails;
@@ -94,6 +96,24 @@ class ApplePayMock extends ApplePay {
   private _mockedPaymentAuthorization() {
     this.payment
       .authorizePayment({
+        ...this.paymentRequest,
+        wallettoken: this.merchantSession,
+        walletsource: this.validateMerchantRequestData.walletsource,
+        walletmerchantid: this.validateMerchantRequestData.walletmerchantid,
+        walletvalidationurl: this.validateMerchantRequestData.walletvalidationurl,
+        walletrequestdomain: this.validateMerchantRequestData.walletrequestdomain
+      })
+      .then(() => {
+        this.setNotification(NotificationType.Success, Language.translations.PAYMENT_AUTHORIZED);
+      })
+      .catch(() => {
+        this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
+      });
+  }
+
+  private _mockedCachetokenisePayment() {
+    this.payment
+      .tokenizeCard({
         ...this.paymentRequest,
         wallettoken: this.merchantSession,
         walletsource: this.validateMerchantRequestData.walletsource,

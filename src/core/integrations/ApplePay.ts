@@ -85,9 +85,10 @@ class ApplePay {
     'vPay'
   ]);
   public static VERSION_5_SUPPORTED_NETWORKS = ApplePay.BASIC_SUPPORTED_NETWORKS.concat(['elo', 'mada']);
-  private _jwt: string;
   private _applePayButtonProps: any = {};
+  private _jwt: string;
   private _payment: Payment;
+  private step: boolean;
 
   /**
    * All object properties are required for WALLETVERIFY request call to ST.
@@ -99,7 +100,7 @@ class ApplePay {
     walletrequestdomain: window.location.hostname
   };
 
-  constructor(config: any, jwt: string) {
+  constructor(config: any, step: boolean, jwt: string) {
     const {
       props: { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId }
     } = config;
@@ -109,6 +110,7 @@ class ApplePay {
     this.payment = new Payment(jwt);
     this.paymentRequest = paymentRequest;
     this.sitesecurity = sitesecurity;
+    this.step = step;
     this.validateMerchantRequestData.walletmerchantid = merchantId;
     this.stJwtInstance = new StJwt(jwt);
     this.stTransportInstance = new StTransport({ jwt });
@@ -285,22 +287,44 @@ class ApplePay {
     this.session.onpaymentauthorized = (event: any) => {
       this.paymentDetails = JSON.stringify(event.payment);
       this.session.completePayment({ status: ApplePaySession.STATUS_SUCCESS, errors: [] });
-      this.payment
-        .authorizePayment({
-          walletsource: this.validateMerchantRequestData.walletsource,
-          wallettoken: this.paymentDetails
-        })
-        .then((response: object) => {
-          return response;
-        })
-        .then((data: object) => {
-          this.setNotification(NotificationType.Success, Language.translations.PAYMENT_AUTHORIZED);
-          return data;
-        })
-        .catch(() => {
-          this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
-        });
+      this.step ? this._paymentAuthorize() : this._cacheTokenizePayment();
     };
+  }
+
+  private _paymentAuthorize() {
+    this.payment
+      .authorizePayment({
+        walletsource: this.validateMerchantRequestData.walletsource,
+        wallettoken: this.paymentDetails
+      })
+      .then((response: object) => {
+        return response;
+      })
+      .then((data: object) => {
+        this.setNotification(NotificationType.Success, Language.translations.PAYMENT_AUTHORIZED);
+        return data;
+      })
+      .catch(() => {
+        this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
+      });
+  }
+
+  private _cacheTokenizePayment() {
+    this.payment
+      .tokenizeCard({
+        walletsource: this.validateMerchantRequestData.walletsource,
+        wallettoken: this.paymentDetails
+      })
+      .then((response: object) => {
+        return response;
+      })
+      .then((data: object) => {
+        this.setNotification(NotificationType.Success, Language.translations.PAYMENT_AUTHORIZED);
+        return data;
+      })
+      .catch(() => {
+        this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
+      });
   }
 
   /**

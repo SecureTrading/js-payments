@@ -74,6 +74,7 @@ class VisaCheckout {
   private _placement: string = 'body';
   private _buttonSettings: any;
   private _payment: Payment;
+  private _step: boolean;
   private _walletSource: string = 'VISACHECKOUT';
 
   /**
@@ -91,7 +92,7 @@ class VisaCheckout {
     settings: {}
   };
 
-  constructor(config: any, jwt: string) {
+  constructor(config: any, step: boolean, jwt: string) {
     this.messageBus = new MessageBus();
     const {
       props: { merchantId, livestatus, placement, settings, paymentRequest, buttonSettings }
@@ -100,6 +101,7 @@ class VisaCheckout {
     this.payment = new Payment(jwt);
     this._livestatus = livestatus;
     this._placement = placement;
+    this._step = step;
     this._setInitConfiguration(paymentRequest, settings, stJwt, merchantId);
     this._buttonSettings = this.setConfiguration({ locale: stJwt.locale }, settings);
     this._setLiveStatus();
@@ -221,18 +223,7 @@ class VisaCheckout {
       this.paymentDetails = JSON.stringify(payment);
       this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
       this.getResponseMessage(this.paymentStatus);
-      this.payment
-        .authorizePayment({ walletsource: this._walletSource, wallettoken: this.paymentDetails })
-        .then((response: object) => {
-          return response;
-        })
-        .then((data: object) => {
-          this.setNotification(NotificationType.Success, this.responseMessage);
-          return data;
-        })
-        .catch(() => {
-          this.setNotification(NotificationType.Error, this.responseMessage);
-        });
+      this._step ? this.cacheTokenizePayment() : this.authorizePayment();
     });
     V.on(VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.ERROR, () => {
       this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
@@ -245,6 +236,42 @@ class VisaCheckout {
       this.getResponseMessage(this.paymentStatus);
       this.setNotification(this.paymentStatus, this.responseMessage);
     });
+  }
+
+  /**
+   * Starts AUTH request
+   */
+  private authorizePayment() {
+    this.payment
+      .authorizePayment({ walletsource: this._walletSource, wallettoken: this.paymentDetails })
+      .then((response: object) => {
+        return response;
+      })
+      .then((data: object) => {
+        this.setNotification(NotificationType.Success, this.responseMessage);
+        return data;
+      })
+      .catch(() => {
+        this.setNotification(NotificationType.Error, this.responseMessage);
+      });
+  }
+
+  /**
+   * Starts CACHETOKENISE request
+   */
+  private cacheTokenizePayment() {
+    this.payment
+      .tokenizeCard({ walletsource: this._walletSource, wallettoken: this.paymentDetails })
+      .then((response: object) => {
+        return response;
+      })
+      .then((data: object) => {
+        this.setNotification(NotificationType.Success, this.responseMessage);
+        return data;
+      })
+      .catch(() => {
+        this.setNotification(NotificationType.Error, this.responseMessage);
+      });
   }
 }
 

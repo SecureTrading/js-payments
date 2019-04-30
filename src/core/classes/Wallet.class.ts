@@ -9,10 +9,12 @@ import VisaCheckoutMock from '../integrations/VisaCheckoutMock';
  */
 class Wallet {
   private jwt: string;
+  private step: boolean;
   private wallets: any;
 
-  constructor(jwt: string, wallets: any) {
+  constructor(jwt: string, step: boolean, wallets: any) {
     this.jwt = jwt;
+    this.step = step;
     this.wallets = wallets;
     this._initWallets(jwt);
   }
@@ -36,12 +38,14 @@ class Wallet {
     const visaCheckoutConfig = this._getWalletConfig(environment.APM_NAMES.VISA_CHECKOUT);
 
     if (applePayConfig) {
-      environment.testEnvironment ? new ApplePayMock(applePayConfig, jwt) : new ApplePay(applePayConfig, jwt);
+      environment.testEnvironment
+        ? new ApplePayMock(applePayConfig, this.step, jwt)
+        : new ApplePay(applePayConfig, this.step, jwt);
     }
     if (visaCheckoutConfig) {
       environment.testEnvironment
-        ? new VisaCheckoutMock(visaCheckoutConfig, jwt)
-        : new VisaCheckout(visaCheckoutConfig, jwt);
+        ? new VisaCheckoutMock(visaCheckoutConfig, this.step, jwt)
+        : new VisaCheckout(visaCheckoutConfig, this.step, jwt);
     }
   }
 }

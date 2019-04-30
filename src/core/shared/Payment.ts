@@ -14,20 +14,20 @@ export default class Payment {
     this._stJwtPayload = this._stJwtDecode.payload;
   }
 
-  public tokenizeCard(card: Card): Promise<object> {
-    let requestBody: IStRequest = Object.assign(
+  public tokenizeCard(payment: Card | Wallet): Promise<object> {
+    const requestBody: IStRequest = Object.assign(
       {
         requesttypedescription: 'CACHETOKENISE'
       },
-      this._stJwtPayload,
-      card
+      payment,
+      this._stJwtPayload
     );
 
     return this._stTransport.sendRequest(requestBody);
   }
 
   public walletVerify(wallet: WalletVerify) {
-    let requestBody: IStRequest = Object.assign(
+    const requestBody: IStRequest = Object.assign(
       {
         requesttypedescription: 'WALLETVERIFY'
       },
@@ -38,7 +38,7 @@ export default class Payment {
   }
 
   public authorizePayment(payment: Card | Wallet, threeDResponse?: string) {
-    let requestBody: IStRequest = Object.assign(
+    const requestBody: IStRequest = Object.assign(
       {
         requesttypedescription: 'AUTH'
       },
@@ -50,7 +50,7 @@ export default class Payment {
   }
 
   public threeDInitRequest() {
-    let requestBody: IStRequest = Object.assign(
+    const requestBody: IStRequest = Object.assign(
       {
         requesttypedescription: 'THREEDINIT'
       },
@@ -65,7 +65,7 @@ export default class Payment {
   }
 
   public threeDQueryRequest(card: Card): Promise<object> {
-    let requestBody: IStRequest = Object.assign(
+    const requestBody: IStRequest = Object.assign(
       {
         requesttypedescription: 'THREEDQUERY',
         termurl: 'https://termurl.com',

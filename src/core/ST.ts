@@ -9,7 +9,7 @@ import { Styles } from './shared/Styler';
 export default class ST {
   private readonly jwt: string;
   private readonly origin: string;
-  private readonly stepPayment: boolean;
+  private readonly step: boolean;
   private readonly onlyWallets: boolean;
   private readonly fieldsIds: any;
   private readonly styles: Styles;
@@ -18,7 +18,7 @@ export default class ST {
   constructor(
     jwt: string,
     origin: string,
-    stepPayment: boolean,
+    step: boolean,
     onlyWallets: boolean,
     fieldsIds: any,
     styles: Styles,
@@ -26,7 +26,7 @@ export default class ST {
   ) {
     this.jwt = jwt;
     this.origin = origin;
-    this.stepPayment = stepPayment;
+    this.step = step;
     this.onlyWallets = onlyWallets;
     this.fieldsIds = fieldsIds;
     this.styles = styles;
@@ -60,5 +60,5 @@ export default class ST {
    * Inits Alternative Payment Methods
    * @private
    */
-  private _initWallets = () => new Wallet(this.jwt, this.wallets);
+  private _initWallets = () => new Wallet(this.jwt, this.step, this.wallets);
 }
