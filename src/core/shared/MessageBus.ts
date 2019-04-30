@@ -34,7 +34,7 @@ export default class MessageBus {
       let messageBusEvent: MessageBusEvent = event.data;
       let isPublicEvent = Utils.inArray(Object.keys(MessageBus.EVENTS_PUBLIC), messageBusEvent.type);
       let isCallbackAllowed =
-        event.origin === this._frameOrigin || (event.origin === this._parentOrigin && isPublicEvent);
+        event.origin === (new URL(this._frameOrigin)).origin || (event.origin === this._parentOrigin && isPublicEvent); // TODO change where this._frameOrigin is set rather than doing this on every message
       let subscribersStore = window.sessionStorage.getItem(MessageBus.SUBSCRIBERS);
 
       subscribersStore = JSON.parse(subscribersStore);

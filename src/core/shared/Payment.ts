@@ -37,12 +37,14 @@ export default class Payment {
     return this._stTransport.sendRequest(requestBody);
   }
 
-  public authorizePayment(payment: Card | Wallet, threeDResponse?: string) {
+  public authorizePayment(payment: Card | Wallet, threeDResponse?: string, cacheToken?: string, parentTransactionReference?: string) {
     let requestBody: IStRequest = Object.assign(
       {
         requesttypedescription: 'AUTH'
       },
       threeDResponse ? { threedresponse: threeDResponse } : {},
+      cacheToken ? { cachetoken: cacheToken } : {},
+      parentTransactionReference ? { parenttransactionreference: parentTransactionReference } : {},
       this._stJwtPayload,
       payment
     );
@@ -52,7 +54,7 @@ export default class Payment {
   public threeDInitRequest() {
     let requestBody: IStRequest = Object.assign(
       {
-        requesttypedescription: 'THREEDINIT'
+        requesttypedescription: 'JSINIT'
       },
       this._stJwtPayload
     );

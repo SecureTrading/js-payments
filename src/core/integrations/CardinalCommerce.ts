@@ -6,10 +6,11 @@ import Selectors from '../shared/Selectors';
 declare const Cardinal: any;
 
 interface ThreeDQueryResponse {
-  acquirerresponsemessage: string;
+  acquirertransactionreference: string;
   acsurl: string;
+  transactionreference: string;	
   enrolled: string;
-  pareq: string;
+  threedpayload: string;
 }
 
 /**
@@ -40,6 +41,7 @@ export default class CardinalCommerce {
   private _messageBus: MessageBus;
   private _cardinalCommerceJWT: string;
   private _cardinalCommerceCacheToken: string;
+  private _threedQueryTransactionReference: string;
 
   constructor() {
     this._messageBus = new MessageBus();
@@ -67,7 +69,7 @@ export default class CardinalCommerce {
   }
 
   private _onThreeDInitEvent(data: any) {
-    this._cardinalCommerceJWT = data.jwt;
+    this._cardinalCommerceJWT = data.threedinit;
     this._cardinalCommerceCacheToken = data.cachetoken;
     this._threeDSetup();
   }
@@ -99,16 +101,15 @@ export default class CardinalCommerce {
    */
   private _onCardinalLoad() {
     Cardinal.configure(environment.CARDINAL_COMMERCE_CONFIG);
-    Cardinal.setup(CardinalCommerce.PAYMENT_EVENTS.INIT, {
-      jwt: this._cardinalCommerceJWT
-    });
-
     Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.SETUP_COMPLETE, () => {
       this._onCardinalSetupComplete();
     });
 
     Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.VALIDATED, (data: any, jwt: any) => {
       this._onCardinalValidated(data, jwt);
+    });
+    Cardinal.setup(CardinalCommerce.PAYMENT_EVENTS.INIT, {
+      jwt: this._cardinalCommerceJWT
     });
   }
 
@@ -141,7 +142,7 @@ export default class CardinalCommerce {
     } else {
       // @TODO
       // N - Perform an AUTH Request, including the transactionreference returned in the THREEDQUERY response.
-      // U - This typically indicates a temporary problem with the card issuer’s systems. You can configure your system to resubmit the same THREEDQUERY request. If this continues to fail, perform a standard AUTH request, including the transactionreference returned in the THREEDQUERY response.
+      // U - This typically indicates a temporary problem with the card issuerâs systems. You can configure your system to resubmit the same THREEDQUERY request. If this continues to fail, perform a standard AUTH request, including the transactionreference returned in the THREEDQUERY response.
     }
   }
 
@@ -156,15 +157,16 @@ export default class CardinalCommerce {
    * @private
    */
   private _authenticateCard(responseObject: ThreeDQueryResponse) {
+    this._threedQueryTransactionReference = responseObject.transactionreference;
     Cardinal.continue(
       CardinalCommerce.PAYMENT_BRAND,
       {
         AcsUrl: responseObject.acsurl,
-        Payload: responseObject.pareq // @TODO: this should be threedresponse not pareq but the server needs updating
+        Payload: responseObject.threedpayload
       },
       {
         Cart: [],
-        OrderDetails: { TransactionId: responseObject.acquirerresponsemessage }
+        OrderDetails: { TransactionId: responseObject.acquirertransactionreference }
       },
       this._cardinalCommerceJWT
     );
@@ -173,7 +175,7 @@ export default class CardinalCommerce {
   private _authorizePayment(threeDResponse: string) {
     const messageBusEvent: MessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.AUTH,
-      data: threeDResponse
+      data: [threeDResponse, this._cardinalCommerceCacheToken, this._threedQueryTransactionReference]
     };
     this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }

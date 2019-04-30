@@ -114,7 +114,7 @@ export default class ControlFrame extends Frame {
   }
 
   private onAuthEvent(data: any) {
-    this.requestAuth(data);
+    this.requestAuth(data[0], data[1], data[2]); // TODO  should use spread operator to pass through to function
   }
 
   private requestThreeDInit() {
@@ -127,8 +127,8 @@ export default class ControlFrame extends Frame {
     });
   }
 
-  private requestAuth(data: any) {
-    this._payment.authorizePayment(this._card, data);
+  private requestAuth(threedResponse: any, cacheToken: any, parentTransactionReference: any) {
+    this._payment.authorizePayment(this._card, threedResponse, cacheToken, parentTransactionReference);
   }
 
   private requestPayment() {
