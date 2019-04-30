@@ -66,14 +66,14 @@ class VisaCheckout {
     src: environment.VISA_CHECKOUT_URLS.DEV_BUTTON_URL
   };
 
-  private _sdkAddress: string = environment.VISA_CHECKOUT_URLS.DEV_SDK;
-  private _paymentStatus: string;
-  private _paymentDetails: string;
-  private _responseMessage: string;
-  private _livestatus: number = 0;
-  private _placement: string = 'body';
   private _buttonSettings: any;
+  private _livestatus: number = 0;
   private _payment: Payment;
+  private _paymentDetails: string;
+  private _paymentStatus: string;
+  private _placement: string = 'body';
+  private _responseMessage: string;
+  private _sdkAddress: string = environment.VISA_CHECKOUT_URLS.DEV_SDK;
   private _step: boolean;
   private _walletSource: string = 'VISACHECKOUT';
 

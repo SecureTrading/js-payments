@@ -111,6 +111,10 @@ class ApplePayMock extends ApplePay {
       });
   }
 
+  /**
+   * Mocked CACHETOKENISE process after this.session.completePayment()
+   * @private
+   */
   private _mockedCachetokenisePayment() {
     this.payment
       .tokenizeCard({

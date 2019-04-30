@@ -291,6 +291,10 @@ class ApplePay {
     };
   }
 
+  /**
+   * Starts AUTH request
+   * @private
+   */
   private _paymentAuthorize() {
     this.payment
       .authorizePayment({
@@ -309,6 +313,10 @@ class ApplePay {
       });
   }
 
+  /**
+   * Starts CACHETOKENISE request
+   * @private
+   */
   private _cacheTokenizePayment() {
     this.payment
       .tokenizeCard({
