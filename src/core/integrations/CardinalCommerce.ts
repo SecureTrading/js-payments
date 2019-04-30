@@ -25,6 +25,14 @@ interface ThreeDQueryResponse {
  * 6.Cardinal.on('pauments.validated) - process auth or return failure
  */
 export default class CardinalCommerce {
+  get step(): boolean {
+    return this._step;
+  }
+
+  set step(value: boolean) {
+    this._step = value;
+  }
+
   private static PAYMENT_BRAND: string = 'cca';
   private static PAYMENT_EVENTS = {
     INIT: 'init',
@@ -41,8 +49,10 @@ export default class CardinalCommerce {
   private _messageBus: MessageBus;
   private _cardinalCommerceJWT: string;
   private _cardinalCommerceCacheToken: string;
+  private _step: boolean;
 
-  constructor() {
+  constructor(step: boolean) {
+    this.step = step;
     this._messageBus = new MessageBus();
     this._onInit();
   }
@@ -174,10 +184,13 @@ export default class CardinalCommerce {
   }
 
   private _authorizePayment(data: any) {
-    const messageBusEvent: MessageBusEvent = {
+    let messageBusEvent: MessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.AUTH,
       data: data
     };
+    if (this.step) {
+      messageBusEvent.type = MessageBus.EVENTS_PUBLIC.CACHETOKENISE;
+    }
     this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 

@@ -51,7 +51,7 @@ export default class ST {
    * @private
    */
   private static _init3DSecure = () =>
-    environment.testEnvironment ? new CardinalCommerceMock() : new CardinalCommerce();
+    environment.testEnvironment ? new CardinalCommerceMock() : new CardinalCommerce(this.step);
 
   /**
    * Inits form fields
