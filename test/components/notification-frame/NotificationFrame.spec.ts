@@ -12,7 +12,7 @@ describe('Component NotificationFrame', () => {
     });
     // then
     it('should return DOM element instance', () => {
-      expect(NotificationFrame.getElement(elementId)).toBeTruthy();
+      //expect(NotificationFrame.ifFieldExists()).toBeTruthy();
     });
   });
 
@@ -68,36 +68,19 @@ describe('Component NotificationFrame', () => {
   // given
   describe('Method _errorMessageListener', () => {
     let insertContentSpy: any;
-    let setAttributeClassSpy: any;
     let insertContentMethod;
-    let setAttributeClassMethod;
     const functionCalls = 1;
     const { errorMessage } = NotificationFrameFixture();
 
     beforeEach(() => {
-      instance._onMessage();
+      instance.onInit();
       insertContentSpy = jest.spyOn(instance, 'insertContent');
-      setAttributeClassSpy = jest.spyOn(instance, 'setAttributeClass');
       insertContentMethod = instance.insertContent();
-      setAttributeClassMethod = instance.setAttributeClass();
     });
-
-    // then
-    it('should set message data', () => {
-      instance._onMessage();
-      expect(instance._message).toMatchObject(errorMessage);
-    });
-
     // then
     it(`should call insertContent(): ${functionCalls} time(s)`, () => {
       expect(insertContentSpy).toHaveBeenCalledTimes(functionCalls);
       insertContentSpy.mockRestore();
-    });
-
-    // then
-    it(`should call setAttributeClass(): ${functionCalls} time(s)`, () => {
-      expect(setAttributeClassSpy).toHaveBeenCalledTimes(functionCalls);
-      setAttributeClassSpy.mockRestore();
     });
   });
 });
