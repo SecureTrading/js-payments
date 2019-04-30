@@ -8,6 +8,7 @@ import Selectors from '../../core/shared/Selectors';
  * Defines component for displaying payment status messages
  */
 export default class NotificationFrame extends Frame {
+  private static readonly NOTIFICATION_TTL = 7 * 1000;
   private _messageBus: MessageBus;
 
   get notificationFrameElement(): HTMLElement {
@@ -115,6 +116,13 @@ export default class NotificationFrame extends Frame {
     this._onMessage();
   }
 
+  private _autoHide(notificationElementClass: string) {
+    let timeoutId = window.setTimeout(() => {
+      this.notificationFrameElement.classList.remove(notificationElementClass);
+      window.clearTimeout(timeoutId);
+    }, NotificationFrame.NOTIFICATION_TTL);
+  }
+
   /**
    * Listens to postMessage event, receives message from it and triggers method for inserting content into div
    */
@@ -143,6 +151,7 @@ export default class NotificationFrame extends Frame {
     const notificationElementClass = NotificationFrame._getMessageClass(this._message.type);
     if (this.notificationFrameElement && notificationElementClass) {
       this.notificationFrameElement.classList.add(notificationElementClass);
+      this._autoHide(notificationElementClass);
     }
   }
 }

@@ -20,11 +20,12 @@ body {
   border-radius: $border-radius-notification;
   padding: $space-inset-notification;
   position: relative;
-  visibility: hidden;
+  opacity: 0;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: opacity 0.25s;
 
   &:after {
     content: 'x';
@@ -32,16 +33,16 @@ body {
     position: absolute;
     top: 0;
     right: 0.6rem;
+    visibility: hidden;
   }
 
   &--info,
   &--error,
   &--warning,
   &--success {
-    visibility: visible;
+    opacity: 1;
   }
 
-  &,
   &--info {
     @include messageType(
       $background-color-notification-info,

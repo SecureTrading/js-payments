@@ -1,4 +1,5 @@
 import Language from '../shared/Language';
+import Notification from '../shared/Notification';
 import { StJwt } from '../shared/StJwt';
 
 interface IStRequest {
@@ -16,6 +17,8 @@ class StCodec {
   public static CONTENT_TYPE = 'application/json';
   public static VERSION = '1.00';
   public static SUPPORTED_REQUEST_TYPES = ['WALLETVERIFY', 'THREEDINIT', 'THREEDQUERY', 'CACHETOKENISE', 'AUTH'];
+
+  private static _notification = new Notification();
 
   private _requestId: string;
   private _jwt: string;
@@ -71,6 +74,7 @@ class StCodec {
       Object.keys(requestObject).length < 2 ||
       !StCodec.SUPPORTED_REQUEST_TYPES.includes(requestObject.requesttypedescription)
     ) {
+      StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST);
       throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST);
     }
     return JSON.stringify(this.buildRequestObject(requestObject));
@@ -92,12 +96,14 @@ class StCodec {
         responseData.response.length === 1
       )
     ) {
+      StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
       throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
     }
     const responseContent = responseData.response[0];
     if (responseContent.errorcode !== '0') {
       // Should this be a custom error type which can also take a field that is at fault
       // so that errordata can be sent up to highlight the field?
+      StCodec._notification.error(responseContent.errormessage);
       throw new Error(responseContent.errormessage);
     }
     return responseContent;
@@ -115,6 +121,7 @@ class StCodec {
           resolve(StCodec.verifyResponseObject(responseData));
         });
       } else {
+        StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
         reject(new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
       }
     });

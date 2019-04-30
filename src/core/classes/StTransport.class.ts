@@ -1,5 +1,5 @@
+import { environment } from '../../environments/environment';
 import Utils from '../shared/Utils';
-import Language from '../shared/Language';
 import { IStRequest, StCodec } from './StCodec.class';
 
 export interface IStTransportParams {
@@ -26,7 +26,7 @@ export default class StTransport {
   public get codec() {
     return this._codec;
   }
-  public static GATEWAY_URL = 'https://webservices.securetrading.net/jwt/';
+  public static GATEWAY_URL = environment.GATEWAY_URL;
   public static DEFAULT_FETCH_OPTIONS = {
     headers: {
       Accept: StCodec.CONTENT_TYPE,
