@@ -132,24 +132,24 @@ class Form {
     this.messageBusInstance = new MessageBus();
     document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).addEventListener('submit', (event: Event) => {
       event.preventDefault();
-      this._preloadSubmitButton();
+      Form._preloadSubmitButton();
       this.messageBusInstance.publishFromParent(this.messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
     });
   }
 
-  private _setPreloader(element: HTMLElement, text: string, animatedIcon?: string) {
+  private static _setPreloader(element: HTMLElement, text: string, animatedIcon?: string) {
     element.textContent = `${animatedIcon ? animatedIcon : ''}${text}`;
     // @ts-ignore
     element.disabled = true;
   }
 
-  private _preloadSubmitButton() {
+  private static _preloadSubmitButton() {
     const inputSubmit = document.querySelector('input[type="submit"]');
     const buttonSubmit = document.querySelector('button[type="submit"]');
     // @ts-ignore
-    inputSubmit && this._setPreloader(inputSubmit, Language.translations.PRELOADER_TEXT);
+    inputSubmit && Form._setPreloader(inputSubmit, Language.translations.PRELOADER_TEXT);
     // @ts-ignore
-    buttonSubmit && this._setPreloader(buttonSubmit, Language.translations.PRELOADER_TEXT);
+    buttonSubmit && Form._setPreloader(buttonSubmit, Language.translations.PRELOADER_TEXT);
   }
 }
 
