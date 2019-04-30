@@ -37,12 +37,12 @@ export default class Payment {
     return this._stTransport.sendRequest(requestBody);
   }
 
-  public authorizePayment(payment: Card | Wallet, threeDResponse?: string) {
+  public authorizePayment(payment: Card | Wallet, additionalData?: any) {
     let requestBody: IStRequest = Object.assign(
       {
         requesttypedescription: 'AUTH'
       },
-      threeDResponse ? { threedresponse: threeDResponse } : {},
+      additionalData,
       this._stJwtPayload,
       payment
     );

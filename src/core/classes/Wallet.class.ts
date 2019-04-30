@@ -11,6 +11,11 @@ class Wallet {
   private jwt: string;
   private wallets: any;
 
+  public static APM_NAMES = {
+    APPLE_PAY: 'APPLEPAY',
+    VISA_CHECKOUT: 'VISACHECKOUT'
+  };
+
   constructor(jwt: string, wallets: any) {
     this.jwt = jwt;
     this.wallets = wallets;
@@ -32,8 +37,8 @@ class Wallet {
    * @private
    */
   private _initWallets(jwt: string) {
-    const applePayConfig = this._getWalletConfig(environment.APM_NAMES.APPLE_PAY);
-    const visaCheckoutConfig = this._getWalletConfig(environment.APM_NAMES.VISA_CHECKOUT);
+    const applePayConfig = this._getWalletConfig(Wallet.APM_NAMES.APPLE_PAY);
+    const visaCheckoutConfig = this._getWalletConfig(Wallet.APM_NAMES.VISA_CHECKOUT);
 
     if (applePayConfig) {
       environment.testEnvironment ? new ApplePayMock(applePayConfig, jwt) : new ApplePay(applePayConfig, jwt);
