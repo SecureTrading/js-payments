@@ -55,6 +55,8 @@ class DomMethods {
     return parent;
   }
 
+  public static getElement = (elementId: string) => document.getElementById(elementId);
+
   public static addListener(targetId: string, listenerType: string, callback: any) {
     document.getElementById(targetId).addEventListener(listenerType, callback);
   }

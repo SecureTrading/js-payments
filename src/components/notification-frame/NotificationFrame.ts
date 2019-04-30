@@ -1,3 +1,4 @@
+import DomMethods from '../../core/shared/DomMethods';
 import Frame from '../../core/shared/Frame';
 import MessageBus from '../../core/shared/MessageBus';
 import { NotificationEvent, NotificationType } from '../../core/models/NotificationEvent';
@@ -8,27 +9,10 @@ import Selectors from '../../core/shared/Selectors';
  * Defines component for displaying payment status messages
  */
 export default class NotificationFrame extends Frame {
-  private _messageBus: MessageBus;
+  public message: NotificationEvent;
+  public notificationFrameElement: HTMLElement;
 
-  get notificationFrameElement(): HTMLElement {
-    return this._notificationFrameElement;
-  }
-
-  set notificationFrameElement(value: HTMLElement) {
-    this._notificationFrameElement = value;
-  }
-
-  public static ELEMENT_CLASSES = {
-    error: Selectors.NOTIFICATION_FRAME_ERROR_CLASS,
-    info: Selectors.NOTIFICATION_FRAME_INFO_CLASS,
-    success: Selectors.NOTIFICATION_FRAME_SUCCESS_CLASS,
-    warning: Selectors.NOTIFICATION_FRAME_WARNING_CLASS
-  };
-
-  public static getElement = (elementId: string) => document.getElementById(elementId);
-
-  public static ifFieldExists = (): HTMLInputElement =>
-    document.getElementById(NotificationFrame.ELEMENT_ID) as HTMLInputElement;
+  public static readonly ifFieldExists = () => DomMethods.getElement(Selectors.NOTIFICATION_FRAME_ID);
 
   /**
    * Returns proper class for every type of incoming message
@@ -36,13 +20,13 @@ export default class NotificationFrame extends Frame {
    */
   public static _getMessageClass(messageType: string) {
     if (messageType === NotificationType.Error) {
-      return NotificationFrame.ELEMENT_CLASSES.error;
+      return Selectors.NOTIFICATION_FRAME_ERROR_CLASS;
     } else if (messageType === NotificationType.Success) {
-      return NotificationFrame.ELEMENT_CLASSES.success;
+      return Selectors.NOTIFICATION_FRAME_SUCCESS_CLASS;
     } else if (messageType === NotificationType.Warning) {
-      return NotificationFrame.ELEMENT_CLASSES.warning;
+      return Selectors.NOTIFICATION_FRAME_WARNING_CLASS;
     } else if (messageType === NotificationType.Info) {
-      return NotificationFrame.ELEMENT_CLASSES.info;
+      return Selectors.NOTIFICATION_FRAME_INFO_CLASS;
     } else {
       return '';
     }
@@ -50,11 +34,11 @@ export default class NotificationFrame extends Frame {
 
   protected _getAllowedStyles() {
     let allowed = super._getAllowedStyles();
-    const notification = `#${NotificationFrame.ELEMENT_ID}`;
-    const error = `.${NotificationFrame.ELEMENT_CLASSES.error}${notification}`;
-    const success = `${NotificationFrame.ELEMENT_CLASSES.success}${notification}`;
-    const warning = `${NotificationFrame.ELEMENT_CLASSES.warning}${notification}`;
-    const info = `${NotificationFrame.ELEMENT_CLASSES.info}${notification}`;
+    const notification = `#${Selectors.NOTIFICATION_FRAME_ID}`;
+    const error = `.${Selectors.NOTIFICATION_FRAME_ERROR_CLASS}${notification}`;
+    const success = `${Selectors.NOTIFICATION_FRAME_SUCCESS_CLASS}${notification}`;
+    const warning = `${Selectors.NOTIFICATION_FRAME_WARNING_CLASS}${notification}`;
+    const info = `${Selectors.NOTIFICATION_FRAME_INFO_CLASS}${notification}`;
     allowed = {
       ...allowed,
       'background-color-notification': { property: 'background-color', selector: notification },
@@ -98,29 +82,23 @@ export default class NotificationFrame extends Frame {
     return allowed;
   }
 
-  private static ELEMENT_ID: string = Selectors.NOTIFICATION_FRAME_ID;
-  public _message: NotificationEvent;
-  private _notificationFrameElement: HTMLElement;
+  private _messageBus: MessageBus;
 
   constructor() {
     super();
     this._messageBus = new MessageBus();
-    this.notificationFrameElement = NotificationFrame.getElement(NotificationFrame.ELEMENT_ID);
-    this._onInit();
-  }
-
-  private _onInit() {
-    this._onMessage();
+    this.notificationFrameElement = DomMethods.getElement(Selectors.NOTIFICATION_FRAME_ID);
+    this.onInit();
   }
 
   /**
    * Listens to postMessage event, receives message from it and triggers method for inserting content into div
    */
-  public _onMessage() {
+  public onInit() {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, (data: NotificationEvent) => {
-      this._message = { type: data.type, content: data.content };
-      this.toggleNotification();
-      this.fadeNotificationFrame(3000);
+      this.message = { type: data.type, content: data.content };
+      this.showNotification();
+      this.hideNotification(3000);
     });
   }
 
@@ -128,7 +106,7 @@ export default class NotificationFrame extends Frame {
    * Fades notification frame
    * @param timeout
    */
-  public fadeNotificationFrame(timeout: number) {
+  public hideNotification(timeout: number) {
     setTimeout(() => {
       this.notificationFrameElement.classList.add(Selectors.NOTIFICATION_FRAME_FADE_CLASS);
     }, timeout);
@@ -139,7 +117,7 @@ export default class NotificationFrame extends Frame {
    */
   public insertContent() {
     if (this.notificationFrameElement) {
-      this.notificationFrameElement.textContent = this._message.content;
+      this.notificationFrameElement.textContent = this.message.content;
     }
   }
 
@@ -147,17 +125,11 @@ export default class NotificationFrame extends Frame {
    * Sets proper class to message container
    * @private
    */
-  public toggleNotification() {
-    const notificationElementClass = NotificationFrame._getMessageClass(this._message.type);
-    const frame = document.getElementById('st-notification-frame');
-    if (frame.textContent) {
-      this.notificationFrameElement.className = '';
-      this.notificationFrameElement.classList.add('notification-frame', notificationElementClass);
-    } else {
-      if (this.notificationFrameElement && notificationElementClass) {
-        this.insertContent();
-        this.notificationFrameElement.classList.add('notification-frame', notificationElementClass);
-      }
+  public showNotification() {
+    const notificationMessageClass = NotificationFrame._getMessageClass(this.message.type);
+    if (this.notificationFrameElement && notificationMessageClass) {
+      this.insertContent();
+      this.notificationFrameElement.className = `${Selectors.NOTIFICATION_FRAME} ${notificationMessageClass}`;
     }
   }
 }
