@@ -21,14 +21,6 @@ describe('Class CCIntegration', () => {
       threedeinitRequest = instance._3DInitRequest();
     });
   });
-
-  // given
-  describe('Method _onCardinalSetupComplete', () => {
-    // then
-    it('should subscribe method be called once', () => {
-      expect(instance.messageBus).toEqual(true);
-    });
-  });
 });
 
 function CardinalCommerceFixture() {
