@@ -1,4 +1,4 @@
-import VisaCheckout from '../../../src/core/classes/VisaCheckout';
+import VisaCheckout from '../../../src/core/integrations/VisaCheckout';
 
 // given
 describe('Visa Checkout class', () => {
@@ -207,7 +207,7 @@ function VisaCheckoutFixture() {
     name: 'VISA',
     livestatus: 0,
     props: {
-      apikey: '2ig278`13b123872121h31h20e'
+      merchantId: '2ig278`13b123872121h31h20e'
     },
     settings: { displayName: 'My Test Site' },
     paymentRequest: { subtotal: '20.00' },
