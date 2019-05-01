@@ -30,9 +30,12 @@ describe('Class CCIntegration', () => {
     // then
     it('should subscribe method be called once', () => {
       const messageBus = new MessageBus();
-      const spy = jest.spyOn(messageBus, 'subscribe');
+      const spySubscribe = jest.spyOn(messageBus, 'subscribe');
+      const spyPublish = jest.spyOn(messageBus, 'publishFromParent');
+      instance.messageBus = messageBus;
       instance._onCardinalSetupComplete();
-      expect(spy).toHaveBeenCalled();
+      expect(spySubscribe).toHaveBeenCalled();
+      expect(spyPublish).toHaveBeenCalled();
     });
   });
 });
