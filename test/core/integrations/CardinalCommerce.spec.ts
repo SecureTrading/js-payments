@@ -1,4 +1,4 @@
-import CardinalCommerce from '../../../src/core/integrations/CardinalCommerce';
+import { CardinalCommerce, ThreeDQueryResponse } from '../../../src/core/integrations/CardinalCommerce';
 
 // given
 describe('Class CCIntegration', () => {
@@ -50,6 +50,14 @@ describe('Class CCIntegration', () => {
   describe('Method _retrieveValidationData', () => {
     // then
     it('should be called once', () => {});
+  });
+
+  // given
+  describe('Method _isCardEnrolledOrFrictionless', () => {
+    // then
+    it('should be called once', () => {
+      let queryResponse: ThreeDQueryResponse = instance._isCardEnrolledOrFrictionless();
+    });
   });
 });
 

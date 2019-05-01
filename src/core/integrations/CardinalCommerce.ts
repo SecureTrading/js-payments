@@ -5,10 +5,10 @@ import Selectors from '../shared/Selectors';
 
 declare const Cardinal: any;
 
-interface ThreeDQueryResponse {
+export interface ThreeDQueryResponse {
   acquirertransactionreference: string;
   acsurl: string;
-  transactionreference: string;	
+  transactionreference: string;
   enrolled: string;
   threedpayload: string;
 }
@@ -24,7 +24,7 @@ interface ThreeDQueryResponse {
  * 5.Cardinal.continue + required payload from cmpi_lookup response
  * 6.Cardinal.on('pauments.validated) - process auth or return failure
  */
-export default class CardinalCommerce {
+export class CardinalCommerce {
   private static PAYMENT_BRAND: string = 'cca';
   private static PAYMENT_EVENTS = {
     INIT: 'init',
@@ -139,7 +139,7 @@ export default class CardinalCommerce {
   }
 
   private _threeDQueryRequest(responseObject: ThreeDQueryResponse) {
-    if (this._isCardEnrolled(responseObject)) {
+    if (this._isCardEnrolledOrFrictionless(responseObject)) {
       this._authenticateCard(responseObject);
     } else {
       this._authorizePayment({
@@ -148,7 +148,7 @@ export default class CardinalCommerce {
     }
   }
 
-  private _isCardEnrolled(response: ThreeDQueryResponse) {// TODO deal with frictionless case
+  private _isCardEnrolledOrFrictionless(response: ThreeDQueryResponse) {
     return response.enrolled === 'Y' && response.acsurl !== undefined;
   }
 

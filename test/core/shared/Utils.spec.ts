@@ -38,8 +38,8 @@ describe('timeoutPromise', () => {
     let after = before;
     await Utils.timeoutPromise(timeout).catch(e => (after = Date.now()));
     // toBeCloseTo is intended to check N significant figures of floats
-    // but by using -1 we can check it's within 5s of the set value
-    expect(after - before).toBeCloseTo(timeout, -1);
+    // but by using -2 we can check it's within 5s of the set value
+    expect(after - before).toBeCloseTo(timeout, -2);
   });
 });
 
@@ -65,7 +65,7 @@ describe('promiseWithTimeout', () => {
 
   it('should reject with the timeout if it times out', async () => {
     const err = new Error('Timeout error');
-    await expect(Utils.promiseWithTimeout(() => Utils.timeoutPromise(10), 5, err)).rejects.toEqual(err);
+    await expect(Utils.promiseWithTimeout(() => Utils.timeoutPromise(5), 2, err)).rejects.toEqual(err);
   });
 });
 
@@ -89,7 +89,7 @@ describe('retryPromise', () => {
     async (timeout, attempts, error) => {
       const promissory = jest.fn(() => Utils.timeoutPromise(timeout, error));
       await expect(Utils.retryPromise(promissory)).rejects.toThrow(error);
-      expect(promissory.mock.calls.length).toBeCloseTo(attempts, -1);
+      expect(promissory.mock.calls.length).toBeLessThan(attempts + 1);
     }
   );
 });
