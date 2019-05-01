@@ -116,6 +116,7 @@ export default class ControlFrame extends Frame {
 
   private onAuthEvent(data: any) {
     this.requestAuth(data);
+  }
 
   private requestThreeDInit() {
     this._payment.threeDInitRequest().then(responseBody => {
@@ -127,8 +128,8 @@ export default class ControlFrame extends Frame {
     });
   }
 
-  private requestAuth(threedResponse: any) {
-    this._payment.authorizePayment(this._card, threedResponse);
+  private requestAuth(data: any) {
+    this._payment.authorizePayment(this._card, data);
   }
 
   private requestPayment() {

@@ -99,7 +99,7 @@ export class CardinalCommerce {
    * Initialize Cardinal Commerce mechanism with given JWT (by merchant).
    * @protected
    */
-  private _onCardinalLoad() {
+  protected _onCardinalLoad() {
     Cardinal.configure(environment.CARDINAL_COMMERCE.CONFIG);
     Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.SETUP_COMPLETE, () => {
       this._onCardinalSetupComplete();
