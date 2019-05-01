@@ -32,7 +32,7 @@ jobs:
       script:
         - npm run coverage
         - npm run snyk
-      - name: 'Behavioural test: chrome 68'
+    - name: 'Behavioural test: chrome 68'
       script:
         - npm run behave -- test_chrome_68_w10
     # - name: 'Behavioural test: firefox 61'
