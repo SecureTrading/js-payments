@@ -28,12 +28,12 @@ jobs:
         - docker build . --build-arg "CODE_VERSION=$DOCKER_BRANCH" --tag "securetrading1/js-payments-testing:$DOCKER_BRANCH"
         - docker push "securetrading1/js-payments-testing"
     - stage: 'Test'
-      - name: 'Unit tests'
-        script:
+      name: 'Unit tests'
+      script:
         - npm run coverage
         - npm run snyk
       - name: 'Behavioural test: chrome 68'
-        script:
+      script:
         - npm run behave -- test_chrome_68_w10
     # - name: 'Behavioural test: firefox 61'
     #  script:
