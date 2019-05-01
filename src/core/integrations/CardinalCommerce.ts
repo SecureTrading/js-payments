@@ -10,6 +10,7 @@ interface ThreeDQueryResponse {
   acsurl: string;
   enrolled: string;
   pareq: string;
+  transactionreference: string;
 }
 
 /**
@@ -87,7 +88,7 @@ export default class CardinalCommerce {
   }
 
   private _threeDSetup() {
-    DomMethods.insertScript('head', environment.SONGBIRD_URL).addEventListener('load', () => {
+    DomMethods.insertScript('head', environment.CARDINAL_COMMERCE.SONGBIRD_URL).addEventListener('load', () => {
       this._onCardinalLoad();
     });
   }
@@ -95,10 +96,10 @@ export default class CardinalCommerce {
   /**
    * Initiate configuration of Cardinal Commerce
    * Initialize Cardinal Commerce mechanism with given JWT (by merchant).
-   * @private
+   * @protected
    */
-  private _onCardinalLoad() {
-    Cardinal.configure(environment.CARDINAL_COMMERCE_CONFIG);
+  protected _onCardinalLoad() {
+    Cardinal.configure(environment.CARDINAL_COMMERCE.CONFIG);
     Cardinal.setup(CardinalCommerce.PAYMENT_EVENTS.INIT, {
       jwt: this._cardinalCommerceJWT
     });
@@ -129,12 +130,14 @@ export default class CardinalCommerce {
 
   /**
    * Triggered when the transaction has been finished.
-   * @private
+   * @protected
    */
-  private _onCardinalValidated(data: any, jwt: any) {
+  protected _onCardinalValidated(data: any, jwt: any) {
     // @TODO: handle all errors - part of STJS-25
     if (data.ActionCode === 'SUCCESS') {
-      this._authorizePayment(jwt);
+      this._authorizePayment({
+        threedresponse: jwt
+      });
     }
   }
 
@@ -142,9 +145,9 @@ export default class CardinalCommerce {
     if (this._isCardEnrolled(responseObject.enrolled)) {
       this._authenticateCard(responseObject);
     } else {
-      // @TODO
-      // N - Perform an AUTH Request, including the transactionreference returned in the THREEDQUERY response.
-      // U - This typically indicates a temporary problem with the card issuer’s systems. You can configure your system to resubmit the same THREEDQUERY request. If this continues to fail, perform a standard AUTH request, including the transactionreference returned in the THREEDQUERY response.
+      this._authorizePayment({
+        transactionreference: responseObject.transactionreference
+      });
     }
   }
 
@@ -156,9 +159,9 @@ export default class CardinalCommerce {
    * Handles continue action from Cardinal Commerce, retrieve overlay with iframe which target is on AcsUrl
    * and handles the rest of process.
    * Cardinal.continue(PAYMENT_BRAND, CONTINUE_DATA, ORDER_OBJECT, NEW_JWT)
-   * @private
+   * @protected
    */
-  private _authenticateCard(responseObject: ThreeDQueryResponse) {
+  protected _authenticateCard(responseObject: ThreeDQueryResponse) {
     Cardinal.continue(
       CardinalCommerce.PAYMENT_BRAND,
       {
@@ -173,10 +176,10 @@ export default class CardinalCommerce {
     );
   }
 
-  private _authorizePayment(threeDResponse: string) {
+  private _authorizePayment(data: any) {
     const messageBusEvent: MessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.AUTH,
-      data: threeDResponse
+      data: data
     };
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
