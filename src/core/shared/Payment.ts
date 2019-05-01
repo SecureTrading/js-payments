@@ -37,14 +37,12 @@ export default class Payment {
     return this._stTransport.sendRequest(requestBody);
   }
 
-  public authorizePayment(payment: Card | Wallet, additionalData?: string, cacheToken?: string, parentTransactionReference?: string) {
+  public authorizePayment(payment: Card | Wallet, additionalData?: string) {
     let requestBody: IStRequest = Object.assign(
       {
         requesttypedescription: 'AUTH'
       },
-      cacheToken ? { cachetoken: cacheToken } : {},
-      parentTransactionReference ? { parenttransactionreference: parentTransactionReference } : {},
-      additionalData,// TODO is this the best name for this?
+      additionalData,
       this._stJwtPayload,
       payment
     );

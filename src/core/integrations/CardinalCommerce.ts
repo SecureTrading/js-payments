@@ -8,9 +8,9 @@ declare const Cardinal: any;
 export interface ThreeDQueryResponse {
   acquirertransactionreference: string;
   acsurl: string;
-  transactionreference: string;
   enrolled: string;
   threedpayload: string;
+  transactionreference: string;
 }
 
 /**
@@ -139,7 +139,7 @@ export class CardinalCommerce {
   }
 
   private _threeDQueryRequest(responseObject: ThreeDQueryResponse) {
-    if (this._isCardEnrolledOrFrictionless(responseObject)) {
+    if (this._isCardEnrolledAndNotFrictionless(responseObject)) {
       this._authenticateCard(responseObject);
     } else {
       this._authorizePayment({
@@ -148,7 +148,7 @@ export class CardinalCommerce {
     }
   }
 
-  private _isCardEnrolledOrFrictionless(response: ThreeDQueryResponse) {
+  private _isCardEnrolledAndNotFrictionless(response: ThreeDQueryResponse) {
     return response.enrolled === 'Y' && response.acsurl !== undefined;
   }
 
@@ -175,9 +175,11 @@ export class CardinalCommerce {
   }
 
   private _authorizePayment(data: any) {
+    data.cachetoken = this._cardinalCommerceCacheToken;
+    data.parenttransactionreference = this._threedQueryTransactionReference;
     const messageBusEvent: MessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.AUTH,
-      data: [data, this._cardinalCommerceCacheToken, this._threedQueryTransactionReference]
+      data: data
     };
     this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }

@@ -1,3 +1,4 @@
+import each from 'jest-each';
 import { CardinalCommerce, ThreeDQueryResponse } from '../../../src/core/integrations/CardinalCommerce';
 
 // given
@@ -53,11 +54,26 @@ describe('Class CCIntegration', () => {
   });
 
   // given
-  describe('Method _isCardEnrolledOrFrictionless', () => {
+  describe('Method _isCardEnrolledAndNotFrictionless', () => {
     // then
-    it('should be called once', () => {
-      let queryResponse: ThreeDQueryResponse = instance._isCardEnrolledOrFrictionless();
-    });
+    each([
+      ['Y', undefined, false],
+      ['Y', 'https://example.com', true],
+      ['N', 'https://example.com', false],
+      ['N', undefined, false]
+    ]).it(
+      'should detect if card is enrolled and we did not get a frictionless 3DS 2.0 response',
+      async (enrolled, acsurl, expected) => {
+        let response: ThreeDQueryResponse = {
+          acquirertransactionreference: 'tx-ref',
+          acsurl: acsurl,
+          enrolled: enrolled,
+          threedpayload: 'payload',
+          transactionreference: '1-2-3'
+        };
+        expect(instance._isCardEnrolledAndNotFrictionless(response)).toBe(expected);
+      }
+    );
   });
 });
 
