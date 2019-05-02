@@ -138,7 +138,6 @@ class Form {
   }
 
   private onInput(event: Event) {
-    let input: HTMLInputElement = <HTMLInputElement>event.target;
     let messageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS,
       data: DomMethods.parseMerchantForm()
@@ -148,10 +147,9 @@ class Form {
 
   private _setMerchantInputListeners() {
     const els = DomMethods.getAllFormElements(document.getElementById(Selectors.MERCHANT_FORM_SELECTOR));
-    let i, el;
+    let i;
     for (i = 0; i < els.length; i++) {
-      el = els[i];
-      el.addEventListener('input', this.onInput.bind(this));
+      els[i].addEventListener('input', this.onInput.bind(this));
     }
   }
 }
