@@ -1,9 +1,11 @@
+import { environment } from '../../environments/environment';
 import Frame from '../../core/shared/Frame';
 import MessageBus from '../../core/shared/MessageBus';
 import Payment from '../../core/shared/Payment';
+import PaymentMock from '../../core/shared/PaymentMock';
 
 export default class ControlFrame extends Frame {
-  private _frameParams: object;
+  private _frameParams: { origin: string; jwt: string };
   private _messageBus: MessageBus;
   private _payment: Payment;
   private _isPaymentReady: boolean = false;
@@ -26,10 +28,10 @@ export default class ControlFrame extends Frame {
   constructor() {
     super();
     this.setFrameParams();
-    // @ts-ignore
     this._messageBus = new MessageBus(this._frameParams.origin);
-    // @ts-ignore
-    this._payment = new Payment(this._frameParams.jwt);
+    this._payment = environment.testEnvironment
+      ? new PaymentMock(this._frameParams.jwt)
+      : new Payment(this._frameParams.jwt);
     this.onInit();
   }
 

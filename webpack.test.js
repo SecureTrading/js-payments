@@ -9,8 +9,9 @@ module.exports = merge(common, {
   plugins: [
     new TypedocWebpackPlugin({}),
     new webpack.NormalModuleReplacementPlugin(
-      /\.\.\/\.\.\/environments\/environment/,
+      /^\.\.\/\.\.\/environments\/environment/,
       '../../environments/environment.test'
-    )
+    ),
+    new webpack.NormalModuleReplacementPlugin(/^\.\.\/environments\/environment/, '../environments/environment.test')
   ]
 });
