@@ -1,21 +1,21 @@
 import { IStRequest } from '../classes/StCodec.class';
-import { StJwt, StJwtPayload } from './StJwt';
 import StTransport from '../classes/StTransport.class';
+import { IStJwtPayload, StJwt } from './StJwt';
 
 export default class Payment {
   private _stTransport: StTransport;
   private _stJwtDecode: any;
-  private readonly _stJwtPayload: StJwtPayload;
+  private readonly _stJwtPayload: IStJwtPayload;
   private _cardinalCommerceCacheToken: string;
 
   constructor(jwt: string) {
-    this._stTransport = new StTransport({ jwt: jwt });
+    this._stTransport = new StTransport({ jwt });
     this._stJwtDecode = new StJwt(jwt);
     this._stJwtPayload = this._stJwtDecode.payload;
   }
 
   public tokenizeCard(card: ICard): Promise<object> {
-    let requestBody: IStRequest = Object.assign(
+    const requestBody: IStRequest = Object.assign(
       {
         requesttypedescription: 'CACHETOKENISE'
       },
@@ -27,7 +27,7 @@ export default class Payment {
   }
 
   public walletVerify(wallet: IWalletVerify) {
-    let requestBody: IStRequest = Object.assign(
+    const requestBody: IStRequest = Object.assign(
       {
         requesttypedescription: 'WALLETVERIFY'
       },
@@ -38,7 +38,7 @@ export default class Payment {
   }
 
   public authorizePayment(payment: ICard | IWallet, additionalData?: any) {
-    let requestBody: IStRequest = Object.assign(
+    const requestBody: IStRequest = Object.assign(
       {
         requesttypedescription: 'AUTH'
       },
@@ -50,7 +50,7 @@ export default class Payment {
   }
 
   public threeDInitRequest() {
-    let requestBody: IStRequest = Object.assign(
+    const requestBody: IStRequest = Object.assign(
       {
         requesttypedescription: 'THREEDINIT'
       },
@@ -65,11 +65,11 @@ export default class Payment {
   }
 
   public threeDQueryRequest(card: ICard): Promise<object> {
-    let requestBody: IStRequest = Object.assign(
+    const requestBody: IStRequest = Object.assign(
       {
+        cachetoken: this._cardinalCommerceCacheToken,
         requesttypedescription: 'THREEDQUERY',
-        termurl: 'https://termurl.com',
-        cachetoken: this._cardinalCommerceCacheToken
+        termurl: 'https://termurl.com'
       },
       card
     );

@@ -24,7 +24,7 @@ class DomMethods {
   }
 
   public static insertStyle(contents: string) {
-    let style = document.createElement('style');
+    const style = document.createElement('style');
     style.innerHTML = contents;
     document.head.appendChild(style);
   }

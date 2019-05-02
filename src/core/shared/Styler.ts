@@ -26,6 +26,7 @@ export interface IAllowedStyles {
 export class Styler {
   private static _getTagStyles(styles: ISubStyles) {
     const results = [];
+    // tslint:disable-next-line:forin
     for (const style in styles) {
       results.push(`${style}: ${styles[style]};`);
     }
@@ -47,6 +48,7 @@ export class Styler {
    */
   private _filter(styles: IStyles) {
     const filtered: IStyles = {};
+    // tslint:disable-next-line:forin
     for (const style in styles) {
       if (this._allowed.hasOwnProperty(style)) {
         filtered[style] = styles[style];
@@ -57,6 +59,7 @@ export class Styler {
 
   private _group(styles: IStyles) {
     const grouped: IGroupedStyles = {};
+    // tslint:disable-next-line:forin
     for (const style in styles) {
       const allowed = this._allowed[style];
       if (!grouped.hasOwnProperty(allowed.selector)) {
@@ -72,6 +75,7 @@ export class Styler {
     const groupedStyles = this._group(styles);
     let tag;
     const templates = [`body { display: block; }`];
+    // tslint:disable-next-line:forin
     for (tag in groupedStyles) {
       const tagStyle = Styler._getTagStyles(groupedStyles[tag]);
       templates.push(`${tag} { ${tagStyle} }`);

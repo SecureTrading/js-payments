@@ -47,7 +47,7 @@ export default class ExpirationDate extends FormField {
   }
 
   private sendState() {
-    const formFieldState: FormFieldState = this.getState();
+    const formFieldState: IFormFieldState = this.getState();
     const messageBusEvent: IMessageBusEvent = {
       data: formFieldState,
       type: MessageBus.EVENTS.CHANGE_EXPIRATION_DATE

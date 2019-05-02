@@ -88,7 +88,7 @@ export default class FormField extends Frame {
     });
   }
 
-  protected getState(): FormFieldState {
+  protected getState(): IFormFieldState {
     return {
       validity: this._inputElement.validity.valid,
       value: this._inputElement.value

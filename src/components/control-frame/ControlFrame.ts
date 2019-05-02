@@ -9,7 +9,11 @@ export default class ControlFrame extends Frame {
   private _messageBus: MessageBus;
   private _payment: Payment;
   private _isPaymentReady: boolean = false;
-  private _formFields: { cardNumber: FormFieldState; expirationDate: FormFieldState; securityCode: FormFieldState } = {
+  private _formFields: {
+    cardNumber: IFormFieldState;
+    expirationDate: IFormFieldState;
+    securityCode: IFormFieldState;
+  } = {
     cardNumber: {
       validity: false,
       value: ''
@@ -59,13 +63,13 @@ export default class ControlFrame extends Frame {
   }
 
   private initSubscriptions() {
-    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: FormFieldState) => {
+    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: IFormFieldState) => {
       this.onCardNumberStateChange(data);
     });
-    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, (data: FormFieldState) => {
+    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, (data: IFormFieldState) => {
       this.onExpirationDateStateChange(data);
     });
-    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: FormFieldState) => {
+    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: IFormFieldState) => {
       this.onSecurityCodeStateChange(data);
     });
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
@@ -95,17 +99,17 @@ export default class ControlFrame extends Frame {
     this._isPaymentReady = true;
   }
 
-  private onCardNumberStateChange(data: FormFieldState) {
+  private onCardNumberStateChange(data: IFormFieldState) {
     this._formFields.cardNumber.validity = data.validity;
     this._formFields.cardNumber.value = data.value;
   }
 
-  private onExpirationDateStateChange(data: FormFieldState) {
+  private onExpirationDateStateChange(data: IFormFieldState) {
     this._formFields.expirationDate.validity = data.validity;
     this._formFields.expirationDate.value = data.value;
   }
 
-  private onSecurityCodeStateChange(data: FormFieldState) {
+  private onSecurityCodeStateChange(data: IFormFieldState) {
     this._formFields.securityCode.validity = data.validity;
     this._formFields.securityCode.value = data.value;
   }
