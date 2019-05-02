@@ -150,7 +150,6 @@ class Form {
     const els = DomMethods.getAllFormElements(document.getElementById(Selectors.MERCHANT_FORM_SELECTOR));
     let i, el;
     for (i = 0; i < els.length; i++) {
-      // TODO should we validate that pan/exiprydate etc aren't in merchant form?
       el = els[i];
       el.addEventListener('input', this.onInput.bind(this));
     }

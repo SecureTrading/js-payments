@@ -71,7 +71,6 @@ class DomMethods {
     for (i = 0; i < els.length; i++) {
       let el = els[i];
       if (el.dataset.stName) {
-        // TODO unittest for if el.name and converting to stName
         result[el.dataset.stName] = el.value;
       }
     }
@@ -79,7 +78,6 @@ class DomMethods {
   }
 
   public static getAllFormElements(form: HTMLElement) {
-    // TODO unittest?
     let selects = Array.prototype.slice.call(form.querySelectorAll('select'));
     let inputs = Array.prototype.slice.call(form.querySelectorAll('input'));
     let els = [...selects, ...inputs];

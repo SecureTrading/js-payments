@@ -1,6 +1,7 @@
 import { IStRequest } from '../classes/StCodec.class';
 import { StJwt, StJwtPayload } from './StJwt';
 import StTransport from '../classes/StTransport.class';
+import { IMerchantData } from '../models/MerchantData';
 
 export default class Payment {
   private _stTransport: StTransport;
@@ -37,7 +38,7 @@ export default class Payment {
     return this._stTransport.sendRequest(requestBody);
   }
 
-  public authorizePayment(payment: Card | Wallet, merchantData: any, additionalData?: any) {
+  public authorizePayment(payment: Card | Wallet, merchantData: IMerchantData, additionalData?: any) {
     let requestBody: IStRequest = Object.assign(
       {
         requesttypedescription: 'AUTH'
@@ -65,7 +66,7 @@ export default class Payment {
     });
   }
 
-  public threeDQueryRequest(card: Card, merchantData: any): Promise<object> {
+  public threeDQueryRequest(card: Card, merchantData: IMerchantData): Promise<object> {
     let requestBody: IStRequest = Object.assign(
       {
         requesttypedescription: 'THREEDQUERY',

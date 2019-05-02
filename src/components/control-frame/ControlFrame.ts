@@ -3,13 +3,14 @@ import Frame from '../../core/shared/Frame';
 import MessageBus from '../../core/shared/MessageBus';
 import Payment from '../../core/shared/Payment';
 import PaymentMock from '../../core/shared/PaymentMock';
+import { IMerchantData } from '../../core/models/MerchantData';
 
 export default class ControlFrame extends Frame {
   private _frameParams: { origin: string; jwt: string };
   private _messageBus: MessageBus;
   private _payment: Payment;
   private _isPaymentReady: boolean = false;
-  private _merchantFormData: object; // TODO type
+  private _merchantFormData: IMerchantData;
   private _formFields: { cardNumber: FormFieldState; expirationDate: FormFieldState; securityCode: FormFieldState } = {
     cardNumber: {
       validity: false,
@@ -51,12 +52,6 @@ export default class ControlFrame extends Frame {
       jwt: frameParams.get('jwt'),
       origin: frameParams.get('origin')
     };
-  }
-
-  protected _getAllowedStyles() {
-    // @TODO: remove
-    let allowed = super._getAllowedStyles();
-    return allowed;
   }
 
   private initSubscriptions() {
