@@ -5,9 +5,6 @@ import { IStyles } from './shared/Styler';
  * Can be styled by predefined JSON.
  */
 export default class Element {
-  private _name: string;
-  private _iframeSrc: string;
-
   /***
    * Function which defines iframe src attribute
    * @param name Component name
@@ -40,6 +37,9 @@ export default class Element {
     element.setAttribute('class', id);
     return element;
   };
+
+  private _name: string;
+  private _iframeSrc: string;
 
   get iframeSrc(): string {
     return this._iframeSrc;

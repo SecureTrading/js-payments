@@ -1,14 +1,21 @@
 import { environment } from '../environments/environment';
 import Form from './classes/Form.class';
+import Wallet from './classes/Wallet.class';
 import CardinalCommerce from './integrations/CardinalCommerce';
 import CardinalCommerceMock from './integrations/CardinalCommerceMock';
-import Wallet from './classes/Wallet.class';
 import { IStyles } from './shared/Styler';
 
 /**
  * Establishes connection with ST, defines client.
  */
 export default class ST {
+  /**
+   * Inits Cardinal Commerce
+   * @private
+   */
+  private static _init3DSecure = () =>
+    environment.testEnvironment ? new CardinalCommerceMock() : new CardinalCommerce();
+
   private readonly jwt: string;
   private readonly origin: string;
   private readonly onlyWallets: boolean;
@@ -35,13 +42,6 @@ export default class ST {
     this._initWallets();
     ST._init3DSecure();
   }
-
-  /**
-   * Inits Cardinal Commerce
-   * @private
-   */
-  private static _init3DSecure = () =>
-    environment.testEnvironment ? new CardinalCommerceMock() : new CardinalCommerce();
 
   /**
    * Inits form fields
