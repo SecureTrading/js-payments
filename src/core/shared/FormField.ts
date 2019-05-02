@@ -34,7 +34,10 @@ export default class FormField extends Frame {
     allowed = {
       ...allowed,
       'background-color-input': { property: 'background-color', selector: input },
-      'background-color-input-error': { property: 'background-color', selector: inputError },
+      'background-color-input-error': {
+        property: 'background-color',
+        selector: inputError
+      },
       'border-color-input': { property: 'border-color', selector: input },
       'border-color-input-error': { property: 'border-color', selector: inputError },
       'border-radius-input': { property: 'border-radius', selector: input },
@@ -92,30 +95,32 @@ export default class FormField extends Frame {
     };
   }
 
-  onKeyPress(event: KeyboardEvent) {
+  protected onKeyPress(event: KeyboardEvent) {
     if (!Validation.isCharNumber(event)) {
       event.preventDefault();
       if (Validation.isEnter(event)) {
-        const messageBusEvent: MessageBusEvent = { type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM };
+        const messageBusEvent: MessageBusEvent = {
+          type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
+        };
         this._messageBus.publish(messageBusEvent);
       }
     }
   }
 
-  onInput(event: Event) {
+  protected onInput(event: Event) {
     this.format(this._inputElement.value);
     this.validate();
   }
 
-  onFocus(event: Event) {
+  protected onFocus(event: Event) {
     this.focus();
   }
 
-  onBlur(event: Event) {
+  protected onBlur(event: Event) {
     this.blur();
   }
 
-  onPaste(event: ClipboardEvent) {
+  protected onPaste(event: ClipboardEvent) {
     let clipboardData: string;
 
     event.preventDefault();
@@ -149,7 +154,7 @@ export default class FormField extends Frame {
     this.setMessage(validationMessage);
   }
 
-  format(data: string) {
+  protected format(data: string) {
     this._inputElement.value = data;
   }
 
