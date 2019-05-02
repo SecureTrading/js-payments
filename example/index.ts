@@ -8,7 +8,7 @@ import { ST } from '../src/stjs';
 
 (() => {
   const st = new ST(
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU1NjE0NDY4MC42NTIxOTcxLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSJ9fQ.Mg9k3sNFig32evH6xGPxgXqT8ishkc24zglDFjWz8L0',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoiMTU1NjE5MjQxMDc0OSIsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6ImxpdmUyIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00ifX0.YPXFxhb72eEc5yUihniXmbyVEQfPtvULk9W36uKR2zg',
     window.location.origin,
     false,
     {
@@ -30,7 +30,6 @@ import { ST } from '../src/stjs';
       {
         name: 'APPLEPAY',
         props: {
-          sitereference: 'test_site',
           paymentRequest: {
             total: { label: 'Secure Trading Merchant', amount: '10.00' },
             countryCode: 'US',
@@ -48,7 +47,7 @@ import { ST } from '../src/stjs';
       {
         name: 'VISACHECKOUT',
         props: {
-          apikey: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4',
+          merchantId: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4',
           livestatus: 0,
           placement: 'st-visa-checkout',
           settings: { displayName: 'My Test Site' },
