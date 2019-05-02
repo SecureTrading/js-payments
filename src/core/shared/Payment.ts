@@ -26,13 +26,14 @@ export default class Payment {
     return this._stTransport.sendRequest(requestBody);
   }
 
-  public authorizePayment(payment: Card | Wallet, threeDResponse?: string) {
+  public authorizePayment(payment: Card | Wallet, merchantData: any, threeDResponse?: string) {
     let requestBody: IStRequest = Object.assign(
       {
         requesttypedescription: 'AUTH'
       },
       threeDResponse ? { threedresponse: threeDResponse } : {},
       this._stJwtPayload,
+      merchantData,
       payment
     );
     return this._stTransport.sendRequest(requestBody);
@@ -53,13 +54,14 @@ export default class Payment {
     });
   }
 
-  public threeDQueryRequest(card: Card): Promise<object> {
+  public threeDQueryRequest(card: Card, merchantData: any): Promise<object> {
     let requestBody: IStRequest = Object.assign(
       {
         requesttypedescription: 'THREEDQUERY',
         termurl: 'https://termurl.com',
         cachetoken: this._cardinalCommerceCacheToken
       },
+      merchantData,
       card
     );
 

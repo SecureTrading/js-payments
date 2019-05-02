@@ -244,8 +244,9 @@ class VisaCheckout {
       this.paymentDetails = JSON.stringify(payment);
       this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
       this.getResponseMessage(this.paymentStatus);
+      let merchantFormData = DomMethods.parseForm(document.getElementById(Selectors.MERCHANT_FORM_SELECTOR));
       this._payment
-        .authorizePayment({ walletsource: this._walletSource, wallettoken: this.paymentDetails })
+        .authorizePayment({ walletsource: this._walletSource, wallettoken: this.paymentDetails }, merchantFormData)
         .then((response: object) => {
           return response;
         })
