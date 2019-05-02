@@ -137,7 +137,7 @@ class VisaCheckout {
       content: content,
       type: type
     };
-    const messageBusEvent: MessageBusEvent = {
+    const messageBusEvent: IMessageBusEvent = {
       data: notificationEvent,
       type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
     };

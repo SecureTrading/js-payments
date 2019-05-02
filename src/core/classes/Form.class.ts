@@ -27,7 +27,7 @@ class Form {
   private notificationFrame: Element;
   private controlFrame: Element;
   private messageBusInstance: MessageBus;
-  private messageBusEvent: MessageBusEvent;
+  private messageBusEvent: IMessageBusEvent;
 
   constructor(jwt: any, origin: any, onlyWallets: boolean, fieldsIds: [], styles: IStyles) {
     this.styles = styles;

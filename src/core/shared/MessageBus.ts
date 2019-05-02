@@ -28,7 +28,7 @@ export default class MessageBus {
     this.registerMessageListener();
   }
 
-  public publish(event: MessageBusEvent, publishToParent?: boolean) {
+  public publish(event: IMessageBusEvent, publishToParent?: boolean) {
     let subscribersStore;
 
     if (publishToParent) {
@@ -46,7 +46,7 @@ export default class MessageBus {
     }
   }
 
-  public publishFromParent(event: MessageBusEvent, frameName: string) {
+  public publishFromParent(event: IMessageBusEvent, frameName: string) {
     // @ts-ignore
     window.frames[frameName].postMessage(event, this._frameOrigin);
   }
@@ -77,7 +77,7 @@ export default class MessageBus {
 
   private registerMessageListener() {
     window.addEventListener('message', (event: MessageEvent) => {
-      const messageBusEvent: MessageBusEvent = event.data;
+      const messageBusEvent: IMessageBusEvent = event.data;
       const isPublicEvent = Utils.inArray(Object.keys(MessageBus.EVENTS_PUBLIC), messageBusEvent.type);
       const isCallbackAllowed =
         event.origin === this._frameOrigin || (event.origin === this._parentOrigin && isPublicEvent);

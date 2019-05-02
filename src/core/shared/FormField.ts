@@ -99,7 +99,7 @@ export default class FormField extends Frame {
     if (!Validation.isCharNumber(event)) {
       event.preventDefault();
       if (Validation.isEnter(event)) {
-        const messageBusEvent: MessageBusEvent = {
+        const messageBusEvent: IMessageBusEvent = {
           type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
         };
         this._messageBus.publish(messageBusEvent);

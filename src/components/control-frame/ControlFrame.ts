@@ -23,7 +23,7 @@ export default class ControlFrame extends Frame {
       value: ''
     }
   };
-  private _card: Card;
+  private _card: ICard;
 
   constructor() {
     super();
@@ -87,7 +87,7 @@ export default class ControlFrame extends Frame {
   }
 
   private onLoad() {
-    const messageBusEvent: MessageBusEvent = { type: MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME };
+    const messageBusEvent: IMessageBusEvent = { type: MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME };
     this._messageBus.publish(messageBusEvent, true);
   }
 
@@ -120,7 +120,7 @@ export default class ControlFrame extends Frame {
 
   private requestThreeDInit() {
     this._payment.threeDInitRequest().then(responseBody => {
-      const messageBusEvent: MessageBusEvent = {
+      const messageBusEvent: IMessageBusEvent = {
         data: responseBody,
         type: MessageBus.EVENTS_PUBLIC.THREEDINIT
       };
@@ -146,7 +146,7 @@ export default class ControlFrame extends Frame {
 
     if (this._isPaymentReady && isFormValid) {
       this._payment.threeDQueryRequest(this._card).then(responseBody => {
-        const messageBusEvent: MessageBusEvent = {
+        const messageBusEvent: IMessageBusEvent = {
           data: responseBody,
           type: MessageBus.EVENTS_PUBLIC.THREEDQUERY
         };

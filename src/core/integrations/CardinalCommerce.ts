@@ -81,7 +81,7 @@ export default class CardinalCommerce {
    * Perform a THREEDINIT with ST in order to generate the Cardinal songbird JWT
    */
   private _threeDInitRequest() {
-    const messageBusEvent: MessageBusEvent = {
+    const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.THREEDINIT
     };
     this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
@@ -119,7 +119,7 @@ export default class CardinalCommerce {
    * This includes a failed JWT authentication.
    */
   private _onCardinalSetupComplete() {
-    const messageBusEvent: MessageBusEvent = {
+    const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL
     };
     this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
@@ -174,7 +174,7 @@ export default class CardinalCommerce {
   }
 
   private _authorizePayment(data: any) {
-    const messageBusEvent: MessageBusEvent = {
+    const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.AUTH,
       data: data
     };

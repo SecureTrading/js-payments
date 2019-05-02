@@ -372,7 +372,7 @@ class ApplePay {
       type: type,
       content: content
     };
-    const messageBusEvent: MessageBusEvent = {
+    const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.NOTIFICATION,
       data: notificationEvent
     };
