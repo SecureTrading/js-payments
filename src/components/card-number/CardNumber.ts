@@ -13,6 +13,8 @@ export default class CardNumber extends FormField {
   }
 
   private static DEFAULT_CARD_LENGTH = 16;
+  private static getCardNumberForBinProcess = (cardNumber: string) => cardNumber.slice(0, 6);
+
   public binLookup: BinLookup;
   public brand: BrandDetailsType;
   private _cardType: string;
@@ -42,24 +44,7 @@ export default class CardNumber extends FormField {
     // this.brand = null;
   }
 
-  private static getCardNumberForBinProcess = (cardNumber: string) => cardNumber.slice(0, 6);
-
-  private sendState() {
-    let formFieldState: FormFieldState = this.getState();
-    let messageBusEvent: IMessageBusEvent = {
-      type: MessageBus.EVENTS.CHANGE_CARD_NUMBER,
-      data: formFieldState
-    };
-
-    const binProcessEvent: IMessageBusEvent = {
-      type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS,
-      data: CardNumber.getCardNumberForBinProcess(formFieldState.value)
-    };
-    formFieldState.validity && this._messageBus.publish(binProcessEvent, true);
-    this._messageBus.publish(messageBusEvent);
-  }
-
-  onInput(event: Event) {
+  protected onInput(event: Event) {
     super.onInput(event);
     this.sendState();
   }
@@ -72,6 +57,22 @@ export default class CardNumber extends FormField {
   protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
     this.sendState();
+  }
+  private sendState() {
+    const formFieldState: FormFieldState = this.getState();
+    const messageBusEvent: IMessageBusEvent = {
+      data: formFieldState,
+      type: MessageBus.EVENTS.CHANGE_CARD_NUMBER
+    };
+
+    if (formFieldState.validity) {
+      const binProcessEvent: IMessageBusEvent = {
+        data: CardNumber.getCardNumberForBinProcess(formFieldState.value),
+        type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS
+      };
+      this._messageBus.publish(binProcessEvent, true);
+    }
+    this._messageBus.publish(messageBusEvent);
   }
 
   // private setValidity() {
