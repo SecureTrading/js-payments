@@ -23,7 +23,7 @@ describe('FormField', () => {
         maxlength: 10,
         minlength: 1
       };
-
+      // @ts-ignore
       formField.setAttributes(inputAttributes);
 
       expect(inputElement.getAttribute('maxlength')).toEqual(inputAttributes.maxlength.toString());
@@ -34,7 +34,7 @@ describe('FormField', () => {
   describe('setMessage()', () => {
     it('should render given message', () => {
       let message: string = 'abc';
-
+      // @ts-ignore
       formField.setMessage(message);
 
       expect(messageElement.innerText).toBe(message);
@@ -44,7 +44,7 @@ describe('FormField', () => {
   describe('setValue()', () => {
     it('should set value of input element', () => {
       let value: string = '123';
-
+      // @ts-ignore
       formField.setValue(value);
 
       expect(inputElement.value).toBe(value);
