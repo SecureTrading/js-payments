@@ -14,6 +14,7 @@ export default class MessageBus {
   };
   public static EVENTS_PUBLIC = {
     AUTH: 'AUTH',
+    BIN_PROCESS: 'BIN_PROCESS',
     LOAD_CARDINAL: 'LOAD_CARDINAL',
     LOAD_CONTROL_FRAME: 'LOAD_CONTROL_FRAME',
     NOTIFICATION: 'NOTIFICATION',
