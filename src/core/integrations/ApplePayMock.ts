@@ -93,7 +93,6 @@ class ApplePayMock extends ApplePay {
    * @private
    */
   private _mockedPaymentAuthorization() {
-    let merchantFormData = DomMethods.parseForm(document.getElementById(Selectors.MERCHANT_FORM_SELECTOR));
     this.payment
       .authorizePayment(
         {
@@ -104,7 +103,7 @@ class ApplePayMock extends ApplePay {
           walletvalidationurl: this.validateMerchantRequestData.walletvalidationurl,
           walletrequestdomain: this.validateMerchantRequestData.walletrequestdomain
         },
-        merchantFormData
+        DomMethods.parseMerchantForm()
       )
       .then(() => {
         this.setNotification(NotificationType.Success, Language.translations.PAYMENT_AUTHORIZED);

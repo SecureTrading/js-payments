@@ -1,4 +1,5 @@
 import { getLanguage } from 'highlight.js';
+import Selectors from './Selectors';
 
 /**
  * DomMethods class.
@@ -75,6 +76,10 @@ class DomMethods {
       }
     }
     return result;
+  }
+
+  public static parseMerchantForm() {
+    return this.parseForm(document.getElementById(Selectors.MERCHANT_FORM_SELECTOR));
   }
 
   public static getAllFormElements(form: HTMLElement) {

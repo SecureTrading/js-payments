@@ -141,7 +141,7 @@ class Form {
     let input: HTMLInputElement = <HTMLInputElement>event.target;
     let messageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS,
-      data: DomMethods.parseForm(input.form)
+      data: DomMethods.parseMerchantForm()
     };
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }

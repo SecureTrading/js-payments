@@ -285,14 +285,13 @@ class ApplePay {
     this.session.onpaymentauthorized = (event: any) => {
       this.paymentDetails = JSON.stringify(event.payment);
       this.session.completePayment({ status: ApplePaySession.STATUS_SUCCESS, errors: [] });
-      let merchantFormData = DomMethods.parseForm(document.getElementById(Selectors.MERCHANT_FORM_SELECTOR));
       this.payment
         .authorizePayment(
           {
             walletsource: this.validateMerchantRequestData.walletsource,
             wallettoken: this.paymentDetails
           },
-          merchantFormData
+          DomMethods.parseMerchantForm()
         )
         .then((response: object) => {
           return response;
