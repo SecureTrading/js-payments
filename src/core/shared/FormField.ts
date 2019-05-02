@@ -1,7 +1,7 @@
 import Formatter from './Formatter';
 import Frame from './Frame';
-import Validation from './Validation';
 import MessageBus from './MessageBus';
+import Validation from './Validation';
 
 export default class FormField extends Frame {
   protected _inputSelector: string;
@@ -66,28 +66,6 @@ export default class FormField extends Frame {
     return allowed;
   }
 
-  private setInputListeners() {
-    this._inputElement.addEventListener('paste', (event: ClipboardEvent) => {
-      this.onPaste(event);
-    });
-
-    this._inputElement.addEventListener('keypress', (event: KeyboardEvent) => {
-      this.onKeyPress(event);
-    });
-
-    this._inputElement.addEventListener('input', (event: Event) => {
-      this.onInput(event);
-    });
-
-    this._inputElement.addEventListener('focus', (event: Event) => {
-      this.onFocus(event);
-    });
-
-    this._inputElement.addEventListener('blur', (event: Event) => {
-      this.onBlur(event);
-    });
-  }
-
   protected getState(): IFormFieldState {
     return {
       validity: this._inputElement.validity.valid,
@@ -130,8 +108,9 @@ export default class FormField extends Frame {
     this.validate();
   }
 
-  setAttributes(attributes: object) {
-    for (let attribute in attributes) {
+  protected setAttributes(attributes: object) {
+    // tslint:disable-next-line:forin
+    for (const attribute in attributes) {
       // @ts-ignore
       this._inputElement.setAttribute(attribute, attributes[attribute]);
     }
@@ -141,16 +120,16 @@ export default class FormField extends Frame {
    * Method placed errorMessage inside chosen container (specified by id).
    * @param messageText
    */
-  setMessage(messageText: string) {
+  protected setMessage(messageText: string) {
     this._messageElement.innerText = messageText;
   }
 
-  setValue(value: string) {
+  protected setValue(value: string) {
     this._inputElement.value = value;
   }
 
-  validate() {
-    let validationMessage: string = Validation.getValidationMessage(this._inputElement.validity);
+  protected validate() {
+    const validationMessage: string = Validation.getValidationMessage(this._inputElement.validity);
     this.setMessage(validationMessage);
   }
 
@@ -158,11 +137,33 @@ export default class FormField extends Frame {
     this._inputElement.value = data;
   }
 
-  blur() {
+  protected blur() {
     this._inputElement.blur();
   }
 
-  focus() {
+  protected focus() {
     this._inputElement.focus();
+  }
+
+  private setInputListeners() {
+    this._inputElement.addEventListener('paste', (event: ClipboardEvent) => {
+      this.onPaste(event);
+    });
+
+    this._inputElement.addEventListener('keypress', (event: KeyboardEvent) => {
+      this.onKeyPress(event);
+    });
+
+    this._inputElement.addEventListener('input', (event: Event) => {
+      this.onInput(event);
+    });
+
+    this._inputElement.addEventListener('focus', (event: Event) => {
+      this.onFocus(event);
+    });
+
+    this._inputElement.addEventListener('blur', (event: Event) => {
+      this.onBlur(event);
+    });
   }
 }
