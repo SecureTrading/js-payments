@@ -1,4 +1,4 @@
-import { IAllowedStyles, Styler, IStyles } from './Styler';
+import { IAllowedStyles, IStyles, Styler } from './Styler';
 
 export default class Frame {
   public onInit() {

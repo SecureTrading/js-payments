@@ -117,7 +117,7 @@ module.exports = {
         use: [
           {
             loader: 'tslint-loader',
-            options: {}
+            options: { emitErrors: true }
           }
         ],
         exclude: /node_modules/
