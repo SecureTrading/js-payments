@@ -5,6 +5,7 @@
     "max-line-length": {
       "options": [120]
     },
+    "object-literal-key-quotes": [true, "as-needed"],
     "new-parens": true,
     "no-arg": true,
     "no-bitwise": true,
