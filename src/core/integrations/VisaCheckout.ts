@@ -1,6 +1,6 @@
 declare const V: any;
 import { environment } from '../../environments/environment';
-import { NotificationEvent, NotificationType } from '../models/NotificationEvent';
+import { INotificationEvent, NotificationType } from '../models/NotificationEvent';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
@@ -133,7 +133,7 @@ class VisaCheckout {
    * @param content
    */
   public setNotification(type: string, content: string) {
-    const notificationEvent: NotificationEvent = {
+    const notificationEvent: INotificationEvent = {
       content: content,
       type: type
     };
