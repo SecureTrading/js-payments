@@ -1,6 +1,6 @@
-import DomMethods from './../shared/DomMethods';
 import { environment } from '../../environments/environment';
 import { NotificationType } from '../models/NotificationEvent';
+import DomMethods from '../shared/DomMethods';
 import Language from '../shared/Language';
 import VisaCheckout from './VisaCheckout';
 

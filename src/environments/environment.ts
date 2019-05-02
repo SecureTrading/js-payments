@@ -23,7 +23,7 @@ export const environment = {
   },
   // @ts-ignore
   FRAME_URL: `https://${HOST}:8443`,
-  GATEWAY_URL: GATEWAY_URL, // tslint:disable-line:object-literal-shorthand
+  GATEWAY_URL,
   ST_URLS: {
     MOCK: {
       THREEDQUERY_URL: `${MOCK_GATEWAY_URL}/threeDQuery`

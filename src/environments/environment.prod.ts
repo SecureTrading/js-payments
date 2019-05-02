@@ -12,7 +12,7 @@ export const environment = {
     SONGBIRD_URL: 'https://songbirdstag.cardinalcommerce.com/cardinalcruise/v1/songbird.js'
   },
   FRAME_URL: '',
-  GATEWAY_URL: GATEWAY_URL, // tslint:disable-line:object-literal-shorthand
+  GATEWAY_URL,
   ST_URLS: {
     MOCK: {
       THREEDQUERY_URL: `${MOCK_GATEWAY_URL}/threeDQuery`

@@ -1,21 +1,14 @@
-import { applePayButton } from '../imports/images';
 import { environment } from '../../environments/environment';
+import { applePayButton } from '../imports/images';
 import { NotificationType } from '../models/NotificationEvent';
-import ApplePay from './ApplePay';
 import DomMethods from '../shared/DomMethods';
 import Language from '../shared/Language';
+import ApplePay from './ApplePay';
 
 /**
  * Mocked version of Apple Pay setting test environment for Apple Pay automated tests.
  */
 class ApplePayMock extends ApplePay {
-  public paymentDetails: string;
-
-  constructor(config: any, jwt: string) {
-    super(config, jwt);
-    this._onMockInit();
-  }
-
   /**
    * Retrieves Apple Pay data from test endpoint
    * @private
@@ -28,6 +21,13 @@ class ApplePayMock extends ApplePay {
       .then((data: any) => {
         return data;
       });
+  }
+
+  public paymentDetails: string;
+
+  constructor(config: any, jwt: string) {
+    super(config, jwt);
+    this._onMockInit();
   }
 
   /**

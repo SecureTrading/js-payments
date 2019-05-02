@@ -103,7 +103,9 @@ class VisaCheckout {
     this._setInitConfiguration(paymentRequest, settings, stJwt, merchantId);
     this._buttonSettings = this.setConfiguration({ locale: stJwt.locale }, settings);
     this._setLiveStatus();
-    !environment.testEnvironment && this._initVisaFlow();
+    if (!environment.testEnvironment) {
+      this._initVisaFlow();
+    }
   }
 
   public _setInitConfiguration(paymentRequest: any, settings: any, stJwt: StJwt, merchantId: string) {
@@ -120,8 +122,6 @@ class VisaCheckout {
     return this.setConfiguration(config, paymentRequest);
   }
 
-  private setConfiguration = (config: any, settings: any) => (settings || config ? { ...config, ...settings } : {});
-
   /**
    * Creates html image element which will be transformed into interactive button by SDK.
    */
@@ -134,8 +134,8 @@ class VisaCheckout {
    */
   public setNotification(type: string, content: string) {
     const notificationEvent: INotificationEvent = {
-      content: content,
-      type: type
+      content,
+      type
     };
     const messageBusEvent: IMessageBusEvent = {
       data: notificationEvent,
@@ -143,6 +143,35 @@ class VisaCheckout {
     };
     this.messageBus.publishFromParent(messageBusEvent, Selectors.NOTIFICATION_FRAME_IFRAME);
   }
+
+  /**
+   * Attaches Visa Button to specified element, if element is undefined Visa Checkout button is appended to body
+   * @private
+   */
+  protected _attachVisaButton = () => DomMethods.appendChildIntoDOM(this._placement, this._createVisaButton());
+
+  /**
+   * Gets translated response message based on response communicate
+   * @param type
+   */
+  protected getResponseMessage(type: string) {
+    switch (type) {
+      case VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS: {
+        this.responseMessage = Language.translations.PAYMENT_SUCCESS;
+        break;
+      }
+      case VisaCheckout.VISA_PAYMENT_STATUS.WARNING: {
+        this.responseMessage = Language.translations.PAYMENT_WARNING;
+        break;
+      }
+      case VisaCheckout.VISA_PAYMENT_STATUS.ERROR: {
+        this.responseMessage = Language.translations.PAYMENT_ERROR;
+        break;
+      }
+    }
+  }
+
+  private setConfiguration = (config: any, settings: any) => (settings || config ? { ...config, ...settings } : {});
 
   /**
    * Init configuration and payment data
@@ -171,12 +200,6 @@ class VisaCheckout {
   }
 
   /**
-   * Attaches Visa Button to specified element, if element is undefined Visa Checkout button is appended to body
-   * @private
-   */
-  protected _attachVisaButton = () => DomMethods.appendChildIntoDOM(this._placement, this._createVisaButton());
-
-  /**
    * Checks if we are on production or not
    * @private
    */
@@ -184,27 +207,6 @@ class VisaCheckout {
     if (this._livestatus) {
       this._visaCheckoutButtonProps.src = environment.VISA_CHECKOUT_URLS.PROD_BUTTON_URL;
       this._sdkAddress = environment.VISA_CHECKOUT_URLS.PROD_SDK;
-    }
-  }
-
-  /**
-   * Gets translated response message based on response communicate
-   * @param type
-   */
-  protected getResponseMessage(type: string) {
-    switch (type) {
-      case VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS: {
-        this.responseMessage = Language.translations.PAYMENT_SUCCESS;
-        break;
-      }
-      case VisaCheckout.VISA_PAYMENT_STATUS.WARNING: {
-        this.responseMessage = Language.translations.PAYMENT_WARNING;
-        break;
-      }
-      case VisaCheckout.VISA_PAYMENT_STATUS.ERROR: {
-        this.responseMessage = Language.translations.PAYMENT_ERROR;
-        break;
-      }
     }
   }
 
