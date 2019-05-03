@@ -2,6 +2,7 @@ import Formatter from './Formatter';
 import Frame from './Frame';
 import Validation from './Validation';
 import MessageBus from './MessageBus';
+import { Translator } from './Translator';
 
 export default class FormField extends Frame {
   protected _inputSelector: string;
@@ -9,6 +10,7 @@ export default class FormField extends Frame {
   protected _inputElement: HTMLInputElement;
   protected _messageElement: HTMLParagraphElement;
   protected _messageBus: MessageBus;
+  private _translator: Translator;
 
   constructor(inputSelector: string, messageSelector: string) {
     super();
@@ -16,12 +18,18 @@ export default class FormField extends Frame {
     this._inputElement = document.getElementById(inputSelector);
     // @ts-ignore
     this._messageElement = document.getElementById(messageSelector);
+
     this._inputSelector = inputSelector;
     this._messageSelector = messageSelector;
     // @ts-ignore
     this._messageBus = new MessageBus();
     this.setInputListeners();
     this.onInit();
+  }
+
+  public onInit() {
+    super.onInit();
+    this._translator = new Translator(this._params.locale);
   }
 
   protected _getAllowedStyles() {
@@ -137,7 +145,7 @@ export default class FormField extends Frame {
    * @param messageText
    */
   setMessage(messageText: string) {
-    this._messageElement.innerText = messageText;
+    this._messageElement.innerText = this._translator.translate(messageText);
   }
 
   setValue(value: string) {
