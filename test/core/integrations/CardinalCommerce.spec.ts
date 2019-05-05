@@ -1,4 +1,5 @@
-import CardinalCommerce from '../../../src/core/integrations/CardinalCommerce';
+import each from 'jest-each';
+import { CardinalCommerce, ThreeDQueryResponse } from '../../../src/core/integrations/CardinalCommerce';
 import MessageBus from '../../../src/core/shared/MessageBus';
 
 jest.mock('./../../../src/core/shared/MessageBus');
@@ -37,6 +38,29 @@ describe('Class CCIntegration', () => {
       expect(spySubscribe).toHaveBeenCalled();
       expect(spyPublish).toHaveBeenCalled();
     });
+  });
+
+  // given
+  describe('Method _isCardEnrolledAndNotFrictionless', () => {
+    // then
+    each([
+      ['Y', undefined, false],
+      ['Y', 'https://example.com', true],
+      ['N', 'https://example.com', false],
+      ['N', undefined, false]
+    ]).it(
+      'should detect if card is enrolled and we did not get a frictionless 3DS 2.0 response',
+      async (enrolled, acsurl, expected) => {
+        let response: ThreeDQueryResponse = {
+          acquirertransactionreference: 'tx-ref',
+          acsurl: acsurl,
+          enrolled: enrolled,
+          threedpayload: 'payload',
+          transactionreference: '1-2-3'
+        };
+        expect(instance._isCardEnrolledAndNotFrictionless(response)).toBe(expected);
+      }
+    );
   });
 });
 

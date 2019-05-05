@@ -15,7 +15,7 @@ interface IStRequest {
 class StCodec {
   public static CONTENT_TYPE = 'application/json';
   public static VERSION = '1.00';
-  public static SUPPORTED_REQUEST_TYPES = ['WALLETVERIFY', 'THREEDINIT', 'THREEDQUERY', 'CACHETOKENISE', 'AUTH'];
+  public static SUPPORTED_REQUEST_TYPES = ['WALLETVERIFY', 'JSINIT', 'THREEDQUERY', 'CACHETOKENISE', 'AUTH'];
 
   private _requestId: string;
   private _jwt: string;

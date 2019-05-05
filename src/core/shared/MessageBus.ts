@@ -26,7 +26,7 @@ export default class MessageBus {
 
   constructor(parentOrigin?: string) {
     this._parentOrigin = parentOrigin;
-    this._frameOrigin = environment.FRAME_URL;
+    this._frameOrigin = new URL(environment.FRAME_URL).origin;
     this.registerMessageListener();
   }
 

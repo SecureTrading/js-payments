@@ -52,7 +52,7 @@ export default class Payment {
   public threeDInitRequest() {
     let requestBody: IStRequest = Object.assign(
       {
-        requesttypedescription: 'THREEDINIT'
+        requesttypedescription: 'JSINIT'
       },
       this._stJwtPayload
     );
