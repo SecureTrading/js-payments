@@ -146,7 +146,7 @@ class VisaCheckout {
 
   /**
    * Attaches Visa Button to specified element, if element is undefined Visa Checkout button is appended to body
-   * @private
+   * @protected
    */
   protected _attachVisaButton = () => DomMethods.appendChildIntoDOM(this._placement, this._createVisaButton());
 
@@ -200,7 +200,7 @@ class VisaCheckout {
   }
 
   /**
-   * Checks if we are on production or not
+   * Checks if we are processing live transactions or not
    * @private
    */
   private _setLiveStatus() {

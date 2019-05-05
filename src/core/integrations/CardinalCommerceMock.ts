@@ -1,5 +1,5 @@
 import { environment } from '../../environments/environment';
-import CardinalCommerce from './CardinalCommerce';
+import { CardinalCommerce } from './CardinalCommerce';
 
 export default class CardinalCommerceMock extends CardinalCommerce {
   protected _authenticateCard() {

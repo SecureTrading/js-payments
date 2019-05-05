@@ -1,7 +1,7 @@
 import { environment } from '../environments/environment';
 import Form from './classes/Form.class';
 import Wallet from './classes/Wallet.class';
-import CardinalCommerce from './integrations/CardinalCommerce';
+import { CardinalCommerce } from './integrations/CardinalCommerce';
 import CardinalCommerceMock from './integrations/CardinalCommerceMock';
 import { IStyles } from './shared/Styler';
 
