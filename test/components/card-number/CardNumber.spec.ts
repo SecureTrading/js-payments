@@ -7,13 +7,16 @@ describe('CardNumber', () => {
   let cardNumber: CardNumber;
 
   beforeAll(() => {
+    let labelElement = document.createElement('label');
     let inputElement = document.createElement('input');
     let messageElement = document.createElement('p');
 
+    labelElement.id = Selectors.CARD_NUMBER_LABEL;
     inputElement.id = Selectors.CARD_NUMBER_INPUT;
     messageElement.id = Selectors.CARD_NUMBER_MESSAGE;
 
     document.body.appendChild(inputElement);
+    document.body.appendChild(labelElement);
     document.body.appendChild(messageElement);
 
     cardNumber = new CardNumber();

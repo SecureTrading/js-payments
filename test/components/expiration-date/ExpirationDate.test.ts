@@ -6,12 +6,15 @@ describe('ExpirationDate', () => {
   let expirationDate: ExpirationDate;
 
   beforeAll(() => {
+    let labelElement = document.createElement('label');
     let inputElement = document.createElement('input');
     let messageElement = document.createElement('p');
 
+    labelElement.id = Selectors.EXPIRATION_DATE_LABEL;
     inputElement.id = Selectors.EXPIRATION_DATE_INPUT;
     messageElement.id = Selectors.EXPIRATION_DATE_MESSAGE;
 
+    document.body.appendChild(labelElement);
     document.body.appendChild(inputElement);
     document.body.appendChild(messageElement);
 
