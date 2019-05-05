@@ -75,7 +75,7 @@ class Form {
     this.securityCode = new Element();
     this.animatedCard = new Element();
 
-    let params = { locale: 'de-DE' };
+    let params = { locale: 'fr-FR' };
 
     this.cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, this.styles, params);
     this.cardNumberMounted = this.cardNumber.mount(Selectors.CARD_NUMBER_IFRAME);

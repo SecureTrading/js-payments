@@ -10,16 +10,8 @@ export class Translator {
       lng: locale,
       debug: false,
       resources: {
-        en: {
-          translation: {
-            'Value mismatch pattern': 'Value mismatch pattern'
-          }
-        },
-        de: {
-          translation: {
-            'Value mismatch pattern': 'Some german text'
-          }
-        }
+        de: { translation: require('../translations/de.po') },
+        fr: { translation: require('../translations/fr.po') }
       }
     });
   }

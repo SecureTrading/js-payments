@@ -1,0 +1,63 @@
+msgid "Timeout"
+msgstr "Auszeit"
+
+msgid "Field is required"
+msgstr "Feld ist erforderlich"
+
+msgid "Payment is not available"
+msgstr "Zahlung ist nicht verfügbar"
+
+msgid "An error occurred"
+msgstr "Ein Fehler ist aufgetreten"
+
+msgid "Merchant validation failure"
+msgstr "Fehler bei der Händlerprüfung"
+
+msgid "Field is empty"
+msgstr "Feld ist leer"
+
+msgid "Payment has been canceled"
+msgstr "Zahlung wurde storniert"
+
+msgid "Value mismatch pattern"
+msgstr "Wertübereinstimmungsmuster"
+
+msgid "Security code does not match card number"
+msgstr "Sicherheitscode stimmt nicht mit Kartennummer überein"
+
+msgid "Invalid response"
+msgstr "Ungültige Antwort"
+
+msgid "Value is too short"
+msgstr "Wert ist zu kurz"
+
+msgid "Invalid request"
+msgstr "Ungültige Anfrage"
+
+msgid "Your browser does not support Apple Pay"
+msgstr "Ihr Browser unterstützt Apple Pay nicht"
+
+msgid "This version of browser does not support Apple Pay"
+msgstr "Diese Browser-Version unterstützt Apple Pay nicht"
+
+msgid "Payment type is not available !"
+msgstr "Zahlungsart ist nicht verfügbar!"
+
+msgid "Payment has been authorized"
+msgstr "Zahlung wurde genehmigt"
+
+msgid "Security code is too long"
+msgstr "Sicherheitscode ist zu lang"
+
+msgid "Amount and currency are not set"
+msgstr "Betrag und Währung werden nicht eingestellt"
+
+msgid "You have no cards in your wallet"
+msgstr "Sie haben keine Karten in Ihrer Brieftasche"
+
+msgid "Card number is invalid"
+msgstr "Kartennummer ist ungültig"
+
+msgid "Payment has been successfully proceeded"
+msgstr "Die Zahlung wurde erfolgreich durchgeführt"
+
