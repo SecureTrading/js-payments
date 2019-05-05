@@ -1,0 +1,23 @@
+export default {
+  Timeout: 'Auszeit',
+  'Field is required': 'Feld ist erforderlich',
+  'Payment is not available': 'Zahlung ist nicht verfügbar',
+  'An error occurred': 'Ein Fehler ist aufgetreten',
+  'Merchant validation failure': 'Fehler bei der Händlerprüfung',
+  'Field is empty': 'Feld ist leer',
+  'Payment has been canceled': 'Zahlung wurde storniert',
+  'Value mismatch pattern': 'Wertübereinstimmungsmuster',
+  'Security code does not match card number': 'Sicherheitscode stimmt nicht mit Kartennummer überein',
+  'Invalid response': 'Ungültige Antwort',
+  'Value is too short': 'Wert ist zu kurz',
+  'Invalid request': 'Ungültige Anfrage',
+  'Your browser does not support Apple Pay': 'Ihr Browser unterstützt Apple Pay nicht',
+  'This version of browser does not support Apple Pay': 'Diese Browser-Version unterstützt Apple Pay nicht',
+  'Payment type is not available !': 'Zahlungsart ist nicht verfügbar!',
+  'Payment has been authorized': 'Zahlung wurde genehmigt',
+  'Security code is too long': 'Sicherheitscode ist zu lang',
+  'Amount and currency are not set': 'Betrag und Währung werden nicht eingestellt',
+  'You have no cards in your wallet': 'Sie haben keine Karten in Ihrer Brieftasche',
+  'Card number is invalid': 'Kartennummer ist ungültig',
+  'Payment has been successfully proceeded': 'Die Zahlung wurde erfolgreich durchgeführt'
+};
