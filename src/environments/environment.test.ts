@@ -23,9 +23,9 @@ export const environment = {
     }
   },
   VISA_CHECKOUT_URLS: {
+    MOCK_DATA_URL: `${MOCK_GATEWAY_URL}/visaPaymentStatus`,
     TEST_BUTTON_URL: 'https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png',
-    TEST_SDK: 'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js',
-    MOCK_DATA_URL: `${MOCK_GATEWAY_URL}/visaPaymentStatus`
+    TEST_SDK: 'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js'
   },
   production: false,
   testEnvironment: true
