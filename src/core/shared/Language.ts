@@ -11,6 +11,9 @@ class Language {
     COMMUNICATION_ERROR_INVALID_REQUEST: 'Invalid request',
     COMMUNICATION_ERROR_INVALID_RESPONSE: 'Invalid response',
     COMMUNICATION_ERROR_TIMEOUT: 'Timeout',
+    LABEL_CARD_NUMBER: 'Card number',
+    LABEL_EXPIRATION_DATE: 'Expiration date',
+    LABEL_SECURITY_CODE: 'Security code',
     MERCHANT_VALIDATION_FAILURE: 'Merchant validation failure',
     NO_CARDS_IN_WALLET: 'You have no cards in your wallet',
     PAYMENT_AUTHORIZED: 'Payment has been authorized',
@@ -34,6 +37,9 @@ class Language {
     COMMUNICATION_ERROR_INVALID_REQUEST: string;
     COMMUNICATION_ERROR_INVALID_RESPONSE: string;
     COMMUNICATION_ERROR_TIMEOUT: string;
+    LABEL_CARD_NUMBER: string;
+    LABEL_EXPIRATION_DATE: string;
+    LABEL_SECURITY_CODE: string;
     MERCHANT_VALIDATION_FAILURE: string;
     NO_CARDS_IN_WALLET: string;
     PAYMENT_AUTHORIZED: string;

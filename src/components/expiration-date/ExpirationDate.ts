@@ -2,6 +2,7 @@ import FormField from '../../core/shared/FormField';
 import Selectors from '../../core/shared/Selectors';
 import Formatter from '../../core/shared/Formatter';
 import MessageBus from '../../core/shared/MessageBus';
+import Language from '../../core/shared/Language';
 
 /**
  * Defines specific Expiration Date validation methods and attributes
@@ -11,7 +12,7 @@ export default class ExpirationDate extends FormField {
   private static INPUT_PATTERN: string = '^(0[1-9]|1[0-2])\\/([0-9]{2})$';
 
   constructor() {
-    super(Selectors.EXPIRATION_DATE_INPUT, Selectors.EXPIRATION_DATE_MESSAGE);
+    super(Selectors.EXPIRATION_DATE_INPUT, Selectors.EXPIRATION_DATE_MESSAGE, Selectors.EXPIRATION_DATE_LABEL);
 
     this.setAttributes({
       maxlength: ExpirationDate.INPUT_MAX_LENGTH,
@@ -55,5 +56,9 @@ export default class ExpirationDate extends FormField {
   format(data: string) {
     let dataFormatted = Formatter.maskExpirationDate(data);
     this.setValue(dataFormatted);
+  }
+
+  protected getLabel() {
+    return Language.translations.LABEL_EXPIRATION_DATE;
   }
 }

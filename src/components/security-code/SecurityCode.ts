@@ -1,6 +1,7 @@
 import FormField from '../../core/shared/FormField';
 import Selectors from '../../core/shared/Selectors';
 import MessageBus from '../../core/shared/MessageBus';
+import Language from '../../core/shared/Language';
 
 /**
  * Definition of security code validation
@@ -9,7 +10,7 @@ export default class SecurityCode extends FormField {
   private static INPUT_LENGTH: number = 3;
 
   constructor() {
-    super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE);
+    super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
 
     this.setAttributes({
       maxlength: SecurityCode.INPUT_LENGTH,
@@ -53,6 +54,10 @@ export default class SecurityCode extends FormField {
   onPaste(event: ClipboardEvent) {
     super.onPaste(event);
     this.sendState();
+  }
+
+  protected getLabel() {
+    return Language.translations.LABEL_SECURITY_CODE;
   }
 
   // /**

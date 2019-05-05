@@ -29,7 +29,7 @@ export default class CardNumber extends FormField {
   }
 
   constructor() {
-    super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE);
+    super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE, Selectors.CARD_NUMBER_LABEL);
 
     this.setAttributes({
       maxlength: CardNumber.DEFAULT_CARD_LENGTH,
@@ -79,6 +79,10 @@ export default class CardNumber extends FormField {
   onPaste(event: ClipboardEvent) {
     super.onPaste(event);
     this.sendState();
+  }
+
+  protected getLabel() {
+    return Language.translations.LABEL_CARD_NUMBER;
   }
 
   // private setValidity() {

@@ -3,24 +3,30 @@ import Frame from './Frame';
 import Validation from './Validation';
 import MessageBus from './MessageBus';
 import { Translator } from './Translator';
+import Language from './Language';
 
 export default class FormField extends Frame {
   protected _inputSelector: string;
   protected _messageSelector: string;
+  protected _labelSelector: string;
   protected _inputElement: HTMLInputElement;
   protected _messageElement: HTMLParagraphElement;
+  protected _labelElement: HTMLLabelElement;
   protected _messageBus: MessageBus;
   private _translator: Translator;
 
-  constructor(inputSelector: string, messageSelector: string) {
+  constructor(inputSelector: string, messageSelector: string, labelSelector: string) {
     super();
     // @ts-ignore
     this._inputElement = document.getElementById(inputSelector);
     // @ts-ignore
     this._messageElement = document.getElementById(messageSelector);
+    // @ts-ignore
+    this._labelElement = document.getElementById(labelSelector);
 
     this._inputSelector = inputSelector;
     this._messageSelector = messageSelector;
+    this._labelSelector = labelSelector;
     // @ts-ignore
     this._messageBus = new MessageBus();
     this.setInputListeners();
@@ -30,6 +36,15 @@ export default class FormField extends Frame {
   public onInit() {
     super.onInit();
     this._translator = new Translator(this._params.locale);
+    this.setLabelText();
+  }
+
+  protected setLabelText() {
+    this._labelElement.innerHTML = this._translator.translate(this.getLabel());
+  }
+
+  protected getLabel() {
+    return '';
   }
 
   protected _getAllowedStyles() {
@@ -42,7 +57,10 @@ export default class FormField extends Frame {
     allowed = {
       ...allowed,
       'background-color-input': { property: 'background-color', selector: input },
-      'background-color-input-error': { property: 'background-color', selector: inputError },
+      'background-color-input-error': {
+        property: 'background-color',
+        selector: inputError
+      },
       'border-color-input': { property: 'border-color', selector: input },
       'border-color-input-error': { property: 'border-color', selector: inputError },
       'border-radius-input': { property: 'border-radius', selector: input },
@@ -104,7 +122,9 @@ export default class FormField extends Frame {
     if (!Validation.isCharNumber(event)) {
       event.preventDefault();
       if (Validation.isEnter(event)) {
-        const messageBusEvent: MessageBusEvent = { type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM };
+        const messageBusEvent: MessageBusEvent = {
+          type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
+        };
         this._messageBus.publish(messageBusEvent);
       }
     }

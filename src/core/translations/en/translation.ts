@@ -19,5 +19,8 @@ export default {
   'Amount and currency are not set': 'Amount and currency are not set',
   'You have no cards in your wallet': 'You have no cards in your wallet',
   'Card number is invalid': 'Card number is invalid',
-  'Payment has been successfully proceeded': 'Payment has been successfully proceeded'
+  'Payment has been successfully proceeded': 'Payment has been successfully proceeded',
+  'Card number': 'Card number',
+  'Expiration date': 'Expiration date',
+  'Security code': 'Security code'
 };
