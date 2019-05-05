@@ -21,7 +21,8 @@ export default class MessageBus {
     SUBMIT_FORM: 'SUBMIT_FORM',
     THREEDINIT: 'THREEDINIT',
     THREEDQUERY: 'THREEDQUERY',
-    WALLETVERIFY: 'WALLETVERIFY'
+    WALLETVERIFY: 'WALLETVERIFY',
+    UPDATE_MERCHANT_FIELDS: 'UPDATE_MERCHANT_FIELDS'
   };
 
   constructor(parentOrigin?: string) {

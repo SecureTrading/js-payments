@@ -3,12 +3,14 @@ import Frame from '../../core/shared/Frame';
 import MessageBus from '../../core/shared/MessageBus';
 import Payment from '../../core/shared/Payment';
 import PaymentMock from '../../core/shared/PaymentMock';
+import { IMerchantData } from '../../core/models/MerchantData';
 
 export default class ControlFrame extends Frame {
   private _frameParams: { origin: string; jwt: string };
   private _messageBus: MessageBus;
   private _payment: Payment;
   private _isPaymentReady: boolean = false;
+  private _merchantFormData: IMerchantData;
   private _formFields: { cardNumber: FormFieldState; expirationDate: FormFieldState; securityCode: FormFieldState } = {
     cardNumber: {
       validity: false,
@@ -52,12 +54,6 @@ export default class ControlFrame extends Frame {
     };
   }
 
-  protected _getAllowedStyles() {
-    // @TODO: remove
-    let allowed = super._getAllowedStyles();
-    return allowed;
-  }
-
   private initSubscriptions() {
     this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: FormFieldState) => {
       this.onCardNumberStateChange(data);
@@ -80,6 +76,13 @@ export default class ControlFrame extends Frame {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, () => {
       this.onSubmit();
     });
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS, (data: any) => {
+      this.storeMerchantData(data);
+    });
+  }
+
+  private storeMerchantData(data: any) {
+    this._merchantFormData = data;
   }
 
   private onSubmit() {
@@ -129,7 +132,7 @@ export default class ControlFrame extends Frame {
   }
 
   private requestAuth(data: any) {
-    this._payment.authorizePayment(this._card, data);
+    this._payment.authorizePayment(this._card, this._merchantFormData, data);
   }
 
   private requestPayment() {
@@ -145,7 +148,7 @@ export default class ControlFrame extends Frame {
     };
 
     if (this._isPaymentReady && isFormValid) {
-      this._payment.threeDQueryRequest(this._card).then(responseBody => {
+      this._payment.threeDQueryRequest(this._card, this._merchantFormData).then(responseBody => {
         const messageBusEvent: MessageBusEvent = {
           type: MessageBus.EVENTS_PUBLIC.THREEDQUERY,
           data: responseBody
