@@ -17,6 +17,7 @@ export default class MessageBus {
     SUBMIT_FORM: 'SUBMIT_FORM',
     THREEDINIT: 'THREEDINIT',
     THREEDQUERY: 'THREEDQUERY',
+    UPDATE_MERCHANT_FIELDS: 'UPDATE_MERCHANT_FIELDS',
     WALLETVERIFY: 'WALLETVERIFY'
   };
   private readonly _parentOrigin: string;

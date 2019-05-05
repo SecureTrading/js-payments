@@ -92,14 +92,17 @@ class ApplePayMock extends ApplePay {
    */
   private _mockedPaymentAuthorization() {
     this.payment
-      .authorizePayment({
-        ...this.paymentRequest,
-        walletmerchantid: this.validateMerchantRequestData.walletmerchantid,
-        walletrequestdomain: this.validateMerchantRequestData.walletrequestdomain,
-        walletsource: this.validateMerchantRequestData.walletsource,
-        wallettoken: this.merchantSession,
-        walletvalidationurl: this.validateMerchantRequestData.walletvalidationurl
-      })
+      .authorizePayment(
+        {
+          ...this.paymentRequest,
+          walletmerchantid: this.validateMerchantRequestData.walletmerchantid,
+          walletrequestdomain: this.validateMerchantRequestData.walletrequestdomain,
+          walletsource: this.validateMerchantRequestData.walletsource,
+          wallettoken: this.merchantSession,
+          walletvalidationurl: this.validateMerchantRequestData.walletvalidationurl
+        },
+        DomMethods.parseMerchantForm()
+      )
       .then(() => {
         this.setNotification(NotificationType.Success, Language.translations.PAYMENT_AUTHORIZED);
       })

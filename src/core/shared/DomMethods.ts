@@ -1,3 +1,6 @@
+import { getLanguage } from 'highlight.js';
+import Selectors from './Selectors';
+
 /**
  * DomMethods class.
  * Gather all methods which are making operation on DOM
@@ -61,6 +64,40 @@ class DomMethods {
 
   public static addClass = (element: HTMLElement, classToAdd: string) => element.classList.add(classToAdd);
   public static removeClass = (element: HTMLElement, classToRemove: string) => element.classList.remove(classToRemove);
+
+  /**
+   * Parse inputs and selects out of a form if the field name is provided in data-st-name attribute
+   * Tested by parseForm
+   * @param form
+   */
+  public static parseForm(form: HTMLElement) {
+    const els = this.getAllFormElements(form);
+    const result: any = {};
+    for (const el of els) {
+      if (el.dataset.stName) {
+        result[el.dataset.stName] = el.value;
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Convenience method for parsing merchant forms using the merchant form selector
+   * Tested by parseForm
+   */
+  public static parseMerchantForm() {
+    return this.parseForm(document.getElementById(Selectors.MERCHANT_FORM_SELECTOR));
+  }
+
+  /**
+   * Get all form elements out of a form
+   * Tested by parseForm
+   * @param form
+   */
+  public static getAllFormElements = (form: HTMLElement) => [
+    ...Array.prototype.slice.call(form.querySelectorAll('select')),
+    ...Array.prototype.slice.call(form.querySelectorAll('input'))
+  ];
 }
 
 export default DomMethods;

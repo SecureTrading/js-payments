@@ -1,5 +1,6 @@
 import { IStRequest } from '../classes/StCodec.class';
 import StTransport from '../classes/StTransport.class';
+import { IMerchantData } from '../models/MerchantData';
 import { IStJwtPayload, StJwt } from './StJwt';
 
 export default class Payment {
@@ -37,13 +38,14 @@ export default class Payment {
     return this._stTransport.sendRequest(requestBody);
   }
 
-  public authorizePayment(payment: ICard | IWallet, additionalData?: any) {
+  public authorizePayment(payment: ICard | IWallet, merchantData: IMerchantData, additionalData?: any) {
     const requestBody: IStRequest = Object.assign(
       {
         requesttypedescription: 'AUTH'
       },
       additionalData,
       this._stJwtPayload,
+      merchantData,
       payment
     );
     return this._stTransport.sendRequest(requestBody);
@@ -64,13 +66,14 @@ export default class Payment {
     });
   }
 
-  public threeDQueryRequest(card: ICard): Promise<object> {
+  public threeDQueryRequest(card: ICard, merchantData: IMerchantData): Promise<object> {
     const requestBody: IStRequest = Object.assign(
       {
         cachetoken: this._cardinalCommerceCacheToken,
         requesttypedescription: 'THREEDQUERY',
         termurl: 'https://termurl.com'
       },
+      merchantData,
       card
     );
 

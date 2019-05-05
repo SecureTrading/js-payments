@@ -1,4 +1,5 @@
 import Element from '../Element';
+import DomMethods from '../shared/DomMethods';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
 import { IStyles } from '../shared/Styler';
@@ -26,7 +27,7 @@ class Form {
   private animatedCard: Element;
   private notificationFrame: Element;
   private controlFrame: Element;
-  private messageBusInstance: MessageBus;
+  private messageBus: MessageBus;
   private messageBusEvent: IMessageBusEvent;
 
   constructor(jwt: any, origin: any, onlyWallets: boolean, fieldsIds: [], styles: IStyles) {
@@ -37,6 +38,7 @@ class Form {
     this.elementsToRegister = [];
     this.jwt = jwt;
     this.origin = origin;
+    this.messageBus = new MessageBus();
     this._onInit();
   }
 
@@ -62,6 +64,7 @@ class Form {
       this._setFormListener();
     }
     this.initFormFields();
+    this._setMerchantInputListeners();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
   }
 
@@ -128,11 +131,25 @@ class Form {
    */
   private _setFormListener() {
     this.messageBusEvent = { type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM };
-    this.messageBusInstance = new MessageBus();
     document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).addEventListener('submit', (event: Event) => {
       event.preventDefault();
-      this.messageBusInstance.publishFromParent(this.messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+      this.messageBus.publishFromParent(this.messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
     });
+  }
+
+  private onInput(event: Event) {
+    const messageBusEvent = {
+      data: DomMethods.parseMerchantForm(),
+      type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
+    };
+    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+  }
+
+  private _setMerchantInputListeners() {
+    const els = DomMethods.getAllFormElements(document.getElementById(Selectors.MERCHANT_FORM_SELECTOR));
+    for (const el of els) {
+      el.addEventListener('input', this.onInput.bind(this));
+    }
   }
 }
 
