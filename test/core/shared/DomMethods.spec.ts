@@ -9,6 +9,27 @@ function addInput(form: any, name: string, value: string, stName?: string) {
   form.appendChild(input);
 }
 
+function createFormFixture() {
+  const form = document.createElement('form');
+  addInput(form, 'myfield', '', 'stFieldName');
+  addInput(form, 'myfield2', 'some value', 'stFieldName2');
+  addInput(form, 'myfield3', 'ignored');
+  addInput(form, 'duplicate', 'value1', 'stDuplicate');
+  addInput(form, 'duplicate', 'value2', 'stDuplicate');
+  const select = document.createElement('select');
+  select.name = 'selectField';
+  select.dataset.stName = 'stSelectName';
+  const opt1 = document.createElement('option');
+  const opt2 = document.createElement('option');
+  opt1.value = 'A';
+  opt2.value = 'B';
+  opt2.selected = true;
+  select.appendChild(opt1);
+  select.appendChild(opt2);
+  form.appendChild(select);
+  return form;
+}
+
 describe('DomMethods', () => {
   beforeEach(() => {
     document.head.innerHTML = '';
@@ -39,23 +60,7 @@ describe('DomMethods', () => {
 
   describe('parseForm()', () => {
     it('should parse st-name from form', () => {
-      const form = document.createElement('form');
-      addInput(form, 'myfield', '', 'stFieldName');
-      addInput(form, 'myfield2', 'some value', 'stFieldName2');
-      addInput(form, 'myfield3', 'ignored');
-      addInput(form, 'duplicate', 'value1', 'stDuplicate');
-      addInput(form, 'duplicate', 'value2', 'stDuplicate');
-      const select = document.createElement('select');
-      select.name = 'selectField';
-      select.dataset.stName = 'stSelectName';
-      const opt1 = document.createElement('option');
-      const opt2 = document.createElement('option');
-      opt1.value = 'A';
-      opt2.value = 'B';
-      opt2.selected = true;
-      select.appendChild(opt1);
-      select.appendChild(opt2);
-      form.appendChild(select);
+      const form = createFormFixture();
       const merchantData = DomMethods.parseForm(form);
       expect(merchantData).toMatchObject({
         stFieldName: '',

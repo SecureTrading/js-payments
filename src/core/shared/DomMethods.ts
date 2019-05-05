@@ -71,10 +71,9 @@ class DomMethods {
    * @param form
    */
   public static parseForm(form: HTMLElement) {
-    let els = this.getAllFormElements(form);
+    const els = this.getAllFormElements(form);
     let result: any = {};
-    let i;
-    for (i = 0; i < els.length; i++) {
+    for (let i = 0; i < els.length; i++) {
       let el = els[i];
       if (el.dataset.stName) {
         result[el.dataset.stName] = el.value;
@@ -96,12 +95,10 @@ class DomMethods {
    * Tested by parseForm
    * @param form
    */
-  public static getAllFormElements(form: HTMLElement) {
-    let selects = Array.prototype.slice.call(form.querySelectorAll('select'));
-    let inputs = Array.prototype.slice.call(form.querySelectorAll('input'));
-    let els = [...selects, ...inputs];
-    return els;
-  }
+  public static getAllFormElements = (form: HTMLElement) => [
+    ...Array.prototype.slice.call(form.querySelectorAll('select')),
+    ...Array.prototype.slice.call(form.querySelectorAll('input'))
+  ];
 }
 
 export default DomMethods;
