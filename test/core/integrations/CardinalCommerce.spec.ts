@@ -1,6 +1,5 @@
 import each from 'jest-each';
 import { CardinalCommerce, ThreeDQueryResponse } from '../../../src/core/integrations/CardinalCommerce';
-import CardinalCommerce from '../../../src/core/integrations/CardinalCommerce';
 import MessageBus from '../../../src/core/shared/MessageBus';
 
 jest.mock('./../../../src/core/shared/MessageBus');
