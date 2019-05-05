@@ -2,6 +2,7 @@ import Element from '../Element';
 import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
+import { StJwt } from '../shared/StJwt';
 import { Styles } from '../shared/Styler';
 
 /**
@@ -16,6 +17,7 @@ class Form {
   public fieldsIds: any;
   public jwt: any;
   public origin: any;
+  private stJwt: StJwt;
   private cardNumberMounted: HTMLElement;
   private expirationDateMounted: HTMLElement;
   private securityCodeMounted: HTMLElement;
@@ -38,8 +40,9 @@ class Form {
     this.elementsTargets = this.setElementsFields(onlyWallets);
     this.elementsToRegister = [];
     this.jwt = jwt;
+    this.stJwt = new StJwt(jwt);
     this.origin = origin;
-    this.params = { locale: 'fr-FR' }; // TODO get from jwt
+    this.params = { locale: this.stJwt.locale };
     this._onInit();
   }
 
