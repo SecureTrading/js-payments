@@ -11,7 +11,7 @@ export default class Frame {
 
   public onInit() {
     this._params = this.parseUrl();
-    this._applyStyles();
+    this.applyStyles();
   }
 
   public parseUrl() {
@@ -30,7 +30,7 @@ export default class Frame {
     return params;
   }
 
-  protected _applyStyles() {
+  public applyStyles() {
     new Styler(this._getAllowedStyles()).inject(this._params.styles);
   }
 
