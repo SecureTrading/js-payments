@@ -2,6 +2,7 @@ import Frame from '../../core/shared/Frame';
 import MessageBus from '../../core/shared/MessageBus';
 import { NotificationEvent, NotificationType } from '../../core/models/NotificationEvent';
 import Selectors from '../../core/shared/Selectors';
+import { Translator } from '../../core/shared/Translator';
 
 /**
  * NotificationFrame class
@@ -9,6 +10,7 @@ import Selectors from '../../core/shared/Selectors';
  */
 export default class NotificationFrame extends Frame {
   private _messageBus: MessageBus;
+  private _translator: Translator;
 
   get notificationFrameElement(): HTMLElement {
     return this._notificationFrameElement;
@@ -108,10 +110,12 @@ export default class NotificationFrame extends Frame {
 
     this.notificationFrameElement = NotificationFrame.getElement(NotificationFrame.ELEMENT_ID);
 
-    this._onInit();
+    this.onInit();
   }
 
-  private _onInit() {
+  public onInit() {
+    super.onInit();
+    this._translator = new Translator(this._params.locale);
     this._onMessage();
   }
 
@@ -131,7 +135,7 @@ export default class NotificationFrame extends Frame {
    */
   public insertContent() {
     if (this.notificationFrameElement) {
-      this.notificationFrameElement.textContent = this._message.content;
+      this.notificationFrameElement.textContent = this._translator.translate(this._message.content);
     }
   }
 

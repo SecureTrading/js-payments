@@ -9,6 +9,7 @@ import { Styles } from '../shared/Styler';
  */
 class Form {
   public styles: Styles;
+  public params: any; // TODO type?
   public onlyWallets: boolean;
   public elementsToRegister: HTMLElement[];
   public elementsTargets: any;
@@ -38,6 +39,7 @@ class Form {
     this.elementsToRegister = [];
     this.jwt = jwt;
     this.origin = origin;
+    this.params = { locale: 'fr-FR' }; // TODO get from jwt
     this._onInit();
   }
 
@@ -75,17 +77,15 @@ class Form {
     this.securityCode = new Element();
     this.animatedCard = new Element();
 
-    let params = { locale: 'fr-FR' };
-
-    this.cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, this.styles, params);
+    this.cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, this.styles, this.params);
     this.cardNumberMounted = this.cardNumber.mount(Selectors.CARD_NUMBER_IFRAME);
     this.elementsToRegister.push(this.cardNumberMounted);
 
-    this.expirationDate.create(Selectors.EXPIRATION_DATE_COMPONENT_NAME, this.styles, params);
+    this.expirationDate.create(Selectors.EXPIRATION_DATE_COMPONENT_NAME, this.styles, this.params);
     this.expirationDateMounted = this.expirationDate.mount(Selectors.EXPIRATION_DATE_IFRAME);
     this.elementsToRegister.push(this.expirationDateMounted);
 
-    this.securityCode.create(Selectors.SECURITY_CODE_COMPONENT_NAME, this.styles, params);
+    this.securityCode.create(Selectors.SECURITY_CODE_COMPONENT_NAME, this.styles, this.params);
     this.securityCodeMounted = this.securityCode.mount(Selectors.SECURITY_CODE_IFRAME);
     this.elementsToRegister.push(this.securityCodeMounted);
 
@@ -100,7 +100,7 @@ class Form {
   public initFormFields() {
     this.notificationFrame = new Element();
     this.controlFrame = new Element();
-    this.notificationFrame.create(Selectors.NOTIFICATION_FRAME_COMPONENT_NAME, this.styles);
+    this.notificationFrame.create(Selectors.NOTIFICATION_FRAME_COMPONENT_NAME, this.styles, this.params);
     this.notificationFrameMounted = this.notificationFrame.mount(Selectors.NOTIFICATION_FRAME_IFRAME);
     this.elementsToRegister.push(this.notificationFrameMounted);
 
