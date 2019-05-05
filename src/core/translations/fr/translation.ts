@@ -22,5 +22,6 @@ export default {
   'Payment has been successfully proceeded': 'Le paiement a été effectué avec succès',
   'Card number': 'Numéro de carte',
   'Expiration date': "Date d'expiration",
-  'Security code': 'Code de sécurité'
+  'Security code': 'Code de sécurité',
+  Ok: 'Paiement terminé'
 };
