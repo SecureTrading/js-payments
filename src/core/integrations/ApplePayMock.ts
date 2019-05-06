@@ -121,11 +121,11 @@ class ApplePayMock extends ApplePay {
     this.payment
       .tokenizeCard({
         ...this.paymentRequest,
-        wallettoken: this.merchantSession,
-        walletsource: this.validateMerchantRequestData.walletsource,
         walletmerchantid: this.validateMerchantRequestData.walletmerchantid,
-        walletvalidationurl: this.validateMerchantRequestData.walletvalidationurl,
-        walletrequestdomain: this.validateMerchantRequestData.walletrequestdomain
+        walletrequestdomain: this.validateMerchantRequestData.walletrequestdomain,
+        walletsource: this.validateMerchantRequestData.walletsource,
+        wallettoken: this.merchantSession,
+        walletvalidationurl: this.validateMerchantRequestData.walletvalidationurl
       })
       .then(() => {
         this.setNotification(NotificationType.Success, Language.translations.PAYMENT_AUTHORIZED);

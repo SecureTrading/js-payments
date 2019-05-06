@@ -53,12 +53,12 @@ import './style.scss';
       {
         name: 'VISACHECKOUT',
         props: {
+          buttonSettings: { size: '154', color: 'neutral' },
           livestatus: 0,
           merchantId: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4',
           paymentRequest: { subtotal: '20.00' },
           placement: 'st-visa-checkout',
-          settings: { displayName: 'My Test Site' },
-          buttonSettings: { size: '154', color: 'neutral' }
+          settings: { displayName: 'My Test Site' }
         }
       }
     ]

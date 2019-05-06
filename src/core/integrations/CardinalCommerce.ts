@@ -24,7 +24,7 @@ export interface IThreeDQueryResponse {
  * 5.Cardinal.continue + required payload from cmpi_lookup response
  * 6.Cardinal.on('pauments.validated) - process auth or return failure
  */
-export default class CardinalCommerce {
+export class CardinalCommerce {
   get step(): boolean {
     return this._step;
   }
@@ -54,7 +54,7 @@ export default class CardinalCommerce {
 
   constructor(step: boolean) {
     this.step = step;
-    this._messageBus = new MessageBus();
+    this.messageBus = new MessageBus();
     this._onInit();
   }
 

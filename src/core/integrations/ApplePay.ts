@@ -322,50 +322,6 @@ class ApplePay {
   }
 
   /**
-   * Starts AUTH request
-   * @private
-   */
-  private _paymentAuthorize() {
-    this.payment
-      .authorizePayment({
-        walletsource: this.validateMerchantRequestData.walletsource,
-        wallettoken: this.paymentDetails
-      })
-      .then((response: object) => {
-        return response;
-      })
-      .then((data: object) => {
-        this.setNotification(NotificationType.Success, Language.translations.PAYMENT_AUTHORIZED);
-        return data;
-      })
-      .catch(() => {
-        this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
-      });
-  }
-
-  /**
-   * Starts CACHETOKENISE request
-   * @private
-   */
-  private _cacheTokenizePayment() {
-    this.payment
-      .tokenizeCard({
-        walletsource: this.validateMerchantRequestData.walletsource,
-        wallettoken: this.paymentDetails
-      })
-      .then((response: object) => {
-        return response;
-      })
-      .then((data: object) => {
-        this.setNotification(NotificationType.Success, Language.translations.PAYMENT_AUTHORIZED);
-        return data;
-      })
-      .catch(() => {
-        this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
-      });
-  }
-
-  /**
    * Handles oncancel event and set notification about it
    */
   public onPaymentCanceled() {
@@ -470,6 +426,53 @@ class ApplePay {
         }
       });
     }
+  }
+
+  /**
+   * Starts AUTH request
+   * @private
+   */
+  private _paymentAuthorize() {
+    this.payment
+      .authorizePayment(
+        {
+          walletsource: this.validateMerchantRequestData.walletsource,
+          wallettoken: this.paymentDetails
+        },
+        DomMethods.parseMerchantForm()
+      )
+      .then((response: object) => {
+        return response;
+      })
+      .then((data: object) => {
+        this.setNotification(NotificationType.Success, Language.translations.PAYMENT_AUTHORIZED);
+        return data;
+      })
+      .catch(() => {
+        this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
+      });
+  }
+
+  /**
+   * Starts CACHETOKENISE request
+   * @private
+   */
+  private _cacheTokenizePayment() {
+    this.payment
+      .tokenizeCard({
+        walletsource: this.validateMerchantRequestData.walletsource,
+        wallettoken: this.paymentDetails
+      })
+      .then((response: object) => {
+        return response;
+      })
+      .then((data: object) => {
+        this.setNotification(NotificationType.Success, Language.translations.PAYMENT_AUTHORIZED);
+        return data;
+      })
+      .catch(() => {
+        this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
+      });
   }
 }
 

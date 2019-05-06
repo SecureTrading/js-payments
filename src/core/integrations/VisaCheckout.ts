@@ -58,6 +58,7 @@ class VisaCheckout {
 
   public messageBus: MessageBus;
 
+  protected _step: boolean;
   protected _visaCheckoutButtonProps: any = {
     alt: 'Visa Checkout',
     class: 'v-button',
@@ -75,7 +76,6 @@ class VisaCheckout {
   private _buttonSettings: any;
   private _payment: Payment;
   private _walletSource: string = 'VISACHECKOUT';
-  protected _step: boolean;
 
   /**
    * Init configuration (temporary with some test data).
@@ -191,6 +191,49 @@ class VisaCheckout {
     }
   }
 
+  /**
+   * Starts AUTH request
+   */
+  protected _authorizePayment() {
+    this.payment
+      .authorizePayment(
+        { walletsource: this._walletSource, wallettoken: this.paymentDetails },
+        DomMethods.parseMerchantForm()
+      )
+      .then((response: object) => response)
+      .then((data: object) => {
+        this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
+        this.getResponseMessage(this.paymentStatus);
+        this.setNotification(NotificationType.Success, this.responseMessage);
+        return data;
+      })
+      .catch(() => {
+        this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
+        this.getResponseMessage(this.paymentStatus);
+        this.setNotification(NotificationType.Error, this.responseMessage);
+      });
+  }
+
+  /**
+   * Starts CACHETOKENISE request
+   */
+  protected _cacheTokenizePayment() {
+    this.payment
+      .tokenizeCard({ walletsource: this._walletSource, wallettoken: this.paymentDetails })
+      .then((response: object) => response)
+      .then((data: object) => {
+        this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
+        this.getResponseMessage(this.paymentStatus);
+        this.setNotification(NotificationType.Success, this.responseMessage);
+        return data;
+      })
+      .catch(() => {
+        this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
+        this.getResponseMessage(this.paymentStatus);
+        this.setNotification(NotificationType.Error, this.responseMessage);
+      });
+  }
+
   private setConfiguration = (config: any, settings: any) => (settings || config ? { ...config, ...settings } : {});
 
   /**
@@ -256,49 +299,6 @@ class VisaCheckout {
       this.getResponseMessage(this.paymentStatus);
       this.setNotification(this.paymentStatus, this.responseMessage);
     });
-  }
-
-  /**
-   * Starts AUTH request
-   */
-  protected _authorizePayment() {
-    this.payment
-      .authorizePayment(
-        { walletsource: this._walletSource, wallettoken: this.paymentDetails },
-        DomMethods.parseMerchantForm()
-      )
-      .then((response: object) => response)
-      .then((data: object) => {
-        this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
-        this.getResponseMessage(this.paymentStatus);
-        this.setNotification(NotificationType.Success, this.responseMessage);
-        return data;
-      })
-      .catch(() => {
-        this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
-        this.getResponseMessage(this.paymentStatus);
-        this.setNotification(NotificationType.Error, this.responseMessage);
-      });
-  }
-
-  /**
-   * Starts CACHETOKENISE request
-   */
-  protected _cacheTokenizePayment() {
-    this.payment
-      .tokenizeCard({ walletsource: this._walletSource, wallettoken: this.paymentDetails })
-      .then((response: object) => response)
-      .then((data: object) => {
-        this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
-        this.getResponseMessage(this.paymentStatus);
-        this.setNotification(NotificationType.Success, this.responseMessage);
-        return data;
-      })
-      .catch(() => {
-        this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
-        this.getResponseMessage(this.paymentStatus);
-        this.setNotification(NotificationType.Error, this.responseMessage);
-      });
   }
 }
 
