@@ -1,6 +1,6 @@
+import { INotificationEvent, NotificationType } from '../../core/models/NotificationEvent';
 import Frame from '../../core/shared/Frame';
 import MessageBus from '../../core/shared/MessageBus';
-import { NotificationEvent, NotificationType } from '../../core/models/NotificationEvent';
 import Selectors from '../../core/shared/Selectors';
 
 /**
@@ -49,6 +49,17 @@ export default class NotificationFrame extends Frame {
     }
   }
 
+  private static ELEMENT_ID: string = Selectors.NOTIFICATION_FRAME_ID;
+  public _message: INotificationEvent;
+  private _notificationFrameElement: HTMLElement;
+
+  constructor() {
+    super();
+    this._messageBus = new MessageBus();
+    this.notificationFrameElement = NotificationFrame.getElement(NotificationFrame.ELEMENT_ID);
+    this._onInit();
+  }
+
   protected _getAllowedStyles() {
     let allowed = super._getAllowedStyles();
     const notification = `#${NotificationFrame.ELEMENT_ID}`;
@@ -58,21 +69,48 @@ export default class NotificationFrame extends Frame {
     const info = `${NotificationFrame.ELEMENT_CLASSES.info}${notification}`;
     allowed = {
       ...allowed,
-      'background-color-notification': { property: 'background-color', selector: notification },
-      'background-color-notification-error': { property: 'background-color', selector: error },
-      'background-color-notification-info': { property: 'background-color', selector: info },
-      'background-color-notification-success': { property: 'background-color', selector: success },
-      'background-color-notification-warning': { property: 'background-color', selector: warning },
+      'background-color-notification': {
+        property: 'background-color',
+        selector: notification
+      },
+      'background-color-notification-error': {
+        property: 'background-color',
+        selector: error
+      },
+      'background-color-notification-info': {
+        property: 'background-color',
+        selector: info
+      },
+      'background-color-notification-success': {
+        property: 'background-color',
+        selector: success
+      },
+      'background-color-notification-warning': {
+        property: 'background-color',
+        selector: warning
+      },
       'border-color-notification': { property: 'border-color', selector: notification },
       'border-color-notification-error': { property: 'border-color', selector: error },
       'border-color-notification-info': { property: 'border-color', selector: info },
-      'border-color-notification-success': { property: 'border-color', selector: success },
-      'border-color-notification-warning': { property: 'border-color', selector: warning },
+      'border-color-notification-success': {
+        property: 'border-color',
+        selector: success
+      },
+      'border-color-notification-warning': {
+        property: 'border-color',
+        selector: warning
+      },
       'border-radius-notification': { property: 'border-radius', selector: notification },
       'border-radius-notification-error': { property: 'border-radius', selector: error },
       'border-radius-notification-info': { property: 'border-radius', selector: info },
-      'border-radius-notification-success': { property: 'border-radius', selector: success },
-      'border-radius-notification-warning': { property: 'border-radius', selector: warning },
+      'border-radius-notification-success': {
+        property: 'border-radius',
+        selector: success
+      },
+      'border-radius-notification-warning': {
+        property: 'border-radius',
+        selector: warning
+      },
       'border-size-notification': { property: 'border-size', selector: notification },
       'border-size-notification-error': { property: 'border-size', selector: error },
       'border-size-notification-info': { property: 'border-size', selector: info },
@@ -98,20 +136,6 @@ export default class NotificationFrame extends Frame {
     };
     return allowed;
   }
-
-  private static ELEMENT_ID: string = Selectors.NOTIFICATION_FRAME_ID;
-  public _message: NotificationEvent;
-  private _notificationFrameElement: HTMLElement;
-
-  constructor() {
-    super();
-    this._messageBus = new MessageBus();
-
-    this.notificationFrameElement = NotificationFrame.getElement(NotificationFrame.ELEMENT_ID);
-
-    this._onInit();
-  }
-
   private _onInit() {
     this._onMessage();
   }

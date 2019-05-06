@@ -3,56 +3,61 @@
  * This is code fired on merchant's side.
  * It can be treated as a reference for merchants how to integrate with STJS.
  */
-import './style.scss';
 import { ST } from '../src/stjs';
+import './style.scss';
+
+/* tslint:disable:max-line-length */
 
 (() => {
   const st = new ST(
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU1NjU0NDY0OS41MjkwOTA0LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSJ9fQ.zH8psHhs4YK6I-Jcy7iD0eDWlzwIq6jZ7iefKK5Dyh4',
+    // Cardinal commerce dev22 Jwt:
+    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU2MjY2ODE2LjgxMjIwODQsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoibGl2ZTIifX0.LKFdLCMO4WnaXd6nI9r5xqVWHItBQCUFa6IdlGQI8IM',
+    // ApplePay/Visa checkout prod Jwt:
+    // 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoiMTU1NjE5MjQxMDc0OSIsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6ImxpdmUyIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00ifX0.YPXFxhb72eEc5yUihniXmbyVEQfPtvULk9W36uKR2zg',
     window.location.origin,
     false,
     {
+      animatedCard: 'st-animated-card',
       cardNumber: 'st-card-number',
-      expirationDate: 'st-expiration-date',
-      securityCode: 'st-security-code',
-      notificationFrame: 'st-notification-frame',
       controlFrame: 'st-control-frame',
-      animatedCard: 'st-animated-card'
+      expirationDate: 'st-expiration-date',
+      notificationFrame: 'st-notification-frame',
+      securityCode: 'st-security-code'
     },
     {
       'background-color-input': 'AliceBlue',
+      'background-color-input-error': '#f8d7da',
       'color-input-error': '#721c24',
-      'line-height-input': '12px',
       'font-size-input': '12px',
-      'background-color-input-error': '#f8d7da'
+      'line-height-input': '12px'
     },
     [
       {
         name: 'APPLEPAY',
         props: {
+          buttonStyle: 'white-outline',
+          buttonText: 'donate',
+          merchantId: 'merchant.net.securetrading',
           paymentRequest: {
-            total: { label: 'Secure Trading Merchant', amount: '10.00' },
             countryCode: 'US',
             currencyCode: 'USD',
             merchantCapabilities: ['supports3DS', 'supportsCredit', 'supportsDebit'],
-            supportedNetworks: []
+            supportedNetworks: [],
+            total: { label: 'Secure Trading Merchant', amount: '10.00' }
           },
-          merchantId: 'merchant.net.securetrading',
-          sitesecurity: 'gABC123DEFABC',
           placement: 'st-apple-pay',
-          buttonText: 'donate',
-          buttonStyle: 'white-outline'
+          sitesecurity: 'gABC123DEFABC'
         }
       },
       {
         name: 'VISACHECKOUT',
         props: {
-          merchantId: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4',
+          buttonSettings: { size: '154' },
           livestatus: 0,
-          placement: 'st-visa-checkout',
-          settings: { displayName: 'My Test Site' },
+          merchantId: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4',
           paymentRequest: { subtotal: '20.00' },
-          buttonSettings: { size: '154' }
+          placement: 'st-visa-checkout',
+          settings: { displayName: 'My Test Site' }
         }
       }
     ]

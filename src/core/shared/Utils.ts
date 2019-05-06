@@ -23,6 +23,7 @@ export default class Utils {
     callback: (item: inputType) => returnType
   ): returnType {
     let result: returnType = null;
+    // tslint:disable-next-line:forin
     for (const i in iterable) {
       result = callback(iterable[i]);
       if (result) {
@@ -49,8 +50,8 @@ export default class Utils {
    * @return The new URL including the extra parameters
    */
   public static addUrlParams(url: string, params: any) {
-    if (params != undefined) {
-      let urlParams = new URLSearchParams(params);
+    if (params !== undefined) {
+      const urlParams = new URLSearchParams(params);
       return `${url}?${urlParams.toString()}`;
     }
   }
@@ -75,7 +76,7 @@ export default class Utils {
    * @param err The error with which to reject
    * @return A much more likely to be resolved promise
    */
-  public static retryPromise<T>(promissory: () => Promise<T>, delay = 0, retries = 5, retryTimeout = 20): Promise<T> {
+  public static retryPromise<T>(promissory: () => Promise<T>, delay = 0, retries = 5, retryTimeout = 100): Promise<T> {
     return new Promise((resolve, reject) => {
       const endtime = Date.now() + retryTimeout;
       let error: Error;

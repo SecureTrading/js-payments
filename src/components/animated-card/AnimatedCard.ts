@@ -26,12 +26,12 @@ class AnimatedCard {
     CLASS_BACK: `${AnimatedCard.CARD_COMPONENT_CLASS}__back`,
     CLASS_FOR_ANIMATION: `${AnimatedCard.CARD_COMPONENT_CLASS}__flip-card`,
     CLASS_FRONT: `${AnimatedCard.CARD_COMPONENT_CLASS}__front`,
-    CLASS_SIDE: `${AnimatedCard.CARD_COMPONENT_CLASS}__side`,
-    CLASS_LOGO_WRAPPER: `${AnimatedCard.CARD_COMPONENT_CLASS}-payment-logo`,
     CLASS_LOGO: `${AnimatedCard.CARD_COMPONENT_CLASS}__payment-logo`,
     CLASS_LOGO_DEFAULT: `${AnimatedCard.CARD_COMPONENT_CLASS}__payment-logo--default`,
+    CLASS_LOGO_IMAGE: `${AnimatedCard.CARD_COMPONENT_CLASS}__payment-logo-img`,
+    CLASS_LOGO_WRAPPER: `${AnimatedCard.CARD_COMPONENT_CLASS}-payment-logo`,
     CLASS_SECURITY_CODE_HIDDEN: `${AnimatedCard.CARD_COMPONENT_CLASS}__security-code--front-hidden`,
-    CLASS_LOGO_IMAGE: `${AnimatedCard.CARD_COMPONENT_CLASS}__payment-logo-img`
+    CLASS_SIDE: `${AnimatedCard.CARD_COMPONENT_CLASS}__side`
   };
   public static CARD_DETAILS_PLACEHOLDERS = {
     CARD_NUMBER: 'XXXX XXXX XXXX XXXX',
@@ -46,10 +46,20 @@ class AnimatedCard {
   public static ifCardExists = (): HTMLInputElement => document.getElementById(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
 
   /**
-   * Returns theme class for specified theme
-   * @param theme
+   * Set one of three values on animated card
+   * @param data
+   * @param placeholder
    */
-  public returnThemeClass = (theme: string) => `${AnimatedCard.CARD_COMPONENT_CLASS}__${theme}`;
+  public static setCardDetail(data: any, placeholder: string) {
+    const { value } = data;
+    return value ? value : placeholder;
+  }
+
+  /**
+   * Getting logo from external js file
+   * @param type
+   */
+  public static getLogo = (type: string) => cardsLogos[type];
 
   public animatedCardBack: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_SIDE_BACK);
   public animatedCardExpirationDate: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_EXPIRATION_DATE_ID);
@@ -70,9 +80,9 @@ class AnimatedCard {
   public cardDetails: any = {
     cardNumber: AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER,
     expirationDate: AnimatedCard.CARD_DETAILS_PLACEHOLDERS.EXPIRATION_DATE,
+    logo: '',
     securityCode: AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE,
-    type: AnimatedCard.CARD_DETAILS_PLACEHOLDERS.TYPE,
-    logo: ''
+    type: AnimatedCard.CARD_DETAILS_PLACEHOLDERS.TYPE
   };
   public cardElement: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
   public messageBus: MessageBus;
@@ -83,6 +93,12 @@ class AnimatedCard {
     this.setDefaultInputsValues();
     this.setSubscribeEvents();
   }
+
+  /**
+   * Returns theme class for specified theme
+   * @param theme
+   */
+  public returnThemeClass = (theme: string) => `${AnimatedCard.CARD_COMPONENT_CLASS}__${theme}`;
 
   /**
    * Resets styles on both sides of credit card to default theme
@@ -105,7 +121,7 @@ class AnimatedCard {
   public setThemeClasses() {
     const { type } = this.cardDetails;
 
-    if (type === AnimatedCard.CARD_TYPES.DEFAULT || type == undefined) {
+    if (type === AnimatedCard.CARD_TYPES.DEFAULT || type === undefined) {
       DOMMethods.addClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`);
     } else {
       DOMMethods.addClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO}`);
@@ -124,9 +140,9 @@ class AnimatedCard {
       const element = DOMMethods.createHtmlElement.apply(this, [
         {
           alt: type,
-          src: logo,
           class: AnimatedCard.CARD_CLASSES.CLASS_LOGO_IMAGE,
-          id: Selectors.ANIMATED_CARD_PAYMENT_LOGO_ID
+          id: Selectors.ANIMATED_CARD_PAYMENT_LOGO_ID,
+          src: logo
         },
         'img'
       ]);
@@ -137,12 +153,6 @@ class AnimatedCard {
     }
     return logo;
   }
-
-  /**
-   * Getting logo from external js file
-   * @param type
-   */
-  public static getLogo = (type: string) => cardsLogos[type];
 
   /**
    * Sets card theme according to card brand coming from binLookup()
@@ -157,7 +167,7 @@ class AnimatedCard {
   /**
    * For particular type of card it sets security code on front side of card
    */
-  public setSecurityCodeOnProperSide = () => {
+  public setSecurityCodeOnProperSide() {
     if (this.cardDetails.type === AnimatedCard.CARD_TYPES.AMEX) {
       DOMMethods.removeClass(this.animatedCardSecurityCodeFront, AnimatedCard.CARD_CLASSES.CLASS_SECURITY_CODE_HIDDEN);
     } else {
@@ -167,7 +177,7 @@ class AnimatedCard {
     return this.cardDetails.type === AnimatedCard.CARD_TYPES.AMEX
       ? this.animatedCardSecurityCodeFrontField
       : this.animatedCardSecurityCode;
-  };
+  }
 
   /**
    * Checks if given card should not be flipped
@@ -199,12 +209,12 @@ class AnimatedCard {
   /**
    * Removes cards logo when it's theme changed  to default
    */
-  public removeLogo = () =>
+  public removeLogo() {
     DOMMethods.removeChildFromDOM.apply(this, [
       AnimatedCard.CARD_CLASSES.CLASS_LOGO_WRAPPER,
       Selectors.ANIMATED_CARD_PAYMENT_LOGO_ID
     ]);
-
+  }
   /**
    * Sets placeholders for each editable value on card (card number, expiration date, security code)
    */
@@ -212,16 +222,6 @@ class AnimatedCard {
     this.animatedCardPan.textContent = this.cardDetails.cardNumber;
     this.animatedCardExpirationDate.textContent = this.cardDetails.expirationDate;
     this.setSecurityCodeOnProperSide().textContent = this.cardDetails.securityCode;
-  }
-
-  /**
-   * Set one of three values on animated card
-   * @param data
-   * @param placeholder
-   */
-  public static setCardDetail(data: any, placeholder: string) {
-    let { value } = data;
-    return value ? value : placeholder;
   }
 
   /**

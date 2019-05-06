@@ -2,10 +2,6 @@ import { environment } from '../../environments/environment';
 import Utils from './Utils';
 
 export default class MessageBus {
-  private readonly _parentOrigin: string;
-  private readonly _frameOrigin: string;
-  private _subscriptions: any = {};
-
   public static SUBSCRIBERS: string = 'ST_SUBSCRIBERS';
   public static EVENTS = {
     CHANGE_CARD_NUMBER: 'CHANGE_CARD_NUMBER',
@@ -14,38 +10,27 @@ export default class MessageBus {
   };
   public static EVENTS_PUBLIC = {
     AUTH: 'AUTH',
+    BIN_PROCESS: 'BIN_PROCESS',
     LOAD_CARDINAL: 'LOAD_CARDINAL',
     LOAD_CONTROL_FRAME: 'LOAD_CONTROL_FRAME',
     NOTIFICATION: 'NOTIFICATION',
     SUBMIT_FORM: 'SUBMIT_FORM',
     THREEDINIT: 'THREEDINIT',
     THREEDQUERY: 'THREEDQUERY',
+    UPDATE_MERCHANT_FIELDS: 'UPDATE_MERCHANT_FIELDS',
     WALLETVERIFY: 'WALLETVERIFY'
   };
+  private readonly _parentOrigin: string;
+  private readonly _frameOrigin: string;
+  private _subscriptions: any = {};
 
   constructor(parentOrigin?: string) {
     this._parentOrigin = parentOrigin;
-    this._frameOrigin = environment.FRAME_URL;
+    this._frameOrigin = new URL(environment.FRAME_URL).origin;
     this.registerMessageListener();
   }
 
-  private registerMessageListener() {
-    window.addEventListener('message', (event: MessageEvent) => {
-      let messageBusEvent: MessageBusEvent = event.data;
-      let isPublicEvent = Utils.inArray(Object.keys(MessageBus.EVENTS_PUBLIC), messageBusEvent.type);
-      let isCallbackAllowed =
-        event.origin === this._frameOrigin || (event.origin === this._parentOrigin && isPublicEvent);
-      let subscribersStore = window.sessionStorage.getItem(MessageBus.SUBSCRIBERS);
-
-      subscribersStore = JSON.parse(subscribersStore);
-
-      if (isCallbackAllowed && this._subscriptions[messageBusEvent.type]) {
-        this._subscriptions[messageBusEvent.type](messageBusEvent.data);
-      }
-    });
-  }
-
-  publish(event: MessageBusEvent, publishToParent?: boolean) {
+  public publish(event: IMessageBusEvent, publishToParent?: boolean) {
     let subscribersStore;
 
     if (publishToParent) {
@@ -63,14 +48,14 @@ export default class MessageBus {
     }
   }
 
-  publishFromParent(event: MessageBusEvent, frameName: string) {
+  public publishFromParent(event: IMessageBusEvent, frameName: string) {
     // @ts-ignore
     window.frames[frameName].postMessage(event, this._frameOrigin);
   }
 
-  subscribe(eventType: string, callback: any) {
+  public subscribe(eventType: string, callback: any) {
     let subscribers;
-    let subscriber = window.name;
+    const subscriber = window.name;
     let subscribersStore = window.sessionStorage.getItem(MessageBus.SUBSCRIBERS);
 
     subscribersStore = JSON.parse(subscribersStore);
@@ -88,7 +73,23 @@ export default class MessageBus {
     this._subscriptions[eventType] = callback;
   }
 
-  subscribeOnParent(eventType: string, callback: any) {
+  public subscribeOnParent(eventType: string, callback: any) {
     this._subscriptions[eventType] = callback;
+  }
+
+  private registerMessageListener() {
+    window.addEventListener('message', (event: MessageEvent) => {
+      const messageBusEvent: IMessageBusEvent = event.data;
+      const isPublicEvent = Utils.inArray(Object.keys(MessageBus.EVENTS_PUBLIC), messageBusEvent.type);
+      const isCallbackAllowed =
+        event.origin === this._frameOrigin || (event.origin === this._parentOrigin && isPublicEvent);
+      let subscribersStore = window.sessionStorage.getItem(MessageBus.SUBSCRIBERS);
+
+      subscribersStore = JSON.parse(subscribersStore);
+
+      if (isCallbackAllowed && this._subscriptions[messageBusEvent.type]) {
+        this._subscriptions[messageBusEvent.type](messageBusEvent.data);
+      }
+    });
   }
 }

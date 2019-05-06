@@ -10,23 +10,15 @@ interface IStRequest {
   termurl?: string; // TODO shouldn't be needed for CC request but this needs to wait for 153 release
 }
 
-/***
+/**
  * Encodes and Decodes a request for the ST gateway
  */
 class StCodec {
   public static CONTENT_TYPE = 'application/json';
   public static VERSION = '1.00';
-  public static SUPPORTED_REQUEST_TYPES = ['WALLETVERIFY', 'THREEDINIT', 'THREEDQUERY', 'CACHETOKENISE', 'AUTH'];
+  public static SUPPORTED_REQUEST_TYPES = ['WALLETVERIFY', 'JSINIT', 'THREEDQUERY', 'CACHETOKENISE', 'AUTH'];
 
   private static _notification = new Notification();
-
-  private _requestId: string;
-  private _jwt: string;
-
-  constructor(jwt: string) {
-    this._requestId = this._createRequestId();
-    this._jwt = jwt;
-  }
 
   /**
    * Generate a unique ID for a request
@@ -35,13 +27,21 @@ class StCodec {
    *   (since we prepend 'J-' the random section will be 2 char shorter)
    * @return A newly generated random request ID
    */
-  public _createRequestId(length = 10) {
+  public static _createRequestId(length = 10) {
     return (
       'J-' +
       Math.random()
         .toString(36)
         .substring(2, length)
     );
+  }
+
+  private readonly _requestId: string;
+  private readonly _jwt: string;
+
+  constructor(jwt: string) {
+    this._requestId = StCodec._createRequestId();
+    this._jwt = jwt;
   }
 
   /**

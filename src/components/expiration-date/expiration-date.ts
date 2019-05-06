@@ -1,4 +1,6 @@
 import './expiration-date.scss';
 import ExpirationDate from './ExpirationDate';
 
-ExpirationDate.ifFieldExists() && new ExpirationDate();
+(() => {
+  return ExpirationDate.ifFieldExists() && new ExpirationDate();
+})();
