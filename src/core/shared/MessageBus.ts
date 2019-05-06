@@ -21,12 +21,13 @@ export default class MessageBus {
     SUBMIT_FORM: 'SUBMIT_FORM',
     THREEDINIT: 'THREEDINIT',
     THREEDQUERY: 'THREEDQUERY',
-    WALLETVERIFY: 'WALLETVERIFY'
+    WALLETVERIFY: 'WALLETVERIFY',
+    UPDATE_MERCHANT_FIELDS: 'UPDATE_MERCHANT_FIELDS'
   };
 
   constructor(parentOrigin?: string) {
     this._parentOrigin = parentOrigin;
-    this._frameOrigin = environment.FRAME_URL;
+    this._frameOrigin = new URL(environment.FRAME_URL).origin;
     this.registerMessageListener();
   }
 

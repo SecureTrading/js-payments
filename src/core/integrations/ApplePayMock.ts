@@ -4,6 +4,7 @@ import { NotificationType } from '../models/NotificationEvent';
 import Language from '../shared/Language';
 import ApplePay from './ApplePay';
 import DomMethods from '../shared/DomMethods';
+import Selectors from '../shared/Selectors';
 
 /**
  * Mocked version of Apple Pay setting test environment for Apple Pay automated tests.
@@ -93,14 +94,17 @@ class ApplePayMock extends ApplePay {
    */
   private _mockedPaymentAuthorization() {
     this.payment
-      .authorizePayment({
-        ...this.paymentRequest,
-        wallettoken: this.merchantSession,
-        walletsource: this.validateMerchantRequestData.walletsource,
-        walletmerchantid: this.validateMerchantRequestData.walletmerchantid,
-        walletvalidationurl: this.validateMerchantRequestData.walletvalidationurl,
-        walletrequestdomain: this.validateMerchantRequestData.walletrequestdomain
-      })
+      .authorizePayment(
+        {
+          ...this.paymentRequest,
+          wallettoken: this.merchantSession,
+          walletsource: this.validateMerchantRequestData.walletsource,
+          walletmerchantid: this.validateMerchantRequestData.walletmerchantid,
+          walletvalidationurl: this.validateMerchantRequestData.walletvalidationurl,
+          walletrequestdomain: this.validateMerchantRequestData.walletrequestdomain
+        },
+        DomMethods.parseMerchantForm()
+      )
       .then(() => {
         this.setNotification(NotificationType.Success, Language.translations.PAYMENT_AUTHORIZED);
       })

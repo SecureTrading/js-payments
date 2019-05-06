@@ -5,11 +5,11 @@ import Selectors from '../shared/Selectors';
 
 declare const Cardinal: any;
 
-interface ThreeDQueryResponse {
-  acquirerresponsemessage: string;
+export interface ThreeDQueryResponse {
+  acquirertransactionreference: string;
   acsurl: string;
   enrolled: string;
-  pareq: string;
+  threedpayload: string;
   transactionreference: string;
 }
 
@@ -24,7 +24,7 @@ interface ThreeDQueryResponse {
  * 5.Cardinal.continue + required payload from cmpi_lookup response
  * 6.Cardinal.on('pauments.validated) - process auth or return failure
  */
-export default class CardinalCommerce {
+export class CardinalCommerce {
   private static PAYMENT_BRAND: string = 'cca';
   private static PAYMENT_EVENTS = {
     INIT: 'init',
@@ -41,6 +41,7 @@ export default class CardinalCommerce {
   public messageBus: MessageBus;
   private _cardinalCommerceJWT: string;
   private _cardinalCommerceCacheToken: string;
+  private _threedQueryTransactionReference: string;
 
   constructor() {
     this.messageBus = new MessageBus();
@@ -68,7 +69,7 @@ export default class CardinalCommerce {
   }
 
   private _onThreeDInitEvent(data: any) {
-    this._cardinalCommerceJWT = data.jwt;
+    this._cardinalCommerceJWT = data.threedinit;
     this._cardinalCommerceCacheToken = data.cachetoken;
     this._threeDSetup();
   }
@@ -100,16 +101,15 @@ export default class CardinalCommerce {
    */
   protected _onCardinalLoad() {
     Cardinal.configure(environment.CARDINAL_COMMERCE.CONFIG);
-    Cardinal.setup(CardinalCommerce.PAYMENT_EVENTS.INIT, {
-      jwt: this._cardinalCommerceJWT
-    });
-
     Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.SETUP_COMPLETE, () => {
       this._onCardinalSetupComplete();
     });
 
     Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.VALIDATED, (data: any, jwt: any) => {
       this._onCardinalValidated(data, jwt);
+    });
+    Cardinal.setup(CardinalCommerce.PAYMENT_EVENTS.INIT, {
+      jwt: this._cardinalCommerceJWT
     });
   }
 
@@ -142,17 +142,17 @@ export default class CardinalCommerce {
   }
 
   private _threeDQueryRequest(responseObject: ThreeDQueryResponse) {
-    if (this._isCardEnrolled(responseObject.enrolled)) {
+    if (this._isCardEnrolledAndNotFrictionless(responseObject)) {
       this._authenticateCard(responseObject);
     } else {
       this._authorizePayment({
-        transactionreference: responseObject.transactionreference
+        parenttransactionreference: responseObject.transactionreference
       });
     }
   }
 
-  private _isCardEnrolled(enrolled: string) {
-    return enrolled === 'Y';
+  private _isCardEnrolledAndNotFrictionless(response: ThreeDQueryResponse) {
+    return response.enrolled === 'Y' && response.acsurl !== undefined;
   }
 
   /**
@@ -162,21 +162,24 @@ export default class CardinalCommerce {
    * @protected
    */
   protected _authenticateCard(responseObject: ThreeDQueryResponse) {
+    this._threedQueryTransactionReference = responseObject.transactionreference;
     Cardinal.continue(
       CardinalCommerce.PAYMENT_BRAND,
       {
         AcsUrl: responseObject.acsurl,
-        Payload: responseObject.pareq // @TODO: this should be threedresponse not pareq but the server needs updating
+        Payload: responseObject.threedpayload
       },
       {
         Cart: [],
-        OrderDetails: { TransactionId: responseObject.acquirerresponsemessage }
+        OrderDetails: { TransactionId: responseObject.acquirertransactionreference }
       },
       this._cardinalCommerceJWT
     );
   }
 
   private _authorizePayment(data: any) {
+    data.cachetoken = this._cardinalCommerceCacheToken;
+    data.parenttransactionreference = this._threedQueryTransactionReference;
     const messageBusEvent: MessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.AUTH,
       data: data

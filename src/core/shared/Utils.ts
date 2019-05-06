@@ -75,7 +75,7 @@ export default class Utils {
    * @param err The error with which to reject
    * @return A much more likely to be resolved promise
    */
-  public static retryPromise<T>(promissory: () => Promise<T>, delay = 0, retries = 5, retryTimeout = 20): Promise<T> {
+  public static retryPromise<T>(promissory: () => Promise<T>, delay = 0, retries = 5, retryTimeout = 100): Promise<T> {
     return new Promise((resolve, reject) => {
       const endtime = Date.now() + retryTimeout;
       let error: Error;
