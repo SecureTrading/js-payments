@@ -1,4 +1,4 @@
-interface WalletVerify {
+interface IWalletVerify {
   walletsource: string;
   walletmerchantid: string;
   walletvalidationurl: string;

@@ -5,6 +5,7 @@
     "max-line-length": {
       "options": [120]
     },
+    "object-literal-key-quotes": [true, "as-needed"],
     "new-parens": true,
     "no-arg": true,
     "no-bitwise": true,
@@ -16,6 +17,7 @@
     },
     "one-variable-per-declaration": true,
     "quotemark": [true, "single"],
+    "semicolon": [true, "ignore-bound-class-methods"],
     "trailing-comma": false,
     "variable-name": [true, "check-format", "allow-leading-underscore", "allow-pascal-case"]
   },

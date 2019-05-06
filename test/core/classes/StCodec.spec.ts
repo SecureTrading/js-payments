@@ -52,13 +52,13 @@ describe('StCodec class', () => {
     });
 
     it('generates a request id', () => {
-      expect(str._createRequestId()).toEqual(requestid);
+      expect(StCodec._createRequestId()).toEqual(requestid);
     });
     it('generates reasonably unique ids', () => {
       const attempts = 99999;
       const results = new Set();
       for (let i = 0; i < attempts; i++) {
-        results.add(str._createRequestId());
+        results.add(StCodec._createRequestId());
       }
       expect(results.size).toEqual(attempts);
     });

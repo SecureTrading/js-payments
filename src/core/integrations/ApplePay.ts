@@ -1,31 +1,38 @@
+import StTransport from '../classes/StTransport.class';
+import { INotificationEvent, NotificationType } from '../models/NotificationEvent';
+import DomMethods from '../shared/DomMethods';
 import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
-import { NotificationEvent, NotificationType } from '../models/NotificationEvent';
 import Payment from '../shared/Payment';
 import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
-import DomMethods from '../shared/DomMethods';
-import StTransport from '../classes/StTransport.class';
 
 const ApplePaySession = (window as any).ApplePaySession;
 
 /**
  * Apple Pay flow:
- * 1. Check if ApplePaySession class exists (it must be iOS 10 and later and macOS 10.12 and later).
+ * 1. Check if ApplePaySession class exists
+ *    (it must be iOS 10 and later and macOS 10.12 and later).
  * 2. Call setApplePayVersion() to set latest available ApplePay version.
- * 3. Call setSupportedNetworks() to set available networks which are supported in this particular version of Apple Pay.
+ * 3. Call setSupportedNetworks() to set available networks which are supported
+ *    in this particular version of Apple Pay.
  * 4. Call setAmountAndCurrency() to set amount and currency hidden in provided JWT.
- * 5. Call createApplePayButton(), setApplePayButtonProps() and addApplePayButton) to provide styled button for launching Apple Pay Process.
- * 6. Call applePayProcess() which checks by canMakePayments() and canMakePaymentsWithActiveCard(merchantID) the capability of device for making Apple Pay payments and if there is at least one card in  users Wallet.
- * 7. User taps / clicks ApplePayButton on page and this event triggers applePayButtonClickHandler() - this is obligatory process -it has to be triggered by users action.
+ * 5. Call createApplePayButton(), setApplePayButtonProps() and addApplePayButton)
+ *    to provide styled button for launching Apple Pay Process.
+ * 6. Call applePayProcess() which checks by canMakePayments() and canMakePaymentsWithActiveCard(merchantID)
+ *    the capability of device for making Apple Pay payments and if there is at least one card in  users Wallet.
+ * 7. User taps / clicks ApplePayButton on page and this event triggers applePayButtonClickHandler() -
+ *    this is obligatory process -it has to be triggered by users action.
  * 8. Clicking button triggers paymentProcess() which sets ApplePaySession object.
  * 9. Then this.session.begin() is called which begins validating merchant process and display payment sheet.
  * 10. this.onValidateMerchantRequest() - triggers onvalidatemerchant which literally validates merchant.
- * 11. this.subscribeStatusHandlers() - if merchant has been successfully validated, three handlers are set - onpaymentmethodselected,  onshippingmethodselected, onshippingcontactselected
+ * 11. this.subscribeStatusHandlers() - if merchant has been successfully validated, three handlers are set -
+ *     onpaymentmethodselected,  onshippingmethodselected, onshippingcontactselected
  *     to handle customer's selections in the payment sheet to complete transaction cost.
- *     We've got 30 seconds to handle each event before the payment sheet times out: completePaymentMethodSelection, completeShippingMethodSelection, and completeShippingContactSelection
- * 12.Then onPaymentAuthorized() or onPaymentCanceled() has been called which completes payment with this.session.completePayment function or canceled it with this.session.oncancel handler.
-
+ *     We've got 30 seconds to handle each event before the payment sheet times out: completePaymentMethodSelection,
+ *     completeShippingMethodSelection, and completeShippingContactSelection
+ * 12. Then onPaymentAuthorized() or onPaymentCanceled() has been called which completes payment with
+ *     this.session.completePayment function or canceled it with this.session.oncancel handler.
  */
 class ApplePay {
   get applePayButtonProps(): any {
@@ -47,20 +54,6 @@ class ApplePay {
   get jwt(): string {
     return this._jwt;
   }
-
-  public applePayVersion: number;
-  public buttonText: string;
-  public buttonStyle: string;
-  public merchantId: string;
-  public messageBus: MessageBus;
-  public paymentRequest: any;
-  public placement: string;
-  public paymentDetails: string;
-  public session: any;
-  public merchantSession: any;
-  public sitesecurity: string;
-  public stJwtInstance: StJwt;
-  public stTransportInstance: StTransport;
 
   public static APPLE_PAY_BUTTON_ID: string = 'st-apple-pay';
   public static APPLE_PAY_MIN_VERSION: number = 2;
@@ -85,19 +78,34 @@ class ApplePay {
     'vPay'
   ]);
   public static VERSION_5_SUPPORTED_NETWORKS = ApplePay.BASIC_SUPPORTED_NETWORKS.concat(['elo', 'mada']);
-  private _jwt: string;
-  private _applePayButtonProps: any = {};
-  private _payment: Payment;
+
+  public applePayVersion: number;
+  public buttonText: string;
+  public buttonStyle: string;
+  public merchantId: string;
+  public messageBus: MessageBus;
+  public paymentRequest: any;
+  public placement: string;
+  public paymentDetails: string;
+  public session: any;
+  public merchantSession: any;
+  public sitesecurity: string;
+  public stJwtInstance: StJwt;
+  public stTransportInstance: StTransport;
 
   /**
    * All object properties are required for WALLETVERIFY request call to ST.
    */
   public validateMerchantRequestData = {
-    walletsource: 'APPLEPAY',
     walletmerchantid: '',
-    walletvalidationurl: '',
-    walletrequestdomain: window.location.hostname
+    walletrequestdomain: window.location.hostname,
+    walletsource: 'APPLEPAY',
+    walletvalidationurl: ''
   };
+
+  private _jwt: string;
+  private _applePayButtonProps: any = {};
+  private _payment: Payment;
 
   constructor(config: any, jwt: string) {
     const {
@@ -172,7 +180,7 @@ class ApplePay {
       ? (this.buttonText = buttonText)
       : (this.buttonText = ApplePay.AVAILABLE_BUTTON_TEXTS[0]);
 
-    this._applePayButtonProps['style'] = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${
+    this._applePayButtonProps.style = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${
       this.buttonText
     }; -apple-pay-button-style: ${this.buttonStyle}`;
   }
@@ -201,7 +209,8 @@ class ApplePay {
 
   /**
    * Simple handler for generated Apple Pay button.
-   * It's obligatory due to ApplePay requirements - this action needs to be triggered by user himself by tapping/clicking button 'Pay'
+   * It's obligatory due to ApplePay requirements -
+   * this action needs to be triggered by user himself by tapping/clicking button 'Pay'
    * @param elementId
    * @param event
    */
@@ -259,8 +268,11 @@ class ApplePay {
   }
 
   /**
-   * Make a server-to-server call to pass a payload to the Apple Pay validationURL endpoint.
-   * If successful, Apple Pay servers will return a merchant session object which will be used in response to completeMerchantValidation
+   * Make a server-to-server call to pass a payload to the
+   * Apple Pay validationURL endpoint.
+   *
+   * If successful, Apple Pay servers will return a merchant session object
+   * which will be used in response to completeMerchantValidation
    */
   public onValidateMerchantRequest() {
     this.session.onvalidatemerchant = (event: any) => {
@@ -286,10 +298,13 @@ class ApplePay {
       this.paymentDetails = JSON.stringify(event.payment);
       this.session.completePayment({ status: ApplePaySession.STATUS_SUCCESS, errors: [] });
       this.payment
-        .authorizePayment({
-          walletsource: this.validateMerchantRequestData.walletsource,
-          wallettoken: this.paymentDetails
-        })
+        .authorizePayment(
+          {
+            walletsource: this.validateMerchantRequestData.walletsource,
+            wallettoken: this.paymentDetails
+          },
+          DomMethods.parseMerchantForm()
+        )
         .then((response: object) => {
           return response;
         })
@@ -337,13 +352,19 @@ class ApplePay {
   }
 
   /**
-   * Sets payment sheet interactions handlers: onpaymentmethodselected, onshippingmethodselected, onshippingcontactselected
+   * Sets payment sheet interactions handlers: onpaymentmethodselected,
+   * onshippingmethodselected, onshippingcontactselected
    */
   public subscribeStatusHandlers() {
     this.session.onpaymentmethodselected = (event: any) => {
       const { paymentMethod } = event;
       this.session.completePaymentMethodSelection({
-        newTotal: { label: this.paymentRequest.total.label, amount: this.paymentRequest.total.amount, type: 'final' } // what is type ??
+        // what is type ??
+        newTotal: {
+          amount: this.paymentRequest.total.amount,
+          label: this.paymentRequest.total.label,
+          type: 'final'
+        }
       });
     };
 
@@ -368,13 +389,13 @@ class ApplePay {
    * @param content
    */
   public setNotification(type: string, content: string) {
-    const notificationEvent: NotificationEvent = {
-      type: type,
-      content: content
+    const notificationEvent: INotificationEvent = {
+      content,
+      type
     };
-    const messageBusEvent: MessageBusEvent = {
-      type: MessageBus.EVENTS_PUBLIC.NOTIFICATION,
-      data: notificationEvent
+    const messageBusEvent: IMessageBusEvent = {
+      data: notificationEvent,
+      type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
     };
     this.messageBus.publishFromParent(messageBusEvent, Selectors.NOTIFICATION_FRAME_IFRAME);
   }

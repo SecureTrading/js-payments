@@ -5,11 +5,12 @@ import Selectors from '../shared/Selectors';
 
 declare const Cardinal: any;
 
-interface ThreeDQueryResponse {
-  acquirerresponsemessage: string;
+export interface IThreeDQueryResponse {
+  acquirertransactionreference: string;
   acsurl: string;
   enrolled: string;
-  pareq: string;
+  threedpayload: string;
+  transactionreference: string;
 }
 
 /**
@@ -23,7 +24,7 @@ interface ThreeDQueryResponse {
  * 5.Cardinal.continue + required payload from cmpi_lookup response
  * 6.Cardinal.on('pauments.validated) - process auth or return failure
  */
-export default class CardinalCommerce {
+export class CardinalCommerce {
   private static PAYMENT_BRAND: string = 'cca';
   private static PAYMENT_EVENTS = {
     INIT: 'init',
@@ -37,13 +38,82 @@ export default class CardinalCommerce {
     SUCCESS: 'SUCCESS'
   };
 
-  private _messageBus: MessageBus;
+  public messageBus: MessageBus;
   private _cardinalCommerceJWT: string;
   private _cardinalCommerceCacheToken: string;
+  private _threedQueryTransactionReference: string;
 
   constructor() {
-    this._messageBus = new MessageBus();
+    this.messageBus = new MessageBus();
     this._onInit();
+  }
+
+  /**
+   * Method on successful initialization after calling Cardinal.setup() - Songbird.js has been successfully initialized.
+   * CAUTION ! this will not be triggered if an error occurred during Cardinal.setup() call.
+   * This includes a failed JWT authentication.
+   */
+  public _onCardinalSetupComplete() {
+    const messageBusEvent: IMessageBusEvent = {
+      type: MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL
+    };
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BIN_PROCESS, (data: IFormFieldState) => {
+      Cardinal.trigger('bin.process', data.value);
+    });
+    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+  }
+
+  /**
+   * Triggered when the transaction has been finished.
+   * @protected
+   */
+  protected _onCardinalValidated(data: any, jwt: any) {
+    // @TODO: handle all errors - part of STJS-25
+    if (data.ActionCode === 'SUCCESS') {
+      this._authorizePayment({
+        threedresponse: jwt
+      });
+    }
+  }
+  /**
+   * Handles continue action from Cardinal Commerce, retrieve overlay with iframe which target is on AcsUrl
+   * and handles the rest of process.
+   * Cardinal.continue(PAYMENT_BRAND, CONTINUE_DATA, ORDER_OBJECT, NEW_JWT)
+   * @protected
+   */
+  protected _authenticateCard(responseObject: IThreeDQueryResponse) {
+    this._threedQueryTransactionReference = responseObject.transactionreference;
+    Cardinal.continue(
+      CardinalCommerce.PAYMENT_BRAND,
+      {
+        AcsUrl: responseObject.acsurl,
+        Payload: responseObject.threedpayload
+      },
+      {
+        Cart: [],
+        OrderDetails: { TransactionId: responseObject.acquirertransactionreference }
+      },
+      this._cardinalCommerceJWT
+    );
+  }
+
+  /**
+   * Initiate configuration of Cardinal Commerce
+   * Initialize Cardinal Commerce mechanism with given JWT (by merchant).
+   * @protected
+   */
+  protected _onCardinalLoad() {
+    Cardinal.configure(environment.CARDINAL_COMMERCE.CONFIG);
+    Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.SETUP_COMPLETE, () => {
+      this._onCardinalSetupComplete();
+    });
+
+    Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.VALIDATED, (data: any, jwt: any) => {
+      this._onCardinalValidated(data, jwt);
+    });
+    Cardinal.setup(CardinalCommerce.PAYMENT_EVENTS.INIT, {
+      jwt: this._cardinalCommerceJWT
+    });
   }
 
   private _onInit() {
@@ -51,13 +121,13 @@ export default class CardinalCommerce {
   }
 
   private _initSubscriptions() {
-    this._messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME, () => {
+    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME, () => {
       this._onLoadControlFrame();
     });
-    this._messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDINIT, (data: any) => {
+    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDINIT, (data: any) => {
       this._onThreeDInitEvent(data);
     });
-    this._messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDQUERY, (data: any) => {
+    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDQUERY, (data: any) => {
       this._onThreeDQueryEvent(data);
     });
   }
@@ -67,7 +137,7 @@ export default class CardinalCommerce {
   }
 
   private _onThreeDInitEvent(data: any) {
-    this._cardinalCommerceJWT = data.jwt;
+    this._cardinalCommerceJWT = data.threedinit;
     this._cardinalCommerceCacheToken = data.cachetoken;
     this._threeDSetup();
   }
@@ -80,102 +150,40 @@ export default class CardinalCommerce {
    * Perform a THREEDINIT with ST in order to generate the Cardinal songbird JWT
    */
   private _threeDInitRequest() {
-    const messageBusEvent: MessageBusEvent = {
+    const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.THREEDINIT
     };
-    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
   private _threeDSetup() {
-    DomMethods.insertScript('head', environment.SONGBIRD_URL).addEventListener('load', () => {
+    DomMethods.insertScript('head', environment.CARDINAL_COMMERCE.SONGBIRD_URL).addEventListener('load', () => {
       this._onCardinalLoad();
     });
   }
 
-  /**
-   * Initiate configuration of Cardinal Commerce
-   * Initialize Cardinal Commerce mechanism with given JWT (by merchant).
-   * @private
-   */
-  private _onCardinalLoad() {
-    Cardinal.configure(environment.CARDINAL_COMMERCE_CONFIG);
-    Cardinal.setup(CardinalCommerce.PAYMENT_EVENTS.INIT, {
-      jwt: this._cardinalCommerceJWT
-    });
-
-    Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.SETUP_COMPLETE, () => {
-      this._onCardinalSetupComplete();
-    });
-
-    Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.VALIDATED, (data: any, jwt: any) => {
-      this._onCardinalValidated(data, jwt);
-    });
-  }
-
-  /**
-   * Method on successful initialization after calling Cardinal.setup() - Songbird.js has been successfully initialized.
-   * CAUTION ! this will not be triggered if an error occurred during Cardinal.setup() call.
-   * This includes a failed JWT authentication.
-   */
-  private _onCardinalSetupComplete() {
-    const messageBusEvent: MessageBusEvent = {
-      type: MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL
-    };
-    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
-  }
-
-  /**
-   * Triggered when the transaction has been finished.
-   * @private
-   */
-  private _onCardinalValidated(data: any, jwt: any) {
-    // @TODO: handle all errors - part of STJS-25
-    if (data.ActionCode === 'SUCCESS') {
-      this._authorizePayment(jwt);
-    }
-  }
-
-  private _threeDQueryRequest(responseObject: ThreeDQueryResponse) {
-    if (this._isCardEnrolled(responseObject.enrolled)) {
+  private _threeDQueryRequest(responseObject: IThreeDQueryResponse) {
+    if (this._isCardEnrolledAndNotFrictionless(responseObject)) {
       this._authenticateCard(responseObject);
     } else {
-      // @TODO
-      // N - Perform an AUTH Request, including the transactionreference returned in the THREEDQUERY response.
-      // U - This typically indicates a temporary problem with the card issuer’s systems. You can configure your system to resubmit the same THREEDQUERY request. If this continues to fail, perform a standard AUTH request, including the transactionreference returned in the THREEDQUERY response.
+      this._authorizePayment({
+        parenttransactionreference: responseObject.transactionreference
+      });
     }
   }
 
-  private _isCardEnrolled(enrolled: string) {
-    return enrolled === 'Y';
+  private _isCardEnrolledAndNotFrictionless(response: IThreeDQueryResponse) {
+    return response.enrolled === 'Y' && response.acsurl !== undefined;
   }
 
-  /**
-   * Handles continue action from Cardinal Commerce, retrieve overlay with iframe which target is on AcsUrl
-   * and handles the rest of process.
-   * Cardinal.continue(PAYMENT_BRAND, CONTINUE_DATA, ORDER_OBJECT, NEW_JWT)
-   * @private
-   */
-  private _authenticateCard(responseObject: ThreeDQueryResponse) {
-    Cardinal.continue(
-      CardinalCommerce.PAYMENT_BRAND,
-      {
-        AcsUrl: responseObject.acsurl,
-        Payload: responseObject.pareq // @TODO: this should be threedresponse not pareq but the server needs updating
-      },
-      {
-        Cart: [],
-        OrderDetails: { TransactionId: responseObject.acquirerresponsemessage }
-      },
-      this._cardinalCommerceJWT
-    );
-  }
-
-  private _authorizePayment(threeDResponse: string) {
-    const messageBusEvent: MessageBusEvent = {
-      type: MessageBus.EVENTS_PUBLIC.AUTH,
-      data: threeDResponse
+  private _authorizePayment(data: any) {
+    data.cachetoken = this._cardinalCommerceCacheToken;
+    data.parenttransactionreference = this._threedQueryTransactionReference;
+    const messageBusEvent: IMessageBusEvent = {
+      data,
+      type: MessageBus.EVENTS_PUBLIC.AUTH
     };
-    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
   // /**

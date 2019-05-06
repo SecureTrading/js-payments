@@ -1,14 +1,28 @@
 import { environment } from '../../environments/environment';
 import { applePayButton } from '../imports/images';
 import { NotificationType } from '../models/NotificationEvent';
+import DomMethods from '../shared/DomMethods';
 import Language from '../shared/Language';
 import ApplePay from './ApplePay';
-import DomMethods from '../shared/DomMethods';
 
 /**
  * Mocked version of Apple Pay setting test environment for Apple Pay automated tests.
  */
 class ApplePayMock extends ApplePay {
+  /**
+   * Retrieves Apple Pay data from test endpoint
+   * @private
+   */
+  private static _getWalletverifyData() {
+    return fetch(environment.APPLE_PAY_URLS.MOCK_DATA_URL)
+      .then((response: any) => {
+        return response.json();
+      })
+      .then((data: any) => {
+        return data;
+      });
+  }
+
   public paymentDetails: string;
 
   constructor(config: any, jwt: string) {
@@ -55,21 +69,6 @@ class ApplePayMock extends ApplePay {
   }
 
   /**
-   * Retrieves Apple Pay data from test endpoint
-   * @private
-   */
-
-  private static _getWalletverifyData() {
-    return fetch(environment.APPLE_PAY_URLS.MOCK_DATA_URL)
-      .then((response: any) => {
-        return response.json();
-      })
-      .then((data: any) => {
-        return data;
-      });
-  }
-
-  /**
    * Proceeds payment flow with mocked data
    * @private
    */
@@ -93,14 +92,17 @@ class ApplePayMock extends ApplePay {
    */
   private _mockedPaymentAuthorization() {
     this.payment
-      .authorizePayment({
-        ...this.paymentRequest,
-        wallettoken: this.merchantSession,
-        walletsource: this.validateMerchantRequestData.walletsource,
-        walletmerchantid: this.validateMerchantRequestData.walletmerchantid,
-        walletvalidationurl: this.validateMerchantRequestData.walletvalidationurl,
-        walletrequestdomain: this.validateMerchantRequestData.walletrequestdomain
-      })
+      .authorizePayment(
+        {
+          ...this.paymentRequest,
+          walletmerchantid: this.validateMerchantRequestData.walletmerchantid,
+          walletrequestdomain: this.validateMerchantRequestData.walletrequestdomain,
+          walletsource: this.validateMerchantRequestData.walletsource,
+          wallettoken: this.merchantSession,
+          walletvalidationurl: this.validateMerchantRequestData.walletvalidationurl
+        },
+        DomMethods.parseMerchantForm()
+      )
       .then(() => {
         this.setNotification(NotificationType.Success, Language.translations.PAYMENT_AUTHORIZED);
       })
