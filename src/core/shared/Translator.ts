@@ -7,8 +7,8 @@ import fr from '../translations/fr/translation';
 export class Translator {
   constructor(locale: string) {
     i18next.init({
-      lng: locale,
       debug: false,
+      lng: locale,
       resources: {
         de_DE: { translation: de },
         en_EN: { translation: en },

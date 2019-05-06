@@ -1,12 +1,12 @@
 import * as JwtDecode from 'jwt-decode';
-import { Money, Currencies } from 'ts-money';
+import { Currencies, Money } from 'ts-money';
 
-export interface StJwtPayload {
+export interface IStJwtPayload {
   [key: string]: string;
 }
 
-export interface StJwtObj {
-  payload: StJwtPayload;
+export interface IStJwtObj {
+  payload: IStJwtPayload;
 }
 
 /***
@@ -14,11 +14,11 @@ export interface StJwtObj {
  * Does not verify it as this will be done by the server
  */
 export class StJwt {
-  private _decodedJwt: StJwtObj;
-  public payload: StJwtPayload;
+  public payload: IStJwtPayload;
+  private _decodedJwt: IStJwtObj;
 
   constructor(jwt: string) {
-    this._decodedJwt = JwtDecode<StJwtObj>(jwt);
+    this._decodedJwt = JwtDecode<IStJwtObj>(jwt);
     this.payload = this._decodedJwt.payload;
   }
 
@@ -59,7 +59,10 @@ export class StJwt {
     let mainamount = this.payload.mainamount;
     if (mainamount === undefined) {
       // Merchants can specify amount in main or base units so need to convert to main
-      mainamount = Money.fromInteger({ amount: parseInt(this.payload.baseamount), currency: this.currency }).toString();
+      mainamount = Money.fromInteger({
+        amount: parseInt(this.payload.baseamount, 10),
+        currency: this.currency
+      }).toString();
     }
     return mainamount;
   }

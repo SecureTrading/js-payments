@@ -1,18 +1,18 @@
 import DomMethods from './DomMethods';
 
-export interface SubStyles {
+export interface ISubStyles {
   [key: string]: string;
 }
 
-export interface GroupedStyles {
-  [key: string]: SubStyles;
+export interface IGroupedStyles {
+  [key: string]: ISubStyles;
 }
 
-export interface Styles {
+export interface IStyles {
   [identifier: string]: string;
 }
 
-export interface AllowedStyles {
+export interface IAllowedStyles {
   [identifier: string]: {
     selector: string;
     property: string;
@@ -24,18 +24,32 @@ export interface AllowedStyles {
  * Does not verify it as this will be done by the server
  */
 export class Styler {
-  private _allowed: AllowedStyles;
+  private static _getTagStyles(styles: ISubStyles) {
+    const results = [];
+    // tslint:disable-next-line:forin
+    for (const style in styles) {
+      results.push(`${style}: ${styles[style]};`);
+    }
+    return results.join(' ');
+  }
 
-  constructor(allowed: AllowedStyles) {
+  private readonly _allowed: IAllowedStyles;
+
+  constructor(allowed: IAllowedStyles) {
     this._allowed = allowed;
+  }
+
+  public inject(styles: IStyles) {
+    DomMethods.insertStyle(this._getStyleString(styles));
   }
 
   /**
    * Validates that the provided styles will only allow the expected values to be overridden
    */
-  private _filter(styles: Styles) {
-    let filtered: Styles = {};
-    for (let style in styles) {
+  private _filter(styles: IStyles) {
+    const filtered: IStyles = {};
+    // tslint:disable-next-line:forin
+    for (const style in styles) {
       if (this._allowed.hasOwnProperty(style)) {
         filtered[style] = styles[style];
       }
@@ -43,11 +57,11 @@ export class Styler {
     return filtered;
   }
 
-  private _group(styles: Styles) {
-    let grouped: GroupedStyles = {};
-    let i;
-    for (let style in styles) {
-      let allowed = this._allowed[style];
+  private _group(styles: IStyles) {
+    const grouped: IGroupedStyles = {};
+    // tslint:disable-next-line:forin
+    for (const style in styles) {
+      const allowed = this._allowed[style];
       if (!grouped.hasOwnProperty(allowed.selector)) {
         grouped[allowed.selector] = {};
       }
@@ -56,28 +70,16 @@ export class Styler {
     return grouped;
   }
 
-  private _getStyleString(styles: Styles) {
+  private _getStyleString(styles: IStyles) {
     styles = this._filter(styles);
-    let groupedStyles = this._group(styles);
+    const groupedStyles = this._group(styles);
     let tag;
-    let templates = [`body { display: block; }`];
+    const templates = [`body { display: block; }`];
+    // tslint:disable-next-line:forin
     for (tag in groupedStyles) {
-      let tagStyle = this._getTagStyles(groupedStyles[tag]);
+      const tagStyle = Styler._getTagStyles(groupedStyles[tag]);
       templates.push(`${tag} { ${tagStyle} }`);
     }
     return templates.join(' ');
-  }
-
-  public inject(styles: Styles) {
-    DomMethods.insertStyle(this._getStyleString(styles));
-  }
-
-  private _getTagStyles(styles: SubStyles) {
-    let results = [];
-    for (let style in styles) {
-      results.push(`${style}: ${styles[style]};`);
-    }
-    const result = results.join(' ');
-    return result;
   }
 }

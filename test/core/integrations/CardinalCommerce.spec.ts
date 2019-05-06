@@ -1,5 +1,5 @@
 import each from 'jest-each';
-import { CardinalCommerce, ThreeDQueryResponse } from '../../../src/core/integrations/CardinalCommerce';
+import { CardinalCommerce, IThreeDQueryResponse } from '../../../src/core/integrations/CardinalCommerce';
 import MessageBus from '../../../src/core/shared/MessageBus';
 
 jest.mock('./../../../src/core/shared/MessageBus');
@@ -51,7 +51,7 @@ describe('Class CCIntegration', () => {
     ]).it(
       'should detect if card is enrolled and we did not get a frictionless 3DS 2.0 response',
       async (enrolled, acsurl, expected) => {
-        let response: ThreeDQueryResponse = {
+        let response: IThreeDQueryResponse = {
           acquirertransactionreference: 'tx-ref',
           acsurl: acsurl,
           enrolled: enrolled,

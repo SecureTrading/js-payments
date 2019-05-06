@@ -1,12 +1,16 @@
 import FormField from '../../core/shared/FormField';
-import Selectors from '../../core/shared/Selectors';
-import MessageBus from '../../core/shared/MessageBus';
 import Language from '../../core/shared/Language';
+import MessageBus from '../../core/shared/MessageBus';
+import Selectors from '../../core/shared/Selectors';
 
 /**
  * Definition of security code validation
  */
 export default class SecurityCode extends FormField {
+  public static ifFieldExists(): HTMLInputElement {
+    // @ts-ignore
+    return document.getElementById(Selectors.SECURITY_CODE_INPUT);
+  }
   private static INPUT_LENGTH: number = 3;
 
   constructor() {
@@ -22,36 +26,22 @@ export default class SecurityCode extends FormField {
     }
   }
 
-  static ifFieldExists(): HTMLInputElement {
-    // @ts-ignore
-    return document.getElementById(Selectors.SECURITY_CODE_INPUT);
-  }
-
-  private sendState() {
-    let formFieldState: FormFieldState = this.getState();
-    let messageBusEvent: MessageBusEvent = {
-      type: MessageBus.EVENTS.CHANGE_SECURITY_CODE,
-      data: formFieldState
-    };
-    this._messageBus.publish(messageBusEvent);
-  }
-
-  onInput(event: Event) {
+  protected onInput(event: Event) {
     super.onInput(event);
     this.sendState();
   }
 
-  onBlur(event: FocusEvent) {
+  protected onBlur(event: FocusEvent) {
     super.onBlur(event);
     this.sendState();
   }
 
-  onFocus(event: FocusEvent) {
+  protected onFocus(event: FocusEvent) {
     super.onFocus(event);
     this.sendState();
   }
 
-  onPaste(event: ClipboardEvent) {
+  protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
     this.sendState();
   }
@@ -60,6 +50,14 @@ export default class SecurityCode extends FormField {
     return Language.translations.LABEL_SECURITY_CODE;
   }
 
+  private sendState() {
+    const formFieldState: IFormFieldState = this.getState();
+    const messageBusEvent: IMessageBusEvent = {
+      data: formFieldState,
+      type: MessageBus.EVENTS.CHANGE_SECURITY_CODE
+    };
+    this._messageBus.publish(messageBusEvent);
+  }
   // /**
   //  * Listens to postMessage event from Form
   //  * @deprecated

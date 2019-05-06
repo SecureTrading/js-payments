@@ -1,4 +1,4 @@
-interface Wallet {
+interface IWallet {
   walletsource: string;
   wallettoken: string;
 }

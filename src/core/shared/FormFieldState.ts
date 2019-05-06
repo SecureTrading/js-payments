@@ -1,4 +1,4 @@
-interface FormFieldState {
+interface IFormFieldState {
   validity: boolean;
   value: string;
 }

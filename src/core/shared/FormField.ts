@@ -1,9 +1,8 @@
 import Formatter from './Formatter';
 import Frame from './Frame';
-import Validation from './Validation';
 import MessageBus from './MessageBus';
 import { Translator } from './Translator';
-import Language from './Language';
+import Validation from './Validation';
 
 export default class FormField extends Frame {
   protected _inputSelector: string;
@@ -89,6 +88,85 @@ export default class FormField extends Frame {
     return allowed;
   }
 
+  protected getState(): IFormFieldState {
+    return {
+      validity: this._inputElement.validity.valid,
+      value: this._inputElement.value
+    };
+  }
+
+  protected onKeyPress(event: KeyboardEvent) {
+    if (!Validation.isCharNumber(event)) {
+      event.preventDefault();
+      if (Validation.isEnter(event)) {
+        const messageBusEvent: IMessageBusEvent = {
+          type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
+        };
+        this._messageBus.publish(messageBusEvent);
+      }
+    }
+  }
+
+  protected onInput(event: Event) {
+    this.format(this._inputElement.value);
+    this.validate();
+  }
+
+  protected onFocus(event: Event) {
+    this.focus();
+  }
+
+  protected onBlur(event: Event) {
+    this.blur();
+  }
+
+  protected onPaste(event: ClipboardEvent) {
+    let clipboardData: string;
+
+    event.preventDefault();
+
+    clipboardData = event.clipboardData.getData('text/plain');
+    this._inputElement.value = Formatter.trimNonNumeric(clipboardData);
+    this.validate();
+  }
+
+  protected setAttributes(attributes: object) {
+    // tslint:disable-next-line:forin
+    for (const attribute in attributes) {
+      // @ts-ignore
+      this._inputElement.setAttribute(attribute, attributes[attribute]);
+    }
+  }
+
+  /**
+   * Method placed errorMessage inside chosen container (specified by id).
+   * @param messageText
+   */
+  protected setMessage(messageText: string) {
+    this._messageElement.innerText = this._translator.translate(messageText);
+  }
+
+  protected setValue(value: string) {
+    this._inputElement.value = value;
+  }
+
+  protected validate() {
+    const validationMessage: string = Validation.getValidationMessage(this._inputElement.validity);
+    this.setMessage(validationMessage);
+  }
+
+  protected format(data: string) {
+    this._inputElement.value = data;
+  }
+
+  protected blur() {
+    this._inputElement.blur();
+  }
+
+  protected focus() {
+    this._inputElement.focus();
+  }
+
   private setInputListeners() {
     this._inputElement.addEventListener('paste', (event: ClipboardEvent) => {
       this.onPaste(event);
@@ -109,83 +187,5 @@ export default class FormField extends Frame {
     this._inputElement.addEventListener('blur', (event: Event) => {
       this.onBlur(event);
     });
-  }
-
-  protected getState(): FormFieldState {
-    return {
-      validity: this._inputElement.validity.valid,
-      value: this._inputElement.value
-    };
-  }
-
-  onKeyPress(event: KeyboardEvent) {
-    if (!Validation.isCharNumber(event)) {
-      event.preventDefault();
-      if (Validation.isEnter(event)) {
-        const messageBusEvent: MessageBusEvent = {
-          type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
-        };
-        this._messageBus.publish(messageBusEvent);
-      }
-    }
-  }
-
-  onInput(event: Event) {
-    this.format(this._inputElement.value);
-    this.validate();
-  }
-
-  onFocus(event: Event) {
-    this.focus();
-  }
-
-  onBlur(event: Event) {
-    this.blur();
-  }
-
-  onPaste(event: ClipboardEvent) {
-    let clipboardData: string;
-
-    event.preventDefault();
-
-    clipboardData = event.clipboardData.getData('text/plain');
-    this._inputElement.value = Formatter.trimNonNumeric(clipboardData);
-    this.validate();
-  }
-
-  setAttributes(attributes: object) {
-    for (let attribute in attributes) {
-      // @ts-ignore
-      this._inputElement.setAttribute(attribute, attributes[attribute]);
-    }
-  }
-
-  /**
-   * Method placed errorMessage inside chosen container (specified by id).
-   * @param messageText
-   */
-  setMessage(messageText: string) {
-    this._messageElement.innerText = this._translator.translate(messageText);
-  }
-
-  setValue(value: string) {
-    this._inputElement.value = value;
-  }
-
-  validate() {
-    let validationMessage: string = Validation.getValidationMessage(this._inputElement.validity);
-    this.setMessage(validationMessage);
-  }
-
-  format(data: string) {
-    this._inputElement.value = data;
-  }
-
-  blur() {
-    this._inputElement.blur();
-  }
-
-  focus() {
-    this._inputElement.focus();
   }
 }

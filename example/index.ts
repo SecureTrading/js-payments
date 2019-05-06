@@ -3,8 +3,10 @@
  * This is code fired on merchant's side.
  * It can be treated as a reference for merchants how to integrate with STJS.
  */
-import './style.scss';
 import { ST } from '../src/stjs';
+import './style.scss';
+
+/* tslint:disable:max-line-length */
 
 (() => {
   const st = new ST(
@@ -15,47 +17,47 @@ import { ST } from '../src/stjs';
     window.location.origin,
     false,
     {
+      animatedCard: 'st-animated-card',
       cardNumber: 'st-card-number',
-      expirationDate: 'st-expiration-date',
-      securityCode: 'st-security-code',
-      notificationFrame: 'st-notification-frame',
       controlFrame: 'st-control-frame',
-      animatedCard: 'st-animated-card'
+      expirationDate: 'st-expiration-date',
+      notificationFrame: 'st-notification-frame',
+      securityCode: 'st-security-code'
     },
     {
       'background-color-input': 'AliceBlue',
+      'background-color-input-error': '#f8d7da',
       'color-input-error': '#721c24',
-      'line-height-input': '12px',
       'font-size-input': '12px',
-      'background-color-input-error': '#f8d7da'
+      'line-height-input': '12px'
     },
     [
       {
         name: 'APPLEPAY',
         props: {
+          buttonStyle: 'white-outline',
+          buttonText: 'donate',
+          merchantId: 'merchant.net.securetrading',
           paymentRequest: {
-            total: { label: 'Secure Trading Merchant', amount: '10.00' },
             countryCode: 'US',
             currencyCode: 'USD',
             merchantCapabilities: ['supports3DS', 'supportsCredit', 'supportsDebit'],
-            supportedNetworks: []
+            supportedNetworks: [],
+            total: { label: 'Secure Trading Merchant', amount: '10.00' }
           },
-          merchantId: 'merchant.net.securetrading',
-          sitesecurity: 'gABC123DEFABC',
           placement: 'st-apple-pay',
-          buttonText: 'donate',
-          buttonStyle: 'white-outline'
+          sitesecurity: 'gABC123DEFABC'
         }
       },
       {
         name: 'VISACHECKOUT',
         props: {
-          merchantId: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4',
+          buttonSettings: { size: '154' },
           livestatus: 0,
-          placement: 'st-visa-checkout',
-          settings: { displayName: 'My Test Site' },
+          merchantId: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4',
           paymentRequest: { subtotal: '20.00' },
-          buttonSettings: { size: '154' }
+          placement: 'st-visa-checkout',
+          settings: { displayName: 'My Test Site' }
         }
       }
     ]

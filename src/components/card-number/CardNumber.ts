@@ -1,24 +1,25 @@
 import { BrandDetailsType } from '../../core/imports/cardtype';
-import Language from '../../core/shared/Language';
-import Validation from '../../core/shared/Validation';
 import BinLookup from '../../core/shared/BinLookup';
 import FormField from '../../core/shared/FormField';
-import Selectors from '../../core/shared/Selectors';
+import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
+import Selectors from '../../core/shared/Selectors';
 
 /**
  * Card number validation class
  */
 export default class CardNumber extends FormField {
+  public static ifFieldExists(): HTMLInputElement {
+    return document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
+  }
+
   private static DEFAULT_CARD_LENGTH = 16;
-  private static STANDARD_CARD_FORMAT = '(\\d{1,4})(\\d{1,4})?(\\d{1,4})?(\\d+)?';
-  private static MESSAGE_ELEMENT_ID = 'st-card-number-message';
+  private static getCardNumberForBinProcess = (cardNumber: string) => cardNumber.slice(0, 6);
+
   public binLookup: BinLookup;
+  public brand: BrandDetailsType;
   private _cardType: string;
   private _cardLength: [];
-  private messageBus: MessageBus;
-
-  public brand: BrandDetailsType;
 
   get cardType(): string {
     return this._cardType;
@@ -44,45 +45,40 @@ export default class CardNumber extends FormField {
     // this.brand = null;
   }
 
-  static ifFieldExists(): HTMLInputElement {
-    // @ts-ignore
-    return document.getElementById(Selectors.CARD_NUMBER_INPUT);
-  }
-
-  private static getCardNumberForBinProcess = (cardNumber: string) => cardNumber.slice(0, 6);
-
-  private sendState() {
-    let formFieldState: FormFieldState = this.getState();
-    let messageBusEvent: MessageBusEvent = {
-      type: MessageBus.EVENTS.CHANGE_CARD_NUMBER,
-      data: formFieldState
-    };
-
-    const binProcessEvent: MessageBusEvent = {
-      type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS,
-      data: CardNumber.getCardNumberForBinProcess(formFieldState.value)
-    };
-    formFieldState.validity && this._messageBus.publish(binProcessEvent, true);
-    this._messageBus.publish(messageBusEvent);
-  }
-
-  onInput(event: Event) {
+  protected onInput(event: Event) {
     super.onInput(event);
     this.sendState();
   }
 
-  onFocus(event: Event) {
+  protected onFocus(event: Event) {
     super.onFocus(event);
     this.sendState();
   }
 
-  onPaste(event: ClipboardEvent) {
+  protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
     this.sendState();
   }
 
   protected getLabel() {
     return Language.translations.LABEL_CARD_NUMBER;
+  }
+
+  private sendState() {
+    const formFieldState: IFormFieldState = this.getState();
+    const messageBusEvent: IMessageBusEvent = {
+      data: formFieldState,
+      type: MessageBus.EVENTS.CHANGE_CARD_NUMBER
+    };
+
+    if (formFieldState.validity) {
+      const binProcessEvent: IMessageBusEvent = {
+        data: CardNumber.getCardNumberForBinProcess(formFieldState.value),
+        type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS
+      };
+      this._messageBus.publish(binProcessEvent, true);
+    }
+    this._messageBus.publish(messageBusEvent);
   }
 
   // private setValidity() {

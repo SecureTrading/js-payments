@@ -1,3 +1,4 @@
+/* tslint:disable:quotemark object-literal-sort-keys */
 export default {
   Timeout: 'Temps libre',
   'Field is required': 'Champ requis',

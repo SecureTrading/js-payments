@@ -1,3 +1,4 @@
+/* tslint:disable:quotemark object-literal-sort-keys */
 export default {
   Timeout: 'Auszeit',
   'Field is required': 'Feld ist erforderlich',

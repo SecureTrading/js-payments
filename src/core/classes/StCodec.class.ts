@@ -9,7 +9,7 @@ interface IStRequest {
   termurl?: string; // TODO shouldn't be needed for CC request but this needs to wait for 153 release
 }
 
-/***
+/**
  * Encodes and Decodes a request for the ST gateway
  */
 class StCodec {
@@ -17,12 +17,31 @@ class StCodec {
   public static VERSION = '1.00';
   public static SUPPORTED_REQUEST_TYPES = ['WALLETVERIFY', 'JSINIT', 'THREEDQUERY', 'CACHETOKENISE', 'AUTH'];
 
-  private _requestId: string;
-  private _jwt: string;
-
-  constructor(jwt: string) {
-    this._requestId = this._createRequestId();
-    this._jwt = jwt;
+  /**
+   * Verify the response from the gateway
+   * @param responseData The response from the gateway
+   * @return The content of the response that can be used in the following processes
+   */
+  public static verifyResponseObject(responseData: any): object {
+    // Ought we keep hold of the requestreference (eg. log it to console)
+    // So that we can link these requests up with the gateway?
+    if (
+      !(
+        responseData &&
+        responseData.version === StCodec.VERSION &&
+        responseData.response &&
+        responseData.response.length === 1
+      )
+    ) {
+      throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
+    }
+    const responseContent = responseData.response[0];
+    if (responseContent.errorcode !== '0') {
+      // Should this be a custom error type which can also take a field that is at fault
+      // so that errordata can be sent up to highlight the field?
+      throw new Error(responseContent.errormessage);
+    }
+    return responseContent;
   }
 
   /**
@@ -32,13 +51,21 @@ class StCodec {
    *   (since we prepend 'J-' the random section will be 2 char shorter)
    * @return A newly generated random request ID
    */
-  public _createRequestId(length = 10) {
+  public static _createRequestId(length = 10) {
     return (
       'J-' +
       Math.random()
         .toString(36)
         .substring(2, length)
     );
+  }
+
+  private readonly _requestId: string;
+  private readonly _jwt: string;
+
+  constructor(jwt: string) {
+    this._requestId = StCodec._createRequestId();
+    this._jwt = jwt;
   }
 
   /**
@@ -74,33 +101,6 @@ class StCodec {
       throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST);
     }
     return JSON.stringify(this.buildRequestObject(requestObject));
-  }
-
-  /**
-   * Verify the response from the gateway
-   * @param responseData The response from the gateway
-   * @return The content of the response that can be used in the following processes
-   */
-  public static verifyResponseObject(responseData: any): object {
-    // Ought we keep hold of the requestreference (eg. log it to console)
-    // So that we can link these requests up with the gateway?
-    if (
-      !(
-        responseData &&
-        responseData.version === StCodec.VERSION &&
-        responseData.response &&
-        responseData.response.length === 1
-      )
-    ) {
-      throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
-    }
-    const responseContent = responseData.response[0];
-    if (responseContent.errorcode !== '0') {
-      // Should this be a custom error type which can also take a field that is at fault
-      // so that errordata can be sent up to highlight the field?
-      throw new Error(responseContent.errormessage);
-    }
-    return responseContent;
   }
 
   /**
