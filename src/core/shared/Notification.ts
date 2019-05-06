@@ -1,4 +1,4 @@
-import { NotificationEvent, NotificationType } from '../models/NotificationEvent';
+import { INotificationEvent, NotificationType } from '../models/NotificationEvent';
 import MessageBus from './MessageBus';
 
 export default class Notification {
@@ -9,11 +9,11 @@ export default class Notification {
   }
 
   private _setNotification(type: string, content: string) {
-    const notificationEvent: NotificationEvent = {
+    const notificationEvent: INotificationEvent = {
       content: content,
       type: type
     };
-    const messageBusEvent: MessageBusEvent = {
+    const messageBusEvent: IMessageBusEvent = {
       data: notificationEvent,
       type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
     };
