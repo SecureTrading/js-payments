@@ -1,13 +1,10 @@
 import Selectors from './shared/Selectors';
-import { Styles } from './shared/Styler';
+import { IStyles } from './shared/Styler';
 /***
  * Defines input with iframe source
  * Can be styled by predefined JSON.
  */
 export default class Element {
-  private _name: string;
-  private _iframeSrc: string;
-
   /***
    * Function which defines iframe src attribute
    * @param name Component name
@@ -41,6 +38,9 @@ export default class Element {
     return element;
   };
 
+  private _name: string;
+  private _iframeSrc: string;
+
   get iframeSrc(): string {
     return this._iframeSrc;
   }
@@ -67,7 +67,7 @@ export default class Element {
    * @param params
    * @param styles
    */
-  public create(elementName: string, styles?: Styles, params?: object) {
+  public create(elementName: string, styles?: IStyles, params?: object) {
     const componentAddress = Element.getComponentAddress(elementName);
     // @ts-ignore
     const componentStyles = new URLSearchParams(styles).toString(); // @TODO: add polyfill for IE

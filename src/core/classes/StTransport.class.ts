@@ -1,5 +1,4 @@
 import Utils from '../shared/Utils';
-import Language from '../shared/Language';
 import { IStRequest, StCodec } from './StCodec.class';
 
 export interface IStTransportParams {

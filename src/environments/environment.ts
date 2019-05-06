@@ -2,33 +2,40 @@ const GATEWAY_URL: string = 'https://webservices.securetrading.net/jwt/';
 const MOCK_GATEWAY_URL: string = 'https://merchant.example.com:8443';
 
 export const environment = {
-  production: false,
-  testEnvironment: false,
-  // @ts-ignore
-  FRAME_URL: `https://${HOST}:8443`,
-  GATEWAY_URL: GATEWAY_URL,
-  CARDINAL_COMMERCE: {
-    CONFIG: {
-      logging: { level: 'on' }
-    },
-    SONGBIRD_URL: 'https://songbirdstag.cardinalcommerce.com/cardinalcruise/v1/songbird.js',
-    MOCK: {
-      AUTHENTICATE_CARD_URL: `${MOCK_GATEWAY_URL}/cardinalAuthenticateCard`
-    }
-  },
-  VISA_CHECKOUT_URLS: {
-    TEST_BUTTON_URL: 'https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png',
-    TEST_SDK: 'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js',
-    LIVE_BUTTON_URL: 'https://secure.checkout.visa.com/wallet-services-web/xo/button.png',
-    LIVE_SDK: 'https://secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js',
-    MOCK_DATA_URL: `${MOCK_GATEWAY_URL}/visaPaymentStatus`
+  APM_NAMES: {
+    APPLE_PAY: 'APPLEPAY',
+    VISA_CHECKOUT: 'VISACHECKOUT'
   },
   APPLE_PAY_URLS: {
     MOCK_DATA_URL: 'https://merchant.example.com:8443/applePaymentStatus'
   },
+  CARDINAL_COMMERCE: {
+    CONFIG: {
+      logging: { level: 'on' }
+    },
+    MOCK: {
+      AUTHENTICATE_CARD_URL: `${MOCK_GATEWAY_URL}/cardinalAuthenticateCard`
+    },
+    SONGBIRD_URL: 'https://songbirdstag.cardinalcommerce.com/cardinalcruise/v1/songbird.js'
+  },
+  CARDINAL_COMMERCE_CONFIG: {
+    logging: { level: 'on' }
+  },
+  // @ts-ignore
+  FRAME_URL: `https://${HOST}:8443`,
+  GATEWAY_URL,
   ST_URLS: {
     MOCK: {
       THREEDQUERY_URL: `${MOCK_GATEWAY_URL}/threeDQuery`
     }
-  }
+  },
+  VISA_CHECKOUT_URLS: {
+    DEV_BUTTON_URL: 'https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png',
+    DEV_SDK: 'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js',
+    MOCK_DATA_URL: `${MOCK_GATEWAY_URL}/visaPaymentStatus`,
+    PROD_BUTTON_URL: 'https://secure.checkout.visa.com/wallet-services-web/xo/button.png',
+    PROD_SDK: 'https://secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js'
+  },
+  production: false,
+  testEnvironment: false
 };

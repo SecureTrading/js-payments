@@ -1,4 +1,6 @@
 import './animated-card.scss';
 import AnimatedCard from './AnimatedCard';
 
-AnimatedCard.ifCardExists() && new AnimatedCard();
+(() => {
+  return AnimatedCard.ifCardExists() && new AnimatedCard();
+})();

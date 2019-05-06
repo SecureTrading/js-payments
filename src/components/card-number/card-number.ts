@@ -1,4 +1,6 @@
 import './card-number.scss';
 import CardNumber from './CardNumber';
 
-CardNumber.ifFieldExists() && new CardNumber();
+(() => {
+  return CardNumber.ifFieldExists() && new CardNumber();
+})();

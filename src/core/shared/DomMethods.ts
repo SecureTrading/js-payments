@@ -27,7 +27,7 @@ class DomMethods {
   }
 
   public static insertStyle(contents: string) {
-    let style = document.createElement('style');
+    const style = document.createElement('style');
     style.innerHTML = contents;
     document.head.appendChild(style);
   }
@@ -72,9 +72,8 @@ class DomMethods {
    */
   public static parseForm(form: HTMLElement) {
     const els = this.getAllFormElements(form);
-    let result: any = {};
-    for (let i = 0; i < els.length; i++) {
-      let el = els[i];
+    const result: any = {};
+    for (const el of els) {
       if (el.dataset.stName) {
         result[el.dataset.stName] = el.value;
       }

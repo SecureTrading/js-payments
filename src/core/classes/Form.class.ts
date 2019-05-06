@@ -1,14 +1,14 @@
 import Element from '../Element';
+import DomMethods from '../shared/DomMethods';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
-import { Styles } from '../shared/Styler';
-import DomMethods from '../shared/DomMethods';
+import { IStyles } from '../shared/Styler';
 
 /**
  * Defines all elements of form and their  placement on merchant site.
  */
 class Form {
-  public styles: Styles;
+  public styles: IStyles;
   public onlyWallets: boolean;
   public elementsToRegister: HTMLElement[];
   public elementsTargets: any;
@@ -28,9 +28,9 @@ class Form {
   private notificationFrame: Element;
   private controlFrame: Element;
   private messageBus: MessageBus;
-  private messageBusEvent: MessageBusEvent;
+  private messageBusEvent: IMessageBusEvent;
 
-  constructor(jwt: any, origin: any, onlyWallets: boolean, fieldsIds: [], styles: Styles) {
+  constructor(jwt: any, origin: any, onlyWallets: boolean, fieldsIds: [], styles: IStyles) {
     this.styles = styles;
     this.onlyWallets = onlyWallets;
     this.fieldsIds = fieldsIds;
@@ -139,16 +139,16 @@ class Form {
 
   private onInput(event: Event) {
     const messageBusEvent = {
-      type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS,
-      data: DomMethods.parseMerchantForm()
+      data: DomMethods.parseMerchantForm(),
+      type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
     };
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
   private _setMerchantInputListeners() {
     const els = DomMethods.getAllFormElements(document.getElementById(Selectors.MERCHANT_FORM_SELECTOR));
-    for (let i = 0; i < els.length; i++) {
-      els[i].addEventListener('input', this.onInput.bind(this));
+    for (const el of els) {
+      el.addEventListener('input', this.onInput.bind(this));
     }
   }
 }
