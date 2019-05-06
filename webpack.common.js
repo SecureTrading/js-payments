@@ -17,6 +17,8 @@ module.exports = {
   output: {
     filename: '[name].bundle.js',
     path: path.join(__dirname, 'dist'),
+    library: '[name]',
+    libraryTarget: 'var',
     publicPath: ''
   },
   plugins: [
@@ -117,7 +119,7 @@ module.exports = {
         use: [
           {
             loader: 'tslint-loader',
-            options: {}
+            options: { emitErrors: true }
           }
         ],
         exclude: /node_modules/

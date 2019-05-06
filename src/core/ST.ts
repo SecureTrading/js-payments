@@ -1,20 +1,25 @@
 import { environment } from '../environments/environment';
 import Form from './classes/Form.class';
-import CardinalCommerce from './integrations/CardinalCommerce';
-import CardinalCommerceMock from './integrations/CardinalCommerceMock';
 import Wallet from './classes/Wallet.class';
-import { Styles } from './shared/Styler';
+import { CardinalCommerce } from './integrations/CardinalCommerce';
+import CardinalCommerceMock from './integrations/CardinalCommerceMock';
+import { IStyles } from './shared/Styler';
 
 /**
  * Establishes connection with ST, defines client.
  */
 export default class ST {
+  /**
+   * Inits Cardinal Commerce
+   * @private
+   */
+
   private readonly jwt: string;
   private readonly origin: string;
   private readonly step: boolean;
   private readonly onlyWallets: boolean;
   private readonly fieldsIds: any;
-  private readonly styles: Styles;
+  private readonly styles: IStyles;
   private readonly wallets: object[];
 
   constructor(
@@ -23,7 +28,7 @@ export default class ST {
     step: boolean,
     onlyWallets: boolean,
     fieldsIds: any,
-    styles: Styles,
+    styles: IStyles,
     wallets: object[]
   ) {
     this.jwt = jwt;

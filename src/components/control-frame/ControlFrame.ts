@@ -1,15 +1,21 @@
-import { environment } from '../../environments/environment';
+import { IMerchantData } from '../../core/models/MerchantData';
 import Frame from '../../core/shared/Frame';
 import MessageBus from '../../core/shared/MessageBus';
 import Payment from '../../core/shared/Payment';
 import PaymentMock from '../../core/shared/PaymentMock';
+import { environment } from '../../environments/environment';
 
 export default class ControlFrame extends Frame {
   private _frameParams: { origin: string; jwt: string };
   private _messageBus: MessageBus;
   private _payment: Payment;
   private _isPaymentReady: boolean = false;
-  private _formFields: { cardNumber: FormFieldState; expirationDate: FormFieldState; securityCode: FormFieldState } = {
+  private _merchantFormData: IMerchantData;
+  private _formFields: {
+    cardNumber: IFormFieldState;
+    expirationDate: IFormFieldState;
+    securityCode: IFormFieldState;
+  } = {
     cardNumber: {
       validity: false,
       value: ''
@@ -23,7 +29,7 @@ export default class ControlFrame extends Frame {
       value: ''
     }
   };
-  private _card: Card;
+  private _card: ICard;
 
   constructor() {
     super();
@@ -41,6 +47,12 @@ export default class ControlFrame extends Frame {
     this.onLoad();
   }
 
+  protected _getAllowedStyles() {
+    // @TODO: remove
+    const allowed = super._getAllowedStyles();
+    return allowed;
+  }
+
   private setFrameParams() {
     // @ts-ignore
     const frameUrl = new URL(window.location);
@@ -52,20 +64,14 @@ export default class ControlFrame extends Frame {
     };
   }
 
-  protected _getAllowedStyles() {
-    // @TODO: remove
-    let allowed = super._getAllowedStyles();
-    return allowed;
-  }
-
   private initSubscriptions() {
-    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: FormFieldState) => {
+    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: IFormFieldState) => {
       this.onCardNumberStateChange(data);
     });
-    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, (data: FormFieldState) => {
+    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, (data: IFormFieldState) => {
       this.onExpirationDateStateChange(data);
     });
-    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: FormFieldState) => {
+    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: IFormFieldState) => {
       this.onSecurityCodeStateChange(data);
     });
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
@@ -80,6 +86,13 @@ export default class ControlFrame extends Frame {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, () => {
       this.onSubmit();
     });
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS, (data: any) => {
+      this.storeMerchantData(data);
+    });
+  }
+
+  private storeMerchantData(data: any) {
+    this._merchantFormData = data;
   }
 
   private onSubmit() {
@@ -87,7 +100,7 @@ export default class ControlFrame extends Frame {
   }
 
   private onLoad() {
-    const messageBusEvent: MessageBusEvent = { type: MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME };
+    const messageBusEvent: IMessageBusEvent = { type: MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME };
     this._messageBus.publish(messageBusEvent, true);
   }
 
@@ -95,17 +108,17 @@ export default class ControlFrame extends Frame {
     this._isPaymentReady = true;
   }
 
-  private onCardNumberStateChange(data: FormFieldState) {
+  private onCardNumberStateChange(data: IFormFieldState) {
     this._formFields.cardNumber.validity = data.validity;
     this._formFields.cardNumber.value = data.value;
   }
 
-  private onExpirationDateStateChange(data: FormFieldState) {
+  private onExpirationDateStateChange(data: IFormFieldState) {
     this._formFields.expirationDate.validity = data.validity;
     this._formFields.expirationDate.value = data.value;
   }
 
-  private onSecurityCodeStateChange(data: FormFieldState) {
+  private onSecurityCodeStateChange(data: IFormFieldState) {
     this._formFields.securityCode.validity = data.validity;
     this._formFields.securityCode.value = data.value;
   }
@@ -120,16 +133,16 @@ export default class ControlFrame extends Frame {
 
   private requestThreeDInit() {
     this._payment.threeDInitRequest().then(responseBody => {
-      const messageBusEvent: MessageBusEvent = {
-        type: MessageBus.EVENTS_PUBLIC.THREEDINIT,
-        data: responseBody
+      const messageBusEvent: IMessageBusEvent = {
+        data: responseBody,
+        type: MessageBus.EVENTS_PUBLIC.THREEDINIT
       };
       this._messageBus.publish(messageBusEvent, true);
     });
   }
 
   private requestAuth(data: any) {
-    this._payment.authorizePayment(this._card, data);
+    this._payment.authorizePayment(this._card, this._merchantFormData, data);
   }
 
   private requestPayment() {
@@ -145,10 +158,10 @@ export default class ControlFrame extends Frame {
     };
 
     if (this._isPaymentReady && isFormValid) {
-      this._payment.threeDQueryRequest(this._card).then(responseBody => {
-        const messageBusEvent: MessageBusEvent = {
-          type: MessageBus.EVENTS_PUBLIC.THREEDQUERY,
-          data: responseBody
+      this._payment.threeDQueryRequest(this._card, this._merchantFormData).then(responseBody => {
+        const messageBusEvent: IMessageBusEvent = {
+          data: responseBody,
+          type: MessageBus.EVENTS_PUBLIC.THREEDQUERY
         };
         this._messageBus.publish(messageBusEvent, true);
       });

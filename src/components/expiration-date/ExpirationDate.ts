@@ -1,12 +1,16 @@
-import FormField from '../../core/shared/FormField';
-import Selectors from '../../core/shared/Selectors';
 import Formatter from '../../core/shared/Formatter';
+import FormField from '../../core/shared/FormField';
 import MessageBus from '../../core/shared/MessageBus';
+import Selectors from '../../core/shared/Selectors';
 
 /**
  * Defines specific Expiration Date validation methods and attributes
  */
 export default class ExpirationDate extends FormField {
+  public static ifFieldExists(): HTMLInputElement {
+    // @ts-ignore
+    return document.getElementById(Selectors.EXPIRATION_DATE_INPUT);
+  }
   private static INPUT_MAX_LENGTH: number = 5;
   private static INPUT_PATTERN: string = '^(0[1-9]|1[0-2])\\/([0-9]{2})$';
 
@@ -23,37 +27,31 @@ export default class ExpirationDate extends FormField {
     }
   }
 
-  static ifFieldExists(): HTMLInputElement {
-    // @ts-ignore
-    return document.getElementById(Selectors.EXPIRATION_DATE_INPUT);
-  }
-
-  private sendState() {
-    let formFieldState: FormFieldState = this.getState();
-    let messageBusEvent: MessageBusEvent = {
-      type: MessageBus.EVENTS.CHANGE_EXPIRATION_DATE,
-      data: formFieldState
-    };
-    this._messageBus.publish(messageBusEvent);
-  }
-
-  onInput(event: Event) {
+  protected onInput(event: Event) {
     super.onInput(event);
     this.sendState();
   }
 
-  onFocus(event: Event) {
+  protected onFocus(event: Event) {
     super.onFocus(event);
     this.sendState();
   }
 
-  onPaste(event: ClipboardEvent) {
+  protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
     this.sendState();
   }
 
-  format(data: string) {
-    let dataFormatted = Formatter.maskExpirationDate(data);
-    this.setValue(dataFormatted);
+  protected format(data: string) {
+    this.setValue(Formatter.maskExpirationDate(data));
+  }
+
+  private sendState() {
+    const formFieldState: IFormFieldState = this.getState();
+    const messageBusEvent: IMessageBusEvent = {
+      data: formFieldState,
+      type: MessageBus.EVENTS.CHANGE_EXPIRATION_DATE
+    };
+    this._messageBus.publish(messageBusEvent);
   }
 }

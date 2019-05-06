@@ -10,8 +10,6 @@ const {
  * Base class for validation, aggregates common methods and attributes for all subclasses
  */
 export default class Validation {
-  private static ONLY_DIGITS_REGEXP = '^\\d+$';
-
   /**
    * Method for prevent inserting non digits
    * @param event
@@ -58,6 +56,7 @@ export default class Validation {
     return validationMessage;
   }
 
+  private static ONLY_DIGITS_REGEXP = '^\\d+$';
   // /**
   //  * Method set custom error message, eg. when credit card is not valid.
   //  * @param messageContent

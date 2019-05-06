@@ -5,11 +5,11 @@ import Selectors from '../shared/Selectors';
 
 declare const Cardinal: any;
 
-interface ThreeDQueryResponse {
-  acquirerresponsemessage: string;
+export interface IThreeDQueryResponse {
+  acquirertransactionreference: string;
   acsurl: string;
   enrolled: string;
-  pareq: string;
+  threedpayload: string;
   transactionreference: string;
 }
 
@@ -46,9 +46,10 @@ export default class CardinalCommerce {
     SUCCESS: 'SUCCESS'
   };
 
-  private _messageBus: MessageBus;
+  public messageBus: MessageBus;
   private _cardinalCommerceJWT: string;
   private _cardinalCommerceCacheToken: string;
+  private _threedQueryTransactionReference: string;
   private _step: boolean;
 
   constructor(step: boolean) {
@@ -57,82 +58,19 @@ export default class CardinalCommerce {
     this._onInit();
   }
 
-  private _onInit() {
-    this._initSubscriptions();
-  }
-
-  private _initSubscriptions() {
-    this._messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME, () => {
-      this._onLoadControlFrame();
-    });
-    this._messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDINIT, (data: any) => {
-      this._onThreeDInitEvent(data);
-    });
-    this._messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDQUERY, (data: any) => {
-      this._onThreeDQueryEvent(data);
-    });
-  }
-
-  private _onLoadControlFrame() {
-    this._threeDInitRequest();
-  }
-
-  private _onThreeDInitEvent(data: any) {
-    this._cardinalCommerceJWT = data.jwt;
-    this._cardinalCommerceCacheToken = data.cachetoken;
-    this._threeDSetup();
-  }
-
-  private _onThreeDQueryEvent(data: any) {
-    this._threeDQueryRequest(data);
-  }
-
-  /**
-   * Perform a THREEDINIT with ST in order to generate the Cardinal songbird JWT
-   */
-  private _threeDInitRequest() {
-    const messageBusEvent: MessageBusEvent = {
-      type: MessageBus.EVENTS_PUBLIC.THREEDINIT
-    };
-    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
-  }
-
-  private _threeDSetup() {
-    DomMethods.insertScript('head', environment.CARDINAL_COMMERCE.SONGBIRD_URL).addEventListener('load', () => {
-      this._onCardinalLoad();
-    });
-  }
-
-  /**
-   * Initiate configuration of Cardinal Commerce
-   * Initialize Cardinal Commerce mechanism with given JWT (by merchant).
-   * @protected
-   */
-  protected _onCardinalLoad() {
-    Cardinal.configure(environment.CARDINAL_COMMERCE.CONFIG);
-    Cardinal.setup(CardinalCommerce.PAYMENT_EVENTS.INIT, {
-      jwt: this._cardinalCommerceJWT
-    });
-
-    Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.SETUP_COMPLETE, () => {
-      this._onCardinalSetupComplete();
-    });
-
-    Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.VALIDATED, (data: any, jwt: any) => {
-      this._onCardinalValidated(data, jwt);
-    });
-  }
-
   /**
    * Method on successful initialization after calling Cardinal.setup() - Songbird.js has been successfully initialized.
    * CAUTION ! this will not be triggered if an error occurred during Cardinal.setup() call.
    * This includes a failed JWT authentication.
    */
-  private _onCardinalSetupComplete() {
-    const messageBusEvent: MessageBusEvent = {
+  public _onCardinalSetupComplete() {
+    const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL
     };
-    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BIN_PROCESS, (data: IFormFieldState) => {
+      Cardinal.trigger('bin.process', data.value);
+    });
+    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
   /**
@@ -147,51 +85,118 @@ export default class CardinalCommerce {
       });
     }
   }
-
-  private _threeDQueryRequest(responseObject: ThreeDQueryResponse) {
-    if (this._isCardEnrolled(responseObject.enrolled)) {
-      this._authenticateCard(responseObject);
-    } else {
-      this._authorizePayment({
-        transactionreference: responseObject.transactionreference
-      });
-    }
-  }
-
-  private _isCardEnrolled(enrolled: string) {
-    return enrolled === 'Y';
-  }
-
   /**
    * Handles continue action from Cardinal Commerce, retrieve overlay with iframe which target is on AcsUrl
    * and handles the rest of process.
    * Cardinal.continue(PAYMENT_BRAND, CONTINUE_DATA, ORDER_OBJECT, NEW_JWT)
    * @protected
    */
-  protected _authenticateCard(responseObject: ThreeDQueryResponse) {
+  protected _authenticateCard(responseObject: IThreeDQueryResponse) {
+    this._threedQueryTransactionReference = responseObject.transactionreference;
     Cardinal.continue(
       CardinalCommerce.PAYMENT_BRAND,
       {
         AcsUrl: responseObject.acsurl,
-        Payload: responseObject.pareq // @TODO: this should be threedresponse not pareq but the server needs updating
+        Payload: responseObject.threedpayload
       },
       {
         Cart: [],
-        OrderDetails: { TransactionId: responseObject.acquirerresponsemessage }
+        OrderDetails: { TransactionId: responseObject.acquirertransactionreference }
       },
       this._cardinalCommerceJWT
     );
   }
 
+  /**
+   * Initiate configuration of Cardinal Commerce
+   * Initialize Cardinal Commerce mechanism with given JWT (by merchant).
+   * @protected
+   */
+  protected _onCardinalLoad() {
+    Cardinal.configure(environment.CARDINAL_COMMERCE.CONFIG);
+    Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.SETUP_COMPLETE, () => {
+      this._onCardinalSetupComplete();
+    });
+
+    Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.VALIDATED, (data: any, jwt: any) => {
+      this._onCardinalValidated(data, jwt);
+    });
+    Cardinal.setup(CardinalCommerce.PAYMENT_EVENTS.INIT, {
+      jwt: this._cardinalCommerceJWT
+    });
+  }
+
+  private _onInit() {
+    this._initSubscriptions();
+  }
+
+  private _initSubscriptions() {
+    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME, () => {
+      this._onLoadControlFrame();
+    });
+    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDINIT, (data: any) => {
+      this._onThreeDInitEvent(data);
+    });
+    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDQUERY, (data: any) => {
+      this._onThreeDQueryEvent(data);
+    });
+  }
+
+  private _onLoadControlFrame() {
+    this._threeDInitRequest();
+  }
+
+  private _onThreeDInitEvent(data: any) {
+    this._cardinalCommerceJWT = data.threedinit;
+    this._cardinalCommerceCacheToken = data.cachetoken;
+    this._threeDSetup();
+  }
+
+  private _onThreeDQueryEvent(data: any) {
+    this._threeDQueryRequest(data);
+  }
+
+  /**
+   * Perform a THREEDINIT with ST in order to generate the Cardinal songbird JWT
+   */
+  private _threeDInitRequest() {
+    const messageBusEvent: IMessageBusEvent = {
+      type: MessageBus.EVENTS_PUBLIC.THREEDINIT
+    };
+    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+  }
+
+  private _threeDSetup() {
+    DomMethods.insertScript('head', environment.CARDINAL_COMMERCE.SONGBIRD_URL).addEventListener('load', () => {
+      this._onCardinalLoad();
+    });
+  }
+
+  private _threeDQueryRequest(responseObject: IThreeDQueryResponse) {
+    if (this._isCardEnrolledAndNotFrictionless(responseObject)) {
+      this._authenticateCard(responseObject);
+    } else {
+      this._authorizePayment({
+        parenttransactionreference: responseObject.transactionreference
+      });
+    }
+  }
+
+  private _isCardEnrolledAndNotFrictionless(response: IThreeDQueryResponse) {
+    return response.enrolled === 'Y' && response.acsurl !== undefined;
+  }
+
   private _authorizePayment(data: any) {
-    let messageBusEvent: MessageBusEvent = {
-      type: MessageBus.EVENTS_PUBLIC.AUTH,
-      data: data
+    data.cachetoken = this._cardinalCommerceCacheToken;
+    data.parenttransactionreference = this._threedQueryTransactionReference;
+    const messageBusEvent: IMessageBusEvent = {
+      data,
+      type: MessageBus.EVENTS_PUBLIC.AUTH
     };
     if (this.step) {
       messageBusEvent.type = MessageBus.EVENTS_PUBLIC.CACHETOKENISE;
     }
-    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
   // /**

@@ -1,4 +1,6 @@
 import './notification-frame.scss';
 import NotificationFrame from './NotificationFrame';
 
-NotificationFrame.ifFieldExists() && new NotificationFrame();
+(() => {
+  return NotificationFrame.ifFieldExists() && new NotificationFrame();
+})();

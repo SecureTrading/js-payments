@@ -1,20 +1,21 @@
 import { IStRequest } from '../classes/StCodec.class';
-import { StJwt, StJwtPayload } from './StJwt';
 import StTransport from '../classes/StTransport.class';
+import { IMerchantData } from '../models/MerchantData';
+import { IStJwtPayload, StJwt } from './StJwt';
 
 export default class Payment {
   private _stTransport: StTransport;
   private _stJwtDecode: any;
-  private readonly _stJwtPayload: StJwtPayload;
+  private readonly _stJwtPayload: IStJwtPayload;
   private _cardinalCommerceCacheToken: string;
 
   constructor(jwt: string) {
-    this._stTransport = new StTransport({ jwt: jwt });
+    this._stTransport = new StTransport({ jwt });
     this._stJwtDecode = new StJwt(jwt);
     this._stJwtPayload = this._stJwtDecode.payload;
   }
 
-  public tokenizeCard(payment: Card | Wallet): Promise<object> {
+  public tokenizeCard(payment: ICard | IWallet): Promise<object> {
     const requestBody: IStRequest = Object.assign(
       {
         requesttypedescription: 'CACHETOKENISE'
@@ -26,7 +27,7 @@ export default class Payment {
     return this._stTransport.sendRequest(requestBody);
   }
 
-  public walletVerify(wallet: WalletVerify) {
+  public walletVerify(wallet: IWalletVerify) {
     const requestBody: IStRequest = Object.assign(
       {
         requesttypedescription: 'WALLETVERIFY'
@@ -37,13 +38,14 @@ export default class Payment {
     return this._stTransport.sendRequest(requestBody);
   }
 
-  public authorizePayment(payment: Card | Wallet, additionalData?: any) {
+  public authorizePayment(payment: ICard | IWallet, merchantData: IMerchantData, additionalData?: any) {
     const requestBody: IStRequest = Object.assign(
       {
         requesttypedescription: 'AUTH'
       },
       additionalData,
       this._stJwtPayload,
+      merchantData,
       payment
     );
     return this._stTransport.sendRequest(requestBody);
@@ -52,7 +54,7 @@ export default class Payment {
   public threeDInitRequest() {
     const requestBody: IStRequest = Object.assign(
       {
-        requesttypedescription: 'THREEDINIT'
+        requesttypedescription: 'JSINIT'
       },
       this._stJwtPayload
     );
@@ -64,13 +66,14 @@ export default class Payment {
     });
   }
 
-  public threeDQueryRequest(card: Card): Promise<object> {
+  public threeDQueryRequest(card: ICard, merchantData: IMerchantData): Promise<object> {
     const requestBody: IStRequest = Object.assign(
       {
+        cachetoken: this._cardinalCommerceCacheToken,
         requesttypedescription: 'THREEDQUERY',
-        termurl: 'https://termurl.com',
-        cachetoken: this._cardinalCommerceCacheToken
+        termurl: 'https://termurl.com'
       },
+      merchantData,
       card
     );
 

@@ -1,8 +1,8 @@
 import { environment } from '../../environments/environment';
 import { NotificationType } from '../models/NotificationEvent';
+import DomMethods from '../shared/DomMethods';
 import Language from '../shared/Language';
 import VisaCheckout from './VisaCheckout';
-import DomMethods from './../shared/DomMethods';
 
 class VisaCheckoutMock extends VisaCheckout {
   constructor(config: any, step: boolean, jwt: string) {

@@ -43,6 +43,7 @@ each([
 
 test('BinLookup.getAllBrands', () => {
   const bl = new BinLookup();
+  // @ts-ignore
   expect(bl.getAllBrands()).toEqual([
     'AMEX',
     'ASTROPAYCARD',
@@ -69,6 +70,7 @@ each([
   [{}, false]
 ]).test('BinLookup.isSupported', (cardTree, expected) => {
   const bl = new BinLookup();
+  // @ts-ignore
   expect(bl.isSupported(cardTree)).toBe(expected);
 });
 
@@ -78,7 +80,9 @@ each([
   ['AMEX', { type: 'AMEX', length: [15] }]
 ]).test('BinLookup.getCard', (type, expected) => {
   const bl = new BinLookup();
+  // @ts-ignore
   expect(bl.getCard(type)).toMatchObject(expected); // WARNING: toMatchObject only tests the keys in the expected are a subset of the actual - to test against {} we MUST use toEqual
+  // @ts-ignore
   expect(Object.keys(bl.getCard(type)).sort()).toEqual(['cvcLength', 'format', 'length', 'luhn', 'type']);
 });
 
@@ -91,6 +95,7 @@ each([
   ['3096', '3088-3094', false]
 ]).test('BinLookup.matchKey', (number, key, expected) => {
   const bl = new BinLookup();
+  // @ts-ignore
   expect(bl.matchKey(number, key)).toBe(expected);
 });
 
@@ -104,7 +109,9 @@ each([
   [{ defaultCardType: 'MASTERCARD', maxMatch: 3 }, '3456', null, nullType]
 ]).test('BinLookup._lookup_withDefaults', (config, number, lookupResult, expected) => {
   const bl = new BinLookup(config);
+  // @ts-ignore
   bl._lookup = jest.fn();
+  // @ts-ignore
   (<jest.Mock>bl._lookup).mockReturnValue(lookupResult);
   expect(bl.binLookup(number)).toEqual(expected);
 });
@@ -113,10 +120,14 @@ test('BinLookup._lookup_allMappings', () => {
   const bl = new BinLookup();
   const mappings = Object.assign({ 198: nullType, null: nullType }, brandMapping);
   for (let result in mappings) {
+    // @ts-ignore
     bl._lookup = jest.fn();
+    // @ts-ignore
     (<jest.Mock>bl._lookup).mockReturnValue(result);
     expect(bl.binLookup('01234')).toEqual(mappings[result]);
+    // @ts-ignore
     expect(bl._lookup).toHaveBeenCalledTimes(1);
+    // @ts-ignore
     expect(bl._lookup).toHaveBeenCalledWith('01234', cardTree);
   }
 });
@@ -167,7 +178,10 @@ each([
   ]
 ]).test('BinLookup._lookup', (number, tree, expected, depth) => {
   const bl = new BinLookup();
+  // @ts-ignore
   bl._lookup = jest.fn(bl._lookup); // mock the function as itself (so that we can spy how deep it has recursed)
+  // @ts-ignore
   expect(bl._lookup(number, tree)).toBe(expected);
+  // @ts-ignore
   expect(bl._lookup).toHaveBeenCalledTimes(depth);
 });

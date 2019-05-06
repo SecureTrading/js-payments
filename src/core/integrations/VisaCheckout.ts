@@ -1,6 +1,6 @@
 declare const V: any;
 import { environment } from '../../environments/environment';
-import { NotificationEvent, NotificationType } from '../models/NotificationEvent';
+import { INotificationEvent, NotificationType } from '../models/NotificationEvent';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
@@ -66,16 +66,16 @@ class VisaCheckout {
     src: environment.VISA_CHECKOUT_URLS.DEV_BUTTON_URL
   };
 
-  private _buttonSettings: any;
-  private _livestatus: number = 0;
-  private _payment: Payment;
-  private _paymentDetails: string;
-  private _paymentStatus: string;
-  private _placement: string = 'body';
-  private _responseMessage: string;
   private _sdkAddress: string = environment.VISA_CHECKOUT_URLS.DEV_SDK;
-  protected _step: boolean;
+  private _paymentStatus: string;
+  private _paymentDetails: string;
+  private _responseMessage: string;
+  private _livestatus: number = 0;
+  private _placement: string = 'body';
+  private _buttonSettings: any;
+  private _payment: Payment;
   private _walletSource: string = 'VISACHECKOUT';
+  protected _step: boolean;
 
   /**
    * Init configuration (temporary with some test data).
@@ -106,7 +106,9 @@ class VisaCheckout {
     this._buttonSettings = this.setConfiguration({ locale: stJwt.locale }, settings);
     this.customizeVisaButton(buttonSettings);
     this._setLiveStatus();
-    !environment.testEnvironment && this._initVisaFlow();
+    if (!environment.testEnvironment) {
+      this._initVisaFlow();
+    }
   }
 
   public _setInitConfiguration(paymentRequest: any, settings: any, stJwt: StJwt, merchantId: string) {
@@ -140,8 +142,6 @@ class VisaCheckout {
     return this.setConfiguration(config, paymentRequest);
   }
 
-  private setConfiguration = (config: any, settings: any) => (settings || config ? { ...config, ...settings } : {});
-
   /**
    * Creates html image element which will be transformed into interactive button by SDK.
    */
@@ -153,16 +153,45 @@ class VisaCheckout {
    * @param content
    */
   public setNotification(type: string, content: string) {
-    const notificationEvent: NotificationEvent = {
-      content: content,
-      type: type
+    const notificationEvent: INotificationEvent = {
+      content,
+      type
     };
-    const messageBusEvent: MessageBusEvent = {
+    const messageBusEvent: IMessageBusEvent = {
       data: notificationEvent,
       type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
     };
     this.messageBus.publishFromParent(messageBusEvent, Selectors.NOTIFICATION_FRAME_IFRAME);
   }
+
+  /**
+   * Attaches Visa Button to specified element, if element is undefined Visa Checkout button is appended to body
+   * @protected
+   */
+  protected _attachVisaButton = () => DomMethods.appendChildIntoDOM(this._placement, this._createVisaButton());
+
+  /**
+   * Gets translated response message based on response communicate
+   * @param type
+   */
+  protected getResponseMessage(type: string) {
+    switch (type) {
+      case VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS: {
+        this.responseMessage = Language.translations.PAYMENT_SUCCESS;
+        break;
+      }
+      case VisaCheckout.VISA_PAYMENT_STATUS.WARNING: {
+        this.responseMessage = Language.translations.PAYMENT_WARNING;
+        break;
+      }
+      case VisaCheckout.VISA_PAYMENT_STATUS.ERROR: {
+        this.responseMessage = Language.translations.PAYMENT_ERROR;
+        break;
+      }
+    }
+  }
+
+  private setConfiguration = (config: any, settings: any) => (settings || config ? { ...config, ...settings } : {});
 
   /**
    * Init configuration and payment data
@@ -191,40 +220,13 @@ class VisaCheckout {
   }
 
   /**
-   * Attaches Visa Button to specified element, if element is undefined Visa Checkout button is appended to body
-   * @private
-   */
-  protected _attachVisaButton = () => DomMethods.appendChildIntoDOM(this._placement, this._createVisaButton());
-
-  /**
-   * Checks if we are on production or not
+   * Checks if we are processing live transactions or not
    * @private
    */
   private _setLiveStatus() {
     if (this._livestatus) {
       this._visaCheckoutButtonProps.src = environment.VISA_CHECKOUT_URLS.PROD_BUTTON_URL;
       this._sdkAddress = environment.VISA_CHECKOUT_URLS.PROD_SDK;
-    }
-  }
-
-  /**
-   * Gets translated response message based on response communicate
-   * @param type
-   */
-  protected getResponseMessage(type: string) {
-    switch (type) {
-      case VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS: {
-        this.responseMessage = Language.translations.PAYMENT_SUCCESS;
-        break;
-      }
-      case VisaCheckout.VISA_PAYMENT_STATUS.WARNING: {
-        this.responseMessage = Language.translations.PAYMENT_WARNING;
-        break;
-      }
-      case VisaCheckout.VISA_PAYMENT_STATUS.ERROR: {
-        this.responseMessage = Language.translations.PAYMENT_ERROR;
-        break;
-      }
     }
   }
 
@@ -261,7 +263,10 @@ class VisaCheckout {
    */
   protected _authorizePayment() {
     this.payment
-      .authorizePayment({ walletsource: this._walletSource, wallettoken: this.paymentDetails })
+      .authorizePayment(
+        { walletsource: this._walletSource, wallettoken: this.paymentDetails },
+        DomMethods.parseMerchantForm()
+      )
       .then((response: object) => response)
       .then((data: object) => {
         this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
