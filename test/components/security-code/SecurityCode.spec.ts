@@ -26,4 +26,8 @@ describe('SecurityCode', () => {
     FormField.prototype.getLabel = jest.fn(); // Not implemented in FormField
     expect(securityCode).toBeInstanceOf(FormField);
   });
+
+  it('should have a label', () => {
+    expect(securityCode.getLabel()).toBe('Security code');
+  });
 });

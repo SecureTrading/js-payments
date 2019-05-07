@@ -27,6 +27,10 @@ describe('CardNumber', () => {
     FormField.prototype.getLabel = jest.fn(); // Not implemented in FormField
     expect(cardNumber).toBeInstanceOf(FormField);
   });
+
+  it('should have a label', () => {
+    expect(cardNumber.getLabel()).toBe('Card number');
+  });
 });
 
 each([

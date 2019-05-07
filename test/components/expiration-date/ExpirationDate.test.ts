@@ -27,6 +27,10 @@ describe('ExpirationDate', () => {
     expect(expirationDate).toBeInstanceOf(FormField);
   });
 
+  it('should have a label', () => {
+    expect(expirationDate.getLabel()).toBe('Expiration date');
+  });
+
   // // given
   // describe('Class ExpirationDate instance', () => {
   //   // when

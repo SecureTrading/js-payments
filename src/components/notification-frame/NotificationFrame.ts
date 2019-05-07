@@ -49,9 +49,9 @@ export default class NotificationFrame extends Frame {
 
   private static ELEMENT_ID: string = Selectors.NOTIFICATION_FRAME_ID;
   public _message: INotificationEvent;
+  public _translator: Translator;
   private _messageBus: MessageBus;
   private _notificationFrameElement: HTMLElement;
-  private _translator: Translator;
 
   constructor() {
     super();
