@@ -63,10 +63,10 @@ class VisaCheckout {
     class: 'v-button',
     id: 'v-button',
     role: 'button',
-    src: environment.VISA_CHECKOUT_URLS.DEV_BUTTON_URL
+    src: environment.VISA_CHECKOUT_URLS.TEST_BUTTON_URL
   };
 
-  private _sdkAddress: string = environment.VISA_CHECKOUT_URLS.DEV_SDK;
+  private _sdkAddress: string = environment.VISA_CHECKOUT_URLS.TEST_SDK;
   private _paymentStatus: string;
   private _paymentDetails: string;
   private _responseMessage: string;
@@ -205,8 +205,8 @@ class VisaCheckout {
    */
   private _setLiveStatus() {
     if (this._livestatus) {
-      this._visaCheckoutButtonProps.src = environment.VISA_CHECKOUT_URLS.PROD_BUTTON_URL;
-      this._sdkAddress = environment.VISA_CHECKOUT_URLS.PROD_SDK;
+      this._visaCheckoutButtonProps.src = environment.VISA_CHECKOUT_URLS.LIVE_BUTTON_URL;
+      this._sdkAddress = environment.VISA_CHECKOUT_URLS.LIVE_SDK;
     }
   }
 

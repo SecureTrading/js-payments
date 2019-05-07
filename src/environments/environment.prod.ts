@@ -4,7 +4,7 @@ const MOCK_GATEWAY_URL: string = 'https://merchant.example.com:8443';
 export const environment = {
   CARDINAL_COMMERCE: {
     CONFIG: {
-      logging: { level: 'off' }
+      logging: { level: 'verbose' }
     },
     MOCK: {
       AUTHENTICATE_CARD_URL: `${MOCK_GATEWAY_URL}/cardinalAuthenticateCard`

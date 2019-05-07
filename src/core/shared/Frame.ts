@@ -1,6 +1,17 @@
+import MessageBus from '../../core/shared/MessageBus';
 import { IAllowedStyles, IStyles, Styler } from './Styler';
 
 export default class Frame {
+  // TODO "protected" here isn't the correct solution (jwt should only be in ControlFrame)
+  protected _frameParams: { origin: string; jwt: string };
+  protected _messageBus: MessageBus;
+
+  constructor() {
+    this.setFrameParams();
+    // TODO this is now duplicated by every child except ControlFrame
+    this._messageBus = new MessageBus(this._frameParams.origin);
+  }
+
   public onInit() {
     this._applyStyles();
   }
@@ -29,4 +40,16 @@ export default class Frame {
     };
     return allowed;
   }
+
+  private setFrameParams() {
+    // @ts-ignore
+    const frameUrl = new URL(window.location);
+    const frameParams = new URLSearchParams(frameUrl.search); // @TODO: add polyfill for IE
+
+    this._frameParams = {
+      jwt: frameParams.get('jwt'),
+      origin: frameParams.get('origin')
+    };
+  }
+
 }

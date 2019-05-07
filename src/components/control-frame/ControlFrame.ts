@@ -6,8 +6,6 @@ import PaymentMock from '../../core/shared/PaymentMock';
 import { environment } from '../../environments/environment';
 
 export default class ControlFrame extends Frame {
-  private _frameParams: { origin: string; jwt: string };
-  private _messageBus: MessageBus;
   private _payment: Payment;
   private _isPaymentReady: boolean = false;
   private _merchantFormData: IMerchantData;
@@ -33,8 +31,6 @@ export default class ControlFrame extends Frame {
 
   constructor() {
     super();
-    this.setFrameParams();
-    this._messageBus = new MessageBus(this._frameParams.origin);
     this._payment = environment.testEnvironment
       ? new PaymentMock(this._frameParams.jwt)
       : new Payment(this._frameParams.jwt);
@@ -51,17 +47,6 @@ export default class ControlFrame extends Frame {
     // @TODO: remove
     const allowed = super._getAllowedStyles();
     return allowed;
-  }
-
-  private setFrameParams() {
-    // @ts-ignore
-    const frameUrl = new URL(window.location);
-    const frameParams = new URLSearchParams(frameUrl.search); // @TODO: add polyfill for IE
-
-    this._frameParams = {
-      jwt: frameParams.get('jwt'),
-      origin: frameParams.get('origin')
-    };
   }
 
   private initSubscriptions() {

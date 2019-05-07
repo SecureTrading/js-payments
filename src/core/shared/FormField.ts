@@ -8,7 +8,6 @@ export default class FormField extends Frame {
   protected _messageSelector: string;
   protected _inputElement: HTMLInputElement;
   protected _messageElement: HTMLParagraphElement;
-  protected _messageBus: MessageBus;
 
   constructor(inputSelector: string, messageSelector: string) {
     super();
@@ -18,8 +17,6 @@ export default class FormField extends Frame {
     this._messageElement = document.getElementById(messageSelector);
     this._inputSelector = inputSelector;
     this._messageSelector = messageSelector;
-    // @ts-ignore
-    this._messageBus = new MessageBus();
     this.setInputListeners();
     this.onInit();
   }
