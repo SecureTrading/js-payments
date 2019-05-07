@@ -166,9 +166,8 @@ export class CardinalCommerce {
     if (this._isCardEnrolledAndNotFrictionless(responseObject)) {
       this._authenticateCard(responseObject);
     } else {
-      this._authorizePayment({
-        parenttransactionreference: responseObject.transactionreference
-      });
+      this._threedQueryTransactionReference = responseObject.transactionreference;
+      this._authorizePayment({});
     }
   }
 
