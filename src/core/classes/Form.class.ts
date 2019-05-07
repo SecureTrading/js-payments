@@ -2,6 +2,7 @@ import Element from '../Element';
 import DomMethods from '../shared/DomMethods';
 import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
+import { Preloader } from '../shared/Preloader';
 import Selectors from '../shared/Selectors';
 import { IStyles } from '../shared/Styler';
 
@@ -30,6 +31,7 @@ class Form {
   private controlFrame: Element;
   private messageBus: MessageBus;
   private messageBusEvent: IMessageBusEvent;
+  private preloader: Preloader;
 
   constructor(jwt: any, origin: any, onlyWallets: boolean, fieldsIds: [], styles: IStyles) {
     this.styles = styles;
@@ -40,6 +42,7 @@ class Form {
     this.jwt = jwt;
     this.origin = origin;
     this.messageBus = new MessageBus();
+    this.preloader = new Preloader();
     this._onInit();
   }
 
@@ -132,39 +135,11 @@ class Form {
    */
   private _setFormListener() {
     this.messageBusEvent = { type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM };
-    this.messageBusInstance = new MessageBus();
     document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).addEventListener('submit', (event: Event) => {
       event.preventDefault();
       this.messageBus.publishFromParent(this.messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
-      Form._disableSubmitButton();
-      this.messageBusInstance.publishFromParent(this.messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+      this.preloader.setSubmitButtonStatus(true, Language.translations.PRELOADER_TEXT);
     });
-  }
-
-  /**
-   * Attaches to specified element text or/and icon and disables it.
-   * @param element
-   * @param text
-   * @param animatedIcon
-   * @private
-   */
-  private static _setPreloader(element: HTMLElement, text?: string, animatedIcon?: string) {
-    element.textContent = `${animatedIcon ? animatedIcon : ''}${text ? text : ''}`;
-    // @ts-ignore
-    element.disabled = true;
-  }
-
-  /**
-   * Finds submit button, disable it and set preloader text or / and icon.
-   * @private
-   */
-  private static _disableSubmitButton() {
-    const inputSubmit = document.querySelector('input[type="submit"]');
-    const buttonSubmit = document.querySelector('button[type="submit"]');
-    // @ts-ignore
-    inputSubmit && Form._setPreloader(inputSubmit, Language.translations.PRELOADER_TEXT);
-    // @ts-ignore
-    buttonSubmit && Form._setPreloader(buttonSubmit, Language.translations.PRELOADER_TEXT);
   }
 
   private onInput(event: Event) {
@@ -181,7 +156,6 @@ class Form {
       el.addEventListener('input', this.onInput.bind(this));
     }
   }
-}
 }
 
 export default Form;

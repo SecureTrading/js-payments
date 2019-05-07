@@ -1,7 +1,9 @@
 import { environment } from '../../environments/environment';
+import { INotificationEvent, NotificationType } from '../models/NotificationEvent';
 import DomMethods from '../shared/DomMethods';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
+import { Preloader } from '../shared/Preloader';
 
 declare const Cardinal: any;
 
@@ -39,12 +41,14 @@ export class CardinalCommerce {
   };
 
   public messageBus: MessageBus;
+  public preloader: Preloader;
   private _cardinalCommerceJWT: string;
   private _cardinalCommerceCacheToken: string;
   private _threedQueryTransactionReference: string;
 
   constructor() {
     this.messageBus = new MessageBus();
+    this.preloader = new Preloader();
     this._onInit();
   }
 
@@ -62,6 +66,22 @@ export class CardinalCommerce {
     });
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
+  /**
+   * Send postMessage to notificationFrame component, to inform user about payment status
+   * @param type
+   * @param content
+   */
+  public setNotification(type: string, content: string) {
+    const notificationEvent: INotificationEvent = {
+      content,
+      type
+    };
+    const messageBusEvent: IMessageBusEvent = {
+      data: notificationEvent,
+      type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
+    };
+    this.messageBus.publishFromParent(messageBusEvent, Selectors.NOTIFICATION_FRAME_IFRAME);
+  }
 
   /**
    * Triggered when the transaction has been finished.
@@ -73,8 +93,14 @@ export class CardinalCommerce {
       this._authorizePayment({
         threedresponse: jwt
       });
+      this.preloader.setSubmitButtonStatus(true, 'Pay');
+      this.setNotification(NotificationType.Success, 'Sukces');
+    } else {
+      this.setNotification(NotificationType.Error, data.ActionCode);
+      this.preloader.setSubmitButtonStatus(false, 'Pay');
     }
   }
+
   /**
    * Handles continue action from Cardinal Commerce, retrieve overlay with iframe which target is on AcsUrl
    * and handles the rest of process.

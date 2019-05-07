@@ -158,13 +158,17 @@ export default class ControlFrame extends Frame {
     };
 
     if (this._isPaymentReady && isFormValid) {
-      this._payment.threeDQueryRequest(this._card, this._merchantFormData).then(responseBody => {
-        const messageBusEvent: IMessageBusEvent = {
-          data: responseBody,
-          type: MessageBus.EVENTS_PUBLIC.THREEDQUERY
-        };
-        this._messageBus.publish(messageBusEvent, true);
-      });
+      this._payment
+        .threeDQueryRequest(this._card, this._merchantFormData)
+        .then(responseBody => {
+          const messageBusEvent: IMessageBusEvent = {
+            data: responseBody,
+            type: MessageBus.EVENTS_PUBLIC.THREEDQUERY
+          };
+          this._messageBus.publish(messageBusEvent, true);
+        })
+        .catch(error => console.log(error))
+        .finally(() => {});
     }
   }
 }
