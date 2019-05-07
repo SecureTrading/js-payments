@@ -26,6 +26,10 @@ export default class SecurityCode extends FormField {
     }
   }
 
+  public getLabel(): string {
+    return Language.translations.LABEL_SECURITY_CODE;
+  }
+
   protected onInput(event: Event) {
     super.onInput(event);
     this.sendState();
@@ -45,8 +49,6 @@ export default class SecurityCode extends FormField {
     super.onPaste(event);
     this.sendState();
   }
-
-  protected getLabel = () => Language.translations.LABEL_SECURITY_CODE;
 
   private sendState() {
     const formFieldState: IFormFieldState = this.getState();

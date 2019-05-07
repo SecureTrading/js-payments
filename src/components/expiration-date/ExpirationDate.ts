@@ -28,6 +28,10 @@ export default class ExpirationDate extends FormField {
     }
   }
 
+  public getLabel(): string {
+    return Language.translations.LABEL_EXPIRATION_DATE;
+  }
+
   protected onInput(event: Event) {
     super.onInput(event);
     this.sendState();
@@ -46,8 +50,6 @@ export default class ExpirationDate extends FormField {
   protected format(data: string) {
     this.setValue(Formatter.maskExpirationDate(data));
   }
-
-  protected getLabel = () => Language.translations.LABEL_EXPIRATION_DATE;
 
   private sendState() {
     const formFieldState: IFormFieldState = this.getState();

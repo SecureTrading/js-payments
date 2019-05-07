@@ -24,6 +24,7 @@ describe('CardNumber', () => {
 
   it('should create instance of classes CardNumber and FormField representing form field', () => {
     expect(cardNumber).toBeInstanceOf(CardNumber);
+    FormField.prototype.getLabel = jest.fn(); // Not implemented in FormField
     expect(cardNumber).toBeInstanceOf(FormField);
   });
 });

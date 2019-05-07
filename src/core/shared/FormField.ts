@@ -38,12 +38,12 @@ export default class FormField extends Frame {
     this.setLabelText();
   }
 
-  protected setLabelText() {
-    this._labelElement.innerHTML = this._translator.translate(this.getLabel());
+  public getLabel(): string {
+    throw new Error('Method not implemented.');
   }
 
-  protected getLabel(): never | string {
-    throw new Error('not implemented');
+  protected setLabelText() {
+    this._labelElement.innerHTML = this._translator.translate(this.getLabel());
   }
 
   protected _getAllowedStyles() {

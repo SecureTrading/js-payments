@@ -18,6 +18,8 @@ describe('FormField', () => {
     document.body.appendChild(inputElement);
     document.body.appendChild(messageElement);
 
+    FormField.prototype.getLabel = jest.fn(); // Not implemented in FormField
+
     formField = new FormField('st-form-field-input', 'st-form-field-message', 'st-form-field-label');
   });
 

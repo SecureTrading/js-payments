@@ -23,6 +23,7 @@ describe('ExpirationDate', () => {
 
   it('should create instance of classes ExpirationDate and FormField representing form field', () => {
     expect(expirationDate).toBeInstanceOf(ExpirationDate);
+    FormField.prototype.getLabel = jest.fn(); // Not implemented in FormField
     expect(expirationDate).toBeInstanceOf(FormField);
   });
 

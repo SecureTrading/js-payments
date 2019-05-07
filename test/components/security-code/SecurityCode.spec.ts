@@ -23,6 +23,7 @@ describe('SecurityCode', () => {
 
   it('should create instance of classes SecurityCode and FormField representing form field', () => {
     expect(securityCode).toBeInstanceOf(SecurityCode);
+    FormField.prototype.getLabel = jest.fn(); // Not implemented in FormField
     expect(securityCode).toBeInstanceOf(FormField);
   });
 });
