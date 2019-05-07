@@ -42,8 +42,8 @@ export default class FormField extends Frame {
     this._labelElement.innerHTML = this._translator.translate(this.getLabel());
   }
 
-  protected getLabel() {
-    return '';
+  protected getLabel(): never | string {
+    throw new Error('not implemented');
   }
 
   protected _getAllowedStyles() {

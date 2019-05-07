@@ -46,9 +46,7 @@ export default class SecurityCode extends FormField {
     this.sendState();
   }
 
-  protected getLabel() {
-    return Language.translations.LABEL_SECURITY_CODE;
-  }
+  protected getLabel = () => Language.translations.LABEL_SECURITY_CODE;
 
   private sendState() {
     const formFieldState: IFormFieldState = this.getState();

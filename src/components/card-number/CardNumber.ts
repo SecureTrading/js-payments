@@ -60,9 +60,7 @@ export default class CardNumber extends FormField {
     this.sendState();
   }
 
-  protected getLabel() {
-    return Language.translations.LABEL_CARD_NUMBER;
-  }
+  protected getLabel = () => Language.translations.LABEL_CARD_NUMBER;
 
   private sendState() {
     const formFieldState: IFormFieldState = this.getState();

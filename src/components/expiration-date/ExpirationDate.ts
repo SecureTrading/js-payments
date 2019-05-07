@@ -47,9 +47,7 @@ export default class ExpirationDate extends FormField {
     this.setValue(Formatter.maskExpirationDate(data));
   }
 
-  protected getLabel() {
-    return Language.translations.LABEL_EXPIRATION_DATE;
-  }
+  protected getLabel = () => Language.translations.LABEL_EXPIRATION_DATE;
 
   private sendState() {
     const formFieldState: IFormFieldState = this.getState();

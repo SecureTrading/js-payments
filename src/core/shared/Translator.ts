@@ -17,7 +17,5 @@ export class Translator {
     });
   }
 
-  public translate(text: string) {
-    return i18next.t(text);
-  }
+  public translate = (text: string) => i18next.t(text);
 }
