@@ -5,6 +5,7 @@ describe('Frame', () => {
   each([
     ['/myframe.html', {}],
     ['/myframe.html?mykey=some%20value', { styles: { mykey: 'some value' } }],
+    ['/myframe.html?mykey=some%20value&locale=fr_FR', { locale: 'fr_FR', styles: { mykey: 'some value' } }],
     [
       '/card-number.html?background-color-input=AliceBlue&color-input-error=%23721c24&line-height-input=12px&font-size-input=12px&background-color-input-error=%23f8d7da',
       {

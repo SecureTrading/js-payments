@@ -24,5 +24,5 @@ export default {
   'Card number': 'Card number',
   'Expiration date': 'Expiration date',
   'Security code': 'Security code',
-  OK: 'Payment successful'
+  Ok: 'Payment successful'
 };

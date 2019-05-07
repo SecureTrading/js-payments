@@ -1,7 +1,7 @@
 import i18next from 'i18next';
-import de from '../translations/de/translation';
-import en from '../translations/en/translation';
-import fr from '../translations/fr/translation';
+import de_DE from '../translations/de_DE';
+import en_GB from '../translations/en_GB';
+import fr_FR from '../translations/fr_FR';
 
 // TODO docstring - class to act as adapter in case we ever change out the translator mechanism
 export class Translator {
@@ -10,9 +10,9 @@ export class Translator {
       debug: false,
       lng: locale,
       resources: {
-        de_DE: { translation: de },
-        en_EN: { translation: en },
-        fr_FR: { translation: fr }
+        de_DE: { translation: de_DE },
+        en_GB: { translation: en_GB },
+        fr_FR: { translation: fr_FR }
       }
     });
   }
