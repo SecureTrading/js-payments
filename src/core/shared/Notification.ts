@@ -8,18 +8,6 @@ export default class Notification {
     this._messageBus = new MessageBus();
   }
 
-  private _setNotification(type: string, content: string) {
-    const notificationEvent: INotificationEvent = {
-      content: content,
-      type: type
-    };
-    const messageBusEvent: IMessageBusEvent = {
-      data: notificationEvent,
-      type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
-    };
-    this._messageBus.publish(messageBusEvent);
-  }
-
   public error(message: string) {
     this._setNotification(NotificationType.Error, message);
   }
@@ -34,5 +22,17 @@ export default class Notification {
 
   public warning(message: string) {
     this._setNotification(NotificationType.Warning, message);
+  }
+
+  private _setNotification(type: string, content: string) {
+    const notificationEvent: INotificationEvent = {
+      content,
+      type
+    };
+    const messageBusEvent: IMessageBusEvent = {
+      data: notificationEvent,
+      type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
+    };
+    this._messageBus.publish(messageBusEvent);
   }
 }

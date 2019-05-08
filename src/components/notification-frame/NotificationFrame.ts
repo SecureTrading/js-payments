@@ -8,17 +8,6 @@ import Selectors from '../../core/shared/Selectors';
  * Defines component for displaying payment status messages
  */
 export default class NotificationFrame extends Frame {
-  private static readonly NOTIFICATION_TTL = 7 * 1000;
-  private _messageBus: MessageBus;
-
-  get notificationFrameElement(): HTMLElement {
-    return this._notificationFrameElement;
-  }
-
-  set notificationFrameElement(value: HTMLElement) {
-    this._notificationFrameElement = value;
-  }
-
   public static ELEMENT_CLASSES = {
     error: Selectors.NOTIFICATION_FRAME_ERROR_CLASS,
     info: Selectors.NOTIFICATION_FRAME_INFO_CLASS,
@@ -49,8 +38,18 @@ export default class NotificationFrame extends Frame {
     }
   }
 
+  get notificationFrameElement(): HTMLElement {
+    return this._notificationFrameElement;
+  }
+
+  set notificationFrameElement(value: HTMLElement) {
+    this._notificationFrameElement = value;
+  }
+
+  private static readonly NOTIFICATION_TTL = 7 * 1000;
   private static ELEMENT_ID: string = Selectors.NOTIFICATION_FRAME_ID;
   public _message: INotificationEvent;
+  private _messageBus: MessageBus;
   private _notificationFrameElement: HTMLElement;
 
   constructor() {
@@ -58,6 +57,38 @@ export default class NotificationFrame extends Frame {
     this._messageBus = new MessageBus();
     this.notificationFrameElement = NotificationFrame.getElement(NotificationFrame.ELEMENT_ID);
     this._onInit();
+  }
+
+  /**
+   * Listens to postMessage event, receives message from it and triggers method for inserting content into div
+   */
+  public _onMessage() {
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, (data: INotificationEvent) => {
+      this._message = { type: data.type, content: data.content };
+      this.insertContent();
+      this.setAttributeClass();
+    });
+  }
+
+  /**
+   * Inserts content of incoming text info into div
+   */
+  public insertContent() {
+    if (this.notificationFrameElement) {
+      this.notificationFrameElement.textContent = this._message.content;
+    }
+  }
+
+  /**
+   * Sets proper class to message container
+   * @private
+   */
+  public setAttributeClass() {
+    const notificationElementClass = NotificationFrame._getMessageClass(this._message.type);
+    if (this.notificationFrameElement && notificationElementClass) {
+      this.notificationFrameElement.classList.add(notificationElementClass);
+      this._autoHide(notificationElementClass);
+    }
   }
 
   protected _getAllowedStyles() {
@@ -141,41 +172,9 @@ export default class NotificationFrame extends Frame {
   }
 
   private _autoHide(notificationElementClass: string) {
-    let timeoutId = window.setTimeout(() => {
+    const timeoutId = window.setTimeout(() => {
       this.notificationFrameElement.classList.remove(notificationElementClass);
       window.clearTimeout(timeoutId);
     }, NotificationFrame.NOTIFICATION_TTL);
-  }
-
-  /**
-   * Listens to postMessage event, receives message from it and triggers method for inserting content into div
-   */
-  public _onMessage() {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, (data: INotificationEvent) => {
-      this._message = { type: data.type, content: data.content };
-      this.insertContent();
-      this.setAttributeClass();
-    });
-  }
-
-  /**
-   * Inserts content of incoming text info into div
-   */
-  public insertContent() {
-    if (this.notificationFrameElement) {
-      this.notificationFrameElement.textContent = this._message.content;
-    }
-  }
-
-  /**
-   * Sets proper class to message container
-   * @private
-   */
-  public setAttributeClass() {
-    const notificationElementClass = NotificationFrame._getMessageClass(this._message.type);
-    if (this.notificationFrameElement && notificationElementClass) {
-      this.notificationFrameElement.classList.add(notificationElementClass);
-      this._autoHide(notificationElementClass);
-    }
   }
 }

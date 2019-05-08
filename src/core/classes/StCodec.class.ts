@@ -18,8 +18,6 @@ class StCodec {
   public static VERSION = '1.00';
   public static SUPPORTED_REQUEST_TYPES = ['WALLETVERIFY', 'JSINIT', 'THREEDQUERY', 'CACHETOKENISE', 'AUTH'];
 
-  private static _notification = new Notification();
-
   /**
    * Generate a unique ID for a request
    * (this is informational. it doesn't need to be cryptographically random since one of those is allocated server-side)
@@ -36,6 +34,36 @@ class StCodec {
     );
   }
 
+  /**
+   * Verify the response from the gateway
+   * @param responseData The response from the gateway
+   * @return The content of the response that can be used in the following processes
+   */
+  public static verifyResponseObject(responseData: any): object {
+    // Ought we keep hold of the requestreference (eg. log it to console)
+    // So that we can link these requests up with the gateway?
+    if (
+      !(
+        responseData &&
+        responseData.version === StCodec.VERSION &&
+        responseData.response &&
+        responseData.response.length === 1
+      )
+    ) {
+      StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
+      throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
+    }
+    const responseContent = responseData.response[0];
+    if (responseContent.errorcode !== '0') {
+      // Should this be a custom error type which can also take a field that is at fault
+      // so that errordata can be sent up to highlight the field?
+      StCodec._notification.error(responseContent.errormessage);
+      throw new Error(responseContent.errormessage);
+    }
+    return responseContent;
+  }
+
+  private static _notification = new Notification();
   private readonly _requestId: string;
   private readonly _jwt: string;
 
@@ -78,35 +106,6 @@ class StCodec {
       throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST);
     }
     return JSON.stringify(this.buildRequestObject(requestObject));
-  }
-
-  /**
-   * Verify the response from the gateway
-   * @param responseData The response from the gateway
-   * @return The content of the response that can be used in the following processes
-   */
-  public static verifyResponseObject(responseData: any): object {
-    // Ought we keep hold of the requestreference (eg. log it to console)
-    // So that we can link these requests up with the gateway?
-    if (
-      !(
-        responseData &&
-        responseData.version === StCodec.VERSION &&
-        responseData.response &&
-        responseData.response.length === 1
-      )
-    ) {
-      StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
-      throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
-    }
-    const responseContent = responseData.response[0];
-    if (responseContent.errorcode !== '0') {
-      // Should this be a custom error type which can also take a field that is at fault
-      // so that errordata can be sent up to highlight the field?
-      StCodec._notification.error(responseContent.errormessage);
-      throw new Error(responseContent.errormessage);
-    }
-    return responseContent;
   }
 
   /**
