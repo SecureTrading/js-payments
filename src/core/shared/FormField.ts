@@ -18,7 +18,6 @@ export default class FormField extends Frame {
     this._messageElement = document.getElementById(messageSelector);
     this._inputSelector = inputSelector;
     this._messageSelector = messageSelector;
-    // @ts-ignore
     this._messageBus = new MessageBus();
     this.setInputListeners();
     this.onInit();

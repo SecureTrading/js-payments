@@ -40,8 +40,8 @@ export default class CardNumber extends FormField {
       this.sendState();
     }
 
-    // this.binLookup = new BinLookup();
-    // this.brand = null;
+    this.binLookup = new BinLookup();
+    this.brand = null;
   }
 
   protected onInput(event: Event) {
@@ -58,8 +58,49 @@ export default class CardNumber extends FormField {
     super.onPaste(event);
     this.sendState();
   }
+
+  public getSecurityCodeLength() {
+    const { value } = this.getState();
+    if (this.binLookup.binLookup(value).cvcLength != undefined) {
+      const messageBusEvent: IMessageBusEvent = {
+        data: this.binLookup.binLookup(value).cvcLength[0],
+        type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
+      };
+      this._messageBus.publish(messageBusEvent);
+    }
+  }
+
+  private formatCardNumber(): IFormFieldState {
+    const { value, validity } = this.getState();
+    let details = this.binLookup.binLookup(value);
+    const { format } = details;
+    // //CardNumber.formatno(value, format);
+    // console.log(details);
+    // console.log(CardNumber.formatno(value, format));
+    this.getSecurityCodeLength();
+
+    return { value, validity };
+  }
+
+  static formatno(value: string, format: string) {
+    let regexp = new RegExp(format);
+    var v = value.replace(regexp, value);
+
+    // var matches = v.match(regexp);
+    // var match = (matches && matches[0]) || '';
+    // var parts = [];
+    // for (let i = 0, len = match.length; i < len; i += 4) {
+    //   parts.push(match.substring(i, i + 4));
+    // }
+    // if (parts.length) {
+    //   return parts.join(' ');
+    // } else {
+    //   return value;
+    // }
+  }
+
   private sendState() {
-    const formFieldState: IFormFieldState = this.getState();
+    const formFieldState: IFormFieldState = this.formatCardNumber();
     const messageBusEvent: IMessageBusEvent = {
       data: formFieldState,
       type: MessageBus.EVENTS.CHANGE_CARD_NUMBER
