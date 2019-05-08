@@ -89,11 +89,18 @@ describe('Component NotificationFrame', () => {
       instance.setAttributeClass = jest.fn();
 
       // @ts-ignore
-      instance._notificationEvent({ type: 'error', content: 'my error content' });
+      instance._notificationEvent({
+        type: 'error',
+        content: 'my error content'
+      });
 
       expect(instance.insertContent).toHaveBeenCalledTimes(1);
       expect(instance.setAttributeClass).toHaveBeenCalledTimes(1);
-      expect(instance._message).toMatchObject({ type: 'error', content: 'my error content' });
+      // @ts-ignore
+      expect(instance._message).toMatchObject({
+        type: 'error',
+        content: 'my error content'
+      });
     });
   });
 
@@ -135,6 +142,7 @@ describe('Component NotificationFrame', () => {
     // then
     it('should set message data', () => {
       instance._onMessage();
+      // @ts-ignore
       expect(instance._message).toMatchObject(errorMessage);
     });
 
@@ -228,6 +236,7 @@ describe('Component NotificationFrame', () => {
       instance.notificationFrameElement = document.createElement('div');
       instance.notificationFrameElement.textContent = 'ORIGINAL';
       expect(instance.notificationFrameElement.textContent).toBe('ORIGINAL');
+      // @ts-ignore
       instance._message = { type: 'error', content: 'NEW VALUE' };
       instance.insertContent();
       expect(instance.notificationFrameElement.textContent).toBe('NEW VALUE');

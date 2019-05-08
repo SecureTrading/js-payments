@@ -20,7 +20,10 @@ export default class Payment {
       {
         requesttypedescription: 'CACHETOKENISE'
       },
-      this._stJwtPayload, // TODO we shouldn't need to include the stjwtpayload here on any request we send the full jwt in so the server will decode and update with data inside jwt
+      // TODO we shouldn't need to include the stjwtpayload
+      // here on any request we send the full jwt in so the
+      // server will decode and update with data inside jwt
+      this._stJwtPayload,
       card
     );
 

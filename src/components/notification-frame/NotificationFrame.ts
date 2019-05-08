@@ -48,9 +48,9 @@ export default class NotificationFrame extends Frame {
 
   private static readonly NOTIFICATION_TTL = 7 * 1000;
   private static ELEMENT_ID: string = Selectors.NOTIFICATION_FRAME_ID;
-  public _message: INotificationEvent;
   private _messageBus: MessageBus;
   private _notificationFrameElement: HTMLElement;
+  private _message: INotificationEvent;
 
   constructor() {
     super();
@@ -65,13 +65,6 @@ export default class NotificationFrame extends Frame {
   public _onMessage() {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, this._notificationEvent);
   }
-
-  private _notificationEvent = (data: INotificationEvent) => {
-    this._message = { type: data.type, content: data.content };
-    this.insertContent();
-    this.setAttributeClass();
-  };
-
   /**
    * Inserts content of incoming text info into div
    */
@@ -179,4 +172,10 @@ export default class NotificationFrame extends Frame {
       window.clearTimeout(timeoutId);
     }, NotificationFrame.NOTIFICATION_TTL);
   }
+
+  private _notificationEvent = (data: INotificationEvent) => {
+    this._message = { type: data.type, content: data.content };
+    this.insertContent();
+    this.setAttributeClass();
+  };
 }
