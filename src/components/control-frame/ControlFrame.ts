@@ -83,6 +83,9 @@ export default class ControlFrame extends Frame {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.AUTH, (data: any) => {
       this.onAuthEvent(data);
     });
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.CACHETOKENISE, (data: any) => {
+      this.onCachetokeniseEvent(data);
+    });
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, () => {
       this.onSubmit();
     });
@@ -129,6 +132,10 @@ export default class ControlFrame extends Frame {
 
   private onAuthEvent(data: any) {
     this.requestAuth(data);
+  }
+
+  private onCachetokeniseEvent(data: any) {
+    this._payment.tokenizeCard(data);
   }
 
   private requestThreeDInit() {
