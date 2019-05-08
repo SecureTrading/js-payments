@@ -15,9 +15,9 @@ export default class SecurityCode extends FormField {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE);
     this.binLookup = new BinLookup();
 
-    this.sendState();
     this.setSecurityCodeAttributes();
     this.subscribeSecurityCodeChange();
+    this.sendState();
   }
 
   protected onBlur(event: FocusEvent) {
