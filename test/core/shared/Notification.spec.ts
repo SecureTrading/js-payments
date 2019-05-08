@@ -6,12 +6,14 @@ describe('FormField', () => {
 
   beforeEach(() => {
     notify = new Notification();
+    // @ts-ignore
     notify._messageBus.publish = jest.fn();
   });
 
   describe('error()', () => {
     it('should send error notification', () => {
       notify.error('abc');
+      // @ts-ignore
       expect(notify._messageBus.publish).toHaveBeenCalledWith({
         data: {
           content: 'abc',
@@ -25,6 +27,7 @@ describe('FormField', () => {
   describe('info()', () => {
     it('should send info notification', () => {
       notify.info('abc');
+      // @ts-ignore
       expect(notify._messageBus.publish).toHaveBeenCalledWith({
         data: {
           content: 'abc',
@@ -38,6 +41,7 @@ describe('FormField', () => {
   describe('success()', () => {
     it('should send info success', () => {
       notify.success('abc');
+      // @ts-ignore
       expect(notify._messageBus.publish).toHaveBeenCalledWith({
         data: {
           content: 'abc',
@@ -51,6 +55,7 @@ describe('FormField', () => {
   describe('warning()', () => {
     it('should send info warning', () => {
       notify.warning('abc');
+      // @ts-ignore
       expect(notify._messageBus.publish).toHaveBeenCalledWith({
         data: {
           content: 'abc',

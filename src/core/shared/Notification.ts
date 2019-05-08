@@ -2,7 +2,7 @@ import { INotificationEvent, NotificationType } from '../models/NotificationEven
 import MessageBus from './MessageBus';
 
 export default class Notification {
-  public _messageBus: MessageBus;
+  private _messageBus: MessageBus;
 
   constructor() {
     this._messageBus = new MessageBus();
