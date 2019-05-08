@@ -50,4 +50,7 @@ export default class Selectors {
   public static readonly ANIMATED_CARD_PAYMENT_LOGO_ID: string = 'st-payment-logo';
   public static readonly ANIMATED_CARD_COMPONENT_FRAME: string = 'st-animated-card-iframe';
   public static readonly ANIMATED_CARD_COMPONENT_NAME: string = 'animatedCard';
+  public static readonly ANIMATED_CARD_CREDIT_CARD_LABEL = 'st-animated-card-card-number-label';
+  public static readonly ANIMATED_CARD_EXPIRATION_DATE_LABEL = 'st-animated-card-expiration-date-label';
+  public static readonly ANIMATED_CARD_SECURITY_CODE_LABEL = 'st-animated-card-security-code-label';
 }

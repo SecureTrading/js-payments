@@ -1,13 +1,16 @@
 import BinLookup from '../../core/shared/BinLookup';
 import DOMMethods from '../../core/shared/DomMethods';
+import Frame from '../../core/shared/Frame';
+import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
+import { Translator } from '../../core/shared/Translator';
 import { cardsLogos } from './animated-card-logos';
 
 /**
  * Defines animated card, it's 'stateless' component which only receives data validated previously by other components.
  */
-class AnimatedCard {
+class AnimatedCard extends Frame {
   public static CARD_TYPES = {
     AMEX: 'amex',
     ASTROPAYCARD: 'astropaycard',
@@ -86,12 +89,23 @@ class AnimatedCard {
   };
   public cardElement: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
   public messageBus: MessageBus;
+  private _translator: Translator;
 
   constructor() {
+    super();
+    this.onInit();
     this.binLookup = new BinLookup();
     this.messageBus = new MessageBus();
+    this._translator = new Translator(this._params.locale);
+    this.setLabels();
     this.setDefaultInputsValues();
     this.setSubscribeEvents();
+  }
+
+  public setLabels() {
+    this._setLabel(Selectors.ANIMATED_CARD_CREDIT_CARD_LABEL, Language.translations.LABEL_CARD_NUMBER);
+    this._setLabel(Selectors.ANIMATED_CARD_EXPIRATION_DATE_LABEL, Language.translations.LABEL_EXPIRATION_DATE);
+    this._setLabel(Selectors.ANIMATED_CARD_SECURITY_CODE_LABEL, Language.translations.LABEL_SECURITY_CODE);
   }
 
   /**
@@ -295,6 +309,10 @@ class AnimatedCard {
       this.onExpirationDateChanged(data)
     );
     this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: any) => this.onSecurityCodeChanged(data));
+  }
+
+  private _setLabel(labelSelector: string, text: string) {
+    document.getElementById(labelSelector).innerHTML = this._translator.translate(text);
   }
 }
 

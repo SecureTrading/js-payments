@@ -123,7 +123,7 @@ class Form {
     this.securityCodeMounted = this.securityCode.mount(Selectors.SECURITY_CODE_IFRAME);
     this.elementsToRegister.push(this.securityCodeMounted);
 
-    this.animatedCard.create(Selectors.ANIMATED_CARD_COMPONENT_NAME);
+    this.animatedCard.create(Selectors.ANIMATED_CARD_COMPONENT_NAME, {}, this.params);
     this.animatedCardMounted = this.animatedCard.mount(Selectors.ANIMATED_CARD_COMPONENT_FRAME);
     this.elementsToRegister.push(this.animatedCardMounted);
   }
