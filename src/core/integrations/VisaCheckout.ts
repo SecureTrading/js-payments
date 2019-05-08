@@ -192,34 +192,18 @@ class VisaCheckout {
   }
 
   /**
-   * Starts AUTH request
+   * Starts processing payment with AUTH pr CACHETOKENISE request
    */
-  protected _authorizePayment() {
+  protected _processPayment() {
     this.payment
-      .authorizePayment(
-        { walletsource: this._walletSource, wallettoken: this.paymentDetails },
+      .processPayment(
+        { requesttypedescription: this._step ? 'CACHETOKENISE' : 'AUTH' },
+        {
+          walletsource: this._walletSource,
+          wallettoken: this.paymentDetails
+        },
         DomMethods.parseMerchantForm()
       )
-      .then((response: object) => response)
-      .then((data: object) => {
-        this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
-        this.getResponseMessage(this.paymentStatus);
-        this.setNotification(NotificationType.Success, this.responseMessage);
-        return data;
-      })
-      .catch(() => {
-        this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
-        this.getResponseMessage(this.paymentStatus);
-        this.setNotification(NotificationType.Error, this.responseMessage);
-      });
-  }
-
-  /**
-   * Starts CACHETOKENISE request
-   */
-  protected _cacheTokenizePayment() {
-    this.payment
-      .tokenizeCard({ walletsource: this._walletSource, wallettoken: this.paymentDetails })
       .then((response: object) => response)
       .then((data: object) => {
         this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
@@ -285,7 +269,7 @@ class VisaCheckout {
     V.on(VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.SUCCESS, (payment: object) => {
       this.paymentDetails = JSON.stringify(payment);
       this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
-      this._step ? this._cacheTokenizePayment() : this._authorizePayment();
+      this._processPayment();
     });
 
     V.on(VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.ERROR, () => {

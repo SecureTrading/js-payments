@@ -15,18 +15,6 @@ export default class Payment {
     this._stJwtPayload = this._stJwtDecode.payload;
   }
 
-  public tokenizeCard(payment: ICard | IWallet): Promise<object> {
-    const requestBody: IStRequest = Object.assign(
-      {
-        requesttypedescription: 'CACHETOKENISE'
-      },
-      payment,
-      this._stJwtPayload
-    );
-
-    return this._stTransport.sendRequest(requestBody);
-  }
-
   public walletVerify(wallet: IWalletVerify) {
     const requestBody: IStRequest = Object.assign(
       {
@@ -38,15 +26,18 @@ export default class Payment {
     return this._stTransport.sendRequest(requestBody);
   }
 
-  public authorizePayment(payment: ICard | IWallet, merchantData: IMerchantData, additionalData?: any) {
+  public processPayment(
+    requestType: object,
+    payment: ICard | IWallet,
+    merchantData: IMerchantData,
+    additionalData?: any
+  ): Promise<object> {
     const requestBody: IStRequest = Object.assign(
-      {
-        requesttypedescription: 'AUTH'
-      },
-      additionalData,
-      this._stJwtPayload,
+      requestType,
+      payment,
       merchantData,
-      payment
+      additionalData,
+      this._stJwtPayload
     );
     return this._stTransport.sendRequest(requestBody);
   }
