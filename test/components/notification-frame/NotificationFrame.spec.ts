@@ -12,7 +12,29 @@ describe('Component NotificationFrame', () => {
     });
     // then
     it('should return DOM element instance', () => {
-      expect(NotificationFrame.getElement(elementId)).toBeTruthy();
+      let actual = NotificationFrame.getElement(elementId);
+      expect(actual).toBeTruthy();
+      expect(actual).toBeInstanceOf(HTMLDivElement);
+    });
+  });
+
+  describe('Method ifFieldExists', () => {
+    // when
+    beforeEach(() => {
+      document.body.innerHTML = '<div id="st-notification-frame" class="notification-frame">Some example error</div>';
+    });
+    // then
+    it('should return DOM element instance', () => {
+      let actual = NotificationFrame.ifFieldExists();
+      expect(actual).toBeTruthy();
+      expect(actual).toBeInstanceOf(HTMLDivElement);
+    });
+  });
+
+  describe('property get and set notificationFrameElement', () => {
+    it('should be able to set and get notificationFrameElement', () => {
+      instance.notificationFrameElement = document.createElement('input');
+      expect(instance.notificationFrameElement.tagName).toBe('INPUT');
     });
   });
 
@@ -44,6 +66,34 @@ describe('Component NotificationFrame', () => {
     // then
     it('should return empty string when input type is not from required', () => {
       expect(NotificationFrame._getMessageClass('some strange type')).toEqual('');
+    });
+  });
+
+  describe('Method _onMessage', () => {
+    it('should set messageBus listener', () => {
+      // @ts-ignore
+      instance._messageBus.subscribe = jest.fn();
+      instance._onMessage();
+      // @ts-ignore
+      expect(instance._messageBus.subscribe.mock.calls[0][0]).toBe('NOTIFICATION');
+      // @ts-ignore
+      expect(instance._messageBus.subscribe.mock.calls[0][1]).toBeInstanceOf(Function);
+      // @ts-ignore
+      expect(instance._messageBus.subscribe).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('Method _notificationEvent', () => {
+    it('should set message and call other functions', () => {
+      instance.insertContent = jest.fn();
+      instance.setAttributeClass = jest.fn();
+
+      // @ts-ignore
+      instance._notificationEvent({ type: 'error', content: 'my error content' });
+
+      expect(instance.insertContent).toHaveBeenCalledTimes(1);
+      expect(instance.setAttributeClass).toHaveBeenCalledTimes(1);
+      expect(instance._message).toMatchObject({ type: 'error', content: 'my error content' });
     });
   });
 
@@ -98,6 +148,89 @@ describe('Component NotificationFrame', () => {
     it(`should call setAttributeClass(): ${functionCalls} time(s)`, () => {
       expect(setAttributeClassSpy).toHaveBeenCalledTimes(functionCalls);
       setAttributeClassSpy.mockRestore();
+    });
+  });
+
+  describe('Method _autoHide', () => {
+    it('should remove class after timeout', () => {
+      // @ts-ignore
+      NotificationFrame.NOTIFICATION_TTL = 0;
+      instance.notificationFrameElement = document.createElement('div');
+      instance.notificationFrameElement.className = 'hello world';
+      expect(instance.notificationFrameElement.className).toBe('hello world');
+      // @ts-ignore
+      instance._autoHide('world');
+      window.setTimeout(() => {
+        expect(instance.notificationFrameElement.className).toBe('hello a');
+      }, 50);
+    });
+  });
+
+  describe('Method _getAllowedStyles', () => {
+    it('should return allowed styles', () => {
+      // @ts-ignore
+      let styles = instance._getAllowedStyles();
+      expect(styles['background-color-notification']).toMatchObject({
+        property: 'background-color',
+        selector: '#st-notification-frame'
+      });
+      expect(styles['space-outset-notification-warning']).toMatchObject({
+        property: 'margin',
+        selector: 'notification-frame--warning#st-notification-frame'
+      });
+    });
+  });
+
+  describe('Method setAttributeClass', () => {
+    beforeEach(() => {
+      instance = new NotificationFrame();
+    });
+
+    it('should add error class', () => {
+      // @ts-ignore
+      instance._message = { type: 'ERROR' };
+      instance.notificationFrameElement = document.createElement('div');
+      // @ts-ignore
+      instance._autoHide = jest.fn();
+      instance.setAttributeClass();
+      expect(instance.notificationFrameElement.className).toBe('notification-frame--error');
+      // @ts-ignore
+      expect(instance._autoHide).toHaveBeenCalledTimes(1);
+    });
+
+    it('should add warning class', () => {
+      // @ts-ignore
+      instance._message = { type: 'WARNING' };
+      instance.notificationFrameElement = document.createElement('div');
+      // @ts-ignore
+      instance._autoHide = jest.fn();
+      instance.setAttributeClass();
+      expect(instance.notificationFrameElement.className).toBe('notification-frame--warning');
+      // @ts-ignore
+      expect(instance._autoHide).toHaveBeenCalledTimes(1);
+    });
+
+    it('shouldnt add unknown class', () => {
+      // @ts-ignore
+      instance._message = { type: 'ANOTHER' };
+      instance.notificationFrameElement = document.createElement('div');
+      // @ts-ignore
+      instance._autoHide = jest.fn();
+      instance.setAttributeClass();
+      expect(instance.notificationFrameElement.className).toBe('');
+      // @ts-ignore
+      expect(instance._autoHide).toHaveBeenCalledTimes(0);
+    });
+  });
+
+  describe('Method insertContent', () => {
+    it('should set text content', () => {
+      instance.notificationFrameElement = document.createElement('div');
+      instance.notificationFrameElement.textContent = 'ORIGINAL';
+      expect(instance.notificationFrameElement.textContent).toBe('ORIGINAL');
+      instance._message = { type: 'error', content: 'NEW VALUE' };
+      instance.insertContent();
+      expect(instance.notificationFrameElement.textContent).toBe('NEW VALUE');
     });
   });
 });

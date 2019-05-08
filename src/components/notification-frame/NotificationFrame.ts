@@ -63,12 +63,14 @@ export default class NotificationFrame extends Frame {
    * Listens to postMessage event, receives message from it and triggers method for inserting content into div
    */
   public _onMessage() {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, (data: INotificationEvent) => {
-      this._message = { type: data.type, content: data.content };
-      this.insertContent();
-      this.setAttributeClass();
-    });
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, this._notificationEvent);
   }
+
+  private _notificationEvent = (data: INotificationEvent) => {
+    this._message = { type: data.type, content: data.content };
+    this.insertContent();
+    this.setAttributeClass();
+  };
 
   /**
    * Inserts content of incoming text info into div
