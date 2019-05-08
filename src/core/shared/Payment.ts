@@ -20,7 +20,7 @@ export default class Payment {
       {
         requesttypedescription: 'CACHETOKENISE'
       },
-      this._stJwtPayload,
+      this._stJwtPayload, // TODO we shouldn't need to include the stjwtpayload here on any request we send the full jwt in so the server will decode and update with data inside jwt
       card
     );
 
@@ -71,7 +71,7 @@ export default class Payment {
       {
         cachetoken: this._cardinalCommerceCacheToken,
         requesttypedescription: 'THREEDQUERY',
-        termurl: 'https://termurl.com'
+        termurl: 'https://termurl.com' // TODO shouldn't this be removed?
       },
       merchantData,
       card
