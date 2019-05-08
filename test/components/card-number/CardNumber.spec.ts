@@ -3,6 +3,8 @@ import CardNumber from '../../../src/components/card-number/CardNumber';
 import Selectors from '../../../src/core/shared/Selectors';
 import FormField from '../../../src/core/shared/FormField';
 
+jest.mock('./../../../src/core/shared/MessageBus');
+
 describe('CardNumber', () => {
   let cardNumber: CardNumber;
 
