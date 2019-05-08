@@ -18,14 +18,14 @@ class Language {
     NO_CARDS_IN_WALLET: 'You have no cards in your wallet',
     PAYMENT_AUTHORIZED: 'Payment has been authorized',
     PAYMENT_ERROR: 'An error occurred',
-    PAYMENT_SUCCESS: 'Payment has been successfully proceeded',
-    PAYMENT_WARNING: 'Payment has been canceled',
+    PAYMENT_SUCCESS: 'Payment has been successfully processed',
+    PAYMENT_WARNING: 'Payment has been cancelled',
     VALIDATION_ERROR_CARD: 'Card number is invalid',
     VALIDATION_ERROR_CARD_AND_CODE: 'Security code does not match card number',
     VALIDATION_ERROR_FIELD_IS_EMPTY: 'Field is empty',
     VALIDATION_ERROR_FIELD_IS_REQUIRED: 'Field is required',
     VALIDATION_ERROR_PATTERN_MISMATCH: 'Value mismatch pattern',
-    VALIDATION_ERROR_PAYMENT_IS_NOT_AVAILABLE: 'Payment type is not available !',
+    VALIDATION_ERROR_PAYMENT_IS_NOT_AVAILABLE: 'Payment type is not available',
     VALIDATION_ERROR_SECURITY_CODE_TOO_LONG: 'Security code is too long',
     VALIDATION_ERROR_VALUE_TOO_SHORT: 'Value is too short'
   };

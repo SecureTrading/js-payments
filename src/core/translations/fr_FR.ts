@@ -6,7 +6,7 @@ export default {
   'An error occurred': 'Une erreur est survenue',
   'Merchant validation failure': 'Échec de validation du marchand',
   'Field is empty': 'Le champ est vide',
-  'Payment has been canceled': 'Le paiement a été annulé',
+  'Payment has been cancelled': 'Le paiement a été annulé',
   'Value mismatch pattern': 'Modèle de non-concordance des valeurs',
   'Security code does not match card number': 'Le code de sécurité ne correspond pas au numéro de carte',
   'Invalid response': 'Réponse invalide',
@@ -14,15 +14,15 @@ export default {
   'Invalid request': 'Requête invalide',
   'Your browser does not support Apple Pay': 'Votre navigateur ne supporte pas Apple Pay',
   'This version of browser does not support Apple Pay': 'Cette version de navigateur ne supporte pas Apple Pay',
-  'Payment type is not available !': "Le type de paiement n'est pas disponible!",
+  'Payment type is not available': "Le type de paiement n'est pas disponible",
   'Payment has been authorized': 'Le paiement a été autorisé',
   'Security code is too long': 'Le code de sécurité est trop long',
   'Amount and currency are not set': 'Le montant et la devise ne sont pas définis',
   'You have no cards in your wallet': "Vous n'avez pas de cartes dans votre portefeuille",
   'Card number is invalid': 'Le numéro de carte est invalide',
-  'Payment has been successfully proceeded': 'Le paiement a été effectué avec succès',
+  'Payment has been successfully processed': 'Le paiement a été traité avec succès',
   'Card number': 'Numéro de carte',
   'Expiration date': "Date d'expiration",
   'Security code': 'Code de sécurité',
-  Ok: 'Paiement terminé'
+  Ok: 'Le paiement a été traité avec succès'
 };
