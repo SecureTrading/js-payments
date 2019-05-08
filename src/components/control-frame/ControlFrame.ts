@@ -81,13 +81,9 @@ export default class ControlFrame extends Frame {
       this.onLoadCardinal();
     });
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.AUTH, (data: any) => {
-      console.log('MessageBus.EVENTS_PUBLIC.AUTH');
-      console.log(data);
       this.onAuthEvent(data);
     });
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.CACHETOKENISE, (data: any) => {
-      console.log('MessageBus.EVENTS_PUBLIC.CACHETOKENISE');
-      console.log(data);
       this.onCachetokeniseEvent(data);
     });
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, () => {

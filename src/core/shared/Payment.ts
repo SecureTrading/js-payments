@@ -34,10 +34,10 @@ export default class Payment {
   ): Promise<object> {
     const requestBody: IStRequest = Object.assign(
       requestType,
-      payment,
-      merchantData,
       additionalData,
-      this._stJwtPayload
+      this._stJwtPayload,
+      merchantData,
+      payment
     );
     return this._stTransport.sendRequest(requestBody);
   }
