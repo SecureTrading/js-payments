@@ -46,7 +46,7 @@ class VisaCheckoutMock extends VisaCheckout {
    */
   private _proceedFlowWithMockedData() {
     this.getResponseMessage(this.paymentStatus);
-    this._step ? this._cacheTokenizePayment() : this._authorizePayment();
+    this._processPayment();
   }
 }
 

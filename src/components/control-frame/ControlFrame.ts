@@ -81,9 +81,13 @@ export default class ControlFrame extends Frame {
       this.onLoadCardinal();
     });
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.AUTH, (data: any) => {
+      console.log('MessageBus.EVENTS_PUBLIC.AUTH');
+      console.log(data);
       this.onAuthEvent(data);
     });
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.CACHETOKENISE, (data: any) => {
+      console.log('MessageBus.EVENTS_PUBLIC.CACHETOKENISE');
+      console.log(data);
       this.onCachetokeniseEvent(data);
     });
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, () => {
@@ -135,7 +139,7 @@ export default class ControlFrame extends Frame {
   }
 
   private onCachetokeniseEvent(data: any) {
-    this._payment.tokenizeCard(data);
+    this.requestCachetokenise(data);
   }
 
   private requestThreeDInit() {
@@ -149,7 +153,11 @@ export default class ControlFrame extends Frame {
   }
 
   private requestAuth(data: any) {
-    this._payment.authorizePayment(this._card, this._merchantFormData, data);
+    this._payment.processPayment({ requesttypedescription: 'AUTH' }, this._card, this._merchantFormData, data);
+  }
+
+  private requestCachetokenise(data: any) {
+    this._payment.processPayment({ requesttypedescription: 'CACHETOKENISE' }, this._card, this._merchantFormData, data);
   }
 
   private requestPayment() {

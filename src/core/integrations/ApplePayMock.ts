@@ -79,7 +79,7 @@ class ApplePayMock extends ApplePay {
     if (this.paymentDetails.walletsession) {
       this.onValidateMerchantResponseSuccess(this.paymentDetails);
       this.setNotification(NotificationType.Success, 'response');
-      this._step ? this._mockedPaymentAuthorization() : this._mockedCachetokenisePayment();
+      this.mockedPaymentProcess();
     } else {
       // @ts-ignore
       const { errorcode, errormessage } = this.paymentDetails;
@@ -92,41 +92,18 @@ class ApplePayMock extends ApplePay {
    * Mocked AUTH process after this.session.completePayment()
    * @private
    */
-  private _mockedPaymentAuthorization() {
+  private mockedPaymentProcess() {
     this.payment
-      .authorizePayment(
+      .processPayment(
         {
-          ...this.paymentRequest,
-          walletmerchantid: this.validateMerchantRequestData.walletmerchantid,
-          walletrequestdomain: this.validateMerchantRequestData.walletrequestdomain,
+          requesttypedescription: this._step ? 'CACHETOKENISE' : 'AUTH'
+        },
+        {
           walletsource: this.validateMerchantRequestData.walletsource,
-          wallettoken: this.merchantSession,
-          walletvalidationurl: this.validateMerchantRequestData.walletvalidationurl
+          wallettoken: this.paymentDetails
         },
         DomMethods.parseMerchantForm()
       )
-      .then(() => {
-        this.setNotification(NotificationType.Success, Language.translations.PAYMENT_AUTHORIZED);
-      })
-      .catch(() => {
-        this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
-      });
-  }
-
-  /**
-   * Mocked CACHETOKENISE process after this.session.completePayment()
-   * @private
-   */
-  private _mockedCachetokenisePayment() {
-    this.payment
-      .tokenizeCard({
-        ...this.paymentRequest,
-        walletmerchantid: this.validateMerchantRequestData.walletmerchantid,
-        walletrequestdomain: this.validateMerchantRequestData.walletrequestdomain,
-        walletsource: this.validateMerchantRequestData.walletsource,
-        wallettoken: this.merchantSession,
-        walletvalidationurl: this.validateMerchantRequestData.walletvalidationurl
-      })
       .then(() => {
         this.setNotification(NotificationType.Success, Language.translations.PAYMENT_AUTHORIZED);
       })
