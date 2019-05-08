@@ -19,6 +19,7 @@ export const environment = {
   GATEWAY_URL,
   ST_URLS: {
     MOCK: {
+      AUTH: `${MOCK_GATEWAY_URL}/auth`,
       THREEDQUERY_URL: `${MOCK_GATEWAY_URL}/threeDQuery`
     }
   },
