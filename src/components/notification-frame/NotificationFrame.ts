@@ -38,6 +38,15 @@ export default class NotificationFrame extends Frame {
     }
   }
 
+  get notificationFrameElement(): HTMLElement {
+    return this._notificationFrameElement;
+  }
+
+  set notificationFrameElement(value: HTMLElement) {
+    this._notificationFrameElement = value;
+  }
+
+  private static readonly NOTIFICATION_TTL = 7 * 1000;
   private static ELEMENT_ID: string = Selectors.NOTIFICATION_FRAME_ID;
   public _message: INotificationEvent;
   private _messageBus: MessageBus;
@@ -46,17 +55,8 @@ export default class NotificationFrame extends Frame {
   constructor() {
     super();
     this._messageBus = new MessageBus();
-
     this.notificationFrameElement = NotificationFrame.getElement(NotificationFrame.ELEMENT_ID);
-
     this._onInit();
-  }
-  get notificationFrameElement(): HTMLElement {
-    return this._notificationFrameElement;
-  }
-
-  set notificationFrameElement(value: HTMLElement) {
-    this._notificationFrameElement = value;
   }
 
   /**
@@ -87,6 +87,7 @@ export default class NotificationFrame extends Frame {
     const notificationElementClass = NotificationFrame._getMessageClass(this._message.type);
     if (this.notificationFrameElement && notificationElementClass) {
       this.notificationFrameElement.classList.add(notificationElementClass);
+      this._autoHide(notificationElementClass);
     }
   }
 
@@ -166,8 +167,14 @@ export default class NotificationFrame extends Frame {
     };
     return allowed;
   }
-
   private _onInit() {
     this._onMessage();
+  }
+
+  private _autoHide(notificationElementClass: string) {
+    const timeoutId = window.setTimeout(() => {
+      this.notificationFrameElement.classList.remove(notificationElementClass);
+      window.clearTimeout(timeoutId);
+    }, NotificationFrame.NOTIFICATION_TTL);
   }
 }
