@@ -6,13 +6,20 @@ import Selectors from '../../core/shared/Selectors';
 export default class CardNumber extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
-  public cardNumberField: HTMLInputElement;
-  private static CARD_NUMBER_FOR_BIN_PROCESS = (cardNumber: string) => cardNumber.slice(0, 6);
   private static DEFAULT_CARD_LENGTH = 16;
   private static LUHN_CHECK_ARRAY: any = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
 
+  private static CARD_NUMBER_FOR_BIN_PROCESS = (cardNumber: string) => cardNumber.slice(0, 6);
+
   public binLookup: BinLookup;
+  public cardNumberField: HTMLInputElement;
   public isCardNumberValid: boolean;
+
+  private getLastElementOfArray = (array: []) => {
+    if (array) {
+      array.slice(-1).pop();
+    }
+  };
 
   constructor() {
     super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE);
@@ -54,13 +61,18 @@ export default class CardNumber extends FormField {
   }
 
   private setCardNumberMaxLength(cardNumber: string) {
-    let maxlength = this.getPossibleCardLength(cardNumber)
-      ? this.getPossibleCardLength(cardNumber)
-          .slice(-1)
-          .pop()
-      : CardNumber.DEFAULT_CARD_LENGTH;
+    const possibleCardLengths = this.getPossibleCardLength(cardNumber);
     // @ts-ignore
+    let maxlength: number = this.getLastElementOfArray(possibleCardLengths);
+    maxlength = maxlength ? maxlength : CardNumber.DEFAULT_CARD_LENGTH;
     this.setAttributes({ maxlength });
+  }
+
+  private setCardNumberMinLength(cardNumber: string) {
+    const possibleCardLengths = this.getPossibleCardLength(cardNumber);
+    let minlength: number;
+    minlength = possibleCardLengths[0] ? possibleCardLengths[0] : CardNumber.DEFAULT_CARD_LENGTH;
+    this.setAttributes({ minlength });
   }
 
   private checkCardNumberLength = (cardNumber: string) =>
@@ -88,6 +100,7 @@ export default class CardNumber extends FormField {
     const { value, validity } = this.getState();
     this.publishSecurityCodeLength();
     this.setCardNumberMaxLength(value);
+    this.setCardNumberMinLength(value);
     this.formatCardNumber(value);
     return {
       value,
@@ -161,7 +174,6 @@ export default class CardNumber extends FormField {
         selectStart += matched - preMatched;
         selectEnd += matched - preMatched;
         value = matches.join(' ');
-        console.log(value);
       }
     }
 
