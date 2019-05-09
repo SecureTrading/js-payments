@@ -1,4 +1,5 @@
 import FormField from '../../core/shared/FormField';
+import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
 
@@ -13,7 +14,7 @@ export default class SecurityCode extends FormField {
   private static INPUT_LENGTH: number = 3;
 
   constructor() {
-    super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE);
+    super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
 
     this.setAttributes({
       maxlength: SecurityCode.INPUT_LENGTH,
@@ -23,6 +24,10 @@ export default class SecurityCode extends FormField {
     if (this._inputElement.value) {
       this.sendState();
     }
+  }
+
+  public getLabel(): string {
+    return Language.translations.LABEL_SECURITY_CODE;
   }
 
   protected onInput(event: Event) {

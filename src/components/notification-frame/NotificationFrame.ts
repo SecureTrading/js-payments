@@ -2,12 +2,21 @@ import { INotificationEvent, NotificationType } from '../../core/models/Notifica
 import Frame from '../../core/shared/Frame';
 import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
+import { Translator } from '../../core/shared/Translator';
 
 /**
  * NotificationFrame class
  * Defines component for displaying payment status messages
  */
 export default class NotificationFrame extends Frame {
+  get notificationFrameElement(): HTMLElement {
+    return this._notificationFrameElement;
+  }
+
+  set notificationFrameElement(value: HTMLElement) {
+    this._notificationFrameElement = value;
+  }
+
   public static ELEMENT_CLASSES = {
     error: Selectors.NOTIFICATION_FRAME_ERROR_CLASS,
     info: Selectors.NOTIFICATION_FRAME_INFO_CLASS,
@@ -38,25 +47,25 @@ export default class NotificationFrame extends Frame {
     }
   }
 
-  get notificationFrameElement(): HTMLElement {
-    return this._notificationFrameElement;
-  }
-
-  set notificationFrameElement(value: HTMLElement) {
-    this._notificationFrameElement = value;
-  }
-
   private static readonly NOTIFICATION_TTL = 7 * 1000;
   private static ELEMENT_ID: string = Selectors.NOTIFICATION_FRAME_ID;
+  public _message: INotificationEvent;
+  public _translator: Translator;
   private _messageBus: MessageBus;
   private _notificationFrameElement: HTMLElement;
-  private _message: INotificationEvent;
 
   constructor() {
     super();
     this._messageBus = new MessageBus();
     this.notificationFrameElement = NotificationFrame.getElement(NotificationFrame.ELEMENT_ID);
-    this._onInit();
+
+    this.onInit();
+  }
+
+  public onInit() {
+    super.onInit();
+    this._translator = new Translator(this._params.locale);
+    this._onMessage();
   }
 
   /**
@@ -70,7 +79,7 @@ export default class NotificationFrame extends Frame {
    */
   public insertContent() {
     if (this.notificationFrameElement) {
-      this.notificationFrameElement.textContent = this._message.content;
+      this.notificationFrameElement.textContent = this._translator.translate(this._message.content);
     }
   }
 
@@ -161,9 +170,6 @@ export default class NotificationFrame extends Frame {
       'space-outset-notification-warning': { property: 'margin', selector: warning }
     };
     return allowed;
-  }
-  private _onInit() {
-    this._onMessage();
   }
 
   private _autoHide(notificationElementClass: string) {

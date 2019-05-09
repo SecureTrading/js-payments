@@ -1,5 +1,6 @@
 import Formatter from '../../core/shared/Formatter';
 import FormField from '../../core/shared/FormField';
+import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
 
@@ -15,7 +16,7 @@ export default class ExpirationDate extends FormField {
   private static INPUT_PATTERN: string = '^(0[1-9]|1[0-2])\\/([0-9]{2})$';
 
   constructor() {
-    super(Selectors.EXPIRATION_DATE_INPUT, Selectors.EXPIRATION_DATE_MESSAGE);
+    super(Selectors.EXPIRATION_DATE_INPUT, Selectors.EXPIRATION_DATE_MESSAGE, Selectors.EXPIRATION_DATE_LABEL);
 
     this.setAttributes({
       maxlength: ExpirationDate.INPUT_MAX_LENGTH,
@@ -25,6 +26,10 @@ export default class ExpirationDate extends FormField {
     if (this._inputElement.value) {
       this.sendState();
     }
+  }
+
+  public getLabel(): string {
+    return Language.translations.LABEL_EXPIRATION_DATE;
   }
 
   protected onInput(event: Event) {

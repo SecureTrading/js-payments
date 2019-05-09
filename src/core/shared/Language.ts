@@ -11,18 +11,22 @@ class Language {
     COMMUNICATION_ERROR_INVALID_REQUEST: 'Invalid request',
     COMMUNICATION_ERROR_INVALID_RESPONSE: 'Invalid response',
     COMMUNICATION_ERROR_TIMEOUT: 'Timeout',
+    LABEL_CARD_NUMBER: 'Card number',
+    LABEL_EXPIRATION_DATE: 'Expiration date',
+    LABEL_SECURITY_CODE: 'Security code',
     MERCHANT_VALIDATION_FAILURE: 'Merchant validation failure',
+    NOT_IMPLEMENTED_ERROR: 'Method not implemented',
     NO_CARDS_IN_WALLET: 'You have no cards in your wallet',
     PAYMENT_AUTHORIZED: 'Payment has been authorized',
     PAYMENT_ERROR: 'An error occurred',
-    PAYMENT_SUCCESS: 'Payment has been successfully proceeded',
-    PAYMENT_WARNING: 'Payment has been canceled',
+    PAYMENT_SUCCESS: 'Payment has been successfully processed',
+    PAYMENT_WARNING: 'Payment has been cancelled',
     VALIDATION_ERROR_CARD: 'Card number is invalid',
     VALIDATION_ERROR_CARD_AND_CODE: 'Security code does not match card number',
     VALIDATION_ERROR_FIELD_IS_EMPTY: 'Field is empty',
     VALIDATION_ERROR_FIELD_IS_REQUIRED: 'Field is required',
     VALIDATION_ERROR_PATTERN_MISMATCH: 'Value mismatch pattern',
-    VALIDATION_ERROR_PAYMENT_IS_NOT_AVAILABLE: 'Payment type is not available !',
+    VALIDATION_ERROR_PAYMENT_IS_NOT_AVAILABLE: 'Payment type is not available',
     VALIDATION_ERROR_SECURITY_CODE_TOO_LONG: 'Security code is too long',
     VALIDATION_ERROR_VALUE_TOO_SHORT: 'Value is too short'
   };
@@ -34,7 +38,11 @@ class Language {
     COMMUNICATION_ERROR_INVALID_REQUEST: string;
     COMMUNICATION_ERROR_INVALID_RESPONSE: string;
     COMMUNICATION_ERROR_TIMEOUT: string;
+    LABEL_CARD_NUMBER: string;
+    LABEL_EXPIRATION_DATE: string;
+    LABEL_SECURITY_CODE: string;
     MERCHANT_VALIDATION_FAILURE: string;
+    NOT_IMPLEMENTED_ERROR: string;
     NO_CARDS_IN_WALLET: string;
     PAYMENT_AUTHORIZED: string;
     PAYMENT_ERROR: string;
