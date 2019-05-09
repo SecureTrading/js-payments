@@ -1,9 +1,9 @@
 import Formatter from './Formatter';
 import Frame from './Frame';
+import Language from './Language';
 import MessageBus from './MessageBus';
 import { Translator } from './Translator';
 import Validation from './Validation';
-import Language from './Language';
 
 export default class FormField extends Frame {
   protected _inputSelector: string;
