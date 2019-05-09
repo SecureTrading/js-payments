@@ -123,6 +123,15 @@ module.exports = {
           }
         ],
         exclude: /node_modules/
+      },
+      {
+        test: /\.po$/,
+        use: [
+          {
+            loader: 'i18next-po-loader',
+            options: {}
+          }
+        ]
       }
     ]
   },
