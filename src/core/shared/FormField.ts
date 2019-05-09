@@ -3,6 +3,7 @@ import Frame from './Frame';
 import MessageBus from './MessageBus';
 import { Translator } from './Translator';
 import Validation from './Validation';
+import Language from './Language';
 
 export default class FormField extends Frame {
   protected _inputSelector: string;
@@ -39,7 +40,7 @@ export default class FormField extends Frame {
   }
 
   public getLabel(): string {
-    throw new Error('Method not implemented.');
+    throw new Error(Language.translations.NOT_IMPLEMENTED_ERROR);
   }
 
   protected setLabelText() {

@@ -24,5 +24,6 @@ export default {
   'Card number': 'Card number',
   'Expiration date': 'Expiration date',
   'Security code': 'Security code',
-  Ok: 'Payment has been successfully processed'
+  Ok: 'Payment has been successfully processed',
+  'Method not implemented': 'Method not implemented'
 };

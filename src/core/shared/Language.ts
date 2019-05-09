@@ -16,6 +16,7 @@ class Language {
     LABEL_SECURITY_CODE: 'Security code',
     MERCHANT_VALIDATION_FAILURE: 'Merchant validation failure',
     NO_CARDS_IN_WALLET: 'You have no cards in your wallet',
+    NOT_IMPLEMENTED_ERROR: 'Method not implemented',
     PAYMENT_AUTHORIZED: 'Payment has been authorized',
     PAYMENT_ERROR: 'An error occurred',
     PAYMENT_SUCCESS: 'Payment has been successfully processed',
@@ -42,6 +43,7 @@ class Language {
     LABEL_SECURITY_CODE: string;
     MERCHANT_VALIDATION_FAILURE: string;
     NO_CARDS_IN_WALLET: string;
+    NOT_IMPLEMENTED_ERROR: string;
     PAYMENT_AUTHORIZED: string;
     PAYMENT_ERROR: string;
     PAYMENT_SUCCESS: string;
