@@ -65,7 +65,8 @@ export class CardinalCommerce {
    * Triggered when the card number bin value changes
    * @protected
    */
-  protected _performBinDetection = (data: IFormFieldState) => Cardinal.trigger('bin.process', data.value);
+  // @ts-ignore
+  protected _performBinDetection = (data: IFormFieldState) => global.Cardinal.trigger('bin.process', data.value);
 
   /**
    * Triggered when the transaction has been finished.
@@ -86,8 +87,10 @@ export class CardinalCommerce {
    * @protected
    */
   protected _authenticateCard(responseObject: IThreeDQueryResponse) {
+    // @ts-ignore
+    const cardinal = global.Cardinal;
     this._threedQueryTransactionReference = responseObject.transactionreference;
-    Cardinal.continue(
+    cardinal.continue(
       CardinalCommerce.PAYMENT_BRAND,
       {
         AcsUrl: responseObject.acsurl,
@@ -107,10 +110,12 @@ export class CardinalCommerce {
    * @protected
    */
   protected _onCardinalLoad() {
-    Cardinal.configure(environment.CARDINAL_COMMERCE.CONFIG);
-    Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.SETUP_COMPLETE, this._onCardinalSetupComplete);
-    Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.VALIDATED, this._onCardinalValidated);
-    Cardinal.setup(CardinalCommerce.PAYMENT_EVENTS.INIT, {
+    // @ts-ignore
+    const cardinal = global.Cardinal;
+    cardinal.configure(environment.CARDINAL_COMMERCE.CONFIG);
+    cardinal.on(CardinalCommerce.PAYMENT_EVENTS.SETUP_COMPLETE, this._onCardinalSetupComplete.bind(this));
+    cardinal.on(CardinalCommerce.PAYMENT_EVENTS.VALIDATED, this._onCardinalValidated.bind(this));
+    cardinal.setup(CardinalCommerce.PAYMENT_EVENTS.INIT, {
       jwt: this._cardinalCommerceJWT
     });
   }
@@ -120,9 +125,9 @@ export class CardinalCommerce {
   }
 
   private _initSubscriptions() {
-    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME, this._onLoadControlFrame);
-    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDINIT, this._onThreeDInitEvent);
-    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDQUERY, this._onThreeDQueryEvent);
+    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME, this._onLoadControlFrame.bind(this));
+    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDINIT, this._onThreeDInitEvent.bind(this));
+    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDQUERY, this._onThreeDQueryEvent.bind(this));
   }
 
   private _onLoadControlFrame() {
@@ -152,7 +157,7 @@ export class CardinalCommerce {
   private _threeDSetup() {
     DomMethods.insertScript('head', environment.CARDINAL_COMMERCE.SONGBIRD_URL).addEventListener(
       'load',
-      this._onCardinalLoad
+      this._onCardinalLoad.bind(this)
     );
   }
 
