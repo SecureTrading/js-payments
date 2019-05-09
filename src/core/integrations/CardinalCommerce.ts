@@ -3,7 +3,7 @@ import DomMethods from '../shared/DomMethods';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
 
-declare const Cardinal: any;
+export declare const Cardinal: any;
 
 export interface IThreeDQueryResponse {
   acquirertransactionreference: string;
