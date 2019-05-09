@@ -6,6 +6,7 @@ import Selectors from '../../core/shared/Selectors';
 export default class CardNumber extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
+  public cardNumberField: HTMLInputElement;
   private static CARD_NUMBER_FOR_BIN_PROCESS = (cardNumber: string) => cardNumber.slice(0, 6);
   private static DEFAULT_CARD_LENGTH = 16;
   private static LUHN_CHECK_ARRAY: any = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
@@ -15,6 +16,8 @@ export default class CardNumber extends FormField {
 
   constructor() {
     super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE);
+    // @ts-ignore
+    this.cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT);
     this.binLookup = new BinLookup();
     this.isCardNumberValid = true;
 
@@ -56,7 +59,7 @@ export default class CardNumber extends FormField {
           .slice(-1)
           .pop()
       : CardNumber.DEFAULT_CARD_LENGTH;
-
+    // @ts-ignore
     this.setAttributes({ maxlength });
   }
 
@@ -65,6 +68,7 @@ export default class CardNumber extends FormField {
 
   private setCardNumberAttributes() {
     this.setAttributes({
+      // @ts-ignore
       'data-luhn-check': this.isCardNumberValid,
       maxlength: CardNumber.DEFAULT_CARD_LENGTH,
       minlength: CardNumber.DEFAULT_CARD_LENGTH
@@ -74,7 +78,7 @@ export default class CardNumber extends FormField {
   public publishSecurityCodeLength() {
     const { value } = this.getState();
     const messageBusEvent: IMessageBusEvent = {
-      data: this.getPossibleCardLength(value),
+      data: this.getSecurityCodeLength(value),
       type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
     };
     this._messageBus.publish(messageBusEvent);
@@ -83,7 +87,8 @@ export default class CardNumber extends FormField {
   private getFormFieldState(): IFormFieldState {
     const { value, validity } = this.getState();
     this.publishSecurityCodeLength();
-    this.formatCardNumber();
+    this.setCardNumberMaxLength(value);
+    this.formatCardNumber(value);
     return {
       value,
       validity
@@ -96,8 +101,9 @@ export default class CardNumber extends FormField {
       data: this.getFormFieldState(),
       type: MessageBus.EVENTS.CHANGE_CARD_NUMBER
     };
-    console.log(this.checkCardNumberLength(value));
-    console.log(this.setCardNumberMaxLength(value));
+
+    console.log(`card number length ${this.checkCardNumberLength(value)}`);
+    console.log(`set card number max length: ${this.setCardNumberMaxLength(value)}`);
 
     if (validity) {
       const binProcessEvent: IMessageBusEvent = {
@@ -109,7 +115,62 @@ export default class CardNumber extends FormField {
     this._messageBus.publish(messageBusEvent);
   }
 
-  public formatCardNumber() {}
+  static inArray(array: any, item: any) {
+    return array.indexOf(item) >= 0;
+  }
+
+  static stripChars(string: any, regex: any) {
+    if (typeof regex == 'undefined') {
+      regex = /[\D+]/g;
+    }
+    return string.replace(regex, '');
+  }
+
+  public setAttributees(attributes: []) {
+    for (let attribute in attributes) {
+      let value = attributes[attribute];
+      if (CardNumber.inArray(['value'], attribute)) {
+        // @ts-ignore
+        this.cardNumberField[attribute] = value;
+      } else if (value === false) {
+        this.cardNumberField.removeAttribute(attribute);
+      } else {
+        this.cardNumberField.setAttribute(attribute, value);
+      }
+    }
+  }
+
+  public formatCardNumber(cardNumber: string) {
+    let field = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
+    const original = cardNumber;
+    let value = original;
+    let selectStart = field.selectionStart;
+    let selectEnd = field.selectionEnd;
+    const format = this.binLookup.binLookup(value).format;
+
+    if (format && value.length > 0) {
+      // Don't bother formatting the pan if we have a blank string
+      value = CardNumber.stripChars(value, undefined);
+      let matches = value.match(new RegExp(format, '')).slice(1);
+      if (CardNumber.inArray(matches, undefined)) {
+        matches = matches.slice(0, matches.indexOf(undefined));
+      }
+      const matched = matches.length;
+      if (this.binLookup.binLookup(value).format && matched > 1) {
+        let preMatched = original.split(' ').length;
+        selectStart += matched - preMatched;
+        selectEnd += matched - preMatched;
+        value = matches.join(' ');
+        console.log(value);
+      }
+    }
+
+    if (value !== original) {
+      // @ts-ignore
+      this.setAttributees({ value });
+      this.cardNumberField.setSelectionRange(selectStart, selectEnd);
+    }
+  }
 
   /**
    * Card number validation based on Luhn algorithm, card length and card brand
