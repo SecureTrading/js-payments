@@ -7,6 +7,7 @@ import Utils from '../../core/shared/Utils';
 export default class CardNumber extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
+  private static WHITESPACES_DECREASE_NUMBER = 2;
   private static LUHN_CHECK_ARRAY: any = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
   private static STANDARD_CARD_LENGTH = 19;
   private static CARD_NUMBER_FOR_BIN_PROCESS = (cardNumber: string) => cardNumber.slice(0, 6);
@@ -149,7 +150,7 @@ export default class CardNumber extends FormField {
     const cardFormat = this.getCardFormat(cardNumber);
     let numberOfWhitespaces;
     if (cardFormat) {
-      numberOfWhitespaces = cardFormat.split('d').length - 1;
+      numberOfWhitespaces = cardFormat.split('d').length - CardNumber.WHITESPACES_DECREASE_NUMBER;
     } else {
       numberOfWhitespaces = 0;
     }
@@ -158,9 +159,12 @@ export default class CardNumber extends FormField {
   }
 
   private getMinLengthOfCardNumber(cardNumber: string) {
+    console.log(this.binLookup.binLookup(cardNumber));
     let cardNumberMinLength = CardNumber.STANDARD_CARD_LENGTH;
     if (this.getPossibleCardLength(cardNumber)) {
-      const numberOfWhitespaces = this.binLookup.binLookup(cardNumber).format.split('d').length - 1;
+      const numberOfWhitespaces =
+        this.binLookup.binLookup(cardNumber).format.split('d').length - CardNumber.WHITESPACES_DECREASE_NUMBER;
+      console.log(this.binLookup.binLookup(cardNumber).format.split('d'));
       const cardNumberLength = this.getPossibleCardLength(cardNumber)[0];
       cardNumberMinLength = cardNumberLength + numberOfWhitespaces;
     }
