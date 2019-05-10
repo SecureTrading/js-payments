@@ -7,7 +7,6 @@ export default class SecurityCode extends FormField {
   // @ts-ignore
   public static ifFieldExists = (): HTMLInputElement => document.getElementById(Selectors.SECURITY_CODE_INPUT);
   private static INPUT_LENGTH: number = 3;
-  private static PLACEHOLDER_VALUE: any = { 3: 'XXX', 4: 'XXXX' };
 
   public binLookup: BinLookup;
 
@@ -68,8 +67,7 @@ export default class SecurityCode extends FormField {
   private setSecurityCodeAttributes(securityCodeLength: number = SecurityCode.INPUT_LENGTH) {
     this.setAttributes({
       maxlength: securityCodeLength,
-      minlength: securityCodeLength,
-      placeholder: SecurityCode.PLACEHOLDER_VALUE[securityCodeLength]
+      minlength: securityCodeLength
     });
   }
 }

@@ -34,9 +34,9 @@ class AnimatedCard {
     CLASS_SIDE: `${AnimatedCard.CARD_COMPONENT_CLASS}__side`
   };
   public static CARD_DETAILS_PLACEHOLDERS = {
-    CARD_NUMBER: 'XXXX XXXX XXXX XXXX',
+    CARD_NUMBER: '\u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219',
     EXPIRATION_DATE: 'MM/YY',
-    SECURITY_CODE: 'XXX',
+    SECURITY_CODE: '\u2219\u2219\u2219',
     TYPE: 'default'
   };
 
@@ -215,6 +215,7 @@ class AnimatedCard {
       Selectors.ANIMATED_CARD_PAYMENT_LOGO_ID
     ]);
   }
+
   /**
    * Sets placeholders for each editable value on card (card number, expiration date, security code)
    */

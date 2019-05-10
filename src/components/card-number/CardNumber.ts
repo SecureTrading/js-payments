@@ -60,20 +60,20 @@ export default class CardNumber extends FormField {
     }
   }
 
-  private setCardNumberMaxLength(cardNumber: string) {
-    const possibleCardLengths = this.getPossibleCardLength(cardNumber);
-    // @ts-ignore
-    let maxlength: number = this.getLastElementOfArray(possibleCardLengths);
-    maxlength = maxlength ? maxlength : CardNumber.DEFAULT_CARD_LENGTH;
-    this.setAttributes({ maxlength });
-  }
+  // private setCardNumberMaxLength(cardNumber: string) {
+  //   const possibleCardLengths = this.getPossibleCardLength(cardNumber);
+  //   // @ts-ignore
+  //   let maxlength: number = this.getLastElementOfArray(possibleCardLengths);
+  //   maxlength = maxlength ? maxlength : CardNumber.DEFAULT_CARD_LENGTH;
+  //   this.setAttributes({ maxlength });
+  // }
 
-  private setCardNumberMinLength(cardNumber: string) {
-    const possibleCardLengths = this.getPossibleCardLength(cardNumber);
-    let minlength: number;
-    minlength = possibleCardLengths[0] ? possibleCardLengths[0] : CardNumber.DEFAULT_CARD_LENGTH;
-    this.setAttributes({ minlength });
-  }
+  // private setCardNumberMinLength(cardNumber: string) {
+  //   const possibleCardLengths = this.getPossibleCardLength(cardNumber);
+  //   let minlength: number;
+  //   minlength = possibleCardLengths[0] ? possibleCardLengths[0] : CardNumber.DEFAULT_CARD_LENGTH;
+  //   this.setAttributes({ minlength });
+  // }
 
   private checkCardNumberLength = (cardNumber: string) =>
     this.getPossibleCardLength(cardNumber) ? this.getPossibleCardLength(cardNumber).includes(cardNumber.length) : false;
@@ -81,9 +81,7 @@ export default class CardNumber extends FormField {
   private setCardNumberAttributes() {
     this.setAttributes({
       // @ts-ignore
-      'data-luhn-check': this.isCardNumberValid,
-      maxlength: CardNumber.DEFAULT_CARD_LENGTH,
-      minlength: CardNumber.DEFAULT_CARD_LENGTH
+      'data-luhn-check': this.isCardNumberValid
     });
   }
 
@@ -99,8 +97,6 @@ export default class CardNumber extends FormField {
   private getFormFieldState(): IFormFieldState {
     const { value, validity } = this.getState();
     this.publishSecurityCodeLength();
-    this.setCardNumberMaxLength(value);
-    this.setCardNumberMinLength(value);
     this.formatCardNumber(value);
     return {
       value,
@@ -114,9 +110,6 @@ export default class CardNumber extends FormField {
       data: this.getFormFieldState(),
       type: MessageBus.EVENTS.CHANGE_CARD_NUMBER
     };
-
-    console.log(`card number length ${this.checkCardNumberLength(value)}`);
-    console.log(`set card number max length: ${this.setCardNumberMaxLength(value)}`);
 
     if (validity) {
       const binProcessEvent: IMessageBusEvent = {
