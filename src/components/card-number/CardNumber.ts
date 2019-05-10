@@ -159,12 +159,10 @@ export default class CardNumber extends FormField {
   }
 
   private getMinLengthOfCardNumber(cardNumber: string) {
-    console.log(this.binLookup.binLookup(cardNumber));
     let cardNumberMinLength = CardNumber.STANDARD_CARD_LENGTH;
     if (this.getPossibleCardLength(cardNumber)) {
       const numberOfWhitespaces =
         this.binLookup.binLookup(cardNumber).format.split('d').length - CardNumber.WHITESPACES_DECREASE_NUMBER;
-      console.log(this.binLookup.binLookup(cardNumber).format.split('d'));
       const cardNumberLength = this.getPossibleCardLength(cardNumber)[0];
       cardNumberMinLength = cardNumberLength + numberOfWhitespaces;
     }

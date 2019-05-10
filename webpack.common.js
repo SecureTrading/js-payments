@@ -119,7 +119,7 @@ module.exports = {
         use: [
           {
             loader: 'tslint-loader',
-            options: { emitErrors: false }
+            options: { emitErrors: true }
           }
         ],
         exclude: /node_modules/
