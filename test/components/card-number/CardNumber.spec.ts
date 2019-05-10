@@ -5,54 +5,60 @@ import FormField from '../../../src/core/shared/FormField';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 
-describe('CardNumber', () => {
-  let cardNumber: CardNumber;
-
+// given
+describe('Class CardNumber', () => {
+  let { inputElement, messageElement, cardNumberInstance, testCardNumbers } = CardNumberFixture();
+  // when
   beforeAll(() => {
-    let inputElement = document.createElement('input');
-    let messageElement = document.createElement('p');
-
-    inputElement.id = Selectors.CARD_NUMBER_INPUT;
-    messageElement.id = Selectors.CARD_NUMBER_MESSAGE;
-
     document.body.appendChild(inputElement);
     document.body.appendChild(messageElement);
-
-    cardNumber = new CardNumber();
   });
 
-  it('should create instance of classes CardNumber and FormField representing form field', () => {
-    expect(cardNumber).toBeInstanceOf(CardNumber);
-    expect(cardNumber).toBeInstanceOf(FormField);
+  // then
+  it('should create instance of class CardNumber', () => {
+    expect(cardNumberInstance).toBeInstanceOf(CardNumber);
+  });
+
+  // then
+  it('should create instance of class CardNumber', () => {
+    expect(cardNumberInstance).toBeInstanceOf(FormField);
+  });
+
+  // given
+  describe('Method luhnCheck()', () => {
+    // then
+    each(testCardNumbers).it('should check card number and return correct Luhn check', (cardNumber, expected) => {
+      expect(CardNumberFixture().cardNumberInstance.luhnCheck(cardNumber)).toEqual(expected);
+    });
   });
 });
 
-each([
-  ['', true], // Couldn't identify the brand
-  ['4111111111111111', true],
-  ['4111111111111110', false], // A VISA card needs to pass a luhn check
-  ['6759555555555555', true] // A MAESTRO brand card doesn't need to pass a luhn check
-]).test('CardNumber.validateCreditCard', (cardNumber, expected) => {
-  // const cn = new CardNumber('card-number');
-  // expect(cn.validateCreditCard(cardNumber)).toEqual(expected);
-});
+function CardNumberFixture() {
+  const html =
+    '<form id="st-card-number" class="card-number" novalidate=""><label for="st-card-number-input" class="card-number__label card-number__label--required">CARD NUMBER</label> <input id="st-card-number-input" class="card-number__input" type="text" autocomplete="off" required="" data-luhn-check="true" maxlength="NaN" minlength="19"> <p id="st-card-number-message" class="card-number__message"></p> </form>';
+  document.body.innerHTML = html;
+  let cardNumberInstance = new CardNumber();
 
-each([
-  ['', 0],
-  ['0000000000000000', 0], // Strictly any number of 0s should pass the luhn, but it shouldn't ever be a valid card so this is okay
-  ['4111111111111111', true],
-  ['79927398713', true],
-  ['6759555555555555', false]
-]).test('CardNumber.luhnCheck', (cardNumber, expected) => {
-  // const cn = new CardNumber('card-number');
-  // expect(CardNumber.luhnCheck(cardNumber)).toEqual(expected);
-});
+  function createElement(markup: string) {
+    return document.createElement(markup);
+  }
 
-// each([[null, cardsLogos.chip], [{ type: 'fred' }, cardsLogos.chip], [{ type: 'AMEX' }, cardsLogos.amex]]).test(
-//   'CardNumber.getCardLogo',
-//   (brand, expected) => {
-// const cn = new CardNumber('card-number');
-// cn.brand = brand;
-// expect(cn.getCardLogo()).toEqual(expected);
-//   }
-// );
+  let inputElement = createElement('input');
+  let messageElement = createElement('p');
+  const testCardNumbers = [
+    ['', 0],
+    ['0000000000000000', 0],
+    ['4111111111111111', true],
+    ['79927398713', true],
+    ['6759555555555555', false]
+  ];
+  inputElement.id = Selectors.CARD_NUMBER_INPUT;
+  messageElement.id = Selectors.CARD_NUMBER_MESSAGE;
+
+  return {
+    cardNumberInstance,
+    inputElement,
+    messageElement,
+    testCardNumbers
+  };
+}

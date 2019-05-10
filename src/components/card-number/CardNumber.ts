@@ -34,12 +34,13 @@ export default class CardNumber extends FormField {
    *    Step 4: if sum of those above is divisible by ten, YOU PASS THE LUHN !
    */
   public luhnCheck(cardNumber: string) {
+    let cardNumberWithoutSpaces = cardNumber.replace(/\s/g, '');
     let bit = 1;
-    let cardNumberLength = cardNumber.length;
+    let cardNumberLength = cardNumberWithoutSpaces.length;
     let sum = 0;
 
     while (cardNumberLength) {
-      const val = parseInt(cardNumber.charAt(--cardNumberLength), 10);
+      const val = parseInt(cardNumberWithoutSpaces.charAt(--cardNumberLength), 10);
       bit = bit ^ 1;
       const algorithmValue = bit ? CardNumber.LUHN_CHECK_ARRAY[val] : val;
       sum += algorithmValue;
@@ -193,6 +194,8 @@ export default class CardNumber extends FormField {
       data: this.getFormFieldState(),
       type: MessageBus.EVENTS.CHANGE_CARD_NUMBER
     };
+
+    console.log(this.luhnCheck(value));
 
     if (validity) {
       const binProcessEvent: IMessageBusEvent = {
