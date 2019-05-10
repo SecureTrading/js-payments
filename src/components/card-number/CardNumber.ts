@@ -99,6 +99,7 @@ export default class CardNumber extends FormField {
       this.setCardNumberAttributes({ value });
       this.cardNumberField.setSelectionRange(selectStart, selectEnd);
     }
+    return value;
   }
 
   /**

@@ -25,10 +25,33 @@ describe('Class CardNumber', () => {
   });
 
   // given
-  describe('Method luhnCheck()', () => {
+  describe('Method luhnCheck', () => {
     // then
     each(testCardNumbers).it('should check card number and return correct Luhn check', (cardNumber, expected) => {
       expect(CardNumberFixture().cardNumberInstance.luhnCheck(cardNumber)).toEqual(expected);
+    });
+  });
+
+  // given
+  describe('Method setCardNumberAttributes', () => {
+    // then
+    it('should set proper card number attributes given in params', () => {
+      cardNumberInstance.setCardNumberAttributes({
+        firstAttribute: 'FUUUUUUUUUUUUUU',
+        secondAttribute: 'Like a sir',
+        thirdAttribute: 'Pepe the Frog'
+      });
+      expect(cardNumberInstance.cardNumberField.getAttribute('firstAttribute')).toEqual('FUUUUUUUUUUUUUU');
+      expect(cardNumberInstance.cardNumberField.getAttribute('secondAttribute')).toEqual('Like a sir');
+      expect(cardNumberInstance.cardNumberField.getAttribute('thirdAttribute')).toEqual('Pepe the Frog');
+    });
+  });
+
+  // given
+  describe('Method formatCardNumber', () => {
+    // then
+    it('should format card number properly', () => {
+      expect(cardNumberInstance.formatCardNumber('4111111111111111')).toEqual('4111 1111 1111 1111');
     });
   });
 });
