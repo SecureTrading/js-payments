@@ -5,11 +5,11 @@ import Selectors from '../../core/shared/Selectors';
 import Utils from '../../core/shared/Utils';
 
 export default class CardNumber extends FormField {
+  private static LUHN_CHECK_ARRAY: any = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
+  private static STANDARD_CARD_LENGTH = 19;
+  private static CARD_NUMBER_FOR_BIN_PROCESS = (cardNumber: string) => cardNumber.slice(0, 6);
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
-  private static LUHN_CHECK_ARRAY: any = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
-  private static MAX_CARD_LENGTH = 22;
-  private static CARD_NUMBER_FOR_BIN_PROCESS = (cardNumber: string) => cardNumber.slice(0, 6);
 
   public binLookup: BinLookup;
   public cardNumberField: HTMLInputElement;
@@ -21,7 +21,6 @@ export default class CardNumber extends FormField {
     this.cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT);
     this.binLookup = new BinLookup();
     this.isCardNumberValid = true;
-    console.log(this.getLastElementOfArray([1, 2, 3]));
     this.setCardNumberProperties();
     this.sendState();
   }
@@ -90,17 +89,6 @@ export default class CardNumber extends FormField {
     }
   }
 
-  /**
-   * Card number validation based on Luhn algorithm, card length and card brand
-   * @param cardNumber the card number to validate
-   * @return whether the card number is valid
-   */
-  public validateCardNumber(cardNumber: string) {
-    if (this.getLuhnCheckStatus(cardNumber)) {
-      this.isCardNumberValid = this.luhnCheck(cardNumber);
-    }
-  }
-
   public publishSecurityCodeLength() {
     const { value } = this.getState();
     const messageBusEvent: IMessageBusEvent = {
@@ -138,16 +126,42 @@ export default class CardNumber extends FormField {
     }
   }
 
+  private setMinMaxLengthOfCard(cardNumber: string) {
+    this.setAttributes({
+      maxlength: this.getMaxLengthOfCardNumber(cardNumber),
+      minlength: this.getMinLengthOfCardNumber(cardNumber)
+    });
+  }
+
   private getLastElementOfArray = (array: number[]) => array && array.slice(-1).pop();
 
-  private checkCardNumberLength = (cardNumber: string) =>
-    this.getPossibleCardLength(cardNumber) ? this.getPossibleCardLength(cardNumber).includes(cardNumber.length) : false;
+  private getMaxLengthOfCardNumber(cardNumber: string) {
+    const cardLengthFromBin = this.getPossibleCardLength(cardNumber);
+    const cardFormat = this.binLookup.binLookup(cardNumber).format;
+    let numberOfWhitespaces;
+    if (cardFormat) {
+      numberOfWhitespaces = this.binLookup.binLookup(cardNumber).format.split('d').length - 1;
+    } else {
+      numberOfWhitespaces = 0;
+    }
+
+    return this.getLastElementOfArray(cardLengthFromBin) + numberOfWhitespaces;
+  }
+
+  private getMinLengthOfCardNumber(cardNumber: string) {
+    let cardNumberMinLength = CardNumber.STANDARD_CARD_LENGTH;
+    if (this.getPossibleCardLength(cardNumber)) {
+      const numberOfWhitespaces = this.binLookup.binLookup(cardNumber).format.split('d').length - 1;
+      const cardNumberLength = this.getPossibleCardLength(cardNumber)[0];
+      cardNumberMinLength = cardNumberLength + numberOfWhitespaces;
+    }
+    return cardNumberMinLength;
+  }
 
   private setCardNumberProperties() {
     this.setAttributes({
       // @ts-ignore
-      'data-luhn-check': this.isCardNumberValid,
-      maxlength: CardNumber.MAX_CARD_LENGTH
+      'data-luhn-check': this.isCardNumberValid
     });
   }
 
@@ -155,6 +169,7 @@ export default class CardNumber extends FormField {
     const { value, validity } = this.getState();
     this.publishSecurityCodeLength();
     this.formatCardNumber(value);
+    this.setMinMaxLengthOfCard(value);
     return {
       validity,
       value
