@@ -111,9 +111,15 @@ export default class CardNumber extends FormField {
     this._messageBus.publish(messageBusEvent);
   }
 
-  protected onInput(event: Event) {
-    super.onInput(event);
-    this.sendState();
+  protected getBinLookupDetails = (cardNumber: string) =>
+    this.binLookup.binLookup(cardNumber) ? this.binLookup.binLookup(cardNumber) : undefined;
+  protected getCardFormat = (cardNumber: string) => this.getBinLookupDetails(cardNumber).format;
+  protected getPossibleCardLength = (cardNumber: string) => this.getBinLookupDetails(cardNumber).length;
+
+  protected getSecurityCodeLength(cardNumber: string) {
+    if (this.getBinLookupDetails(cardNumber).cvcLength !== undefined) {
+      return this.getBinLookupDetails(cardNumber).cvcLength[0];
+    }
   }
 
   protected onFocus(event: Event) {
@@ -121,20 +127,14 @@ export default class CardNumber extends FormField {
     this.sendState();
   }
 
-  protected onPaste(event: ClipboardEvent) {
-    super.onPaste(event);
+  protected onInput(event: Event) {
+    super.onInput(event);
     this.sendState();
   }
 
-  protected getCardFormat = (cardNumber: string) =>
-    this.binLookup.binLookup(cardNumber).format ? this.binLookup.binLookup(cardNumber).format : undefined;
-  protected getPossibleCardLength = (cardNumber: string) =>
-    this.binLookup.binLookup(cardNumber).length ? this.binLookup.binLookup(cardNumber).length : undefined;
-
-  protected getSecurityCodeLength(cardNumber: string) {
-    if (this.binLookup.binLookup(cardNumber).cvcLength !== undefined) {
-      return this.binLookup.binLookup(cardNumber).cvcLength[0];
-    }
+  protected onPaste(event: ClipboardEvent) {
+    super.onPaste(event);
+    this.sendState();
   }
 
   private setMinMaxLengthOfCard(cardNumber: string) {
