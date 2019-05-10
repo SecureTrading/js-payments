@@ -1,5 +1,5 @@
 import each from 'jest-each';
-import { CardinalCommerce, IThreeDQueryResponse, Cardinal } from '../../../src/core/integrations/CardinalCommerce';
+import { CardinalCommerce, IThreeDQueryResponse } from '../../../src/core/integrations/CardinalCommerce';
 import MessageBus from '../../../src/core/shared/MessageBus';
 import { initHighlighting } from 'highlight.js';
 import DomMethods from '../../../src/core/shared/DomMethods';
@@ -10,7 +10,7 @@ jest.mock('./../../../src/core/shared/MessageBus');
 describe('Class CCIntegration', () => {
   let instance: any;
   let { jwt, validationData } = CardinalCommerceFixture();
-
+  let Cardinal: any;
   // when
   beforeEach(() => {
     document.body.innerHTML = `<input id='JWTContainer' value="${jwt}" />`;
@@ -47,10 +47,10 @@ describe('Class CCIntegration', () => {
     it('should call cardinal bin process', () => {
       let { CardinalMock } = CardinalCommerceFixture();
       // @ts-ignore
-      Cardinal = CardinalMock;
+      global.Cardinal = CardinalMock;
       instance._performBinDetection({ value: '411111' });
-      expect(Cardinal.trigger).toHaveBeenCalledTimes(1);
-      expect(Cardinal.trigger).toHaveBeenCalledWith('bin.process', '411111');
+      expect(CardinalMock.trigger).toHaveBeenCalledTimes(1);
+      expect(CardinalMock.trigger).toHaveBeenCalledWith('bin.process', '411111');
     });
   });
 
@@ -76,7 +76,7 @@ describe('Class CCIntegration', () => {
     it('should call cardinal continue', () => {
       let { CardinalMock, jwt } = CardinalCommerceFixture();
       // @ts-ignore
-      Cardinal = CardinalMock;
+      global.Cardinal = CardinalMock;
       instance._cardinalCommerceJWT = jwt;
       instance._authenticateCard({
         acquirertransactionreference: 'cardinal-tx-id',
@@ -85,8 +85,8 @@ describe('Class CCIntegration', () => {
         threedpayload: 'CARDINAL_ACS_RESPONSE',
         transactionreference: '1-2-3'
       });
-      expect(Cardinal.continue).toHaveBeenCalled();
-      expect(Cardinal.continue).toHaveBeenCalledWith(
+      expect(CardinalMock.continue).toHaveBeenCalled();
+      expect(CardinalMock.continue).toHaveBeenCalledWith(
         'cca',
         { AcsUrl: 'https://example.com', Payload: 'CARDINAL_ACS_RESPONSE' },
         { Cart: [], OrderDetails: { TransactionId: 'cardinal-tx-id' } },
@@ -100,20 +100,20 @@ describe('Class CCIntegration', () => {
       it('should call cardinal methods to setup callbacks and setup process', () => {
         let { CardinalMock, jwt } = CardinalCommerceFixture();
         // @ts-ignore
-        Cardinal = CardinalMock;
+        global.Cardinal = CardinalMock;
         instance._cardinalCommerceJWT = jwt;
         instance._onCardinalLoad();
-        expect(Cardinal.configure).toHaveBeenCalledTimes(1);
-        expect(Cardinal.configure).toHaveBeenCalledWith({ logging: { level: 'on' } });
-        expect(Cardinal.on).toHaveBeenCalledTimes(2);
-        expect(Cardinal.on.mock.calls[0][0]).toBe('payments.setupComplete');
-        expect(Cardinal.on.mock.calls[0][1] instanceof Function).toBe(true);
+        expect(CardinalMock.configure).toHaveBeenCalledTimes(1);
+        expect(CardinalMock.configure).toHaveBeenCalledWith({ logging: { level: 'on' } });
+        expect(CardinalMock.on).toHaveBeenCalledTimes(2);
+        expect(CardinalMock.on.mock.calls[0][0]).toBe('payments.setupComplete');
+        expect(CardinalMock.on.mock.calls[0][1] instanceof Function).toBe(true);
 
-        expect(Cardinal.on.mock.calls[1][0]).toBe('payments.validated');
-        expect(Cardinal.on.mock.calls[1][1] instanceof Function).toBe(true);
+        expect(CardinalMock.on.mock.calls[1][0]).toBe('payments.validated');
+        expect(CardinalMock.on.mock.calls[1][1] instanceof Function).toBe(true);
 
-        expect(Cardinal.setup).toHaveBeenCalledTimes(1);
-        expect(Cardinal.setup).toHaveBeenCalledWith('init', { jwt });
+        expect(CardinalMock.setup).toHaveBeenCalledTimes(1);
+        expect(CardinalMock.setup).toHaveBeenCalledWith('init', { jwt });
       });
     });
 

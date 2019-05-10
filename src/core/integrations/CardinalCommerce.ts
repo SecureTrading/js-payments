@@ -3,7 +3,7 @@ import DomMethods from '../shared/DomMethods';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
 
-export declare const Cardinal: any;
+declare const Cardinal: any;
 
 export interface IThreeDQueryResponse {
   acquirertransactionreference: string;
@@ -87,10 +87,8 @@ export class CardinalCommerce {
    * @protected
    */
   protected _authenticateCard(responseObject: IThreeDQueryResponse) {
-    // @ts-ignore
-    const cardinal = Cardinal;
     this._threedQueryTransactionReference = responseObject.transactionreference;
-    cardinal.continue(
+    Cardinal.continue(
       CardinalCommerce.PAYMENT_BRAND,
       {
         AcsUrl: responseObject.acsurl,
@@ -110,12 +108,14 @@ export class CardinalCommerce {
    * @protected
    */
   protected _onCardinalLoad() {
-    // @ts-ignore
-    const cardinal = Cardinal;
-    cardinal.configure(environment.CARDINAL_COMMERCE.CONFIG);
-    cardinal.on(CardinalCommerce.PAYMENT_EVENTS.SETUP_COMPLETE, this._onCardinalSetupComplete.bind(this));
-    cardinal.on(CardinalCommerce.PAYMENT_EVENTS.VALIDATED, this._onCardinalValidated.bind(this));
-    cardinal.setup(CardinalCommerce.PAYMENT_EVENTS.INIT, {
+    Cardinal.configure(environment.CARDINAL_COMMERCE.CONFIG);
+    Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.SETUP_COMPLETE, () => {
+      this._onCardinalSetupComplete();
+    });
+    Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.VALIDATED, (data: any, jwt: any) => {
+      this._onCardinalValidated(data, jwt);
+    });
+    Cardinal.setup(CardinalCommerce.PAYMENT_EVENTS.INIT, {
       jwt: this._cardinalCommerceJWT
     });
   }
