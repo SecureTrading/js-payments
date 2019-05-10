@@ -2,6 +2,7 @@ import BinLookup from '../../core/shared/BinLookup';
 import FormField from '../../core/shared/FormField';
 import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
+import Utils from '../../core/shared/Utils';
 
 export default class CardNumber extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
@@ -21,8 +22,92 @@ export default class CardNumber extends FormField {
     this.binLookup = new BinLookup();
     this.isCardNumberValid = true;
     console.log(this.getLastElementOfArray([1, 2, 3]));
-    this.setCardNumberAttributes();
+    this.setCardNumberProperties();
     this.sendState();
+  }
+
+  /**
+   * Luhn Algorithm
+   * From the right:
+   *    Step 1: take the value of this digit
+   *    Step 2: if the offset from the end is even
+   *    Step 3: double the value, then sum the digits
+   *    Step 4: if sum of those above is divisible by ten, YOU PASS THE LUHN !
+   */
+  public luhnCheck(cardNumber: string) {
+    let bit = 1;
+    let cardNumberLength = cardNumber.length;
+    let sum = 0;
+
+    while (cardNumberLength) {
+      const val = parseInt(cardNumber.charAt(--cardNumberLength), 10);
+      sum += (bit ^= 1) ? CardNumber.LUHN_CHECK_ARRAY[val] : val;
+    }
+
+    return sum && sum % 10 === 0;
+  }
+
+  public setCardNumberAttributes(attributes: {}) {
+    for (const attribute in attributes) {
+      // @ts-ignore
+      const value = attributes[attribute];
+      if (Utils.inArray(['value'], attribute)) {
+        // @ts-ignore
+        this.cardNumberField[attribute] = value;
+      } else if (value === false) {
+        this.cardNumberField.removeAttribute(attribute);
+      } else {
+        this.cardNumberField.setAttribute(attribute, value);
+      }
+    }
+  }
+
+  public formatCardNumber(cardNumber: string) {
+    const format = this.getCardFormat(cardNumber);
+    const previousValue = cardNumber;
+    let value = previousValue;
+    let selectEnd = this.cardNumberField.selectionEnd;
+    let selectStart = this.cardNumberField.selectionStart;
+
+    if (format && value.length > 0) {
+      value = Utils.stripChars(value, undefined);
+      let matches = value.match(new RegExp(format, '')).slice(1);
+      if (Utils.inArray(matches, undefined)) {
+        matches = matches.slice(0, matches.indexOf(undefined));
+      }
+      const matched = matches.length;
+      if (this.binLookup.binLookup(value).format && matched > 1) {
+        const preMatched = previousValue.split(' ').length;
+        selectStart += matched - preMatched;
+        selectEnd += matched - preMatched;
+        value = matches.join(' ');
+      }
+    }
+
+    if (value !== previousValue) {
+      this.setCardNumberAttributes({ value });
+      this.cardNumberField.setSelectionRange(selectStart, selectEnd);
+    }
+  }
+
+  /**
+   * Card number validation based on Luhn algorithm, card length and card brand
+   * @param cardNumber the card number to validate
+   * @return whether the card number is valid
+   */
+  public validateCardNumber(cardNumber: string) {
+    if (this.getLuhnCheckStatus(cardNumber)) {
+      this.isCardNumberValid = this.luhnCheck(cardNumber);
+    }
+  }
+
+  public publishSecurityCodeLength() {
+    const { value } = this.getState();
+    const messageBusEvent: IMessageBusEvent = {
+      data: this.getSecurityCodeLength(value),
+      type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
+    };
+    this._messageBus.publish(messageBusEvent);
   }
 
   protected onInput(event: Event) {
@@ -58,7 +143,7 @@ export default class CardNumber extends FormField {
   private checkCardNumberLength = (cardNumber: string) =>
     this.getPossibleCardLength(cardNumber) ? this.getPossibleCardLength(cardNumber).includes(cardNumber.length) : false;
 
-  private setCardNumberAttributes() {
+  private setCardNumberProperties() {
     this.setAttributes({
       // @ts-ignore
       'data-luhn-check': this.isCardNumberValid,
@@ -66,22 +151,13 @@ export default class CardNumber extends FormField {
     });
   }
 
-  public publishSecurityCodeLength() {
-    const { value } = this.getState();
-    const messageBusEvent: IMessageBusEvent = {
-      data: this.getSecurityCodeLength(value),
-      type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
-    };
-    this._messageBus.publish(messageBusEvent);
-  }
-
   private getFormFieldState(): IFormFieldState {
     const { value, validity } = this.getState();
     this.publishSecurityCodeLength();
     this.formatCardNumber(value);
     return {
-      value,
-      validity
+      validity,
+      value
     };
   }
 
@@ -100,92 +176,5 @@ export default class CardNumber extends FormField {
       this._messageBus.publish(binProcessEvent, true);
     }
     this._messageBus.publish(messageBusEvent);
-  }
-
-  static inArray(array: any, item: any) {
-    return array.indexOf(item) >= 0;
-  }
-
-  static stripChars(string: any, regex: any) {
-    if (typeof regex == 'undefined') {
-      regex = /[\D+]/g;
-    }
-    return string.replace(regex, '');
-  }
-
-  public setAttributees(attributes: []) {
-    for (let attribute in attributes) {
-      let value = attributes[attribute];
-      if (CardNumber.inArray(['value'], attribute)) {
-        // @ts-ignore
-        this.cardNumberField[attribute] = value;
-      } else if (value === false) {
-        this.cardNumberField.removeAttribute(attribute);
-      } else {
-        this.cardNumberField.setAttribute(attribute, value);
-      }
-    }
-  }
-
-  public formatCardNumber(cardNumber: string) {
-    let field = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
-    const original = cardNumber;
-    let value = original;
-    let selectStart = field.selectionStart;
-    let selectEnd = field.selectionEnd;
-    const format = this.getCardFormat(cardNumber);
-
-    if (format && value.length > 0) {
-      value = CardNumber.stripChars(value, undefined);
-      let matches = value.match(new RegExp(format, '')).slice(1);
-      if (CardNumber.inArray(matches, undefined)) {
-        matches = matches.slice(0, matches.indexOf(undefined));
-      }
-      const matched = matches.length;
-      if (this.binLookup.binLookup(value).format && matched > 1) {
-        let preMatched = original.split(' ').length;
-        selectStart += matched - preMatched;
-        selectEnd += matched - preMatched;
-        value = matches.join(' ');
-      }
-    }
-
-    if (value !== original) {
-      // @ts-ignore
-      this.setAttributees({ value });
-      this.cardNumberField.setSelectionRange(selectStart, selectEnd);
-    }
-  }
-
-  /**
-   * Card number validation based on Luhn algorithm, card length and card brand
-   * @param cardNumber the card number to validate
-   * @return whether the card number is valid
-   */
-  public validateCardNumber(cardNumber: string) {
-    if (this.getLuhnCheckStatus(cardNumber)) {
-      this.isCardNumberValid = CardNumber.luhnCheck(cardNumber);
-    }
-  }
-
-  /**
-   * Luhn Algorithm
-   * From the right:
-   *    Step 1: take the value of this digit
-   *    Step 2: if the offset from the end is even
-   *    Step 3: double the value, then sum the digits
-   *    Step 4: if sum of those above is divisible by ten, YOU PASS THE LUHN !
-   */
-  public static luhnCheck(cardNumber: string) {
-    let bit = 1;
-    let cardNumberLength = cardNumber.length;
-    let sum = 0;
-
-    while (cardNumberLength) {
-      const val = parseInt(cardNumber.charAt(--cardNumberLength), 10);
-      sum += (bit ^= 1) ? CardNumber.LUHN_CHECK_ARRAY[val] : val;
-    }
-
-    return sum && sum % 10 === 0;
   }
 }
