@@ -1,5 +1,6 @@
 import BinLookup from '../../core/shared/BinLookup';
 import FormField from '../../core/shared/FormField';
+import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
 import Utils from '../../core/shared/Utils';
@@ -17,7 +18,7 @@ export default class CardNumber extends FormField {
   public isCardNumberValid: boolean;
 
   constructor() {
-    super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE);
+    super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE, Selectors.CARD_NUMBER_LABEL);
     this.cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     this.binLookup = new BinLookup();
     this.isCardNumberValid = true;
@@ -123,6 +124,10 @@ export default class CardNumber extends FormField {
     if (this.getBinLookupDetails(cardNumber).cvcLength !== undefined) {
       return this.getBinLookupDetails(cardNumber).cvcLength[0];
     }
+  }
+
+  public getLabel(): string {
+    return Language.translations.LABEL_CARD_NUMBER;
   }
 
   protected onFocus(event: Event) {

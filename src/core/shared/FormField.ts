@@ -1,26 +1,50 @@
 import Formatter from './Formatter';
 import Frame from './Frame';
+import Language from './Language';
 import MessageBus from './MessageBus';
+import { Translator } from './Translator';
 import Validation from './Validation';
 
 export default class FormField extends Frame {
   protected _inputSelector: string;
   protected _messageSelector: string;
+  protected _labelSelector: string;
   protected _inputElement: HTMLInputElement;
   protected _messageElement: HTMLParagraphElement;
+  protected _labelElement: HTMLLabelElement;
   protected _messageBus: MessageBus;
+  private _translator: Translator;
 
-  constructor(inputSelector: string, messageSelector: string) {
+  constructor(inputSelector: string, messageSelector: string, labelSelector: string) {
     super();
     // @ts-ignore
     this._inputElement = document.getElementById(inputSelector);
     // @ts-ignore
     this._messageElement = document.getElementById(messageSelector);
+    // @ts-ignore
+    this._labelElement = document.getElementById(labelSelector);
+
     this._inputSelector = inputSelector;
     this._messageSelector = messageSelector;
+    this._labelSelector = labelSelector;
+    // @ts-ignore
     this._messageBus = new MessageBus();
     this.setInputListeners();
     this.onInit();
+  }
+
+  public onInit() {
+    super.onInit();
+    this._translator = new Translator(this._params.locale);
+    this.setLabelText();
+  }
+
+  public getLabel(): string {
+    throw new Error(Language.translations.NOT_IMPLEMENTED_ERROR);
+  }
+
+  protected setLabelText() {
+    this._labelElement.innerHTML = this._translator.translate(this.getLabel());
   }
 
   protected _getAllowedStyles() {
@@ -120,7 +144,7 @@ export default class FormField extends Frame {
    * @param messageText
    */
   protected setMessage(messageText: string) {
-    this._messageElement.innerText = messageText;
+    this._messageElement.innerText = this._translator.translate(messageText);
   }
 
   protected setValue(value: string) {

@@ -1,5 +1,6 @@
 import BinLookup from '../../core/shared/BinLookup';
 import FormField from '../../core/shared/FormField';
+import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
 
@@ -11,12 +12,23 @@ export default class SecurityCode extends FormField {
   public binLookup: BinLookup;
 
   constructor() {
-    super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE);
+    super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
     this.binLookup = new BinLookup();
 
+    this.setAttributes({
+      maxlength: SecurityCode.INPUT_LENGTH,
+      minlength: SecurityCode.INPUT_LENGTH
+    });
+
+    if (this._inputElement.value) {
+      this.sendState();
+    }
     this.setSecurityCodeAttributes();
     this.subscribeSecurityCodeChange();
-    this.sendState();
+  }
+
+  public getLabel(): string {
+    return Language.translations.LABEL_SECURITY_CODE;
   }
 
   protected onBlur(event: FocusEvent) {

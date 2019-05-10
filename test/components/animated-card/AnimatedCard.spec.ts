@@ -3,6 +3,7 @@ import MessageBus from '../../../src/core/shared/MessageBus';
 import Selectors from '../../../src/core/shared/Selectors';
 import { cardsLogos } from '../../../src/components/animated-card/animated-card-logos';
 import AnimatedCard from './../../../src/components/animated-card/AnimatedCard';
+import { Translator } from '../../../src/core/shared/Translator';
 // given
 describe('Class AnimatedCard', () => {
   // given
@@ -15,6 +16,27 @@ describe('Class AnimatedCard', () => {
 
     it('should return HTMLInput element', () => {
       expect(AnimatedCard.ifCardExists()).toBeTruthy();
+    });
+  });
+
+  // given
+  describe('Method setLabels', () => {
+    const { instance } = animatedCardFixture();
+    // then
+    it('should have set label text', () => {
+      instance.setLabels();
+      let card = document.getElementById(Selectors.ANIMATED_CARD_CREDIT_CARD_LABEL);
+      let expiry = document.getElementById(Selectors.ANIMATED_CARD_EXPIRATION_DATE_LABEL);
+      let secCode = document.getElementById(Selectors.ANIMATED_CARD_SECURITY_CODE_LABEL);
+      expect(card.innerHTML).toEqual('Card number');
+      expect(expiry.innerHTML).toEqual('Expiration date');
+      expect(secCode.innerHTML).toEqual('Security code');
+      // @ts-ignore
+      instance._translator = new Translator('fr_FR');
+      instance.setLabels();
+      expect(card.innerHTML).toEqual('Numéro de carte');
+      expect(expiry.innerHTML).toEqual("Date d'expiration");
+      expect(secCode.innerHTML).toEqual('Code de sécurité');
     });
   });
 
@@ -83,7 +105,10 @@ describe('Class AnimatedCard', () => {
   describe('Method onExpirationDateChanged', () => {
     // when
     let { instance } = animatedCardFixture();
-    let dataObject = { value: '', validity: false };
+    let dataObject = {
+      value: '',
+      validity: false
+    };
     beforeEach(() => {
       dataObject.value = '11/12';
     });
@@ -201,7 +226,7 @@ describe('Class AnimatedCard', () => {
 
 function animatedCardFixture() {
   const html =
-    '<div class="st-animated-card" id="st-animated-card"> <div class="st-animated-card__content"> <div class="st-animated-card__side st-animated-card__front" id="st-animated-card-side-front"> <div class="st-animated-card__logos"> <div class="st-animated-card__chip-logo"> <img src="" alt="" /> </div> <div class="st-animated-card__payment-logo" id="st-animated-card-payment-logo"></div> </div> <div class="st-animated-card__pan"> <label class="st-animated-card__label">Card number</label> <div class="st-animated-card__value" id="st-animated-card-number"></div> </div> <div class="st-animated-card__expiration-date-and-security-code"> <div class="st-animated-card__expiration-date"> <label class="st-animated-card__label">Expiration date</label> <div class="st-animated-card__value" id="st-animated-card-expiration-date"></div> </div> <div class="st-animated-card__security-code st-animated-card__security-code--front st-animated-card__security-code--front-hidden" id="st-animated-card-security-code-front" > <label class="st-animated-card__label">Security code</label> <div class="st-animated-card__value" id="st-animated-card-security-code-front-field"></div> </div> </div> </div> <div class="st-animated-card__side st-animated-card__back" id="st-animated-card-side-back"> <div class="st-animated-card__signature"></div> <div class="st-animated-card__security-code" id="st-animated-card-security-code"></div> </div> </div> </div>';
+    '<div class="st-animated-card" id="st-animated-card"> <div class="st-animated-card__content"> <div class="st-animated-card__side st-animated-card__front" id="st-animated-card-side-front"> <div class="st-animated-card__logos"> <div class="st-animated-card__chip-logo"> <img src="" alt="" /> </div> <div class="st-animated-card__payment-logo" id="st-animated-card-payment-logo"></div> </div> <div class="st-animated-card__pan"> <label class="st-animated-card__label" id="st-animated-card-card-number-label"></label> <div class="st-animated-card__value" id="st-animated-card-number"></div> </div> <div class="st-animated-card__expiration-date-and-security-code"> <div class="st-animated-card__expiration-date"> <label class="st-animated-card__label" id="st-animated-card-expiration-date-label"></label> <div class="st-animated-card__value" id="st-animated-card-expiration-date"></div> </div> <div class="st-animated-card__security-code st-animated-card__security-code--front st-animated-card__security-code--front-hidden" id="st-animated-card-security-code-front" > <label class="st-animated-card__label" id="st-animated-card-security-code-label"></label> <div class="st-animated-card__value" id="st-animated-card-security-code-front-field"></div> </div> </div> </div> <div class="st-animated-card__side st-animated-card__back" id="st-animated-card-side-back"> <div class="st-animated-card__signature"></div> <div class="st-animated-card__security-code" id="st-animated-card-security-code"></div> </div> </div> </div>';
   document.body.innerHTML = html;
   const inputValues = {
     cardNumber: '123456789',

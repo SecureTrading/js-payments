@@ -1,4 +1,5 @@
 import NotificationFrame from '../../../src/components/notification-frame/NotificationFrame';
+import { Translator } from '../../../src/core/shared/Translator';
 
 // given
 describe('Component NotificationFrame', () => {
@@ -49,19 +50,40 @@ describe('Component NotificationFrame', () => {
 
   // given
   describe('Method insertContent', () => {
-    let { errorMessage } = NotificationFrameFixture();
+    let { elementId, errorMessage } = NotificationFrameFixture();
     // when
     beforeEach(() => {
       document.body.innerHTML = '<div id="st-notification-frame" class="notification-frame">Some example error</div>';
       // @ts-ignore
+      instance.notificationFrameElement = document.getElementById(elementId) as HTMLElement;
       instance._message = errorMessage;
       instance.insertContent();
     });
 
     // then
     it('should insert proper content to message container', () => {
-      const elementText: string = (document.getElementById(elementId) as HTMLElement).textContent;
+      const elementText: string = instance.notificationFrameElement.textContent;
       expect(elementText).toEqual(errorMessage.content);
+    });
+  });
+
+  describe('Method insertContent translated', () => {
+    let { elementId } = NotificationFrameFixture();
+    let instance = new NotificationFrame();
+    // when
+    beforeEach(() => {
+      document.body.innerHTML = '<div id="st-notification-frame" class="notification-frame">Some example error</div>';
+      // @ts-ignore
+      instance.notificationFrameElement = document.getElementById(elementId) as HTMLElement;
+      instance._message = { content: 'Field is required', type: 'error' };
+      instance._translator = new Translator('fr_FR');
+      instance.insertContent();
+    });
+
+    // then
+    it('should insert proper content to message container in french', () => {
+      const elementText: string = instance.notificationFrameElement.textContent;
+      expect(elementText).toEqual('Champ requis');
     });
   });
 

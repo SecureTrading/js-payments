@@ -7,11 +7,13 @@ jest.mock('./../../../src/core/shared/MessageBus');
 
 // given
 describe('Class CardNumber', () => {
-  let { inputElement, messageElement, cardNumberInstance, testCardNumbers } = CardNumberFixture();
+  let { inputElement, messageElement, cardNumberInstance, testCardNumbers, labelElement } = CardNumberFixture();
   // when
   beforeAll(() => {
     document.body.appendChild(inputElement);
+    document.body.appendChild(labelElement);
     document.body.appendChild(messageElement);
+    FormField.prototype.getLabel = jest.fn(); // Not implemented in FormField
   });
 
   // then
@@ -22,6 +24,11 @@ describe('Class CardNumber', () => {
   // then
   it('should create instance of class CardNumber', () => {
     expect(cardNumberInstance).toBeInstanceOf(FormField);
+  });
+
+  // then
+  it('should have a label', () => {
+    expect(cardNumberInstance.getLabel()).toBe('Card number');
   });
 
   // given
@@ -58,7 +65,7 @@ describe('Class CardNumber', () => {
 
 function CardNumberFixture() {
   const html =
-    '<form id="st-card-number" class="card-number" novalidate=""><label for="st-card-number-input" class="card-number__label card-number__label--required">CARD NUMBER</label> <input id="st-card-number-input" class="card-number__input" type="text" autocomplete="off" required="" data-luhn-check="true" maxlength="NaN" minlength="19"> <p id="st-card-number-message" class="card-number__message"></p> </form>';
+    '<form id="st-card-number" class="card-number" novalidate=""><label id="st-card-number-label" for="st-card-number-input" class="card-number__label card-number__label--required">Card number</label><input id="st-card-number-input" class="card-number__input" type="text" autocomplete="off" required="" data-luhn-check="true" maxlength="NaN" minlength="19"><p id="st-card-number-message" class="card-number__message"></p></form>';
   document.body.innerHTML = html;
   let cardNumberInstance = new CardNumber();
 
@@ -67,6 +74,7 @@ function CardNumberFixture() {
   }
 
   let inputElement = createElement('input');
+  let labelElement = document.createElement('label');
   let messageElement = createElement('p');
   const testCardNumbers = [
     ['', 0],
@@ -75,12 +83,14 @@ function CardNumberFixture() {
     ['79927398713', true],
     ['6759555555555555', false]
   ];
+  labelElement.id = Selectors.CARD_NUMBER_LABEL;
   inputElement.id = Selectors.CARD_NUMBER_INPUT;
   messageElement.id = Selectors.CARD_NUMBER_MESSAGE;
 
   return {
     cardNumberInstance,
     inputElement,
+    labelElement,
     messageElement,
     testCardNumbers
   };
