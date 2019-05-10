@@ -66,7 +66,7 @@ export class CardinalCommerce {
    * @protected
    */
   // @ts-ignore
-  protected _performBinDetection = (data: IFormFieldState) => global.Cardinal.trigger('bin.process', data.value);
+  protected _performBinDetection = (data: IFormFieldState) => Cardinal.trigger('bin.process', data.value);
 
   /**
    * Triggered when the transaction has been finished.
@@ -88,7 +88,7 @@ export class CardinalCommerce {
    */
   protected _authenticateCard(responseObject: IThreeDQueryResponse) {
     // @ts-ignore
-    const cardinal = global.Cardinal;
+    const cardinal = Cardinal;
     this._threedQueryTransactionReference = responseObject.transactionreference;
     cardinal.continue(
       CardinalCommerce.PAYMENT_BRAND,
@@ -111,7 +111,7 @@ export class CardinalCommerce {
    */
   protected _onCardinalLoad() {
     // @ts-ignore
-    const cardinal = global.Cardinal;
+    const cardinal = Cardinal;
     cardinal.configure(environment.CARDINAL_COMMERCE.CONFIG);
     cardinal.on(CardinalCommerce.PAYMENT_EVENTS.SETUP_COMPLETE, this._onCardinalSetupComplete.bind(this));
     cardinal.on(CardinalCommerce.PAYMENT_EVENTS.VALIDATED, this._onCardinalValidated.bind(this));

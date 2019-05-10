@@ -107,10 +107,10 @@ describe('Class CCIntegration', () => {
         expect(Cardinal.configure).toHaveBeenCalledWith({ logging: { level: 'on' } });
         expect(Cardinal.on).toHaveBeenCalledTimes(2);
         expect(Cardinal.on.mock.calls[0][0]).toBe('payments.setupComplete');
-        expect(Cardinal.on.mock.calls[0][1]).toBe(instance._onCardinalSetupComplete);
+        expect(Cardinal.on.mock.calls[0][1] instanceof Function).toBe(true);
 
         expect(Cardinal.on.mock.calls[1][0]).toBe('payments.validated');
-        expect(Cardinal.on.mock.calls[1][1]).toBe(instance._onCardinalValidated);
+        expect(Cardinal.on.mock.calls[1][1] instanceof Function).toBe(true);
 
         expect(Cardinal.setup).toHaveBeenCalledTimes(1);
         expect(Cardinal.setup).toHaveBeenCalledWith('init', { jwt });
@@ -124,11 +124,11 @@ describe('Class CCIntegration', () => {
         instance._initSubscriptions();
         expect(instance.messageBus.subscribeOnParent).toHaveBeenCalledTimes(3);
         expect(instance.messageBus.subscribeOnParent.mock.calls[0][0]).toBe('LOAD_CONTROL_FRAME');
-        expect(instance.messageBus.subscribeOnParent.mock.calls[0][1]).toBe(instance._onLoadControlFrame);
+        expect(instance.messageBus.subscribeOnParent.mock.calls[0][1] instanceof Function).toBe(true);
         expect(instance.messageBus.subscribeOnParent.mock.calls[1][0]).toBe('THREEDINIT');
-        expect(instance.messageBus.subscribeOnParent.mock.calls[1][1]).toBe(instance._onThreeDInitEvent);
+        expect(instance.messageBus.subscribeOnParent.mock.calls[1][1] instanceof Function).toBe(true);
         expect(instance.messageBus.subscribeOnParent.mock.calls[2][0]).toBe('THREEDQUERY');
-        expect(instance.messageBus.subscribeOnParent.mock.calls[2][1]).toBe(instance._onThreeDQueryEvent);
+        expect(instance.messageBus.subscribeOnParent.mock.calls[2][1] instanceof Function).toBe(true);
       });
     });
 
@@ -202,7 +202,10 @@ describe('Class CCIntegration', () => {
           'https://songbirdstag.cardinalcommerce.com/cardinalcruise/v1/songbird.js'
         );
         expect(script.addEventListener).toHaveBeenCalledTimes(1);
-        expect(script.addEventListener).toHaveBeenCalledWith('load', instance._onCardinalLoad);
+        // @ts-ignore
+        expect(script.addEventListener.mock.calls[0][0]).toBe('load');
+        // @ts-ignore
+        expect(script.addEventListener.mock.calls[0][1] instanceof Function).toEqual(true);
       });
     });
 
