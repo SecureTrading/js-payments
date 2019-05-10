@@ -26,7 +26,7 @@ export default class FormField extends Frame {
   protected _getAllowedStyles() {
     let allowed = super._getAllowedStyles();
     const input = `#${this._inputSelector}`;
-    const inputError = `${input}:invalid`;
+    const inputError = `${input}:invalid:focus`;
     const inputPlaceholder = `${input}::placeholder`;
     const message = `#${this._messageSelector}`;
     const label = `label[for=${this._inputSelector}]`;

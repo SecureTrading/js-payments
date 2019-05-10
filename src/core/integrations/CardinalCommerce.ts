@@ -82,6 +82,7 @@ export class CardinalCommerce {
    * @protected
    */
   protected _authenticateCard(responseObject: IThreeDQueryResponse) {
+    console.log(responseObject);
     this._threedQueryTransactionReference = responseObject.transactionreference;
     Cardinal.continue(
       CardinalCommerce.PAYMENT_BRAND,
