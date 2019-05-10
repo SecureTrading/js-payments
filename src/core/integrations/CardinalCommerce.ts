@@ -125,9 +125,15 @@ export class CardinalCommerce {
   }
 
   private _initSubscriptions() {
-    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME, this._onLoadControlFrame.bind(this));
-    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDINIT, this._onThreeDInitEvent.bind(this));
-    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDQUERY, this._onThreeDQueryEvent.bind(this));
+    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME, () => {
+      this._onLoadControlFrame();
+    });
+    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDINIT, (data: any) => {
+      this._onThreeDInitEvent(data);
+    });
+    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDQUERY, (data: any) => {
+      this._onThreeDQueryEvent(data);
+    });
   }
 
   private _onLoadControlFrame() {
@@ -155,10 +161,9 @@ export class CardinalCommerce {
   }
 
   private _threeDSetup() {
-    DomMethods.insertScript('head', environment.CARDINAL_COMMERCE.SONGBIRD_URL).addEventListener(
-      'load',
-      this._onCardinalLoad.bind(this)
-    );
+    DomMethods.insertScript('head', environment.CARDINAL_COMMERCE.SONGBIRD_URL).addEventListener('load', () => {
+      this._onCardinalLoad();
+    });
   }
 
   private _threeDQueryRequest(responseObject: IThreeDQueryResponse) {
