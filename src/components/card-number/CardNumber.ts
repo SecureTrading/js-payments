@@ -5,11 +5,11 @@ import Selectors from '../../core/shared/Selectors';
 import Utils from '../../core/shared/Utils';
 
 export default class CardNumber extends FormField {
+  public static ifFieldExists = (): HTMLInputElement =>
+    document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
   private static LUHN_CHECK_ARRAY: any = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
   private static STANDARD_CARD_LENGTH = 19;
   private static CARD_NUMBER_FOR_BIN_PROCESS = (cardNumber: string) => cardNumber.slice(0, 6);
-  public static ifFieldExists = (): HTMLInputElement =>
-    document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
 
   public binLookup: BinLookup;
   public cardNumberField: HTMLInputElement;
@@ -17,8 +17,7 @@ export default class CardNumber extends FormField {
 
   constructor() {
     super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE);
-    // @ts-ignore
-    this.cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT);
+    this.cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     this.binLookup = new BinLookup();
     this.isCardNumberValid = true;
     this.setCardNumberProperties();
@@ -40,27 +39,38 @@ export default class CardNumber extends FormField {
 
     while (cardNumberLength) {
       const val = parseInt(cardNumber.charAt(--cardNumberLength), 10);
-      sum += (bit ^= 1) ? CardNumber.LUHN_CHECK_ARRAY[val] : val;
+      bit = bit ^ 1;
+      const algorithmValue = bit ? CardNumber.LUHN_CHECK_ARRAY[val] : val;
+      sum += algorithmValue;
     }
 
     return sum && sum % 10 === 0;
   }
 
-  public setCardNumberAttributes(attributes: {}) {
+  /**
+   * Sets multiple attributes on card number input.
+   * @param attributes
+   */
+  public setCardNumberAttributes(attributes: any) {
     for (const attribute in attributes) {
-      // @ts-ignore
-      const value = attributes[attribute];
-      if (Utils.inArray(['value'], attribute)) {
-        // @ts-ignore
-        this.cardNumberField[attribute] = value;
-      } else if (value === false) {
-        this.cardNumberField.removeAttribute(attribute);
-      } else {
-        this.cardNumberField.setAttribute(attribute, value);
+      if (attributes.hasOwnProperty(attribute)) {
+        const value = attributes[attribute];
+        if (Utils.inArray(['value'], attribute)) {
+          // @ts-ignore
+          this.cardNumberField[attribute] = value;
+        } else if (value === false) {
+          this.cardNumberField.removeAttribute(attribute);
+        } else {
+          this.cardNumberField.setAttribute(attribute, value);
+        }
       }
     }
   }
 
+  /**
+   * Live card formatting based on binLookup request.
+   * @param cardNumber
+   */
   public formatCardNumber(cardNumber: string) {
     const format = this.getCardFormat(cardNumber);
     const previousValue = cardNumber;
@@ -89,6 +99,9 @@ export default class CardNumber extends FormField {
     }
   }
 
+  /**
+   * Inform about security code length based on binLookup request.
+   */
   public publishSecurityCodeLength() {
     const { value } = this.getState();
     const messageBusEvent: IMessageBusEvent = {
@@ -113,12 +126,10 @@ export default class CardNumber extends FormField {
     this.sendState();
   }
 
-  protected getPossibleCardLength = (cardNumber: string) =>
-    this.binLookup.binLookup(cardNumber).length ? this.binLookup.binLookup(cardNumber).length : undefined;
-  protected getLuhnCheckStatus = (cardNumber: string) =>
-    this.binLookup.binLookup(cardNumber).luhn ? this.binLookup.binLookup(cardNumber).luhn : undefined;
   protected getCardFormat = (cardNumber: string) =>
     this.binLookup.binLookup(cardNumber).format ? this.binLookup.binLookup(cardNumber).format : undefined;
+  protected getPossibleCardLength = (cardNumber: string) =>
+    this.binLookup.binLookup(cardNumber).length ? this.binLookup.binLookup(cardNumber).length : undefined;
 
   protected getSecurityCodeLength(cardNumber: string) {
     if (this.binLookup.binLookup(cardNumber).cvcLength !== undefined) {
@@ -133,19 +144,17 @@ export default class CardNumber extends FormField {
     });
   }
 
-  private getLastElementOfArray = (array: number[]) => array && array.slice(-1).pop();
-
   private getMaxLengthOfCardNumber(cardNumber: string) {
     const cardLengthFromBin = this.getPossibleCardLength(cardNumber);
-    const cardFormat = this.binLookup.binLookup(cardNumber).format;
+    const cardFormat = this.getCardFormat(cardNumber);
     let numberOfWhitespaces;
     if (cardFormat) {
-      numberOfWhitespaces = this.binLookup.binLookup(cardNumber).format.split('d').length - 1;
+      numberOfWhitespaces = cardFormat.split('d').length - 1;
     } else {
       numberOfWhitespaces = 0;
     }
 
-    return this.getLastElementOfArray(cardLengthFromBin) + numberOfWhitespaces;
+    return Utils.getLastElementOfArray(cardLengthFromBin) + numberOfWhitespaces;
   }
 
   private getMinLengthOfCardNumber(cardNumber: string) {

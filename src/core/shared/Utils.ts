@@ -105,4 +105,6 @@ export default class Utils {
     }
     return string.replace(regex, '');
   }
+
+  public static getLastElementOfArray = (array: number[]) => array && array.slice(-1).pop();
 }
