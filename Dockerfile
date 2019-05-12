@@ -1,5 +1,4 @@
-FROM alpine:latest
-RUN apk update && apk add nodejs npm git
+FROM securetrading1/js-payments-image:master
 COPY . /app/js-payments
 WORKDIR /app/js-payments
 RUN npm rebuild node-sass
