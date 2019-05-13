@@ -95,8 +95,23 @@ describe('Class CardNumber', () => {
     });
 
     // then
-    it('should return binLookup object if card format is recognized', () => {
+    it('should return card format regexp if card format is recognized', () => {
       expect(cardNumberInstance.getCardFormat(cardNumberCorrect)).toEqual(receivedObject.format);
+    });
+  });
+
+  // given
+  describe('Method getPossibleCardLength', () => {
+    const { unrecognizedCardNumber, cardNumberCorrect, receivedObject } = CardNumberFixture();
+
+    // then
+    it('should return undefined if card format is not recognized', () => {
+      expect(cardNumberInstance.getPossibleCardLength(unrecognizedCardNumber)).toEqual(undefined);
+    });
+
+    // then
+    it('should return possible card length if card format is recognized', () => {
+      expect(cardNumberInstance.getPossibleCardLength(cardNumberCorrect)).toEqual(receivedObject.length);
     });
   });
 });
