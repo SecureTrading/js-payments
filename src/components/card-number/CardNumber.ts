@@ -115,13 +115,15 @@ export default class CardNumber extends FormField {
     this._messageBus.publish(messageBusEvent);
   }
 
-  protected getBinLookupDetails = (cardNumber: string) =>
-    this.binLookup.binLookup(cardNumber) ? this.binLookup.binLookup(cardNumber) : undefined;
-  protected getCardFormat = (cardNumber: string) => this.getBinLookupDetails(cardNumber).format;
-  protected getPossibleCardLength = (cardNumber: string) => this.getBinLookupDetails(cardNumber).length;
+  public getBinLookupDetails = (cardNumber: string) =>
+    this.binLookup.binLookup(cardNumber).type ? this.binLookup.binLookup(cardNumber) : undefined;
+  public getCardFormat = (cardNumber: string) =>
+    this.getBinLookupDetails(cardNumber) ? this.getBinLookupDetails(cardNumber).format : undefined;
+  public getPossibleCardLength = (cardNumber: string) =>
+    this.getBinLookupDetails(cardNumber) ? this.getBinLookupDetails(cardNumber).length : undefined;
 
-  protected getSecurityCodeLength(cardNumber: string) {
-    if (this.getBinLookupDetails(cardNumber).cvcLength !== undefined) {
+  public getSecurityCodeLength(cardNumber: string) {
+    if (this.getBinLookupDetails(cardNumber)) {
       return this.getBinLookupDetails(cardNumber).cvcLength[0];
     }
   }
