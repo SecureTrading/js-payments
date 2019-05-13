@@ -1,6 +1,5 @@
 import each from 'jest-each';
 import CardNumber from '../../../src/components/card-number/CardNumber';
-import MessageBus from '../../../src/core/shared/MessageBus';
 import Selectors from '../../../src/core/shared/Selectors';
 import FormField from '../../../src/core/shared/FormField';
 
@@ -112,6 +111,21 @@ describe('Class CardNumber', () => {
     // then
     it('should return possible card length if card format is recognized', () => {
       expect(cardNumberInstance.getPossibleCardLength(cardNumberCorrect)).toEqual(receivedObject.length);
+    });
+  });
+
+  // given
+  describe('Method getSecurityCodeLength', () => {
+    const { unrecognizedCardNumber, cardNumberCorrect, receivedObject } = CardNumberFixture();
+
+    // then
+    it('should return undefined if card format is not recognized', () => {
+      expect(cardNumberInstance.getSecurityCodeLength(unrecognizedCardNumber)).toEqual(undefined);
+    });
+
+    // then
+    it('should return possible cvc lengths if card format is recognized', () => {
+      expect(cardNumberInstance.getSecurityCodeLength(cardNumberCorrect)).toEqual(receivedObject.cvcLength[0]);
     });
   });
 });

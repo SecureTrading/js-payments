@@ -121,12 +121,8 @@ export default class CardNumber extends FormField {
     this.getBinLookupDetails(cardNumber) ? this.getBinLookupDetails(cardNumber).format : undefined;
   public getPossibleCardLength = (cardNumber: string) =>
     this.getBinLookupDetails(cardNumber) ? this.getBinLookupDetails(cardNumber).length : undefined;
-
-  public getSecurityCodeLength(cardNumber: string) {
-    if (this.getBinLookupDetails(cardNumber)) {
-      return this.getBinLookupDetails(cardNumber).cvcLength[0];
-    }
-  }
+  public getSecurityCodeLength = (cardNumber: string) =>
+    this.getBinLookupDetails(cardNumber) ? this.getBinLookupDetails(cardNumber).cvcLength[0] : undefined;
 
   public getLabel(): string {
     return Language.translations.LABEL_CARD_NUMBER;
