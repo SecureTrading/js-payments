@@ -17,6 +17,13 @@ export default class NotificationFrame extends Frame {
     this._notificationFrameElement = value;
   }
 
+  public static MESSAGE_TYPES = {
+    error: 'ERROR',
+    info: 'INFO',
+    success: 'SUCCESS',
+    warning: 'WARNING'
+  };
+
   public static ELEMENT_CLASSES = {
     error: Selectors.NOTIFICATION_FRAME_ERROR_CLASS,
     info: Selectors.NOTIFICATION_FRAME_INFO_CLASS,
@@ -89,6 +96,25 @@ export default class NotificationFrame extends Frame {
   }
 
   /**
+   * Sets data-* attributes for QA purposes
+   */
+  public setDataNotificationColorAttribute(messageType: string) {
+    if (this.notificationFrameElement) {
+      if (messageType === NotificationFrame.MESSAGE_TYPES.error) {
+        this.notificationFrameElement.dataset.notificationColor = 'red';
+      } else if (messageType === NotificationFrame.MESSAGE_TYPES.info) {
+        this.notificationFrameElement.dataset.notificationColor = 'grey';
+      } else if (messageType === NotificationFrame.MESSAGE_TYPES.success) {
+        this.notificationFrameElement.dataset.notificationColor = 'green';
+      } else if (messageType === NotificationFrame.MESSAGE_TYPES.warning) {
+        this.notificationFrameElement.dataset.notificationColor = 'yellow';
+      } else {
+        this.notificationFrameElement.dataset.notificationColor = 'undefined';
+      }
+    }
+  }
+
+  /**
    * Sets proper class to message container
    * @private
    */
@@ -96,6 +122,7 @@ export default class NotificationFrame extends Frame {
     const notificationElementClass = NotificationFrame._getMessageClass(this._message.type);
     if (this.notificationFrameElement && notificationElementClass) {
       this.notificationFrameElement.classList.add(notificationElementClass);
+      this.setDataNotificationColorAttribute(this._message.type);
       this._autoHide(notificationElementClass);
     }
   }
