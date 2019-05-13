@@ -85,6 +85,36 @@ describe('Class CardNumber', () => {
   });
 
   // given
+  describe('Method getMaxLengthOfCardNumber', () => {
+    const { cardNumberCorrect } = CardNumberFixture();
+    const maxLengthOfCardNumber = 21;
+
+    // then
+    it('should return max length of card number', () => {
+      expect(cardNumberInstance.getMaxLengthOfCardNumber(cardNumberCorrect)).toEqual(maxLengthOfCardNumber);
+    });
+  });
+
+  // given
+  describe('Method setMinMaxLengthOfCard', () => {
+    let expectedMinMax: any;
+    const { cardNumberCorrect } = CardNumberFixture();
+
+    // when
+    beforeEach(() => {
+      expectedMinMax = {
+        maxlength: 21,
+        minlength: 16
+      };
+    });
+
+    // then
+    it('should set max and min attributes of card number', () => {
+      expect(cardNumberInstance.setMinMaxLengthOfCard(cardNumberCorrect)).toEqual(expectedMinMax);
+    });
+  });
+
+  // given
   describe('Method getCardFormat', () => {
     const { unrecognizedCardNumber, cardNumberCorrect, receivedObject } = CardNumberFixture();
 
@@ -126,6 +156,34 @@ describe('Class CardNumber', () => {
     // then
     it('should return possible cvc lengths if card format is recognized', () => {
       expect(cardNumberInstance.getSecurityCodeLength(cardNumberCorrect)).toEqual(receivedObject.cvcLength[0]);
+    });
+  });
+
+  // given
+  describe('Method getFormFieldState', () => {
+    let publishSecurityCodeLengthSpy: any;
+    let formatCardNumberSpy: any;
+    let setMinMaxLengthOfCardSpy: any;
+    // when
+    beforeEach(() => {
+      publishSecurityCodeLengthSpy = jest.spyOn(cardNumberInstance, 'publishSecurityCodeLength');
+      formatCardNumberSpy = jest.spyOn(cardNumberInstance, 'formatCardNumber');
+      setMinMaxLengthOfCardSpy = jest.spyOn(cardNumberInstance, 'setMinMaxLengthOfCard');
+      cardNumberInstance.getFormFieldState();
+    });
+    // then
+    it('should publishSecurityCodeLength has been called', () => {
+      expect(publishSecurityCodeLengthSpy).toHaveBeenCalled();
+    });
+
+    // then
+    it('should formatCardNumber has been called', () => {
+      expect(formatCardNumberSpy).toHaveBeenCalled();
+    });
+
+    // then
+    it('should setMinMaxLengthOfCard has been called', () => {
+      expect(setMinMaxLengthOfCardSpy).toHaveBeenCalled();
     });
   });
 });

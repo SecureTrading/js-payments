@@ -35,7 +35,7 @@ export default class CardNumber extends FormField {
    *    Step 4: if sum of those above is divisible by ten, YOU PASS THE LUHN !
    */
   public luhnCheck(cardNumber: string) {
-    let cardNumberWithoutSpaces = cardNumber.replace(/\s/g, '');
+    const cardNumberWithoutSpaces = cardNumber.replace(/\s/g, '');
     let bit = 1;
     let cardNumberLength = cardNumberWithoutSpaces.length;
     let sum = 0;
@@ -128,6 +128,28 @@ export default class CardNumber extends FormField {
     return Language.translations.LABEL_CARD_NUMBER;
   }
 
+  public setMinMaxLengthOfCard(cardNumber: string) {
+    const minMax = {
+      maxlength: this.getMaxLengthOfCardNumber(cardNumber),
+      minlength: this.getMinLengthOfCardNumber(cardNumber)
+    };
+    this.setAttributes(minMax);
+    return minMax;
+  }
+
+  public getMaxLengthOfCardNumber(cardNumber: string) {
+    const cardLengthFromBin = this.getPossibleCardLength(cardNumber);
+    const cardFormat = this.getCardFormat(cardNumber);
+    let numberOfWhitespaces;
+    if (cardFormat) {
+      numberOfWhitespaces = cardFormat.split('d').length - CardNumber.WHITESPACES_DECREASE_NUMBER;
+    } else {
+      numberOfWhitespaces = 0;
+    }
+
+    return Utils.getLastElementOfArray(cardLengthFromBin) + numberOfWhitespaces;
+  }
+
   protected onFocus(event: Event) {
     super.onFocus(event);
     this.sendState();
@@ -141,26 +163,6 @@ export default class CardNumber extends FormField {
   protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
     this.sendState();
-  }
-
-  private setMinMaxLengthOfCard(cardNumber: string) {
-    this.setAttributes({
-      maxlength: this.getMaxLengthOfCardNumber(cardNumber),
-      minlength: this.getMinLengthOfCardNumber(cardNumber)
-    });
-  }
-
-  private getMaxLengthOfCardNumber(cardNumber: string) {
-    const cardLengthFromBin = this.getPossibleCardLength(cardNumber);
-    const cardFormat = this.getCardFormat(cardNumber);
-    let numberOfWhitespaces;
-    if (cardFormat) {
-      numberOfWhitespaces = cardFormat.split('d').length - CardNumber.WHITESPACES_DECREASE_NUMBER;
-    } else {
-      numberOfWhitespaces = 0;
-    }
-
-    return Utils.getLastElementOfArray(cardLengthFromBin) + numberOfWhitespaces;
   }
 
   private getMinLengthOfCardNumber(cardNumber: string) {
@@ -181,7 +183,7 @@ export default class CardNumber extends FormField {
     });
   }
 
-  private getFormFieldState(): IFormFieldState {
+  public getFormFieldState(): IFormFieldState {
     const { value, validity } = this.getState();
     this.publishSecurityCodeLength();
     this.formatCardNumber(value);
@@ -198,8 +200,6 @@ export default class CardNumber extends FormField {
       data: this.getFormFieldState(),
       type: MessageBus.EVENTS.CHANGE_CARD_NUMBER
     };
-
-    console.log(this.luhnCheck(value));
 
     if (validity) {
       const binProcessEvent: IMessageBusEvent = {
