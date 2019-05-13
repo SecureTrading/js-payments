@@ -150,6 +150,17 @@ export default class CardNumber extends FormField {
     return Utils.getLastElementOfArray(cardLengthFromBin) + numberOfWhitespaces;
   }
 
+  public getFormFieldState(): IFormFieldState {
+    const { value, validity } = this.getState();
+    this.publishSecurityCodeLength();
+    this.formatCardNumber(value);
+    this.setMinMaxLengthOfCard(value);
+    return {
+      validity,
+      value
+    };
+  }
+
   protected onFocus(event: Event) {
     super.onFocus(event);
     this.sendState();
@@ -181,17 +192,6 @@ export default class CardNumber extends FormField {
       // @ts-ignore
       'data-luhn-check': this.isCardNumberValid
     });
-  }
-
-  public getFormFieldState(): IFormFieldState {
-    const { value, validity } = this.getState();
-    this.publishSecurityCodeLength();
-    this.formatCardNumber(value);
-    this.setMinMaxLengthOfCard(value);
-    return {
-      validity,
-      value
-    };
   }
 
   private sendState() {
