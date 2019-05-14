@@ -98,4 +98,13 @@ export default class Utils {
       attempt();
     });
   }
+
+  public static stripChars(string: string, regex: any) {
+    if (typeof regex === 'undefined') {
+      regex = /[\D+]/g;
+    }
+    return string.replace(regex, '');
+  }
+
+  public static getLastElementOfArray = (array: number[]) => array && array.slice(-1).pop();
 }
