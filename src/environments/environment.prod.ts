@@ -13,6 +13,7 @@ export const environment = {
   },
   FRAME_URL: 'https://webservices.securetrading.net/js',
   GATEWAY_URL,
+  NOTIFICATION_TTL: 7000,
   ST_URLS: {
     MOCK: {
       AUTH: `${MOCK_GATEWAY_URL}/auth`,

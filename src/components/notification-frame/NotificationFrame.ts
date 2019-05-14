@@ -1,4 +1,5 @@
 import { INotificationEvent, NotificationType } from '../../core/models/NotificationEvent';
+import { environment } from '../../environments/environment';
 import Frame from '../../core/shared/Frame';
 import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
@@ -54,7 +55,7 @@ export default class NotificationFrame extends Frame {
     }
   }
 
-  private static readonly NOTIFICATION_TTL = 7 * 1000;
+  private static readonly NOTIFICATION_TTL = environment.NOTIFICATION_TTL;
   private static ELEMENT_ID: string = Selectors.NOTIFICATION_FRAME_ID;
   public _message: INotificationEvent;
   public _translator: Translator;
