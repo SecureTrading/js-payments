@@ -99,7 +99,7 @@ class StCodec {
    */
   public encode(requestObject: IStRequest) {
     if (
-      Object.keys(requestObject).length < 2 ||
+      Object.keys(requestObject).length < 1 ||
       !StCodec.SUPPORTED_REQUEST_TYPES.includes(requestObject.requesttypedescription)
     ) {
       StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST);

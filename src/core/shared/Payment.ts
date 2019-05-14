@@ -5,14 +5,10 @@ import { IStJwtPayload, StJwt } from './StJwt';
 
 export default class Payment {
   private _stTransport: StTransport;
-  private _stJwtDecode: any;
-  private readonly _stJwtPayload: IStJwtPayload;
   private _cardinalCommerceCacheToken: string;
 
   constructor(jwt: string) {
     this._stTransport = new StTransport({ jwt });
-    this._stJwtDecode = new StJwt(jwt);
-    this._stJwtPayload = this._stJwtDecode.payload;
   }
 
   public tokenizeCard(card: ICard): Promise<object> {
@@ -20,10 +16,6 @@ export default class Payment {
       {
         requesttypedescription: 'CACHETOKENISE'
       },
-      // TODO we shouldn't need to include the stjwtpayload
-      // here on any request we send the full jwt in so the
-      // server will decode and update with data inside jwt
-      this._stJwtPayload,
       card
     );
 
@@ -35,8 +27,7 @@ export default class Payment {
       {
         requesttypedescription: 'WALLETVERIFY'
       },
-      wallet,
-      this._stJwtPayload
+      wallet
     );
     return this._stTransport.sendRequest(requestBody);
   }
@@ -47,7 +38,6 @@ export default class Payment {
         requesttypedescription: 'AUTH'
       },
       additionalData,
-      this._stJwtPayload,
       merchantData,
       payment
     );
@@ -58,8 +48,7 @@ export default class Payment {
     const requestBody: IStRequest = Object.assign(
       {
         requesttypedescription: 'JSINIT'
-      },
-      this._stJwtPayload
+      }
     );
 
     return this._stTransport.sendRequest(requestBody).then(responseBody => {
@@ -74,7 +63,7 @@ export default class Payment {
       {
         cachetoken: this._cardinalCommerceCacheToken,
         requesttypedescription: 'THREEDQUERY',
-        termurl: 'https://termurl.com' // TODO shouldn't this be removed?
+        termurl: 'https://termurl.com' // TODO this shouldn't be needed but currently the backend needs this
       },
       merchantData,
       card

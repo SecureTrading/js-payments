@@ -19,7 +19,7 @@
     "example": "ws --rewrite '/* -> /dist/$1' --https",
     "prod": "npm run build",
     "test": "jest --watchAll",
-    "coverage": "jest --coverage --no-cache",
+    "coverage": "jest --coverage",
     "snyk": "snyk test",
     "testdocker": "docker pull \"securetrading1/js-payments-testing:$DOCKER_BRANCH\" && docker run -d -p 8443:8443 -p 8760:8760 -it \"securetrading1/js-payments-testing:$DOCKER_BRANCH\"",
     "behave": "npm run testdocker && cd js-payments-testing && make"
