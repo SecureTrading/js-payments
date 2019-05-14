@@ -13,7 +13,6 @@ export default class Frame {
   protected _messageBus: MessageBus;
   protected _params: IParams;
 
-
   public onInit() {
     this._params = this.parseUrl();
     this._messageBus = new MessageBus(this._params.origin);
@@ -24,7 +23,7 @@ export default class Frame {
     const parsedUrl = new URL(window.location.href);
     const styles: IStyles = {};
     const params: IParams = {};
-    const allowedParams = ['locale', 'jwt', 'origin'];
+    const allowedParams = this._getAllowedParams();
     parsedUrl.searchParams.forEach((value, param) => {
       if (allowedParams.includes(param)) {
         params[param] = value;
@@ -40,6 +39,10 @@ export default class Frame {
     new Styler(this._getAllowedStyles()).inject(this._params.styles);
   }
 
+  protected _getAllowedParams() {
+    return ['locale', 'origin'];
+  }
+
   protected _getAllowedStyles() {
     const allowed: IAllowedStyles = {
       'background-color-body': { property: 'background-color', selector: 'body' },
@@ -51,5 +54,4 @@ export default class Frame {
     };
     return allowed;
   }
-
 }

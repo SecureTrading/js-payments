@@ -36,11 +36,13 @@ export default class ControlFrame extends Frame {
 
   public onInit() {
     super.onInit();
-    this._payment = environment.testEnvironment
-      ? new PaymentMock(this._params.jwt)
-      : new Payment(this._params.jwt);
+    this._payment = environment.testEnvironment ? new PaymentMock(this._params.jwt) : new Payment(this._params.jwt);
     this.initSubscriptions();
     this.onLoad();
+  }
+
+  protected _getAllowedParams() {
+    return super._getAllowedParams().concat(['jwt']);
   }
 
   protected _getAllowedStyles() {
@@ -85,7 +87,9 @@ export default class ControlFrame extends Frame {
   }
 
   private onLoad() {
-    const messageBusEvent: IMessageBusEvent = { type: MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME };
+    const messageBusEvent: IMessageBusEvent = {
+      type: MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME
+    };
     this._messageBus.publish(messageBusEvent, true);
   }
 

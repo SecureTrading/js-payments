@@ -6,7 +6,10 @@ describe('Frame', () => {
     ['/myframe.html', {}],
     ['/myframe.html?mykey=some%20value', { styles: { mykey: 'some value' } }],
     ['/myframe.html?mykey=some%20value&locale=fr_FR', { locale: 'fr_FR', styles: { mykey: 'some value' } }],
-    ['/myframe.html?mykey=some%20value&locale=fr_FR&jwt=ajwtvalue', { jwt: 'ajwtvalue', locale: 'fr_FR', styles: { mykey: 'some value' } }],
+    [
+      '/myframe.html?mykey=some%20value&locale=fr_FR&origin=https%3A%2F%2Fexample.com',
+      { origin: 'https://example.com', locale: 'fr_FR', styles: { mykey: 'some value' } }
+    ],
     [
       '/card-number.html?background-color-input=AliceBlue&color-input-error=%23721c24&line-height-input=12px&font-size-input=12px&background-color-input-error=%23f8d7da',
       {
@@ -30,13 +33,13 @@ describe('Frame', () => {
   describe('Frame.onInit', () => {
     it('should call parseUrl', () => {
       let frame = new Frame();
-      frame.parseUrl = jest.fn().mockReturnValueOnce({origin: 'https://example.com'});
+      frame.parseUrl = jest.fn().mockReturnValueOnce({ origin: 'https://example.com' });
       frame.applyStyles = jest.fn();
       frame.onInit();
       expect(frame.parseUrl).toHaveBeenCalledTimes(1);
       expect(frame.applyStyles).toHaveBeenCalledTimes(1);
       // @ts-ignore
-      expect(frame._params).toMatchObject({origin: 'https://example.com'});
+      expect(frame._params).toMatchObject({ origin: 'https://example.com' });
     });
   });
 });
