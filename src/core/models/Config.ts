@@ -7,5 +7,10 @@ export interface IConfig {
   origin: string;
   step: boolean;
   styles: IStyles;
-  wallets: object[];
+}
+
+export interface IWalletConfig {
+  jwt: string;
+  step: boolean;
+  props: object;
 }

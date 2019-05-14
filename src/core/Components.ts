@@ -1,6 +1,5 @@
 import { environment } from '../environments/environment';
 import Form from './classes/Form.class';
-import Wallet from './classes/Wallet.class';
 import { CardinalCommerce } from './integrations/CardinalCommerce';
 import CardinalCommerceMock from './integrations/CardinalCommerceMock';
 import { IConfig } from './models/Config';
@@ -9,7 +8,7 @@ import { IStyles } from './shared/Styler';
 /**
  * Establishes connection with ST, defines client.
  */
-export class Components {
+export default class Components {
   /**
    * Inits Cardinal Commerce
    * @private
@@ -21,7 +20,6 @@ export class Components {
   private readonly onlyWallets: boolean;
   private readonly fieldsIds: any;
   private readonly styles: IStyles;
-  private readonly wallets: object[];
 
   constructor(config: IConfig) {
     this.jwt = config.jwt;
@@ -30,7 +28,6 @@ export class Components {
     this.onlyWallets = config.onlyWallets;
     this.fieldsIds = config.fieldsIds;
     this.styles = config.styles;
-    this.wallets = config.wallets;
     this._onInit();
   }
 
@@ -40,7 +37,6 @@ export class Components {
    */
   private _onInit() {
     this._initForm();
-    this._initWallets();
     this._init3DSecure();
   }
 
@@ -56,10 +52,4 @@ export class Components {
    * @private
    */
   private _initForm = () => new Form(this.jwt, this.origin, this.onlyWallets, this.fieldsIds, this.styles);
-
-  /**
-   * Inits Alternative Payment Methods
-   * @private
-   */
-  private _initWallets = () => new Wallet(this.jwt, this.step, this.wallets);
 }
