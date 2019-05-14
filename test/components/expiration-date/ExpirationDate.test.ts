@@ -6,12 +6,15 @@ describe('ExpirationDate', () => {
   let expirationDate: ExpirationDate;
 
   beforeAll(() => {
+    let labelElement = document.createElement('label');
     let inputElement = document.createElement('input');
     let messageElement = document.createElement('p');
 
+    labelElement.id = Selectors.EXPIRATION_DATE_LABEL;
     inputElement.id = Selectors.EXPIRATION_DATE_INPUT;
     messageElement.id = Selectors.EXPIRATION_DATE_MESSAGE;
 
+    document.body.appendChild(labelElement);
     document.body.appendChild(inputElement);
     document.body.appendChild(messageElement);
 
@@ -20,7 +23,12 @@ describe('ExpirationDate', () => {
 
   it('should create instance of classes ExpirationDate and FormField representing form field', () => {
     expect(expirationDate).toBeInstanceOf(ExpirationDate);
+    FormField.prototype.getLabel = jest.fn(); // Not implemented in FormField
     expect(expirationDate).toBeInstanceOf(FormField);
+  });
+
+  it('should have a label', () => {
+    expect(expirationDate.getLabel()).toBe('Expiration date');
   });
 
   // // given

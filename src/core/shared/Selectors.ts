@@ -5,16 +5,19 @@ export default class Selectors {
   public static readonly CARD_NUMBER_IFRAME: string = 'st-card-number-iframe';
   public static readonly CARD_NUMBER_INPUT: string = 'st-card-number-input';
   public static readonly CARD_NUMBER_MESSAGE: string = 'st-card-number-message';
+  public static readonly CARD_NUMBER_LABEL: string = 'st-card-number-label';
 
   public static readonly EXPIRATION_DATE_COMPONENT_NAME: string = 'expirationDate';
   public static readonly EXPIRATION_DATE_IFRAME: string = 'st-expiration-date-iframe';
   public static readonly EXPIRATION_DATE_INPUT: string = 'st-expiration-date-input';
   public static readonly EXPIRATION_DATE_MESSAGE: string = 'st-expiration-date-message';
+  public static readonly EXPIRATION_DATE_LABEL: string = 'st-expiration-date-label';
 
   public static readonly SECURITY_CODE_COMPONENT_NAME: string = 'securityCode';
   public static readonly SECURITY_CODE_IFRAME: string = 'st-security-code-iframe';
   public static readonly SECURITY_CODE_INPUT: string = 'st-security-code-input';
   public static readonly SECURITY_CODE_MESSAGE: string = 'st-security-code-message';
+  public static readonly SECURITY_CODE_LABEL: string = 'st-security-code-label';
 
   public static readonly NOTIFICATION_FRAME_COMPONENT_NAME: string = 'notificationFrame';
   public static readonly NOTIFICATION_FRAME_IFRAME: string = 'st-notification-frame-iframe';
@@ -47,4 +50,7 @@ export default class Selectors {
   public static readonly ANIMATED_CARD_PAYMENT_LOGO_ID: string = 'st-payment-logo';
   public static readonly ANIMATED_CARD_COMPONENT_FRAME: string = 'st-animated-card-iframe';
   public static readonly ANIMATED_CARD_COMPONENT_NAME: string = 'animatedCard';
+  public static readonly ANIMATED_CARD_CREDIT_CARD_LABEL = 'st-animated-card-card-number-label';
+  public static readonly ANIMATED_CARD_EXPIRATION_DATE_LABEL = 'st-animated-card-expiration-date-label';
+  public static readonly ANIMATED_CARD_SECURITY_CODE_LABEL = 'st-animated-card-security-code-label';
 }

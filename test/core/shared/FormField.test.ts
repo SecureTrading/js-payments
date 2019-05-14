@@ -3,18 +3,24 @@ import FormField from '../../../src/core/shared/FormField';
 describe('FormField', () => {
   let formField: FormField;
   let inputElement: HTMLInputElement;
+  let labelElement: HTMLLabelElement;
   let messageElement: HTMLParagraphElement;
 
   beforeAll(() => {
+    labelElement = document.createElement('label');
     inputElement = document.createElement('input');
     messageElement = document.createElement('p');
+    labelElement.id = 'st-form-field-label';
     inputElement.id = 'st-form-field-input';
     messageElement.id = 'st-form-field-message';
 
+    document.body.appendChild(labelElement);
     document.body.appendChild(inputElement);
     document.body.appendChild(messageElement);
 
-    formField = new FormField('st-form-field-input', 'st-form-field-message');
+    FormField.prototype.getLabel = jest.fn(); // Not implemented in FormField
+
+    formField = new FormField('st-form-field-input', 'st-form-field-message', 'st-form-field-label');
   });
 
   describe('setAttributes()', () => {

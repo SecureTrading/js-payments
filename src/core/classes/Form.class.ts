@@ -1,20 +1,52 @@
 import Element from '../Element';
 import DomMethods from '../shared/DomMethods';
+import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
+import { StJwt } from '../shared/StJwt';
 import { IStyles } from '../shared/Styler';
 
 /**
  * Defines all elements of form and their  placement on merchant site.
  */
 class Form {
+  /**
+   * Attaches to specified element text or/and icon and disables it.
+   * @param element
+   * @param text
+   * @param animatedIcon
+   * @private
+   */
+  private static _setPreloader(element: HTMLElement, text?: string, animatedIcon?: string) {
+    element.textContent = `${animatedIcon ? animatedIcon : ''}${text ? text : ''}`;
+    // @ts-ignore
+    element.disabled = true;
+  }
+
+  /**
+   * Finds submit button, disable it and set preloader text or / and icon.
+   * @private
+   */
+  private static _disableSubmitButton() {
+    const inputSubmit = document.querySelector('input[type="submit"]');
+    const buttonSubmit = document.querySelector('button[type="submit"]');
+    // @ts-ignore
+    // tslint:disable-next-line:no-unused-expression
+    inputSubmit && Form._setPreloader(inputSubmit, Language.translations.PRELOADER_TEXT);
+    // @ts-ignore
+    // tslint:disable-next-line:no-unused-expression
+    buttonSubmit && Form._setPreloader(buttonSubmit, Language.translations.PRELOADER_TEXT);
+  }
+
   public styles: IStyles;
+  public params: any; // TODO type?
   public onlyWallets: boolean;
   public elementsToRegister: HTMLElement[];
   public elementsTargets: any;
   public fieldsIds: any;
   public jwt: any;
   public origin: any;
+  private stJwt: StJwt;
   private cardNumberMounted: HTMLElement;
   private expirationDateMounted: HTMLElement;
   private securityCodeMounted: HTMLElement;
@@ -37,7 +69,9 @@ class Form {
     this.elementsTargets = this.setElementsFields(onlyWallets);
     this.elementsToRegister = [];
     this.jwt = jwt;
+    this.stJwt = new StJwt(jwt);
     this.origin = origin;
+    this.params = { locale: this.stJwt.locale };
     this.messageBus = new MessageBus();
     this._onInit();
   }
@@ -76,22 +110,22 @@ class Form {
     this.expirationDate = new Element();
     this.securityCode = new Element();
     this.animatedCard = new Element();
-
-    this.cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, this.styles, {
-      origin: this.origin
-    });
+    this.params.origin= this.origin;
+    
+    this.cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, this.styles, this.params);
+    this.cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, this.styles, this.params);
     this.cardNumberMounted = this.cardNumber.mount(Selectors.CARD_NUMBER_IFRAME);
     this.elementsToRegister.push(this.cardNumberMounted);
 
-    this.expirationDate.create(Selectors.EXPIRATION_DATE_COMPONENT_NAME, this.styles);
+    this.expirationDate.create(Selectors.EXPIRATION_DATE_COMPONENT_NAME, this.styles, this.params);
     this.expirationDateMounted = this.expirationDate.mount(Selectors.EXPIRATION_DATE_IFRAME);
     this.elementsToRegister.push(this.expirationDateMounted);
 
-    this.securityCode.create(Selectors.SECURITY_CODE_COMPONENT_NAME, this.styles);
+    this.securityCode.create(Selectors.SECURITY_CODE_COMPONENT_NAME, this.styles, this.params);
     this.securityCodeMounted = this.securityCode.mount(Selectors.SECURITY_CODE_IFRAME);
     this.elementsToRegister.push(this.securityCodeMounted);
 
-    this.animatedCard.create(Selectors.ANIMATED_CARD_COMPONENT_NAME);
+    this.animatedCard.create(Selectors.ANIMATED_CARD_COMPONENT_NAME, {}, this.params);
     this.animatedCardMounted = this.animatedCard.mount(Selectors.ANIMATED_CARD_COMPONENT_FRAME);
     this.elementsToRegister.push(this.animatedCardMounted);
   }
@@ -102,8 +136,7 @@ class Form {
   public initFormFields() {
     this.notificationFrame = new Element();
     this.controlFrame = new Element();
-
-    this.notificationFrame.create(Selectors.NOTIFICATION_FRAME_COMPONENT_NAME, this.styles);
+    this.notificationFrame.create(Selectors.NOTIFICATION_FRAME_COMPONENT_NAME, this.styles, this.params);
     this.notificationFrameMounted = this.notificationFrame.mount(Selectors.NOTIFICATION_FRAME_IFRAME);
     this.elementsToRegister.push(this.notificationFrameMounted);
 
@@ -135,6 +168,7 @@ class Form {
     this.messageBusEvent = { type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM };
     document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).addEventListener('submit', (event: Event) => {
       event.preventDefault();
+      Form._disableSubmitButton();
       this.messageBus.publishFromParent(this.messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
     });
   }
