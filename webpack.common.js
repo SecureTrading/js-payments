@@ -17,7 +17,7 @@ module.exports = {
   output: {
     filename: '[name].bundle.js',
     path: path.join(__dirname, 'dist'),
-    library: '[name]',
+    library: 'SecureTrading',
     libraryTarget: 'var',
     publicPath: ''
   },

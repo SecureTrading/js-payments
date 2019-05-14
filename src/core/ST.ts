@@ -3,12 +3,13 @@ import Form from './classes/Form.class';
 import Wallet from './classes/Wallet.class';
 import { CardinalCommerce } from './integrations/CardinalCommerce';
 import CardinalCommerceMock from './integrations/CardinalCommerceMock';
+import { IConfig } from './models/Config';
 import { IStyles } from './shared/Styler';
 
 /**
  * Establishes connection with ST, defines client.
  */
-export default class ST {
+export class Components {
   /**
    * Inits Cardinal Commerce
    * @private
@@ -22,22 +23,14 @@ export default class ST {
   private readonly styles: IStyles;
   private readonly wallets: object[];
 
-  constructor(
-    jwt: string,
-    origin: string,
-    step: boolean,
-    onlyWallets: boolean,
-    fieldsIds: any,
-    styles: IStyles,
-    wallets: object[]
-  ) {
-    this.jwt = jwt;
-    this.origin = origin;
-    this.step = step;
-    this.onlyWallets = onlyWallets;
-    this.fieldsIds = fieldsIds;
-    this.styles = styles;
-    this.wallets = wallets;
+  constructor(config: IConfig) {
+    this.jwt = config.jwt;
+    this.origin = config.origin;
+    this.step = config.step;
+    this.onlyWallets = config.onlyWallets;
+    this.fieldsIds = config.fieldsIds;
+    this.styles = config.styles;
+    this.wallets = config.wallets;
     this._onInit();
   }
 
