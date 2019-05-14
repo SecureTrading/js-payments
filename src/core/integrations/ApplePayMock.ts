@@ -74,7 +74,7 @@ class ApplePayMock extends ApplePay {
     // @ts-ignore
     if (this.paymentDetails.walletsession) {
       this.onValidateMerchantResponseSuccess(this.paymentDetails);
-      this._mockedPaymentAuthorization();
+      this.mockedPaymentProcess();
     } else {
       this.onValidateMerchantResponseFailure(this.paymentDetails);
     }
