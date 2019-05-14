@@ -13,19 +13,27 @@ export default class ST {
    * Inits Cardinal Commerce
    * @private
    */
-  private static _init3DSecure = () =>
-    environment.testEnvironment ? new CardinalCommerceMock() : new CardinalCommerce();
 
   private readonly jwt: string;
   private readonly origin: string;
+  private readonly step: boolean;
   private readonly onlyWallets: boolean;
   private readonly fieldsIds: any;
   private readonly styles: IStyles;
   private readonly wallets: object[];
 
-  constructor(jwt: string, origin: string, onlyWallets: boolean, fieldsIds: any, styles: IStyles, wallets: object[]) {
+  constructor(
+    jwt: string,
+    origin: string,
+    step: boolean,
+    onlyWallets: boolean,
+    fieldsIds: any,
+    styles: IStyles,
+    wallets: object[]
+  ) {
     this.jwt = jwt;
     this.origin = origin;
+    this.step = step;
     this.onlyWallets = onlyWallets;
     this.fieldsIds = fieldsIds;
     this.styles = styles;
@@ -40,8 +48,15 @@ export default class ST {
   private _onInit() {
     this._initForm();
     this._initWallets();
-    ST._init3DSecure();
+    this._init3DSecure();
   }
+
+  /**
+   * Inits Cardinal Commerce
+   * @private
+   */
+  private _init3DSecure = () =>
+    environment.testEnvironment ? new CardinalCommerceMock(this.step) : new CardinalCommerce(this.step);
 
   /**
    * Inits form fields
@@ -53,5 +68,5 @@ export default class ST {
    * Inits Alternative Payment Methods
    * @private
    */
-  private _initWallets = () => new Wallet(this.jwt, this.wallets);
+  private _initWallets = () => new Wallet(this.jwt, this.step, this.wallets);
 }

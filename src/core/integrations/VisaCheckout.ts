@@ -58,6 +58,7 @@ class VisaCheckout {
 
   public messageBus: MessageBus;
 
+  protected _step: boolean;
   protected _visaCheckoutButtonProps: any = {
     alt: 'Visa Checkout',
     class: 'v-button',
@@ -91,7 +92,7 @@ class VisaCheckout {
     settings: {}
   };
 
-  constructor(config: any, jwt: string) {
+  constructor(config: any, step: boolean, jwt: string) {
     this.messageBus = new MessageBus();
     const {
       props: { merchantId, livestatus, placement, settings, paymentRequest, buttonSettings }
@@ -100,8 +101,10 @@ class VisaCheckout {
     this.payment = new Payment(jwt);
     this._livestatus = livestatus;
     this._placement = placement;
+    this._step = step;
     this._setInitConfiguration(paymentRequest, settings, stJwt, merchantId);
     this._buttonSettings = this.setConfiguration({ locale: stJwt.locale }, settings);
+    this.customizeVisaButton(buttonSettings);
     this._setLiveStatus();
     if (!environment.testEnvironment) {
       this._initVisaFlow();
@@ -112,6 +115,23 @@ class VisaCheckout {
     this._initConfiguration.apikey = merchantId;
     this._initConfiguration.paymentRequest = this._getInitPaymentRequest(paymentRequest, stJwt);
     this._initConfiguration.settings = this.setConfiguration({ locale: stJwt.locale }, settings);
+  }
+
+  /**
+   * Adds query string to src visa button image to customize it
+   * @param properties
+   */
+  public customizeVisaButton(properties: any) {
+    const { color, size } = properties;
+    const url = new URL(this._visaCheckoutButtonProps.src);
+    if (color) {
+      url.searchParams.append('color', color);
+    }
+    if (size) {
+      url.searchParams.append('size', size);
+    }
+    this._visaCheckoutButtonProps.src = url.href;
+    return this._visaCheckoutButtonProps.src;
   }
 
   public _getInitPaymentRequest(paymentRequest: any, stJwt: StJwt) {
@@ -171,6 +191,33 @@ class VisaCheckout {
     }
   }
 
+  /**
+   * Starts processing payment with AUTH pr CACHETOKENISE request
+   */
+  protected _processPayment() {
+    this.payment
+      .processPayment(
+        { requesttypedescription: this._step ? 'CACHETOKENISE' : 'AUTH' },
+        {
+          walletsource: this._walletSource,
+          wallettoken: this.paymentDetails
+        },
+        DomMethods.parseMerchantForm()
+      )
+      .then((response: object) => response)
+      .then((data: object) => {
+        this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
+        this.getResponseMessage(this.paymentStatus);
+        this.setNotification(NotificationType.Success, this.responseMessage);
+        return data;
+      })
+      .catch(() => {
+        this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
+        this.getResponseMessage(this.paymentStatus);
+        this.setNotification(NotificationType.Error, this.responseMessage);
+      });
+  }
+
   private setConfiguration = (config: any, settings: any) => (settings || config ? { ...config, ...settings } : {});
 
   /**
@@ -222,23 +269,9 @@ class VisaCheckout {
     V.on(VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.SUCCESS, (payment: object) => {
       this.paymentDetails = JSON.stringify(payment);
       this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
-      this.getResponseMessage(this.paymentStatus);
-      this._payment
-        .authorizePayment(
-          { walletsource: this._walletSource, wallettoken: this.paymentDetails },
-          DomMethods.parseMerchantForm()
-        )
-        .then((response: object) => {
-          return response;
-        })
-        .then((data: object) => {
-          this.setNotification(NotificationType.Success, this.responseMessage);
-          return data;
-        })
-        .catch(() => {
-          this.setNotification(NotificationType.Error, this.responseMessage);
-        });
+      this._processPayment();
     });
+
     V.on(VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.ERROR, () => {
       this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
       this.getResponseMessage(this.paymentStatus);

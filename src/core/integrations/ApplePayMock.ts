@@ -24,9 +24,11 @@ class ApplePayMock extends ApplePay {
   }
 
   public paymentDetails: string;
+  private _step: boolean;
 
-  constructor(config: any, jwt: string) {
-    super(config, jwt);
+  constructor(config: any, step: boolean, jwt: string) {
+    super(config, step, jwt);
+    this._step = step;
     this._onMockInit();
   }
 
@@ -72,7 +74,7 @@ class ApplePayMock extends ApplePay {
     // @ts-ignore
     if (this.paymentDetails.walletsession) {
       this.onValidateMerchantResponseSuccess(this.paymentDetails);
-      this._mockedPaymentAuthorization();
+      this.mockedPaymentProcess();
     } else {
       this.onValidateMerchantResponseFailure(this.paymentDetails);
     }
@@ -82,16 +84,15 @@ class ApplePayMock extends ApplePay {
    * Mocked AUTH process after this.session.completePayment()
    * @private
    */
-  private _mockedPaymentAuthorization() {
+  private mockedPaymentProcess() {
     this.payment
-      .authorizePayment(
+      .processPayment(
         {
-          ...this.paymentRequest,
-          walletmerchantid: this.validateMerchantRequestData.walletmerchantid,
-          walletrequestdomain: this.validateMerchantRequestData.walletrequestdomain,
+          requesttypedescription: this._step ? 'CACHETOKENISE' : 'AUTH'
+        },
+        {
           walletsource: this.validateMerchantRequestData.walletsource,
-          wallettoken: this.merchantSession,
-          walletvalidationurl: this.validateMerchantRequestData.walletvalidationurl
+          wallettoken: this.paymentDetails
         },
         DomMethods.parseMerchantForm()
       )

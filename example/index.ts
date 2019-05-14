@@ -15,6 +15,7 @@ import './style.scss';
     // ApplePay/Visa checkout prod Jwt:
     // 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoiMTU1NjE5MjQxMDc0OSIsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6ImxpdmUyIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00ifX0.YPXFxhb72eEc5yUihniXmbyVEQfPtvULk9W36uKR2zg',
     window.location.origin,
+    true,
     false,
     {
       animatedCard: 'st-animated-card',
@@ -52,7 +53,7 @@ import './style.scss';
       {
         name: 'VISACHECKOUT',
         props: {
-          buttonSettings: { size: '154' },
+          buttonSettings: { size: '154', color: 'neutral' },
           livestatus: 0,
           merchantId: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4',
           paymentRequest: { subtotal: '20.00' },
