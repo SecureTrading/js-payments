@@ -115,7 +115,6 @@ describe('StCodec class', () => {
       expect(str.encode(request)).toEqual(expected);
       expect(str.buildRequestObject).toHaveBeenCalledWith(request);
     });
-    });
 
     it('should refuse to build a request with an invalid rtd', () => {
       expect(() =>
