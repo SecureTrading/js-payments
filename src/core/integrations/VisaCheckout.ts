@@ -123,15 +123,15 @@ class VisaCheckout {
    */
   public customizeVisaButton(properties: any) {
     const { color, size } = properties;
-    let queryString: string;
-    if (color && size) {
-      queryString = `?color=${color}&size=${size}`;
-    } else if (color && !size) {
-      queryString = `?color=${color}`;
-    } else {
-      queryString = `?size=${size}`;
+    const url = new URL(this._visaCheckoutButtonProps.src);
+    if (color) {
+      url.searchParams.append('color', color);
     }
-    return (this._visaCheckoutButtonProps.src = `${this._visaCheckoutButtonProps.src}${queryString}`);
+    if (size) {
+      url.searchParams.append('size', size);
+    }
+    this._visaCheckoutButtonProps.src = url.href;
+    return this._visaCheckoutButtonProps.src;
   }
 
   public _getInitPaymentRequest(paymentRequest: any, stJwt: StJwt) {
