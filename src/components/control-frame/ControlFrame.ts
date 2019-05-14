@@ -6,8 +6,6 @@ import PaymentMock from '../../core/shared/PaymentMock';
 import { environment } from '../../environments/environment';
 
 export default class ControlFrame extends Frame {
-  private _frameParams: { origin: string; jwt: string };
-  private _messageBus: MessageBus;
   private _payment: Payment;
   private _isPaymentReady: boolean = false;
   private _merchantFormData: IMerchantData;
@@ -33,35 +31,24 @@ export default class ControlFrame extends Frame {
 
   constructor() {
     super();
-    this.setFrameParams();
-    this._messageBus = new MessageBus(this._frameParams.origin);
-    this._payment = environment.testEnvironment
-      ? new PaymentMock(this._frameParams.jwt)
-      : new Payment(this._frameParams.jwt);
     this.onInit();
   }
 
   public onInit() {
     super.onInit();
+    this._payment = environment.testEnvironment ? new PaymentMock(this._params.jwt) : new Payment(this._params.jwt);
     this.initSubscriptions();
     this.onLoad();
+  }
+
+  protected _getAllowedParams() {
+    return super._getAllowedParams().concat(['origin', 'jwt']);
   }
 
   protected _getAllowedStyles() {
     // @TODO: remove
     const allowed = super._getAllowedStyles();
     return allowed;
-  }
-
-  private setFrameParams() {
-    // @ts-ignore
-    const frameUrl = new URL(window.location);
-    const frameParams = new URLSearchParams(frameUrl.search); // @TODO: add polyfill for IE
-
-    this._frameParams = {
-      jwt: frameParams.get('jwt'),
-      origin: frameParams.get('origin')
-    };
   }
 
   private initSubscriptions() {
@@ -103,7 +90,9 @@ export default class ControlFrame extends Frame {
   }
 
   private onLoad() {
-    const messageBusEvent: IMessageBusEvent = { type: MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME };
+    const messageBusEvent: IMessageBusEvent = {
+      type: MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME
+    };
     this._messageBus.publish(messageBusEvent, true);
   }
 

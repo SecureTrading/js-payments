@@ -176,9 +176,8 @@ export class CardinalCommerce {
     if (this._isCardEnrolledAndNotFrictionless(responseObject)) {
       this._authenticateCard(responseObject);
     } else {
-      this._authorizePayment({
-        parenttransactionreference: responseObject.transactionreference
-      });
+      this._threedQueryTransactionReference = responseObject.transactionreference;
+      this._authorizePayment();
     }
   }
 
@@ -186,7 +185,8 @@ export class CardinalCommerce {
     return response.enrolled === 'Y' && response.acsurl !== undefined;
   }
 
-  private _authorizePayment(data: any) {
+  private _authorizePayment(data?: any) {
+    data = data || {};
     data.cachetoken = this._cardinalCommerceCacheToken;
     data.parenttransactionreference = this._threedQueryTransactionReference;
     const messageBusEvent: IMessageBusEvent = {

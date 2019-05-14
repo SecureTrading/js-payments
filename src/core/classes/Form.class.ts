@@ -111,7 +111,7 @@ class Form {
     this.securityCode = new Element();
     this.animatedCard = new Element();
 
-    this.cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, this.styles, this.params);
+    this.cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, this.styles, { ...this.params, origin: this.origin });
     this.cardNumberMounted = this.cardNumber.mount(Selectors.CARD_NUMBER_IFRAME);
     this.elementsToRegister.push(this.cardNumberMounted);
 

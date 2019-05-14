@@ -49,6 +49,10 @@ export default class CardNumber extends FormField {
     return Language.translations.LABEL_CARD_NUMBER;
   }
 
+  protected _getAllowedParams() {
+    return super._getAllowedParams().concat(['origin']);
+  }
+
   protected onInput(event: Event) {
     super.onInput(event);
     this.sendState();
