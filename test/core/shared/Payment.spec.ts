@@ -18,14 +18,6 @@ describe('Payment', () => {
     it('should set attributes to payment instance', () => {
       // @ts-ignore
       expect(instance._stTransport).toBeInstanceOf(StTransport);
-      // @ts-ignore
-      expect(instance._stJwtDecode).toBeInstanceOf(StJwt);
-      // @ts-ignore
-      expect(instance._stJwtPayload).toMatchObject({
-        baseamount: '1000',
-        currencyiso3a: 'GBP',
-        sitereference: 'example12345'
-      });
     });
   });
 
@@ -34,13 +26,10 @@ describe('Payment', () => {
       instance.tokenizeCard(card);
       // @ts-ignore
       expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
-        baseamount: '1000',
-        currencyiso3a: 'GBP',
         expirydate: '10/22',
         pan: '4111111111111111',
         requesttypedescription: 'CACHETOKENISE',
-        securitycode: '123',
-        sitereference: 'example12345'
+        securitycode: '123'
       });
     });
   });
@@ -50,14 +39,11 @@ describe('Payment', () => {
       instance.walletVerify(walletverify);
       // @ts-ignore
       expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
-        baseamount: '1000',
-        currencyiso3a: 'GBP',
         requesttypedescription: 'WALLETVERIFY',
         walletsource: 'APPLEPAY',
         walletmerchantid: '123456789',
         walletvalidationurl: 'https://example.com',
-        walletrequestdomain: 'https://example2.com',
-        sitereference: 'example12345'
+        walletrequestdomain: 'https://example2.com'
       });
     });
   });
@@ -67,13 +53,10 @@ describe('Payment', () => {
       instance.authorizePayment(card, { merchant: 'data' });
       // @ts-ignore
       expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
-        baseamount: '1000',
-        currencyiso3a: 'GBP',
         expirydate: '10/22',
         pan: '4111111111111111',
         requesttypedescription: 'AUTH',
         securitycode: '123',
-        sitereference: 'example12345',
         merchant: 'data'
       });
     });
@@ -86,13 +69,10 @@ describe('Payment', () => {
       );
       // @ts-ignore
       expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
-        baseamount: '1000',
-        currencyiso3a: 'GBP',
         expirydate: '10/22',
         pan: '4111111111111111',
         requesttypedescription: 'AUTH',
         securitycode: '123',
-        sitereference: 'example12345',
         merchant: 'data',
         additional: 'some data'
       });
@@ -102,12 +82,9 @@ describe('Payment', () => {
       instance.authorizePayment(wallet, { merchant: 'data' });
       // @ts-ignore
       expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
-        baseamount: '1000',
-        currencyiso3a: 'GBP',
         walletsource: 'APPLEPAY',
         wallettoken: 'encryptedpaymentdata',
         requesttypedescription: 'AUTH',
-        sitereference: 'example12345',
         merchant: 'data'
       });
     });
@@ -120,12 +97,9 @@ describe('Payment', () => {
       );
       // @ts-ignore
       expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
-        baseamount: '1000',
-        currencyiso3a: 'GBP',
         walletsource: 'APPLEPAY',
         wallettoken: 'encryptedpaymentdata',
         requesttypedescription: 'AUTH',
-        sitereference: 'example12345',
         merchant: 'data',
         extra: 'some value'
       });
@@ -139,10 +113,7 @@ describe('Payment', () => {
       instance.threeDInitRequest();
       // @ts-ignore
       expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
-        baseamount: '1000',
-        currencyiso3a: 'GBP',
-        requesttypedescription: 'JSINIT',
-        sitereference: 'example12345'
+        requesttypedescription: 'JSINIT'
       });
     });
   });
