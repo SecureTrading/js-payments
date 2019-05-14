@@ -55,7 +55,7 @@ const exampleJwt =
         total: { label: 'Secure Trading Merchant', amount: '10.00' }
       },
       placement: 'st-apple-pay',
-      sitesecurity: 'gABC123DEFABC'
+      sitesecurity: 'gABC123DEFABC' // TODO this shouldn't be needed should it?
     },
     step: true
   });
