@@ -10,7 +10,6 @@ interface IParams {
 }
 
 export default class Frame {
-  // TODO "protected" here isn't the correct solution (jwt should only be in ControlFrame)
   protected _messageBus: MessageBus;
   protected _params: IParams;
 
