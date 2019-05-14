@@ -59,14 +59,10 @@ class ApplePayMock extends ApplePay {
    */
   private _setActionOnMockedButton() {
     DomMethods.addListener('st-apple-pay-mock', 'click', () => {
-      ApplePayMock._getWalletverifyData()
-        .then((data: any) => {
-          this.paymentDetails = JSON.stringify(data);
-          this._proceedFlowWithMockedData();
-        })
-        .catch(() => {
-          this.setNotification(NotificationType.Error, 'error');
-        });
+      ApplePayMock._getWalletverifyData().then((data: any) => {
+        this.paymentDetails = JSON.stringify(data);
+        this._proceedFlowWithMockedData();
+      });
     });
   }
 
@@ -78,13 +74,9 @@ class ApplePayMock extends ApplePay {
     // @ts-ignore
     if (this.paymentDetails.walletsession) {
       this.onValidateMerchantResponseSuccess(this.paymentDetails);
-      this.setNotification(NotificationType.Success, 'response');
-      this.mockedPaymentProcess();
+      this._mockedPaymentAuthorization();
     } else {
-      // @ts-ignore
-      const { errorcode, errormessage } = this.paymentDetails;
       this.onValidateMerchantResponseFailure(this.paymentDetails);
-      this.setNotification(NotificationType.Error, `${errorcode}: ${errormessage}`);
     }
   }
 

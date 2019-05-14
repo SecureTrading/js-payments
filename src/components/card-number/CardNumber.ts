@@ -1,6 +1,7 @@
 import { BrandDetailsType } from '../../core/imports/cardtype';
 import BinLookup from '../../core/shared/BinLookup';
 import FormField from '../../core/shared/FormField';
+import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
 
@@ -29,7 +30,7 @@ export default class CardNumber extends FormField {
   }
 
   constructor() {
-    super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE);
+    super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE, Selectors.CARD_NUMBER_LABEL);
 
     this.setAttributes({
       maxlength: CardNumber.DEFAULT_CARD_LENGTH,
@@ -42,6 +43,10 @@ export default class CardNumber extends FormField {
 
     // this.binLookup = new BinLookup();
     // this.brand = null;
+  }
+
+  public getLabel(): string {
+    return Language.translations.LABEL_CARD_NUMBER;
   }
 
   protected onInput(event: Event) {
@@ -58,6 +63,7 @@ export default class CardNumber extends FormField {
     super.onPaste(event);
     this.sendState();
   }
+
   private sendState() {
     const formFieldState: IFormFieldState = this.getState();
     const messageBusEvent: IMessageBusEvent = {

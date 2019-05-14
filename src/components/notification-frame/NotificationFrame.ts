@@ -2,12 +2,28 @@ import { INotificationEvent, NotificationType } from '../../core/models/Notifica
 import Frame from '../../core/shared/Frame';
 import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
+import { Translator } from '../../core/shared/Translator';
 
 /**
  * NotificationFrame class
  * Defines component for displaying payment status messages
  */
 export default class NotificationFrame extends Frame {
+  get notificationFrameElement(): HTMLElement {
+    return this._notificationFrameElement;
+  }
+
+  set notificationFrameElement(value: HTMLElement) {
+    this._notificationFrameElement = value;
+  }
+
+  public static MESSAGE_TYPES = {
+    error: 'ERROR',
+    info: 'INFO',
+    success: 'SUCCESS',
+    warning: 'WARNING'
+  };
+
   public static ELEMENT_CLASSES = {
     error: Selectors.NOTIFICATION_FRAME_ERROR_CLASS,
     info: Selectors.NOTIFICATION_FRAME_INFO_CLASS,
@@ -38,25 +54,25 @@ export default class NotificationFrame extends Frame {
     }
   }
 
+  private static readonly NOTIFICATION_TTL = 7 * 1000;
   private static ELEMENT_ID: string = Selectors.NOTIFICATION_FRAME_ID;
   public _message: INotificationEvent;
+  public _translator: Translator;
   private _messageBus: MessageBus;
   private _notificationFrameElement: HTMLElement;
 
   constructor() {
     super();
     this._messageBus = new MessageBus();
-
     this.notificationFrameElement = NotificationFrame.getElement(NotificationFrame.ELEMENT_ID);
 
-    this._onInit();
-  }
-  get notificationFrameElement(): HTMLElement {
-    return this._notificationFrameElement;
+    this.onInit();
   }
 
-  set notificationFrameElement(value: HTMLElement) {
-    this._notificationFrameElement = value;
+  public onInit() {
+    super.onInit();
+    this._translator = new Translator(this._params.locale);
+    this._onMessage();
   }
 
   /**
@@ -75,7 +91,26 @@ export default class NotificationFrame extends Frame {
    */
   public insertContent() {
     if (this.notificationFrameElement) {
-      this.notificationFrameElement.textContent = this._message.content;
+      this.notificationFrameElement.textContent = this._translator.translate(this._message.content);
+    }
+  }
+
+  /**
+   * Sets data-* attributes for QA purposes
+   */
+  public setDataNotificationColorAttribute(messageType: string) {
+    if (this.notificationFrameElement) {
+      if (messageType === NotificationFrame.MESSAGE_TYPES.error) {
+        this.notificationFrameElement.dataset.notificationColor = 'red';
+      } else if (messageType === NotificationFrame.MESSAGE_TYPES.info) {
+        this.notificationFrameElement.dataset.notificationColor = 'grey';
+      } else if (messageType === NotificationFrame.MESSAGE_TYPES.success) {
+        this.notificationFrameElement.dataset.notificationColor = 'green';
+      } else if (messageType === NotificationFrame.MESSAGE_TYPES.warning) {
+        this.notificationFrameElement.dataset.notificationColor = 'yellow';
+      } else {
+        this.notificationFrameElement.dataset.notificationColor = 'undefined';
+      }
     }
   }
 
@@ -87,6 +122,8 @@ export default class NotificationFrame extends Frame {
     const notificationElementClass = NotificationFrame._getMessageClass(this._message.type);
     if (this.notificationFrameElement && notificationElementClass) {
       this.notificationFrameElement.classList.add(notificationElementClass);
+      this.setDataNotificationColorAttribute(this._message.type);
+      this._autoHide(notificationElementClass);
     }
   }
 
@@ -167,7 +204,10 @@ export default class NotificationFrame extends Frame {
     return allowed;
   }
 
-  private _onInit() {
-    this._onMessage();
+  private _autoHide(notificationElementClass: string) {
+    const timeoutId = window.setTimeout(() => {
+      this.notificationFrameElement.classList.remove(notificationElementClass);
+      window.clearTimeout(timeoutId);
+    }, NotificationFrame.NOTIFICATION_TTL);
   }
 }
