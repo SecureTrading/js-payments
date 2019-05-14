@@ -31,11 +31,11 @@ export const environment = {
     }
   },
   VISA_CHECKOUT_URLS: {
-    TEST_BUTTON_URL: 'https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png',
-    TEST_SDK: 'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js',
-    MOCK_DATA_URL: `${MOCK_GATEWAY_URL}/visaPaymentStatus`,
     LIVE_BUTTON_URL: 'https://secure.checkout.visa.com/wallet-services-web/xo/button.png',
-    LIVE_SDK: 'https://secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js'
+    LIVE_SDK: 'https://secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js',
+    MOCK_DATA_URL: `${MOCK_GATEWAY_URL}/visaPaymentStatus`,
+    TEST_BUTTON_URL: 'https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png',
+    TEST_SDK: 'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js'
   },
   production: false,
   testEnvironment: false

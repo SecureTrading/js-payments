@@ -29,11 +29,13 @@ describe('Frame', () => {
   describe('Frame.onInit', () => {
     it('should call parseUrl', () => {
       let frame = new Frame();
-      frame.parseUrl = jest.fn();
+      frame.parseUrl = jest.fn().mockReturnValueOnce({origin: 'https://example.com'});
       frame.applyStyles = jest.fn();
       frame.onInit();
       expect(frame.parseUrl).toHaveBeenCalledTimes(1);
       expect(frame.applyStyles).toHaveBeenCalledTimes(1);
+      // @ts-ignore
+      expect(frame._params).toMatchObject({origin: 'https://example.com'});
     });
   });
 });

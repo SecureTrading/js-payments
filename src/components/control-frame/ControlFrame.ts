@@ -31,14 +31,14 @@ export default class ControlFrame extends Frame {
 
   constructor() {
     super();
-    this._payment = environment.testEnvironment
-      ? new PaymentMock(this._frameParams.jwt)
-      : new Payment(this._frameParams.jwt);
     this.onInit();
   }
 
   public onInit() {
     super.onInit();
+    this._payment = environment.testEnvironment
+      ? new PaymentMock(this._params.jwt)
+      : new Payment(this._params.jwt);
     this.initSubscriptions();
     this.onLoad();
   }

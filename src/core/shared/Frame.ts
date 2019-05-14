@@ -5,22 +5,19 @@ interface IParams {
   [name: string]: object | string;
   styles?: IStyles;
   locale?: string;
+  origin?: string;
+  jwt?: string;
 }
 
 export default class Frame {
   // TODO "protected" here isn't the correct solution (jwt should only be in ControlFrame)
-  protected _frameParams: { origin: string; jwt: string };
   protected _messageBus: MessageBus;
   protected _params: IParams;
 
-  constructor() {
-    this.setFrameParams();
-    // TODO this is now duplicated by every child except ControlFrame
-    this._messageBus = new MessageBus(this._frameParams.origin);
-  }
 
   public onInit() {
     this._params = this.parseUrl();
+    this._messageBus = new MessageBus(this._params.origin);
     this.applyStyles();
   }
 
@@ -28,7 +25,7 @@ export default class Frame {
     const parsedUrl = new URL(window.location.href);
     const styles: IStyles = {};
     const params: IParams = {};
-    const allowedParams = ['locale'];
+    const allowedParams = ['locale', 'jwt', 'origin'];
     parsedUrl.searchParams.forEach((value, param) => {
       if (allowedParams.includes(param)) {
         params[param] = value;
@@ -54,17 +51,6 @@ export default class Frame {
       'space-outset-body': { property: 'margin', selector: 'body' }
     };
     return allowed;
-  }
-
-  private setFrameParams() {
-    // @ts-ignore
-    const frameUrl = new URL(window.location);
-    const frameParams = new URLSearchParams(frameUrl.search); // @TODO: add polyfill for IE
-
-    this._frameParams = {
-      jwt: frameParams.get('jwt'),
-      origin: frameParams.get('origin')
-    };
   }
 
 }

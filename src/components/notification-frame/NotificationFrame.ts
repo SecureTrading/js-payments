@@ -62,7 +62,6 @@ export default class NotificationFrame extends Frame {
 
   constructor() {
     super();
-    this._messageBus = new MessageBus();
     this.notificationFrameElement = NotificationFrame.getElement(NotificationFrame.ELEMENT_ID);
 
     this.onInit();

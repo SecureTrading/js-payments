@@ -110,8 +110,8 @@ class Form {
     this.expirationDate = new Element();
     this.securityCode = new Element();
     this.animatedCard = new Element();
-    this.params.origin= this.origin;
-    
+    this.params.origin = this.origin;
+
     this.cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, this.styles, this.params);
     this.cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, this.styles, this.params);
     this.cardNumberMounted = this.cardNumber.mount(Selectors.CARD_NUMBER_IFRAME);
