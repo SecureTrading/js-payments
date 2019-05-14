@@ -86,7 +86,7 @@ describe('Index placeholder test', () => {
     // then
     it('should create new DOM element', () => {
       // @ts-ignore
-      let actual = Element.createFormElement('input', 'myID');
+      const actual = Element.createFormElement('input', 'myID');
       expect(actual.tagName).toBe('INPUT');
       expect(actual.id).toBe('myID');
       expect(actual.className).toBe('myID');

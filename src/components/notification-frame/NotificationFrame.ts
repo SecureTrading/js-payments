@@ -207,7 +207,8 @@ export default class NotificationFrame extends Frame {
   }
 
   private _notificationEvent = (data: INotificationEvent) => {
-    this._message = { type: data.type, content: data.content };
+    const { type, content } = data;
+    this._message = { type, content };
     this.insertContent();
     this.setAttributeClass();
   };
