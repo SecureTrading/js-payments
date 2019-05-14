@@ -5,7 +5,7 @@ import Selectors from '../../src/core/shared/Selectors';
 // given
 describe('Index placeholder test', () => {
   //when
-  let element,
+  let instance: Element,
     mockObject: object,
     createNewElement: object,
     createNewStyledElement: object,
@@ -31,13 +31,13 @@ describe('Index placeholder test', () => {
         environment.FRAME_URL
       }/card-number.html?background-color-input=AliceBlue&color-input-error=%23721c24&locale=en_GB`
     };
+    instance = new Element();
   });
-
+  // given
   describe('constructor', () => {
     //then
     it('should have initial settings ', () => {
-      element = new Element();
-      expect(element).toMatchObject(mockObject);
+      expect(instance).toMatchObject(mockObject);
     });
 
     // then
@@ -52,25 +52,22 @@ describe('Index placeholder test', () => {
 
     // then
     it('should create new element', () => {
-      element = new Element();
-      element.create('cardNumber', {});
-      expect(element).toMatchObject(createNewElement);
+      instance.create('cardNumber', {});
+      expect(instance).toMatchObject(createNewElement);
     });
 
     // then
     it('should create new element with styles', () => {
-      element = new Element();
-      element.create('cardNumber', {
+      instance.create('cardNumber', {
         'background-color-input': 'AliceBlue',
         'color-input-error': '#721c24'
       });
-      expect(element).toMatchObject(createNewStyledElement);
+      expect(instance).toMatchObject(createNewStyledElement);
     });
 
     // then
     it('should create new element with styles and params', () => {
-      element = new Element();
-      element.create(
+      instance.create(
         'cardNumber',
         {
           'background-color-input': 'AliceBlue',
@@ -78,10 +75,11 @@ describe('Index placeholder test', () => {
         },
         { locale: 'en_GB' }
       );
-      expect(element).toMatchObject(createNewStyledAndParamedElement);
+      expect(instance).toMatchObject(createNewStyledAndParamedElement);
     });
   });
 
+  // given
   describe('createFormElement', () => {
     // then
     it('should create new DOM element', () => {
@@ -93,12 +91,12 @@ describe('Index placeholder test', () => {
     });
   });
 
+  // given
   describe('mount', () => {
     // then
     it('should create iframe element', () => {
-      let element = new Element();
-      element.iframeSrc = 'https://example.com';
-      let actual = element.mount('myID');
+      instance.iframeSrc = 'https://example.com';
+      const actual = instance.mount('myID');
       expect(actual.tagName).toBe('IFRAME');
       expect(actual.id).toBe('myID');
       expect(actual.className).toBe('myID');
@@ -107,12 +105,12 @@ describe('Index placeholder test', () => {
     });
   });
 
+  // given
   describe('name', () => {
     // then
     it('should use set and get', () => {
-      let element = new Element();
-      element.name = 'Some name';
-      expect(element.name).toBe('Some name');
+      instance.name = 'Some name';
+      expect(instance.name).toBe('Some name');
     });
   });
 });
