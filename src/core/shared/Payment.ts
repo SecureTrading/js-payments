@@ -11,17 +11,6 @@ export default class Payment {
     this._stTransport = new StTransport({ jwt });
   }
 
-  public tokenizeCard(card: ICard): Promise<object> {
-    const requestBody: IStRequest = Object.assign(
-      {
-        requesttypedescription: 'CACHETOKENISE'
-      },
-      card
-    );
-
-    return this._stTransport.sendRequest(requestBody);
-  }
-
   public walletVerify(wallet: IWalletVerify) {
     const requestBody: IStRequest = Object.assign(
       {
@@ -32,24 +21,20 @@ export default class Payment {
     return this._stTransport.sendRequest(requestBody);
   }
 
-  public authorizePayment(payment: ICard | IWallet, merchantData: IMerchantData, additionalData?: any) {
-    const requestBody: IStRequest = Object.assign(
-      {
-        requesttypedescription: 'AUTH'
-      },
-      additionalData,
-      merchantData,
-      payment
-    );
+  public processPayment(
+    requestType: object,
+    payment: ICard | IWallet,
+    merchantData: IMerchantData,
+    additionalData?: any
+  ): Promise<object> {
+    const requestBody: IStRequest = Object.assign(requestType, additionalData, merchantData, payment);
     return this._stTransport.sendRequest(requestBody);
   }
 
   public threeDInitRequest() {
-    const requestBody: IStRequest = Object.assign(
-      {
-        requesttypedescription: 'JSINIT'
-      }
-    );
+    const requestBody: IStRequest = Object.assign({
+      requesttypedescription: 'JSINIT'
+    });
 
     return this._stTransport.sendRequest(requestBody).then(responseBody => {
       // @ts-ignore

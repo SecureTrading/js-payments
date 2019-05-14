@@ -25,19 +25,6 @@ describe('Payment', () => {
   });
 
   // given
-  describe('tokenizeCard', () => {
-    // then
-    it('should send CACHETOKENISE request', () => {
-      instance.tokenizeCard(card);
-      // @ts-ignore
-      expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
-        ...card,
-        requesttypedescription: 'CACHETOKENISE'
-      });
-    });
-  });
-
-  // given
   describe('walletVerify', () => {
     // then
     it('should send WALLETVERIFY request with walletverify', () => {
@@ -54,10 +41,10 @@ describe('Payment', () => {
   });
 
   // given
-  describe('authorizePayment', () => {
+  describe('processPayment', () => {
     // then
     it('should send AUTH request with card', () => {
-      instance.authorizePayment(card, {
+      instance.processPayment({ requesttypedescription: 'AUTH' }, card, {
         merchant: 'data'
       });
       // @ts-ignore
@@ -68,8 +55,24 @@ describe('Payment', () => {
       });
     });
     // then
+    it('should send CACHETOKENISE request', () => {
+      instance.processPayment(
+        {
+          requesttypedescription: 'CACHETOKENISE'
+        },
+        card,
+        {}
+      );
+      // @ts-ignore
+      expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
+        ...card,
+        requesttypedescription: 'CACHETOKENISE'
+      });
+    });
+    // then
     it('should send AUTH request with card and additional data', () => {
-      instance.authorizePayment(
+      instance.processPayment(
+        { requesttypedescription: 'AUTH' },
         card,
         { pan: 'overridden', merchant: 'data' },
         {
@@ -87,7 +90,7 @@ describe('Payment', () => {
     });
     // then
     it('should send AUTH request with wallet', () => {
-      instance.authorizePayment(wallet, {
+      instance.processPayment({ requesttypedescription: 'AUTH' }, wallet, {
         merchant: 'data'
       });
       // @ts-ignore
@@ -100,7 +103,8 @@ describe('Payment', () => {
     });
     // then
     it('should send AUTH request with wallet and additional data', () => {
-      instance.authorizePayment(
+      instance.processPayment(
+        { requesttypedescription: 'AUTH' },
         wallet,
         {
           wallettoken: 'overridden',
@@ -116,6 +120,28 @@ describe('Payment', () => {
         walletsource: 'APPLEPAY',
         wallettoken: 'encryptedpaymentdata',
         requesttypedescription: 'AUTH',
+        merchant: 'data',
+        extra: 'some value'
+      });
+    }); // then
+    it('should send CACHETOKENISE request with wallet and additional data', () => {
+      instance.processPayment(
+        { requesttypedescription: 'CACHETOKENISE' },
+        wallet,
+        {
+          wallettoken: 'overridden',
+          merchant: 'data'
+        },
+        {
+          walletsource: 'OVERRIDDEN',
+          extra: 'some value'
+        }
+      );
+      // @ts-ignore
+      expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
+        walletsource: 'APPLEPAY',
+        wallettoken: 'encryptedpaymentdata',
+        requesttypedescription: 'CACHETOKENISE',
         merchant: 'data',
         extra: 'some value'
       });

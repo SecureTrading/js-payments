@@ -14,10 +14,12 @@ class Wallet {
   };
 
   private jwt: string;
+  private step: boolean;
   private wallets: any;
 
-  constructor(jwt: string, wallets: any) {
+  constructor(jwt: string, step: boolean, wallets: any) {
     this.jwt = jwt;
+    this.step = step;
     this.wallets = wallets;
     this._initWallets(jwt);
   }
@@ -42,12 +44,14 @@ class Wallet {
 
     if (applePayConfig) {
       // tslint:disable-next-line:no-unused-expression
-      environment.testEnvironment ? new ApplePayMock(applePayConfig, jwt) : new ApplePay(applePayConfig, jwt);
+      environment.testEnvironment
+        ? new ApplePayMock(applePayConfig, this.step, jwt)
+        : new ApplePay(applePayConfig, this.step, jwt);
     }
     if (visaCheckoutConfig) {
       environment.testEnvironment
-        ? new VisaCheckoutMock(visaCheckoutConfig, jwt)
-        : new VisaCheckout(visaCheckoutConfig, jwt); // tslint:disable-line:no-unused-expression
+        ? new VisaCheckoutMock(visaCheckoutConfig, this.step, jwt)
+        : new VisaCheckout(visaCheckoutConfig, this.step, jwt); // tslint:disable-line:no-unused-expression
     }
   }
 }

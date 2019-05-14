@@ -1,4 +1,5 @@
 import StTransport from '../classes/StTransport.class';
+import { IMerchantData } from '../models/MerchantData';
 import { INotificationEvent, NotificationType } from '../models/NotificationEvent';
 import DomMethods from '../shared/DomMethods';
 import Language from '../shared/Language';
@@ -106,8 +107,9 @@ class ApplePay {
   private _jwt: string;
   private _applePayButtonProps: any = {};
   private _payment: Payment;
+  private step: boolean;
 
-  constructor(config: any, jwt: string) {
+  constructor(config: any, step: boolean, jwt: string) {
     const {
       props: { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId }
     } = config;
@@ -117,6 +119,7 @@ class ApplePay {
     this.payment = new Payment(jwt);
     this.paymentRequest = paymentRequest;
     this.sitesecurity = sitesecurity;
+    this.step = step;
     this.validateMerchantRequestData.walletmerchantid = merchantId;
     this.stJwtInstance = new StJwt(jwt);
     this.stTransportInstance = new StTransport({ jwt });
@@ -298,16 +301,15 @@ class ApplePay {
       this.paymentDetails = JSON.stringify(event.payment);
       this.session.completePayment({ status: ApplePaySession.STATUS_SUCCESS, errors: [] });
       this.payment
-        .authorizePayment(
+        .processPayment(
+          { requesttypedescription: this.step ? 'CACHETOKENISE' : 'AUTH' },
           {
             walletsource: this.validateMerchantRequestData.walletsource,
             wallettoken: this.paymentDetails
           },
           DomMethods.parseMerchantForm()
         )
-        .then((response: object) => {
-          return response;
-        })
+        .then((response: object) => response)
         .then((data: object) => {
           this.setNotification(NotificationType.Success, Language.translations.PAYMENT_AUTHORIZED);
           return data;
