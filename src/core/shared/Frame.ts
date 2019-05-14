@@ -40,7 +40,7 @@ export default class Frame {
   }
 
   protected _getAllowedParams() {
-    return ['locale', 'origin'];
+    return ['locale'];
   }
 
   protected _getAllowedStyles() {

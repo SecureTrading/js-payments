@@ -42,7 +42,7 @@ export default class ControlFrame extends Frame {
   }
 
   protected _getAllowedParams() {
-    return super._getAllowedParams().concat(['jwt']);
+    return super._getAllowedParams().concat(['origin', 'jwt']);
   }
 
   protected _getAllowedStyles() {
