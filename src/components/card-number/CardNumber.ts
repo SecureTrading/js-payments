@@ -16,6 +16,8 @@ export default class CardNumber extends FormField {
   public binLookup: BinLookup;
   public cardNumberField: HTMLInputElement;
   public isCardNumberValid: boolean;
+  public cardNumberValue: string;
+  public cardNumberFormatted: string;
 
   constructor() {
     super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE, Selectors.CARD_NUMBER_LABEL);
@@ -100,6 +102,8 @@ export default class CardNumber extends FormField {
       this.setCardNumberAttributes({ value });
       this.cardNumberField.setSelectionRange(selectStart, selectEnd);
     }
+    this.cardNumberFormatted = value;
+    this.cardNumberValue = value.replace(/\s/g, '');
     return value;
   }
 
@@ -157,7 +161,8 @@ export default class CardNumber extends FormField {
     this.setMinMaxLengthOfCard(value);
     return {
       validity,
-      value
+      value: this.cardNumberValue,
+      formattedValue: this.cardNumberFormatted
     };
   }
 

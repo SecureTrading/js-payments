@@ -303,7 +303,6 @@ class AnimatedCard extends Frame {
    */
   public setSubscribeEvents() {
     this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: any) => {
-      console.log(data);
       this.onCardNumberChanged(data);
     });
     this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, (data: any) =>
