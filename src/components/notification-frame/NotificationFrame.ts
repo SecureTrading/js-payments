@@ -1,9 +1,9 @@
 import { INotificationEvent, NotificationType } from '../../core/models/NotificationEvent';
-import { environment } from '../../environments/environment';
 import Frame from '../../core/shared/Frame';
 import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
 import { Translator } from '../../core/shared/Translator';
+import { environment } from '../../environments/environment';
 
 /**
  * NotificationFrame class
