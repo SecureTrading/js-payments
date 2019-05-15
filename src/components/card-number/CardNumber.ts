@@ -160,9 +160,9 @@ export default class CardNumber extends FormField {
     this.formatCardNumber(value);
     this.setMinMaxLengthOfCard(value);
     return {
+      formattedValue: this.cardNumberFormatted,
       validity,
-      value: this.cardNumberValue,
-      formattedValue: this.cardNumberFormatted
+      value: this.cardNumberValue
     };
   }
 
