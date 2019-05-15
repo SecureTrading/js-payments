@@ -128,6 +128,10 @@ export default class CardNumber extends FormField {
     return Language.translations.LABEL_CARD_NUMBER;
   }
 
+  protected _getAllowedParams() {
+    return super._getAllowedParams().concat(['origin']);
+  }
+
   public setMinMaxLengthOfCard(cardNumber: string) {
     const minMax = {
       maxlength: this.getMaxLengthOfCardNumber(cardNumber),

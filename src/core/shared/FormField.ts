@@ -12,7 +12,6 @@ export default class FormField extends Frame {
   protected _inputElement: HTMLInputElement;
   protected _messageElement: HTMLParagraphElement;
   protected _labelElement: HTMLLabelElement;
-  protected _messageBus: MessageBus;
   private _translator: Translator;
 
   constructor(inputSelector: string, messageSelector: string, labelSelector: string) {
@@ -27,8 +26,6 @@ export default class FormField extends Frame {
     this._inputSelector = inputSelector;
     this._messageSelector = messageSelector;
     this._labelSelector = labelSelector;
-    // @ts-ignore
-    this._messageBus = new MessageBus();
     this.setInputListeners();
     this.onInit();
   }
