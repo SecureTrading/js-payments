@@ -50,13 +50,10 @@ class AnimatedCard extends Frame {
 
   /**
    * Set one of three values on animated card
-   * @param data
+   * @param value
    * @param placeholder
    */
-  public static setCardDetail(data: any, placeholder: string) {
-    const { value } = data;
-    return value ? value : placeholder;
-  }
+  public static setCardDetail = (value: string, placeholder: string) => (value ? value : placeholder);
 
   /**
    * Getting logo from external js file
@@ -253,9 +250,12 @@ class AnimatedCard extends Frame {
    * value: Value passed from component
    */
   public onCardNumberChanged(data: any) {
-    const { value } = data;
+    const { formattedValue, value } = data;
     this.cardDetails.type = this.setCardType(value);
-    this.cardDetails.cardNumber = AnimatedCard.setCardDetail(data, AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER);
+    this.cardDetails.cardNumber = AnimatedCard.setCardDetail(
+      formattedValue,
+      AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER
+    );
     this.animatedCardPan.textContent = this.cardDetails.cardNumber;
     this.flipCardBack();
     this.resetTheme();
@@ -274,8 +274,9 @@ class AnimatedCard extends Frame {
    * value: Value passed from component
    */
   public onExpirationDateChanged(data: any) {
+    const { value } = data;
     this.cardDetails.expirationDate = AnimatedCard.setCardDetail(
-      data,
+      value,
       AnimatedCard.CARD_DETAILS_PLACEHOLDERS.EXPIRATION_DATE
     );
     this.flipCardBack();
@@ -290,8 +291,9 @@ class AnimatedCard extends Frame {
    * value: Value passed from component
    */
   public onSecurityCodeChanged(data: any) {
+    const { value } = data;
     this.cardDetails.securityCode = AnimatedCard.setCardDetail(
-      data,
+      value,
       AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE
     );
     this.shouldFlipCard();
