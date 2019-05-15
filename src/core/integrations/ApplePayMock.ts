@@ -68,7 +68,7 @@ class ApplePayMock extends ApplePay {
 
   /**
    * Proceeds payment flow with mocked data
-   * @private
+   * @privatewa
    */
   private _proceedFlowWithMockedData() {
     // @ts-ignore
