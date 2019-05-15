@@ -52,14 +52,12 @@ export default class SecurityCode extends FormField {
   }
 
   private sendState() {
-    if (this._inputElement.value) {
-      const formFieldState: IFormFieldState = this.getState();
-      const messageBusEvent: IMessageBusEvent = {
-        data: formFieldState,
-        type: MessageBus.EVENTS.CHANGE_SECURITY_CODE
-      };
-      this._messageBus.publish(messageBusEvent);
-    }
+    const formFieldState: IFormFieldState = this.getState();
+    const messageBusEvent: IMessageBusEvent = {
+      data: formFieldState,
+      type: MessageBus.EVENTS.CHANGE_SECURITY_CODE
+    };
+    this._messageBus.publish(messageBusEvent);
   }
 
   /**
