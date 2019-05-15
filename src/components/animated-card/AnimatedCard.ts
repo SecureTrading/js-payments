@@ -135,11 +135,11 @@ class AnimatedCard extends Frame {
   public setThemeClasses() {
     const { type } = this.cardDetails;
 
-    if (type === AnimatedCard.CARD_TYPES.DEFAULT || type === undefined) {
-      DOMMethods.addClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`);
+    if (type) {
+      DOMMethods.removeClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`);
     } else {
       DOMMethods.addClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO}`);
-      DOMMethods.removeClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`);
+      DOMMethods.addClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`);
     }
     DOMMethods.addClass(this.animatedCardFront, this.returnThemeClass(type));
     DOMMethods.addClass(this.animatedCardBack, this.returnThemeClass(type));
@@ -182,15 +182,12 @@ class AnimatedCard extends Frame {
    * For particular type of card it sets security code on front side of card
    */
   public setSecurityCodeOnProperSide() {
-    if (this.cardDetails.type === AnimatedCard.CARD_TYPES.AMEX) {
-      DOMMethods.removeClass(this.animatedCardSecurityCodeFront, AnimatedCard.CARD_CLASSES.CLASS_SECURITY_CODE_HIDDEN);
-    } else {
-      DOMMethods.addClass(this.animatedCardSecurityCodeFront, AnimatedCard.CARD_CLASSES.CLASS_SECURITY_CODE_HIDDEN);
-    }
+    const isAmex: boolean = this.cardDetails.type === AnimatedCard.CARD_TYPES.AMEX;
+    isAmex
+      ? DOMMethods.removeClass(this.animatedCardSecurityCodeFront, AnimatedCard.CARD_CLASSES.CLASS_SECURITY_CODE_HIDDEN)
+      : DOMMethods.addClass(this.animatedCardSecurityCodeFront, AnimatedCard.CARD_CLASSES.CLASS_SECURITY_CODE_HIDDEN);
 
-    return this.cardDetails.type === AnimatedCard.CARD_TYPES.AMEX
-      ? this.animatedCardSecurityCodeFrontField
-      : this.animatedCardSecurityCode;
+    return isAmex ? this.animatedCardSecurityCodeFrontField : this.animatedCardSecurityCode;
   }
 
   /**
@@ -305,7 +302,10 @@ class AnimatedCard extends Frame {
    * Sets subscribe events on every editable field of card
    */
   public setSubscribeEvents() {
-    this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: any) => this.onCardNumberChanged(data));
+    this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: any) => {
+      console.log(data);
+      this.onCardNumberChanged(data);
+    });
     this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, (data: any) =>
       this.onExpirationDateChanged(data)
     );
