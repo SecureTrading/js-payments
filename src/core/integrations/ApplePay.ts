@@ -338,10 +338,7 @@ class ApplePay {
     if (walletsession) {
       this.merchantSession = JSON.parse(response.walletsession);
       this.validateMerchantRequestData.walletmerchantid = this.merchantSession.merchantIdentifier;
-      this.setNotification(NotificationType.Success, Language.translations.PAYMENT_SUCCESS);
-      if (this.session) {
-        this.session.completeMerchantValidation(this.merchantSession);
-      }
+      this.session.completeMerchantValidation(this.merchantSession);
     } else {
       this.onValidateMerchantResponseFailure(response.requestid);
     }
@@ -352,9 +349,7 @@ class ApplePay {
    * @param error
    */
   public onValidateMerchantResponseFailure(error: any) {
-    if (this.session) {
-      this.session.abort();
-    }
+    this.session.abort();
     this.setNotification(NotificationType.Error, Language.translations.MERCHANT_VALIDATION_FAILURE);
   }
 
