@@ -71,13 +71,13 @@ class ApplePayMock extends ApplePay {
    * @private
    */
   private _proceedFlowWithMockedData() {
-    const { walletsession } = JSON.parse(this.paymentDetails);
+    const paymentDetails = JSON.parse(this.paymentDetails);
     // @ts-ignore
-    if (walletsession) {
-      this.onValidateMerchantResponseSuccess(this.paymentDetails);
+    if (paymentDetails.walletsession) {
+      this.onValidateMerchantResponseSuccess(paymentDetails);
       this.mockedPaymentProcess();
     } else {
-      this.onValidateMerchantResponseFailure(this.paymentDetails);
+      this.onValidateMerchantResponseFailure(paymentDetails);
     }
   }
 
