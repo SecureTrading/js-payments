@@ -14,23 +14,13 @@ class ApplePayMock extends ApplePay {
    * @private
    */
   private static _getWalletverifyData() {
-    // return fetch(environment.APPLE_PAY_URLS.MOCK_DATA_URL)
-    //   .then((response: any) => {
-    //     return response.json();
-    //   })
-    //   .then((data: any) => {
-    //     return data;
-    //   });
-    return {
-      errorcode: '0',
-      errormessage: 'Ok',
-      requestid: 'J-3bhw30gu',
-      requesttypedescription: 'WALLETVERIFY',
-      transactionstartedtimestamp: '2019-04-18 12:11:26',
-      walletsession:
-        '{"epochTimestamp":1555589486829,"expiresAt":1555593086829,"merchantSessionIdentifier":"SSH54A9E73B26674B71A27E44E4BC07E22B_916523AAED1343F5"}',
-      walletsource: 'APPLEPAY'
-    };
+    return fetch(environment.APPLE_PAY_URLS.MOCK_DATA_URL)
+      .then((response: any) => {
+        return response.json();
+      })
+      .then((data: any) => {
+        return data;
+      });
   }
 
   public paymentDetails: string;
@@ -69,11 +59,10 @@ class ApplePayMock extends ApplePay {
    */
   private _setActionOnMockedButton() {
     DomMethods.addListener('st-apple-pay-mock', 'click', () => {
-      // ApplePayMock._getWalletverifyData().then((data: any) => {
-      const data = ApplePayMock._getWalletverifyData();
-      this.paymentDetails = JSON.stringify(data);
-      this._proceedFlowWithMockedData();
-      // });
+      ApplePayMock._getWalletverifyData().then((data: any) => {
+        this.paymentDetails = JSON.stringify(data);
+        this._proceedFlowWithMockedData();
+      });
     });
   }
 
