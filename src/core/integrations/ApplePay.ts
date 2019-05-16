@@ -334,8 +334,7 @@ class ApplePay {
    * @param response
    */
   public onValidateMerchantResponseSuccess(response: any) {
-    const { walletsession } = response;
-    if (walletsession) {
+    if (response.walletsession) {
       this.merchantSession = JSON.parse(response.walletsession);
       this.validateMerchantRequestData.walletmerchantid = this.merchantSession.merchantIdentifier;
       this.session.completeMerchantValidation(this.merchantSession);
