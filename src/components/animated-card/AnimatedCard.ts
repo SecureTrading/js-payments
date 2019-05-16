@@ -37,9 +37,9 @@ class AnimatedCard extends Frame {
     CLASS_SIDE: `${AnimatedCard.CARD_COMPONENT_CLASS}__side`
   };
   public static CARD_DETAILS_PLACEHOLDERS = {
-    CARD_NUMBER: 'XXXX XXXX XXXX XXXX',
+    CARD_NUMBER: '\u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219',
     EXPIRATION_DATE: 'MM/YY',
-    SECURITY_CODE: 'XXX',
+    SECURITY_CODE: '\u2219\u2219\u2219',
     TYPE: 'default'
   };
 
@@ -50,13 +50,10 @@ class AnimatedCard extends Frame {
 
   /**
    * Set one of three values on animated card
-   * @param data
+   * @param value
    * @param placeholder
    */
-  public static setCardDetail(data: any, placeholder: string) {
-    const { value } = data;
-    return value ? value : placeholder;
-  }
+  public static setCardDetail = (value: string, placeholder: string) => (value ? value : placeholder);
 
   /**
    * Getting logo from external js file
@@ -135,11 +132,11 @@ class AnimatedCard extends Frame {
   public setThemeClasses() {
     const { type } = this.cardDetails;
 
-    if (type === AnimatedCard.CARD_TYPES.DEFAULT || type === undefined) {
-      DOMMethods.addClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`);
+    if (type) {
+      DOMMethods.removeClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`);
     } else {
       DOMMethods.addClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO}`);
-      DOMMethods.removeClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`);
+      DOMMethods.addClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`);
     }
     DOMMethods.addClass(this.animatedCardFront, this.returnThemeClass(type));
     DOMMethods.addClass(this.animatedCardBack, this.returnThemeClass(type));
@@ -182,15 +179,12 @@ class AnimatedCard extends Frame {
    * For particular type of card it sets security code on front side of card
    */
   public setSecurityCodeOnProperSide() {
-    if (this.cardDetails.type === AnimatedCard.CARD_TYPES.AMEX) {
-      DOMMethods.removeClass(this.animatedCardSecurityCodeFront, AnimatedCard.CARD_CLASSES.CLASS_SECURITY_CODE_HIDDEN);
-    } else {
-      DOMMethods.addClass(this.animatedCardSecurityCodeFront, AnimatedCard.CARD_CLASSES.CLASS_SECURITY_CODE_HIDDEN);
-    }
+    const isAmex: boolean = this.cardDetails.type === AnimatedCard.CARD_TYPES.AMEX;
+    isAmex
+      ? DOMMethods.removeClass(this.animatedCardSecurityCodeFront, AnimatedCard.CARD_CLASSES.CLASS_SECURITY_CODE_HIDDEN)
+      : DOMMethods.addClass(this.animatedCardSecurityCodeFront, AnimatedCard.CARD_CLASSES.CLASS_SECURITY_CODE_HIDDEN);
 
-    return this.cardDetails.type === AnimatedCard.CARD_TYPES.AMEX
-      ? this.animatedCardSecurityCodeFrontField
-      : this.animatedCardSecurityCode;
+    return isAmex ? this.animatedCardSecurityCodeFrontField : this.animatedCardSecurityCode;
   }
 
   /**
@@ -229,6 +223,7 @@ class AnimatedCard extends Frame {
       Selectors.ANIMATED_CARD_PAYMENT_LOGO_ID
     ]);
   }
+
   /**
    * Sets placeholders for each editable value on card (card number, expiration date, security code)
    */
@@ -255,9 +250,12 @@ class AnimatedCard extends Frame {
    * value: Value passed from component
    */
   public onCardNumberChanged(data: any) {
-    const { value } = data;
+    const { formattedValue, value } = data;
     this.cardDetails.type = this.setCardType(value);
-    this.cardDetails.cardNumber = AnimatedCard.setCardDetail(data, AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER);
+    this.cardDetails.cardNumber = AnimatedCard.setCardDetail(
+      formattedValue,
+      AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER
+    );
     this.animatedCardPan.textContent = this.cardDetails.cardNumber;
     this.flipCardBack();
     this.resetTheme();
@@ -276,8 +274,9 @@ class AnimatedCard extends Frame {
    * value: Value passed from component
    */
   public onExpirationDateChanged(data: any) {
+    const { value } = data;
     this.cardDetails.expirationDate = AnimatedCard.setCardDetail(
-      data,
+      value,
       AnimatedCard.CARD_DETAILS_PLACEHOLDERS.EXPIRATION_DATE
     );
     this.flipCardBack();
@@ -292,8 +291,9 @@ class AnimatedCard extends Frame {
    * value: Value passed from component
    */
   public onSecurityCodeChanged(data: any) {
+    const { value } = data;
     this.cardDetails.securityCode = AnimatedCard.setCardDetail(
-      data,
+      value,
       AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE
     );
     this.shouldFlipCard();
@@ -304,7 +304,9 @@ class AnimatedCard extends Frame {
    * Sets subscribe events on every editable field of card
    */
   public setSubscribeEvents() {
-    this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: any) => this.onCardNumberChanged(data));
+    this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: any) => {
+      this.onCardNumberChanged(data);
+    });
     this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, (data: any) =>
       this.onExpirationDateChanged(data)
     );
