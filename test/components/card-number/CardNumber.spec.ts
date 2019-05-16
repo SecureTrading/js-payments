@@ -6,7 +6,7 @@ import FormField from '../../../src/core/shared/FormField';
 jest.mock('./../../../src/core/shared/MessageBus');
 
 // given
-describe('Class CardNumber', () => {
+describe('CardNumber', () => {
   let {
     inputElement,
     messageElement,
@@ -39,7 +39,7 @@ describe('Class CardNumber', () => {
   });
 
   // given
-  describe('Method luhnCheck', () => {
+  describe('CardNumber.luhnCheck', () => {
     // then
     each(testCardNumbers).it('should check card number and return correct Luhn check', (cardNumber, expected) => {
       expect(CardNumberFixture().cardNumberInstance.luhnCheck(cardNumber)).toEqual(expected);
@@ -47,7 +47,7 @@ describe('Class CardNumber', () => {
   });
 
   // given
-  describe('Method setCardNumberAttributes', () => {
+  describe('CardNumber.setCardNumberAttributes', () => {
     // then
     it('should set proper card number attributes given in params', () => {
       cardNumberInstance.setCardNumberAttributes({
@@ -62,7 +62,7 @@ describe('Class CardNumber', () => {
   });
 
   // given
-  describe('Method formatCardNumber', () => {
+  describe('CardNumber.formatCardNumber', () => {
     // then
     each(formattedCards).it('should format card number properly', (given, accepted) => {
       expect(cardNumberInstance.formatCardNumber(given)).toEqual(accepted);
@@ -70,7 +70,7 @@ describe('Class CardNumber', () => {
   });
 
   // given
-  describe('Method getBinLookupDetails', () => {
+  describe('CardNumber.getBinLookupDetails', () => {
     const { unrecognizedCardNumber, cardNumberCorrect, receivedObject } = CardNumberFixture();
 
     // then
@@ -85,7 +85,7 @@ describe('Class CardNumber', () => {
   });
 
   // given
-  describe('Method getMaxLengthOfCardNumber', () => {
+  describe('CardNumber.getMaxLengthOfCardNumber', () => {
     const { cardNumberCorrect } = CardNumberFixture();
     const maxLengthOfCardNumber = 21;
 
@@ -96,7 +96,7 @@ describe('Class CardNumber', () => {
   });
 
   // given
-  describe('Method setMinMaxLengthOfCard', () => {
+  describe('CardNumber.setMinMaxLengthOfCard', () => {
     let expectedMinMax: any;
     const { cardNumberCorrect } = CardNumberFixture();
 
@@ -115,7 +115,7 @@ describe('Class CardNumber', () => {
   });
 
   // given
-  describe('Method getCardFormat', () => {
+  describe('CardNumber.getCardFormat', () => {
     const { unrecognizedCardNumber, cardNumberCorrect, receivedObject } = CardNumberFixture();
 
     // then
@@ -130,7 +130,7 @@ describe('Class CardNumber', () => {
   });
 
   // given
-  describe('Method getPossibleCardLength', () => {
+  describe('CardNumber.getPossibleCardLength', () => {
     const { unrecognizedCardNumber, cardNumberCorrect, receivedObject } = CardNumberFixture();
 
     // then
@@ -145,7 +145,7 @@ describe('Class CardNumber', () => {
   });
 
   // given
-  describe('Method getSecurityCodeLength', () => {
+  describe('CardNumber.getSecurityCodeLength', () => {
     const { unrecognizedCardNumber, cardNumberCorrect, receivedObject } = CardNumberFixture();
 
     // then
@@ -160,7 +160,7 @@ describe('Class CardNumber', () => {
   });
 
   // given
-  describe('Method getFormFieldState', () => {
+  describe('CardNumber.getFormFieldState', () => {
     let publishSecurityCodeLengthSpy: any;
     let formatCardNumberSpy: any;
     let setMinMaxLengthOfCardSpy: any;
