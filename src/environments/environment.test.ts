@@ -17,6 +17,7 @@ export const environment = {
   // @ts-ignore
   FRAME_URL: `https://${HOST}:8443`,
   GATEWAY_URL,
+  NOTIFICATION_TTL: 14000,
   ST_URLS: {
     MOCK: {
       AUTH: `${MOCK_GATEWAY_URL}/auth`,
