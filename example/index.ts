@@ -3,7 +3,7 @@
  * This is code fired on merchant's side.
  * It can be treated as a reference for merchants how to integrate with STJS.
  */
-import { ApplePay, Components, VisaCheckout } from '../src/stjs';
+import { ApplePay, Components, Create, VisaCheckout } from '../src/stjs';
 import './style.scss';
 
 /* tslint:disable:max-line-length */
@@ -19,7 +19,12 @@ const exampleJwt =
 // TODO have to include jwt on all calls? Is there a better way to share common config?
 
 (() => {
-  const components = new Components({
+  Create({
+    jwt: exampleJwt,
+    step: false
+  });
+
+  Components({
     fieldsIds: {
       animatedCard: 'st-animated-card',
       cardNumber: 'st-card-number',
@@ -28,10 +33,8 @@ const exampleJwt =
       notificationFrame: 'st-notification-frame',
       securityCode: 'st-security-code'
     },
-    jwt: exampleJwt,
     onlyWallets: false,
     origin: window.location.origin,
-    step: true,
     styles: {
       'background-color-input': 'AliceBlue',
       'background-color-input-error': '#f8d7da',
@@ -40,9 +43,7 @@ const exampleJwt =
       'line-height-input': '12px'
     }
   });
-  // TODO how to always include notification frame even on ApplePay/VisaCheckout?
-  const applepay = new ApplePay({
-    jwt: exampleJwt,
+  ApplePay({
     props: {
       buttonStyle: 'white-outline',
       buttonText: 'donate',
@@ -56,12 +57,9 @@ const exampleJwt =
       },
       placement: 'st-apple-pay',
       sitesecurity: 'gABC123DEFABC' // TODO this shouldn't be needed should it?
-    },
-    step: true
+    }
   });
-  // TODO how to always include notification frame even on ApplePay/VisaCheckout?
-  const visacheckout = new VisaCheckout({
-    jwt: exampleJwt,
+  VisaCheckout({
     props: {
       buttonSettings: { size: '154', color: 'neutral' },
       livestatus: 0,
@@ -69,7 +67,6 @@ const exampleJwt =
       paymentRequest: { subtotal: '20.00' },
       placement: 'st-visa-checkout',
       settings: { displayName: 'My Test Site' }
-    },
-    step: true
+    }
   });
 })();

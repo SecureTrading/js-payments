@@ -2,8 +2,9 @@
  * STJS Client.
  * This code contains all logic responsible for creating ST fields on merchant's site.
  */
-import ApplePay from './core/ApplePay';
-import Components from './core/Components';
-import VisaCheckout from './core/VisaCheckout';
-
-export { ApplePay, Components, VisaCheckout };
+import ST from './core/ST';
+const Components = ST.Components;
+const Create = ST.Create;
+const ApplePay = ST.ApplePay;
+const VisaCheckout = ST.VisaCheckout;
+export { ApplePay, Components, Create, VisaCheckout };
