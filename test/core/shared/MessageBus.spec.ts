@@ -1,8 +1,8 @@
 import MessageBus from '../../../src/core/shared/MessageBus';
 
 // given
-describe('MessageBus', () => {
-  describe('constructor', () => {
+describe('MessageBus class', () => {
+  describe('MessageBus.constructor', () => {
     it('should set origins and event listener', () => {
       window.addEventListener = jest.fn();
       let instance = new MessageBus();
@@ -34,7 +34,7 @@ describe('MessageBus', () => {
     });
   });
 
-  describe('publish()', () => {
+  describe('MessageBus.publish', () => {
     let event: any;
     let instance: MessageBus;
     let framePostMessage: Function;
@@ -68,7 +68,7 @@ describe('MessageBus', () => {
     });
   });
 
-  describe('publishFromParent()', () => {
+  describe('MessageBus.publishFromParent', () => {
     it('should postMessage to frame', () => {
       let event = { type: 'MYEVENT', data: 'SOME EVENT DATA' };
       let framePostMessage = jest.fn();
@@ -86,7 +86,7 @@ describe('MessageBus', () => {
     });
   });
 
-  describe('subscribeOnParent()', () => {
+  describe('MessageBus.subscribeOnParent', () => {
     it('should add callback to subscriptions', () => {
       let instance = new MessageBus();
       instance.subscribeOnParent('MYEVENT', 'MYCALLBACK');
@@ -111,7 +111,7 @@ describe('MessageBus', () => {
     });
   });
 
-  describe('registerMessageListener()', () => {
+  describe('MessageBus.registerMessageListener', () => {
     it('should register message listener', () => {
       let instance = new MessageBus();
       window.addEventListener = jest.fn();
@@ -123,7 +123,7 @@ describe('MessageBus', () => {
     });
   });
 
-  describe('_handleMessageEvent()', () => {
+  describe('MessageBus._handleMessageEvent', () => {
     let subFunc: Function;
     let instance: MessageBus;
     beforeEach(() => {

@@ -3,7 +3,7 @@ import StTransport from '../../../src/core/classes/StTransport.class';
 import { StJwt } from '../../../src/core/shared/StJwt';
 
 // given
-describe('Payment', () => {
+describe('Payment class', () => {
   const jwt =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0ZXN0X2p3dF9pc3N1ZXIiLCJwYXlsb2FkIjp7InNpdGVyZWZlcmVuY2UiOiJleGFtcGxlMTIzNDUiLCJiYXNlYW1vdW50IjoiMTAwMCIsImN1cnJlbmN5aXNvM2EiOiJHQlAifSwiaWF0IjoxNTE2MjM5MDIyfQ.jPuLMHxK3fznVddzkRoYC94hgheBXI1Y7zHAr7qNCig';
   let instance: Payment;
@@ -16,7 +16,7 @@ describe('Payment', () => {
   });
 
   // given
-  describe('constructor', () => {
+  describe('Payment.constructor', () => {
     // then
     it('should set attributes to payment instance', () => {
       // @ts-ignore
@@ -25,7 +25,7 @@ describe('Payment', () => {
   });
 
   // given
-  describe('walletVerify', () => {
+  describe('Payment.walletVerify', () => {
     // then
     it('should send WALLETVERIFY request with walletverify', () => {
       instance.walletVerify(walletverify);
@@ -41,7 +41,7 @@ describe('Payment', () => {
   });
 
   // given
-  describe('processPayment', () => {
+  describe('Payment.processPayment', () => {
     // then
     it('should send AUTH request with card', () => {
       instance.processPayment({ requesttypedescription: 'AUTH' }, card, {
@@ -148,7 +148,7 @@ describe('Payment', () => {
     });
   });
   // given
-  describe('threeDInitRequest', () => {
+  describe('Payment.threeDInitRequest', () => {
     // then
     it('should send JSINIT request', () => {
       // @ts-ignore
@@ -165,7 +165,7 @@ describe('Payment', () => {
     });
   });
   // given
-  describe('threeDQueryRequest', () => {
+  describe('Payment.threeDQueryRequest', () => {
     // then
     it('should send THREEDQUERY request', () => {
       // @ts-ignore

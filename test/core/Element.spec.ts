@@ -3,7 +3,7 @@ import Element from '../../src/core/Element';
 import Selectors from '../../src/core/shared/Selectors';
 
 // given
-describe('Index placeholder test', () => {
+describe('Element class', () => {
   //when
   let instance: Element,
     mockObject: object,
@@ -34,7 +34,7 @@ describe('Index placeholder test', () => {
     instance = new Element();
   });
   // given
-  describe('constructor', () => {
+  describe('Element.constructor', () => {
     //then
     it('should have initial settings ', () => {
       expect(instance).toMatchObject(mockObject);
@@ -80,7 +80,7 @@ describe('Index placeholder test', () => {
   });
 
   // given
-  describe('createFormElement', () => {
+  describe('Element.createFormElement', () => {
     // then
     it('should create new DOM element', () => {
       // @ts-ignore
@@ -92,7 +92,7 @@ describe('Index placeholder test', () => {
   });
 
   // given
-  describe('mount', () => {
+  describe('Element.mount', () => {
     // then
     it('should create iframe element', () => {
       instance.iframeSrc = 'https://example.com';
@@ -106,7 +106,7 @@ describe('Index placeholder test', () => {
   });
 
   // given
-  describe('name', () => {
+  describe('Element.name', () => {
     // then
     it('should use set and get', () => {
       instance.name = 'Some name';

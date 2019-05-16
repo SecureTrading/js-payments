@@ -6,7 +6,7 @@ import DomMethods from '../../../src/core/shared/DomMethods';
 jest.mock('./../../../src/core/shared/MessageBus');
 
 // given
-describe('Class CCIntegration', () => {
+describe('CardinalCommerce class', () => {
   let instance: any;
   let { jwt, validationData } = CardinalCommerceFixture();
   let Cardinal: any;
@@ -17,7 +17,7 @@ describe('Class CCIntegration', () => {
   });
 
   // given
-  describe('Method _3DInitRequest', () => {
+  describe('CardinalCommerce._3DInitRequest', () => {
     // then
     let sendRequestSpy: any;
     let threedeinitRequest;
@@ -28,7 +28,7 @@ describe('Class CCIntegration', () => {
   });
 
   // given
-  describe('Method _onCardinalSetupComplete', () => {
+  describe('CardinalCommerce._onCardinalSetupComplete', () => {
     // then
     it('should subscribe method be called once', () => {
       const messageBus = new MessageBus();
@@ -41,7 +41,7 @@ describe('Class CCIntegration', () => {
     });
   });
 
-  describe('Method _performBinDetection', () => {
+  describe('CardinalCommerce._performBinDetection', () => {
     // then
     it('should call cardinal bin process', () => {
       let { CardinalMock } = CardinalCommerceFixture();
@@ -54,7 +54,7 @@ describe('Class CCIntegration', () => {
   });
 
   // given
-  describe('Method _onCardinalValidated', () => {
+  describe('CardinalCommerce._onCardinalValidated', () => {
     // then
     it('should authorise if successful', () => {
       let spyAuthorize = jest.spyOn(instance, '_authorizePayment');
@@ -70,7 +70,7 @@ describe('Class CCIntegration', () => {
     });
   });
 
-  describe('Method _authenticateCard', () => {
+  describe('CardinalCommerce._authenticateCard', () => {
     // then
     it('should call cardinal continue', () => {
       let { CardinalMock, jwt } = CardinalCommerceFixture();
@@ -94,7 +94,7 @@ describe('Class CCIntegration', () => {
       expect(instance._threedQueryTransactionReference).toBe('1-2-3');
     });
 
-    describe('Method _onCardinalLoad', () => {
+    describe('CardinalCommerce._onCardinalLoad', () => {
       // then
       it('should call cardinal methods to setup callbacks and setup process', () => {
         let { CardinalMock, jwt } = CardinalCommerceFixture();
@@ -126,7 +126,7 @@ describe('Class CCIntegration', () => {
       });
     });
 
-    describe('Method _initSubscriptions', () => {
+    describe('CardinalCommerce._initSubscriptions', () => {
       // then
       it('should set up subscribers to control frame setup, threedquery and threedinit events', () => {
         instance.messageBus.subscribeOnParent = jest.fn();
@@ -147,7 +147,7 @@ describe('Class CCIntegration', () => {
       });
     });
 
-    describe('Method _onInit', () => {
+    describe('CardinalCommerce._onInit', () => {
       // then
       it('should set up subscribers', () => {
         instance._initSubscriptions = jest.fn();
@@ -157,7 +157,7 @@ describe('Class CCIntegration', () => {
       });
     });
 
-    describe('Method _onLoadControlFrame', () => {
+    describe('CardinalCommerce._onLoadControlFrame', () => {
       // then
       it('should set up subscribers', () => {
         instance._threeDInitRequest = jest.fn();
@@ -167,7 +167,7 @@ describe('Class CCIntegration', () => {
       });
     });
 
-    describe('Method _onThreeDInitEvent', () => {
+    describe('CardinalCommerce._onThreeDInitEvent', () => {
       // then
       it('should set instance variables and call setup', () => {
         instance._threeDSetup = jest.fn();
@@ -179,7 +179,7 @@ describe('Class CCIntegration', () => {
       });
     });
 
-    describe('Method _onThreeDQueryEvent', () => {
+    describe('CardinalCommerce._onThreeDQueryEvent', () => {
       // then
       it('should send THREEDQUERY request', () => {
         instance._threeDQueryRequest = jest.fn();
@@ -189,7 +189,7 @@ describe('Class CCIntegration', () => {
       });
     });
 
-    describe('Method _threeDInitRequest', () => {
+    describe('CardinalCommerce._threeDInitRequest', () => {
       // then
       it('should publish control iframe event', () => {
         instance.messageBus.publishFromParent = jest.fn();
@@ -202,7 +202,7 @@ describe('Class CCIntegration', () => {
       });
     });
 
-    describe('Method _threeDSetup', () => {
+    describe('CardinalCommerce._threeDSetup', () => {
       // then
       it('should load cardinal javascript', () => {
         const script = document.createElement('script');
@@ -225,7 +225,7 @@ describe('Class CCIntegration', () => {
       });
     });
 
-    describe('Method _threeDQueryRequest', () => {
+    describe('CardinalCommerce._threeDQueryRequest', () => {
       // then
       it('should authenticate card if enrolled or frictionless', () => {
         instance._isCardEnrolledAndNotFrictionless = jest.fn().mockReturnValueOnce(true);
@@ -246,7 +246,7 @@ describe('Class CCIntegration', () => {
     });
 
     // given
-    describe('Method _isCardEnrolledAndNotFrictionless', () => {
+    describe('CardinalCommerce._isCardEnrolledAndNotFrictionless', () => {
       // then
       each([
         ['Y', undefined, false],
@@ -269,7 +269,7 @@ describe('Class CCIntegration', () => {
     });
   });
 
-  describe('Method _authorizePayment', () => {
+  describe('CardinalCommerce._authorizePayment', () => {
     // then
     it('should publish control iframe event', () => {
       instance.messageBus.publishFromParent = jest.fn();

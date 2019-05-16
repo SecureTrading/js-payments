@@ -2,11 +2,11 @@ import NotificationFrame from '../../../src/components/notification-frame/Notifi
 import { Translator } from '../../../src/core/shared/Translator';
 
 // given
-describe('Component NotificationFrame', () => {
+describe('Component NotificationFrame class', () => {
   // given
   const { elementId } = NotificationFrameFixture();
   let { instance } = NotificationFrameFixture();
-  describe('Method _getElement', () => {
+  describe('NotificationFrame._getElement', () => {
     // when
     beforeEach(() => {
       document.body.innerHTML = '<div id="st-notification-frame" class="notification-frame">Some example error</div>';
@@ -19,7 +19,7 @@ describe('Component NotificationFrame', () => {
     });
   });
 
-  describe('Method ifFieldExists', () => {
+  describe('NotificationFrame.ifFieldExists', () => {
     // when
     beforeEach(() => {
       document.body.innerHTML = '<div id="st-notification-frame" class="notification-frame">Some example error</div>';
@@ -32,7 +32,7 @@ describe('Component NotificationFrame', () => {
     });
   });
 
-  describe('property get and set notificationFrameElement', () => {
+  describe('NotificationFrame.notificationFrameElement get and set', () => {
     it('should be able to set and get notificationFrameElement', () => {
       instance.notificationFrameElement = document.createElement('input');
       expect(instance.notificationFrameElement.tagName).toBe('INPUT');
@@ -40,7 +40,7 @@ describe('Component NotificationFrame', () => {
   });
 
   // given
-  describe('Method _getMessageClass', () => {
+  describe('NotificationFrame._getMessageClass', () => {
     let { messageClasses } = NotificationFrameFixture();
     let { messageTypes } = NotificationFrameFixture();
 
@@ -70,7 +70,7 @@ describe('Component NotificationFrame', () => {
     });
   });
 
-  describe('Method _onMessage', () => {
+  describe('NotificationFrame._onMessage', () => {
     it('should set messageBus listener', () => {
       // @ts-ignore
       instance._messageBus.subscribe = jest.fn();
@@ -84,7 +84,7 @@ describe('Component NotificationFrame', () => {
     });
   });
 
-  describe('Method _notificationEvent', () => {
+  describe('NotificationFrame._notificationEvent', () => {
     it('should set message and call other functions', () => {
       instance.insertContent = jest.fn();
       instance.setAttributeClass = jest.fn();
@@ -106,7 +106,7 @@ describe('Component NotificationFrame', () => {
   });
 
   // given
-  describe('Method insertContent', () => {
+  describe('NotificationFrame.insertContent', () => {
     let { elementId, errorMessage } = NotificationFrameFixture();
     // when
     beforeEach(() => {
@@ -124,7 +124,7 @@ describe('Component NotificationFrame', () => {
     });
   });
 
-  describe('Method insertContent translated', () => {
+  describe('NotificationFrame.insertContent translated', () => {
     let { elementId } = NotificationFrameFixture();
     let instance = new NotificationFrame();
     // when
@@ -145,7 +145,7 @@ describe('Component NotificationFrame', () => {
   });
 
   // given
-  describe('Method _errorMessageListener', () => {
+  describe('NotificationFrame._errorMessageListener', () => {
     let insertContentSpy: any;
     let setAttributeClassSpy: any;
     let insertContentMethod;
@@ -181,7 +181,7 @@ describe('Component NotificationFrame', () => {
     });
   });
 
-  describe('Method _autoHide', () => {
+  describe('NotificationFrame._autoHide', () => {
     it('should remove class after timeout', () => {
       // @ts-ignore
       NotificationFrame.NOTIFICATION_TTL = 0;
@@ -196,7 +196,7 @@ describe('Component NotificationFrame', () => {
     });
   });
 
-  describe('Method _getAllowedStyles', () => {
+  describe('NotificationFrame._getAllowedStyles', () => {
     it('should return allowed styles', () => {
       // @ts-ignore
       let styles = instance._getAllowedStyles();
@@ -211,7 +211,7 @@ describe('Component NotificationFrame', () => {
     });
   });
 
-  describe('Method setAttributeClass', () => {
+  describe('NotificationFrame.setAttributeClass', () => {
     beforeEach(() => {
       instance = new NotificationFrame();
     });
@@ -253,7 +253,7 @@ describe('Component NotificationFrame', () => {
     });
   });
 
-  describe('Method insertContent', () => {
+  describe('NotificationFrame.insertContent', () => {
     it('should set text content', () => {
       instance.notificationFrameElement = document.createElement('div');
       instance.notificationFrameElement.textContent = 'ORIGINAL';
