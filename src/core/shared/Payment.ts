@@ -1,7 +1,6 @@
 import { IStRequest } from '../classes/StCodec.class';
 import StTransport from '../classes/StTransport.class';
 import { IMerchantData } from '../models/MerchantData';
-import { IStJwtPayload, StJwt } from './StJwt';
 
 export default class Payment {
   private _stTransport: StTransport;
@@ -32,10 +31,9 @@ export default class Payment {
   }
 
   public threeDInitRequest() {
-    const requestBody: IStRequest = Object.assign({
+    const requestBody: IStRequest = {
       requesttypedescription: 'JSINIT'
-    });
-
+    };
     return this._stTransport.sendRequest(requestBody).then(responseBody => {
       // @ts-ignore
       this._cardinalCommerceCacheToken = responseBody.cachetoken;

@@ -1,7 +1,6 @@
 import each from 'jest-each';
 import { CardinalCommerce, IThreeDQueryResponse } from '../../../src/core/integrations/CardinalCommerce';
 import MessageBus from '../../../src/core/shared/MessageBus';
-import { initHighlighting } from 'highlight.js';
 import DomMethods from '../../../src/core/shared/DomMethods';
 
 jest.mock('./../../../src/core/shared/MessageBus');
@@ -104,16 +103,26 @@ describe('Class CCIntegration', () => {
         instance._cardinalCommerceJWT = jwt;
         instance._onCardinalLoad();
         expect(CardinalMock.configure).toHaveBeenCalledTimes(1);
-        expect(CardinalMock.configure).toHaveBeenCalledWith({ logging: { level: 'on' } });
+        expect(CardinalMock.configure).toHaveBeenCalledWith({
+          logging: {
+            level: 'on'
+          }
+        });
         expect(CardinalMock.on).toHaveBeenCalledTimes(2);
         expect(CardinalMock.on.mock.calls[0][0]).toBe('payments.setupComplete');
-        expect(CardinalMock.on.mock.calls[0][1] instanceof Function).toBe(true);
+        // Annonymous function so can't test using toHaveBeenCalledWith
+        expect(CardinalMock.on.mock.calls[0][1]).toBeInstanceOf(Function);
+        expect(CardinalMock.on.mock.calls[0].length).toBe(2);
 
         expect(CardinalMock.on.mock.calls[1][0]).toBe('payments.validated');
-        expect(CardinalMock.on.mock.calls[1][1] instanceof Function).toBe(true);
+        // Annonymous function so can't test using toHaveBeenCalledWith
+        expect(CardinalMock.on.mock.calls[1][1]).toBeInstanceOf(Function);
+        expect(CardinalMock.on.mock.calls[1].length).toBe(2);
 
         expect(CardinalMock.setup).toHaveBeenCalledTimes(1);
-        expect(CardinalMock.setup).toHaveBeenCalledWith('init', { jwt });
+        expect(CardinalMock.setup).toHaveBeenCalledWith('init', {
+          jwt
+        });
       });
     });
 
@@ -124,11 +133,17 @@ describe('Class CCIntegration', () => {
         instance._initSubscriptions();
         expect(instance.messageBus.subscribeOnParent).toHaveBeenCalledTimes(3);
         expect(instance.messageBus.subscribeOnParent.mock.calls[0][0]).toBe('LOAD_CONTROL_FRAME');
-        expect(instance.messageBus.subscribeOnParent.mock.calls[0][1] instanceof Function).toBe(true);
+        // Annonymous function so can't test using toHaveBeenCalledWith
+        expect(instance.messageBus.subscribeOnParent.mock.calls[0][1]).toBeInstanceOf(Function);
+        expect(instance.messageBus.subscribeOnParent.mock.calls[0].length).toBe(2);
         expect(instance.messageBus.subscribeOnParent.mock.calls[1][0]).toBe('THREEDINIT');
-        expect(instance.messageBus.subscribeOnParent.mock.calls[1][1] instanceof Function).toBe(true);
+        // Annonymous function so can't test using toHaveBeenCalledWith
+        expect(instance.messageBus.subscribeOnParent.mock.calls[1][1]).toBeInstanceOf(Function);
+        expect(instance.messageBus.subscribeOnParent.mock.calls[1].length).toBe(2);
         expect(instance.messageBus.subscribeOnParent.mock.calls[2][0]).toBe('THREEDQUERY');
-        expect(instance.messageBus.subscribeOnParent.mock.calls[2][1] instanceof Function).toBe(true);
+        // Annonymous function so can't test using toHaveBeenCalledWith
+        expect(instance.messageBus.subscribeOnParent.mock.calls[2][1]).toBeInstanceOf(Function);
+        expect(instance.messageBus.subscribeOnParent.mock.calls[2].length).toBe(2);
       });
     });
 
@@ -204,8 +219,9 @@ describe('Class CCIntegration', () => {
         expect(script.addEventListener).toHaveBeenCalledTimes(1);
         // @ts-ignore
         expect(script.addEventListener.mock.calls[0][0]).toBe('load');
+        // Annonymous function so can't test using toHaveBeenCalledWith
         // @ts-ignore
-        expect(script.addEventListener.mock.calls[0][1] instanceof Function).toEqual(true);
+        expect(script.addEventListener.mock.calls[0][1]).toBeInstanceOf(Function);
       });
     });
 

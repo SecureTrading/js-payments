@@ -11,6 +11,11 @@ describe('MessageBus', () => {
       // @ts-ignore
       expect(instance._frameOrigin).toBe('https://localhost:8443');
       expect(window.addEventListener).toHaveBeenCalledTimes(1);
+      // @ts-ignore
+      const call = window.addEventListener.mock.calls[0];
+      expect(call[0]).toBe('message');
+      expect(call[1]).toBeInstanceOf(Function);
+      expect(call.length).toBe(2);
     });
 
     it('should set origins and event listener', () => {
@@ -21,6 +26,11 @@ describe('MessageBus', () => {
       // @ts-ignore
       expect(instance._frameOrigin).toBe('https://localhost:8443');
       expect(window.addEventListener).toHaveBeenCalledTimes(1);
+      // @ts-ignore
+      const call = window.addEventListener.mock.calls[0];
+      expect(call[0]).toBe('message');
+      expect(call[1]).toBeInstanceOf(Function);
+      expect(call.length).toBe(2);
     });
   });
 
