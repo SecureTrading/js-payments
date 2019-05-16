@@ -54,13 +54,40 @@ class StCodec {
       throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
     }
     const responseContent = responseData.response[0];
+    console.log(responseData);
     if (responseContent.errorcode !== '0') {
       // Should this be a custom error type which can also take a field that is at fault
       // so that errordata can be sent up to highlight the field?
       StCodec._notification.error(responseContent.errormessage);
+      StCodec.propagateErrorToField(responseContent);
       throw new Error(responseContent.errormessage);
     }
     return responseContent;
+  }
+
+  public static getErrorData(data: any) {
+    const { errordata, errormessage, requesttypedescription } = data;
+    return {
+      errordata,
+      errormessage,
+      requesttypedescription
+    };
+  }
+
+  private static propagateErrorToField(errorData: any) {
+    const { errordata, errormessage, requesttypedescription } = StCodec.getErrorData(errorData);
+    if (requesttypedescription === 'ERROR') {
+      if (errordata[0] === 'pan') {
+        // TODO: publish to card number field
+        console.log(errormessage);
+      } else if (errordata[0] === 'securitycode') {
+        // TODO: publish to security code field
+        console.log(errormessage);
+      } else if (errordata[0] === 'expirydate') {
+        // TODO: publish to expiry date field
+        console.log(errormessage);
+      }
+    }
   }
 
   private static _notification = new Notification();
