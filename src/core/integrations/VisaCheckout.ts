@@ -11,7 +11,7 @@ import Payment from './../shared/Payment';
 /**
  *  Visa Checkout configuration class; sets up Visa e-wallet
  */
-class VisaCheckout {
+export class VisaCheckout {
   get payment(): Payment {
     return this._payment;
   }

@@ -35,7 +35,7 @@ const ApplePaySession = (window as any).ApplePaySession;
  * 12. Then onPaymentAuthorized() or onPaymentCanceled() has been called which completes payment with
  *     this.session.completePayment function or canceled it with this.session.oncancel handler.
  */
-class ApplePay {
+export class ApplePay {
   get applePayButtonProps(): any {
     return this._applePayButtonProps;
   }
@@ -110,6 +110,8 @@ class ApplePay {
   private step: boolean;
 
   constructor(config: any, step: boolean, jwt: string) {
+    // tslint:disable-next-line
+    console.log(config);
     const {
       props: { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId }
     } = config;
