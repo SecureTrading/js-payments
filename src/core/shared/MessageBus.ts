@@ -79,19 +79,21 @@ export default class MessageBus {
     this._subscriptions[eventType] = callback;
   }
 
+  private _handleMessageEvent = (event: MessageEvent) => {
+    const messageBusEvent: IMessageBusEvent = event.data;
+    const isPublicEvent = Utils.inArray(Object.keys(MessageBus.EVENTS_PUBLIC), messageBusEvent.type);
+    const isCallbackAllowed =
+      event.origin === this._frameOrigin || (event.origin === this._parentOrigin && isPublicEvent);
+    let subscribersStore = window.sessionStorage.getItem(MessageBus.SUBSCRIBERS);
+
+    subscribersStore = JSON.parse(subscribersStore);
+
+    if (isCallbackAllowed && this._subscriptions[messageBusEvent.type]) {
+      this._subscriptions[messageBusEvent.type](messageBusEvent.data);
+    }
+  };
+
   private registerMessageListener() {
-    window.addEventListener('message', (event: MessageEvent) => {
-      const messageBusEvent: IMessageBusEvent = event.data;
-      const isPublicEvent = Utils.inArray(Object.keys(MessageBus.EVENTS_PUBLIC), messageBusEvent.type);
-      const isCallbackAllowed =
-        event.origin === this._frameOrigin || (event.origin === this._parentOrigin && isPublicEvent);
-      let subscribersStore = window.sessionStorage.getItem(MessageBus.SUBSCRIBERS);
-
-      subscribersStore = JSON.parse(subscribersStore);
-
-      if (isCallbackAllowed && this._subscriptions[messageBusEvent.type]) {
-        this._subscriptions[messageBusEvent.type](messageBusEvent.data);
-      }
-    });
+    window.addEventListener('message', this._handleMessageEvent);
   }
 }
