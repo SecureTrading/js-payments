@@ -46,7 +46,10 @@ class VisaCheckoutMock extends VisaCheckout {
    */
   private _proceedFlowWithMockedData() {
     this.getResponseMessage(this.paymentStatus);
-    this._processPayment();
+    this.setNotification(this.paymentStatus, this.responseMessage);
+    if (this.paymentStatus == VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS) {
+      this._processPayment();
+    }
   }
 }
 

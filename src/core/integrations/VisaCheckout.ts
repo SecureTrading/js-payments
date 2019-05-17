@@ -50,7 +50,7 @@ class VisaCheckout {
     SUCCESS: 'payment.success'
   };
 
-  private static VISA_PAYMENT_STATUS = {
+  protected static VISA_PAYMENT_STATUS = {
     ERROR: 'ERROR',
     SUCCESS: 'SUCCESS',
     WARNING: 'WARNING'
