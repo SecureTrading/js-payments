@@ -311,7 +311,7 @@ class ApplePay {
         )
         .then((response: object) => response)
         .then((data: object) => {
-          this.setNotification(NotificationType.Success, Language.translations.PAYMENT_AUTHORIZED);
+          this.setNotification(NotificationType.Success, Language.translations.PAYMENT_SUCCESS);
           return data;
         })
         .catch(() => {

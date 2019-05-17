@@ -99,7 +99,7 @@ class ApplePayMock extends ApplePay {
         DomMethods.parseMerchantForm()
       )
       .then(() => {
-        this.setNotification(NotificationType.Success, Language.translations.PAYMENT_AUTHORIZED);
+        this.setNotification(NotificationType.Success, Language.translations.PAYMENT_SUCCESS);
       })
       .catch(() => {
         this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);

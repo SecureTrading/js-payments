@@ -17,7 +17,7 @@ class Language {
     MERCHANT_VALIDATION_FAILURE: 'Merchant validation failure',
     NOT_IMPLEMENTED_ERROR: 'Method not implemented',
     NO_CARDS_IN_WALLET: 'You have no cards in your wallet',
-    PAYMENT_AUTHORIZED: 'Payment has been authorized',
+    PAYMENT_AUTHORIZED: 'Payment has been authorized', // TODO no longer used and can be removed
     PAYMENT_ERROR: 'An error occurred',
     PAYMENT_SUCCESS: 'Payment has been successfully processed',
     PAYMENT_WARNING: 'Payment has been cancelled',
