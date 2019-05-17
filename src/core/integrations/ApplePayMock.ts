@@ -87,6 +87,10 @@ class ApplePayMock extends ApplePay {
    * @private
    */
   private mockedPaymentProcess() {
+    console.log({
+      walletsource: this.validateMerchantRequestData.walletsource,
+      wallettoken: this.paymentDetails
+    });
     this.payment
       .processPayment(
         {

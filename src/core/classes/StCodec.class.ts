@@ -54,6 +54,7 @@ class StCodec {
       StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
       throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
     }
+    console.log(responseData);
     const responseContent = responseData.response[0];
     if (responseContent.errorcode !== '0') {
       // Should this be a custom error type which can also take a field that is at fault

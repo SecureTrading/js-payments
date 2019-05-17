@@ -31,7 +31,7 @@ class VisaCheckoutMock extends VisaCheckout {
     return fetch(environment.VISA_CHECKOUT_URLS.MOCK_DATA_URL)
       .then((response: any) => response.json())
       .then(({ payment, status }: any) => {
-        this.paymentDetails = payment;
+        this.paymentDetails = JSON.stringify(payment);
         this.paymentStatus = status;
         return this.paymentDetails;
       })
