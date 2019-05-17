@@ -123,11 +123,15 @@ export default class FormField extends Frame {
     this.format(this._inputElement.value);
     this.setAttributes({ 'data-validity': validity });
     this.toggleErrorClass(validity);
-    console.log('input');
     this.validate(validity);
   }
 
   protected onFocus(event: Event) {
+    const { validity } = this.getState();
+    this.format(this._inputElement.value);
+    this.setAttributes({ 'data-validity': validity });
+    this.toggleErrorClass(validity);
+    this.validate(validity);
     this.focus();
   }
 

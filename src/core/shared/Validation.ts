@@ -78,6 +78,7 @@ export default class Validation {
 
   public getValidationMessage(validityState: ValidityState, customValidity: any): string {
     let validationMessage: string = '';
+    console.log(validityState);
     if (!validityState.valid) {
       if (validityState.valueMissing) {
         validationMessage = VALIDATION_ERROR_FIELD_IS_REQUIRED;
