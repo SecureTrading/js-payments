@@ -1,4 +1,4 @@
-const GATEWAY_URL: string = 'https://securetrading.example.com:8443/jwt/';
+const GATEWAY_URL: string = 'https://merchant.example.com:8443/jwt/';
 const MOCK_GATEWAY_URL: string = 'https://merchant.example.com:8443';
 
 export const environment = {
