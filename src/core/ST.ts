@@ -19,6 +19,7 @@ export default class ST {
    */
 
   public static Create(config: IConfig) {
+    // TODO should this be constructor instead? then all others are not static functions?
     // TODO this should always create Notification frame so it's available for all payment methods
     // (basically taking it out of Form and getting rid of onlyWallets)
     ST.jwt = config.jwt;
