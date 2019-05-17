@@ -25,7 +25,7 @@ export default class CardNumber extends FormField {
     super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE, Selectors.CARD_NUMBER_LABEL);
     this.cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     this.binLookup = new BinLookup();
-    this.validity = new Validation('pan');
+    this.validity = new Validation();
     this.isCardNumberValid = true;
     this.sendState();
   }

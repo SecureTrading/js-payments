@@ -5,6 +5,7 @@ import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import { IStyles } from '../shared/Styler';
+import Validation from '../shared/Validation';
 
 /**
  * Defines all elements of form and their  placement on merchant site.
@@ -61,6 +62,7 @@ class Form {
   private controlFrame: Element;
   private messageBus: MessageBus;
   private messageBusEvent: IMessageBusEvent;
+  private validation: Validation;
 
   constructor(jwt: any, origin: any, onlyWallets: boolean, fieldsIds: [], styles: IStyles) {
     this.styles = styles;
@@ -70,6 +72,7 @@ class Form {
     this.elementsToRegister = [];
     this.jwt = jwt;
     this.stJwt = new StJwt(jwt);
+    this.validation = new Validation();
     this.origin = origin;
     this.params = { locale: this.stJwt.locale };
     this.messageBus = new MessageBus();

@@ -35,7 +35,7 @@ export default class FormField extends Frame {
   public onInit() {
     super.onInit();
     this._translator = new Translator(this._params.locale);
-    this.validation = new Validation('pan');
+    this.validation = new Validation();
     this.setLabelText();
     this.setValidationAttributes();
   }
@@ -162,8 +162,6 @@ export default class FormField extends Frame {
    * @param messageText
    */
   protected setMessage(messageText: string) {
-    // console.log(this._translator.translate(messageText));
-    // console.log(this._messageElement);
     this._messageElement.innerText = this._translator.translate(messageText);
   }
 
@@ -173,7 +171,6 @@ export default class FormField extends Frame {
 
   protected validate(customValidity?: any) {
     const validationMessage: string = this.validation.getValidationMessage(this._inputElement.validity, customValidity);
-    // console.log(validationMessage);
     this.setMessage(validationMessage);
   }
 

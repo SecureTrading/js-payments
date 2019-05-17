@@ -18,34 +18,11 @@ const {
  */
 export default class Validation {
   public validation: IValidation;
-  public pan: boolean;
-  public expirydate: boolean;
-  public securitycode: boolean;
-  public pristine: boolean;
-  public dirty: boolean;
-  public fieldName: string;
+  public errorData: any;
 
-  constructor(fieldName: string) {
-    this.fieldName = fieldName;
-    this.pan = false;
-    this.expirydate = false;
-    this.securitycode = false;
-    this.pristine = true;
-    this.dirty = true;
-  }
-
-  public propagateErrorToField(errorData: any) {
+  public static getErrorData(errorData: any) {
     const { errordata, errormessage, requesttypedescription } = StCodec.getErrorData(errorData);
-    this.fieldName = errordata[0];
-    if (requesttypedescription === 'ERROR') {
-      if (this.fieldName === 'pan') {
-        // TODO: publish to card number field
-      } else if (this.fieldName === 'securitycode') {
-        // TODO: publish to security code field
-      } else if (this.fieldName === 'expirydate') {
-        // TODO: publish to expiry date field
-      }
-    }
+    return { field: errordata[0], errormessage, requesttypedescription };
   }
 
   /**
@@ -76,6 +53,8 @@ export default class Validation {
     return cardNumber.slice(-securityCodeLength);
   }
 
+  constructor() {}
+
   public getValidationMessage(validityState: ValidityState, customValidity: any): string {
     let validationMessage: string = '';
     console.log(validityState);
@@ -98,14 +77,4 @@ export default class Validation {
   }
 
   private static ONLY_DIGITS_REGEXP = '^\\d+$';
-  // /**
-  //  * Method set custom error message, eg. when credit card is not valid.
-  //  * @param messageContent
-  //  * @param errorContainerId
-  //  */
-  // public static customErrorMessage(messageContent: string, errorContainerId: string) {
-  //   if (document.getElementById(errorContainerId).innerText === '') {
-  //     document.getElementById(errorContainerId).innerText = messageContent;
-  //   }
-  // }
 }
