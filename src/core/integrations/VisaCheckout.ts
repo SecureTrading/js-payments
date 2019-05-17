@@ -44,16 +44,16 @@ class VisaCheckout {
     this._responseMessage = value;
   }
 
-  private static VISA_PAYMENT_RESPONSE_TYPES = {
-    CANCEL: 'payment.cancel',
-    ERROR: 'payment.error',
-    SUCCESS: 'payment.success'
-  };
-
   protected static VISA_PAYMENT_STATUS = {
     ERROR: 'ERROR',
     SUCCESS: 'SUCCESS',
     WARNING: 'WARNING'
+  };
+
+  private static VISA_PAYMENT_RESPONSE_TYPES = {
+    CANCEL: 'payment.cancel',
+    ERROR: 'payment.error',
+    SUCCESS: 'payment.success'
   };
 
   public messageBus: MessageBus;

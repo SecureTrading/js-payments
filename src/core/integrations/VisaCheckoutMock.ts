@@ -45,6 +45,7 @@ class VisaCheckoutMock extends VisaCheckout {
    * @private
    */
   private _proceedFlowWithMockedData() {
+    // TODO is there a better way to call the normal flow more?
     this.getResponseMessage(this.paymentStatus);
     this.setNotification(this.paymentStatus, this.responseMessage);
     if (this.paymentStatus == VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS) {
