@@ -6,11 +6,12 @@ import { Translator } from './Translator';
 import Validation from './Validation';
 
 export default class FormField extends Frame {
+  public validation: Validation;
   protected _inputSelector: string;
   protected _messageSelector: string;
   protected _labelSelector: string;
   protected _inputElement: HTMLInputElement;
-  protected _messageElement: HTMLParagraphElement;
+  protected _messageElement: HTMLDivElement;
   protected _labelElement: HTMLLabelElement;
   private _translator: Translator;
 
@@ -22,6 +23,7 @@ export default class FormField extends Frame {
     this._messageElement = document.getElementById(messageSelector);
     // @ts-ignore
     this._labelElement = document.getElementById(labelSelector);
+    // @ts-ignore
 
     this._inputSelector = inputSelector;
     this._messageSelector = messageSelector;
@@ -33,11 +35,22 @@ export default class FormField extends Frame {
   public onInit() {
     super.onInit();
     this._translator = new Translator(this._params.locale);
+    this.validation = new Validation('pan');
     this.setLabelText();
+    this.setValidationAttributes();
   }
 
   public getLabel(): string {
     throw new Error(Language.translations.NOT_IMPLEMENTED_ERROR);
+  }
+
+  public setValidationAttributes(attributes?: any) {
+    this.setAttributes({
+      'data-validity': false,
+      'data-pristine': true,
+      'data-dirty': false,
+      ...attributes
+    });
   }
 
   protected setLabelText() {
@@ -47,7 +60,7 @@ export default class FormField extends Frame {
   protected _getAllowedStyles() {
     let allowed = super._getAllowedStyles();
     const input = `#${this._inputSelector}`;
-    const inputError = `${input}:invalid:focus`;
+    const inputError = `#${this._inputSelector}.error-field`;
     const inputPlaceholder = `${input}::placeholder`;
     const message = `#${this._messageSelector}`;
     const label = `label[for=${this._inputSelector}]`;
@@ -106,8 +119,12 @@ export default class FormField extends Frame {
   }
 
   protected onInput(event: Event) {
+    const { validity } = this.getState();
     this.format(this._inputElement.value);
-    this.validate();
+    this.setAttributes({ 'data-validity': validity });
+    this.toggleErrorClass(validity);
+    console.log('input');
+    this.validate(validity);
   }
 
   protected onFocus(event: Event) {
@@ -141,6 +158,8 @@ export default class FormField extends Frame {
    * @param messageText
    */
   protected setMessage(messageText: string) {
+    // console.log(this._translator.translate(messageText));
+    // console.log(this._messageElement);
     this._messageElement.innerText = this._translator.translate(messageText);
   }
 
@@ -148,8 +167,9 @@ export default class FormField extends Frame {
     this._inputElement.value = value;
   }
 
-  protected validate() {
-    const validationMessage: string = Validation.getValidationMessage(this._inputElement.validity);
+  protected validate(customValidity?: any) {
+    const validationMessage: string = this.validation.getValidationMessage(this._inputElement.validity, customValidity);
+    // console.log(validationMessage);
     this.setMessage(validationMessage);
   }
 
@@ -162,6 +182,7 @@ export default class FormField extends Frame {
   }
 
   protected focus() {
+    this.setAttributes({ 'data-pristine': false, 'data-dirty': true });
     this._inputElement.focus();
   }
 
@@ -186,4 +207,7 @@ export default class FormField extends Frame {
       this.onBlur(event);
     });
   }
+
+  private toggleErrorClass = (validity: boolean) =>
+    validity ? this._inputElement.classList.remove('error-field') : this._inputElement.classList.add('error-field');
 }

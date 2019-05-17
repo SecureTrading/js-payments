@@ -4,6 +4,7 @@ import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
 import Utils from '../../core/shared/Utils';
+import Validation from '../../core/shared/Validation';
 
 export default class CardNumber extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
@@ -18,13 +19,14 @@ export default class CardNumber extends FormField {
   public isCardNumberValid: boolean;
   public cardNumberValue: string;
   public cardNumberFormatted: string;
+  public validity: Validation;
 
   constructor() {
     super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE, Selectors.CARD_NUMBER_LABEL);
     this.cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     this.binLookup = new BinLookup();
+    this.validity = new Validation('pan');
     this.isCardNumberValid = true;
-    this.setCardNumberProperties();
     this.sendState();
   }
 
@@ -194,13 +196,6 @@ export default class CardNumber extends FormField {
       cardNumberMinLength = cardNumberLength + numberOfWhitespaces;
     }
     return cardNumberMinLength;
-  }
-
-  private setCardNumberProperties() {
-    this.setAttributes({
-      // @ts-ignore
-      'data-luhn-check': this.isCardNumberValid
-    });
   }
 
   private sendState() {

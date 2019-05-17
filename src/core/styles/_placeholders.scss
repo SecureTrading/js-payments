@@ -52,12 +52,6 @@
   &::placeholder {
     color: $color-input-placeholder; // @param
   }
-
-  &:invalid:focus {
-    color: $color-input-error; // @param
-    border-color: $color-error; // @param
-    background-color: $background-color-input-error; // @param
-  }
 }
 
 %input--readonly {

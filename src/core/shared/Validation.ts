@@ -1,4 +1,11 @@
 import Language from './Language';
+import { StCodec } from '../classes/StCodec.class';
+
+interface IValidation {
+  pan: boolean;
+  securitycode: boolean;
+  expirydate: boolean;
+}
 
 const {
   VALIDATION_ERROR_FIELD_IS_REQUIRED,
@@ -10,6 +17,37 @@ const {
  * Base class for validation, aggregates common methods and attributes for all subclasses
  */
 export default class Validation {
+  public validation: IValidation;
+  public pan: boolean;
+  public expirydate: boolean;
+  public securitycode: boolean;
+  public pristine: boolean;
+  public dirty: boolean;
+  public fieldName: string;
+
+  constructor(fieldName: string) {
+    this.fieldName = fieldName;
+    this.pan = false;
+    this.expirydate = false;
+    this.securitycode = false;
+    this.pristine = true;
+    this.dirty = true;
+  }
+
+  public propagateErrorToField(errorData: any) {
+    const { errordata, errormessage, requesttypedescription } = StCodec.getErrorData(errorData);
+    this.fieldName = errordata[0];
+    if (requesttypedescription === 'ERROR') {
+      if (this.fieldName === 'pan') {
+        // TODO: publish to card number field
+      } else if (this.fieldName === 'securitycode') {
+        // TODO: publish to security code field
+      } else if (this.fieldName === 'expirydate') {
+        // TODO: publish to expiry date field
+      }
+    }
+  }
+
   /**
    * Method for prevent inserting non digits
    * @param event
@@ -38,9 +76,8 @@ export default class Validation {
     return cardNumber.slice(-securityCodeLength);
   }
 
-  public static getValidationMessage(validityState: ValidityState): string {
+  public getValidationMessage(validityState: ValidityState, customValidity: any): string {
     let validationMessage: string = '';
-
     if (!validityState.valid) {
       if (validityState.valueMissing) {
         validationMessage = VALIDATION_ERROR_FIELD_IS_REQUIRED;
@@ -51,6 +88,9 @@ export default class Validation {
       if (validityState.tooShort) {
         validationMessage = VALIDATION_ERROR_VALUE_TOO_SHORT;
       }
+    }
+    if (!customValidity) {
+      validationMessage = VALIDATION_ERROR_PATTERN_MISMATCH;
     }
 
     return validationMessage;
