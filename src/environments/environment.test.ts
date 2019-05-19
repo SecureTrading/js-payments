@@ -1,6 +1,6 @@
-const FRAME_URL: string = 'https://webservices.securetrading.net:8443';
-const MOCK_GATEWAY_URL: string = FRAME_URL;
-const GATEWAY_URL: string = `${FRAME_URL}/jwt/`;
+const FRAME_URL: string = 'https://merchant.example.com:8443'; // TODO should be webservices.securetrading.net but messageBus is blocking something
+const MOCK_GATEWAY_URL: string = 'https://webservices.securetrading.net:8443';
+const GATEWAY_URL: string = `${MOCK_GATEWAY_URL}/jwt/`;
 const MOCK_THIRD_PARTY_URL: string = 'https://thirdparty.example.com:8443';
 
 export const environment = {
