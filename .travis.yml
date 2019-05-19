@@ -29,9 +29,12 @@ jobs:
       script:
         - npm run coverage
         - npm run snyk
-    - name: 'Behavioural test: chrome 68'
+    - name: 'Behavioural test: Chrome 72, Windows 10'
       script:
-        - npm run behave -- test_chrome_68_w10
+        - npm run behave -- test_chrome_72_w10
+    - name: 'Behavioural test: iPhone X, iOS 11.0'
+      script:
+        - npm run behave -- test_iPhoneX_11_0
     # - name: 'Behavioural test: firefox 61'
     #  script:
     #    - npm run behave -- test_firefox_61_w10
