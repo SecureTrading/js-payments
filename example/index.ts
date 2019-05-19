@@ -23,7 +23,7 @@ import './style.scss';
   const st = new ST(
     jwt,
     window.location.origin,
-    true,
+    false,
     false,
     {
       animatedCard: 'st-animated-card',
