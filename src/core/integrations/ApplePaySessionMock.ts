@@ -20,15 +20,19 @@ export default class ApplePaySessionMock {
         return response.json();
       })
       .then((data: any) => {
-        if (data.status === 'SUCCESS') {
-          this.STATUS_SUCCESS = data.status;
-          this.onpaymentauthorized(data);
-        } else {
-          this.oncancel(data);
-        }
-        return data;
+        this._handleResponse(data);
       });
   }
 
   public static completePayment = () => true;
+
+  private static _handleResponse(data: any) {
+    if (data.status === 'SUCCESS') {
+      this.STATUS_SUCCESS = data.status;
+      this.onpaymentauthorized(data);
+    } else {
+      this.oncancel(data);
+    }
+    return data;
+  }
 }
