@@ -2,8 +2,6 @@ import { IMerchantData } from '../../core/models/MerchantData';
 import Frame from '../../core/shared/Frame';
 import MessageBus from '../../core/shared/MessageBus';
 import Payment from '../../core/shared/Payment';
-import PaymentMock from '../../core/shared/PaymentMock';
-import { environment } from '../../environments/environment';
 
 export default class ControlFrame extends Frame {
   private _payment: Payment;
@@ -36,7 +34,7 @@ export default class ControlFrame extends Frame {
 
   public onInit() {
     super.onInit();
-    this._payment = environment.testEnvironment ? new PaymentMock(this._params.jwt) : new Payment(this._params.jwt);
+    this._payment = new Payment(this._params.jwt);
     this.initSubscriptions();
     this.onLoad();
   }

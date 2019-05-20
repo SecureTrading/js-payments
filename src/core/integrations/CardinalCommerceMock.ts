@@ -2,8 +2,8 @@ import { environment } from '../../environments/environment';
 import { CardinalCommerce } from './CardinalCommerce';
 
 export default class CardinalCommerceMock extends CardinalCommerce {
-  constructor(step: boolean) {
-    super(step);
+  protected _performBinDetection(data: IFormFieldState) {
+    return true;
   }
 
   protected _authenticateCard() {

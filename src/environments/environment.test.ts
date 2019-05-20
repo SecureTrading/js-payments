@@ -20,12 +20,6 @@ export const environment = {
   FRAME_URL,
   GATEWAY_URL,
   NOTIFICATION_TTL: 14000,
-  ST_URLS: {
-    MOCK: {
-      AUTH: `${MOCK_GATEWAY_URL}/auth`,
-      THREEDQUERY_URL: `${MOCK_GATEWAY_URL}/threeDQuery`
-    }
-  },
   VISA_CHECKOUT_URLS: {
     MOCK_DATA_URL: `${MOCK_THIRD_PARTY_URL}/visaPaymentStatus`,
     TEST_BUTTON_URL: 'https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png',

@@ -76,7 +76,9 @@ export class CardinalCommerce {
    * @protected
    */
   // @ts-ignore
-  protected _performBinDetection = (data: IFormFieldState) => Cardinal.trigger('bin.process', data.value);
+  protected _performBinDetection(data: IFormFieldState) {
+    Cardinal.trigger('bin.process', data.value);
+  }
 
   /**
    * Triggered when the transaction has been finished.
