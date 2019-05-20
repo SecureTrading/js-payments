@@ -132,6 +132,12 @@ export class CardinalCommerce {
     });
   }
 
+  protected _threeDSetup() {
+    DomMethods.insertScript('head', environment.CARDINAL_COMMERCE.SONGBIRD_URL).addEventListener('load', () => {
+      this._onCardinalLoad();
+    });
+  }
+
   private _onInit() {
     this._initSubscriptions();
   }
@@ -170,12 +176,6 @@ export class CardinalCommerce {
       type: MessageBus.EVENTS_PUBLIC.THREEDINIT
     };
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
-  }
-
-  private _threeDSetup() {
-    DomMethods.insertScript('head', environment.CARDINAL_COMMERCE.SONGBIRD_URL).addEventListener('load', () => {
-      this._onCardinalLoad();
-    });
   }
 
   private _threeDQueryRequest(responseObject: IThreeDQueryResponse) {

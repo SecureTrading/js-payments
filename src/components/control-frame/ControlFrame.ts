@@ -1,7 +1,10 @@
 import { IMerchantData } from '../../core/models/MerchantData';
+import { INotificationEvent, NotificationType } from '../../core/models/NotificationEvent';
 import Frame from '../../core/shared/Frame';
+import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Payment from '../../core/shared/Payment';
+import Selectors from '../../core/shared/Selectors';
 
 export default class ControlFrame extends Frame {
   private _payment: Payment;
@@ -37,6 +40,24 @@ export default class ControlFrame extends Frame {
     this._payment = new Payment(this._params.jwt);
     this.initSubscriptions();
     this.onLoad();
+  }
+
+  /**
+   * Send postMessage to notificationFrame component, to inform user about payment status
+   * @param type
+   * @param content
+   */
+  // TODO refactor with Apple and Visa Checkout
+  public setNotification(type: string, content: string) {
+    const notificationEvent: INotificationEvent = {
+      content,
+      type
+    };
+    const messageBusEvent: IMessageBusEvent = {
+      data: notificationEvent,
+      type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
+    };
+    this._messageBus.publish(messageBusEvent);
   }
 
   protected _getAllowedParams() {
@@ -135,12 +156,33 @@ export default class ControlFrame extends Frame {
     });
   }
 
+  // TODO refactor with Apple and Visa Checkout to handle response in same way
   private requestAuth(data: any) {
-    this._payment.processPayment({ requesttypedescription: 'AUTH' }, this._card, this._merchantFormData, data);
+    this._payment
+      .processPayment({ requesttypedescription: 'AUTH' }, this._card, this._merchantFormData, data)
+      .then((response: object) => response)
+      .then((respData: object) => {
+        this.setNotification(NotificationType.Success, Language.translations.PAYMENT_SUCCESS);
+        return respData;
+      })
+      .catch(() => {
+        this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
+      });
   }
 
+  // TODO refactor with Apple and Visa Checkout to handle response in same way
+  // TODO refactor with AUTH
   private requestCachetokenise(data: any) {
-    this._payment.processPayment({ requesttypedescription: 'CACHETOKENISE' }, this._card, this._merchantFormData, data);
+    this._payment
+      .processPayment({ requesttypedescription: 'CACHETOKENISE' }, this._card, this._merchantFormData, data)
+      .then((response: object) => response)
+      .then((respData: object) => {
+        this.setNotification(NotificationType.Success, Language.translations.PAYMENT_SUCCESS);
+        return respData;
+      })
+      .catch(() => {
+        this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
+      });
   }
 
   private requestPayment() {
