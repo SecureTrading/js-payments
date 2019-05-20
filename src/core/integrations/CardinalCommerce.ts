@@ -67,11 +67,16 @@ export class CardinalCommerce {
     const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL
     };
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BIN_PROCESS, (data: IFormFieldState) => {
-      Cardinal.trigger('bin.process', data.value);
-    });
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BIN_PROCESS, this._performBinDetection);
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
+
+  /**
+   * Triggered when the card number bin value changes
+   * @protected
+   */
+  // @ts-ignore
+  protected _performBinDetection = (data: IFormFieldState) => Cardinal.trigger('bin.process', data.value);
 
   /**
    * Triggered when the transaction has been finished.
@@ -117,7 +122,6 @@ export class CardinalCommerce {
     Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.SETUP_COMPLETE, () => {
       this._onCardinalSetupComplete();
     });
-
     Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.VALIDATED, (data: any, jwt: any) => {
       this._onCardinalValidated(data, jwt);
     });

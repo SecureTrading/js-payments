@@ -18,6 +18,7 @@ class StCodec {
   public static CONTENT_TYPE = 'application/json';
   public static VERSION = '1.00';
   public static SUPPORTED_REQUEST_TYPES = ['WALLETVERIFY', 'JSINIT', 'THREEDQUERY', 'CACHETOKENISE', 'AUTH'];
+  public static MINIMUM_REQUEST_FIELDS = 1;
 
   /**
    * Generate a unique ID for a request
@@ -111,7 +112,7 @@ class StCodec {
    */
   public encode(requestObject: IStRequest) {
     if (
-      Object.keys(requestObject).length < 2 ||
+      Object.keys(requestObject).length < StCodec.MINIMUM_REQUEST_FIELDS ||
       !StCodec.SUPPORTED_REQUEST_TYPES.includes(requestObject.requesttypedescription)
     ) {
       StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST);
