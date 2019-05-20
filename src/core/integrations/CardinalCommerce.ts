@@ -1,5 +1,7 @@
 import { environment } from '../../environments/environment';
+import { INotificationEvent, NotificationType } from '../models/NotificationEvent';
 import DomMethods from '../shared/DomMethods';
+import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
 
@@ -72,6 +74,24 @@ export class CardinalCommerce {
   }
 
   /**
+   * Send postMessage to notificationFrame component, to inform user about payment status
+   * @param type
+   * @param content
+   */
+  public setNotification(type: string, content: string) {
+    // TODO refactor with ApplePay/Visa/Control frame
+    const notificationEvent: INotificationEvent = {
+      content,
+      type
+    };
+    const messageBusEvent: IMessageBusEvent = {
+      data: notificationEvent,
+      type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
+    };
+    this.messageBus.publishFromParent(messageBusEvent, Selectors.NOTIFICATION_FRAME_IFRAME);
+  }
+
+  /**
    * Triggered when the card number bin value changes
    * @protected
    */
@@ -85,11 +105,12 @@ export class CardinalCommerce {
    * @protected
    */
   protected _onCardinalValidated(data: any, jwt: any) {
-    // @TODO: handle all errors - part of STJS-25
-    if (data.ActionCode === 'SUCCESS') {
+    if (['SUCCESS', 'NOACTION', 'FAILURE'].includes(data.ActionCode)) {
       this._authorizePayment({
         threedresponse: jwt
       });
+    } else {
+      this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
     }
   }
   /**
