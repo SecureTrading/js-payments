@@ -4,7 +4,6 @@ import Frame from '../../core/shared/Frame';
 import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Payment from '../../core/shared/Payment';
-import Selectors from '../../core/shared/Selectors';
 
 export default class ControlFrame extends Frame {
   private _payment: Payment;
@@ -47,7 +46,7 @@ export default class ControlFrame extends Frame {
    * @param type
    * @param content
    */
-  // TODO refactor with Apple and Visa Checkout
+  // TODO STJS-205 refactor into Payments
   public setNotification(type: string, content: string) {
     const notificationEvent: INotificationEvent = {
       content,
@@ -156,7 +155,7 @@ export default class ControlFrame extends Frame {
     });
   }
 
-  // TODO refactor with Apple and Visa Checkout to handle response in same way
+  // TODO STJS-205 refactor into Payments
   private requestAuth(data: any) {
     this._payment
       .processPayment({ requesttypedescription: 'AUTH' }, this._card, this._merchantFormData, data)
@@ -170,7 +169,7 @@ export default class ControlFrame extends Frame {
       });
   }
 
-  // TODO refactor with Apple and Visa Checkout to handle response in same way
+  // TODO STJS-205 refactor into Payments
   // TODO refactor with AUTH
   private requestCachetokenise(data: any) {
     this._payment

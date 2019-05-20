@@ -79,7 +79,7 @@ export class CardinalCommerce {
    * @param content
    */
   public setNotification(type: string, content: string) {
-    // TODO refactor with ApplePay/Visa/Control frame
+    // @TODO STJS-205 refactor into Payments
     const notificationEvent: INotificationEvent = {
       content,
       type
