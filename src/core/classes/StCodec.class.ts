@@ -59,7 +59,8 @@ class StCodec {
       // Should this be a custom error type which can also take a field that is at fault
       // so that errordata can be sent up to highlight the field?
       StCodec._notification.error(responseContent.errormessage);
-      Validation.getErrorData(StCodec.getErrorData(responseContent));
+      const validation = new Validation();
+      validation.getErrorData(StCodec.getErrorData(responseContent));
       throw new Error(responseContent.errormessage);
     }
     return responseContent;

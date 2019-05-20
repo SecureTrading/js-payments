@@ -3,6 +3,7 @@ import Frame from '../../core/shared/Frame';
 import MessageBus from '../../core/shared/MessageBus';
 import Payment from '../../core/shared/Payment';
 import PaymentMock from '../../core/shared/PaymentMock';
+import Selectors from '../../core/shared/Selectors';
 import { environment } from '../../environments/environment';
 
 export default class ControlFrame extends Frame {
@@ -36,6 +37,12 @@ export default class ControlFrame extends Frame {
 
   public onInit() {
     super.onInit();
+    const formValidity =
+      this._formFields.cardNumber.validity &&
+      this._formFields.expirationDate.validity &&
+      this._formFields.securityCode.validity;
+    this.setFormValidity(formValidity);
+
     this._payment = environment.testEnvironment ? new PaymentMock(this._params.jwt) : new Payment(this._params.jwt);
     this.initSubscriptions();
     this.onLoad();
@@ -145,7 +152,16 @@ export default class ControlFrame extends Frame {
     this._payment.processPayment({ requesttypedescription: 'CACHETOKENISE' }, this._card, this._merchantFormData, data);
   }
 
+  private setFormValidity(state: boolean) {
+    let validationEvent: IMessageBusEvent = {
+      data: { validity: state },
+      type: MessageBus.EVENTS.VALIDATE_FORM
+    };
+    this._messageBus.publish(validationEvent, true);
+  }
+
   private requestPayment() {
+    console.log('dupa');
     const isFormValid: boolean =
       this._formFields.cardNumber.validity &&
       this._formFields.expirationDate.validity &&
@@ -157,7 +173,15 @@ export default class ControlFrame extends Frame {
       securitycode: this._formFields.securityCode.value
     };
 
+    if (isFormValid) {
+      console.log('dupa');
+      this.setFormValidity(isFormValid);
+    } else {
+      alert('form is not valid');
+    }
+
     if (this._isPaymentReady && isFormValid) {
+      console.log('dupa1');
       this._payment.threeDQueryRequest(this._card, this._merchantFormData).then(responseBody => {
         const messageBusEvent: IMessageBusEvent = {
           data: responseBody,

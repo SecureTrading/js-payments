@@ -1,11 +1,13 @@
 import Formatter from './Formatter';
 import Frame from './Frame';
+import Form from '../classes/Form.class';
 import Language from './Language';
 import MessageBus from './MessageBus';
 import { Translator } from './Translator';
 import Validation from './Validation';
 
 export default class FormField extends Frame {
+  private static FOCUSED_FIELD_STATE = { 'data-pristine': false, 'data-dirty': true };
   public validation: Validation;
   protected _inputSelector: string;
   protected _messageSelector: string;
@@ -38,6 +40,7 @@ export default class FormField extends Frame {
     this.validation = new Validation();
     this.setLabelText();
     this.setValidationAttributes();
+    this.checkBackendValidity();
   }
 
   public getLabel(): string {
@@ -146,7 +149,6 @@ export default class FormField extends Frame {
 
     clipboardData = event.clipboardData.getData('text/plain');
     this._inputElement.value = Formatter.trimNonNumeric(clipboardData);
-    this.validate();
   }
 
   protected setAttributes(attributes: object) {
@@ -169,8 +171,14 @@ export default class FormField extends Frame {
     this._inputElement.value = value;
   }
 
-  protected validate(customValidity?: any) {
-    const validationMessage: string = this.validation.getValidationMessage(this._inputElement.validity, customValidity);
+  protected validate(validity: boolean) {
+    const validationMessage: string = this.validation.getValidationMessage(this._inputElement.validity);
+    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_FORM, (data: any) => {
+      console.log('dupajbdsfbsdbfsdbfsd');
+      console.log(data);
+      const disable = !data.validity;
+      Form._setSubmitButtonState(disable);
+    });
     this.setMessage(validationMessage);
   }
 
@@ -183,7 +191,7 @@ export default class FormField extends Frame {
   }
 
   protected focus() {
-    this.setAttributes({ 'data-pristine': false, 'data-dirty': true });
+    this.setAttributes(FormField.FOCUSED_FIELD_STATE);
     this._inputElement.focus();
   }
 
@@ -211,4 +219,33 @@ export default class FormField extends Frame {
 
   private toggleErrorClass = (validity: boolean) =>
     validity ? this._inputElement.classList.remove('error-field') : this._inputElement.classList.add('error-field');
+
+  private checkBackendValidity() {
+    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD, (data: any) => {
+      const validation = { type: data.field, content: data.message };
+      if (this._inputSelector === 'st-card-number-input') {
+        console.log(data);
+        // @ts-ignore
+        this.toggleErrorClass(false);
+        this.setMessage(data.message);
+        this._inputElement.setCustomValidity(validation.content);
+      }
+    });
+    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD, (data: any) => {
+      const validation = { type: data.field, content: data.message };
+      console.log(data);
+      // @ts-ignore
+      this.toggleErrorClass(false);
+      this.setMessage(data.message);
+      this._inputElement.setCustomValidity(validation.content);
+    });
+    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD, (data: any) => {
+      const validation = { type: data.field, content: data.message };
+      console.log(data);
+      // @ts-ignore
+      this.toggleErrorClass(false);
+      this.setMessage(data.message);
+      this._inputElement.setCustomValidity(validation.content);
+    });
+  }
 }

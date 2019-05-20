@@ -11,32 +11,31 @@ import Validation from '../shared/Validation';
  * Defines all elements of form and their  placement on merchant site.
  */
 class Form {
-  /**
-   * Attaches to specified element text or/and icon and disables it.
-   * @param element
-   * @param text
-   * @param animatedIcon
-   * @private
-   */
-  private static _setPreloader(element: HTMLElement, text?: string, animatedIcon?: string) {
-    element.textContent = `${animatedIcon ? animatedIcon : ''}${text ? text : ''}`;
+  private static SUBMIT_BUTTON_DISABLED_CLASS = 'st-button-submit__disabled';
+
+  private static _setSubmitButtonProperties(element: HTMLElement, disabledState: boolean) {
+    if (disabledState) {
+      element.classList.add(Form.SUBMIT_BUTTON_DISABLED_CLASS);
+    } else {
+      element.classList.remove(Form.SUBMIT_BUTTON_DISABLED_CLASS);
+    }
+
     // @ts-ignore
-    element.disabled = true;
+    element.disabled = disabledState;
+    return element;
   }
 
   /**
    * Finds submit button, disable it and set preloader text or / and icon.
    * @private
    */
-  private static _disableSubmitButton() {
+  public static _setSubmitButtonState(disabledState: boolean) {
     const inputSubmit = document.querySelector('input[type="submit"]');
     const buttonSubmit = document.querySelector('button[type="submit"]');
     // @ts-ignore
-    // tslint:disable-next-line:no-unused-expression
-    inputSubmit && Form._setPreloader(inputSubmit, Language.translations.PRELOADER_TEXT);
+    inputSubmit && Form._setSubmitButtonProperties(inputSubmit, disabledState);
     // @ts-ignore
-    // tslint:disable-next-line:no-unused-expression
-    buttonSubmit && Form._setPreloader(buttonSubmit, Language.translations.PRELOADER_TEXT);
+    buttonSubmit && Form._setSubmitButtonProperties(buttonSubmit, disabledState);
   }
 
   public styles: IStyles;
@@ -76,6 +75,13 @@ class Form {
     this.origin = origin;
     this.params = { locale: this.stJwt.locale };
     this.messageBus = new MessageBus();
+    document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).addEventListener('submit', (event: Event) => {
+      event.preventDefault();
+      const messageBusEvent: IMessageBusEvent = {
+        type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
+      };
+      this.messageBus.publish(messageBusEvent);
+    });
     this._onInit();
   }
 
@@ -98,7 +104,6 @@ class Form {
   public _onInit() {
     if (!this.onlyWallets) {
       this.initCardFields();
-      this._setFormListener();
     }
     this.initFormFields();
     this._setMerchantInputListeners();
@@ -158,19 +163,6 @@ class Form {
     targets.map((item, index) => {
       const itemToChange = document.getElementById(item);
       itemToChange.appendChild(fields[index]);
-    });
-  }
-
-  /**
-   * Sets submit listener on form
-   * @private
-   */
-  private _setFormListener() {
-    this.messageBusEvent = { type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM };
-    document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).addEventListener('submit', (event: Event) => {
-      event.preventDefault();
-      Form._disableSubmitButton();
-      this.messageBus.publishFromParent(this.messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
     });
   }
 

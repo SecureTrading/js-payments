@@ -1,5 +1,6 @@
 import Language from './Language';
 import { StCodec } from '../classes/StCodec.class';
+import MessageBus from './MessageBus';
 
 interface IValidation {
   pan: boolean;
@@ -10,7 +11,8 @@ interface IValidation {
 const {
   VALIDATION_ERROR_FIELD_IS_REQUIRED,
   VALIDATION_ERROR_PATTERN_MISMATCH,
-  VALIDATION_ERROR_VALUE_TOO_SHORT
+  VALIDATION_ERROR_VALUE_TOO_SHORT,
+  VALIDATION_ERROR
 } = Language.translations;
 
 /**
@@ -19,10 +21,25 @@ const {
 export default class Validation {
   public validation: IValidation;
   public errorData: any;
+  private _messageBus: MessageBus;
 
-  public static getErrorData(errorData: any) {
-    const { errordata, errormessage, requesttypedescription } = StCodec.getErrorData(errorData);
-    return { field: errordata[0], errormessage, requesttypedescription };
+  public getErrorData(errorData: any) {
+    const { errordata, errormessage } = StCodec.getErrorData(errorData);
+    let validationEvent: IMessageBusEvent = {
+      data: { field: errordata[0], message: errormessage },
+      type: ''
+    };
+
+    if (errordata[0] === 'pan') {
+      console.log(errordata);
+      validationEvent.type = MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD;
+    } else if (errordata[0] === 'expirationDate') {
+      validationEvent.type = MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD;
+    } else if (errordata[0] === 'securityCode') {
+      validationEvent.type = MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD;
+    }
+    this._messageBus.publish(validationEvent);
+    return { field: errordata[0], errormessage };
   }
 
   /**
@@ -53,9 +70,11 @@ export default class Validation {
     return cardNumber.slice(-securityCodeLength);
   }
 
-  constructor() {}
+  constructor() {
+    this._messageBus = new MessageBus();
+  }
 
-  public getValidationMessage(validityState: ValidityState, customValidity: any): string {
+  public getValidationMessage(validityState: ValidityState): string {
     let validationMessage: string = '';
     console.log(validityState);
     if (!validityState.valid) {
@@ -68,9 +87,9 @@ export default class Validation {
       if (validityState.tooShort) {
         validationMessage = VALIDATION_ERROR_VALUE_TOO_SHORT;
       }
-    }
-    if (!customValidity) {
-      validationMessage = VALIDATION_ERROR_PATTERN_MISMATCH;
+      if (validityState.customError) {
+        validationMessage = VALIDATION_ERROR;
+      }
     }
 
     return validationMessage;

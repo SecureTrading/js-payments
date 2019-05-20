@@ -20,3 +20,12 @@ body {
   border-color: $border-color-notification-error;
   color: $color-notification-error;
 }
+
+.st-button-submit__disabled {
+  opacity: .5;
+  cursor: not-allowed;
+
+  &:hover{
+    background: transparent;
+  }
+}
