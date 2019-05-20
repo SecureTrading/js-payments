@@ -46,7 +46,7 @@ export default class ControlFrame extends Frame {
    * @param type
    * @param content
    */
-  // TODO STJS-205 refactor into Payments
+  // @TODO STJS-205 refactor into Payments
   public setNotification(type: string, content: string) {
     const notificationEvent: INotificationEvent = {
       content,
@@ -155,25 +155,18 @@ export default class ControlFrame extends Frame {
     });
   }
 
-  // TODO STJS-205 refactor into Payments
   private requestAuth(data: any) {
-    this._payment
-      .processPayment({ requesttypedescription: 'AUTH' }, this._card, this._merchantFormData, data)
-      .then((response: object) => response)
-      .then((respData: object) => {
-        this.setNotification(NotificationType.Success, Language.translations.PAYMENT_SUCCESS);
-        return respData;
-      })
-      .catch(() => {
-        this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
-      });
+    this._processPayment(data, 'AUTH');
   }
 
-  // TODO STJS-205 refactor into Payments
-  // TODO refactor with AUTH
   private requestCachetokenise(data: any) {
+    this._processPayment(data, 'CACHETOKENISE');
+  }
+
+  // @TODO STJS-205 refactor into Payments
+  private _processPayment(data: any, type: string) {
     this._payment
-      .processPayment({ requesttypedescription: 'CACHETOKENISE' }, this._card, this._merchantFormData, data)
+      .processPayment({ requesttypedescription: type }, this._card, this._merchantFormData, data)
       .then((response: object) => response)
       .then((respData: object) => {
         this.setNotification(NotificationType.Success, Language.translations.PAYMENT_SUCCESS);
