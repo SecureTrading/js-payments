@@ -1,5 +1,5 @@
-import Language from './Language';
 import { StCodec } from '../classes/StCodec.class';
+import Language from './Language';
 import MessageBus from './MessageBus';
 
 interface IValidation {
@@ -19,29 +19,6 @@ const {
  * Base class for validation, aggregates common methods and attributes for all subclasses
  */
 export default class Validation {
-  public validation: IValidation;
-  public errorData: any;
-  private _messageBus: MessageBus;
-
-  public getErrorData(errorData: any) {
-    const { errordata, errormessage } = StCodec.getErrorData(errorData);
-    let validationEvent: IMessageBusEvent = {
-      data: { field: errordata[0], message: errormessage },
-      type: ''
-    };
-
-    if (errordata[0] === 'pan') {
-      console.log(errordata);
-      validationEvent.type = MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD;
-    } else if (errordata[0] === 'expirationDate') {
-      validationEvent.type = MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD;
-    } else if (errordata[0] === 'securityCode') {
-      validationEvent.type = MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD;
-    }
-    this._messageBus.publish(validationEvent);
-    return { field: errordata[0], errormessage };
-  }
-
   /**
    * Method for prevent inserting non digits
    * @param event
@@ -70,13 +47,35 @@ export default class Validation {
     return cardNumber.slice(-securityCodeLength);
   }
 
+  private static ONLY_DIGITS_REGEXP = '^\\d+$';
+  public validation: IValidation;
+  public errorData: any;
+  private _messageBus: MessageBus;
+
   constructor() {
     this._messageBus = new MessageBus();
   }
 
+  public getErrorData(errorData: any) {
+    const { errordata, errormessage } = StCodec.getErrorData(errorData);
+    const validationEvent: IMessageBusEvent = {
+      data: { field: errordata[0], message: errormessage },
+      type: ''
+    };
+
+    if (errordata[0] === 'pan') {
+      validationEvent.type = MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD;
+    } else if (errordata[0] === 'expirationDate') {
+      validationEvent.type = MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD;
+    } else if (errordata[0] === 'securityCode') {
+      validationEvent.type = MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD;
+    }
+    this._messageBus.publish(validationEvent);
+    return { field: errordata[0], errormessage };
+  }
+
   public getValidationMessage(validityState: ValidityState): string {
     let validationMessage: string = '';
-    console.log(validityState);
     if (!validityState.valid) {
       if (validityState.valueMissing) {
         validationMessage = VALIDATION_ERROR_FIELD_IS_REQUIRED;
@@ -94,6 +93,4 @@ export default class Validation {
 
     return validationMessage;
   }
-
-  private static ONLY_DIGITS_REGEXP = '^\\d+$';
 }

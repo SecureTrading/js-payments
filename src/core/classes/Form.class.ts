@@ -11,6 +11,24 @@ import Validation from '../shared/Validation';
  * Defines all elements of form and their  placement on merchant site.
  */
 class Form {
+  /**
+   * Finds submit button, disable it and set preloader text or / and icon.
+   * @private
+   */
+  public static _setSubmitButtonState(disabledState: boolean) {
+    const inputSubmit = document.querySelector('input[type="submit"]');
+    const buttonSubmit = document.querySelector('button[type="submit"]');
+
+    if (inputSubmit) {
+      // @ts-ignore
+      Form._setSubmitButtonProperties(inputSubmit, disabledState);
+    }
+    if (buttonSubmit) {
+      // @ts-ignore
+      Form._setSubmitButtonProperties(buttonSubmit, disabledState);
+    }
+  }
+
   private static SUBMIT_BUTTON_DISABLED_CLASS = 'st-button-submit__disabled';
 
   private static _setSubmitButtonProperties(element: HTMLElement, disabledState: boolean) {
@@ -24,20 +42,6 @@ class Form {
     element.disabled = disabledState;
     return element;
   }
-
-  /**
-   * Finds submit button, disable it and set preloader text or / and icon.
-   * @private
-   */
-  public static _setSubmitButtonState(disabledState: boolean) {
-    const inputSubmit = document.querySelector('input[type="submit"]');
-    const buttonSubmit = document.querySelector('button[type="submit"]');
-    // @ts-ignore
-    inputSubmit && Form._setSubmitButtonProperties(inputSubmit, disabledState);
-    // @ts-ignore
-    buttonSubmit && Form._setSubmitButtonProperties(buttonSubmit, disabledState);
-  }
-
   public styles: IStyles;
   public params: any; // TODO type?
   public onlyWallets: boolean;

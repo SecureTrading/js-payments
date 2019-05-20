@@ -3,7 +3,6 @@ import Frame from '../../core/shared/Frame';
 import MessageBus from '../../core/shared/MessageBus';
 import Payment from '../../core/shared/Payment';
 import PaymentMock from '../../core/shared/PaymentMock';
-import Selectors from '../../core/shared/Selectors';
 import { environment } from '../../environments/environment';
 
 export default class ControlFrame extends Frame {
@@ -153,7 +152,7 @@ export default class ControlFrame extends Frame {
   }
 
   private setFormValidity(state: boolean) {
-    let validationEvent: IMessageBusEvent = {
+    const validationEvent: IMessageBusEvent = {
       data: { validity: state },
       type: MessageBus.EVENTS.VALIDATE_FORM
     };
@@ -161,7 +160,6 @@ export default class ControlFrame extends Frame {
   }
 
   private requestPayment() {
-    console.log('dupa');
     const isFormValid: boolean =
       this._formFields.cardNumber.validity &&
       this._formFields.expirationDate.validity &&
@@ -174,14 +172,12 @@ export default class ControlFrame extends Frame {
     };
 
     if (isFormValid) {
-      console.log('dupa');
       this.setFormValidity(isFormValid);
     } else {
-      alert('form is not valid');
+      return 'Form is invalid';
     }
 
     if (this._isPaymentReady && isFormValid) {
-      console.log('dupa1');
       this._payment.threeDQueryRequest(this._card, this._merchantFormData).then(responseBody => {
         const messageBusEvent: IMessageBusEvent = {
           data: responseBody,

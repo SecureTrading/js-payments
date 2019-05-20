@@ -1,6 +1,6 @@
+import Form from '../classes/Form.class';
 import Formatter from './Formatter';
 import Frame from './Frame';
-import Form from '../classes/Form.class';
 import Language from './Language';
 import MessageBus from './MessageBus';
 import { Translator } from './Translator';
@@ -49,9 +49,9 @@ export default class FormField extends Frame {
 
   public setValidationAttributes(attributes?: any) {
     this.setAttributes({
-      'data-validity': false,
-      'data-pristine': true,
       'data-dirty': false,
+      'data-pristine': true,
+      'data-validity': false,
       ...attributes
     });
   }
@@ -174,8 +174,6 @@ export default class FormField extends Frame {
   protected validate(validity: boolean) {
     const validationMessage: string = this.validation.getValidationMessage(this._inputElement.validity);
     this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_FORM, (data: any) => {
-      console.log('dupajbdsfbsdbfsdbfsd');
-      console.log(data);
       const disable = !data.validity;
       Form._setSubmitButtonState(disable);
     });
@@ -224,7 +222,6 @@ export default class FormField extends Frame {
     this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD, (data: any) => {
       const validation = { type: data.field, content: data.message };
       if (this._inputSelector === 'st-card-number-input') {
-        console.log(data);
         // @ts-ignore
         this.toggleErrorClass(false);
         this.setMessage(data.message);
@@ -233,7 +230,6 @@ export default class FormField extends Frame {
     });
     this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD, (data: any) => {
       const validation = { type: data.field, content: data.message };
-      console.log(data);
       // @ts-ignore
       this.toggleErrorClass(false);
       this.setMessage(data.message);
@@ -241,7 +237,6 @@ export default class FormField extends Frame {
     });
     this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD, (data: any) => {
       const validation = { type: data.field, content: data.message };
-      console.log(data);
       // @ts-ignore
       this.toggleErrorClass(false);
       this.setMessage(data.message);
