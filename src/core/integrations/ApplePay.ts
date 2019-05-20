@@ -122,7 +122,9 @@ class ApplePay {
     this.step = step;
     this.validateMerchantRequestData.walletmerchantid = merchantId;
     this.stJwtInstance = new StJwt(jwt);
-    this.stTransportInstance = new StTransport({ jwt });
+    this.stTransportInstance = new StTransport({
+      jwt
+    });
     this.messageBus = new MessageBus();
     this.onInit(buttonText, buttonStyle);
   }
@@ -131,7 +133,9 @@ class ApplePay {
    * Checks if ApplePaySession object is available
    * If yes, returns ApplePaySession object, if not returns undefined.
    */
-  public ifApplePayIsAvailable = () => ApplePaySession;
+  public ifApplePayIsAvailable() {
+    return ApplePaySession;
+  }
 
   /**
    * Checks whether user uses Safari and if it's version supports Apple Pay
@@ -191,7 +195,9 @@ class ApplePay {
   /**
    * Creates Apple Pay button with props specified by Merchant (buttonText, buttonStyle)
    */
-  public createApplePayButton = () => DomMethods.createHtmlElement.apply(this, [this._applePayButtonProps, 'div']);
+  public createApplePayButton() {
+    return DomMethods.createHtmlElement.apply(this, [this._applePayButtonProps, 'div']);
+  }
 
   /**
    * Adds Apple Pay button to DOM
@@ -226,17 +232,23 @@ class ApplePay {
   /**
    * Checks whether ApplePay is available on current device
    */
-  public checkApplePayAvailability = () => ApplePaySession && ApplePaySession.canMakePayments();
+  public checkApplePayAvailability() {
+    return ApplePaySession && ApplePaySession.canMakePayments();
+  }
 
   /**
    * Checks whether ApplePay is available on current device and also if it us at least one active card in Wallet
    */
-  public checkApplePayWalletCardAvailability = () => ApplePaySession.canMakePaymentsWithActiveCard(this.merchantId);
+  public checkApplePayWalletCardAvailability() {
+    return ApplePaySession.canMakePaymentsWithActiveCard(this.merchantId);
+  }
 
   /**
    * Gets Apple Pay session object based on Apple Pay version number and ApplePayPaymentRequest
    */
-  public getApplePaySessionObject = () => new ApplePaySession(this.applePayVersion, this.paymentRequest);
+  public getApplePaySessionObject() {
+    return new ApplePaySession(this.applePayVersion, this.paymentRequest);
+  }
 
   /**
    * Sets details encrypted in JWT into payment request
@@ -293,13 +305,17 @@ class ApplePay {
     };
   }
 
+  public getPaymentStatus() {
+    return ApplePaySession.STATUS_SUCCESS;
+  }
+
   /**
    * Handles onpaymentauthorized event and completes payment
    */
   public onPaymentAuthorized() {
     this.session.onpaymentauthorized = (event: any) => {
       this.paymentDetails = JSON.stringify(event.payment);
-      this.session.completePayment({ status: ApplePaySession.STATUS_SUCCESS, errors: [] });
+      this.session.completePayment({ status: this.getPaymentStatus(), errors: [] });
       this.payment
         .processPayment(
           { requesttypedescription: this.step ? 'CACHETOKENISE' : 'AUTH' },
@@ -311,7 +327,7 @@ class ApplePay {
         )
         .then((response: object) => response)
         .then((data: object) => {
-          this.setNotification(NotificationType.Success, Language.translations.PAYMENT_AUTHORIZED);
+          this.setNotification(NotificationType.Success, Language.translations.PAYMENT_SUCCESS);
           return data;
         })
         .catch(() => {
