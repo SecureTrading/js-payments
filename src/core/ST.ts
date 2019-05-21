@@ -20,27 +20,11 @@ export default class ST {
    */
 
   public static init(config: IConfig) {
+    config = this._addDefaults(config);
     ST.jwt = config.jwt;
     ST.componentIds = config.componentIds;
     ST.styles = config.styles;
     ST._initForm();
-  }
-
-  private _addDefaults(config: IConfig) {
-    ST.origin = config.origin ? config.origin : window.location.origin;
-    ST.tokenise = config.tokenise ? config.tokenise : false;
-    const componentIds = {
-      animatedCard: 'st-animated-card',
-      cardNumber: 'st-card-number',
-      controlFrame: 'st-control-frame',
-      expirationDate: 'st-expiration-date',
-      notificationFrame: 'st-notification-frame',
-      securityCode: 'st-security-code'
-    };
-    // Default config
-    config.componentIds = config.componentIds ? { ...componentIds, ...config.componentIds } : componentIds;
-    config.styles = config.styles ? config.styles : {};
-    return config;
   }
 
   public static Components(config?: IComponentsConfig) {
@@ -100,4 +84,21 @@ export default class ST {
    * @private
    */
   private static _initForm = () => new Form(ST.jwt, ST.origin, ST.componentIds, ST.styles);
+
+  private static _addDefaults(config: IConfig) {
+    ST.origin = config.origin ? config.origin : window.location.origin;
+    ST.tokenise = config.tokenise ? config.tokenise : false;
+    const componentIds = {
+      animatedCard: 'st-animated-card',
+      cardNumber: 'st-card-number',
+      controlFrame: 'st-control-frame',
+      expirationDate: 'st-expiration-date',
+      notificationFrame: 'st-notification-frame',
+      securityCode: 'st-security-code'
+    };
+    // Default config
+    config.componentIds = config.componentIds ? { ...componentIds, ...config.componentIds } : componentIds;
+    config.styles = config.styles ? config.styles : {};
+    return config;
+  }
 }
