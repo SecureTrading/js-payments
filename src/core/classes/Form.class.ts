@@ -50,6 +50,7 @@ class Form {
     this.messageBus = new MessageBus();
     document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).addEventListener('submit', (event: Event) => {
       event.preventDefault();
+      this.validation.blockForm(true);
       const messageBusEvent: IMessageBusEvent = {
         type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
       };

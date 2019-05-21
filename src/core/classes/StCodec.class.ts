@@ -63,9 +63,9 @@ class StCodec {
       // so that errordata can be sent up to highlight the field?
       StCodec._notification.error(responseContent.errormessage);
       validation.getErrorData(StCodec.getErrorData(responseContent));
+      validation.blockForm(false);
       throw new Error(responseContent.errormessage);
     } else if (responseContent.requesttypedescription === StCodec.SUPPORTED_REQUEST_TYPES[4]) {
-      validation.blockForm();
       StCodec._notification.success('Payment succeded !');
     }
     return responseContent;
