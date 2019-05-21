@@ -40,7 +40,6 @@ export default class FormField extends Frame {
     this.validation = new Validation();
     this.setLabelText();
     this.setValidationAttributes();
-    this.checkBackendValidity();
   }
 
   public getLabel(): string {
@@ -127,6 +126,7 @@ export default class FormField extends Frame {
   }
 
   protected onFocus(event: Event) {
+    this._inputElement.setCustomValidity('');
     this.format(this._inputElement.value);
     this.validation.validate(this._inputElement, this._messageElement);
     this.focus();
@@ -192,24 +192,13 @@ export default class FormField extends Frame {
     });
   }
 
-  private checkBackendValidity() {
-    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD, (data: any) => {
-      const validation = { type: data.field, content: data.message };
-      this.validation.toggleErrorClass(this._inputElement);
-      this.validation.setMessage(this._inputElement, this._messageElement);
-      this._inputElement.setCustomValidity(validation.content);
-    });
-    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD, (data: any) => {
-      const validation = { type: data.field, content: data.message };
-      this.validation.toggleErrorClass(this._inputElement);
-      this.validation.setMessage(this._inputElement, this._messageElement);
-      this._inputElement.setCustomValidity(validation.content);
-    });
-    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD, (data: any) => {
-      const validation = { type: data.field, content: data.message };
-      this.validation.toggleErrorClass(this._inputElement);
-      this.validation.setMessage(this._inputElement, this._messageElement);
-      this._inputElement.setCustomValidity(validation.content);
-    });
+  protected checkBackendValidity(data: any) {
+    this.setError(this._inputElement, this._messageElement, data.message);
+  }
+
+  public setError(inputElement: any, messageElement: any, message: string) {
+    inputElement.classList.add('error-field');
+    messageElement.innerText = this._translator.translate(message);
+    this._inputElement.setCustomValidity(message);
   }
 }

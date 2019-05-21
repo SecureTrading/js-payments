@@ -25,6 +25,7 @@ export default class SecurityCode extends FormField {
     }
     this.setSecurityCodeAttributes();
     this.subscribeSecurityCodeChange();
+    this.backendValidation();
   }
 
   public getLabel(): string {
@@ -78,6 +79,12 @@ export default class SecurityCode extends FormField {
     this.setAttributes({
       maxlength: securityCodeLength,
       minlength: securityCodeLength
+    });
+  }
+
+  public backendValidation() {
+    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD, (data: any) => {
+      this.checkBackendValidity(data);
     });
   }
 }

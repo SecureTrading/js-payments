@@ -26,6 +26,7 @@ export default class ExpirationDate extends FormField {
     if (this._inputElement.value) {
       this.sendState();
     }
+    this.backendValidation();
   }
 
   public getLabel(): string {
@@ -58,5 +59,12 @@ export default class ExpirationDate extends FormField {
       type: MessageBus.EVENTS.CHANGE_EXPIRATION_DATE
     };
     this._messageBus.publish(messageBusEvent);
+  }
+
+  public backendValidation() {
+    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD, (data: any) => {
+      console.log(data);
+      this.checkBackendValidity(data);
+    });
   }
 }

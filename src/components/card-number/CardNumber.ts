@@ -27,6 +27,7 @@ export default class CardNumber extends FormField {
     this.binLookup = new BinLookup();
     this.validity = new Validation();
     this.isCardNumberValid = true;
+    this.backendValidation();
     this.sendState();
   }
 
@@ -226,5 +227,11 @@ export default class CardNumber extends FormField {
       this._messageBus.publish(binProcessEvent, true);
     }
     this._messageBus.publish(messageBusEvent);
+  }
+
+  public backendValidation() {
+    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD, (data: any) => {
+      this.checkBackendValidity(data);
+    });
   }
 }

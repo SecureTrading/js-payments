@@ -117,6 +117,8 @@ export default class Validation extends Frame {
   }
 
   public toggleErrorClass = (inputElement: any) => {
+    console.log(inputElement);
+    console.log(inputElement.validity.valid);
     inputElement.validity.valid
       ? inputElement.classList.remove('error-field')
       : inputElement.classList.add('error-field');
@@ -124,10 +126,10 @@ export default class Validation extends Frame {
 
   /**
    * Method placed errorMessage inside chosen container (specified by id).
-   * @param messageText
+   * @param inputElement
+   * @param messageElement
    */
   public setMessage(inputElement: any, messageElement: any) {
-    console.log(inputElement);
     const messageText = this.getValidationMessage(inputElement.validity);
     messageElement.innerText = this._translator.translate(messageText);
   }
