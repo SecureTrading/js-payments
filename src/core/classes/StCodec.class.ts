@@ -57,13 +57,16 @@ class StCodec {
     }
     const responseContent = responseData.response[0];
     console.log(responseData);
+    const validation = new Validation();
     if (responseContent.errorcode !== '0') {
       // Should this be a custom error type which can also take a field that is at fault
       // so that errordata can be sent up to highlight the field?
       StCodec._notification.error(responseContent.errormessage);
-      const validation = new Validation();
       validation.getErrorData(StCodec.getErrorData(responseContent));
       throw new Error(responseContent.errormessage);
+    } else if (responseContent.requesttypedescription === StCodec.SUPPORTED_REQUEST_TYPES[4]) {
+      validation.blockForm();
+      StCodec._notification.success('Payment succeded !');
     }
     return responseContent;
   }

@@ -11,37 +11,6 @@ import Validation from '../shared/Validation';
  * Defines all elements of form and their  placement on merchant site.
  */
 class Form {
-  /**
-   * Finds submit button, disable it and set preloader text or / and icon.
-   * @private
-   */
-  public static _setSubmitButtonState(disabledState: boolean) {
-    const inputSubmit = document.querySelector('input[type="submit"]');
-    const buttonSubmit = document.querySelector('button[type="submit"]');
-
-    if (inputSubmit) {
-      // @ts-ignore
-      Form._setSubmitButtonProperties(inputSubmit, disabledState);
-    }
-    if (buttonSubmit) {
-      // @ts-ignore
-      Form._setSubmitButtonProperties(buttonSubmit, disabledState);
-    }
-  }
-
-  private static SUBMIT_BUTTON_DISABLED_CLASS = 'st-button-submit__disabled';
-
-  private static _setSubmitButtonProperties(element: HTMLElement, disabledState: boolean) {
-    if (disabledState) {
-      element.classList.add(Form.SUBMIT_BUTTON_DISABLED_CLASS);
-    } else {
-      element.classList.remove(Form.SUBMIT_BUTTON_DISABLED_CLASS);
-    }
-
-    // @ts-ignore
-    element.disabled = disabledState;
-    return element;
-  }
   public styles: IStyles;
   public params: any; // TODO type?
   public onlyWallets: boolean;
@@ -87,6 +56,44 @@ class Form {
       this.messageBus.publish(messageBusEvent);
     });
     this._onInit();
+    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (data: any) => {
+      this.setSubmitButton(data.state);
+      // this.formOverlay();
+    });
+  }
+
+  private static SUBMIT_BUTTON_DISABLED_CLASS = 'st-button-submit__disabled';
+
+  private _setSubmitButtonProperties(element: any, disabledState: boolean) {
+    if (disabledState) {
+      element.classList.add(Form.SUBMIT_BUTTON_DISABLED_CLASS);
+    } else {
+      element.classList.remove(Form.SUBMIT_BUTTON_DISABLED_CLASS);
+    }
+
+    // @ts-ignore
+    element.disabled = disabledState;
+    return element;
+  }
+
+  public setSubmitButton(state: boolean) {
+    const inputSubmit = document.querySelector('input[type="submit"]');
+    const buttonSubmit = document.querySelector('button[type="submit"]');
+    if (inputSubmit) {
+      this._setSubmitButtonProperties(inputSubmit, state);
+    } else if (buttonSubmit) {
+      this._setSubmitButtonProperties(buttonSubmit, state);
+    }
+  }
+
+  public formOverlay() {
+    let div = document.createElement('div');
+    div.setAttribute('class', 'st-form__overlay');
+    div.setAttribute(
+      'style',
+      'position: fixed; width: 100%; height: 100%; opacity: 0.7; background-color: #fff;top:0;left:0;'
+    );
+    document.body.appendChild(div);
   }
 
   /**

@@ -4,6 +4,7 @@ import Utils from './Utils';
 export default class MessageBus {
   public static SUBSCRIBERS: string = 'ST_SUBSCRIBERS';
   public static EVENTS = {
+    BLOCK_FORM: 'BLOCK_FORM',
     CHANGE_CARD_NUMBER: 'CHANGE_CARD_NUMBER',
     CHANGE_EXPIRATION_DATE: 'CHANGE_EXPIRATION_DATE',
     CHANGE_SECURITY_CODE: 'CHANGE_SECURITY_CODE',

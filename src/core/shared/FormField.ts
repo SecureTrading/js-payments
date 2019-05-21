@@ -1,4 +1,3 @@
-import Form from '../classes/Form.class';
 import Formatter from './Formatter';
 import Frame from './Frame';
 import Language from './Language';

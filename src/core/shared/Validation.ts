@@ -1,4 +1,4 @@
-import Form from '../classes/Form.class';
+import Form from './../classes/Form.class';
 import Frame from './Frame';
 import { StCodec } from '../classes/StCodec.class';
 import Language from './Language';
@@ -109,16 +109,10 @@ export default class Validation extends Frame {
 
   public validate(inputElement: any, messageElement: any) {
     this.toggleErrorClass(inputElement);
-    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_FORM, (data: any) => {
-      const disable = !data.validity;
-      Form._setSubmitButtonState(disable);
-    });
     this.setMessage(inputElement, messageElement);
   }
 
   public toggleErrorClass = (inputElement: any) => {
-    console.log(inputElement);
-    console.log(inputElement.validity.valid);
     inputElement.validity.valid
       ? inputElement.classList.remove('error-field')
       : inputElement.classList.add('error-field');
@@ -132,5 +126,16 @@ export default class Validation extends Frame {
   public setMessage(inputElement: any, messageElement: any) {
     const messageText = this.getValidationMessage(inputElement.validity);
     messageElement.innerText = this._translator.translate(messageText);
+  }
+
+  /**
+   *
+   */
+  public blockForm() {
+    const messageBusEvent: IMessageBusEvent = {
+      data: { state: true },
+      type: MessageBus.EVENTS.BLOCK_FORM
+    };
+    this._messageBus.publish(messageBusEvent, true);
   }
 }
