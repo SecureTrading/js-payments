@@ -6,7 +6,6 @@
 import { ApplePay, Components, Create, VisaCheckout } from '../src/stjs';
 import './style.scss';
 
-
 // TODO have to include jwt on all calls? Is there a better way to share common config?
 
 const parsedUrl = new URL(window.location.href);
@@ -21,10 +20,9 @@ const applePayVisaCheckoutJwt =
 
 const jwt = parsedUrl.searchParams.get('jwt') || cardinalJwt;
 
-
 (() => {
   Create({
-    jwt: jwt,
+    jwt,
     step: false
   });
 
