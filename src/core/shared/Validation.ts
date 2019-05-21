@@ -1,6 +1,9 @@
+import Form from '../classes/Form.class';
+import Frame from './Frame';
 import { StCodec } from '../classes/StCodec.class';
 import Language from './Language';
 import MessageBus from './MessageBus';
+import { Translator } from './Translator';
 
 interface IValidation {
   pan: boolean;
@@ -18,7 +21,7 @@ const {
 /**
  * Base class for validation, aggregates common methods and attributes for all subclasses
  */
-export default class Validation {
+export default class Validation extends Frame {
   /**
    * Method for prevent inserting non digits
    * @param event
@@ -50,10 +53,18 @@ export default class Validation {
   private static ONLY_DIGITS_REGEXP = '^\\d+$';
   public validation: IValidation;
   public errorData: any;
-  private _messageBus: MessageBus;
+  public _messageBus: MessageBus;
+  private _translator: Translator;
 
   constructor() {
+    super();
     this._messageBus = new MessageBus();
+    this.onInit();
+  }
+
+  public onInit() {
+    super.onInit();
+    this._translator = new Translator(this._params.locale);
   }
 
   public getErrorData(errorData: any) {
@@ -65,9 +76,9 @@ export default class Validation {
 
     if (errordata[0] === 'pan') {
       validationEvent.type = MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD;
-    } else if (errordata[0] === 'expirationDate') {
+    } else if (errordata[0] === 'expirydate') {
       validationEvent.type = MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD;
-    } else if (errordata[0] === 'securityCode') {
+    } else if (errordata[0] === 'securitycode') {
       validationEvent.type = MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD;
     }
     this._messageBus.publish(validationEvent);
@@ -75,22 +86,49 @@ export default class Validation {
   }
 
   public getValidationMessage(validityState: ValidityState): string {
+    const { customError, patternMismatch, tooLong, tooShort, typeMismatch, valid, valueMissing } = validityState;
     let validationMessage: string = '';
-    if (!validityState.valid) {
-      if (validityState.valueMissing) {
+    if (!valid) {
+      if (valueMissing) {
         validationMessage = VALIDATION_ERROR_FIELD_IS_REQUIRED;
-      }
-      if (validityState.patternMismatch) {
+      } else if (patternMismatch) {
         validationMessage = VALIDATION_ERROR_PATTERN_MISMATCH;
-      }
-      if (validityState.tooShort) {
+      } else if (tooShort) {
         validationMessage = VALIDATION_ERROR_VALUE_TOO_SHORT;
-      }
-      if (validityState.customError) {
+      } else if (customError) {
+        validationMessage = VALIDATION_ERROR_PATTERN_MISMATCH;
+      } else if (typeMismatch) {
+        validationMessage = VALIDATION_ERROR;
+      } else if (tooLong) {
         validationMessage = VALIDATION_ERROR;
       }
     }
 
     return validationMessage;
+  }
+
+  public validate(inputElement: any, messageElement: any) {
+    this.toggleErrorClass(inputElement);
+    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_FORM, (data: any) => {
+      const disable = !data.validity;
+      Form._setSubmitButtonState(disable);
+    });
+    this.setMessage(inputElement, messageElement);
+  }
+
+  public toggleErrorClass = (inputElement: any) => {
+    inputElement.validity.valid
+      ? inputElement.classList.remove('error-field')
+      : inputElement.classList.add('error-field');
+  };
+
+  /**
+   * Method placed errorMessage inside chosen container (specified by id).
+   * @param messageText
+   */
+  public setMessage(inputElement: any, messageElement: any) {
+    console.log(inputElement);
+    const messageText = this.getValidationMessage(inputElement.validity);
+    messageElement.innerText = this._translator.translate(messageText);
   }
 }

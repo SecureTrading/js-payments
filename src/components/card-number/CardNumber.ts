@@ -51,7 +51,18 @@ export default class CardNumber extends FormField {
       sum += algorithmValue;
     }
 
-    return sum && sum % 10 === 0;
+    const luhnCheck = sum && sum % 10 === 0;
+    let errorMessage;
+    if (!luhnCheck) {
+      (document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement).setCustomValidity(
+        'Card number format is incorrect'
+      );
+      errorMessage = 'Card number format is incorrect';
+    } else {
+      (document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement).setCustomValidity('');
+      errorMessage = '';
+    }
+    return errorMessage;
   }
 
   /**
@@ -159,12 +170,14 @@ export default class CardNumber extends FormField {
   public getFormFieldState(): IFormFieldState {
     const { value, validity } = this.getState();
     this.publishSecurityCodeLength();
+    this.luhnCheck(value);
     this.formatCardNumber(value);
     this.setMinMaxLengthOfCard(value);
     return {
       formattedValue: this.cardNumberFormatted,
       validity,
-      value: this.cardNumberValue
+      value: this.cardNumberValue,
+      customErrorMessage: this.luhnCheck(value)
     };
   }
 

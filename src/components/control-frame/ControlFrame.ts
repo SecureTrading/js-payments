@@ -172,9 +172,10 @@ export default class ControlFrame extends Frame {
     };
 
     if (isFormValid) {
+      console.log('avlid');
       this.setFormValidity(isFormValid);
     } else {
-      return 'Form is invalid';
+      alert('Form is invalid');
     }
 
     if (this._isPaymentReady && isFormValid) {

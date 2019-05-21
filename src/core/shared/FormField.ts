@@ -122,20 +122,13 @@ export default class FormField extends Frame {
   }
 
   protected onInput(event: Event) {
-    const { validity } = this.getState();
-    this._inputElement.setCustomValidity('');
     this.format(this._inputElement.value);
-    this.setAttributes({ 'data-validity': validity });
-    this.toggleErrorClass(validity);
-    this.validate(validity);
+    this.validation.validate(this._inputElement, this._messageElement);
   }
 
   protected onFocus(event: Event) {
-    const { validity } = this.getState();
     this.format(this._inputElement.value);
-    this.setAttributes({ 'data-validity': validity });
-    this.toggleErrorClass(validity);
-    this.validate(validity);
+    this.validation.validate(this._inputElement, this._messageElement);
     this.focus();
   }
 
@@ -160,25 +153,8 @@ export default class FormField extends Frame {
     }
   }
 
-  /**
-   * Method placed errorMessage inside chosen container (specified by id).
-   * @param messageText
-   */
-  protected setMessage(messageText: string) {
-    this._messageElement.innerText = this._translator.translate(messageText);
-  }
-
   protected setValue(value: string) {
     this._inputElement.value = value;
-  }
-
-  protected validate(validity: boolean) {
-    const validationMessage: string = this.validation.getValidationMessage(this._inputElement.validity);
-    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_FORM, (data: any) => {
-      const disable = !data.validity;
-      Form._setSubmitButtonState(disable);
-    });
-    this.setMessage(validationMessage);
   }
 
   protected format(data: string) {
@@ -216,31 +192,23 @@ export default class FormField extends Frame {
     });
   }
 
-  private toggleErrorClass = (validity: boolean) =>
-    validity ? this._inputElement.classList.remove('error-field') : this._inputElement.classList.add('error-field');
-
   private checkBackendValidity() {
     this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD, (data: any) => {
       const validation = { type: data.field, content: data.message };
-      if (this._inputSelector === 'st-card-number-input') {
-        // @ts-ignore
-        this.toggleErrorClass(false);
-        this.setMessage(data.message);
-        this._inputElement.setCustomValidity(validation.content);
-      }
+      this.validation.toggleErrorClass(this._inputElement);
+      this.validation.setMessage(this._inputElement, this._messageElement);
+      this._inputElement.setCustomValidity(validation.content);
     });
     this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD, (data: any) => {
       const validation = { type: data.field, content: data.message };
-      // @ts-ignore
-      this.toggleErrorClass(false);
-      this.setMessage(data.message);
+      this.validation.toggleErrorClass(this._inputElement);
+      this.validation.setMessage(this._inputElement, this._messageElement);
       this._inputElement.setCustomValidity(validation.content);
     });
     this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD, (data: any) => {
       const validation = { type: data.field, content: data.message };
-      // @ts-ignore
-      this.toggleErrorClass(false);
-      this.setMessage(data.message);
+      this.validation.toggleErrorClass(this._inputElement);
+      this.validation.setMessage(this._inputElement, this._messageElement);
       this._inputElement.setCustomValidity(validation.content);
     });
   }
