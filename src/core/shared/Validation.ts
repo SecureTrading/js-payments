@@ -1,4 +1,3 @@
-import Form from './../classes/Form.class';
 import Frame from './Frame';
 import { StCodec } from '../classes/StCodec.class';
 import Language from './Language';
@@ -50,9 +49,13 @@ export default class Validation extends Frame {
     return cardNumber.slice(-securityCodeLength);
   }
 
+  private static BACKEND_ERROR_FIELDS_NAMES = {
+    cardNumber: 'pan',
+    expirationDate: 'expirydate',
+    securityCode: 'securitycode'
+  };
   private static ONLY_DIGITS_REGEXP = '^\\d+$';
   public validation: IValidation;
-  public errorData: any;
   public _messageBus: MessageBus;
   private _translator: Translator;
 
@@ -74,11 +77,11 @@ export default class Validation extends Frame {
       type: ''
     };
 
-    if (errordata[0] === 'pan') {
+    if (errordata[0] === Validation.BACKEND_ERROR_FIELDS_NAMES.cardNumber) {
       validationEvent.type = MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD;
-    } else if (errordata[0] === 'expirydate') {
+    } else if (errordata[0] === Validation.BACKEND_ERROR_FIELDS_NAMES.expirationDate) {
       validationEvent.type = MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD;
-    } else if (errordata[0] === 'securitycode') {
+    } else if (errordata[0] === Validation.BACKEND_ERROR_FIELDS_NAMES.securityCode) {
       validationEvent.type = MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD;
     }
     this._messageBus.publish(validationEvent);
