@@ -3,7 +3,7 @@
  * This is code fired on merchant's side.
  * It can be treated as a reference for merchants how to integrate with STJS.
  */
-import { ApplePay, Components, init, VisaCheckout } from '../src/stjs';
+import SecureTrading from '../src/ST';
 import './style.scss';
 
 /* tslint:disable:max-line-length */
@@ -20,7 +20,7 @@ import './style.scss';
 
   const jwt = parsedUrl.searchParams.get('jwt') || cardinalJwt;
 
-  init({
+  const st = SecureTrading({
     jwt,
     styles: {
       'background-color-input': 'AliceBlue',
@@ -31,8 +31,9 @@ import './style.scss';
     }
   });
 
-  Components();
-  ApplePay({
+  st.Components();
+
+  st.ApplePay({
     buttonStyle: 'white-outline',
     buttonText: 'donate',
     merchantId: 'merchant.net.securetrading',
@@ -46,7 +47,8 @@ import './style.scss';
     placement: 'st-apple-pay',
     sitesecurity: 'gABC123DEFABC' // TODO this shouldn't be needed should it?
   });
-  VisaCheckout({
+
+  st.VisaCheckout({
     buttonSettings: { size: '154', color: 'neutral' },
     livestatus: 0,
     merchantId: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4',
