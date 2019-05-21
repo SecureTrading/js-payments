@@ -20,7 +20,7 @@ export default class ST {
    */
 
   public static init(config: IConfig) {
-    config = this._addDefaults(config);
+    config = ST._addDefaults(config);
     ST.jwt = config.jwt;
     ST.componentIds = config.componentIds;
     ST.styles = config.styles;
