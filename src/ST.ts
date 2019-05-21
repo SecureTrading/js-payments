@@ -1,5 +1,5 @@
-import Cards from './core/classes/Cards.class';
-import Form from './core/classes/Form.class';
+import Cards from './core/classes/CardFrames.class';
+import Form from './core/classes/CommonFrames.class';
 import ApplePay from './core/integrations/ApplePay';
 import ApplePayMock from './core/integrations/ApplePayMock';
 import { CardinalCommerce } from './core/integrations/CardinalCommerce';
