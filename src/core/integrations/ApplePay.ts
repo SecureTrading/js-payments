@@ -107,9 +107,9 @@ export class ApplePay {
   private _jwt: string;
   private _applePayButtonProps: any = {};
   private _payment: Payment;
-  private step: boolean;
+  private tokenise: boolean;
 
-  constructor(config: any, step: boolean, jwt: string) {
+  constructor(config: any, tokenise: boolean, jwt: string) {
     const { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId } = config;
     this.jwt = jwt;
     this.merchantId = merchantId;
@@ -117,7 +117,7 @@ export class ApplePay {
     this.payment = new Payment(jwt);
     this.paymentRequest = paymentRequest;
     this.sitesecurity = sitesecurity;
-    this.step = step;
+    this.tokenise = tokenise;
     this.validateMerchantRequestData.walletmerchantid = merchantId;
     this.stJwtInstance = new StJwt(jwt);
     this.stTransportInstance = new StTransport({
@@ -317,7 +317,7 @@ export class ApplePay {
       // @TODO STJS-205 refactor into Payments
       this.payment
         .processPayment(
-          { requesttypedescription: this.step ? 'CACHETOKENISE' : 'AUTH' },
+          { requesttypedescription: this.tokenise ? 'CACHETOKENISE' : 'AUTH' },
           {
             walletsource: this.validateMerchantRequestData.walletsource,
             wallettoken: this.paymentDetails

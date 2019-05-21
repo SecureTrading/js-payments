@@ -21,8 +21,14 @@ export default class ST {
 
   public static init(config: IConfig) {
     ST.jwt = config.jwt;
-    ST.origin = config.origin;
-    ST.step = config.step;
+    ST.componentIds = config.componentIds;
+    ST.styles = config.styles;
+    ST._initForm();
+  }
+
+  private _addDefaults(config: IConfig) {
+    ST.origin = config.origin ? config.origin : window.location.origin;
+    ST.tokenise = config.tokenise ? config.tokenise : false;
     const componentIds = {
       animatedCard: 'st-animated-card',
       cardNumber: 'st-card-number',
@@ -34,9 +40,7 @@ export default class ST {
     // Default config
     config.componentIds = config.componentIds ? { ...componentIds, ...config.componentIds } : componentIds;
     config.styles = config.styles ? config.styles : {};
-    ST.componentIds = config.componentIds;
-    ST.styles = config.styles;
-    ST._initForm();
+    return config;
   }
 
   public static Components(config?: IComponentsConfig) {
@@ -48,24 +52,24 @@ export default class ST {
   public static ApplePay(config: IWalletConfig) {
     let instance;
     if (environment.testEnvironment) {
-      instance = new ApplePayMock(config, ST.step, ST.jwt);
+      instance = new ApplePayMock(config, ST.tokenise, ST.jwt);
     } else {
-      instance = new ApplePay(config, ST.step, ST.jwt);
+      instance = new ApplePay(config, ST.tokenise, ST.jwt);
     }
   }
 
   public static VisaCheckout(config: IWalletConfig) {
     let instance;
     if (environment.testEnvironment) {
-      instance = new VisaCheckoutMock(config, ST.step, ST.jwt);
+      instance = new VisaCheckoutMock(config, ST.tokenise, ST.jwt);
     } else {
-      instance = new VisaCheckout(config, ST.step, ST.jwt);
+      instance = new VisaCheckout(config, ST.tokenise, ST.jwt);
     }
   }
 
   private static jwt: string;
   private static origin: string;
-  private static step: boolean;
+  private static tokenise: boolean;
   private static styles: IStyles;
   private static componentIds: any;
 
@@ -83,7 +87,7 @@ export default class ST {
    * @private
    */
   private static _init3DSecure = () =>
-    environment.testEnvironment ? new CardinalCommerceMock(ST.step) : new CardinalCommerce(ST.step);
+    environment.testEnvironment ? new CardinalCommerceMock(ST.tokenise) : new CardinalCommerce(ST.tokenise);
 
   /**
    * Inits form fields

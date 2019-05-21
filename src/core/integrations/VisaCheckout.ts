@@ -58,7 +58,7 @@ export class VisaCheckout {
 
   public messageBus: MessageBus;
 
-  protected _step: boolean;
+  protected _tokenise: boolean;
   protected _visaCheckoutButtonProps: any = {
     alt: 'Visa Checkout',
     class: 'v-button',
@@ -92,14 +92,14 @@ export class VisaCheckout {
     settings: {}
   };
 
-  constructor(config: any, step: boolean, jwt: string) {
+  constructor(config: any, tokenise: boolean, jwt: string) {
     this.messageBus = new MessageBus();
     const { merchantId, livestatus, placement, settings, paymentRequest, buttonSettings } = config;
     const stJwt = new StJwt(jwt);
     this.payment = new Payment(jwt);
     this._livestatus = livestatus;
     this._placement = placement;
-    this._step = step;
+    this._tokenise = tokenise;
     this._setInitConfiguration(paymentRequest, settings, stJwt, merchantId);
     this._buttonSettings = this.setConfiguration({ locale: stJwt.locale }, settings);
     this.customizeVisaButton(buttonSettings);
@@ -196,7 +196,7 @@ export class VisaCheckout {
   protected _processPayment() {
     this.payment
       .processPayment(
-        { requesttypedescription: this._step ? 'CACHETOKENISE' : 'AUTH' },
+        { requesttypedescription: this._tokenise ? 'CACHETOKENISE' : 'AUTH' },
         {
           walletsource: this._walletSource,
           wallettoken: this.paymentDetails

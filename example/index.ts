@@ -22,8 +22,6 @@ import './style.scss';
 
   init({
     jwt,
-    origin: window.location.origin,
-    step: false,
     styles: {
       'background-color-input': 'AliceBlue',
       'background-color-input-error': '#f8d7da',
