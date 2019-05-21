@@ -110,8 +110,6 @@ export class ApplePay {
   private step: boolean;
 
   constructor(config: any, step: boolean, jwt: string) {
-    // tslint:disable-next-line
-    console.log(config);
     const {
       props: { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId }
     } = config;

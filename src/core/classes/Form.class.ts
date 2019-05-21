@@ -2,49 +2,34 @@ import Element from '../Element';
 import DomMethods from '../shared/DomMethods';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
-import { StJwt } from '../shared/StJwt';
 import { IStyles } from '../shared/Styler';
+import Register from './Register.class';
 
 /**
  * Defines all non field elements of form and their placement on merchant site.
  */
-class Form {
-  // TODO refactor with Cards
-  // TODO better name?
-
-  public styles: IStyles;
-  public params: any; // TODO type?
-  public onlyWallets: boolean;
+class Form extends Register {
   public elementsToRegister: HTMLElement[];
   public elementsTargets: any;
-  public fieldsIds: any;
-  public jwt: any;
-  public origin: any;
-  private stJwt: StJwt;
   private notificationFrameMounted: HTMLElement;
   private controlFrameMounted: HTMLElement;
   private notificationFrame: Element;
   private controlFrame: Element;
   private messageBus: MessageBus;
 
+  // TODO do we need all this data on all types
   constructor(jwt: any, origin: any, fieldsIds: [], styles: IStyles) {
-    this.styles = styles;
-    this.fieldsIds = fieldsIds;
-    this.elementsTargets = this.setElementsFields();
-    this.elementsToRegister = [];
-    this.jwt = jwt;
-    this.stJwt = new StJwt(jwt);
-    this.origin = origin;
-    this.params = { locale: this.stJwt.locale };
+    super(jwt, origin, fieldsIds, styles);
     this.messageBus = new MessageBus();
     this._onInit();
   }
 
   /**
-   * Defines form elements if merchant chooses only apms or not
-   * @param onlyWallets
+   * Defines form elements for notifications and control frame
    */
-  public setElementsFields = () => [this.fieldsIds.notificationFrame, this.fieldsIds.controlFrame];
+  public setElementsFields() {
+    return [this.fieldsIds.notificationFrame, this.fieldsIds.controlFrame];
+  }
 
   public _onInit() {
     this.initFormFields();

@@ -28,7 +28,7 @@ export default class ST {
     ST._initForm();
   }
 
-  public static Components(config: IComponentsConfig) {
+  public static Components(config?: IComponentsConfig) {
     ST._onInit();
   }
 

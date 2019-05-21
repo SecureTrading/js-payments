@@ -2,13 +2,13 @@ import Element from '../Element';
 import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
-import { StJwt } from '../shared/StJwt';
 import { IStyles } from '../shared/Styler';
+import Register from './Register.class';
 
 /**
  * Defines all card elements of form and their  placement on merchant site.
  */
-class Form {
+class Form extends Register {
   /**
    * Attaches to specified element text or/and icon and disables it.
    * @param element
@@ -37,15 +37,6 @@ class Form {
     buttonSubmit && Form._setPreloader(buttonSubmit, Language.translations.PRELOADER_TEXT);
   }
 
-  public styles: IStyles;
-  public params: any; // TODO type?
-  public onlyWallets: boolean;
-  public elementsToRegister: HTMLElement[];
-  public elementsTargets: any;
-  public fieldsIds: any;
-  public jwt: any;
-  public origin: any;
-  private stJwt: StJwt;
   private cardNumberMounted: HTMLElement;
   private expirationDateMounted: HTMLElement;
   private securityCodeMounted: HTMLElement;
@@ -57,29 +48,24 @@ class Form {
   private messageBus: MessageBus;
   private messageBusEvent: IMessageBusEvent;
 
+  // TODO do we need all this data on all types
   constructor(jwt: any, origin: any, fieldsIds: [], styles: IStyles) {
-    this.styles = styles;
-    this.fieldsIds = fieldsIds;
-    this.elementsTargets = this.setElementsFields();
-    this.elementsToRegister = [];
-    this.jwt = jwt;
-    this.stJwt = new StJwt(jwt);
-    this.origin = origin;
-    this.params = { locale: this.stJwt.locale };
+    super(jwt, origin, fieldsIds, styles);
     this.messageBus = new MessageBus();
     this._onInit();
   }
 
   /**
-   * Defines form elements if merchant chooses only apms or not
-   * @param onlyWallets
+   * Defines form elements for card payments
    */
-  public setElementsFields = () => [
-    this.fieldsIds.cardNumber,
-    this.fieldsIds.expirationDate,
-    this.fieldsIds.securityCode,
-    this.fieldsIds.animatedCard
-  ];
+  public setElementsFields() {
+    return [
+      this.fieldsIds.cardNumber,
+      this.fieldsIds.expirationDate,
+      this.fieldsIds.securityCode,
+      this.fieldsIds.animatedCard
+    ];
+  }
 
   public _onInit() {
     if (!this.onlyWallets) {
