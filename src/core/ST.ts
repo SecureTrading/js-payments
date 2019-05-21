@@ -18,8 +18,7 @@ export default class ST {
    * @private
    */
 
-  public static Create(config: IConfig) {
-    // TODO should this be constructor instead? then all others are not static functions?
+  public static init(config: IConfig) {
     // TODO this should always create Notification frame so it's available for all payment methods
     // (basically taking it out of Form and getting rid of onlyWallets)
     ST.jwt = config.jwt;
@@ -27,7 +26,6 @@ export default class ST {
   }
 
   public static Components(config: IComponentsConfig) {
-    // TODO add validation to this and other interfaces to check they have always called Create first
     ST.origin = config.origin;
     ST.onlyWallets = config.onlyWallets;
     ST.fieldsIds = config.fieldsIds;

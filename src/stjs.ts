@@ -4,7 +4,7 @@
  */
 import ST from './core/ST';
 const Components = ST.Components;
-const Create = ST.Create;
+const init = ST.init;
 const ApplePay = ST.ApplePay;
 const VisaCheckout = ST.VisaCheckout;
-export { ApplePay, Components, Create, VisaCheckout };
+export { ApplePay, Components, init, VisaCheckout };
