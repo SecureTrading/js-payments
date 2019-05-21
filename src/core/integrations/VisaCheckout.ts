@@ -194,6 +194,7 @@ export class VisaCheckout {
   /**
    * Starts processing payment with AUTH pr CACHETOKENISE request
    */
+  // @TODO STJS-205 refactor into Payments
   protected _processPayment() {
     this.payment
       .processPayment(
