@@ -76,7 +76,7 @@ export class CardinalCommerce {
    * @protected
    */
   // @ts-ignore
-  protected _performBinDetection = (data: IFormFieldState) => Cardinal.trigger('bin.process', data.value);
+  protected _performBinDetection = (bin: IFormFieldState) => Cardinal.trigger('bin.process', bin);
 
   /**
    * Triggered when the transaction has been finished.
@@ -90,6 +90,7 @@ export class CardinalCommerce {
       });
     }
   }
+
   /**
    * Handles continue action from Cardinal Commerce, retrieve overlay with iframe which target is on AcsUrl
    * and handles the rest of process.
