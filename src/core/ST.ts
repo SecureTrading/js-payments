@@ -20,16 +20,29 @@ export default class ST {
    */
 
   public static init(config: IConfig) {
-    ST.fieldsIds = config.fieldsIds;
     ST.jwt = config.jwt;
     ST.origin = config.origin;
     ST.step = config.step;
+    const componentIds = {
+      animatedCard: 'st-animated-card',
+      cardNumber: 'st-card-number',
+      controlFrame: 'st-control-frame',
+      expirationDate: 'st-expiration-date',
+      notificationFrame: 'st-notification-frame',
+      securityCode: 'st-security-code'
+    };
+    // Default config
+    config.componentIds = config.componentIds ? { ...componentIds, ...config.componentIds } : componentIds;
+    config.styles = config.styles ? config.styles : {};
+    ST.componentIds = config.componentIds;
     ST.styles = config.styles;
     ST._initForm();
   }
 
   public static Components(config?: IComponentsConfig) {
-    ST._onInit();
+    // Default config
+    config = config ? config : {};
+    ST._onComponents();
   }
 
   public static ApplePay(config: IWalletConfig) {
@@ -53,14 +66,14 @@ export default class ST {
   private static jwt: string;
   private static origin: string;
   private static step: boolean;
-  private static fieldsIds: any;
   private static styles: IStyles;
+  private static componentIds: any;
 
   /**
    * Starts library initialization
    * @private
    */
-  private static _onInit() {
+  private static _onComponents() {
     ST._initCards();
     ST._init3DSecure();
   }
@@ -76,11 +89,11 @@ export default class ST {
    * Inits form fields
    * @private
    */
-  private static _initCards = () => new Cards(ST.jwt, ST.origin, ST.fieldsIds, ST.styles);
+  private static _initCards = () => new Cards(ST.jwt, ST.origin, ST.componentIds, ST.styles);
 
   /**
    * Inits control and notification frames
    * @private
    */
-  private static _initForm = () => new Form(ST.jwt, ST.origin, ST.fieldsIds, ST.styles);
+  private static _initForm = () => new Form(ST.jwt, ST.origin, ST.componentIds, ST.styles);
 }

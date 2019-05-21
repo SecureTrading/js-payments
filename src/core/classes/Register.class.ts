@@ -11,14 +11,14 @@ class Register {
   public onlyWallets: boolean;
   public elementsToRegister: HTMLElement[];
   public elementsTargets: any;
-  public fieldsIds: any;
+  public componentIds: any;
   public jwt: any;
   public origin: any;
   private stJwt: StJwt;
 
-  constructor(jwt: any, origin: any, fieldsIds: [], styles: IStyles) {
+  constructor(jwt: any, origin: any, componentIds: [], styles: IStyles) {
     this.styles = styles;
-    this.fieldsIds = fieldsIds;
+    this.componentIds = componentIds;
     this.elementsTargets = this.setElementsFields();
     this.elementsToRegister = [];
     this.jwt = jwt;

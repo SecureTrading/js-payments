@@ -49,8 +49,8 @@ class Form extends Register {
   private messageBusEvent: IMessageBusEvent;
 
   // TODO do we need all this data on all types
-  constructor(jwt: any, origin: any, fieldsIds: [], styles: IStyles) {
-    super(jwt, origin, fieldsIds, styles);
+  constructor(jwt: any, origin: any, componentIds: [], styles: IStyles) {
+    super(jwt, origin, componentIds, styles);
     this.messageBus = new MessageBus();
     this._onInit();
   }
@@ -60,10 +60,10 @@ class Form extends Register {
    */
   public setElementsFields() {
     return [
-      this.fieldsIds.cardNumber,
-      this.fieldsIds.expirationDate,
-      this.fieldsIds.securityCode,
-      this.fieldsIds.animatedCard
+      this.componentIds.cardNumber,
+      this.componentIds.expirationDate,
+      this.componentIds.securityCode,
+      this.componentIds.animatedCard
     ];
   }
 

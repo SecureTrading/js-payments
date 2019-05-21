@@ -94,9 +94,7 @@ export class VisaCheckout {
 
   constructor(config: any, step: boolean, jwt: string) {
     this.messageBus = new MessageBus();
-    const {
-      props: { merchantId, livestatus, placement, settings, paymentRequest, buttonSettings }
-    } = config;
+    const { merchantId, livestatus, placement, settings, paymentRequest, buttonSettings } = config;
     const stJwt = new StJwt(jwt);
     this.payment = new Payment(jwt);
     this._livestatus = livestatus;

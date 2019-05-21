@@ -110,9 +110,7 @@ export class ApplePay {
   private step: boolean;
 
   constructor(config: any, step: boolean, jwt: string) {
-    const {
-      props: { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId }
-    } = config;
+    const { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId } = config;
     this.jwt = jwt;
     this.merchantId = merchantId;
     this.placement = placement;

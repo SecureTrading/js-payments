@@ -18,8 +18,8 @@ class Form extends Register {
   private messageBus: MessageBus;
 
   // TODO do we need all this data on all types
-  constructor(jwt: any, origin: any, fieldsIds: [], styles: IStyles) {
-    super(jwt, origin, fieldsIds, styles);
+  constructor(jwt: any, origin: any, componentIds: [], styles: IStyles) {
+    super(jwt, origin, componentIds, styles);
     this.messageBus = new MessageBus();
     this._onInit();
   }
@@ -28,7 +28,7 @@ class Form extends Register {
    * Defines form elements for notifications and control frame
    */
   public setElementsFields() {
-    return [this.fieldsIds.notificationFrame, this.fieldsIds.controlFrame];
+    return [this.componentIds.notificationFrame, this.componentIds.controlFrame];
   }
 
   public _onInit() {
