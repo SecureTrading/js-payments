@@ -1,92 +1,115 @@
 import ApplePayMock from '../../../src/core/integrations/ApplePayMock';
-
-jest.mock('./../../../src/core/shared/MessageBus');
+import ApplePaySessionMock from '../../../src/core/integrations/ApplePaySessionMock';
 
 // given
 describe('Class ApplePayMock', () => {
   // given
-  describe('_onMockInit', () => {
+  describe('ApplePayMock.ifApplePayIsAvailable', () => {
     // when
     let instance: any;
-    let attachMockButtonSpy: any;
-    let setActionOnMockedButtonSpy: any;
     beforeEach(() => {
       instance = applePayMockFixture().instance;
-      instance.ifApplePayIsAvailable = jest.fn().mockReturnValueOnce(true);
-      instance.ifBrowserSupportsApplePayVersion = jest.fn().mockReturnValueOnce(true);
-      attachMockButtonSpy = jest.spyOn(instance, '_attachMockButton');
-      setActionOnMockedButtonSpy = jest.spyOn(instance, '_setActionOnMockedButton');
     });
 
     // then
-    it('should _attachMockButton been called', () => {
-      instance._onMockInit();
-      expect(attachMockButtonSpy).toHaveBeenCalled();
-    });
-
-    // then
-    it('should _setActionOnMockedButton been called', () => {
-      instance._onMockInit();
-      expect(setActionOnMockedButtonSpy).toHaveBeenCalled();
+    it('should always return true', () => {
+      expect(instance.ifApplePayIsAvailable()).toBe(true);
     });
   });
 
   // given
-  describe('_attachMockButton', () => {
+  describe('ApplePayMock.setApplePayVersion', () => {
     // when
     let instance: any;
-    let createMockedButtonSpy: any;
     beforeEach(() => {
       instance = applePayMockFixture().instance;
-      createMockedButtonSpy = jest.spyOn(instance, '_createMockedButton');
     });
 
     // then
-    it('should _createMockedButton been called', () => {
-      instance._attachMockButton();
-      expect(createMockedButtonSpy).toHaveBeenCalled();
+    it('should always set version to 5', () => {
+      instance.setApplePayVersion();
+      expect(instance.applePayVersion).toBe(5);
+    });
+  });
+
+  // given
+  describe('ApplePayMock.checkApplePayAvailability', () => {
+    // when
+    let instance: any;
+    beforeEach(() => {
+      instance = applePayMockFixture().instance;
     });
 
     // then
-    it('should button be attached', () => {
-      const button = document.getElementById('st-apple-pay-mock');
-      expect(button).toBeTruthy();
+    it('should always return true', () => {
+      expect(instance.checkApplePayAvailability()).toBe(true);
     });
   });
 
   // given
-  describe('_createMockedButton', () => {
+  describe('ApplePayMock.checkApplePayWalletCardAvailability', () => {
     // when
-    beforeEach(() => {});
+    let instance: any;
+    beforeEach(() => {
+      instance = applePayMockFixture().instance;
+    });
 
-    //then
-    it('should ', () => {});
+    // then
+    it('should return promise which returns true', () => {
+      instance.checkApplePayWalletCardAvailability().then((response: boolean) => {
+        expect(response).toBe(true);
+      });
+    });
   });
 
   // given
-  describe('_setActionOnMockedButton', () => {
+  describe('ApplePayMock.getApplePaySessionObject', () => {
     // when
-    beforeEach(() => {});
+    let instance: any;
+    beforeEach(() => {
+      instance = applePayMockFixture().instance;
+    });
 
-    //then
-    it('should ...', () => {});
+    // then
+    it('should always return mock applepay session', () => {
+      expect(instance.getApplePaySessionObject()).toBe(ApplePaySessionMock);
+    });
   });
 
   // given
-  describe('_getWalletverifyData', () => {
+  describe('ApplePayMock.getApplePaySessionObject', () => {
     // when
-    beforeEach(() => {});
+    let instance: any;
+    beforeEach(() => {
+      instance = applePayMockFixture().instance;
+    });
 
-    //then
-    it('should ...', () => {});
+    // then
+    it('should always return STATUS_SUCCESS as SUCCESS', () => {
+      ApplePaySessionMock.STATUS_SUCCESS = 'SUCCESS';
+      expect(instance.getPaymentStatus()).toBe('SUCCESS');
+    });
+
+    // then
+    it('should always return STATUS_SUCCESS as ERROR', () => {
+      ApplePaySessionMock.STATUS_SUCCESS = 'ERROR';
+      expect(instance.getPaymentStatus()).toBe('ERROR');
+    });
   });
 
-  describe('_proceedFlowWithMockedData', () => {
+  // given
+  describe('ApplePayMock.createApplePayButton', () => {
     // when
-    beforeEach(() => {});
+    let instance: any;
+    beforeEach(() => {
+      instance = applePayMockFixture().instance;
+    });
 
-    //then
-    it('should ...', () => {});
+    // then
+    it('should always return Mock button', () => {
+      expect(instance.createApplePayButton().tagName).toBe('IMG');
+      expect(instance.createApplePayButton().id).toBe('st-apple-pay');
+    });
   });
 });
 

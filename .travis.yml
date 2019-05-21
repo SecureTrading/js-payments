@@ -29,9 +29,12 @@ jobs:
       script:
         - npm run coverage
         - npm run snyk
-    - name: 'Behavioural test: chrome 68'
+    - name: 'Behavioural test: Chrome 72, Windows 10'
       script:
-        - npm run behave -- test_chrome_68_w10
+        - npm run behave -- test_chrome_72_w10
+    - name: 'Behavioural test: iPhone X, iOS 11.0'
+      script:
+        - npm run behave -- test_iPhoneX_11_0
     # - name: 'Behavioural test: firefox 61'
     #  script:
     #    - npm run behave -- test_firefox_61_w10
@@ -59,3 +62,7 @@ addons:
       secure: AH4sfHC+edBLzaGZo0UVn70c88/AKjFV7YGqQq6+8g96izDov25nB7rPaPuQHqnnARVoM7FSyc9XoHOA8Xm10oKxIBbtofw7Ydj+8czjNwa6k7nS0Rbpzl2JmhhgGXwFhXmvFXBxXiApXrhMYtE9Lo0rQGt9fXhWU7JkC2x04E3fPVAI+9oQ9V1SxIAZL+WSDyjPc1ZwQT8gwFM+XZaEy2J99LhNuFYQzeI6szmdtM0ZBLiqfeD2tixIXNUY+HAtTvUgZqwE9h+hon8Y/c574zzUf5ZxXzSaZbeU3+HW0rl75YaiP9lABOE4rrsY3rFd56IqXz5W46b63ZYAP8essu79Ph4xM9poJTpmU65domfCebMApdfgbIo7aSV7uOeNfKnrb5udbnqiZPGTuQSNJ+UJOjXJUfvNx/qBVFDsE7DqMChmZByRIUXVANaWDw70ixBij/vS5fpDiHpJ0gneizqosx09Vv10/cb9QDJ4FRDggQKZF3bS1V4q3vX1sodudTIuQVgfg95iR2uiQNnEdTPmvbM37FO6t8h8Vqxx4UqRIyf3jasVqsk79LU7F5/KYhvWW/KLN2lq65J2tKsTa/xBT856ah18cIGSMoie892tEsZxLbDy8KMUDyrbWNE4n11ButzifQISDziK7vQ7OwD3k6lJ24UFKBUoa/Oiim0=
     access_key:
       secure: TXgjJzYRpKcoBX6exipmXWj8TRToxGBQoQz0agRHczP9THyguyopST1XiPDdhcLIn7SMNDVORyP0D5EvMpchhvJ1unDpIULlNWjp63NsoYBGrryBXv307yn3NoQ+Tzh6U6GUG59bNfsqqLMOYapIqm6xxEqpcx1svA4Zjoz2rvcUK2gBof0UuL6s0rESB/4rQkwk0MQZDzm10O6wb6CWreFw/BMBTSKMvwVNfo5K+il+Ch1MWy2riWqYhyvGdu5Y/CG39WIUowa/y1HjcYNTwLlETr0nqqF9BnOjS05fabGIUnLBmf80mb6AEyrmNeVzQJlcJ4/lvI4f1RhrKvnDE70Ac6RFMoVcxOLLdSJIDoInFSH5xI5E/clGBYfP44LRDhRPXI4++8CPDp+MHG8trAOMIef3ySZGWoaHknNQ/G/Xhrsy7NLoBGnpz2c7CJoNjAPAIt2fm7y3Re+oo/hrhCh5/oya+kEKrrPI8qy9GpidCup5/QD/jKjkJijfusvC3ZEluaw+izAY+7RgLcaOifUqtVAx10JQIpZufWHJkHVqzmfGiLIWbyhNNJcrF+PcWIZSZelPb9uljO325M3bR7ViVmMPDuLojv0Z0cD/KWdqWW/uL7G7uzGSKgdTkuL7LqeaPOOQHZ07+v8Ii9GTZVee4+TRzucUISgNPvBVVJI=
+  hosts:
+    - webservices.securetrading.net
+    - merchant.example.com
+    - thirdparty.example.com

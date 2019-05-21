@@ -1,18 +1,13 @@
 import { IStRequest } from '../classes/StCodec.class';
 import StTransport from '../classes/StTransport.class';
 import { IMerchantData } from '../models/MerchantData';
-import { IStJwtPayload, StJwt } from './StJwt';
 
 export default class Payment {
   private _stTransport: StTransport;
-  private _stJwtDecode: any;
-  private readonly _stJwtPayload: IStJwtPayload;
   private _cardinalCommerceCacheToken: string;
 
   constructor(jwt: string) {
     this._stTransport = new StTransport({ jwt });
-    this._stJwtDecode = new StJwt(jwt);
-    this._stJwtPayload = this._stJwtDecode.payload;
   }
 
   public walletVerify(wallet: IWalletVerify) {
@@ -20,8 +15,7 @@ export default class Payment {
       {
         requesttypedescription: 'WALLETVERIFY'
       },
-      wallet,
-      this._stJwtPayload
+      wallet
     );
     return this._stTransport.sendRequest(requestBody);
   }
@@ -32,24 +26,14 @@ export default class Payment {
     merchantData: IMerchantData,
     additionalData?: any
   ): Promise<object> {
-    const requestBody: IStRequest = Object.assign(
-      requestType,
-      additionalData,
-      this._stJwtPayload,
-      merchantData,
-      payment
-    );
+    const requestBody: IStRequest = Object.assign(requestType, additionalData, merchantData, payment);
     return this._stTransport.sendRequest(requestBody);
   }
 
   public threeDInitRequest() {
-    const requestBody: IStRequest = Object.assign(
-      {
-        requesttypedescription: 'JSINIT'
-      },
-      this._stJwtPayload
-    );
-
+    const requestBody: IStRequest = {
+      requesttypedescription: 'JSINIT'
+    };
     return this._stTransport.sendRequest(requestBody).then(responseBody => {
       // @ts-ignore
       this._cardinalCommerceCacheToken = responseBody.cachetoken;
@@ -62,7 +46,7 @@ export default class Payment {
       {
         cachetoken: this._cardinalCommerceCacheToken,
         requesttypedescription: 'THREEDQUERY',
-        termurl: 'https://termurl.com'
+        termurl: 'https://termurl.com' // TODO this shouldn't be needed but currently the backend needs this
       },
       merchantData,
       card

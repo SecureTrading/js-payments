@@ -3,6 +3,7 @@ import Frame from '../../core/shared/Frame';
 import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
 import { Translator } from '../../core/shared/Translator';
+import { environment } from '../../environments/environment';
 
 /**
  * NotificationFrame class
@@ -54,7 +55,7 @@ export default class NotificationFrame extends Frame {
     }
   }
 
-  private static readonly NOTIFICATION_TTL = 7 * 1000;
+  private static readonly NOTIFICATION_TTL = environment.NOTIFICATION_TTL;
   private static ELEMENT_ID: string = Selectors.NOTIFICATION_FRAME_ID;
   public _message: INotificationEvent;
   public _translator: Translator;
@@ -77,13 +78,8 @@ export default class NotificationFrame extends Frame {
    * Listens to postMessage event, receives message from it and triggers method for inserting content into div
    */
   public _onMessage() {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, (data: INotificationEvent) => {
-      this._message = { type: data.type, content: data.content };
-      this.insertContent();
-      this.setAttributeClass();
-    });
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, this._notificationEvent);
   }
-
   /**
    * Inserts content of incoming text info into div
    */
@@ -208,4 +204,10 @@ export default class NotificationFrame extends Frame {
       window.clearTimeout(timeoutId);
     }, NotificationFrame.NOTIFICATION_TTL);
   }
+
+  private _notificationEvent = (data: INotificationEvent) => {
+    this._message = data;
+    this.insertContent();
+    this.setAttributeClass();
+  };
 }

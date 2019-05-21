@@ -48,7 +48,7 @@ describe('StCodec class', () => {
     version: '1.00'
   };
 
-  describe('Method _createRequestId', () => {
+  describe('StCodec._createRequestId', () => {
     beforeEach(() => {
       str = new StCodec(jwt);
     });
@@ -66,7 +66,7 @@ describe('StCodec class', () => {
     });
   });
 
-  describe('Method buildRequestObject', () => {
+  describe('StCodec.buildRequestObject', () => {
     beforeEach(() => {
       str = new StCodec(jwt);
     });
@@ -92,7 +92,7 @@ describe('StCodec class', () => {
     });
   });
 
-  describe('Method encode', () => {
+  describe('StCodec.encode', () => {
     beforeEach(() => {
       str = new StCodec(jwt);
     });
@@ -115,11 +115,6 @@ describe('StCodec class', () => {
       expect(str.encode(request)).toEqual(expected);
       expect(str.buildRequestObject).toHaveBeenCalledWith(request);
     });
-    it('should refuse to build a request with no data', () => {
-      expect(() => str.encode({ requesttypedescription: 'AUTH' })).toThrow(
-        Error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST)
-      );
-    });
 
     it('should refuse to build a request with an invalid rtd', () => {
       expect(() =>
@@ -131,7 +126,7 @@ describe('StCodec class', () => {
     });
   });
 
-  describe('Method verifyResponseObject', () => {
+  describe('StCodec.verifyResponseObject', () => {
     beforeEach(() => {
       str = new StCodec(jwt);
     });
@@ -159,7 +154,7 @@ describe('StCodec class', () => {
     });
   });
 
-  describe('Method decode', () => {
+  describe('StCodec.decode', () => {
     beforeEach(() => {
       str = new StCodec(jwt);
     });

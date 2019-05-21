@@ -17,7 +17,6 @@ class Language {
     MERCHANT_VALIDATION_FAILURE: 'Merchant validation failure',
     NOT_IMPLEMENTED_ERROR: 'Method not implemented',
     NO_CARDS_IN_WALLET: 'You have no cards in your wallet',
-    PAYMENT_AUTHORIZED: 'Payment has been authorized',
     PAYMENT_ERROR: 'An error occurred',
     PAYMENT_SUCCESS: 'Payment has been successfully processed',
     PAYMENT_WARNING: 'Payment has been cancelled',
@@ -44,7 +43,6 @@ class Language {
     MERCHANT_VALIDATION_FAILURE: string;
     NOT_IMPLEMENTED_ERROR: string;
     NO_CARDS_IN_WALLET: string;
-    PAYMENT_AUTHORIZED: string;
     PAYMENT_ERROR: string;
     PAYMENT_SUCCESS: string;
     PAYMENT_WARNING: string;
