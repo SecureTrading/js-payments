@@ -1,4 +1,5 @@
 import { environment } from '../environments/environment';
+import Cards from './classes/Cards.class';
 import Form from './classes/Form.class';
 import ApplePay from './integrations/ApplePay';
 import ApplePayMock from './integrations/ApplePayMock';
@@ -19,17 +20,15 @@ export default class ST {
    */
 
   public static init(config: IConfig) {
-    // TODO this should always create Notification frame so it's available for all payment methods
-    // (basically taking it out of Form and getting rid of onlyWallets)
+    ST.fieldsIds = config.fieldsIds;
     ST.jwt = config.jwt;
+    ST.origin = config.origin;
     ST.step = config.step;
+    ST.styles = config.styles;
+    ST._initForm();
   }
 
   public static Components(config: IComponentsConfig) {
-    ST.origin = config.origin;
-    ST.onlyWallets = config.onlyWallets;
-    ST.fieldsIds = config.fieldsIds;
-    ST.styles = config.styles;
     ST._onInit();
   }
 
@@ -54,7 +53,6 @@ export default class ST {
   private static jwt: string;
   private static origin: string;
   private static step: boolean;
-  private static onlyWallets: boolean;
   private static fieldsIds: any;
   private static styles: IStyles;
 
@@ -63,7 +61,7 @@ export default class ST {
    * @private
    */
   private static _onInit() {
-    ST._initForm();
+    ST._initCards();
     ST._init3DSecure();
   }
 
@@ -78,5 +76,11 @@ export default class ST {
    * Inits form fields
    * @private
    */
-  private static _initForm = () => new Form(ST.jwt, ST.origin, ST.onlyWallets, ST.fieldsIds, ST.styles);
+  private static _initCards = () => new Cards(ST.jwt, ST.origin, ST.fieldsIds, ST.styles);
+
+  /**
+   * Inits control and notification frames
+   * @private
+   */
+  private static _initForm = () => new Form(ST.jwt, ST.origin, ST.fieldsIds, ST.styles);
 }

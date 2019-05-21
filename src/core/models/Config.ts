@@ -1,16 +1,14 @@
 import { IStyles } from '../shared/Styler';
 
 export interface IConfig {
-  jwt: string;
-  step: boolean;
-}
-
-export interface IComponentsConfig {
   fieldsIds: any;
-  onlyWallets: boolean;
+  jwt: string;
   origin: string;
+  step: boolean;
   styles: IStyles;
 }
+
+export interface IComponentsConfig {}
 
 export interface IWalletConfig {
   props: object;

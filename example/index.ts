@@ -22,11 +22,6 @@ const jwt = parsedUrl.searchParams.get('jwt') || cardinalJwt;
 
 (() => {
   init({
-    jwt,
-    step: false
-  });
-
-  Components({
     fieldsIds: {
       animatedCard: 'st-animated-card',
       cardNumber: 'st-card-number',
@@ -35,8 +30,9 @@ const jwt = parsedUrl.searchParams.get('jwt') || cardinalJwt;
       notificationFrame: 'st-notification-frame',
       securityCode: 'st-security-code'
     },
-    onlyWallets: false,
+    jwt,
     origin: window.location.origin,
+    step: false,
     styles: {
       'background-color-input': 'AliceBlue',
       'background-color-input-error': '#f8d7da',
@@ -45,6 +41,8 @@ const jwt = parsedUrl.searchParams.get('jwt') || cardinalJwt;
       'line-height-input': '12px'
     }
   });
+
+  Components({});
   ApplePay({
     props: {
       buttonStyle: 'white-outline',
