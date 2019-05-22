@@ -128,7 +128,7 @@ export default class FormField extends Frame {
     this.focus();
   }
 
-  protected onBlur(event: Event) {
+  protected onBlur() {
     this._inputElement.setCustomValidity('');
     this.format(this._inputElement.value);
     this.validation.validate(this._inputElement, this._messageElement);
@@ -189,7 +189,7 @@ export default class FormField extends Frame {
     });
 
     this._inputElement.addEventListener('blur', (event: Event) => {
-      this.onBlur(event);
+      this.onBlur();
     });
   }
 

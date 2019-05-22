@@ -117,6 +117,7 @@ class Form {
     this.initFormFields();
     this.submitFormListener();
     this.subscribeBlockSubmit();
+    this.validateFieldsAfterSubmit();
     this._setMerchantInputListeners();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
   }
@@ -205,7 +206,6 @@ class Form {
   private submitFormListener() {
     document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).addEventListener('submit', (event: Event) => {
       event.preventDefault();
-      Form.disableSubmitButton(true);
       this.publishSubmitEvent();
     });
   }
@@ -225,6 +225,28 @@ class Form {
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
     this.messageBus.publish(messageBusEvent);
+  }
+
+  /**
+   *
+   */
+  private validateFieldsAfterSubmit() {
+    this.messageBus.subscribe(MessageBus.EVENTS.VALIDATE_FORM, (data: any) => {
+      const { cardNumber, expirationDate, securityCode } = data;
+      let messageBusEvent: IMessageBusEvent = { data: 'test', type: '' };
+      if (!cardNumber) {
+        messageBusEvent.type = MessageBus.EVENTS.FOCUS_CARD_NUMBER;
+        this.messageBus.publish(messageBusEvent);
+      }
+      if (!expirationDate) {
+        messageBusEvent.type = MessageBus.EVENTS.FOCUS_EXPIRATION_DATE;
+        this.messageBus.publish(messageBusEvent);
+      }
+      if (!securityCode) {
+        messageBusEvent.type = MessageBus.EVENTS.FOCUS_SECURITY_CODE;
+        this.messageBus.publish(messageBusEvent);
+      }
+    });
   }
 }
 

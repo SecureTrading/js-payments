@@ -26,6 +26,7 @@ export default class ExpirationDate extends FormField {
     if (this._inputElement.value) {
       this.sendState();
     }
+    this.setFocusListener();
     this.backendValidation();
   }
 
@@ -63,8 +64,12 @@ export default class ExpirationDate extends FormField {
 
   public backendValidation() {
     this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD, (data: any) => {
-      console.log(data);
       this.checkBackendValidity(data);
+    });
+  }
+  public setFocusListener() {
+    this._messageBus.subscribe(MessageBus.EVENTS.FOCUS_EXPIRATION_DATE, () => {
+      this.onBlur();
     });
   }
 }

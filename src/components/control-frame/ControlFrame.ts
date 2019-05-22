@@ -4,6 +4,8 @@ import Frame from '../../core/shared/Frame';
 import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Payment from '../../core/shared/Payment';
+import Form from '../../core/classes/Form.class';
+import Validation from '../../core/shared/Validation';
 
 export default class ControlFrame extends Frame {
   private _payment: Payment;
@@ -36,12 +38,6 @@ export default class ControlFrame extends Frame {
 
   public onInit() {
     super.onInit();
-    const formValidity =
-      this._formFields.cardNumber.validity &&
-      this._formFields.expirationDate.validity &&
-      this._formFields.securityCode.validity;
-    this.setFormValidity(formValidity);
-
     this._payment = new Payment(this._params.jwt);
     this.initSubscriptions();
     this.onLoad();
@@ -183,9 +179,9 @@ export default class ControlFrame extends Frame {
       });
   }
 
-  private setFormValidity(state: boolean) {
+  private setFormValidity(state: any) {
     const validationEvent: IMessageBusEvent = {
-      data: { validity: state },
+      data: { ...state },
       type: MessageBus.EVENTS.VALIDATE_FORM
     };
     this._messageBus.publish(validationEvent, true);
@@ -197,6 +193,12 @@ export default class ControlFrame extends Frame {
       this._formFields.expirationDate.validity &&
       this._formFields.securityCode.validity;
 
+    const formValidity = {
+      cardNumber: this._formFields.cardNumber.validity,
+      expirationDate: this._formFields.expirationDate.validity,
+      securityCode: this._formFields.securityCode.validity
+    };
+
     this._card = {
       expirydate: this._formFields.expirationDate.value,
       pan: this._formFields.cardNumber.value,
@@ -204,6 +206,9 @@ export default class ControlFrame extends Frame {
     };
 
     if (this._isPaymentReady && isFormValid) {
+      const validation = new Validation();
+      validation.blockForm(true);
+
       this._payment.threeDQueryRequest(this._card, this._merchantFormData).then(responseBody => {
         const messageBusEvent: IMessageBusEvent = {
           data: responseBody,
@@ -212,9 +217,7 @@ export default class ControlFrame extends Frame {
         this._messageBus.publish(messageBusEvent, true);
       });
     } else {
-      this.setFormValidity(isFormValid);
+      this.setFormValidity(formValidity);
     }
   }
-
-  private subscribeFormValidate() {}
 }
