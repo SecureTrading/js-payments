@@ -19,6 +19,9 @@ class ST {
   private tokenise: boolean;
   private styles: IStyles;
   private componentIds: any;
+  private submitOnSuccess: boolean;
+  private submitOnError: boolean;
+  private submitFields: string[];
 
   /**
    * Defines static methods for starting different payment methods
@@ -28,9 +31,22 @@ class ST {
   constructor(config: IConfig) {
     config = this._addDefaults(config);
     this.jwt = config.jwt;
+    this.origin = config.origin;
+    this.tokenise = config.tokenise;
     this.componentIds = config.componentIds;
     this.styles = config.styles;
-    const instance = new CommonFrames(this.jwt, this.origin, this.componentIds, this.styles);
+    this.submitOnSuccess = config.submitOnSuccess;
+    this.submitOnError = config.submitOnError;
+    this.submitFields = config.submitFields;
+    const instance = new CommonFrames(
+      this.jwt,
+      this.origin,
+      this.componentIds,
+      this.styles,
+      this.submitOnSuccess,
+      this.submitOnError,
+      this.submitFields
+    );
   }
 
   public Components(config?: IComponentsConfig) {
@@ -51,8 +67,24 @@ class ST {
   }
 
   private _addDefaults(config: IConfig) {
-    this.origin = config.origin ? config.origin : window.location.origin;
-    this.tokenise = config.tokenise ? config.tokenise : false;
+    config.origin = config.origin ? config.origin : window.location.origin;
+    config.tokenise = config.tokenise ? config.tokenise : false;
+    config.submitOnSuccess = config.submitOnSuccess ? config.submitOnSuccess : false;
+    config.submitOnError = config.submitOnError ? config.submitOnError : false;
+    // TODO get correct default list of submit fields
+    config.submitFields = config.submitFields
+      ? config.submitFields
+      : [
+          'baseamount',
+          'currencyiso3a',
+          'eci',
+          'enrolled',
+          'errorcode',
+          'errormessage',
+          'orderreference',
+          'settlestatus',
+          'status'
+        ];
     const componentIds = {
       animatedCard: 'st-animated-card',
       cardNumber: 'st-card-number',

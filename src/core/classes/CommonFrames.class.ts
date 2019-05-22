@@ -16,9 +16,23 @@ export default class CommonFrames extends RegisterFrames {
   private notificationFrame: Element;
   private controlFrame: Element;
   private messageBus: MessageBus;
+  private submitOnSuccess: boolean;
+  private submitOnError: boolean;
+  private submitFields: string[];
 
-  constructor(jwt: any, origin: any, componentIds: [], styles: IStyles) {
+  constructor(
+    jwt: any,
+    origin: any,
+    componentIds: [],
+    styles: IStyles,
+    submitOnSuccess: boolean,
+    submitOnError: boolean,
+    submitFields: string[]
+  ) {
     super(jwt, origin, componentIds, styles);
+    this.submitOnSuccess = submitOnSuccess;
+    this.submitOnError = submitOnError;
+    this.submitFields = submitFields;
     this.messageBus = new MessageBus();
     this._onInit();
   }
@@ -82,26 +96,9 @@ export default class CommonFrames extends RegisterFrames {
   }
 
   private onTransactionComplete(data: any) {
-    // TODO make this optional
-    if (false) {
-      // TODO move to DomMethods.addDataToForm
+    if ((this.submitOnSuccess && data.errorcode === '0') || (this.submitOnError && data.errorcode !== '0')) {
       const form: HTMLFormElement = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR) as HTMLFormElement;
-      Object.entries(data).forEach(([field, value]) => {
-        // TODO whitelist for fields
-        if (['errorcode'].includes(field)) {
-          form.appendChild(
-            DomMethods.createHtmlElement(
-              {
-                name: field,
-                type: 'hidden',
-                value
-              },
-              'input'
-            )
-          );
-        }
-      });
-      // TODO add in a choice of when to submit (always or only on paymentSuccess)
+      DomMethods.addDataToForm(form, data, this.submitFields);
       form.submit();
     }
   }
