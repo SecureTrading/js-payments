@@ -11,14 +11,16 @@ module.exports = {
   entry: {
     main: './src/components/index.ts',
     componentControlFrame: './src/components/control-frame/control-frame.ts',
-    stjs: './src/stjs.ts',
+    st: './src/ST.ts',
     example: './example/index.ts',
-    immediateExample: './example/immediate.ts'
+    immediateExample: './example/immediate.ts',
+    receipt: './example/receipt.ts'
   },
   output: {
     filename: '[name].bundle.js',
     path: path.join(__dirname, 'dist'),
-    library: '[name]',
+    library: 'SecureTrading',
+    libraryExport: 'default',
     libraryTarget: 'var',
     publicPath: ''
   },

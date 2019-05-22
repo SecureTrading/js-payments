@@ -5,8 +5,8 @@ import Language from '../shared/Language';
 import VisaCheckout from './VisaCheckout';
 
 class VisaCheckoutMock extends VisaCheckout {
-  constructor(config: any, step: boolean, jwt: string) {
-    super(config, step, jwt);
+  constructor(config: any, tokenise: boolean, jwt: string) {
+    super(config, tokenise, jwt);
     this._attachVisaButton();
     this._setActionOnMockedButton();
   }
