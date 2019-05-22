@@ -316,6 +316,7 @@ class ApplePay {
     this.session.onpaymentauthorized = (event: any) => {
       this.paymentDetails = JSON.stringify(event.payment);
       this.session.completePayment({ status: this.getPaymentStatus(), errors: [] });
+      // @TODO STJS-205 refactor into Payments
       this.payment
         .processPayment(
           { requesttypedescription: this.step ? 'CACHETOKENISE' : 'AUTH' },

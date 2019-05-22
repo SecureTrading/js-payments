@@ -1,9 +1,9 @@
 import { IMerchantData } from '../../core/models/MerchantData';
+import { INotificationEvent, NotificationType } from '../../core/models/NotificationEvent';
 import Frame from '../../core/shared/Frame';
+import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Payment from '../../core/shared/Payment';
-import PaymentMock from '../../core/shared/PaymentMock';
-import { environment } from '../../environments/environment';
 
 export default class ControlFrame extends Frame {
   private _payment: Payment;
@@ -42,9 +42,27 @@ export default class ControlFrame extends Frame {
       this._formFields.securityCode.validity;
     this.setFormValidity(formValidity);
 
-    this._payment = environment.testEnvironment ? new PaymentMock(this._params.jwt) : new Payment(this._params.jwt);
+    this._payment = new Payment(this._params.jwt);
     this.initSubscriptions();
     this.onLoad();
+  }
+
+  /**
+   * Send postMessage to notificationFrame component, to inform user about payment status
+   * @param type
+   * @param content
+   */
+  // @TODO STJS-205 refactor into Payments
+  public setNotification(type: string, content: string) {
+    const notificationEvent: INotificationEvent = {
+      content,
+      type
+    };
+    const messageBusEvent: IMessageBusEvent = {
+      data: notificationEvent,
+      type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
+    };
+    this._messageBus.publish(messageBusEvent);
   }
 
   protected _getAllowedParams() {
@@ -144,11 +162,25 @@ export default class ControlFrame extends Frame {
   }
 
   private requestAuth(data: any) {
-    this._payment.processPayment({ requesttypedescription: 'AUTH' }, this._card, this._merchantFormData, data);
+    this._processPayment(data, 'AUTH');
   }
 
   private requestCachetokenise(data: any) {
-    this._payment.processPayment({ requesttypedescription: 'CACHETOKENISE' }, this._card, this._merchantFormData, data);
+    this._processPayment(data, 'CACHETOKENISE');
+  }
+
+  // @TODO STJS-205 refactor into Payments
+  private _processPayment(data: any, type: string) {
+    this._payment
+      .processPayment({ requesttypedescription: type }, this._card, this._merchantFormData, data)
+      .then((response: object) => response)
+      .then((respData: object) => {
+        this.setNotification(NotificationType.Success, Language.translations.PAYMENT_SUCCESS);
+        return respData;
+      })
+      .catch(() => {
+        this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
+      });
   }
 
   private setFormValidity(state: boolean) {
