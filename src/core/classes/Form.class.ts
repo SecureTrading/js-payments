@@ -1,4 +1,5 @@
 import Element from '../Element';
+import { INotificationEvent } from '../models/NotificationEvent';
 import DomMethods from '../shared/DomMethods';
 import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
@@ -99,6 +100,7 @@ class Form {
     }
     this.initFormFields();
     this._setMerchantInputListeners();
+    this._setTransactionCompleteListener();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
   }
 
@@ -184,6 +186,37 @@ class Form {
     for (const el of els) {
       el.addEventListener('input', this.onInput.bind(this));
     }
+  }
+
+  private onTransactionComplete(data: any) {
+    // TODO make this optional
+    if (false) {
+      // TODO move to DomMethods.addDataToForm
+      const form: HTMLFormElement = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR) as HTMLFormElement;
+      Object.entries(data).forEach(([field, value]) => {
+        // TODO whitelist for fields
+        if (['errorcode'].includes(field)) {
+          form.appendChild(
+            DomMethods.createHtmlElement(
+              {
+                name: field,
+                type: 'hidden',
+                value
+              },
+              'input'
+            )
+          );
+        }
+      });
+      // TODO add in a choice of when to submit (always or only on paymentSuccess)
+      form.submit();
+    }
+  }
+
+  private _setTransactionCompleteListener() {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE, (data: any) => {
+      this.onTransactionComplete(data);
+    });
   }
 }
 

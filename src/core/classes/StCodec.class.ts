@@ -1,6 +1,9 @@
+import { INotificationEvent } from '../models/NotificationEvent';
 import Language from '../shared/Language';
+import MessageBus from '../shared/MessageBus';
 import Notification from '../shared/Notification';
 import { StJwt } from '../shared/StJwt';
+import { Translator } from '../shared/Translator';
 
 interface IStRequest {
   requesttypedescription: string;
@@ -35,42 +38,17 @@ class StCodec {
     );
   }
 
-  /**
-   * Verify the response from the gateway
-   * @param responseData The response from the gateway
-   * @return The content of the response that can be used in the following processes
-   */
-  public static verifyResponseObject(responseData: any): object {
-    // Ought we keep hold of the requestreference (eg. log it to console)
-    // So that we can link these requests up with the gateway?
-    if (
-      !(
-        responseData &&
-        responseData.version === StCodec.VERSION &&
-        responseData.response &&
-        responseData.response.length === 1
-      )
-    ) {
-      StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
-      throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
-    }
-    const responseContent = responseData.response[0];
-    if (responseContent.errorcode !== '0') {
-      // Should this be a custom error type which can also take a field that is at fault
-      // so that errordata can be sent up to highlight the field?
-      StCodec._notification.error(responseContent.errormessage);
-      throw new Error(responseContent.errormessage);
-    }
-    return responseContent;
-  }
-
   private static _notification = new Notification();
   private readonly _requestId: string;
   private readonly _jwt: string;
+  private _translator: Translator;
+  private _messageBus: MessageBus;
 
   constructor(jwt: string) {
     this._requestId = StCodec._createRequestId();
     this._jwt = jwt;
+    this._translator = new Translator(new StJwt(this._jwt).locale);
+    this._messageBus = new MessageBus();
   }
 
   /**
@@ -118,13 +96,61 @@ class StCodec {
     return new Promise((resolve, reject) => {
       if ('json' in responseObject) {
         responseObject.json().then(responseData => {
-          resolve(StCodec.verifyResponseObject(responseData));
+          resolve(this.verifyResponseObject(responseData));
         });
       } else {
+        // TODO refactor with verifyRepsonseObject
+        this.publishResponse({
+          errorcode: '50003',
+          errormessage: Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE
+        });
         StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
         reject(new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
       }
     });
+  }
+
+  /**
+   * Verify the response from the gateway
+   * @param responseData The response from the gateway
+   * @return The content of the response that can be used in the following processes
+   */
+  public verifyResponseObject(responseData: any): object {
+    // Ought we keep hold of the requestreference (eg. log it to console)
+    // So that we can link these requests up with the gateway?
+    if (
+      !(
+        responseData &&
+        responseData.version === StCodec.VERSION &&
+        responseData.response &&
+        responseData.response.length === 1
+      )
+    ) {
+      this.publishResponse({
+        errorcode: '50003',
+        errormessage: Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE
+      });
+      StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
+      throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
+    }
+    const responseContent = responseData.response[0];
+    this.publishResponse(responseContent);
+    if (responseContent.errorcode !== '0') {
+      // Should this be a custom error type which can also take a field that is at fault
+      // so that errordata can be sent up to highlight the field?
+      StCodec._notification.error(responseContent.errormessage);
+      throw new Error(responseContent.errormessage);
+    }
+    return responseContent;
+  }
+
+  private publishResponse(responseData: any) {
+    responseData.errormessage = this._translator.translate(responseData.errormessage);
+    const notificationEvent: IMessageBusEvent = {
+      data: responseData,
+      type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE
+    };
+    this._messageBus.publish(notificationEvent, true);
   }
 }
 

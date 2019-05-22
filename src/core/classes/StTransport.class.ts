@@ -56,7 +56,12 @@ export default class StTransport {
     return this.fetchRetry(this.gatewayUrl, {
       ...StTransport.DEFAULT_FETCH_OPTIONS,
       body: this._codec.encode(requestObject)
-    }).then(this._codec.decode);
+    })
+      .then(this._codec.decode)
+      .catch(e => {
+        this._codec.decode({});
+        return {};
+      });
   }
 
   /**

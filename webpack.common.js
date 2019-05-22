@@ -84,6 +84,12 @@ module.exports = {
       chunks: ['immediateExample'],
       favicon: './favicon.ico'
     }),
+    new HtmlWebpackPlugin({
+      filename: 'receipt.html',
+      template: './example/receipt.html',
+      chunks: ['receipt'],
+      favicon: './favicon.ico'
+    }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css'

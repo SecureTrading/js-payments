@@ -40,35 +40,6 @@ import './style.scss';
       'font-size-input': '12px',
       'line-height-input': '12px'
     },
-    [
-      {
-        name: 'APPLEPAY',
-        props: {
-          buttonStyle: 'white-outline',
-          buttonText: 'donate',
-          merchantId: 'merchant.net.securetrading',
-          paymentRequest: {
-            countryCode: 'US',
-            currencyCode: 'USD',
-            merchantCapabilities: ['supports3DS', 'supportsCredit', 'supportsDebit'],
-            supportedNetworks: [],
-            total: { label: 'Secure Trading Merchant', amount: '10.00' }
-          },
-          placement: 'st-apple-pay',
-          sitesecurity: 'gABC123DEFABC'
-        }
-      },
-      {
-        name: 'VISACHECKOUT',
-        props: {
-          buttonSettings: { size: '154', color: 'neutral' },
-          livestatus: 0,
-          merchantId: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4',
-          paymentRequest: { subtotal: '20.00' },
-          placement: 'st-visa-checkout',
-          settings: { displayName: 'My Test Site' }
-        }
-      }
-    ]
+    []
   );
 })();
