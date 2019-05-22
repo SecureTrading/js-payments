@@ -237,8 +237,9 @@ export default class CardNumber extends FormField {
   }
 
   public setFocusListener() {
-    this._messageBus.subscribe(MessageBus.EVENTS.FOCUS_CARD_NUMBER, (data: any) => {
-      this.onBlur();
+    this._messageBus.subscribe(MessageBus.EVENTS.FOCUS_CARD_NUMBER, () => {
+      this.format(this._inputElement.value);
+      this.validation.validate(this._inputElement, this._messageElement);
     });
   }
 }

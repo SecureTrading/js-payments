@@ -69,7 +69,8 @@ export default class ExpirationDate extends FormField {
   }
   public setFocusListener() {
     this._messageBus.subscribe(MessageBus.EVENTS.FOCUS_EXPIRATION_DATE, () => {
-      this.onBlur();
+      this.format(this._inputElement.value);
+      this.validation.validate(this._inputElement, this._messageElement);
     });
   }
 }

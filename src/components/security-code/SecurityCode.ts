@@ -94,7 +94,8 @@ export default class SecurityCode extends FormField {
 
   public setFocusListener() {
     this._messageBus.subscribe(MessageBus.EVENTS.FOCUS_SECURITY_CODE, () => {
-      this.onBlur();
+      this.format(this._inputElement.value);
+      this.validation.validate(this._inputElement, this._messageElement);
     });
   }
 }
