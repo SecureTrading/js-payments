@@ -36,21 +36,18 @@ class ST {
   public Components(config?: IComponentsConfig) {
     config = config ? config : {};
     const instance = new Cards(this.jwt, this.origin, this.componentIds, this.styles);
-    const cardinal = environment.testEnvironment
-      ? new CardinalCommerceMock(this.tokenise)
-      : new CardinalCommerce(this.tokenise);
+    const cardinal = environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce;
+    const cardinalInstance = new cardinal(this.tokenise);
   }
 
   public ApplePay(config: IWalletConfig) {
-    const instance = environment.testEnvironment
-      ? new ApplePayMock(config, this.tokenise, this.jwt)
-      : new ApplePay(config, this.tokenise, this.jwt);
+    const applepay = environment.testEnvironment ? ApplePayMock : ApplePay;
+    const instance = new applepay(config, this.tokenise, this.jwt);
   }
 
   public VisaCheckout(config: IWalletConfig) {
-    const instance = environment.testEnvironment
-      ? new VisaCheckoutMock(config, this.tokenise, this.jwt)
-      : new VisaCheckout(config, this.tokenise, this.jwt);
+    const visa = environment.testEnvironment ? VisaCheckoutMock : VisaCheckout;
+    const instance = new visa(config, this.tokenise, this.jwt);
   }
 
   private _addDefaults(config: IConfig) {
