@@ -3,12 +3,12 @@ import DomMethods from '../shared/DomMethods';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
 import { IStyles } from '../shared/Styler';
-import Register from './RegisterFrames.class';
+import RegisterFrames from './RegisterFrames.class';
 
 /**
  * Defines all non field elements of form and their placement on merchant site.
  */
-class Form extends Register {
+export default class CommonFrames extends RegisterFrames {
   public elementsToRegister: HTMLElement[];
   public elementsTargets: any;
   private notificationFrameMounted: HTMLElement;
@@ -80,5 +80,3 @@ class Form extends Register {
     }
   }
 }
-
-export default Form;

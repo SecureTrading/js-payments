@@ -1,5 +1,5 @@
-import Cards from './core/classes/CardFrames.class';
-import Form from './core/classes/CommonFrames.class';
+import CardFrames from './core/classes/CardFrames.class';
+import CommonFrames from './core/classes/CommonFrames.class';
 import ApplePay from './core/integrations/ApplePay';
 import ApplePayMock from './core/integrations/ApplePayMock';
 import { CardinalCommerce } from './core/integrations/CardinalCommerce';
@@ -30,12 +30,12 @@ class ST {
     this.jwt = config.jwt;
     this.componentIds = config.componentIds;
     this.styles = config.styles;
-    const instance = new Form(this.jwt, this.origin, this.componentIds, this.styles);
+    const instance = new CommonFrames(this.jwt, this.origin, this.componentIds, this.styles);
   }
 
   public Components(config?: IComponentsConfig) {
     config = config ? config : {};
-    const instance = new Cards(this.jwt, this.origin, this.componentIds, this.styles);
+    const instance = new CardFrames(this.jwt, this.origin, this.componentIds, this.styles);
     const cardinal = environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce;
     const cardinalInstance = new cardinal(this.tokenise);
   }

@@ -3,12 +3,12 @@ import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
 import { IStyles } from '../shared/Styler';
-import Register from './RegisterFrames.class';
+import RegisterFrames from './RegisterFrames.class';
 
 /**
  * Defines all card elements of form and their  placement on merchant site.
  */
-class Form extends Register {
+export default class CardFrames extends RegisterFrames {
   /**
    * Attaches to specified element text or/and icon and disables it.
    * @param element
@@ -31,10 +31,10 @@ class Form extends Register {
     const buttonSubmit = document.querySelector('button[type="submit"]');
     // @ts-ignore
     // tslint:disable-next-line:no-unused-expression
-    inputSubmit && Form._setPreloader(inputSubmit, Language.translations.PRELOADER_TEXT);
+    inputSubmit && CardFrames._setPreloader(inputSubmit, Language.translations.PRELOADER_TEXT);
     // @ts-ignore
     // tslint:disable-next-line:no-unused-expression
-    buttonSubmit && Form._setPreloader(buttonSubmit, Language.translations.PRELOADER_TEXT);
+    buttonSubmit && CardFrames._setPreloader(buttonSubmit, Language.translations.PRELOADER_TEXT);
   }
 
   private cardNumberMounted: HTMLElement;
@@ -120,10 +120,8 @@ class Form extends Register {
     this.messageBusEvent = { type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM };
     document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).addEventListener('submit', (event: Event) => {
       event.preventDefault();
-      Form._disableSubmitButton();
+      CardFrames._disableSubmitButton();
       this.messageBus.publishFromParent(this.messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
     });
   }
 }
-
-export default Form;

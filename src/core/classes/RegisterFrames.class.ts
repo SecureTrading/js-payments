@@ -4,7 +4,7 @@ import { IStyles } from '../shared/Styler';
 /**
  * Defines all non field elements of form and their placement on merchant site.
  */
-class Register {
+export default class RegisterFrames {
   public styles: IStyles;
   public params: any;
   public onlyWallets: boolean;
@@ -50,5 +50,3 @@ class Register {
     });
   }
 }
-
-export default Register;

@@ -437,7 +437,6 @@ function ApplePayFixture() {
       supportedNetworks: ['amex', 'visa']
     },
     merchantId: 'merchant.net.securetrading',
-    sitesecurity: 'gABC123DEFABC',
     placement: 'st-apple-pay',
     buttonText: 'donate',
     buttonStyle: 'white-outline'
