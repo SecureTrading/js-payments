@@ -12,7 +12,8 @@ module.exports = {
     main: './src/components/index.ts',
     componentControlFrame: './src/components/control-frame/control-frame.ts',
     stjs: './src/stjs.ts',
-    example: './example/index.ts'
+    example: './example/index.ts',
+    immediateExample: './example/immediate.ts'
   },
   output: {
     filename: '[name].bundle.js',
@@ -75,6 +76,12 @@ module.exports = {
       filename: 'index.html',
       template: './example/index.html',
       chunks: ['example'],
+      favicon: './favicon.ico'
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'immediate.html',
+      template: './example/immediate.html',
+      chunks: ['immediateExample'],
       favicon: './favicon.ico'
     }),
     new MiniCssExtractPlugin({
