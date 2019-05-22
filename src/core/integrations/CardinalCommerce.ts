@@ -27,12 +27,12 @@ export interface IThreeDQueryResponse {
  * 6.Cardinal.on('pauments.validated) - process auth or return failure
  */
 export class CardinalCommerce {
-  get step(): boolean {
-    return this._step;
+  get tokenise(): boolean {
+    return this._tokenise;
   }
 
-  set step(value: boolean) {
-    this._step = value;
+  set tokenise(value: boolean) {
+    this._tokenise = value;
   }
 
   private static PAYMENT_BRAND: string = 'cca';
@@ -52,10 +52,10 @@ export class CardinalCommerce {
   private _cardinalCommerceJWT: string;
   private _cardinalCommerceCacheToken: string;
   private _threedQueryTransactionReference: string;
-  private _step: boolean;
+  private _tokenise: boolean;
 
-  constructor(step: boolean) {
-    this.step = step;
+  constructor(tokenise: boolean) {
+    this.tokenise = tokenise;
     this.messageBus = new MessageBus();
     this._onInit();
   }
@@ -220,7 +220,7 @@ export class CardinalCommerce {
       data,
       type: MessageBus.EVENTS_PUBLIC.AUTH
     };
-    if (this.step) {
+    if (this.tokenise) {
       messageBusEvent.type = MessageBus.EVENTS_PUBLIC.CACHETOKENISE;
     }
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);

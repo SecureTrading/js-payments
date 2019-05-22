@@ -21,6 +21,6 @@ module.exports = merge(common, {
       /^\.\.\/\.\.\/environments\/environment/,
       '../../environments/environment.test'
     ),
-    new webpack.NormalModuleReplacementPlugin(/^\.\.\/environments\/environment/, '../environments/environment.test')
+    new webpack.NormalModuleReplacementPlugin(/^\.\/environments\/environment/, './environments/environment.test')
   ]
 });

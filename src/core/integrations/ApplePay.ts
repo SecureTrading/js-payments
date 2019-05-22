@@ -35,7 +35,7 @@ const ApplePaySession = (window as any).ApplePaySession;
  * 12. Then onPaymentAuthorized() or onPaymentCanceled() has been called which completes payment with
  *     this.session.completePayment function or canceled it with this.session.oncancel handler.
  */
-class ApplePay {
+export class ApplePay {
   get applePayButtonProps(): any {
     return this._applePayButtonProps;
   }
@@ -107,19 +107,17 @@ class ApplePay {
   private _jwt: string;
   private _applePayButtonProps: any = {};
   private _payment: Payment;
-  private step: boolean;
+  private tokenise: boolean;
 
-  constructor(config: any, step: boolean, jwt: string) {
-    const {
-      props: { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId }
-    } = config;
+  constructor(config: any, tokenise: boolean, jwt: string) {
+    const { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId } = config;
     this.jwt = jwt;
     this.merchantId = merchantId;
     this.placement = placement;
     this.payment = new Payment(jwt);
     this.paymentRequest = paymentRequest;
     this.sitesecurity = sitesecurity;
-    this.step = step;
+    this.tokenise = tokenise;
     this.validateMerchantRequestData.walletmerchantid = merchantId;
     this.stJwtInstance = new StJwt(jwt);
     this.stTransportInstance = new StTransport({
@@ -319,7 +317,7 @@ class ApplePay {
       // @TODO STJS-205 refactor into Payments
       this.payment
         .processPayment(
-          { requesttypedescription: this.step ? 'CACHETOKENISE' : 'AUTH' },
+          { requesttypedescription: this.tokenise ? 'CACHETOKENISE' : 'AUTH' },
           {
             walletsource: this.validateMerchantRequestData.walletsource,
             wallettoken: this.paymentDetails
