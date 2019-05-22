@@ -125,13 +125,13 @@ export default class FormField extends Frame {
   }
 
   protected onFocus(event: Event) {
-    this._inputElement.setCustomValidity('');
-    this.format(this._inputElement.value);
-    this.validation.validate(this._inputElement, this._messageElement);
     this.focus();
   }
 
   protected onBlur(event: Event) {
+    this._inputElement.setCustomValidity('');
+    this.format(this._inputElement.value);
+    this.validation.validate(this._inputElement, this._messageElement);
     this.blur();
   }
 

@@ -11,6 +11,7 @@ import { cardsLogos } from './animated-card-logos';
  * Defines animated card, it's 'stateless' component which only receives data validated previously by other components.
  */
 class AnimatedCard extends Frame {
+  private static SECURITY_CODE_LENGTH_EXTENDED = 4;
   public static CARD_TYPES = {
     AMEX: 'amex',
     ASTROPAYCARD: 'astropaycard',
@@ -40,6 +41,7 @@ class AnimatedCard extends Frame {
     CARD_NUMBER: '\u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219',
     EXPIRATION_DATE: 'MM/YY',
     SECURITY_CODE: '\u2219\u2219\u2219',
+    SECURITY_CODE_EXTENDED: '\u2219\u2219\u2219\u2219',
     TYPE: 'default'
   };
 
@@ -97,6 +99,16 @@ class AnimatedCard extends Frame {
     this.setLabels();
     this.setDefaultInputsValues();
     this.setSubscribeEvents();
+    this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (length: number) =>
+      this.setSecurityCodePlaceholderContent(length)
+    );
+  }
+
+  public setSecurityCodePlaceholderContent(securityCodeLength: number) {
+    securityCodeLength === AnimatedCard.SECURITY_CODE_LENGTH_EXTENDED
+      ? (this.animatedCardSecurityCode.textContent = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE)
+      : (this.animatedCardSecurityCodeFront.textContent =
+          AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED);
   }
 
   public setLabels() {
@@ -169,8 +181,10 @@ class AnimatedCard extends Frame {
    * Sets card theme according to card brand coming from binLookup()
    */
   public setTheme() {
+    this.animatedCardSecurityCodeFrontField.textContent = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
     if (this.cardDetails.type === AnimatedCard.CARD_TYPES.AMEX) {
-      this.animatedCardSecurityCodeFrontField.textContent = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
+      this.animatedCardSecurityCodeFrontField.textContent =
+        AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED;
     }
     this.cardDetails.logo = AnimatedCard.getLogo(this.cardDetails.type);
   }
