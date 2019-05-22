@@ -38,17 +38,59 @@ class StCodec {
     );
   }
 
+  /**
+   * Verify the response from the gateway
+   * @param responseData The response from the gateway
+   * @return The content of the response that can be used in the following processes
+   */
+  public static verifyResponseObject(responseData: any): object {
+    // Ought we keep hold of the requestreference (eg. log it to console)
+    // So that we can link these requests up with the gateway?
+    if (
+      !(
+        responseData &&
+        responseData.version === StCodec.VERSION &&
+        responseData.response &&
+        responseData.response.length === 1
+      )
+    ) {
+      StCodec.publishResponse({
+        errorcode: '50003',
+        errormessage: Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE
+      });
+      StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
+      throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
+    }
+    const responseContent = responseData.response[0];
+    StCodec.publishResponse(responseContent);
+    if (responseContent.errorcode !== '0') {
+      // Should this be a custom error type which can also take a field that is at fault
+      // so that errordata can be sent up to highlight the field?
+      StCodec._notification.error(responseContent.errormessage);
+      throw new Error(responseContent.errormessage);
+    }
+    return responseContent;
+  }
+
   private static _notification = new Notification();
+  private static _translator = new Translator('en_GB');
+  private static _messageBus = new MessageBus();
+
+  private static publishResponse(responseData: any) {
+    responseData.errormessage = this._translator.translate(responseData.errormessage);
+    const notificationEvent: IMessageBusEvent = {
+      data: responseData,
+      type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE
+    };
+    this._messageBus.publish(notificationEvent, true);
+  }
   private readonly _requestId: string;
   private readonly _jwt: string;
-  private _translator: Translator;
-  private _messageBus: MessageBus;
 
   constructor(jwt: string) {
     this._requestId = StCodec._createRequestId();
     this._jwt = jwt;
-    this._translator = new Translator(new StJwt(this._jwt).locale);
-    this._messageBus = new MessageBus();
+    StCodec._translator = new Translator(new StJwt(this._jwt).locale);
   }
 
   /**
@@ -96,11 +138,11 @@ class StCodec {
     return new Promise((resolve, reject) => {
       if ('json' in responseObject) {
         responseObject.json().then(responseData => {
-          resolve(this.verifyResponseObject(responseData));
+          resolve(StCodec.verifyResponseObject(responseData));
         });
       } else {
         // TODO refactor with verifyRepsonseObject
-        this.publishResponse({
+        StCodec.publishResponse({
           errorcode: '50003',
           errormessage: Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE
         });
@@ -108,49 +150,6 @@ class StCodec {
         reject(new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
       }
     });
-  }
-
-  /**
-   * Verify the response from the gateway
-   * @param responseData The response from the gateway
-   * @return The content of the response that can be used in the following processes
-   */
-  public verifyResponseObject(responseData: any): object {
-    // Ought we keep hold of the requestreference (eg. log it to console)
-    // So that we can link these requests up with the gateway?
-    if (
-      !(
-        responseData &&
-        responseData.version === StCodec.VERSION &&
-        responseData.response &&
-        responseData.response.length === 1
-      )
-    ) {
-      this.publishResponse({
-        errorcode: '50003',
-        errormessage: Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE
-      });
-      StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
-      throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
-    }
-    const responseContent = responseData.response[0];
-    this.publishResponse(responseContent);
-    if (responseContent.errorcode !== '0') {
-      // Should this be a custom error type which can also take a field that is at fault
-      // so that errordata can be sent up to highlight the field?
-      StCodec._notification.error(responseContent.errormessage);
-      throw new Error(responseContent.errormessage);
-    }
-    return responseContent;
-  }
-
-  private publishResponse(responseData: any) {
-    responseData.errormessage = this._translator.translate(responseData.errormessage);
-    const notificationEvent: IMessageBusEvent = {
-      data: responseData,
-      type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE
-    };
-    this._messageBus.publish(notificationEvent, true);
   }
 }
 

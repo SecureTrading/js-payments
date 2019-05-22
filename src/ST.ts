@@ -81,6 +81,7 @@ class ST {
           'eci',
           'enrolled',
           'errorcode',
+          'errordata',
           'errormessage',
           'orderreference',
           'settlestatus',

@@ -96,7 +96,12 @@ export default class CommonFrames extends RegisterFrames {
   }
 
   private onTransactionComplete(data: any) {
-    if ((this.submitOnSuccess && data.errorcode === '0') || (this.submitOnError && data.errorcode !== '0')) {
+    if (
+      (this.submitOnSuccess &&
+        data.errorcode === '0' &&
+        ['AUTH', 'CACHETOKENISE'].includes(data.requesttypedescription)) ||
+      (this.submitOnError && data.errorcode !== '0')
+    ) {
       const form: HTMLFormElement = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR) as HTMLFormElement;
       DomMethods.addDataToForm(form, data, this.submitFields);
       form.submit();

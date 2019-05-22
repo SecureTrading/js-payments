@@ -182,17 +182,19 @@ export default class ControlFrame extends Frame {
     let isFormValid: boolean;
     if (dataInJwt) {
       isFormValid = true;
+      this._isPaymentReady = true;
     } else {
       isFormValid =
         this._formFields.cardNumber.validity &&
         this._formFields.expirationDate.validity &&
         this._formFields.securityCode.validity;
+
+      this._card = {
+        expirydate: this._formFields.expirationDate.value,
+        pan: this._formFields.cardNumber.value,
+        securitycode: this._formFields.securityCode.value
+      };
     }
-    this._card = {
-      expirydate: this._formFields.expirationDate.value,
-      pan: this._formFields.cardNumber.value,
-      securitycode: this._formFields.securityCode.value
-    };
 
     if (this._isPaymentReady && isFormValid) {
       this._payment.threeDQueryRequest(this._card, this._merchantFormData).then(responseBody => {
