@@ -11,7 +11,9 @@ export interface IConfig {
   submitFields?: string[];
 }
 
-export interface IComponentsConfig {}
+export interface IComponentsConfig {
+  startOnLoad?: boolean;
+}
 
 export interface IWalletConfig {
   [key: string]: any;

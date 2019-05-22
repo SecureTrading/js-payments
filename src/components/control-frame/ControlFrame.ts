@@ -91,8 +91,8 @@ export default class ControlFrame extends Frame {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.CACHETOKENISE, (data: any) => {
       this.onCachetokeniseEvent(data);
     });
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, () => {
-      this.onSubmit();
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, (data?: any) => {
+      this.onSubmit(data);
     });
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS, (data: any) => {
       this.storeMerchantData(data);
@@ -103,8 +103,8 @@ export default class ControlFrame extends Frame {
     this._merchantFormData = data;
   }
 
-  private onSubmit() {
-    this.requestPayment();
+  private onSubmit(data: any) {
+    this.requestPayment(data);
   }
 
   private onLoad() {
@@ -177,12 +177,17 @@ export default class ControlFrame extends Frame {
       });
   }
 
-  private requestPayment() {
-    const isFormValid: boolean =
-      this._formFields.cardNumber.validity &&
-      this._formFields.expirationDate.validity &&
-      this._formFields.securityCode.validity;
-
+  private requestPayment(data: any) {
+    const dataInJwt = data ? data.dataInJwt : false;
+    let isFormValid: boolean;
+    if (dataInJwt) {
+      isFormValid = true;
+    } else {
+      isFormValid =
+        this._formFields.cardNumber.validity &&
+        this._formFields.expirationDate.validity &&
+        this._formFields.securityCode.validity;
+    }
     this._card = {
       expirydate: this._formFields.expirationDate.value,
       pan: this._formFields.cardNumber.value,

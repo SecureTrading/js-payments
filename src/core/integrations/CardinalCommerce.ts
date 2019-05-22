@@ -4,6 +4,7 @@ import DomMethods from '../shared/DomMethods';
 import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
+import { StJwt } from '../shared/StJwt';
 
 declare const Cardinal: any;
 
@@ -53,8 +54,12 @@ export class CardinalCommerce {
   private _cardinalCommerceCacheToken: string;
   private _threedQueryTransactionReference: string;
   private _tokenise: boolean;
+  private _startOnLoad: boolean;
+  private _jwt: string;
 
-  constructor(tokenise: boolean) {
+  constructor(tokenise: boolean, startOnLoad: boolean, jwt: string) {
+    this._startOnLoad = startOnLoad;
+    this._jwt = jwt;
     this.tokenise = tokenise;
     this.messageBus = new MessageBus();
     this._onInit();
@@ -66,11 +71,21 @@ export class CardinalCommerce {
    * This includes a failed JWT authentication.
    */
   public _onCardinalSetupComplete() {
-    const messageBusEvent: IMessageBusEvent = {
-      type: MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL
-    };
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BIN_PROCESS, this._performBinDetection);
-    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    if (this._startOnLoad) {
+      const pan = new StJwt(this._jwt).payload.pan as string;
+      this._performBinDetection({ validity: true, value: pan });
+      const submitFormEvent: IMessageBusEvent = {
+        data: { dataInJwt: true },
+        type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
+      };
+      this.messageBus.publishFromParent(submitFormEvent, Selectors.CONTROL_FRAME_IFRAME);
+    } else {
+      const messageBusEvent: IMessageBusEvent = {
+        type: MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL
+      };
+      this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BIN_PROCESS, this._performBinDetection);
+      this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    }
   }
 
   /**
