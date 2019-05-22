@@ -7,20 +7,20 @@ import Selectors from '../../core/shared/Selectors';
 export default class SecurityCode extends FormField {
   // @ts-ignore
   public static ifFieldExists = (): HTMLInputElement => document.getElementById(Selectors.SECURITY_CODE_INPUT);
-  private static INPUT_LENGTH_PATTERN: string = '^[0-9]{3}$';
+  private static STANDARD_INPUT_LENGTH: number = 3;
+  private static STANDARD_LENGTH_PATTERN: string = '^[0-9]{3}$';
+  private static SPECIAL_LENGTH_PATTERN: string = '^[0-9]{4}$';
 
   public binLookup: BinLookup;
 
   constructor() {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
     this.binLookup = new BinLookup();
-
-    this.setAttributes({ pattern: SecurityCode.INPUT_LENGTH_PATTERN });
+    this.setSecurityCodeAttributes(SecurityCode.STANDARD_INPUT_LENGTH, SecurityCode.STANDARD_LENGTH_PATTERN);
 
     if (this._inputElement.value) {
       this.sendState();
     }
-    this.setSecurityCodeAttributes();
     this.subscribeSecurityCodeChange();
     this.backendValidation();
   }
@@ -62,9 +62,13 @@ export default class SecurityCode extends FormField {
    * Listens to Security Code length change event,
    */
   private subscribeSecurityCodeChange() {
-    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (data: any) => {
-      console.log(data);
-      this.setSecurityCodeAttributes();
+    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (length: any) => {
+      let securityCodeLength = length;
+      let securityCodePattern = SecurityCode.STANDARD_LENGTH_PATTERN;
+      if (securityCodeLength !== SecurityCode.STANDARD_INPUT_LENGTH) {
+        securityCodePattern = SecurityCode.SPECIAL_LENGTH_PATTERN;
+      }
+      this.setSecurityCodeAttributes(securityCodeLength, securityCodePattern);
     });
   }
 
@@ -72,10 +76,12 @@ export default class SecurityCode extends FormField {
    * Sets values of Security Code field (maxlength, minlength and placeholder) according to data form BinLookup.
    * If length is not specified it takes 3 as length.
    * @param securityCodeLength
+   * @param securityCodePattern
    */
-  private setSecurityCodeAttributes() {
+  private setSecurityCodeAttributes(securityCodeLength: number, securityCodePattern: string) {
     this.setAttributes({
-      pattern: '^[0-9]{3}$'
+      maxlength: securityCodeLength,
+      pattern: securityCodePattern
     });
   }
 
