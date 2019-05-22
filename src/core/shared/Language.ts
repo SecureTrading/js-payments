@@ -11,6 +11,7 @@ class Language {
     COMMUNICATION_ERROR_INVALID_REQUEST: 'Invalid request',
     COMMUNICATION_ERROR_INVALID_RESPONSE: 'Invalid response',
     COMMUNICATION_ERROR_TIMEOUT: 'Timeout',
+    FORM_IS_NOT_VALID: 'Form is not valid',
     LABEL_CARD_NUMBER: 'Card number',
     LABEL_EXPIRATION_DATE: 'Expiration date',
     LABEL_SECURITY_CODE: 'Security code',
@@ -38,6 +39,7 @@ class Language {
     COMMUNICATION_ERROR_INVALID_REQUEST: string;
     COMMUNICATION_ERROR_INVALID_RESPONSE: string;
     COMMUNICATION_ERROR_TIMEOUT: string;
+    FORM_IS_NOT_VALID: string;
     LABEL_CARD_NUMBER: string;
     LABEL_EXPIRATION_DATE: string;
     LABEL_SECURITY_CODE: string;

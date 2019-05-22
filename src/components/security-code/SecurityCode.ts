@@ -7,7 +7,7 @@ import Selectors from '../../core/shared/Selectors';
 export default class SecurityCode extends FormField {
   // @ts-ignore
   public static ifFieldExists = (): HTMLInputElement => document.getElementById(Selectors.SECURITY_CODE_INPUT);
-  private static INPUT_LENGTH: number = 3;
+  private static INPUT_LENGTH_PATTERN: string = '^[0-9]{3}$';
 
   public binLookup: BinLookup;
 
@@ -15,10 +15,7 @@ export default class SecurityCode extends FormField {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
     this.binLookup = new BinLookup();
 
-    this.setAttributes({
-      maxlength: SecurityCode.INPUT_LENGTH,
-      minlength: SecurityCode.INPUT_LENGTH
-    });
+    this.setAttributes({ pattern: SecurityCode.INPUT_LENGTH_PATTERN });
 
     if (this._inputElement.value) {
       this.sendState();
@@ -65,9 +62,10 @@ export default class SecurityCode extends FormField {
    * Listens to Security Code length change event,
    */
   private subscribeSecurityCodeChange() {
-    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (data: any) =>
-      this.setSecurityCodeAttributes(data)
-    );
+    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (data: any) => {
+      console.log(data);
+      this.setSecurityCodeAttributes();
+    });
   }
 
   /**
@@ -75,10 +73,9 @@ export default class SecurityCode extends FormField {
    * If length is not specified it takes 3 as length.
    * @param securityCodeLength
    */
-  private setSecurityCodeAttributes(securityCodeLength: number = SecurityCode.INPUT_LENGTH) {
+  private setSecurityCodeAttributes() {
     this.setAttributes({
-      maxlength: securityCodeLength,
-      minlength: securityCodeLength
+      pattern: '^[0-9]{3}$'
     });
   }
 
