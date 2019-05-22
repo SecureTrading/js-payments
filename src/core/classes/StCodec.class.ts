@@ -1,7 +1,7 @@
 import Language from '../shared/Language';
 import Notification from '../shared/Notification';
-import { StJwt } from '../shared/StJwt';
 import Validation from '../shared/Validation';
+import { StJwt } from '../shared/StJwt';
 
 interface IStRequest {
   requesttypedescription: string;
@@ -17,8 +17,9 @@ interface IStRequest {
 class StCodec {
   public static CONTENT_TYPE = 'application/json';
   public static VERSION = '1.00';
-  public static SUPPORTED_REQUEST_TYPES = ['WALLETVERIFY', 'JSINIT', 'THREEDQUERY', 'CACHETOKENISE', 'AUTH'];
+  public static SUPPORTED_REQUEST_TYPES = ['WALLETVERIFY', 'JSINIT', 'THREEDQUERY', 'CACHETOKENISE', 'AUTH', 'ERROR'];
   public static MINIMUM_REQUEST_FIELDS = 1;
+  private static ERROR_CODE_INVALID_FIELD = '30000';
 
   /**
    * Generate a unique ID for a request
@@ -56,17 +57,17 @@ class StCodec {
       throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
     }
     const responseContent = responseData.response[0];
-    console.log(responseData);
     const validation = new Validation();
-    if (responseContent.errorcode !== '0') {
-      // Should this be a custom error type which can also take a field that is at fault
-      // so that errordata can be sent up to highlight the field?
-      StCodec._notification.error(responseContent.errormessage);
-      validation.getErrorData(StCodec.getErrorData(responseContent));
-      validation.blockForm(false);
-      throw new Error(responseContent.errormessage);
-    } else if (responseContent.requesttypedescription === StCodec.SUPPORTED_REQUEST_TYPES[4]) {
-      StCodec._notification.success('Payment succeded !');
+    console.log(responseData);
+    if (responseContent.requesttypedescription === StCodec.SUPPORTED_REQUEST_TYPES[5]) {
+      if (responseContent.errorcode === StCodec.ERROR_CODE_INVALID_FIELD) {
+        StCodec._notification.error(responseContent.errormessage);
+        validation.getErrorData(StCodec.getErrorData(responseContent));
+        validation.blockForm(false);
+      } else {
+        StCodec._notification.error(responseContent.errormessage);
+        throw new Error(responseContent.errormessage);
+      }
     }
     return responseContent;
   }

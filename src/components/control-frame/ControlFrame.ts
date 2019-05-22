@@ -203,12 +203,6 @@ export default class ControlFrame extends Frame {
       securitycode: this._formFields.securityCode.value
     };
 
-    if (isFormValid) {
-      this.setFormValidity(isFormValid);
-    } else {
-      this.setNotification(NotificationType.Error, Language.translations.FORM_IS_NOT_VALID);
-    }
-
     if (this._isPaymentReady && isFormValid) {
       this._payment.threeDQueryRequest(this._card, this._merchantFormData).then(responseBody => {
         const messageBusEvent: IMessageBusEvent = {
@@ -217,6 +211,10 @@ export default class ControlFrame extends Frame {
         };
         this._messageBus.publish(messageBusEvent, true);
       });
+    } else {
+      this.setFormValidity(isFormValid);
     }
   }
+
+  private subscribeFormValidate() {}
 }

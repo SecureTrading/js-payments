@@ -18,9 +18,11 @@ class Language {
     MERCHANT_VALIDATION_FAILURE: 'Merchant validation failure',
     NOT_IMPLEMENTED_ERROR: 'Method not implemented',
     NO_CARDS_IN_WALLET: 'You have no cards in your wallet',
+    PAY: 'Pay',
     PAYMENT_ERROR: 'An error occurred',
     PAYMENT_SUCCESS: 'Payment has been successfully processed',
     PAYMENT_WARNING: 'Payment has been cancelled',
+    PROCESSING: 'Processing ...',
     VALIDATION_ERROR: 'Invalid field',
     VALIDATION_ERROR_CARD: 'Card number is invalid',
     VALIDATION_ERROR_CARD_AND_CODE: 'Security code does not match card number',
@@ -46,9 +48,11 @@ class Language {
     MERCHANT_VALIDATION_FAILURE: string;
     NOT_IMPLEMENTED_ERROR: string;
     NO_CARDS_IN_WALLET: string;
+    PAY: string;
     PAYMENT_ERROR: string;
     PAYMENT_SUCCESS: string;
     PAYMENT_WARNING: string;
+    PROCESSING: string;
     VALIDATION_ERROR: string;
     VALIDATION_ERROR_CARD: string;
     VALIDATION_ERROR_CARD_AND_CODE: string;

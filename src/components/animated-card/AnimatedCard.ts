@@ -327,8 +327,14 @@ class AnimatedCard extends Frame {
     this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: any) => this.onSecurityCodeChanged(data));
   }
 
+  /**
+   * Sets text label of particular element.
+   * @param labelSelector
+   * @param text
+   * @private
+   */
   private _setLabel(labelSelector: string, text: string) {
-    document.getElementById(labelSelector).innerHTML = this._translator.translate(text);
+    document.getElementById(labelSelector).textContent = this._translator.translate(text);
   }
 }
 

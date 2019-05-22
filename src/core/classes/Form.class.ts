@@ -33,7 +33,6 @@ class Form {
   private notificationFrame: Element;
   private controlFrame: Element;
   private messageBus: MessageBus;
-  private messageBusEvent: IMessageBusEvent;
   private validation: Validation;
 
   constructor(jwt: any, origin: any, onlyWallets: boolean, fieldsIds: [], styles: IStyles) {
@@ -48,27 +47,25 @@ class Form {
     this.origin = origin;
     this.params = { locale: this.stJwt.locale };
     this.messageBus = new MessageBus();
-    document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).addEventListener('submit', (event: Event) => {
-      event.preventDefault();
-      this.validation.blockForm(true);
-      const messageBusEvent: IMessageBusEvent = {
-        type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
-      };
-      this.messageBus.publish(messageBusEvent);
-    });
     this._onInit();
-    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (data: any) => {
-      this.setSubmitButton(data.state);
-      // this.formOverlay();
-    });
   }
 
+  private static SUBMIT_BUTTON_AS_BUTTON_MARKUP = 'button[type="submit"]';
+  private static SUBMIT_BUTTON_AS_INPUT_MARKUP = 'input[type="submit"]';
   private static SUBMIT_BUTTON_DISABLED_CLASS = 'st-button-submit__disabled';
 
-  private _setSubmitButtonProperties(element: any, disabledState: boolean) {
+  /**
+   * Sets button properties as text and disable/enable class
+   * @param element
+   * @param disabledState
+   * @private
+   */
+  private static _setSubmitButtonProperties(element: any, disabledState: boolean) {
     if (disabledState) {
+      element.textContent = Language.translations.PROCESSING;
       element.classList.add(Form.SUBMIT_BUTTON_DISABLED_CLASS);
     } else {
+      element.textContent = Language.translations.PAY;
       element.classList.remove(Form.SUBMIT_BUTTON_DISABLED_CLASS);
     }
 
@@ -77,28 +74,24 @@ class Form {
     return element;
   }
 
-  public setSubmitButton(state: boolean) {
-    const inputSubmit = document.querySelector('input[type="submit"]');
-    const buttonSubmit = document.querySelector('button[type="submit"]');
-    if (inputSubmit) {
-      this._setSubmitButtonProperties(inputSubmit, state);
-    } else if (buttonSubmit) {
-      this._setSubmitButtonProperties(buttonSubmit, state);
-    }
-  }
+  /**
+   * Gets submit button whether is input or button markup.
+   */
+  private static getSubmitButton = () =>
+    document.querySelector(Form.SUBMIT_BUTTON_AS_BUTTON_MARKUP) ||
+    document.querySelector(Form.SUBMIT_BUTTON_AS_INPUT_MARKUP);
 
-  public formOverlay() {
-    let div = document.createElement('div');
-    div.setAttribute('class', 'st-form__overlay');
-    div.setAttribute(
-      'style',
-      'position: fixed; width: 100%; height: 100%; opacity: 0.7; background-color: #fff;top:0;left:0;'
-    );
-    document.body.appendChild(div);
+  /**
+   * Finds submit button whether is input or button markup and sets properties.
+   * @param state
+   */
+  public static disableSubmitButton(state: boolean) {
+    const element = Form.getSubmitButton();
+    element && Form._setSubmitButtonProperties(element, state);
   }
 
   /**
-   * Defines form elements if merchant chooses only apms or not
+   * Defines form elements if merchant chooses only apms or not.
    * @param onlyWallets
    */
   public setElementsFields = (onlyWallets: boolean) =>
@@ -113,11 +106,17 @@ class Form {
           this.fieldsIds.controlFrame
         ];
 
+  /**
+   * Triggers all necessary
+   * @private
+   */
   public _onInit() {
     if (!this.onlyWallets) {
       this.initCardFields();
     }
     this.initFormFields();
+    this.submitFormListener();
+    this.subscribeBlockSubmit();
     this._setMerchantInputListeners();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
   }
@@ -178,7 +177,10 @@ class Form {
     });
   }
 
-  private onInput(event: Event) {
+  /**
+   * Publishes UPDATE_MERCHANT_FIELDS event to Message Bus.
+   */
+  private onInput() {
     const messageBusEvent = {
       data: DomMethods.parseMerchantForm(),
       type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
@@ -186,11 +188,43 @@ class Form {
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
+  /**
+   * Binds all the form inputs and listen to onInput event.
+   * @private
+   */
   private _setMerchantInputListeners() {
     const els = DomMethods.getAllFormElements(document.getElementById(Selectors.MERCHANT_FORM_SELECTOR));
     for (const el of els) {
       el.addEventListener('input', this.onInput.bind(this));
     }
+  }
+
+  /**
+   * Listens to html submit form event, blocks default event, disables submit button and publish event to Message Bus.
+   */
+  private submitFormListener() {
+    document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).addEventListener('submit', (event: Event) => {
+      event.preventDefault();
+      Form.disableSubmitButton(true);
+      this.publishSubmitEvent();
+    });
+  }
+
+  /**
+   * Checks if submit button needs to be blocked.
+   */
+  private subscribeBlockSubmit() {
+    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (data: any) => Form.disableSubmitButton(data.state));
+  }
+
+  /**
+   * Publishes message bus submit event.
+   */
+  private publishSubmitEvent() {
+    const messageBusEvent: IMessageBusEvent = {
+      type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
+    };
+    this.messageBus.publish(messageBusEvent);
   }
 }
 
