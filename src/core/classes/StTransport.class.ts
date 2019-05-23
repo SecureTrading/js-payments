@@ -59,7 +59,7 @@ export default class StTransport {
     })
       .then(this._codec.decode)
       .catch(e => {
-        return this._codec.decode({});
+        return this._codec.decode({}).catch();
       });
   }
 

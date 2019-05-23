@@ -12,7 +12,8 @@ module.exports = merge(common, {
     hot: true,
     host: '0.0.0.0',
     writeToDisk: true,
-    index: ''
+    index: '',
+    disableHostCheck: true
   },
   plugins: [new webpack.HotModuleReplacementPlugin()]
 });
