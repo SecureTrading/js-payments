@@ -13,7 +13,7 @@ describe('CardinalCommerce class', () => {
   // when
   beforeEach(() => {
     document.body.innerHTML = `<input id='JWTContainer' value="${jwt}" />`;
-    instance = new CardinalCommerce(false);
+    instance = new CardinalCommerce(false, false, jwt);
   });
 
   // given
