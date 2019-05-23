@@ -51,11 +51,8 @@ export default class ExpirationDate extends FormField {
 
   protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
-    if (this.isMaxLengthReached()) {
-      this._inputElement.value = Formatter.maskExpirationDate(
-        this._inputElement.value.substring(0, ExpirationDate.EXPIRATION_DATE_LENGTH)
-      );
-    }
+    const preparedValue = this._inputElement.value.substring(0, ExpirationDate.EXPIRATION_DATE_LENGTH);
+    this._inputElement.value = Formatter.maskExpirationDateOnPaste(preparedValue);
     this.sendState();
   }
 
