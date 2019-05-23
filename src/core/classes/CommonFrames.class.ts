@@ -56,9 +56,11 @@ export default class CommonFrames extends RegisterFrames {
   public initFormFields() {
     this.notificationFrame = new Element();
     this.controlFrame = new Element();
-    this.notificationFrame.create(Selectors.NOTIFICATION_FRAME_COMPONENT_NAME, this.styles, this.params);
-    this.notificationFrameMounted = this.notificationFrame.mount(Selectors.NOTIFICATION_FRAME_IFRAME);
-    this.elementsToRegister.push(this.notificationFrameMounted);
+    if (!(this.submitOnError && this.submitOnSuccess)) {
+      this.notificationFrame.create(Selectors.NOTIFICATION_FRAME_COMPONENT_NAME, this.styles, this.params);
+      this.notificationFrameMounted = this.notificationFrame.mount(Selectors.NOTIFICATION_FRAME_IFRAME);
+      this.elementsToRegister.push(this.notificationFrameMounted);
+    }
 
     this.controlFrame.create(Selectors.CONTROL_FRAME_COMPONENT_NAME, this.styles, {
       jwt: this.jwt,
@@ -76,7 +78,9 @@ export default class CommonFrames extends RegisterFrames {
   public registerElements(fields: HTMLElement[], targets: string[]) {
     targets.map((item, index) => {
       const itemToChange = document.getElementById(item);
-      itemToChange.appendChild(fields[index]);
+      if (fields[index]) {
+        itemToChange.appendChild(fields[index]);
+      }
     });
   }
 

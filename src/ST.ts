@@ -51,9 +51,11 @@ class ST {
 
   public Components(config?: IComponentsConfig) {
     config = config ? config : {};
-    const instance = new CardFrames(this.jwt, this.origin, this.componentIds, this.styles);
-    const cardinal = environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce;
     config.startOnLoad = config.startOnLoad ? config.startOnLoad : false;
+    if (!config.startOnLoad) {
+      const instance = new CardFrames(this.jwt, this.origin, this.componentIds, this.styles);
+    }
+    const cardinal = environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce;
     const cardinalInstance = new cardinal(this.tokenise, config.startOnLoad, this.jwt);
   }
 
