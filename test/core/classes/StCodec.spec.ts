@@ -69,6 +69,8 @@ describe('StCodec class', () => {
   describe('StCodec.buildRequestObject', () => {
     beforeEach(() => {
       str = new StCodec(jwt);
+      // @ts-ignore
+      StCodec.publishResponse = jest.fn();
     });
 
     each([
@@ -95,6 +97,8 @@ describe('StCodec class', () => {
   describe('StCodec.encode', () => {
     beforeEach(() => {
       str = new StCodec(jwt);
+      // @ts-ignore
+      StCodec.publishResponse = jest.fn();
     });
 
     each([
@@ -129,6 +133,8 @@ describe('StCodec class', () => {
   describe('StCodec.verifyResponseObject', () => {
     beforeEach(() => {
       str = new StCodec(jwt);
+      // @ts-ignore
+      StCodec.publishResponse = jest.fn();
     });
 
     each([
@@ -157,6 +163,8 @@ describe('StCodec class', () => {
   describe('StCodec.decode', () => {
     beforeEach(() => {
       str = new StCodec(jwt);
+      // @ts-ignore
+      StCodec.publishResponse = jest.fn();
     });
 
     it('should decode a valid response', async () => {
