@@ -75,15 +75,15 @@ class StCodec {
   private static _parentOrigin: string;
 
   private static publishResponse(responseData: any) {
-    responseData.errormessage = this._translator.translate(responseData.errormessage);
+    responseData.errormessage = StCodec._translator.translate(responseData.errormessage);
     const notificationEvent: IMessageBusEvent = {
       data: responseData,
       type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE
     };
-    if (StCodec._parentOrigin) {
-      this._messageBus.publish(notificationEvent, true);
+    if (StCodec._parentOrigin !== undefined) {
+      StCodec._messageBus.publish(notificationEvent, true);
     } else {
-      this._messageBus.publish(notificationEvent);
+      StCodec._messageBus.publishFromParent(notificationEvent, 'window');
     }
   }
 

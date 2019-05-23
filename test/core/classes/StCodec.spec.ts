@@ -57,6 +57,8 @@ describe('StCodec class', () => {
       StCodec._translator.translate.mockReturnValueOnce('Translated');
       // @ts-ignore
       StCodec._messageBus.publish = jest.fn();
+      // @ts-ignore
+      StCodec._messageBus.publishFromParent = jest.fn();
     });
 
     it('should translate and publish result to parent', () => {
@@ -80,6 +82,8 @@ describe('StCodec class', () => {
         },
         true
       );
+      // @ts-ignore
+      expect(StCodec._messageBus.publishFromParent).toHaveBeenCalledTimes(0);
     });
 
     it('should translate and publish result to itself', () => {
@@ -93,13 +97,18 @@ describe('StCodec class', () => {
       // @ts-ignore
       expect(StCodec._translator.translate).toHaveBeenCalledWith('Ok');
       // @ts-ignore
-      expect(StCodec._messageBus.publish).toHaveBeenCalledWith({
-        data: {
-          errorcode: '0',
-          errormessage: 'Translated'
+      expect(StCodec._messageBus.publish).toHaveBeenCalledTimes(0);
+      // @ts-ignore
+      expect(StCodec._messageBus.publishFromParent).toHaveBeenCalledWith(
+        {
+          data: {
+            errorcode: '0',
+            errormessage: 'Translated'
+          },
+          type: 'TRANSACTION_COMPLETE'
         },
-        type: 'TRANSACTION_COMPLETE'
-      });
+        'window'
+      );
     });
   });
 
