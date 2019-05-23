@@ -65,17 +65,6 @@ export default class ExpirationDate extends FormField {
 
   private isMaxLengthReached = () => this._inputElement.value.length >= ExpirationDate.EXPIRATION_DATE_LENGTH;
 
-  // private isDateFromThePast = () => {
-  //   let date = new Date();
-  //   let monthExpected = ('0' + (date.getMonth() + 1)).slice(-2);
-  //   let yearExpected = date
-  //     .getFullYear()
-  //     .toString()
-  //     .substr(-2);
-  //   const month = this._inputElement.value.substring(0, 2);
-  //   const year = this._inputElement.value.slice(-2);
-  // };
-
   protected format(data: string) {
     this.setValue(Formatter.maskExpirationDate(data));
   }

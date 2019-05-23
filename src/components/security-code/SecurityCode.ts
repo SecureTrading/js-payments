@@ -96,6 +96,9 @@ export default class SecurityCode extends FormField {
     this.setAttributes({ pattern: securityCodePattern });
   }
 
+  /**
+   *
+   */
   private isMaxLengthReached = () => this._inputElement.value.length >= this.securityCodeLength;
 
   public backendValidation() {

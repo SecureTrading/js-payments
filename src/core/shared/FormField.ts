@@ -107,6 +107,10 @@ export default class FormField extends Frame {
     };
   }
 
+  private setCustomValidationError(errorContent: string) {
+    this._inputElement.setCustomValidity(errorContent);
+  }
+
   protected onKeyPress(event: KeyboardEvent) {
     if (!Validation.isCharNumber(event)) {
       event.preventDefault();
@@ -120,8 +124,8 @@ export default class FormField extends Frame {
   }
 
   protected onInput(event: Event) {
+    this.setCustomValidationError('');
     this.format(this._inputElement.value);
-    this.validation.validate(this._inputElement, this._messageElement);
   }
 
   protected onFocus(event: Event) {
@@ -138,7 +142,8 @@ export default class FormField extends Frame {
     event.preventDefault();
     clipboardData = event.clipboardData.getData('text/plain');
     this._inputElement.value = Formatter.trimNonNumeric(clipboardData);
-    this._inputElement.setCustomValidity('');
+    this.setCustomValidationError('');
+
     this.format(this._inputElement.value);
     this.validation.validate(this._inputElement, this._messageElement);
   }

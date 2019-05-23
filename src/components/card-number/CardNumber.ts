@@ -209,17 +209,6 @@ export default class CardNumber extends FormField {
 
   private isMaxLengthReached = () => this._inputElement.value.length >= this.cardNumberLength;
 
-  private getMinLengthOfCardNumber(cardNumber: string) {
-    let cardNumberMinLength = CardNumber.STANDARD_CARD_LENGTH;
-    if (this.getPossibleCardLength(cardNumber)) {
-      const numberOfWhitespaces =
-        this.binLookup.binLookup(cardNumber).format.split('d').length - CardNumber.WHITESPACES_DECREASE_NUMBER;
-      const cardNumberLength = this.getPossibleCardLength(cardNumber)[0];
-      cardNumberMinLength = cardNumberLength + numberOfWhitespaces;
-    }
-    return cardNumberMinLength;
-  }
-
   private sendState() {
     const { value, validity } = this.getFormFieldState();
     const messageBusEvent: IMessageBusEvent = {
@@ -237,6 +226,9 @@ export default class CardNumber extends FormField {
     this._messageBus.publish(messageBusEvent);
   }
 
+  /**
+   *
+   */
   public backendValidation() {
     this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD, (data: any) => {
       this.checkBackendValidity(data);
