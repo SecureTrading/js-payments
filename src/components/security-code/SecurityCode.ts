@@ -44,6 +44,9 @@ export default class SecurityCode extends FormField {
 
   protected onInput(event: Event) {
     super.onInput(event);
+    if (this._inputElement.value.length >= this.securityCodeLength) {
+      this.validation.validate(this._inputElement, this._messageElement);
+    }
     this.sendState();
   }
 

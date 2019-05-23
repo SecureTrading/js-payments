@@ -143,7 +143,6 @@ export default class FormField extends Frame {
     clipboardData = event.clipboardData.getData('text/plain');
     this._inputElement.value = Formatter.trimNonNumeric(clipboardData);
     this.setCustomValidationError('');
-
     this.format(this._inputElement.value);
     this.validation.validate(this._inputElement, this._messageElement);
   }

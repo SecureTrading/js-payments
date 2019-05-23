@@ -189,6 +189,9 @@ export default class CardNumber extends FormField {
 
   protected onInput(event: Event) {
     super.onInput(event);
+    if (this._inputElement.value.length >= this.cardNumberLength) {
+      this.validation.validate(this._inputElement, this._messageElement);
+    }
     this.sendState();
   }
 
