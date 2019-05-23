@@ -61,6 +61,8 @@ describe('StCodec class', () => {
 
     it('should translate and publish result to parent', () => {
       // @ts-ignore
+      StCodec._parentOrigin = 'https://example.com';
+      // @ts-ignore
       StCodec.publishResponse({
         errorcode: '0',
         errormessage: 'Ok'
@@ -70,11 +72,34 @@ describe('StCodec class', () => {
       // @ts-ignore
       expect(StCodec._messageBus.publish).toHaveBeenCalledWith(
         {
-          data: { errorcode: '0', errormessage: 'Translated' },
+          data: {
+            errorcode: '0',
+            errormessage: 'Translated'
+          },
           type: 'TRANSACTION_COMPLETE'
         },
         true
       );
+    });
+
+    it('should translate and publish result to itself', () => {
+      // @ts-ignore
+      StCodec._parentOrigin = undefined;
+      // @ts-ignore
+      StCodec.publishResponse({
+        errorcode: '0',
+        errormessage: 'Ok'
+      });
+      // @ts-ignore
+      expect(StCodec._translator.translate).toHaveBeenCalledWith('Ok');
+      // @ts-ignore
+      expect(StCodec._messageBus.publish).toHaveBeenCalledWith({
+        data: {
+          errorcode: '0',
+          errormessage: 'Translated'
+        },
+        type: 'TRANSACTION_COMPLETE'
+      });
     });
   });
 
