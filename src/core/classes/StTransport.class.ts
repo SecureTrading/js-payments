@@ -42,9 +42,9 @@ export default class StTransport {
   private gatewayUrl: string;
   private _codec: StCodec;
 
-  constructor(params: IStTransportParams) {
+  constructor(params: IStTransportParams, parentOrigin?: string) {
     this.gatewayUrl = 'gatewayUrl' in params ? params.gatewayUrl : StTransport.GATEWAY_URL;
-    this._codec = new StCodec(params.jwt);
+    this._codec = new StCodec(params.jwt, parentOrigin);
   }
 
   /**
@@ -59,7 +59,7 @@ export default class StTransport {
     })
       .then(this._codec.decode)
       .catch(e => {
-        return this._codec.decode({}).catch();
+        return this._codec.decode({});
       });
   }
 

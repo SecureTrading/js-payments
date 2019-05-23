@@ -87,10 +87,13 @@ class StCodec {
   private readonly _requestId: string;
   private readonly _jwt: string;
 
-  constructor(jwt: string) {
+  constructor(jwt: string, parentOrigin?: string) {
     this._requestId = StCodec._createRequestId();
     this._jwt = jwt;
     StCodec._translator = new Translator(new StJwt(this._jwt).locale);
+    if (parentOrigin) {
+      StCodec._messageBus = new MessageBus(parentOrigin);
+    }
   }
 
   /**

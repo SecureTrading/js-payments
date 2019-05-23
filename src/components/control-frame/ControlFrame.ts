@@ -36,7 +36,7 @@ export default class ControlFrame extends Frame {
 
   public onInit() {
     super.onInit();
-    this._payment = new Payment(this._params.jwt);
+    this._payment = new Payment(this._params.jwt, this._params.origin);
     this.initSubscriptions();
     this.onLoad();
   }

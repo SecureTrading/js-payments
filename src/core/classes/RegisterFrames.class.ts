@@ -7,7 +7,6 @@ import { IStyles } from '../shared/Styler';
 export default class RegisterFrames {
   public styles: IStyles;
   public params: any;
-  public onlyWallets: boolean;
   public elementsToRegister: HTMLElement[];
   public elementsTargets: any;
   public componentIds: any;
