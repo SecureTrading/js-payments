@@ -11,7 +11,19 @@
   </head>
 
   <body>
-    <h1>DONE</h1>
-    <p>TODO need to design this</p>
+    <h1>Receipt page</h1>
+
+    <p>Transaction ref:</p>
+    <p id="transactionreference"></p>
+    <p>Error code:</p>
+    <p id="errorcode"></p>
+    <p>Error message:</p>
+    <p id="errormessage"></p>
   </body>
+  <script>
+    const parsedUrl = new URL(window.location.href);
+    document.getElementById('transactionreference').innerHTML = parsedUrl.searchParams.get('transactionreference', '');
+    document.getElementById('errorcode').innerHTML = parsedUrl.searchParams.get('errorcode', '');
+    document.getElementById('errormessage').innerHTML = parsedUrl.searchParams.get('errormessage', '');
+  </script>
 </html>

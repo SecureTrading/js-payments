@@ -54,10 +54,7 @@ class StCodec {
         responseData.response.length === 1
       )
     ) {
-      StCodec.publishResponse({
-        errorcode: '50003',
-        errormessage: Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE
-      });
+      StCodec.publishResponse(StCodec._createCommunicationError());
       StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
       throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
     }
@@ -84,6 +81,14 @@ class StCodec {
     };
     this._messageBus.publish(notificationEvent, true);
   }
+
+  private static _createCommunicationError() {
+    return {
+      errorcode: '50003',
+      errormessage: Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE
+    };
+  }
+
   private readonly _requestId: string;
   private readonly _jwt: string;
 
@@ -144,11 +149,7 @@ class StCodec {
           resolve(StCodec.verifyResponseObject(responseData));
         });
       } else {
-        // TODO refactor with verifyRepsonseObject
-        StCodec.publishResponse({
-          errorcode: '50003',
-          errormessage: Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE
-        });
+        StCodec.publishResponse(StCodec._createCommunicationError());
         StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
         reject(new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
       }

@@ -74,7 +74,6 @@ class ST {
     config.tokenise = config.tokenise ? config.tokenise : false;
     config.submitOnSuccess = config.submitOnSuccess ? config.submitOnSuccess : false;
     config.submitOnError = config.submitOnError ? config.submitOnError : false;
-    // TODO get correct default list of submit fields
     config.submitFields = config.submitFields
       ? config.submitFields
       : [
