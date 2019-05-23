@@ -40,7 +40,6 @@ export default class SecurityCode extends FormField {
 
   protected onFocus(event: FocusEvent) {
     super.onFocus(event);
-    this.sendState();
   }
 
   protected onInput(event: Event) {

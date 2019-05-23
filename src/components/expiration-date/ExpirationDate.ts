@@ -13,9 +13,8 @@ export default class ExpirationDate extends FormField {
     return document.getElementById(Selectors.EXPIRATION_DATE_INPUT);
   }
 
-  private static INPUT_PATTERN: string = '^(0[1-9]|1[0-2])\\/([0-9]{2})$';
-
   private static EXPIRATION_DATE_LENGTH: number = 5;
+  private static INPUT_PATTERN: string = '^(0[1-9]|1[0-2])\\/([0-9]{2})$';
 
   constructor() {
     super(Selectors.EXPIRATION_DATE_INPUT, Selectors.EXPIRATION_DATE_MESSAGE, Selectors.EXPIRATION_DATE_LABEL);
@@ -40,6 +39,10 @@ export default class ExpirationDate extends FormField {
 
   protected onFocus(event: Event) {
     super.onFocus(event);
+  }
+
+  protected onBlur() {
+    super.onBlur();
     this.sendState();
   }
 

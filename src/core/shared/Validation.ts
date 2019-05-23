@@ -13,7 +13,6 @@ interface IValidation {
 const {
   VALIDATION_ERROR_FIELD_IS_REQUIRED,
   VALIDATION_ERROR_PATTERN_MISMATCH,
-  VALIDATION_ERROR_VALUE_TOO_SHORT,
   VALIDATION_ERROR
 } = Language.translations;
 
@@ -89,20 +88,16 @@ export default class Validation extends Frame {
   }
 
   public getValidationMessage(validityState: ValidityState): string {
-    const { customError, patternMismatch, tooLong, tooShort, typeMismatch, valid, valueMissing } = validityState;
+    const { customError, patternMismatch, valid, valueMissing } = validityState;
     let validationMessage: string = '';
     if (!valid) {
       if (valueMissing) {
         validationMessage = VALIDATION_ERROR_FIELD_IS_REQUIRED;
       } else if (patternMismatch) {
         validationMessage = VALIDATION_ERROR_PATTERN_MISMATCH;
-      } else if (tooShort) {
-        validationMessage = VALIDATION_ERROR_VALUE_TOO_SHORT;
       } else if (customError) {
         validationMessage = VALIDATION_ERROR_PATTERN_MISMATCH;
-      } else if (typeMismatch) {
-        validationMessage = VALIDATION_ERROR;
-      } else if (tooLong) {
+      } else {
         validationMessage = VALIDATION_ERROR;
       }
     }

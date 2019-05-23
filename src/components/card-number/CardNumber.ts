@@ -56,17 +56,17 @@ export default class CardNumber extends FormField {
     }
 
     const luhnCheck = sum && sum % 10 === 0;
-    let errorMessage;
-    if (!luhnCheck) {
-      (document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement).setCustomValidity(
-        'Your card number is invalid.'
-      );
-      errorMessage = 'Your card number is invalid.';
+    this._luhnCheckValidation(luhnCheck);
+  }
+
+  private _luhnCheckValidation(luhn: boolean) {
+    const cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
+    if (!luhn) {
+      cardNumberField.setCustomValidity(Language.translations.VALIDATION_ERROR_CARD);
+      this.validation.validate(this._inputElement, this._messageElement);
     } else {
-      (document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement).setCustomValidity('');
-      errorMessage = '';
+      cardNumberField.setCustomValidity('');
     }
-    return errorMessage;
   }
 
   /**
@@ -180,11 +180,11 @@ export default class CardNumber extends FormField {
   protected onBlur() {
     super.onBlur();
     this.luhnCheck(this._inputElement.value);
+    this.sendState();
   }
 
   protected onFocus(event: Event) {
     super.onFocus(event);
-    this.sendState();
   }
 
   protected onInput(event: Event) {
