@@ -72,6 +72,7 @@ class StCodec {
   private static _notification = new Notification();
   private static _translator = new Translator('en_GB');
   private static _messageBus = new MessageBus();
+  private static _parentOrigin: string;
 
   private static publishResponse(responseData: any) {
     responseData.errormessage = this._translator.translate(responseData.errormessage);
@@ -79,7 +80,11 @@ class StCodec {
       data: responseData,
       type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE
     };
-    this._messageBus.publish(notificationEvent, true);
+    if (StCodec._parentOrigin) {
+      this._messageBus.publish(notificationEvent, true);
+    } else {
+      this._messageBus.publish(notificationEvent);
+    }
   }
 
   private static _createCommunicationError() {
@@ -95,6 +100,7 @@ class StCodec {
   constructor(jwt: string, parentOrigin?: string) {
     this._requestId = StCodec._createRequestId();
     this._jwt = jwt;
+    StCodec._parentOrigin = parentOrigin;
     StCodec._translator = new Translator(new StJwt(this._jwt).locale);
     if (parentOrigin) {
       StCodec._messageBus = new MessageBus(parentOrigin);
