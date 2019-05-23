@@ -64,7 +64,6 @@ class StCodec {
         validation.getErrorData(StCodec.getErrorData(responseContent));
         validation.blockForm(false);
       } else {
-        StCodec._notification.error(responseContent.errormessage);
         throw new Error(responseContent.errormessage);
       }
     }
