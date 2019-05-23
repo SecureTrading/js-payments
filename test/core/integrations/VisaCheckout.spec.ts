@@ -197,10 +197,8 @@ function VisaCheckoutFixture() {
   const config = {
     name: 'VISA',
     livestatus: 0,
-    props: {
-      merchantId: '2ig278`13b123872121h31h20e',
-      buttonSettings: { size: '154', color: 'neutral' }
-    },
+    merchantId: '2ig278`13b123872121h31h20e',
+    buttonSettings: { size: '154', color: 'neutral' },
     settings: { displayName: 'My Test Site' },
     paymentRequest: { subtotal: '20.00' }
   };
@@ -211,8 +209,8 @@ function VisaCheckoutFixture() {
   const sandboxAssets = {
     sdk: 'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js',
     buttonImg: `https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png?color=${
-      config.props.buttonSettings.color
-    }&size=${config.props.buttonSettings.size}`
+      config.buttonSettings.color
+    }&size=${config.buttonSettings.size}`
   };
   const fakeVisaButton = document.createElement('img');
   fakeVisaButton.setAttribute('src', visaButttonProps.src);

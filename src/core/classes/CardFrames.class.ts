@@ -1,52 +1,32 @@
 import Element from '../Element';
-import DomMethods from '../shared/DomMethods';
 import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
-import { StJwt } from '../shared/StJwt';
 import { IStyles } from '../shared/Styler';
+import RegisterFrames from './RegisterFrames.class';
 import Validation from '../shared/Validation';
+import DomMethods from '../shared/DomMethods';
 
 /**
- * Defines all elements of form and their  placement on merchant site.
+ * Defines all card elements of form and their  placement on merchant site.
  */
-class Form {
-  public styles: IStyles;
-  public params: any; // TODO type?
-  public onlyWallets: boolean;
-  public elementsToRegister: HTMLElement[];
-  public elementsTargets: any;
-  public fieldsIds: any;
-  public jwt: any;
-  public origin: any;
-  private stJwt: StJwt;
+export default class CardFrames extends RegisterFrames {
   private cardNumberMounted: HTMLElement;
   private expirationDateMounted: HTMLElement;
   private securityCodeMounted: HTMLElement;
   private animatedCardMounted: HTMLElement;
-  private notificationFrameMounted: HTMLElement;
-  private controlFrameMounted: HTMLElement;
   private cardNumber: Element;
   private expirationDate: Element;
   private securityCode: Element;
   private animatedCard: Element;
-  private notificationFrame: Element;
-  private controlFrame: Element;
   private messageBus: MessageBus;
   private validation: Validation;
 
-  constructor(jwt: any, origin: any, onlyWallets: boolean, fieldsIds: [], styles: IStyles) {
-    this.styles = styles;
-    this.onlyWallets = onlyWallets;
-    this.fieldsIds = fieldsIds;
-    this.elementsTargets = this.setElementsFields(onlyWallets);
-    this.elementsToRegister = [];
-    this.jwt = jwt;
-    this.stJwt = new StJwt(jwt);
+  constructor(jwt: any, origin: any, componentIds: [], styles: IStyles) {
+    super(jwt, origin, componentIds, styles);
     this.validation = new Validation();
-    this.origin = origin;
-    this.params = { locale: this.stJwt.locale };
     this.messageBus = new MessageBus();
+    this._initSubscribes();
     this._onInit();
   }
 
@@ -63,10 +43,10 @@ class Form {
   private static _setSubmitButtonProperties(element: any, disabledState: boolean) {
     if (disabledState) {
       element.textContent = Language.translations.PROCESSING;
-      element.classList.add(Form.SUBMIT_BUTTON_DISABLED_CLASS);
+      element.classList.add(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
     } else {
       element.textContent = Language.translations.PAY;
-      element.classList.remove(Form.SUBMIT_BUTTON_DISABLED_CLASS);
+      element.classList.remove(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
     }
 
     // @ts-ignore
@@ -78,47 +58,47 @@ class Form {
    * Gets submit button whether is input or button markup.
    */
   private static getSubmitButton = () =>
-    document.querySelector(Form.SUBMIT_BUTTON_AS_BUTTON_MARKUP) ||
-    document.querySelector(Form.SUBMIT_BUTTON_AS_INPUT_MARKUP);
+    document.querySelector(CardFrames.SUBMIT_BUTTON_AS_BUTTON_MARKUP) ||
+    document.querySelector(CardFrames.SUBMIT_BUTTON_AS_INPUT_MARKUP);
 
   /**
    * Finds submit button whether is input or button markup and sets properties.
    * @param state
    */
   public static disableSubmitButton(state: boolean) {
-    const element = Form.getSubmitButton();
-    element && Form._setSubmitButtonProperties(element, state);
+    const element = CardFrames.getSubmitButton();
+    element && CardFrames._setSubmitButtonProperties(element, state);
   }
 
   /**
-   * Defines form elements if merchant chooses only apms or not.
-   * @param onlyWallets
+   * Defines form elements for card payments
    */
-  public setElementsFields = (onlyWallets: boolean) =>
-    onlyWallets
-      ? [this.fieldsIds.notificationFrame, this.fieldsIds.controlFrame]
-      : [
-          this.fieldsIds.cardNumber,
-          this.fieldsIds.expirationDate,
-          this.fieldsIds.securityCode,
-          this.fieldsIds.animatedCard,
-          this.fieldsIds.notificationFrame,
-          this.fieldsIds.controlFrame
-        ];
+  public setElementsFields() {
+    return [
+      this.componentIds.cardNumber,
+      this.componentIds.expirationDate,
+      this.componentIds.securityCode,
+      this.componentIds.animatedCard
+    ];
+  }
 
   /**
-   * Triggers all necessary
-   * @private
+   * Inits all methods with Message Bus subscribe and eventListeners.
+   */
+  private _initSubscribes() {
+    this.submitFormListener();
+    this.subscribeBlockSubmit();
+    this.validateFieldsAfterSubmit();
+    this._setMerchantInputListeners();
+  }
+
+  /**
+   *
    */
   public _onInit() {
     if (!this.onlyWallets) {
       this.initCardFields();
     }
-    this.initFormFields();
-    this.submitFormListener();
-    this.subscribeBlockSubmit();
-    this.validateFieldsAfterSubmit();
-    this._setMerchantInputListeners();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
   }
 
@@ -149,24 +129,6 @@ class Form {
   }
 
   /**
-   * Inits necessary fields - notification and control frame
-   */
-  public initFormFields() {
-    this.notificationFrame = new Element();
-    this.controlFrame = new Element();
-    this.notificationFrame.create(Selectors.NOTIFICATION_FRAME_COMPONENT_NAME, this.styles, this.params);
-    this.notificationFrameMounted = this.notificationFrame.mount(Selectors.NOTIFICATION_FRAME_IFRAME);
-    this.elementsToRegister.push(this.notificationFrameMounted);
-
-    this.controlFrame.create(Selectors.CONTROL_FRAME_COMPONENT_NAME, this.styles, {
-      jwt: this.jwt,
-      origin: this.origin
-    });
-    this.controlFrameMounted = this.controlFrame.mount(Selectors.CONTROL_FRAME_IFRAME);
-    this.elementsToRegister.push(this.controlFrameMounted);
-  }
-
-  /**
    * Register fields in clients form
    * @param fields
    * @param targets
@@ -182,7 +144,7 @@ class Form {
    * Publishes UPDATE_MERCHANT_FIELDS event to Message Bus.
    */
   private onInput() {
-    const messageBusEvent = {
+    const messageBusEvent: IMessageBusEvent = {
       data: DomMethods.parseMerchantForm(),
       type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
     };
@@ -214,7 +176,7 @@ class Form {
    * Checks if submit button needs to be blocked.
    */
   private subscribeBlockSubmit() {
-    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (data: any) => Form.disableSubmitButton(data.state));
+    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (data: any) => CardFrames.disableSubmitButton(data.state));
   }
 
   /**
@@ -249,5 +211,3 @@ class Form {
     });
   }
 }
-
-export default Form;

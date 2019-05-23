@@ -14,6 +14,7 @@ export default class CardNumber extends FormField {
   private static STANDARD_CARD_LENGTH = 19;
   private static CARD_NUMBER_FOR_BIN_PROCESS = (cardNumber: string) => cardNumber.slice(0, 6);
 
+  private cardNumberLength: number;
   public binLookup: BinLookup;
   public cardNumberField: HTMLInputElement;
   public isCardNumberValid: boolean;
@@ -27,6 +28,7 @@ export default class CardNumber extends FormField {
     this.binLookup = new BinLookup();
     this.validity = new Validation();
     this.isCardNumberValid = true;
+    this.cardNumberLength = CardNumber.STANDARD_CARD_LENGTH;
     this.setFocusListener();
     this.backendValidation();
     this.sendState();
@@ -57,9 +59,9 @@ export default class CardNumber extends FormField {
     let errorMessage;
     if (!luhnCheck) {
       (document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement).setCustomValidity(
-        'Card number format is incorrect'
+        'Your card number is invalid.'
       );
-      errorMessage = 'Card number format is incorrect';
+      errorMessage = 'Your card number is invalid.';
     } else {
       (document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement).setCustomValidity('');
       errorMessage = '';
@@ -147,15 +149,6 @@ export default class CardNumber extends FormField {
     return Language.translations.LABEL_CARD_NUMBER;
   }
 
-  public setMinMaxLengthOfCard(cardNumber: string) {
-    const minMax = {
-      maxlength: this.getMaxLengthOfCardNumber(cardNumber),
-      minlength: this.getMinLengthOfCardNumber(cardNumber)
-    };
-    this.setAttributes(minMax);
-    return minMax;
-  }
-
   public getMaxLengthOfCardNumber(cardNumber: string) {
     const cardLengthFromBin = this.getPossibleCardLength(cardNumber);
     const cardFormat = this.getCardFormat(cardNumber);
@@ -172,19 +165,21 @@ export default class CardNumber extends FormField {
   public getFormFieldState(): IFormFieldState {
     const { value, validity } = this.getState();
     this.publishSecurityCodeLength();
-    this.luhnCheck(value);
     this.formatCardNumber(value);
-    this.setMinMaxLengthOfCard(value);
     return {
       formattedValue: this.cardNumberFormatted,
       validity,
-      value: this.cardNumberValue,
-      customErrorMessage: this.luhnCheck(value)
+      value: this.cardNumberValue
     };
   }
 
   protected _getAllowedParams() {
     return super._getAllowedParams().concat(['origin']);
+  }
+
+  protected onBlur() {
+    super.onBlur();
+    this.luhnCheck(this._inputElement.value);
   }
 
   protected onFocus(event: Event) {
@@ -199,8 +194,20 @@ export default class CardNumber extends FormField {
 
   protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
+    if (this.isMaxLengthReached()) {
+      this._inputElement.value = this._inputElement.value.substring(0, this.cardNumberLength);
+    }
     this.sendState();
   }
+
+  protected onKeyPress(event: KeyboardEvent) {
+    super.onKeyPress(event);
+    if (this.isMaxLengthReached()) {
+      event.preventDefault();
+    }
+  }
+
+  private isMaxLengthReached = () => this._inputElement.value.length >= this.cardNumberLength;
 
   private getMinLengthOfCardNumber(cardNumber: string) {
     let cardNumberMinLength = CardNumber.STANDARD_CARD_LENGTH;

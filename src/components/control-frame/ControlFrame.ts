@@ -4,7 +4,6 @@ import Frame from '../../core/shared/Frame';
 import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Payment from '../../core/shared/Payment';
-import Form from '../../core/classes/Form.class';
 import Validation from '../../core/shared/Validation';
 
 export default class ControlFrame extends Frame {

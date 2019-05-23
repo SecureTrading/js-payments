@@ -12,16 +12,15 @@ export default class ExpirationDate extends FormField {
     // @ts-ignore
     return document.getElementById(Selectors.EXPIRATION_DATE_INPUT);
   }
-  private static INPUT_MAX_LENGTH: number = 5;
+
   private static INPUT_PATTERN: string = '^(0[1-9]|1[0-2])\\/([0-9]{2})$';
+
+  private static EXPIRATION_DATE_LENGTH: number = 5;
 
   constructor() {
     super(Selectors.EXPIRATION_DATE_INPUT, Selectors.EXPIRATION_DATE_MESSAGE, Selectors.EXPIRATION_DATE_LABEL);
 
-    this.setAttributes({
-      maxlength: ExpirationDate.INPUT_MAX_LENGTH,
-      pattern: ExpirationDate.INPUT_PATTERN
-    });
+    this.setAttributes({ pattern: ExpirationDate.INPUT_PATTERN });
 
     if (this._inputElement.value) {
       this.sendState();
@@ -46,8 +45,33 @@ export default class ExpirationDate extends FormField {
 
   protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
+    if (this.isMaxLengthReached()) {
+      this._inputElement.value = Formatter.maskExpirationDate(
+        this._inputElement.value.substring(0, ExpirationDate.EXPIRATION_DATE_LENGTH)
+      );
+    }
     this.sendState();
   }
+
+  protected onKeyPress(event: KeyboardEvent) {
+    super.onKeyPress(event);
+    if (this.isMaxLengthReached()) {
+      event.preventDefault();
+    }
+  }
+
+  private isMaxLengthReached = () => this._inputElement.value.length >= ExpirationDate.EXPIRATION_DATE_LENGTH;
+
+  // private isDateFromThePast = () => {
+  //   let date = new Date();
+  //   let monthExpected = ('0' + (date.getMonth() + 1)).slice(-2);
+  //   let yearExpected = date
+  //     .getFullYear()
+  //     .toString()
+  //     .substr(-2);
+  //   const month = this._inputElement.value.substring(0, 2);
+  //   const year = this._inputElement.value.slice(-2);
+  // };
 
   protected format(data: string) {
     this.setValue(Formatter.maskExpirationDate(data));
@@ -67,6 +91,7 @@ export default class ExpirationDate extends FormField {
       this.checkBackendValidity(data);
     });
   }
+
   public setFocusListener() {
     this._messageBus.subscribe(MessageBus.EVENTS.FOCUS_EXPIRATION_DATE, () => {
       this.format(this._inputElement.value);

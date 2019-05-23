@@ -129,7 +129,6 @@ export default class FormField extends Frame {
   }
 
   protected onBlur() {
-    this._inputElement.setCustomValidity('');
     this.format(this._inputElement.value);
     this.validation.validate(this._inputElement, this._messageElement);
     this.blur();
@@ -137,7 +136,6 @@ export default class FormField extends Frame {
 
   protected onPaste(event: ClipboardEvent) {
     let clipboardData: string;
-
     event.preventDefault();
     clipboardData = event.clipboardData.getData('text/plain');
     this._inputElement.value = Formatter.trimNonNumeric(clipboardData);

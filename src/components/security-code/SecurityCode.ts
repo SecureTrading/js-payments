@@ -8,15 +8,18 @@ export default class SecurityCode extends FormField {
   // @ts-ignore
   public static ifFieldExists = (): HTMLInputElement => document.getElementById(Selectors.SECURITY_CODE_INPUT);
   private static STANDARD_INPUT_LENGTH: number = 3;
+  private static SPECIAL_INPUT_LENGTH: number = 4;
   private static STANDARD_LENGTH_PATTERN: string = '^[0-9]{3}$';
   private static SPECIAL_LENGTH_PATTERN: string = '^[0-9]{4}$';
 
   public binLookup: BinLookup;
+  private securityCodeLength: number;
 
   constructor() {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
+    this.securityCodeLength = 3;
     this.binLookup = new BinLookup();
-    this.setSecurityCodeAttributes(SecurityCode.STANDARD_INPUT_LENGTH, SecurityCode.STANDARD_LENGTH_PATTERN);
+    this.setSecurityCodeAttributes(SecurityCode.STANDARD_LENGTH_PATTERN);
 
     if (this._inputElement.value) {
       this.sendState();
@@ -47,7 +50,17 @@ export default class SecurityCode extends FormField {
 
   protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
+    if (this.isMaxLengthReached()) {
+      this._inputElement.value = this._inputElement.value.substring(0, this.securityCodeLength);
+    }
     this.sendState();
+  }
+
+  protected onKeyPress(event: KeyboardEvent) {
+    super.onKeyPress(event);
+    if (this.isMaxLengthReached()) {
+      event.preventDefault();
+    }
   }
 
   private sendState() {
@@ -64,27 +77,27 @@ export default class SecurityCode extends FormField {
    */
   private subscribeSecurityCodeChange() {
     this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (length: any) => {
-      let securityCodeLength = length;
       let securityCodePattern = SecurityCode.STANDARD_LENGTH_PATTERN;
-      if (securityCodeLength !== SecurityCode.STANDARD_INPUT_LENGTH) {
+      this.securityCodeLength = SecurityCode.STANDARD_INPUT_LENGTH;
+      if (length === SecurityCode.SPECIAL_INPUT_LENGTH) {
         securityCodePattern = SecurityCode.SPECIAL_LENGTH_PATTERN;
+        this.securityCodeLength = SecurityCode.SPECIAL_INPUT_LENGTH;
       }
-      this.setSecurityCodeAttributes(securityCodeLength, securityCodePattern);
+      this.setSecurityCodeAttributes(securityCodePattern);
+      return securityCodePattern;
     });
   }
 
   /**
    * Sets values of Security Code field (maxlength, minlength and placeholder) according to data form BinLookup.
    * If length is not specified it takes 3 as length.
-   * @param securityCodeLength
    * @param securityCodePattern
    */
-  private setSecurityCodeAttributes(securityCodeLength: number, securityCodePattern: string) {
-    this.setAttributes({
-      maxlength: securityCodeLength,
-      pattern: securityCodePattern
-    });
+  private setSecurityCodeAttributes(securityCodePattern: string) {
+    this.setAttributes({ pattern: securityCodePattern });
   }
+
+  private isMaxLengthReached = () => this._inputElement.value.length >= this.securityCodeLength;
 
   public backendValidation() {
     this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD, (data: any) => {
