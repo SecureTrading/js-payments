@@ -15,9 +15,12 @@ export default abstract class Formatter {
 
   public static maskExpirationDateOnPaste(data: string): string {
     let value;
-    if (data.length >= 4) {
-      value = data.slice(0, 4);
-      value = value.replace(/^([\d]{2})([\d]{2})$/, '$1/$2');
+    value = Formatter.trimNonNumeric(data);
+    if (value.length >= Formatter.EXPIRATION_DATE_DIGITS_AMOUNT) {
+      value = data.slice(0, Formatter.EXPIRATION_DATE_DIGITS_AMOUNT);
+      value = value.replace(Formatter.EXPIRATION_DATE_FORMAT, Formatter.EXPIRATION_DATE_REPLACE_VALUE);
+    } else if (value.length === 3) {
+      value = `${value[0]}${value[1]}/${value[2]}`;
     }
     return value;
   }
@@ -25,4 +28,8 @@ export default abstract class Formatter {
   private static DATA_NON_NUMERIC: RegExp = /\D/g;
   private static DATE_MONTH_WITH_SEPARATOR: RegExp = /^\d\d\/$/;
   private static DATE_MONTH_WITHOUT_SEPARATOR: RegExp = /^\d\d$/;
+
+  private static EXPIRATION_DATE_DIGITS_AMOUNT = 4;
+  private static EXPIRATION_DATE_FORMAT = /^([\d]{2})([\d]{2})$/;
+  private static EXPIRATION_DATE_REPLACE_VALUE = '$1/$2';
 }
