@@ -59,11 +59,12 @@ class StCodec {
     const responseContent = responseData.response[0];
     const validation = new Validation();
     if (responseContent.requesttypedescription === StCodec.SUPPORTED_REQUEST_TYPES[5]) {
-      if (responseContent.errorcode === StCodec.ERROR_CODE_INVALID_FIELD) {
+      if (responseContent.errorcode !== '0') {
+        if (responseContent.errorcode === StCodec.ERROR_CODE_INVALID_FIELD) {
+          validation.getErrorData(StCodec.getErrorData(responseContent));
+          validation.blockForm(false);
+        }
         StCodec._notification.error(responseContent.errormessage);
-        validation.getErrorData(StCodec.getErrorData(responseContent));
-        validation.blockForm(false);
-      } else {
         throw new Error(responseContent.errormessage);
       }
     }
