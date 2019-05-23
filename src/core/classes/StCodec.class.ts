@@ -58,7 +58,6 @@ class StCodec {
     }
     const responseContent = responseData.response[0];
     const validation = new Validation();
-    console.log(responseData);
     if (responseContent.requesttypedescription === StCodec.SUPPORTED_REQUEST_TYPES[5]) {
       if (responseContent.errorcode === StCodec.ERROR_CODE_INVALID_FIELD) {
         StCodec._notification.error(responseContent.errormessage);
