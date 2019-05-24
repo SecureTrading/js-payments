@@ -86,7 +86,9 @@ class ST {
           'errormessage',
           'orderreference',
           'settlestatus',
-          'status'
+          'status',
+          'transactionreference'
+        
         ];
     const componentIds = {
       animatedCard: 'st-animated-card',
