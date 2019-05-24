@@ -4,13 +4,8 @@ export default abstract class Formatter {
   }
 
   public static maskExpirationDate(data: string): string {
-    if (Formatter.DATE_MONTH_WITHOUT_SEPARATOR.test(data)) {
-      return `${data}/`;
-    } else if (Formatter.DATE_MONTH_WITH_SEPARATOR.test(data)) {
-      return data.replace('/', '');
-    } else {
-      return data;
-    }
+    const length = data.length;
+    return length === 3 && data[2] !== '/' ? `${data[0]}${data[1]}/${data[2]}` : data;
   }
 
   public static maskExpirationDateOnPaste(data: string): string {

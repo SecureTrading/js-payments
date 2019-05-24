@@ -159,8 +159,8 @@ export default class CardNumber extends FormField {
     } else {
       numberOfWhitespaces = 0;
     }
-
-    return Utils.getLastElementOfArray(cardLengthFromBin) + numberOfWhitespaces;
+    this.cardNumberLength = Utils.getLastElementOfArray(cardLengthFromBin) + numberOfWhitespaces;
+    return this.cardNumberLength;
   }
 
   public getFormFieldState(): IFormFieldState {
@@ -190,16 +190,22 @@ export default class CardNumber extends FormField {
 
   protected onInput(event: Event) {
     super.onInput(event);
-    if (this._inputElement.value.length >= this.cardNumberLength) {
-      this.validation.validate(this._inputElement, this._messageElement);
+    this.getMaxLengthOfCardNumber(this._inputElement.value);
+    console.log(this.getMaxLengthOfCardNumber(this._inputElement.value));
+    console.log(this.isMaxLengthReached());
+    if (this.isMaxLengthReached()) {
+      this._inputElement.value = this._inputElement.value.substring(0, this.cardNumberLength);
     }
     this.sendState();
   }
 
   protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
+    this.getMaxLengthOfCardNumber(this._inputElement.value);
+    console.log(this.cardNumberLength);
     if (this.isMaxLengthReached()) {
       this._inputElement.value = this._inputElement.value.substring(0, this.cardNumberLength);
+      console.log(this._inputElement.value);
     }
     this.sendState();
   }
