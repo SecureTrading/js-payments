@@ -21,8 +21,6 @@ export default abstract class Formatter {
   }
 
   private static DATA_NON_NUMERIC: RegExp = /\D/g;
-  private static DATE_MONTH_WITH_SEPARATOR: RegExp = /^\d\d\/$/;
-  private static DATE_MONTH_WITHOUT_SEPARATOR: RegExp = /^\d\d$/;
 
   private static EXPIRATION_DATE_DIGITS_AMOUNT = 4;
   private static EXPIRATION_DATE_FORMAT = /^([\d]{2})([\d]{2})$/;

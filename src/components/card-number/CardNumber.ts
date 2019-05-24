@@ -191,8 +191,6 @@ export default class CardNumber extends FormField {
   protected onInput(event: Event) {
     super.onInput(event);
     this.getMaxLengthOfCardNumber(this._inputElement.value);
-    console.log(this.getMaxLengthOfCardNumber(this._inputElement.value));
-    console.log(this.isMaxLengthReached());
     if (this.isMaxLengthReached()) {
       this._inputElement.value = this._inputElement.value.substring(0, this.cardNumberLength);
     }
@@ -202,10 +200,8 @@ export default class CardNumber extends FormField {
   protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
     this.getMaxLengthOfCardNumber(this._inputElement.value);
-    console.log(this.cardNumberLength);
     if (this.isMaxLengthReached()) {
       this._inputElement.value = this._inputElement.value.substring(0, this.cardNumberLength);
-      console.log(this._inputElement.value);
     }
     this.sendState();
   }
