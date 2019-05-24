@@ -119,9 +119,9 @@ export default class SecurityCode extends FormField {
   }
 
   public setDisableListener() {
-    this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_SECURITY_CODE, (data: any) => {
-      console.log(data.state);
-      this._inputElement.setAttribute('disabled', data.state);
+    this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_SECURITY_CODE, (state: boolean) => {
+      // @ts-ignore
+      this._inputElement.setAttribute('disabled', state);
       this._inputElement.classList.add('st-input--disabled');
     });
   }

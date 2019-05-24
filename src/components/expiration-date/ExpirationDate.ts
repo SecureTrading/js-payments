@@ -93,9 +93,9 @@ export default class ExpirationDate extends FormField {
   }
 
   public setDisableListener() {
-    this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_EXPIRATION_DATE, (data: any) => {
-      console.log(data.state);
-      this._inputElement.setAttribute('disabled', data.state);
+    this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_EXPIRATION_DATE, (state: boolean) => {
+      // @ts-ignore
+      this._inputElement.setAttribute('disabled', state);
       this._inputElement.classList.add('st-input--disabled');
     });
   }
