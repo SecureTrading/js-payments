@@ -37,10 +37,20 @@ export default class SecurityCode extends FormField {
   protected onBlur() {
     super.onBlur();
     this.sendState();
+    const messageBusEvent: IMessageBusEvent = {
+      data: false,
+      type: MessageBus.EVENTS.FOCUS_SECURITY_CODE
+    };
+    this._messageBus.publish(messageBusEvent);
   }
 
   protected onFocus(event: FocusEvent) {
     super.onFocus(event);
+    const messageBusEvent: IMessageBusEvent = {
+      data: true,
+      type: MessageBus.EVENTS.FOCUS_SECURITY_CODE
+    };
+    this._messageBus.publish(messageBusEvent);
   }
 
   protected onInput(event: Event) {

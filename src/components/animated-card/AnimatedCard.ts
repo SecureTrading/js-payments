@@ -102,6 +102,13 @@ class AnimatedCard extends Frame {
     this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (length: number) => {
       this.setSecurityCodePlaceholderContent(length);
     });
+    this.messageBus.subscribe(MessageBus.EVENTS.FOCUS_SECURITY_CODE, (state: boolean) => {
+      if (state) {
+        this.shouldFlipCard();
+      } else {
+        this.flipCardBack();
+      }
+    });
   }
 
   public setSecurityCodePlaceholderContent(securityCodeLength: number) {
@@ -315,7 +322,6 @@ class AnimatedCard extends Frame {
       value,
       AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE
     );
-    this.shouldFlipCard();
     this.setSecurityCodeOnProperSide();
   }
 
