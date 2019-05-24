@@ -17,7 +17,7 @@ module.exports = {
     receipt: './example/receipt.ts'
   },
   output: {
-    filename: '[name].bundle.js',
+    filename: '[name].js',
     path: path.join(__dirname, 'dist'),
     library: 'SecureTrading',
     libraryExport: 'default',
@@ -104,8 +104,7 @@ module.exports = {
     })
   ],
   module: {
-    rules: [
-      {
+    rules: [{
         test: /\.scss$/,
         use: [
           MiniCssExtractPlugin.loader,
@@ -131,22 +130,20 @@ module.exports = {
       {
         test: /\.ts$/,
         enforce: 'pre',
-        use: [
-          {
-            loader: 'tslint-loader',
-            options: { emitErrors: true }
+        use: [{
+          loader: 'tslint-loader',
+          options: {
+            emitErrors: true
           }
-        ],
+        }],
         exclude: /node_modules/
       },
       {
         test: /\.po$/,
-        use: [
-          {
-            loader: 'i18next-po-loader',
-            options: {}
-          }
-        ]
+        use: [{
+          loader: 'i18next-po-loader',
+          options: {}
+        }]
       }
     ]
   },
