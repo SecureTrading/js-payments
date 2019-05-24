@@ -19,7 +19,8 @@ class StCodec {
   public static VERSION = '1.00';
   public static SUPPORTED_REQUEST_TYPES = ['WALLETVERIFY', 'JSINIT', 'THREEDQUERY', 'CACHETOKENISE', 'AUTH', 'ERROR'];
   public static MINIMUM_REQUEST_FIELDS = 1;
-  private static ERROR_CODE_INVALID_FIELD = '30000';
+  private static REQUESTS_WITH_ERROR_MESSAGES = ['AUTH', 'CACHETOKENISE', 'ERROR', 'THREEDQUERY', 'WALLETVERIFY'];
+  private static STATUS_CODES = { invalidfield: '30000', ok: '0', declined: '70000' };
 
   /**
    * Generate a unique ID for a request
@@ -58,9 +59,10 @@ class StCodec {
     }
     const responseContent = responseData.response[0];
     const validation = new Validation();
-    if (responseContent.requesttypedescription === StCodec.SUPPORTED_REQUEST_TYPES[5]) {
-      if (responseContent.errorcode !== '0') {
-        if (responseContent.errorcode === StCodec.ERROR_CODE_INVALID_FIELD) {
+    console.log(StCodec.REQUESTS_WITH_ERROR_MESSAGES.includes(responseContent.requesttypedescription));
+    if (StCodec.REQUESTS_WITH_ERROR_MESSAGES.includes(responseContent.requesttypedescription)) {
+      if (responseContent.errorcode !== StCodec.STATUS_CODES.ok) {
+        if (responseContent.errorcode === StCodec.STATUS_CODES.invalidfield) {
           validation.getErrorData(StCodec.getErrorData(responseContent));
           validation.blockForm(false);
         }
