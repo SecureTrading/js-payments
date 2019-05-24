@@ -70,6 +70,14 @@ export default class CardFrames extends RegisterFrames {
     element && CardFrames._setSubmitButtonProperties(element, state);
   }
 
+  public disableFormField(state: boolean, eventName: string) {
+    const messageBusEvent: IMessageBusEvent = {
+      data: state,
+      type: eventName
+    };
+    this.messageBus.publish(messageBusEvent);
+  }
+
   /**
    * Defines form elements for card payments
    */
@@ -176,7 +184,12 @@ export default class CardFrames extends RegisterFrames {
    * Checks if submit button needs to be blocked.
    */
   private subscribeBlockSubmit() {
-    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (data: any) => CardFrames.disableSubmitButton(data.state));
+    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (data: any) => {
+      CardFrames.disableSubmitButton(data.state);
+      this.disableFormField(data.state, MessageBus.EVENTS.BLOCK_CARD_NUMBER);
+      this.disableFormField(data.state, MessageBus.EVENTS.BLOCK_EXPIRATION_DATE);
+      this.disableFormField(data.state, MessageBus.EVENTS.BLOCK_SECURITY_CODE);
+    });
   }
 
   /**

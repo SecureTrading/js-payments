@@ -26,6 +26,7 @@ export default class SecurityCode extends FormField {
     }
     this.subscribeSecurityCodeChange();
     this.setFocusListener();
+    this.setDisableListener();
     this.backendValidation();
   }
 
@@ -114,6 +115,14 @@ export default class SecurityCode extends FormField {
     this._messageBus.subscribe(MessageBus.EVENTS.FOCUS_SECURITY_CODE, () => {
       this.format(this._inputElement.value);
       this.validation.validate(this._inputElement, this._messageElement);
+    });
+  }
+
+  public setDisableListener() {
+    this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_SECURITY_CODE, (data: any) => {
+      console.log(data.state);
+      this._inputElement.setAttribute('disabled', data.state);
+      this._inputElement.classList.add('st-input--disabled');
     });
   }
 }

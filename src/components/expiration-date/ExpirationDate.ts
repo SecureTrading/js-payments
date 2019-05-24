@@ -25,6 +25,7 @@ export default class ExpirationDate extends FormField {
       this.sendState();
     }
     this.setFocusListener();
+    this.setDisableListener();
     this.backendValidation();
   }
 
@@ -88,6 +89,14 @@ export default class ExpirationDate extends FormField {
     this._messageBus.subscribe(MessageBus.EVENTS.FOCUS_EXPIRATION_DATE, () => {
       this.format(this._inputElement.value);
       this.validation.validate(this._inputElement, this._messageElement);
+    });
+  }
+
+  public setDisableListener() {
+    this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_EXPIRATION_DATE, (data: any) => {
+      console.log(data.state);
+      this._inputElement.setAttribute('disabled', data.state);
+      this._inputElement.classList.add('st-input--disabled');
     });
   }
 }
