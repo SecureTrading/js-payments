@@ -83,7 +83,7 @@ class StCodec {
     if (StCodec._parentOrigin !== undefined) {
       StCodec._messageBus.publish(notificationEvent, true);
     } else {
-      StCodec._messageBus.publishFromParent(notificationEvent, 'window');
+      StCodec._messageBus.publishToSelf(notificationEvent);
     }
   }
 

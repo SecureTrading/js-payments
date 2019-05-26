@@ -33,7 +33,7 @@ export default class CommonFrames extends RegisterFrames {
     this.submitOnSuccess = submitOnSuccess;
     this.submitOnError = submitOnError;
     this.submitFields = submitFields;
-    this.messageBus = new MessageBus();
+    this.messageBus = new MessageBus(origin);
     this._onInit();
   }
 
@@ -59,6 +59,7 @@ export default class CommonFrames extends RegisterFrames {
     if (!(this.submitOnError && this.submitOnSuccess)) {
       this.notificationFrame.create(Selectors.NOTIFICATION_FRAME_COMPONENT_NAME, this.styles, this.params);
       this.notificationFrameMounted = this.notificationFrame.mount(Selectors.NOTIFICATION_FRAME_IFRAME);
+      // TODO this means control frame gets mounted in the wrong frame if the notification frame isn't needed
       this.elementsToRegister.push(this.notificationFrameMounted);
     }
 

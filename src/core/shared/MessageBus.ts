@@ -56,6 +56,11 @@ export default class MessageBus {
     window.frames[frameName].postMessage(event, this._frameOrigin);
   }
 
+  public publishToSelf(event: IMessageBusEvent) {
+    // @ts-ignore
+    window.postMessage(event, window.location.origin);
+  }
+
   public subscribe(eventType: string, callback: any) {
     let subscribers;
     const subscriber = window.name;

@@ -72,7 +72,7 @@ class ST {
   private _addDefaults(config: IConfig) {
     config.origin = config.origin ? config.origin : window.location.origin;
     config.tokenise = config.tokenise ? config.tokenise : false;
-    config.submitOnSuccess = config.submitOnSuccess ? config.submitOnSuccess : false;
+    config.submitOnSuccess = config.submitOnSuccess ? config.submitOnSuccess : true;
     config.submitOnError = config.submitOnError ? config.submitOnError : false;
     config.submitFields = config.submitFields
       ? config.submitFields
