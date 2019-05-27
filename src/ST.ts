@@ -92,7 +92,6 @@ class ST {
     const componentIds = {
       animatedCard: 'st-animated-card',
       cardNumber: 'st-card-number',
-      controlFrame: 'st-control-frame',
       expirationDate: 'st-expiration-date',
       notificationFrame: 'st-notification-frame',
       securityCode: 'st-security-code'

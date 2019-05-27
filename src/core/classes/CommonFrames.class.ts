@@ -41,7 +41,12 @@ export default class CommonFrames extends RegisterFrames {
    * Defines form elements for notifications and control frame
    */
   public setElementsFields() {
-    return [this.componentIds.notificationFrame, this.componentIds.controlFrame];
+    const elements = [];
+    if (this.shouldLoadNotificationFrame()) {
+      elements.push(this.componentIds.notificationFrame);
+    }
+    elements.push(Selectors.MERCHANT_FORM_SELECTOR); // Control frame is always needed so just append to form
+    return elements;
   }
 
   public _onInit() {
@@ -56,10 +61,9 @@ export default class CommonFrames extends RegisterFrames {
   public initFormFields() {
     this.notificationFrame = new Element();
     this.controlFrame = new Element();
-    if (!(this.submitOnError && this.submitOnSuccess)) {
+    if (this.shouldLoadNotificationFrame()) {
       this.notificationFrame.create(Selectors.NOTIFICATION_FRAME_COMPONENT_NAME, this.styles, this.params);
       this.notificationFrameMounted = this.notificationFrame.mount(Selectors.NOTIFICATION_FRAME_IFRAME);
-      // TODO this means control frame gets mounted in the wrong frame if the notification frame isn't needed
       this.elementsToRegister.push(this.notificationFrameMounted);
     }
 
@@ -83,6 +87,10 @@ export default class CommonFrames extends RegisterFrames {
         itemToChange.appendChild(fields[index]);
       }
     });
+  }
+
+  private shouldLoadNotificationFrame() {
+    return !(this.submitOnError && this.submitOnSuccess);
   }
 
   private onInput(event: Event) {

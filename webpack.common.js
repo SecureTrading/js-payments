@@ -2,7 +2,6 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const ManifestPlugin = require('webpack-manifest-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
@@ -10,7 +9,7 @@ const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 module.exports = {
   entry: {
     main: './src/components/index.ts',
-    componentControlFrame: './src/components/control-frame/control-frame.ts',
+    'control-frame': './src/components/control-frame/control-frame.ts',
     st: './src/ST.ts',
     example: './example/index.ts',
     immediateExample: './example/immediate.ts',
@@ -72,31 +71,27 @@ module.exports = {
       templateParameters: {
         partial: 'controlFrame'
       },
-      chunks: ['componentControlFrame']
+      chunks: ['control-frame']
     }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: './example/index.html',
-      chunks: ['example'],
-      favicon: './favicon.ico'
+      chunks: ['example']
     }),
     new HtmlWebpackPlugin({
       filename: 'immediate.html',
       template: './example/immediate.html',
-      chunks: ['immediateExample'],
-      favicon: './favicon.ico'
+      chunks: ['immediateExample']
     }),
     new HtmlWebpackPlugin({
       filename: 'receipt.html',
       template: './example/receipt.html',
-      chunks: ['receipt'],
-      favicon: './favicon.ico'
+      chunks: ['receipt']
     }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css'
     }),
-    new ManifestPlugin(),
     new StyleLintPlugin(),
     new FriendlyErrorsWebpackPlugin(),
     new webpack.DefinePlugin({
@@ -104,7 +99,8 @@ module.exports = {
     })
   ],
   module: {
-    rules: [{
+    rules: [
+      {
         test: /\.scss$/,
         use: [
           MiniCssExtractPlugin.loader,
@@ -130,20 +126,24 @@ module.exports = {
       {
         test: /\.ts$/,
         enforce: 'pre',
-        use: [{
-          loader: 'tslint-loader',
-          options: {
-            emitErrors: true
+        use: [
+          {
+            loader: 'tslint-loader',
+            options: {
+              emitErrors: true
+            }
           }
-        }],
+        ],
         exclude: /node_modules/
       },
       {
         test: /\.po$/,
-        use: [{
-          loader: 'i18next-po-loader',
-          options: {}
-        }]
+        use: [
+          {
+            loader: 'i18next-po-loader',
+            options: {}
+          }
+        ]
       }
     ]
   },
