@@ -126,7 +126,7 @@ export class CardinalCommerce {
         threedresponse: jwt
       });
     } else {
-      const responseData = {
+      const responseData: IResponseData = {
         errorcode: '50003',
         errormessage: Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE
       };

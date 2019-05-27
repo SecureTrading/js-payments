@@ -14,14 +14,14 @@ import { environment } from './environments/environment';
  * Establishes connection with ST, defines client.
  */
 class ST {
+  private componentIds: any;
   private jwt: string;
   private origin: string;
-  private tokenise: boolean;
   private styles: IStyles;
-  private componentIds: any;
-  private submitOnSuccess: boolean;
-  private submitOnError: boolean;
   private submitFields: string[];
+  private submitOnError: boolean;
+  private submitOnSuccess: boolean;
+  private tokenise: boolean;
 
   /**
    * Defines static methods for starting different payment methods
@@ -30,14 +30,14 @@ class ST {
 
   constructor(config: IConfig) {
     config = this._addDefaults(config);
+    this.componentIds = config.componentIds;
     this.jwt = config.jwt;
     this.origin = config.origin;
-    this.tokenise = config.tokenise;
-    this.componentIds = config.componentIds;
     this.styles = config.styles;
-    this.submitOnSuccess = config.submitOnSuccess;
-    this.submitOnError = config.submitOnError;
     this.submitFields = config.submitFields;
+    this.submitOnError = config.submitOnError;
+    this.submitOnSuccess = config.submitOnSuccess;
+    this.tokenise = config.tokenise;
     const instance = new CommonFrames(
       this.jwt,
       this.origin,

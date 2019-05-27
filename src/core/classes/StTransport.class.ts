@@ -58,7 +58,7 @@ export default class StTransport {
       body: this._codec.encode(requestObject)
     })
       .then(this._codec.decode)
-      .catch(e => {
+      .catch(() => {
         return this._codec.decode({});
       });
   }

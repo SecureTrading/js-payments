@@ -58,7 +58,7 @@ class StCodec {
       StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
       throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
     }
-    const responseContent = responseData.response[0];
+    const responseContent: IResponseData = responseData.response[0];
     StCodec.publishResponse(responseContent);
     if (responseContent.errorcode !== '0') {
       // Should this be a custom error type which can also take a field that is at fault
@@ -74,7 +74,7 @@ class StCodec {
   private static _messageBus = new MessageBus();
   private static _parentOrigin: string;
 
-  private static publishResponse(responseData: any) {
+  private static publishResponse(responseData: IResponseData) {
     responseData.errormessage = StCodec._translator.translate(responseData.errormessage);
     const notificationEvent: IMessageBusEvent = {
       data: responseData,
@@ -91,7 +91,7 @@ class StCodec {
     return {
       errorcode: '50003',
       errormessage: Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE
-    };
+    } as IResponseData;
   }
 
   private readonly _requestId: string;

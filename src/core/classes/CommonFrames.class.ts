@@ -9,6 +9,7 @@ import RegisterFrames from './RegisterFrames.class';
  * Defines all non field elements of form and their placement on merchant site.
  */
 export default class CommonFrames extends RegisterFrames {
+  private static FORM: HTMLFormElement = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR) as HTMLFormElement;
   public elementsToRegister: HTMLElement[];
   public elementsTargets: any;
   private notificationFrameMounted: HTMLElement;
@@ -115,9 +116,8 @@ export default class CommonFrames extends RegisterFrames {
         ['AUTH', 'CACHETOKENISE'].includes(data.requesttypedescription)) ||
       (this.submitOnError && data.errorcode !== '0')
     ) {
-      const form: HTMLFormElement = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR) as HTMLFormElement;
-      DomMethods.addDataToForm(form, data, this.submitFields);
-      form.submit();
+      DomMethods.addDataToForm(CommonFrames.FORM, data, this.submitFields);
+      CommonFrames.FORM.submit();
     }
   }
 
