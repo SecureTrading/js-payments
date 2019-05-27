@@ -15,7 +15,7 @@
     "build": "webpack --config webpack.prod.js",
     "build:automated": "webpack --config webpack.test.js",
     "start:automated": "webpack-dev-server --color --progress --config webpack.test.js",
-    "start": "webpack-dev-server --color --progress --config webpack.dev.js",
+    "start": "webpack-dev-server --color --progress --config webpack.prod.js",
     "example": "ws --rewrite '/* -> /dist/$1' --https",
     "prod": "npm run build",
     "test": "jest --watchAll",
@@ -83,6 +83,7 @@
     "webpack-merge": "^4.2.1"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.4.4",
     "@types/jwt-decode": "^2.2.1",
     "i18next": "^15.1.1",
     "jest-get-type": "^24.8.0",
