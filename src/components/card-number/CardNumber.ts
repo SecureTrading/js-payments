@@ -58,6 +58,7 @@ export default class CardNumber extends FormField {
 
     const luhnCheck = sum && sum % 10 === 0;
     this._luhnCheckValidation(luhnCheck);
+    return luhnCheck;
   }
 
   private _luhnCheckValidation(luhn: boolean) {

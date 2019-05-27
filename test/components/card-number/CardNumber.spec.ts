@@ -107,11 +107,6 @@ describe('CardNumber', () => {
         minlength: 16
       };
     });
-
-    // then
-    it('should set max and min attributes of card number', () => {
-      expect(cardNumberInstance.setMinMaxLengthOfCard(cardNumberCorrect)).toEqual(expectedMinMax);
-    });
   });
 
   // given
@@ -168,7 +163,6 @@ describe('CardNumber', () => {
     beforeEach(() => {
       publishSecurityCodeLengthSpy = jest.spyOn(cardNumberInstance, 'publishSecurityCodeLength');
       formatCardNumberSpy = jest.spyOn(cardNumberInstance, 'formatCardNumber');
-      setMinMaxLengthOfCardSpy = jest.spyOn(cardNumberInstance, 'setMinMaxLengthOfCard');
       cardNumberInstance.getFormFieldState();
     });
     // then
@@ -179,11 +173,6 @@ describe('CardNumber', () => {
     // then
     it('should formatCardNumber has been called', () => {
       expect(formatCardNumberSpy).toHaveBeenCalled();
-    });
-
-    // then
-    it('should setMinMaxLengthOfCard has been called', () => {
-      expect(setMinMaxLengthOfCardSpy).toHaveBeenCalled();
     });
   });
 });
