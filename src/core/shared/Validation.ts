@@ -53,7 +53,7 @@ export default class Validation extends Frame {
     expirationDate: 'expirydate',
     securityCode: 'securitycode'
   };
-  private static ONLY_DIGITS_REGEXP = '^\\d+$';
+  private static ONLY_DIGITS_REGEXP = /^[0-9]*$/;
   public validation: IValidation;
   public _messageBus: MessageBus;
   private _translator: Translator;
