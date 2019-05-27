@@ -58,7 +58,7 @@ describe('StCodec class', () => {
       // @ts-ignore
       StCodec._messageBus.publish = jest.fn();
       // @ts-ignore
-      StCodec._messageBus.publishFromParent = jest.fn();
+      StCodec._messageBus.publishToSelf = jest.fn();
     });
 
     it('should translate and publish result to parent', () => {
@@ -83,7 +83,7 @@ describe('StCodec class', () => {
         true
       );
       // @ts-ignore
-      expect(StCodec._messageBus.publishFromParent).toHaveBeenCalledTimes(0);
+      expect(StCodec._messageBus.publishToSelf).toHaveBeenCalledTimes(0);
     });
 
     it('should translate and publish result to itself', () => {
@@ -99,16 +99,13 @@ describe('StCodec class', () => {
       // @ts-ignore
       expect(StCodec._messageBus.publish).toHaveBeenCalledTimes(0);
       // @ts-ignore
-      expect(StCodec._messageBus.publishFromParent).toHaveBeenCalledWith(
-        {
-          data: {
-            errorcode: '0',
-            errormessage: 'Translated'
-          },
-          type: 'TRANSACTION_COMPLETE'
+      expect(StCodec._messageBus.publishToSelf).toHaveBeenCalledWith({
+        data: {
+          errorcode: '0',
+          errormessage: 'Translated'
         },
-        'window'
-      );
+        type: 'TRANSACTION_COMPLETE'
+      });
     });
   });
 

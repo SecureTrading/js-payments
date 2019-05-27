@@ -51,7 +51,7 @@ class ST {
 
   public Components(config?: IComponentsConfig) {
     config = config ? config : {};
-    config.startOnLoad = config.startOnLoad ? config.startOnLoad : false;
+    config.startOnLoad = config.startOnLoad !== undefined ? config.startOnLoad : false;
     if (!config.startOnLoad) {
       const instance = new CardFrames(this.jwt, this.origin, this.componentIds, this.styles);
     }
@@ -71,9 +71,9 @@ class ST {
 
   private _addDefaults(config: IConfig) {
     config.origin = config.origin ? config.origin : window.location.origin;
-    config.tokenise = config.tokenise ? config.tokenise : false;
-    config.submitOnSuccess = config.submitOnSuccess ? config.submitOnSuccess : true;
-    config.submitOnError = config.submitOnError ? config.submitOnError : false;
+    config.tokenise = config.tokenise !== undefined ? config.tokenise : false;
+    config.submitOnSuccess = config.submitOnSuccess !== undefined ? config.submitOnSuccess : true;
+    config.submitOnError = config.submitOnError !== undefined ? config.submitOnError : false;
     config.submitFields = config.submitFields
       ? config.submitFields
       : [
