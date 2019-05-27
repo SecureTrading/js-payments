@@ -278,6 +278,10 @@ class AnimatedCard extends Frame {
   public onCardNumberChanged(data: any) {
     const { formattedValue, value } = data;
     this.cardDetails.type = this.setCardType(value);
+    this.cardDetails.securityCode =
+      this.cardDetails.type === AnimatedCard.CARD_TYPES.AMEX
+        ? AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED
+        : AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
     this.cardDetails.cardNumber = AnimatedCard.setCardDetail(
       formattedValue,
       AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER
