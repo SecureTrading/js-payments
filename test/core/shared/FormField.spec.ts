@@ -37,11 +37,11 @@ describe('FormField', () => {
     });
   });
 
-  describe('setMessage()', () => {
+  describe('setError()', () => {
     it('should render given message', () => {
       let message: string = 'abc';
       // @ts-ignore
-      formField.setMessage(message);
+      formField.setError(inputElement, messageElement, message);
 
       expect(messageElement.innerText).toBe(message);
     });
