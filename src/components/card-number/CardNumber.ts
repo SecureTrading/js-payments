@@ -14,13 +14,13 @@ export default class CardNumber extends FormField {
   private static STANDARD_CARD_LENGTH = 19;
   private static CARD_NUMBER_FOR_BIN_PROCESS = (cardNumber: string) => cardNumber.slice(0, 6);
 
-  private cardNumberLength: number;
   public binLookup: BinLookup;
   public cardNumberField: HTMLInputElement;
   public isCardNumberValid: boolean;
   public cardNumberValue: string;
   public cardNumberFormatted: string;
   public validity: Validation;
+  private cardNumberLength: number;
 
   constructor() {
     super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE, Selectors.CARD_NUMBER_LABEL);
@@ -59,16 +59,6 @@ export default class CardNumber extends FormField {
     const luhnCheck = sum && sum % 10 === 0;
     this._luhnCheckValidation(luhnCheck);
     return luhnCheck;
-  }
-
-  private _luhnCheckValidation(luhn: boolean) {
-    const cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
-    if (!luhn) {
-      cardNumberField.setCustomValidity(Language.translations.VALIDATION_ERROR_CARD);
-      this.validation.validate(this._inputElement, this._messageElement);
-    } else {
-      cardNumberField.setCustomValidity('');
-    }
   }
 
   /**
@@ -175,6 +165,30 @@ export default class CardNumber extends FormField {
     };
   }
 
+  /**
+   *
+   */
+  public backendValidation() {
+    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD, (data: any) => {
+      this.checkBackendValidity(data);
+    });
+  }
+
+  public setFocusListener() {
+    this._messageBus.subscribe(MessageBus.EVENTS.FOCUS_CARD_NUMBER, () => {
+      this.format(this._inputElement.value);
+      this.validation.validate(this._inputElement, this._messageElement);
+    });
+  }
+
+  public setDisableListener() {
+    this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_CARD_NUMBER, (state: boolean) => {
+      // @ts-ignore
+      this._inputElement.setAttribute('disabled', state);
+      this._inputElement.classList.add('st-input--disabled');
+    });
+  }
+
   protected _getAllowedParams() {
     return super._getAllowedParams().concat(['origin']);
   }
@@ -216,6 +230,16 @@ export default class CardNumber extends FormField {
 
   private isMaxLengthReached = () => this._inputElement.value.length >= this.cardNumberLength;
 
+  private _luhnCheckValidation(luhn: boolean) {
+    const cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
+    if (!luhn) {
+      cardNumberField.setCustomValidity(Language.translations.VALIDATION_ERROR_CARD);
+      this.validation.validate(this._inputElement, this._messageElement);
+    } else {
+      cardNumberField.setCustomValidity('');
+    }
+  }
+
   private sendState() {
     const { value, validity } = this.getFormFieldState();
     const messageBusEvent: IMessageBusEvent = {
@@ -231,29 +255,5 @@ export default class CardNumber extends FormField {
       this._messageBus.publish(binProcessEvent, true);
     }
     this._messageBus.publish(messageBusEvent);
-  }
-
-  /**
-   *
-   */
-  public backendValidation() {
-    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD, (data: any) => {
-      this.checkBackendValidity(data);
-    });
-  }
-
-  public setFocusListener() {
-    this._messageBus.subscribe(MessageBus.EVENTS.FOCUS_CARD_NUMBER, () => {
-      this.format(this._inputElement.value);
-      this.validation.validate(this._inputElement, this._messageElement);
-    });
-  }
-
-  public setDisableListener() {
-    this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_CARD_NUMBER, (state: boolean) => {
-      // @ts-ignore
-      this._inputElement.setAttribute('disabled', state);
-      this._inputElement.classList.add('st-input--disabled');
-    });
   }
 }

@@ -54,6 +54,12 @@ export default class FormField extends Frame {
     });
   }
 
+  public setError(inputElement: any, messageElement: any, message: string) {
+    inputElement.classList.add('error-field');
+    messageElement.innerText = this._translator.translate(message);
+    this._inputElement.setCustomValidity(message);
+  }
+
   protected setLabelText() {
     this._labelElement.innerHTML = this._translator.translate(this.getLabel());
   }
@@ -105,10 +111,6 @@ export default class FormField extends Frame {
       validity: this._inputElement.validity.valid,
       value: this._inputElement.value
     };
-  }
-
-  private setCustomValidationError(errorContent: string) {
-    this._inputElement.setCustomValidity(errorContent);
   }
 
   protected onKeyPress(event: KeyboardEvent) {
@@ -172,6 +174,14 @@ export default class FormField extends Frame {
     this._inputElement.focus();
   }
 
+  protected checkBackendValidity(data: any) {
+    this.setError(this._inputElement, this._messageElement, data.message);
+  }
+
+  private setCustomValidationError(errorContent: string) {
+    this._inputElement.setCustomValidity(errorContent);
+  }
+
   private setInputListeners() {
     this._inputElement.addEventListener('paste', (event: ClipboardEvent) => {
       this.onPaste(event);
@@ -192,15 +202,5 @@ export default class FormField extends Frame {
     this._inputElement.addEventListener('blur', () => {
       this.onBlur();
     });
-  }
-
-  protected checkBackendValidity(data: any) {
-    this.setError(this._inputElement, this._messageElement, data.message);
-  }
-
-  public setError(inputElement: any, messageElement: any, message: string) {
-    inputElement.classList.add('error-field');
-    messageElement.innerText = this._translator.translate(message);
-    this._inputElement.setCustomValidity(message);
   }
 }

@@ -34,6 +34,27 @@ export default class SecurityCode extends FormField {
     return Language.translations.LABEL_SECURITY_CODE;
   }
 
+  public backendValidation() {
+    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD, (data: any) => {
+      this.checkBackendValidity(data);
+    });
+  }
+
+  public setFocusListener() {
+    this._messageBus.subscribe(MessageBus.EVENTS.FOCUS_SECURITY_CODE, () => {
+      this.format(this._inputElement.value);
+      this.validation.validate(this._inputElement, this._messageElement);
+    });
+  }
+
+  public setDisableListener() {
+    this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_SECURITY_CODE, (state: boolean) => {
+      // @ts-ignore
+      this._inputElement.setAttribute('disabled', state);
+      this._inputElement.classList.add('st-input--disabled');
+    });
+  }
+
   protected onBlur() {
     super.onBlur();
     this.sendState();
@@ -114,25 +135,4 @@ export default class SecurityCode extends FormField {
    *
    */
   private isMaxLengthReached = () => this._inputElement.value.length >= this.securityCodeLength;
-
-  public backendValidation() {
-    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD, (data: any) => {
-      this.checkBackendValidity(data);
-    });
-  }
-
-  public setFocusListener() {
-    this._messageBus.subscribe(MessageBus.EVENTS.FOCUS_SECURITY_CODE, () => {
-      this.format(this._inputElement.value);
-      this.validation.validate(this._inputElement, this._messageElement);
-    });
-  }
-
-  public setDisableListener() {
-    this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_SECURITY_CODE, (state: boolean) => {
-      // @ts-ignore
-      this._inputElement.setAttribute('disabled', state);
-      this._inputElement.classList.add('st-input--disabled');
-    });
-  }
 }

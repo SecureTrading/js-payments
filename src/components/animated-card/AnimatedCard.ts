@@ -11,7 +11,6 @@ import { cardsLogos } from './animated-card-logos';
  * Defines animated card, it's 'stateless' component which only receives data validated previously by other components.
  */
 class AnimatedCard extends Frame {
-  private static SECURITY_CODE_LENGTH_EXTENDED = 4;
   public static CARD_TYPES = {
     AMEX: 'amex',
     ASTROPAYCARD: 'astropaycard',
@@ -62,6 +61,8 @@ class AnimatedCard extends Frame {
    * @param type
    */
   public static getLogo = (type: string) => cardsLogos[type];
+
+  private static SECURITY_CODE_LENGTH_EXTENDED = 4;
 
   public animatedCardBack: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_SIDE_BACK);
   public animatedCardExpirationDate: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_EXPIRATION_DATE_ID);
