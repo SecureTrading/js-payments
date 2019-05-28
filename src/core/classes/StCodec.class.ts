@@ -1,6 +1,9 @@
+import { INotificationEvent } from '../models/NotificationEvent';
 import Language from '../shared/Language';
+import MessageBus from '../shared/MessageBus';
 import Notification from '../shared/Notification';
 import { StJwt } from '../shared/StJwt';
+import { Translator } from '../shared/Translator';
 
 interface IStRequest {
   requesttypedescription: string;
@@ -51,10 +54,12 @@ class StCodec {
         responseData.response.length === 1
       )
     ) {
+      StCodec.publishResponse(StCodec._createCommunicationError());
       StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
       throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
     }
-    const responseContent = responseData.response[0];
+    const responseContent: IResponseData = responseData.response[0];
+    StCodec.publishResponse(responseContent);
     if (responseContent.errorcode !== '0') {
       // Should this be a custom error type which can also take a field that is at fault
       // so that errordata can be sent up to highlight the field?
@@ -65,12 +70,41 @@ class StCodec {
   }
 
   private static _notification = new Notification();
+  private static _translator = new Translator('en_GB');
+  private static _messageBus = new MessageBus();
+  private static _parentOrigin: string;
+
+  private static publishResponse(responseData: IResponseData) {
+    responseData.errormessage = StCodec._translator.translate(responseData.errormessage);
+    const notificationEvent: IMessageBusEvent = {
+      data: responseData,
+      type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE
+    };
+    if (StCodec._parentOrigin !== undefined) {
+      StCodec._messageBus.publish(notificationEvent, true);
+    } else {
+      StCodec._messageBus.publishToSelf(notificationEvent);
+    }
+  }
+
+  private static _createCommunicationError() {
+    return {
+      errorcode: '50003',
+      errormessage: Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE
+    } as IResponseData;
+  }
+
   private readonly _requestId: string;
   private readonly _jwt: string;
 
-  constructor(jwt: string) {
+  constructor(jwt: string, parentOrigin?: string) {
     this._requestId = StCodec._createRequestId();
     this._jwt = jwt;
+    StCodec._parentOrigin = parentOrigin;
+    StCodec._translator = new Translator(new StJwt(this._jwt).locale);
+    if (parentOrigin) {
+      StCodec._messageBus = new MessageBus(parentOrigin);
+    }
   }
 
   /**
@@ -121,6 +155,7 @@ class StCodec {
           resolve(StCodec.verifyResponseObject(responseData));
         });
       } else {
+        StCodec.publishResponse(StCodec._createCommunicationError());
         StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
         reject(new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
       }

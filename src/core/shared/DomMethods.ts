@@ -98,6 +98,23 @@ class DomMethods {
     ...Array.prototype.slice.call(form.querySelectorAll('select')),
     ...Array.prototype.slice.call(form.querySelectorAll('input'))
   ];
+
+  public static addDataToForm(form: HTMLFormElement, data: any, fields?: string[]) {
+    Object.entries(data).forEach(([field, value]) => {
+      if (!fields || fields.includes(field)) {
+        form.appendChild(
+          DomMethods.createHtmlElement(
+            {
+              name: field,
+              type: 'hidden',
+              value
+            },
+            'input'
+          )
+        );
+      }
+    });
+  }
 }
 
 export default DomMethods;

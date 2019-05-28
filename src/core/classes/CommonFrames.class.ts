@@ -9,6 +9,7 @@ import RegisterFrames from './RegisterFrames.class';
  * Defines all non field elements of form and their placement on merchant site.
  */
 export default class CommonFrames extends RegisterFrames {
+  private static FORM: HTMLFormElement = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR) as HTMLFormElement;
   public elementsToRegister: HTMLElement[];
   public elementsTargets: any;
   private notificationFrameMounted: HTMLElement;
@@ -16,10 +17,24 @@ export default class CommonFrames extends RegisterFrames {
   private notificationFrame: Element;
   private controlFrame: Element;
   private messageBus: MessageBus;
+  private submitOnSuccess: boolean;
+  private submitOnError: boolean;
+  private submitFields: string[];
 
-  constructor(jwt: any, origin: any, componentIds: [], styles: IStyles) {
+  constructor(
+    jwt: any,
+    origin: any,
+    componentIds: [],
+    styles: IStyles,
+    submitOnSuccess: boolean,
+    submitOnError: boolean,
+    submitFields: string[]
+  ) {
     super(jwt, origin, componentIds, styles);
-    this.messageBus = new MessageBus();
+    this.submitOnSuccess = submitOnSuccess;
+    this.submitOnError = submitOnError;
+    this.submitFields = submitFields;
+    this.messageBus = new MessageBus(origin);
     this._onInit();
   }
 
@@ -27,12 +42,18 @@ export default class CommonFrames extends RegisterFrames {
    * Defines form elements for notifications and control frame
    */
   public setElementsFields() {
-    return [this.componentIds.notificationFrame, this.componentIds.controlFrame];
+    const elements = [];
+    if (this.shouldLoadNotificationFrame()) {
+      elements.push(this.componentIds.notificationFrame);
+    }
+    elements.push(Selectors.MERCHANT_FORM_SELECTOR); // Control frame is always needed so just append to form
+    return elements;
   }
 
   public _onInit() {
     this.initFormFields();
     this._setMerchantInputListeners();
+    this._setTransactionCompleteListener();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
   }
   /**
@@ -41,9 +62,11 @@ export default class CommonFrames extends RegisterFrames {
   public initFormFields() {
     this.notificationFrame = new Element();
     this.controlFrame = new Element();
-    this.notificationFrame.create(Selectors.NOTIFICATION_FRAME_COMPONENT_NAME, this.styles, this.params);
-    this.notificationFrameMounted = this.notificationFrame.mount(Selectors.NOTIFICATION_FRAME_IFRAME);
-    this.elementsToRegister.push(this.notificationFrameMounted);
+    if (this.shouldLoadNotificationFrame()) {
+      this.notificationFrame.create(Selectors.NOTIFICATION_FRAME_COMPONENT_NAME, this.styles, this.params);
+      this.notificationFrameMounted = this.notificationFrame.mount(Selectors.NOTIFICATION_FRAME_IFRAME);
+      this.elementsToRegister.push(this.notificationFrameMounted);
+    }
 
     this.controlFrame.create(Selectors.CONTROL_FRAME_COMPONENT_NAME, this.styles, {
       jwt: this.jwt,
@@ -61,8 +84,14 @@ export default class CommonFrames extends RegisterFrames {
   public registerElements(fields: HTMLElement[], targets: string[]) {
     targets.map((item, index) => {
       const itemToChange = document.getElementById(item);
-      itemToChange.appendChild(fields[index]);
+      if (fields[index]) {
+        itemToChange.appendChild(fields[index]);
+      }
     });
+  }
+
+  private shouldLoadNotificationFrame() {
+    return !(this.submitOnError && this.submitOnSuccess);
   }
 
   private onInput(event: Event) {
@@ -78,5 +107,23 @@ export default class CommonFrames extends RegisterFrames {
     for (const el of els) {
       el.addEventListener('input', this.onInput.bind(this));
     }
+  }
+
+  private onTransactionComplete(data: any) {
+    if (
+      (this.submitOnSuccess &&
+        data.errorcode === '0' &&
+        ['AUTH', 'CACHETOKENISE'].includes(data.requesttypedescription)) ||
+      (this.submitOnError && data.errorcode !== '0')
+    ) {
+      DomMethods.addDataToForm(CommonFrames.FORM, data, this.submitFields);
+      CommonFrames.FORM.submit();
+    }
+  }
+
+  private _setTransactionCompleteListener() {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE, (data: any) => {
+      this.onTransactionComplete(data);
+    });
   }
 }

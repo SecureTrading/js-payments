@@ -8,6 +8,10 @@
   border: 0;
 }
 
+.example-form iframe {
+  @extend %iframe;
+}
+
 body {
   padding: 4rem 2rem;
 }
