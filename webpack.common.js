@@ -2,7 +2,6 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const ManifestPlugin = require('webpack-manifest-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
@@ -10,12 +9,14 @@ const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 module.exports = {
   entry: {
     main: './src/components/index.ts',
-    componentControlFrame: './src/components/control-frame/control-frame.ts',
+    'control-frame': './src/components/control-frame/control-frame.ts',
     st: './src/ST.ts',
-    example: './example/index.ts'
+    example: './example/index.ts',
+    immediateExample: './example/immediate.ts',
+    receipt: './example/receipt.ts'
   },
   output: {
-    filename: '[name].bundle.js',
+    filename: '[name].js',
     path: path.join(__dirname, 'dist'),
     library: 'SecureTrading',
     libraryExport: 'default',
@@ -70,19 +71,27 @@ module.exports = {
       templateParameters: {
         partial: 'controlFrame'
       },
-      chunks: ['componentControlFrame']
+      chunks: ['control-frame']
     }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: './example/index.html',
-      chunks: ['example'],
-      favicon: './favicon.ico'
+      chunks: ['example']
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'immediate.html',
+      template: './example/immediate.html',
+      chunks: ['immediateExample']
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'receipt.html',
+      template: './example/receipt.html',
+      chunks: ['receipt']
     }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css'
     }),
-    new ManifestPlugin(),
     new StyleLintPlugin(),
     new FriendlyErrorsWebpackPlugin(),
     new webpack.DefinePlugin({
@@ -120,7 +129,9 @@ module.exports = {
         use: [
           {
             loader: 'tslint-loader',
-            options: { emitErrors: false }
+            options: {
+              emitErrors: true
+            }
           }
         ],
         exclude: /node_modules/

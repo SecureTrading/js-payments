@@ -30,6 +30,7 @@ export default class MessageBus {
     SUBMIT_FORM: 'SUBMIT_FORM',
     THREEDINIT: 'THREEDINIT',
     THREEDQUERY: 'THREEDQUERY',
+    TRANSACTION_COMPLETE: 'TRANSACTION_COMPLETE',
     UPDATE_MERCHANT_FIELDS: 'UPDATE_MERCHANT_FIELDS',
     WALLETVERIFY: 'WALLETVERIFY'
   };
@@ -64,6 +65,11 @@ export default class MessageBus {
   public publishFromParent(event: IMessageBusEvent, frameName: string) {
     // @ts-ignore
     window.frames[frameName].postMessage(event, this._frameOrigin);
+  }
+
+  public publishToSelf(event: IMessageBusEvent) {
+    // @ts-ignore
+    window.postMessage(event, window.location.origin);
   }
 
   public subscribe(eventType: string, callback: any) {

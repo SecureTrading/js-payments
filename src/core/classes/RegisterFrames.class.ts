@@ -7,7 +7,6 @@ import { IStyles } from '../shared/Styler';
 export default class RegisterFrames {
   public styles: IStyles;
   public params: any;
-  public onlyWallets: boolean;
   public elementsToRegister: HTMLElement[];
   public elementsTargets: any;
   public componentIds: any;
@@ -24,7 +23,6 @@ export default class RegisterFrames {
     this.stJwt = new StJwt(jwt);
     this.origin = origin;
     this.params = { locale: this.stJwt.locale };
-    this._onInit();
   }
 
   /**

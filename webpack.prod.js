@@ -5,9 +5,7 @@ const TypedocWebpackPlugin = require('typedoc-webpack-plugin');
 
 module.exports = merge(common, {
   mode: 'production',
-  devtool: 'source-map',
   plugins: [
-    new TypedocWebpackPlugin({}),
     new webpack.NormalModuleReplacementPlugin(
       /^\.\.\/\.\.\/environments\/environment/,
       '../../environments/environment.prod'

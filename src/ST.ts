@@ -14,11 +14,14 @@ import { environment } from './environments/environment';
  * Establishes connection with ST, defines client.
  */
 class ST {
+  private componentIds: any;
   private jwt: string;
   private origin: string;
-  private tokenise: boolean;
   private styles: IStyles;
-  private componentIds: any;
+  private submitFields: string[];
+  private submitOnError: boolean;
+  private submitOnSuccess: boolean;
+  private tokenise: boolean;
 
   /**
    * Defines static methods for starting different payment methods
@@ -27,17 +30,33 @@ class ST {
 
   constructor(config: IConfig) {
     config = this._addDefaults(config);
-    this.jwt = config.jwt;
     this.componentIds = config.componentIds;
+    this.jwt = config.jwt;
+    this.origin = config.origin;
     this.styles = config.styles;
-    const instance = new CommonFrames(this.jwt, this.origin, this.componentIds, this.styles);
+    this.submitFields = config.submitFields;
+    this.submitOnError = config.submitOnError;
+    this.submitOnSuccess = config.submitOnSuccess;
+    this.tokenise = config.tokenise;
+    const instance = new CommonFrames(
+      this.jwt,
+      this.origin,
+      this.componentIds,
+      this.styles,
+      this.submitOnSuccess,
+      this.submitOnError,
+      this.submitFields
+    );
   }
 
   public Components(config?: IComponentsConfig) {
     config = config ? config : {};
-    const instance = new CardFrames(this.jwt, this.origin, this.componentIds, this.styles);
+    config.startOnLoad = config.startOnLoad !== undefined ? config.startOnLoad : false;
+    if (!config.startOnLoad) {
+      const instance = new CardFrames(this.jwt, this.origin, this.componentIds, this.styles);
+    }
     const cardinal = environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce;
-    const cardinalInstance = new cardinal(this.tokenise);
+    const cardinalInstance = new cardinal(this.tokenise, config.startOnLoad, this.jwt);
   }
 
   public ApplePay(config: IWalletConfig) {
@@ -51,12 +70,28 @@ class ST {
   }
 
   private _addDefaults(config: IConfig) {
-    this.origin = config.origin ? config.origin : window.location.origin;
-    this.tokenise = config.tokenise ? config.tokenise : false;
+    config.origin = config.origin ? config.origin : window.location.origin;
+    config.tokenise = config.tokenise !== undefined ? config.tokenise : false;
+    config.submitOnSuccess = config.submitOnSuccess !== undefined ? config.submitOnSuccess : true;
+    config.submitOnError = config.submitOnError !== undefined ? config.submitOnError : false;
+    config.submitFields = config.submitFields
+      ? config.submitFields
+      : [
+          'baseamount',
+          'currencyiso3a',
+          'eci',
+          'enrolled',
+          'errorcode',
+          'errordata',
+          'errormessage',
+          'orderreference',
+          'settlestatus',
+          'status',
+          'transactionreference'
+        ];
     const componentIds = {
       animatedCard: 'st-animated-card',
       cardNumber: 'st-card-number',
-      controlFrame: 'st-control-frame',
       expirationDate: 'st-expiration-date',
       notificationFrame: 'st-notification-frame',
       securityCode: 'st-security-code'
