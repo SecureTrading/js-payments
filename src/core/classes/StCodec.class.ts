@@ -1,9 +1,9 @@
 import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
 import Notification from '../shared/Notification';
-import Validation from '../shared/Validation';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
+import Validation from '../shared/Validation';
 
 interface IStRequest {
   requesttypedescription: string;
@@ -21,8 +21,6 @@ class StCodec {
   public static VERSION = '1.00';
   public static SUPPORTED_REQUEST_TYPES = ['WALLETVERIFY', 'JSINIT', 'THREEDQUERY', 'CACHETOKENISE', 'AUTH', 'ERROR'];
   public static MINIMUM_REQUEST_FIELDS = 1;
-  private static REQUESTS_WITH_ERROR_MESSAGES = ['AUTH', 'CACHETOKENISE', 'ERROR', 'THREEDQUERY', 'WALLETVERIFY'];
-  private static STATUS_CODES = { invalidfield: '30000', ok: '0', declined: '70000' };
 
   /**
    * Generate a unique ID for a request
@@ -63,7 +61,6 @@ class StCodec {
 
     const responseContent: IResponseData = responseData.response[0];
     const validation = new Validation();
-    console.log(StCodec.REQUESTS_WITH_ERROR_MESSAGES.includes(responseContent.requesttypedescription));
     if (StCodec.REQUESTS_WITH_ERROR_MESSAGES.includes(responseContent.requesttypedescription)) {
       if (responseContent.errorcode !== StCodec.STATUS_CODES.ok) {
         if (responseContent.errorcode === StCodec.STATUS_CODES.invalidfield) {
@@ -90,6 +87,8 @@ class StCodec {
   private static _translator = new Translator('en_GB');
   private static _messageBus = new MessageBus();
   private static _parentOrigin: string;
+  private static REQUESTS_WITH_ERROR_MESSAGES = ['AUTH', 'CACHETOKENISE', 'ERROR', 'THREEDQUERY', 'WALLETVERIFY'];
+  private static STATUS_CODES = { invalidfield: '30000', ok: '0', declined: '70000' };
 
   private static publishResponse(responseData: IResponseData) {
     responseData.errormessage = StCodec._translator.translate(responseData.errormessage);

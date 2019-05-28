@@ -33,6 +33,27 @@ export default class ExpirationDate extends FormField {
     return Language.translations.LABEL_EXPIRATION_DATE;
   }
 
+  public backendValidation() {
+    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD, (data: any) => {
+      this.checkBackendValidity(data);
+    });
+  }
+
+  public setFocusListener() {
+    this._messageBus.subscribe(MessageBus.EVENTS.FOCUS_EXPIRATION_DATE, () => {
+      this.format(this._inputElement.value);
+      this.validation.validate(this._inputElement, this._messageElement);
+    });
+  }
+
+  public setDisableListener() {
+    this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_EXPIRATION_DATE, (state: boolean) => {
+      // @ts-ignore
+      this._inputElement.setAttribute('disabled', state);
+      this._inputElement.classList.add('st-input--disabled');
+    });
+  }
+
   protected onInput(event: Event) {
     super.onInput(event);
     if (this._inputElement.value.length >= ExpirationDate.EXPIRATION_DATE_LENGTH) {
@@ -64,11 +85,11 @@ export default class ExpirationDate extends FormField {
     }
   }
 
-  private isMaxLengthReached = () => this._inputElement.value.length >= ExpirationDate.EXPIRATION_DATE_LENGTH;
-
   protected format(data: string) {
     this.setValue(Formatter.maskExpirationDate(data));
   }
+
+  private isMaxLengthReached = (): boolean => this._inputElement.value.length >= ExpirationDate.EXPIRATION_DATE_LENGTH;
 
   private sendState() {
     const formFieldState: IFormFieldState = this.getState();
@@ -77,26 +98,5 @@ export default class ExpirationDate extends FormField {
       type: MessageBus.EVENTS.CHANGE_EXPIRATION_DATE
     };
     this._messageBus.publish(messageBusEvent);
-  }
-
-  public backendValidation() {
-    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD, (data: any) => {
-      this.checkBackendValidity(data);
-    });
-  }
-
-  public setFocusListener() {
-    this._messageBus.subscribe(MessageBus.EVENTS.FOCUS_EXPIRATION_DATE, () => {
-      this.format(this._inputElement.value);
-      this.validation.validate(this._inputElement, this._messageElement);
-    });
-  }
-
-  public setDisableListener() {
-    this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_EXPIRATION_DATE, (state: boolean) => {
-      // @ts-ignore
-      this._inputElement.setAttribute('disabled', state);
-      this._inputElement.classList.add('st-input--disabled');
-    });
   }
 }

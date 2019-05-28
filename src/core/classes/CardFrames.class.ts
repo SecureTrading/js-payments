@@ -1,33 +1,23 @@
 import Element from '../Element';
+import DomMethods from '../shared/DomMethods';
 import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
 import { IStyles } from '../shared/Styler';
-import RegisterFrames from './RegisterFrames.class';
 import Validation from '../shared/Validation';
-import DomMethods from '../shared/DomMethods';
+import RegisterFrames from './RegisterFrames.class';
 
 /**
  * Defines all card elements of form and their  placement on merchant site.
  */
 export default class CardFrames extends RegisterFrames {
-  private cardNumberMounted: HTMLElement;
-  private expirationDateMounted: HTMLElement;
-  private securityCodeMounted: HTMLElement;
-  private animatedCardMounted: HTMLElement;
-  private cardNumber: Element;
-  private expirationDate: Element;
-  private securityCode: Element;
-  private animatedCard: Element;
-  private messageBus: MessageBus;
-  private validation: Validation;
-
-  constructor(jwt: any, origin: any, componentIds: [], styles: IStyles) {
-    super(jwt, origin, componentIds, styles);
-    this.validation = new Validation();
-    this.messageBus = new MessageBus();
-    this._initSubscribes();
-    this._onInit();
+  /**
+   * Finds submit button whether is input or button markup and sets properties.
+   * @param state
+   */
+  public static disableSubmitButton(state: boolean) {
+    const element = CardFrames.getSubmitButton();
+    return element && CardFrames._setSubmitButtonProperties(element, state);
   }
 
   private static SUBMIT_BUTTON_AS_BUTTON_MARKUP = 'button[type="submit"]';
@@ -61,13 +51,23 @@ export default class CardFrames extends RegisterFrames {
     document.querySelector(CardFrames.SUBMIT_BUTTON_AS_BUTTON_MARKUP) ||
     document.querySelector(CardFrames.SUBMIT_BUTTON_AS_INPUT_MARKUP);
 
-  /**
-   * Finds submit button whether is input or button markup and sets properties.
-   * @param state
-   */
-  public static disableSubmitButton(state: boolean) {
-    const element = CardFrames.getSubmitButton();
-    element && CardFrames._setSubmitButtonProperties(element, state);
+  private cardNumberMounted: HTMLElement;
+  private expirationDateMounted: HTMLElement;
+  private securityCodeMounted: HTMLElement;
+  private animatedCardMounted: HTMLElement;
+  private cardNumber: Element;
+  private expirationDate: Element;
+  private securityCode: Element;
+  private animatedCard: Element;
+  private messageBus: MessageBus;
+  private validation: Validation;
+
+  constructor(jwt: any, origin: any, componentIds: [], styles: IStyles) {
+    super(jwt, origin, componentIds, styles);
+    this.validation = new Validation();
+    this.messageBus = new MessageBus();
+    this._initSubscribes();
+    this._onInit();
   }
 
   public disableFormField(state: boolean, eventName: string) {
@@ -88,16 +88,6 @@ export default class CardFrames extends RegisterFrames {
       this.componentIds.securityCode,
       this.componentIds.animatedCard
     ];
-  }
-
-  /**
-   * Inits all methods with Message Bus subscribe and eventListeners.
-   */
-  private _initSubscribes() {
-    this.submitFormListener();
-    this.subscribeBlockSubmit();
-    this.validateFieldsAfterSubmit();
-    this._setMerchantInputListeners();
   }
 
   /**
@@ -144,6 +134,16 @@ export default class CardFrames extends RegisterFrames {
       const itemToChange = document.getElementById(item);
       itemToChange.appendChild(fields[index]);
     });
+  }
+
+  /**
+   * Inits all methods with Message Bus subscribe and eventListeners.
+   */
+  private _initSubscribes() {
+    this.submitFormListener();
+    this.subscribeBlockSubmit();
+    this.validateFieldsAfterSubmit();
+    this._setMerchantInputListeners();
   }
 
   /**
@@ -206,7 +206,7 @@ export default class CardFrames extends RegisterFrames {
   private validateFieldsAfterSubmit() {
     this.messageBus.subscribe(MessageBus.EVENTS.VALIDATE_FORM, (data: any) => {
       const { cardNumber, expirationDate, securityCode } = data;
-      let messageBusEvent: IMessageBusEvent = { data: 'test', type: '' };
+      const messageBusEvent: IMessageBusEvent = { data: 'test', type: '' };
       if (!cardNumber) {
         messageBusEvent.type = MessageBus.EVENTS.FOCUS_CARD_NUMBER;
         this.messageBus.publish(messageBusEvent);

@@ -1,5 +1,5 @@
-import Frame from './Frame';
 import { StCodec } from '../classes/StCodec.class';
+import Frame from './Frame';
 import Language from './Language';
 import MessageBus from './MessageBus';
 import { Translator } from './Translator';
