@@ -11,7 +11,7 @@ export const environment = {
     },
     SONGBIRD_URL: 'https://songbirdstag.cardinalcommerce.com/cardinalcruise/v1/songbird.js'
   },
-  FRAME_URL: 'https://webservices.securetrading.net/js',
+  FRAME_URL: 'https://webservices.securetrading.net/js/v2',
   GATEWAY_URL,
   NOTIFICATION_TTL: 7000,
   VISA_CHECKOUT_URLS: {

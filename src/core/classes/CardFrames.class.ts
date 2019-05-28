@@ -67,10 +67,8 @@ export default class CardFrames extends RegisterFrames {
   }
 
   public _onInit() {
-    if (!this.onlyWallets) {
-      this.initCardFields();
-      this._setFormListener();
-    }
+    this.initCardFields();
+    this._setFormListener();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
   }
 

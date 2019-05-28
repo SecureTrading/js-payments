@@ -1,6 +1,7 @@
 import each from 'jest-each';
 import Language from '../../../src/core/shared/Language';
 import { StCodec } from '../../../src/core/classes/StCodec.class';
+import MessageBus from '../../../src/core/shared/MessageBus';
 
 describe('StCodec class', () => {
   const ridRegex = 'J-[\\da-z]{8}';
@@ -48,6 +49,76 @@ describe('StCodec class', () => {
     version: '1.00'
   };
 
+  describe('StCodec.publishResponse', () => {
+    beforeEach(() => {
+      // @ts-ignore
+      StCodec._translator.translate = jest.fn();
+      // @ts-ignore
+      StCodec._translator.translate.mockReturnValueOnce('Translated');
+      // @ts-ignore
+      StCodec._messageBus.publish = jest.fn();
+      // @ts-ignore
+      StCodec._messageBus.publishToSelf = jest.fn();
+    });
+
+    it('should translate and publish result to parent', () => {
+      // @ts-ignore
+      StCodec._parentOrigin = 'https://example.com';
+      // @ts-ignore
+      StCodec.publishResponse({
+        errorcode: '0',
+        errormessage: 'Ok'
+      });
+      // @ts-ignore
+      expect(StCodec._translator.translate).toHaveBeenCalledWith('Ok');
+      // @ts-ignore
+      expect(StCodec._messageBus.publish).toHaveBeenCalledWith(
+        {
+          data: {
+            errorcode: '0',
+            errormessage: 'Translated'
+          },
+          type: 'TRANSACTION_COMPLETE'
+        },
+        true
+      );
+      // @ts-ignore
+      expect(StCodec._messageBus.publishToSelf).toHaveBeenCalledTimes(0);
+    });
+
+    it('should translate and publish result to itself', () => {
+      // @ts-ignore
+      StCodec._parentOrigin = undefined;
+      // @ts-ignore
+      StCodec.publishResponse({
+        errorcode: '0',
+        errormessage: 'Ok'
+      });
+      // @ts-ignore
+      expect(StCodec._translator.translate).toHaveBeenCalledWith('Ok');
+      // @ts-ignore
+      expect(StCodec._messageBus.publish).toHaveBeenCalledTimes(0);
+      // @ts-ignore
+      expect(StCodec._messageBus.publishToSelf).toHaveBeenCalledWith({
+        data: {
+          errorcode: '0',
+          errormessage: 'Translated'
+        },
+        type: 'TRANSACTION_COMPLETE'
+      });
+    });
+  });
+
+  describe('StCodec._createCommunicationError', () => {
+    it('return valid error response', () => {
+      // @ts-ignore
+      expect(StCodec._createCommunicationError()).toMatchObject({
+        errorcode: '50003',
+        errormessage: 'Invalid response'
+      });
+    });
+  });
+
   describe('StCodec._createRequestId', () => {
     beforeEach(() => {
       str = new StCodec(jwt);
@@ -69,6 +140,8 @@ describe('StCodec class', () => {
   describe('StCodec.buildRequestObject', () => {
     beforeEach(() => {
       str = new StCodec(jwt);
+      // @ts-ignore
+      StCodec.publishResponse = jest.fn();
     });
 
     each([
@@ -95,6 +168,8 @@ describe('StCodec class', () => {
   describe('StCodec.encode', () => {
     beforeEach(() => {
       str = new StCodec(jwt);
+      // @ts-ignore
+      StCodec.publishResponse = jest.fn();
     });
 
     each([
@@ -129,6 +204,8 @@ describe('StCodec class', () => {
   describe('StCodec.verifyResponseObject', () => {
     beforeEach(() => {
       str = new StCodec(jwt);
+      // @ts-ignore
+      StCodec.publishResponse = jest.fn();
     });
 
     each([
@@ -140,6 +217,8 @@ describe('StCodec class', () => {
       expect(() => StCodec.verifyResponseObject(responseData)).toThrow(
         Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE)
       );
+      // @ts-ignore
+      expect(StCodec.publishResponse).toHaveBeenCalledWith({ errorcode: '50003', errormessage: 'Invalid response' });
     });
 
     each([
@@ -151,12 +230,19 @@ describe('StCodec class', () => {
       ]
     ]).it('should verify the gateway error response', responseData => {
       expect(() => StCodec.verifyResponseObject(responseData)).toThrow(Error(responseData.response[0].errormessage));
+      // @ts-ignore
+      expect(StCodec.publishResponse).toHaveBeenCalledWith({
+        errorcode: 30000,
+        errormessage: 'Field error'
+      });
     });
   });
 
   describe('StCodec.decode', () => {
     beforeEach(() => {
       str = new StCodec(jwt);
+      // @ts-ignore
+      StCodec.publishResponse = jest.fn();
     });
 
     it('should decode a valid response', async () => {
@@ -169,10 +255,17 @@ describe('StCodec class', () => {
         })
       ).resolves.toEqual(StCodec.verifyResponseObject(fullResponse));
       expect(StCodec.verifyResponseObject).toHaveBeenCalledWith(fullResponse);
+      // @ts-ignore
+      expect(StCodec.publishResponse).toHaveBeenCalledWith(fullResponse.response[0]);
     });
 
     it('should error an invalid response', async () => {
       await expect(str.decode({})).rejects.toThrow(Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
+      // @ts-ignore
+      expect(StCodec.publishResponse).toHaveBeenCalledWith({
+        errorcode: '50003',
+        errormessage: 'Invalid response'
+      });
     });
   });
 });

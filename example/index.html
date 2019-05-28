@@ -9,6 +9,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Secure Trading Example Form</title>
   </head>
+
   <body>
     <form id="st-form" class="example-form">
       <h1 class="example-form__title">
@@ -49,7 +50,8 @@
             placeholder="+00 000 000 000"
             autocomplete="tel"
             name="myBillTel"
-          /><!-- no data-st-name attribute so this field will not be submitted to ST -->
+          />
+          <!-- no data-st-name attribute so this field will not be submitted to ST -->
         </div>
       </div>
 
@@ -60,7 +62,6 @@
         <div id="st-card-number" class="example-form__group"></div>
         <div id="st-expiration-date" class="example-form__group"></div>
         <div id="st-security-code" class="example-form__group"></div>
-        <div id="st-error-container" class="example-form__group"></div>
         <div class="example-form__spacer"></div>
       </div>
 
@@ -77,21 +78,21 @@
       </div>
       <div id="st-animated-card" class="st-animated-card-wrapper"></div>
     </form>
-    <script type="text/javascript" src="st.bundle.js"></script>
+    <script type="text/javascript" src="st.js"></script>
     <script>
       (function() {
-        const parsedUrl = new URL(window.location.href);
+        var parsedUrl = new URL(window.location.href);
 
-        const cardinalJwt =
+        var cardinalJwt =
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU3NDIzNDgyLjk0MzE1MywicGF5bG9hZCI6eyJjdXN0b21lcnRvd24iOiJCYW5nb3IiLCJiaWxsaW5ncG9zdGNvZGUiOiJURTEyIDNTVCIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJjdXN0b21lcnByZW1pc2UiOiIxMiIsImJpbGxpbmdsYXN0bmFtZSI6Ik5hbWUiLCJsb2NhbGUiOiJlbl9HQiIsImJhc2VhbW91bnQiOiIxMDAwIiwiYmlsbGluZ2VtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImJpbGxpbmdwcmVtaXNlIjoiMTIiLCJzaXRlcmVmZXJlbmNlIjoidGVzdDEiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImJpbGxpbmdzdHJlZXQiOiJUZXN0IHN0cmVldCIsImN1c3RvbWVyc3RyZWV0IjoiVGVzdCBzdHJlZXQiLCJjdXN0b21lcnBvc3Rjb2RlIjoiVEUxMiAzU1QiLCJjdXN0b21lcmxhc3RuYW1lIjoiTmFtZSIsImJpbGxpbmd0ZWxlcGhvbmUiOiIwMTIzNCAxMTEyMjIiLCJiaWxsaW5nZmlyc3RuYW1lIjoiVGVzdCIsImJpbGxpbmd0b3duIjoiQmFuZ29yIiwiYmlsbGluZ3RlbGVwaG9uZXR5cGUiOiJNIn19.08q3gem0kW0eODs5iGQieKbpqu7pVcvQF2xaJIgtrnc';
-        const cardinalJwtFR =
+        var cardinalJwtFR =
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU3NDExNDIzLjI0NTQ3LCJwYXlsb2FkIjp7ImN1c3RvbWVydG93biI6IkJhbmdvciIsImJpbGxpbmdwb3N0Y29kZSI6IlRFMTIgM1NUIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsImN1c3RvbWVycHJlbWlzZSI6IjEyIiwiYmlsbGluZ2xhc3RuYW1lIjoiTmFtZSIsImxvY2FsZSI6ImZyX0ZSIiwiYmFzZWFtb3VudCI6IjEwMDAiLCJiaWxsaW5nZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiYmlsbGluZ3ByZW1pc2UiOiIxMiIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0MSIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiYmlsbGluZ3N0cmVldCI6IlRlc3Qgc3RyZWV0IiwiY3VzdG9tZXJzdHJlZXQiOiJUZXN0IHN0cmVldCIsImN1c3RvbWVycG9zdGNvZGUiOiJURTEyIDNTVCIsImN1c3RvbWVybGFzdG5hbWUiOiJOYW1lIiwiYmlsbGluZ3RlbGVwaG9uZSI6IjAxMjM0IDExMTIyMiIsImJpbGxpbmdmaXJzdG5hbWUiOiJUZXN0IiwiYmlsbGluZ3Rvd24iOiJCYW5nb3IiLCJiaWxsaW5ndGVsZXBob25ldHlwZSI6Ik0ifX0.OQ7PaErcXj7vmR4ob_uzXv3LqoLYmD3tP6cof2FCfkQ';
-        const applePayVisaCheckoutJwt =
+        var applePayVisaCheckoutJwt =
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoiMTU1NjE5MjQxMDc0OSIsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6ImxpdmUyIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00ifX0.YPXFxhb72eEc5yUihniXmbyVEQfPtvULk9W36uKR2zg';
 
-        const jwt = parsedUrl.searchParams.get('jwt') || cardinalJwt;
+        var jwt = parsedUrl.searchParams.get('jwt') || cardinalJwt;
 
-        const st = SecureTrading({
+        var st = SecureTrading({
           jwt,
           styles: {
             'background-color-input': 'AliceBlue',
@@ -99,7 +100,8 @@
             'color-input-error': '#721c24',
             'font-size-input': '12px',
             'line-height-input': '12px'
-          }
+          },
+          submitOnSuccess: false
         });
 
         st.Components();
@@ -113,18 +115,28 @@
             currencyCode: 'USD',
             merchantCapabilities: ['supports3DS', 'supportsCredit', 'supportsDebit'],
             supportedNetworks: [],
-            total: { label: 'Secure Trading Merchant', amount: '10.00' }
+            total: {
+              label: 'Secure Trading Merchant',
+              amount: '10.00'
+            }
           },
           placement: 'st-apple-pay'
         });
 
         st.VisaCheckout({
-          buttonSettings: { size: '154', color: 'neutral' },
+          buttonSettings: {
+            size: '154',
+            color: 'neutral'
+          },
           livestatus: 0,
           merchantId: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4',
-          paymentRequest: { subtotal: '20.00' },
+          paymentRequest: {
+            subtotal: '20.00'
+          },
           placement: 'st-visa-checkout',
-          settings: { displayName: 'My Test Site' }
+          settings: {
+            displayName: 'My Test Site'
+          }
         });
       })();
     </script>

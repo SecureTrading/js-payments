@@ -6,8 +6,8 @@ export default class Payment {
   private _stTransport: StTransport;
   private _cardinalCommerceCacheToken: string;
 
-  constructor(jwt: string) {
-    this._stTransport = new StTransport({ jwt });
+  constructor(jwt: string, parentOrigin?: string) {
+    this._stTransport = new StTransport({ jwt }, parentOrigin);
   }
 
   public walletVerify(wallet: IWalletVerify) {

@@ -6,9 +6,14 @@ export interface IConfig {
   origin?: string;
   tokenise?: boolean;
   styles?: IStyles;
+  submitOnSuccess?: boolean;
+  submitOnError?: boolean;
+  submitFields?: string[];
 }
 
-export interface IComponentsConfig {}
+export interface IComponentsConfig {
+  startOnLoad?: boolean;
+}
 
 export interface IWalletConfig {
   [key: string]: any;
