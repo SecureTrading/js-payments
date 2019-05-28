@@ -105,7 +105,6 @@ export default class CardFrames extends RegisterFrames {
    */
   public _onInit() {
     this.initCardFields();
-    this._setFormListener();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
   }
 
