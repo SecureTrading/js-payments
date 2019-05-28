@@ -1,4 +1,3 @@
-import { INotificationEvent } from '../models/NotificationEvent';
 import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
 import Notification from '../shared/Notification';
