@@ -5,6 +5,8 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
+const CompressionPlugin = require('compression-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -14,6 +16,31 @@ module.exports = {
     example: './example/index.ts',
     immediateExample: './example/immediate.ts',
     receipt: './example/receipt.ts'
+  },
+  optimization: {
+    minimizer: [
+      new TerserPlugin({
+        cache: true,
+        parallel: true,
+        sourceMap: true,
+        terserOptions: {}
+      })
+    ],
+    // splitChunks: {
+    //   chunks: 'all'
+    // },
+    namedModules: true,
+    namedChunks: true,
+    moduleIds: 'hashed',
+    chunkIds: 'named',
+    nodeEnv: 'production',
+    mangleWasmImports: true,
+    removeAvailableModules: true,
+    removeEmptyChunks: true,
+    mergeDuplicateChunks: true,
+    occurrenceOrder: true,
+    providedExports: true,
+    runtimeChunk: false
   },
   output: {
     filename: '[name].js',
@@ -25,6 +52,16 @@ module.exports = {
   },
   plugins: [
     new CleanWebpackPlugin(),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': '"production"'
+    }),
+    new CompressionPlugin({
+      algorithm: 'gzip',
+      filename: '[path].gz[query]',
+      test: /\.js$|\.css$|\.html$|\.eot?.+$|\.ttf?.+$|\.woff?.+$|\.svg?.+$/,
+      threshold: 10240,
+      minRatio: 0.8
+    }),
     new HtmlWebpackPlugin({
       filename: 'card-number.html',
       template: './src/components/index.html',
