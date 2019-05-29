@@ -1,3 +1,4 @@
+import 'url-polyfill';
 import CardFrames from './core/classes/CardFrames.class';
 import CommonFrames from './core/classes/CommonFrames.class';
 import ApplePay from './core/integrations/ApplePay';

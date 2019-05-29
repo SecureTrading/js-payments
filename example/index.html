@@ -93,7 +93,7 @@
         var jwt = parsedUrl.searchParams.get('jwt') || cardinalJwt;
 
         var st = SecureTrading({
-          jwt,
+          jwt: jwt, // Can't use property shorthand because it isn't supported by IE
           styles: {
             'background-color-input': 'AliceBlue',
             'background-color-input-error': '#f8d7da',
