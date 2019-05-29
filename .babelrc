@@ -4,11 +4,7 @@
     [
       "@babel/preset-env",
       {
-        "useBuiltIns": "entry",
-        "modules": false,
-        "targets": {
-          "node": "current"
-        }
+        "useBuiltIns": "entry"
       }
     ]
   ]

@@ -1,5 +1,5 @@
+// TODO fix me import * as Dinero from 'dinero.js';
 import * as JwtDecode from 'jwt-decode';
-import { Currencies, Money } from 'ts-money';
 
 export interface IStJwtPayload {
   [key: string]: string;
@@ -39,8 +39,8 @@ export class StJwt {
   }
 
   private get currency() {
-    // Currencies doesn't define index signature so treating as 'any'
-    return (Currencies as any)[this.payload.currencyiso3a];
+    // TODO why is this needed anymore?
+    return this.payload.currencyiso3a;
   }
 
   /**
@@ -59,10 +59,12 @@ export class StJwt {
     let mainamount = this.payload.mainamount;
     if (mainamount === undefined) {
       // Merchants can specify amount in main or base units so need to convert to main
-      mainamount = Money.fromInteger({
-        amount: parseInt(this.payload.baseamount, 10),
-        currency: this.currency
-      }).toString();
+      // TODO fix me
+      // mainamount = Dinero({
+      //   amount: parseInt(this.payload.baseamount, 10),
+      //  currency: this.currency
+      // }).toString();
+      mainamount = '10.00';
     }
     return mainamount;
   }

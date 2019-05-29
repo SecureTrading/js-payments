@@ -1,4 +1,7 @@
+import '@babel/polyfill';
+import 'location-origin';
 import 'url-polyfill';
+import 'whatwg-fetch';
 import CardFrames from './core/classes/CardFrames.class';
 import CommonFrames from './core/classes/CommonFrames.class';
 import ApplePay from './core/integrations/ApplePay';
