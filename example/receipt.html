@@ -21,9 +21,14 @@
     <p id="errormessage"></p>
   </body>
   <script>
-    const parsedUrl = new URL(window.location.href);
-    document.getElementById('transactionreference').innerHTML = parsedUrl.searchParams.get('transactionreference', '');
-    document.getElementById('errorcode').innerHTML = parsedUrl.searchParams.get('errorcode', '');
-    document.getElementById('errormessage').innerHTML = parsedUrl.searchParams.get('errormessage', '');
+    (function() {
+      const parsedUrl = new URL(window.location.href);
+      document.getElementById('transactionreference').innerHTML = parsedUrl.searchParams.get(
+        'transactionreference',
+        ''
+      );
+      document.getElementById('errorcode').innerHTML = parsedUrl.searchParams.get('errorcode', '');
+      document.getElementById('errormessage').innerHTML = parsedUrl.searchParams.get('errormessage', '');
+    })();
   </script>
 </html>
