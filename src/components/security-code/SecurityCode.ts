@@ -1,4 +1,5 @@
 import BinLookup from '../../core/shared/BinLookup';
+import Formatter from '../../core/shared/Formatter';
 import FormField from '../../core/shared/FormField';
 import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
@@ -78,6 +79,7 @@ export default class SecurityCode extends FormField {
 
   protected onInput(event: Event) {
     super.onInput(event);
+    this._inputElement.value = Formatter.trimNonNumeric(this._inputElement.value);
     if (this._inputElement.value.length >= this.securityCodeLength) {
       this.validation.validate(this._inputElement, this._messageElement);
     }

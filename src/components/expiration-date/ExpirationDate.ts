@@ -57,7 +57,9 @@ export default class ExpirationDate extends FormField {
 
   protected onInput(event: Event) {
     super.onInput(event);
+    this._inputElement.value = Formatter.trimNonNumeric(this._inputElement.value);
     if (this._inputElement.value.length >= ExpirationDate.EXPIRATION_DATE_LENGTH) {
+      this._inputElement.value = this._inputElement.value.substring(0, ExpirationDate.EXPIRATION_DATE_LENGTH);
       this.validation.validate(this._inputElement, this._messageElement);
     }
     this.sendState();
