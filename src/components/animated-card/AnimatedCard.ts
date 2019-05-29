@@ -319,9 +319,12 @@ class AnimatedCard extends Frame {
    */
   public onSecurityCodeChanged(data: any) {
     const { value } = data;
+    const isAmex: boolean = this.cardDetails.type === AnimatedCard.CARD_TYPES.AMEX;
     this.cardDetails.securityCode = AnimatedCard.setCardDetail(
       value,
-      AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE
+      isAmex
+        ? AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED
+        : AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE
     );
     this.setSecurityCodeOnProperSide();
   }
