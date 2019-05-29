@@ -36,6 +36,7 @@ export default class ExpirationDate extends FormField {
   public backendValidation() {
     this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD, (data: any) => {
       this.checkBackendValidity(data);
+      this.validation.validate(this._inputElement, this._messageElement);
     });
   }
 

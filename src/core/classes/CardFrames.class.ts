@@ -208,15 +208,15 @@ export default class CardFrames extends RegisterFrames {
       const { cardNumber, expirationDate, securityCode } = data;
       const messageBusEvent: IMessageBusEvent = { data: 'test', type: '' };
       if (!cardNumber) {
-        messageBusEvent.type = MessageBus.EVENTS.FOCUS_CARD_NUMBER;
+        messageBusEvent.type = MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD;
         this.messageBus.publish(messageBusEvent);
       }
       if (!expirationDate) {
-        messageBusEvent.type = MessageBus.EVENTS.FOCUS_EXPIRATION_DATE;
+        messageBusEvent.type = MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD;
         this.messageBus.publish(messageBusEvent);
       }
       if (!securityCode) {
-        messageBusEvent.type = MessageBus.EVENTS.FOCUS_SECURITY_CODE;
+        messageBusEvent.type = MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD;
         this.messageBus.publish(messageBusEvent);
       }
     });

@@ -37,6 +37,7 @@ export default class SecurityCode extends FormField {
   public backendValidation() {
     this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD, (data: any) => {
       this.checkBackendValidity(data);
+      this.validation.validate(this._inputElement, this._messageElement);
     });
   }
 
@@ -65,13 +66,8 @@ export default class SecurityCode extends FormField {
     this._messageBus.publish(messageBusEvent);
   }
 
-  protected onFocus(event: FocusEvent) {
+  protected onFocus(event: Event) {
     super.onFocus(event);
-    const messageBusEvent: IMessageBusEvent = {
-      data: true,
-      type: MessageBus.EVENTS.FOCUS_SECURITY_CODE
-    };
-    this._messageBus.publish(messageBusEvent);
   }
 
   protected onInput(event: Event) {

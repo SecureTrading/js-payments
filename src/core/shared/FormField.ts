@@ -38,7 +38,7 @@ export default class FormField extends Frame {
     this._translator = new Translator(this._params.locale);
     this.validation = new Validation();
     this.setLabelText();
-    this.setValidationAttributes();
+    this.setValidationAttributes({ 'data-clicked': false });
   }
 
   public getLabel(): string {
@@ -134,6 +134,10 @@ export default class FormField extends Frame {
     this.focus();
   }
 
+  protected onClick(event: Event) {
+    this.click();
+  }
+
   protected onBlur() {
     this.validation.validate(this._inputElement, this._messageElement);
     this.blur();
@@ -169,12 +173,17 @@ export default class FormField extends Frame {
     this._inputElement.blur();
   }
 
+  protected click() {
+    this._inputElement.click();
+  }
+
   protected focus() {
     this.setAttributes(FormField.FOCUSED_FIELD_STATE);
     this._inputElement.focus();
   }
 
   protected checkBackendValidity(data: any) {
+    // GRZESIEK
     this.setError(this._inputElement, this._messageElement, data.message);
   }
 
@@ -201,6 +210,10 @@ export default class FormField extends Frame {
 
     this._inputElement.addEventListener('blur', () => {
       this.onBlur();
+    });
+
+    this._inputElement.addEventListener('click', (event: Event) => {
+      this.onClick(event);
     });
   }
 }
