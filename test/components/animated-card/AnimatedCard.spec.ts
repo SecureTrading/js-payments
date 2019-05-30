@@ -32,6 +32,7 @@ describe('Class AnimatedCard', () => {
     });
   });
 
+  // given
   describe('getLogo', () => {
     // then
     each(['amex', 'astropaycard', 'diners', 'discover', 'jcb', 'maestro', 'mastercard', 'piba', 'visa']).it(
@@ -51,18 +52,6 @@ describe('Class AnimatedCard', () => {
 
   // given
   describe('setSecurityCodeFocusEventListener', () => {
-    // then
-    it('should be triggered', () => {});
-  });
-
-  // given
-  describe('setSecurityCodeFocusEventListener', () => {
-    // then
-    it('should be triggered', () => {});
-  });
-
-  // given
-  describe('setSecurityCodePlaceholderContent', () => {
     // then
     it('should be triggered', () => {});
   });
@@ -91,7 +80,7 @@ describe('Class AnimatedCard', () => {
   });
 
   // given
-  describe('Method setLabels', () => {
+  describe('setLabels', () => {
     const { instance } = animatedCardFixture();
     // then
     it('should have set label text', () => {
@@ -112,7 +101,7 @@ describe('Class AnimatedCard', () => {
   });
 
   // given
-  describe('Method returnThemeClass', () => {
+  describe('returnThemeClass', () => {
     const { cardTypes, instance } = animatedCardFixture();
     // then
     each(cardTypes).it('should return proper name of class specified in parameter', (name: string) => {
@@ -121,7 +110,7 @@ describe('Class AnimatedCard', () => {
   });
 
   // given
-  describe('Method resetTheme', () => {
+  describe('resetTheme', () => {
     // given
     let { instance } = animatedCardFixture();
     const defaultFrontPageClassSet = `${AnimatedCard.CARD_CLASSES.CLASS_SIDE} ${AnimatedCard.CARD_CLASSES.CLASS_FRONT}`;
@@ -142,7 +131,7 @@ describe('Class AnimatedCard', () => {
   });
 
   // given
-  describe('Method setThemeClasses', () => {
+  describe('setThemeClasses', () => {
     // when
     let { instance, themeObjects } = animatedCardFixture();
 
@@ -157,6 +146,21 @@ describe('Class AnimatedCard', () => {
       instance.setThemeClasses();
       expect(instance.animatedCardBack.classList.contains(themeObject.type));
     });
+  });
+
+  // given
+  describe('setLogo', () => {
+    it('some test', () => {});
+  });
+
+  // given
+  describe('setTheme', () => {
+    it('some test', () => {});
+  });
+
+  // given
+  describe('setSecurityCodeOnProperSide', () => {
+    it('some test', () => {});
   });
 
   // given
