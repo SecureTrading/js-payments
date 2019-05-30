@@ -20,6 +20,54 @@ describe('Class AnimatedCard', () => {
   });
 
   // given
+  describe('setSecurityCodeChangeListener', () => {
+    const { instance } = animatedCardFixture();
+    // then
+    it('should be triggered', () => {});
+  });
+
+  // given
+  describe('setSecurityCodeFocusEventListener', () => {
+    // then
+    it('should be triggered', () => {});
+  });
+
+  // given
+  describe('setSecurityCodeFocusEventListener', () => {
+    // then
+    it('should be triggered', () => {});
+  });
+
+  // given
+  describe('setSecurityCodePlaceholderContent', () => {
+    // then
+    it('should be triggered', () => {});
+  });
+
+  // given
+  describe('setSecurityCodePlaceholderContent', () => {
+    const securityCodeLength = 3;
+    const securityCodeLengthExtended = 4;
+    const { instance } = animatedCardFixture();
+
+    // then
+    it('should return regular placeholder', () => {
+      instance.setSecurityCodePlaceholderContent(securityCodeLength);
+      expect(instance.animatedCardSecurityCodeFrontField.textContent).toEqual(
+        AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE
+      );
+    });
+
+    // then
+    it('should return extended placeholder', () => {
+      instance.setSecurityCodePlaceholderContent(securityCodeLengthExtended);
+      expect(instance.animatedCardSecurityCodeFrontField.textContent).toEqual(
+        AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED
+      );
+    });
+  });
+
+  // given
   describe('Method setLabels', () => {
     const { instance } = animatedCardFixture();
     // then

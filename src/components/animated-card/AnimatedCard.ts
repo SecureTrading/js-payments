@@ -100,9 +100,17 @@ class AnimatedCard extends Frame {
     this.setLabels();
     this.setDefaultInputsValues();
     this.setSubscribeEvents();
+    this.setSecurityCodeChangeListener();
+    this.setSecurityCodeFocusEventListener();
+  }
+
+  public setSecurityCodeChangeListener() {
     this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (length: number) => {
       this.setSecurityCodePlaceholderContent(length);
     });
+  }
+
+  public setSecurityCodeFocusEventListener() {
     this.messageBus.subscribe(MessageBus.EVENTS.FOCUS_SECURITY_CODE, (state: boolean) => {
       state ? this.shouldFlipCard() : this.flipCardBack();
     });
