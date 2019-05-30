@@ -1,4 +1,6 @@
 import SecurityCode from '../../../src/components/security-code/SecurityCode';
+import Formatter from '../../../src/core/shared/Formatter';
+import MessageBus from '../../../src/core/shared/MessageBus';
 import Selectors from '../../../src/core/shared/Selectors';
 import FormField from '../../../src/core/shared/FormField';
 
@@ -161,6 +163,20 @@ describe('SecurityCode', () => {
       // @ts-ignore
       expect(instance._messageBus.subscribe).toHaveBeenCalled();
     });
+
+    // then
+    it('should set default security code length if non Amex', () => {
+      // @ts-ignore
+      expect(instance.securityCodeLength).toEqual(SecurityCode.STANDARD_INPUT_LENGTH);
+    });
+
+    // then
+    it('should call setSecurityCodePattern function', () => {
+      // @ts-ignore
+      // expect(spy).toHaveBeenCalled();
+    });
+    // then
+    it('should return input pattern', () => {});
   });
 
   // given
