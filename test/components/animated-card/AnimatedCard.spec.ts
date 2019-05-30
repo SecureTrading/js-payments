@@ -32,6 +32,16 @@ describe('Class AnimatedCard', () => {
     });
   });
 
+  describe('getLogo', () => {
+    // then
+    each(['amex', 'astropaycard', 'diners', 'discover', 'jcb', 'maestro', 'mastercard', 'piba', 'visa']).it(
+      'should return logo content',
+      (logoName: string) => {
+        expect(AnimatedCard.getLogo(logoName)).toEqual(cardsLogos[logoName]);
+      }
+    );
+  });
+
   // given
   describe('setSecurityCodeChangeListener', () => {
     const { instance } = animatedCardFixture();
