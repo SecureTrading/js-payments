@@ -81,20 +81,36 @@ describe('SecurityCode', () => {
 
   // given
   describe('onBlur', () => {
+    const { instance } = securityCodeFixture();
+    // @ts-ignore
+    const spySendState = jest.spyOn(instance, 'sendState');
+
+    beforeEach(() => {
+      // @ts-ignore
+      instance.onBlur();
+    });
     // then
-    it('', () => {});
+    it('should publish method has been called', () => {
+      // @ts-ignore
+      expect(instance._messageBus.publish).toHaveBeenCalled();
+    });
+
+    // then
+    it('should sendState method has been called', () => {
+      // @ts-ignore
+      expect(spySendState).toHaveBeenCalled();
+    });
   });
 
   // given
-  describe('onInput', () => {
-    // then
-    it('', () => {});
-  });
+  describe('onInput', () => {});
 
   // given
   describe('onPaste', () => {
+    const { instance } = securityCodeFixture();
+
     // then
-    it('', () => {});
+    it('should isMaxLengthReached method has been called', () => {});
   });
 
   // given
@@ -135,8 +151,16 @@ describe('SecurityCode', () => {
 
   // given
   describe('subscribeSecurityCodeChange', () => {
+    const { instance } = securityCodeFixture();
+    beforeEach(() => {
+      // @ts-ignore
+      instance.subscribeSecurityCodeChange();
+    });
     // then
-    it('', () => {});
+    it('should call publish method', () => {
+      // @ts-ignore
+      expect(instance._messageBus.subscribe).toHaveBeenCalled();
+    });
   });
 
   // given
