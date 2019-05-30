@@ -8,27 +8,24 @@ import Selectors from '../../core/shared/Selectors';
 export default class SecurityCode extends FormField {
   // @ts-ignore
   public static ifFieldExists = (): HTMLInputElement => document.getElementById(Selectors.SECURITY_CODE_INPUT);
+
   private static STANDARD_INPUT_LENGTH: number = 3;
   private static SPECIAL_INPUT_LENGTH: number = 4;
-  private static STANDARD_LENGTH_PATTERN: string = '^[0-9]{3}$';
-  private static SPECIAL_LENGTH_PATTERN: string = '^[0-9]{4}$';
 
   public binLookup: BinLookup;
+
   private securityCodeLength: number;
 
   constructor() {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
-    this.securityCodeLength = 3;
+    this.securityCodeLength = SecurityCode.STANDARD_INPUT_LENGTH;
     this.binLookup = new BinLookup();
-    this.setSecurityCodeAttributes(SecurityCode.STANDARD_LENGTH_PATTERN);
-
-    if (this._inputElement.value) {
-      this.sendState();
-    }
+    this.setSecurityCodeAttributes(Formatter.STANDARD_LENGTH_PATTERN);
     this.subscribeSecurityCodeChange();
     this.setFocusListener();
     this.setDisableListener();
     this.backendValidation();
+    this.sendState();
   }
 
   public getLabel(): string {
@@ -115,10 +112,10 @@ export default class SecurityCode extends FormField {
    */
   private subscribeSecurityCodeChange() {
     this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (length: any) => {
-      let securityCodePattern = SecurityCode.STANDARD_LENGTH_PATTERN;
+      let securityCodePattern = Formatter.STANDARD_LENGTH_PATTERN;
       this.securityCodeLength = SecurityCode.STANDARD_INPUT_LENGTH;
       if (length === SecurityCode.SPECIAL_INPUT_LENGTH) {
-        securityCodePattern = SecurityCode.SPECIAL_LENGTH_PATTERN;
+        securityCodePattern = Formatter.SPECIAL_LENGTH_PATTERN;
         this.securityCodeLength = SecurityCode.SPECIAL_INPUT_LENGTH;
       }
       this.setSecurityCodeAttributes(securityCodePattern);

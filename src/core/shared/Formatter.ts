@@ -1,4 +1,7 @@
 export default abstract class Formatter {
+  public static STANDARD_LENGTH_PATTERN: string = '^[0-9]{3}$';
+  public static SPECIAL_LENGTH_PATTERN: string = '^[0-9]{4}$';
+
   public static trimNonNumeric(data: string): string {
     return data.trim().replace(Formatter.DATA_NON_NUMERIC, '');
   }
