@@ -20,6 +20,19 @@ describe('Class AnimatedCard', () => {
   });
 
   // given
+  describe('setCardDetail', () => {
+    // then
+    it('should return placeholder when value is not defined', () => {
+      expect(AnimatedCard.setCardDetail('', 'some placeholder')).toEqual('some placeholder');
+    });
+
+    // then
+    it('should return value when value is defined', () => {
+      expect(AnimatedCard.setCardDetail('some value', 'some placeholder')).toEqual('some value');
+    });
+  });
+
+  // given
   describe('setSecurityCodeChangeListener', () => {
     const { instance } = animatedCardFixture();
     // then
