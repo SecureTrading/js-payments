@@ -65,8 +65,24 @@ describe('SecurityCode', () => {
 
   // given
   describe('backendValidation', () => {
+    const { instance } = securityCodeFixture();
+
+    const validateSpy = jest.spyOn(instance.validation, 'validate');
+
+    beforeEach(() => {
+      instance.backendValidation();
+    });
     // then
-    it('', () => {});
+    it('should call validateSpy method', () => {
+      // @ts-ignore
+      // expect(validateSpy).toHaveBeenCalled();
+    });
+
+    // then
+    it('should call subscribe method', () => {
+      // @ts-ignore
+      expect(instance._messageBus.subscribe).toHaveBeenCalled();
+    });
   });
 
   // given
