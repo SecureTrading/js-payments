@@ -1,4 +1,3 @@
-import CardNumber from '../../../src/components/card-number/CardNumber';
 import SecurityCode from '../../../src/components/security-code/SecurityCode';
 import Selectors from '../../../src/core/shared/Selectors';
 import FormField from '../../../src/core/shared/FormField';
@@ -81,14 +80,28 @@ describe('SecurityCode', () => {
 
   // given
   describe('onKeyPress', () => {
+    const { instance } = securityCodeFixture();
+    // @ts-ignore
+    const spy = jest.spyOn(instance, 'isMaxLengthReached');
+    // @ts-ignore
+    const event = new KeyboardEvent('keydown', { keyCode: 37 });
     // then
-    it('', () => {});
+    it('should publish method has been called', () => {
+      // @ts-ignore
+      instance.onKeyPress(event);
+      expect(spy).toHaveBeenCalled();
+    });
   });
 
   // given
   describe('sendState', () => {
-    // then
-    it('', () => {});
+    const { instance } = securityCodeFixture();
+    it('should publish method has been called', () => {
+      // @ts-ignore
+      instance.sendState();
+      // @ts-ignore
+      expect(instance._messageBus.publish).toHaveBeenCalled();
+    });
   });
 
   // given
@@ -98,20 +111,44 @@ describe('SecurityCode', () => {
   });
 
   // given
-  describe('setSecurityCodeAttributes', () => {
+  describe('setSecurityCodePattern', () => {
+    const pattern = 'some243pa%^tern';
+    const { instance } = securityCodeFixture();
+    // @ts-ignore
+    instance.setSecurityCodePattern(pattern);
     // then
-    it('', () => {});
+    it('should set pattern attribute on input field', () => {
+      // @ts-ignore
+      expect(instance._inputElement.getAttribute('pattern')).toEqual(pattern);
+    });
   });
 
   // given
   describe('isMaxLengthReached', () => {
-    // then
-    it('should return false if max lenght has not been reached', () => {
-      const { instance } = securityCodeFixture();
+    const { instance } = securityCodeFixture();
+    let value = '123';
+    let valueMax = '1234';
+    // when
+    beforeEach(() => {
       // @ts-ignore
-      // instance._inputElement.value.length = 2;
+      instance.securityCodeLength = 4;
+    });
+
+    // then
+    it('should return false if max length has not been reached', () => {
+      // @ts-ignore
+      instance._inputElement.value = value;
       // @ts-ignore
       expect(instance.isMaxLengthReached()).toEqual(false);
+    });
+
+    // then
+    it('should return true if max length has been reached', () => {
+      const { instance } = securityCodeFixture();
+      // @ts-ignore
+      instance._inputElement.value = valueMax;
+      // @ts-ignore
+      expect(instance.isMaxLengthReached()).toEqual(true);
     });
   });
 });

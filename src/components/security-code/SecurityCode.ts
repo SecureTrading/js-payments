@@ -20,7 +20,7 @@ export default class SecurityCode extends FormField {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
     this.securityCodeLength = SecurityCode.STANDARD_INPUT_LENGTH;
     this.binLookup = new BinLookup();
-    this.setSecurityCodeAttributes(Formatter.STANDARD_LENGTH_PATTERN);
+    this.setSecurityCodePattern(Formatter.STANDARD_LENGTH_PATTERN);
     this.subscribeSecurityCodeChange();
     this.setFocusListener();
     this.setDisableListener();
@@ -118,7 +118,7 @@ export default class SecurityCode extends FormField {
         securityCodePattern = Formatter.SPECIAL_LENGTH_PATTERN;
         this.securityCodeLength = SecurityCode.SPECIAL_INPUT_LENGTH;
       }
-      this.setSecurityCodeAttributes(securityCodePattern);
+      this.setSecurityCodePattern(securityCodePattern);
       return securityCodePattern;
     });
   }
@@ -128,12 +128,12 @@ export default class SecurityCode extends FormField {
    * If length is not specified it takes 3 as length.
    * @param securityCodePattern
    */
-  private setSecurityCodeAttributes(securityCodePattern: string) {
+  private setSecurityCodePattern(securityCodePattern: string) {
     this.setAttributes({ pattern: securityCodePattern });
   }
 
   /**
-   *
+   * Checks if the max length of security code is reached
    */
-  private isMaxLengthReached = () => this._inputElement.value.length >= this.securityCodeLength;
+  private isMaxLengthReached = (): boolean => this._inputElement.value.length >= this.securityCodeLength;
 }
