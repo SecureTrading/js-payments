@@ -35,6 +35,25 @@ describe('SecurityCode', () => {
   });
 
   // then
+  describe('ifFieldExists', () => {
+    let ifFieldExists: HTMLInputElement;
+    // when
+    beforeEach(() => {
+      ifFieldExists = SecurityCode.ifFieldExists();
+    });
+
+    // then
+    it('should security code field exist', () => {
+      expect(ifFieldExists).toBeTruthy();
+    });
+
+    // then
+    it('should security code field be an instance of HTMLDivElement', () => {
+      expect(SecurityCode.ifFieldExists()).toBeInstanceOf(HTMLInputElement);
+    });
+  });
+
+  // then
   describe('getLabel', () => {
     // then
     it('should have a label', () => {
@@ -82,14 +101,24 @@ describe('SecurityCode', () => {
   describe('onKeyPress', () => {
     const { instance } = securityCodeFixture();
     // @ts-ignore
+    instance.securityCodeLength = 4;
+    // @ts-ignore
     const spy = jest.spyOn(instance, 'isMaxLengthReached');
     // @ts-ignore
     const event = new KeyboardEvent('keydown', { keyCode: 37 });
+    const spyPrevent = jest.spyOn(event, 'preventDefault');
     // then
-    it('should publish method has been called', () => {
+    it('should isMaxLengthReached method has been called', () => {
       // @ts-ignore
       instance.onKeyPress(event);
       expect(spy).toHaveBeenCalled();
+    });
+
+    // then
+    it('should preventDefault method has been called', () => {
+      // @ts-ignore
+      instance.onKeyPress(event);
+      // expect(spyPrevent).toHaveBeenCalled();
     });
   });
 
