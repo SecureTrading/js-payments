@@ -3,6 +3,13 @@ export default abstract class Formatter {
     return data.trim().replace(Formatter.DATA_NON_NUMERIC, '');
   }
 
+  public static trimNonNumericExceptSlash(data: string): string {
+    return data.trim().replace(Formatter.DATA_NON_NUMERIC_EXCEPT_SLASH, '');
+  }
+  public static trimNonNumericExceptSpace(data: string): string {
+    return data.trim().replace(Formatter.DATA_NON_NUMERIC_EXCEPT_SPACE, '');
+  }
+
   public static maskExpirationDate(data: string): string {
     const length = data.length;
     return length === 3 && data[2] !== '/' ? `${data[0]}${data[1]}/${data[2]}` : data;
@@ -21,6 +28,8 @@ export default abstract class Formatter {
   }
 
   private static DATA_NON_NUMERIC: RegExp = /\D/g;
+  private static DATA_NON_NUMERIC_EXCEPT_SLASH: RegExp = /[^0-9\/]/g;
+  private static DATA_NON_NUMERIC_EXCEPT_SPACE: RegExp = /[^0-9\ ]/g;
 
   private static EXPIRATION_DATE_DIGITS_AMOUNT = 4;
   private static EXPIRATION_DATE_FORMAT = /^([\d]{2})([\d]{2})$/;

@@ -1,4 +1,5 @@
 import BinLookup from '../../core/shared/BinLookup';
+import Formatter from '../../core/shared/Formatter';
 import FormField from '../../core/shared/FormField';
 import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
@@ -206,6 +207,7 @@ export default class CardNumber extends FormField {
 
   protected onInput(event: Event) {
     super.onInput(event);
+    this._inputElement.value = Formatter.trimNonNumericExceptSpace(this._inputElement.value);
     this.getMaxLengthOfCardNumber(this._inputElement.value);
     if (this.isMaxLengthReached()) {
       this._inputElement.value = this._inputElement.value.substring(0, this.cardNumberLength);
