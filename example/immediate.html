@@ -2,54 +2,55 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8"/>
   <meta name="viewport"
-    content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+  <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
   <title>Secure Trading Immediate Submit Form</title>
 </head>
 
 <body>
-  <form id="st-form" class="example-form" action="receipt.html">
-    <div id="st-notification-frame" class="example-form__group"></div>
-    </div>
-    <div id="st-control-frame" class="example-form__group"></div>
-  </form>
-  <script type="text/javascript" src="st.js"></script>
-  <script>
-      var parsedUrl = new URL(window.location.href);
+<form id="st-form" class="example-form" action="receipt.html">
+  <div id="st-notification-frame" class="example-form__group"></div>
+  </div>
+  <div id="st-control-frame" class="example-form__group"></div>
+</form>
+<script type="text/javascript" src="st.js"></script>
+<script>
+  (function() {
+    var parsedUrl = new URL(window.location.href);
 
-      var cardinalJwt =
-        'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU4NTUxMjA3LjEzNTU5NTMsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdDEiLCJsb2NhbGUiOiJlbl9HQiIsInBhbiI6IjQwMDAwMDAwMDAwMDEwMDAiLCJleHBpcnlkYXRlIjoiMDEvMjIiLCJzZWN1cml0eWNvZGUiOiIxMjMifX0.V_-f5m35ADC4Y9t17mZjaHgNt_0GXMqPhxJWohAYwSA';
-      var cardinalJwtStatusU =
-        'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU4NTUxMjc4LjA0Nzk0NSwicGF5bG9hZCI6eyJiYXNlYW1vdW50IjoiMTAwMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiNDAwMDAwMDAwMDAwMTAzNCIsImV4cGlyeWRhdGUiOiIwMS8yMiIsInNlY3VyaXR5Y29kZSI6IjEyMyJ9fQ.6i7QGMCf-ISvsD6q6dp4jk3QDkyP-Ol1Ud_y3amu458';
+    var cardinalJwt =
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU4NTUxMjA3LjEzNTU5NTMsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdDEiLCJsb2NhbGUiOiJlbl9HQiIsInBhbiI6IjQwMDAwMDAwMDAwMDEwMDAiLCJleHBpcnlkYXRlIjoiMDEvMjIiLCJzZWN1cml0eWNvZGUiOiIxMjMifX0.V_-f5m35ADC4Y9t17mZjaHgNt_0GXMqPhxJWohAYwSA';
+    var cardinalJwtStatusU =
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU4NTUxMjc4LjA0Nzk0NSwicGF5bG9hZCI6eyJiYXNlYW1vdW50IjoiMTAwMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiNDAwMDAwMDAwMDAwMTAzNCIsImV4cGlyeWRhdGUiOiIwMS8yMiIsInNlY3VyaXR5Y29kZSI6IjEyMyJ9fQ.6i7QGMCf-ISvsD6q6dp4jk3QDkyP-Ol1Ud_y3amu458';
 
-      var cardinalJwtEnrolledU =
-        'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU4NTUxMzY5LjQzMTE5MTIsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdDEiLCJsb2NhbGUiOiJlbl9HQiIsInBhbiI6IjQwMDAwMDAwMDAwMDEwNTkiLCJleHBpcnlkYXRlIjoiMDEvMjIiLCJzZWN1cml0eWNvZGUiOiIxMjMifX0.kx5GQOCEZCY6MvDuBYvJzImwlVJngr9CGwe1ddS888A';
+    var cardinalJwtEnrolledU =
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU4NTUxMzY5LjQzMTE5MTIsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdDEiLCJsb2NhbGUiOiJlbl9HQiIsInBhbiI6IjQwMDAwMDAwMDAwMDEwNTkiLCJleHBpcnlkYXRlIjoiMDEvMjIiLCJzZWN1cml0eWNvZGUiOiIxMjMifX0.kx5GQOCEZCY6MvDuBYvJzImwlVJngr9CGwe1ddS888A';
 
-      var cardinalJwt3DSV1 =
-        'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU4NTUxNDQ0LjMzOTkzMzIsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdDEiLCJsb2NhbGUiOiJlbl9HQiIsInBhbiI6IjQwMDAwMDAwMDAwMDAwMDIiLCJleHBpcnlkYXRlIjoiMDEvMjIiLCJzZWN1cml0eWNvZGUiOiIxMjMifX0.qJ49380AXb6lO7Ik0uZ1c4P8bJU4nyBDP5Fw7C0MCSU';
+    var cardinalJwt3DSV1 =
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU4NTUxNDQ0LjMzOTkzMzIsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdDEiLCJsb2NhbGUiOiJlbl9HQiIsInBhbiI6IjQwMDAwMDAwMDAwMDAwMDIiLCJleHBpcnlkYXRlIjoiMDEvMjIiLCJzZWN1cml0eWNvZGUiOiIxMjMifX0.qJ49380AXb6lO7Ik0uZ1c4P8bJU4nyBDP5Fw7C0MCSU';
 
-      var jwt = parsedUrl.searchParams.get('jwt') || cardinalJwt;
+    var jwt = cardinalJwt3DSV1;
 
-      var st = SecureTrading({
-        jwt,
-        styles: {
-          'background-color-input': 'AliceBlue',
-          'background-color-input-error': '#f8d7da',
-          'color-input-error': '#721c24',
-          'font-size-input': '12px',
-          'line-height-input': '12px'
-        },
-        submitOnError: true
-      });
+    var st = SecureTrading({
+      jwt,
+      styles: {
+        'background-color-input': 'AliceBlue',
+        'background-color-input-error': '#f8d7da',
+        'color-input-error': '#721c24',
+        'font-size-input': '12px',
+        'line-height-input': '12px',
+      },
+      submitOnError: true,
+    });
 
-      st.Components({
-        startOnLoad: true
-      });
-    })();
+    st.Components({
+      startOnLoad: true,
+    });
+  })();
 
-  </script>
+</script>
 </body>
 
 </html>
