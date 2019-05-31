@@ -47,9 +47,9 @@ jobs:
     # - name: 'Behavioural test: ie 10'
     #   script:
     #     - npm run behave -- test_ie_10_w8
-    # - name: 'Behavioural test: ie 11'
-    #   script:
-    #     - npm run behave -- test_ie_11_w8
+    - name: 'Behavioural test: IE 11, Windows 10'
+      script:
+        - npm run behave -- test_ie_11_w10
     # - name: 'Behavioural test: safari 11'
     #   script:
     #     - npm run behave -- test_safari_11_osxhs
