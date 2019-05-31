@@ -4,7 +4,7 @@ function addInput(form: any, name: string, value: string, stName?: string) {
   input.name = name;
   input.value = value;
   if (stName) {
-    input.dataset.stName = stName;
+    input.setAttribute('data-st-name', stName);
   }
   form.appendChild(input);
 }
@@ -18,7 +18,7 @@ function createFormFixture() {
   addInput(form, 'duplicate', 'value2', 'stDuplicate');
   const select = document.createElement('select');
   select.name = 'selectField';
-  select.dataset.stName = 'stSelectName';
+  select.setAttribute('data-st-name', 'stSelectName');
   const opt1 = document.createElement('option');
   const opt2 = document.createElement('option');
   opt1.value = 'A';

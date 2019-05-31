@@ -36,6 +36,9 @@
   "homepage": "https://github.com/SecureTrading/js-payments#readme",
   "devDependencies": {
     "@babel/core": "^7.4.5",
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@babel/plugin-transform-runtime": "^7.4.4",
+    "@babel/plugin-transform-typescript": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
     "@babel/preset-typescript": "^7.3.3",
     "@types/jest": "^24.0.13",
@@ -54,6 +57,7 @@
     "jest": "^24.8.0",
     "jest-each": "^24.8.0",
     "jest-fetch-mock": "^2.1.2",
+    "jest-get-type": "^24.8.0",
     "live-server": "^1.2.1",
     "local-web-server": "^2.6.1",
     "mini-css-extract-plugin": "^0.6.0",
@@ -83,11 +87,14 @@
     "webpack-merge": "^4.2.1"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.4.4",
+    "@babel/runtime": "^7.4.5",
     "@types/jwt-decode": "^2.2.1",
     "i18next": "^15.1.3",
-    "jest-get-type": "^24.8.0",
     "jwt-decode": "^2.2.0",
+    "location-origin": "^1.1.4",
     "ts-money": "^0.4.6",
-    "url-polyfill": "^1.1.5"
+    "url-polyfill": "^1.1.5",
+    "whatwg-fetch": "^3.0.0"
   }
 }

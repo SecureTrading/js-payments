@@ -15,7 +15,10 @@ module.exports = merge(common, {
     host: '0.0.0.0',
     writeToDisk: true,
     index: '',
-    disableHostCheck: true
+    disableHostCheck: true,
+    watchOptions: {
+      ignored: ['node_modules']
+    }
   },
   plugins: [new ManifestPlugin(), new TypedocWebpackPlugin({}), new webpack.HotModuleReplacementPlugin()]
 });
