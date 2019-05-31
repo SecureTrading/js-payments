@@ -1,5 +1,5 @@
 import JwtDecode from 'jwt-decode';
-// import { Currencies, Money } from 'ts-money';
+import { Currencies, Money } from 'ts-money';
 
 export interface IStJwtPayload {
   [key: string]: string;
@@ -56,14 +56,13 @@ export class StJwt {
    * @return The mainamount calculated using the encoded payload
    */
   public get mainamount() {
-    const mainamount = this.payload.mainamount;
+    let mainamount = this.payload.mainamount;
     if (mainamount === undefined) {
-      // TODO fix me
       // Merchants can specify amount in main or base units so need to convert to main
-      // mainamount = Money.fromInteger({
-      //   amount: parseInt(this.payload.baseamount, 10),
-      //   currency: this.currency
-      // }).toString();
+      mainamount = Money.fromInteger({
+        amount: parseInt(this.payload.baseamount, 10),
+        currency: this.currency
+      }).toString();
     }
     return mainamount;
   }
