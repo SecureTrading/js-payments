@@ -14,7 +14,10 @@ module.exports = merge(common, {
     hot: true,
     host: '0.0.0.0',
     writeToDisk: true,
-    disableHostCheck: true
+    disableHostCheck: true,
+    watchOptions: {
+      ignored: ['node_modules']
+    }
   },
   plugins: [
     new ManifestPlugin(),

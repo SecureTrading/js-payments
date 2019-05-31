@@ -2,7 +2,6 @@
  * STJS Library.
  * This file contains logic for all ST form fields served inside IFRAME.
  */
-import '@babel/polyfill';
 import 'location-origin';
 import 'url-polyfill';
 import './animated-card/animated-card';

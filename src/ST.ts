@@ -1,4 +1,3 @@
-import '@babel/polyfill';
 import 'location-origin';
 import 'url-polyfill';
 import 'whatwg-fetch';
