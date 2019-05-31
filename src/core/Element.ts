@@ -86,6 +86,13 @@ export default class Element {
     const iframe = Element.createFormElement('iframe', fieldId);
     iframe.setAttribute('src', this.iframeSrc);
     iframe.setAttribute('name', fieldId);
+    iframe.setAttribute('allowtransparency', 'true');
+    iframe.setAttribute('scrolling', 'no');
+    iframe.setAttribute('frameborder', '0');
+    iframe.setAttribute(
+      'style',
+      'border: medium none !important; margin: 0px !important; padding: 0px !important; width: 1px !important; min-width: 100% !important; overflow: hidden !important; display: block !important;'
+    );
     return iframe;
   }
 }
