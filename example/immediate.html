@@ -30,7 +30,7 @@
       var cardinalJwt3DSV1 =
         'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU4NTUxNDQ0LjMzOTkzMzIsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdDEiLCJsb2NhbGUiOiJlbl9HQiIsInBhbiI6IjQwMDAwMDAwMDAwMDAwMDIiLCJleHBpcnlkYXRlIjoiMDEvMjIiLCJzZWN1cml0eWNvZGUiOiIxMjMifX0.qJ49380AXb6lO7Ik0uZ1c4P8bJU4nyBDP5Fw7C0MCSU';
 
-      var jwt = cardinalJwt3DSV1;
+      var jwt = parsedUrl.searchParams.get('jwt') || cardinalJwt;
 
       var st = SecureTrading({
         jwt,

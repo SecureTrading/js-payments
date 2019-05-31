@@ -39,8 +39,8 @@ export class StJwt {
   }
 
   private get currency() {
-    // TODO why is this needed anymore?
-    return this.payload.currencyiso3a;
+    // Currencies doesn't define index signature so treating as 'any'
+    return (Currencies as any)[this.payload.currencyiso3a];
   }
 
   /**
