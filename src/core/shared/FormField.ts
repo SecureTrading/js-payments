@@ -186,4 +186,10 @@ export default class FormField extends Frame {
       this.onBlur(event);
     });
   }
+  private _addTabListener() {
+    // TODO unittest
+    window.addEventListener('focus', e => {
+      this._inputElement.focus();
+    });
+  }
 }
