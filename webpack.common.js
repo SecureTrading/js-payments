@@ -119,9 +119,14 @@ module.exports = {
         use: ['file-loader']
       },
       {
-        test: /\.tsx?$/,
-        use: 'ts-loader',
-        exclude: /node_modules/
+        test: /\.tsx?|js$/,
+        use: 'babel-loader',
+        include: [
+          path.join(__dirname, 'src'),
+          path.join(__dirname, 'test'),
+          path.join(__dirname, 'example'),
+          path.join(__dirname, 'node_modules/ts-money')
+        ]
       },
       {
         test: /\.ts$/,

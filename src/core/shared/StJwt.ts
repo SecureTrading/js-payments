@@ -1,4 +1,4 @@
-import * as JwtDecode from 'jwt-decode';
+import JwtDecode from 'jwt-decode';
 import { Currencies, Money } from 'ts-money';
 
 export interface IStJwtPayload {

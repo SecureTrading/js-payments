@@ -74,8 +74,8 @@ class DomMethods {
     const els = this.getAllFormElements(form);
     const result: any = {};
     for (const el of els) {
-      if (el.dataset.stName) {
-        result[el.dataset.stName] = el.value;
+      if (el.hasAttribute('data-st-name')) {
+        result[el.getAttribute('data-st-name')] = el.value;
       }
     }
     return result;
