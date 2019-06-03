@@ -183,10 +183,10 @@ export default class CardFrames extends RegisterFrames {
    */
   private subscribeBlockSubmit() {
     this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (data: any) => {
-      CardFrames.disableSubmitButton(data.state);
-      this.disableFormField(data.state, MessageBus.EVENTS.BLOCK_CARD_NUMBER);
-      this.disableFormField(data.state, MessageBus.EVENTS.BLOCK_EXPIRATION_DATE);
-      this.disableFormField(data.state, MessageBus.EVENTS.BLOCK_SECURITY_CODE);
+      CardFrames.disableSubmitButton(data);
+      this.disableFormField(data, MessageBus.EVENTS.BLOCK_CARD_NUMBER);
+      this.disableFormField(data, MessageBus.EVENTS.BLOCK_EXPIRATION_DATE);
+      this.disableFormField(data, MessageBus.EVENTS.BLOCK_SECURITY_CODE);
     });
   }
 

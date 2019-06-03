@@ -131,7 +131,7 @@ export default class Validation extends Frame {
    */
   public blockForm(state: boolean) {
     const messageBusEvent: IMessageBusEvent = {
-      data: { state },
+      data: state,
       type: MessageBus.EVENTS.BLOCK_FORM
     };
     this._messageBus.publish(messageBusEvent, true);
