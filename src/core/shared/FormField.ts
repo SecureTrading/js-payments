@@ -187,10 +187,14 @@ export default class FormField extends Frame {
       this.onBlur(event);
     });
   }
+
+  private _onFocus() {
+    this._inputElement.focus();
+  }
+
   private _addTabListener() {
-    // TODO unittest
     window.addEventListener('focus', e => {
-      this._inputElement.focus();
+      this._onFocus();
     });
   }
 }
