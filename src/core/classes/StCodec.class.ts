@@ -65,7 +65,6 @@ class StCodec {
       if (responseContent.errorcode !== StCodec.STATUS_CODES.ok) {
         if (responseContent.errorcode === StCodec.STATUS_CODES.invalidfield) {
           validation.getErrorData(StCodec.getErrorData(responseContent));
-          validation.blockForm(false);
         }
         StCodec._notification.error(responseContent.errormessage);
         throw new Error(responseContent.errormessage);

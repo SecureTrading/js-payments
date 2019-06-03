@@ -182,7 +182,7 @@ export default class CardFrames extends RegisterFrames {
    * Checks if submit button needs to be blocked.
    */
   private subscribeBlockSubmit() {
-    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (data: any) => {
+    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (data: boolean) => {
       CardFrames.disableSubmitButton(data);
       this.disableFormField(data, MessageBus.EVENTS.BLOCK_CARD_NUMBER);
       this.disableFormField(data, MessageBus.EVENTS.BLOCK_EXPIRATION_DATE);

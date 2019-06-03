@@ -185,9 +185,15 @@ export default class CardNumber extends FormField {
 
   public setDisableListener() {
     this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_CARD_NUMBER, (state: boolean) => {
-      // @ts-ignore
-      this._inputElement.setAttribute('disabled', state);
-      this._inputElement.classList.add('st-input--disabled');
+      if (state) {
+        // @ts-ignore
+        this._inputElement.setAttribute('disabled', state);
+        this._inputElement.classList.add('st-input--disabled');
+      } else {
+        // @ts-ignore
+        this._inputElement.removeAttribute('disabled');
+        this._inputElement.classList.remove('st-input--disabled');
+      }
     });
   }
 

@@ -48,9 +48,15 @@ export default class SecurityCode extends FormField {
 
   public setDisableListener() {
     this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_SECURITY_CODE, (state: boolean) => {
-      // @ts-ignore
-      this._inputElement.setAttribute('disabled', state);
-      this._inputElement.classList.add('st-input--disabled');
+      if (state) {
+        // @ts-ignore
+        this._inputElement.setAttribute('disabled', state);
+        this._inputElement.classList.add('st-input--disabled');
+      } else {
+        // @ts-ignore
+        this._inputElement.removeAttribute('disabled');
+        this._inputElement.classList.remove('st-input--disabled');
+      }
     });
   }
 
