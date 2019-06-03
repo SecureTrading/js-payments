@@ -34,6 +34,7 @@ export default class FormField extends Frame {
     super.onInit();
     this._translator = new Translator(this._params.locale);
     this.setLabelText();
+    this._addTabListener();
   }
 
   public getLabel(): string {
