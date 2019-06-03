@@ -146,6 +146,15 @@ describe('Class AnimatedCard', () => {
       instance.setThemeClasses();
       expect(instance.animatedCardBack.classList.contains(themeObject.type));
     });
+
+    // then
+    it('should add standard standard theme if type is not defined', () => {
+      instance.cardDetails.typ = undefined;
+      instance.setThemeClasses();
+      expect(instance.animatedCardLogoBackground.classList.contains(AnimatedCard.CARD_CLASSES.CLASS_LOGO)).toEqual(
+        true
+      );
+    });
   });
 
   // given
@@ -295,6 +304,25 @@ describe('Class AnimatedCard', () => {
       instance.animatedCardSecurityCode.onfocus = () => {
         expect(spy).toHaveBeenCalledTimes(functionCalls);
       };
+    });
+  });
+
+  // given
+  describe('setCardType', () => {
+    let instance: any;
+    beforeEach(() => {
+      instance = animatedCardFixture().instance;
+    });
+    it('should set card type', () => {
+      expect(instance.setCardType('400000')).toEqual('visa');
+    });
+  });
+
+  // given
+  describe('AnimatedCard.getLogo', () => {
+    const { cardTypes } = animatedCardFixture();
+    each(cardTypes).it('should set card type', type => {
+      expect(AnimatedCard.getLogo(type[0])).toEqual(cardsLogos[type[0]]);
     });
   });
 });
