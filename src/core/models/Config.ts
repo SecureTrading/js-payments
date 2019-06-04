@@ -12,6 +12,8 @@ export interface IConfig {
 }
 
 export interface IComponentsConfig {
+  defaultPaymentType: string;
+  paymentTypes?: string[];
   startOnLoad?: boolean;
 }
 

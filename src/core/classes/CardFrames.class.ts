@@ -47,9 +47,20 @@ export default class CardFrames extends RegisterFrames {
   private animatedCard: Element;
   private messageBus: MessageBus;
   private messageBusEvent: IMessageBusEvent;
+  private _paymentTypes: string[];
+  private _defaultPaymentType: string;
 
-  constructor(jwt: any, origin: any, componentIds: [], styles: IStyles) {
+  constructor(
+    jwt: any,
+    origin: any,
+    componentIds: [],
+    styles: IStyles,
+    paymentTypes: string[],
+    defaultPaymentType: string
+  ) {
     super(jwt, origin, componentIds, styles);
+    this._paymentTypes = paymentTypes;
+    this._defaultPaymentType = defaultPaymentType;
     this.messageBus = new MessageBus();
     this._onInit();
   }
@@ -93,7 +104,15 @@ export default class CardFrames extends RegisterFrames {
     this.securityCodeMounted = this.securityCode.mount(Selectors.SECURITY_CODE_IFRAME);
     this.elementsToRegister.push(this.securityCodeMounted);
 
-    this.animatedCard.create(Selectors.ANIMATED_CARD_COMPONENT_NAME, {}, this.params);
+    const animatedCardConfig = { ...this.params };
+    if (this._paymentTypes !== undefined) {
+      animatedCardConfig.paymentTypes = this._paymentTypes;
+    }
+    if (this._defaultPaymentType !== undefined) {
+      animatedCardConfig.defaultPaymentType = this._defaultPaymentType;
+    }
+
+    this.animatedCard.create(Selectors.ANIMATED_CARD_COMPONENT_NAME, {}, animatedCardConfig);
     this.animatedCardMounted = this.animatedCard.mount(Selectors.ANIMATED_CARD_COMPONENT_FRAME);
     this.elementsToRegister.push(this.animatedCardMounted);
   }

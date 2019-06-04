@@ -56,7 +56,14 @@ class ST {
     config = config ? config : {};
     config.startOnLoad = config.startOnLoad !== undefined ? config.startOnLoad : false;
     if (!config.startOnLoad) {
-      const instance = new CardFrames(this.jwt, this.origin, this.componentIds, this.styles);
+      const instance = new CardFrames(
+        this.jwt,
+        this.origin,
+        this.componentIds,
+        this.styles,
+        config.paymentTypes,
+        config.defaultPaymentType
+      );
     }
     const cardinal = environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce;
     const cardinalInstance = new cardinal(this.tokenise, config.startOnLoad, this.jwt);
