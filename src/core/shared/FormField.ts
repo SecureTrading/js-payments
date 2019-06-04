@@ -38,6 +38,7 @@ export default class FormField extends Frame {
     this._translator = new Translator(this._params.locale);
     this.validation = new Validation();
     this.setLabelText();
+    this._addTabListener();
     this.setValidationAttributes({ 'data-clicked': false });
   }
 
@@ -183,7 +184,6 @@ export default class FormField extends Frame {
   }
 
   protected checkBackendValidity(data: any) {
-    // GRZESIEK
     this.setError(this._inputElement, this._messageElement, data.message);
   }
 
@@ -214,6 +214,16 @@ export default class FormField extends Frame {
 
     this._inputElement.addEventListener('click', (event: Event) => {
       this.onClick(event);
+    });
+  }
+
+  private _onFocus() {
+    this._inputElement.focus();
+  }
+
+  private _addTabListener() {
+    window.addEventListener('focus', e => {
+      this._onFocus();
     });
   }
 }

@@ -6,6 +6,12 @@
   height: 8.1rem;
   width: 100%;
   border: 0;
+
+  &:hover,
+  &:focus,
+  &:active {
+    outline: none;
+  }
 }
 
 .example-form iframe {

@@ -40,6 +40,8 @@ body {
     left: 0;
     background: $default-gradient;
     backface-visibility: hidden;
+    transition: 1.2s ease-in-out;
+    transform-style: preserve-3d;
     border-radius: 1.5rem;
     box-shadow: 0 0 2rem 0 rgba(0, 0, 0, 0.24);
     box-sizing: border-box;
@@ -120,8 +122,6 @@ body {
   }
 
   &__front {
-    @include flipY(0deg);
-
     &::after,
     &::before {
       position: absolute;
@@ -151,14 +151,20 @@ body {
     @include flipY(180deg);
   }
 
-  &__flip-card &__content {
+  &__front {
+    @include flipY(0deg);
+  }
+
+  &__flip-card &__front {
     @include flipY(-180deg);
+  }
+
+  &__flip-card &__back {
+    @include flipY(0deg);
   }
 
   &__content {
     position: relative;
-    transition: 1.2s;
-    transform-style: preserve-3d;
   }
 
   &__logos {
