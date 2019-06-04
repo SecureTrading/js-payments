@@ -97,7 +97,7 @@ class AnimatedCard extends Frame {
     this.setLabels();
     this.setDefaultInputsValues();
     this.setSubscribeEvents();
-    this.onCardNumberChanged({ value: '', formattedValue: '' }); // Need to call this to use the default card type
+    this.onCardNumberChanged({ formattedValue: '', value: '' }); // Need to call this to use the default card type
   }
 
   public setLabels() {
@@ -327,7 +327,7 @@ class AnimatedCard extends Frame {
     if (this._params.paymentTypes !== undefined) {
       binLookupConfig.supported = this._params.paymentTypes.split(',');
     }
-    if (this._params.paymentTypes !== undefined) {
+    if (this._params.defaultPaymentType !== undefined) {
       binLookupConfig.defaultCardType = this._params.defaultPaymentType;
     }
     return binLookupConfig;
