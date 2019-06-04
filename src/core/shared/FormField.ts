@@ -6,11 +6,13 @@ import { Translator } from './Translator';
 import Validation from './Validation';
 
 export default class FormField extends Frame {
+  private static FOCUSED_FIELD_STATE = { 'data-pristine': false, 'data-dirty': true };
+  public validation: Validation;
   protected _inputSelector: string;
   protected _messageSelector: string;
   protected _labelSelector: string;
   protected _inputElement: HTMLInputElement;
-  protected _messageElement: HTMLParagraphElement;
+  protected _messageElement: HTMLDivElement;
   protected _labelElement: HTMLLabelElement;
   private _translator: Translator;
 
@@ -22,6 +24,7 @@ export default class FormField extends Frame {
     this._messageElement = document.getElementById(messageSelector);
     // @ts-ignore
     this._labelElement = document.getElementById(labelSelector);
+    // @ts-ignore
 
     this._inputSelector = inputSelector;
     this._messageSelector = messageSelector;
@@ -33,12 +36,29 @@ export default class FormField extends Frame {
   public onInit() {
     super.onInit();
     this._translator = new Translator(this._params.locale);
+    this.validation = new Validation();
     this.setLabelText();
     this._addTabListener();
+    this.setValidationAttributes({ 'data-clicked': false });
   }
 
   public getLabel(): string {
     throw new Error(Language.translations.NOT_IMPLEMENTED_ERROR);
+  }
+
+  public setValidationAttributes(attributes?: any) {
+    this.setAttributes({
+      'data-dirty': false,
+      'data-pristine': true,
+      'data-validity': false,
+      ...attributes
+    });
+  }
+
+  public setError(inputElement: any, messageElement: any, message: string) {
+    inputElement.classList.add('error-field');
+    messageElement.innerText = this._translator.translate(message);
+    this._inputElement.setCustomValidity(message);
   }
 
   protected setLabelText() {
@@ -48,7 +68,7 @@ export default class FormField extends Frame {
   protected _getAllowedStyles() {
     let allowed = super._getAllowedStyles();
     const input = `#${this._inputSelector}`;
-    const inputError = `${input}:invalid:focus`;
+    const inputError = `#${this._inputSelector}.error-field`;
     const inputPlaceholder = `${input}::placeholder`;
     const message = `#${this._messageSelector}`;
     const label = `label[for=${this._inputSelector}]`;
@@ -107,26 +127,31 @@ export default class FormField extends Frame {
   }
 
   protected onInput(event: Event) {
+    this.setCustomValidationError('');
     this.format(this._inputElement.value);
-    this.validate();
   }
 
   protected onFocus(event: Event) {
     this.focus();
   }
 
-  protected onBlur(event: Event) {
+  protected onClick(event: Event) {
+    this.click();
+  }
+
+  protected onBlur() {
+    this.validation.validate(this._inputElement, this._messageElement);
     this.blur();
   }
 
   protected onPaste(event: ClipboardEvent) {
     let clipboardData: string;
-
     event.preventDefault();
-
     clipboardData = event.clipboardData.getData('text/plain');
     this._inputElement.value = Formatter.trimNonNumeric(clipboardData);
-    this.validate();
+    this.setCustomValidationError('');
+    this.format(this._inputElement.value);
+    this.validation.validate(this._inputElement, this._messageElement);
   }
 
   protected setAttributes(attributes: object) {
@@ -137,21 +162,8 @@ export default class FormField extends Frame {
     }
   }
 
-  /**
-   * Method placed errorMessage inside chosen container (specified by id).
-   * @param messageText
-   */
-  protected setMessage(messageText: string) {
-    this._messageElement.innerText = this._translator.translate(messageText);
-  }
-
   protected setValue(value: string) {
     this._inputElement.value = value;
-  }
-
-  protected validate() {
-    const validationMessage: string = Validation.getValidationMessage(this._inputElement.validity);
-    this.setMessage(validationMessage);
   }
 
   protected format(data: string) {
@@ -162,8 +174,21 @@ export default class FormField extends Frame {
     this._inputElement.blur();
   }
 
+  protected click() {
+    this._inputElement.click();
+  }
+
   protected focus() {
+    this.setAttributes(FormField.FOCUSED_FIELD_STATE);
     this._inputElement.focus();
+  }
+
+  protected checkBackendValidity(data: any) {
+    this.setError(this._inputElement, this._messageElement, data.message);
+  }
+
+  private setCustomValidationError(errorContent: string) {
+    this._inputElement.setCustomValidity(errorContent);
   }
 
   private setInputListeners() {
@@ -183,8 +208,12 @@ export default class FormField extends Frame {
       this.onFocus(event);
     });
 
-    this._inputElement.addEventListener('blur', (event: Event) => {
-      this.onBlur(event);
+    this._inputElement.addEventListener('blur', () => {
+      this.onBlur();
+    });
+
+    this._inputElement.addEventListener('click', (event: Event) => {
+      this.onClick(event);
     });
   }
 

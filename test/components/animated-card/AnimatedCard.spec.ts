@@ -20,7 +20,67 @@ describe('Class AnimatedCard', () => {
   });
 
   // given
-  describe('Method setLabels', () => {
+  describe('setCardDetail', () => {
+    // then
+    it('should return placeholder when value is not defined', () => {
+      expect(AnimatedCard.setCardDetail('', 'some placeholder')).toEqual('some placeholder');
+    });
+
+    // then
+    it('should return value when value is defined', () => {
+      expect(AnimatedCard.setCardDetail('some value', 'some placeholder')).toEqual('some value');
+    });
+  });
+
+  // given
+  describe('getLogo', () => {
+    // then
+    each(['amex', 'astropaycard', 'diners', 'discover', 'jcb', 'maestro', 'mastercard', 'piba', 'visa']).it(
+      'should return logo content',
+      (logoName: string) => {
+        expect(AnimatedCard.getLogo(logoName)).toEqual(cardsLogos[logoName]);
+      }
+    );
+  });
+
+  // given
+  describe('setSecurityCodeChangeListener', () => {
+    const { instance } = animatedCardFixture();
+    // then
+    it('should be triggered', () => {});
+  });
+
+  // given
+  describe('setSecurityCodeFocusEventListener', () => {
+    // then
+    it('should be triggered', () => {});
+  });
+
+  // given
+  describe('setSecurityCodePlaceholderContent', () => {
+    const securityCodeLength = 3;
+    const securityCodeLengthExtended = 4;
+    const { instance } = animatedCardFixture();
+
+    // then
+    it('should return regular placeholder', () => {
+      instance.setSecurityCodePlaceholderContent(securityCodeLength);
+      expect(instance.animatedCardSecurityCodeFrontField.textContent).toEqual(
+        AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE
+      );
+    });
+
+    // then
+    it('should return extended placeholder', () => {
+      instance.setSecurityCodePlaceholderContent(securityCodeLengthExtended);
+      expect(instance.animatedCardSecurityCodeFrontField.textContent).toEqual(
+        AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED
+      );
+    });
+  });
+
+  // given
+  describe('setLabels', () => {
     const { instance } = animatedCardFixture();
     // then
     it('should have set label text', () => {
@@ -41,7 +101,7 @@ describe('Class AnimatedCard', () => {
   });
 
   // given
-  describe('Method returnThemeClass', () => {
+  describe('returnThemeClass', () => {
     const { cardTypes, instance } = animatedCardFixture();
     // then
     each(cardTypes).it('should return proper name of class specified in parameter', (name: string) => {
@@ -50,7 +110,7 @@ describe('Class AnimatedCard', () => {
   });
 
   // given
-  describe('Method resetTheme', () => {
+  describe('resetTheme', () => {
     // given
     let { instance } = animatedCardFixture();
     const defaultFrontPageClassSet = `${AnimatedCard.CARD_CLASSES.CLASS_SIDE} ${AnimatedCard.CARD_CLASSES.CLASS_FRONT}`;
@@ -71,7 +131,7 @@ describe('Class AnimatedCard', () => {
   });
 
   // given
-  describe('Method setThemeClasses', () => {
+  describe('setThemeClasses', () => {
     // when
     let { instance, themeObjects } = animatedCardFixture();
 
@@ -86,6 +146,30 @@ describe('Class AnimatedCard', () => {
       instance.setThemeClasses();
       expect(instance.animatedCardBack.classList.contains(themeObject.type));
     });
+
+    // then
+    it('should add standard standard theme if type is not defined', () => {
+      instance.cardDetails.typ = undefined;
+      instance.setThemeClasses();
+      expect(instance.animatedCardLogoBackground.classList.contains(AnimatedCard.CARD_CLASSES.CLASS_LOGO)).toEqual(
+        true
+      );
+    });
+  });
+
+  // given
+  describe('setLogo', () => {
+    it('some test', () => {});
+  });
+
+  // given
+  describe('setTheme', () => {
+    it('some test', () => {});
+  });
+
+  // given
+  describe('setSecurityCodeOnProperSide', () => {
+    it('some test', () => {});
   });
 
   // given
@@ -220,6 +304,25 @@ describe('Class AnimatedCard', () => {
       instance.animatedCardSecurityCode.onfocus = () => {
         expect(spy).toHaveBeenCalledTimes(functionCalls);
       };
+    });
+  });
+
+  // given
+  describe('setCardType', () => {
+    let instance: any;
+    beforeEach(() => {
+      instance = animatedCardFixture().instance;
+    });
+    it('should set card type', () => {
+      expect(instance.setCardType('400000')).toEqual('visa');
+    });
+  });
+
+  // given
+  describe('AnimatedCard.getLogo', () => {
+    const { cardTypes } = animatedCardFixture();
+    each(cardTypes).it('should set card type', type => {
+      expect(AnimatedCard.getLogo(type[0])).toEqual(cardsLogos[type[0]]);
     });
   });
 });

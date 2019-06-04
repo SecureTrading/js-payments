@@ -4,6 +4,14 @@
     for="st-card-number-input"
     class="card-number__label card-number__label--required"
   ></label>
-  <input id="st-card-number-input" class="card-number__input" type="text" autocomplete="off" required />
-  <p id="st-card-number-message" class="card-number__message"></p>
+  <input
+    id="st-card-number-input"
+    class="card-number__input"
+    autocomplete="off"
+    autocorrect="off"
+    spellcheck="false"
+    inputmode="numeric"
+    required
+  />
+  <div id="st-card-number-message" class="card-number__message"></div>
 </form>

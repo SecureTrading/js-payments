@@ -71,7 +71,7 @@ describe('CardinalCommerce class', () => {
       global.Cardinal = CardinalMock;
       instance._performBinDetection({ value: '411111' });
       expect(CardinalMock.trigger).toHaveBeenCalledTimes(1);
-      expect(CardinalMock.trigger).toHaveBeenCalledWith('bin.process', '411111');
+      expect(CardinalMock.trigger).toHaveBeenCalledWith('bin.process', { value: '411111' });
     });
   });
 
