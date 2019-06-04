@@ -340,7 +340,7 @@ export class ApplePay {
    */
   public onPaymentCanceled() {
     this.session.oncancel = (event: any) => {
-      this.setNotification(NotificationType.Warning, Language.translations.PAYMENT_WARNING);
+      this.setNotification(NotificationType.Warning, Language.translations.PAYMENT_CANCELLED);
     };
   }
 
