@@ -13,8 +13,7 @@ describe('Formatter', () => {
   describe('maskExpirationDate()', () => {
     it('should return given date in format MM/YY', () => {
       expect(Formatter.maskExpirationDate('1')).toBe('1');
-      expect(Formatter.maskExpirationDate('11')).toBe('11/');
-      expect(Formatter.maskExpirationDate('11/')).toBe('11');
+      expect(Formatter.maskExpirationDate('11')).toBe('11');
       expect(Formatter.maskExpirationDate('11/1')).toBe('11/1');
       expect(Formatter.maskExpirationDate('11/11')).toBe('11/11');
     });

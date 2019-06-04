@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-06-04T22:08:38.541Z\n"
-"PO-Revision-Date: 2019-06-04T22:08:38.541Z\n"
+"POT-Creation-Date: 2019-06-04T22:42:17.172Z\n"
+"PO-Revision-Date: 2019-06-04T22:42:17.172Z\n"
 "Language: de_DE\n"
 
 msgid "Timeout"
@@ -59,3 +59,18 @@ msgstr "Zahlung wurde erfolgreich verarbeitet"
 
 msgid "Method not implemented"
 msgstr "Methode nicht implementiert"
+
+msgid "Form is not valid"
+msgstr "Das Formular ist ungültig"
+
+msgid "Pay"
+msgstr "Zahlen"
+
+msgid "Processing..."
+msgstr "Wird bearbeitet..."
+
+msgid "Invalid field"
+msgstr "Ungültiges Feld"
+
+msgid "Card number is invalid"
+msgstr "Kartennummer ist ungültig"

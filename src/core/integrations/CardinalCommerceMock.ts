@@ -2,6 +2,7 @@ import { environment } from '../../environments/environment';
 import { CardinalCommerce } from './CardinalCommerce';
 
 export default class CardinalCommerceMock extends CardinalCommerce {
+  // @ts-ignore
   protected _performBinDetection(data: IFormFieldState) {
     return true;
   }

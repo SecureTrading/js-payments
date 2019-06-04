@@ -15,5 +15,10 @@
   "Expiration date": "Date d'expiration",
   "Security code": "Code de sécurité",
   "Ok": "Le paiement a été traité avec succès",
-  "Method not implemented": "Méthode non implémentée"
+  "Method not implemented": "Méthode non implémentée",
+  "Form is not valid": "Le formulaire n'est pas valide",
+  "Pay": "Payer",
+  "Processing...": "En traitement...",
+  "Invalid field": "Champ invalide",
+  "Card number is invalid": "Le numéro de carte est invalide"
 }

@@ -1,9 +1,9 @@
-import { INotificationEvent } from '../models/NotificationEvent';
 import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
 import Notification from '../shared/Notification';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
+import Validation from '../shared/Validation';
 
 interface IStRequest {
   requesttypedescription: string;
@@ -19,7 +19,7 @@ interface IStRequest {
 class StCodec {
   public static CONTENT_TYPE = 'application/json';
   public static VERSION = '1.00';
-  public static SUPPORTED_REQUEST_TYPES = ['WALLETVERIFY', 'JSINIT', 'THREEDQUERY', 'CACHETOKENISE', 'AUTH'];
+  public static SUPPORTED_REQUEST_TYPES = ['WALLETVERIFY', 'JSINIT', 'THREEDQUERY', 'CACHETOKENISE', 'AUTH', 'ERROR'];
   public static MINIMUM_REQUEST_FIELDS = 1;
 
   /**
@@ -58,21 +58,37 @@ class StCodec {
       StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
       throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
     }
+
     const responseContent: IResponseData = responseData.response[0];
-    StCodec.publishResponse(responseContent);
-    if (responseContent.errorcode !== '0') {
-      // Should this be a custom error type which can also take a field that is at fault
-      // so that errordata can be sent up to highlight the field?
-      StCodec._notification.error(responseContent.errormessage);
-      throw new Error(responseContent.errormessage);
+    const validation = new Validation();
+    if (StCodec.REQUESTS_WITH_ERROR_MESSAGES.includes(responseContent.requesttypedescription)) {
+      if (responseContent.errorcode !== StCodec.STATUS_CODES.ok) {
+        if (responseContent.errorcode === StCodec.STATUS_CODES.invalidfield) {
+          validation.getErrorData(StCodec.getErrorData(responseContent));
+        }
+        validation.blockForm(false);
+        StCodec._notification.error(responseContent.errormessage);
+        throw new Error(responseContent.errormessage);
+      }
     }
     return responseContent;
+  }
+
+  public static getErrorData(data: any) {
+    const { errordata, errormessage, requesttypedescription } = data;
+    return {
+      errordata,
+      errormessage,
+      requesttypedescription
+    };
   }
 
   private static _notification = new Notification();
   private static _translator = new Translator('en_GB');
   private static _messageBus = new MessageBus();
   private static _parentOrigin: string;
+  private static REQUESTS_WITH_ERROR_MESSAGES = ['AUTH', 'CACHETOKENISE', 'ERROR', 'THREEDQUERY', 'WALLETVERIFY'];
+  private static STATUS_CODES = { invalidfield: '30000', ok: '0', declined: '70000' };
 
   private static publishResponse(responseData: IResponseData) {
     responseData.errormessage = StCodec._translator.translate(responseData.errormessage);

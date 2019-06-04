@@ -41,12 +41,16 @@ describe('translate()', () => {
   });
 
   it('should have translations for all Language parameters', () => {
-    let translations = [cy_GB, da_DK, de_DE, en_GB, en_US, es_ES, fr_FR, nl_NL, no_NO, sv_SE];
+    let translations = [en_GB, cy_GB, da_DK, de_DE, en_US, es_ES, fr_FR, nl_NL, no_NO, sv_SE];
     for (let i in translations) {
       let translation: any = translations[i];
       let language: any = Language.translations;
       for (let key in language) {
         let text = language[key];
+        // tslint:disable-next-line
+        console.log(key);
+        // tslint:disable-next-line
+        console.log(text);
         expect(translation[text]).toBeDefined();
       }
     }
