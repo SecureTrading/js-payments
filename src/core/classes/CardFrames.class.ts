@@ -113,7 +113,7 @@ export default class CardFrames extends RegisterFrames {
     }
 
     this.animatedCard.create(Selectors.ANIMATED_CARD_COMPONENT_NAME, {}, animatedCardConfig);
-    this.animatedCardMounted = this.animatedCard.mount(Selectors.ANIMATED_CARD_COMPONENT_FRAME);
+    this.animatedCardMounted = this.animatedCard.mount(Selectors.ANIMATED_CARD_COMPONENT_FRAME, '-1');
     this.elementsToRegister.push(this.animatedCardMounted);
   }
 
