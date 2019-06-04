@@ -9,5 +9,10 @@
     "target": "es5",
     "jsx": "react"
   },
-  "include": ["./src/**/*"]
+  "include": ["./src/**/*"],
+  "exclude": [
+    "node_modules",
+    "./src/**/__test*", //exclude all that *__test*
+    "./src/**/*.spec.ts" // exclude all that contain "spec.ts" in name
+  ]
 }
