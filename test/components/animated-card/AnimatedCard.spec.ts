@@ -101,6 +101,18 @@ describe('AnimatedCard', () => {
       // @ts-ignore
       expect(instance._animatedCardBack.classList.contains(themeObject.type));
     });
+
+    // then
+    it('should set default settings', () => {
+      // @ts-ignore
+      instance._cardDetails.type = undefined;
+      // @ts-ignore
+      instance._setThemeClasses();
+      // @ts-ignore
+      expect(instance.animatedCardLogoBackground.classList.contains(AnimatedCard.CARD_CLASSES.CLASS_LOGO)).toEqual(
+        true
+      );
+    });
   });
 
   // given
@@ -237,7 +249,7 @@ describe('AnimatedCard', () => {
   });
 
   // given
-  describe('setSubscribeEvents()', () => {
+  describe('_setSubscribeEvents()', () => {
     // when
     const functionCalls = 1;
     let instance: any;
@@ -245,7 +257,7 @@ describe('AnimatedCard', () => {
       instance = animatedCardFixture().instance;
     });
     // then
-    it(`should onCardNumberChanged been called ${functionCalls} times when it's changed`, () => {
+    it(`should _onCardNumberChanged been called ${functionCalls} times when it's changed`, () => {
       const spy = jest.spyOn(instance, '_onCardNumberChanged');
       instance._animatedCardPan.onfocus = () => {
         expect(spy).toHaveBeenCalledTimes(functionCalls);
@@ -253,7 +265,7 @@ describe('AnimatedCard', () => {
     });
 
     // then
-    it(`should onExpirationDateChanged been called ${functionCalls} times when it's changed`, () => {
+    it(`should _onExpirationDateChanged been called ${functionCalls} times when it's changed`, () => {
       const spy = jest.spyOn(instance, '_onExpirationDateChanged');
       instance._animatedCardExpirationDate.onfocus = () => {
         expect(spy).toHaveBeenCalledTimes(functionCalls);
@@ -261,11 +273,57 @@ describe('AnimatedCard', () => {
     });
 
     // then
-    it(`should onSecurityCodeChanged been called ${functionCalls} times when it's changed`, () => {
+    it(`should _onSecurityCodeChanged been called ${functionCalls} times when it's changed`, () => {
       const spy = jest.spyOn(instance, '_onSecurityCodeChanged');
       instance._animatedCardSecurityCode.onfocus = () => {
         expect(spy).toHaveBeenCalledTimes(functionCalls);
       };
+    });
+
+    // given
+    describe('_getLogo', () => {
+      const { cardTypes } = animatedCardFixture();
+
+      // then
+      each(cardTypes).it('should receive proper card logo', type => {
+        // @ts-ignore
+        expect(AnimatedCard._getLogo(type[0])).toEqual(cardsLogos[type[0]]);
+      });
+    });
+
+    // given
+    describe('_setTheme', () => {
+      // then
+      it('should set security code on front', () => {
+        // @ts-ignore
+        instance._cardDetails.type = AnimatedCard.CARD_TYPES.AMEX;
+        // @ts-ignore
+        instance._setTheme();
+
+        expect(instance._animatedCardSecurityCodeFrontField.textContent).toEqual(
+          // @ts-ignore
+          AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE
+        );
+      });
+    });
+
+    // given
+    describe('_setCardType()', () => {
+      // then
+      it('should set card type', () => {
+        expect(instance._setCardType('40000')).toEqual('visa');
+      });
+    });
+
+    // given
+    describe('_removeLogo()', () => {
+      // then
+      it('should remove logo', () => {
+        const element = document.createElement('img').setAttribute('id', Selectors.ANIMATED_CARD_PAYMENT_LOGO_ID);
+        instance.animatedCardLogoBackground.appendChild(element);
+        instance._removeLogo();
+        expect(instance.animatedCardLogoBackground).toContain('dsiaud');
+      });
     });
   });
 });
