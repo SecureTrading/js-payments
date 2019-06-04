@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
-"POT-Creation-Date: 2019-06-04T21:25:30.650Z\n"
-"PO-Revision-Date: 2019-06-04T21:25:30.650Z\n"
+"POT-Creation-Date: 2019-06-04T22:09:06.684Z\n"
+"PO-Revision-Date: 2019-06-04T22:09:06.684Z\n"
 "Language: fr_FR\n"
 
 msgid "Timeout"
@@ -15,26 +15,17 @@ msgstr "Temps libre"
 msgid "Field is required"
 msgstr "Champ requis"
 
-msgid "Payment is not available"
-msgstr "Le paiement n'est pas disponible"
-
 msgid "An error occurred"
 msgstr "Une erreur est survenue"
 
 msgid "Merchant validation failure"
 msgstr "Échec de validation du marchand"
 
-msgid "Field is empty"
-msgstr "Le champ est vide"
-
 msgid "Payment has been cancelled"
 msgstr "Le paiement a été annulé"
 
 msgid "Value mismatch pattern"
 msgstr "Modèle de non-concordance des valeurs"
-
-msgid "Security code does not match card number"
-msgstr "Le code de sécurité ne correspond pas au numéro de carte"
 
 msgid "Invalid response"
 msgstr "Réponse invalide"
@@ -45,29 +36,11 @@ msgstr "La valeur est trop courte"
 msgid "Invalid request"
 msgstr "Requête invalide"
 
-msgid "Your browser does not support Apple Pay"
-msgstr "Votre navigateur ne supporte pas Apple Pay"
-
-msgid "This version of browser does not support Apple Pay"
-msgstr "Cette version de navigateur ne supporte pas Apple Pay"
-
-msgid "Payment type is not available"
-msgstr "Le type de paiement n'est pas disponible"
-
 msgid "Payment has been authorized"
 msgstr "Le paiement a été autorisé"
 
-msgid "Security code is too long"
-msgstr "Le code de sécurité est trop long"
-
 msgid "Amount and currency are not set"
 msgstr "Le montant et la devise ne sont pas définis"
-
-msgid "You have no cards in your wallet"
-msgstr "Vous n'avez pas de cartes dans votre portefeuille"
-
-msgid "Card number is invalid"
-msgstr "Le numéro de carte est invalide"
 
 msgid "Payment has been successfully processed"
 msgstr "Le paiement a été traité avec succès"
