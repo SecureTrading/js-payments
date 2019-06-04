@@ -9,7 +9,8 @@
     "IE 10"
   ],
   "config": {
-    "host": "localhost"
+    "host": "localhost",
+    "locale": "en_GB"
   },
   "scripts": {
     "build": "webpack --config webpack.prod.js",
@@ -22,7 +23,9 @@
     "coverage": "jest --coverage",
     "snyk": "snyk monitor --dev --org=secure-trading",
     "testdocker": "docker pull \"securetrading1/js-payments-testing:$DOCKER_BRANCH\" && docker run -d -p 8443:8443 -p 8760:8760 -it \"securetrading1/js-payments-testing:$DOCKER_BRANCH\"",
-    "behave": "npm run testdocker && cd js-payments-testing && make"
+    "behave": "npm run testdocker && cd js-payments-testing && make",
+    "export:translations": "cross-env-shell i18next-conv -l '$npm_package_config_locale' -s ./src/core/translations/$npm_package_config_locale.json -t ./translations/$npm_package_config_locale.po",
+    "import:translations": "cross-env-shell i18next-conv -l '$npm_package_config_locale' -s ./translations/$npm_package_config_locale.po -t ./src/core/translations/$npm_package_config_locale.json"
   },
   "repository": {
     "type": "git",
@@ -48,12 +51,14 @@
     "babel-loader": "^8.0.6",
     "clean-webpack-plugin": "^3.0.0",
     "coveralls": "^3.0.3",
+    "cross-env": "^5.2.0",
     "css-loader": "^2.1.1",
     "cssnano": "^4.1.10",
     "file-loader": "^3.0.1",
     "friendly-errors-webpack-plugin": "^1.7.0",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
+    "i18next-conv": "^9.0.0",
     "jest": "^24.8.0",
     "jest-each": "^24.8.0",
     "jest-fetch-mock": "^2.1.2",
