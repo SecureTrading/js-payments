@@ -37,7 +37,7 @@ describe('AnimatedCard', () => {
       // @ts-ignore
       instance._translator = new Translator('fr_FR');
       // @ts-ignore
-      instance.setLabels();
+      instance._setLabels();
       expect(card.innerHTML).toEqual('Numéro de carte');
       expect(expiry.innerHTML).toEqual("Date d'expiration");
       expect(secCode.innerHTML).toEqual('Code de sécurité');
@@ -51,7 +51,7 @@ describe('AnimatedCard', () => {
     // then
     each(cardTypes).it('should return proper name of class specified in parameter', (name: string) => {
       // @ts-ignore
-      expect(instance.returnThemeClass(name)).toEqual(`st-animated-card__${name}`);
+      expect(instance._returnThemeClass(name)).toEqual(`st-animated-card__${name}`);
     });
   });
 
@@ -66,7 +66,7 @@ describe('AnimatedCard', () => {
 
     beforeEach(() => {
       // @ts-ignore
-      instance.resetTheme();
+      instance._resetTheme();
     });
     // then
     it('should reset front page of card to default theme', () => {
@@ -89,7 +89,7 @@ describe('AnimatedCard', () => {
     // then
     each(themeObjects).it('should set proper classes for front page of card', themeObject => {
       // @ts-ignore
-      instance.setThemeClasses();
+      instance._setThemeClasses();
       // @ts-ignore
       expect(instance.animatedCardFront.classList.contains(themeObject.type));
     });
@@ -97,7 +97,7 @@ describe('AnimatedCard', () => {
     // then
     each(themeObjects).it('should set proper classes for back page of card', themeObject => {
       // @ts-ignore
-      instance.setThemeClasses();
+      instance._setThemeClasses();
       // @ts-ignore
       expect(instance.animatedCardBack.classList.contains(themeObject.type));
     });
@@ -111,7 +111,7 @@ describe('AnimatedCard', () => {
     // then
     it('should set card number if it is requested to change', () => {
       // @ts-ignore
-      instance.cardDetails.cardNumber = inputValues.cardNumber;
+      instance._cardDetails.cardNumber = inputValues.cardNumber;
       // instance._onCardNumberChanged({type});
       // expect(instance.animatedCardPan.textContent).toEqual(inputValues.cardNumber);
     });
@@ -132,9 +132,9 @@ describe('AnimatedCard', () => {
     // then
     it('should set expiration date if it is requested to change', () => {
       // @ts-ignore
-      instance.onExpirationDateChanged(dataObject);
+      instance._onExpirationDateChanged(dataObject);
       // @ts-ignore
-      expect(instance.cardDetails.expirationDate).toEqual(dataObject.value);
+      expect(instance._cardDetails.expirationDate).toEqual(dataObject.value);
     });
   });
 
@@ -146,22 +146,22 @@ describe('AnimatedCard', () => {
     // then
     each(cardTypes).it('should flip card if it is requested', () => {
       // @ts-ignore
-      const spy = jest.spyOn(instance, 'flipCard');
+      const spy = jest.spyOn(instance, '_flipCard');
       // @ts-ignore
-      instance.shouldFlipCard();
+      instance._shouldFlipCard();
       expect(spy).toHaveBeenCalledTimes(1);
       // @ts-ignore
-      instance.flipCardBack();
+      instance._flipCardBack();
     });
 
     // then
     it('should not flip card if it is on no flipped list', () => {
       // @ts-ignore
-      const spy = jest.spyOn(instance, 'flipCard');
+      const spy = jest.spyOn(instance, '_flipCard');
       // @ts-ignore
-      instance.cardDetails.type = 'AMEX';
+      instance._cardDetails.type = 'AMEX';
       // @ts-ignore
-      instance.shouldFlipCard();
+      instance._shouldFlipCard();
       expect(spy).toHaveBeenCalledTimes(1);
     });
   });
@@ -175,9 +175,9 @@ describe('AnimatedCard', () => {
     // @ts-ignore
     it(`should add ${AnimatedCard.CARD_CLASSES.CLASS_FOR_ANIMATION} class to element`, () => {
       // @ts-ignore
-      instance.flipCard();
+      instance._flipCard();
       // @ts-ignore
-      expect(instance.cardElement.classList.contains(AnimatedCard.CARD_CLASSES.CLASS_FOR_ANIMATION));
+      expect(instance._cardElement.classList.contains(AnimatedCard.CARD_CLASSES.CLASS_FOR_ANIMATION));
     });
   });
 
@@ -189,22 +189,22 @@ describe('AnimatedCard', () => {
     // then
     each(cardTypes).it(`should flip back card`, (type: string) => {
       // @ts-ignore
-      instance.cardDetails.type = type;
+      instance._cardDetails.type = type;
       // @ts-ignore
-      instance.flipCardBack();
+      instance._flipCardBack();
       // @ts-ignore
-      expect(instance.cardElement.getAttribute('class')).toEqual(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
+      expect(instance._cardElement.getAttribute('class')).toEqual(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
     });
   });
 
   // given
-  describe('_setDefaultInputsValues()', () => {
+  describe('_setLabels()', () => {
     let { instance } = animatedCardFixture();
     // then
     // @ts-ignore
     it(`should set card number on start with value: ${AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER}`, () => {
       // @ts-ignore
-      instance.setDefaultInputsValues();
+      instance._setLabels();
       // @ts-ignore
       expect(instance.animatedCardPan.textContent).toEqual(AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER);
     });
@@ -215,7 +215,7 @@ describe('AnimatedCard', () => {
       AnimatedCard.CARD_DETAILS_PLACEHOLDERS.EXPIRATION_DATE
     }`, () => {
       // @ts-ignore
-      instance.setDefaultInputsValues();
+      instance._setLabels();
       // @ts-ignore
       expect(instance.animatedCardExpirationDate.textContent).toEqual(
         // @ts-ignore
@@ -254,7 +254,7 @@ describe('AnimatedCard', () => {
 
     // then
     it(`should onExpirationDateChanged been called ${functionCalls} times when it's changed`, () => {
-      const spy = jest.spyOn(instance, 'onExpirationDateChanged');
+      const spy = jest.spyOn(instance, '_onExpirationDateChanged');
       instance.animatedCardExpirationDate.onfocus = () => {
         expect(spy).toHaveBeenCalledTimes(functionCalls);
       };
@@ -262,7 +262,7 @@ describe('AnimatedCard', () => {
 
     // then
     it(`should onSecurityCodeChanged been called ${functionCalls} times when it's changed`, () => {
-      const spy = jest.spyOn(instance, 'onSecurityCodeChanged');
+      const spy = jest.spyOn(instance, '_onSecurityCodeChanged');
       instance.animatedCardSecurityCode.onfocus = () => {
         expect(spy).toHaveBeenCalledTimes(functionCalls);
       };
