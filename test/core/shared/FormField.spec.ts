@@ -47,13 +47,29 @@ describe('FormField', () => {
     });
   });
 
-  describe('setValue()', () => {
-    it('should set value of input element', () => {
-      let value: string = '123';
+  describe('_onFocus()', () => {
+    it('should focus on input element', () => {
       // @ts-ignore
-      formField.setValue(value);
+      const mockFocus = (formField._inputElement.focus = jest.fn());
+      // @ts-ignore
+      formField._onFocus();
+      expect(mockFocus).toBeCalledTimes(1);
+      expect(mockFocus).toBeCalledWith();
+    });
+  });
 
-      expect(inputElement.value).toBe(value);
+  describe('_addTabListener()', () => {
+    it('should add focus event listener', () => {
+      window.addEventListener = jest.fn();
+      // @ts-ignore
+      formField._addTabListener();
+
+      expect(window.addEventListener).toBeCalledTimes(1);
+      // @ts-ignore
+      const calls = window.addEventListener.mock.calls;
+      expect(calls[0].length).toBe(2);
+      expect(calls[0][0]).toBe('focus');
+      expect(calls[0][1]).toBeInstanceOf(Function);
     });
   });
 });
