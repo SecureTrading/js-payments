@@ -37,7 +37,7 @@ export default class Selectors {
   public static CONTROL_FRAME_COMPONENT: string = `${environment.FRAME_URL}/control-frame.html`;
   public static readonly ANIMATED_CARD_COMPONENT: string = `${environment.FRAME_URL}/animated-card.html`;
 
-  public static readonly MERCHANT_FORM_SELECTOR: string = 'st-form';
+  public static MERCHANT_FORM_SELECTOR: string = 'st-form';
 
   public static readonly ANIMATED_CARD_INPUT_SELECTOR: string = 'st-animated-card';
   public static readonly ANIMATED_CARD_CREDIT_CARD_ID = 'st-animated-card-number';

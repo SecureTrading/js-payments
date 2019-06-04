@@ -10,6 +10,7 @@ import CardinalCommerceMock from './core/integrations/CardinalCommerceMock';
 import VisaCheckout from './core/integrations/VisaCheckout';
 import VisaCheckoutMock from './core/integrations/VisaCheckoutMock';
 import { IComponentsConfig, IConfig, IWalletConfig } from './core/models/Config';
+import Selectors from './core/shared/Selectors';
 import { IStyles } from './core/shared/Styler';
 import { environment } from './environments/environment';
 
@@ -41,6 +42,7 @@ class ST {
     this.submitOnError = config.submitOnError;
     this.submitOnSuccess = config.submitOnSuccess;
     this.tokenise = config.tokenise;
+    Selectors.MERCHANT_FORM_SELECTOR = config.formId ? config.formId : Selectors.MERCHANT_FORM_SELECTOR;
     const instance = new CommonFrames(
       this.jwt,
       this.origin,

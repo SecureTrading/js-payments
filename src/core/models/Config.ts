@@ -9,6 +9,7 @@ export interface IConfig {
   submitOnSuccess?: boolean;
   submitOnError?: boolean;
   submitFields?: string[];
+  formId?: string;
 }
 
 export interface IComponentsConfig {
