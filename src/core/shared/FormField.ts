@@ -34,6 +34,7 @@ export default class FormField extends Frame {
     super.onInit();
     this._translator = new Translator(this._params.locale);
     this.setLabelText();
+    this._addTabListener();
   }
 
   public getLabel(): string {
@@ -184,6 +185,16 @@ export default class FormField extends Frame {
 
     this._inputElement.addEventListener('blur', (event: Event) => {
       this.onBlur(event);
+    });
+  }
+
+  private _onFocus() {
+    this._inputElement.focus();
+  }
+
+  private _addTabListener() {
+    window.addEventListener('focus', e => {
+      this._onFocus();
     });
   }
 }

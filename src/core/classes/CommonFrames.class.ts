@@ -64,7 +64,7 @@ export default class CommonFrames extends RegisterFrames {
     this.controlFrame = new Element();
     if (this.shouldLoadNotificationFrame()) {
       this.notificationFrame.create(Selectors.NOTIFICATION_FRAME_COMPONENT_NAME, this.styles, this.params);
-      this.notificationFrameMounted = this.notificationFrame.mount(Selectors.NOTIFICATION_FRAME_IFRAME);
+      this.notificationFrameMounted = this.notificationFrame.mount(Selectors.NOTIFICATION_FRAME_IFRAME, '-1');
       this.elementsToRegister.push(this.notificationFrameMounted);
     }
 
@@ -72,7 +72,7 @@ export default class CommonFrames extends RegisterFrames {
       jwt: this.jwt,
       origin: this.origin
     });
-    this.controlFrameMounted = this.controlFrame.mount(Selectors.CONTROL_FRAME_IFRAME);
+    this.controlFrameMounted = this.controlFrame.mount(Selectors.CONTROL_FRAME_IFRAME, '-1');
     this.elementsToRegister.push(this.controlFrameMounted);
   }
 
