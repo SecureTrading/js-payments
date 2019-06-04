@@ -7,7 +7,7 @@ describe('MessageBus class', () => {
       window.addEventListener = jest.fn();
       let instance = new MessageBus();
       // @ts-ignore
-      expect(instance._parentOrigin).toBeUndefined();
+      expect(instance._parentOrigin).toEqual('*');
       // @ts-ignore
       expect(instance._frameOrigin).toBe('https://localhost:8443');
       expect(window.addEventListener).toHaveBeenCalledTimes(1);

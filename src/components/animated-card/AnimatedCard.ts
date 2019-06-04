@@ -45,6 +45,7 @@ class AnimatedCard extends Frame {
     CARD_NUMBER: '\u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219',
     EXPIRATION_DATE: 'MM/YY',
     SECURITY_CODE: '\u2219\u2219\u2219',
+    SECURITY_CODE_EXTENDED: '\u2219\u2219\u2219\u2219',
     TYPE: 'default'
   };
 
@@ -62,7 +63,7 @@ class AnimatedCard extends Frame {
    * @param type
    */
   private static _getLogo = (type: string) => cardsLogos[type];
-
+  private static SECURITY_CODE_LENGTH_EXTENDED = 4;
   protected _messageBus: MessageBus;
   private _animatedCardBack: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_SIDE_BACK);
   private _animatedCardExpirationDate: HTMLElement = document.getElementById(
@@ -101,6 +102,29 @@ class AnimatedCard extends Frame {
     this._setLabels();
     this._setDefaultInputsValues();
     this._setSubscribeEvents();
+    this._setSecurityCodeChangeListener();
+    this._setSecurityCodeFocusEventListener();
+  }
+
+  private _setSecurityCodeChangeListener() {
+    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (length: number) => {
+      this.setSecurityCodePlaceholderContent(length);
+    });
+  }
+
+  private _setSecurityCodeFocusEventListener() {
+    this._messageBus.subscribe(MessageBus.EVENTS.FOCUS_SECURITY_CODE, (state: boolean) => {
+      state ? this._shouldFlipCard() : this._flipCardBack();
+    });
+  }
+
+  public setSecurityCodePlaceholderContent(securityCodeLength: number) {
+    if (securityCodeLength === AnimatedCard.SECURITY_CODE_LENGTH_EXTENDED) {
+      this._animatedCardSecurityCodeFrontField.textContent =
+        AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED;
+    } else {
+      this._animatedCardSecurityCodeFrontField.textContent = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
+    }
   }
 
   /**
@@ -181,9 +205,12 @@ class AnimatedCard extends Frame {
    * Sets card theme according to card brand coming from _binLookup()
    * @private
    */
+
   private _setTheme() {
+    this._animatedCardSecurityCodeFrontField.textContent = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
     if (this._cardDetails.type === AnimatedCard.CARD_TYPES.AMEX) {
-      this._animatedCardSecurityCodeFrontField.textContent = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
+      this._animatedCardSecurityCodeFrontField.textContent =
+        AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED;
     }
     this._cardDetails.logo = AnimatedCard._getLogo(this._cardDetails.type);
   }
@@ -194,14 +221,14 @@ class AnimatedCard extends Frame {
    */
   private _setSecurityCodeOnProperSide() {
     const isAmex: boolean = this._cardDetails.type === AnimatedCard.CARD_TYPES.AMEX;
-    isAmex
-      ? DOMMethods.removeClass(
-          this._animatedCardSecurityCodeFront,
-          AnimatedCard.CARD_CLASSES.CLASS_SECURITY_CODE_HIDDEN
-        )
-      : DOMMethods.addClass(this._animatedCardSecurityCodeFront, AnimatedCard.CARD_CLASSES.CLASS_SECURITY_CODE_HIDDEN);
 
-    return isAmex ? this._animatedCardSecurityCodeFrontField : this._animatedCardSecurityCode;
+    if (isAmex) {
+      DOMMethods.removeClass(this._animatedCardSecurityCodeFront, AnimatedCard.CARD_CLASSES.CLASS_SECURITY_CODE_HIDDEN);
+      this._animatedCardSecurityCodeFrontField.textContent = this.cardDetails.securityCode;
+    } else {
+      DOMMethods.addClass(this._animatedCardSecurityCodeFront, AnimatedCard.CARD_CLASSES.CLASS_SECURITY_CODE_HIDDEN);
+      this._animatedCardSecurityCode.textContent = this._cardDetails.securityCode;
+    }
   }
 
   /**
@@ -252,7 +279,7 @@ class AnimatedCard extends Frame {
   private _setDefaultInputsValues() {
     this._animatedCardPan.textContent = this._cardDetails.cardNumber;
     this._animatedCardExpirationDate.textContent = this._cardDetails.expirationDate;
-    this._setSecurityCodeOnProperSide().textContent = this._cardDetails.securityCode;
+    this._setSecurityCodeOnProperSide();
   }
 
   /**
@@ -276,6 +303,10 @@ class AnimatedCard extends Frame {
   private _onCardNumberChanged(data: ISubscribeObject) {
     const { formattedValue, value } = data;
     this._cardDetails.type = this._setCardType(value);
+    this._cardDetails.securityCode =
+      this._cardDetails.type === AnimatedCard.CARD_TYPES.AMEX
+        ? AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED
+        : AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
     this._cardDetails.cardNumber = AnimatedCard._setCardDetail(
       formattedValue,
       AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER
@@ -287,7 +318,7 @@ class AnimatedCard extends Frame {
     this._removeLogo();
     this._setLogo();
     this._setThemeClasses();
-    this._setSecurityCodeOnProperSide().textContent = this._cardDetails.securityCode;
+    this._setSecurityCodeOnProperSide();
   }
 
   /**
@@ -318,12 +349,15 @@ class AnimatedCard extends Frame {
    */
   private _onSecurityCodeChanged(data: ISubscribeObject) {
     const { value } = data;
+    const isAmex: boolean = this._cardDetails.type === AnimatedCard.CARD_TYPES.AMEX;
     this._cardDetails.securityCode = AnimatedCard._setCardDetail(
       value,
-      AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE
+      isAmex
+        ? AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED
+        : AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE
     );
     this._shouldFlipCard();
-    this._setSecurityCodeOnProperSide().textContent = this._cardDetails.securityCode;
+    this._setSecurityCodeOnProperSide();
   }
 
   /**

@@ -4,6 +4,7 @@ import Frame from '../../core/shared/Frame';
 import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Payment from '../../core/shared/Payment';
+import Validation from '../../core/shared/Validation';
 
 export default class ControlFrame extends Frame {
   private _payment: Payment;
@@ -177,9 +178,22 @@ export default class ControlFrame extends Frame {
       });
   }
 
+  private setFormValidity(state: any) {
+    const validationEvent: IMessageBusEvent = {
+      data: { ...state },
+      type: MessageBus.EVENTS.VALIDATE_FORM
+    };
+    this._messageBus.publish(validationEvent, true);
+  }
+
   private requestPayment(data: any) {
     const dataInJwt = data ? data.dataInJwt : false;
     let isFormValid: boolean;
+    const formValidity = {
+      cardNumber: this._formFields.cardNumber.validity,
+      expirationDate: this._formFields.expirationDate.validity,
+      securityCode: this._formFields.securityCode.validity
+    };
     if (dataInJwt) {
       isFormValid = true;
       this._isPaymentReady = true;
@@ -197,13 +211,17 @@ export default class ControlFrame extends Frame {
     }
 
     if (this._isPaymentReady && isFormValid) {
+      const validation = new Validation();
       this._payment.threeDQueryRequest(this._card, this._merchantFormData).then(responseBody => {
         const messageBusEvent: IMessageBusEvent = {
           data: responseBody,
           type: MessageBus.EVENTS_PUBLIC.THREEDQUERY
         };
+        validation.blockForm(true);
         this._messageBus.publish(messageBusEvent, true);
       });
+    } else {
+      this.setFormValidity(formValidity);
     }
   }
 }

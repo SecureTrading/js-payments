@@ -1,9 +1,11 @@
 import BinLookup from '../../core/shared/BinLookup';
+import Formatter from '../../core/shared/Formatter';
 import FormField from '../../core/shared/FormField';
 import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
 import Utils from '../../core/shared/Utils';
+import Validation from '../../core/shared/Validation';
 
 export default class CardNumber extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
@@ -18,13 +20,19 @@ export default class CardNumber extends FormField {
   public isCardNumberValid: boolean;
   public cardNumberValue: string;
   public cardNumberFormatted: string;
+  public validity: Validation;
+  private cardNumberLength: number;
 
   constructor() {
     super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE, Selectors.CARD_NUMBER_LABEL);
     this.cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     this.binLookup = new BinLookup();
+    this.validity = new Validation();
     this.isCardNumberValid = true;
-    this.setCardNumberProperties();
+    this.cardNumberLength = CardNumber.STANDARD_CARD_LENGTH;
+    this.setFocusListener();
+    this.setDisableListener();
+    this.backendValidation();
     this.sendState();
   }
 
@@ -49,7 +57,9 @@ export default class CardNumber extends FormField {
       sum += algorithmValue;
     }
 
-    return sum && sum % 10 === 0;
+    const luhnCheck = sum && sum % 10 === 0;
+    this._luhnCheckValidation(luhnCheck);
+    return luhnCheck;
   }
 
   /**
@@ -132,15 +142,6 @@ export default class CardNumber extends FormField {
     return Language.translations.LABEL_CARD_NUMBER;
   }
 
-  public setMinMaxLengthOfCard(cardNumber: string) {
-    const minMax = {
-      maxlength: this.getMaxLengthOfCardNumber(cardNumber),
-      minlength: this.getMinLengthOfCardNumber(cardNumber)
-    };
-    this.setAttributes(minMax);
-    return minMax;
-  }
-
   public getMaxLengthOfCardNumber(cardNumber: string) {
     const cardLengthFromBin = this.getPossibleCardLength(cardNumber);
     const cardFormat = this.getCardFormat(cardNumber);
@@ -150,15 +151,14 @@ export default class CardNumber extends FormField {
     } else {
       numberOfWhitespaces = 0;
     }
-
-    return Utils.getLastElementOfArray(cardLengthFromBin) + numberOfWhitespaces;
+    this.cardNumberLength = Utils.getLastElementOfArray(cardLengthFromBin) + numberOfWhitespaces;
+    return this.cardNumberLength;
   }
 
   public getFormFieldState(): IFormFieldState {
     const { value, validity } = this.getState();
     this.publishSecurityCodeLength();
     this.formatCardNumber(value);
-    this.setMinMaxLengthOfCard(value);
     return {
       formattedValue: this.cardNumberFormatted,
       validity,
@@ -166,41 +166,87 @@ export default class CardNumber extends FormField {
     };
   }
 
+  /**
+   *
+   */
+  public backendValidation() {
+    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD, (data: any) => {
+      this.checkBackendValidity(data);
+      this.validation.validate(this._inputElement, this._messageElement);
+    });
+  }
+
+  public setFocusListener() {
+    this._messageBus.subscribe(MessageBus.EVENTS.FOCUS_CARD_NUMBER, () => {
+      this.format(this._inputElement.value);
+      this.validation.validate(this._inputElement, this._messageElement);
+    });
+  }
+
+  public setDisableListener() {
+    this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_CARD_NUMBER, (state: boolean) => {
+      if (state) {
+        // @ts-ignore
+        this._inputElement.setAttribute('disabled', state);
+        this._inputElement.classList.add('st-input--disabled');
+      } else {
+        // @ts-ignore
+        this._inputElement.removeAttribute('disabled');
+        this._inputElement.classList.remove('st-input--disabled');
+      }
+    });
+  }
+
   protected _getAllowedParams() {
     return super._getAllowedParams().concat(['origin']);
   }
 
+  protected onBlur() {
+    super.onBlur();
+    this.luhnCheck(this._inputElement.value);
+    this.sendState();
+  }
+
   protected onFocus(event: Event) {
     super.onFocus(event);
-    this.sendState();
   }
 
   protected onInput(event: Event) {
     super.onInput(event);
+    this._inputElement.value = Formatter.trimNonNumericExceptSpace(this._inputElement.value);
+    this.getMaxLengthOfCardNumber(this._inputElement.value);
+    if (this.isMaxLengthReached()) {
+      this._inputElement.value = this._inputElement.value.substring(0, this.cardNumberLength);
+    }
     this.sendState();
   }
 
   protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
+    this.getMaxLengthOfCardNumber(this._inputElement.value);
+    if (this.isMaxLengthReached()) {
+      this._inputElement.value = this._inputElement.value.substring(0, this.cardNumberLength);
+    }
     this.sendState();
   }
 
-  private getMinLengthOfCardNumber(cardNumber: string) {
-    let cardNumberMinLength = CardNumber.STANDARD_CARD_LENGTH;
-    if (this.getPossibleCardLength(cardNumber)) {
-      const numberOfWhitespaces =
-        this.binLookup.binLookup(cardNumber).format.split('d').length - CardNumber.WHITESPACES_DECREASE_NUMBER;
-      const cardNumberLength = this.getPossibleCardLength(cardNumber)[0];
-      cardNumberMinLength = cardNumberLength + numberOfWhitespaces;
+  protected onKeyPress(event: KeyboardEvent) {
+    super.onKeyPress(event);
+    if (this.isMaxLengthReached()) {
+      event.preventDefault();
     }
-    return cardNumberMinLength;
   }
 
-  private setCardNumberProperties() {
-    this.setAttributes({
-      // @ts-ignore
-      'data-luhn-check': this.isCardNumberValid
-    });
+  private isMaxLengthReached = () => this._inputElement.value.length >= this.cardNumberLength;
+
+  private _luhnCheckValidation(luhn: boolean) {
+    const cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
+    if (!luhn) {
+      cardNumberField.setCustomValidity(Language.translations.VALIDATION_ERROR_CARD);
+      this.validation.validate(this._inputElement, this._messageElement);
+    } else {
+      cardNumberField.setCustomValidity('');
+    }
   }
 
   private sendState() {

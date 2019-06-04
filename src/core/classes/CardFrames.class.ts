@@ -1,8 +1,10 @@
 import Element from '../Element';
+import DomMethods from '../shared/DomMethods';
 import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
 import { IStyles } from '../shared/Styler';
+import Validation from '../shared/Validation';
 import RegisterFrames from './RegisterFrames.class';
 
 /**
@@ -10,32 +12,44 @@ import RegisterFrames from './RegisterFrames.class';
  */
 export default class CardFrames extends RegisterFrames {
   /**
-   * Attaches to specified element text or/and icon and disables it.
+   * Finds submit button whether is input or button markup and sets properties.
+   * @param state
+   */
+  public static disableSubmitButton(state: boolean) {
+    const element = CardFrames.getSubmitButton();
+    return element && CardFrames._setSubmitButtonProperties(element, state);
+  }
+
+  private static SUBMIT_BUTTON_AS_BUTTON_MARKUP = 'button[type="submit"]';
+  private static SUBMIT_BUTTON_AS_INPUT_MARKUP = 'input[type="submit"]';
+  private static SUBMIT_BUTTON_DISABLED_CLASS = 'st-button-submit__disabled';
+
+  /**
+   * Sets button properties as text and disable/enable class
    * @param element
-   * @param text
-   * @param animatedIcon
+   * @param disabledState
    * @private
    */
-  private static _setPreloader(element: HTMLElement, text?: string, animatedIcon?: string) {
-    element.textContent = `${animatedIcon ? animatedIcon : ''}${text ? text : ''}`;
+  private static _setSubmitButtonProperties(element: any, disabledState: boolean) {
+    if (disabledState) {
+      element.textContent = Language.translations.PROCESSING;
+      element.classList.add(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
+    } else {
+      element.textContent = Language.translations.PAY;
+      element.classList.remove(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
+    }
+
     // @ts-ignore
-    element.disabled = true;
+    element.disabled = disabledState;
+    return element;
   }
 
   /**
-   * Finds submit button, disable it and set preloader text or / and icon.
-   * @private
+   * Gets submit button whether is input or button markup.
    */
-  private static _disableSubmitButton() {
-    const inputSubmit = document.querySelector('input[type="submit"]');
-    const buttonSubmit = document.querySelector('button[type="submit"]');
-    // @ts-ignore
-    // tslint:disable-next-line:no-unused-expression
-    inputSubmit && CardFrames._setPreloader(inputSubmit, Language.translations.PRELOADER_TEXT);
-    // @ts-ignore
-    // tslint:disable-next-line:no-unused-expression
-    buttonSubmit && CardFrames._setPreloader(buttonSubmit, Language.translations.PRELOADER_TEXT);
-  }
+  private static getSubmitButton = () =>
+    document.querySelector(CardFrames.SUBMIT_BUTTON_AS_BUTTON_MARKUP) ||
+    document.querySelector(CardFrames.SUBMIT_BUTTON_AS_INPUT_MARKUP);
 
   private cardNumberMounted: HTMLElement;
   private expirationDateMounted: HTMLElement;
@@ -46,12 +60,22 @@ export default class CardFrames extends RegisterFrames {
   private securityCode: Element;
   private animatedCard: Element;
   private messageBus: MessageBus;
-  private messageBusEvent: IMessageBusEvent;
+  private validation: Validation;
 
   constructor(jwt: any, origin: any, componentIds: [], styles: IStyles) {
     super(jwt, origin, componentIds, styles);
+    this.validation = new Validation();
     this.messageBus = new MessageBus();
+    this._initSubscribes();
     this._onInit();
+  }
+
+  public disableFormField(state: boolean, eventName: string) {
+    const messageBusEvent: IMessageBusEvent = {
+      data: state,
+      type: eventName
+    };
+    this.messageBus.publish(messageBusEvent);
   }
 
   /**
@@ -66,9 +90,11 @@ export default class CardFrames extends RegisterFrames {
     ];
   }
 
+  /**
+   *
+   */
   public _onInit() {
     this.initCardFields();
-    this._setFormListener();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
   }
 
@@ -111,15 +137,88 @@ export default class CardFrames extends RegisterFrames {
   }
 
   /**
-   * Sets submit listener on form
+   * Inits all methods with Message Bus subscribe and eventListeners.
+   */
+  private _initSubscribes() {
+    this.submitFormListener();
+    this.subscribeBlockSubmit();
+    this.validateFieldsAfterSubmit();
+    this._setMerchantInputListeners();
+  }
+
+  /**
+   * Publishes UPDATE_MERCHANT_FIELDS event to Message Bus.
+   */
+  private onInput() {
+    const messageBusEvent: IMessageBusEvent = {
+      data: DomMethods.parseMerchantForm(),
+      type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
+    };
+    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+  }
+
+  /**
+   * Binds all the form inputs and listen to onInput event.
    * @private
    */
-  private _setFormListener() {
-    this.messageBusEvent = { type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM };
+  private _setMerchantInputListeners() {
+    const els = DomMethods.getAllFormElements(document.getElementById(Selectors.MERCHANT_FORM_SELECTOR));
+    for (const el of els) {
+      el.addEventListener('input', this.onInput.bind(this));
+    }
+  }
+
+  /**
+   * Listens to html submit form event, blocks default event, disables submit button and publish event to Message Bus.
+   */
+  private submitFormListener() {
     document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).addEventListener('submit', (event: Event) => {
       event.preventDefault();
-      CardFrames._disableSubmitButton();
-      this.messageBus.publishFromParent(this.messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+      this.publishSubmitEvent();
+    });
+  }
+
+  /**
+   * Checks if submit button needs to be blocked.
+   */
+  private subscribeBlockSubmit() {
+    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (data: boolean) => {
+      CardFrames.disableSubmitButton(data);
+      this.disableFormField(data, MessageBus.EVENTS.BLOCK_CARD_NUMBER);
+      this.disableFormField(data, MessageBus.EVENTS.BLOCK_EXPIRATION_DATE);
+      this.disableFormField(data, MessageBus.EVENTS.BLOCK_SECURITY_CODE);
+    });
+  }
+
+  /**
+   * Publishes message bus submit event.
+   */
+  private publishSubmitEvent() {
+    const messageBusEvent: IMessageBusEvent = {
+      type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
+    };
+    this.messageBus.publish(messageBusEvent);
+  }
+
+  /**
+   *
+   */
+  private validateFieldsAfterSubmit() {
+    this.messageBus.subscribe(MessageBus.EVENTS.VALIDATE_FORM, (data: any) => {
+      const { cardNumber, expirationDate, securityCode } = data;
+      const messageBusEvent: IMessageBusEvent = { data: 'test', type: '' };
+      if (!cardNumber) {
+        messageBusEvent.type = MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD;
+        this.messageBus.publish(messageBusEvent);
+      }
+      if (!expirationDate) {
+        messageBusEvent.type = MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD;
+        this.messageBus.publish(messageBusEvent);
+      }
+      if (!securityCode) {
+        messageBusEvent.type = MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD;
+        this.messageBus.publish(messageBusEvent);
+      }
     });
   }
 }
