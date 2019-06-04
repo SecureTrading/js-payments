@@ -71,13 +71,13 @@ describe('AnimatedCard', () => {
     // then
     it('should reset front page of card to default theme', () => {
       // @ts-ignore
-      expect(instance.animatedCardFront.getAttribute('class')).toEqual(defaultFrontPageClassSet);
+      expect(instance._animatedCardFront.getAttribute('class')).toEqual(defaultFrontPageClassSet);
     });
 
     // then
     it('should reset back page of card to default theme', () => {
       // @ts-ignore
-      expect(instance.animatedCardBack.getAttribute('class')).toEqual(defaultBackPageClassSet);
+      expect(instance._animatedCardBack.getAttribute('class')).toEqual(defaultBackPageClassSet);
     });
   });
 
@@ -91,7 +91,7 @@ describe('AnimatedCard', () => {
       // @ts-ignore
       instance._setThemeClasses();
       // @ts-ignore
-      expect(instance.animatedCardFront.classList.contains(themeObject.type));
+      expect(instance._animatedCardFront.classList.contains(themeObject.type));
     });
 
     // then
@@ -99,7 +99,7 @@ describe('AnimatedCard', () => {
       // @ts-ignore
       instance._setThemeClasses();
       // @ts-ignore
-      expect(instance.animatedCardBack.classList.contains(themeObject.type));
+      expect(instance._animatedCardBack.classList.contains(themeObject.type));
     });
   });
 
@@ -206,7 +206,7 @@ describe('AnimatedCard', () => {
       // @ts-ignore
       instance._setLabels();
       // @ts-ignore
-      expect(instance.animatedCardPan.textContent).toEqual(AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER);
+      expect(instance._animatedCardPan.textContent).toEqual(AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER);
     });
 
     // then
@@ -217,7 +217,7 @@ describe('AnimatedCard', () => {
       // @ts-ignore
       instance._setLabels();
       // @ts-ignore
-      expect(instance.animatedCardExpirationDate.textContent).toEqual(
+      expect(instance._animatedCardExpirationDate.textContent).toEqual(
         // @ts-ignore
         AnimatedCard.CARD_DETAILS_PLACEHOLDERS.EXPIRATION_DATE
       );
@@ -227,9 +227,9 @@ describe('AnimatedCard', () => {
     // @ts-ignore
     it(`should set security code on start with value: ${AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE}`, () => {
       // @ts-ignore
-      instance.setDefaultInputsValues();
+      instance._setDefaultInputsValues();
       // @ts-ignore
-      expect(instance.animatedCardSecurityCode.textContent).toEqual(
+      expect(instance._animatedCardSecurityCode.textContent).toEqual(
         // @ts-ignore
         AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE
       );
@@ -247,7 +247,7 @@ describe('AnimatedCard', () => {
     // then
     it(`should onCardNumberChanged been called ${functionCalls} times when it's changed`, () => {
       const spy = jest.spyOn(instance, '_onCardNumberChanged');
-      instance.animatedCardPan.onfocus = () => {
+      instance._animatedCardPan.onfocus = () => {
         expect(spy).toHaveBeenCalledTimes(functionCalls);
       };
     });
@@ -255,7 +255,7 @@ describe('AnimatedCard', () => {
     // then
     it(`should onExpirationDateChanged been called ${functionCalls} times when it's changed`, () => {
       const spy = jest.spyOn(instance, '_onExpirationDateChanged');
-      instance.animatedCardExpirationDate.onfocus = () => {
+      instance._animatedCardExpirationDate.onfocus = () => {
         expect(spy).toHaveBeenCalledTimes(functionCalls);
       };
     });
@@ -263,7 +263,7 @@ describe('AnimatedCard', () => {
     // then
     it(`should onSecurityCodeChanged been called ${functionCalls} times when it's changed`, () => {
       const spy = jest.spyOn(instance, '_onSecurityCodeChanged');
-      instance.animatedCardSecurityCode.onfocus = () => {
+      instance._animatedCardSecurityCode.onfocus = () => {
         expect(spy).toHaveBeenCalledTimes(functionCalls);
       };
     });

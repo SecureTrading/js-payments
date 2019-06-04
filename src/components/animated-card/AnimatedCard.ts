@@ -5,6 +5,7 @@ import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
 import { Translator } from '../../core/shared/Translator';
+import { ICardDetails, ISubscribeObject } from './animated-card-interfaces';
 import { cardsLogos } from './animated-card-logos';
 
 /**
@@ -63,15 +64,17 @@ class AnimatedCard extends Frame {
   private static _getLogo = (type: string) => cardsLogos[type];
 
   protected _messageBus: MessageBus;
-  private animatedCardBack: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_SIDE_BACK);
-  private animatedCardExpirationDate: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_EXPIRATION_DATE_ID);
-  private animatedCardFront: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_SIDE_FRONT);
-  private animatedCardPan: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_CREDIT_CARD_ID);
-  private animatedCardSecurityCode: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_SECURITY_CODE_ID);
-  private animatedCardSecurityCodeFront: HTMLElement = document.getElementById(
+  private _animatedCardBack: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_SIDE_BACK);
+  private _animatedCardExpirationDate: HTMLElement = document.getElementById(
+    Selectors.ANIMATED_CARD_EXPIRATION_DATE_ID
+  );
+  private _animatedCardFront: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_SIDE_FRONT);
+  private _animatedCardPan: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_CREDIT_CARD_ID);
+  private _animatedCardSecurityCode: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_SECURITY_CODE_ID);
+  private _animatedCardSecurityCodeFront: HTMLElement = document.getElementById(
     Selectors.ANIMATED_CARD_SECURITY_CODE_FRONT_ID
   );
-  private animatedCardSecurityCodeFrontField: HTMLElement = document.getElementById(
+  private _animatedCardSecurityCodeFrontField: HTMLElement = document.getElementById(
     Selectors.ANIMATED_CARD_SECURITY_CODE_FRONT_FIELD_ID
   );
 
@@ -79,7 +82,7 @@ class AnimatedCard extends Frame {
     AnimatedCard.CARD_CLASSES.CLASS_LOGO_WRAPPER
   );
   private _binLookup: BinLookup;
-  private _cardDetails: any = {
+  private _cardDetails: ICardDetails = {
     cardNumber: AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER,
     expirationDate: AnimatedCard.CARD_DETAILS_PLACEHOLDERS.EXPIRATION_DATE,
     logo: '',
@@ -96,7 +99,7 @@ class AnimatedCard extends Frame {
     this._messageBus = new MessageBus();
     this._translator = new Translator(this._params.locale);
     this._setLabels();
-    this.setDefaultInputsValues();
+    this._setDefaultInputsValues();
     this._setSubscribeEvents();
   }
 
@@ -122,12 +125,12 @@ class AnimatedCard extends Frame {
    * @private
    */
   private _resetTheme() {
-    this.animatedCardSecurityCodeFrontField.textContent = '';
-    this.animatedCardFront.setAttribute(
+    this._animatedCardSecurityCodeFrontField.textContent = '';
+    this._animatedCardFront.setAttribute(
       'class',
       `${AnimatedCard.CARD_CLASSES.CLASS_SIDE} ${AnimatedCard.CARD_CLASSES.CLASS_FRONT}`
     );
-    this.animatedCardBack.setAttribute(
+    this._animatedCardBack.setAttribute(
       'class',
       `${AnimatedCard.CARD_CLASSES.CLASS_SIDE} ${AnimatedCard.CARD_CLASSES.CLASS_BACK}`
     );
@@ -146,8 +149,8 @@ class AnimatedCard extends Frame {
       DOMMethods.addClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO}`);
       DOMMethods.addClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`);
     }
-    DOMMethods.addClass(this.animatedCardFront, this._returnThemeClass(type));
-    DOMMethods.addClass(this.animatedCardBack, this._returnThemeClass(type));
+    DOMMethods.addClass(this._animatedCardFront, this._returnThemeClass(type));
+    DOMMethods.addClass(this._animatedCardBack, this._returnThemeClass(type));
   }
 
   /**
@@ -180,7 +183,7 @@ class AnimatedCard extends Frame {
    */
   private _setTheme() {
     if (this._cardDetails.type === AnimatedCard.CARD_TYPES.AMEX) {
-      this.animatedCardSecurityCodeFrontField.textContent = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
+      this._animatedCardSecurityCodeFrontField.textContent = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
     }
     this._cardDetails.logo = AnimatedCard._getLogo(this._cardDetails.type);
   }
@@ -192,10 +195,13 @@ class AnimatedCard extends Frame {
   private _setSecurityCodeOnProperSide() {
     const isAmex: boolean = this._cardDetails.type === AnimatedCard.CARD_TYPES.AMEX;
     isAmex
-      ? DOMMethods.removeClass(this.animatedCardSecurityCodeFront, AnimatedCard.CARD_CLASSES.CLASS_SECURITY_CODE_HIDDEN)
-      : DOMMethods.addClass(this.animatedCardSecurityCodeFront, AnimatedCard.CARD_CLASSES.CLASS_SECURITY_CODE_HIDDEN);
+      ? DOMMethods.removeClass(
+          this._animatedCardSecurityCodeFront,
+          AnimatedCard.CARD_CLASSES.CLASS_SECURITY_CODE_HIDDEN
+        )
+      : DOMMethods.addClass(this._animatedCardSecurityCodeFront, AnimatedCard.CARD_CLASSES.CLASS_SECURITY_CODE_HIDDEN);
 
-    return isAmex ? this.animatedCardSecurityCodeFrontField : this.animatedCardSecurityCode;
+    return isAmex ? this._animatedCardSecurityCodeFrontField : this._animatedCardSecurityCode;
   }
 
   /**
@@ -243,9 +249,9 @@ class AnimatedCard extends Frame {
    * Sets placeholders for each editable value on card (card number, expiration date, security code)
    * @private
    */
-  private setDefaultInputsValues() {
-    this.animatedCardPan.textContent = this._cardDetails.cardNumber;
-    this.animatedCardExpirationDate.textContent = this._cardDetails.expirationDate;
+  private _setDefaultInputsValues() {
+    this._animatedCardPan.textContent = this._cardDetails.cardNumber;
+    this._animatedCardExpirationDate.textContent = this._cardDetails.expirationDate;
     this._setSecurityCodeOnProperSide().textContent = this._cardDetails.securityCode;
   }
 
@@ -254,7 +260,7 @@ class AnimatedCard extends Frame {
    * @param cardNumber
    * @private
    */
-  private setCardType(cardNumber: string) {
+  private _setCardType(cardNumber: string) {
     const type = this._binLookup.binLookup(cardNumber).type;
     return type ? type.toLowerCase() : type;
   }
@@ -267,14 +273,14 @@ class AnimatedCard extends Frame {
    * value: Value passed from component
    * @private
    */
-  private _onCardNumberChanged(data: any) {
+  private _onCardNumberChanged(data: ISubscribeObject) {
     const { formattedValue, value } = data;
-    this._cardDetails.type = this.setCardType(value);
+    this._cardDetails.type = this._setCardType(value);
     this._cardDetails.cardNumber = AnimatedCard._setCardDetail(
       formattedValue,
       AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER
     );
-    this.animatedCardPan.textContent = this._cardDetails.cardNumber;
+    this._animatedCardPan.textContent = this._cardDetails.cardNumber;
     this._flipCardBack();
     this._resetTheme();
     this._setTheme();
@@ -292,14 +298,14 @@ class AnimatedCard extends Frame {
    * value: Value passed from component
    * @private
    */
-  private _onExpirationDateChanged(data: any) {
+  private _onExpirationDateChanged(data: ISubscribeObject) {
     const { value } = data;
     this._cardDetails.expirationDate = AnimatedCard._setCardDetail(
       value,
       AnimatedCard.CARD_DETAILS_PLACEHOLDERS.EXPIRATION_DATE
     );
     this._flipCardBack();
-    this.animatedCardExpirationDate.textContent = this._cardDetails.expirationDate;
+    this._animatedCardExpirationDate.textContent = this._cardDetails.expirationDate;
   }
 
   /**
@@ -310,7 +316,7 @@ class AnimatedCard extends Frame {
    * value: Value passed from component
    * @private
    */
-  private _onSecurityCodeChanged(data: any) {
+  private _onSecurityCodeChanged(data: ISubscribeObject) {
     const { value } = data;
     this._cardDetails.securityCode = AnimatedCard._setCardDetail(
       value,
@@ -325,13 +331,13 @@ class AnimatedCard extends Frame {
    * @private
    */
   private _setSubscribeEvents() {
-    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: any) => {
+    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: ISubscribeObject) => {
       this._onCardNumberChanged(data);
     });
-    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, (data: any) =>
+    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, (data: ISubscribeObject) =>
       this._onExpirationDateChanged(data)
     );
-    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: any) =>
+    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: ISubscribeObject) =>
       this._onSecurityCodeChanged(data)
     );
   }
