@@ -212,13 +212,12 @@ export default class ControlFrame extends Frame {
 
     if (this._isPaymentReady && isFormValid) {
       const validation = new Validation();
-      validation.blockForm(true);
-
       this._payment.threeDQueryRequest(this._card, this._merchantFormData).then(responseBody => {
         const messageBusEvent: IMessageBusEvent = {
           data: responseBody,
           type: MessageBus.EVENTS_PUBLIC.THREEDQUERY
         };
+        validation.blockForm(true);
         this._messageBus.publish(messageBusEvent, true);
       });
     } else {

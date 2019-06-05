@@ -84,6 +84,7 @@ export default class Validation extends Frame {
       validationEvent.type = MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD;
     }
     this._messageBus.publish(validationEvent);
+
     return { field: errordata[0], errormessage };
   }
 
@@ -131,9 +132,10 @@ export default class Validation extends Frame {
    */
   public blockForm(state: boolean) {
     const messageBusEvent: IMessageBusEvent = {
-      data: { state },
+      data: state,
       type: MessageBus.EVENTS.BLOCK_FORM
     };
     this._messageBus.publish(messageBusEvent, true);
+    return state;
   }
 }

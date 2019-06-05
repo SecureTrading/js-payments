@@ -39,7 +39,7 @@ export default class MessageBus {
   private _subscriptions: any = {};
 
   constructor(parentOrigin?: string) {
-    this._parentOrigin = parentOrigin;
+    this._parentOrigin = parentOrigin ? parentOrigin : '*';
     this._frameOrigin = new URL(environment.FRAME_URL).origin;
     this.registerMessageListener();
   }
