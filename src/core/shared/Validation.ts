@@ -6,8 +6,8 @@ import { Translator } from './Translator';
 
 interface IValidation {
   pan: boolean;
-  securitycode: boolean;
   expirydate: boolean;
+  securitycode: boolean;
 }
 
 interface IMessageBusValidateField {
@@ -53,25 +53,52 @@ export default class Validation extends Frame {
     return cardNumber.slice(-securityCodeLength);
   }
 
+  /**
+   * Sets custom validation error in validity input object.
+   * @param inputElement
+   * @param errorContent
+   */
+  public static setCustomValidationError(inputElement: HTMLInputElement, errorContent: string) {
+    inputElement.setCustomValidity(errorContent);
+  }
+
   private static BACKEND_ERROR_FIELDS_NAMES = {
     cardNumber: 'pan',
     expirationDate: 'expirydate',
     securityCode: 'securitycode'
   };
   private static ONLY_DIGITS_REGEXP = /^[0-9]*$/;
+
+  /**
+   * Gets validity state from input object and sets proper Validation message.
+   * @param validityState
+   * @private
+   */
+  private static getValidationMessage(validityState: ValidityState): string {
+    const { customError, patternMismatch, valid, valueMissing } = validityState;
+    let validationMessage: string = '';
+    if (!valid) {
+      if (valueMissing) {
+        validationMessage = VALIDATION_ERROR_FIELD_IS_REQUIRED;
+      } else if (patternMismatch) {
+        validationMessage = VALIDATION_ERROR_PATTERN_MISMATCH;
+      } else if (customError) {
+        validationMessage = VALIDATION_ERROR;
+      } else {
+        validationMessage = VALIDATION_ERROR;
+      }
+    }
+    return validationMessage;
+  }
+
   public validation: IValidation;
-  public _messageBus: MessageBus;
+  protected _messageBus: MessageBus;
   private _translator: Translator;
 
   constructor() {
     super();
     this._messageBus = new MessageBus();
     this.onInit();
-  }
-
-  protected onInit() {
-    super.onInit();
-    this._translator = new Translator(this._params.locale);
   }
 
   public getErrorData(errorData: any) {
@@ -94,47 +121,16 @@ export default class Validation extends Frame {
   }
 
   /**
-   *
-   * @param validityState
-   * @private
-   */
-  private static getValidationMessage(validityState: ValidityState): string {
-    const { customError, patternMismatch, valid, valueMissing } = validityState;
-    let validationMessage: string = '';
-    if (!valid) {
-      if (valueMissing) {
-        validationMessage = VALIDATION_ERROR_FIELD_IS_REQUIRED;
-      } else if (patternMismatch) {
-        validationMessage = VALIDATION_ERROR_PATTERN_MISMATCH;
-      } else if (customError) {
-        validationMessage = VALIDATION_ERROR;
-      } else {
-        validationMessage = VALIDATION_ERROR;
-      }
-    }
-
-    return validationMessage;
-  }
-
-  public validate(inputElement: HTMLInputElement, messageElement: HTMLElement) {
-    this.toggleErrorClass(inputElement);
-    this.setMessage(inputElement, messageElement);
-  }
-
-  private toggleErrorClass = (inputElement: HTMLInputElement) => {
-    inputElement.validity.valid
-      ? inputElement.classList.remove('error-field')
-      : inputElement.classList.add('error-field');
-  };
-
-  /**
-   * Method placed errorMessage inside chosen container (specified by id).
+   * Listens to backend validation event from MessageBus and sets proper validation actions.
    * @param inputElement
    * @param messageElement
+   * @param event
    */
-  private setMessage(inputElement: HTMLInputElement, messageElement: HTMLElement) {
-    const messageText = Validation.getValidationMessage(inputElement.validity);
-    messageElement.innerText = this._translator.translate(messageText);
+  public backendValidation(inputElement: HTMLInputElement, messageElement: HTMLElement, event: string) {
+    this._messageBus.subscribe(event, (data: any) => {
+      this.checkBackendValidity(data, inputElement, messageElement);
+      this.validate(inputElement, messageElement);
+    });
   }
 
   /**
@@ -149,6 +145,12 @@ export default class Validation extends Frame {
     return state;
   }
 
+  /**
+   * Triggers setError method with proper parameters.
+   * @param data
+   * @param inputElement
+   * @param messageElement
+   */
   public checkBackendValidity(
     data: IMessageBusValidateField,
     inputElement: HTMLInputElement,
@@ -157,20 +159,53 @@ export default class Validation extends Frame {
     this.setError(inputElement, messageElement, data.message);
   }
 
+  /**
+   * Sets all necessary error properties on input and label.
+   * @param inputElement
+   * @param messageElement
+   * @param message
+   */
   public setError(inputElement: HTMLInputElement, messageElement: HTMLElement, message: string) {
     inputElement.classList.add('error-field');
     messageElement.innerText = this._translator.translate(message);
     inputElement.setCustomValidity(message);
   }
 
-  public static setCustomValidationError(inputElement: HTMLInputElement, errorContent: string) {
-    inputElement.setCustomValidity(errorContent);
+  /**
+   * Validate particular form input.
+   * @param inputElement
+   * @param messageElement
+   */
+  public validate(inputElement: HTMLInputElement, messageElement: HTMLElement) {
+    this.toggleErrorClass(inputElement);
+    this.setMessage(inputElement, messageElement);
   }
 
-  public backendValidation(inputElement: HTMLInputElement, messageElement: HTMLElement, event: string) {
-    this._messageBus.subscribe(event, (data: any) => {
-      this.checkBackendValidity(data, inputElement, messageElement);
-      this.validate(inputElement, messageElement);
-    });
+  /**
+   * Extended onInit() method from Frame.ts class.
+   */
+  protected onInit() {
+    super.onInit();
+    this._translator = new Translator(this._params.locale);
+  }
+
+  /**
+   * Add or remove error class from input field.
+   * @param inputElement
+   */
+  private toggleErrorClass = (inputElement: HTMLInputElement) => {
+    inputElement.validity.valid
+      ? inputElement.classList.remove('error-field')
+      : inputElement.classList.add('error-field');
+  };
+
+  /**
+   * Method placed errorMessage inside chosen container (specified by id).
+   * @param inputElement
+   * @param messageElement
+   */
+  private setMessage(inputElement: HTMLInputElement, messageElement: HTMLElement) {
+    const messageText = Validation.getValidationMessage(inputElement.validity);
+    messageElement.innerText = this._translator.translate(messageText);
   }
 }
