@@ -28,7 +28,7 @@ jobs:
       name: 'Unit tests'
       script:
         - npm run coverage
-        - npm run snyk
+      #  - npm run snyk
     - name: 'Behavioural test: Chrome 72, Windows 10'
       script:
         - npm run behave -- test_chrome_72_w10
