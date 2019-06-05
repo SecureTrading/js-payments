@@ -4,10 +4,21 @@ import Utils from './Utils';
 export default class MessageBus {
   public static SUBSCRIBERS: string = 'ST_SUBSCRIBERS';
   public static EVENTS = {
+    BLOCK_CARD_NUMBER: 'BLOCK_CARD_NUMBER',
+    BLOCK_EXPIRATION_DATE: 'BLOCK_EXPIRATION_DATE',
+    BLOCK_FORM: 'BLOCK_FORM',
+    BLOCK_SECURITY_CODE: 'BLOCK_SECURITY_CODE',
     CHANGE_CARD_NUMBER: 'CHANGE_CARD_NUMBER',
     CHANGE_EXPIRATION_DATE: 'CHANGE_EXPIRATION_DATE',
     CHANGE_SECURITY_CODE: 'CHANGE_SECURITY_CODE',
-    CHANGE_SECURITY_CODE_LENGTH: 'CHANGE_SECURITY_CODE_LENGTH'
+    CHANGE_SECURITY_CODE_LENGTH: 'CHANGE_SECURITY_CODE_LENGTH',
+    FOCUS_CARD_NUMBER: 'FOCUS_CARD_NUMBER',
+    FOCUS_EXPIRATION_DATE: 'FOCUS_EXPIRATION_DATE',
+    FOCUS_SECURITY_CODE: 'FOCUS_SECURITY_CODE',
+    VALIDATE_CARD_NUMBER_FIELD: 'VALIDATE_CARD_NUMBER_FIELD',
+    VALIDATE_EXPIRATION_DATE_FIELD: 'VALIDATE_EXPIRATION_DATE_FIELD',
+    VALIDATE_FORM: 'VALIDATE_FORM',
+    VALIDATE_SECURITY_CODE_FIELD: 'VALIDATE_SECURITY_CODE_FIELD'
   };
   public static EVENTS_PUBLIC = {
     AUTH: 'AUTH',
@@ -28,7 +39,7 @@ export default class MessageBus {
   private _subscriptions: any = {};
 
   constructor(parentOrigin?: string) {
-    this._parentOrigin = parentOrigin;
+    this._parentOrigin = parentOrigin ? parentOrigin : '*';
     this._frameOrigin = new URL(environment.FRAME_URL).origin;
     this.registerMessageListener();
   }

@@ -1,7 +1,6 @@
 import each from 'jest-each';
 import Language from '../../../src/core/shared/Language';
 import { StCodec } from '../../../src/core/classes/StCodec.class';
-import MessageBus from '../../../src/core/shared/MessageBus';
 
 describe('StCodec class', () => {
   const ridRegex = 'J-[\\da-z]{8}';
@@ -220,22 +219,6 @@ describe('StCodec class', () => {
       // @ts-ignore
       expect(StCodec.publishResponse).toHaveBeenCalledWith({ errorcode: '50003', errormessage: 'Invalid response' });
     });
-
-    each([
-      [
-        {
-          response: [{ errorcode: 30000, errormessage: 'Field error' }],
-          version: '1.00'
-        }
-      ]
-    ]).it('should verify the gateway error response', responseData => {
-      expect(() => StCodec.verifyResponseObject(responseData)).toThrow(Error(responseData.response[0].errormessage));
-      // @ts-ignore
-      expect(StCodec.publishResponse).toHaveBeenCalledWith({
-        errorcode: 30000,
-        errormessage: 'Field error'
-      });
-    });
   });
 
   describe('StCodec.decode', () => {
@@ -255,8 +238,6 @@ describe('StCodec class', () => {
         })
       ).resolves.toEqual(StCodec.verifyResponseObject(fullResponse));
       expect(StCodec.verifyResponseObject).toHaveBeenCalledWith(fullResponse);
-      // @ts-ignore
-      expect(StCodec.publishResponse).toHaveBeenCalledWith(fullResponse.response[0]);
     });
 
     it('should error an invalid response', async () => {

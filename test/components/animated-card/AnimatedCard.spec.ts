@@ -1,10 +1,9 @@
 import each from 'jest-each';
-import MessageBus from '../../../src/core/shared/MessageBus';
-import Selectors from '../../../src/core/shared/Selectors';
 import { cardsLogos } from '../../../src/components/animated-card/animated-card-logos';
 import AnimatedCard from './../../../src/components/animated-card/AnimatedCard';
+import Selectors from '../../../src/core/shared/Selectors';
 import { Translator } from '../../../src/core/shared/Translator';
-import { spawnSync } from 'child_process';
+
 // given
 describe('Class AnimatedCard', () => {
   // given
@@ -75,6 +74,66 @@ describe('Class AnimatedCard', () => {
 
     it('should return HTMLInput element', () => {
       expect(AnimatedCard.ifCardExists()).toBeTruthy();
+    });
+  });
+
+  // given
+  describe('setCardDetail()', () => {
+    // then
+    it('should return placeholder when value is not defined', () => {
+      expect(AnimatedCard.setCardDetail('', 'some placeholder')).toEqual('some placeholder');
+    });
+
+    // then
+    it('should return value when value is defined', () => {
+      expect(AnimatedCard.setCardDetail('some value', 'some placeholder')).toEqual('some value');
+    });
+  });
+
+  // given
+  describe('getLogo', () => {
+    // then
+    each(['amex', 'astropaycard', 'diners', 'discover', 'jcb', 'maestro', 'mastercard', 'piba', 'visa']).it(
+      'should return logo content',
+      (logoName: string) => {
+        expect(AnimatedCard.getLogo(logoName)).toEqual(cardsLogos[logoName]);
+      }
+    );
+  });
+
+  // given
+  describe('setSecurityCodeChangeListener', () => {
+    const { instance } = animatedCardFixture();
+    // then
+    it('should be triggered', () => {});
+  });
+
+  // given
+  describe('setSecurityCodeFocusEventListener', () => {
+    // then
+    it('should be triggered', () => {});
+  });
+
+  // given
+  describe('setSecurityCodePlaceholderContent', () => {
+    const securityCodeLength = 3;
+    const securityCodeLengthExtended = 4;
+    const { instance } = animatedCardFixture();
+
+    // then
+    it('should return regular placeholder', () => {
+      instance.setSecurityCodePlaceholderContent(securityCodeLength);
+      expect(instance.animatedCardSecurityCodeFrontField.textContent).toEqual(
+        AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE
+      );
+    });
+
+    // then
+    it('should return extended placeholder', () => {
+      instance.setSecurityCodePlaceholderContent(securityCodeLengthExtended);
+      expect(instance.animatedCardSecurityCodeFrontField.textContent).toEqual(
+        AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED
+      );
     });
   });
 
@@ -167,6 +226,28 @@ describe('Class AnimatedCard', () => {
       expect(instance.animatedCardLogoBackground.classList[1]).toBe('st-animated-card__payment-logo--default');
       expect(instance.animatedCardLogoBackground.classList.length).toBe(2);
     });
+    it('should add standard standard theme if type is not defined', () => {
+      instance.cardDetails.typ = undefined;
+      instance.setThemeClasses();
+      expect(instance.animatedCardLogoBackground.classList.contains(AnimatedCard.CARD_CLASSES.CLASS_LOGO)).toEqual(
+        true
+      );
+    });
+  });
+
+  // given
+  describe('setLogo', () => {
+    it('some test', () => {});
+  });
+
+  // given
+  describe('setTheme', () => {
+    it('some test', () => {});
+  });
+
+  // given
+  describe('setSecurityCodeOnProperSide', () => {
+    it('some test', () => {});
   });
 
   // given
@@ -342,6 +423,23 @@ describe('Class AnimatedCard', () => {
         defaultCardType: 'AMEX',
         supported: ['VISA', 'MASTERCARD', 'AMEX']
       });
+    });
+  });
+  describe('setCardType', () => {
+    let instance: any;
+    beforeEach(() => {
+      instance = animatedCardFixture().instance;
+    });
+    it('should set card type', () => {
+      expect(instance.setCardType('400000')).toEqual('visa');
+    });
+  });
+
+  // given
+  describe('AnimatedCard.getLogo', () => {
+    const { cardTypes } = animatedCardFixture();
+    each(cardTypes).it('should set card type', type => {
+      expect(AnimatedCard.getLogo(type[0])).toEqual(cardsLogos[type[0]]);
     });
   });
 });

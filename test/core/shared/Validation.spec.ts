@@ -23,7 +23,8 @@ each([
   [{ valid: true, valueMissing: false }, ''],
   [{ valid: false, valueMissing: true }, Language.translations.VALIDATION_ERROR_FIELD_IS_REQUIRED],
   [{ valid: false, patternMismatch: true }, Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH],
-  [{ valid: false, tooShort: true }, Language.translations.VALIDATION_ERROR_VALUE_TOO_SHORT]
+  [{ valid: false, tooShort: true }, Language.translations.VALIDATION_ERROR]
 ]).test('Validation.getValidationMessage', (validityState, expected) => {
-  expect(Validation.getValidationMessage(validityState)).toBe(expected);
+  const instance = new Validation();
+  expect(instance.getValidationMessage(validityState)).toBe(expected);
 });

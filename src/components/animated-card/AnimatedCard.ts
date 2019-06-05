@@ -40,6 +40,7 @@ class AnimatedCard extends Frame {
     CARD_NUMBER: '\u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219',
     EXPIRATION_DATE: 'MM/YY',
     SECURITY_CODE: '\u2219\u2219\u2219',
+    SECURITY_CODE_EXTENDED: '\u2219\u2219\u2219\u2219',
     TYPE: 'default'
   };
 
@@ -60,6 +61,8 @@ class AnimatedCard extends Frame {
    * @param type
    */
   public static getLogo = (type: string) => cardsLogos[type];
+
+  private static SECURITY_CODE_LENGTH_EXTENDED = 4;
 
   public animatedCardBack: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_SIDE_BACK);
   public animatedCardExpirationDate: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_EXPIRATION_DATE_ID);
@@ -98,6 +101,29 @@ class AnimatedCard extends Frame {
     this.setDefaultInputsValues();
     this.setSubscribeEvents();
     this.onCardNumberChanged({ formattedValue: '', value: '' }); // Need to call this to use the default card type
+    this.setSecurityCodeChangeListener();
+    this.setSecurityCodeFocusEventListener();
+  }
+
+  public setSecurityCodeChangeListener() {
+    this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (length: number) => {
+      this.setSecurityCodePlaceholderContent(length);
+    });
+  }
+
+  public setSecurityCodeFocusEventListener() {
+    this.messageBus.subscribe(MessageBus.EVENTS.FOCUS_SECURITY_CODE, (state: boolean) => {
+      state ? this.shouldFlipCard() : this.flipCardBack();
+    });
+  }
+
+  public setSecurityCodePlaceholderContent(securityCodeLength: number) {
+    if (securityCodeLength === AnimatedCard.SECURITY_CODE_LENGTH_EXTENDED) {
+      this.animatedCardSecurityCodeFrontField.textContent =
+        AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED;
+    } else {
+      this.animatedCardSecurityCodeFrontField.textContent = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
+    }
   }
 
   public setLabels() {
@@ -170,8 +196,10 @@ class AnimatedCard extends Frame {
    * Sets card theme according to card brand coming from binLookup()
    */
   public setTheme() {
+    this.animatedCardSecurityCodeFrontField.textContent = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
     if (this.cardDetails.type === AnimatedCard.CARD_TYPES.AMEX) {
-      this.animatedCardSecurityCodeFrontField.textContent = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
+      this.animatedCardSecurityCodeFrontField.textContent =
+        AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED;
     }
     this.cardDetails.logo = AnimatedCard.getLogo(this.cardDetails.type);
   }
@@ -181,11 +209,14 @@ class AnimatedCard extends Frame {
    */
   public setSecurityCodeOnProperSide() {
     const isAmex: boolean = this.cardDetails.type === AnimatedCard.CARD_TYPES.AMEX;
-    isAmex
-      ? DOMMethods.removeClass(this.animatedCardSecurityCodeFront, AnimatedCard.CARD_CLASSES.CLASS_SECURITY_CODE_HIDDEN)
-      : DOMMethods.addClass(this.animatedCardSecurityCodeFront, AnimatedCard.CARD_CLASSES.CLASS_SECURITY_CODE_HIDDEN);
 
-    return isAmex ? this.animatedCardSecurityCodeFrontField : this.animatedCardSecurityCode;
+    if (isAmex) {
+      DOMMethods.removeClass(this.animatedCardSecurityCodeFront, AnimatedCard.CARD_CLASSES.CLASS_SECURITY_CODE_HIDDEN);
+      this.animatedCardSecurityCodeFrontField.textContent = this.cardDetails.securityCode;
+    } else {
+      DOMMethods.addClass(this.animatedCardSecurityCodeFront, AnimatedCard.CARD_CLASSES.CLASS_SECURITY_CODE_HIDDEN);
+      this.animatedCardSecurityCode.textContent = this.cardDetails.securityCode;
+    }
   }
 
   /**
@@ -231,7 +262,7 @@ class AnimatedCard extends Frame {
   public setDefaultInputsValues() {
     this.animatedCardPan.textContent = this.cardDetails.cardNumber;
     this.animatedCardExpirationDate.textContent = this.cardDetails.expirationDate;
-    this.setSecurityCodeOnProperSide().textContent = this.cardDetails.securityCode;
+    this.setSecurityCodeOnProperSide();
   }
 
   /**
@@ -253,6 +284,10 @@ class AnimatedCard extends Frame {
   public onCardNumberChanged(data: any) {
     const { formattedValue, value } = data;
     this.cardDetails.type = this.setCardType(value);
+    this.cardDetails.securityCode =
+      this.cardDetails.type === AnimatedCard.CARD_TYPES.AMEX
+        ? AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED
+        : AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
     this.cardDetails.cardNumber = AnimatedCard.setCardDetail(
       formattedValue,
       AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER
@@ -264,7 +299,7 @@ class AnimatedCard extends Frame {
     this.removeLogo();
     this.setLogo();
     this.setThemeClasses();
-    this.setSecurityCodeOnProperSide().textContent = this.cardDetails.securityCode;
+    this.setSecurityCodeOnProperSide();
   }
 
   /**
@@ -293,12 +328,14 @@ class AnimatedCard extends Frame {
    */
   public onSecurityCodeChanged(data: any) {
     const { value } = data;
+    const isAmex: boolean = this.cardDetails.type === AnimatedCard.CARD_TYPES.AMEX;
     this.cardDetails.securityCode = AnimatedCard.setCardDetail(
       value,
-      AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE
+      isAmex
+        ? AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED
+        : AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE
     );
-    this.shouldFlipCard();
-    this.setSecurityCodeOnProperSide().textContent = this.cardDetails.securityCode;
+    this.setSecurityCodeOnProperSide();
   }
 
   /**
@@ -318,8 +355,14 @@ class AnimatedCard extends Frame {
     return super._getAllowedParams().concat(['defaultPaymentType', 'paymentTypes']);
   }
 
+  /**
+   * Sets text label of particular element.
+   * @param labelSelector
+   * @param text
+   * @private
+   */
   private _setLabel(labelSelector: string, text: string) {
-    document.getElementById(labelSelector).innerHTML = this._translator.translate(text);
+    document.getElementById(labelSelector).textContent = this._translator.translate(text);
   }
 
   private getBinLookupConfig() {

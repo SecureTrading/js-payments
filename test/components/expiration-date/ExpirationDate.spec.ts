@@ -1,10 +1,11 @@
 import ExpirationDate from '../../../src/components/expiration-date/ExpirationDate';
-import FormField from '../../../src/core/shared/FormField';
+import Language from '../../../src/core/shared/Language';
 import Selectors from '../../../src/core/shared/Selectors';
 
-describe('ExpirationDate', () => {
-  let expirationDate: ExpirationDate;
+jest.mock('./../../../src/core/shared/MessageBus');
 
+// given
+describe('ExpirationDate', () => {
   beforeAll(() => {
     let labelElement = document.createElement('label');
     let inputElement = document.createElement('input');
@@ -17,93 +18,51 @@ describe('ExpirationDate', () => {
     document.body.appendChild(labelElement);
     document.body.appendChild(inputElement);
     document.body.appendChild(messageElement);
-
-    expirationDate = new ExpirationDate();
   });
-
-  it('should create instance of classes ExpirationDate and FormField representing form field', () => {
-    expect(expirationDate).toBeInstanceOf(ExpirationDate);
-    FormField.prototype.getLabel = jest.fn(); // Not implemented in FormField
-    expect(expirationDate).toBeInstanceOf(FormField);
-  });
-
-  it('should have a label', () => {
-    expect(expirationDate.getLabel()).toBe('Expiration date');
-  });
-
-  // // given
-  // describe('Class ExpirationDate instance', () => {
-  //   // when
-  //   beforeEach(() => {
-  //     instance = new ExpirationDate('st-expiration-date-input');
-  //     expirationDateClass = ExpirationDate;
-  //     validationClass = Validation;
-  //   });
-  //   // then
-  //   it('should new object be an instance od ExpirationDate and Validation class', () => {
-  //     expect(instance).toBeInstanceOf(ExpirationDate);
-  //     expect(instance).toBeInstanceOf(Validation);
-  //   });
-  // });
 
   // given
-  // describe('Method dateInputMask', () => {
-  //   // when
-  //   let expectedValueWithSlash: string;
-  //   let keyPressedValue: string;
-  //   let keyPressedValueIncorrect: string;
-  //
-  //   beforeEach(() => {
-  //     expectedValueWithSlash = '55/';
-  //     keyPressedValue = '0';
-  //     keyPressedValueIncorrect = 'a';
-  //   });
-  //
-  //   // then
-  //   it('should prevent from exceed max length of date', () => {
-  //     let { elementWithExceededValue } = elementFixture();
-  //     const { event } = eventFixture('keypress', keyPressedValue);
-  //     // expect(ExpirationDate.dateInputMask(elementWithExceededValue, event)).toBe(false);
-  //   });
-  //
-  //   // then
-  //   it('should indicate slash at third place of indicated string', () => {
-  //     let { element } = elementFixture();
-  //     const { event } = eventFixture('keypress', keyPressedValue);
-  //     // ExpirationDate.dateInputMask(element, event);
-  //     expect(element.value).toBe(expectedValueWithSlash);
-  //   });
-  //
-  //   // then
-  //   it('should prevent from enter char except digit', () => {
-  //     let { element } = elementFixture();
-  //     let { event } = eventFixture('keypress', keyPressedValueIncorrect);
-  //     // let expirationDateResult = ExpirationDate.dateInputMask(element, event);
-  //     // expect(expirationDateResult).toBe(false);
-  //   });
-  // });
+  describe('ifFieldExists', () => {
+    // then
+    it('should return input element', () => {
+      expect(ExpirationDate.ifFieldExists()).toBeTruthy();
+    });
+
+    // then
+    it('should return input element', () => {
+      expect(ExpirationDate.ifFieldExists()).toBeInstanceOf(HTMLInputElement);
+    });
+  });
 
   // given
-  // describe('Method isDateValid', () => {
-  //   //when
-  //   const { element, elementWithError } = elementFixture();
-  //
-  //   // then
-  //   it('should return false if non-digit expression is indicated', () => {
-  //     // expect(ExpirationDate.isDateValid(elementWithError)).toEqual(false);
-  //   });
-  //
-  //   // then
-  //   it('should return true if digit expression is indicated', () => {
-  //     // expect(ExpirationDate.isDateValid(element)).toEqual(false);
-  //   });
-  // });
+  describe('ExpirationDate.getLabel', () => {
+    const { instance } = expirationDateFixture();
+    // then
+    it('should return translated label', () => {
+      expect(instance.getLabel()).toEqual(Language.translations.LABEL_EXPIRATION_DATE);
+    });
+  });
+
+  // given
+  describe('ExpirationDate.isMaxLengthReached ', () => {
+    const { instance } = expirationDateFixture();
+    // then
+    it('should return true if input value greater than date length', () => {
+      // @ts-ignore
+      instance._inputElement.value = '12/12';
+      // @ts-ignore;
+      expect(instance.isMaxLengthReached()).toEqual(true);
+    });
+  });
 });
 
-function elementFixture() {
+function expirationDateFixture() {
+  const html =
+    '<form id="st-expiration-date" class="expiration-date" novalidate=""> <label id="st-expiration-date-label" for="st-expiration-date-input" class="expiration-date__label expiration-date__label--required">Expiration date</label> <input id="st-expiration-date-input" class="expiration-date__input error-field" type="text" autocomplete="off" autocorrect="off" spellcheck="false" inputmode="numeric" required="" data-dirty="true" data-pristine="false" data-validity="false" data-clicked="false" pattern="^(0[1-9]|1[0-2])\\/([0-9]{2})$"> <div id="st-expiration-date-message" class="expiration-date__message">Field is required</div> </form>';
+  document.body.innerHTML = html;
   const correctValue = '55';
   const incorrectValue = 'a';
   const correctDataValue = '12/19';
+  const instance = new ExpirationDate();
 
   let element = document.createElement('input');
   let elementWithError = document.createElement('input');
@@ -111,10 +70,5 @@ function elementFixture() {
   element.setAttribute('value', correctValue);
   elementWithError.setAttribute('value', incorrectValue);
   elementWithExceededValue.setAttribute('value', correctDataValue);
-  return { element, elementWithError, elementWithExceededValue };
-}
-
-function eventFixture(eventType: string, eventKeyValue: string) {
-  const event = new KeyboardEvent(eventType, { key: eventKeyValue });
-  return { event };
+  return { element, elementWithError, elementWithExceededValue, instance };
 }
