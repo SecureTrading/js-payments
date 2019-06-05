@@ -224,7 +224,7 @@ class AnimatedCard extends Frame {
 
     if (isAmex) {
       DOMMethods.removeClass(this._animatedCardSecurityCodeFront, AnimatedCard.CARD_CLASSES.CLASS_SECURITY_CODE_HIDDEN);
-      this._animatedCardSecurityCodeFrontField.textContent = this.cardDetails.securityCode;
+      this._animatedCardSecurityCodeFrontField.textContent = this._cardDetails.securityCode;
     } else {
       DOMMethods.addClass(this._animatedCardSecurityCodeFront, AnimatedCard.CARD_CLASSES.CLASS_SECURITY_CODE_HIDDEN);
       this._animatedCardSecurityCode.textContent = this._cardDetails.securityCode;
