@@ -47,10 +47,6 @@ describe('translate()', () => {
       let language: any = Language.translations;
       for (let key in language) {
         let text = language[key];
-        // tslint:disable-next-line
-        console.log(key);
-        // tslint:disable-next-line
-        console.log(text);
         expect(translation[text]).toBeDefined();
       }
     }
