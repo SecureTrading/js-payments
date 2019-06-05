@@ -37,8 +37,6 @@ export default class Selectors {
   public static CONTROL_FRAME_COMPONENT: string = `${environment.FRAME_URL}/control-frame.html`;
   public static readonly ANIMATED_CARD_COMPONENT: string = `${environment.FRAME_URL}/animated-card.html`;
 
-  public static MERCHANT_FORM_SELECTOR: string = 'st-form';
-
   public static readonly ANIMATED_CARD_INPUT_SELECTOR: string = 'st-animated-card';
   public static readonly ANIMATED_CARD_CREDIT_CARD_ID = 'st-animated-card-number';
   public static readonly ANIMATED_CARD_EXPIRATION_DATE_ID = 'st-animated-card-expiration-date';
@@ -53,4 +51,6 @@ export default class Selectors {
   public static readonly ANIMATED_CARD_CREDIT_CARD_LABEL = 'st-animated-card-card-number-label';
   public static readonly ANIMATED_CARD_EXPIRATION_DATE_LABEL = 'st-animated-card-expiration-date-label';
   public static readonly ANIMATED_CARD_SECURITY_CODE_LABEL = 'st-animated-card-security-code-label';
+
+  public MERCHANT_FORM_SELECTOR: string = 'st-form';
 }
