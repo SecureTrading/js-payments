@@ -55,11 +55,11 @@ export default class FormField extends Frame {
     });
   }
 
-  public setError(inputElement: any, messageElement: any, message: string) {
-    inputElement.classList.add('error-field');
-    messageElement.innerText = this._translator.translate(message);
-    this._inputElement.setCustomValidity(message);
-  }
+  // public setError(inputElement: any, messageElement: any, message: string) {
+  //   inputElement.classList.add('error-field');
+  //   messageElement.innerText = this._translator.translate(message);
+  //   this._inputElement.setCustomValidity(message);
+  // }
 
   protected setLabelText() {
     this._labelElement.innerHTML = this._translator.translate(this.getLabel());
@@ -127,7 +127,7 @@ export default class FormField extends Frame {
   }
 
   protected onInput(event: Event) {
-    this.setCustomValidationError('');
+    this.validation.setCustomValidationError(this._inputElement, '');
     this.format(this._inputElement.value);
   }
 
@@ -149,7 +149,7 @@ export default class FormField extends Frame {
     event.preventDefault();
     clipboardData = event.clipboardData.getData('text/plain');
     this._inputElement.value = Formatter.trimNonNumeric(clipboardData);
-    this.setCustomValidationError('');
+    this.validation.setCustomValidationError(this._inputElement, '');
     this.format(this._inputElement.value);
     this.validation.validate(this._inputElement, this._messageElement);
   }
@@ -181,14 +181,6 @@ export default class FormField extends Frame {
   protected focus() {
     this.setAttributes(FormField.FOCUSED_FIELD_STATE);
     this._inputElement.focus();
-  }
-
-  protected checkBackendValidity(data: any) {
-    this.setError(this._inputElement, this._messageElement, data.message);
-  }
-
-  private setCustomValidationError(errorContent: string) {
-    this._inputElement.setCustomValidity(errorContent);
   }
 
   private setInputListeners() {

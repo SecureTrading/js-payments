@@ -32,7 +32,11 @@ export default class CardNumber extends FormField {
     this.cardNumberLength = CardNumber.STANDARD_CARD_LENGTH;
     this.setFocusListener();
     this.setDisableListener();
-    this.backendValidation();
+    this.validation.backendValidation(
+      this._inputElement,
+      this._messageElement,
+      MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD
+    );
     this.sendState();
   }
 
@@ -164,16 +168,6 @@ export default class CardNumber extends FormField {
       validity,
       value: this.cardNumberValue
     };
-  }
-
-  /**
-   *
-   */
-  public backendValidation() {
-    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD, (data: any) => {
-      this.checkBackendValidity(data);
-      this.validation.validate(this._inputElement, this._messageElement);
-    });
   }
 
   public setFocusListener() {

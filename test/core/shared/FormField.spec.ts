@@ -37,16 +37,6 @@ describe('FormField', () => {
     });
   });
 
-  describe('setError()', () => {
-    it('should render given message', () => {
-      let message: string = 'abc';
-      // @ts-ignore
-      formField.setError(inputElement, messageElement, message);
-
-      expect(messageElement.innerText).toBe(message);
-    });
-  });
-
   describe('_onFocus()', () => {
     it('should focus on input element', () => {
       // @ts-ignore

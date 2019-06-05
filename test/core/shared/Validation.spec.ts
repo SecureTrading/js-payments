@@ -29,8 +29,8 @@ each([
   [{ valid: false, customError: true }, Language.translations.VALIDATION_ERROR],
   [{ valid: false, tooShort: true }, Language.translations.VALIDATION_ERROR]
 ]).test('Validation.getValidationMessage', (validityState, expected) => {
-  const instance = new Validation();
-  expect(instance.getValidationMessage(validityState)).toBe(expected);
+  // @ts-ignore
+  expect(Validation.getValidationMessage(validityState)).toBe(expected);
 });
 
 // given

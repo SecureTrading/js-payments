@@ -10,6 +10,11 @@ interface IValidation {
   expirydate: boolean;
 }
 
+interface MessageBusValidateField {
+  field: string;
+  message: string;
+}
+
 const {
   VALIDATION_ERROR_FIELD_IS_REQUIRED,
   VALIDATION_ERROR_PATTERN_MISMATCH,
@@ -64,7 +69,7 @@ export default class Validation extends Frame {
     this.onInit();
   }
 
-  public onInit() {
+  protected onInit() {
     super.onInit();
     this._translator = new Translator(this._params.locale);
   }
@@ -88,7 +93,12 @@ export default class Validation extends Frame {
     return { field: errordata[0], errormessage };
   }
 
-  public getValidationMessage(validityState: ValidityState): string {
+  /**
+   *
+   * @param validityState
+   * @private
+   */
+  private static getValidationMessage(validityState: ValidityState): string {
     const { customError, patternMismatch, valid, valueMissing } = validityState;
     let validationMessage: string = '';
     if (!valid) {
@@ -111,7 +121,7 @@ export default class Validation extends Frame {
     this.setMessage(inputElement, messageElement);
   }
 
-  public toggleErrorClass = (inputElement: any) => {
+  private toggleErrorClass = (inputElement: any) => {
     inputElement.validity.valid
       ? inputElement.classList.remove('error-field')
       : inputElement.classList.add('error-field');
@@ -122,13 +132,13 @@ export default class Validation extends Frame {
    * @param inputElement
    * @param messageElement
    */
-  public setMessage(inputElement: any, messageElement: any) {
-    const messageText = this.getValidationMessage(inputElement.validity);
+  private setMessage(inputElement: any, messageElement: any) {
+    const messageText = Validation.getValidationMessage(inputElement.validity);
     messageElement.innerText = this._translator.translate(messageText);
   }
 
   /**
-   *
+   * Send request via MessageBus to let know if form should be blocked or not.
    */
   public blockForm(state: boolean) {
     const messageBusEvent: IMessageBusEvent = {
@@ -137,5 +147,26 @@ export default class Validation extends Frame {
     };
     this._messageBus.publish(messageBusEvent, true);
     return state;
+  }
+
+  public checkBackendValidity(data: any, inputElement: any, messageElement: any) {
+    this.setError(inputElement, messageElement, data.message);
+  }
+
+  public setError(inputElement: any, messageElement: any, message: string) {
+    inputElement.classList.add('error-field');
+    messageElement.innerText = this._translator.translate(message);
+    inputElement.setCustomValidity(message);
+  }
+
+  public setCustomValidationError(inputElement: any, errorContent: string) {
+    inputElement.setCustomValidity(errorContent);
+  }
+
+  public backendValidation(inputElement: any, messageElement: any, event: any) {
+    this._messageBus.subscribe(event, (data: any) => {
+      this.checkBackendValidity(data, inputElement, messageElement);
+      this.validate(inputElement, messageElement);
+    });
   }
 }

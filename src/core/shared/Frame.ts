@@ -13,7 +13,7 @@ export default class Frame {
   protected _messageBus: MessageBus;
   protected _params: IParams;
 
-  public onInit() {
+  protected onInit() {
     this._params = this.parseUrl();
     this._messageBus = new MessageBus(this._params.origin);
     this.applyStyles();
