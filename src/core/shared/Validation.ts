@@ -97,7 +97,7 @@ export default class Validation extends Frame {
       } else if (patternMismatch) {
         validationMessage = VALIDATION_ERROR_PATTERN_MISMATCH;
       } else if (customError) {
-        validationMessage = VALIDATION_ERROR_PATTERN_MISMATCH;
+        validationMessage = VALIDATION_ERROR;
       } else {
         validationMessage = VALIDATION_ERROR;
       }
