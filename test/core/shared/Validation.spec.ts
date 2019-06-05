@@ -1,4 +1,5 @@
 import each from 'jest-each';
+import MessageBus from '../../../src/core/shared/MessageBus';
 import Validation from '../../../src/core/shared/Validation';
 import Language from '../../../src/core/shared/Language';
 import { StCodec } from '../../../src/core/classes/StCodec.class';
@@ -12,14 +13,6 @@ each([
   [new KeyboardEvent('keypress', { key: 'Shift' }), false]
 ]).test('Validation.isCharNumber', (event: KeyboardEvent, expected: any) => {
   expect(Validation.isCharNumber(event)).toBe(expected);
-});
-
-each([
-  [{ value: '123', length: 1 }, '3'],
-  [{ value: '123', length: 2 }, '23'],
-  [{ value: '123', length: 4 }, '123']
-]).test('Validation.getLastNChars', (data, expected) => {
-  expect(Validation.getLastNChars(data.value, data.length)).toBe(expected);
 });
 
 each([
@@ -77,6 +70,7 @@ describe('getErrorData()', () => {
     };
     const data = StCodec.getErrorData(errorData);
 
+    // @ts-ignore
     expect(instance.getErrorData(errorData)).toEqual({
       field: errorData.errordata[0],
       errormessage: errorData.errormessage
@@ -92,6 +86,7 @@ describe('getErrorData()', () => {
     };
     const data = StCodec.getErrorData(errorData);
 
+    // @ts-ignore
     expect(instance.getErrorData(errorData)).toEqual({
       field: errorData.errordata[0],
       errormessage: errorData.errormessage
@@ -107,9 +102,77 @@ describe('getErrorData()', () => {
     };
     const data = StCodec.getErrorData(errorData);
 
+    // @ts-ignore
     expect(instance.getErrorData(errorData)).toEqual({
       field: errorData.errordata[0],
       errormessage: errorData.errormessage
     });
+  });
+});
+
+// given
+describe('setCustomValidationError()', () => {
+  // when
+  let element: HTMLInputElement;
+  beforeEach(() => {
+    element = document.createElement('input');
+  });
+
+  // then
+  it('should have validity equal false if validation message is set', () => {
+    Validation.setCustomValidationError(element, 'some error message');
+    expect(element.checkValidity()).toEqual(false);
+  });
+
+  // then
+  it('should have validity equal true if validation message is not set', () => {
+    Validation.setCustomValidationError(element, '');
+    expect(element.checkValidity()).toEqual(true);
+  });
+});
+
+// given
+describe('backendValidation()', () => {
+  // when
+  let element: HTMLInputElement;
+  let messageElement: HTMLElement;
+  let instance: Validation = new Validation();
+  beforeEach(() => {
+    element = document.createElement('input');
+    messageElement = document.createElement('label');
+
+    const messageBusEvent = {
+      type: MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD
+    };
+    // @ts-ignore
+    instance._messageBus.publish(messageBusEvent);
+  });
+
+  // then
+  it('checkBackendValidity', () => {
+    // const spy = jest.spyOn(instance, 'checkBackendValidity');
+    // const spy2 = jest.spyOn(instance, 'validate');
+    // instance.backendValidation(element, messageElement, MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD);
+    // expect(spy).toHaveBeenCalled();
+  });
+
+  // then
+  it('validate', () => {});
+});
+
+// given
+describe('checkBackendValidity()', () => {
+  let instance: Validation = new Validation();
+  // then
+  it('should trigger setError function', () => {
+    const spy = jest.spyOn(instance, 'setError');
+    const data = {
+      field: 'pan',
+      message: 'some message'
+    };
+    let element = document.createElement('input');
+    let messageElement = document.createElement('label');
+    instance.checkBackendValidity(data, element, messageElement);
+    expect(spy).toHaveBeenCalled();
   });
 });

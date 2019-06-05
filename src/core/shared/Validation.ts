@@ -3,17 +3,7 @@ import Frame from './Frame';
 import Language from './Language';
 import MessageBus from './MessageBus';
 import { Translator } from './Translator';
-
-interface IValidation {
-  pan: boolean;
-  expirydate: boolean;
-  securitycode: boolean;
-}
-
-interface IMessageBusValidateField {
-  field: string;
-  message: string;
-}
+import { IErrorData, IMessageBusValidateField, IValidation } from '../interfaces/IValidation';
 
 const {
   VALIDATION_ERROR_FIELD_IS_REQUIRED,
@@ -41,16 +31,7 @@ export default class Validation extends Frame {
    */
   public static isEnter(event: KeyboardEvent) {
     const keyCode: number = event.keyCode;
-    return keyCode === 13;
-  }
-
-  /**
-   * Returns last N chars of given input
-   * @param cardNumber
-   * @param securityCodeLength
-   */
-  public static getLastNChars(cardNumber: string, securityCodeLength: number) {
-    return cardNumber.slice(-securityCodeLength);
+    return keyCode === Validation.ENTER_KEY_CODE;
   }
 
   /**
@@ -67,6 +48,7 @@ export default class Validation extends Frame {
     expirationDate: 'expirydate',
     securityCode: 'securitycode'
   };
+  private static ENTER_KEY_CODE = 13;
   private static ONLY_DIGITS_REGEXP = /^[0-9]*$/;
 
   /**
@@ -101,25 +83,6 @@ export default class Validation extends Frame {
     this.onInit();
   }
 
-  public getErrorData(errorData: any) {
-    const { errordata, errormessage } = StCodec.getErrorData(errorData);
-    const validationEvent: IMessageBusEvent = {
-      data: { field: errordata[0], message: errormessage },
-      type: ''
-    };
-
-    if (errordata[0] === Validation.BACKEND_ERROR_FIELDS_NAMES.cardNumber) {
-      validationEvent.type = MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD;
-    } else if (errordata[0] === Validation.BACKEND_ERROR_FIELDS_NAMES.expirationDate) {
-      validationEvent.type = MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD;
-    } else if (errordata[0] === Validation.BACKEND_ERROR_FIELDS_NAMES.securityCode) {
-      validationEvent.type = MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD;
-    }
-    this._messageBus.publish(validationEvent);
-
-    return { field: errordata[0], errormessage };
-  }
-
   /**
    * Listens to backend validation event from MessageBus and sets proper validation actions.
    * @param inputElement
@@ -127,7 +90,7 @@ export default class Validation extends Frame {
    * @param event
    */
   public backendValidation(inputElement: HTMLInputElement, messageElement: HTMLElement, event: string) {
-    this._messageBus.subscribe(event, (data: any) => {
+    this._messageBus.subscribe(event, (data: IMessageBusValidateField) => {
       this.checkBackendValidity(data, inputElement, messageElement);
       this.validate(inputElement, messageElement);
     });
@@ -157,6 +120,29 @@ export default class Validation extends Frame {
     messageElement: HTMLElement
   ) {
     this.setError(inputElement, messageElement, data.message);
+  }
+
+  /**
+   * Gets backend error data and assign it to proper input field.
+   * @param errorData
+   */
+  public getErrorData(errorData: IErrorData) {
+    const { errordata, errormessage } = StCodec.getErrorData(errorData);
+    const validationEvent: IMessageBusEvent = {
+      data: { field: errordata[0], message: errormessage },
+      type: ''
+    };
+
+    if (errordata[0] === Validation.BACKEND_ERROR_FIELDS_NAMES.cardNumber) {
+      validationEvent.type = MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD;
+    } else if (errordata[0] === Validation.BACKEND_ERROR_FIELDS_NAMES.expirationDate) {
+      validationEvent.type = MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD;
+    } else if (errordata[0] === Validation.BACKEND_ERROR_FIELDS_NAMES.securityCode) {
+      validationEvent.type = MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD;
+    }
+    this._messageBus.publish(validationEvent);
+
+    return { field: errordata[0], errormessage };
   }
 
   /**
