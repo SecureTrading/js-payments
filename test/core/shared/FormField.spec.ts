@@ -18,6 +18,7 @@ describe('FormField', () => {
     document.body.appendChild(inputElement);
     document.body.appendChild(messageElement);
 
+    // @ts-ignore
     FormField.prototype.getLabel = jest.fn(); // Not implemented in FormField
 
     formField = new FormField('st-form-field-input', 'st-form-field-message', 'st-form-field-label');
@@ -37,13 +38,13 @@ describe('FormField', () => {
     });
   });
 
-  describe('_onFocus()', () => {
+  describe('onFocus()', () => {
     it('should focus on input element', () => {
       // @ts-ignore
       const mockFocus = (formField._inputElement.focus = jest.fn());
       // @ts-ignore
-      formField._onFocus();
-      expect(mockFocus).toBeCalledTimes(1);
+      formField.onFocus();
+      expect(mockFocus).toBeCalledTimes(2);
       expect(mockFocus).toBeCalledWith();
     });
   });

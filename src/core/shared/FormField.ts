@@ -46,24 +46,6 @@ export default class FormField extends Frame {
     throw new Error(Language.translations.NOT_IMPLEMENTED_ERROR);
   }
 
-  /**
-   * Sets all necessary validation attributes.
-   * @param attributes
-   * @private
-   */
-  private _setValidationAttributes(attributes?: object) {
-    this.setAttributes({
-      'data-dirty': false,
-      'data-pristine': true,
-      'data-validity': false,
-      ...attributes
-    });
-  }
-
-  private _setLabelText() {
-    this._labelElement.innerHTML = this._translator.translate(this.getLabel());
-  }
-
   protected _getAllowedStyles() {
     let allowed = super._getAllowedStyles();
     const input = `#${this._inputSelector}`;
@@ -213,5 +195,23 @@ export default class FormField extends Frame {
     window.addEventListener('focus', event => {
       this.onFocus(event);
     });
+  }
+
+  /**
+   * Sets all necessary validation attributes.
+   * @param attributes
+   * @private
+   */
+  private _setValidationAttributes(attributes?: object) {
+    this.setAttributes({
+      'data-dirty': false,
+      'data-pristine': true,
+      'data-validity': false,
+      ...attributes
+    });
+  }
+
+  private _setLabelText() {
+    this._labelElement.innerHTML = this._translator.translate(this.getLabel());
   }
 }
