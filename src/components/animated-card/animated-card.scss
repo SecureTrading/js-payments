@@ -32,10 +32,6 @@ body {
       max-width: 32rem;
     }
 
-    &__security-code {
-      width: 20rem;
-    }
-
     &__chip-logo {
       max-width: 4rem;
     }
@@ -47,11 +43,6 @@ body {
       max-width: 27rem;
     }
 
-    &__security-code {
-      width: 16rem;
-      height: 3rem;
-    }
-
     &__chip-logo {
       max-width: 4rem;
     }
@@ -61,11 +52,6 @@ body {
     &__content {
       max-height: 15.5rem;
       max-width: 24rem;
-    }
-
-    &__security-code {
-      width: 13rem;
-      height: 3rem;
     }
 
     &__chip-logo {
@@ -377,6 +363,26 @@ body {
 
     &--front-hidden {
       visibility: hidden;
+    }
+  }
+
+  @media screen and (max-width: 22rem) {
+    &__security-code {
+      width: 20rem;
+    }
+  }
+
+  @media screen and (max-width: 19rem) {
+    &__security-code {
+      width: 16rem;
+      height: 3rem;
+    }
+  }
+
+  @media screen and (max-width: 16rem) {
+    &__security-code {
+      width: 13rem;
+      height: 3rem;
     }
   }
 
