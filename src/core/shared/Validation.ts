@@ -10,7 +10,7 @@ interface IValidation {
   expirydate: boolean;
 }
 
-interface MessageBusValidateField {
+interface IMessageBusValidateField {
   field: string;
   message: string;
 }
@@ -116,12 +116,12 @@ export default class Validation extends Frame {
     return validationMessage;
   }
 
-  public validate(inputElement: any, messageElement: any) {
+  public validate(inputElement: HTMLInputElement, messageElement: HTMLElement) {
     this.toggleErrorClass(inputElement);
     this.setMessage(inputElement, messageElement);
   }
 
-  private toggleErrorClass = (inputElement: any) => {
+  private toggleErrorClass = (inputElement: HTMLInputElement) => {
     inputElement.validity.valid
       ? inputElement.classList.remove('error-field')
       : inputElement.classList.add('error-field');
@@ -132,7 +132,7 @@ export default class Validation extends Frame {
    * @param inputElement
    * @param messageElement
    */
-  private setMessage(inputElement: any, messageElement: any) {
+  private setMessage(inputElement: HTMLInputElement, messageElement: HTMLElement) {
     const messageText = Validation.getValidationMessage(inputElement.validity);
     messageElement.innerText = this._translator.translate(messageText);
   }
@@ -149,21 +149,25 @@ export default class Validation extends Frame {
     return state;
   }
 
-  public checkBackendValidity(data: any, inputElement: any, messageElement: any) {
+  public checkBackendValidity(
+    data: IMessageBusValidateField,
+    inputElement: HTMLInputElement,
+    messageElement: HTMLElement
+  ) {
     this.setError(inputElement, messageElement, data.message);
   }
 
-  public setError(inputElement: any, messageElement: any, message: string) {
+  public setError(inputElement: HTMLInputElement, messageElement: HTMLElement, message: string) {
     inputElement.classList.add('error-field');
     messageElement.innerText = this._translator.translate(message);
     inputElement.setCustomValidity(message);
   }
 
-  public setCustomValidationError(inputElement: any, errorContent: string) {
+  public static setCustomValidationError(inputElement: HTMLInputElement, errorContent: string) {
     inputElement.setCustomValidity(errorContent);
   }
 
-  public backendValidation(inputElement: any, messageElement: any, event: any) {
+  public backendValidation(inputElement: HTMLInputElement, messageElement: HTMLElement, event: string) {
     this._messageBus.subscribe(event, (data: any) => {
       this.checkBackendValidity(data, inputElement, messageElement);
       this.validate(inputElement, messageElement);
