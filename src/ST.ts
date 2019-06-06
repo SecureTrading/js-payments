@@ -10,6 +10,7 @@ import CardinalCommerceMock from './core/integrations/CardinalCommerceMock';
 import VisaCheckout from './core/integrations/VisaCheckout';
 import VisaCheckoutMock from './core/integrations/VisaCheckoutMock';
 import { IComponentsConfig, IConfig, IWalletConfig } from './core/models/Config';
+import Selectors from './core/shared/Selectors';
 import { IStyles } from './core/shared/Styler';
 import { environment } from './environments/environment';
 
@@ -41,6 +42,7 @@ class ST {
     this.submitOnError = config.submitOnError;
     this.submitOnSuccess = config.submitOnSuccess;
     this.tokenise = config.tokenise;
+    Selectors.MERCHANT_FORM_SELECTOR = config.formId ? config.formId : Selectors.MERCHANT_FORM_SELECTOR;
     const instance = new CommonFrames(
       this.jwt,
       this.origin,
@@ -56,7 +58,14 @@ class ST {
     config = config ? config : {};
     config.startOnLoad = config.startOnLoad !== undefined ? config.startOnLoad : false;
     if (!config.startOnLoad) {
-      const instance = new CardFrames(this.jwt, this.origin, this.componentIds, this.styles);
+      const instance = new CardFrames(
+        this.jwt,
+        this.origin,
+        this.componentIds,
+        this.styles,
+        config.paymentTypes,
+        config.defaultPaymentType
+      );
     }
     const cardinal = environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce;
     const cardinalInstance = new cardinal(this.tokenise, config.startOnLoad, this.jwt);

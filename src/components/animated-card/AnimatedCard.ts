@@ -1,4 +1,4 @@
-import BinLookup from '../../core/shared/BinLookup';
+import BinLookup, { IBinLookupConfigType } from '../../core/shared/BinLookup';
 import DOMMethods from '../../core/shared/DomMethods';
 import Frame from '../../core/shared/Frame';
 import Language from '../../core/shared/Language';
@@ -94,12 +94,13 @@ class AnimatedCard extends Frame {
   constructor() {
     super();
     this.onInit();
-    this.binLookup = new BinLookup();
+    this.binLookup = new BinLookup(this.getBinLookupConfig());
     this.messageBus = new MessageBus();
     this._translator = new Translator(this._params.locale);
     this.setLabels();
     this.setDefaultInputsValues();
     this.setSubscribeEvents();
+    this.onCardNumberChanged({ formattedValue: '', value: '' }); // Need to call this to use the default card type
     this.setSecurityCodeChangeListener();
     this.setSecurityCodeFocusEventListener();
   }
@@ -158,10 +159,10 @@ class AnimatedCard extends Frame {
   public setThemeClasses() {
     const { type } = this.cardDetails;
 
+    DOMMethods.addClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO}`);
     if (type) {
       DOMMethods.removeClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`);
     } else {
-      DOMMethods.addClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO}`);
       DOMMethods.addClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`);
     }
     DOMMethods.addClass(this.animatedCardFront, this.returnThemeClass(type));
@@ -350,6 +351,10 @@ class AnimatedCard extends Frame {
     this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: any) => this.onSecurityCodeChanged(data));
   }
 
+  protected _getAllowedParams() {
+    return super._getAllowedParams().concat(['defaultPaymentType', 'paymentTypes']);
+  }
+
   /**
    * Sets text label of particular element.
    * @param labelSelector
@@ -358,6 +363,17 @@ class AnimatedCard extends Frame {
    */
   private _setLabel(labelSelector: string, text: string) {
     document.getElementById(labelSelector).textContent = this._translator.translate(text);
+  }
+
+  private getBinLookupConfig() {
+    const binLookupConfig: IBinLookupConfigType = {};
+    if (this._params.paymentTypes !== undefined) {
+      binLookupConfig.supported = this._params.paymentTypes.split(',');
+    }
+    if (this._params.defaultPaymentType !== undefined) {
+      binLookupConfig.defaultCardType = this._params.defaultPaymentType;
+    }
+    return binLookupConfig;
   }
 }
 
