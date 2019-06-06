@@ -249,29 +249,29 @@ describe('AnimatedCard', () => {
       // @ts-ignore
       instance._cardDetails.type = 'visa';
       // @ts-ignore
-      instance.animatedCardLogoBackground.setAttribute('class', '');
+      instance._animatedCardLogoBackground.setAttribute('class', '');
       // @ts-ignore
       instance._setThemeClasses();
 
       // @ts-ignore
-      expect(instance.animatedCardLogoBackground.classList[0]).toBe('st-animated-card__payment-logo');
+      expect(instance._animatedCardLogoBackground.classList[0]).toBe('st-animated-card__payment-logo');
       // @ts-ignore
-      expect(instance.animatedCardLogoBackground.classList.length).toBe(1);
+      expect(instance._animatedCardLogoBackground.classList.length).toBe(1);
     });
     // then
     it('should set proper default class', () => {
       // @ts-ignore
       instance._cardDetails.type = undefined;
       // @ts-ignore
-      instance.animatedCardLogoBackground.setAttribute('class', '');
+      instance._animatedCardLogoBackground.setAttribute('class', '');
       // @ts-ignore
       instance._setThemeClasses();
       // @ts-ignore
-      expect(instance.animatedCardLogoBackground.classList[0]).toBe('st-animated-card__payment-logo');
+      expect(instance._animatedCardLogoBackground.classList[0]).toBe('st-animated-card__payment-logo');
       // @ts-ignore
-      expect(instance.animatedCardLogoBackground.classList[1]).toBe('st-animated-card__payment-logo--default');
+      expect(instance._animatedCardLogoBackground.classList[1]).toBe('st-animated-card__payment-logo--default');
       // @ts-ignore
-      expect(instance.animatedCardLogoBackground.classList.length).toBe(2);
+      expect(instance._animatedCardLogoBackground.classList.length).toBe(2);
     });
     it('should add standard standard theme if type is not defined', () => {
       // @ts-ignore
@@ -279,7 +279,7 @@ describe('AnimatedCard', () => {
       // @ts-ignore
       instance._setThemeClasses();
       // @ts-ignore
-      expect(instance.animatedCardLogoBackground.classList.contains(AnimatedCard.CARD_CLASSES.CLASS_LOGO)).toEqual(
+      expect(instance._animatedCardLogoBackground.classList.contains(AnimatedCard.CARD_CLASSES.CLASS_LOGO)).toEqual(
         true
       );
     });
