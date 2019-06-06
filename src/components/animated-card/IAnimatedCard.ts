@@ -8,7 +8,7 @@ interface ICardDetails {
 
 interface ISubscribeObject {
   formattedValue: string;
-  validity: object;
+  validity?: object;
   value: string;
 }
 

@@ -102,7 +102,7 @@ class AnimatedCard extends Frame {
     this._setLabels();
     this._setDefaultInputsValues();
     this._setSubscribeEvents();
-    this.onCardNumberChanged({ formattedValue: '', value: '' }); // Need to call this to use the default card type
+    this._onCardNumberChanged({ formattedValue: '', value: '' }); // Need to call this to use the default card type
     this._setSecurityCodeChangeListener();
     this._setSecurityCodeFocusEventListener();
   }
@@ -168,10 +168,10 @@ class AnimatedCard extends Frame {
   private _setThemeClasses() {
     const { type } = this._cardDetails;
 
+    DOMMethods.addClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO}`);
     if (type) {
       DOMMethods.removeClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`);
     } else {
-      DOMMethods.addClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO}`);
       DOMMethods.addClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`);
     }
     DOMMethods.addClass(this._animatedCardFront, this._returnThemeClass(type));
