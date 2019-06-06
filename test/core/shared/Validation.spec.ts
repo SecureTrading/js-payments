@@ -55,7 +55,7 @@ describe('isEnter()', () => {
 
 // given
 describe('blockForm()', () => {
-  const instance = new Validation();
+  const { instance } = validationFixture();
   // then
   it('should return state of blocking action', () => {
     expect(instance.blockForm(true)).toBe(true);
@@ -71,7 +71,7 @@ describe('blockForm()', () => {
 describe('getErrorData()', () => {
   // then
   it('should return state of blocking action', () => {
-    const instance = new Validation();
+    const { instance } = validationFixture();
     const errorData = {
       errordata: ['pan'],
       errormessage: 'Invalid field'
@@ -87,7 +87,7 @@ describe('getErrorData()', () => {
 
   // then
   it('should return state of blocking action', () => {
-    const instance = new Validation();
+    const { instance } = validationFixture();
     const errorData = {
       errordata: ['expirydate'],
       errormessage: 'Invalid field'
@@ -103,7 +103,7 @@ describe('getErrorData()', () => {
 
   // then
   it('should return state of blocking action', () => {
-    const instance = new Validation();
+    const { instance } = validationFixture();
     const errorData = {
       errordata: ['securitycode'],
       errormessage: 'Invalid field'
@@ -121,34 +121,27 @@ describe('getErrorData()', () => {
 // given
 describe('setCustomValidationError()', () => {
   // when
-  let element: HTMLInputElement;
-  beforeEach(() => {
-    element = document.createElement('input');
-  });
+  const { inputElement, someRandomMessage } = validationFixture();
 
   // then
   it('should have validity equal false if validation message is set', () => {
-    Validation.setCustomValidationError(element, 'some error message');
-    expect(element.checkValidity()).toEqual(false);
+    Validation.setCustomValidationError(inputElement, someRandomMessage);
+    expect(inputElement.checkValidity()).toEqual(false);
   });
 
   // then
   it('should have validity equal true if validation message is not set', () => {
-    Validation.setCustomValidationError(element, '');
-    expect(element.checkValidity()).toEqual(true);
+    Validation.setCustomValidationError(inputElement, '');
+    expect(inputElement.checkValidity()).toEqual(true);
   });
 });
 
 // given
 describe('backendValidation()', () => {
   // when
-  let element: HTMLInputElement;
-  let messageElement: HTMLElement;
-  let instance: Validation = new Validation();
-  beforeEach(() => {
-    element = document.createElement('input');
-    messageElement = document.createElement('label');
+  const { instance, inputElement, messageElement } = validationFixture();
 
+  beforeEach(() => {
     const messageBusEvent = {
       type: MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD
     };
@@ -157,7 +150,7 @@ describe('backendValidation()', () => {
   });
 
   // then
-  it('checkBackendValidity', () => {
+  it('should call checkBackendValidity()', () => {
     // const spy = jest.spyOn(instance, 'checkBackendValidity');
     // const spy2 = jest.spyOn(instance, 'validate');
     // instance.backendValidation(element, messageElement, MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD);
@@ -165,12 +158,12 @@ describe('backendValidation()', () => {
   });
 
   // then
-  it('validate', () => {});
+  it('should call validate()', () => {});
 });
 
 // given
 describe('checkBackendValidity()', () => {
-  let instance: Validation = new Validation();
+  const { instance } = validationFixture();
   // then
   it('should trigger setError function', () => {
     const spy = jest.spyOn(instance, 'setError');
@@ -184,3 +177,11 @@ describe('checkBackendValidity()', () => {
     expect(spy).toHaveBeenCalled();
   });
 });
+
+function validationFixture() {
+  const instance: Validation = new Validation();
+  const inputElement = document.createElement('input');
+  const messageElement = document.createElement('label');
+  const someRandomMessage = 'Release the Kraken!';
+  return { inputElement, instance, messageElement, someRandomMessage };
+}
