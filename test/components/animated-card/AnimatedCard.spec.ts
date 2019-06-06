@@ -1,8 +1,12 @@
 import each from 'jest-each';
 import { cardsLogos } from '../../../src/components/animated-card/animated-card-logos';
+import { StCodec } from '../../../src/core/classes/StCodec.class';
 import AnimatedCard from './../../../src/components/animated-card/AnimatedCard';
 import Selectors from '../../../src/core/shared/Selectors';
 import { Translator } from '../../../src/core/shared/Translator';
+import MessageBus from '../../../src/core/shared/MessageBus';
+
+jest.mock('./../../../src/core/shared/MessageBus');
 
 // given
 describe('AnimatedCard', () => {
@@ -157,6 +161,69 @@ describe('AnimatedCard', () => {
         // @ts-ignore
         AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED
       );
+    });
+  });
+
+  // given
+  describe('_setSecurityCodeChangeListener()', () => {
+    let instance: AnimatedCard;
+    instance = new AnimatedCard();
+    const event = { type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, data: 'SOME EVENT DATA' };
+    // @ts-ignore
+    const spy = jest.spyOn(instance, '_setSecurityCodePlaceholderContent');
+
+    // when
+    beforeEach(() => {
+      instance = animatedCardFixture().instance;
+      // @ts-ignore
+      instance._setSecurityCodeChangeListener();
+      // @ts-ignore
+      instance._messageBus.publish = jest.fn();
+    });
+
+    // then
+    it.skip('should trigger _setSecurityCodePlaceholderContent()', () => {
+      // @ts-ignore
+      expect(instance._messageBus.publish).toHaveBeenCalledWith(
+        {
+          data: false,
+          type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
+        },
+        true
+      );
+    });
+  });
+
+  // given
+  describe('_setSecurityCodeFocusEventListener()', () => {
+    let instance: AnimatedCard;
+    instance = new AnimatedCard();
+    const eventPositive = { type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, data: true };
+    const eventNegative = { type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, data: false };
+    // @ts-ignore
+    const spyFlip = jest.spyOn(instance, '_shouldFlipCard');
+    // @ts-ignore
+    const spyFlipBack = jest.spyOn(instance, '_flipCardBack');
+
+    // when
+    beforeEach(() => {
+      instance = animatedCardFixture().instance;
+      // @ts-ignore
+      instance._setSecurityCodeChangeListener();
+    });
+
+    // then
+    it.skip('should flip card when state is true', () => {
+      // @ts-ignore
+      instance._messageBus.publish(eventPositive);
+      expect(spyFlip).toHaveBeenCalled();
+    });
+
+    // then
+    it.skip('should flip card back when state is false', () => {
+      // @ts-ignore
+      instance._messageBus.publish(eventNegative);
+      expect(spyFlipBack).toHaveBeenCalled();
     });
   });
 
