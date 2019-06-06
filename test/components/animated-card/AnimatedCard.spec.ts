@@ -14,6 +14,7 @@ describe('Class AnimatedCard', () => {
     beforeEach(() => {
       // @ts-ignore
       originalBinLookup = AnimatedCard.prototype.getBinLookupConfig;
+      // @ts-ignore
       jest.spyOn(AnimatedCard.prototype, 'onInit');
       jest.spyOn(AnimatedCard.prototype, 'setLabels');
       jest.spyOn(AnimatedCard.prototype, 'setDefaultInputsValues');
@@ -25,7 +26,9 @@ describe('Class AnimatedCard', () => {
       // @ts-ignore
       spy = AnimatedCard.prototype.getBinLookupConfig = jest.fn().mockReturnValueOnce({});
       instance = new AnimatedCard();
+      // @ts-ignore
       expect(instance.onInit).toBeCalledTimes(1);
+      // @ts-ignore
       expect(instance.onInit).toBeCalledWith();
       expect(instance.setLabels).toBeCalledTimes(1);
       expect(instance.setLabels).toBeCalledWith();
