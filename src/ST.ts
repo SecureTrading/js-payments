@@ -44,9 +44,7 @@ class ST {
     this.submitOnError = config.submitOnError;
     this.submitOnSuccess = config.submitOnSuccess;
     this.tokenise = config.tokenise;
-    this.gatewayUrl = config.datacenterurl ? config.datacenterurl : ST.GATEWAY_URL;
     Selectors.MERCHANT_FORM_SELECTOR = config.formId ? config.formId : Selectors.MERCHANT_FORM_SELECTOR;
-
     const instance = new CommonFrames(
       this.jwt,
       this.origin,
@@ -63,7 +61,14 @@ class ST {
     config = config ? config : ({} as IComponentsConfig);
     config.startOnLoad = config.startOnLoad !== undefined ? config.startOnLoad : false;
     if (!config.startOnLoad) {
-      const instance = new CardFrames(this.jwt, this.origin, this.componentIds, this.styles);
+      const instance = new CardFrames(
+        this.jwt,
+        this.origin,
+        this.componentIds,
+        this.styles,
+        config.paymentTypes,
+        config.defaultPaymentType
+      );
     }
     const cardinal = environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce;
     const cardinalInstance = new cardinal(this.tokenise, config.startOnLoad, this.jwt);
