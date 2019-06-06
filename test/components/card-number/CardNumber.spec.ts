@@ -20,7 +20,6 @@ describe('CardNumber', () => {
     document.body.appendChild(inputElement);
     document.body.appendChild(labelElement);
     document.body.appendChild(messageElement);
-    FormField.prototype.getLabel = jest.fn(); // Not implemented in FormField
   });
 
   // then

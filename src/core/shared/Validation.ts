@@ -50,6 +50,7 @@ export default class Validation extends Frame {
   };
   private static ENTER_KEY_CODE = 13;
   private static ONLY_DIGITS_REGEXP = /^[0-9]*$/;
+  private static ERROR_FIELD_CLASS = 'error-field';
 
   /**
    * Gets validity state from input object and sets proper Validation message.
@@ -152,7 +153,7 @@ export default class Validation extends Frame {
    * @param message
    */
   public setError(inputElement: HTMLInputElement, messageElement: HTMLElement, message: string) {
-    inputElement.classList.add('error-field');
+    inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
     messageElement.innerText = this._translator.translate(message);
     inputElement.setCustomValidity(message);
   }
@@ -181,8 +182,8 @@ export default class Validation extends Frame {
    */
   private toggleErrorClass = (inputElement: HTMLInputElement) => {
     inputElement.validity.valid
-      ? inputElement.classList.remove('error-field')
-      : inputElement.classList.add('error-field');
+      ? inputElement.classList.remove(Validation.ERROR_FIELD_CLASS)
+      : inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
   };
 
   /**

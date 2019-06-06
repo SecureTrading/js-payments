@@ -1,6 +1,4 @@
 import SecurityCode from '../../../src/components/security-code/SecurityCode';
-import Formatter from '../../../src/core/shared/Formatter';
-import MessageBus from '../../../src/core/shared/MessageBus';
 import Selectors from '../../../src/core/shared/Selectors';
 import FormField from '../../../src/core/shared/FormField';
 
@@ -31,7 +29,6 @@ describe('SecurityCode', () => {
     // then
     it('should create instance of classes SecurityCode and FormField representing form field', () => {
       expect(securityCode).toBeInstanceOf(SecurityCode);
-      FormField.prototype.getLabel = jest.fn(); // Not implemented in FormField
       expect(securityCode).toBeInstanceOf(FormField);
     });
   });
