@@ -13,6 +13,7 @@ import { IComponentsConfig, IConfig, IWalletConfig } from './core/models/Config'
 import Selectors from './core/shared/Selectors';
 import { IStyles } from './core/shared/Styler';
 import { environment } from './environments/environment';
+import { env } from 'shelljs';
 
 /**
  * Establishes connection with ST, defines client.
@@ -44,6 +45,7 @@ class ST {
     this.submitOnError = config.submitOnError;
     this.submitOnSuccess = config.submitOnSuccess;
     this.tokenise = config.tokenise;
+    this.gatewayUrl = config.datacenterurl ? config.datacenterurl : environment.GATEWAY_URL;
     Selectors.MERCHANT_FORM_SELECTOR = config.formId ? config.formId : Selectors.MERCHANT_FORM_SELECTOR;
     const instance = new CommonFrames(
       this.jwt,
