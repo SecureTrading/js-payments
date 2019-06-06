@@ -1,9 +1,9 @@
 import { StCodec } from '../classes/StCodec.class';
+import { IErrorData, IMessageBusValidateField, IValidation } from '../interfaces/IValidation';
 import Frame from './Frame';
 import Language from './Language';
 import MessageBus from './MessageBus';
 import { Translator } from './Translator';
-import { IErrorData, IMessageBusValidateField, IValidation } from '../interfaces/IValidation';
 
 const {
   VALIDATION_ERROR_FIELD_IS_REQUIRED,

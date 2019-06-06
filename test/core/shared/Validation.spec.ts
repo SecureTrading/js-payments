@@ -6,24 +6,32 @@ import { StCodec } from '../../../src/core/classes/StCodec.class';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 
-each([
-  [new KeyboardEvent('keypress', { key: 'a' }), false],
-  [new KeyboardEvent('keypress', { key: '0' }), true],
-  [new KeyboardEvent('keypress', { key: '"' }), false],
-  [new KeyboardEvent('keypress', { key: 'Shift' }), false]
-]).test('Validation.isCharNumber', (event: KeyboardEvent, expected: any) => {
-  expect(Validation.isCharNumber(event)).toBe(expected);
+// given
+describe('isCharNumber()', () => {
+  // then
+  each([
+    [new KeyboardEvent('keypress', { key: 'a' }), false],
+    [new KeyboardEvent('keypress', { key: '0' }), true],
+    [new KeyboardEvent('keypress', { key: '"' }), false],
+    [new KeyboardEvent('keypress', { key: 'Shift' }), false]
+  ]).test('Validation.isCharNumber', (event: KeyboardEvent, expected: any) => {
+    expect(Validation.isCharNumber(event)).toBe(expected);
+  });
 });
 
-each([
-  [{ valid: true, valueMissing: false }, ''],
-  [{ valid: false, valueMissing: true }, Language.translations.VALIDATION_ERROR_FIELD_IS_REQUIRED],
-  [{ valid: false, patternMismatch: true }, Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH],
-  [{ valid: false, customError: true }, Language.translations.VALIDATION_ERROR],
-  [{ valid: false, tooShort: true }, Language.translations.VALIDATION_ERROR]
-]).test('Validation.getValidationMessage', (validityState, expected) => {
-  // @ts-ignore
-  expect(Validation.getValidationMessage(validityState)).toBe(expected);
+// given
+describe('getValidationMessage()', () => {
+  // then
+  each([
+    [{ valid: true, valueMissing: false }, ''],
+    [{ valid: false, valueMissing: true }, Language.translations.VALIDATION_ERROR_FIELD_IS_REQUIRED],
+    [{ valid: false, patternMismatch: true }, Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH],
+    [{ valid: false, customError: true }, Language.translations.VALIDATION_ERROR],
+    [{ valid: false, tooShort: true }, Language.translations.VALIDATION_ERROR]
+  ]).test('Validation.getValidationMessage', (validityState, expected) => {
+    // @ts-ignore
+    expect(Validation.getValidationMessage(validityState)).toBe(expected);
+  });
 });
 
 // given
