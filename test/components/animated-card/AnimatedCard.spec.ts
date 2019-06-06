@@ -11,46 +11,48 @@ describe('AnimatedCard', () => {
     let instance: AnimatedCard;
     let originalBinLookup: any;
     let spy: any;
-    let setLabelsSpy: any;
-    let setDefaultInputsSpy: any;
-    let setSubscribeEventsSpy: any;
     beforeEach(() => {
       // @ts-ignore
       originalBinLookup = AnimatedCard.prototype.getBinLookupConfig;
       jest.spyOn(AnimatedCard.prototype, 'onInit');
+      // @ts-ignore
+      jest.spyOn(AnimatedCard.prototype, '_setLabels');
+      // @ts-ignore
+      jest.spyOn(AnimatedCard.prototype, '_setDefaultInputsValues');
+      // @ts-ignore
+      jest.spyOn(AnimatedCard.prototype, '_setSubscribeEvents');
+      // @ts-ignore
     });
 
     // then
     it('should call necessary functions', () => {
       // @ts-ignore
-      // spy = AnimatedCard.prototype.getBinLookupConfig = jest.fn().mockReturnValueOnce({});
-      // instance = new AnimatedCard();
-      // setLabelsSpy = jest.spyOn(instance, '_setLabels');
-      // setDefaultInputsSpy = jest.spyOn(instance, '_setDefaultInputsValues');
-      // setSubscribeEventsSpy = jest.spyOn(instance, '_setSubscribeEvents');
-      // // expect(instance.onInit).toBeCalledTimes(1);
-      // // expect(instance.onInit).toBeCalledWith();
-      // // @ts-ignore
-      // expect(instance._setLabels).toBeCalledTimes(1);
-      // // @ts-ignore
-      // expect(instance._setLabels).toBeCalledWith();
-      // // @ts-ignore
-      // expect(instance._setDefaultInputsValues).toBeCalledTimes(1);
-      // // @ts-ignore
-      // expect(instance._setDefaultInputsValues).toBeCalledWith();
-      // // @ts-ignore
-      // expect(instance._setSubscribeEvents).toBeCalledTimes(1);
-      // // @ts-ignore
-      // expect(instance._setSubscribeEvents).toBeCalledWith();
-      // // @ts-ignore
-      // expect(instance._cardDetails).toMatchObject({
-      //   cardNumber:
-      //     '\u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219',
-      //   expirationDate: 'MM/YY',
-      //   logo: undefined,
-      //   securityCode: '\u2219\u2219\u2219',
-      //   type: null
-      // });
+      spy = AnimatedCard.prototype.getBinLookupConfig = jest.fn().mockReturnValueOnce({});
+      instance = new AnimatedCard();
+      // @ts-ignore
+      expect(instance.onInit).toBeCalledTimes(1);
+      expect(instance.onInit).toBeCalledWith();
+      // @ts-ignore
+      expect(instance._setLabels).toBeCalledTimes(1);
+      // @ts-ignore
+      expect(instance._setLabels).toBeCalledWith();
+      // @ts-ignore
+      expect(instance._setDefaultInputsValues).toBeCalledTimes(1);
+      // @ts-ignore
+      expect(instance._setDefaultInputsValues).toBeCalledWith();
+      // @ts-ignore
+      expect(instance._setSubscribeEvents).toBeCalledTimes(1);
+      // @ts-ignore
+      expect(instance._setSubscribeEvents).toBeCalledWith();
+      // @ts-ignore
+      expect(instance._cardDetails).toMatchObject({
+        cardNumber:
+          '\u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219',
+        expirationDate: 'MM/YY',
+        logo: undefined,
+        securityCode: '\u2219\u2219\u2219',
+        type: null
+      });
     });
 
     // then
@@ -130,14 +132,15 @@ describe('AnimatedCard', () => {
   });
 
   // given
-  describe('setSecurityCodePlaceholderContent', () => {
+  describe('_setSecurityCodePlaceholderContent', () => {
     const securityCodeLength = 3;
     const securityCodeLengthExtended = 4;
     const { instance } = animatedCardFixture();
 
     // then
     it('should return regular placeholder', () => {
-      instance.setSecurityCodePlaceholderContent(securityCodeLength);
+      // @ts-ignore
+      instance._setSecurityCodePlaceholderContent(securityCodeLength);
       // @ts-ignore
       expect(instance._animatedCardSecurityCodeFrontField.textContent).toEqual(
         // @ts-ignore
@@ -147,7 +150,8 @@ describe('AnimatedCard', () => {
 
     // then
     it('should return extended placeholder', () => {
-      instance.setSecurityCodePlaceholderContent(securityCodeLengthExtended);
+      // @ts-ignore
+      instance._setSecurityCodePlaceholderContent(securityCodeLengthExtended);
       // @ts-ignore
       expect(instance._animatedCardSecurityCodeFrontField.textContent).toEqual(
         // @ts-ignore

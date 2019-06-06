@@ -5,8 +5,8 @@ import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
 import { Translator } from '../../core/shared/Translator';
-import { ICardDetails, ISubscribeObject } from './IAnimatedCard';
 import { cardsLogos } from './animated-card-logos';
+import { ICardDetails, ISubscribeObject } from './IAnimatedCard';
 
 /**
  * Defines animated card, it's 'stateless' component which only receives data validated previously by other components.
@@ -49,6 +49,8 @@ class AnimatedCard extends Frame {
     TYPE: 'default'
   };
 
+  private static SECURITY_CODE_LENGTH_EXTENDED = 4;
+
   private static NOT_FLIPPED_CARDS = [AnimatedCard.CARD_TYPES.AMEX];
 
   /**
@@ -63,7 +65,7 @@ class AnimatedCard extends Frame {
    * @param type
    */
   private static _getLogo = (type: string) => cardsLogos[type];
-  private static SECURITY_CODE_LENGTH_EXTENDED = 4;
+
   protected _messageBus: MessageBus;
   private _animatedCardBack: HTMLElement = document.getElementById(Selectors.ANIMATED_CARD_SIDE_BACK);
   private _animatedCardExpirationDate: HTMLElement = document.getElementById(
@@ -107,25 +109,46 @@ class AnimatedCard extends Frame {
     this._setSecurityCodeFocusEventListener();
   }
 
-  private _setSecurityCodeChangeListener() {
-    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (length: number) => {
-      this.setSecurityCodePlaceholderContent(length);
-    });
+  /**
+   *
+   * @private
+   */
+  protected _getAllowedParams() {
+    return super._getAllowedParams().concat(['defaultPaymentType', 'paymentTypes']);
   }
 
-  private _setSecurityCodeFocusEventListener() {
-    this._messageBus.subscribe(MessageBus.EVENTS.FOCUS_SECURITY_CODE, (state: boolean) => {
-      state ? this._shouldFlipCard() : this._flipCardBack();
-    });
-  }
-
-  public setSecurityCodePlaceholderContent(securityCodeLength: number) {
+  /**
+   *
+   * @param securityCodeLength
+   * @private
+   */
+  private _setSecurityCodePlaceholderContent(securityCodeLength: number) {
     if (securityCodeLength === AnimatedCard.SECURITY_CODE_LENGTH_EXTENDED) {
       this._animatedCardSecurityCodeFrontField.textContent =
         AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED;
     } else {
       this._animatedCardSecurityCodeFrontField.textContent = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
     }
+  }
+
+  /**
+   *
+   * @private
+   */
+  private _setSecurityCodeChangeListener() {
+    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (length: number) => {
+      this._setSecurityCodePlaceholderContent(length);
+    });
+  }
+
+  /**
+   *
+   * @private
+   */
+  private _setSecurityCodeFocusEventListener() {
+    this._messageBus.subscribe(MessageBus.EVENTS.FOCUS_SECURITY_CODE, (state: boolean) => {
+      state ? this._shouldFlipCard() : this._flipCardBack();
+    });
   }
 
   /**
@@ -375,10 +398,6 @@ class AnimatedCard extends Frame {
     this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: ISubscribeObject) =>
       this._onSecurityCodeChanged(data)
     );
-  }
-
-  protected _getAllowedParams() {
-    return super._getAllowedParams().concat(['defaultPaymentType', 'paymentTypes']);
   }
 
   /**
