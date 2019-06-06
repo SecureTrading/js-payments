@@ -1,14 +1,72 @@
 import each from 'jest-each';
-import Selectors from '../../../src/core/shared/Selectors';
 import { cardsLogos } from '../../../src/components/animated-card/animated-card-logos';
 import AnimatedCard from './../../../src/components/animated-card/AnimatedCard';
+import Selectors from '../../../src/core/shared/Selectors';
 import { Translator } from '../../../src/core/shared/Translator';
 
 // given
 describe('AnimatedCard', () => {
   // given
+  describe('constructor()', () => {
+    let instance: AnimatedCard;
+    let originalBinLookup: any;
+    let spy: any;
+    beforeEach(() => {
+      // @ts-ignore
+      originalBinLookup = AnimatedCard.prototype.getBinLookupConfig;
+      jest.spyOn(AnimatedCard.prototype, 'onInit');
+      jest.spyOn(AnimatedCard.prototype, 'setLabels');
+      jest.spyOn(AnimatedCard.prototype, 'setDefaultInputsValues');
+      jest.spyOn(AnimatedCard.prototype, 'setSubscribeEvents');
+    });
+
+    // then
+    it('should call necessary functions', () => {
+      // @ts-ignore
+      spy = AnimatedCard.prototype.getBinLookupConfig = jest.fn().mockReturnValueOnce({});
+      instance = new AnimatedCard();
+      expect(instance.onInit).toBeCalledTimes(1);
+      expect(instance.onInit).toBeCalledWith();
+      expect(instance.setLabels).toBeCalledTimes(1);
+      expect(instance.setLabels).toBeCalledWith();
+      expect(instance.setDefaultInputsValues).toBeCalledTimes(1);
+      expect(instance.setDefaultInputsValues).toBeCalledWith();
+      expect(instance.setSubscribeEvents).toBeCalledTimes(1);
+      expect(instance.setSubscribeEvents).toBeCalledWith();
+      expect(instance.cardDetails).toMatchObject({
+        cardNumber:
+          '\u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219',
+        expirationDate: 'MM/YY',
+        logo: undefined,
+        securityCode: '\u2219\u2219\u2219',
+        type: null
+      });
+    });
+
+    // then
+    it('should default card type', () => {
+      // @ts-ignore
+      spy = AnimatedCard.prototype.getBinLookupConfig = jest.fn().mockReturnValueOnce({ defaultCardType: 'VISA' });
+      instance = new AnimatedCard();
+      expect(instance.cardDetails).toMatchObject({
+        cardNumber:
+          '\u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219',
+        expirationDate: 'MM/YY',
+        logo: cardsLogos.visa,
+        securityCode: '\u2219\u2219\u2219',
+        type: 'visa'
+      });
+    });
+
+    afterEach(() => {
+      // @ts-ignore
+      AnimatedCard.prototype.getBinLookupConfig = originalBinLookup;
+    });
+  });
+
+  // given
   describe('ifCardExists()', () => {
-    // when
+    // then
     beforeAll(() => {
       const { html } = animatedCardFixture();
       document.body.innerHTML = html;
@@ -21,8 +79,67 @@ describe('AnimatedCard', () => {
   });
 
   // given
+  describe('setCardDetail()', () => {
+    // then
+    it('should return placeholder when value is not defined', () => {
+      expect(AnimatedCard.setCardDetail('', 'some placeholder')).toEqual('some placeholder');
+    });
+
+    // then
+    it('should return value when value is defined', () => {
+      expect(AnimatedCard.setCardDetail('some value', 'some placeholder')).toEqual('some value');
+    });
+  });
+
+  // given
+  describe('getLogo', () => {
+    // then
+    each(['amex', 'astropaycard', 'diners', 'discover', 'jcb', 'maestro', 'mastercard', 'piba', 'visa']).it(
+      'should return logo content',
+      (logoName: string) => {
+        expect(AnimatedCard.getLogo(logoName)).toEqual(cardsLogos[logoName]);
+      }
+    );
+  });
+
+  // given
+  describe('setSecurityCodeChangeListener', () => {
+    const { instance } = animatedCardFixture();
+    // then
+    it('should be triggered', () => {});
+  });
+
+  // given
+  describe('setSecurityCodeFocusEventListener', () => {
+    // then
+    it('should be triggered', () => {});
+  });
+
+  // given
+  describe('setSecurityCodePlaceholderContent', () => {
+    const securityCodeLength = 3;
+    const securityCodeLengthExtended = 4;
+    const { instance } = animatedCardFixture();
+
+    // then
+    it('should return regular placeholder', () => {
+      instance.setSecurityCodePlaceholderContent(securityCodeLength);
+      expect(instance.animatedCardSecurityCodeFrontField.textContent).toEqual(
+        AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE
+      );
+    });
+
+    // then
+    it('should return extended placeholder', () => {
+      instance.setSecurityCodePlaceholderContent(securityCodeLengthExtended);
+      expect(instance.animatedCardSecurityCodeFrontField.textContent).toEqual(
+        AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED
+      );
+    });
+  });
+
+  // given
   describe('setLabels()', () => {
-    // when
     const { instance } = animatedCardFixture();
     // then
     it('should have set label text', () => {
@@ -88,10 +205,10 @@ describe('AnimatedCard', () => {
 
     // then
     each(themeObjects).it('should set proper classes for front page of card', themeObject => {
-      // @ts-ignore
-      instance._setThemeClasses();
-      // @ts-ignore
-      expect(instance._animatedCardFront.classList.contains(themeObject.type));
+      instance.setThemeClasses();
+
+      expect(instance.animatedCardFront.classList.contains(themeObject.type));
+      expect(instance.animatedCardFront.classList.contains(themeObject.type));
     });
 
     // then
@@ -103,12 +220,27 @@ describe('AnimatedCard', () => {
     });
 
     // then
-    it('should set default settings', () => {
-      // @ts-ignore
-      instance._cardDetails.type = undefined;
-      // @ts-ignore
-      instance._setThemeClasses();
-      // @ts-ignore
+    it('should set proper type class', () => {
+      instance.cardDetails.type = 'visa';
+      instance.animatedCardLogoBackground.setAttribute('class', '');
+      instance.setThemeClasses();
+
+      expect(instance.animatedCardLogoBackground.classList[0]).toBe('st-animated-card__payment-logo');
+      expect(instance.animatedCardLogoBackground.classList.length).toBe(1);
+    });
+    // then
+    it('should set proper default class', () => {
+      instance.cardDetails.type = undefined;
+      instance.animatedCardLogoBackground.setAttribute('class', '');
+      instance.setThemeClasses();
+
+      expect(instance.animatedCardLogoBackground.classList[0]).toBe('st-animated-card__payment-logo');
+      expect(instance.animatedCardLogoBackground.classList[1]).toBe('st-animated-card__payment-logo--default');
+      expect(instance.animatedCardLogoBackground.classList.length).toBe(2);
+    });
+    it('should add standard standard theme if type is not defined', () => {
+      instance.cardDetails.typ = undefined;
+      instance.setThemeClasses();
       expect(instance.animatedCardLogoBackground.classList.contains(AnimatedCard.CARD_CLASSES.CLASS_LOGO)).toEqual(
         true
       );
@@ -116,7 +248,22 @@ describe('AnimatedCard', () => {
   });
 
   // given
-  describe('_onCardNumberChanged()', () => {
+  describe('setLogo', () => {
+    it('some test', () => {});
+  });
+
+  // given
+  describe('setTheme', () => {
+    it('some test', () => {});
+  });
+
+  // given
+  describe('setSecurityCodeOnProperSide', () => {
+    it('some test', () => {});
+  });
+
+  // given
+  describe('onCardNumberChanged()', () => {
     // when
     let { instance, inputValues } = animatedCardFixture();
 
@@ -247,8 +394,7 @@ describe('AnimatedCard', () => {
       );
     });
   });
-
-  // given
+    // given
   describe('_setSubscribeEvents()', () => {
     // when
     const functionCalls = 1;
@@ -279,51 +425,63 @@ describe('AnimatedCard', () => {
         expect(spy).toHaveBeenCalledTimes(functionCalls);
       };
     });
+  });
 
-    // given
-    describe('_getLogo', () => {
-      const { cardTypes } = animatedCardFixture();
+  // given
+  describe('getBinLookupConfig()', () => {
+    // when
+    let { instance } = animatedCardFixture();
 
-      // then
-      each(cardTypes).it('should receive proper card logo', type => {
-        // @ts-ignore
-        expect(AnimatedCard._getLogo(type[0])).toEqual(cardsLogos[type[0]]);
-      });
+    // then
+    it('should return empty config', () => {
+      // @ts-ignore
+      instance._params = {};
+      // @ts-ignore
+      expect(instance.getBinLookupConfig()).toStrictEqual({});
     });
 
-    // given
-    describe('_setTheme', () => {
-      // then
-      it('should set security code on front', () => {
-        // @ts-ignore
-        instance._cardDetails.type = AnimatedCard.CARD_TYPES.AMEX;
-        // @ts-ignore
-        instance._setTheme();
-
-        expect(instance._animatedCardSecurityCodeFrontField.textContent).toEqual(
-          // @ts-ignore
-          AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED
-        );
-      });
+    // then
+    it('should get supported', () => {
+      // @ts-ignore
+      instance._params = { paymentTypes: 'VISA,MASTERCARD' };
+      // @ts-ignore
+      expect(instance.getBinLookupConfig()).toStrictEqual({ supported: ['VISA', 'MASTERCARD'] });
     });
 
-    // given
-    describe('_setCardType()', () => {
-      // then
-      it('should set card type', () => {
-        expect(instance._setCardType('40000')).toEqual('visa');
-      });
+    // then
+    it('should get defaultCardType', () => {
+      // @ts-ignore
+      instance._params = { defaultPaymentType: 'AMEX' };
+      // @ts-ignore
+      expect(instance.getBinLookupConfig()).toStrictEqual({ defaultCardType: 'AMEX' });
     });
 
-    // given
-    describe('_removeLogo()', () => {
-      // then
-      // it('should remove logo', () => {
-      //   const element = document.createElement('img').setAttribute('id', Selectors.ANIMATED_CARD_PAYMENT_LOGO_ID);
-      //   instance.animatedCardLogoBackground.appendChild(element);
-      //   instance._removeLogo();
-      //   expect(instance.animatedCardLogoBackground).toContain('dsiaud');
-      // });
+    // then
+    it('should get all configs', () => {
+      // @ts-ignore
+      instance._params = { defaultPaymentType: 'AMEX', paymentTypes: 'VISA,MASTERCARD,AMEX' };
+      // @ts-ignore
+      expect(instance.getBinLookupConfig()).toStrictEqual({
+        defaultCardType: 'AMEX',
+        supported: ['VISA', 'MASTERCARD', 'AMEX']
+      });
+    });
+  });
+  describe('setCardType', () => {
+    let instance: any;
+    beforeEach(() => {
+      instance = animatedCardFixture().instance;
+    });
+    it('should set card type', () => {
+      expect(instance.setCardType('400000')).toEqual('visa');
+    });
+  });
+
+  // given
+  describe('AnimatedCard.getLogo', () => {
+    const { cardTypes } = animatedCardFixture();
+    each(cardTypes).it('should set card type', type => {
+      expect(AnimatedCard.getLogo(type[0])).toEqual(cardsLogos[type[0]]);
     });
   });
 });
