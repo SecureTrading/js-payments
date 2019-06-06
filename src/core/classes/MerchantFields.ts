@@ -6,6 +6,7 @@ import Validation from '../shared/Validation';
  * Represents merchant fields which must be validated.
  */
 export class MerchantFields {
+  private static readonly DATA_ATTRIBUTE_NAME: string = 'stName';
   public validation: Validation;
   private _messageBus: MessageBus;
 
@@ -32,19 +33,18 @@ export class MerchantFields {
    * Checks if Merchant's form has inputs with data-st-name and  returns them.
    */
   public findAllMerchantInputs() {
-    let merchantInputs = document.getElementsByTagName('input') as HTMLCollection;
-    let merchantFieldsNamesArray = [];
-    // @ts-ignore
+    const merchantInputs = document.getElementsByTagName('input') as HTMLCollection;
+    const merchantFieldsNamesArray = [];
     for (let i = 0; i < merchantInputs.length; ++i) {
       // @ts-ignore
-      if (merchantInputs[i].dataset.hasOwnProperty('stName')) {
+      if (merchantInputs[i].dataset.hasOwnProperty(MerchantFields.DATA_ATTRIBUTE_NAME)) {
         // @ts-ignore
         this.backendValidation(
           document.getElementById(merchantInputs[i].id),
           MessageBus.EVENTS.VALIDATE_MERCHANT_FIELD
         );
         // @ts-ignore
-        merchantFieldsNamesArray.push(merchantInputs[i].dataset['stName']);
+        merchantFieldsNamesArray.push(merchantInputs[i].dataset[MerchantFields.DATA_ATTRIBUTE_NAME]);
       }
     }
 

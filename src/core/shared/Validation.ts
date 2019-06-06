@@ -51,6 +51,7 @@ export default class Validation extends Frame {
   private static ENTER_KEY_CODE = 13;
   private static ONLY_DIGITS_REGEXP = /^[0-9]*$/;
   private static ERROR_FIELD_CLASS = 'error-field';
+  private static readonly MERCHANT_EXTRA_FIELDS_PREFIX = 'billing';
 
   /**
    * Gets validity state from input object and sets proper Validation message.
@@ -143,7 +144,7 @@ export default class Validation extends Frame {
     } else if (errordata[0] === Validation.BACKEND_ERROR_FIELDS_NAMES.securityCode) {
       validationEvent.type = MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD;
       this._messageBus.publish(validationEvent);
-    } else {
+    } else if (errordata.find((element: any) => element.includes(Validation.MERCHANT_EXTRA_FIELDS_PREFIX))) {
       validationEvent.type = MessageBus.EVENTS.VALIDATE_MERCHANT_FIELD;
       this._messageBus.publish(validationEvent, true);
     }
