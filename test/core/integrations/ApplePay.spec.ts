@@ -378,48 +378,44 @@ describe('Class Apple Pay', () => {
   // given
   describe('Method applePayProcess', () => {
     // then
-    it('should set notification if checkApplePayAvailability returns false', () => {
+    it('should do nothing if checkApplePayAvailability returns false', () => {
       const { instance } = ApplePayFixture();
       instance.checkApplePayAvailability = jest.fn().mockReturnValueOnce(false);
-      const spy = jest.spyOn(instance, 'setNotification');
-      instance.setNotification(NotificationType.Error, Language.translations.APPLE_PAYMENT_IS_NOT_AVAILABLE);
-      expect(spy).toHaveBeenCalled();
+      instance.checkApplePayWalletCardAvailability = jest.fn();
+      instance.applePayProcess();
+      expect(instance.checkApplePayAvailability).toHaveBeenCalledTimes(1);
+      expect(instance.checkApplePayWalletCardAvailability).not.toHaveBeenCalled();
+    });
+    // then
+    it('should call only canMakePayments if checkApplePayAvailability returns true and canMakePayments returns false', async () => {
+      const { instance } = ApplePayFixture();
+      jest.resetAllMocks();
+      jest.spyOn(instance, 'checkApplePayAvailability').mockReturnValueOnce(true);
+      jest.spyOn(instance, 'checkApplePayWalletCardAvailability').mockReturnValue(
+        new Promise(function(resolve, reject) {
+          resolve(false);
+        })
+      );
+      jest.spyOn(instance, 'applePayButtonClickHandler');
+      await instance.applePayProcess();
+      expect(instance.checkApplePayWalletCardAvailability).toHaveBeenCalled();
+      expect(instance.applePayButtonClickHandler).not.toHaveBeenCalled();
     });
 
     // then
-    it('should call checkApplePayWalletCardAvailability if checkApplePayAvailability returns false', () => {
+    it('should call applePayButtonClickHandler if checkApplePayAvailability returns true and canMakePayments returns true', async () => {
       const { instance } = ApplePayFixture();
-      instance.checkApplePayAvailability = jest.fn().mockReturnValueOnce(true);
-      instance.checkApplePayWalletCardAvailability = jest.fn().mockReturnValueOnce(true);
-      const spy = jest.spyOn(instance, 'checkApplePayWalletCardAvailability');
-      instance.checkApplePayWalletCardAvailability();
-      expect(spy).toHaveBeenCalled();
-    });
-
-    // then
-    it('should call checkApplePayWalletCardAvailability and setNotification if checkApplePayAvailability returns true and canMakePayments returns false', () => {
-      const { instance } = ApplePayFixture();
-      instance.checkApplePayAvailability = jest.fn().mockReturnValueOnce(true);
-      instance.checkApplePayWalletCardAvailability = jest.fn().mockReturnValueOnce(true);
-      const spyNotification = jest.spyOn(instance, 'setNotification');
-      const spy = jest.spyOn(instance, 'checkApplePayWalletCardAvailability');
-      instance.setNotification(NotificationType.Error, Language.translations.NO_CARDS_IN_WALLET);
-      instance.checkApplePayWalletCardAvailability();
-      expect(spy).toHaveBeenCalled();
-      expect(spyNotification).toHaveBeenCalled();
-    });
-
-    // then
-    it('should call checkApplePayWalletCardAvailability and applePayButtonClickHandler if checkApplePayAvailability returns true and canMakePayments returns true', () => {
-      const { instance } = ApplePayFixture();
-      instance.checkApplePayAvailability = jest.fn().mockReturnValueOnce(true);
-      instance.checkApplePayWalletCardAvailability = jest.fn().mockReturnValueOnce(true);
-      const spyHandler = jest.spyOn(instance, 'applePayButtonClickHandler');
-      const spy = jest.spyOn(instance, 'checkApplePayWalletCardAvailability');
-      instance.applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
-      instance.checkApplePayWalletCardAvailability();
-      expect(spy).toHaveBeenCalled();
-      expect(spyHandler).toHaveBeenCalled();
+      jest.resetAllMocks();
+      jest.spyOn(instance, 'checkApplePayAvailability').mockReturnValueOnce(true);
+      jest.spyOn(instance, 'checkApplePayWalletCardAvailability').mockReturnValue(
+        new Promise(function(resolve, reject) {
+          resolve(true);
+        })
+      );
+      jest.spyOn(instance, 'applePayButtonClickHandler');
+      await instance.applePayProcess();
+      expect(instance.checkApplePayWalletCardAvailability).toHaveBeenCalled();
+      expect(instance.applePayButtonClickHandler).toHaveBeenCalled();
     });
   });
 });
