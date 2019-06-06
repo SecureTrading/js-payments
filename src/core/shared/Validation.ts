@@ -1,5 +1,5 @@
 import { StCodec } from '../classes/StCodec.class';
-import { IErrorData, IMessageBusValidateField, IValidation } from '../interfaces/IValidation';
+import { IErrorData, IMessageBusValidateField, IValidation } from '../models/Validation';
 import Frame from './Frame';
 import Language from './Language';
 import MessageBus from './MessageBus';
@@ -118,7 +118,7 @@ export default class Validation extends Frame {
   public checkBackendValidity(
     data: IMessageBusValidateField,
     inputElement: HTMLInputElement,
-    messageElement: HTMLElement
+    messageElement?: HTMLElement
   ) {
     this.setError(inputElement, messageElement, data.message);
   }
@@ -136,12 +136,17 @@ export default class Validation extends Frame {
 
     if (errordata[0] === Validation.BACKEND_ERROR_FIELDS_NAMES.cardNumber) {
       validationEvent.type = MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD;
+      this._messageBus.publish(validationEvent);
     } else if (errordata[0] === Validation.BACKEND_ERROR_FIELDS_NAMES.expirationDate) {
       validationEvent.type = MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD;
+      this._messageBus.publish(validationEvent);
     } else if (errordata[0] === Validation.BACKEND_ERROR_FIELDS_NAMES.securityCode) {
       validationEvent.type = MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD;
+      this._messageBus.publish(validationEvent);
+    } else {
+      validationEvent.type = MessageBus.EVENTS.VALIDATE_MERCHANT_FIELD;
+      this._messageBus.publish(validationEvent, true);
     }
-    this._messageBus.publish(validationEvent);
 
     return { field: errordata[0], errormessage };
   }
@@ -154,7 +159,9 @@ export default class Validation extends Frame {
    */
   public setError(inputElement: HTMLInputElement, messageElement: HTMLElement, message: string) {
     inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
-    messageElement.innerText = this._translator.translate(message);
+    if (messageElement) {
+      messageElement.innerText = this._translator.translate(message);
+    }
     inputElement.setCustomValidity(message);
   }
 
@@ -163,7 +170,7 @@ export default class Validation extends Frame {
    * @param inputElement
    * @param messageElement
    */
-  public validate(inputElement: HTMLInputElement, messageElement: HTMLElement) {
+  public validate(inputElement: HTMLInputElement, messageElement?: HTMLElement) {
     this.toggleErrorClass(inputElement);
     this.setMessage(inputElement, messageElement);
   }
@@ -191,8 +198,10 @@ export default class Validation extends Frame {
    * @param inputElement
    * @param messageElement
    */
-  private setMessage(inputElement: HTMLInputElement, messageElement: HTMLElement) {
+  private setMessage(inputElement: HTMLInputElement, messageElement?: HTMLElement) {
     const messageText = Validation.getValidationMessage(inputElement.validity);
-    messageElement.innerText = this._translator.translate(messageText);
+    if (messageElement) {
+      messageElement.innerText = this._translator.translate(messageText);
+    }
   }
 }

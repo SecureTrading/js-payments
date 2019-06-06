@@ -15,10 +15,10 @@ body {
   Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
 }
 
-.error-input {
-  background-color: $background-color-notification-error;
+.error-field {
+  background-color: $background-color-notification-error !important;
   border-color: $border-color-notification-error;
-  color: $color-notification-error;
+  color: $color-notification-error !important;
 }
 
 .st-button-submit__disabled {
