@@ -13,8 +13,8 @@ import { ICardDetails, ISubscribeObject } from './IAnimatedCard';
  * TODO: In not distant future it'll be refactored to standalone version available to work with library.
  */
 class AnimatedCard extends Frame {
-  // @ts-ignore
-  public static ifCardExists = (): HTMLInputElement => document.getElementById(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
+  public static ifCardExists = (): HTMLInputElement =>
+    document.getElementById(Selectors.ANIMATED_CARD_INPUT_SELECTOR) as HTMLInputElement;
 
   private static CARD_TYPES = {
     AMEX: 'amex',
@@ -49,9 +49,8 @@ class AnimatedCard extends Frame {
     TYPE: 'default'
   };
 
-  private static SECURITY_CODE_LENGTH_EXTENDED = 4;
-
   private static NOT_FLIPPED_CARDS = [AnimatedCard.CARD_TYPES.AMEX];
+  private static SECURITY_CODE_LENGTH_EXTENDED = 4;
 
   /**
    * Set one of three values on animated card
@@ -81,7 +80,7 @@ class AnimatedCard extends Frame {
     Selectors.ANIMATED_CARD_SECURITY_CODE_FRONT_FIELD_ID
   );
 
-  private animatedCardLogoBackground: HTMLElement = document.getElementById(
+  private _animatedCardLogoBackground: HTMLElement = document.getElementById(
     AnimatedCard.CARD_CLASSES.CLASS_LOGO_WRAPPER
   );
   private _binLookup: BinLookup;
@@ -110,15 +109,15 @@ class AnimatedCard extends Frame {
   }
 
   /**
-   *
-   * @private
+   * Inherited function from Frame.ts, concats 'defaultPaymentType', 'paymentTypes' parameters.
+   * @protected
    */
   protected _getAllowedParams() {
     return super._getAllowedParams().concat(['defaultPaymentType', 'paymentTypes']);
   }
 
   /**
-   *
+   * Sets placeholder for security code includes front security code for Amex cards.
    * @param securityCodeLength
    * @private
    */
@@ -132,7 +131,7 @@ class AnimatedCard extends Frame {
   }
 
   /**
-   *
+   * Listens to type of card and sets proper card length.
    * @private
    */
   private _setSecurityCodeChangeListener() {
@@ -142,7 +141,7 @@ class AnimatedCard extends Frame {
   }
 
   /**
-   *
+   * Checks is card should be flipped or not.
    * @private
    */
   private _setSecurityCodeFocusEventListener() {
@@ -191,11 +190,11 @@ class AnimatedCard extends Frame {
   private _setThemeClasses() {
     const { type } = this._cardDetails;
 
-    DOMMethods.addClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO}`);
+    DOMMethods.addClass(this._animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO}`);
     if (type) {
-      DOMMethods.removeClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`);
+      DOMMethods.removeClass(this._animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`);
     } else {
-      DOMMethods.addClass(this.animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`);
+      DOMMethods.addClass(this._animatedCardLogoBackground, `${AnimatedCard.CARD_CLASSES.CLASS_LOGO_DEFAULT}`);
     }
     DOMMethods.addClass(this._animatedCardFront, this._returnThemeClass(type));
     DOMMethods.addClass(this._animatedCardBack, this._returnThemeClass(type));
