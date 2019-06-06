@@ -212,12 +212,12 @@ body {
 
   &__chip-logo {
     align-self: flex-end;
+  }
 
-    img {
-      max-width: 100%;
-      display: block;
-      height: auto;
-    }
+  &__chip-logo-img {
+    max-width: 100%;
+    display: block;
+    height: auto;
   }
 
   &__payment-logo {

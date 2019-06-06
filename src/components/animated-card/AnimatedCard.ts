@@ -5,7 +5,7 @@ import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
 import { Translator } from '../../core/shared/Translator';
-import { ICardDetails, ISubscribeObject } from './animated-card-interfaces';
+import { ICardDetails, ISubscribeObject } from './IAnimatedCard';
 import { cardsLogos } from './animated-card-logos';
 
 /**
