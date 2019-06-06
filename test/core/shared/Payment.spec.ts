@@ -9,7 +9,7 @@ describe('Payment class', () => {
   let { card, wallet, walletverify } = paymentFixture();
   // when
   beforeAll(() => {
-    instance = new Payment(jwt);
+    instance = new Payment(jwt, 'https://example.com');
     // @ts-ignore
     instance._stTransport.sendRequest = jest.fn();
   });
