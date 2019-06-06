@@ -1,6 +1,5 @@
 import Payment from '../../../src/core/shared/Payment';
 import StTransport from '../../../src/core/classes/StTransport.class';
-import { StJwt } from '../../../src/core/shared/StJwt';
 
 // given
 describe('Payment class', () => {

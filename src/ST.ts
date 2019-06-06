@@ -10,6 +10,7 @@ import CardinalCommerceMock from './core/integrations/CardinalCommerceMock';
 import VisaCheckout from './core/integrations/VisaCheckout';
 import VisaCheckoutMock from './core/integrations/VisaCheckoutMock';
 import { IComponentsConfig, IConfig, IWalletConfig } from './core/models/Config';
+import Selectors from './core/shared/Selectors';
 import { IStyles } from './core/shared/Styler';
 import { environment } from './environments/environment';
 
@@ -17,6 +18,7 @@ import { environment } from './environments/environment';
  * Establishes connection with ST, defines client.
  */
 class ST {
+  private static GATEWAY_URL = environment.GATEWAY_URL;
   private componentIds: any;
   private jwt: string;
   private origin: string;
@@ -25,6 +27,7 @@ class ST {
   private submitOnError: boolean;
   private submitOnSuccess: boolean;
   private tokenise: boolean;
+  private gatewayUrl: string;
 
   /**
    * Defines static methods for starting different payment methods
@@ -41,6 +44,9 @@ class ST {
     this.submitOnError = config.submitOnError;
     this.submitOnSuccess = config.submitOnSuccess;
     this.tokenise = config.tokenise;
+    this.gatewayUrl = config.datacenterurl ? config.datacenterurl : ST.GATEWAY_URL;
+    Selectors.MERCHANT_FORM_SELECTOR = config.formId ? config.formId : Selectors.MERCHANT_FORM_SELECTOR;
+
     const instance = new CommonFrames(
       this.jwt,
       this.origin,
@@ -48,12 +54,13 @@ class ST {
       this.styles,
       this.submitOnSuccess,
       this.submitOnError,
-      this.submitFields
+      this.submitFields,
+      this.gatewayUrl
     );
   }
 
   public Components(config?: IComponentsConfig) {
-    config = config ? config : {};
+    config = config ? config : ({} as IComponentsConfig);
     config.startOnLoad = config.startOnLoad !== undefined ? config.startOnLoad : false;
     if (!config.startOnLoad) {
       const instance = new CardFrames(this.jwt, this.origin, this.componentIds, this.styles);
@@ -64,12 +71,12 @@ class ST {
 
   public ApplePay(config: IWalletConfig) {
     const applepay = environment.testEnvironment ? ApplePayMock : ApplePay;
-    const instance = new applepay(config, this.tokenise, this.jwt);
+    const instance = new applepay(config, this.tokenise, this.jwt, this.gatewayUrl);
   }
 
   public VisaCheckout(config: IWalletConfig) {
     const visa = environment.testEnvironment ? VisaCheckoutMock : VisaCheckout;
-    const instance = new visa(config, this.tokenise, this.jwt);
+    const instance = new visa(config, this.tokenise, this.jwt, this.gatewayUrl);
   }
 
   private _addDefaults(config: IConfig) {
