@@ -2,6 +2,7 @@ import { environment } from '../../environments/environment';
 
 export default class ApplePaySessionMock {
   public static STATUS_SUCCESS: any;
+  public static STATUS_FAILURE: any = 'FAILURE';
   public static onvalidatemerchant: any;
   public static onpaymentauthorized: any;
   public static oncancel: any;
@@ -31,6 +32,7 @@ export default class ApplePaySessionMock {
       this.STATUS_SUCCESS = data.status;
       this.onpaymentauthorized(data);
     } else {
+      this.STATUS_FAILURE = data.status;
       this.oncancel(data);
     }
     return data;
