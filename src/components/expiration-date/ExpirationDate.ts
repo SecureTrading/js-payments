@@ -10,6 +10,8 @@ import Selectors from '../../core/shared/Selectors';
 export default class ExpirationDate extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.EXPIRATION_DATE_INPUT) as HTMLInputElement;
+  private static DISABLE_FIELD_CLASS = 'st-input--disabled';
+  private static DISABLE_STATE = 'disabled';
   private static EXPIRATION_DATE_LENGTH: number = 5;
   private static INPUT_PATTERN: string = '^(0[1-9]|1[0-2])\\/([0-9]{2})$';
 
@@ -26,12 +28,15 @@ export default class ExpirationDate extends FormField {
     this.backendValidation();
   }
 
+  /**
+   * Gets translated label content.
+   */
   public getLabel(): string {
     return Language.translations.LABEL_EXPIRATION_DATE;
   }
 
   public backendValidation() {
-    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD, (data: any) => {
+    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD, (data: IMessageBusEvent) => {
       this.checkBackendValidity(data);
       this.validation.validate(this._inputElement, this._messageElement);
     });
@@ -48,12 +53,12 @@ export default class ExpirationDate extends FormField {
     this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_EXPIRATION_DATE, (state: boolean) => {
       if (state) {
         // @ts-ignore
-        this._inputElement.setAttribute('disabled', state);
-        this._inputElement.classList.add('st-input--disabled');
+        this._inputElement.setAttribute(ExpirationDate.DISABLE_STATE, state);
+        this._inputElement.classList.add(ExpirationDate.DISABLE_FIELD_CLASS);
       } else {
         // @ts-ignore
-        this._inputElement.removeAttribute('disabled');
-        this._inputElement.classList.remove('st-input--disabled');
+        this._inputElement.removeAttribute(ExpirationDate.DISABLE_STATE);
+        this._inputElement.classList.remove(ExpirationDate.DISABLE_FIELD_CLASS);
       }
     });
   }
