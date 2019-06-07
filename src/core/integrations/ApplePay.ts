@@ -343,11 +343,6 @@ export class ApplePay {
     };
   }
 
-  private getApplePayError(data: object) {
-    const error = new ApplePayError('unknown');
-    return error;
-  }
-
   /**
    * Handles oncancel event and set notification about it
    */

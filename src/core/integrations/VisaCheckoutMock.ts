@@ -5,17 +5,19 @@ import Language from '../shared/Language';
 import VisaCheckout from './VisaCheckout';
 
 class VisaCheckoutMock extends VisaCheckout {
-  constructor(config: any, tokenise: boolean, jwt: string, gatewayUrl: string) {
-    super(config, tokenise, jwt, gatewayUrl);
-    this._attachVisaButton();
-    this._setActionOnMockedButton();
+  /**
+   * Init configuration and payment data
+   * @protected
+   */
+  protected _initPaymentConfiguration() {
+    // Do nothing on mock because we don't want to use V.
   }
 
   /**
    * Sets action on appended mocked Visa Checkout button
-   * @private
+   * @protected
    */
-  private _setActionOnMockedButton() {
+  protected _paymentStatusHandler() {
     DomMethods.addListener(this._visaCheckoutButtonProps.id, 'click', () => {
       this._setMockedData().then(() => {
         this._proceedFlowWithMockedData();
@@ -45,10 +47,12 @@ class VisaCheckoutMock extends VisaCheckout {
    * @private
    */
   private _proceedFlowWithMockedData() {
-    this.getResponseMessage(this.paymentStatus);
-    this.setNotification(this.paymentStatus, this.responseMessage);
-    if (this.paymentStatus === VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS) {
-      this._processPayment();
+    if (this.paymentStatus === 'SUCCESS') {
+      this._onSuccess(JSON.parse(this.paymentDetails));
+    } else if (this.paymentStatus === 'ERROR') {
+      this._onError();
+    } else if (this.paymentStatus === 'WARNING') {
+      this._onCancel();
     }
   }
 }
