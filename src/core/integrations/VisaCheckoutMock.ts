@@ -19,9 +19,7 @@ class VisaCheckoutMock extends VisaCheckout {
    */
   protected _paymentStatusHandler() {
     DomMethods.addListener(this._visaCheckoutButtonProps.id, 'click', () => {
-      this._setMockedData().then(() => {
-        this._proceedFlowWithMockedData();
-      });
+      this._handleMockedData();
     });
   }
 
@@ -29,16 +27,11 @@ class VisaCheckoutMock extends VisaCheckout {
    * Retrieves data from mocked data endpoint
    * @private
    */
-  private _setMockedData() {
-    return fetch(environment.VISA_CHECKOUT_URLS.MOCK_DATA_URL)
+  private _handleMockedData() {
+    fetch(environment.VISA_CHECKOUT_URLS.MOCK_DATA_URL)
       .then((response: any) => response.json())
       .then(({ payment, status }: any) => {
-        this.paymentDetails = payment;
-        this.paymentStatus = status;
-        return this.paymentDetails;
-      })
-      .catch(() => {
-        this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
+        this._proceedFlowWithMockedData(payment, status);
       });
   }
 
@@ -46,12 +39,12 @@ class VisaCheckoutMock extends VisaCheckout {
    * Proceeds payment flow with mocked data
    * @private
    */
-  private _proceedFlowWithMockedData() {
-    if (this.paymentStatus === 'SUCCESS') {
-      this._onSuccess(JSON.parse(this.paymentDetails));
-    } else if (this.paymentStatus === 'ERROR') {
+  private _proceedFlowWithMockedData(payment: any, status: string) {
+    if (status === 'SUCCESS') {
+      this._onSuccess(payment);
+    } else if (status === 'ERROR') {
       this._onError();
-    } else if (this.paymentStatus === 'WARNING') {
+    } else if (status === 'WARNING') {
       this._onCancel();
     }
   }
