@@ -44,7 +44,7 @@ describe('StTransport class', () => {
       );
       await st.sendRequest(requestObject);
       expect(st.fetchRetry).toHaveBeenCalledTimes(1);
-      expect(st.fetchRetry).toHaveBeenCalledWith('https://example.com', {
+      expect(st.fetchRetry).toHaveBeenCalledWith(DEFAULT_PARAMS.gatewayUrl, {
         ...StTransport.DEFAULT_FETCH_OPTIONS,
         body: JSON.stringify(requestObject)
       });
