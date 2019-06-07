@@ -18,13 +18,10 @@ export default class FormField extends Frame {
 
   constructor(inputSelector: string, messageSelector: string, labelSelector: string) {
     super();
-    // @ts-ignore
-    this._inputElement = document.getElementById(inputSelector);
-    // @ts-ignore
-    this._messageElement = document.getElementById(messageSelector);
-    // @ts-ignore
-    this._labelElement = document.getElementById(labelSelector);
-    // @ts-ignore
+
+    this._inputElement = document.getElementById(inputSelector) as HTMLInputElement;
+    this._messageElement = document.getElementById(messageSelector) as HTMLDivElement;
+    this._labelElement = document.getElementById(labelSelector) as HTMLLabelElement;
 
     this._inputSelector = inputSelector;
     this._messageSelector = messageSelector;

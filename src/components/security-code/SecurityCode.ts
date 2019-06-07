@@ -25,7 +25,6 @@ export default class SecurityCode extends FormField {
     this.setFocusListener();
     this.setDisableListener();
     this.backendValidation();
-    this.sendState();
   }
 
   public getLabel(): string {

@@ -13,7 +13,6 @@ import { IComponentsConfig, IConfig, IWalletConfig } from './core/models/Config'
 import Selectors from './core/shared/Selectors';
 import { IStyles } from './core/shared/Styler';
 import { environment } from './environments/environment';
-import { env } from 'shelljs';
 
 /**
  * Establishes connection with ST, defines client.

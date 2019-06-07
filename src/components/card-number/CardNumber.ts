@@ -33,7 +33,6 @@ export default class CardNumber extends FormField {
     this.setFocusListener();
     this.setDisableListener();
     this.backendValidation();
-    this.sendState();
   }
 
   /**
