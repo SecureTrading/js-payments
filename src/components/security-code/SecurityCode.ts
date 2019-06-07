@@ -29,7 +29,6 @@ export default class SecurityCode extends FormField {
       this._messageElement,
       MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD
     );
-    this.sendState();
   }
 
   /**
