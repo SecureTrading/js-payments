@@ -255,6 +255,6 @@ describe('StCodec class', () => {
 function stCodecFixture() {
   const jwt =
     'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU1OTg1OTUyNC4yMzkxMjQ4LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSJ9fQ.OKrm6cXJTDcclJAUKjFV2IoHy9tBILmp_kqxxh3wy9E';
-  const instance = new StCodec(jwt);
+  const instance = StCodec;
   return { instance };
 }
