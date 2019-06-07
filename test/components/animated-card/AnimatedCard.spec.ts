@@ -1,11 +1,15 @@
 import each from 'jest-each';
 import { cardsLogos } from '../../../src/components/animated-card/animated-card-logos';
+import { StCodec } from '../../../src/core/classes/StCodec.class';
 import AnimatedCard from './../../../src/components/animated-card/AnimatedCard';
 import Selectors from '../../../src/core/shared/Selectors';
 import { Translator } from '../../../src/core/shared/Translator';
+import MessageBus from '../../../src/core/shared/MessageBus';
+
+jest.mock('./../../../src/core/shared/MessageBus');
 
 // given
-describe('Class AnimatedCard', () => {
+describe('AnimatedCard', () => {
   // given
   describe('constructor()', () => {
     let instance: AnimatedCard;
@@ -15,9 +19,13 @@ describe('Class AnimatedCard', () => {
       // @ts-ignore
       originalBinLookup = AnimatedCard.prototype.getBinLookupConfig;
       jest.spyOn(AnimatedCard.prototype, 'onInit');
-      jest.spyOn(AnimatedCard.prototype, 'setLabels');
-      jest.spyOn(AnimatedCard.prototype, 'setDefaultInputsValues');
-      jest.spyOn(AnimatedCard.prototype, 'setSubscribeEvents');
+      // @ts-ignore
+      jest.spyOn(AnimatedCard.prototype, '_setLabels');
+      // @ts-ignore
+      jest.spyOn(AnimatedCard.prototype, '_setDefaultInputsValues');
+      // @ts-ignore
+      jest.spyOn(AnimatedCard.prototype, '_setSubscribeEvents');
+      // @ts-ignore
     });
 
     // then
@@ -25,15 +33,23 @@ describe('Class AnimatedCard', () => {
       // @ts-ignore
       spy = AnimatedCard.prototype.getBinLookupConfig = jest.fn().mockReturnValueOnce({});
       instance = new AnimatedCard();
+      // @ts-ignore
       expect(instance.onInit).toBeCalledTimes(1);
       expect(instance.onInit).toBeCalledWith();
-      expect(instance.setLabels).toBeCalledTimes(1);
-      expect(instance.setLabels).toBeCalledWith();
-      expect(instance.setDefaultInputsValues).toBeCalledTimes(1);
-      expect(instance.setDefaultInputsValues).toBeCalledWith();
-      expect(instance.setSubscribeEvents).toBeCalledTimes(1);
-      expect(instance.setSubscribeEvents).toBeCalledWith();
-      expect(instance.cardDetails).toMatchObject({
+      // @ts-ignore
+      expect(instance._setLabels).toBeCalledTimes(1);
+      // @ts-ignore
+      expect(instance._setLabels).toBeCalledWith();
+      // @ts-ignore
+      expect(instance._setDefaultInputsValues).toBeCalledTimes(1);
+      // @ts-ignore
+      expect(instance._setDefaultInputsValues).toBeCalledWith();
+      // @ts-ignore
+      expect(instance._setSubscribeEvents).toBeCalledTimes(1);
+      // @ts-ignore
+      expect(instance._setSubscribeEvents).toBeCalledWith();
+      // @ts-ignore
+      expect(instance._cardDetails).toMatchObject({
         cardNumber:
           '\u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219',
         expirationDate: 'MM/YY',
@@ -48,7 +64,8 @@ describe('Class AnimatedCard', () => {
       // @ts-ignore
       spy = AnimatedCard.prototype.getBinLookupConfig = jest.fn().mockReturnValueOnce({ defaultCardType: 'VISA' });
       instance = new AnimatedCard();
-      expect(instance.cardDetails).toMatchObject({
+      // @ts-ignore
+      expect(instance._cardDetails).toMatchObject({
         cardNumber:
           '\u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219',
         expirationDate: 'MM/YY',
@@ -72,6 +89,7 @@ describe('Class AnimatedCard', () => {
       document.body.innerHTML = html;
     });
 
+    // then
     it('should return HTMLInput element', () => {
       expect(AnimatedCard.ifCardExists()).toBeTruthy();
     });
@@ -81,12 +99,14 @@ describe('Class AnimatedCard', () => {
   describe('setCardDetail()', () => {
     // then
     it('should return placeholder when value is not defined', () => {
-      expect(AnimatedCard.setCardDetail('', 'some placeholder')).toEqual('some placeholder');
+      // @ts-ignore
+      expect(AnimatedCard._setCardDetail('', 'some placeholder')).toEqual('some placeholder');
     });
 
     // then
     it('should return value when value is defined', () => {
-      expect(AnimatedCard.setCardDetail('some value', 'some placeholder')).toEqual('some value');
+      // @ts-ignore
+      expect(AnimatedCard._setCardDetail('some value', 'some placeholder')).toEqual('some value');
     });
   });
 
@@ -96,7 +116,8 @@ describe('Class AnimatedCard', () => {
     each(['amex', 'astropaycard', 'diners', 'discover', 'jcb', 'maestro', 'mastercard', 'piba', 'visa']).it(
       'should return logo content',
       (logoName: string) => {
-        expect(AnimatedCard.getLogo(logoName)).toEqual(cardsLogos[logoName]);
+        // @ts-ignore
+        expect(AnimatedCard._getLogo(logoName)).toEqual(cardsLogos[logoName]);
       }
     );
   });
@@ -115,25 +136,94 @@ describe('Class AnimatedCard', () => {
   });
 
   // given
-  describe('setSecurityCodePlaceholderContent', () => {
+  describe('_setSecurityCodePlaceholderContent', () => {
     const securityCodeLength = 3;
     const securityCodeLengthExtended = 4;
     const { instance } = animatedCardFixture();
 
     // then
     it('should return regular placeholder', () => {
-      instance.setSecurityCodePlaceholderContent(securityCodeLength);
-      expect(instance.animatedCardSecurityCodeFrontField.textContent).toEqual(
+      // @ts-ignore
+      instance._setSecurityCodePlaceholderContent(securityCodeLength);
+      // @ts-ignore
+      expect(instance._animatedCardSecurityCodeFrontField.textContent).toEqual(
+        // @ts-ignore
         AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE
       );
     });
 
     // then
     it('should return extended placeholder', () => {
-      instance.setSecurityCodePlaceholderContent(securityCodeLengthExtended);
-      expect(instance.animatedCardSecurityCodeFrontField.textContent).toEqual(
+      // @ts-ignore
+      instance._setSecurityCodePlaceholderContent(securityCodeLengthExtended);
+      // @ts-ignore
+      expect(instance._animatedCardSecurityCodeFrontField.textContent).toEqual(
+        // @ts-ignore
         AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED
       );
+    });
+  });
+
+  // given
+  describe('_setSecurityCodeChangeListener()', () => {
+    let instance: AnimatedCard;
+    instance = new AnimatedCard();
+    const event = { type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, data: 'SOME EVENT DATA' };
+    // @ts-ignore
+    const spy = jest.spyOn(instance, '_setSecurityCodePlaceholderContent');
+
+    // when
+    beforeEach(() => {
+      instance = animatedCardFixture().instance;
+      // @ts-ignore
+      instance._setSecurityCodeChangeListener();
+      // @ts-ignore
+      instance._messageBus.publish = jest.fn();
+    });
+
+    // then
+    it.skip('should trigger _setSecurityCodePlaceholderContent()', () => {
+      // @ts-ignore
+      expect(instance._messageBus.publish).toHaveBeenCalledWith(
+        {
+          data: false,
+          type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
+        },
+        true
+      );
+    });
+  });
+
+  // given
+  describe('_setSecurityCodeFocusEventListener()', () => {
+    let instance: AnimatedCard;
+    instance = new AnimatedCard();
+    const eventPositive = { type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, data: true };
+    const eventNegative = { type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, data: false };
+    // @ts-ignore
+    const spyFlip = jest.spyOn(instance, '_shouldFlipCard');
+    // @ts-ignore
+    const spyFlipBack = jest.spyOn(instance, '_flipCardBack');
+
+    // when
+    beforeEach(() => {
+      instance = animatedCardFixture().instance;
+      // @ts-ignore
+      instance._setSecurityCodeChangeListener();
+    });
+
+    // then
+    it.skip('should flip card when state is true', () => {
+      // @ts-ignore
+      instance._messageBus.publish(eventPositive);
+      expect(spyFlip).toHaveBeenCalled();
+    });
+
+    // then
+    it.skip('should flip card back when state is false', () => {
+      // @ts-ignore
+      instance._messageBus.publish(eventNegative);
+      expect(spyFlipBack).toHaveBeenCalled();
     });
   });
 
@@ -142,7 +232,8 @@ describe('Class AnimatedCard', () => {
     const { instance } = animatedCardFixture();
     // then
     it('should have set label text', () => {
-      instance.setLabels();
+      // @ts-ignore
+      instance._setLabels();
       let card = document.getElementById(Selectors.ANIMATED_CARD_CREDIT_CARD_LABEL);
       let expiry = document.getElementById(Selectors.ANIMATED_CARD_EXPIRATION_DATE_LABEL);
       let secCode = document.getElementById(Selectors.ANIMATED_CARD_SECURITY_CODE_LABEL);
@@ -151,7 +242,8 @@ describe('Class AnimatedCard', () => {
       expect(secCode.innerHTML).toEqual('Security code');
       // @ts-ignore
       instance._translator = new Translator('fr_FR');
-      instance.setLabels();
+      // @ts-ignore
+      instance._setLabels();
       expect(card.innerHTML).toEqual('Numéro de carte');
       expect(expiry.innerHTML).toEqual("Date d'expiration");
       expect(secCode.innerHTML).toEqual('Code de sécurité');
@@ -160,31 +252,38 @@ describe('Class AnimatedCard', () => {
 
   // given
   describe('returnThemeClass()', () => {
+    // when
     const { cardTypes, instance } = animatedCardFixture();
     // then
     each(cardTypes).it('should return proper name of class specified in parameter', (name: string) => {
-      expect(instance.returnThemeClass(name)).toEqual(`st-animated-card__${name}`);
+      // @ts-ignore
+      expect(instance._returnThemeClass(name)).toEqual(`st-animated-card__${name}`);
     });
   });
 
   // given
   describe('resetTheme()', () => {
-    // given
+    // when
     let { instance } = animatedCardFixture();
+    // @ts-ignore
     const defaultFrontPageClassSet = `${AnimatedCard.CARD_CLASSES.CLASS_SIDE} ${AnimatedCard.CARD_CLASSES.CLASS_FRONT}`;
+    // @ts-ignore
     const defaultBackPageClassSet = `${AnimatedCard.CARD_CLASSES.CLASS_SIDE} ${AnimatedCard.CARD_CLASSES.CLASS_BACK}`;
 
     beforeEach(() => {
-      instance.resetTheme();
+      // @ts-ignore
+      instance._resetTheme();
     });
     // then
     it('should reset front page of card to default theme', () => {
-      expect(instance.animatedCardFront.getAttribute('class')).toEqual(defaultFrontPageClassSet);
+      // @ts-ignore
+      expect(instance._animatedCardFront.getAttribute('class')).toEqual(defaultFrontPageClassSet);
     });
 
     // then
     it('should reset back page of card to default theme', () => {
-      expect(instance.animatedCardBack.getAttribute('class')).toEqual(defaultBackPageClassSet);
+      // @ts-ignore
+      expect(instance._animatedCardBack.getAttribute('class')).toEqual(defaultBackPageClassSet);
     });
   });
 
@@ -195,71 +294,61 @@ describe('Class AnimatedCard', () => {
 
     // then
     each(themeObjects).it('should set proper classes for front page of card', themeObject => {
-      instance.setThemeClasses();
+      // @ts-ignore
+      instance._setThemeClasses();
 
-      expect(instance.animatedCardFront.classList.contains(themeObject.type));
-      expect(instance.animatedCardFront.classList.contains(themeObject.type));
+      // @ts-ignore
+      expect(instance._animatedCardFront.classList.contains(themeObject.type));
+      // @ts-ignore
+      expect(instance._animatedCardFront.classList.contains(themeObject.type));
     });
 
     // then
     each(themeObjects).it('should set proper classes for back page of card', themeObject => {
-      instance.setThemeClasses();
-      expect(instance.animatedCardBack.classList.contains(themeObject.type));
+      // @ts-ignore
+      instance._setThemeClasses();
+      // @ts-ignore
+      expect(instance._animatedCardBack.classList.contains(themeObject.type));
     });
 
     // then
     it('should set proper type class', () => {
-      instance.cardDetails.type = 'visa';
-      instance.animatedCardLogoBackground.setAttribute('class', '');
-      instance.setThemeClasses();
+      // @ts-ignore
+      instance._cardDetails.type = 'visa';
+      // @ts-ignore
+      instance._animatedCardLogoBackground.setAttribute('class', '');
+      // @ts-ignore
+      instance._setThemeClasses();
 
-      expect(instance.animatedCardLogoBackground.classList[0]).toBe('st-animated-card__payment-logo');
-      expect(instance.animatedCardLogoBackground.classList.length).toBe(1);
+      // @ts-ignore
+      expect(instance._animatedCardLogoBackground.classList[0]).toBe('st-animated-card__payment-logo');
+      // @ts-ignore
+      expect(instance._animatedCardLogoBackground.classList.length).toBe(1);
     });
     // then
     it('should set proper default class', () => {
-      instance.cardDetails.type = undefined;
-      instance.animatedCardLogoBackground.setAttribute('class', '');
-      instance.setThemeClasses();
-
-      expect(instance.animatedCardLogoBackground.classList[0]).toBe('st-animated-card__payment-logo');
-      expect(instance.animatedCardLogoBackground.classList[1]).toBe('st-animated-card__payment-logo--default');
-      expect(instance.animatedCardLogoBackground.classList.length).toBe(2);
+      // @ts-ignore
+      instance._cardDetails.type = undefined;
+      // @ts-ignore
+      instance._animatedCardLogoBackground.setAttribute('class', '');
+      // @ts-ignore
+      instance._setThemeClasses();
+      // @ts-ignore
+      expect(instance._animatedCardLogoBackground.classList[0]).toBe('st-animated-card__payment-logo');
+      // @ts-ignore
+      expect(instance._animatedCardLogoBackground.classList[1]).toBe('st-animated-card__payment-logo--default');
+      // @ts-ignore
+      expect(instance._animatedCardLogoBackground.classList.length).toBe(2);
     });
     it('should add standard standard theme if type is not defined', () => {
-      instance.cardDetails.typ = undefined;
-      instance.setThemeClasses();
-      expect(instance.animatedCardLogoBackground.classList.contains(AnimatedCard.CARD_CLASSES.CLASS_LOGO)).toEqual(
+      // @ts-ignore
+      instance._cardDetails.typ = undefined;
+      // @ts-ignore
+      instance._setThemeClasses();
+      // @ts-ignore
+      expect(instance._animatedCardLogoBackground.classList.contains(AnimatedCard.CARD_CLASSES.CLASS_LOGO)).toEqual(
         true
       );
-    });
-  });
-
-  // given
-  describe('setLogo', () => {
-    it('some test', () => {});
-  });
-
-  // given
-  describe('setTheme', () => {
-    it('some test', () => {});
-  });
-
-  // given
-  describe('setSecurityCodeOnProperSide', () => {
-    it('some test', () => {});
-  });
-
-  // given
-  describe('onCardNumberChanged()', () => {
-    // when
-    let { instance, inputValues } = animatedCardFixture();
-
-    // then
-    it('should set card number if it is requested to change', () => {
-      instance.cardDetails.cardNumber = inputValues.cardNumber;
-      // instance.onCardNumberChanged({type});
-      // expect(instance.animatedCardPan.textContent).toEqual(inputValues.cardNumber);
     });
   });
 
@@ -277,8 +366,10 @@ describe('Class AnimatedCard', () => {
 
     // then
     it('should set expiration date if it is requested to change', () => {
-      instance.onExpirationDateChanged(dataObject);
-      expect(instance.cardDetails.expirationDate).toEqual(dataObject.value);
+      // @ts-ignore
+      instance._onExpirationDateChanged(dataObject);
+      // @ts-ignore
+      expect(instance._cardDetails.expirationDate).toEqual(dataObject.value);
     });
   });
 
@@ -288,16 +379,24 @@ describe('Class AnimatedCard', () => {
     let { instance, cardTypes } = animatedCardFixture();
 
     // then
-    each(cardTypes).it('should flip card if it is requested', (type: string) => {
-      const spy = jest.spyOn(instance, 'flipCard');
-      instance.shouldFlipCard();
+    each(cardTypes).it('should flip card if it is requested', () => {
+      // @ts-ignore
+      const spy = jest.spyOn(instance, '_flipCard');
+      // @ts-ignore
+      instance._shouldFlipCard();
       expect(spy).toHaveBeenCalledTimes(1);
-      instance.flipCardBack();
+      // @ts-ignore
+      instance._flipCardBack();
     });
+
+    // then
     it('should not flip card if it is on no flipped list', () => {
-      const spy = jest.spyOn(instance, 'flipCard');
-      instance.cardDetails.type = 'AMEX';
-      instance.shouldFlipCard();
+      // @ts-ignore
+      const spy = jest.spyOn(instance, '_flipCard');
+      // @ts-ignore
+      instance._cardDetails.type = 'AMEX';
+      // @ts-ignore
+      instance._shouldFlipCard();
       expect(spy).toHaveBeenCalledTimes(1);
     });
   });
@@ -308,9 +407,12 @@ describe('Class AnimatedCard', () => {
     let { instance } = animatedCardFixture();
 
     // then
+    // @ts-ignore
     it(`should add ${AnimatedCard.CARD_CLASSES.CLASS_FOR_ANIMATION} class to element`, () => {
-      instance.flipCard();
-      expect(instance.cardElement.classList.contains(AnimatedCard.CARD_CLASSES.CLASS_FOR_ANIMATION));
+      // @ts-ignore
+      instance._flipCard();
+      // @ts-ignore
+      expect(instance._cardElement.classList.contains(AnimatedCard.CARD_CLASSES.CLASS_FOR_ANIMATION));
     });
   });
 
@@ -321,65 +423,81 @@ describe('Class AnimatedCard', () => {
 
     // then
     each(cardTypes).it(`should flip back card`, (type: string) => {
-      instance.cardDetails.type = type;
-      instance.flipCardBack();
-      expect(instance.cardElement.getAttribute('class')).toEqual(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
+      // @ts-ignore
+      instance._cardDetails.type = type;
+      // @ts-ignore
+      instance._flipCardBack();
+      // @ts-ignore
+      expect(instance._cardElement.getAttribute('class')).toEqual(Selectors.ANIMATED_CARD_INPUT_SELECTOR);
     });
   });
 
   // given
-  describe('_setDefaultInputsValues()', () => {
+  describe('_setLabels()', () => {
     let { instance } = animatedCardFixture();
     // then
+    // @ts-ignore
     it(`should set card number on start with value: ${AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER}`, () => {
-      instance.setDefaultInputsValues();
-      expect(instance.animatedCardPan.textContent).toEqual(AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER);
+      // @ts-ignore
+      instance._setLabels();
+      // @ts-ignore
+      expect(instance._animatedCardPan.textContent).toEqual(AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER);
     });
 
     // then
     it(`should set expiration date on start with value: ${
+      // @ts-ignore
       AnimatedCard.CARD_DETAILS_PLACEHOLDERS.EXPIRATION_DATE
     }`, () => {
-      instance.setDefaultInputsValues();
-      expect(instance.animatedCardExpirationDate.textContent).toEqual(
+      // @ts-ignore
+      instance._setLabels();
+      // @ts-ignore
+      expect(instance._animatedCardExpirationDate.textContent).toEqual(
+        // @ts-ignore
         AnimatedCard.CARD_DETAILS_PLACEHOLDERS.EXPIRATION_DATE
       );
     });
 
     // then
+    // @ts-ignore
     it(`should set security code on start with value: ${AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE}`, () => {
-      instance.setDefaultInputsValues();
-      expect(instance.animatedCardSecurityCode.textContent).toEqual(
+      // @ts-ignore
+      instance._setDefaultInputsValues();
+      // @ts-ignore
+      expect(instance._animatedCardSecurityCode.textContent).toEqual(
+        // @ts-ignore
         AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE
       );
     });
   });
-  describe('setSubscribeEvents()', () => {
+  // given
+  describe('_setSubscribeEvents()', () => {
+    // when
     const functionCalls = 1;
     let instance: any;
     beforeEach(() => {
       instance = animatedCardFixture().instance;
     });
     // then
-    it(`should onCardNumberChanged been called ${functionCalls} times when it's changed`, () => {
-      const spy = jest.spyOn(instance, 'onCardNumberChanged');
-      instance.animatedCardPan.onfocus = () => {
+    it(`should _onCardNumberChanged been called ${functionCalls} times when it's changed`, () => {
+      const spy = jest.spyOn(instance, '_onCardNumberChanged');
+      instance._animatedCardPan.onfocus = () => {
         expect(spy).toHaveBeenCalledTimes(functionCalls);
       };
     });
 
     // then
-    it(`should onExpirationDateChanged been called ${functionCalls} times when it's changed`, () => {
-      const spy = jest.spyOn(instance, 'onExpirationDateChanged');
-      instance.animatedCardExpirationDate.onfocus = () => {
+    it(`should _onExpirationDateChanged been called ${functionCalls} times when it's changed`, () => {
+      const spy = jest.spyOn(instance, '_onExpirationDateChanged');
+      instance._animatedCardExpirationDate.onfocus = () => {
         expect(spy).toHaveBeenCalledTimes(functionCalls);
       };
     });
 
     // then
-    it(`should onSecurityCodeChanged been called ${functionCalls} times when it's changed`, () => {
-      const spy = jest.spyOn(instance, 'onSecurityCodeChanged');
-      instance.animatedCardSecurityCode.onfocus = () => {
+    it(`should _onSecurityCodeChanged been called ${functionCalls} times when it's changed`, () => {
+      const spy = jest.spyOn(instance, '_onSecurityCodeChanged');
+      instance._animatedCardSecurityCode.onfocus = () => {
         expect(spy).toHaveBeenCalledTimes(functionCalls);
       };
     });
@@ -431,7 +549,7 @@ describe('Class AnimatedCard', () => {
       instance = animatedCardFixture().instance;
     });
     it('should set card type', () => {
-      expect(instance.setCardType('400000')).toEqual('visa');
+      expect(instance._setCardType('400000')).toEqual('visa');
     });
   });
 
@@ -439,7 +557,8 @@ describe('Class AnimatedCard', () => {
   describe('AnimatedCard.getLogo', () => {
     const { cardTypes } = animatedCardFixture();
     each(cardTypes).it('should set card type', type => {
-      expect(AnimatedCard.getLogo(type[0])).toEqual(cardsLogos[type[0]]);
+      // @ts-ignore
+      expect(AnimatedCard._getLogo(type[0])).toEqual(cardsLogos[type[0]]);
     });
   });
 });
@@ -454,27 +573,46 @@ function animatedCardFixture() {
     securityCode: '1234'
   };
   const themeObjects = [
+    // @ts-ignore
     [{ type: AnimatedCard.CARD_TYPES.AMEX, logo: cardsLogos.amex }],
+    // @ts-ignore
     [{ type: AnimatedCard.CARD_TYPES.ASTROPAYCARD, logo: cardsLogos.astropaycard }],
+    // @ts-ignore
     [{ type: AnimatedCard.CARD_TYPES.DEFAULT, logo: '' }],
+    // @ts-ignore
     [{ type: AnimatedCard.CARD_TYPES.DINERS, logo: cardsLogos.diners }],
+    // @ts-ignore
     [{ type: AnimatedCard.CARD_TYPES.DISCOVER, logo: cardsLogos.discover }],
+    // @ts-ignore
     [{ type: AnimatedCard.CARD_TYPES.JCB, logo: cardsLogos.jcb }],
+    // @ts-ignore
     [{ type: AnimatedCard.CARD_TYPES.MAESTRO, logo: cardsLogos.maestro }],
+    // @ts-ignore
     [{ type: AnimatedCard.CARD_TYPES.MASTERCARD, logo: cardsLogos.mastercard }],
+    // @ts-ignore
     [{ type: AnimatedCard.CARD_TYPES.PIBA, logo: cardsLogos.piba }],
+    // @ts-ignore
     [{ type: AnimatedCard.CARD_TYPES.VISA, logo: cardsLogos.visa }]
   ];
 
   const cardTypes = [
+    // @ts-ignore
     [AnimatedCard.CARD_TYPES.ASTROPAYCARD],
+    // @ts-ignore
     [AnimatedCard.CARD_TYPES.DEFAULT],
+    // @ts-ignore
     [AnimatedCard.CARD_TYPES.DINERS],
+    // @ts-ignore
     [AnimatedCard.CARD_TYPES.DISCOVER],
+    // @ts-ignore
     [AnimatedCard.CARD_TYPES.JCB],
+    // @ts-ignore
     [AnimatedCard.CARD_TYPES.MAESTRO],
+    // @ts-ignore
     [AnimatedCard.CARD_TYPES.MASTERCARD],
+    // @ts-ignore
     [AnimatedCard.CARD_TYPES.PIBA],
+    // @ts-ignore
     [AnimatedCard.CARD_TYPES.VISA]
   ];
   const instance = new AnimatedCard();

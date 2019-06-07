@@ -33,7 +33,6 @@ export default class CardNumber extends FormField {
     this.setFocusListener();
     this.setDisableListener();
     this.backendValidation();
-    this.sendState();
   }
 
   /**
@@ -138,6 +137,9 @@ export default class CardNumber extends FormField {
   public getSecurityCodeLength = (cardNumber: string) =>
     this.getBinLookupDetails(cardNumber) ? this.getBinLookupDetails(cardNumber).cvcLength[0] : undefined;
 
+  /**
+   * Gets translated label content.
+   */
   public getLabel(): string {
     return Language.translations.LABEL_CARD_NUMBER;
   }
@@ -167,7 +169,7 @@ export default class CardNumber extends FormField {
   }
 
   /**
-   *
+   * Checks the response from backend
    */
   public backendValidation() {
     this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD, (data: any) => {
