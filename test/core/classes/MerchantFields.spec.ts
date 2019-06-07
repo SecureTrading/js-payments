@@ -1,6 +1,6 @@
-// given
 import { MerchantFields } from '../../../src/core/classes/MerchantFields';
 
+// given
 describe('MerchantField', () => {
   // given
   describe('findAllMerchantInputs()', () => {

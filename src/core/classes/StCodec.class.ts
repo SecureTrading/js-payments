@@ -38,42 +38,6 @@ class StCodec {
     );
   }
 
-  /**
-   * Verify the response from the gateway
-   * @param responseData The response from the gateway
-   * @return The content of the response that can be used in the following processes
-   */
-  public static verifyResponseObject(responseData: any): object {
-    // Ought we keep hold of the requestreference (eg. log it to console)
-    // So that we can link these requests up with the gateway?
-    if (
-      !(
-        responseData &&
-        responseData.version === StCodec.VERSION &&
-        responseData.response &&
-        responseData.response.length === 1
-      )
-    ) {
-      StCodec.publishResponse(StCodec._createCommunicationError());
-      StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
-      throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
-    }
-
-    const responseContent: IResponseData = responseData.response[0];
-    const validation = new Validation();
-    if (StCodec.REQUESTS_WITH_ERROR_MESSAGES.includes(responseContent.requesttypedescription)) {
-      if (responseContent.errorcode !== StCodec.STATUS_CODES.ok) {
-        if (responseContent.errorcode === StCodec.STATUS_CODES.invalidfield) {
-          validation.getErrorData(StCodec.getErrorData(responseContent));
-        }
-        validation.blockForm(false);
-        StCodec._notification.error(responseContent.errormessage);
-        throw new Error(responseContent.errormessage);
-      }
-    }
-    return responseContent;
-  }
-
   public static getErrorData(data: any) {
     const { errordata, errormessage, requesttypedescription } = data;
     return {
@@ -112,10 +76,12 @@ class StCodec {
 
   private readonly _requestId: string;
   private readonly _jwt: string;
+  private _validation: Validation;
 
   constructor(jwt: string, parentOrigin?: string) {
     this._requestId = StCodec._createRequestId();
     this._jwt = jwt;
+    this._validation = new Validation();
     StCodec._parentOrigin = parentOrigin;
     StCodec._translator = new Translator(new StJwt(this._jwt).locale);
     if (parentOrigin) {
@@ -168,7 +134,7 @@ class StCodec {
     return new Promise((resolve, reject) => {
       if ('json' in responseObject) {
         responseObject.json().then(responseData => {
-          resolve(StCodec.verifyResponseObject(responseData));
+          resolve(this.verifyResponseObject(responseData));
         });
       } else {
         StCodec.publishResponse(StCodec._createCommunicationError());
@@ -176,6 +142,41 @@ class StCodec {
         reject(new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
       }
     });
+  }
+
+  /**
+   * Verify the response from the gateway
+   * @param responseData The response from the gateway
+   * @return The content of the response that can be used in the following processes
+   */
+  public verifyResponseObject(responseData: any): object {
+    // Ought we keep hold of the requestreference (eg. log it to console)
+    // So that we can link these requests up with the gateway?
+    if (
+      !(
+        responseData &&
+        responseData.version === StCodec.VERSION &&
+        responseData.response &&
+        responseData.response.length === 1
+      )
+    ) {
+      StCodec.publishResponse(StCodec._createCommunicationError());
+      StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
+      throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
+    }
+
+    const responseContent: IResponseData = responseData.response[0];
+    if (StCodec.REQUESTS_WITH_ERROR_MESSAGES.includes(responseContent.requesttypedescription)) {
+      if (responseContent.errorcode !== StCodec.STATUS_CODES.ok) {
+        if (responseContent.errorcode === StCodec.STATUS_CODES.invalidfield) {
+          this._validation.getErrorData(StCodec.getErrorData(responseContent));
+        }
+        this._validation.blockForm(false);
+        StCodec._notification.error(responseContent.errormessage);
+        throw new Error(responseContent.errormessage);
+      }
+    }
+    return responseContent;
   }
 }
 
