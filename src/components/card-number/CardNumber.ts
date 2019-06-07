@@ -142,6 +142,9 @@ export default class CardNumber extends FormField {
   public getSecurityCodeLength = (cardNumber: string) =>
     this.getBinLookupDetails(cardNumber) ? this.getBinLookupDetails(cardNumber).cvcLength[0] : undefined;
 
+  /**
+   * Gets translated label content.
+   */
   public getLabel(): string {
     return Language.translations.LABEL_CARD_NUMBER;
   }
