@@ -92,11 +92,11 @@ export class VisaCheckout {
     settings: {}
   };
 
-  constructor(config: any, tokenise: boolean, jwt: string) {
+  constructor(config: any, tokenise: boolean, jwt: string, gatewayUrl: string) {
     this.messageBus = new MessageBus();
     const { merchantId, livestatus, placement, settings, paymentRequest, buttonSettings } = config;
     const stJwt = new StJwt(jwt);
-    this.payment = new Payment(jwt);
+    this.payment = new Payment(jwt, gatewayUrl);
     this._livestatus = livestatus;
     this._placement = placement;
     this._tokenise = tokenise;

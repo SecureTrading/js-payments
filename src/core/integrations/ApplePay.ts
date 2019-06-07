@@ -109,18 +109,19 @@ export class ApplePay {
   private _payment: Payment;
   private tokenise: boolean;
 
-  constructor(config: any, tokenise: boolean, jwt: string) {
+  constructor(config: any, tokenise: boolean, jwt: string, gatewayUrl: string) {
     const { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId } = config;
     this.jwt = jwt;
     this.merchantId = merchantId;
     this.placement = placement;
-    this.payment = new Payment(jwt);
+    this.payment = new Payment(jwt, gatewayUrl);
     this.paymentRequest = paymentRequest;
     this.sitesecurity = sitesecurity;
     this.tokenise = tokenise;
     this.validateMerchantRequestData.walletmerchantid = merchantId;
     this.stJwtInstance = new StJwt(jwt);
     this.stTransportInstance = new StTransport({
+      gatewayUrl,
       jwt
     });
     this.messageBus = new MessageBus();

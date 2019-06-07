@@ -7,6 +7,7 @@ interface IParams {
   locale?: string;
   origin?: string;
   jwt?: string;
+  gatewayUrl?: string;
   paymentTypes?: string;
   defaultPaymentType?: string;
 }
