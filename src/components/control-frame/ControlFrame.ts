@@ -37,7 +37,7 @@ export default class ControlFrame extends Frame {
 
   public onInit() {
     super.onInit();
-    this._payment = new Payment(this._params.jwt, this._params.origin);
+    this._payment = new Payment(this._params.jwt, this._params.gatewayUrl, this._params.origin);
     this.initSubscriptions();
     this.onLoad();
   }
@@ -61,7 +61,7 @@ export default class ControlFrame extends Frame {
   }
 
   protected _getAllowedParams() {
-    return super._getAllowedParams().concat(['origin', 'jwt']);
+    return super._getAllowedParams().concat(['origin', 'jwt', 'gatewayUrl']);
   }
 
   protected _getAllowedStyles() {

@@ -20,6 +20,7 @@ export default class CommonFrames extends RegisterFrames {
   private submitOnSuccess: boolean;
   private submitOnError: boolean;
   private submitFields: string[];
+  private gatewayUrl: string;
 
   constructor(
     jwt: any,
@@ -28,12 +29,14 @@ export default class CommonFrames extends RegisterFrames {
     styles: IStyles,
     submitOnSuccess: boolean,
     submitOnError: boolean,
-    submitFields: string[]
+    submitFields: string[],
+    gatewayUrl: string
   ) {
     super(jwt, origin, componentIds, styles);
     this.submitOnSuccess = submitOnSuccess;
     this.submitOnError = submitOnError;
     this.submitFields = submitFields;
+    this.gatewayUrl = gatewayUrl;
     this.messageBus = new MessageBus(origin);
     this._onInit();
   }
@@ -69,6 +72,7 @@ export default class CommonFrames extends RegisterFrames {
     }
 
     this.controlFrame.create(Selectors.CONTROL_FRAME_COMPONENT_NAME, this.styles, {
+      gatewayUrl: this.gatewayUrl,
       jwt: this.jwt,
       origin: this.origin
     });
