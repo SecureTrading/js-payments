@@ -8,11 +8,8 @@ import Selectors from '../../core/shared/Selectors';
  * Defines specific Expiration Date validation methods and attributes
  */
 export default class ExpirationDate extends FormField {
-  public static ifFieldExists(): HTMLInputElement {
-    // @ts-ignore
-    return document.getElementById(Selectors.EXPIRATION_DATE_INPUT);
-  }
-
+  public static ifFieldExists = (): HTMLInputElement =>
+    document.getElementById(Selectors.EXPIRATION_DATE_INPUT) as HTMLInputElement;
   private static EXPIRATION_DATE_LENGTH: number = 5;
   private static INPUT_PATTERN: string = '^(0[1-9]|1[0-2])\\/([0-9]{2})$';
 
