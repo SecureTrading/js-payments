@@ -1,7 +1,5 @@
 import { environment } from '../../environments/environment';
-import { NotificationType } from '../models/NotificationEvent';
 import DomMethods from '../shared/DomMethods';
-import Language from '../shared/Language';
 import VisaCheckout from './VisaCheckout';
 
 class VisaCheckoutMock extends VisaCheckout {
@@ -28,7 +26,7 @@ class VisaCheckoutMock extends VisaCheckout {
    * @private
    */
   private _handleMockedData() {
-    fetch(environment.VISA_CHECKOUT_URLS.MOCK_DATA_URL)
+    return fetch(environment.VISA_CHECKOUT_URLS.MOCK_DATA_URL)
       .then((response: any) => response.json())
       .then(({ payment, status }: any) => {
         this._proceedFlowWithMockedData(payment, status);

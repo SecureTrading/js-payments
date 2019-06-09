@@ -14,7 +14,7 @@ describe('Visa Checkout class', () => {
   });
 
   // given
-  describe('Method _setInitConfiguration', () => {
+  describe('_setInitConfiguration()', () => {
     // then
     it('should set _initConfiguration', () => {
       instance._initConfiguration = { start: 'with value', paymentRequest: {} };
@@ -34,7 +34,7 @@ describe('Visa Checkout class', () => {
   });
 
   // given
-  describe('Method _getInitPaymentRequest', () => {
+  describe('_getInitPaymentRequest()', () => {
     // then
     it('should return paymentRequest config', () => {
       instance._initConfiguration.paymentRequest = { original: 'data', overrideMe: 'unchanged' };
@@ -70,7 +70,7 @@ describe('Visa Checkout class', () => {
   });
 
   // given
-  describe('Method setConfiguration', () => {
+  describe('setConfiguration()', () => {
     // then
     it('should return configuration', () => {
       const result = instance.setConfiguration(
@@ -101,7 +101,7 @@ describe('Visa Checkout class', () => {
   });
 
   // given
-  describe('Method _createVisaButton', () => {
+  describe('_createVisaButton()', () => {
     const { fakeVisaButton } = VisaCheckoutFixture();
 
     // then
@@ -116,7 +116,7 @@ describe('Visa Checkout class', () => {
   });
 
   // given
-  describe('Method _initVisaConfiguration', () => {
+  describe('_initVisaConfiguration()', () => {
     // then
     let sdkMarkup: object;
     beforeEach(() => {
@@ -128,7 +128,7 @@ describe('Visa Checkout class', () => {
   });
 
   // given
-  describe('Method _attachVisaButton', () => {
+  describe('_attachVisaButton()', () => {
     // then
     it('should prepared structure be equal to real document object ', () => {
       expect(instance._attachVisaButton()).toEqual(body);
@@ -136,7 +136,7 @@ describe('Visa Checkout class', () => {
   });
 
   // given
-  describe('Method _setLiveStatus', () => {
+  describe('_setLiveStatus()', () => {
     // then
     it('should set sandbox assets when application is not live', () => {
       const { sandboxAssets } = VisaCheckoutFixture();
@@ -153,37 +153,73 @@ describe('Visa Checkout class', () => {
     });
   });
 
-  describe('Method _paymentStatusHandler', () => {
+  describe('_paymentStatusHandler()', () => {
     // then
-    it('should trigger V.init function with proper configuration', () => {});
+    it('should trigger V.on functions with proper configuration', () => {});
   });
 
   // given
-  describe('Method _initPaymentConfiguration', () => {
+  describe('_initPaymentConfiguration()', () => {
     // then
-    it('should trigger V.init function with proper configuration', () => {});
+    it('should trigger V.init function with proper configuration', () => {
+      const { fakeV } = VisaCheckoutFixture();
+      // @ts-ignore
+      global.V = fakeV;
+      instance._initConfiguration = { myDummy: 'config' };
+      instance._initPaymentConfiguration();
+      expect(fakeV.init).toHaveBeenCalledTimes(1);
+      expect(fakeV.init).toHaveBeenCalledWith(instance._initConfiguration);
+    });
   });
 
   // given
-  describe('Method setNotification', () => {
+  describe('setNotification()', () => {
     // then
     it('', () => {});
+  });
+  // given
+  describe('_onSuccess()', () => {
+    // then
+    it('should set paymentDetails and paymentStatus and call _processPayment', () => {
+      instance._processPayment = jest.fn();
+      const payment = { status: 'SUCCESS', another: 'value' };
+      instance._onSuccess(payment);
+      expect(instance.paymentDetails).toBe('{"status":"SUCCESS","another":"value"}');
+      expect(instance.paymentStatus).toBe('SUCCESS');
+      expect(instance._processPayment).toHaveBeenCalledTimes(1);
+    });
   });
 
   // given
-  describe('Method _setActionOnMockedButton', () => {
+  describe('_onError()', () => {
     // then
-    it('', () => {});
+    it('should set paymentStatus and call _getResponseMessage and _setNotification', () => {
+      instance.getResponseMessage = jest.fn();
+      instance.setNotification = jest.fn();
+      instance.responseMessage = 'MY MESSAGE';
+      instance._onError();
+      expect(instance.paymentStatus).toBe('ERROR');
+      expect(instance.getResponseMessage).toHaveBeenCalledTimes(1);
+      expect(instance.getResponseMessage).toHaveBeenCalledWith('ERROR');
+      expect(instance.setNotification).toHaveBeenCalledTimes(1);
+      expect(instance.setNotification).toHaveBeenCalledWith('ERROR', 'MY MESSAGE');
+    });
   });
+
   // given
-  describe('Method _setMockedData', () => {
+  describe('_onCancel()', () => {
     // then
-    it('', () => {});
-  });
-  // given
-  describe('Method _proceedFlowWithMockedData', () => {
-    // then
-    it('', () => {});
+    it('should set paymentStatus and call _getResponseMessage and _setNotification', () => {
+      instance.getResponseMessage = jest.fn();
+      instance.setNotification = jest.fn();
+      instance.responseMessage = 'MY MESSAGE';
+      instance._onCancel();
+      expect(instance.paymentStatus).toBe('WARNING');
+      expect(instance.getResponseMessage).toHaveBeenCalledTimes(1);
+      expect(instance.getResponseMessage).toHaveBeenCalledWith('WARNING');
+      expect(instance.setNotification).toHaveBeenCalledTimes(1);
+      expect(instance.setNotification).toHaveBeenCalledWith('WARNING', 'MY MESSAGE');
+    });
   });
 });
 
@@ -224,5 +260,7 @@ function VisaCheckoutFixture() {
     'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js'
   );
 
-  return { config, fakeVisaButton, sdkMarkup, productionAssets, sandboxAssets };
+  const fakeV = { init: jest.fn(), on: jest.fn() };
+
+  return { config, fakeVisaButton, sdkMarkup, productionAssets, sandboxAssets, fakeV };
 }

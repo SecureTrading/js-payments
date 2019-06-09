@@ -215,7 +215,6 @@ export class VisaCheckout {
       });
   }
 
-  // TODO unit test these
   protected _onSuccess(payment: object) {
     this.paymentDetails = JSON.stringify(payment);
     this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
