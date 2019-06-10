@@ -16,7 +16,22 @@ body {
 }
 
 .error-field {
+  background-color: #f8d7da;
+  color: #721c24;
   border-color: $border-color-notification-error;
+}
+
+@-webkit-keyframes autofill {
+  to {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: $border-color-notification-error;
+  }
+}
+
+input:-webkit-autofill.error-field {
+  -webkit-animation-name: autofill;
+  -webkit-animation-fill-mode: both;
 }
 
 .st-button-submit__disabled {

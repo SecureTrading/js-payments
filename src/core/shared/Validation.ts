@@ -189,6 +189,7 @@ export default class Validation extends Frame {
    * @param inputElement
    */
   private toggleErrorClass = (inputElement: HTMLInputElement) => {
+    console.log(inputElement.validity);
     inputElement.validity.valid
       ? inputElement.classList.remove(Validation.ERROR_FIELD_CLASS)
       : inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
