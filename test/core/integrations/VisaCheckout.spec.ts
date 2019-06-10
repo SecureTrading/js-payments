@@ -34,6 +34,16 @@ describe('Visa Checkout class', () => {
   });
 
   // given
+  describe('set and get payment', () => {
+    // then
+    it('should set and get the payment attribute', () => {
+      instance.payment = { myKey: 'some value' };
+      expect(instance.payment).toStrictEqual({ myKey: 'some value' });
+      expect(instance._payment).toStrictEqual({ myKey: 'some value' });
+    });
+  });
+
+  // given
   describe('_getInitPaymentRequest()', () => {
     // then
     it('should return paymentRequest config', () => {
@@ -153,9 +163,114 @@ describe('Visa Checkout class', () => {
     });
   });
 
+  // given
+  describe('_initVisaFlow()', () => {
+    // @ts-ignore
+    const initPayment = VisaCheckout.prototype._initPaymentConfiguration;
+    // @ts-ignore
+    const statusHandler = VisaCheckout.prototype._paymentStatusHandler;
+
+    // then
+    it('should call load handler', () => {
+      // @ts-ignore
+      const spy = jest.spyOn(VisaCheckout.prototype, '_initPaymentConfiguration').mockImplementation(() => {});
+      // @ts-ignore
+      const spy2 = jest.spyOn(VisaCheckout.prototype, '_paymentStatusHandler').mockImplementation(() => {});
+      instance._initVisaFlow();
+      const ev = document.createEvent('Event');
+      ev.initEvent('load', false, false);
+      const script = document.getElementsByTagName('script')[0];
+      script.dispatchEvent(ev);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy2).toHaveBeenCalledTimes(1);
+    });
+
+    afterEach(() => {
+      // @ts-ignore
+      VisaCheckout.prototype._initPaymentConfiguration = initPayment;
+      // @ts-ignore
+      VisaCheckout.prototype._paymentStatusHandler = statusHandler;
+    });
+  });
+
   describe('_paymentStatusHandler()', () => {
     // then
-    it('should trigger V.on functions with proper configuration', () => {});
+    it('should trigger V.on functions with proper configuration', () => {
+      const { fakeV } = VisaCheckoutFixture();
+      // @ts-ignore
+      global.V = fakeV;
+      instance._paymentStatusHandler();
+      expect(fakeV.on).toHaveBeenCalledTimes(3);
+      expect(fakeV.on.mock.calls[0].length).toBe(2);
+      expect(fakeV.on.mock.calls[0][0]).toBe('payment.success');
+      expect(fakeV.on.mock.calls[0][1]).toBeInstanceOf(Function);
+      expect(fakeV.on.mock.calls[1].length).toBe(2);
+      expect(fakeV.on.mock.calls[1][0]).toBe('payment.error');
+      expect(fakeV.on.mock.calls[1][1]).toBeInstanceOf(Function);
+      expect(fakeV.on.mock.calls[2].length).toBe(2);
+      expect(fakeV.on.mock.calls[2][0]).toBe('payment.cancel');
+      expect(fakeV.on.mock.calls[2][1]).toBeInstanceOf(Function);
+    });
+    // then
+    it('should trigger V.on payment.success and call _onSuccess', () => {
+      instance._onSuccess = jest.fn();
+      instance._onError = jest.fn();
+      instance._onCancel = jest.fn();
+      const { fakeV } = VisaCheckoutFixture();
+      fakeV.on = jest.fn((eventType, callback) => {
+        if (eventType === 'payment.success') {
+          callback({ myPayment: 'some value' });
+        }
+      });
+      // @ts-ignore
+      global.V = fakeV;
+      instance._paymentStatusHandler();
+      expect(fakeV.on).toHaveBeenCalledTimes(3);
+      expect(instance._onSuccess).toHaveBeenCalledTimes(1);
+      expect(instance._onSuccess).toHaveBeenCalledWith({ myPayment: 'some value' });
+      expect(instance._onError).toHaveBeenCalledTimes(0);
+      expect(instance._onCancel).toHaveBeenCalledTimes(0);
+    });
+    // then
+    it('should trigger V.on payment.error and call _onError', () => {
+      instance._onSuccess = jest.fn();
+      instance._onError = jest.fn();
+      instance._onCancel = jest.fn();
+      const { fakeV } = VisaCheckoutFixture();
+      fakeV.on = jest.fn((eventType, callback) => {
+        if (eventType === 'payment.error') {
+          callback({ myPayment: 'some value' });
+        }
+      });
+      // @ts-ignore
+      global.V = fakeV;
+      instance._paymentStatusHandler();
+      expect(fakeV.on).toHaveBeenCalledTimes(3);
+      expect(instance._onSuccess).toHaveBeenCalledTimes(0);
+      expect(instance._onError).toHaveBeenCalledTimes(1);
+      expect(instance._onError).toHaveBeenCalledWith();
+      expect(instance._onCancel).toHaveBeenCalledTimes(0);
+    });
+    // then
+    it('should trigger V.on payment.cancel and call _onCancel', () => {
+      instance._onSuccess = jest.fn();
+      instance._onError = jest.fn();
+      instance._onCancel = jest.fn();
+      const { fakeV } = VisaCheckoutFixture();
+      fakeV.on = jest.fn((eventType, callback) => {
+        if (eventType === 'payment.cancel') {
+          callback({ myPayment: 'some value' });
+        }
+      });
+      // @ts-ignore
+      global.V = fakeV;
+      instance._paymentStatusHandler();
+      expect(fakeV.on).toHaveBeenCalledTimes(3);
+      expect(instance._onSuccess).toHaveBeenCalledTimes(0);
+      expect(instance._onError).toHaveBeenCalledTimes(0);
+      expect(instance._onCancel).toHaveBeenCalledTimes(1);
+      expect(instance._onCancel).toHaveBeenCalledWith();
+    });
   });
 
   // given
@@ -219,6 +334,30 @@ describe('Visa Checkout class', () => {
       expect(instance.getResponseMessage).toHaveBeenCalledWith('WARNING');
       expect(instance.setNotification).toHaveBeenCalledTimes(1);
       expect(instance.setNotification).toHaveBeenCalledWith('WARNING', 'MY MESSAGE');
+    });
+  });
+
+  // given
+  describe('getResponseMessage()', () => {
+    // then
+    it('should set responseMessage on success', () => {
+      instance.getResponseMessage('SUCCESS');
+      expect(instance.responseMessage).toBe('Payment has been successfully processed');
+    });
+    // then
+    it('should set responseMessage on success', () => {
+      instance.getResponseMessage('ERROR');
+      expect(instance.responseMessage).toBe('An error occurred');
+    });
+    // then
+    it('should set responseMessage on success', () => {
+      instance.getResponseMessage('WARNING');
+      expect(instance.responseMessage).toBe('Payment has been cancelled');
+    });
+    // then
+    it('should not set responseMessage on unknown', () => {
+      instance.getResponseMessage('UNKNOWN');
+      expect(instance.responseMessage).toBe(undefined);
     });
   });
 });
