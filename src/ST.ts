@@ -15,7 +15,7 @@ import Selectors from './core/shared/Selectors';
 import { IStyles } from './core/shared/Styler';
 import { environment } from './environments/environment';
 
-const IConfigSchema = Joi.object().keys({
+const IConfigSchema: Joi.JoiObject = Joi.object().keys({
   componentIds: Joi.object().keys({
     animatedCard: Joi.string().required(),
     cardNumber: Joi.string().required(),
@@ -23,6 +23,8 @@ const IConfigSchema = Joi.object().keys({
     notificationFrame: Joi.string().required(),
     securityCode: Joi.string().required()
   }),
+  datacenterurl: Joi.string(),
+  formId: Joi.string(),
   jwt: Joi.string().required(),
   origin: Joi.string(),
   styles: Joi.object(),
@@ -30,6 +32,12 @@ const IConfigSchema = Joi.object().keys({
   submitOnError: Joi.boolean(),
   submitOnSuccess: Joi.boolean(),
   tokenise: Joi.boolean()
+});
+
+const IComponentsConfigSchema = Joi.object().keys({
+  defaultPaymentType: Joi.string(),
+  paymentTypes: Joi.array().allow([Joi.string()]),
+  startOnLoad: Joi.boolean()
 });
 
 /**
@@ -54,12 +62,7 @@ class ST {
 
   constructor(config: IConfig) {
     config = this._addDefaults(config);
-
-    Joi.validate(config, IConfigSchema, (error, value) => {
-      if (error !== null) {
-        throw error;
-      }
-    });
+    this.validateConfig(config, IConfigSchema);
     this.componentIds = config.componentIds;
     this.jwt = config.jwt;
     this.origin = config.origin;
@@ -85,6 +88,7 @@ class ST {
   public Components(config?: IComponentsConfig) {
     config = config ? config : ({} as IComponentsConfig);
     config.startOnLoad = config.startOnLoad !== undefined ? config.startOnLoad : false;
+    this.validateConfig(config, IComponentsConfigSchema);
     if (!config.startOnLoad) {
       const instance = new CardFrames(
         this.jwt,
@@ -107,6 +111,14 @@ class ST {
   public VisaCheckout(config: IWalletConfig) {
     const visa = environment.testEnvironment ? VisaCheckoutMock : VisaCheckout;
     const instance = new visa(config, this.tokenise, this.jwt, this.gatewayUrl);
+  }
+
+  private validateConfig(config: IConfig | IComponentsConfig, schema: Joi.JoiObject) {
+    Joi.validate(config, schema, (error, value) => {
+      if (error !== null) {
+        throw error;
+      }
+    });
   }
 
   private _addDefaults(config: IConfig) {
