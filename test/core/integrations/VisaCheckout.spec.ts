@@ -1,4 +1,5 @@
 import VisaCheckout from '../../../src/core/integrations/VisaCheckout';
+import { exportAllDeclaration } from '@babel/types';
 
 // given
 describe('Visa Checkout class', () => {
@@ -107,6 +108,11 @@ describe('Visa Checkout class', () => {
     it('should handle undefined settings', () => {
       const result = instance.setConfiguration({ payment: 'request', another: 'value' }, undefined);
       expect(result).toMatchObject({ payment: 'request', another: 'value' });
+    });
+    // then
+    it('should handle undefined both', () => {
+      const result = instance.setConfiguration(undefined, undefined);
+      expect(result).toMatchObject({});
     });
   });
 
@@ -288,9 +294,31 @@ describe('Visa Checkout class', () => {
   });
 
   // given
-  describe('setNotification()', () => {
+  describe('customizeVisaButton()', () => {
     // then
-    it('', () => {});
+    it('should handle no color or size', () => {
+      instance._visaCheckoutButtonProps.src = 'https://example.com';
+      const resp = instance.customizeVisaButton({});
+      expect(resp).toBe('https://example.com/');
+    });
+    // then
+    it('should set color', () => {
+      instance._visaCheckoutButtonProps.src = 'https://example.com';
+      const resp = instance.customizeVisaButton({ color: 'neutral' });
+      expect(resp).toBe('https://example.com/?color=neutral');
+    });
+    // then
+    it('should set size', () => {
+      instance._visaCheckoutButtonProps.src = 'https://example.com';
+      const resp = instance.customizeVisaButton({ size: '154' });
+      expect(resp).toBe('https://example.com/?size=154');
+    });
+    // then
+    it('should set color and size', () => {
+      instance._visaCheckoutButtonProps.src = 'https://example.com';
+      const resp = instance.customizeVisaButton({ color: 'neutral', size: '154' });
+      expect(resp).toBe('https://example.com/?color=neutral&size=154');
+    });
   });
   // given
   describe('_onSuccess()', () => {
@@ -360,9 +388,105 @@ describe('Visa Checkout class', () => {
       expect(instance.responseMessage).toBe(undefined);
     });
   });
+
+  // given
+  describe('_processPayment()', () => {
+    // then
+    it('should process AUTH call getResponseMessage and setNotification for success with tokenise false', async () => {
+      instance.payment.processPayment = jest.fn().mockResolvedValueOnce({ myData: 'response' });
+      instance.getResponseMessage = jest.fn();
+      instance.setNotification = jest.fn();
+      instance.responseMessage = 'MYRESPONSE';
+      instance._tokenise = false;
+      instance._walletSource = 'VISACHECKOUT';
+      instance.paymentDetails = 'TOKEN';
+      await instance._processPayment();
+      expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
+      expect(instance.payment.processPayment).toHaveBeenCalledWith(
+        { requesttypedescription: 'AUTH' },
+        { walletsource: 'VISACHECKOUT', wallettoken: 'TOKEN' },
+        {}
+      );
+      expect(instance.getResponseMessage).toHaveBeenCalledTimes(1);
+      expect(instance.getResponseMessage).toHaveBeenCalledWith('SUCCESS');
+      expect(instance.setNotification).toHaveBeenCalledTimes(1);
+      expect(instance.setNotification).toHaveBeenCalledWith('SUCCESS', 'MYRESPONSE');
+    });
+
+    // then
+    it('should process CACHETOKEN call getResponseMessage and setNotification for success with tokenise true', async () => {
+      instance.payment.processPayment = jest.fn().mockResolvedValueOnce({ myData: 'response' });
+      instance.getResponseMessage = jest.fn();
+      instance.setNotification = jest.fn();
+      instance.responseMessage = 'MYRESPONSE';
+      instance._tokenise = true;
+      instance._walletSource = 'VISACHECKOUT';
+      instance.paymentDetails = 'TOKEN';
+      await instance._processPayment();
+      expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
+      expect(instance.payment.processPayment).toHaveBeenCalledWith(
+        { requesttypedescription: 'CACHETOKENISE' },
+        { walletsource: 'VISACHECKOUT', wallettoken: 'TOKEN' },
+        {}
+      );
+      expect(instance.getResponseMessage).toHaveBeenCalledTimes(1);
+      expect(instance.getResponseMessage).toHaveBeenCalledWith('SUCCESS');
+      expect(instance.setNotification).toHaveBeenCalledTimes(1);
+      expect(instance.setNotification).toHaveBeenCalledWith('SUCCESS', 'MYRESPONSE');
+    });
+
+    // then
+    it('should process AUTH call getResponseMessage and setNotification for error with tokenise false', async () => {
+      instance.payment.processPayment = jest.fn().mockRejectedValueOnce({ myData: 'response' });
+      instance.getResponseMessage = jest.fn();
+      instance.setNotification = jest.fn();
+      instance.responseMessage = 'MYRESPONSE';
+      instance._tokenise = false;
+      instance._walletSource = 'VISACHECKOUT';
+      instance.paymentDetails = 'TOKEN';
+      await instance._processPayment();
+      expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
+      expect(instance.payment.processPayment).toHaveBeenCalledWith(
+        { requesttypedescription: 'AUTH' },
+        { walletsource: 'VISACHECKOUT', wallettoken: 'TOKEN' },
+        {}
+      );
+      expect(instance.getResponseMessage).toHaveBeenCalledTimes(1);
+      expect(instance.getResponseMessage).toHaveBeenCalledWith('ERROR');
+      expect(instance.setNotification).toHaveBeenCalledTimes(1);
+      expect(instance.setNotification).toHaveBeenCalledWith('ERROR', 'MYRESPONSE');
+    });
+  });
+
+  // given
+  describe('setNotification()', () => {
+    // then
+    it('should call publishFromParent with SUCCESS', () => {
+      instance.messageBus.publishFromParent = jest.fn();
+      instance.setNotification('SUCCESS', 'MYCONTENT');
+      expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
+      expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
+        { data: { content: 'MYCONTENT', type: 'SUCCESS' }, type: 'NOTIFICATION' },
+        'st-notification-frame-iframe'
+      );
+    });
+    // then
+    it('should call publishFromParent with ERROR', () => {
+      instance.messageBus.publishFromParent = jest.fn();
+      instance.setNotification('ERROR', 'ANOTHER');
+      expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
+      expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
+        { data: { content: 'ANOTHER', type: 'ERROR' }, type: 'NOTIFICATION' },
+        'st-notification-frame-iframe'
+      );
+    });
+  });
 });
 
 function VisaCheckoutFixture() {
+  const html = '<form id="st-form"><button id="v-button" /></form>';
+  document.body.innerHTML = html;
+
   const visaButttonProps = {
     alt: 'Visa Checkout',
     class: 'v-button',
