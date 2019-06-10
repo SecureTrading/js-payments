@@ -2,6 +2,7 @@ import each from 'jest-each';
 import { CardinalCommerce, IThreeDQueryResponse } from '../../../src/core/integrations/CardinalCommerce';
 import MessageBus from '../../../src/core/shared/MessageBus';
 import DomMethods from '../../../src/core/shared/DomMethods';
+import { idText } from 'typescript';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 
@@ -60,6 +61,29 @@ describe('CardinalCommerce class', () => {
           'st-control-frame-iframe'
         );
       });
+    });
+  });
+
+  describe('CardinalCommerce.setNotification', () => {
+    // then
+    it('should call publishFromParent with SUCCESS', () => {
+      instance.messageBus.publishFromParent = jest.fn();
+      instance.setNotification('SUCCESS', 'MYCONTENT');
+      expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
+      expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
+        { data: { content: 'MYCONTENT', type: 'SUCCESS' }, type: 'NOTIFICATION' },
+        'st-notification-frame-iframe'
+      );
+    });
+    // then
+    it('should call publishFromParent with ERROR', () => {
+      instance.messageBus.publishFromParent = jest.fn();
+      instance.setNotification('ERROR', 'ANOTHER');
+      expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
+      expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
+        { data: { content: 'ANOTHER', type: 'ERROR' }, type: 'NOTIFICATION' },
+        'st-notification-frame-iframe'
+      );
     });
   });
 
@@ -166,6 +190,54 @@ describe('CardinalCommerce class', () => {
         // Annonymous function so can't test using toHaveBeenCalledWith
         expect(instance.messageBus.subscribeOnParent.mock.calls[2][1]).toBeInstanceOf(Function);
         expect(instance.messageBus.subscribeOnParent.mock.calls[2].length).toBe(2);
+      });
+
+      it('should call _onLoadControlFrame if eventType is LOAD_CONTROL_FRAME', () => {
+        instance._onLoadControlFrame = jest.fn();
+        instance._onThreeDInitEvent = jest.fn();
+        instance._onThreeDQueryEvent = jest.fn();
+        instance.messageBus.subscribeOnParent = jest.fn((eventType, callback) => {
+          if (eventType === 'LOAD_CONTROL_FRAME') {
+            callback();
+          }
+        });
+        instance._initSubscriptions();
+        expect(instance._onLoadControlFrame).toHaveBeenCalledTimes(1);
+        expect(instance._onLoadControlFrame).toHaveBeenCalledWith();
+        expect(instance._onThreeDInitEvent).toHaveBeenCalledTimes(0);
+        expect(instance._onThreeDQueryEvent).toHaveBeenCalledTimes(0);
+      });
+
+      it('should call _onThreeDInitEvent if eventType is THREEDINIT', () => {
+        instance._onLoadControlFrame = jest.fn();
+        instance._onThreeDInitEvent = jest.fn();
+        instance._onThreeDQueryEvent = jest.fn();
+        instance.messageBus.subscribeOnParent = jest.fn((eventType, callback) => {
+          if (eventType === 'THREEDINIT') {
+            callback({ myData: 'SOMETHING' });
+          }
+        });
+        instance._initSubscriptions();
+        expect(instance._onLoadControlFrame).toHaveBeenCalledTimes(0);
+        expect(instance._onThreeDInitEvent).toHaveBeenCalledTimes(1);
+        expect(instance._onThreeDInitEvent).toHaveBeenCalledWith({ myData: 'SOMETHING' });
+        expect(instance._onThreeDQueryEvent).toHaveBeenCalledTimes(0);
+      });
+
+      it('should call _onThreeDQueryEvent if eventType is THREEDQUERY', () => {
+        instance._onLoadControlFrame = jest.fn();
+        instance._onThreeDInitEvent = jest.fn();
+        instance._onThreeDQueryEvent = jest.fn();
+        instance.messageBus.subscribeOnParent = jest.fn((eventType, callback) => {
+          if (eventType === 'THREEDQUERY') {
+            callback({ myData: 'SOMETHING' });
+          }
+        });
+        instance._initSubscriptions();
+        expect(instance._onLoadControlFrame).toHaveBeenCalledTimes(0);
+        expect(instance._onThreeDInitEvent).toHaveBeenCalledTimes(0);
+        expect(instance._onThreeDQueryEvent).toHaveBeenCalledTimes(1);
+        expect(instance._onThreeDQueryEvent).toHaveBeenCalledWith({ myData: 'SOMETHING' });
       });
     });
 
@@ -293,7 +365,7 @@ describe('CardinalCommerce class', () => {
 
   describe('CardinalCommerce._authorizePayment', () => {
     // then
-    it('should publish control iframe event', () => {
+    it('should publish control iframe event with AUTH', () => {
       instance.messageBus.publishFromParent = jest.fn();
       instance._cardinalCommerceCacheToken = 'tokenValue';
       instance._threedQueryTransactionReference = '1-2-3';
@@ -301,6 +373,22 @@ describe('CardinalCommerce class', () => {
       expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
       expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
         { type: 'AUTH', data: { some: 'value', cachetoken: 'tokenValue', parenttransactionreference: '1-2-3' } },
+        'st-control-frame-iframe'
+      );
+    });
+    // then
+    it('should publish control iframe event with CACHETOKENISE', () => {
+      instance.messageBus.publishFromParent = jest.fn();
+      instance.tokenise = true;
+      instance._cardinalCommerceCacheToken = 'tokenValue';
+      instance._threedQueryTransactionReference = '1-2-3';
+      instance._authorizePayment({ some: 'value', cachetoken: 'OVERRIDDEN' });
+      expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
+      expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
+        {
+          type: 'CACHETOKENISE',
+          data: { some: 'value', cachetoken: 'tokenValue', parenttransactionreference: '1-2-3' }
+        },
         'st-control-frame-iframe'
       );
     });
