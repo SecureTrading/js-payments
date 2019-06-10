@@ -87,13 +87,15 @@ describe('Class ApplePayMock', () => {
     // then
     it('should always return STATUS_SUCCESS as SUCCESS', () => {
       ApplePaySessionMock.STATUS_SUCCESS = 'SUCCESS';
-      expect(instance.getPaymentStatus()).toBe('SUCCESS');
+      ApplePaySessionMock.STATUS_FAILURE = 'ERROR';
+      expect(instance.getPaymentSuccessStatus()).toBe('SUCCESS');
     });
 
     // then
     it('should always return STATUS_SUCCESS as ERROR', () => {
-      ApplePaySessionMock.STATUS_SUCCESS = 'ERROR';
-      expect(instance.getPaymentStatus()).toBe('ERROR');
+      ApplePaySessionMock.STATUS_SUCCESS = 'SUCCESS';
+      ApplePaySessionMock.STATUS_FAILURE = 'ERROR';
+      expect(instance.getPaymentFailureStatus()).toBe('ERROR');
     });
   });
 
