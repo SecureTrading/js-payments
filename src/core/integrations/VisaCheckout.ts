@@ -1,4 +1,3 @@
-declare const V: any;
 import { environment } from '../../environments/environment';
 import { INotificationEvent, NotificationType } from '../models/NotificationEvent';
 import MessageBus from '../shared/MessageBus';
@@ -7,6 +6,15 @@ import { StJwt } from '../shared/StJwt';
 import DomMethods from './../shared/DomMethods';
 import Language from './../shared/Language';
 import Payment from './../shared/Payment';
+
+declare const V: any;
+
+interface IVisaSettings {
+  [key: string]: string;
+}
+interface IVisaConfig {
+  [key: string]: string;
+}
 
 /**
  *  Visa Checkout configuration class; sets up Visa e-wallet
@@ -109,7 +117,7 @@ export class VisaCheckout {
 
   public _setInitConfiguration(paymentRequest: any, settings: any, stJwt: StJwt, merchantId: string) {
     this._initConfiguration.apikey = merchantId;
-    this._initConfiguration.paymentRequest = this._getInitPaymentRequest(paymentRequest, stJwt);
+    this._initConfiguration.paymentRequest = this._getInitPaymentRequest(paymentRequest, stJwt) as any;
     this._initConfiguration.settings = this.setConfiguration({ locale: stJwt.locale }, settings);
   }
 
@@ -261,7 +269,8 @@ export class VisaCheckout {
     });
   }
 
-  private setConfiguration = (config: any, settings: any) => (settings || config ? { ...config, ...settings } : {});
+  private setConfiguration = (config: IVisaConfig, settings: IVisaSettings) =>
+    settings || config ? { ...config, ...settings } : {};
 
   /**
    * Initialize Visa Checkout flow:
