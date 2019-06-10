@@ -165,7 +165,6 @@ class StCodec {
     }
 
     const responseContent: IResponseData = responseData.response[0];
-    console.log(responseData);
     if (StCodec.REQUESTS_WITH_ERROR_MESSAGES.includes(responseContent.requesttypedescription)) {
       if (responseContent.errorcode !== StCodec.STATUS_CODES.ok) {
         if (responseContent.errorcode === StCodec.STATUS_CODES.invalidfield) {
