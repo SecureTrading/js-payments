@@ -7,6 +7,7 @@ import Validation from '../shared/Validation';
  */
 export class MerchantFields {
   private static readonly DATA_ATTRIBUTE_NAME: string = 'stName';
+  private _merchantInputs = document.getElementsByTagName('input') as HTMLCollection;
   public validation: Validation;
   private _messageBus: MessageBus;
 
@@ -22,7 +23,7 @@ export class MerchantFields {
    * @param messageElement
    * @param event
    */
-  public backendValidation(inputElement: HTMLInputElement, event: string, messageElement: HTMLElement) {
+  public backendValidation(inputElement: HTMLInputElement, event: string, messageElement?: HTMLElement) {
     this._messageBus.subscribe(event, (data: IMessageBusValidateField) => {
       this.validation.checkBackendValidity(data, inputElement, messageElement);
       this.validation.validate(inputElement, messageElement);
@@ -33,18 +34,19 @@ export class MerchantFields {
    * Checks if Merchant's form has inputs with data-st-name and  returns them.
    */
   public findAllMerchantInputs() {
-    const merchantInputs = document.getElementsByTagName('input') as HTMLCollection;
     const merchantFieldsNamesArray = [];
-    for (let i = 0; i < merchantInputs.length; ++i) {
+    for (let i = 0; i < this._merchantInputs.length; ++i) {
       // @ts-ignore
-      if (merchantInputs[i].dataset.hasOwnProperty(MerchantFields.DATA_ATTRIBUTE_NAME)) {
+      if (this._merchantInputs[i].dataset.hasOwnProperty(MerchantFields.DATA_ATTRIBUTE_NAME)) {
+        const input = document.getElementById(this._merchantInputs[i].id) as HTMLInputElement;
+        this.backendValidation(input, MessageBus.EVENTS.VALIDATE_MERCHANT_FIELD);
+        input.addEventListener('keypress', () => {
+          input.setCustomValidity('');
+          input.classList.remove('error-field');
+        });
+
         // @ts-ignore
-        this.backendValidation(
-          document.getElementById(merchantInputs[i].id),
-          MessageBus.EVENTS.VALIDATE_MERCHANT_FIELD
-        );
-        // @ts-ignore
-        merchantFieldsNamesArray.push(merchantInputs[i].dataset[MerchantFields.DATA_ATTRIBUTE_NAME]);
+        merchantFieldsNamesArray.push(this._merchantInputs[i].dataset[MerchantFields.DATA_ATTRIBUTE_NAME]);
       }
     }
 
