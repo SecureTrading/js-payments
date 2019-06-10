@@ -1,3 +1,4 @@
+import Joi from 'joi';
 import 'location-origin';
 import 'url-polyfill';
 import 'whatwg-fetch';
@@ -13,6 +14,23 @@ import { IComponentsConfig, IConfig, IWalletConfig } from './core/models/Config'
 import Selectors from './core/shared/Selectors';
 import { IStyles } from './core/shared/Styler';
 import { environment } from './environments/environment';
+
+const IConfigSchema = Joi.object().keys({
+  componentIds: Joi.object().keys({
+    animatedCard: Joi.string().required(),
+    cardNumber: Joi.string().required(),
+    expirationDate: Joi.string().required(),
+    notificationFrame: Joi.string().required(),
+    securityCode: Joi.string().required()
+  }),
+  jwt: Joi.string().required(),
+  origin: Joi.string(),
+  styles: Joi.object(),
+  submitFields: Joi.array().allow([Joi.string()]),
+  submitOnError: Joi.boolean(),
+  submitOnSuccess: Joi.boolean(),
+  tokenise: Joi.boolean()
+});
 
 /**
  * Establishes connection with ST, defines client.
@@ -36,6 +54,12 @@ class ST {
 
   constructor(config: IConfig) {
     config = this._addDefaults(config);
+
+    Joi.validate(config, IConfigSchema, (error, value) => {
+      if (error !== null) {
+        throw error;
+      }
+    });
     this.componentIds = config.componentIds;
     this.jwt = config.jwt;
     this.origin = config.origin;

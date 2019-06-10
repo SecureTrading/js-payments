@@ -144,6 +144,7 @@ module.exports = {
     ]
   },
   resolve: {
+    alias: { joi: 'joi-browser' },
     extensions: ['.ts', '.js']
   }
 };
