@@ -2,7 +2,6 @@ import { environment } from '../../environments/environment';
 import { CardinalCommerce } from './CardinalCommerce';
 
 export default class CardinalCommerceMock extends CardinalCommerce {
-  // @ts-ignore
   protected _performBinDetection(data: IFormFieldState) {
     return true;
   }
@@ -16,7 +15,7 @@ export default class CardinalCommerceMock extends CardinalCommerce {
   }
 
   protected _authenticateCard() {
-    fetch(environment.CARDINAL_COMMERCE.MOCK.AUTHENTICATE_CARD_URL)
+    return fetch(environment.CARDINAL_COMMERCE.MOCK.AUTHENTICATE_CARD_URL)
       .then((response: any) => {
         return response.json();
       })
