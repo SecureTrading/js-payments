@@ -31,8 +31,12 @@ class ApplePayMock extends ApplePay {
     return ApplePaySessionMock;
   }
 
-  public getPaymentStatus() {
+  public getPaymentSuccessStatus() {
     return ApplePaySessionMock.STATUS_SUCCESS;
+  }
+
+  public getPaymentFailureStatus() {
+    return ApplePaySessionMock.STATUS_FAILURE;
   }
 
   /**

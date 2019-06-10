@@ -2,6 +2,7 @@ const getType = require('jest-get-type');
 import Language from '../../../src/core/shared/Language';
 import { NotificationType } from '../../../src/core/models/NotificationEvent';
 import ApplePay from '../../../src/core/integrations/ApplePay';
+import ApplePaySessionMock from '../../../src/core/integrations/ApplePaySessionMock';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 
@@ -19,7 +20,7 @@ describe('Class Apple Pay', () => {
   // given
   describe('Method ifApplePayIsAvailable', () => {
     // then
-    it('should return undefined if device is not Mac', () => {
+    it('should return false if device is not Mac', () => {
       const { instance } = ApplePayFixture();
       expect(instance.ifApplePayIsAvailable()).toBeFalsy();
     });

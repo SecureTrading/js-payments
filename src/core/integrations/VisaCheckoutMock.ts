@@ -1,25 +1,23 @@
 import { environment } from '../../environments/environment';
-import { NotificationType } from '../models/NotificationEvent';
 import DomMethods from '../shared/DomMethods';
-import Language from '../shared/Language';
 import VisaCheckout from './VisaCheckout';
 
 class VisaCheckoutMock extends VisaCheckout {
-  constructor(config: any, tokenise: boolean, jwt: string, gatewayUrl: string) {
-    super(config, tokenise, jwt, gatewayUrl);
-    this._attachVisaButton();
-    this._setActionOnMockedButton();
+  /**
+   * Init configuration and payment data
+   * @protected
+   */
+  protected _initPaymentConfiguration() {
+    // Do nothing on mock because we don't want to use V.
   }
 
   /**
    * Sets action on appended mocked Visa Checkout button
-   * @private
+   * @protected
    */
-  private _setActionOnMockedButton() {
+  protected _paymentStatusHandler() {
     DomMethods.addListener(this._visaCheckoutButtonProps.id, 'click', () => {
-      this._setMockedData().then(() => {
-        this._proceedFlowWithMockedData();
-      });
+      this._handleMockedData();
     });
   }
 
@@ -27,16 +25,11 @@ class VisaCheckoutMock extends VisaCheckout {
    * Retrieves data from mocked data endpoint
    * @private
    */
-  private _setMockedData() {
+  private _handleMockedData() {
     return fetch(environment.VISA_CHECKOUT_URLS.MOCK_DATA_URL)
       .then((response: any) => response.json())
       .then(({ payment, status }: any) => {
-        this.paymentDetails = payment;
-        this.paymentStatus = status;
-        return this.paymentDetails;
-      })
-      .catch(() => {
-        this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
+        this._proceedFlowWithMockedData(payment, status);
       });
   }
 
@@ -44,11 +37,13 @@ class VisaCheckoutMock extends VisaCheckout {
    * Proceeds payment flow with mocked data
    * @private
    */
-  private _proceedFlowWithMockedData() {
-    this.getResponseMessage(this.paymentStatus);
-    this.setNotification(this.paymentStatus, this.responseMessage);
-    if (this.paymentStatus === VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS) {
-      this._processPayment();
+  private _proceedFlowWithMockedData(payment: any, status: string) {
+    if (status === 'SUCCESS') {
+      this._onSuccess(payment);
+    } else if (status === 'ERROR') {
+      this._onError();
+    } else if (status === 'WARNING') {
+      this._onCancel();
     }
   }
 }
