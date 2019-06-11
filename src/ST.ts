@@ -44,16 +44,15 @@ const IComponentsConfigSchema = Joi.object().keys({
  * Establishes connection with ST, defines client.
  */
 class ST {
-  private static GATEWAY_URL = environment.GATEWAY_URL;
-  private componentIds: any;
-  private jwt: string;
-  private origin: string;
-  private styles: IStyles;
-  private submitFields: string[];
-  private submitOnError: boolean;
-  private submitOnSuccess: boolean;
-  private tokenise: boolean;
-  private gatewayUrl: string;
+  private readonly componentIds: any;
+  private readonly jwt: string;
+  private readonly origin: string;
+  private readonly styles: IStyles;
+  private readonly submitFields: string[];
+  private readonly submitOnError: boolean;
+  private readonly submitOnSuccess: boolean;
+  private readonly tokenise: boolean;
+  private readonly gatewayUrl: string;
 
   /**
    * Defines static methods for starting different payment methods

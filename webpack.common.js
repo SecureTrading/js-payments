@@ -10,12 +10,20 @@ const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
   entry: {
-    main: './src/components/index.ts',
-    'control-frame': './src/components/control-frame/control-frame.ts',
     st: './src/ST.ts',
+    main: './src/components/index.ts',
+    controlFrame: './src/components/control-frame/control-frame.ts',
     example: './example/index.ts',
     immediateExample: './example/immediate.ts',
     receipt: './example/receipt.ts'
+  },
+  output: {
+    filename: '[name].js',
+    path: path.join(__dirname, 'dist'),
+    library: 'SecureTrading',
+    libraryExport: 'default',
+    libraryTarget: 'var',
+    publicPath: ''
   },
   optimization: {
     minimizer: [
@@ -26,29 +34,20 @@ module.exports = {
         terserOptions: {}
       })
     ],
-    // splitChunks: {
-    //   chunks: 'all'
-    // },
-    namedModules: true,
-    namedChunks: true,
-    moduleIds: 'hashed',
-    chunkIds: 'named',
+    // @TODO: splitChunks is not working properly - the application doesnt recognize SecureTrading global object (is undefined) and form fields are not loaded.
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendor',
+          chunks: 'all',
+          enforce: true
+        }
+      }
+    },
+    runtimeChunk: 'single',
     nodeEnv: 'production',
-    mangleWasmImports: true,
-    removeAvailableModules: true,
-    removeEmptyChunks: true,
-    mergeDuplicateChunks: true,
-    occurrenceOrder: true,
-    providedExports: true,
-    runtimeChunk: false
-  },
-  output: {
-    filename: '[name].js',
-    path: path.join(__dirname, 'dist'),
-    library: 'SecureTrading',
-    libraryExport: 'default',
-    libraryTarget: 'var',
-    publicPath: ''
+    mangleWasmImports: true
   },
   plugins: [
     new CleanWebpackPlugin(),
