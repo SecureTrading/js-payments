@@ -6,12 +6,11 @@ export interface IConfig {
   formId?: string;
   jwt: string;
   origin?: string;
-  tokenise?: boolean;
   styles?: IStyles;
+  submitFields?: string[];
   submitOnSuccess?: boolean;
   submitOnError?: boolean;
-  submitFields?: string[];
-  formId?: string;
+  tokenise?: boolean;
 }
 
 export interface IComponentsConfig {
