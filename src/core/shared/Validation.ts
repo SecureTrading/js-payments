@@ -15,6 +15,8 @@ const {
  * Base class for validation, aggregates common methods and attributes for all subclasses
  */
 export default class Validation extends Frame {
+  public static ERROR_FIELD_CLASS = 'error-field';
+
   /**
    * Method for prevent inserting non digits
    * @param event
@@ -50,7 +52,6 @@ export default class Validation extends Frame {
   };
   private static ENTER_KEY_CODE = 13;
   private static ONLY_DIGITS_REGEXP = /^[0-9]*$/;
-  private static ERROR_FIELD_CLASS = 'error-field';
   private static readonly MERCHANT_EXTRA_FIELDS_PREFIX = 'billing';
 
   /**

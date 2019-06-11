@@ -6,7 +6,7 @@ import Validation from '../shared/Validation';
  * Represents merchant fields which must be validated.
  */
 export class MerchantFields {
-  private static readonly DATA_ATTRIBUTE_NAME: string = 'stName';
+  private static readonly DATA_ATTRIBUTE_NAME: string = 'data-st-name';
   private _merchantInputs = document.getElementsByTagName('input') as HTMLCollection;
   public validation: Validation;
   private _messageBus: MessageBus;
@@ -36,17 +36,15 @@ export class MerchantFields {
   public findAllMerchantInputs() {
     const merchantFieldsNamesArray = [];
     for (let i = 0; i < this._merchantInputs.length; ++i) {
-      // @ts-ignore
-      if (this._merchantInputs[i].dataset.hasOwnProperty(MerchantFields.DATA_ATTRIBUTE_NAME)) {
+      if (this._merchantInputs[i].hasAttribute(MerchantFields.DATA_ATTRIBUTE_NAME)) {
         const input = document.getElementById(this._merchantInputs[i].id) as HTMLInputElement;
         this.backendValidation(input, MessageBus.EVENTS.VALIDATE_MERCHANT_FIELD);
         input.addEventListener('keypress', () => {
           input.setCustomValidity('');
-          input.classList.remove('error-field');
+          input.classList.remove(Validation.ERROR_FIELD_CLASS);
         });
 
-        // @ts-ignore
-        merchantFieldsNamesArray.push(this._merchantInputs[i].dataset[MerchantFields.DATA_ATTRIBUTE_NAME]);
+        merchantFieldsNamesArray.push(this._merchantInputs[i].getAttribute(MerchantFields.DATA_ATTRIBUTE_NAME));
       }
     }
 
