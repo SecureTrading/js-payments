@@ -162,7 +162,8 @@ module.exports = {
           path.join(__dirname, 'src'),
           path.join(__dirname, 'test'),
           path.join(__dirname, 'example'),
-          path.join(__dirname, 'node_modules/ts-money')
+          path.join(__dirname, 'node_modules/ts-money'),
+          path.join(__dirname, 'node_modules/joi-browser')
         ]
       },
       {
@@ -181,6 +182,7 @@ module.exports = {
     ]
   },
   resolve: {
+    alias: { joi: 'joi-browser' },
     extensions: ['.ts', '.js']
   }
 };
