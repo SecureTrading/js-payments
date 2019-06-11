@@ -75,7 +75,7 @@
     "sass-loader": "^7.1.0",
     "snyk": "^1.174.2",
     "source-map-loader": "^0.2.4",
-    "stylelint": "^10.0.1",
+    "stylelint": "^10.1.0",
     "stylelint-webpack-plugin": "^0.10.5",
     "ts-jest": "^24.0.2",
     "ts-loader": "^6.0.2",
