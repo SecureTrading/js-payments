@@ -1,11 +1,11 @@
 import { Brand, BrandDetailsType, brandMapping, cardTree, CardTreeNode } from '../imports/cardtype';
 import Utils from './Utils';
 
-interface IBinLookupConfigType {
+export interface IBinLookupConfigType {
+  defaultCardType?: string;
   minMatch?: number;
   maxMatch?: number;
   supported?: string[];
-  defaultCardType?: string;
 }
 
 class BinLookup {

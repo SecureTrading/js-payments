@@ -9,7 +9,7 @@ import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 
 const ApplePaySession = (window as any).ApplePaySession;
-
+const ApplePayError = (window as any).ApplePayError;
 /**
  * Apple Pay flow:
  * 1. Check if ApplePaySession class exists
@@ -109,18 +109,19 @@ export class ApplePay {
   private _payment: Payment;
   private tokenise: boolean;
 
-  constructor(config: any, tokenise: boolean, jwt: string) {
+  constructor(config: any, tokenise: boolean, jwt: string, gatewayUrl: string) {
     const { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId } = config;
     this.jwt = jwt;
     this.merchantId = merchantId;
     this.placement = placement;
-    this.payment = new Payment(jwt);
+    this.payment = new Payment(jwt, gatewayUrl);
     this.paymentRequest = paymentRequest;
     this.sitesecurity = sitesecurity;
     this.tokenise = tokenise;
     this.validateMerchantRequestData.walletmerchantid = merchantId;
     this.stJwtInstance = new StJwt(jwt);
     this.stTransportInstance = new StTransport({
+      gatewayUrl,
       jwt
     });
     this.messageBus = new MessageBus();
@@ -132,7 +133,7 @@ export class ApplePay {
    * If yes, returns ApplePaySession object, if not returns undefined.
    */
   public ifApplePayIsAvailable() {
-    return ApplePaySession;
+    return ApplePaySession ? true : false;
   }
 
   /**
@@ -303,8 +304,12 @@ export class ApplePay {
     };
   }
 
-  public getPaymentStatus() {
+  public getPaymentSuccessStatus() {
     return ApplePaySession.STATUS_SUCCESS;
+  }
+
+  public getPaymentFailureStatus() {
+    return ApplePaySession.STATUS_FAILURE;
   }
 
   /**
@@ -313,7 +318,6 @@ export class ApplePay {
   public onPaymentAuthorized() {
     this.session.onpaymentauthorized = (event: any) => {
       this.paymentDetails = JSON.stringify(event.payment);
-      this.session.completePayment({ status: this.getPaymentStatus(), errors: [] });
       // @TODO STJS-205 refactor into Payments
       this.payment
         .processPayment(
@@ -327,10 +331,14 @@ export class ApplePay {
         .then((response: object) => response)
         .then((data: object) => {
           this.setNotification(NotificationType.Success, Language.translations.PAYMENT_SUCCESS);
+          this.session.completePayment({ status: this.getPaymentSuccessStatus(), errors: [] });
           return data;
         })
-        .catch(() => {
+        .catch((data: object) => {
           this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
+          // TODO STJS-242 should create an ApplePayError which maps billing and customer errors
+          // to apple pay versions and adds it to errors array
+          this.session.completePayment({ status: this.getPaymentFailureStatus(), errors: [] });
         });
     };
   }

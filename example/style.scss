@@ -103,3 +103,9 @@ body {
   min-width: 37rem;
   border: none;
 }
+
+@media screen {
+  .st-animated-card-iframe {
+    min-width: 100%;
+  }
+}

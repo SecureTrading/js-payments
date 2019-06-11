@@ -30,14 +30,14 @@ export default class Selectors {
   public static readonly CONTROL_FRAME_COMPONENT_NAME: string = 'controlFrame';
   public static readonly CONTROL_FRAME_IFRAME: string = 'st-control-frame-iframe';
 
+  public static MERCHANT_FORM_SELECTOR: string = 'st-form';
+
   public static CARD_NUMBER_COMPONENT: string = `${environment.FRAME_URL}/card-number.html`;
   public static EXPIRATION_DATE_COMPONENT: string = `${environment.FRAME_URL}/expiration-date.html`;
   public static SECURITY_CODE_COMPONENT: string = `${environment.FRAME_URL}/security-code.html`;
   public static NOTIFICATION_FRAME_COMPONENT: string = `${environment.FRAME_URL}/notification-frame.html`;
   public static CONTROL_FRAME_COMPONENT: string = `${environment.FRAME_URL}/control-frame.html`;
   public static readonly ANIMATED_CARD_COMPONENT: string = `${environment.FRAME_URL}/animated-card.html`;
-
-  public static readonly MERCHANT_FORM_SELECTOR: string = 'st-form';
 
   public static readonly ANIMATED_CARD_INPUT_SELECTOR: string = 'st-animated-card';
   public static readonly ANIMATED_CARD_CREDIT_CARD_ID = 'st-animated-card-number';

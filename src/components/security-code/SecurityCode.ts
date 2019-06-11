@@ -6,8 +6,8 @@ import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
 
 export default class SecurityCode extends FormField {
-  // @ts-ignore
-  public static ifFieldExists = (): HTMLInputElement => document.getElementById(Selectors.SECURITY_CODE_INPUT);
+  public static ifFieldExists = (): HTMLInputElement =>
+    document.getElementById(Selectors.SECURITY_CODE_INPUT) as HTMLInputElement;
 
   private static STANDARD_INPUT_LENGTH: number = 3;
   private static SPECIAL_INPUT_LENGTH: number = 4;
@@ -25,9 +25,11 @@ export default class SecurityCode extends FormField {
     this.setFocusListener();
     this.setDisableListener();
     this.backendValidation();
-    this.sendState();
   }
 
+  /**
+   * Gets translated label content.
+   */
   public getLabel(): string {
     return Language.translations.LABEL_SECURITY_CODE;
   }
@@ -84,6 +86,7 @@ export default class SecurityCode extends FormField {
     super.onInput(event);
     this._inputElement.value = Formatter.trimNonNumeric(this._inputElement.value);
     if (this._inputElement.value.length >= this.securityCodeLength) {
+      this._inputElement.value = this._inputElement.value.substring(0, this.securityCodeLength);
       this.validation.validate(this._inputElement, this._messageElement);
     }
     this.sendState();

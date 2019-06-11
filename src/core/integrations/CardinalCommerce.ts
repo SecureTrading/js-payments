@@ -111,8 +111,10 @@ export class CardinalCommerce {
    * Triggered when the card number bin value changes
    * @protected
    */
-  // @ts-ignore
-  protected _performBinDetection = (bin: IFormFieldState) => Cardinal.trigger('bin.process', bin);
+  protected _performBinDetection(bin: IFormFieldState) {
+    // Can't be an arrow function as it does not override correctly in CardinalCommerceMock
+    return Cardinal.trigger('bin.process', bin);
+  }
 
   /**
    * Triggered when the transaction has been finished.

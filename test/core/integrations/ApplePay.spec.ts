@@ -2,6 +2,7 @@ const getType = require('jest-get-type');
 import Language from '../../../src/core/shared/Language';
 import { NotificationType } from '../../../src/core/models/NotificationEvent';
 import ApplePay from '../../../src/core/integrations/ApplePay';
+import ApplePaySessionMock from '../../../src/core/integrations/ApplePaySessionMock';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 
@@ -19,7 +20,7 @@ describe('Class Apple Pay', () => {
   // given
   describe('Method ifApplePayIsAvailable', () => {
     // then
-    it('should return undefined if device is not Mac', () => {
+    it('should return false if device is not Mac', () => {
       const { instance } = ApplePayFixture();
       expect(instance.ifApplePayIsAvailable()).toBeFalsy();
     });
@@ -439,7 +440,7 @@ function ApplePayFixture() {
   };
   const jwt =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
-  const instance = new ApplePay(config, false, jwt);
+  const instance = new ApplePay(config, false, jwt, 'https://example.com');
 
   return {
     config,

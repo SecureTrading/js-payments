@@ -20,8 +20,44 @@ body {
   &__content {
     display: flex;
     flex-direction: column;
-    height: 23rem;
-    width: 36rem;
+    max-height: 23rem;
+    height: 100%;
+    max-width: 36rem;
+    width: 100%;
+    margin: 1rem;
+  }
+
+  @media screen and (max-width: 22rem) {
+    &__content {
+      max-height: 20.5rem;
+      max-width: 32rem;
+    }
+
+    &__chip-logo {
+      max-width: 4rem;
+    }
+  }
+
+  @media screen and (max-width: 19rem) {
+    &__content {
+      max-height: 17rem;
+      max-width: 27rem;
+    }
+
+    &__chip-logo {
+      max-width: 4rem;
+    }
+  }
+
+  @media screen and (max-width: 16rem) {
+    &__content {
+      max-height: 15.5rem;
+      max-width: 24rem;
+    }
+
+    &__chip-logo {
+      max-width: 3rem;
+    }
   }
 
   &__front,
@@ -179,6 +215,12 @@ body {
     align-self: flex-end;
   }
 
+  &__chip-logo-img {
+    max-width: 100%;
+    display: block;
+    height: auto;
+  }
+
   &__payment-logo {
     align-self: flex-start;
     height: 12rem;
@@ -191,6 +233,42 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  @media screen and (max-width: 22rem) {
+    &__payment-logo {
+      width: 10rem;
+      height: 10rem;
+      border-radius: 0 0 0 9rem;
+    }
+
+    &__payment-logo-img {
+      max-width: 6rem;
+    }
+  }
+
+  @media screen and (max-width: 19rem) {
+    &__payment-logo {
+      width: 9rem;
+      height: 9rem;
+      border-radius: 0 0 0 7rem;
+    }
+
+    &__payment-logo-img {
+      max-width: 6rem;
+    }
+  }
+
+  @media screen and (max-width: 16rem) {
+    &__payment-logo {
+      width: 8rem;
+      height: 8rem;
+      border-radius: 0 0 0 7rem;
+    }
+
+    &__payment-logo-img {
+      max-width: 5rem;
+    }
   }
 
   &__label {
@@ -210,6 +288,39 @@ body {
     text-shadow: -0.1rem 0.1rem 0.4rem rgba(0, 0, 0, 0.5);
     line-height: 2rem;
     margin-top: 0.75rem;
+  }
+
+  @media screen and (max-width: 22rem) {
+    &__value {
+      font-size: 1.4rem;
+      margin-top: 0;
+    }
+
+    &__label {
+      font-size: 0.9rem;
+    }
+  }
+
+  @media screen and (max-width: 19rem) {
+    &__value {
+      font-size: 1.3rem;
+      margin-top: 0;
+    }
+
+    &__label {
+      font-size: 0.8rem;
+    }
+  }
+
+  @media screen and (max-width: 16rem) {
+    &__value {
+      font-size: 1.2rem;
+      margin-top: 0;
+    }
+
+    &__label {
+      font-size: 0.7rem;
+    }
   }
 
   &__pan {
@@ -253,6 +364,26 @@ body {
 
     &--front-hidden {
       visibility: hidden;
+    }
+  }
+
+  @media screen and (max-width: 22rem) {
+    &__security-code {
+      width: 20rem;
+    }
+  }
+
+  @media screen and (max-width: 19rem) {
+    &__security-code {
+      width: 16rem;
+      height: 3rem;
+    }
+  }
+
+  @media screen and (max-width: 16rem) {
+    &__security-code {
+      width: 13rem;
+      height: 3rem;
     }
   }
 

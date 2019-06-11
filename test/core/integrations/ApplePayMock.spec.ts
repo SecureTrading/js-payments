@@ -87,13 +87,15 @@ describe('Class ApplePayMock', () => {
     // then
     it('should always return STATUS_SUCCESS as SUCCESS', () => {
       ApplePaySessionMock.STATUS_SUCCESS = 'SUCCESS';
-      expect(instance.getPaymentStatus()).toBe('SUCCESS');
+      ApplePaySessionMock.STATUS_FAILURE = 'ERROR';
+      expect(instance.getPaymentSuccessStatus()).toBe('SUCCESS');
     });
 
     // then
     it('should always return STATUS_SUCCESS as ERROR', () => {
-      ApplePaySessionMock.STATUS_SUCCESS = 'ERROR';
-      expect(instance.getPaymentStatus()).toBe('ERROR');
+      ApplePaySessionMock.STATUS_SUCCESS = 'SUCCESS';
+      ApplePaySessionMock.STATUS_FAILURE = 'ERROR';
+      expect(instance.getPaymentFailureStatus()).toBe('ERROR');
     });
   });
 
@@ -129,6 +131,6 @@ function applePayMockFixture() {
   };
   const jwt =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
-  const instance = new ApplePayMock(config, false, jwt);
+  const instance = new ApplePayMock(config, false, jwt, 'https://example.com');
   return { instance, config, jwt };
 }
