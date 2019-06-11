@@ -8,12 +8,12 @@ import Validation from '../shared/Validation';
 export class MerchantFields {
   private static readonly DATA_ATTRIBUTE_NAME: string = 'data-st-name';
   private _merchantInputs = document.getElementsByTagName('input') as HTMLCollection;
-  public validation: Validation;
   private _messageBus: MessageBus;
+  private _validation: Validation;
 
   constructor() {
     this._messageBus = new MessageBus();
-    this.validation = new Validation();
+    this._validation = new Validation();
     this.findAllMerchantInputs();
   }
 
@@ -25,8 +25,8 @@ export class MerchantFields {
    */
   public backendValidation(inputElement: HTMLInputElement, event: string, messageElement?: HTMLElement) {
     this._messageBus.subscribe(event, (data: IMessageBusValidateField) => {
-      this.validation.checkBackendValidity(data, inputElement, messageElement);
-      this.validation.validate(inputElement, messageElement);
+      this._validation.checkBackendValidity(data, inputElement, messageElement);
+      this._validation.validate(inputElement, messageElement);
     });
   }
 

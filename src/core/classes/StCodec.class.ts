@@ -47,6 +47,44 @@ class StCodec {
     };
   }
 
+  /**
+   * Verify the response from the gateway
+   * @param responseData The response from the gateway
+   * @return The content of the response that can be used in the following processes
+   */
+  public static verifyResponseObject(responseData: any): object {
+    // Ought we keep hold of the requestreference (eg. log it to console)
+    // So that we can link these requests up with the gateway?
+    const validation = new Validation();
+    if (
+      !(
+        responseData &&
+        responseData.version === StCodec.VERSION &&
+        responseData.response &&
+        responseData.response.length === 1
+      )
+    ) {
+      StCodec.publishResponse(StCodec._createCommunicationError());
+      StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
+      throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
+    }
+
+    const responseContent: IResponseData = responseData.response[0];
+    if (StCodec.REQUESTS_WITH_ERROR_MESSAGES.includes(responseContent.requesttypedescription)) {
+      if (responseContent.errorcode !== StCodec.STATUS_CODES.ok) {
+        if (responseContent.errorcode === StCodec.STATUS_CODES.invalidfield) {
+          validation.getErrorData(StCodec.getErrorData(responseContent));
+        }
+        validation.blockForm(false);
+        StCodec.publishResponse(responseContent);
+        StCodec._notification.error(responseContent.errormessage);
+        throw new Error(responseContent.errormessage);
+      }
+    }
+    StCodec.publishResponse(responseContent);
+    return responseContent;
+  }
+
   private static _notification = new Notification();
   private static _translator = new Translator('en_GB');
   private static _messageBus = new MessageBus();
@@ -140,44 +178,6 @@ class StCodec {
         reject(new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
       }
     });
-  }
-
-  /**
-   * Verify the response from the gateway
-   * @param responseData The response from the gateway
-   * @return The content of the response that can be used in the following processes
-   */
-  public static verifyResponseObject(responseData: any): object {
-    // Ought we keep hold of the requestreference (eg. log it to console)
-    // So that we can link these requests up with the gateway?
-    const validation = new Validation();
-    if (
-      !(
-        responseData &&
-        responseData.version === StCodec.VERSION &&
-        responseData.response &&
-        responseData.response.length === 1
-      )
-    ) {
-      StCodec.publishResponse(StCodec._createCommunicationError());
-      StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
-      throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
-    }
-
-    const responseContent: IResponseData = responseData.response[0];
-    if (StCodec.REQUESTS_WITH_ERROR_MESSAGES.includes(responseContent.requesttypedescription)) {
-      if (responseContent.errorcode !== StCodec.STATUS_CODES.ok) {
-        if (responseContent.errorcode === StCodec.STATUS_CODES.invalidfield) {
-          validation.getErrorData(StCodec.getErrorData(responseContent));
-        }
-        validation.blockForm(false);
-        StCodec.publishResponse(responseContent);
-        StCodec._notification.error(responseContent.errormessage);
-        throw new Error(responseContent.errormessage);
-      }
-    }
-    StCodec.publishResponse(responseContent);
-    return responseContent;
   }
 }
 
