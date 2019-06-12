@@ -1,8 +1,12 @@
+import ApplePaySessionMock from '../../../src/core/integrations/ApplePaySessionMock';
+(window as any).ApplePaySession = ApplePaySessionMock; // has to be defined before we import ApplePay
+(window as any).ApplePaySession.supportsVersion = jest.fn();
+(window as any).ApplePaySession.canMakePayments = jest.fn();
+(window as any).ApplePaySession.STATUS_SUCCESS = 'SUCCESS';
 const getType = require('jest-get-type');
 import Language from '../../../src/core/shared/Language';
 import { NotificationType } from '../../../src/core/models/NotificationEvent';
 import ApplePay from '../../../src/core/integrations/ApplePay';
-import ApplePaySessionMock from '../../../src/core/integrations/ApplePaySessionMock';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 
@@ -20,9 +24,9 @@ describe('Class Apple Pay', () => {
   // given
   describe('Method ifApplePayIsAvailable', () => {
     // then
-    it('should return false if device is not Mac', () => {
+    it('should return true if session exists', () => {
       const { instance } = ApplePayFixture();
-      expect(instance.ifApplePayIsAvailable()).toBeFalsy();
+      expect(instance.ifApplePayIsAvailable()).toBeTruthy();
     });
   });
 
@@ -274,6 +278,24 @@ describe('Class Apple Pay', () => {
   });
 
   // given
+  describe('Method getPaymentSuccessStatus', () => {
+    // then
+    it('should return success', () => {
+      const { instance } = ApplePayFixture();
+      expect(instance.getPaymentSuccessStatus()).toBe('SUCCESS');
+    });
+  });
+
+  // given
+  describe('Method getPaymentFailureStatus', () => {
+    // then
+    it('should return error', () => {
+      const { instance } = ApplePayFixture();
+      expect(instance.getPaymentFailureStatus()).toBe('FAILURE');
+    });
+  });
+
+  // given
   describe('Method onPaymentCanceled', () => {
     // then
     it('should oncancel handler has been set', () => {
@@ -282,6 +304,11 @@ describe('Class Apple Pay', () => {
       Object.defineProperty(instance.session, 'oncancel', { value: '', writable: true });
       instance.onPaymentCanceled();
       expect(getType(instance.session.oncancel)).toBe('function');
+
+      instance.setNotification = jest.fn();
+      instance.session.oncancel({});
+      expect(instance.setNotification).toHaveBeenCalledTimes(1);
+      expect(instance.setNotification).toHaveBeenCalledWith('WARNING', 'Payment has been cancelled');
     });
   });
   // given
@@ -304,7 +331,7 @@ describe('Class Apple Pay', () => {
       instance.session = {};
       instance.session.abort = jest.fn();
       const spy = jest.spyOn(instance, 'onValidateMerchantResponseFailure');
-      instance.onValidateMerchantResponseFailure(response);
+      instance.onValidateMerchantResponseSuccess(response);
       expect(spy).toHaveBeenCalled();
     });
   });
