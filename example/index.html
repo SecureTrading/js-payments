@@ -92,7 +92,7 @@
 
         var jwt = parsedUrl.searchParams.get('jwt') || cardinalJwt;
         // @TODO: SecureTrading global object is undefined, it looks like splitChunks spoils it or the configuration is wrong:
-        // console.log(SecureTrading);
+        console.log(SecureTrading);
         var st = SecureTrading({
           jwt: jwt, // Can't use property shorthand because it isn't supported by IE
           styles: {

@@ -3,10 +3,9 @@ const common = require('./webpack.common.js');
 const webpack = require('webpack');
 const TypedocWebpackPlugin = require('typedoc-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
-var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = merge(common, {
-  mode: 'production',
+  mode: 'development',
   devtool: 'inline-source-map',
   devServer: {
     contentBase: './dist',
@@ -21,10 +20,5 @@ module.exports = merge(common, {
       ignored: ['node_modules']
     }
   },
-  plugins: [
-    new ManifestPlugin(),
-    new TypedocWebpackPlugin({}),
-    new webpack.HotModuleReplacementPlugin(),
-    new BundleAnalyzerPlugin()
-  ]
+  plugins: [new ManifestPlugin(), new TypedocWebpackPlugin({}), new webpack.HotModuleReplacementPlugin()]
 });
