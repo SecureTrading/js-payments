@@ -170,6 +170,65 @@ describe('CardinalCommerce class', () => {
           jwt
         });
       });
+
+      // then
+      it('should call _onCardinalSetupComplete in SETUP_COMPLETE event', () => {
+        let { CardinalMock } = CardinalCommerceFixture();
+        instance._onCardinalSetupComplete = jest.fn();
+        instance._onCardinalValidated = jest.fn();
+        CardinalMock.on = jest.fn((evType, callback) => {
+          if (evType === 'payments.setupComplete') {
+            callback();
+          }
+        });
+        // @ts-ignore
+        global.Cardinal = CardinalMock;
+        instance._onCardinalLoad();
+        expect(instance._onCardinalSetupComplete).toHaveBeenCalledTimes(1);
+        expect(instance._onCardinalSetupComplete).toHaveBeenCalledWith();
+        expect(instance._onCardinalValidated).toHaveBeenCalledTimes(0);
+      });
+
+      // then
+      it('should call _onCardinalValidated in SETUP_COMPLETE event', () => {
+        let { CardinalMock } = CardinalCommerceFixture();
+        instance._onCardinalSetupComplete = jest.fn();
+        instance._onCardinalValidated = jest.fn();
+        CardinalMock.on = jest.fn((evType, callback) => {
+          if (evType === 'payments.validated') {
+            callback('someData', 'someJWT');
+          }
+        });
+        // @ts-ignore
+        global.Cardinal = CardinalMock;
+        instance._onCardinalLoad();
+        expect(instance._onCardinalSetupComplete).toHaveBeenCalledTimes(0);
+        expect(instance._onCardinalValidated).toHaveBeenCalledTimes(1);
+        expect(instance._onCardinalValidated).toHaveBeenCalledWith('someData', 'someJWT');
+      });
+    });
+
+    // given
+    describe('CardinalCommerce._threeDSetup()', () => {
+      // @ts-ignore
+      const onLoad = CardinalCommerce.prototype._onCardinalLoad;
+
+      // then
+      it('should call load handler', () => {
+        // @ts-ignore
+        const spy = jest.spyOn(CardinalCommerce.prototype, '_onCardinalLoad').mockImplementation(() => {});
+        instance._threeDSetup();
+        const ev = document.createEvent('Event');
+        ev.initEvent('load', false, false);
+        const script = document.getElementsByTagName('script')[0];
+        script.dispatchEvent(ev);
+        expect(spy).toHaveBeenCalledTimes(1);
+      });
+
+      afterEach(() => {
+        // @ts-ignore
+        CardinalCommerce.prototype._onCardinalLoad = onLoad;
+      });
     });
 
     describe('CardinalCommerce._initSubscriptions', () => {
@@ -373,6 +432,18 @@ describe('CardinalCommerce class', () => {
       expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
       expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
         { type: 'AUTH', data: { some: 'value', cachetoken: 'tokenValue', parenttransactionreference: '1-2-3' } },
+        'st-control-frame-iframe'
+      );
+    });
+    // then
+    it('should publish control iframe event with AUTH with no data', () => {
+      instance.messageBus.publishFromParent = jest.fn();
+      instance._cardinalCommerceCacheToken = 'tokenValue';
+      instance._threedQueryTransactionReference = '1-2-3';
+      instance._authorizePayment();
+      expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
+      expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
+        { type: 'AUTH', data: { cachetoken: 'tokenValue', parenttransactionreference: '1-2-3' } },
         'st-control-frame-iframe'
       );
     });
