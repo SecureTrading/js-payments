@@ -24,7 +24,11 @@ export default class SecurityCode extends FormField {
     this.subscribeSecurityCodeChange();
     this.setFocusListener();
     this.setDisableListener();
-    this.backendValidation();
+    this.validation.backendValidation(
+      this._inputElement,
+      this._messageElement,
+      MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD
+    );
   }
 
   /**
@@ -32,13 +36,6 @@ export default class SecurityCode extends FormField {
    */
   public getLabel(): string {
     return Language.translations.LABEL_SECURITY_CODE;
-  }
-
-  public backendValidation() {
-    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD, (data: any) => {
-      this.checkBackendValidity(data);
-      this.validation.validate(this._inputElement, this._messageElement);
-    });
   }
 
   public setFocusListener() {

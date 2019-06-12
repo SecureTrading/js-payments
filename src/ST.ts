@@ -1,8 +1,10 @@
+import Joi from 'joi';
 import 'location-origin';
 import 'url-polyfill';
 import 'whatwg-fetch';
 import CardFrames from './core/classes/CardFrames.class';
 import CommonFrames from './core/classes/CommonFrames.class';
+import { MerchantFields } from './core/classes/MerchantFields';
 import ApplePay from './core/integrations/ApplePay';
 import ApplePayMock from './core/integrations/ApplePayMock';
 import { CardinalCommerce } from './core/integrations/CardinalCommerce';
@@ -13,6 +15,31 @@ import { IComponentsConfig, IConfig, IWalletConfig } from './core/models/Config'
 import Selectors from './core/shared/Selectors';
 import { IStyles } from './core/shared/Styler';
 import { environment } from './environments/environment';
+
+const IConfigSchema: Joi.JoiObject = Joi.object().keys({
+  componentIds: Joi.object().keys({
+    animatedCard: Joi.string().required(),
+    cardNumber: Joi.string().required(),
+    expirationDate: Joi.string().required(),
+    notificationFrame: Joi.string().required(),
+    securityCode: Joi.string().required()
+  }),
+  datacenterurl: Joi.string(),
+  formId: Joi.string(),
+  jwt: Joi.string().required(),
+  origin: Joi.string(),
+  styles: Joi.object(),
+  submitFields: Joi.array().allow([Joi.string()]),
+  submitOnError: Joi.boolean(),
+  submitOnSuccess: Joi.boolean(),
+  tokenise: Joi.boolean()
+});
+
+const IComponentsConfigSchema = Joi.object().keys({
+  defaultPaymentType: Joi.string(),
+  paymentTypes: Joi.array().allow([Joi.string()]),
+  startOnLoad: Joi.boolean()
+});
 
 /**
  * Establishes connection with ST, defines client.
@@ -36,6 +63,7 @@ class ST {
 
   constructor(config: IConfig) {
     config = this._addDefaults(config);
+    this.validateConfig(config, IConfigSchema);
     this.componentIds = config.componentIds;
     this.jwt = config.jwt;
     this.origin = config.origin;
@@ -56,11 +84,13 @@ class ST {
       this.submitFields,
       this.gatewayUrl
     );
+    const merchantFields = new MerchantFields();
   }
 
   public Components(config?: IComponentsConfig) {
     config = config ? config : ({} as IComponentsConfig);
     config.startOnLoad = config.startOnLoad !== undefined ? config.startOnLoad : false;
+    this.validateConfig(config, IComponentsConfigSchema);
     if (!config.startOnLoad) {
       const instance = new CardFrames(
         this.jwt,
@@ -83,6 +113,14 @@ class ST {
   public VisaCheckout(config: IWalletConfig) {
     const visa = environment.testEnvironment ? VisaCheckoutMock : VisaCheckout;
     const instance = new visa(config, this.tokenise, this.jwt, this.gatewayUrl);
+  }
+
+  private validateConfig(config: IConfig | IComponentsConfig, schema: Joi.JoiObject) {
+    Joi.validate(config, schema, (error, value) => {
+      if (error !== null) {
+        throw error;
+      }
+    });
   }
 
   private _addDefaults(config: IConfig) {
