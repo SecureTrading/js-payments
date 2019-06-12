@@ -40,16 +40,6 @@ export default class ExpirationDate extends FormField {
   }
 
   /**
-   *
-   */
-  public setFocusListener() {
-    this._messageBus.subscribe(MessageBus.EVENTS.FOCUS_EXPIRATION_DATE, () => {
-      this.format(this._inputElement.value);
-      this.validation.validate(this._inputElement, this._messageElement);
-    });
-  }
-
-  /**
    * Listens to BLOCK_EXPIRATION_DATE event and toggle disable attribute and class.
    */
   public setDisableListener() {
@@ -62,6 +52,40 @@ export default class ExpirationDate extends FormField {
         this._inputElement.classList.remove(ExpirationDate.DISABLE_FIELD_CLASS);
       }
     });
+  }
+
+  /**
+   * Listens to focus event on Expiration Date input.
+   */
+  public setFocusListener() {
+    this._messageBus.subscribe(MessageBus.EVENTS.FOCUS_EXPIRATION_DATE, () => {
+      this.format(this._inputElement.value);
+      this.validation.validate(this._inputElement, this._messageElement);
+    });
+  }
+
+  /**
+   * Formats indicated date using mask.
+   * @param date
+   */
+  protected format(date: string) {
+    this.setValue(Formatter.maskExpirationDate(date));
+  }
+
+  /**
+   * Extends onBlur method and triggers sendState().
+   */
+  protected onBlur() {
+    super.onBlur();
+    this.sendState();
+  }
+
+  /**
+   * Extends onFocus method.
+   * @param event
+   */
+  protected onFocus(event: Event) {
+    super.onFocus(event);
   }
 
   /**
@@ -79,33 +103,6 @@ export default class ExpirationDate extends FormField {
   }
 
   /**
-   * Extends onFocus method.
-   * @param event
-   */
-  protected onFocus(event: Event) {
-    super.onFocus(event);
-  }
-
-  /**
-   * Extends onBlur method and triggers sendState().
-   */
-  protected onBlur() {
-    super.onBlur();
-    this.sendState();
-  }
-
-  /**
-   * Extends onPaste method with formatting and masking.
-   * @param event
-   */
-  protected onPaste(event: ClipboardEvent) {
-    super.onPaste(event);
-    const preparedValue = this._inputElement.value.substring(0, ExpirationDate.EXPIRATION_DATE_LENGTH);
-    this._inputElement.value = Formatter.maskExpirationDateOnPaste(preparedValue);
-    this.sendState();
-  }
-
-  /**
    * Extends onKeyPress event with max length check.
    * @param event
    */
@@ -117,11 +114,14 @@ export default class ExpirationDate extends FormField {
   }
 
   /**
-   * Formats indicated date using mask.
-   * @param date
+   * Extends onPaste method with formatting and masking.
+   * @param event
    */
-  protected format(date: string) {
-    this.setValue(Formatter.maskExpirationDate(date));
+  protected onPaste(event: ClipboardEvent) {
+    super.onPaste(event);
+    const preparedValue = this._inputElement.value.substring(0, ExpirationDate.EXPIRATION_DATE_LENGTH);
+    this._inputElement.value = Formatter.maskExpirationDateOnPaste(preparedValue);
+    this.sendState();
   }
 
   /**
