@@ -80,6 +80,14 @@ describe('CardNumber', () => {
       expect(cardNumberInstance.cardNumberField.getAttribute('secondAttribute')).toEqual('Like a sir');
       expect(cardNumberInstance.cardNumberField.getAttribute('thirdAttribute')).toEqual('Pepe the Frog');
     });
+
+    // then
+    it('should remove attribute from input', () => {
+      cardNumberInstance.setCardNumberAttributes({
+        firstAttribute: false
+      });
+      expect(cardNumberInstance.cardNumberField.getAttribute('firstAttribute')).toBeNull();
+    });
   });
 
   // given
@@ -196,6 +204,26 @@ describe('CardNumber', () => {
       expect(formatCardNumberSpy).toHaveBeenCalled();
     });
   });
+
+  // given
+  describe('isMaxLengthReached', () => {
+    const isMaxLengthReachedCases = [
+      ['4', false],
+      ['40000', false],
+      ['40000000000', false],
+      ['4000000000000', false],
+      ['400000000000000', false],
+      ['400000000000000000000', true]
+    ];
+    const { instance } = CardNumberFixture();
+    // then
+    each(isMaxLengthReachedCases).it('should return proper boolean value', (given: string, expected: boolean) => {
+      // @ts-ignore
+      instance._inputElement.value = given;
+      // @ts-ignore
+      expect(instance.isMaxLengthReached()).toEqual(expected);
+    });
+  });
 });
 
 function CardNumberFixture() {
@@ -211,6 +239,7 @@ function CardNumberFixture() {
   let inputElement = createElement('input');
   let labelElement = document.createElement('label');
   let messageElement = createElement('p');
+  const instance = new CardNumber();
   const cardNumberCorrect = '3000 000000 000111';
   const unrecognizedCardNumber = '8989 8989 6899 9999';
   const receivedObject = {
@@ -256,6 +285,7 @@ function CardNumberFixture() {
 
   return {
     cardNumberInstance,
+    instance,
     inputElement,
     labelElement,
     messageElement,
