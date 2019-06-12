@@ -38,6 +38,28 @@ describe('CardNumber', () => {
   });
 
   // given
+  describe('CardNumber.CARD_NUMBER_FOR_BIN_PROCESS', () => {
+    // then
+    it('should return input element', () => {
+      // @ts-ignore
+      expect(CardNumber.CARD_NUMBER_FOR_BIN_PROCESS('4111111111111111')).toEqual('411111');
+    });
+  });
+
+  // given
+  describe('CardNumber.ifFieldExists', () => {
+    // then
+    it('should return input element', () => {
+      expect(CardNumber.ifFieldExists()).toBeTruthy();
+    });
+
+    // then
+    it('should return input element', () => {
+      expect(CardNumber.ifFieldExists()).toBeInstanceOf(HTMLInputElement);
+    });
+  });
+
+  // given
   describe('CardNumber.luhnCheck', () => {
     // then
     each(testCardNumbers).it('should check card number and return correct Luhn check', (cardNumber, expected) => {
