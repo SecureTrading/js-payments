@@ -3,6 +3,7 @@ import Language from '../../../src/core/shared/Language';
 import { StCodec } from '../../../src/core/classes/StCodec.class';
 
 describe('StCodec class', () => {
+  const { instance } = stCodecFixture();
   const ridRegex = 'J-[\\da-z]{8}';
   const requestid = expect.stringMatching(new RegExp('^' + ridRegex + '$'));
   const jwt =
@@ -213,7 +214,7 @@ describe('StCodec class', () => {
       [{ version: '1.00', response: [] }],
       [{ version: '1.00', response: [{}, {}] }]
     ]).it('should verify the version and number of responses', responseData => {
-      expect(() => StCodec.verifyResponseObject(responseData)).toThrow(
+      expect(() => instance.verifyResponseObject(responseData)).toThrow(
         Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE)
       );
       // @ts-ignore
@@ -229,15 +230,15 @@ describe('StCodec class', () => {
     });
 
     it('should decode a valid response', async () => {
-      StCodec.verifyResponseObject = jest.fn(StCodec.verifyResponseObject);
+      instance.verifyResponseObject = jest.fn(instance.verifyResponseObject);
       await expect(
         str.decode({
           json: () => {
             return new Promise(resolve => resolve(fullResponse));
           }
         })
-      ).resolves.toEqual(StCodec.verifyResponseObject(fullResponse));
-      expect(StCodec.verifyResponseObject).toHaveBeenCalledWith(fullResponse);
+      ).resolves.toEqual(instance.verifyResponseObject(fullResponse));
+      expect(instance.verifyResponseObject).toHaveBeenCalledWith(fullResponse);
     });
 
     it('should error an invalid response', async () => {
@@ -250,3 +251,10 @@ describe('StCodec class', () => {
     });
   });
 });
+
+function stCodecFixture() {
+  const jwt =
+    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU1OTg1OTUyNC4yMzkxMjQ4LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSJ9fQ.OKrm6cXJTDcclJAUKjFV2IoHy9tBILmp_kqxxh3wy9E';
+  const instance = StCodec;
+  return { instance };
+}

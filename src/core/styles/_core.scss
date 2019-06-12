@@ -15,10 +15,23 @@ body {
   Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
 }
 
-.error-input {
-  background-color: $background-color-notification-error;
+.error-field {
+  background-color: #f8d7da;
+  color: #721c24;
   border-color: $border-color-notification-error;
-  color: $color-notification-error;
+}
+
+@-webkit-keyframes autofill {
+  to {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: $border-color-notification-error;
+  }
+}
+
+input:-webkit-autofill.error-field {
+  -webkit-animation-name: autofill;
+  -webkit-animation-fill-mode: both;
 }
 
 .st-button-submit__disabled {

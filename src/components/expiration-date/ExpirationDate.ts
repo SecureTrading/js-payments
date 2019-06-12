@@ -25,7 +25,11 @@ export default class ExpirationDate extends FormField {
     }
     this.setFocusListener();
     this.setDisableListener();
-    this.backendValidation();
+    this.validation.backendValidation(
+      this._inputElement,
+      this._messageElement,
+      MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD
+    );
   }
 
   /**
@@ -33,13 +37,6 @@ export default class ExpirationDate extends FormField {
    */
   public getLabel(): string {
     return Language.translations.LABEL_EXPIRATION_DATE;
-  }
-
-  public backendValidation() {
-    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD, (data: IMessageBusEvent) => {
-      this.checkBackendValidity(data);
-      this.validation.validate(this._inputElement, this._messageElement);
-    });
   }
 
   public setFocusListener() {

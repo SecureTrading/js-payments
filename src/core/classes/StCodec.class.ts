@@ -38,6 +38,15 @@ class StCodec {
     );
   }
 
+  public static getErrorData(data: any) {
+    const { errordata, errormessage, requesttypedescription } = data;
+    return {
+      errordata,
+      errormessage,
+      requesttypedescription
+    };
+  }
+
   /**
    * Verify the response from the gateway
    * @param responseData The response from the gateway
@@ -46,6 +55,7 @@ class StCodec {
   public static verifyResponseObject(responseData: any): object {
     // Ought we keep hold of the requestreference (eg. log it to console)
     // So that we can link these requests up with the gateway?
+    const validation = new Validation();
     if (
       !(
         responseData &&
@@ -60,7 +70,6 @@ class StCodec {
     }
 
     const responseContent: IResponseData = responseData.response[0];
-    const validation = new Validation();
     if (StCodec.REQUESTS_WITH_ERROR_MESSAGES.includes(responseContent.requesttypedescription)) {
       if (responseContent.errorcode !== StCodec.STATUS_CODES.ok) {
         if (responseContent.errorcode === StCodec.STATUS_CODES.invalidfield) {
@@ -74,15 +83,6 @@ class StCodec {
     }
     StCodec.publishResponse(responseContent);
     return responseContent;
-  }
-
-  public static getErrorData(data: any) {
-    const { errordata, errormessage, requesttypedescription } = data;
-    return {
-      errordata,
-      errormessage,
-      requesttypedescription
-    };
   }
 
   private static _notification = new Notification();

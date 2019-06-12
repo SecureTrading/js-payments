@@ -18,6 +18,7 @@ describe('AnimatedCard', () => {
     beforeEach(() => {
       // @ts-ignore
       originalBinLookup = AnimatedCard.prototype.getBinLookupConfig;
+      // @ts-ignore
       jest.spyOn(AnimatedCard.prototype, 'onInit');
       // @ts-ignore
       jest.spyOn(AnimatedCard.prototype, '_setLabels');
@@ -35,6 +36,7 @@ describe('AnimatedCard', () => {
       instance = new AnimatedCard();
       // @ts-ignore
       expect(instance.onInit).toBeCalledTimes(1);
+      // @ts-ignore
       expect(instance.onInit).toBeCalledWith();
       // @ts-ignore
       expect(instance._setLabels).toBeCalledTimes(1);

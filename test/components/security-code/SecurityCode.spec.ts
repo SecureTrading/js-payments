@@ -29,7 +29,6 @@ describe('SecurityCode', () => {
     // then
     it('should create instance of classes SecurityCode and FormField representing form field', () => {
       expect(securityCode).toBeInstanceOf(SecurityCode);
-      FormField.prototype.getLabel = jest.fn(); // Not implemented in FormField
       expect(securityCode).toBeInstanceOf(FormField);
     });
   });
@@ -58,28 +57,6 @@ describe('SecurityCode', () => {
     // then
     it('should have a label', () => {
       expect(securityCode.getLabel()).toBe('Security code');
-    });
-  });
-
-  // given
-  describe('backendValidation', () => {
-    const { instance } = securityCodeFixture();
-
-    const validateSpy = jest.spyOn(instance.validation, 'validate');
-
-    beforeEach(() => {
-      instance.backendValidation();
-    });
-    // then
-    it('should call validateSpy method', () => {
-      // @ts-ignore
-      // expect(validateSpy).toHaveBeenCalled();
-    });
-
-    // then
-    it('should call subscribe method', () => {
-      // @ts-ignore
-      expect(instance._messageBus.subscribe).toHaveBeenCalled();
     });
   });
 

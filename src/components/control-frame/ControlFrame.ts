@@ -29,6 +29,7 @@ export default class ControlFrame extends Frame {
     }
   };
   private _card: ICard;
+  private _validation: Validation;
 
   constructor() {
     super();
@@ -38,6 +39,7 @@ export default class ControlFrame extends Frame {
   public onInit() {
     super.onInit();
     this._payment = new Payment(this._params.jwt, this._params.gatewayUrl, this._params.origin);
+    this._validation = new Validation();
     this.initSubscriptions();
     this.onLoad();
   }
@@ -171,6 +173,7 @@ export default class ControlFrame extends Frame {
       .then((response: object) => response)
       .then((respData: object) => {
         this.setNotification(NotificationType.Success, Language.translations.PAYMENT_SUCCESS);
+        this._validation.blockForm(false);
         return respData;
       })
       .catch(() => {
