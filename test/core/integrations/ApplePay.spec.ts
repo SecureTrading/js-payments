@@ -333,46 +333,101 @@ describe('Class Apple Pay', () => {
   });
 
   // given
+  describe('Method subscribeStatusHandlers', () => {
+    let sessionObjectFake: object;
+    let instance: any;
+    beforeEach(() => {
+      instance = ApplePayFixture().instance;
+      sessionObjectFake = {
+        completePaymentMethodSelection: jest.fn(),
+        completeShippingContactSelection: jest.fn(),
+        completeShippingMethodSelection: jest.fn(),
+        onpaymentmethodselected: undefined,
+        onshippingcontactselected: undefined,
+        onshippingmethodselected: undefined
+      };
+      instance.session = sessionObjectFake;
+      instance.paymentRequest = { total: { amount: '10.00', label: 'someLabel' } };
+    });
+    // then
+    it('should set callback functions', () => {
+      instance.subscribeStatusHandlers();
+      expect(instance.session.onpaymentmethodselected).toBeInstanceOf(Function);
+      expect(instance.session.onshippingcontactselected).toBeInstanceOf(Function);
+      expect(instance.session.onshippingmethodselected).toBeInstanceOf(Function);
+    });
+
+    // then
+    it('calling onpaymentmethodselected should call completePaymentMethodSelection', () => {
+      instance.subscribeStatusHandlers();
+      instance.session.onpaymentmethodselected({ paymentMethod: 'MYMETHOD' });
+      expect(instance.session.completePaymentMethodSelection).toHaveBeenCalledTimes(1);
+      expect(instance.session.completePaymentMethodSelection).toHaveBeenCalledWith({
+        newTotal: {
+          amount: '10.00',
+          label: 'someLabel',
+          type: 'final'
+        }
+      });
+      expect(instance.session.completeShippingMethodSelection).toHaveBeenCalledTimes(0);
+      expect(instance.session.completeShippingContactSelection).toHaveBeenCalledTimes(0);
+    });
+    // then
+    it('calling onshippingmethodselected should call completeShippingMethodSelection', () => {
+      instance.subscribeStatusHandlers();
+      instance.session.onshippingmethodselected({ paymentMethod: 'MYMETHOD' });
+      expect(instance.session.completePaymentMethodSelection).toHaveBeenCalledTimes(0);
+      expect(instance.session.completeShippingMethodSelection).toHaveBeenCalledTimes(1);
+      expect(instance.session.completeShippingMethodSelection).toHaveBeenCalledWith({
+        newTotal: {
+          amount: '10.00',
+          label: 'someLabel',
+          type: 'final'
+        }
+      });
+      expect(instance.session.completeShippingContactSelection).toHaveBeenCalledTimes(0);
+    });
+    // then
+    it('calling onshippingmethodselected should call completeShippingContactSelection', () => {
+      instance.subscribeStatusHandlers();
+      instance.session.onshippingcontactselected({ paymentMethod: 'MYMETHOD' });
+      expect(instance.session.completePaymentMethodSelection).toHaveBeenCalledTimes(0);
+      expect(instance.session.completeShippingMethodSelection).toHaveBeenCalledTimes(0);
+      expect(instance.session.completeShippingContactSelection).toHaveBeenCalledTimes(1);
+      expect(instance.session.completeShippingContactSelection).toHaveBeenCalledWith({
+        newTotal: {
+          amount: '10.00',
+          label: 'someLabel',
+          type: 'final'
+        }
+      });
+    });
+  });
+
+  // given
   describe('Method paymentProcess', () => {
     let sessionObjectFake: object;
     beforeEach(() => {
-      sessionObjectFake = {};
+      sessionObjectFake = { begin: jest.fn() };
     });
 
     // then
-    it('should onValidateMerchantRequest has been called', () => {
+    it('should call correct functions', () => {
       const { instance } = ApplePayFixture();
-      instance.session = sessionObjectFake;
-      const spy = jest.spyOn(instance, 'onValidateMerchantRequest');
-      instance.onValidateMerchantRequest();
-      expect(spy).toHaveBeenCalled();
-    });
+      instance.getApplePaySessionObject = jest.fn().mockReturnValueOnce(sessionObjectFake);
+      instance.onValidateMerchantRequest = jest.fn();
+      instance.subscribeStatusHandlers = jest.fn();
+      instance.onPaymentAuthorized = jest.fn();
+      instance.onPaymentCanceled = jest.fn();
 
-    // then
-    it('should subscribeStatusHandlers has been called', () => {
-      const { instance } = ApplePayFixture();
-      instance.session = sessionObjectFake;
-      const spy = jest.spyOn(instance, 'subscribeStatusHandlers');
-      instance.subscribeStatusHandlers();
-      expect(spy).toHaveBeenCalled();
-    });
+      instance.paymentProcess();
+      expect(instance.getApplePaySessionObject).toHaveBeenCalled();
+      expect(instance.onValidateMerchantRequest).toHaveBeenCalled();
+      expect(instance.subscribeStatusHandlers).toHaveBeenCalled();
+      expect(instance.onPaymentAuthorized).toHaveBeenCalled();
+      expect(instance.onPaymentCanceled).toHaveBeenCalled();
 
-    // then
-    it('should onPaymentAuthorized has been called', () => {
-      const { instance } = ApplePayFixture();
-      instance.session = sessionObjectFake;
-      const spy = jest.spyOn(instance, 'onPaymentAuthorized');
-      instance.onPaymentAuthorized();
-      expect(spy).toHaveBeenCalled();
-    });
-
-    // then
-    it('should onPaymentCanceled has been called', () => {
-      const { instance } = ApplePayFixture();
-      instance.session = sessionObjectFake;
-      const spy = jest.spyOn(instance, 'onPaymentCanceled');
-      instance.onPaymentCanceled();
-      expect(spy).toHaveBeenCalled();
+      expect(instance.session.begin).toHaveBeenCalled();
     });
   });
 
