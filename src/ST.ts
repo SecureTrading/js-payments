@@ -4,6 +4,7 @@ import 'url-polyfill';
 import 'whatwg-fetch';
 import CardFrames from './core/classes/CardFrames.class';
 import CommonFrames from './core/classes/CommonFrames.class';
+import { MerchantFields } from './core/classes/MerchantFields';
 import ApplePay from './core/integrations/ApplePay';
 import ApplePayMock from './core/integrations/ApplePayMock';
 import { CardinalCommerce } from './core/integrations/CardinalCommerce';
@@ -82,6 +83,7 @@ class ST {
       this.submitFields,
       this.gatewayUrl
     );
+    const merchantFields = new MerchantFields();
   }
 
   public Components(config?: IComponentsConfig) {

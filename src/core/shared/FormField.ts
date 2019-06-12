@@ -9,24 +9,24 @@ export default class FormField extends Frame {
   private static FOCUSED_FIELD_STATE = { 'data-pristine': false, 'data-dirty': true };
   public validation: Validation;
   protected _inputSelector: string;
-  protected _messageSelector: string;
   protected _labelSelector: string;
+  protected _messageSelector: string;
   protected _inputElement: HTMLInputElement;
-  protected _messageElement: HTMLDivElement;
   protected _labelElement: HTMLLabelElement;
+  protected _messageElement: HTMLDivElement;
   private _translator: Translator;
 
   constructor(inputSelector: string, messageSelector: string, labelSelector: string) {
     super();
 
     this._inputElement = document.getElementById(inputSelector) as HTMLInputElement;
-    this._messageElement = document.getElementById(messageSelector) as HTMLDivElement;
     this._labelElement = document.getElementById(labelSelector) as HTMLLabelElement;
+    this._messageElement = document.getElementById(messageSelector) as HTMLInputElement;
 
     this._inputSelector = inputSelector;
-    this._messageSelector = messageSelector;
     this._labelSelector = labelSelector;
-    this.setInputListeners();
+    this._messageSelector = messageSelector;
+    this._setInputListeners();
     this.onInit();
   }
 
@@ -34,32 +34,16 @@ export default class FormField extends Frame {
     super.onInit();
     this._translator = new Translator(this._params.locale);
     this.validation = new Validation();
-    this.setLabelText();
+    this._setLabelText();
     this._addTabListener();
-    this.setValidationAttributes({ 'data-clicked': false });
+    this._setValidationAttributes({ 'data-clicked': false });
   }
 
-  public getLabel(): string {
+  /**
+   * Gets translated label for input field.
+   */
+  protected getLabel(): string {
     throw new Error(Language.translations.NOT_IMPLEMENTED_ERROR);
-  }
-
-  public setValidationAttributes(attributes?: any) {
-    this.setAttributes({
-      'data-dirty': false,
-      'data-pristine': true,
-      'data-validity': false,
-      ...attributes
-    });
-  }
-
-  public setError(inputElement: any, messageElement: any, message: string) {
-    inputElement.classList.add('error-field');
-    messageElement.innerText = this._translator.translate(message);
-    this._inputElement.setCustomValidity(message);
-  }
-
-  protected setLabelText() {
-    this._labelElement.innerHTML = this._translator.translate(this.getLabel());
   }
 
   protected _getAllowedStyles() {
@@ -124,21 +108,22 @@ export default class FormField extends Frame {
   }
 
   protected onInput(event: Event) {
-    this.setCustomValidationError('');
+    Validation.setCustomValidationError(this._inputElement, '');
     this.format(this._inputElement.value);
   }
 
   protected onFocus(event: Event) {
-    this.focus();
+    this._focus();
+    this._inputElement.focus();
   }
 
   protected onClick(event: Event) {
-    this.click();
+    this._click();
   }
 
   protected onBlur() {
     this.validation.validate(this._inputElement, this._messageElement);
-    this.blur();
+    this._blur();
   }
 
   protected onPaste(event: ClipboardEvent) {
@@ -146,7 +131,7 @@ export default class FormField extends Frame {
     event.preventDefault();
     clipboardData = event.clipboardData.getData('text/plain');
     this._inputElement.value = Formatter.trimNonNumeric(clipboardData);
-    this.setCustomValidationError('');
+    Validation.setCustomValidationError(this._inputElement, '');
     this.format(this._inputElement.value);
     this.validation.validate(this._inputElement, this._messageElement);
   }
@@ -167,28 +152,20 @@ export default class FormField extends Frame {
     this._inputElement.value = data;
   }
 
-  protected blur() {
+  private _blur() {
     this._inputElement.blur();
   }
 
-  protected click() {
+  private _click() {
     this._inputElement.click();
   }
 
-  protected focus() {
+  private _focus() {
     this.setAttributes(FormField.FOCUSED_FIELD_STATE);
     this._inputElement.focus();
   }
 
-  protected checkBackendValidity(data: any) {
-    this.setError(this._inputElement, this._messageElement, data.message);
-  }
-
-  private setCustomValidationError(errorContent: string) {
-    this._inputElement.setCustomValidity(errorContent);
-  }
-
-  private setInputListeners() {
+  private _setInputListeners() {
     this._inputElement.addEventListener('paste', (event: ClipboardEvent) => {
       this.onPaste(event);
     });
@@ -214,13 +191,27 @@ export default class FormField extends Frame {
     });
   }
 
-  private _onFocus() {
-    this._inputElement.focus();
+  private _addTabListener() {
+    window.addEventListener('focus', event => {
+      this.onFocus(event);
+    });
   }
 
-  private _addTabListener() {
-    window.addEventListener('focus', e => {
-      this._onFocus();
+  /**
+   * Sets all necessary validation attributes.
+   * @param attributes
+   * @private
+   */
+  private _setValidationAttributes(attributes?: object) {
+    this.setAttributes({
+      'data-dirty': false,
+      'data-pristine': true,
+      'data-validity': false,
+      ...attributes
     });
+  }
+
+  private _setLabelText() {
+    this._labelElement.innerHTML = this._translator.translate(this.getLabel());
   }
 }

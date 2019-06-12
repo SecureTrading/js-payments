@@ -37,6 +37,7 @@ describe('Frame', () => {
       let frame = new Frame();
       frame.parseUrl = jest.fn().mockReturnValueOnce({ origin: 'https://example.com' });
       frame.applyStyles = jest.fn();
+      // @ts-ignore
       frame.onInit();
       expect(frame.parseUrl).toHaveBeenCalledTimes(1);
       expect(frame.applyStyles).toHaveBeenCalledTimes(1);

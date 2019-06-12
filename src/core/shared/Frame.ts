@@ -16,12 +16,6 @@ export default class Frame {
   protected _messageBus: MessageBus;
   protected _params: IParams;
 
-  public onInit() {
-    this._params = this.parseUrl();
-    this._messageBus = new MessageBus(this._params.origin);
-    this.applyStyles();
-  }
-
   public parseUrl() {
     const parsedUrl = new URL(window.location.href);
     const styles: IStyles = {};
@@ -40,6 +34,12 @@ export default class Frame {
 
   public applyStyles() {
     new Styler(this._getAllowedStyles()).inject(this._params.styles);
+  }
+
+  protected onInit() {
+    this._params = this.parseUrl();
+    this._messageBus = new MessageBus(this._params.origin);
+    this.applyStyles();
   }
 
   protected _getAllowedParams() {
