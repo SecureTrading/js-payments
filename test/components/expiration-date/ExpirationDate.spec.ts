@@ -1,3 +1,4 @@
+import AnimatedCard from '../../../src/components/animated-card/AnimatedCard';
 import ExpirationDate from '../../../src/components/expiration-date/ExpirationDate';
 import Language from '../../../src/core/shared/Language';
 import MessageBus from '../../../src/core/shared/MessageBus';
@@ -32,35 +33,52 @@ describe('ExpirationDate', () => {
   // given
   describe('setDisableListener()', () => {
     const { instance } = expirationDateFixture();
-    const messageBusEvent = {
-      type: MessageBus.EVENTS.BLOCK_EXPIRATION_DATE,
-      data: true
-    };
     // then
     it('should have attribute disabled set', () => {
+      // @ts-ignore
+      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
+        callback(true);
+      });
       instance.setDisableListener();
       // @ts-ignore
-      instance._messageBus.publish(messageBusEvent);
+      expect(instance._inputElement.hasAttribute('disabled')).toBe(true);
       // @ts-ignore
-      // expect(instance._inputElement.hasAttribute('disabled')).toBe(true);
+      expect(instance._inputElement.classList.contains(ExpirationDate.DISABLE_FIELD_CLASS)).toBe(true);
     });
 
     // then
-    it('should have class disabled set', () => {
+    it('should have no attribute disabled and class disabled', () => {
       // @ts-ignore
-      instance._messageBus.publish(messageBusEvent);
+      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
+        callback(false);
+      });
+      instance.setDisableListener();
       // @ts-ignore
-      // expect(instance._inputElement.classList.contains('st-input--disabled')).toBe(true);
+      expect(instance._inputElement.hasAttribute('disabled')).toBe(false);
+      // @ts-ignore
+      expect(instance._inputElement.classList.contains(ExpirationDate.DISABLE_FIELD_CLASS)).toBe(false);
     });
   });
 
   // given
   describe('setFocusListener()', () => {
+    // when
     const { instance } = expirationDateFixture();
+    let spy: jest.SpyInstance;
+
+    beforeEach(() => {
+      // @ts-ignore
+      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
+        callback();
+      });
+      // @ts-ignore
+      spy = jest.spyOn(instance, 'format');
+      instance.setFocusListener();
+    });
     // then
-    // @ts-ignore
-    // instance._messageBus.publish(messageBusEvent);
-    it('', () => {});
+    it('should call format method', () => {
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
   });
 
   // given
@@ -82,52 +100,97 @@ describe('ExpirationDate', () => {
   // given
   describe('onBlur()', () => {
     const { instance } = expirationDateFixture();
-    let spy: any;
+    let spy: jest.SpyInstance;
     // then
     beforeEach(() => {
       // @ts-ignore
-      instance._inputElement.blur();
-      // @ts-ignore
       spy = jest.spyOn(instance, 'sendState');
+      // @ts-ignore
+      instance.onBlur();
     });
     it('should call sendState()', () => {
-      // expect(spy).toHaveBeenCalled();
+      expect(spy).toHaveBeenCalled();
     });
   });
 
   // given
   describe('onFocus()', () => {
     const { instance } = expirationDateFixture();
+    const event: Event = new Event('focus');
+
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._inputElement.focus = jest.fn();
+      // @ts-ignore
+      instance.onFocus(event);
+    });
     // then
-    it('', () => {});
+    it('should call focus method from parent', () => {
+      // @ts-ignore
+      expect(instance._inputElement.focus).toBeCalled();
+    });
   });
 
   // given
   describe('onInput()', () => {
     const { instance } = expirationDateFixture();
+    const event: Event = new Event('input');
+    let spy: jest.SpyInstance;
+
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      spy = jest.spyOn(instance, 'sendState');
+    });
     // then
-    it('', () => {});
+    it('should call sendState method', () => {
+      // @ts-ignore
+      instance.onInput(event);
+      // @ts-ignore
+      expect(spy).toBeCalled();
+    });
+
+    it('should set proper input value and call validate', () => {
+      // @ts-ignore
+      instance._inputElement.value = '12121';
+      instance.validation.validate = jest.fn();
+      // @ts-ignore
+      instance.onInput(event);
+      // @ts-ignore
+      expect(instance._inputElement.value).toEqual('12121');
+      // @ts-ignore
+      expect(instance.validation.validate).toBeCalled();
+    });
   });
 
   // given
   describe('onKeyPress()', () => {
     const { instance } = expirationDateFixture();
-    let spy: any;
+    // @ts-ignore
+    const event: KeyboardEvent = new KeyboardEvent('keypress', { key: 1 });
+    event.preventDefault = jest.fn();
     // then
     beforeEach(() => {
       // @ts-ignore
-      instance._inputElement.dispatchEvent(new KeyboardEvent('keypress', { key: 1 }));
+      instance.isMaxLengthReached = jest.fn().mockReturnValue(true);
       // @ts-ignore
-      spy = jest.spyOn(instance, 'isMaxLengthReached');
+      instance.onKeyPress(event);
     });
+    //then
     it('should call isMaxLengthReached', () => {
       // @ts-ignore
-      instance._inputElement.dispatchEvent(new KeyboardEvent('keypress', { key: 1 }));
+      expect(instance.isMaxLengthReached).toBeCalled();
+    });
+
+    //then
+    it('should call event.preventDefault', () => {
       // @ts-ignore
-      expect(instance._inputElement.value).toEqual('1');
+      expect(event.preventDefault).toBeCalled();
     });
   });
 
+  // @TODO: problem with paste event
   // given
   describe('onPaste()', () => {
     const { instance } = expirationDateFixture();
