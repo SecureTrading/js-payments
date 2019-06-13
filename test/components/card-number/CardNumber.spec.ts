@@ -1,4 +1,5 @@
 import each from 'jest-each';
+import SpyInstance = jest.SpyInstance;
 import CardNumber from '../../../src/components/card-number/CardNumber';
 import Selectors from '../../../src/core/shared/Selectors';
 import FormField from '../../../src/core/shared/FormField';
@@ -241,13 +242,14 @@ describe('CardNumber', () => {
   describe('setFocusListener', () => {
     const { instance } = CardNumberFixture();
     let spy: any;
-    let event: FocusEvent;
 
     beforeEach(() => {
       // @ts-ignore
       spy = jest.spyOn(instance, 'format');
       // @ts-ignore
-      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback = jest.fn()) => {});
+      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
+        callback();
+      });
       instance.setFocusListener();
     });
     // then
@@ -260,7 +262,9 @@ describe('CardNumber', () => {
       expect(instance._messageBus.subscribe).toHaveBeenCalledTimes(1);
     });
 
-    it('should call format function', () => {});
+    it('should call format function', () => {
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
   });
 
   // given
@@ -336,6 +340,118 @@ describe('CardNumber', () => {
     // then
     it('should call sendState', () => {
       expect(spySendState).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  // given
+  describe('setDisableListener', () => {
+    const { instance } = CardNumberFixture();
+
+    function subscribeMock(state: boolean) {
+      // @ts-ignore
+      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
+        callback(state);
+      });
+      instance.setDisableListener();
+    }
+
+    // then
+    it('should set attribute disabled', () => {
+      subscribeMock(true);
+      // @ts-ignore
+      expect(instance._inputElement.hasAttribute('disabled')).toEqual(true);
+    });
+
+    // then
+    it('should add class st-input--disabled', () => {
+      subscribeMock(true);
+      // @ts-ignore
+      expect(instance._inputElement.classList.contains('st-input--disabled')).toEqual(true);
+    });
+
+    // then
+    it('should remove attribute disabled', () => {
+      subscribeMock(false);
+      // @ts-ignore
+      expect(instance._inputElement.hasAttribute('disabled')).toEqual(false);
+    });
+
+    // then
+    it('should remove class st-input--disabled', () => {
+      subscribeMock(false);
+      // @ts-ignore
+      expect(instance._inputElement.classList.contains('st-input--disabled')).toEqual(false);
+    });
+  });
+
+  // given
+  describe('onPaste', () => {
+    const { instance } = CardNumberFixture();
+    let spyIsMaxLengthReached: SpyInstance;
+    let spySendState: SpyInstance;
+    // @ts-ignore
+    // @TODO clipboard event is not recognizable.
+    // const event: ClipboardEvent = new ClipboardEvent('paste');
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      spyIsMaxLengthReached = jest.spyOn(instance, 'isMaxLengthReached').mockReturnValueOnce(true);
+      // @ts-ignore
+      spySendState = jest.spyOn(instance, 'sendState');
+      // @ts-ignore
+      // instance.onPaste(event);
+    });
+
+    // then
+    it('should call isMaxLengthReached', () => {
+      //expect(spyIsMaxLengthReached).toHaveBeenCalledTimes(1);
+    });
+
+    // then
+    it('should call sendState', () => {
+      // (spySendState).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  // given
+  describe('sendState', () => {
+    const { instance } = CardNumberFixture();
+
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._messageBus.publish = jest.fn().mockImplementation(() => {});
+    });
+    // then
+    it('should call publish method exactly one time', () => {
+      instance.getFormFieldState = jest.fn().mockReturnValueOnce({ value: '11111', validity: false });
+      // @ts-ignore
+      instance.sendState();
+      // @ts-ignore
+      expect(instance._messageBus.publish).toHaveBeenCalledTimes(1);
+    });
+
+    // then
+    it('should call publish method exactly two times', () => {
+      instance.getFormFieldState = jest.fn().mockReturnValueOnce({ value: '111111', validity: true });
+      // @ts-ignore
+      instance.sendState();
+      // @ts-ignore
+      expect(instance._messageBus.publish).toHaveBeenCalledTimes(2);
+    });
+  });
+  describe('onFocus', () => {
+    const { instance } = CardNumberFixture();
+    const event: Event = new Event('focus');
+    // @ts-ignore
+    instance._inputElement.focus = jest.fn();
+
+    // then
+    it('should call super function', () => {
+      // @ts-ignore
+      instance.onFocus(event);
+      // @ts-ignore
+      expect(instance._inputElement.focus).toHaveBeenCalled();
     });
   });
 });
