@@ -255,7 +255,7 @@ describe('CardNumber', () => {
       expect(instance._messageBus.subscribe).toHaveBeenCalledTimes(1);
     });
 
-    it('should call format function', () => {});
+    // it('should call format function', () => {});
   });
 });
 
