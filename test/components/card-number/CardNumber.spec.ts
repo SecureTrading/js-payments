@@ -2,6 +2,7 @@ import each from 'jest-each';
 import CardNumber from '../../../src/components/card-number/CardNumber';
 import Selectors from '../../../src/core/shared/Selectors';
 import FormField from '../../../src/core/shared/FormField';
+import MessageBus from './../../../src/core/shared/MessageBus';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 
@@ -222,6 +223,21 @@ describe('CardNumber', () => {
       instance._inputElement.value = given;
       // @ts-ignore
       expect(instance.isMaxLengthReached()).toEqual(expected);
+    });
+  });
+
+  // given
+  describe('setFocusListener', () => {
+    const { instance } = CardNumberFixture();
+    // @ts-ignore
+    const spy = jest.spyOn(instance, 'format');
+
+    // then
+    it('should call format function', () => {
+      instance.setFocusListener();
+      // @ts-ignore
+      instance._messageBus.publish(MessageBus.EVENTS.FOCUS_CARD_NUMBER);
+      expect(spy).toHaveBeenCalled();
     });
   });
 });
