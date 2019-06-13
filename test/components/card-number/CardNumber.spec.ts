@@ -71,7 +71,7 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('CardNumber.setCardNumberAttributes', () => {
+  describe('setCardNumberAttributes', () => {
     // then
     it('should set proper card number attributes given in params', () => {
       cardNumberInstance.setCardNumberAttributes({
@@ -94,7 +94,7 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('CardNumber.formatCardNumber', () => {
+  describe('formatCardNumber', () => {
     // then
     each(formattedCards).it('should format card number properly', (given, accepted) => {
       expect(cardNumberInstance.formatCardNumber(given)).toEqual(accepted);
@@ -117,7 +117,7 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('CardNumber.getMaxLengthOfCardNumber', () => {
+  describe('getMaxLengthOfCardNumber()', () => {
     const { cardNumberCorrect, unrecognizedCardNumber } = CardNumberFixture();
     const maxLengthOfCardNumber = 21;
     const numberOfWhitespaces = 0;
@@ -138,21 +138,7 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('CardNumber.setMinMaxLengthOfCard', () => {
-    let expectedMinMax: any;
-    const { cardNumberCorrect } = CardNumberFixture();
-
-    // when
-    beforeEach(() => {
-      expectedMinMax = {
-        maxlength: 21,
-        minlength: 16
-      };
-    });
-  });
-
-  // given
-  describe('CardNumber.getCardFormat', () => {
+  describe('getCardFormat()', () => {
     const { unrecognizedCardNumber, cardNumberCorrect, receivedObject } = CardNumberFixture();
 
     // then
@@ -167,7 +153,7 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('CardNumber.getPossibleCardLength', () => {
+  describe('getPossibleCardLength()', () => {
     const { unrecognizedCardNumber, cardNumberCorrect, receivedObject } = CardNumberFixture();
 
     // then
@@ -182,7 +168,7 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('CardNumber.getSecurityCodeLength', () => {
+  describe('getSecurityCodeLength()', () => {
     const { unrecognizedCardNumber, cardNumberCorrect, receivedObject } = CardNumberFixture();
 
     // then
@@ -197,10 +183,9 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('CardNumber.getFormFieldState', () => {
-    let publishSecurityCodeLengthSpy: any;
-    let formatCardNumberSpy: any;
-    let setMinMaxLengthOfCardSpy: any;
+  describe('getFormFieldState()', () => {
+    let publishSecurityCodeLengthSpy: SpyInstance;
+    let formatCardNumberSpy: SpyInstance;
     // when
     beforeEach(() => {
       publishSecurityCodeLengthSpy = jest.spyOn(cardNumberInstance, 'publishSecurityCodeLength');
@@ -219,7 +204,7 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('isMaxLengthReached', () => {
+  describe('isMaxLengthReached()', () => {
     const isMaxLengthReachedCases = [
       ['4', false],
       ['40000', false],
@@ -239,9 +224,9 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('setFocusListener', () => {
+  describe('setFocusListener()', () => {
     const { instance } = CardNumberFixture();
-    let spy: any;
+    let spy: SpyInstance;
 
     beforeEach(() => {
       // @ts-ignore
@@ -268,9 +253,9 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('onBlur', () => {
-    let spy: any;
-    let spyState: any;
+  describe('onBlur()', () => {
+    let spy: SpyInstance;
+    let spyState: SpyInstance;
     const { instance } = CardNumberFixture();
 
     beforeEach(() => {
@@ -290,8 +275,8 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('onKeyPress', () => {
-    let spy: any;
+  describe('onKeyPress()', () => {
+    let spy: SpyInstance;
     const { instance } = CardNumberFixture();
     const event: KeyboardEvent = new KeyboardEvent('keypress', { key: 'a' });
     const preventDefault = jest.spyOn(event, 'preventDefault');
@@ -314,9 +299,9 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('onInput', () => {
-    let spy: any;
-    let spySendState: any;
+  describe('onInput()', () => {
+    let spy: SpyInstance;
+    let spySendState: SpyInstance;
     const { instance } = CardNumberFixture();
     const event = new Event('input');
 
@@ -344,7 +329,7 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('setDisableListener', () => {
+  describe('setDisableListener()', () => {
     const { instance } = CardNumberFixture();
 
     function subscribeMock(state: boolean) {
@@ -385,7 +370,7 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('onPaste', () => {
+  describe('onPaste()', () => {
     const { instance } = CardNumberFixture();
     let spyIsMaxLengthReached: SpyInstance;
     let spySendState: SpyInstance;
@@ -414,7 +399,7 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('sendState', () => {
+  describe('sendState()', () => {
     const { instance } = CardNumberFixture();
 
     // when
@@ -422,6 +407,7 @@ describe('CardNumber', () => {
       // @ts-ignore
       instance._messageBus.publish = jest.fn().mockImplementation(() => {});
     });
+
     // then
     it('should call publish method exactly one time', () => {
       instance.getFormFieldState = jest.fn().mockReturnValueOnce({ value: '11111', validity: false });
@@ -440,7 +426,10 @@ describe('CardNumber', () => {
       expect(instance._messageBus.publish).toHaveBeenCalledTimes(2);
     });
   });
-  describe('onFocus', () => {
+
+  // given
+  describe('onFocus()', () => {
+    // when
     const { instance } = CardNumberFixture();
     const event: Event = new Event('focus');
     // @ts-ignore

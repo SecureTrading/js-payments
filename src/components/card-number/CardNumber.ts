@@ -7,6 +7,9 @@ import Selectors from '../../core/shared/Selectors';
 import Utils from '../../core/shared/Utils';
 import Validation from '../../core/shared/Validation';
 
+/**
+ * Defines Card Number component and input features and rules.
+ */
 export default class CardNumber extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
@@ -17,9 +20,9 @@ export default class CardNumber extends FormField {
 
   public binLookup: BinLookup;
   public cardNumberField: HTMLInputElement;
-  public isCardNumberValid: boolean;
-  public cardNumberValue: string;
   public cardNumberFormatted: string;
+  public cardNumberValue: string;
+  public isCardNumberValid: boolean;
   public validity: Validation;
   private cardNumberLength: number;
 
