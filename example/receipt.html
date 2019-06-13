@@ -28,7 +28,7 @@
         ''
       );
       document.getElementById('errorcode').innerHTML = parsedUrl.searchParams.get('errorcode', '');
-      document.getElementById('errormessage').innerHTML = parsedUrl.searchParams.get('errormessage', '');
+      document.getElementById('errormessage').innerText = parsedUrl.searchParams.get('errormessage', '');
     })();
   </script>
 </html>

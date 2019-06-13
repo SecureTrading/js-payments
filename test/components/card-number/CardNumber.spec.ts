@@ -118,10 +118,16 @@ describe('CardNumber', () => {
   describe('CardNumber.getMaxLengthOfCardNumber', () => {
     const { cardNumberCorrect } = CardNumberFixture();
     const maxLengthOfCardNumber = 21;
+    const numberOfWhitespaces = 0;
 
     // then
     it('should return max length of card number', () => {
       expect(cardNumberInstance.getMaxLengthOfCardNumber(cardNumberCorrect)).toEqual(maxLengthOfCardNumber);
+    });
+
+    // then
+    it(`should return numberOfWhitespaces equals: ${numberOfWhitespaces} when cardFormat is not defined`, () => {
+      // expect(cardNumberInstance.getMaxLengthOfCardNumber(unrecognizedCardNumber)).toEqual(maxLengthOfCardNumber);
     });
   });
 
@@ -229,16 +235,27 @@ describe('CardNumber', () => {
   // given
   describe('setFocusListener', () => {
     const { instance } = CardNumberFixture();
-    // @ts-ignore
-    const spy = jest.spyOn(instance, 'format');
+    let spy: any;
+    let event: FocusEvent;
 
-    // then
-    it('should call format function', () => {
-      instance.setFocusListener();
+    beforeEach(() => {
       // @ts-ignore
-      instance._messageBus.publish(MessageBus.EVENTS.FOCUS_CARD_NUMBER);
-      expect(spy).toHaveBeenCalled();
+      spy = jest.spyOn(instance, 'format');
+      // @ts-ignore
+      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback = jest.fn()) => {});
+      instance.setFocusListener();
     });
+    // then
+    it('should set MessageBus listener function', () => {
+      // @ts-ignore
+      expect(instance._messageBus.subscribe.mock.calls[0][0]).toBe(MessageBus.EVENTS.FOCUS_CARD_NUMBER);
+      // @ts-ignore
+      expect(instance._messageBus.subscribe.mock.calls[0][1]).toBeInstanceOf(Function);
+      // @ts-ignore
+      expect(instance._messageBus.subscribe).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call format function', () => {});
   });
 });
 
