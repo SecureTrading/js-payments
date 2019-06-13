@@ -158,7 +158,8 @@ export default class CardNumber extends FormField {
     } else {
       numberOfWhitespaces = 0;
     }
-    this.cardNumberLength = Utils.getLastElementOfArray(cardLengthFromBin) + numberOfWhitespaces;
+    this.cardNumberLength =
+      Utils.getLastElementOfArray(cardLengthFromBin) + numberOfWhitespaces || CardNumber.STANDARD_CARD_LENGTH;
     return this.cardNumberLength;
   }
 
