@@ -62,14 +62,54 @@ describe('SecurityCode', () => {
 
   // given
   describe('setFocusListener', () => {
+    const { instance } = securityCodeFixture();
+    let spy: jest.SpyInstance;
+
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      spy = jest.spyOn(instance, 'format');
+      // @ts-ignore
+      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
+        callback();
+      });
+      instance.setFocusListener();
+    });
     // then
-    it('', () => {});
+    it('should call format method', () => {
+      expect(spy).toBeCalledTimes(1);
+    });
   });
 
   // given
   describe('setDisableListener', () => {
+    const { instance } = securityCodeFixture();
     // then
-    it('', () => {});
+    it('should set attribute disabled and add class to classList', () => {
+      // @ts-ignore
+      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
+        callback(true);
+      });
+
+      instance.setDisableListener();
+      // @ts-ignore
+      expect(instance._inputElement.hasAttribute(SecurityCode.DISABLED_ATTRIBUTE_NAME)).toEqual(true);
+      // @ts-ignore
+      expect(instance._inputElement.classList.contains(SecurityCode.DISABLED_ATTRIBUTE_CLASS)).toEqual(true);
+    });
+
+    // then
+    it('should remove attribute disabled and remove class from classList', () => {
+      // @ts-ignore
+      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
+        callback(false);
+      });
+      instance.setDisableListener();
+      // @ts-ignore
+      expect(instance._inputElement.hasAttribute(SecurityCode.DISABLED_ATTRIBUTE_NAME)).toEqual(false);
+      // @ts-ignore
+      expect(instance._inputElement.classList.contains(SecurityCode.DISABLED_ATTRIBUTE_CLASS)).toEqual(false);
+    });
   });
 
   // given
