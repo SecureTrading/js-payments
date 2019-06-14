@@ -1,6 +1,7 @@
 import SecurityCode from '../../../src/components/security-code/SecurityCode';
 import Selectors from '../../../src/core/shared/Selectors';
 import FormField from '../../../src/core/shared/FormField';
+import Formatter from '../../../src/core/shared/Formatter';
 
 jest.mock('../../../src/core/shared/MessageBus');
 
@@ -136,7 +137,33 @@ describe('SecurityCode', () => {
   });
 
   // given
-  describe('onInput', () => {});
+  describe('onInput', () => {
+    const { instance } = securityCodeFixture();
+    // @ts-ignore
+    const spySendState = jest.spyOn(instance, 'sendState');
+    const event = new Event('input');
+
+    beforeEach(() => {});
+
+    // then
+    it('should call sendState', () => {
+      // @ts-ignore
+      instance._inputElement.value = '12';
+      // @ts-ignore
+      instance.onInput(event);
+      expect(spySendState).toHaveBeenCalled();
+    });
+
+    // then
+    it('should trim too long value', () => {
+      // @ts-ignore
+      instance._inputElement.value = '1234';
+      // @ts-ignore
+      instance.onInput(event);
+      // @ts-ignore
+      expect(instance._inputElement.value).toEqual('123');
+    });
+  });
 
   // given
   describe('onPaste', () => {
@@ -152,12 +179,12 @@ describe('SecurityCode', () => {
     // @ts-ignore
     instance.securityCodeLength = 4;
     // @ts-ignore
-    const spy = jest.spyOn(instance, 'isMaxLengthReached');
-    // @ts-ignore
     const event = new KeyboardEvent('keydown', { keyCode: 37 });
-    const spyPrevent = jest.spyOn(event, 'preventDefault');
+    event.preventDefault = jest.fn();
     // then
     it('should isMaxLengthReached method has been called', () => {
+      // @ts-ignore
+      const spy = jest.spyOn(instance, 'isMaxLengthReached').mockReturnValueOnce(false);
       // @ts-ignore
       instance.onKeyPress(event);
       expect(spy).toHaveBeenCalled();
@@ -166,8 +193,10 @@ describe('SecurityCode', () => {
     // then
     it('should preventDefault method has been called', () => {
       // @ts-ignore
+      const spy = jest.spyOn(instance, 'isMaxLengthReached').mockReturnValueOnce(true);
+      // @ts-ignore
       instance.onKeyPress(event);
-      // expect(spyPrevent).toHaveBeenCalled();
+      expect(event.preventDefault).toHaveBeenCalled();
     });
   });
 
@@ -185,29 +214,37 @@ describe('SecurityCode', () => {
   // given
   describe('subscribeSecurityCodeChange', () => {
     const { instance } = securityCodeFixture();
-    beforeEach(() => {
-      // @ts-ignore
-      instance.subscribeSecurityCodeChange();
-    });
+    let spySecurityCodePattern: jest.SpyInstance;
+
     // then
-    it('should call publish method', () => {
+    it('should return standard security code pattern', () => {
       // @ts-ignore
-      expect(instance._messageBus.subscribe).toHaveBeenCalled();
+      spySecurityCodePattern = jest.spyOn(instance, 'setSecurityCodePattern');
+      // @ts-ignore
+      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
+        callback(2);
+
+        // @ts-ignore
+        instance.subscribeSecurityCodeChange();
+        // @ts-ignore
+        expect(instance.securityCodeLength).toEqual(SecurityCode.STANDARD_LENGTH_PATTERN);
+        expect(spySecurityCodePattern).toHaveBeenCalled();
+      });
     });
 
     // then
-    it('should set default security code length if non Amex', () => {
+    it('should set extended security code pattern', () => {
       // @ts-ignore
-      expect(instance.securityCodeLength).toEqual(SecurityCode.STANDARD_INPUT_LENGTH);
+      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
+        callback(4);
+        // @ts-ignore
+        instance.subscribeSecurityCodeChange();
+        // @ts-ignore
+        expect(instance.securityCodeLength).toEqual(Formatter.SPECIAL_INPUT_LENGTH);
+        // @ts-ignore
+        expect(instance.securityCodeLength).toEqual(4);
+      });
     });
-
-    // then
-    it('should call setSecurityCodePattern function', () => {
-      // @ts-ignore
-      // expect(spy).toHaveBeenCalled();
-    });
-    // then
-    it('should return input pattern', () => {});
   });
 
   // given
