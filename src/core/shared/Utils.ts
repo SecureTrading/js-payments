@@ -86,6 +86,11 @@ export default class Utils {
     });
   }
 
+  /**
+   * Clear whitespaces in expression.
+   * @param string
+   * @param regex
+   */
   public static stripChars(string: string, regex: any) {
     if (typeof regex === 'undefined') {
       regex = /[\D+]/g;
@@ -93,5 +98,9 @@ export default class Utils {
     return string.replace(regex, '');
   }
 
+  /**
+   * Gets last element of given array.
+   * @param array
+   */
   public static getLastElementOfArray = (array: number[]) => array && array.slice(-1).pop();
 }
