@@ -182,18 +182,6 @@ describe('AnimatedCard', () => {
       // @ts-ignore
       instance._messageBus.publish = jest.fn();
     });
-
-    // then
-    it.skip('should trigger _setSecurityCodePlaceholderContent()', () => {
-      // @ts-ignore
-      expect(instance._messageBus.publish).toHaveBeenCalledWith(
-        {
-          data: false,
-          type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
-        },
-        true
-      );
-    });
   });
 
   // given
@@ -212,20 +200,6 @@ describe('AnimatedCard', () => {
       instance = animatedCardFixture().instance;
       // @ts-ignore
       instance._setSecurityCodeChangeListener();
-    });
-
-    // then
-    it.skip('should flip card when state is true', () => {
-      // @ts-ignore
-      instance._messageBus.publish(eventPositive);
-      expect(spyFlip).toHaveBeenCalled();
-    });
-
-    // then
-    it.skip('should flip card back when state is false', () => {
-      // @ts-ignore
-      instance._messageBus.publish(eventNegative);
-      expect(spyFlipBack).toHaveBeenCalled();
     });
   });
 
