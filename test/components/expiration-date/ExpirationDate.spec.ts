@@ -1,7 +1,5 @@
-import AnimatedCard from '../../../src/components/animated-card/AnimatedCard';
 import ExpirationDate from '../../../src/components/expiration-date/ExpirationDate';
 import Language from '../../../src/core/shared/Language';
-import MessageBus from '../../../src/core/shared/MessageBus';
 import Selectors from '../../../src/core/shared/Selectors';
 
 jest.mock('./../../../src/core/shared/MessageBus');
@@ -9,7 +7,7 @@ jest.mock('./../../../src/core/shared/MessageBus');
 // given
 describe('ExpirationDate', () => {
   // given
-  describe('ifFieldExists()', () => {
+  describe('ExpirationDate.ifFieldExists()', () => {
     // then
     it('should return input element', () => {
       expect(ExpirationDate.ifFieldExists()).toBeTruthy();
@@ -33,6 +31,7 @@ describe('ExpirationDate', () => {
   // given
   describe('setDisableListener()', () => {
     const { instance } = expirationDateFixture();
+    const attributeName: string = 'disabled';
     // then
     it('should have attribute disabled set', () => {
       // @ts-ignore
@@ -41,7 +40,7 @@ describe('ExpirationDate', () => {
       });
       instance.setDisableListener();
       // @ts-ignore
-      expect(instance._inputElement.hasAttribute('disabled')).toBe(true);
+      expect(instance._inputElement.hasAttribute(attributeName)).toBe(true);
       // @ts-ignore
       expect(instance._inputElement.classList.contains(ExpirationDate.DISABLE_FIELD_CLASS)).toBe(true);
     });
@@ -54,7 +53,7 @@ describe('ExpirationDate', () => {
       });
       instance.setDisableListener();
       // @ts-ignore
-      expect(instance._inputElement.hasAttribute('disabled')).toBe(false);
+      expect(instance._inputElement.hasAttribute(attributeName)).toBe(false);
       // @ts-ignore
       expect(instance._inputElement.classList.contains(ExpirationDate.DISABLE_FIELD_CLASS)).toBe(false);
     });
@@ -62,10 +61,10 @@ describe('ExpirationDate', () => {
 
   // given
   describe('setFocusListener()', () => {
-    // when
     const { instance } = expirationDateFixture();
     let spy: jest.SpyInstance;
 
+    // when
     beforeEach(() => {
       // @ts-ignore
       instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
@@ -84,12 +83,15 @@ describe('ExpirationDate', () => {
   // given
   describe('format()', () => {
     const { instance } = expirationDateFixture();
-    let spy: any;
+    let spy: jest.SpyInstance;
+    const testValue: string = '232';
+
+    // when
     beforeEach(() => {
       // @ts-ignore
       spy = jest.spyOn(instance, 'setValue');
       // @ts-ignore
-      instance.format('232');
+      instance.format(testValue);
     });
     // then
     it('should trigger setValue method', () => {
@@ -101,13 +103,15 @@ describe('ExpirationDate', () => {
   describe('onBlur()', () => {
     const { instance } = expirationDateFixture();
     let spy: jest.SpyInstance;
-    // then
+
+    //when
     beforeEach(() => {
       // @ts-ignore
       spy = jest.spyOn(instance, 'sendState');
       // @ts-ignore
       instance.onBlur();
     });
+    // then
     it('should call sendState()', () => {
       expect(spy).toHaveBeenCalled();
     });
@@ -136,6 +140,7 @@ describe('ExpirationDate', () => {
   describe('onInput()', () => {
     const { instance } = expirationDateFixture();
     const event: Event = new Event('input');
+    const inputTestvalue: string = '12121';
     let spy: jest.SpyInstance;
 
     // when
@@ -151,14 +156,15 @@ describe('ExpirationDate', () => {
       expect(spy).toBeCalled();
     });
 
+    // then
     it('should set proper input value and call validate', () => {
       // @ts-ignore
-      instance._inputElement.value = '12121';
+      instance._inputElement.value = inputTestvalue;
       instance.validation.validate = jest.fn();
       // @ts-ignore
       instance.onInput(event);
       // @ts-ignore
-      expect(instance._inputElement.value).toEqual('12121');
+      expect(instance._inputElement.value).toEqual(inputTestvalue);
       // @ts-ignore
       expect(instance.validation.validate).toBeCalled();
     });
@@ -170,7 +176,7 @@ describe('ExpirationDate', () => {
     // @ts-ignore
     const event: KeyboardEvent = new KeyboardEvent('keypress', { key: 1 });
     event.preventDefault = jest.fn();
-    // then
+    // when
     beforeEach(() => {
       // @ts-ignore
       instance.isMaxLengthReached = jest.fn().mockReturnValue(true);
@@ -194,17 +200,46 @@ describe('ExpirationDate', () => {
   // given
   describe('onPaste()', () => {
     const { instance } = expirationDateFixture();
+    // ts-ignore
+    (window as any).ClipboardEvent = class ClipboardEvent {
+      public type: string;
+
+      constructor(type: string) {
+        this.type = type;
+      }
+
+      public preventDefault = jest.fn();
+      public getData = jest.fn();
+      public clipboardData = {
+        dataType: 'text',
+        data: 'some data'
+      };
+    };
+    // let event: ClipboardEvent = new ClipboardEvent('paste');
+
+    let spy: jest.SpyInstance;
+
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      spy = jest.spyOn(instance, 'sendState');
+      // @ts-ignore
+      // instance.onPaste(event);
+    });
     // then
-    it('', () => {});
+    it('should call sendState', () => {
+      // expect(spy).toBeCalledTimes(1);
+    });
   });
 
   // given
   describe('isMaxLengthReached() ', () => {
     const { instance } = expirationDateFixture();
+    const inputTestValue: string = '12/12';
     // then
     it('should return true if input value greater than date length', () => {
       // @ts-ignore
-      instance._inputElement.value = '12/12';
+      instance._inputElement.value = inputTestValue;
       // @ts-ignore;
       expect(instance.isMaxLengthReached()).toEqual(true);
     });
@@ -213,8 +248,9 @@ describe('ExpirationDate', () => {
   // given
   describe('sendState()', () => {
     const { instance } = expirationDateFixture();
-    let spy: any;
+    let spy: jest.SpyInstance;
 
+    // when
     beforeEach(() => {
       // @ts-ignore;
       spy = jest.spyOn(instance._messageBus, 'publish');
