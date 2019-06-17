@@ -140,8 +140,9 @@ export class ApplePay {
    * Checks whether user uses Safari and if it's version supports Apple Pay
    * @param version
    */
-  public ifBrowserSupportsApplePayVersion = (version: number) => ApplePaySession.supportsVersion(version);
-
+  public ifBrowserSupportsApplePayVersion = (version: number) => {
+    return ApplePaySession.supportsVersion(version);
+  };
   /**
    * Sets the latest possible ApplePay version
    */

@@ -2,14 +2,13 @@ import ApplePaySessionMock from '../../../src/core/integrations/ApplePaySessionM
 (window as any).ApplePaySession = ApplePaySessionMock; // has to be defined before we import ApplePay
 (window as any).ApplePaySession.supportsVersion = jest.fn();
 (window as any).ApplePaySession.canMakePayments = jest.fn();
+(window as any).ApplePaySession.canMakePaymentsWithActiveCard = jest.fn();
 (window as any).ApplePaySession.STATUS_SUCCESS = 'SUCCESS';
 const getType = require('jest-get-type');
 import Language from '../../../src/core/shared/Language';
 import { NotificationType } from '../../../src/core/models/NotificationEvent';
 import ApplePay from '../../../src/core/integrations/ApplePay';
-import { jsxEmptyExpression, exportAllDeclaration } from '@babel/types';
 import DomMethods from '../../../src/core/shared/DomMethods';
-import { idText } from 'typescript';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 
@@ -34,7 +33,46 @@ describe('Class Apple Pay', () => {
   });
 
   // given
-  describe('Method setApplePayVersion', () => {
+  describe('Method ifBrowserSupportsApplePayVersion', () => {
+    // then
+    it('should return true if browser supported', () => {
+      const { instance } = ApplePayFixture();
+      (window as any).ApplePaySession.supportsVersion = jest.fn().mockReturnValue(true);
+      expect(instance.ifBrowserSupportsApplePayVersion(3)).toBeTruthy();
+    });
+    // then
+    it('should return false if browser supported', () => {
+      const { instance } = ApplePayFixture();
+      (window as any).ApplePaySession.supportsVersion = jest.fn().mockReturnValue(false);
+      expect(instance.ifBrowserSupportsApplePayVersion(3)).not.toBeTruthy();
+    });
+  });
+
+  // given
+  describe('Method getApplePaySessionObject', () => {
+    // then
+    it('should get object', () => {
+      const { instance } = ApplePayFixture();
+      (window as any).ApplePaySession = jest.fn();
+      const session = instance.getApplePaySessionObject();
+      expect(session).toEqual({});
+    });
+  });
+
+  // given
+  describe('Method checkApplePayWalletCardAvailability', () => {
+    // then
+    it('should check availability', () => {
+      const { instance } = ApplePayFixture();
+      (window as any).ApplePaySession.canMakePaymentsWithActiveCard = jest.fn();
+      instance.merchantId = '123456789';
+      const availability = instance.checkApplePayWalletCardAvailability();
+      expect(availability).toBe(undefined);
+    });
+  });
+
+  // given
+  describe('Method getApplePaySession', () => {
     // then
     it('should set applePayVersion', () => {
       const { instance } = ApplePayFixture();
