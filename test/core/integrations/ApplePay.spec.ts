@@ -9,6 +9,7 @@ import Language from '../../../src/core/shared/Language';
 import { NotificationType } from '../../../src/core/models/NotificationEvent';
 import ApplePay from '../../../src/core/integrations/ApplePay';
 import DomMethods from '../../../src/core/shared/DomMethods';
+import { exportAllDeclaration } from '@babel/types';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 
@@ -226,11 +227,17 @@ describe('Class Apple Pay', () => {
       Object.defineProperty(instance.session, 'begin', { value: '', writable: true });
       instance.session.begin = jest.fn();
       instance.getApplePaySessionObject = jest.fn().mockReturnValueOnce({});
-      const spy = jest.spyOn(instance, 'paymentProcess');
+      instance.paymentProcess = jest.fn();
       instance.applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
-      // TODO: Sth is wrong here and I cannot mock this.session.begin() function
-      // document.getElementById(ApplePay.APPLE_PAY_BUTTON_ID).click();
-      // expect(spy).toHaveBeenCalled();
+
+      const ev = new MouseEvent('click', {
+        view: window,
+        bubbles: true,
+        cancelable: true
+      });
+      document.getElementById(ApplePay.APPLE_PAY_BUTTON_ID).dispatchEvent(ev);
+      expect(instance.paymentProcess).toHaveBeenCalledTimes(1);
+      expect(instance.paymentProcess).toHaveBeenCalledWith();
     });
   });
 
