@@ -58,7 +58,13 @@ describe('blockForm()', () => {
 // given
 describe('getErrorData()', () => {
   // when
-  const { instance, cardNumberErrorData, securityCodeErrorData, expirationDateErrorData } = validationFixture();
+  const {
+    instance,
+    cardNumberErrorData,
+    securityCodeErrorData,
+    expirationDateErrorData,
+    merchantInputsErrorData
+  } = validationFixture();
 
   // then
   it('should pass error data with proper field equals pan ', () => {
@@ -89,6 +95,16 @@ describe('getErrorData()', () => {
       errormessage: expirationDateErrorData.errormessage
     });
   });
+
+  // then
+  it('should pass error data with proper field equals merchant field', () => {
+    StCodec.getErrorData(merchantInputsErrorData);
+    // @ts-ignore
+    expect(instance.getErrorData(merchantInputsErrorData)).toEqual({
+      field: merchantInputsErrorData.errordata[0],
+      errormessage: merchantInputsErrorData.errormessage
+    });
+  });
 });
 
 // given
@@ -112,28 +128,28 @@ describe('setCustomValidationError()', () => {
 // given
 describe('backendValidation()', () => {
   // when
-  const { instance } = validationFixture();
-
-  beforeEach(() => {
-    const messageBusEvent = {
-      type: MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD
-    };
-    // @ts-ignore
-    instance._messageBus.publish(messageBusEvent);
-  });
+  const { instance, inputElement, messageElement } = validationFixture();
 
   // then
   it('should call checkBackendValidity()', () => {
-    // TODO: can't force MessageBus event to be triggered :/ Working on that.
-    // const spy = jest.spyOn(instance, 'checkBackendValidity');
-    // const spy2 = jest.spyOn(instance, 'validate');
-    // instance.backendValidation(element, messageElement, MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD);
-    // expect(spy).toHaveBeenCalled();
+    // @ts-ignore
+    instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
+      callback({ field: 'some-id', message: 'some random message' });
+    });
+    const spy = jest.spyOn(instance, 'checkBackendValidity');
+    instance.backendValidation(inputElement, messageElement, MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD);
+    expect(spy).toHaveBeenCalled();
   });
 
   // then
   it('should call validate()', () => {
-    // TODO: can't force MessageBus event to be triggered :/ Working on that.
+    // @ts-ignore
+    instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
+      callback({ field: 'some-id', message: 'some random message' });
+    });
+    const spy = jest.spyOn(instance, 'validate');
+    instance.backendValidation(inputElement, messageElement, MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD);
+    expect(spy).toHaveBeenCalled();
   });
 });
 
@@ -145,6 +161,26 @@ describe('checkBackendValidity()', () => {
     const spy = jest.spyOn(instance, 'setError');
     instance.checkBackendValidity(backendValidityData, inputElement, messageElement);
     expect(spy).toHaveBeenCalled();
+  });
+});
+
+// given
+describe('toggleErrorClass()', () => {
+  const { instance, inputElement } = validationFixture();
+  // then
+  it('should remove error class if field is valid', () => {
+    inputElement.setCustomValidity('');
+    // @ts-ignore
+    instance.toggleErrorClass(inputElement);
+    expect(inputElement.classList.contains(Validation.ERROR_FIELD_CLASS)).toEqual(false);
+  });
+
+  // then
+  it('should add error class if field is invalid', () => {
+    inputElement.setCustomValidity('some error');
+    // @ts-ignore
+    instance.toggleErrorClass(inputElement);
+    expect(inputElement.classList.contains(Validation.ERROR_FIELD_CLASS)).toEqual(true);
   });
 });
 
@@ -170,6 +206,10 @@ function validationFixture() {
   const backendValidityData = {
     field: 'pan',
     message: 'some message'
+  };
+  const merchantInputsErrorData = {
+    errordata: ['billingemail'],
+    errormessage: 'Invalid field'
   };
 
   const isCharNumberTestCases = [
@@ -201,6 +241,7 @@ function validationFixture() {
     cardNumberErrorData,
     expirationDateErrorData,
     securityCodeErrorData,
+    merchantInputsErrorData,
     backendValidityData,
     isCharNumberTestCases,
     getValidationMessagesTestCases,
