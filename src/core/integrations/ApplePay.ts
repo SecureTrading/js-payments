@@ -186,9 +186,7 @@ export class ApplePay {
       ? (this.buttonText = buttonText)
       : (this.buttonText = ApplePay.AVAILABLE_BUTTON_TEXTS[0]);
 
-    this._applePayButtonProps.style = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${
-      this.buttonText
-    }; -apple-pay-button-style: ${this.buttonStyle}`;
+    this._applePayButtonProps.style = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${this.buttonText}; -apple-pay-button-style: ${this.buttonStyle}`;
   }
 
   /**
@@ -319,7 +317,7 @@ export class ApplePay {
     this.session.onpaymentauthorized = (event: any) => {
       this.paymentDetails = JSON.stringify(event.payment);
       // @TODO STJS-205 refactor into Payments
-      this.payment
+      return this.payment
         .processPayment(
           { requesttypedescription: this.tokenise ? 'CACHETOKENISE' : 'AUTH' },
           {

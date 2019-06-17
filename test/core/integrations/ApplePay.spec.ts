@@ -7,6 +7,8 @@ const getType = require('jest-get-type');
 import Language from '../../../src/core/shared/Language';
 import { NotificationType } from '../../../src/core/models/NotificationEvent';
 import ApplePay from '../../../src/core/integrations/ApplePay';
+import { jsxEmptyExpression } from '@babel/types';
+import DomMethods from '../../../src/core/shared/DomMethods';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 
@@ -274,6 +276,90 @@ describe('Class Apple Pay', () => {
       Object.defineProperty(instance.session, 'onpaymentauthorized', { value: '', writable: true });
       instance.onPaymentAuthorized();
       expect(getType(instance.session.onpaymentauthorized)).toBe('function');
+    });
+
+    it('should call onpaymentauthorized and set paymentDetails and process successful AUTH', async () => {
+      const { instance } = ApplePayFixture();
+
+      instance.payment.processPayment = jest.fn().mockResolvedValueOnce({ myData: 'response' });
+      instance.setNotification = jest.fn();
+      DomMethods.parseMerchantForm = jest.fn().mockReturnValueOnce({ billingfirstname: 'BOB' });
+      instance.getPaymentSuccessStatus = jest.fn().mockReturnValueOnce('SUCCESS');
+      // @ts-ignore
+      instance.tokenise = false;
+      instance.validateMerchantRequestData.walletsource = 'APPLEPAY';
+      instance.session = { completePayment: jest.fn() };
+      Object.defineProperty(instance.session, 'onpaymentauthorized', { value: '', writable: true });
+      instance.onPaymentAuthorized();
+
+      await instance.session.onpaymentauthorized({ payment: { TOKEN: 'TOKEN DATA' } });
+
+      expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
+      expect(instance.payment.processPayment).toHaveBeenCalledWith(
+        { requesttypedescription: 'AUTH' },
+        { walletsource: 'APPLEPAY', wallettoken: '{"TOKEN":"TOKEN DATA"}' },
+        { billingfirstname: 'BOB' }
+      );
+      expect(instance.setNotification).toHaveBeenCalledTimes(1);
+      expect(instance.setNotification).toHaveBeenCalledWith('SUCCESS', 'Payment has been successfully processed');
+      expect(instance.session.completePayment).toHaveBeenCalledTimes(1);
+      expect(instance.session.completePayment).toHaveBeenCalledWith({ status: 'SUCCESS', errors: [] });
+    });
+
+    it('should call onpaymentauthorized and set paymentDetails and process successful CACHETOKEN', async () => {
+      const { instance } = ApplePayFixture();
+
+      instance.payment.processPayment = jest.fn().mockResolvedValueOnce({ myData: 'response' });
+      instance.setNotification = jest.fn();
+      DomMethods.parseMerchantForm = jest.fn().mockReturnValueOnce({ billingfirstname: 'BOB' });
+      instance.getPaymentSuccessStatus = jest.fn().mockReturnValueOnce('SUCCESS');
+      // @ts-ignore
+      instance.tokenise = true;
+      instance.validateMerchantRequestData.walletsource = 'APPLEPAY';
+      instance.session = { completePayment: jest.fn() };
+      Object.defineProperty(instance.session, 'onpaymentauthorized', { value: '', writable: true });
+      instance.onPaymentAuthorized();
+
+      await instance.session.onpaymentauthorized({ payment: { TOKEN: 'TOKEN DATA' } });
+
+      expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
+      expect(instance.payment.processPayment).toHaveBeenCalledWith(
+        { requesttypedescription: 'CACHETOKENISE' },
+        { walletsource: 'APPLEPAY', wallettoken: '{"TOKEN":"TOKEN DATA"}' },
+        { billingfirstname: 'BOB' }
+      );
+      expect(instance.setNotification).toHaveBeenCalledTimes(1);
+      expect(instance.setNotification).toHaveBeenCalledWith('SUCCESS', 'Payment has been successfully processed');
+      expect(instance.session.completePayment).toHaveBeenCalledTimes(1);
+      expect(instance.session.completePayment).toHaveBeenCalledWith({ status: 'SUCCESS', errors: [] });
+    });
+
+    it('should call onpaymentauthorized and set paymentDetails and handle failure', async () => {
+      const { instance } = ApplePayFixture();
+
+      instance.payment.processPayment = jest.fn().mockRejectedValueOnce({ myData: 'response' });
+      instance.setNotification = jest.fn();
+      DomMethods.parseMerchantForm = jest.fn().mockReturnValueOnce({ billingfirstname: 'BOB' });
+      instance.getPaymentFailureStatus = jest.fn().mockReturnValueOnce('FAILURE');
+      // @ts-ignore
+      instance.tokenise = false;
+      instance.validateMerchantRequestData.walletsource = 'APPLEPAY';
+      instance.session = { completePayment: jest.fn() };
+      Object.defineProperty(instance.session, 'onpaymentauthorized', { value: '', writable: true });
+      instance.onPaymentAuthorized();
+
+      await instance.session.onpaymentauthorized({ payment: { TOKEN: 'TOKEN DATA' } });
+
+      expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
+      expect(instance.payment.processPayment).toHaveBeenCalledWith(
+        { requesttypedescription: 'AUTH' },
+        { walletsource: 'APPLEPAY', wallettoken: '{"TOKEN":"TOKEN DATA"}' },
+        { billingfirstname: 'BOB' }
+      );
+      expect(instance.setNotification).toHaveBeenCalledTimes(1);
+      expect(instance.setNotification).toHaveBeenCalledWith('ERROR', 'An error occurred');
+      expect(instance.session.completePayment).toHaveBeenCalledTimes(1);
+      expect(instance.session.completePayment).toHaveBeenCalledWith({ status: 'FAILURE', errors: [] });
     });
   });
 
