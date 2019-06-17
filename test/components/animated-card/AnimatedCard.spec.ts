@@ -1,10 +1,10 @@
 import each from 'jest-each';
 import { cardsLogos } from '../../../src/components/animated-card/animated-card-logos';
-import { StCodec } from '../../../src/core/classes/StCodec.class';
 import AnimatedCard from './../../../src/components/animated-card/AnimatedCard';
+import { diners } from '../../../src/core/imports/images';
+import DomMethods from '../../../src/core/shared/DomMethods';
 import Selectors from '../../../src/core/shared/Selectors';
 import { Translator } from '../../../src/core/shared/Translator';
-import MessageBus from '../../../src/core/shared/MessageBus';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 
@@ -125,19 +125,6 @@ describe('AnimatedCard', () => {
   });
 
   // given
-  describe('setSecurityCodeChangeListener', () => {
-    const { instance } = animatedCardFixture();
-    // then
-    it('should be triggered', () => {});
-  });
-
-  // given
-  describe('setSecurityCodeFocusEventListener', () => {
-    // then
-    it('should be triggered', () => {});
-  });
-
-  // given
   describe('_setSecurityCodePlaceholderContent', () => {
     const securityCodeLength = 3;
     const securityCodeLengthExtended = 4;
@@ -168,63 +155,63 @@ describe('AnimatedCard', () => {
 
   // given
   describe('_setSecurityCodeChangeListener()', () => {
-    let instance: AnimatedCard;
-    instance = new AnimatedCard();
-    const event = { type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, data: 'SOME EVENT DATA' };
+    const { instance } = animatedCardFixture();
     // @ts-ignore
-    const spy = jest.spyOn(instance, '_setSecurityCodePlaceholderContent');
+    let spy: jest.SpyInstance;
 
     // when
     beforeEach(() => {
-      instance = animatedCardFixture().instance;
+      // @ts-ignore
+      spy = jest.spyOn(instance, '_setSecurityCodePlaceholderContent');
+      // @ts-ignore
+      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
+        callback(15);
+      });
       // @ts-ignore
       instance._setSecurityCodeChangeListener();
-      // @ts-ignore
-      instance._messageBus.publish = jest.fn();
     });
 
     // then
-    it.skip('should trigger _setSecurityCodePlaceholderContent()', () => {
+    it('should trigger _setSecurityCodePlaceholderContent()', () => {
       // @ts-ignore
-      expect(instance._messageBus.publish).toHaveBeenCalledWith(
-        {
-          data: false,
-          type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
-        },
-        true
-      );
+      expect(instance._messageBus.subscribe).toHaveBeenCalled();
     });
   });
 
   // given
   describe('_setSecurityCodeFocusEventListener()', () => {
-    let instance: AnimatedCard;
-    instance = new AnimatedCard();
-    const eventPositive = { type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, data: true };
-    const eventNegative = { type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, data: false };
+    const { instance } = animatedCardFixture();
     // @ts-ignore
-    const spyFlip = jest.spyOn(instance, '_shouldFlipCard');
-    // @ts-ignore
-    const spyFlipBack = jest.spyOn(instance, '_flipCardBack');
+    let spyFlip: jest.SpyInstance;
+    let spyFlipBack: jest.SpyInstance;
 
     // when
     beforeEach(() => {
-      instance = animatedCardFixture().instance;
       // @ts-ignore
-      instance._setSecurityCodeChangeListener();
+      spyFlip = jest.spyOn(instance, '_shouldFlipCard');
+      // @ts-ignore
+      spyFlipBack = jest.spyOn(instance, '_flipCardBack');
     });
 
     // then
-    it.skip('should flip card when state is true', () => {
+    it('should flip card when state is true', () => {
       // @ts-ignore
-      instance._messageBus.publish(eventPositive);
+      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
+        callback(true);
+      });
+      // @ts-ignore
+      instance._setSecurityCodeFocusEventListener();
       expect(spyFlip).toHaveBeenCalled();
     });
 
     // then
-    it.skip('should flip card back when state is false', () => {
+    it('should flip card back when state is false', () => {
       // @ts-ignore
-      instance._messageBus.publish(eventNegative);
+      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
+        callback(false);
+      });
+      // @ts-ignore
+      instance._setSecurityCodeFocusEventListener();
       expect(spyFlipBack).toHaveBeenCalled();
     });
   });
@@ -376,6 +363,64 @@ describe('AnimatedCard', () => {
   });
 
   // given
+  describe('setLogo()', () => {
+    const { instance } = animatedCardFixture();
+    const logo = diners;
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._cardDetails.logo = logo;
+      // @ts-ignore
+      DomMethods.setProperty.apply = jest.fn();
+      // @ts-ignore
+      instance._setLogo();
+    });
+
+    it('should set logo', () => {
+      expect(DomMethods.setProperty.apply).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('setTheme()', () => {
+    const { instance } = animatedCardFixture();
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._cardDetails.type = AnimatedCard.CARD_TYPES.AMEX;
+      // @ts-ignore
+      instance._setTheme();
+    });
+
+    // then
+    it('should set security code extended placeholder', () => {
+      // @ts-ignore
+      expect(instance._animatedCardSecurityCodeFrontField.textContent).toEqual(
+        // @ts-ignore
+        AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED
+      );
+    });
+  });
+
+  // given
+  describe('setSecurityCodeOnProperSide()', () => {
+    const { instance } = animatedCardFixture();
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._cardDetails.type = AnimatedCard.CARD_TYPES.AMEX;
+      // @ts-ignore
+      instance._setSecurityCodeOnProperSide();
+    });
+
+    // then
+    it('should set Amex details', () => {
+      // @ts-ignore
+      expect(instance._animatedCardSecurityCodeFrontField.textContent).toEqual(instance._cardDetails.securityCode);
+    });
+  });
+
+  // given
   describe('shouldFlipCard()', () => {
     // when
     let { instance, cardTypes } = animatedCardFixture();
@@ -474,34 +519,54 @@ describe('AnimatedCard', () => {
   });
   // given
   describe('_setSubscribeEvents()', () => {
+    const { instance } = animatedCardFixture();
+    let spyOnCardNumberChanged: jest.SpyInstance;
+    let spyOnExpirationDateChanged: jest.SpyInstance;
+    let spySecurityCodeChanged: jest.SpyInstance;
+    const dataCardNumber = {
+      formattedValue: '4111 11111 1111 1111',
+      value: '41111111111111111'
+    };
     // when
     const functionCalls = 1;
-    let instance: any;
-    beforeEach(() => {
-      instance = animatedCardFixture().instance;
-    });
     // then
     it(`should _onCardNumberChanged been called ${functionCalls} times when it's changed`, () => {
-      const spy = jest.spyOn(instance, '_onCardNumberChanged');
-      instance._animatedCardPan.onfocus = () => {
-        expect(spy).toHaveBeenCalledTimes(functionCalls);
-      };
+      // @ts-ignore
+      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
+        callback(dataCardNumber);
+      });
+      // @ts-ignore
+      spyOnCardNumberChanged = jest.spyOn(instance, '_onCardNumberChanged');
+      // @ts-ignore
+      instance._setSubscribeEvents();
+      // @ts-ignore
+      expect(spyOnCardNumberChanged).toHaveBeenCalledTimes(functionCalls);
     });
 
     // then
     it(`should _onExpirationDateChanged been called ${functionCalls} times when it's changed`, () => {
-      const spy = jest.spyOn(instance, '_onExpirationDateChanged');
-      instance._animatedCardExpirationDate.onfocus = () => {
-        expect(spy).toHaveBeenCalledTimes(functionCalls);
-      };
+      // @ts-ignore
+      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
+        callback(dataCardNumber);
+      });
+      // @ts-ignore
+      spyOnExpirationDateChanged = jest.spyOn(instance, '_onExpirationDateChanged');
+      // @ts-ignore
+      instance._setSubscribeEvents();
+      expect(spyOnExpirationDateChanged).toHaveBeenCalledTimes(functionCalls);
     });
 
     // then
     it(`should _onSecurityCodeChanged been called ${functionCalls} times when it's changed`, () => {
-      const spy = jest.spyOn(instance, '_onSecurityCodeChanged');
-      instance._animatedCardSecurityCode.onfocus = () => {
-        expect(spy).toHaveBeenCalledTimes(functionCalls);
-      };
+      // @ts-ignore
+      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
+        callback(dataCardNumber);
+      });
+      // @ts-ignore
+      spySecurityCodeChanged = jest.spyOn(instance, '_onSecurityCodeChanged');
+      // @ts-ignore
+      instance._setSubscribeEvents();
+      expect(spySecurityCodeChanged).toHaveBeenCalledTimes(functionCalls);
     });
   });
 
@@ -545,6 +610,8 @@ describe('AnimatedCard', () => {
       });
     });
   });
+
+  // given
   describe('setCardType', () => {
     let instance: any;
     beforeEach(() => {

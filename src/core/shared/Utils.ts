@@ -44,19 +44,6 @@ export default class Utils {
   }
 
   /**
-   * Helper function to return a URL string which has parameters added to it
-   * @param url The current URL as a string
-   * @param params The parameters as key, value pairs with which to update the URL
-   * @return The new URL including the extra parameters
-   */
-  public static addUrlParams(url: string, params: any) {
-    if (params !== undefined) {
-      const urlParams = new URLSearchParams(params);
-      return `${url}?${urlParams.toString()}`;
-    }
-  }
-
-  /**
    * Helper function to time out waiting for a promise to resolve
    * @param promissory The callback which generates the wanted promise
    * @param timeout The time until the promise is rejected instead - WARNING this will not cancel a fetch request
@@ -99,6 +86,11 @@ export default class Utils {
     });
   }
 
+  /**
+   * Clear whitespaces in expression.
+   * @param string
+   * @param regex
+   */
   public static stripChars(string: string, regex: any) {
     if (typeof regex === 'undefined') {
       regex = /[\D+]/g;
@@ -106,5 +98,9 @@ export default class Utils {
     return string.replace(regex, '');
   }
 
+  /**
+   * Gets last element of given array.
+   * @param array
+   */
   public static getLastElementOfArray = (array: number[]) => array && array.slice(-1).pop();
 }
