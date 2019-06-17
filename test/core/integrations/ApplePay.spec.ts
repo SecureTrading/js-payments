@@ -265,6 +265,62 @@ describe('Class Apple Pay', () => {
       instance.onValidateMerchantRequest();
       expect(getType(instance.session.onvalidatemerchant)).toBe('function');
     });
+
+    it('should call onvalidatemerchant and set walletvalidationurl and process walletverify', async () => {
+      const { instance } = ApplePayFixture();
+
+      instance.payment.walletVerify = jest.fn().mockResolvedValueOnce({ myData: 'response' });
+      instance.onValidateMerchantResponseSuccess = jest.fn();
+      instance.setNotification = jest.fn();
+      instance.session = {};
+      Object.defineProperty(instance.session, 'onvalidatemerchant', { value: '', writable: true });
+      instance.onValidateMerchantRequest();
+
+      await instance.session.onvalidatemerchant({ validationURL: 'https://example.com' });
+
+      expect(instance.payment.walletVerify).toHaveBeenCalledTimes(1);
+      expect(instance.payment.walletVerify).toHaveBeenCalledWith({
+        walletmerchantid: 'merchant.net.securetrading',
+        walletrequestdomain: 'localhost',
+        walletsource: 'APPLEPAY',
+        walletvalidationurl: 'https://example.com'
+      });
+      expect(instance.validateMerchantRequestData.walletvalidationurl).toBe('https://example.com');
+      expect(instance.onValidateMerchantResponseSuccess).toHaveBeenCalledTimes(1);
+      expect(instance.onValidateMerchantResponseSuccess).toHaveBeenCalledWith({ myData: 'response' });
+      expect(instance.setNotification).toHaveBeenCalledTimes(0);
+    });
+
+    it('should call onvalidatemerchant and set walletvalidationurl handle errors', async () => {
+      const { instance } = ApplePayFixture();
+
+      instance.payment.walletVerify = jest
+        .fn()
+        .mockRejectedValueOnce({ errorcode: '30000', errormessage: 'Invalid field' });
+      instance.onValidateMerchantResponseFailure = jest.fn();
+      instance.setNotification = jest.fn();
+      instance.session = {};
+      Object.defineProperty(instance.session, 'onvalidatemerchant', { value: '', writable: true });
+      instance.onValidateMerchantRequest();
+
+      await instance.session.onvalidatemerchant({ validationURL: 'https://example.com' });
+
+      expect(instance.payment.walletVerify).toHaveBeenCalledTimes(1);
+      expect(instance.payment.walletVerify).toHaveBeenCalledWith({
+        walletmerchantid: 'merchant.net.securetrading',
+        walletrequestdomain: 'localhost',
+        walletsource: 'APPLEPAY',
+        walletvalidationurl: 'https://example.com'
+      });
+      expect(instance.validateMerchantRequestData.walletvalidationurl).toBe('https://example.com');
+      expect(instance.onValidateMerchantResponseFailure).toHaveBeenCalledTimes(1);
+      expect(instance.onValidateMerchantResponseFailure).toHaveBeenCalledWith({
+        errorcode: '30000',
+        errormessage: 'Invalid field'
+      });
+      expect(instance.setNotification).toHaveBeenCalledTimes(1);
+      expect(instance.setNotification).toHaveBeenCalledWith('ERROR', '30000: Invalid field');
+    });
   });
 
   // given

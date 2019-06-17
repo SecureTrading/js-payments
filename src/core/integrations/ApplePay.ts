@@ -289,7 +289,7 @@ export class ApplePay {
   public onValidateMerchantRequest() {
     this.session.onvalidatemerchant = (event: any) => {
       this.validateMerchantRequestData.walletvalidationurl = event.validationURL;
-      this.payment
+      return this.payment
         .walletVerify(this.validateMerchantRequestData)
         .then(response => {
           this.onValidateMerchantResponseSuccess(response);
