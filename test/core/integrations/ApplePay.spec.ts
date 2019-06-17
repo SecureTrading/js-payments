@@ -7,8 +7,9 @@ const getType = require('jest-get-type');
 import Language from '../../../src/core/shared/Language';
 import { NotificationType } from '../../../src/core/models/NotificationEvent';
 import ApplePay from '../../../src/core/integrations/ApplePay';
-import { jsxEmptyExpression } from '@babel/types';
+import { jsxEmptyExpression, exportAllDeclaration } from '@babel/types';
 import DomMethods from '../../../src/core/shared/DomMethods';
+import { idText } from 'typescript';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 
@@ -40,6 +41,20 @@ describe('Class Apple Pay', () => {
       instance.ifBrowserSupportsApplePayVersion = jest.fn().mockReturnValueOnce(true);
       instance.setApplePayVersion();
       expect(instance.applePayVersion).toEqual(5);
+    });
+  });
+
+  // given
+  describe('set jwt and get jwt', () => {
+    // then
+    it('should set _jwt and get _jwt', () => {
+      const { instance } = ApplePayFixture();
+      // @ts-ignore
+      instance._jwt = 'MY VALUE';
+      instance.jwt = 'SOMETHING';
+      // @ts-ignore
+      expect(instance._jwt).toBe('SOMETHING');
+      expect(instance.jwt).toBe('SOMETHING');
     });
   });
 
@@ -195,6 +210,26 @@ describe('Class Apple Pay', () => {
       const { instance } = ApplePayFixture();
       instance.setAmountAndCurrency();
       expect(instance.paymentRequest.currencyCode).toEqual(instance.stJwtInstance.currencyiso3a);
+    });
+    // then
+    it('should handle error notification if it cannot set the value because amount is not set', () => {
+      const { instance } = ApplePayFixture();
+      instance.paymentRequest.total.amount = undefined;
+      instance.paymentRequest.currencyCode = 'SOMETHING';
+      instance.setNotification = jest.fn();
+      instance.setAmountAndCurrency();
+      expect(instance.setNotification).toHaveBeenCalledTimes(1);
+      expect(instance.setNotification).toHaveBeenCalledWith('ERROR', 'Amount and currency are not set');
+    });
+    // then
+    it('should handle error notification if it cannot set the value because currency is not set', () => {
+      const { instance } = ApplePayFixture();
+      instance.paymentRequest.total.amount = 'SOMETHING';
+      instance.paymentRequest.currencyCode = undefined;
+      instance.setNotification = jest.fn();
+      instance.setAmountAndCurrency();
+      expect(instance.setNotification).toHaveBeenCalledTimes(1);
+      expect(instance.setNotification).toHaveBeenCalledWith('ERROR', 'Amount and currency are not set');
     });
   });
 
