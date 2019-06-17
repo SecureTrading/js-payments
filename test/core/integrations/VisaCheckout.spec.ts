@@ -1,5 +1,4 @@
 import VisaCheckout from '../../../src/core/integrations/VisaCheckout';
-import { exportAllDeclaration } from '@babel/types';
 
 // given
 describe('Visa Checkout class', () => {
@@ -507,9 +506,7 @@ function VisaCheckoutFixture() {
   };
   const sandboxAssets = {
     sdk: 'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js',
-    buttonImg: `https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png?color=${
-      config.buttonSettings.color
-    }&size=${config.buttonSettings.size}`
+    buttonImg: `https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png?color=${config.buttonSettings.color}&size=${config.buttonSettings.size}`
   };
   const fakeVisaButton = document.createElement('img');
   fakeVisaButton.setAttribute('src', visaButttonProps.src);

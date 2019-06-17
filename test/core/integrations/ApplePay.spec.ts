@@ -9,7 +9,6 @@ import Language from '../../../src/core/shared/Language';
 import { NotificationType } from '../../../src/core/models/NotificationEvent';
 import ApplePay from '../../../src/core/integrations/ApplePay';
 import DomMethods from '../../../src/core/shared/DomMethods';
-import { exportAllDeclaration } from '@babel/types';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 

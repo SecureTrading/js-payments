@@ -2,8 +2,6 @@ import each from 'jest-each';
 import { CardinalCommerce, IThreeDQueryResponse } from '../../../src/core/integrations/CardinalCommerce';
 import MessageBus from '../../../src/core/shared/MessageBus';
 import DomMethods from '../../../src/core/shared/DomMethods';
-import { idText } from 'typescript';
-
 jest.mock('./../../../src/core/shared/MessageBus');
 
 // given
