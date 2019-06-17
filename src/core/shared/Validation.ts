@@ -139,13 +139,16 @@ export default class Validation extends Frame {
     if (errordata[0] === Validation.BACKEND_ERROR_FIELDS_NAMES.cardNumber) {
       validationEvent.type = MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD;
       this._messageBus.publish(validationEvent);
-    } else if (errordata[0] === Validation.BACKEND_ERROR_FIELDS_NAMES.expirationDate) {
+    }
+    if (errordata[0] === Validation.BACKEND_ERROR_FIELDS_NAMES.expirationDate) {
       validationEvent.type = MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD;
       this._messageBus.publish(validationEvent);
-    } else if (errordata[0] === Validation.BACKEND_ERROR_FIELDS_NAMES.securityCode) {
+    }
+    if (errordata[0] === Validation.BACKEND_ERROR_FIELDS_NAMES.securityCode) {
       validationEvent.type = MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD;
       this._messageBus.publish(validationEvent);
-    } else if (errordata.find((element: any) => element.includes(Validation.MERCHANT_EXTRA_FIELDS_PREFIX))) {
+    }
+    if (errordata.find((element: any) => element.includes(Validation.MERCHANT_EXTRA_FIELDS_PREFIX))) {
       validationEvent.type = MessageBus.EVENTS.VALIDATE_MERCHANT_FIELD;
       this._messageBus.publish(validationEvent, true);
     }
