@@ -1,11 +1,14 @@
 import FormField from '../../../src/core/shared/FormField';
+import Language from '../../../src/core/shared/Language';
 
+// given
 describe('FormField', () => {
   let formField: FormField;
   let inputElement: HTMLInputElement;
   let labelElement: HTMLLabelElement;
   let messageElement: HTMLParagraphElement;
 
+  // when
   beforeAll(() => {
     labelElement = document.createElement('label');
     inputElement = document.createElement('input');
@@ -24,7 +27,42 @@ describe('FormField', () => {
     formField = new FormField('st-form-field-input', 'st-form-field-message', 'st-form-field-label');
   });
 
+  // given
+  describe('getLabel()', () => {
+    let t: any;
+    beforeEach(() => {
+      t = () => {
+        throw new Error();
+      };
+    });
+
+    // then
+    it('should throw exception', () => {
+      // @ts-ignore
+      formField.getLabel();
+      expect(t).toThrow(Error);
+    });
+  });
+  // given
+  describe('onClick()', () => {
+    let spy: jest.SpyInstance;
+
+    beforeEach(() => {
+      const event = new Event('click');
+      // @ts-ignore
+      spy = jest.spyOn(formField, '_click');
+      // @ts-ignore
+      formField.onClick(event);
+    });
+
+    it('should call click method', () => {
+      expect(spy).toBeCalled();
+    });
+  });
+
+  // given
   describe('setAttributes()', () => {
+    // then
     it('should set attributes to HTML input element', () => {
       let inputAttributes = {
         maxlength: 10,
@@ -38,7 +76,9 @@ describe('FormField', () => {
     });
   });
 
+  // given
   describe('onFocus()', () => {
+    // then
     it('should focus on input element', () => {
       // @ts-ignore
       const mockFocus = (formField._inputElement.focus = jest.fn());
@@ -48,8 +88,9 @@ describe('FormField', () => {
       expect(mockFocus).toBeCalledWith();
     });
   });
-
+  // given
   describe('_addTabListener()', () => {
+    // then
     it('should add focus event listener', () => {
       window.addEventListener = jest.fn();
       // @ts-ignore
