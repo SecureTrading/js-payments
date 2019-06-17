@@ -40,9 +40,10 @@ class StCodec {
 
   public static getErrorData(data: any) {
     const { errordata, errormessage, requesttypedescription } = data;
+    const errorMessageTranslated = StCodec._translator.translate(errormessage);
     return {
       errordata,
-      errormessage,
+      errormessage: errorMessageTranslated,
       requesttypedescription
     };
   }
