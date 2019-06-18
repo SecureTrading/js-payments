@@ -200,7 +200,6 @@ jobs:
       if: env(AUTOMATION_TEST_TAG)=fullTest
       script:
         - make test_iPadMini4_11_0_$AUTOMATION_TEST_TAG
-
     - stage: Smoke Tests
       if: env(AUTOMATION_TEST_TAG)=smokeTest
     - name: "Behavioural test: chrome 74, Windows 10"
