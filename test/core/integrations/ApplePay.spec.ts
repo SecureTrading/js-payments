@@ -1,8 +1,14 @@
+import ApplePaySessionMock from '../../../src/core/integrations/ApplePaySessionMock';
+(window as any).ApplePaySession = ApplePaySessionMock; // has to be defined before we import ApplePay
+(window as any).ApplePaySession.supportsVersion = jest.fn();
+(window as any).ApplePaySession.canMakePayments = jest.fn();
+(window as any).ApplePaySession.canMakePaymentsWithActiveCard = jest.fn();
+(window as any).ApplePaySession.STATUS_SUCCESS = 'SUCCESS';
 const getType = require('jest-get-type');
 import Language from '../../../src/core/shared/Language';
 import { NotificationType } from '../../../src/core/models/NotificationEvent';
 import ApplePay from '../../../src/core/integrations/ApplePay';
-import ApplePaySessionMock from '../../../src/core/integrations/ApplePaySessionMock';
+import DomMethods from '../../../src/core/shared/DomMethods';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 
@@ -20,20 +26,73 @@ describe('Class Apple Pay', () => {
   // given
   describe('Method ifApplePayIsAvailable', () => {
     // then
-    it('should return false if device is not Mac', () => {
+    it('should return true if session exists', () => {
       const { instance } = ApplePayFixture();
-      expect(instance.ifApplePayIsAvailable()).toBeFalsy();
+      expect(instance.ifApplePayIsAvailable()).toBeTruthy();
     });
   });
 
   // given
-  describe('Method setApplePayVersion', () => {
+  describe('Method ifBrowserSupportsApplePayVersion', () => {
+    // then
+    it('should return true if browser supported', () => {
+      const { instance } = ApplePayFixture();
+      (window as any).ApplePaySession.supportsVersion = jest.fn().mockReturnValue(true);
+      expect(instance.ifBrowserSupportsApplePayVersion(3)).toBeTruthy();
+    });
+    // then
+    it('should return false if browser supported', () => {
+      const { instance } = ApplePayFixture();
+      (window as any).ApplePaySession.supportsVersion = jest.fn().mockReturnValue(false);
+      expect(instance.ifBrowserSupportsApplePayVersion(3)).not.toBeTruthy();
+    });
+  });
+
+  // given
+  describe('Method getApplePaySessionObject', () => {
+    // then
+    it('should get object', () => {
+      const { instance } = ApplePayFixture();
+      (window as any).ApplePaySession = jest.fn();
+      const session = instance.getApplePaySessionObject();
+      expect(session).toEqual({});
+    });
+  });
+
+  // given
+  describe('Method checkApplePayWalletCardAvailability', () => {
+    // then
+    it('should check availability', () => {
+      const { instance } = ApplePayFixture();
+      (window as any).ApplePaySession.canMakePaymentsWithActiveCard = jest.fn();
+      instance.merchantId = '123456789';
+      const availability = instance.checkApplePayWalletCardAvailability();
+      expect(availability).toBe(undefined);
+    });
+  });
+
+  // given
+  describe('Method getApplePaySession', () => {
     // then
     it('should set applePayVersion', () => {
       const { instance } = ApplePayFixture();
       instance.ifBrowserSupportsApplePayVersion = jest.fn().mockReturnValueOnce(true);
       instance.setApplePayVersion();
       expect(instance.applePayVersion).toEqual(5);
+    });
+  });
+
+  // given
+  describe('set jwt and get jwt', () => {
+    // then
+    it('should set _jwt and get _jwt', () => {
+      const { instance } = ApplePayFixture();
+      // @ts-ignore
+      instance._jwt = 'MY VALUE';
+      instance.jwt = 'SOMETHING';
+      // @ts-ignore
+      expect(instance._jwt).toBe('SOMETHING');
+      expect(instance.jwt).toBe('SOMETHING');
     });
   });
 
@@ -167,11 +226,17 @@ describe('Class Apple Pay', () => {
       Object.defineProperty(instance.session, 'begin', { value: '', writable: true });
       instance.session.begin = jest.fn();
       instance.getApplePaySessionObject = jest.fn().mockReturnValueOnce({});
-      const spy = jest.spyOn(instance, 'paymentProcess');
+      instance.paymentProcess = jest.fn();
       instance.applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
-      // TODO: Sth is wrong here and I cannot mock this.session.begin() function
-      // document.getElementById(ApplePay.APPLE_PAY_BUTTON_ID).click();
-      // expect(spy).toHaveBeenCalled();
+
+      const ev = new MouseEvent('click', {
+        view: window,
+        bubbles: true,
+        cancelable: true
+      });
+      document.getElementById(ApplePay.APPLE_PAY_BUTTON_ID).dispatchEvent(ev);
+      expect(instance.paymentProcess).toHaveBeenCalledTimes(1);
+      expect(instance.paymentProcess).toHaveBeenCalledWith();
     });
   });
 
@@ -189,6 +254,26 @@ describe('Class Apple Pay', () => {
       const { instance } = ApplePayFixture();
       instance.setAmountAndCurrency();
       expect(instance.paymentRequest.currencyCode).toEqual(instance.stJwtInstance.currencyiso3a);
+    });
+    // then
+    it('should handle error notification if it cannot set the value because amount is not set', () => {
+      const { instance } = ApplePayFixture();
+      instance.paymentRequest.total.amount = undefined;
+      instance.paymentRequest.currencyCode = 'SOMETHING';
+      instance.setNotification = jest.fn();
+      instance.setAmountAndCurrency();
+      expect(instance.setNotification).toHaveBeenCalledTimes(1);
+      expect(instance.setNotification).toHaveBeenCalledWith('ERROR', 'Amount and currency are not set');
+    });
+    // then
+    it('should handle error notification if it cannot set the value because currency is not set', () => {
+      const { instance } = ApplePayFixture();
+      instance.paymentRequest.total.amount = 'SOMETHING';
+      instance.paymentRequest.currencyCode = undefined;
+      instance.setNotification = jest.fn();
+      instance.setAmountAndCurrency();
+      expect(instance.setNotification).toHaveBeenCalledTimes(1);
+      expect(instance.setNotification).toHaveBeenCalledWith('ERROR', 'Amount and currency are not set');
     });
   });
 
@@ -259,6 +344,62 @@ describe('Class Apple Pay', () => {
       instance.onValidateMerchantRequest();
       expect(getType(instance.session.onvalidatemerchant)).toBe('function');
     });
+
+    it('should call onvalidatemerchant and set walletvalidationurl and process walletverify', async () => {
+      const { instance } = ApplePayFixture();
+
+      instance.payment.walletVerify = jest.fn().mockResolvedValueOnce({ myData: 'response' });
+      instance.onValidateMerchantResponseSuccess = jest.fn();
+      instance.setNotification = jest.fn();
+      instance.session = {};
+      Object.defineProperty(instance.session, 'onvalidatemerchant', { value: '', writable: true });
+      instance.onValidateMerchantRequest();
+
+      await instance.session.onvalidatemerchant({ validationURL: 'https://example.com' });
+
+      expect(instance.payment.walletVerify).toHaveBeenCalledTimes(1);
+      expect(instance.payment.walletVerify).toHaveBeenCalledWith({
+        walletmerchantid: 'merchant.net.securetrading',
+        walletrequestdomain: 'localhost',
+        walletsource: 'APPLEPAY',
+        walletvalidationurl: 'https://example.com'
+      });
+      expect(instance.validateMerchantRequestData.walletvalidationurl).toBe('https://example.com');
+      expect(instance.onValidateMerchantResponseSuccess).toHaveBeenCalledTimes(1);
+      expect(instance.onValidateMerchantResponseSuccess).toHaveBeenCalledWith({ myData: 'response' });
+      expect(instance.setNotification).toHaveBeenCalledTimes(0);
+    });
+
+    it('should call onvalidatemerchant and set walletvalidationurl handle errors', async () => {
+      const { instance } = ApplePayFixture();
+
+      instance.payment.walletVerify = jest
+        .fn()
+        .mockRejectedValueOnce({ errorcode: '30000', errormessage: 'Invalid field' });
+      instance.onValidateMerchantResponseFailure = jest.fn();
+      instance.setNotification = jest.fn();
+      instance.session = {};
+      Object.defineProperty(instance.session, 'onvalidatemerchant', { value: '', writable: true });
+      instance.onValidateMerchantRequest();
+
+      await instance.session.onvalidatemerchant({ validationURL: 'https://example.com' });
+
+      expect(instance.payment.walletVerify).toHaveBeenCalledTimes(1);
+      expect(instance.payment.walletVerify).toHaveBeenCalledWith({
+        walletmerchantid: 'merchant.net.securetrading',
+        walletrequestdomain: 'localhost',
+        walletsource: 'APPLEPAY',
+        walletvalidationurl: 'https://example.com'
+      });
+      expect(instance.validateMerchantRequestData.walletvalidationurl).toBe('https://example.com');
+      expect(instance.onValidateMerchantResponseFailure).toHaveBeenCalledTimes(1);
+      expect(instance.onValidateMerchantResponseFailure).toHaveBeenCalledWith({
+        errorcode: '30000',
+        errormessage: 'Invalid field'
+      });
+      expect(instance.setNotification).toHaveBeenCalledTimes(1);
+      expect(instance.setNotification).toHaveBeenCalledWith('ERROR', '30000: Invalid field');
+    });
   });
 
   // given
@@ -271,6 +412,108 @@ describe('Class Apple Pay', () => {
       instance.onPaymentAuthorized();
       expect(getType(instance.session.onpaymentauthorized)).toBe('function');
     });
+
+    it('should call onpaymentauthorized and set paymentDetails and process successful AUTH', async () => {
+      const { instance } = ApplePayFixture();
+
+      instance.payment.processPayment = jest.fn().mockResolvedValueOnce({ myData: 'response' });
+      instance.setNotification = jest.fn();
+      DomMethods.parseMerchantForm = jest.fn().mockReturnValueOnce({ billingfirstname: 'BOB' });
+      instance.getPaymentSuccessStatus = jest.fn().mockReturnValueOnce('SUCCESS');
+      // @ts-ignore
+      instance.tokenise = false;
+      instance.validateMerchantRequestData.walletsource = 'APPLEPAY';
+      instance.session = { completePayment: jest.fn() };
+      Object.defineProperty(instance.session, 'onpaymentauthorized', { value: '', writable: true });
+      instance.onPaymentAuthorized();
+
+      await instance.session.onpaymentauthorized({ payment: { TOKEN: 'TOKEN DATA' } });
+
+      expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
+      expect(instance.payment.processPayment).toHaveBeenCalledWith(
+        { requesttypedescription: 'AUTH' },
+        { walletsource: 'APPLEPAY', wallettoken: '{"TOKEN":"TOKEN DATA"}' },
+        { billingfirstname: 'BOB' }
+      );
+      expect(instance.setNotification).toHaveBeenCalledTimes(1);
+      expect(instance.setNotification).toHaveBeenCalledWith('SUCCESS', 'Payment has been successfully processed');
+      expect(instance.session.completePayment).toHaveBeenCalledTimes(1);
+      expect(instance.session.completePayment).toHaveBeenCalledWith({ status: 'SUCCESS', errors: [] });
+    });
+
+    it('should call onpaymentauthorized and set paymentDetails and process successful CACHETOKEN', async () => {
+      const { instance } = ApplePayFixture();
+
+      instance.payment.processPayment = jest.fn().mockResolvedValueOnce({ myData: 'response' });
+      instance.setNotification = jest.fn();
+      DomMethods.parseMerchantForm = jest.fn().mockReturnValueOnce({ billingfirstname: 'BOB' });
+      instance.getPaymentSuccessStatus = jest.fn().mockReturnValueOnce('SUCCESS');
+      // @ts-ignore
+      instance.tokenise = true;
+      instance.validateMerchantRequestData.walletsource = 'APPLEPAY';
+      instance.session = { completePayment: jest.fn() };
+      Object.defineProperty(instance.session, 'onpaymentauthorized', { value: '', writable: true });
+      instance.onPaymentAuthorized();
+
+      await instance.session.onpaymentauthorized({ payment: { TOKEN: 'TOKEN DATA' } });
+
+      expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
+      expect(instance.payment.processPayment).toHaveBeenCalledWith(
+        { requesttypedescription: 'CACHETOKENISE' },
+        { walletsource: 'APPLEPAY', wallettoken: '{"TOKEN":"TOKEN DATA"}' },
+        { billingfirstname: 'BOB' }
+      );
+      expect(instance.setNotification).toHaveBeenCalledTimes(1);
+      expect(instance.setNotification).toHaveBeenCalledWith('SUCCESS', 'Payment has been successfully processed');
+      expect(instance.session.completePayment).toHaveBeenCalledTimes(1);
+      expect(instance.session.completePayment).toHaveBeenCalledWith({ status: 'SUCCESS', errors: [] });
+    });
+
+    it('should call onpaymentauthorized and set paymentDetails and handle failure', async () => {
+      const { instance } = ApplePayFixture();
+
+      instance.payment.processPayment = jest.fn().mockRejectedValueOnce({ myData: 'response' });
+      instance.setNotification = jest.fn();
+      DomMethods.parseMerchantForm = jest.fn().mockReturnValueOnce({ billingfirstname: 'BOB' });
+      instance.getPaymentFailureStatus = jest.fn().mockReturnValueOnce('FAILURE');
+      // @ts-ignore
+      instance.tokenise = false;
+      instance.validateMerchantRequestData.walletsource = 'APPLEPAY';
+      instance.session = { completePayment: jest.fn() };
+      Object.defineProperty(instance.session, 'onpaymentauthorized', { value: '', writable: true });
+      instance.onPaymentAuthorized();
+
+      await instance.session.onpaymentauthorized({ payment: { TOKEN: 'TOKEN DATA' } });
+
+      expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
+      expect(instance.payment.processPayment).toHaveBeenCalledWith(
+        { requesttypedescription: 'AUTH' },
+        { walletsource: 'APPLEPAY', wallettoken: '{"TOKEN":"TOKEN DATA"}' },
+        { billingfirstname: 'BOB' }
+      );
+      expect(instance.setNotification).toHaveBeenCalledTimes(1);
+      expect(instance.setNotification).toHaveBeenCalledWith('ERROR', 'An error occurred');
+      expect(instance.session.completePayment).toHaveBeenCalledTimes(1);
+      expect(instance.session.completePayment).toHaveBeenCalledWith({ status: 'FAILURE', errors: [] });
+    });
+  });
+
+  // given
+  describe('Method getPaymentSuccessStatus', () => {
+    // then
+    it('should return success', () => {
+      const { instance } = ApplePayFixture();
+      expect(instance.getPaymentSuccessStatus()).toBe('SUCCESS');
+    });
+  });
+
+  // given
+  describe('Method getPaymentFailureStatus', () => {
+    // then
+    it('should return error', () => {
+      const { instance } = ApplePayFixture();
+      expect(instance.getPaymentFailureStatus()).toBe('FAILURE');
+    });
   });
 
   // given
@@ -282,6 +525,11 @@ describe('Class Apple Pay', () => {
       Object.defineProperty(instance.session, 'oncancel', { value: '', writable: true });
       instance.onPaymentCanceled();
       expect(getType(instance.session.oncancel)).toBe('function');
+
+      instance.setNotification = jest.fn();
+      instance.session.oncancel({});
+      expect(instance.setNotification).toHaveBeenCalledTimes(1);
+      expect(instance.setNotification).toHaveBeenCalledWith('WARNING', 'Payment has been cancelled');
     });
   });
   // given
@@ -304,7 +552,7 @@ describe('Class Apple Pay', () => {
       instance.session = {};
       instance.session.abort = jest.fn();
       const spy = jest.spyOn(instance, 'onValidateMerchantResponseFailure');
-      instance.onValidateMerchantResponseFailure(response);
+      instance.onValidateMerchantResponseSuccess(response);
       expect(spy).toHaveBeenCalled();
     });
   });
@@ -333,46 +581,101 @@ describe('Class Apple Pay', () => {
   });
 
   // given
+  describe('Method subscribeStatusHandlers', () => {
+    let sessionObjectFake: object;
+    let instance: any;
+    beforeEach(() => {
+      instance = ApplePayFixture().instance;
+      sessionObjectFake = {
+        completePaymentMethodSelection: jest.fn(),
+        completeShippingContactSelection: jest.fn(),
+        completeShippingMethodSelection: jest.fn(),
+        onpaymentmethodselected: undefined,
+        onshippingcontactselected: undefined,
+        onshippingmethodselected: undefined
+      };
+      instance.session = sessionObjectFake;
+      instance.paymentRequest = { total: { amount: '10.00', label: 'someLabel' } };
+    });
+    // then
+    it('should set callback functions', () => {
+      instance.subscribeStatusHandlers();
+      expect(instance.session.onpaymentmethodselected).toBeInstanceOf(Function);
+      expect(instance.session.onshippingcontactselected).toBeInstanceOf(Function);
+      expect(instance.session.onshippingmethodselected).toBeInstanceOf(Function);
+    });
+
+    // then
+    it('calling onpaymentmethodselected should call completePaymentMethodSelection', () => {
+      instance.subscribeStatusHandlers();
+      instance.session.onpaymentmethodselected({ paymentMethod: 'MYMETHOD' });
+      expect(instance.session.completePaymentMethodSelection).toHaveBeenCalledTimes(1);
+      expect(instance.session.completePaymentMethodSelection).toHaveBeenCalledWith({
+        newTotal: {
+          amount: '10.00',
+          label: 'someLabel',
+          type: 'final'
+        }
+      });
+      expect(instance.session.completeShippingMethodSelection).toHaveBeenCalledTimes(0);
+      expect(instance.session.completeShippingContactSelection).toHaveBeenCalledTimes(0);
+    });
+    // then
+    it('calling onshippingmethodselected should call completeShippingMethodSelection', () => {
+      instance.subscribeStatusHandlers();
+      instance.session.onshippingmethodselected({ paymentMethod: 'MYMETHOD' });
+      expect(instance.session.completePaymentMethodSelection).toHaveBeenCalledTimes(0);
+      expect(instance.session.completeShippingMethodSelection).toHaveBeenCalledTimes(1);
+      expect(instance.session.completeShippingMethodSelection).toHaveBeenCalledWith({
+        newTotal: {
+          amount: '10.00',
+          label: 'someLabel',
+          type: 'final'
+        }
+      });
+      expect(instance.session.completeShippingContactSelection).toHaveBeenCalledTimes(0);
+    });
+    // then
+    it('calling onshippingmethodselected should call completeShippingContactSelection', () => {
+      instance.subscribeStatusHandlers();
+      instance.session.onshippingcontactselected({ paymentMethod: 'MYMETHOD' });
+      expect(instance.session.completePaymentMethodSelection).toHaveBeenCalledTimes(0);
+      expect(instance.session.completeShippingMethodSelection).toHaveBeenCalledTimes(0);
+      expect(instance.session.completeShippingContactSelection).toHaveBeenCalledTimes(1);
+      expect(instance.session.completeShippingContactSelection).toHaveBeenCalledWith({
+        newTotal: {
+          amount: '10.00',
+          label: 'someLabel',
+          type: 'final'
+        }
+      });
+    });
+  });
+
+  // given
   describe('Method paymentProcess', () => {
     let sessionObjectFake: object;
     beforeEach(() => {
-      sessionObjectFake = {};
+      sessionObjectFake = { begin: jest.fn() };
     });
 
     // then
-    it('should onValidateMerchantRequest has been called', () => {
+    it('should call correct functions', () => {
       const { instance } = ApplePayFixture();
-      instance.session = sessionObjectFake;
-      const spy = jest.spyOn(instance, 'onValidateMerchantRequest');
-      instance.onValidateMerchantRequest();
-      expect(spy).toHaveBeenCalled();
-    });
+      instance.getApplePaySessionObject = jest.fn().mockReturnValueOnce(sessionObjectFake);
+      instance.onValidateMerchantRequest = jest.fn();
+      instance.subscribeStatusHandlers = jest.fn();
+      instance.onPaymentAuthorized = jest.fn();
+      instance.onPaymentCanceled = jest.fn();
 
-    // then
-    it('should subscribeStatusHandlers has been called', () => {
-      const { instance } = ApplePayFixture();
-      instance.session = sessionObjectFake;
-      const spy = jest.spyOn(instance, 'subscribeStatusHandlers');
-      instance.subscribeStatusHandlers();
-      expect(spy).toHaveBeenCalled();
-    });
+      instance.paymentProcess();
+      expect(instance.getApplePaySessionObject).toHaveBeenCalled();
+      expect(instance.onValidateMerchantRequest).toHaveBeenCalled();
+      expect(instance.subscribeStatusHandlers).toHaveBeenCalled();
+      expect(instance.onPaymentAuthorized).toHaveBeenCalled();
+      expect(instance.onPaymentCanceled).toHaveBeenCalled();
 
-    // then
-    it('should onPaymentAuthorized has been called', () => {
-      const { instance } = ApplePayFixture();
-      instance.session = sessionObjectFake;
-      const spy = jest.spyOn(instance, 'onPaymentAuthorized');
-      instance.onPaymentAuthorized();
-      expect(spy).toHaveBeenCalled();
-    });
-
-    // then
-    it('should onPaymentCanceled has been called', () => {
-      const { instance } = ApplePayFixture();
-      instance.session = sessionObjectFake;
-      const spy = jest.spyOn(instance, 'onPaymentCanceled');
-      instance.onPaymentCanceled();
-      expect(spy).toHaveBeenCalled();
+      expect(instance.session.begin).toHaveBeenCalled();
     });
   });
 

@@ -140,8 +140,9 @@ export class ApplePay {
    * Checks whether user uses Safari and if it's version supports Apple Pay
    * @param version
    */
-  public ifBrowserSupportsApplePayVersion = (version: number) => ApplePaySession.supportsVersion(version);
-
+  public ifBrowserSupportsApplePayVersion = (version: number) => {
+    return ApplePaySession.supportsVersion(version);
+  };
   /**
    * Sets the latest possible ApplePay version
    */
@@ -186,9 +187,7 @@ export class ApplePay {
       ? (this.buttonText = buttonText)
       : (this.buttonText = ApplePay.AVAILABLE_BUTTON_TEXTS[0]);
 
-    this._applePayButtonProps.style = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${
-      this.buttonText
-    }; -apple-pay-button-style: ${this.buttonStyle}`;
+    this._applePayButtonProps.style = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${this.buttonText}; -apple-pay-button-style: ${this.buttonStyle}`;
   }
 
   /**
@@ -291,7 +290,7 @@ export class ApplePay {
   public onValidateMerchantRequest() {
     this.session.onvalidatemerchant = (event: any) => {
       this.validateMerchantRequestData.walletvalidationurl = event.validationURL;
-      this.payment
+      return this.payment
         .walletVerify(this.validateMerchantRequestData)
         .then(response => {
           this.onValidateMerchantResponseSuccess(response);
@@ -319,7 +318,7 @@ export class ApplePay {
     this.session.onpaymentauthorized = (event: any) => {
       this.paymentDetails = JSON.stringify(event.payment);
       // @TODO STJS-205 refactor into Payments
-      this.payment
+      return this.payment
         .processPayment(
           { requesttypedescription: this.tokenise ? 'CACHETOKENISE' : 'AUTH' },
           {
