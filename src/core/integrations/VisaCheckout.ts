@@ -200,7 +200,7 @@ export class VisaCheckout {
    */
   // @TODO STJS-205 refactor into Payments
   protected _processPayment() {
-    this.payment
+    return this.payment
       .processPayment(
         { requesttypedescription: this._tokenise ? 'CACHETOKENISE' : 'AUTH' },
         {

@@ -6,10 +6,10 @@ describe('Visa Checkout class', () => {
   let instance: any;
   // when
   beforeEach(() => {
-    const { config } = VisaCheckoutFixture();
+    const { config, url } = VisaCheckoutFixture();
     const jwt =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
-    instance = new VisaCheckout(config, false, jwt, 'https://example.com');
+    instance = new VisaCheckout(config, false, jwt, url);
     body = document.body;
   });
 
@@ -107,6 +107,11 @@ describe('Visa Checkout class', () => {
     it('should handle undefined settings', () => {
       const result = instance.setConfiguration({ payment: 'request', another: 'value' }, undefined);
       expect(result).toMatchObject({ payment: 'request', another: 'value' });
+    });
+    // then
+    it('should handle undefined both', () => {
+      const result = instance.setConfiguration(undefined, undefined);
+      expect(result).toMatchObject({});
     });
   });
 
@@ -288,9 +293,35 @@ describe('Visa Checkout class', () => {
   });
 
   // given
-  describe('setNotification()', () => {
+  describe('customizeVisaButton()', () => {
     // then
-    it('', () => {});
+    it('should handle no color or size', () => {
+      const { url } = VisaCheckoutFixture();
+      instance._visaCheckoutButtonProps.src = url;
+      const resp = instance.customizeVisaButton({});
+      expect(resp).toBe(`${url}/`);
+    });
+    // then
+    it('should set color', () => {
+      const { url } = VisaCheckoutFixture();
+      instance._visaCheckoutButtonProps.src = url;
+      const resp = instance.customizeVisaButton({ color: 'neutral' });
+      expect(resp).toBe(`${url}/?color=neutral`);
+    });
+    // then
+    it('should set size', () => {
+      const { url } = VisaCheckoutFixture();
+      instance._visaCheckoutButtonProps.src = url;
+      const resp = instance.customizeVisaButton({ size: '154' });
+      expect(resp).toBe(`${url}/?size=154`);
+    });
+    // then
+    it('should set color and size', () => {
+      const { url } = VisaCheckoutFixture();
+      instance._visaCheckoutButtonProps.src = url;
+      const resp = instance.customizeVisaButton({ color: 'neutral', size: '154' });
+      expect(resp).toBe(`${url}/?color=neutral&size=154`);
+    });
   });
   // given
   describe('_onSuccess()', () => {
@@ -360,9 +391,105 @@ describe('Visa Checkout class', () => {
       expect(instance.responseMessage).toBe(undefined);
     });
   });
+
+  // given
+  describe('_processPayment()', () => {
+    // then
+    it('should process AUTH call getResponseMessage and setNotification for success with tokenise false', async () => {
+      instance.payment.processPayment = jest.fn().mockResolvedValueOnce({ myData: 'response' });
+      instance.getResponseMessage = jest.fn();
+      instance.setNotification = jest.fn();
+      instance.responseMessage = 'MYRESPONSE';
+      instance._tokenise = false;
+      instance._walletSource = 'VISACHECKOUT';
+      instance.paymentDetails = 'TOKEN';
+      await instance._processPayment();
+      expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
+      expect(instance.payment.processPayment).toHaveBeenCalledWith(
+        { requesttypedescription: 'AUTH' },
+        { walletsource: 'VISACHECKOUT', wallettoken: 'TOKEN' },
+        {}
+      );
+      expect(instance.getResponseMessage).toHaveBeenCalledTimes(1);
+      expect(instance.getResponseMessage).toHaveBeenCalledWith('SUCCESS');
+      expect(instance.setNotification).toHaveBeenCalledTimes(1);
+      expect(instance.setNotification).toHaveBeenCalledWith('SUCCESS', 'MYRESPONSE');
+    });
+
+    // then
+    it('should process CACHETOKEN call getResponseMessage and setNotification for success with tokenise true', async () => {
+      instance.payment.processPayment = jest.fn().mockResolvedValueOnce({ myData: 'response' });
+      instance.getResponseMessage = jest.fn();
+      instance.setNotification = jest.fn();
+      instance.responseMessage = 'MYRESPONSE';
+      instance._tokenise = true;
+      instance._walletSource = 'VISACHECKOUT';
+      instance.paymentDetails = 'TOKEN';
+      await instance._processPayment();
+      expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
+      expect(instance.payment.processPayment).toHaveBeenCalledWith(
+        { requesttypedescription: 'CACHETOKENISE' },
+        { walletsource: 'VISACHECKOUT', wallettoken: 'TOKEN' },
+        {}
+      );
+      expect(instance.getResponseMessage).toHaveBeenCalledTimes(1);
+      expect(instance.getResponseMessage).toHaveBeenCalledWith('SUCCESS');
+      expect(instance.setNotification).toHaveBeenCalledTimes(1);
+      expect(instance.setNotification).toHaveBeenCalledWith('SUCCESS', 'MYRESPONSE');
+    });
+
+    // then
+    it('should process AUTH call getResponseMessage and setNotification for error with tokenise false', async () => {
+      instance.payment.processPayment = jest.fn().mockRejectedValueOnce({ myData: 'response' });
+      instance.getResponseMessage = jest.fn();
+      instance.setNotification = jest.fn();
+      instance.responseMessage = 'MYRESPONSE';
+      instance._tokenise = false;
+      instance._walletSource = 'VISACHECKOUT';
+      instance.paymentDetails = 'TOKEN';
+      await instance._processPayment();
+      expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
+      expect(instance.payment.processPayment).toHaveBeenCalledWith(
+        { requesttypedescription: 'AUTH' },
+        { walletsource: 'VISACHECKOUT', wallettoken: 'TOKEN' },
+        {}
+      );
+      expect(instance.getResponseMessage).toHaveBeenCalledTimes(1);
+      expect(instance.getResponseMessage).toHaveBeenCalledWith('ERROR');
+      expect(instance.setNotification).toHaveBeenCalledTimes(1);
+      expect(instance.setNotification).toHaveBeenCalledWith('ERROR', 'MYRESPONSE');
+    });
+  });
+
+  // given
+  describe('setNotification()', () => {
+    // then
+    it('should call publishFromParent with SUCCESS', () => {
+      instance.messageBus.publishFromParent = jest.fn();
+      instance.setNotification('SUCCESS', 'MYCONTENT');
+      expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
+      expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
+        { data: { content: 'MYCONTENT', type: 'SUCCESS' }, type: 'NOTIFICATION' },
+        'st-notification-frame-iframe'
+      );
+    });
+    // then
+    it('should call publishFromParent with ERROR', () => {
+      instance.messageBus.publishFromParent = jest.fn();
+      instance.setNotification('ERROR', 'ANOTHER');
+      expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
+      expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
+        { data: { content: 'ANOTHER', type: 'ERROR' }, type: 'NOTIFICATION' },
+        'st-notification-frame-iframe'
+      );
+    });
+  });
 });
 
 function VisaCheckoutFixture() {
+  const html = '<form id="st-form"><button id="v-button" /></form>';
+  document.body.innerHTML = html;
+
   const visaButttonProps = {
     alt: 'Visa Checkout',
     class: 'v-button',
@@ -383,9 +510,7 @@ function VisaCheckoutFixture() {
   };
   const sandboxAssets = {
     sdk: 'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js',
-    buttonImg: `https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png?color=${
-      config.buttonSettings.color
-    }&size=${config.buttonSettings.size}`
+    buttonImg: `https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png?color=${config.buttonSettings.color}&size=${config.buttonSettings.size}`
   };
   const fakeVisaButton = document.createElement('img');
   fakeVisaButton.setAttribute('src', visaButttonProps.src);
@@ -398,8 +523,8 @@ function VisaCheckoutFixture() {
     'src',
     'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js'
   );
-
+  const url = 'https://example.com';
   const fakeV = { init: jest.fn(), on: jest.fn() };
 
-  return { config, fakeVisaButton, sdkMarkup, productionAssets, sandboxAssets, fakeV };
+  return { config, fakeVisaButton, sdkMarkup, productionAssets, sandboxAssets, fakeV, url };
 }
