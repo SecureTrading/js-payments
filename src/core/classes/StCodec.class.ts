@@ -88,7 +88,6 @@ class StCodec {
   }
 
   private static _notification = new Notification();
-  private static _translator: Translator;
   private static _locale: string;
   private static _messageBus = new MessageBus();
   private static _parentOrigin: string;
