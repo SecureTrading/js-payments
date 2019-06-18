@@ -1,7 +1,7 @@
 import FormField from '../../../src/core/shared/FormField';
 import Language from '../../../src/core/shared/Language';
-import Validation from '../../../src/core/shared/Validation';
 
+jest.mock('./../../../src/core/shared/Validation');
 // given
 describe('FormField', () => {
   // given
@@ -34,20 +34,53 @@ describe('FormField', () => {
     });
   });
   // given
-  describe('onKeyPress()', () => {
+  describe('onFocus()', () => {
+    const { instance } = FormFieldFixture();
     let spy: jest.SpyInstance;
+    // then
+    it('should focus on input element', () => {
+      // @ts-ignore
+      const mockFocus = (instance._inputElement.focus = jest.fn());
+      // @ts-ignore
+      instance.onFocus();
+      expect(mockFocus).toBeCalledTimes(2);
+    });
+  });
+  // given
+  describe('onInput()', () => {
+    const { instance } = FormFieldFixture();
+    let spy: jest.SpyInstance;
+    // then
+    it('should input on input element', () => {
+      // @ts-ignore
+      spy = jest.spyOn(instance, 'format');
+      // @ts-ignore
+      instance.onInput();
+      expect(spy).toBeCalledTimes(1);
+    });
+  });
+  // given
+  describe('onKeyPress()', () => {
     const { instance } = FormFieldFixture();
     const event: KeyboardEvent = new KeyboardEvent('keypress', { key: 'a' });
+    // @ts-ignore
+    const eventSuccess: KeyboardEvent = new KeyboardEvent('keypress', { keyCode: 13 });
     const preventDefault = jest.spyOn(event, 'preventDefault');
-
-    beforeEach(() => {
-      // @ts-ignore
-      instance.onKeyPress(event);
-    });
+    // @ts-ignore
+    instance._messageBus.publish = jest.fn().mockImplementation(() => {});
 
     // then
-    it('should trigger isMaxLengthReached function and prevents default event ', () => {
+    it('should trigger preventDefault function and prevents default event ', () => {
+      // @ts-ignore
+      instance.onKeyPress(event);
       expect(preventDefault).toHaveBeenCalled();
+    });
+    // then
+    it('should trigger instance._messageBus.publish ', () => {
+      // @ts-ignore
+      instance.onKeyPress(eventSuccess);
+      // @ts-ignore
+      // expect(instance._messageBus.publish).toHaveBeenCalled();
     });
   });
   // given
@@ -68,37 +101,8 @@ describe('FormField', () => {
     });
   });
   // given
-  describe('onFocus()', () => {
-    const { instance } = FormFieldFixture();
-    // then
-    it('should focus on input element', () => {
-      // @ts-ignore
-      const mockFocus = (instance._inputElement.focus = jest.fn());
-      // @ts-ignore
-      instance.onFocus();
-      expect(mockFocus).toBeCalledTimes(2);
-      expect(mockFocus).toBeCalledWith();
-    });
-  });
-  // given
-  describe('_addTabListener()', () => {
-    const { instance } = FormFieldFixture();
-    // then
-    it('should add focus event listener', () => {
-      window.addEventListener = jest.fn();
-      // @ts-ignore
-      instance._addTabListener();
-
-      expect(window.addEventListener).toBeCalledTimes(1);
-      // @ts-ignore
-      const calls = window.addEventListener.mock.calls;
-      expect(calls[0].length).toBe(2);
-      expect(calls[0][0]).toBe('focus');
-      expect(calls[0][1]).toBeInstanceOf(Function);
-    });
-  });
-  // given
   describe('_setInputListeners()', () => {
+    const { instance } = FormFieldFixture();
     // then
     it('should call onPaste listener', () => {});
     // then
