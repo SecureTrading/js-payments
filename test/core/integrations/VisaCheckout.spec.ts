@@ -6,10 +6,10 @@ describe('Visa Checkout class', () => {
   let instance: any;
   // when
   beforeEach(() => {
-    const { config } = VisaCheckoutFixture();
+    const { config, url } = VisaCheckoutFixture();
     const jwt =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
-    instance = new VisaCheckout(config, false, jwt, 'https://example.com');
+    instance = new VisaCheckout(config, false, jwt, url);
     body = document.body;
   });
 
@@ -296,27 +296,31 @@ describe('Visa Checkout class', () => {
   describe('customizeVisaButton()', () => {
     // then
     it('should handle no color or size', () => {
-      instance._visaCheckoutButtonProps.src = 'https://example.com';
+      const { url } = VisaCheckoutFixture();
+      instance._visaCheckoutButtonProps.src = url;
       const resp = instance.customizeVisaButton({});
-      expect(resp).toBe('https://example.com/');
+      expect(resp).toBe(`${url}/`);
     });
     // then
     it('should set color', () => {
-      instance._visaCheckoutButtonProps.src = 'https://example.com';
+      const { url } = VisaCheckoutFixture();
+      instance._visaCheckoutButtonProps.src = url;
       const resp = instance.customizeVisaButton({ color: 'neutral' });
-      expect(resp).toBe('https://example.com/?color=neutral');
+      expect(resp).toBe(`${url}/?color=neutral`);
     });
     // then
     it('should set size', () => {
-      instance._visaCheckoutButtonProps.src = 'https://example.com';
+      const { url } = VisaCheckoutFixture();
+      instance._visaCheckoutButtonProps.src = url;
       const resp = instance.customizeVisaButton({ size: '154' });
-      expect(resp).toBe('https://example.com/?size=154');
+      expect(resp).toBe(`${url}/?size=154`);
     });
     // then
     it('should set color and size', () => {
-      instance._visaCheckoutButtonProps.src = 'https://example.com';
+      const { url } = VisaCheckoutFixture();
+      instance._visaCheckoutButtonProps.src = url;
       const resp = instance.customizeVisaButton({ color: 'neutral', size: '154' });
-      expect(resp).toBe('https://example.com/?color=neutral&size=154');
+      expect(resp).toBe(`${url}/?color=neutral&size=154`);
     });
   });
   // given
@@ -519,8 +523,8 @@ function VisaCheckoutFixture() {
     'src',
     'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js'
   );
-
+  const url = 'https://example.com';
   const fakeV = { init: jest.fn(), on: jest.fn() };
 
-  return { config, fakeVisaButton, sdkMarkup, productionAssets, sandboxAssets, fakeV };
+  return { config, fakeVisaButton, sdkMarkup, productionAssets, sandboxAssets, fakeV, url };
 }

@@ -3,7 +3,7 @@ import CardinalCommerceMock from '../../../src/core/integrations/CardinalCommerc
 // given
 describe('CardinalCommerce class', () => {
   let instance: any;
-  let { jwt } = CardinalCommerceMockFixture();
+  const { jwt } = CardinalCommerceMockFixture();
 
   // when
   beforeEach(() => {
