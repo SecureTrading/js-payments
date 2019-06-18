@@ -252,29 +252,4 @@ export class CardinalCommerce {
     }
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
-
-  // /**
-  //  * Retrieves validation data and assign it to class fields
-  //  * @param validationData
-  //  * @param jwt
-  //  * @private
-  //  */
-  // private _retrieveValidationData(validationData: any, jwt?: string) {
-  //   const { ActionCode } = validationData;
-  //   const authRequest = { ...this._payload };
-  //   if (ActionCode === CardinalCommerce.VALIDATION_EVENTS.SUCCESS) {
-  //     Object.defineProperty(authRequest, 'threedresponse', { value: jwt, writable: false });
-  //     this._authCallToST(authRequest).then((response: any) => alert(response.errormessage));
-  //   } else if (
-  //     ActionCode === CardinalCommerce.VALIDATION_EVENTS.FAILURE ||
-  //     ActionCode === CardinalCommerce.VALIDATION_EVENTS.NOACTION
-  //   ) {
-  //     this._authCallToST(authRequest).then((response: any) => alert(response.errormessage));
-  //   } else if (ActionCode === CardinalCommerce.VALIDATION_EVENTS.ERROR) {
-  //     alert(CardinalCommerce.VALIDATION_EVENTS.ERROR);
-  //   }
-  //   return { jwt, validationData };
-  // }
-  //
-  // private _authCallToST = (authRequest: any) => this._stTransport.sendRequest(authRequest);
 }
