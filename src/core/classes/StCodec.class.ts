@@ -56,6 +56,7 @@ class StCodec {
     // Ought we keep hold of the requestreference (eg. log it to console)
     // So that we can link these requests up with the gateway?
     const validation = new Validation();
+    const translator = new Translator(StCodec._locale);
     if (
       !(
         responseData &&
@@ -70,6 +71,7 @@ class StCodec {
     }
 
     const responseContent: IResponseData = responseData.response[0];
+    responseContent.errormessage = translator.translate(responseContent.errormessage);
     if (StCodec.REQUESTS_WITH_ERROR_MESSAGES.includes(responseContent.requesttypedescription)) {
       if (responseContent.errorcode !== StCodec.STATUS_CODES.ok) {
         if (responseContent.errorcode === StCodec.STATUS_CODES.invalidfield) {
@@ -86,14 +88,15 @@ class StCodec {
   }
 
   private static _notification = new Notification();
-  private static _translator = new Translator('en_GB');
+  private static _locale: string;
   private static _messageBus = new MessageBus();
   private static _parentOrigin: string;
   private static REQUESTS_WITH_ERROR_MESSAGES = ['AUTH', 'CACHETOKENISE', 'ERROR', 'THREEDQUERY', 'WALLETVERIFY'];
   private static STATUS_CODES = { invalidfield: '30000', ok: '0', declined: '70000' };
 
   private static publishResponse(responseData: IResponseData) {
-    responseData.errormessage = StCodec._translator.translate(responseData.errormessage);
+    const translator = new Translator(StCodec._locale);
+    responseData.errormessage = translator.translate(responseData.errormessage);
     const notificationEvent: IMessageBusEvent = {
       data: responseData,
       type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE
@@ -118,8 +121,8 @@ class StCodec {
   constructor(jwt: string, parentOrigin?: string) {
     this._requestId = StCodec._createRequestId();
     this._jwt = jwt;
+    StCodec._locale = new StJwt(this._jwt).locale;
     StCodec._parentOrigin = parentOrigin;
-    StCodec._translator = new Translator(new StJwt(this._jwt).locale);
     if (parentOrigin) {
       StCodec._messageBus = new MessageBus(parentOrigin);
     }
