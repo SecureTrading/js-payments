@@ -1,6 +1,7 @@
 import each from 'jest-each';
 import Language from '../../../src/core/shared/Language';
 import { StCodec } from '../../../src/core/classes/StCodec.class';
+import { Translator } from '../../../src/core/shared/Translator';
 
 describe('StCodec class', () => {
   const { instance } = stCodecFixture();
@@ -50,11 +51,11 @@ describe('StCodec class', () => {
   };
 
   describe('StCodec.publishResponse', () => {
+    let translator: Translator;
     beforeEach(() => {
       // @ts-ignore
-      StCodec._translator.translate = jest.fn();
-      // @ts-ignore
-      StCodec._translator.translate.mockReturnValueOnce('Translated');
+      translator = new Translator('en_GB');
+      translator.translate = jest.fn().mockReturnValue('Ok');
       // @ts-ignore
       StCodec._messageBus.publish = jest.fn();
       // @ts-ignore
@@ -70,13 +71,13 @@ describe('StCodec class', () => {
         errormessage: 'Ok'
       });
       // @ts-ignore
-      expect(StCodec._translator.translate).toHaveBeenCalledWith('Ok');
+      expect(translator.translate()).toEqual('Ok');
       // @ts-ignore
       expect(StCodec._messageBus.publish).toHaveBeenCalledWith(
         {
           data: {
             errorcode: '0',
-            errormessage: 'Translated'
+            errormessage: 'Ok'
           },
           type: 'TRANSACTION_COMPLETE'
         },
@@ -95,14 +96,14 @@ describe('StCodec class', () => {
         errormessage: 'Ok'
       });
       // @ts-ignore
-      expect(StCodec._translator.translate).toHaveBeenCalledWith('Ok');
+      expect(translator.translate()).toEqual('Ok');
       // @ts-ignore
       expect(StCodec._messageBus.publish).toHaveBeenCalledTimes(0);
-      // @ts-ignore
+      //@ts-ignore
       expect(StCodec._messageBus.publishToSelf).toHaveBeenCalledWith({
         data: {
           errorcode: '0',
-          errormessage: 'Translated'
+          errormessage: 'Ok'
         },
         type: 'TRANSACTION_COMPLETE'
       });
