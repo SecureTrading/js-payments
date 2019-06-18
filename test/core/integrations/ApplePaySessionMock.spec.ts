@@ -38,6 +38,29 @@ describe('Class ApplePaySessionMock', () => {
       session = applePaySessionMockFixture().session;
     });
 
+    // given
+    describe('ApplePayMock.begin()', () => {
+      let handleResp: any;
+      beforeEach(() => {
+        session = applePaySessionMockFixture().session;
+        handleResp = session._handleResponse;
+        session._handleResponse = jest.fn();
+      });
+      // then
+      it('should call _handleResponse on successful fetch', async () => {
+        const mockResponse = { json: jest.fn().mockReturnValue({ payment: 'somedata', status: 'SUCCESS' }) };
+        // @ts-ignore
+        global.fetch = jest.fn().mockResolvedValue(mockResponse);
+        await session.begin();
+        expect(session._handleResponse).toHaveBeenCalledTimes(1);
+        expect(session._handleResponse).toHaveBeenCalledWith({ payment: 'somedata', status: 'SUCCESS' });
+      });
+
+      afterEach(() => {
+        session._handleResponse = handleResp;
+      });
+    });
+
     // then
     it('should always return true', () => {
       expect(session.completePaymentMethodSelection()).toBe(true);
