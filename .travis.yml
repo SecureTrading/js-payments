@@ -13,9 +13,6 @@ before_install:
 install:
   - npm install
   - npm run prod
-  - cd js-payments-testing
-  - git pull --ff-only origin master
-  - cd ..
 jobs:
   include:
     - stage: 'Docker build'
@@ -24,6 +21,8 @@ jobs:
         - docker build . --tag "securetrading1/js-payments:$DOCKER_BRANCH"
         - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
         - docker push "securetrading1/js-payments"
+        - cd js-payments-testing
+        - git pull --ff-only origin master
         - docker build . --build-arg "CODE_VERSION=$DOCKER_BRANCH" --tag "securetrading1/js-payments-testing:$DOCKER_BRANCH"
         - docker push "securetrading1/js-payments-testing"
     - stage: 'Test'
