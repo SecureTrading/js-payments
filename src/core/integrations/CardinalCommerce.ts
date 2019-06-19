@@ -43,19 +43,13 @@ export class CardinalCommerce {
     SETUP_COMPLETE: 'payments.setupComplete',
     VALIDATED: 'payments.validated'
   };
-  private static VALIDATION_EVENTS = {
-    ERROR: 'ERROR',
-    FAILURE: 'FAILURE',
-    NOACTION: 'NOACTION',
-    SUCCESS: 'SUCCESS'
-  };
 
   public messageBus: MessageBus;
   private _cardinalCommerceJWT: string;
   private _cardinalCommerceCacheToken: string;
   private _threedQueryTransactionReference: string;
   private _tokenise: boolean;
-  private _startOnLoad: boolean;
+  private readonly _startOnLoad: boolean;
   private _jwt: string;
 
   constructor(tokenise: boolean, startOnLoad: boolean, jwt: string) {
@@ -120,7 +114,7 @@ export class CardinalCommerce {
    * Triggered when the transaction has been finished.
    * @protected
    */
-  protected _onCardinalValidated(data: any, jwt: any) {
+  protected _onCardinalValidated(data: any, jwt: string) {
     if (['SUCCESS', 'NOACTION', 'FAILURE'].includes(data.ActionCode)) {
       this._authorizePayment({
         threedresponse: jwt
@@ -140,6 +134,7 @@ export class CardinalCommerce {
       this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
     }
   }
+
   /**
    * Handles continue action from Cardinal Commerce, retrieve overlay with iframe which target is on AcsUrl
    * and handles the rest of process.
@@ -172,7 +167,7 @@ export class CardinalCommerce {
     Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.SETUP_COMPLETE, () => {
       this._onCardinalSetupComplete();
     });
-    Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.VALIDATED, (data: any, jwt: any) => {
+    Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.VALIDATED, (data: any, jwt: string) => {
       this._onCardinalValidated(data, jwt);
     });
     Cardinal.setup(CardinalCommerce.PAYMENT_EVENTS.INIT, {
