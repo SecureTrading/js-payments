@@ -32,8 +32,6 @@ export default class CardFrames extends RegisterFrames {
    * @private
    */
   private _setSubmitButtonProperties(element: any, disabledState: boolean) {
-    console.log(this._translator.translate(Language.translations.PAY));
-    console.log(this._translator.translate(Language.translations.COMMUNICATION_ERROR_TIMEOUT));
     if (disabledState) {
       element.textContent = this._translator.translate(Language.translations.PROCESSING);
       element.classList.add(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);

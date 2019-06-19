@@ -4,18 +4,21 @@ export default class Selectors {
   public static readonly CARD_NUMBER_COMPONENT_NAME: string = 'cardNumber';
   public static readonly CARD_NUMBER_IFRAME: string = 'st-card-number-iframe';
   public static readonly CARD_NUMBER_INPUT: string = 'st-card-number-input';
+  public static readonly CARD_NUMBER_INPUT_SELECTOR: string = 'st-card-number';
   public static readonly CARD_NUMBER_MESSAGE: string = 'st-card-number-message';
   public static readonly CARD_NUMBER_LABEL: string = 'st-card-number-label';
 
   public static readonly EXPIRATION_DATE_COMPONENT_NAME: string = 'expirationDate';
   public static readonly EXPIRATION_DATE_IFRAME: string = 'st-expiration-date-iframe';
   public static readonly EXPIRATION_DATE_INPUT: string = 'st-expiration-date-input';
+  public static readonly EXPIRATION_DATE_INPUT_SELECTOR: string = 'st-expiration-date';
   public static readonly EXPIRATION_DATE_MESSAGE: string = 'st-expiration-date-message';
   public static readonly EXPIRATION_DATE_LABEL: string = 'st-expiration-date-label';
 
   public static readonly SECURITY_CODE_COMPONENT_NAME: string = 'securityCode';
   public static readonly SECURITY_CODE_IFRAME: string = 'st-security-code-iframe';
   public static readonly SECURITY_CODE_INPUT: string = 'st-security-code-input';
+  public static readonly SECURITY_CODE_INPUT_SELECTOR: string = 'st-security-code';
   public static readonly SECURITY_CODE_MESSAGE: string = 'st-security-code-message';
   public static readonly SECURITY_CODE_LABEL: string = 'st-security-code-label';
 
