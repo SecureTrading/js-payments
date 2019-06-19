@@ -12,51 +12,9 @@ import RegisterFrames from './RegisterFrames.class';
  * Defines all card elements of form and their  placement on merchant site.
  */
 export default class CardFrames extends RegisterFrames {
-  /**
-   * Finds submit button whether is input or button markup and sets properties.
-   * @param state
-   */
-  public disableSubmitButton(state: boolean) {
-    const element = this.getSubmitButton();
-    return element && this._setSubmitButtonProperties(element, state);
-  }
-
   private static SUBMIT_BUTTON_AS_BUTTON_MARKUP = 'button[type="submit"]';
   private static SUBMIT_BUTTON_AS_INPUT_MARKUP = 'input[type="submit"]';
   private static SUBMIT_BUTTON_DISABLED_CLASS = 'st-button-submit__disabled';
-
-  /**
-   * Sets button properties as text and disable/enable class
-   * @param element
-   * @param disabledState
-   * @private
-   */
-  private _setSubmitButtonProperties(element: any, disabledState: boolean) {
-    console.log(this._translator.translate(Language.translations.PAY));
-    console.log(this._translator.translate(Language.translations.COMMUNICATION_ERROR_TIMEOUT));
-    if (disabledState) {
-      element.textContent = this._translator.translate(Language.translations.PROCESSING);
-      element.classList.add(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
-    } else {
-      element.textContent = this._translator.translate(Language.translations.PAY);
-      element.classList.remove(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
-    }
-
-    // @ts-ignore
-    element.disabled = disabledState;
-    return element;
-  }
-
-  /**
-   * Gets submit button whether is input or button markup.
-   */
-  private getSubmitButton = () => {
-    const button =
-      document.querySelector(CardFrames.SUBMIT_BUTTON_AS_BUTTON_MARKUP) ||
-      document.querySelector(CardFrames.SUBMIT_BUTTON_AS_INPUT_MARKUP);
-    button.textContent = this._translator.translate(Language.translations.PAY);
-    return button;
-  };
 
   private cardNumberMounted: HTMLElement;
   private expirationDateMounted: HTMLElement;
@@ -78,7 +36,8 @@ export default class CardFrames extends RegisterFrames {
     componentIds: [],
     styles: IStyles,
     paymentTypes: string[],
-    defaultPaymentType: string
+    defaultPaymentType: string,
+    requestTypes: string[]
   ) {
     super(jwt, origin, componentIds, styles);
     this._paymentTypes = paymentTypes;
@@ -89,6 +48,16 @@ export default class CardFrames extends RegisterFrames {
     this._onInit();
     this._translator = new Translator(this.params.locale);
     this.getSubmitButton();
+    this.publishRequestTypesEvent(requestTypes);
+  }
+
+  /**
+   * Finds submit button whether is input or button markup and sets properties.
+   * @param state
+   */
+  public disableSubmitButton(state: boolean) {
+    const element = this.getSubmitButton();
+    return element && this._setSubmitButtonProperties(element, state);
   }
 
   public disableFormField(state: boolean, eventName: string) {
@@ -230,6 +199,19 @@ export default class CardFrames extends RegisterFrames {
   }
 
   /**
+   * Publishes message bus set request types event
+   */
+  private publishRequestTypesEvent(requestTypes: string[]) {
+    const messageBusEvent: IMessageBusEvent = {
+      data: { requestTypes },
+      type: MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES
+    };
+    document.getElementById(Selectors.CONTROL_FRAME_IFRAME).addEventListener('load', () => {
+      this.messageBus.publish(messageBusEvent);
+    });
+  }
+
+  /**
    *
    */
   private validateFieldsAfterSubmit() {
@@ -250,4 +232,35 @@ export default class CardFrames extends RegisterFrames {
       }
     });
   }
+
+  /**
+   * Sets button properties as text and disable/enable class
+   * @param element
+   * @param disabledState
+   * @private
+   */
+  private _setSubmitButtonProperties(element: any, disabledState: boolean) {
+    if (disabledState) {
+      element.textContent = this._translator.translate(Language.translations.PROCESSING);
+      element.classList.add(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
+    } else {
+      element.textContent = this._translator.translate(Language.translations.PAY);
+      element.classList.remove(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
+    }
+
+    // @ts-ignore
+    element.disabled = disabledState;
+    return element;
+  }
+
+  /**
+   * Gets submit button whether is input or button markup.
+   */
+  private getSubmitButton = () => {
+    const button =
+      document.querySelector(CardFrames.SUBMIT_BUTTON_AS_BUTTON_MARKUP) ||
+      document.querySelector(CardFrames.SUBMIT_BUTTON_AS_INPUT_MARKUP);
+    button.textContent = this._translator.translate(Language.translations.PAY);
+    return button;
+  };
 }

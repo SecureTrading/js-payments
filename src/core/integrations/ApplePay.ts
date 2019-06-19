@@ -1,5 +1,5 @@
 import StTransport from '../classes/StTransport.class';
-import { IMerchantData } from '../models/MerchantData';
+import { IWalletConfig } from '../models/Config';
 import { INotificationEvent, NotificationType } from '../models/NotificationEvent';
 import DomMethods from '../shared/DomMethods';
 import Language from '../shared/Language';
@@ -107,9 +107,9 @@ export class ApplePay {
   private _jwt: string;
   private _applePayButtonProps: any = {};
   private _payment: Payment;
-  private tokenise: boolean;
+  private requestTypes: string[];
 
-  constructor(config: any, tokenise: boolean, jwt: string, gatewayUrl: string) {
+  constructor(config: IWalletConfig, jwt: string, gatewayUrl: string) {
     const { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId } = config;
     this.jwt = jwt;
     this.merchantId = merchantId;
@@ -117,7 +117,7 @@ export class ApplePay {
     this.payment = new Payment(jwt, gatewayUrl);
     this.paymentRequest = paymentRequest;
     this.sitesecurity = sitesecurity;
-    this.tokenise = tokenise;
+    this.requestTypes = config.requestTypes;
     this.validateMerchantRequestData.walletmerchantid = merchantId;
     this.stJwtInstance = new StJwt(jwt);
     this.stTransportInstance = new StTransport({
@@ -187,9 +187,8 @@ export class ApplePay {
       ? (this.buttonText = buttonText)
       : (this.buttonText = ApplePay.AVAILABLE_BUTTON_TEXTS[0]);
 
-    this._applePayButtonProps.style = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${
-      this.buttonText
-    }; -apple-pay-button-style: ${this.buttonStyle}`;
+    // tslint:disable-next-line: max-line-length
+    this._applePayButtonProps.style = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${this.buttonText}; -apple-pay-button-style: ${this.buttonStyle}`;
   }
 
   /**
@@ -322,7 +321,7 @@ export class ApplePay {
       // @TODO STJS-205 refactor into Payments
       return this.payment
         .processPayment(
-          { requesttypedescription: this.tokenise ? 'CACHETOKENISE' : 'AUTH' },
+          this.requestTypes,
           {
             walletsource: this.validateMerchantRequestData.walletsource,
             wallettoken: this.paymentDetails

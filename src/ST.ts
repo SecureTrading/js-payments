@@ -31,13 +31,13 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
   styles: Joi.object(),
   submitFields: Joi.array().allow([Joi.string()]),
   submitOnError: Joi.boolean(),
-  submitOnSuccess: Joi.boolean(),
-  tokenise: Joi.boolean()
+  submitOnSuccess: Joi.boolean()
 });
 
 const IComponentsConfigSchema = Joi.object().keys({
   defaultPaymentType: Joi.string(),
   paymentTypes: Joi.array().allow([Joi.string()]),
+  requestTypes: Joi.array().allow([Joi.string()]),
   startOnLoad: Joi.boolean()
 });
 
@@ -53,7 +53,6 @@ class ST {
   private submitFields: string[];
   private submitOnError: boolean;
   private submitOnSuccess: boolean;
-  private tokenise: boolean;
   private gatewayUrl: string;
 
   /**
@@ -71,7 +70,6 @@ class ST {
     this.submitFields = config.submitFields;
     this.submitOnError = config.submitOnError;
     this.submitOnSuccess = config.submitOnSuccess;
-    this.tokenise = config.tokenise;
     this.gatewayUrl = config.datacenterurl ? config.datacenterurl : environment.GATEWAY_URL;
     Selectors.MERCHANT_FORM_SELECTOR = config.formId ? config.formId : Selectors.MERCHANT_FORM_SELECTOR;
     const instance = new CommonFrames(
@@ -90,6 +88,7 @@ class ST {
   public Components(config?: IComponentsConfig) {
     config = config ? config : ({} as IComponentsConfig);
     config.startOnLoad = config.startOnLoad !== undefined ? config.startOnLoad : false;
+    config.requestTypes = config.requestTypes ? config.requestTypes : ['THREEDQUERY', 'AUTH'];
     this.validateConfig(config, IComponentsConfigSchema);
     if (!config.startOnLoad) {
       const instance = new CardFrames(
@@ -98,21 +97,24 @@ class ST {
         this.componentIds,
         this.styles,
         config.paymentTypes,
-        config.defaultPaymentType
+        config.defaultPaymentType,
+        config.requestTypes
       );
     }
     const cardinal = environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce;
-    const cardinalInstance = new cardinal(this.tokenise, config.startOnLoad, this.jwt);
+    const cardinalInstance = new cardinal(config.startOnLoad, this.jwt);
   }
 
   public ApplePay(config: IWalletConfig) {
     const applepay = environment.testEnvironment ? ApplePayMock : ApplePay;
-    const instance = new applepay(config, this.tokenise, this.jwt, this.gatewayUrl);
+    config.requestTypes = config.requestTypes ? config.requestTypes : ['AUTH'];
+    const instance = new applepay(config, this.jwt, this.gatewayUrl);
   }
 
   public VisaCheckout(config: IWalletConfig) {
     const visa = environment.testEnvironment ? VisaCheckoutMock : VisaCheckout;
-    const instance = new visa(config, this.tokenise, this.jwt, this.gatewayUrl);
+    config.requestTypes = config.requestTypes ? config.requestTypes : ['AUTH'];
+    const instance = new visa(config, this.jwt, this.gatewayUrl);
   }
 
   private validateConfig(config: IConfig | IComponentsConfig, schema: Joi.JoiObject) {
@@ -125,7 +127,6 @@ class ST {
 
   private _addDefaults(config: IConfig) {
     config.origin = config.origin ? config.origin : window.location.origin;
-    config.tokenise = config.tokenise !== undefined ? config.tokenise : false;
     config.submitOnSuccess = config.submitOnSuccess !== undefined ? config.submitOnSuccess : true;
     config.submitOnError = config.submitOnError !== undefined ? config.submitOnError : false;
     config.submitFields = config.submitFields

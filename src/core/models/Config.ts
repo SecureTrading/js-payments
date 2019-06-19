@@ -10,15 +10,16 @@ export interface IConfig {
   submitFields?: string[];
   submitOnSuccess?: boolean;
   submitOnError?: boolean;
-  tokenise?: boolean;
 }
 
 export interface IComponentsConfig {
   defaultPaymentType: string;
   paymentTypes?: string[];
   startOnLoad?: boolean;
+  requestTypes?: string[];
 }
 
 export interface IWalletConfig {
   [key: string]: any;
+  requestTypes?: string[];
 }

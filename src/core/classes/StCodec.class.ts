@@ -6,7 +6,8 @@ import { Translator } from '../shared/Translator';
 import Validation from '../shared/Validation';
 
 interface IStRequest {
-  requesttypedescription: string;
+  requesttypedescription?: string;
+  requesttypedescriptions?: string[];
   expirydate?: string;
   pan?: string;
   securitycode?: string;
@@ -19,7 +20,16 @@ interface IStRequest {
 class StCodec {
   public static CONTENT_TYPE = 'application/json';
   public static VERSION = '1.00';
-  public static SUPPORTED_REQUEST_TYPES = ['WALLETVERIFY', 'JSINIT', 'THREEDQUERY', 'CACHETOKENISE', 'AUTH', 'ERROR'];
+  public static SUPPORTED_REQUEST_TYPES = [
+    'WALLETVERIFY',
+    'JSINIT',
+    'THREEDQUERY',
+    'CACHETOKENISE',
+    'AUTH',
+    'ERROR',
+    'RISKDEC',
+    'SUBSCRIPTION'
+  ]; // TODO update to support other request types - basically should match ppages?
   public static MINIMUM_REQUEST_FIELDS = 1;
 
   /**
@@ -91,6 +101,7 @@ class StCodec {
   private static _locale: string;
   private static _messageBus = new MessageBus();
   private static _parentOrigin: string;
+  // TODO do we want to update this?
   private static REQUESTS_WITH_ERROR_MESSAGES = ['AUTH', 'CACHETOKENISE', 'ERROR', 'THREEDQUERY', 'WALLETVERIFY'];
   private static STATUS_CODES = { invalidfield: '30000', ok: '0', declined: '70000' };
 
@@ -156,7 +167,9 @@ class StCodec {
   public encode(requestObject: IStRequest) {
     if (
       Object.keys(requestObject).length < StCodec.MINIMUM_REQUEST_FIELDS ||
-      !StCodec.SUPPORTED_REQUEST_TYPES.includes(requestObject.requesttypedescription)
+      // TODO update unittest
+      false
+      // TODO fix !requestObject.requesttypedescriptions.every(val => StCodec.SUPPORTED_REQUEST_TYPES.includes(val))
     ) {
       StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST);
       throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST);

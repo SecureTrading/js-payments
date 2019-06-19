@@ -153,9 +153,9 @@ describe('StCodec class', () => {
       [
         {
           requestid: 'number1',
-          requesttypedescription: 'CACHETOKENISE'
+          requesttypedescriptions: ['CACHETOKENISE']
         },
-        { requesttypedescription: 'CACHETOKENISE', sitereference: 'live2' }
+        { requesttypedescriptions: ['CACHETOKENISE'], sitereference: 'live2' }
       ]
     ]).it('should build the request for a valid object', (requestObject, expected) => {
       expect(str.buildRequestObject(requestObject)).toEqual({
@@ -175,7 +175,7 @@ describe('StCodec class', () => {
 
     each([
       [
-        { pan: '4111111111111111', requesttypedescription: 'AUTH' },
+        { pan: '4111111111111111', requesttypedescriptions: ['AUTH'] },
         expect.stringMatching(
           new RegExp(
             '^{"jwt":"' +
@@ -196,7 +196,7 @@ describe('StCodec class', () => {
       expect(() =>
         str.encode({
           pan: '4111111111111111',
-          requesttypedescription: 'LARGEHADRONCOLLIDER'
+          requesttypedescriptions: ['LARGEHADRONCOLLIDER']
         })
       ).toThrow(Error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST));
     });
