@@ -176,7 +176,8 @@ export class CardinalCommerce {
       this._onCardinalValidated(data, jwt);
     });
     Cardinal.setup(CardinalCommerce.PAYMENT_EVENTS.INIT, {
-      jwt: this._cardinalCommerceJWT
+      // jwt: this._cardinalCommerceJWT
+      jwt: '3249823423vm 2rjcwmef89uwmef98423jf4jcf439rj43r'
     });
   }
 
