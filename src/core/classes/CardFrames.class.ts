@@ -36,8 +36,7 @@ export default class CardFrames extends RegisterFrames {
     componentIds: [],
     styles: IStyles,
     paymentTypes: string[],
-    defaultPaymentType: string,
-    requestTypes: string[]
+    defaultPaymentType: string
   ) {
     super(jwt, origin, componentIds, styles);
     this._paymentTypes = paymentTypes;
@@ -48,7 +47,6 @@ export default class CardFrames extends RegisterFrames {
     this._onInit();
     this._translator = new Translator(this.params.locale);
     this.getSubmitButton();
-    this.publishRequestTypesEvent(requestTypes);
   }
 
   /**
@@ -196,19 +194,6 @@ export default class CardFrames extends RegisterFrames {
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
     this.messageBus.publish(messageBusEvent);
-  }
-
-  /**
-   * Publishes message bus set request types event
-   */
-  private publishRequestTypesEvent(requestTypes: string[]) {
-    const messageBusEvent: IMessageBusEvent = {
-      data: { requestTypes },
-      type: MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES
-    };
-    document.getElementById(Selectors.CONTROL_FRAME_IFRAME).addEventListener('load', () => {
-      this.messageBus.publish(messageBusEvent);
-    });
   }
 
   /**

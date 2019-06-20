@@ -124,7 +124,11 @@ export default class CommonFrames extends RegisterFrames {
       (this.submitOnError && data.errorcode !== '0')
     ) {
       const form = this.merchantForm;
-      DomMethods.addDataToForm(form, data, this.submitFields);
+      let fields = this.submitFields;
+      if (data.hasOwnProperty('stjwt')) {
+        fields = ['stjwt'];
+      }
+      DomMethods.addDataToForm(form, data, fields);
       form.submit();
     }
   }

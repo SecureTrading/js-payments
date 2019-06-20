@@ -48,10 +48,12 @@ export class CardinalCommerce {
   private _threedQueryTransactionReference: string;
   private _startOnLoad: boolean;
   private _jwt: string;
+  private _requestTypes: string[];
 
-  constructor(startOnLoad: boolean, jwt: string) {
+  constructor(startOnLoad: boolean, jwt: string, requestTypes: string[]) {
     this._startOnLoad = startOnLoad;
     this._jwt = jwt;
+    this._requestTypes = requestTypes;
     this.messageBus = new MessageBus();
     this._onInit();
   }
@@ -178,6 +180,7 @@ export class CardinalCommerce {
 
   private _onInit() {
     this._initSubscriptions();
+    this._publishRequestTypesEvent(this._requestTypes);
   }
 
   private _initSubscriptions() {
@@ -189,6 +192,19 @@ export class CardinalCommerce {
     });
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDQUERY, (data: any) => {
       this._onThreeDQueryEvent(data);
+    });
+  }
+
+  /**
+   * Publishes message bus set request types event
+   */
+  private _publishRequestTypesEvent(requestTypes: string[]) {
+    const messageBusEvent: IMessageBusEvent = {
+      data: { requestTypes },
+      type: MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES
+    };
+    document.getElementById(Selectors.CONTROL_FRAME_IFRAME).addEventListener('load', () => {
+      this.messageBus.publish(messageBusEvent);
     });
   }
 

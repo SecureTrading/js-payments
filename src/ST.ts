@@ -88,7 +88,7 @@ class ST {
   public Components(config?: IComponentsConfig) {
     config = config ? config : ({} as IComponentsConfig);
     config.startOnLoad = config.startOnLoad !== undefined ? config.startOnLoad : false;
-    config.requestTypes = config.requestTypes ? config.requestTypes : ['THREEDQUERY', 'AUTH'];
+    config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['THREEDQUERY', 'AUTH'];
     this.validateConfig(config, IComponentsConfigSchema);
     if (!config.startOnLoad) {
       const instance = new CardFrames(
@@ -97,23 +97,22 @@ class ST {
         this.componentIds,
         this.styles,
         config.paymentTypes,
-        config.defaultPaymentType,
-        config.requestTypes
+        config.defaultPaymentType
       );
     }
     const cardinal = environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce;
-    const cardinalInstance = new cardinal(config.startOnLoad, this.jwt);
+    const cardinalInstance = new cardinal(config.startOnLoad, this.jwt, config.requestTypes);
   }
 
   public ApplePay(config: IWalletConfig) {
     const applepay = environment.testEnvironment ? ApplePayMock : ApplePay;
-    config.requestTypes = config.requestTypes ? config.requestTypes : ['AUTH'];
+    config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
     const instance = new applepay(config, this.jwt, this.gatewayUrl);
   }
 
   public VisaCheckout(config: IWalletConfig) {
     const visa = environment.testEnvironment ? VisaCheckoutMock : VisaCheckout;
-    config.requestTypes = config.requestTypes ? config.requestTypes : ['AUTH'];
+    config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
     const instance = new visa(config, this.jwt, this.gatewayUrl);
   }
 
@@ -129,21 +128,7 @@ class ST {
     config.origin = config.origin ? config.origin : window.location.origin;
     config.submitOnSuccess = config.submitOnSuccess !== undefined ? config.submitOnSuccess : true;
     config.submitOnError = config.submitOnError !== undefined ? config.submitOnError : false;
-    config.submitFields = config.submitFields
-      ? config.submitFields
-      : [
-          'baseamount',
-          'currencyiso3a',
-          'eci',
-          'enrolled',
-          'errorcode',
-          'errordata',
-          'errormessage',
-          'orderreference',
-          'settlestatus',
-          'status',
-          'transactionreference'
-        ];
+    config.submitFields = config.submitFields ? config.submitFields : ['errorcode', 'errordata', 'errormessage'];
     const componentIds = {
       animatedCard: 'st-animated-card',
       cardNumber: 'st-card-number',

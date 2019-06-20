@@ -63,7 +63,7 @@ class StCodec {
    * @param responseData The response from the gateway
    * @return The content of the response that can be used in the following processes
    */
-  public static verifyResponseObject(responseData: any): object {
+  public static verifyResponseObject(responseData: any, jwtResponse: string): object {
     // Ought we keep hold of the requestreference (eg. log it to console)
     // So that we can link these requests up with the gateway?
     const validation = new Validation();
@@ -87,12 +87,12 @@ class StCodec {
           validation.getErrorData(StCodec.getErrorData(responseContent));
         }
         validation.blockForm(false);
-        StCodec.publishResponse(responseContent);
+        StCodec.publishResponse(responseContent, jwtResponse);
         StCodec._notification.error(responseContent.errormessage);
         throw new Error(responseContent.errormessage);
       }
     }
-    StCodec.publishResponse(responseContent);
+    StCodec.publishResponse(responseContent, jwtResponse);
     return responseContent;
   }
 
@@ -104,11 +104,15 @@ class StCodec {
   private static REQUESTS_WITH_ERROR_MESSAGES = ['AUTH', 'CACHETOKENISE', 'ERROR', 'THREEDQUERY', 'WALLETVERIFY'];
   private static STATUS_CODES = { invalidfield: '30000', ok: '0', declined: '70000' };
 
-  private static publishResponse(responseData: IResponseData) {
+  private static publishResponse(responseData: IResponseData, jwtResponse?: string) {
     const translator = new Translator(StCodec._locale);
     responseData.errormessage = translator.translate(responseData.errormessage);
+    const eventData = { ...responseData };
+    if (jwtResponse !== undefined) {
+      eventData.stjwt = jwtResponse;
+    }
     const notificationEvent: IMessageBusEvent = {
-      data: responseData,
+      data: eventData,
       type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE
     };
     if (StCodec._parentOrigin !== undefined) {
@@ -186,7 +190,7 @@ class StCodec {
       if ('json' in responseObject) {
         responseObject.json().then(responseData => {
           const decodedResponseData = JwtDecode(responseData.jwt) as any; // TODO type?
-          resolve(StCodec.verifyResponseObject(decodedResponseData.payload));
+          resolve(StCodec.verifyResponseObject(decodedResponseData.payload, responseData.jwt));
         });
       } else {
         StCodec.publishResponse(StCodec._createCommunicationError());

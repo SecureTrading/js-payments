@@ -12,9 +12,8 @@
 
   <body>
     <h1>Receipt page</h1>
-
-    <p>Transaction ref:</p>
-    <p id="transactionreference"></p>
+    <p>ST response JWT:</p>
+    <p id="stjwt"></p>
     <p>Error code:</p>
     <p id="errorcode"></p>
     <p>Error message:</p>
@@ -23,10 +22,7 @@
   <script>
     (function() {
       const parsedUrl = new URL(window.location.href);
-      document.getElementById('transactionreference').innerHTML = parsedUrl.searchParams.get(
-        'transactionreference',
-        ''
-      );
+      document.getElementById('stjwt').innerHTML = parsedUrl.searchParams.get('stjwt', '');
       document.getElementById('errorcode').innerHTML = parsedUrl.searchParams.get('errorcode', '');
       document.getElementById('errormessage').innerHTML = parsedUrl.searchParams.get('errormessage', '');
     })();
