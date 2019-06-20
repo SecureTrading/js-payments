@@ -110,8 +110,8 @@ export default class ControlFrame extends Frame {
 
   private onSetRequestTypesEvent(data: any) {
     const threeDIndex = data.requestTypes.indexOf('THREEDQUERY');
-    this._preThreeDRequestTypes = data.requestTypes.splice(0, threeDIndex + 1);
-    this._postThreeDRequestTypes = data.requestTypes.splice(threeDIndex - 1, data.requestTypes.length);
+    this._preThreeDRequestTypes = data.requestTypes.slice(0, threeDIndex + 1);
+    this._postThreeDRequestTypes = data.requestTypes.slice(threeDIndex + 1, data.requestTypes.length);
   }
 
   private onSubmit(data: any) {

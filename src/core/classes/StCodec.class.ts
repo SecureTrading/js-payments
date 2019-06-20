@@ -1,3 +1,4 @@
+import JwtDecode from 'jwt-decode';
 import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
 import Notification from '../shared/Notification';
@@ -67,20 +68,18 @@ class StCodec {
     // So that we can link these requests up with the gateway?
     const validation = new Validation();
     const translator = new Translator(StCodec._locale);
-    if (
-      !(
-        responseData &&
-        responseData.version === StCodec.VERSION &&
-        responseData.response &&
-        responseData.response.length === 1
-      )
-    ) {
+    if (!(responseData && responseData.version === StCodec.VERSION && responseData.response)) {
       StCodec.publishResponse(StCodec._createCommunicationError());
       StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
       throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
     }
-
-    const responseContent: IResponseData = responseData.response[0];
+    let responseContent: IResponseData;
+    responseData.response.forEach((r: any) => {
+      // TODO unittest
+      if (r.customeroutput) {
+        responseContent = r;
+      }
+    });
     responseContent.errormessage = translator.translate(responseContent.errormessage);
     if (StCodec.REQUESTS_WITH_ERROR_MESSAGES.includes(responseContent.requesttypedescription)) {
       if (responseContent.errorcode !== StCodec.STATUS_CODES.ok) {
@@ -146,6 +145,7 @@ class StCodec {
    */
   public buildRequestObject(requestData: object): object {
     return {
+      acceptcustomeroutput: '1.00',
       jwt: this._jwt,
       request: [
         {
@@ -168,8 +168,7 @@ class StCodec {
     if (
       Object.keys(requestObject).length < StCodec.MINIMUM_REQUEST_FIELDS ||
       // TODO update unittest
-      false
-      // TODO fix !requestObject.requesttypedescriptions.every(val => StCodec.SUPPORTED_REQUEST_TYPES.includes(val))
+      !requestObject.requesttypedescriptions.every(val => StCodec.SUPPORTED_REQUEST_TYPES.includes(val))
     ) {
       StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST);
       throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST);
@@ -186,7 +185,8 @@ class StCodec {
     return new Promise((resolve, reject) => {
       if ('json' in responseObject) {
         responseObject.json().then(responseData => {
-          resolve(StCodec.verifyResponseObject(responseData));
+          const decodedResponseData = JwtDecode(responseData.jwt) as any; // TODO type?
+          resolve(StCodec.verifyResponseObject(decodedResponseData.payload));
         });
       } else {
         StCodec.publishResponse(StCodec._createCommunicationError());
