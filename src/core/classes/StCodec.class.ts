@@ -68,7 +68,14 @@ class StCodec {
     // So that we can link these requests up with the gateway?
     const validation = new Validation();
     const translator = new Translator(StCodec._locale);
-    if (!(responseData && responseData.version === StCodec.VERSION && responseData.response)) {
+    if (
+      !(
+        responseData &&
+        responseData.version === StCodec.VERSION &&
+        responseData.response &&
+        responseData.response.length > 0
+      )
+    ) {
       StCodec.publishResponse(StCodec._createCommunicationError());
       StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
       throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
@@ -194,8 +201,15 @@ class StCodec {
     return new Promise((resolve, reject) => {
       if ('json' in responseObject) {
         responseObject.json().then(responseData => {
-          // TODO handle if JWT is invalid (malformed) - should fall into same invalid response case
-          const decoded = JwtDecode(responseData.jwt) as any; // TODO type?
+          let decoded: any;
+          try {
+            decoded = JwtDecode(responseData.jwt) as any; // TODO type?
+          } catch (e) {
+            // TODO refactor with else
+            StCodec.publishResponse(StCodec._createCommunicationError());
+            StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
+            reject(new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
+          }
           resolve({
             jwt: responseData.jwt,
             // TODO rename decoded?

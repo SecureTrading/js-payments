@@ -1,4 +1,5 @@
 import each from 'jest-each';
+import JwtDecode from 'jwt-decode';
 import Language from '../../../src/core/shared/Language';
 import { StCodec } from '../../../src/core/classes/StCodec.class';
 import { Translator } from '../../../src/core/shared/Translator';
@@ -11,41 +12,8 @@ describe('StCodec class', () => {
   // @ts-ignore
   StCodec._notification.error = jest.fn();
   const fullResponse = {
-    requestreference: 'W33-0rm0gcyx',
-    response: [
-      {
-        accounttypedescription: 'ECOM',
-        acquirerresponsecode: '00',
-        authcode: 'TEST56',
-        baseamount: '100',
-        currencyiso3a: 'GBP',
-        dccenabled: '0',
-        errorcode: '0',
-        errormessage: 'Ok',
-        issuer: 'SecureTrading Test Issuer1',
-        issuercountryiso2a: 'US',
-        livestatus: '0',
-        maskedpan: '411111######0211',
-        merchantcountryiso2a: 'GB',
-        merchantname: 'webservice UNICODE merchantname',
-        merchantnumber: '00000000',
-        operatorname: 'webservices@securetrading.com',
-        orderreference: 'AUTH_VISA_POST-PASS-JSON-JSON',
-        paymenttypedescription: 'VISA',
-        requesttypedescription: 'AUTH',
-        securityresponseaddress: '2',
-        securityresponsepostcode: '2',
-        securityresponsesecuritycode: '2',
-        settleduedate: '2019-02-21',
-        settlestatus: '0',
-        splitfinalnumber: '1',
-        tid: '27882788',
-        transactionreference: '33-9-80168',
-        transactionstartedtimestamp: '2019-02-21 10:06:35'
-      }
-    ],
-    secrand: 'ZKAVMskWQ',
-    version: '1.00'
+    jwt:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NjExMTUyMDksInBheWxvYWQiOnsicmVxdWVzdHJlZmVyZW5jZSI6IlczMy0wcm0wZ2N5eCIsInJlc3BvbnNlIjpbeyJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImFjcXVpcmVycmVzcG9uc2Vjb2RlIjoiMDAiLCJhdXRoY29kZSI6IlRFU1Q1NiIsImJhc2VhbW91bnQiOiIxMDAiLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwiZGNjZW5hYmxlZCI6IjAiLCJlcnJvcmNvZGUiOiIwIiwiZXJyb3JtZXNzYWdlIjoiT2siLCJpc3N1ZXIiOiJTZWN1cmVUcmFkaW5nIFRlc3QgSXNzdWVyMSIsImlzc3VlcmNvdW50cnlpc28yYSI6IlVTIiwibGl2ZXN0YXR1cyI6IjAiLCJtYXNrZWRwYW4iOiI0MTExMTEjIyMjIyMwMjExIiwibWVyY2hhbnRjb3VudHJ5aXNvMmEiOiJHQiIsIm1lcmNoYW50bmFtZSI6IndlYnNlcnZpY2UgVU5JQ09ERSBtZXJjaGFudG5hbWUiLCJtZXJjaGFudG51bWJlciI6IjAwMDAwMDAwIiwib3BlcmF0b3JuYW1lIjoid2Vic2VydmljZXNAc2VjdXJldHJhZGluZy5jb20iLCJvcmRlcnJlZmVyZW5jZSI6IkFVVEhfVklTQV9QT1NULVBBU1MtSlNPTi1KU09OIiwicGF5bWVudHR5cGVkZXNjcmlwdGlvbiI6IlZJU0EiLCJyZXF1ZXN0dHlwZWRlc2NyaXB0aW9uIjoiQVVUSCIsInNlY3VyaXR5cmVzcG9uc2VhZGRyZXNzIjoiMiIsInNlY3VyaXR5cmVzcG9uc2Vwb3N0Y29kZSI6IjIiLCJzZWN1cml0eXJlc3BvbnNlc2VjdXJpdHljb2RlIjoiMiIsInNldHRsZWR1ZWRhdGUiOiIyMDE5LTAyLTIxIiwic2V0dGxlc3RhdHVzIjoiMCIsInNwbGl0ZmluYWxudW1iZXIiOiIxIiwidGlkIjoiMjc4ODI3ODgiLCJ0cmFuc2FjdGlvbnJlZmVyZW5jZSI6IjMzLTktODAxNjgiLCJ0cmFuc2FjdGlvbnN0YXJ0ZWR0aW1lc3RhbXAiOiIyMDE5LTAyLTIxIDEwOjA2OjM1In1dLCJzZWNyYW5kIjoiWktBVk1za1dRIiwidmVyc2lvbiI6IjEuMDAifX0.lLHIs5UsXht0IyFCGEF_x7AM4u_lOWX47J5cCuakqtc'
   };
 
   describe('StCodec.publishResponse', () => {
@@ -157,6 +125,7 @@ describe('StCodec class', () => {
       ]
     ]).it('should build the request for a valid object', (requestObject, expected) => {
       expect(str.buildRequestObject(requestObject)).toEqual({
+        acceptcustomeroutput: '1.00',
         jwt,
         request: [{ requestid, ...expected }],
         version: StCodec.VERSION
@@ -207,18 +176,16 @@ describe('StCodec class', () => {
       StCodec.publishResponse = jest.fn();
     });
 
-    each([
-      [{}],
-      [{ version: '3.02' }],
-      [{ version: '1.00', response: [] }],
-      [{ version: '1.00', response: [{}, {}] }]
-    ]).it('should verify the version and number of responses', responseData => {
-      expect(() => instance.verifyResponseObject(responseData, responseJwt)).toThrow(
-        Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE)
-      );
-      // @ts-ignore
-      expect(StCodec.publishResponse).toHaveBeenCalledWith({ errorcode: '50003', errormessage: 'Invalid response' });
-    });
+    each([[{}], [{ version: '3.02' }], [{ version: '1.00', response: [] }]]).it(
+      'should verify the version and number of responses',
+      responseData => {
+        expect(() => instance.verifyResponseObject(responseData, responseJwt)).toThrow(
+          Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE)
+        );
+        // @ts-ignore
+        expect(StCodec.publishResponse).toHaveBeenCalledWith({ errorcode: '50003', errormessage: 'Invalid response' });
+      }
+    );
   });
 
   describe('StCodec.decode', () => {
@@ -229,6 +196,7 @@ describe('StCodec class', () => {
     });
 
     it('should decode a valid response', async () => {
+      const verifyResponse = instance.verifyResponseObject((JwtDecode(fullResponse.jwt) as any).payload, responseJwt);
       instance.verifyResponseObject = jest.fn(instance.verifyResponseObject);
       await expect(
         str.decode({
@@ -236,8 +204,11 @@ describe('StCodec class', () => {
             return new Promise(resolve => resolve(fullResponse));
           }
         })
-      ).resolves.toEqual(instance.verifyResponseObject(fullResponse, responseJwt));
-      expect(instance.verifyResponseObject).toHaveBeenCalledWith(fullResponse, responseJwt);
+      ).resolves.toEqual({ jwt: fullResponse.jwt, response: verifyResponse });
+      const expectedResult = (JwtDecode(fullResponse.jwt) as any).payload;
+      // Expect this to be translated
+      expectedResult.response[0].errormessage = 'Payment has been successfully processed';
+      expect(instance.verifyResponseObject).toHaveBeenCalledWith(expectedResult, fullResponse.jwt);
     });
 
     it('should error an invalid response', async () => {
