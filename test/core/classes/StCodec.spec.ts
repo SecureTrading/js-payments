@@ -176,9 +176,9 @@ describe('StCodec class', () => {
         { pan: '4111111111111111', requesttypedescriptions: ['AUTH'] },
         expect.stringMatching(
           new RegExp(
-            '^{"jwt":"' +
+            '^{"acceptcustomeroutput":"1.00","jwt":"' +
               jwt +
-              '","request":\\[{"pan":"4111111111111111","requesttypedescription":"AUTH","requestid":"' +
+              '","request":\\[{"pan":"4111111111111111","requesttypedescriptions":\\["AUTH"\\],"requestid":"' +
               ridRegex +
               '","sitereference":"live2"}\\],"version":"1.00"}$'
           )

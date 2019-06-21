@@ -348,7 +348,9 @@ describe('Class Apple Pay', () => {
     it('should call onvalidatemerchant and set walletvalidationurl and process walletverify', async () => {
       const { instance } = ApplePayFixture();
 
-      instance.payment.walletVerify = jest.fn().mockResolvedValueOnce({ myData: 'response' });
+      instance.payment.walletVerify = jest
+        .fn()
+        .mockResolvedValueOnce({ response: { myData: 'respData' }, jwt: 'ajwtvalue' });
       instance.onValidateMerchantResponseSuccess = jest.fn();
       instance.setNotification = jest.fn();
       instance.session = {};
@@ -366,7 +368,7 @@ describe('Class Apple Pay', () => {
       });
       expect(instance.validateMerchantRequestData.walletvalidationurl).toBe('https://example.com');
       expect(instance.onValidateMerchantResponseSuccess).toHaveBeenCalledTimes(1);
-      expect(instance.onValidateMerchantResponseSuccess).toHaveBeenCalledWith({ myData: 'response' });
+      expect(instance.onValidateMerchantResponseSuccess).toHaveBeenCalledWith({ myData: 'respData' });
       expect(instance.setNotification).toHaveBeenCalledTimes(0);
     });
 

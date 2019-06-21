@@ -11,7 +11,8 @@ describe('CardinalCommerce class', () => {
   let Cardinal: any;
   // when
   beforeEach(() => {
-    document.body.innerHTML = `<input id='JWTContainer' value="${jwt}" />`;
+    document.body.innerHTML = `<iframe id='st-control-frame-iframe'>
+    </iframe><input id='JWTContainer' value="${jwt}" />`;
     instance = new CardinalCommerce(false, jwt, ['THREEDQUERY', 'AUTH']);
   });
 
@@ -429,7 +430,10 @@ describe('CardinalCommerce class', () => {
       instance._authorizePayment({ some: 'value', cachetoken: 'OVERRIDDEN' });
       expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
       expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
-        { type: 'AUTH', data: { some: 'value', cachetoken: 'tokenValue', parenttransactionreference: '1-2-3' } },
+        {
+          type: 'PROCESS_PAYMENTS',
+          data: { some: 'value', cachetoken: 'tokenValue', parenttransactionreference: '1-2-3' }
+        },
         'st-control-frame-iframe'
       );
     });
@@ -441,7 +445,7 @@ describe('CardinalCommerce class', () => {
       instance._authorizePayment();
       expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
       expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
-        { type: 'AUTH', data: { cachetoken: 'tokenValue', parenttransactionreference: '1-2-3' } },
+        { type: 'PROCESS_PAYMENTS', data: { cachetoken: 'tokenValue', parenttransactionreference: '1-2-3' } },
         'st-control-frame-iframe'
       );
     });
@@ -455,7 +459,7 @@ describe('CardinalCommerce class', () => {
       expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
       expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
         {
-          type: 'CACHETOKENISE',
+          type: 'PROCESS_PAYMENTS',
           data: { some: 'value', cachetoken: 'tokenValue', parenttransactionreference: '1-2-3' }
         },
         'st-control-frame-iframe'
