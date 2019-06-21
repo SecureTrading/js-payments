@@ -189,6 +189,7 @@ class StCodec {
     return new Promise((resolve, reject) => {
       if ('json' in responseObject) {
         responseObject.json().then(responseData => {
+          // TODO handle if JWT is invalid (malformed) - should fall into same invalid response case
           const decodedResponseData = JwtDecode(responseData.jwt) as any; // TODO type?
           resolve(StCodec.verifyResponseObject(decodedResponseData.payload, responseData.jwt));
         });

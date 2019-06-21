@@ -73,7 +73,6 @@ export default class CommonFrames extends RegisterFrames {
       this.notificationFrameMounted = this.notificationFrame.mount(Selectors.NOTIFICATION_FRAME_IFRAME, '-1');
       this.elementsToRegister.push(this.notificationFrameMounted);
     }
-
     this.controlFrame.create(Selectors.CONTROL_FRAME_COMPONENT_NAME, this.styles, {
       gatewayUrl: this.gatewayUrl,
       jwt: this.jwt,
