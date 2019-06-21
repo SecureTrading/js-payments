@@ -8,7 +8,7 @@ describe('CardinalCommerce class', () => {
   // when
   beforeEach(() => {
     document.body.innerHTML = `<input id='JWTContainer' value="${jwt}" />`;
-    instance = new CardinalCommerceMock(false, false, jwt);
+    instance = new CardinalCommerceMock(false, jwt, ['THREEDQUERY', 'AUTH']);
   });
 
   // given

@@ -80,16 +80,18 @@ class StCodec {
         responseContent = r;
       }
     });
-    responseContent.errormessage = translator.translate(responseContent.errormessage);
-    if (StCodec.REQUESTS_WITH_ERROR_MESSAGES.includes(responseContent.requesttypedescription)) {
-      if (responseContent.errorcode !== StCodec.STATUS_CODES.ok) {
-        if (responseContent.errorcode === StCodec.STATUS_CODES.invalidfield) {
-          validation.getErrorData(StCodec.getErrorData(responseContent));
+    if (responseContent) {
+      responseContent.errormessage = translator.translate(responseContent.errormessage);
+      if (StCodec.REQUESTS_WITH_ERROR_MESSAGES.includes(responseContent.requesttypedescription)) {
+        if (responseContent.errorcode !== StCodec.STATUS_CODES.ok) {
+          if (responseContent.errorcode === StCodec.STATUS_CODES.invalidfield) {
+            validation.getErrorData(StCodec.getErrorData(responseContent));
+          }
+          validation.blockForm(false);
+          StCodec.publishResponse(responseContent, jwtResponse);
+          StCodec._notification.error(responseContent.errormessage);
+          throw new Error(responseContent.errormessage);
         }
-        validation.blockForm(false);
-        StCodec.publishResponse(responseContent, jwtResponse);
-        StCodec._notification.error(responseContent.errormessage);
-        throw new Error(responseContent.errormessage);
       }
     }
     StCodec.publishResponse(responseContent, jwtResponse);

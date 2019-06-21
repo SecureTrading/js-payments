@@ -4,11 +4,9 @@ import { StCodec } from '../../../src/core/classes/StCodec.class';
 import { Translator } from '../../../src/core/shared/Translator';
 
 describe('StCodec class', () => {
-  const { instance } = stCodecFixture();
+  const { instance, jwt, responseJwt } = stCodecFixture();
   const ridRegex = 'J-[\\da-z]{8}';
   const requestid = expect.stringMatching(new RegExp('^' + ridRegex + '$'));
-  const jwt =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
   let str: StCodec;
   // @ts-ignore
   StCodec._notification.error = jest.fn();
@@ -215,7 +213,7 @@ describe('StCodec class', () => {
       [{ version: '1.00', response: [] }],
       [{ version: '1.00', response: [{}, {}] }]
     ]).it('should verify the version and number of responses', responseData => {
-      expect(() => instance.verifyResponseObject(responseData)).toThrow(
+      expect(() => instance.verifyResponseObject(responseData, responseJwt)).toThrow(
         Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE)
       );
       // @ts-ignore
@@ -238,8 +236,8 @@ describe('StCodec class', () => {
             return new Promise(resolve => resolve(fullResponse));
           }
         })
-      ).resolves.toEqual(instance.verifyResponseObject(fullResponse));
-      expect(instance.verifyResponseObject).toHaveBeenCalledWith(fullResponse);
+      ).resolves.toEqual(instance.verifyResponseObject(fullResponse, responseJwt));
+      expect(instance.verifyResponseObject).toHaveBeenCalledWith(fullResponse, responseJwt);
     });
 
     it('should error an invalid response', async () => {
@@ -255,7 +253,9 @@ describe('StCodec class', () => {
 
 function stCodecFixture() {
   const jwt =
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU1OTg1OTUyNC4yMzkxMjQ4LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSJ9fQ.OKrm6cXJTDcclJAUKjFV2IoHy9tBILmp_kqxxh3wy9E';
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
+  const responseJwt =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NjExMDk1MDQsInBheWxvYWQiOnsicmVxdWVzdHJlZmVyZW5jZSI6Ilc0Mi10NGU0Y3I5NSIsInZlcnNpb24iOiIxLjAwIiwicmVzcG9uc2UiOlt7InRyYW5zYWN0aW9uc3RhcnRlZHRpbWVzdGFtcCI6IjIwMTktMDYtMjEgMDk6MzE6NDQiLCJwYXJlbnR0cmFuc2FjdGlvbnJlZmVyZW5jZSI6IjQyLTktODAwMzgiLCJjdXN0b21lcm91dHB1dCI6IlJFU1VMVCIsImxpdmVzdGF0dXMiOiIwIiwibWVyY2hhbnRuYW1lIjoiVGVzdCBVbml0dGVzdCBTaXRlIiwic3BsaXRmaW5hbG51bWJlciI6IjEiLCJ4aWQiOiJZa0pNTTBKM1ZuaHNabTE2U25kSWVYQm1NakE9IiwiZGNjZW5hYmxlZCI6IjAiLCJzZXR0bGVkdWVkYXRlIjoiMjAxOS0wNi0yMSIsImVycm9yY29kZSI6IjAiLCJ0aWQiOiIyNzg4MDAwMCIsImlzc3VlciI6IlNlY3VyZVRyYWRpbmcgVGVzdCBJc3N1ZXIxIiwibWVyY2hhbnRudW1iZXIiOiIwMDAwMDAwMCIsIm1lcmNoYW50Y291bnRyeWlzbzJhIjoiR0IiLCJzdGF0dXMiOiJZIiwidHJhbnNhY3Rpb25yZWZlcmVuY2UiOiI0Mi05LTgwMDM5IiwidGhyZWVkdmVyc2lvbiI6IjEuMC4yIiwicGF5bWVudHR5cGVkZXNjcmlwdGlvbiI6IlZJU0EiLCJiYXNlYW1vdW50IjoiMTAwMCIsImVjaSI6IjA1IiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjYXZ2IjoiQUFBQkFXRmxtUUFBQUFCalJXV1pFRUZnRno4PSIsImFjcXVpcmVycmVzcG9uc2Vjb2RlIjoiMDAiLCJyZXF1ZXN0dHlwZWRlc2NyaXB0aW9uIjoiQVVUSCIsInNlY3VyaXR5cmVzcG9uc2VzZWN1cml0eWNvZGUiOiIyIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsImF1dGhjb2RlIjoiVEVTVDk4IiwiZXJyb3JtZXNzYWdlIjoiT2siLCJpc3N1ZXJjb3VudHJ5aXNvMmEiOiJVUyIsIm1hc2tlZHBhbiI6IjQxMTExMSMjIyMjIzExMTEiLCJzZWN1cml0eXJlc3BvbnNlcG9zdGNvZGUiOiIwIiwiZW5yb2xsZWQiOiJZIiwic2VjdXJpdHlyZXNwb25zZWFkZHJlc3MiOiIwIiwib3BlcmF0b3JuYW1lIjoibGl2ZTJfYXV0b2p3dCIsInNldHRsZXN0YXR1cyI6IjAifV0sInNlY3JhbmQiOiJJWEhCQ2g5In19.ab4CU-ZiRz1ZbxBISjQfzrQeXULPW2YWdAS4lKPANws';
   const instance = StCodec;
-  return { instance };
+  return { instance, jwt, responseJwt };
 }

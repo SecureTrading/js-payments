@@ -9,7 +9,7 @@ describe('Visa Checkout class', () => {
     const { config, url } = VisaCheckoutFixture();
     const jwt =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
-    instance = new VisaCheckout(config, false, jwt, url);
+    instance = new VisaCheckout(config, jwt, url);
     body = document.body;
   });
 
@@ -510,9 +510,7 @@ function VisaCheckoutFixture() {
   };
   const sandboxAssets = {
     sdk: 'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js',
-    buttonImg: `https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png?color=${
-      config.buttonSettings.color
-    }&size=${config.buttonSettings.size}`
+    buttonImg: `https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png?color=${config.buttonSettings.color}&size=${config.buttonSettings.size}`
   };
   const fakeVisaButton = document.createElement('img');
   fakeVisaButton.setAttribute('src', visaButttonProps.src);
