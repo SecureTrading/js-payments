@@ -12,8 +12,10 @@
 
   <body>
     <h1>Receipt page</h1>
-    <p>ST response JWT:</p>
-    <p id="stjwt"></p>
+    <p>JWT:</p>
+    <p id="jwt"></p>
+    <p>ThreeD Response:</p>
+    <p id="threedresponse"></p>
     <p>Error code:</p>
     <p id="errorcode"></p>
     <p>Error message:</p>
@@ -22,7 +24,8 @@
   <script>
     (function() {
       const parsedUrl = new URL(window.location.href);
-      document.getElementById('stjwt').innerHTML = parsedUrl.searchParams.get('stjwt', '');
+      document.getElementById('jwt').innerHTML = parsedUrl.searchParams.get('jwt', '');
+      document.getElementById('threedresponse').innerHTML = parsedUrl.searchParams.get('threedresponse', '');
       document.getElementById('errorcode').innerHTML = parsedUrl.searchParams.get('errorcode', '');
       document.getElementById('errormessage').innerHTML = parsedUrl.searchParams.get('errormessage', '');
     })();

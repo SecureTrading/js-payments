@@ -293,8 +293,8 @@ export class ApplePay {
       this.validateMerchantRequestData.walletvalidationurl = event.validationURL;
       return this.payment
         .walletVerify(this.validateMerchantRequestData)
-        .then(response => {
-          this.onValidateMerchantResponseSuccess(response);
+        .then((result: any) => {
+          this.onValidateMerchantResponseSuccess(result.response);
         })
         .catch(error => {
           const { errorcode, errormessage } = error;
@@ -328,7 +328,7 @@ export class ApplePay {
           },
           DomMethods.parseMerchantForm()
         )
-        .then((response: object) => response)
+        .then((result: any) => result.response)
         .then((data: object) => {
           this.setNotification(NotificationType.Success, Language.translations.PAYMENT_SUCCESS);
           this.session.completePayment({ status: this.getPaymentSuccessStatus(), errors: [] });

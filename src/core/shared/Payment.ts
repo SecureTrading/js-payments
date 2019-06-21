@@ -39,10 +39,9 @@ export default class Payment {
     const requestBody: IStRequest = {
       requesttypedescriptions: ['JSINIT']
     };
-    return this._stTransport.sendRequest(requestBody).then(responseBody => {
-      // @ts-ignore
-      this._cardinalCommerceCacheToken = responseBody.cachetoken;
-      return responseBody;
+    return this._stTransport.sendRequest(requestBody).then((result: any) => {
+      this._cardinalCommerceCacheToken = result.response.cachetoken;
+      return result;
     });
   }
 

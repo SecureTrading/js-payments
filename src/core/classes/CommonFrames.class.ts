@@ -116,16 +116,22 @@ export default class CommonFrames extends RegisterFrames {
   }
 
   private onTransactionComplete(data: any) {
+    // TODO improve this if statement to only submit if we decide to bypass the AUTH/TOKENISE
+    // currently doing it based on data.threedresponse but thats rubbish
+    const isTransactionFinished =
+      ['AUTH', 'CACHETOKENISE'].includes(data.requesttypedescription) || data.threedresponse !== undefined;
     if (
-      (this.submitOnSuccess &&
-        data.errorcode === '0' &&
-        ['AUTH', 'CACHETOKENISE'].includes(data.requesttypedescription)) ||
+      (this.submitOnSuccess && data.errorcode === '0' && isTransactionFinished) ||
       (this.submitOnError && data.errorcode !== '0')
     ) {
       const form = this.merchantForm;
       let fields = this.submitFields;
-      if (data.hasOwnProperty('stjwt')) {
-        fields = ['stjwt'];
+      if (data.hasOwnProperty('jwt')) {
+        fields = ['jwt'];
+      }
+      // TODO do we always want to push this on?
+      if (data.hasOwnProperty('threedresponse')) {
+        fields.push('threedresponse');
       }
       DomMethods.addDataToForm(form, data, fields);
       form.submit();

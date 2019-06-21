@@ -1,3 +1,4 @@
+import { StCodec } from '../../core/classes/StCodec.class';
 import { IMerchantData } from '../../core/models/MerchantData';
 import { INotificationEvent, NotificationType } from '../../core/models/NotificationEvent';
 import Frame from '../../core/shared/Frame';
@@ -32,6 +33,7 @@ export default class ControlFrame extends Frame {
   private _validation: Validation;
   private _preThreeDRequestTypes: string[];
   private _postThreeDRequestTypes: string[];
+  private _threeDQueryResult: any; // TODO type
 
   constructor() {
     super();
@@ -153,9 +155,9 @@ export default class ControlFrame extends Frame {
   }
 
   private requestThreeDInit() {
-    this._payment.threeDInitRequest().then(responseBody => {
+    this._payment.threeDInitRequest().then((result: any) => {
       const messageBusEvent: IMessageBusEvent = {
-        data: responseBody,
+        data: result.response,
         type: MessageBus.EVENTS_PUBLIC.THREEDINIT
       };
       this._messageBus.publish(messageBusEvent, true);
@@ -164,17 +166,25 @@ export default class ControlFrame extends Frame {
 
   // @TODO STJS-205 refactor into Payments
   private _processPayment(data: any) {
-    this._payment
-      .processPayment(this._postThreeDRequestTypes, this._card, this._merchantFormData, data)
-      .then((response: object) => response)
-      .then((respData: object) => {
-        this.setNotification(NotificationType.Success, Language.translations.PAYMENT_SUCCESS);
-        this._validation.blockForm(false);
-        return respData;
-      })
-      .catch(() => {
-        this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
-      });
+    // TODO test
+    if (this._postThreeDRequestTypes.length === 0) {
+      StCodec.publishResponse(this._threeDQueryResult.response, this._threeDQueryResult.jwt, data.threedresponse);
+      // TODO check if we can assume this is a successful response
+      // otherwise I think it would have errored in StCodec originally and followed the correct flow
+      this.setNotification(NotificationType.Success, Language.translations.PAYMENT_SUCCESS);
+    } else {
+      this._payment
+        .processPayment(this._postThreeDRequestTypes, this._card, this._merchantFormData, data)
+        .then((result: any) => result.response)
+        .then((respData: object) => {
+          this.setNotification(NotificationType.Success, Language.translations.PAYMENT_SUCCESS);
+          this._validation.blockForm(false);
+          return respData;
+        })
+        .catch(() => {
+          this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
+        });
+    }
   }
 
   private setFormValidity(state: any) {
@@ -213,9 +223,10 @@ export default class ControlFrame extends Frame {
       const validation = new Validation();
       this._payment
         .threeDQueryRequest(this._preThreeDRequestTypes, this._card, this._merchantFormData)
-        .then(responseBody => {
+        .then((result: any) => {
+          this._threeDQueryResult = result;
           const messageBusEvent: IMessageBusEvent = {
-            data: responseBody,
+            data: result.response,
             type: MessageBus.EVENTS_PUBLIC.THREEDQUERY
           };
           validation.blockForm(true);

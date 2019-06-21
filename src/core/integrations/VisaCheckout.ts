@@ -210,7 +210,7 @@ export class VisaCheckout {
         },
         DomMethods.parseMerchantForm()
       )
-      .then((response: object) => response)
+      .then((result: any) => result.response)
       .then((data: object) => {
         this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
         this.getResponseMessage(this.paymentStatus);

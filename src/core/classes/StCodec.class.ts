@@ -80,38 +80,33 @@ class StCodec {
         responseContent = r;
       }
     });
-    if (responseContent) {
-      responseContent.errormessage = translator.translate(responseContent.errormessage);
-      if (StCodec.REQUESTS_WITH_ERROR_MESSAGES.includes(responseContent.requesttypedescription)) {
-        if (responseContent.errorcode !== StCodec.STATUS_CODES.ok) {
-          if (responseContent.errorcode === StCodec.STATUS_CODES.invalidfield) {
-            validation.getErrorData(StCodec.getErrorData(responseContent));
-          }
-          validation.blockForm(false);
-          StCodec.publishResponse(responseContent, jwtResponse);
-          StCodec._notification.error(responseContent.errormessage);
-          throw new Error(responseContent.errormessage);
+    if (!responseContent) {
+      responseContent = responseData.response[responseData.response.length - 1];
+    }
+    responseContent.errormessage = translator.translate(responseContent.errormessage);
+    if (StCodec.REQUESTS_WITH_ERROR_MESSAGES.includes(responseContent.requesttypedescription)) {
+      if (responseContent.errorcode !== StCodec.STATUS_CODES.ok) {
+        if (responseContent.errorcode === StCodec.STATUS_CODES.invalidfield) {
+          validation.getErrorData(StCodec.getErrorData(responseContent));
         }
+        validation.blockForm(false);
+        StCodec.publishResponse(responseContent, jwtResponse);
+        StCodec._notification.error(responseContent.errormessage);
+        throw new Error(responseContent.errormessage);
       }
     }
     StCodec.publishResponse(responseContent, jwtResponse);
     return responseContent;
   }
-
-  private static _notification = new Notification();
-  private static _locale: string;
-  private static _messageBus = new MessageBus();
-  private static _parentOrigin: string;
-  // TODO do we want to update this?
-  private static REQUESTS_WITH_ERROR_MESSAGES = ['AUTH', 'CACHETOKENISE', 'ERROR', 'THREEDQUERY', 'WALLETVERIFY'];
-  private static STATUS_CODES = { invalidfield: '30000', ok: '0', declined: '70000' };
-
-  private static publishResponse(responseData: IResponseData, jwtResponse?: string) {
+  public static publishResponse(responseData: IResponseData, jwtResponse?: string, threedresponse?: string) {
     const translator = new Translator(StCodec._locale);
     responseData.errormessage = translator.translate(responseData.errormessage);
     const eventData = { ...responseData };
     if (jwtResponse !== undefined) {
-      eventData.stjwt = jwtResponse;
+      eventData.jwt = jwtResponse;
+    }
+    if (threedresponse !== undefined) {
+      eventData.threedresponse = threedresponse;
     }
     const notificationEvent: IMessageBusEvent = {
       data: eventData,
@@ -123,6 +118,14 @@ class StCodec {
       StCodec._messageBus.publishToSelf(notificationEvent);
     }
   }
+
+  private static _notification = new Notification();
+  private static _locale: string;
+  private static _messageBus = new MessageBus();
+  private static _parentOrigin: string;
+  // TODO do we want to update this?
+  private static REQUESTS_WITH_ERROR_MESSAGES = ['AUTH', 'CACHETOKENISE', 'ERROR', 'THREEDQUERY', 'WALLETVERIFY'];
+  private static STATUS_CODES = { invalidfield: '30000', ok: '0', declined: '70000' };
 
   private static _createCommunicationError() {
     return {
@@ -192,8 +195,12 @@ class StCodec {
       if ('json' in responseObject) {
         responseObject.json().then(responseData => {
           // TODO handle if JWT is invalid (malformed) - should fall into same invalid response case
-          const decodedResponseData = JwtDecode(responseData.jwt) as any; // TODO type?
-          resolve(StCodec.verifyResponseObject(decodedResponseData.payload, responseData.jwt));
+          const decoded = JwtDecode(responseData.jwt) as any; // TODO type?
+          resolve({
+            jwt: responseData.jwt,
+            // TODO rename decoded?
+            response: StCodec.verifyResponseObject(decoded.payload, responseData.jwt)
+          });
         });
       } else {
         StCodec.publishResponse(StCodec._createCommunicationError());
