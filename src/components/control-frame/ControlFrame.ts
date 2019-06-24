@@ -117,6 +117,9 @@ export default class ControlFrame extends Frame {
   }
 
   private onSubmit(data: any) {
+    if (data.requestTypes !== undefined) {
+      this.onSetRequestTypesEvent(data);
+    }
     this.requestPayment(data);
   }
 

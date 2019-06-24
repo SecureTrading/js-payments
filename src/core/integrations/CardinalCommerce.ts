@@ -68,7 +68,7 @@ export class CardinalCommerce {
       const pan = new StJwt(this._jwt).payload.pan as string;
       this._performBinDetection({ validity: true, value: pan });
       const submitFormEvent: IMessageBusEvent = {
-        data: { dataInJwt: true },
+        data: { dataInJwt: true, requestTypes: this._requestTypes },
         type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
       };
       this.messageBus.publishFromParent(submitFormEvent, Selectors.CONTROL_FRAME_IFRAME);
