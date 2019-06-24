@@ -29,14 +29,6 @@ export interface IThreeDQueryResponse {
  * 6.Cardinal.on('pauments.validated) - process auth or return failure
  */
 export class CardinalCommerce {
-  get tokenise(): boolean {
-    return this._tokenise;
-  }
-
-  set tokenise(value: boolean) {
-    this._tokenise = value;
-  }
-
   private static PAYMENT_BRAND: string = 'cca';
   private static PAYMENT_EVENTS = {
     INIT: 'init',
@@ -48,14 +40,14 @@ export class CardinalCommerce {
   private _cardinalCommerceJWT: string;
   private _cardinalCommerceCacheToken: string;
   private _threedQueryTransactionReference: string;
-  private _tokenise: boolean;
+  private readonly _tokenise: boolean;
   private readonly _startOnLoad: boolean;
   private _jwt: string;
 
   constructor(tokenise: boolean, startOnLoad: boolean, jwt: string) {
     this._startOnLoad = startOnLoad;
     this._jwt = jwt;
-    this.tokenise = tokenise;
+    this._tokenise = tokenise;
     this.messageBus = new MessageBus();
     this._onInit();
   }
@@ -115,14 +107,15 @@ export class CardinalCommerce {
    * @protected
    */
   protected _onCardinalValidated(data: any, jwt: string) {
-    if (['SUCCESS', 'NOACTION', 'FAILURE'].includes(data.ActionCode)) {
+    const { ActionCode, ErrorNumber, ErrorDescription } = data;
+    if (['SUCCESS', 'NOACTION', 'FAILURE'].includes(ActionCode)) {
       this._authorizePayment({
         threedresponse: jwt
       });
     } else {
       const responseData: IResponseData = {
-        errorcode: '50003',
-        errormessage: Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE
+        errorcode: ErrorNumber,
+        errormessage: ErrorDescription
       };
       const translator = new Translator(new StJwt(this._jwt).locale);
       responseData.errormessage = translator.translate(responseData.errormessage);
@@ -170,21 +163,35 @@ export class CardinalCommerce {
     Cardinal.on(CardinalCommerce.PAYMENT_EVENTS.VALIDATED, (data: any, jwt: string) => {
       this._onCardinalValidated(data, jwt);
     });
+
     Cardinal.setup(CardinalCommerce.PAYMENT_EVENTS.INIT, {
-      jwt: this._cardinalCommerceJWT
+      // jwt: this._cardinalCommerceJWT
+      jwt: '321kn3jdsadsadk12n3n1203n21o3v21em2109e'
     });
   }
 
+  /**
+   *
+   * @private
+   */
   protected _threeDSetup() {
     DomMethods.insertScript('head', environment.CARDINAL_COMMERCE.SONGBIRD_URL).addEventListener('load', () => {
       this._onCardinalLoad();
     });
   }
 
+  /**
+   *
+   * @private
+   */
   private _onInit() {
     this._initSubscriptions();
   }
 
+  /**
+   *
+   * @private
+   */
   private _initSubscriptions() {
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME, () => {
       this._onLoadControlFrame();
@@ -197,16 +204,30 @@ export class CardinalCommerce {
     });
   }
 
+  /**
+   *
+   * @private
+   */
   private _onLoadControlFrame() {
     this._threeDInitRequest();
   }
 
+  /**
+   *
+   * @param data
+   * @private
+   */
   private _onThreeDInitEvent(data: any) {
     this._cardinalCommerceJWT = data.threedinit;
     this._cardinalCommerceCacheToken = data.cachetoken;
     this._threeDSetup();
   }
 
+  /**
+   *
+   * @param data
+   * @private
+   */
   private _onThreeDQueryEvent(data: any) {
     this._threeDQueryRequest(data);
   }
@@ -221,6 +242,11 @@ export class CardinalCommerce {
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
+  /**
+   *
+   * @param responseObject
+   * @private
+   */
   private _threeDQueryRequest(responseObject: IThreeDQueryResponse) {
     if (this._isCardEnrolledAndNotFrictionless(responseObject)) {
       this._authenticateCard(responseObject);
@@ -230,10 +256,20 @@ export class CardinalCommerce {
     }
   }
 
+  /**
+   *
+   * @param response
+   * @private
+   */
   private _isCardEnrolledAndNotFrictionless(response: IThreeDQueryResponse) {
     return response.enrolled === 'Y' && response.acsurl !== undefined;
   }
 
+  /**
+   *
+   * @param data
+   * @private
+   */
   private _authorizePayment(data?: any) {
     data = data || {};
     data.cachetoken = this._cardinalCommerceCacheToken;
@@ -242,7 +278,7 @@ export class CardinalCommerce {
       data,
       type: MessageBus.EVENTS_PUBLIC.AUTH
     };
-    if (this.tokenise) {
+    if (this._tokenise) {
       messageBusEvent.type = MessageBus.EVENTS_PUBLIC.CACHETOKENISE;
     }
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
