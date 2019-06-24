@@ -196,12 +196,13 @@ class ST {
   private submitOnSuccess: boolean;
   private tokenise: boolean;
   private readonly config: IConfig;
+  private commonFrames: CommonFrames;
 
   constructor(config: IConfig) {
     this.config = ST._addDefaults(config);
     ST._validateConfig(this.config, IConfigSchema);
     this._setClassProperties(this.config);
-    ST._configureCommonFrames(
+    this.commonFrames = ST._configureCommonFrames(
       this.jwt,
       this.origin,
       this.componentIds,
@@ -223,6 +224,7 @@ class ST {
     const { targetConfig } = ST._setConfigObject(config);
     ST._validateConfig(targetConfig, IComponentsConfigSchema);
     ST._configureCardFrames(this.jwt, this.origin, this.componentIds, this.styles, targetConfig);
+    this.commonFrames.requestTypes = targetConfig.requestTypes;
     this.CardinalCommerce(targetConfig);
   }
 

@@ -13,6 +13,14 @@ export default class CommonFrames extends RegisterFrames {
     return document.getElementById(Selectors.MERCHANT_FORM_SELECTOR);
   }
 
+  set requestTypes(requestTypes: string[]) {
+    this._requestTypes = requestTypes;
+  }
+
+  get requestTypes(): string[] {
+    return this._requestTypes;
+  }
+
   public elementsToRegister: HTMLElement[];
   public elementsTargets: any;
   private notificationFrameMounted: HTMLElement;
@@ -24,6 +32,7 @@ export default class CommonFrames extends RegisterFrames {
   private submitOnError: boolean;
   private submitFields: string[];
   private gatewayUrl: string;
+  private _requestTypes: string[];
 
   constructor(
     jwt: any,
@@ -115,25 +124,59 @@ export default class CommonFrames extends RegisterFrames {
     }
   }
 
-  private onTransactionComplete(data: any) {
-    // TODO improve this if statement to only submit if we decide to bypass the AUTH/TOKENISE
-    // currently doing it based on data.threedresponse but thats rubbish
-    const isTransactionFinished =
-      ['AUTH', 'CACHETOKENISE'].includes(data.requesttypedescription) || data.threedresponse !== undefined;
-    if (
-      (this.submitOnSuccess && data.errorcode === '0' && isTransactionFinished) ||
+  // TODO refactor with CardinalCommerce
+  private _isCardEnrolledAndNotFrictionless(response: any) {
+    return response.enrolled === 'Y' && response.acsurl !== undefined;
+  }
+
+  // TODO unittest
+  private _isThreedComplete(data: any) {
+    if (this.requestTypes[this.requestTypes.length - 1] === 'THREEDQUERY') {
+      if (
+        (!this._isCardEnrolledAndNotFrictionless(data) && data.requesttypedescription === 'THREEDQUERY') ||
+        data.threedresponse
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // TODO unittest
+  private isTransactionFinished(data: any) {
+    if (['AUTH', 'CACHETOKENISE'].includes(data.requesttypedescription)) {
+      // TODO can we end on anything else
+      return true;
+    } else if (this._isThreedComplete(data)) {
+      return true;
+    }
+    return false;
+  }
+
+  private shouldSubmitForm(data: any) {
+    return (
+      (this.submitOnSuccess && data.errorcode === '0' && this.isTransactionFinished(data)) ||
       (this.submitOnError && data.errorcode !== '0')
-    ) {
+    );
+  }
+
+  // TODO unittest
+  private getSubmitFields(data: any) {
+    let fields = this.submitFields;
+    if (data.hasOwnProperty('jwt')) {
+      fields = ['jwt'];
+    }
+    // TODO do we always want to push this on?
+    if (data.hasOwnProperty('threedresponse')) {
+      fields.push('threedresponse');
+    }
+    return fields;
+  }
+
+  private onTransactionComplete(data: any) {
+    if (this.shouldSubmitForm(data)) {
       const form = this.merchantForm;
-      let fields = this.submitFields;
-      if (data.hasOwnProperty('jwt')) {
-        fields = ['jwt'];
-      }
-      // TODO do we always want to push this on?
-      if (data.hasOwnProperty('threedresponse')) {
-        fields.push('threedresponse');
-      }
-      DomMethods.addDataToForm(form, data, fields);
+      DomMethods.addDataToForm(form, data, this.getSubmitFields(data));
       form.submit();
     }
   }
