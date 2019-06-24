@@ -35,6 +35,7 @@ export class MerchantFields {
    */
   public findAllMerchantInputs() {
     const merchantFieldsNamesArray = [];
+    // tslint:disable-next-line: prefer-for-of
     for (let i = 0; i < this._merchantInputs.length; ++i) {
       if (this._merchantInputs[i].hasAttribute(MerchantFields.DATA_ATTRIBUTE_NAME)) {
         const input = document.getElementById(this._merchantInputs[i].id) as HTMLInputElement;
