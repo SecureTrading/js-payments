@@ -40,7 +40,7 @@ export class CardinalCommerce {
   private _cardinalCommerceJWT: string;
   private _cardinalCommerceCacheToken: string;
   private _threedQueryTransactionReference: string;
-  private readonly _tokenise: boolean;
+  private _tokenise: boolean;
   private readonly _startOnLoad: boolean;
   private _jwt: string;
 

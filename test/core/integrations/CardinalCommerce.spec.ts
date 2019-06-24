@@ -448,7 +448,7 @@ describe('CardinalCommerce class', () => {
     // then
     it('should publish control iframe event with CACHETOKENISE', () => {
       instance.messageBus.publishFromParent = jest.fn();
-      instance.tokenise = true;
+      instance._tokenise = true;
       instance._cardinalCommerceCacheToken = 'tokenValue';
       instance._threedQueryTransactionReference = '1-2-3';
       instance._authorizePayment({ some: 'value', cachetoken: 'OVERRIDDEN' });
