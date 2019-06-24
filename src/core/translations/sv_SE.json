@@ -18,7 +18,7 @@
   "Method not implemented": "Method not implemented",
   "Form is not valid": "Form is not valid",
   "Pay": "Pay",
-  "Processing...": "Processing...",
+  "Processing": "Processing...",
   "Invalid field": "Invalid field",
   "Card number is invalid": "Card number is invalid"
 }
