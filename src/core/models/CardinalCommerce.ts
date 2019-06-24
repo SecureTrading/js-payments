@@ -1,4 +1,12 @@
-const onCardinalValidatedStatus = ['SUCCESS', 'NOACTION', 'FAILURE'];
+const ON_CARDINAL_VALIDATED_STATUS = ['SUCCESS', 'NOACTION', 'FAILURE'];
+
+const PAYMENT_BRAND: string = 'cca';
+const PAYMENT_EVENTS = {
+  BIN_PROCESS: 'bin.process',
+  INIT: 'init',
+  SETUP_COMPLETE: 'payments.setupComplete',
+  VALIDATED: 'payments.validated'
+};
 
 interface IOnCardinalValidated {
   Validated: boolean;
@@ -49,9 +57,11 @@ interface IAuthorizePaymentResponse {
 }
 
 export {
-  onCardinalValidatedStatus,
   IAuthorizePaymentResponse,
   IOnCardinalValidated,
   IThreeDQueryResponse,
-  IThreeDInitResponse
+  IThreeDInitResponse,
+  ON_CARDINAL_VALIDATED_STATUS,
+  PAYMENT_BRAND,
+  PAYMENT_EVENTS
 };

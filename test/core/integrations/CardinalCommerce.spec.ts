@@ -381,6 +381,7 @@ describe('CardinalCommerce class', () => {
     describe('CardinalCommerce._threeDQueryRequest', () => {
       // then
       it('should authenticate card if enrolled or frictionless', () => {
+        // @ts-ignore
         instance._isCardEnrolledAndNotFrictionless = jest.fn().mockReturnValueOnce(true);
         instance._authenticateCard = jest.fn();
         instance._authorizePayment = jest.fn();
@@ -389,6 +390,7 @@ describe('CardinalCommerce class', () => {
         expect(instance._authorizePayment).toHaveBeenCalledTimes(0);
       });
       it('should authorise payment if NOT (enrolled or frictionless)', () => {
+        // @ts-ignore
         instance._isCardEnrolledAndNotFrictionless = jest.fn().mockReturnValueOnce(false);
         instance._authenticateCard = jest.fn();
         instance._authorizePayment = jest.fn();
@@ -400,6 +402,33 @@ describe('CardinalCommerce class', () => {
 
     // given
     describe('CardinalCommerce._isCardEnrolledAndNotFrictionless', () => {
+      let response: IThreeDQueryResponse = {
+        acquirertransactionreference: 'tx-ref',
+        accounttypedescription: 'ECOM',
+        acsurl: '',
+        enrolled: '',
+        threedpayload: 'payload',
+        transactionreference: '1-2-3',
+        acquirerresponsecode: '0',
+        dccenabled: '0',
+        errorcode: '0',
+        errormessage: 'No error',
+        issuer: 'Some test issuer',
+        issuercountryiso2a: 'US',
+        livestatus: '0',
+        maskedpan: '411111######1111',
+        merchantcountryiso2a: 'GB',
+        merchantname: 'Some merchant name',
+        merchantnumber: '00000000',
+        operatorname: 'am0310.autoapi',
+        paymenttypedescription: 'VISA',
+        requesttypedescription: 'THREEDQUERY',
+        settleduedate: '2019-06-24',
+        settlestatus: '0',
+        threedversion: '1.0.2',
+        tid: '27882788',
+        transactionstartedtimestamp: '2019-06-24 14:39:43'
+      };
       // then
       each([
         ['Y', undefined, false],
@@ -408,14 +437,11 @@ describe('CardinalCommerce class', () => {
         ['N', undefined, false]
       ]).it(
         'should detect if card is enrolled and we did not get a frictionless 3DS 2.0 response',
-        async (enrolled, acsurl, expected) => {
-          let response: IThreeDQueryResponse = {
-            acquirertransactionreference: 'tx-ref',
-            acsurl: acsurl,
-            enrolled: enrolled,
-            threedpayload: 'payload',
-            transactionreference: '1-2-3'
-          };
+        (enrolled, acsurl, expected) => {
+          response.acsurl = acsurl;
+          response.enrolled = enrolled;
+
+          // @ts-ignore
           expect(instance._isCardEnrolledAndNotFrictionless(response)).toBe(expected);
         }
       );
