@@ -56,7 +56,7 @@ describe('CardinalCommerce class', () => {
         instance._onCardinalSetupComplete();
         expect(instance._performBinDetection).toHaveBeenCalledWith({ validity: true, value: '4000000000001000' });
         expect(spyPublish).toHaveBeenCalledWith(
-          { data: { dataInJwt: true }, type: 'SUBMIT_FORM' },
+          { data: { dataInJwt: true, requestTypes: ['THREEDQUERY', 'AUTH'] }, type: 'SUBMIT_FORM' },
           'st-control-frame-iframe'
         );
       });
