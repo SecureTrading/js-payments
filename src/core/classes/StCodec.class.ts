@@ -65,15 +65,13 @@ class StCodec {
    * @return The content of the response that can be used in the following processes
    */
   public static verifyResponseObject(responseData: any, jwtResponse: string): object {
-    // TODO unittest - we should be able to have a much simpler test for this now
     // Ought we keep hold of the requestreference (eg. log it to console)
     // So that we can link these requests up with the gateway?
-    const translator = new Translator(StCodec._locale);
-    if (this._isInvalidResponse(responseData)) {
+    if (StCodec._isInvalidResponse(responseData)) {
       throw StCodec._handleInvalidResponse();
     }
-    const responseContent: IResponseData = this._determineResponse(responseData);
-    this._handleValidGatewayResponse(responseContent, jwtResponse, translator);
+    const responseContent: IResponseData = StCodec._determineResponse(responseData);
+    StCodec._handleValidGatewayResponse(responseContent, jwtResponse);
     return responseContent;
   }
 
@@ -142,7 +140,6 @@ class StCodec {
     );
   }
 
-  // TODO unittest
   private static _determineResponse(responseData: any) {
     let responseContent: IResponseData;
     responseData.response.forEach((r: any) => {
@@ -156,12 +153,8 @@ class StCodec {
     return responseContent;
   }
 
-  // TODO unittest
-  private static _handleValidGatewayResponse(
-    responseContent: IResponseData,
-    jwtResponse: string,
-    translator: Translator
-  ) {
+  private static _handleValidGatewayResponse(responseContent: IResponseData, jwtResponse: string) {
+    const translator = new Translator(StCodec._locale);
     const validation = new Validation();
     responseContent.errormessage = translator.translate(responseContent.errormessage);
     if (StCodec.REQUESTS_WITH_ERROR_MESSAGES.includes(responseContent.requesttypedescription)) {
@@ -178,6 +171,7 @@ class StCodec {
     StCodec.publishResponse(responseContent, jwtResponse);
   }
 
+  // TODO unittest
   private static _decodeResponseJwt(jwt: string, reject: (error: Error) => void) {
     let decoded: any;
     try {
@@ -230,7 +224,6 @@ class StCodec {
   public encode(requestObject: IStRequest) {
     if (
       Object.keys(requestObject).length < StCodec.MINIMUM_REQUEST_FIELDS ||
-      // TODO update unittest
       !requestObject.requesttypedescriptions.every(val => StCodec.SUPPORTED_REQUEST_TYPES.includes(val))
     ) {
       StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST);

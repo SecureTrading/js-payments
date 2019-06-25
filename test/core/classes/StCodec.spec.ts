@@ -16,6 +16,67 @@ describe('StCodec class', () => {
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NjExMTUyMDksInBheWxvYWQiOnsicmVxdWVzdHJlZmVyZW5jZSI6IlczMy0wcm0wZ2N5eCIsInJlc3BvbnNlIjpbeyJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImFjcXVpcmVycmVzcG9uc2Vjb2RlIjoiMDAiLCJhdXRoY29kZSI6IlRFU1Q1NiIsImJhc2VhbW91bnQiOiIxMDAiLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwiZGNjZW5hYmxlZCI6IjAiLCJlcnJvcmNvZGUiOiIwIiwiZXJyb3JtZXNzYWdlIjoiT2siLCJpc3N1ZXIiOiJTZWN1cmVUcmFkaW5nIFRlc3QgSXNzdWVyMSIsImlzc3VlcmNvdW50cnlpc28yYSI6IlVTIiwibGl2ZXN0YXR1cyI6IjAiLCJtYXNrZWRwYW4iOiI0MTExMTEjIyMjIyMwMjExIiwibWVyY2hhbnRjb3VudHJ5aXNvMmEiOiJHQiIsIm1lcmNoYW50bmFtZSI6IndlYnNlcnZpY2UgVU5JQ09ERSBtZXJjaGFudG5hbWUiLCJtZXJjaGFudG51bWJlciI6IjAwMDAwMDAwIiwib3BlcmF0b3JuYW1lIjoid2Vic2VydmljZXNAc2VjdXJldHJhZGluZy5jb20iLCJvcmRlcnJlZmVyZW5jZSI6IkFVVEhfVklTQV9QT1NULVBBU1MtSlNPTi1KU09OIiwicGF5bWVudHR5cGVkZXNjcmlwdGlvbiI6IlZJU0EiLCJyZXF1ZXN0dHlwZWRlc2NyaXB0aW9uIjoiQVVUSCIsInNlY3VyaXR5cmVzcG9uc2VhZGRyZXNzIjoiMiIsInNlY3VyaXR5cmVzcG9uc2Vwb3N0Y29kZSI6IjIiLCJzZWN1cml0eXJlc3BvbnNlc2VjdXJpdHljb2RlIjoiMiIsInNldHRsZWR1ZWRhdGUiOiIyMDE5LTAyLTIxIiwic2V0dGxlc3RhdHVzIjoiMCIsInNwbGl0ZmluYWxudW1iZXIiOiIxIiwidGlkIjoiMjc4ODI3ODgiLCJ0cmFuc2FjdGlvbnJlZmVyZW5jZSI6IjMzLTktODAxNjgiLCJ0cmFuc2FjdGlvbnN0YXJ0ZWR0aW1lc3RhbXAiOiIyMDE5LTAyLTIxIDEwOjA2OjM1In1dLCJzZWNyYW5kIjoiWktBVk1za1dRIiwidmVyc2lvbiI6IjEuMDAifX0.lLHIs5UsXht0IyFCGEF_x7AM4u_lOWX47J5cCuakqtc'
   };
 
+  describe('StCodec.verifyResponseObject', () => {
+    // @ts-ignore
+    const originalIsInvalid = StCodec._isInvalidResponse;
+    // @ts-ignore
+    const originalHandleInvalid = StCodec._handleInvalidResponse;
+    // @ts-ignore
+    const originalDetermineResp = StCodec._determineResponse;
+    // @ts-ignore
+    const originalHandleValid = StCodec._handleValidGatewayResponse;
+    beforeEach(() => {
+      // @ts-ignore
+      StCodec._isInvalidResponse = jest.fn();
+      // @ts-ignore
+      StCodec._handleInvalidResponse = jest.fn();
+      // @ts-ignore
+      StCodec._determineResponse = jest.fn();
+      // @ts-ignore
+      StCodec._handleValidGatewayResponse = jest.fn();
+    });
+    afterEach(() => {
+      // @ts-ignore
+      StCodec._isInvalidResponse = originalIsInvalid;
+      // @ts-ignore
+      StCodec._handleInvalidResponse = originalHandleInvalid;
+      // @ts-ignore
+      StCodec._determineResponse = originalDetermineResp;
+      // @ts-ignore
+      StCodec._handleValidGatewayResponse = originalHandleValid;
+    });
+
+    it('handles a valid response', () => {
+      // @ts-ignore
+      StCodec._isInvalidResponse.mockReturnValueOnce(false);
+      // @ts-ignore
+      StCodec._determineResponse.mockReturnValueOnce({ determined: 'response' });
+      expect(StCodec.verifyResponseObject({ 'a response': 'some data' }, 'ajwtstring')).toMatchObject({
+        determined: 'response'
+      });
+      // @ts-ignore
+      expect(StCodec._isInvalidResponse).toHaveBeenCalledTimes(1);
+      // @ts-ignore
+      expect(StCodec._determineResponse).toHaveBeenCalledTimes(1);
+      // @ts-ignore
+      expect(StCodec._handleValidGatewayResponse).toHaveBeenCalledTimes(1);
+    });
+
+    it('handles an invalid response', () => {
+      // @ts-ignore
+      StCodec._isInvalidResponse.mockReturnValueOnce(true);
+      // @ts-ignore
+      StCodec._handleInvalidResponse.mockReturnValue(new Error('Uh oh!'));
+      expect(() => StCodec.verifyResponseObject({ 'a response': 'some data' }, 'ajwtstring')).toThrow(
+        new Error('Uh oh!')
+      );
+      // @ts-ignore
+      expect(StCodec._isInvalidResponse).toHaveBeenCalledTimes(1);
+      // @ts-ignore
+      expect(StCodec._handleInvalidResponse).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe('StCodec.publishResponse', () => {
     let translator: Translator;
     beforeEach(() => {
@@ -86,6 +147,124 @@ describe('StCodec class', () => {
     });
   });
 
+  describe('StCodec._handleInvalidResponse', () => {
+    it('should call publishResponse and error notification and return the error object', () => {
+      let spy1 = jest.spyOn(StCodec, 'publishResponse');
+      // @ts-ignore
+      let spy2 = jest.spyOn(StCodec._notification, 'error');
+      // @ts-ignore
+      expect(StCodec._handleInvalidResponse()).toMatchObject(
+        new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE)
+      );
+      expect(spy1).toHaveBeenCalledTimes(1);
+      expect(spy1).toHaveBeenCalledWith({ errorcode: '50003', errormessage: 'Invalid response' });
+      expect(spy2).toHaveBeenCalledTimes(1);
+      expect(spy2).toHaveBeenCalledWith(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
+    });
+  });
+
+  describe('StCodec._determineResponse', () => {
+    each([
+      [{ response: [{ requesttypedescription: 'AUTH' }] }, { requesttypedescription: 'AUTH' }],
+      [
+        { response: [{ requesttypedescription: 'AUTH' }, { requesttypedescription: 'CHARGEBACK' }] },
+        { requesttypedescription: 'CHARGEBACK' }
+      ],
+      [
+        {
+          response: [
+            { requesttypedescription: 'AUTH', customeroutput: 'RESULT' },
+            { requesttypedescription: 'CHARGEBACK' }
+          ]
+        },
+        { requesttypedescription: 'AUTH', customeroutput: 'RESULT' }
+      ],
+      [
+        {
+          response: [
+            { requesttypedescription: 'AUTH', customeroutput: 'RESULT' },
+            { requesttypedescription: 'RISKDEC' },
+            { requesttypedescription: 'CHARGEBACK' }
+          ]
+        },
+        { requesttypedescription: 'AUTH', customeroutput: 'RESULT' }
+      ],
+      [
+        {
+          response: [
+            { requesttypedescription: 'AUTH' },
+            { requesttypedescription: 'RISKDEC', customeroutput: 'RESULT' },
+            { requesttypedescription: 'CHARGEBACK' }
+          ]
+        },
+        { requesttypedescription: 'RISKDEC', customeroutput: 'RESULT' }
+      ]
+    ]).it('should return a valid response ', (requestObject, expected) => {
+      // @ts-ignore
+      expect(StCodec._determineResponse(requestObject)).toEqual(expected);
+    });
+  });
+
+  describe('StCodec._handleValidGatewayResponse', () => {
+    const originalPublishResponse = StCodec.publishResponse;
+    const originalGetErrorData = StCodec.getErrorData;
+    let spy: any;
+
+    beforeEach(() => {
+      StCodec.publishResponse = jest.fn();
+      StCodec.getErrorData = jest.fn((data: any) => originalGetErrorData(data));
+      // @ts-ignore
+      spy = jest.spyOn(StCodec._notification, 'error');
+    });
+
+    afterEach(() => {
+      StCodec.publishResponse = originalPublishResponse;
+      StCodec.getErrorData = originalGetErrorData;
+    });
+
+    it('should handle successful response', () => {
+      const content = { errorcode: '0', errormessage: 'Ok', requesttypedescription: 'AUTH' };
+      const jwt = 'jwtString';
+
+      // @ts-ignore
+      StCodec._handleValidGatewayResponse(content, jwt);
+      expect(spy).toHaveBeenCalledTimes(0);
+      expect(StCodec.getErrorData).toHaveBeenCalledTimes(0);
+      expect(StCodec.publishResponse).toHaveBeenCalledTimes(1);
+      expect(StCodec.publishResponse).toHaveBeenCalledWith(content, jwt);
+      expect(content.errormessage).toBe('Ok');
+    });
+
+    it('should raise if error response', () => {
+      const content = { errorcode: '50000', errormessage: 'Timeout', requesttypedescription: 'AUTH' };
+      const jwt = 'jwtString';
+      // @ts-ignore
+      expect(() => StCodec._handleValidGatewayResponse(content, jwt)).toThrow(new Error('Timeout'));
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith('Timeout');
+      expect(StCodec.getErrorData).toHaveBeenCalledTimes(0);
+      expect(StCodec.publishResponse).toHaveBeenCalledTimes(1);
+      expect(StCodec.publishResponse).toHaveBeenCalledWith(content, jwt);
+    });
+
+    it('should raise if field error response and call getErrorData', () => {
+      const content = {
+        errorcode: '30000',
+        errordata: ['afield'],
+        errormessage: 'Invalid field',
+        requesttypedescription: 'AUTH'
+      };
+      const jwt = 'jwtString';
+      // @ts-ignore
+      expect(() => StCodec._handleValidGatewayResponse(content, jwt)).toThrow(new Error('Invalid field'));
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith('Invalid field');
+      expect(StCodec.getErrorData).toHaveBeenCalledTimes(2);
+      expect(StCodec.publishResponse).toHaveBeenCalledTimes(1);
+      expect(StCodec.publishResponse).toHaveBeenCalledWith(content, jwt);
+    });
+  });
+
   describe('StCodec._createRequestId', () => {
     beforeEach(() => {
       str = new StCodec(jwt);
@@ -152,6 +331,19 @@ describe('StCodec class', () => {
               '","sitereference":"live2"}\\],"version":"1.00"}$'
           )
         )
+      ],
+      [
+        { pan: '4111111111111111', requesttypedescriptions: ['AUTH', 'SUBSCRIPTION'] },
+        expect.stringMatching(
+          new RegExp(
+            '^{"acceptcustomeroutput":"1.00","jwt":"' +
+              jwt +
+              '","request":\\[{"pan":"4111111111111111",' +
+              '"requesttypedescriptions":\\["AUTH","SUBSCRIPTION"\\],"requestid":"' +
+              ridRegex +
+              '","sitereference":"live2"}\\],"version":"1.00"}$'
+          )
+        )
       ]
     ]).it('should encode valid data', (request, expected) => {
       str.buildRequestObject = jest.fn(str.buildRequestObject);
@@ -167,32 +359,44 @@ describe('StCodec class', () => {
         })
       ).toThrow(Error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST));
     });
+
+    it('should refuse to build a request with if any of the rtd are invalid', () => {
+      expect(() =>
+        str.encode({
+          pan: '4111111111111111',
+          requesttypedescriptions: ['AUTH', 'LARGEHADRONCOLLIDER']
+        })
+      ).toThrow(Error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST));
+    });
   });
 
-  describe('StCodec.verifyResponseObject', () => {
+  describe('StCodec._isInvalidResponse', () => {
     beforeEach(() => {
       str = new StCodec(jwt);
       // @ts-ignore
       StCodec.publishResponse = jest.fn();
     });
 
-    each([[{}], [{ version: '3.02' }], [{ version: '1.00', response: [] }]]).it(
-      'should verify the version and number of responses',
-      responseData => {
-        expect(() => instance.verifyResponseObject(responseData, responseJwt)).toThrow(
-          Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE)
-        );
-        // @ts-ignore
-        expect(StCodec.publishResponse).toHaveBeenCalledWith({ errorcode: '50003', errormessage: 'Invalid response' });
-      }
-    );
+    each([
+      [{}, true],
+      [{ response: [{}] }, true],
+      [{ version: '3.02' }, true],
+      [{ version: '1.00', response: [] }, true],
+      [{ version: '1.00', response: [{}] }, false],
+      [{ version: '1.00', response: [{}, {}] }, false]
+    ]).it('should verify the version and number of responses', (responseData, expected) => {
+      // @ts-ignore
+      expect(instance._isInvalidResponse(responseData)).toBe(expected);
+    });
   });
 
   describe('StCodec.decode', () => {
     beforeEach(() => {
       str = new StCodec(jwt);
       // @ts-ignore
-      StCodec.publishResponse = jest.fn();
+      StCodec._handleInvalidResponse = jest
+        .fn()
+        .mockReturnValueOnce(Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
     });
 
     it('should decode a valid response', async () => {
@@ -211,10 +415,7 @@ describe('StCodec class', () => {
     it('should error an invalid response', async () => {
       await expect(str.decode({})).rejects.toThrow(Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
       // @ts-ignore
-      expect(StCodec.publishResponse).toHaveBeenCalledWith({
-        errorcode: '50003',
-        errormessage: 'Invalid response'
-      });
+      expect(StCodec._handleInvalidResponse).toHaveBeenCalledTimes(1);
     });
   });
 });
