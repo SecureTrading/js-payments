@@ -172,8 +172,6 @@ export default class ControlFrame extends Frame {
     // TODO test
     if (this._postThreeDRequestTypes.length === 0) {
       StCodec.publishResponse(this._threeDQueryResult.response, this._threeDQueryResult.jwt, data.threedresponse);
-      // TODO check if we can assume this is a successful response
-      // otherwise I think it would have errored in StCodec originally and followed the correct flow
       this.setNotification(NotificationType.Success, Language.translations.PAYMENT_SUCCESS);
     } else {
       this._payment

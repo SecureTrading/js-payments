@@ -29,6 +29,10 @@ export interface IThreeDQueryResponse {
  * 6.Cardinal.on('pauments.validated) - process auth or return failure
  */
 export class CardinalCommerce {
+  public static isCardEnrolledAndNotFrictionless(response: IThreeDQueryResponse) {
+    return response.enrolled === 'Y' && response.acsurl !== undefined;
+  }
+
   private static PAYMENT_BRAND: string = 'cca';
   private static PAYMENT_EVENTS = {
     INIT: 'init',
@@ -233,16 +237,12 @@ export class CardinalCommerce {
   }
 
   private _threeDQueryRequest(responseObject: IThreeDQueryResponse) {
-    if (this._isCardEnrolledAndNotFrictionless(responseObject)) {
+    if (CardinalCommerce.isCardEnrolledAndNotFrictionless(responseObject)) {
       this._authenticateCard(responseObject);
     } else {
       this._threedQueryTransactionReference = responseObject.transactionreference;
       this._authorizePayment();
     }
-  }
-
-  private _isCardEnrolledAndNotFrictionless(response: IThreeDQueryResponse) {
-    return response.enrolled === 'Y' && response.acsurl !== undefined;
   }
 
   private _authorizePayment(data?: any) {

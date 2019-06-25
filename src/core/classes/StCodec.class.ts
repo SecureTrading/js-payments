@@ -29,8 +29,9 @@ class StCodec {
     'AUTH',
     'ERROR',
     'RISKDEC',
-    'SUBSCRIPTION'
-  ]; // TODO update to support other request types - basically should match ppages?
+    'SUBSCRIPTION',
+    'ACCOUNTCHECK'
+  ];
   public static MINIMUM_REQUEST_FIELDS = 1;
 
   /**
@@ -130,8 +131,16 @@ class StCodec {
   private static _locale: string;
   private static _messageBus = new MessageBus();
   private static _parentOrigin: string;
-  // TODO do we want to update this?
-  private static REQUESTS_WITH_ERROR_MESSAGES = ['AUTH', 'CACHETOKENISE', 'ERROR', 'THREEDQUERY', 'WALLETVERIFY'];
+  private static REQUESTS_WITH_ERROR_MESSAGES = [
+    'AUTH',
+    'CACHETOKENISE',
+    'ERROR',
+    'THREEDQUERY',
+    'WALLETVERIFY',
+    'RISKDEC',
+    'SUBSCRIPTION',
+    'ACCOUNTCHECK'
+  ];
   private static STATUS_CODES = { invalidfield: '30000', ok: '0', declined: '70000' };
 
   private static _createCommunicationError() {
@@ -203,7 +212,7 @@ class StCodec {
         responseObject.json().then(responseData => {
           let decoded: any;
           try {
-            decoded = JwtDecode(responseData.jwt) as any; // TODO type?
+            decoded = JwtDecode(responseData.jwt) as any;
           } catch (e) {
             // TODO refactor with else
             StCodec.publishResponse(StCodec._createCommunicationError());
@@ -212,7 +221,6 @@ class StCodec {
           }
           resolve({
             jwt: responseData.jwt,
-            // TODO rename decoded?
             response: StCodec.verifyResponseObject(decoded.payload, responseData.jwt)
           });
         });

@@ -1,4 +1,5 @@
 import Element from '../Element';
+import { CardinalCommerce } from '../integrations/CardinalCommerce';
 import DomMethods from '../shared/DomMethods';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
@@ -124,16 +125,11 @@ export default class CommonFrames extends RegisterFrames {
     }
   }
 
-  // TODO refactor with CardinalCommerce
-  private _isCardEnrolledAndNotFrictionless(response: any) {
-    return response.enrolled === 'Y' && response.acsurl !== undefined;
-  }
-
   // TODO unittest
   private _isThreedComplete(data: any) {
     if (this.requestTypes[this.requestTypes.length - 1] === 'THREEDQUERY') {
       if (
-        (!this._isCardEnrolledAndNotFrictionless(data) && data.requesttypedescription === 'THREEDQUERY') ||
+        (!CardinalCommerce.isCardEnrolledAndNotFrictionless(data) && data.requesttypedescription === 'THREEDQUERY') ||
         data.threedresponse
       ) {
         return true;
@@ -143,9 +139,8 @@ export default class CommonFrames extends RegisterFrames {
   }
 
   // TODO unittest
-  private isTransactionFinished(data: any) {
+  private _isTransactionFinished(data: any) {
     if (['AUTH', 'CACHETOKENISE'].includes(data.requesttypedescription)) {
-      // TODO can we end on anything else
       return true;
     } else if (this._isThreedComplete(data)) {
       return true;
@@ -153,9 +148,10 @@ export default class CommonFrames extends RegisterFrames {
     return false;
   }
 
-  private shouldSubmitForm(data: any) {
+  // TODO unittest
+  private _shouldSubmitForm(data: any) {
     return (
-      (this.submitOnSuccess && data.errorcode === '0' && this.isTransactionFinished(data)) ||
+      (this.submitOnSuccess && data.errorcode === '0' && this._isTransactionFinished(data)) ||
       (this.submitOnError && data.errorcode !== '0')
     );
   }
@@ -166,15 +162,14 @@ export default class CommonFrames extends RegisterFrames {
     if (data.hasOwnProperty('jwt')) {
       fields = ['jwt'];
     }
-    // TODO do we always want to push this on?
     if (data.hasOwnProperty('threedresponse')) {
       fields.push('threedresponse');
     }
     return fields;
   }
 
-  private onTransactionComplete(data: any) {
-    if (this.shouldSubmitForm(data)) {
+  private _onTransactionComplete(data: any) {
+    if (this._shouldSubmitForm(data)) {
       const form = this.merchantForm;
       DomMethods.addDataToForm(form, data, this.getSubmitFields(data));
       form.submit();
@@ -183,7 +178,7 @@ export default class CommonFrames extends RegisterFrames {
 
   private _setTransactionCompleteListener() {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE, (data: any) => {
-      this.onTransactionComplete(data);
+      this._onTransactionComplete(data);
     });
   }
 }
