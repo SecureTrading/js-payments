@@ -1,7 +1,9 @@
 import each from 'jest-each';
-import { CardinalCommerce, IThreeDQueryResponse } from '../../../src/core/integrations/CardinalCommerce';
+import { CardinalCommerce } from '../../../src/core/integrations/CardinalCommerce';
+import { IThreeDQueryResponse } from '../../../src/core/models/CardinalCommerce';
 import MessageBus from '../../../src/core/shared/MessageBus';
 import DomMethods from '../../../src/core/shared/DomMethods';
+
 jest.mock('./../../../src/core/shared/MessageBus');
 
 // given
@@ -379,6 +381,7 @@ describe('CardinalCommerce class', () => {
     describe('CardinalCommerce._threeDQueryRequest', () => {
       // then
       it('should authenticate card if enrolled or frictionless', () => {
+        // @ts-ignore
         instance._isCardEnrolledAndNotFrictionless = jest.fn().mockReturnValueOnce(true);
         instance._authenticateCard = jest.fn();
         instance._authorizePayment = jest.fn();
@@ -387,6 +390,7 @@ describe('CardinalCommerce class', () => {
         expect(instance._authorizePayment).toHaveBeenCalledTimes(0);
       });
       it('should authorise payment if NOT (enrolled or frictionless)', () => {
+        // @ts-ignore
         instance._isCardEnrolledAndNotFrictionless = jest.fn().mockReturnValueOnce(false);
         instance._authenticateCard = jest.fn();
         instance._authorizePayment = jest.fn();
@@ -448,7 +452,7 @@ describe('CardinalCommerce class', () => {
     // then
     it('should publish control iframe event with CACHETOKENISE', () => {
       instance.messageBus.publishFromParent = jest.fn();
-      instance.tokenise = true;
+      instance._tokenise = true;
       instance._cardinalCommerceCacheToken = 'tokenValue';
       instance._threedQueryTransactionReference = '1-2-3';
       instance._authorizePayment({ some: 'value', cachetoken: 'OVERRIDDEN' });
@@ -472,6 +476,7 @@ function CardinalCommerceFixture() {
     static setup = jest.fn();
     static trigger = jest.fn();
   }
+
   const validationData: object = {
     ActionCode: 'ERROR',
     ErrorDescription: 'Invalid JWT. Error verifying and deserialize JWT.',
