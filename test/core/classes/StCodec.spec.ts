@@ -265,6 +265,32 @@ describe('StCodec class', () => {
     });
   });
 
+  describe('StCodec._decodeResponseJwt', () => {
+    it('should return decoded JWT payload', () => {
+      const jwt =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJwYXlsb2FkIjp7InNvbWV0aGluZyI6InRoYXRzIGRlY29kZWQifX0.OCxORAco0sqzWR1nd4-MUajfrAHGgGSf4d_AAjmrNlU';
+      const mock = jest.fn();
+      // @ts-ignore
+      const resp = StCodec._decodeResponseJwt(jwt, mock);
+      expect(resp).toMatchObject({
+        iat: 1516239022,
+        name: 'John Doe',
+        payload: { something: 'thats decoded' },
+        sub: '1234567890'
+      });
+      expect(mock).toHaveBeenCalledTimes(0);
+    });
+
+    it('should call reject on failure', () => {
+      const jwt = 'INVALID';
+      const mock = jest.fn();
+      // @ts-ignore
+      const resp = StCodec._decodeResponseJwt(jwt, mock);
+      expect(mock).toHaveBeenCalledTimes(1);
+      expect(mock).toHaveBeenCalledWith(new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
+    });
+  });
+
   describe('StCodec._createRequestId', () => {
     beforeEach(() => {
       str = new StCodec(jwt);

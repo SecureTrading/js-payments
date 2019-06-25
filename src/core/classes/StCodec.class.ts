@@ -171,7 +171,6 @@ class StCodec {
     StCodec.publishResponse(responseContent, jwtResponse);
   }
 
-  // TODO unittest
   private static _decodeResponseJwt(jwt: string, reject: (error: Error) => void) {
     let decoded: any;
     try {
