@@ -1,7 +1,9 @@
 import each from 'jest-each';
-import { CardinalCommerce, IThreeDQueryResponse } from '../../../src/core/integrations/CardinalCommerce';
+import { CardinalCommerce } from '../../../src/core/integrations/CardinalCommerce';
+import { IThreeDQueryResponse } from '../../../src/core/models/CardinalCommerce';
 import MessageBus from '../../../src/core/shared/MessageBus';
 import DomMethods from '../../../src/core/shared/DomMethods';
+
 jest.mock('./../../../src/core/shared/MessageBus');
 
 // given
@@ -459,7 +461,7 @@ describe('CardinalCommerce class', () => {
     // then
     it('should publish control iframe event with CACHETOKENISE', () => {
       instance.messageBus.publishFromParent = jest.fn();
-      instance.tokenise = true;
+      instance._tokenise = true;
       instance._cardinalCommerceCacheToken = 'tokenValue';
       instance._threedQueryTransactionReference = '1-2-3';
       instance._authorizePayment({ some: 'value', cachetoken: 'OVERRIDDEN' });
@@ -483,6 +485,7 @@ function CardinalCommerceFixture() {
     static setup = jest.fn();
     static trigger = jest.fn();
   }
+
   const validationData: object = {
     ActionCode: 'ERROR',
     ErrorDescription: 'Invalid JWT. Error verifying and deserialize JWT.',
