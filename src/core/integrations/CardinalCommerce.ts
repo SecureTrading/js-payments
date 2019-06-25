@@ -131,8 +131,12 @@ export class CardinalCommerce {
   protected _onCardinalValidated(data: IOnCardinalValidated, jwt: string) {
     const { ActionCode, ErrorNumber, ErrorDescription } = data;
     const translator = new Translator(new StJwt(this._jwt).locale);
+    let errorNum: any = ErrorNumber;
+    if (errorNum !== undefined) {
+      errorNum = errorNum.toString();
+    }
     const responseData: IResponseData = {
-      acquirerresponsecode: ErrorNumber,
+      acquirerresponsecode: errorNum,
       acquirerresponsemessage: ErrorDescription,
       errorcode: '50003',
       errormessage: Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE
