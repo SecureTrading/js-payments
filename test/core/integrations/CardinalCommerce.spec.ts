@@ -378,17 +378,24 @@ describe('CardinalCommerce class', () => {
     });
 
     describe('CardinalCommerce._threeDQueryRequest', () => {
+      const original = CardinalCommerce.isCardEnrolledAndNotFrictionless;
+
+      afterEach(() => {
+        CardinalCommerce.isCardEnrolledAndNotFrictionless = original;
+      });
+
       // then
       it('should authenticate card if enrolled or frictionless', () => {
-        instance._isCardEnrolledAndNotFrictionless = jest.fn().mockReturnValueOnce(true);
+        CardinalCommerce.isCardEnrolledAndNotFrictionless = jest.fn().mockReturnValueOnce(true);
         instance._authenticateCard = jest.fn();
         instance._authorizePayment = jest.fn();
         instance._threeDQueryRequest({ transactionreference: '1-2-3' });
         expect(instance._authenticateCard).toHaveBeenCalledTimes(1);
         expect(instance._authorizePayment).toHaveBeenCalledTimes(0);
       });
+
       it('should authorise payment if NOT (enrolled or frictionless)', () => {
-        instance._isCardEnrolledAndNotFrictionless = jest.fn().mockReturnValueOnce(false);
+        CardinalCommerce.isCardEnrolledAndNotFrictionless = jest.fn().mockReturnValueOnce(false);
         instance._authenticateCard = jest.fn();
         instance._authorizePayment = jest.fn();
         instance._threeDQueryRequest({ transactionreference: '1-2-3' });
@@ -398,7 +405,7 @@ describe('CardinalCommerce class', () => {
     });
 
     // given
-    describe('CardinalCommerce._isCardEnrolledAndNotFrictionless', () => {
+    describe('CardinalCommerce.isCardEnrolledAndNotFrictionless', () => {
       // then
       each([
         ['Y', undefined, false],
@@ -415,7 +422,7 @@ describe('CardinalCommerce class', () => {
             threedpayload: 'payload',
             transactionreference: '1-2-3'
           };
-          expect(instance._isCardEnrolledAndNotFrictionless(response)).toBe(expected);
+          expect(CardinalCommerce.isCardEnrolledAndNotFrictionless(response)).toBe(expected);
         }
       );
     });

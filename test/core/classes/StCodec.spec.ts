@@ -196,18 +196,15 @@ describe('StCodec class', () => {
     });
 
     it('should decode a valid response', async () => {
-      const verifyResponse = instance.verifyResponseObject((JwtDecode(fullResponse.jwt) as any).payload, responseJwt);
-      instance.verifyResponseObject = jest.fn(instance.verifyResponseObject);
+      instance.verifyResponseObject = jest.fn().mockReturnValueOnce({ verified: 'data' });
       await expect(
         str.decode({
           json: () => {
             return new Promise(resolve => resolve(fullResponse));
           }
         })
-      ).resolves.toEqual({ jwt: fullResponse.jwt, response: verifyResponse });
+      ).resolves.toEqual({ jwt: fullResponse.jwt, response: { verified: 'data' } });
       const expectedResult = (JwtDecode(fullResponse.jwt) as any).payload;
-      // Expect this to be translated
-      expectedResult.response[0].errormessage = 'Payment has been successfully processed';
       expect(instance.verifyResponseObject).toHaveBeenCalledWith(expectedResult, fullResponse.jwt);
     });
 
