@@ -137,7 +137,7 @@ class ST {
   private static _configureCommonFrames(
     jwt: string,
     origin: string,
-    componentIds: [],
+    componentIds: {},
     styles: {},
     submitOnSuccess: boolean,
     submitOnError: boolean,
@@ -174,7 +174,7 @@ class ST {
   private static _configureCardFrames(
     jwt: string,
     origin: string,
-    componentIds: [],
+    componentIds: {},
     styles: {},
     config: IComponentsConfig
   ) {
@@ -186,7 +186,7 @@ class ST {
     return cardFrames;
   }
 
-  private componentIds: [];
+  private componentIds: {};
   private gatewayUrl: string;
   private jwt: string;
   private origin: string;

@@ -38,7 +38,7 @@ export default class CommonFrames extends RegisterFrames {
   constructor(
     jwt: any,
     origin: any,
-    componentIds: [],
+    componentIds: {},
     styles: IStyles,
     submitOnSuccess: boolean,
     submitOnError: boolean,
@@ -119,6 +119,8 @@ export default class CommonFrames extends RegisterFrames {
   }
 
   private _setMerchantInputListeners() {
+    // tslint:disable-next-line
+    console.log(this.merchantForm);
     const els = DomMethods.getAllFormElements(this.merchantForm);
     for (const el of els) {
       el.addEventListener('input', this.onInput.bind(this));
