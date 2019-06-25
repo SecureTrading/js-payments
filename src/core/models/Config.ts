@@ -6,6 +6,8 @@ interface IConfig {
   datacenterurl?: string;
   formId?: string;
   jwt: string;
+  jwtOnInit?: string;
+  merchantCacheToken?: string;
   origin?: string;
   styles?: IStyles;
   submitFields?: string[];
@@ -35,6 +37,8 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
   datacenterurl: Joi.string(),
   formId: Joi.string(),
   jwt: Joi.string().required(),
+  jwtOnInit: Joi.string(),
+  merchantCacheToken: Joi.string(),
   origin: Joi.string(),
   styles: Joi.object(),
   submitFields: Joi.array().allow([Joi.string()]),

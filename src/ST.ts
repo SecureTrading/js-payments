@@ -188,6 +188,8 @@ class ST {
   private componentIds: [];
   private gatewayUrl: string;
   private jwt: string;
+  private jwtOnInit: string;
+  private merchantCacheToken: string;
   private origin: string;
   private styles: IStyles;
   private submitFields: string[];
@@ -198,6 +200,8 @@ class ST {
 
   constructor(config: IConfig) {
     this.config = ST._addDefaults(config);
+    this.jwtOnInit = config.jwtOnInit;
+    this.merchantCacheToken = config.merchantCacheToken;
     ST._validateConfig(this.config, IConfigSchema);
     this._setClassProperties(this.config);
     ST._configureCommonFrames(
@@ -252,7 +256,7 @@ class ST {
    */
   private CardinalCommerce(config: IWalletConfig) {
     const cardinal = environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce;
-    return new cardinal(this.tokenise, config.startOnLoad, this.jwt);
+    return new cardinal(this.tokenise, config.startOnLoad, this.jwt, this.merchantCacheToken, this.jwtOnInit);
   }
 
   /**
@@ -264,6 +268,7 @@ class ST {
     const {
       componentIds,
       jwt,
+      merchantCacheToken,
       origin,
       styles,
       submitFields,
@@ -275,6 +280,7 @@ class ST {
     } = config;
     this.componentIds = componentIds;
     this.jwt = jwt;
+    this.merchantCacheToken = merchantCacheToken ? merchantCacheToken : '';
     this.origin = origin;
     this.styles = styles;
     this.submitFields = submitFields;

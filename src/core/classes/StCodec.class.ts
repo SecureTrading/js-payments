@@ -17,7 +17,7 @@ interface IStRequest {
  * Encodes and Decodes a request for the ST gateway
  */
 class StCodec {
-  public static CONTENT_TYPE = 'application/json';
+  public static CONTENT_TYPE = 'decodeapplication/json';
   public static VERSION = '1.00';
   public static SUPPORTED_REQUEST_TYPES = ['WALLETVERIFY', 'JSINIT', 'THREEDQUERY', 'CACHETOKENISE', 'AUTH', 'ERROR'];
   public static MINIMUM_REQUEST_FIELDS = 1;
@@ -71,6 +71,7 @@ class StCodec {
     }
 
     const responseContent: IResponseData = responseData.response[0];
+    console.log(responseData);
     responseContent.errormessage = translator.translate(responseContent.errormessage);
     if (StCodec.REQUESTS_WITH_ERROR_MESSAGES.includes(responseContent.requesttypedescription)) {
       if (responseContent.errorcode !== StCodec.STATUS_CODES.ok) {

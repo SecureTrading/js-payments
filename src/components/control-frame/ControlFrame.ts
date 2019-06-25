@@ -82,6 +82,9 @@ export default class ControlFrame extends Frame {
     this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: IFormFieldState) => {
       this.onSecurityCodeStateChange(data);
     });
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BY_PASS_INIT, (data: any) => {
+      this.onByPassInitEvent(data);
+    });
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
       this.onThreeDInitEvent();
     });
@@ -140,6 +143,10 @@ export default class ControlFrame extends Frame {
     this.requestThreeDInit();
   }
 
+  private onByPassInitEvent(data: any) {
+    this.requestByPassInit(data);
+  }
+
   private onAuthEvent(data: any) {
     this.requestAuth(data);
   }
@@ -156,6 +163,14 @@ export default class ControlFrame extends Frame {
       };
       this._messageBus.publish(messageBusEvent, true);
     });
+  }
+
+  private requestByPassInit(data: any) {
+    this._payment.byPassInitRequest(data);
+    const messageBusEvent: IMessageBusEvent = {
+      type: MessageBus.EVENTS_PUBLIC.BY_PASS_INIT
+    };
+    this._messageBus.publish(messageBusEvent, true);
   }
 
   private requestAuth(data: any) {
@@ -215,6 +230,7 @@ export default class ControlFrame extends Frame {
 
     if (this._isPaymentReady && isFormValid) {
       const validation = new Validation();
+      console.log(this._merchantFormData);
       this._payment.threeDQueryRequest(this._card, this._merchantFormData).then(responseBody => {
         const messageBusEvent: IMessageBusEvent = {
           data: responseBody,

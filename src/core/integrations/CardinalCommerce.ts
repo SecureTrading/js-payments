@@ -53,14 +53,18 @@ export class CardinalCommerce {
   public messageBus: MessageBus;
   private _cardinalCommerceJWT: string;
   private _cardinalCommerceCacheToken: string;
+  private _merchantCacheToken: string;
   private _threedQueryTransactionReference: string;
   private _tokenise: boolean;
   private _startOnLoad: boolean;
   private _jwt: string;
+  private _jwtOnInit: string;
 
-  constructor(tokenise: boolean, startOnLoad: boolean, jwt: string) {
+  constructor(tokenise: boolean, startOnLoad: boolean, jwt: string, merchantCacheToken?: string, jwtOnInit?: string) {
     this._startOnLoad = startOnLoad;
     this._jwt = jwt;
+    this._jwtOnInit = jwtOnInit;
+    this._merchantCacheToken = merchantCacheToken ? merchantCacheToken : '';
     this.tokenise = tokenise;
     this.messageBus = new MessageBus();
     this._onInit();
@@ -191,11 +195,15 @@ export class CardinalCommerce {
   }
 
   private _initSubscriptions() {
+    // Grzesiek
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME, () => {
       this._onLoadControlFrame();
     });
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDINIT, (data: any) => {
       this._onThreeDInitEvent(data);
+    });
+    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.BY_PASS_INIT, () => {
+      this._onByPassJsInitEvent();
     });
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDQUERY, (data: any) => {
       this._onThreeDQueryEvent(data);
@@ -203,7 +211,17 @@ export class CardinalCommerce {
   }
 
   private _onLoadControlFrame() {
-    this._threeDInitRequest();
+    if (this._merchantCacheToken) {
+      this._byPassInitRequest();
+    } else {
+      this._threeDInitRequest();
+    }
+  }
+
+  private _onByPassJsInitEvent() {
+    this._cardinalCommerceJWT = this._jwtOnInit;
+    this._cardinalCommerceCacheToken = this._merchantCacheToken;
+    this._threeDSetup();
   }
 
   private _onThreeDInitEvent(data: any) {
@@ -214,6 +232,14 @@ export class CardinalCommerce {
 
   private _onThreeDQueryEvent(data: any) {
     this._threeDQueryRequest(data);
+  }
+
+  private _byPassInitRequest() {
+    const messageBusEvent: IMessageBusEvent = {
+      data: this._merchantCacheToken,
+      type: MessageBus.EVENTS_PUBLIC.BY_PASS_INIT
+    };
+    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
   /**

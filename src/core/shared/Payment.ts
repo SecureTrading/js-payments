@@ -41,6 +41,10 @@ export default class Payment {
     });
   }
 
+  public byPassInitRequest(merchantCacheToken: string) {
+    this._cardinalCommerceCacheToken = merchantCacheToken;
+  }
+
   public threeDQueryRequest(card: ICard, merchantData: IMerchantData): Promise<object> {
     const requestBody: IStRequest = Object.assign(
       {
