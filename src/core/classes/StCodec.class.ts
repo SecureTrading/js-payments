@@ -178,6 +178,16 @@ class StCodec {
     StCodec.publishResponse(responseContent, jwtResponse);
   }
 
+  private static _decodeResponseJwt(jwt: string, reject: (error: Error) => void) {
+    let decoded: any;
+    try {
+      decoded = JwtDecode(jwt) as any;
+    } catch (e) {
+      reject(StCodec._handleInvalidResponse());
+    }
+    return decoded;
+  }
+
   private readonly _requestId: string;
   private readonly _jwt: string;
 
@@ -238,7 +248,7 @@ class StCodec {
     return new Promise((resolve, reject) => {
       if ('json' in responseObject) {
         responseObject.json().then(responseData => {
-          const decoded = this._decodeResponseJwt(responseData.jwt, reject);
+          const decoded = StCodec._decodeResponseJwt(responseData.jwt, reject);
           resolve({
             jwt: responseData.jwt,
             response: StCodec.verifyResponseObject(decoded.payload, responseData.jwt)
@@ -248,16 +258,6 @@ class StCodec {
         reject(StCodec._handleInvalidResponse());
       }
     });
-  }
-
-  private _decodeResponseJwt(jwt: string, reject: (error: Error) => void) {
-    let decoded: any;
-    try {
-      decoded = JwtDecode(jwt) as any;
-    } catch (e) {
-      reject(StCodec._handleInvalidResponse());
-    }
-    return decoded;
   }
 }
 
