@@ -199,9 +199,10 @@ class ST {
   private readonly config: IConfig;
 
   constructor(config: IConfig) {
+    const { jwtOnInit, merchantCacheToken } = config;
     this.config = ST._addDefaults(config);
-    this.jwtOnInit = config.jwtOnInit;
-    this.merchantCacheToken = config.merchantCacheToken;
+    this.jwtOnInit = jwtOnInit;
+    this.merchantCacheToken = merchantCacheToken;
     ST._validateConfig(this.config, IConfigSchema);
     this._setClassProperties(this.config);
     ST._configureCommonFrames(
