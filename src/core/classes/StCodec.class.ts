@@ -65,47 +65,24 @@ class StCodec {
    * @return The content of the response that can be used in the following processes
    */
   public static verifyResponseObject(responseData: any, jwtResponse: string): object {
+    // TODO unittest - we should be able to have a much simpler test for this now
     // Ought we keep hold of the requestreference (eg. log it to console)
     // So that we can link these requests up with the gateway?
-    const validation = new Validation();
     const translator = new Translator(StCodec._locale);
-    if (
-      !(
-        responseData &&
-        responseData.version === StCodec.VERSION &&
-        responseData.response &&
-        responseData.response.length > 0
-      )
-    ) {
-      StCodec.publishResponse(StCodec._createCommunicationError());
-      StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
-      throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
+    if (this._isInvalidResponse(responseData)) {
+      throw StCodec._handleInvalidResponse();
     }
-    let responseContent: IResponseData;
-    responseData.response.forEach((r: any) => {
-      // TODO unittest
-      if (r.customeroutput) {
-        responseContent = r;
-      }
-    });
-    if (!responseContent) {
-      responseContent = responseData.response[responseData.response.length - 1];
-    }
-    responseContent.errormessage = translator.translate(responseContent.errormessage);
-    if (StCodec.REQUESTS_WITH_ERROR_MESSAGES.includes(responseContent.requesttypedescription)) {
-      if (responseContent.errorcode !== StCodec.STATUS_CODES.ok) {
-        if (responseContent.errorcode === StCodec.STATUS_CODES.invalidfield) {
-          validation.getErrorData(StCodec.getErrorData(responseContent));
-        }
-        validation.blockForm(false);
-        StCodec.publishResponse(responseContent, jwtResponse);
-        StCodec._notification.error(responseContent.errormessage);
-        throw new Error(responseContent.errormessage);
-      }
-    }
-    StCodec.publishResponse(responseContent, jwtResponse);
+    const responseContent: IResponseData = this._determineResponse(responseData);
+    this._handleValidGatewayResponse(responseContent, jwtResponse, translator);
     return responseContent;
   }
+
+  /** Publishes translated response as a TRANSACTION_COMPLETE event
+   * to allow the page to submit to the merchant server
+   * @param responseData The decoded response from the gateway
+   * @param jwtResponse The raw JWT response from the gateway
+   * @param threedresponse the response from Cardinal commerce after call to ACS
+   */
   public static publishResponse(responseData: IResponseData, jwtResponse?: string, threedresponse?: string) {
     const translator = new Translator(StCodec._locale);
     responseData.errormessage = translator.translate(responseData.errormessage);
@@ -148,6 +125,57 @@ class StCodec {
       errorcode: '50003',
       errormessage: Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE
     } as IResponseData;
+  }
+
+  private static _handleInvalidResponse() {
+    StCodec.publishResponse(StCodec._createCommunicationError());
+    StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
+    return new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
+  }
+
+  private static _isInvalidResponse(responseData: any) {
+    return !(
+      responseData &&
+      responseData.version === StCodec.VERSION &&
+      responseData.response &&
+      responseData.response.length > 0
+    );
+  }
+
+  // TODO unittest
+  private static _determineResponse(responseData: any) {
+    let responseContent: IResponseData;
+    responseData.response.forEach((r: any) => {
+      if (r.customeroutput) {
+        responseContent = r;
+      }
+    });
+    if (!responseContent) {
+      responseContent = responseData.response[responseData.response.length - 1];
+    }
+    return responseContent;
+  }
+
+  // TODO unittest
+  private static _handleValidGatewayResponse(
+    responseContent: IResponseData,
+    jwtResponse: string,
+    translator: Translator
+  ) {
+    const validation = new Validation();
+    responseContent.errormessage = translator.translate(responseContent.errormessage);
+    if (StCodec.REQUESTS_WITH_ERROR_MESSAGES.includes(responseContent.requesttypedescription)) {
+      if (responseContent.errorcode !== StCodec.STATUS_CODES.ok) {
+        if (responseContent.errorcode === StCodec.STATUS_CODES.invalidfield) {
+          validation.getErrorData(StCodec.getErrorData(responseContent));
+        }
+        validation.blockForm(false);
+        StCodec.publishResponse(responseContent, jwtResponse);
+        StCodec._notification.error(responseContent.errormessage);
+        throw new Error(responseContent.errormessage);
+      }
+    }
+    StCodec.publishResponse(responseContent, jwtResponse);
   }
 
   private readonly _requestId: string;
@@ -210,26 +238,26 @@ class StCodec {
     return new Promise((resolve, reject) => {
       if ('json' in responseObject) {
         responseObject.json().then(responseData => {
-          let decoded: any;
-          try {
-            decoded = JwtDecode(responseData.jwt) as any;
-          } catch (e) {
-            // TODO refactor with else
-            StCodec.publishResponse(StCodec._createCommunicationError());
-            StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
-            reject(new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
-          }
+          const decoded = this._decodeResponseJwt(responseData.jwt, reject);
           resolve({
             jwt: responseData.jwt,
             response: StCodec.verifyResponseObject(decoded.payload, responseData.jwt)
           });
         });
       } else {
-        StCodec.publishResponse(StCodec._createCommunicationError());
-        StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
-        reject(new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
+        reject(StCodec._handleInvalidResponse());
       }
     });
+  }
+
+  private _decodeResponseJwt(jwt: string, reject: (error: Error) => void) {
+    let decoded: any;
+    try {
+      decoded = JwtDecode(jwt) as any;
+    } catch (e) {
+      reject(StCodec._handleInvalidResponse());
+    }
+    return decoded;
   }
 }
 
