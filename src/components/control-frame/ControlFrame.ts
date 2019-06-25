@@ -230,7 +230,6 @@ export default class ControlFrame extends Frame {
 
     if (this._isPaymentReady && isFormValid) {
       const validation = new Validation();
-      console.log(this._merchantFormData);
       this._payment.threeDQueryRequest(this._card, this._merchantFormData).then(responseBody => {
         const messageBusEvent: IMessageBusEvent = {
           data: responseBody,

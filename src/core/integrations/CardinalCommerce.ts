@@ -195,7 +195,6 @@ export class CardinalCommerce {
   }
 
   private _initSubscriptions() {
-    // Grzesiek
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME, () => {
       this._onLoadControlFrame();
     });
