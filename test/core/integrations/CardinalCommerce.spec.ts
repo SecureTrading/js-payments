@@ -236,7 +236,7 @@ describe('CardinalCommerce class', () => {
       it('should set up subscribers to control frame setup, threedquery and threedinit events', () => {
         instance.messageBus.subscribeOnParent = jest.fn();
         instance._initSubscriptions();
-        expect(instance.messageBus.subscribeOnParent).toHaveBeenCalledTimes(3);
+        expect(instance.messageBus.subscribeOnParent.mock.calls.length).toBe(4);
         expect(instance.messageBus.subscribeOnParent.mock.calls[0][0]).toBe('LOAD_CONTROL_FRAME');
         // Annonymous function so can't test using toHaveBeenCalledWith
         expect(instance.messageBus.subscribeOnParent.mock.calls[0][1]).toBeInstanceOf(Function);
@@ -245,10 +245,11 @@ describe('CardinalCommerce class', () => {
         // Annonymous function so can't test using toHaveBeenCalledWith
         expect(instance.messageBus.subscribeOnParent.mock.calls[1][1]).toBeInstanceOf(Function);
         expect(instance.messageBus.subscribeOnParent.mock.calls[1].length).toBe(2);
-        expect(instance.messageBus.subscribeOnParent.mock.calls[2][0]).toBe('THREEDQUERY');
+        expect(instance.messageBus.subscribeOnParent.mock.calls[2][0]).toBe('BY_PASS_INIT');
         // Annonymous function so can't test using toHaveBeenCalledWith
         expect(instance.messageBus.subscribeOnParent.mock.calls[2][1]).toBeInstanceOf(Function);
         expect(instance.messageBus.subscribeOnParent.mock.calls[2].length).toBe(2);
+        expect(instance.messageBus.subscribeOnParent.mock.calls[3][0]).toBe('THREEDQUERY');
       });
 
       it('should call _onLoadControlFrame if eventType is LOAD_CONTROL_FRAME', () => {
