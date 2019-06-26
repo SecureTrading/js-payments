@@ -110,14 +110,14 @@ export class ApplePay {
   private requestTypes: string[];
 
   constructor(config: IWalletConfig, jwt: string, gatewayUrl: string) {
-    const { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId } = config;
+    const { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId, requestTypes } = config;
     this.jwt = jwt;
     this.merchantId = merchantId;
     this.placement = placement;
     this.payment = new Payment(jwt, gatewayUrl);
     this.paymentRequest = paymentRequest;
     this.sitesecurity = sitesecurity;
-    this.requestTypes = config.requestTypes;
+    this.requestTypes = requestTypes;
     this.validateMerchantRequestData.walletmerchantid = merchantId;
     this.stJwtInstance = new StJwt(jwt);
     this.stTransportInstance = new StTransport({

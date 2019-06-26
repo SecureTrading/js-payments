@@ -103,12 +103,12 @@ export class VisaCheckout {
 
   constructor(config: IWalletConfig, jwt: string, gatewayUrl: string) {
     this.messageBus = new MessageBus();
-    const { merchantId, livestatus, placement, settings, paymentRequest, buttonSettings } = config;
+    const { merchantId, livestatus, placement, settings, paymentRequest, buttonSettings, requestTypes } = config;
     const stJwt = new StJwt(jwt);
     this.payment = new Payment(jwt, gatewayUrl);
     this._livestatus = livestatus;
     this._placement = placement;
-    this._requestTypes = config.requestTypes;
+    this._requestTypes = requestTypes;
     this._setInitConfiguration(paymentRequest, settings, stJwt, merchantId);
     this._buttonSettings = this.setConfiguration({ locale: stJwt.locale }, settings);
     this.customizeVisaButton(buttonSettings);

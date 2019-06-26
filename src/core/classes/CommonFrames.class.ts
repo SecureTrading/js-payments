@@ -21,7 +21,7 @@ export default class CommonFrames extends RegisterFrames {
   get requestTypes(): string[] {
     return this._requestTypes;
   }
-
+  private static readonly COMPLETED_REQUEST_TYPES = ['AUTH', 'CACHETOKENISE'];
   public elementsToRegister: HTMLElement[];
   public elementsTargets: any;
   private notificationFrameMounted: HTMLElement;
@@ -127,18 +127,16 @@ export default class CommonFrames extends RegisterFrames {
 
   private _isThreedComplete(data: any) {
     if (this.requestTypes[this.requestTypes.length - 1] === 'THREEDQUERY') {
-      if (
+      return (
         (!CardinalCommerce.isCardEnrolledAndNotFrictionless(data) && data.requesttypedescription === 'THREEDQUERY') ||
-        data.threedresponse
-      ) {
-        return true;
-      }
+        data.threedresponse !== undefined
+      );
     }
     return false;
   }
 
   private _isTransactionFinished(data: any) {
-    if (['AUTH', 'CACHETOKENISE'].includes(data.requesttypedescription)) {
+    if (CommonFrames.COMPLETED_REQUEST_TYPES.includes(data.requesttypedescription)) {
       return true;
     } else if (this._isThreedComplete(data)) {
       return true;

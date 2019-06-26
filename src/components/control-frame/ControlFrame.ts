@@ -168,7 +168,7 @@ export default class ControlFrame extends Frame {
   }
 
   // @TODO STJS-205 refactor into Payments
-  private _processPayment(data: any) {
+  private _processPayment(data: IResponseData) {
     if (this._postThreeDRequestTypes.length === 0) {
       StCodec.publishResponse(this._threeDQueryResult.response, this._threeDQueryResult.jwt, data.threedresponse);
       this.setNotification(NotificationType.Success, Language.translations.PAYMENT_SUCCESS);
@@ -221,14 +221,14 @@ export default class ControlFrame extends Frame {
 
     if (this._isPaymentReady && isFormValid) {
       const validation = new Validation();
+      const messageBusEvent: IMessageBusEvent = {
+        type: MessageBus.EVENTS_PUBLIC.THREEDQUERY
+      };
       this._payment
         .threeDQueryRequest(this._preThreeDRequestTypes, this._card, this._merchantFormData)
         .then((result: any) => {
           this._threeDQueryResult = result;
-          const messageBusEvent: IMessageBusEvent = {
-            data: result.response,
-            type: MessageBus.EVENTS_PUBLIC.THREEDQUERY
-          };
+          messageBusEvent.data = result.response;
           validation.blockForm(true);
           this._messageBus.publish(messageBusEvent, true);
         });
