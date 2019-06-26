@@ -82,8 +82,8 @@ export default class ControlFrame extends Frame {
     this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: IFormFieldState) => {
       this.onSecurityCodeStateChange(data);
     });
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BY_PASS_INIT, (merchantCacheToken: string) => {
-      this.onByPassInitEvent(merchantCacheToken);
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BY_PASS_INIT, (cachetoken: string) => {
+      this.onByPassInitEvent(cachetoken);
     });
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
       this.onThreeDInitEvent();
@@ -165,8 +165,8 @@ export default class ControlFrame extends Frame {
     });
   }
 
-  private requestByPassInit(merchantCacheToken: string) {
-    this._payment.byPassInitRequest(merchantCacheToken);
+  private requestByPassInit(cachetoken: string) {
+    this._payment.byPassInitRequest(cachetoken);
     const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.BY_PASS_INIT
     };

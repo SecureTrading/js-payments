@@ -32,18 +32,18 @@ export class CardinalCommerce {
   public messageBus: MessageBus;
   private _cardinalCommerceJWT: string;
   private _cardinalCommerceCacheToken: string;
-  private _merchantCacheToken: string;
+  private _cachetoken: string;
   private _threedQueryTransactionReference: string;
   private _tokenise: boolean;
   private readonly _startOnLoad: boolean;
   private _jwt: string;
-  private _jwtOnInit: string;
+  private _threedinit: string;
 
-  constructor(tokenise: boolean, startOnLoad: boolean, jwt: string, merchantCacheToken?: string, jwtOnInit?: string) {
+  constructor(tokenise: boolean, startOnLoad: boolean, jwt: string, cachetoken?: string, threedinit?: string) {
     this._startOnLoad = startOnLoad;
     this._jwt = jwt;
-    this._jwtOnInit = jwtOnInit;
-    this._merchantCacheToken = merchantCacheToken ? merchantCacheToken : '';
+    this._threedinit = threedinit;
+    this._cachetoken = cachetoken ? cachetoken : '';
     this._tokenise = tokenise;
     this.messageBus = new MessageBus();
     this._onInit();
@@ -240,7 +240,7 @@ export class CardinalCommerce {
    * @private
    */
   private _onLoadControlFrame() {
-    if (this._merchantCacheToken) {
+    if (this._cachetoken) {
       this._byPassInitRequest();
     } else {
       this._threeDInitRequest();
@@ -248,8 +248,8 @@ export class CardinalCommerce {
   }
 
   private _onByPassJsInitEvent() {
-    this._cardinalCommerceJWT = this._jwtOnInit;
-    this._cardinalCommerceCacheToken = this._merchantCacheToken;
+    this._cardinalCommerceJWT = this._threedinit;
+    this._cardinalCommerceCacheToken = this._cachetoken;
     this._threeDSetup();
   }
 
@@ -276,7 +276,7 @@ export class CardinalCommerce {
 
   private _byPassInitRequest() {
     const messageBusEvent: IMessageBusEvent = {
-      data: this._merchantCacheToken,
+      data: this._cachetoken,
       type: MessageBus.EVENTS_PUBLIC.BY_PASS_INIT
     };
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
