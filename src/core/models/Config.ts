@@ -31,6 +31,7 @@ interface IByPassInit {
 }
 
 const IConfigSchema: Joi.JoiObject = Joi.object().keys({
+  cachetoken: Joi.string(),
   componentIds: Joi.object().keys({
     animatedCard: Joi.string().required(),
     cardNumber: Joi.string().required(),
@@ -38,7 +39,6 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
     notificationFrame: Joi.string().required(),
     securityCode: Joi.string().required()
   }),
-  cachetoken: Joi.string(),
   datacenterurl: Joi.string(),
   formId: Joi.string(),
   jwt: Joi.string().required(),
