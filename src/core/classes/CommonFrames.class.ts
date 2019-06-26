@@ -119,15 +119,12 @@ export default class CommonFrames extends RegisterFrames {
   }
 
   private _setMerchantInputListeners() {
-    // tslint:disable-next-line
-    console.log(this.merchantForm);
     const els = DomMethods.getAllFormElements(this.merchantForm);
     for (const el of els) {
       el.addEventListener('input', this.onInput.bind(this));
     }
   }
 
-  // TODO unittest
   private _isThreedComplete(data: any) {
     if (this.requestTypes[this.requestTypes.length - 1] === 'THREEDQUERY') {
       if (
@@ -140,7 +137,6 @@ export default class CommonFrames extends RegisterFrames {
     return false;
   }
 
-  // TODO unittest
   private _isTransactionFinished(data: any) {
     if (['AUTH', 'CACHETOKENISE'].includes(data.requesttypedescription)) {
       return true;
@@ -150,7 +146,6 @@ export default class CommonFrames extends RegisterFrames {
     return false;
   }
 
-  // TODO unittest
   private _shouldSubmitForm(data: any) {
     return (
       (this.submitOnSuccess && data.errorcode === '0' && this._isTransactionFinished(data)) ||
@@ -158,11 +153,10 @@ export default class CommonFrames extends RegisterFrames {
     );
   }
 
-  // TODO unittest
   private getSubmitFields(data: any) {
-    let fields = this.submitFields;
+    const fields = this.submitFields;
     if (data.hasOwnProperty('jwt')) {
-      fields = ['jwt'];
+      fields.push('jwt');
     }
     if (data.hasOwnProperty('threedresponse')) {
       fields.push('threedresponse');

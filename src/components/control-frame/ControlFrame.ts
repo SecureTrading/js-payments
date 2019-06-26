@@ -33,7 +33,7 @@ export default class ControlFrame extends Frame {
   private _validation: Validation;
   private _preThreeDRequestTypes: string[];
   private _postThreeDRequestTypes: string[];
-  private _threeDQueryResult: any; // TODO type
+  private _threeDQueryResult: any;
 
   constructor() {
     super();
@@ -169,7 +169,6 @@ export default class ControlFrame extends Frame {
 
   // @TODO STJS-205 refactor into Payments
   private _processPayment(data: any) {
-    // TODO test
     if (this._postThreeDRequestTypes.length === 0) {
       StCodec.publishResponse(this._threeDQueryResult.response, this._threeDQueryResult.jwt, data.threedresponse);
       this.setNotification(NotificationType.Success, Language.translations.PAYMENT_SUCCESS);
