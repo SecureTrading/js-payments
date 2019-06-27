@@ -199,12 +199,14 @@ class ST {
   private readonly config: IConfig;
 
   constructor(config: IConfig) {
-    const {
-      init: { cachetoken, threedinit }
-    } = config;
+    if (config.init) {
+      const {
+        init: { cachetoken, threedinit }
+      } = config;
+      this.threedinit = threedinit;
+      this.cachetoken = cachetoken;
+    }
     this.config = ST._addDefaults(config);
-    this.threedinit = threedinit;
-    this.cachetoken = cachetoken;
     ST._validateConfig(this.config, IConfigSchema);
     this._setClassProperties(this.config);
     ST._configureCommonFrames(
@@ -271,7 +273,7 @@ class ST {
     const {
       componentIds,
       jwt,
-      init: { cachetoken },
+      init,
       origin,
       styles,
       submitFields,
@@ -283,7 +285,9 @@ class ST {
     } = config;
     this.componentIds = componentIds;
     this.jwt = jwt;
-    this.cachetoken = cachetoken ? cachetoken : '';
+    if (init) {
+      this.cachetoken = init.cachetoken;
+    }
     this.origin = origin;
     this.styles = styles;
     this.submitFields = submitFields;

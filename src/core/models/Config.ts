@@ -6,7 +6,7 @@ interface IConfig {
   datacenterurl?: string;
   formId?: string;
   jwt: string;
-  init: IByPassInit;
+  init?: IByPassInit;
   origin?: string;
   styles?: IStyles;
   submitFields?: string[];
