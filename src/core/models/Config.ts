@@ -41,6 +41,7 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
   }),
   datacenterurl: Joi.string(),
   formId: Joi.string(),
+  init: Joi.object(),
   jwt: Joi.string().required(),
   origin: Joi.string(),
   styles: Joi.object(),
