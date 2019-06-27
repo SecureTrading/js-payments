@@ -22,7 +22,6 @@ jobs:
         - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
         - docker push "securetrading1/js-payments"
         - cd js-payments-testing
-        - git checkout -t origin/feature/ST-259-handle-multi-requests
         - git pull --ff-only origin
         - docker build . --build-arg "CODE_VERSION=$DOCKER_BRANCH" --tag "securetrading1/js-payments-testing:$DOCKER_BRANCH"
         - docker push "securetrading1/js-payments-testing"
