@@ -13,6 +13,13 @@ export default class ExpirationDate extends FormField {
   private static DISABLE_FIELD_CLASS = 'st-input--disabled';
   private static DISABLE_STATE = 'disabled';
   private static INPUT_PATTERN: string = '^(0[1-9]|1[0-2])\\/([0-9]{2})$';
+  private static LEADING_ZERO = '0';
+  private static LEADING_ZERO_LIMIT = 10;
+  private static ONLY_DIGITS_REGEXP = /[^\d]/g;
+
+  private static addLeadingZero(number: number): string {
+    return `${number < ExpirationDate.LEADING_ZERO_LIMIT ? ExpirationDate.LEADING_ZERO : ''}${number}`;
+  }
 
   private date: any;
   private _datePattern: string[];
@@ -20,12 +27,7 @@ export default class ExpirationDate extends FormField {
 
   constructor() {
     super(Selectors.EXPIRATION_DATE_INPUT, Selectors.EXPIRATION_DATE_MESSAGE, Selectors.EXPIRATION_DATE_LABEL);
-
-    // this.setAttributes({ pattern: ExpirationDate.INPUT_PATTERN });
-
-    // if (this._inputElement.value) {
-    //   this.sendState();
-    // }
+    this.setAttributes({ pattern: ExpirationDate.INPUT_PATTERN });
     this._datePattern = ['m', 'y'];
     this._blocks = [2, 2];
     this.setFocusListener();
@@ -41,7 +43,6 @@ export default class ExpirationDate extends FormField {
    * Gets translated label content.
    */
   public getLabel(): string {
-    super.getLabel();
     return Language.translations.LABEL_EXPIRATION_DATE;
   }
 
@@ -99,9 +100,10 @@ export default class ExpirationDate extends FormField {
    * @param event
    */
   protected onInput(event: Event) {
-    // super.onInput(event);
+    super.onInput(event);
     this._getValidatedDate(this._inputElement.value);
-    this._inputElement.value = this.getISOFormatDate().length ? this.getISOFormatDate() : this._inputElement.value;
+    this._inputElement.value = this.getISOFormatDate().length ? this.getISOFormatDate() : '';
+    console.log(this._inputElement.value);
     this.sendState();
   }
 
@@ -114,15 +116,24 @@ export default class ExpirationDate extends FormField {
   }
 
   /**
+   * Extends onKeyPress event with max length check.
+   * @param event
+   */
+  protected onKeyUp(event: KeyboardEvent) {
+    console.log(event.keyCode);
+    if (event.keyCode === 46) {
+      this._inputElement.setSelectionRange(0, 0);
+    }
+  }
+
+  /**
    * Extends onPaste method with formatting and masking.
    * @param event
    */
   protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
-    // const preparedValue = this._inputElement.value.substring(0, ExpirationDate.EXPIRATION_DATE_LENGTH);
-    // this._inputElement.value = Formatter.maskExpirationDateOnPaste(preparedValue);
     this._getValidatedDate(this._inputElement.value);
-    this._inputElement.value = this.getISOFormatDate().length ? this.getISOFormatDate() : this._inputElement.value;
+    this._inputElement.value = this.getISOFormatDate().length ? this.getISOFormatDate() : '';
     this.sendState();
   }
 
@@ -138,16 +149,26 @@ export default class ExpirationDate extends FormField {
     this._messageBus.publish(messageBusEvent);
   }
 
-  private _getValidatedDate(value: any) {
-    const instance = this;
-    let result: string = '';
-    value = value.replace(/[^\d]/g, '');
+  private static _clearNonDigitsChars = (value: string) => {
+    return value.replace(ExpirationDate.ONLY_DIGITS_REGEXP, '');
+  };
 
-    this._blocks.forEach(function(length, index) {
-      if (value.length > 0) {
-        let sub = value.slice(0, length);
-        let sub0 = sub.slice(0, 1);
-        let rest = value.slice(length);
+  /**
+   * Validates indicated string.
+   * @param value
+   * @private
+   */
+  private _getValidatedDate(value: string) {
+    const instance = this;
+    let date: string = ExpirationDate._clearNonDigitsChars(value);
+    console.log(date);
+    let result: string = '';
+
+    this._blocks.forEach((length, index) => {
+      if (date.length > 0) {
+        let sub = date.slice(0, length);
+        const sub0 = sub.slice(0, 1);
+        const rest = date.slice(length);
 
         if (instance._datePattern[index] === 'm') {
           if (sub === '00') {
@@ -160,50 +181,83 @@ export default class ExpirationDate extends FormField {
         }
 
         result += sub;
-        value = rest;
+        date = rest;
       }
     });
     return this.getFixedDateString(result);
   }
 
   private getFixedDateString(value: any) {
-    const owner = this;
-    let datePattern = owner._datePattern;
-    let date: any = [];
-    let monthStartIndex = 0;
-    let yearStartIndex = 0;
+    let date: number[] = [];
+    const datePattern = this._datePattern;
     let month;
     let year;
-    let fullYearDone = false;
 
-    if (value.length === 4 && datePattern[0] === 'm') {
-      yearStartIndex = 2 - monthStartIndex;
-      month = parseInt(value.slice(monthStartIndex, monthStartIndex + 2), 10);
-      year = parseInt(value.slice(yearStartIndex, yearStartIndex + 2), 10);
+    month = parseInt(value.slice(0, 2), 10);
+    year = parseInt(value.slice(2, 4), 10);
+    date = [month, year];
 
-      fullYearDone = value.slice(yearStartIndex, yearStartIndex + 2).length === 2;
-
-      date = [month, year];
-    }
-    owner.date = date;
+    date = this.getRangeFixedDate(date);
+    this.date = date;
 
     return date.length === 0
       ? value
-      : datePattern.reduce(function(previous, current) {
+      : datePattern.reduce((previous, current) => {
           switch (current) {
             case 'm':
               return previous + (date[0] === 0 ? '' : ExpirationDate.addLeadingZero(date[0]));
             case 'y':
-              return previous + (fullYearDone ? ExpirationDate.addLeadingZero(date[1]) : '');
+              return previous;
           }
         }, '');
   }
 
-  private getISOFormatDate() {
-    return this.date[0] ? ExpirationDate.addLeadingZero(this.date[0]) + '/' + this.date[1] : this.date;
-  }
+  private getISOFormatDate = () => {
+    console.log(this.date);
+    if (this.date[1]) {
+      return ExpirationDate.addLeadingZero(this.date[0]) + '/' + this.date[1];
+    } else if (this.date[0] === 0) {
+      return this.date[0];
+    } else if (this.date[0] && this.date[0] !== 1) {
+      return ExpirationDate.addLeadingZero(this.date[0]);
+    }
+  };
 
-  private static addLeadingZero(number: number) {
-    return (number < 10 ? '0' : '') + number;
+  private getRangeFixedDate(date: any) {
+    var owner = this,
+      datePattern = owner._datePattern,
+      dateMin: any = [],
+      dateMax: any = [];
+
+    if (!date.length || (dateMin.length < 3 && dateMax.length < 3)) {
+      return date;
+    }
+
+    if (
+      datePattern.find(function(x) {
+        return x.toLowerCase() === 'y';
+      }) &&
+      date[2] === 0
+    ) {
+      return date;
+    }
+
+    if (
+      dateMax.length &&
+      (dateMax[2] < date[2] ||
+        (dateMax[2] === date[2] && (dateMax[1] < date[1] || (dateMax[1] === date[1] && dateMax[0] < date[0]))))
+    ) {
+      return dateMax;
+    }
+
+    if (
+      dateMin.length &&
+      (dateMin[2] > date[2] ||
+        (dateMin[2] === date[2] && (dateMin[1] > date[1] || (dateMin[1] === date[1] && dateMin[0] > date[0]))))
+    ) {
+      return dateMin;
+    }
+
+    return date;
   }
 }
