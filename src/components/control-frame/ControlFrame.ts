@@ -1,3 +1,4 @@
+import { StCodec } from '../../core/classes/StCodec.class';
 import { IMerchantData } from '../../core/models/MerchantData';
 import { INotificationEvent, NotificationType } from '../../core/models/NotificationEvent';
 import Frame from '../../core/shared/Frame';
@@ -30,6 +31,9 @@ export default class ControlFrame extends Frame {
   };
   private _card: ICard;
   private _validation: Validation;
+  private _preThreeDRequestTypes: string[];
+  private _postThreeDRequestTypes: string[];
+  private _threeDQueryResult: any;
 
   constructor() {
     super();
@@ -82,17 +86,17 @@ export default class ControlFrame extends Frame {
     this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: IFormFieldState) => {
       this.onSecurityCodeStateChange(data);
     });
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES, (data: any) => {
+      this.onSetRequestTypesEvent(data);
+    });
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
       this.onThreeDInitEvent();
     });
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL, () => {
       this.onLoadCardinal();
     });
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.AUTH, (data: any) => {
-      this.onAuthEvent(data);
-    });
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.CACHETOKENISE, (data: any) => {
-      this.onCachetokeniseEvent(data);
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS, (data: any) => {
+      this.onProcessPaymentEvent(data);
     });
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, (data?: any) => {
       this.onSubmit(data);
@@ -106,7 +110,16 @@ export default class ControlFrame extends Frame {
     this._merchantFormData = data;
   }
 
+  private onSetRequestTypesEvent(data: any) {
+    const threeDIndex = data.requestTypes.indexOf('THREEDQUERY');
+    this._preThreeDRequestTypes = data.requestTypes.slice(0, threeDIndex + 1);
+    this._postThreeDRequestTypes = data.requestTypes.slice(threeDIndex + 1, data.requestTypes.length);
+  }
+
   private onSubmit(data: any) {
+    if (data !== undefined && data.requestTypes !== undefined) {
+      this.onSetRequestTypesEvent(data);
+    }
     this.requestPayment(data);
   }
 
@@ -140,45 +153,38 @@ export default class ControlFrame extends Frame {
     this.requestThreeDInit();
   }
 
-  private onAuthEvent(data: any) {
-    this.requestAuth(data);
-  }
-
-  private onCachetokeniseEvent(data: any) {
-    this.requestCachetokenise(data);
+  private onProcessPaymentEvent(data: any) {
+    this._processPayment(data);
   }
 
   private requestThreeDInit() {
-    this._payment.threeDInitRequest().then(responseBody => {
+    this._payment.threeDInitRequest().then((result: any) => {
       const messageBusEvent: IMessageBusEvent = {
-        data: responseBody,
+        data: result.response,
         type: MessageBus.EVENTS_PUBLIC.THREEDINIT
       };
       this._messageBus.publish(messageBusEvent, true);
     });
   }
 
-  private requestAuth(data: any) {
-    this._processPayment(data, 'AUTH');
-  }
-
-  private requestCachetokenise(data: any) {
-    this._processPayment(data, 'CACHETOKENISE');
-  }
-
   // @TODO STJS-205 refactor into Payments
-  private _processPayment(data: any, type: string) {
-    this._payment
-      .processPayment({ requesttypedescription: type }, this._card, this._merchantFormData, data)
-      .then((response: object) => response)
-      .then((respData: object) => {
-        this.setNotification(NotificationType.Success, Language.translations.PAYMENT_SUCCESS);
-        this._validation.blockForm(false);
-        return respData;
-      })
-      .catch(() => {
-        this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
-      });
+  private _processPayment(data: IResponseData) {
+    if (this._postThreeDRequestTypes.length === 0) {
+      StCodec.publishResponse(this._threeDQueryResult.response, this._threeDQueryResult.jwt, data.threedresponse);
+      this.setNotification(NotificationType.Success, Language.translations.PAYMENT_SUCCESS);
+    } else {
+      this._payment
+        .processPayment(this._postThreeDRequestTypes, this._card, this._merchantFormData, data)
+        .then((result: any) => result.response)
+        .then((respData: object) => {
+          this.setNotification(NotificationType.Success, Language.translations.PAYMENT_SUCCESS);
+          this._validation.blockForm(false);
+          return respData;
+        })
+        .catch(() => {
+          this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
+        });
+    }
   }
 
   private setFormValidity(state: any) {
@@ -215,14 +221,17 @@ export default class ControlFrame extends Frame {
 
     if (this._isPaymentReady && isFormValid) {
       const validation = new Validation();
-      this._payment.threeDQueryRequest(this._card, this._merchantFormData).then(responseBody => {
-        const messageBusEvent: IMessageBusEvent = {
-          data: responseBody,
-          type: MessageBus.EVENTS_PUBLIC.THREEDQUERY
-        };
-        validation.blockForm(true);
-        this._messageBus.publish(messageBusEvent, true);
-      });
+      const messageBusEvent: IMessageBusEvent = {
+        type: MessageBus.EVENTS_PUBLIC.THREEDQUERY
+      };
+      this._payment
+        .threeDQueryRequest(this._preThreeDRequestTypes, this._card, this._merchantFormData)
+        .then((result: any) => {
+          this._threeDQueryResult = result;
+          messageBusEvent.data = result.response;
+          validation.blockForm(true);
+          this._messageBus.publish(messageBusEvent, true);
+        });
     } else {
       this.setFormValidity(formValidity);
     }

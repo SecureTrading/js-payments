@@ -28,19 +28,22 @@ export class CardinalCommerce {
    * @param response
    * @private
    */
+  public static isCardEnrolledAndNotFrictionless(response: IThreeDQueryResponse) {
+    return response.enrolled === 'Y' && response.acsurl !== undefined;
+  }
 
   public messageBus: MessageBus;
   private _cardinalCommerceJWT: string;
   private _cardinalCommerceCacheToken: string;
   private _threedQueryTransactionReference: string;
-  private _tokenise: boolean;
   private readonly _startOnLoad: boolean;
   private _jwt: string;
+  private _requestTypes: string[];
 
-  constructor(tokenise: boolean, startOnLoad: boolean, jwt: string) {
-    this._jwt = jwt;
+  constructor(startOnLoad: boolean, jwt: string, requestTypes: string[]) {
     this._startOnLoad = startOnLoad;
-    this._tokenise = tokenise;
+    this._jwt = jwt;
+    this._requestTypes = requestTypes;
     this.messageBus = new MessageBus();
     this._onInit();
   }
@@ -112,7 +115,7 @@ export class CardinalCommerce {
       const pan = new StJwt(this._jwt).payload.pan as string;
       this._performBinDetection({ validity: true, value: pan });
       const submitFormEvent: IMessageBusEvent = {
-        data: { dataInJwt: true },
+        data: { dataInJwt: true, requestTypes: this._requestTypes },
         type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
       };
       this.messageBus.publishFromParent(submitFormEvent, Selectors.CONTROL_FRAME_IFRAME);
@@ -187,11 +190,8 @@ export class CardinalCommerce {
 
     const messageBusEvent: IMessageBusEvent = {
       data,
-      type: MessageBus.EVENTS_PUBLIC.AUTH
+      type: MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS
     };
-    if (this._tokenise) {
-      messageBusEvent.type = MessageBus.EVENTS_PUBLIC.CACHETOKENISE;
-    }
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
@@ -212,12 +212,16 @@ export class CardinalCommerce {
   }
 
   /**
-   * Check if card is enrolled and non frictionless
-   * @param response
-   * @private
+   * Publishes message bus set request types event
    */
-  private _isCardEnrolledAndNotFrictionless(response: IThreeDQueryResponse) {
-    return response.enrolled === 'Y' && response.acsurl !== undefined;
+  private _publishRequestTypesEvent(requestTypes: string[]) {
+    const messageBusEvent: IMessageBusEvent = {
+      data: { requestTypes },
+      type: MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES
+    };
+    document.getElementById(Selectors.CONTROL_FRAME_IFRAME).addEventListener('load', () => {
+      this.messageBus.publish(messageBusEvent);
+    });
   }
 
   /**
@@ -226,6 +230,7 @@ export class CardinalCommerce {
    */
   private _onInit() {
     this._initSubscriptions();
+    this._publishRequestTypesEvent(this._requestTypes);
   }
 
   /**
@@ -274,7 +279,7 @@ export class CardinalCommerce {
    * @private
    */
   private _threeDQueryRequest(responseObject: IThreeDQueryResponse) {
-    if (this._isCardEnrolledAndNotFrictionless(responseObject)) {
+    if (CardinalCommerce.isCardEnrolledAndNotFrictionless(responseObject)) {
       this._authenticateCard(responseObject);
     } else {
       this._threedQueryTransactionReference = responseObject.transactionreference;
