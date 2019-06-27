@@ -151,7 +151,7 @@ export class CardinalCommerce {
       this._authorizePayment({ threedresponse: jwt });
     } else {
       this.messageBus.publishToSelf(notificationEvent);
-      this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
+      this.setNotification(NotificationType.Error, Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
     }
   }
 
