@@ -12,17 +12,22 @@ export default class ExpirationDate extends FormField {
     document.getElementById(Selectors.EXPIRATION_DATE_INPUT) as HTMLInputElement;
   private static DISABLE_FIELD_CLASS = 'st-input--disabled';
   private static DISABLE_STATE = 'disabled';
-  private static EXPIRATION_DATE_LENGTH: number = 5;
   private static INPUT_PATTERN: string = '^(0[1-9]|1[0-2])\\/([0-9]{2})$';
+
+  private date: any;
+  private _datePattern: string[];
+  private _blocks: number[];
 
   constructor() {
     super(Selectors.EXPIRATION_DATE_INPUT, Selectors.EXPIRATION_DATE_MESSAGE, Selectors.EXPIRATION_DATE_LABEL);
 
-    this.setAttributes({ pattern: ExpirationDate.INPUT_PATTERN });
+    // this.setAttributes({ pattern: ExpirationDate.INPUT_PATTERN });
 
-    if (this._inputElement.value) {
-      this.sendState();
-    }
+    // if (this._inputElement.value) {
+    //   this.sendState();
+    // }
+    this._datePattern = ['m', 'y'];
+    this._blocks = [2, 2];
     this.setFocusListener();
     this.setDisableListener();
     this.validation.backendValidation(
@@ -36,6 +41,7 @@ export default class ExpirationDate extends FormField {
    * Gets translated label content.
    */
   public getLabel(): string {
+    super.getLabel();
     return Language.translations.LABEL_EXPIRATION_DATE;
   }
 
@@ -131,10 +137,6 @@ export default class ExpirationDate extends FormField {
     };
     this._messageBus.publish(messageBusEvent);
   }
-
-  private date: any;
-  private _datePattern = ['m', 'y'];
-  private _blocks = [2, 2];
 
   private _getValidatedDate(value: any) {
     const instance = this;
