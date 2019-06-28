@@ -13,8 +13,9 @@ describe('CardinalCommerce class', () => {
   let Cardinal: any;
   // when
   beforeEach(() => {
-    document.body.innerHTML = `<input id='JWTContainer' value="${jwt}" />`;
-    instance = new CardinalCommerce(false, false, jwt);
+    document.body.innerHTML = `<iframe id='st-control-frame-iframe'>
+    </iframe><input id='JWTContainer' value="${jwt}" />`;
+    instance = new CardinalCommerce(false, jwt, ['THREEDQUERY', 'AUTH']);
   });
 
   // given
@@ -57,7 +58,7 @@ describe('CardinalCommerce class', () => {
         instance._onCardinalSetupComplete();
         expect(instance._performBinDetection).toHaveBeenCalledWith({ validity: true, value: '4000000000001000' });
         expect(spyPublish).toHaveBeenCalledWith(
-          { data: { dataInJwt: true }, type: 'SUBMIT_FORM' },
+          { data: { dataInJwt: true, requestTypes: ['THREEDQUERY', 'AUTH'] }, type: 'SUBMIT_FORM' },
           'st-control-frame-iframe'
         );
       });
@@ -380,19 +381,24 @@ describe('CardinalCommerce class', () => {
     });
 
     describe('CardinalCommerce._threeDQueryRequest', () => {
+      const original = CardinalCommerce.isCardEnrolledAndNotFrictionless;
+
+      afterEach(() => {
+        CardinalCommerce.isCardEnrolledAndNotFrictionless = original;
+      });
+
       // then
       it('should authenticate card if enrolled or frictionless', () => {
-        // @ts-ignore
-        instance._isCardEnrolledAndNotFrictionless = jest.fn().mockReturnValueOnce(true);
+        CardinalCommerce.isCardEnrolledAndNotFrictionless = jest.fn().mockReturnValueOnce(true);
         instance._authenticateCard = jest.fn();
         instance._authorizePayment = jest.fn();
         instance._threeDQueryRequest({ transactionreference: '1-2-3' });
         expect(instance._authenticateCard).toHaveBeenCalledTimes(1);
         expect(instance._authorizePayment).toHaveBeenCalledTimes(0);
       });
+
       it('should authorise payment if NOT (enrolled or frictionless)', () => {
-        // @ts-ignore
-        instance._isCardEnrolledAndNotFrictionless = jest.fn().mockReturnValueOnce(false);
+        CardinalCommerce.isCardEnrolledAndNotFrictionless = jest.fn().mockReturnValueOnce(false);
         instance._authenticateCard = jest.fn();
         instance._authorizePayment = jest.fn();
         instance._threeDQueryRequest({ transactionreference: '1-2-3' });
@@ -402,7 +408,7 @@ describe('CardinalCommerce class', () => {
     });
 
     // given
-    describe('CardinalCommerce._isCardEnrolledAndNotFrictionless', () => {
+    describe('CardinalCommerce.isCardEnrolledAndNotFrictionless', () => {
       // then
       each([
         ['Y', undefined, false],
@@ -419,7 +425,7 @@ describe('CardinalCommerce class', () => {
             threedpayload: 'payload',
             transactionreference: '1-2-3'
           };
-          expect(instance._isCardEnrolledAndNotFrictionless(response)).toBe(expected);
+          expect(CardinalCommerce.isCardEnrolledAndNotFrictionless(response)).toBe(expected);
         }
       );
     });
@@ -434,7 +440,10 @@ describe('CardinalCommerce class', () => {
       instance._authorizePayment({ some: 'value', cachetoken: 'OVERRIDDEN' });
       expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
       expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
-        { type: 'AUTH', data: { some: 'value', cachetoken: 'tokenValue', parenttransactionreference: '1-2-3' } },
+        {
+          type: 'PROCESS_PAYMENTS',
+          data: { some: 'value', cachetoken: 'tokenValue', parenttransactionreference: '1-2-3' }
+        },
         'st-control-frame-iframe'
       );
     });
@@ -446,7 +455,7 @@ describe('CardinalCommerce class', () => {
       instance._authorizePayment();
       expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
       expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
-        { type: 'AUTH', data: { cachetoken: 'tokenValue', parenttransactionreference: '1-2-3' } },
+        { type: 'PROCESS_PAYMENTS', data: { cachetoken: 'tokenValue', parenttransactionreference: '1-2-3' } },
         'st-control-frame-iframe'
       );
     });
@@ -460,7 +469,7 @@ describe('CardinalCommerce class', () => {
       expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
       expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
         {
-          type: 'CACHETOKENISE',
+          type: 'PROCESS_PAYMENTS',
           data: { some: 'value', cachetoken: 'tokenValue', parenttransactionreference: '1-2-3' }
         },
         'st-control-frame-iframe'

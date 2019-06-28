@@ -33,7 +33,7 @@ export default class CardFrames extends RegisterFrames {
   constructor(
     jwt: any,
     origin: any,
-    componentIds: [],
+    componentIds: {},
     styles: IStyles,
     paymentTypes: string[],
     defaultPaymentType: string

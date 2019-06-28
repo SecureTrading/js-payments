@@ -12,9 +12,10 @@
 
   <body>
     <h1>Receipt page</h1>
-
-    <p>Transaction ref:</p>
-    <p id="transactionreference"></p>
+    <p>JWT:</p>
+    <p id="jwt"></p>
+    <p>ThreeD Response:</p>
+    <p id="threedresponse"></p>
     <p>Error code:</p>
     <p id="errorcode"></p>
     <p>Error message:</p>
@@ -23,10 +24,8 @@
   <script>
     (function() {
       const parsedUrl = new URL(window.location.href);
-      document.getElementById('transactionreference').innerHTML = parsedUrl.searchParams.get(
-        'transactionreference',
-        ''
-      );
+      document.getElementById('jwt').innerHTML = parsedUrl.searchParams.get('jwt', '');
+      document.getElementById('threedresponse').innerHTML = parsedUrl.searchParams.get('threedresponse', '');
       document.getElementById('errorcode').innerHTML = parsedUrl.searchParams.get('errorcode', '');
       document.getElementById('errormessage').innerHTML = parsedUrl.searchParams.get('errormessage', '');
     })();

@@ -348,7 +348,9 @@ describe('Class Apple Pay', () => {
     it('should call onvalidatemerchant and set walletvalidationurl and process walletverify', async () => {
       const { instance } = ApplePayFixture();
 
-      instance.payment.walletVerify = jest.fn().mockResolvedValueOnce({ myData: 'response' });
+      instance.payment.walletVerify = jest
+        .fn()
+        .mockResolvedValueOnce({ response: { myData: 'respData' }, jwt: 'ajwtvalue' });
       instance.onValidateMerchantResponseSuccess = jest.fn();
       instance.setNotification = jest.fn();
       instance.session = {};
@@ -366,7 +368,7 @@ describe('Class Apple Pay', () => {
       });
       expect(instance.validateMerchantRequestData.walletvalidationurl).toBe('https://example.com');
       expect(instance.onValidateMerchantResponseSuccess).toHaveBeenCalledTimes(1);
-      expect(instance.onValidateMerchantResponseSuccess).toHaveBeenCalledWith({ myData: 'response' });
+      expect(instance.onValidateMerchantResponseSuccess).toHaveBeenCalledWith({ myData: 'respData' });
       expect(instance.setNotification).toHaveBeenCalledTimes(0);
     });
 
@@ -431,7 +433,7 @@ describe('Class Apple Pay', () => {
 
       expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
       expect(instance.payment.processPayment).toHaveBeenCalledWith(
-        { requesttypedescription: 'AUTH' },
+        ['AUTH'],
         { walletsource: 'APPLEPAY', wallettoken: '{"TOKEN":"TOKEN DATA"}' },
         { billingfirstname: 'BOB' }
       );
@@ -449,7 +451,7 @@ describe('Class Apple Pay', () => {
       DomMethods.parseMerchantForm = jest.fn().mockReturnValueOnce({ billingfirstname: 'BOB' });
       instance.getPaymentSuccessStatus = jest.fn().mockReturnValueOnce('SUCCESS');
       // @ts-ignore
-      instance.tokenise = true;
+      instance.requestTypes = ['CACHETOKENISE'];
       instance.validateMerchantRequestData.walletsource = 'APPLEPAY';
       instance.session = { completePayment: jest.fn() };
       Object.defineProperty(instance.session, 'onpaymentauthorized', { value: '', writable: true });
@@ -459,7 +461,7 @@ describe('Class Apple Pay', () => {
 
       expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
       expect(instance.payment.processPayment).toHaveBeenCalledWith(
-        { requesttypedescription: 'CACHETOKENISE' },
+        ['CACHETOKENISE'],
         { walletsource: 'APPLEPAY', wallettoken: '{"TOKEN":"TOKEN DATA"}' },
         { billingfirstname: 'BOB' }
       );
@@ -487,7 +489,7 @@ describe('Class Apple Pay', () => {
 
       expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
       expect(instance.payment.processPayment).toHaveBeenCalledWith(
-        { requesttypedescription: 'AUTH' },
+        ['AUTH'],
         { walletsource: 'APPLEPAY', wallettoken: '{"TOKEN":"TOKEN DATA"}' },
         { billingfirstname: 'BOB' }
       );
@@ -739,11 +741,12 @@ function ApplePayFixture() {
     merchantId: 'merchant.net.securetrading',
     placement: 'st-apple-pay',
     buttonText: 'donate',
-    buttonStyle: 'white-outline'
+    buttonStyle: 'white-outline',
+    requestTypes: ['AUTH']
   };
   const jwt =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
-  const instance = new ApplePay(config, false, jwt, 'https://example.com');
+  const instance = new ApplePay(config, jwt, 'https://example.com');
 
   return {
     config,

@@ -70,9 +70,9 @@ export default class Element {
   public create(elementName: string, styles?: IStyles, params?: object) {
     const componentAddress = Element.getComponentAddress(elementName);
     // @ts-ignore
-    const componentStyles = new URLSearchParams(styles).toString(); // @TODO: add polyfill for IE
+    const componentStyles = new URLSearchParams(styles).toString();
     // @ts-ignore
-    const componentParams = new URLSearchParams(params).toString(); // @TODO: add polyfill for IE
+    const componentParams = new URLSearchParams(params).toString();
 
     this._name = elementName;
     this._iframeSrc = `${componentAddress}?${componentStyles}${componentParams ? '&' + componentParams : ''}`;
