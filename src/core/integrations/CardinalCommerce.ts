@@ -24,10 +24,13 @@ declare const Cardinal: any;
  */
 export class CardinalCommerce {
   /**
-   * Check if card is enrolled and nto frictionless.
+   * Check if card is enrolled and non frictionless
    * @param response
    * @private
    */
+  private static _isCardEnrolledAndNotFrictionless(response: IThreeDQueryResponse) {
+    return response.enrolled === 'Y' && response.acsurl !== undefined;
+  }
 
   public messageBus: MessageBus;
   private _cardinalCommerceJWT: string;
@@ -226,15 +229,6 @@ export class CardinalCommerce {
     document.getElementById(Selectors.CONTROL_FRAME_IFRAME).addEventListener('load', () => {
       this.messageBus.publish(messageBusEvent);
     });
-  }
-
-  /**
-   * Check if card is enrolled and non frictionless
-   * @param response
-   * @private
-   */
-  private static _isCardEnrolledAndNotFrictionless(response: IThreeDQueryResponse) {
-    return response.enrolled === 'Y' && response.acsurl !== undefined;
   }
 
   /**

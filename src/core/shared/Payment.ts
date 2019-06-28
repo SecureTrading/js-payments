@@ -41,7 +41,6 @@ export default class Payment {
     };
     return this._stTransport.sendRequest(requestBody).then((result: any) => {
       this._cardinalCommerceCacheToken = result.response.cachetoken;
-      console.log(result);
       return result;
     });
   }
