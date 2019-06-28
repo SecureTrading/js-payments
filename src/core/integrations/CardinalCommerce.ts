@@ -39,7 +39,7 @@ export class CardinalCommerce {
   private _requestTypes: string[];
   private _threedinit: string;
 
-  constructor(startOnLoad: boolean, jwt: string, requestTypes: string[],cachetoken?: string, threedinit?: string) {
+  constructor(startOnLoad: boolean, jwt: string, requestTypes: string[], cachetoken?: string, threedinit?: string) {
     this._startOnLoad = startOnLoad;
     this._jwt = jwt;
     this._threedinit = threedinit;
@@ -233,7 +233,7 @@ export class CardinalCommerce {
    * @param response
    * @private
    */
-  private _isCardEnrolledAndNotFrictionless(response: IThreeDQueryResponse) {
+  private static _isCardEnrolledAndNotFrictionless(response: IThreeDQueryResponse) {
     return response.enrolled === 'Y' && response.acsurl !== undefined;
   }
 
@@ -310,7 +310,7 @@ export class CardinalCommerce {
    * @private
    */
   private _threeDQueryRequest(responseObject: IThreeDQueryResponse) {
-    if (CardinalCommerce.isCardEnrolledAndNotFrictionless(responseObject)) {
+    if (CardinalCommerce._isCardEnrolledAndNotFrictionless(responseObject)) {
       this._authenticateCard(responseObject);
     } else {
       this._threedQueryTransactionReference = responseObject.transactionreference;

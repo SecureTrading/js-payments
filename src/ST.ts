@@ -265,7 +265,7 @@ class ST {
    */
   private CardinalCommerce(config: IWalletConfig) {
     const cardinal = environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce;
-    return new cardinal(config.startOnLoad, this.jwt, config.requestTypes,this.cachetoken, this.threedinit);
+    return new cardinal(config.startOnLoad, this.jwt, config.requestTypes, this.cachetoken, this.threedinit);
   }
 
   /**
