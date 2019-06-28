@@ -49,7 +49,8 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
   styles: Joi.object(),
   submitFields: Joi.array().allow([Joi.string()]),
   submitOnError: Joi.boolean(),
-  threedinit: Joi.string()
+  threedinit: Joi.string(),
+  submitOnSuccess: Joi.boolean()
 });
 
 const IComponentsConfigSchema = Joi.object().keys({
