@@ -6,25 +6,33 @@ interface IConfig {
   datacenterurl?: string;
   formId?: string;
   jwt: string;
+  init?: IByPassInit;
   origin?: string;
   styles?: IStyles;
   submitFields?: string[];
   submitOnSuccess?: boolean;
   submitOnError?: boolean;
-  tokenise?: boolean;
 }
 
 interface IComponentsConfig {
   defaultPaymentType: string;
   paymentTypes?: string[];
   startOnLoad?: boolean;
+  requestTypes?: string[];
 }
 
 interface IWalletConfig {
   [key: string]: any;
+  requestTypes?: string[];
+}
+
+interface IByPassInit {
+  threedinit: string;
+  cachetoken: string;
 }
 
 const IConfigSchema: Joi.JoiObject = Joi.object().keys({
+  cachetoken: Joi.string(),
   componentIds: Joi.object().keys({
     animatedCard: Joi.string().required(),
     cardNumber: Joi.string().required(),
@@ -34,19 +42,22 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
   }),
   datacenterurl: Joi.string(),
   formId: Joi.string(),
+  init: Joi.object(),
   jwt: Joi.string().required(),
   origin: Joi.string(),
+  requestTypes: Joi.array().allow([Joi.string()]),
   styles: Joi.object(),
   submitFields: Joi.array().allow([Joi.string()]),
   submitOnError: Joi.boolean(),
   submitOnSuccess: Joi.boolean(),
-  tokenise: Joi.boolean()
+  threedinit: Joi.string()
 });
 
 const IComponentsConfigSchema = Joi.object().keys({
   defaultPaymentType: Joi.string(),
   paymentTypes: Joi.array().allow([Joi.string()]),
+  requestTypes: Joi.array().allow([Joi.string()]),
   startOnLoad: Joi.boolean()
 });
 
-export { IConfig, IConfigSchema, IComponentsConfig, IComponentsConfigSchema, IWalletConfig };
+export { IByPassInit, IConfig, IConfigSchema, IComponentsConfig, IComponentsConfigSchema, IWalletConfig };

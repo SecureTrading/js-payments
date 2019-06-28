@@ -1,4 +1,5 @@
 import { environment } from '../../environments/environment';
+import { IWalletConfig } from '../models/Config';
 import { INotificationEvent, NotificationType } from '../models/NotificationEvent';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
@@ -66,7 +67,7 @@ export class VisaCheckout {
 
   public messageBus: MessageBus;
 
-  protected _tokenise: boolean;
+  protected _requestTypes: string[];
   protected _visaCheckoutButtonProps: any = {
     alt: 'Visa Checkout',
     class: 'v-button',
@@ -100,14 +101,14 @@ export class VisaCheckout {
     settings: {}
   };
 
-  constructor(config: any, tokenise: boolean, jwt: string, gatewayUrl: string) {
+  constructor(config: IWalletConfig, jwt: string, gatewayUrl: string) {
     this.messageBus = new MessageBus();
-    const { merchantId, livestatus, placement, settings, paymentRequest, buttonSettings } = config;
+    const { merchantId, livestatus, placement, settings, paymentRequest, buttonSettings, requestTypes } = config;
     const stJwt = new StJwt(jwt);
     this.payment = new Payment(jwt, gatewayUrl);
     this._livestatus = livestatus;
     this._placement = placement;
-    this._tokenise = tokenise;
+    this._requestTypes = requestTypes;
     this._setInitConfiguration(paymentRequest, settings, stJwt, merchantId);
     this._buttonSettings = this.setConfiguration({ locale: stJwt.locale }, settings);
     this.customizeVisaButton(buttonSettings);
@@ -196,20 +197,20 @@ export class VisaCheckout {
   }
 
   /**
-   * Starts processing payment with AUTH pr CACHETOKENISE request
+   * Starts processing payment with request defined by merchant config
    */
   // @TODO STJS-205 refactor into Payments
   protected _processPayment() {
     return this.payment
       .processPayment(
-        { requesttypedescription: this._tokenise ? 'CACHETOKENISE' : 'AUTH' },
+        this._requestTypes,
         {
           walletsource: this._walletSource,
           wallettoken: this.paymentDetails
         },
         DomMethods.parseMerchantForm()
       )
-      .then((response: object) => response)
+      .then((result: any) => result.response)
       .then((data: object) => {
         this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
         this.getResponseMessage(this.paymentStatus);

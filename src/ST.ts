@@ -45,7 +45,6 @@ class ST {
   private static _addDefaultFeatures(config: IConfig) {
     const defaultFeatures: IConfig = config;
     defaultFeatures.origin = config.origin ? config.origin : window.location.origin;
-    defaultFeatures.tokenise = config.tokenise !== undefined ? config.tokenise : false;
     defaultFeatures.submitOnSuccess = config.submitOnSuccess !== undefined ? config.submitOnSuccess : true;
     defaultFeatures.submitOnError = config.submitOnError !== undefined ? config.submitOnError : false;
     return defaultFeatures;
@@ -118,6 +117,8 @@ class ST {
     let targetConfig: IComponentsConfig;
     targetConfig = config ? config : ({} as IComponentsConfig);
     targetConfig.startOnLoad = targetConfig.startOnLoad !== undefined ? targetConfig.startOnLoad : false;
+    targetConfig.requestTypes =
+      targetConfig.requestTypes !== undefined ? targetConfig.requestTypes : ['THREEDQUERY', 'AUTH'];
     return { targetConfig };
   }
 
@@ -136,7 +137,7 @@ class ST {
   private static _configureCommonFrames(
     jwt: string,
     origin: string,
-    componentIds: [],
+    componentIds: {},
     styles: {},
     submitOnSuccess: boolean,
     submitOnError: boolean,
@@ -173,7 +174,7 @@ class ST {
   private static _configureCardFrames(
     jwt: string,
     origin: string,
-    componentIds: [],
+    componentIds: {},
     styles: {},
     config: IComponentsConfig
   ) {
@@ -185,7 +186,8 @@ class ST {
     return cardFrames;
   }
 
-  private componentIds: [];
+  private componentIds: {};
+  private cachetoken: string;
   private gatewayUrl: string;
   private jwt: string;
   private origin: string;
@@ -193,14 +195,22 @@ class ST {
   private submitFields: string[];
   private submitOnError: boolean;
   private submitOnSuccess: boolean;
-  private tokenise: boolean;
+  private threedinit: string;
   private readonly config: IConfig;
+  private commonFrames: CommonFrames;
 
   constructor(config: IConfig) {
+    if (config.init) {
+      const {
+        init: { cachetoken, threedinit }
+      } = config;
+      this.threedinit = threedinit;
+      this.cachetoken = cachetoken;
+    }
     this.config = ST._addDefaults(config);
     ST._validateConfig(this.config, IConfigSchema);
     this._setClassProperties(this.config);
-    ST._configureCommonFrames(
+    this.commonFrames = ST._configureCommonFrames(
       this.jwt,
       this.origin,
       this.componentIds,
@@ -222,6 +232,7 @@ class ST {
     const { targetConfig } = ST._setConfigObject(config);
     ST._validateConfig(targetConfig, IComponentsConfigSchema);
     ST._configureCardFrames(this.jwt, this.origin, this.componentIds, this.styles, targetConfig);
+    this.commonFrames.requestTypes = targetConfig.requestTypes;
     this.CardinalCommerce(targetConfig);
   }
 
@@ -232,7 +243,8 @@ class ST {
    */
   public ApplePay(config: IWalletConfig) {
     const applepay = environment.testEnvironment ? ApplePayMock : ApplePay;
-    return new applepay(config, this.tokenise, this.jwt, this.gatewayUrl);
+    config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
+    return new applepay(config, this.jwt, this.gatewayUrl);
   }
 
   /**
@@ -242,7 +254,8 @@ class ST {
    */
   public VisaCheckout(config: IWalletConfig) {
     const visa = environment.testEnvironment ? VisaCheckoutMock : VisaCheckout;
-    return new visa(config, this.tokenise, this.jwt, this.gatewayUrl);
+    config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
+    return new visa(config, this.jwt, this.gatewayUrl);
   }
 
   /**
@@ -252,7 +265,7 @@ class ST {
    */
   private CardinalCommerce(config: IWalletConfig) {
     const cardinal = environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce;
-    return new cardinal(this.tokenise, config.startOnLoad, this.jwt);
+    return new cardinal(config.startOnLoad, this.jwt, config.requestTypes, this.cachetoken, this.threedinit);
   }
 
   /**
@@ -264,23 +277,25 @@ class ST {
     const {
       componentIds,
       jwt,
+      init,
       origin,
       styles,
       submitFields,
       submitOnError,
       submitOnSuccess,
-      tokenise,
       datacenterurl,
       formId
     } = config;
     this.componentIds = componentIds;
     this.jwt = jwt;
+    if (init) {
+      this.cachetoken = init.cachetoken;
+    }
     this.origin = origin;
     this.styles = styles;
     this.submitFields = submitFields;
     this.submitOnError = submitOnError;
     this.submitOnSuccess = submitOnSuccess;
-    this.tokenise = tokenise;
     this.gatewayUrl = datacenterurl ? datacenterurl : environment.GATEWAY_URL;
     Selectors.MERCHANT_FORM_SELECTOR = formId ? formId : Selectors.MERCHANT_FORM_SELECTOR;
   }

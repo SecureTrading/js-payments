@@ -1,4 +1,5 @@
 import Element from '../Element';
+import { CardinalCommerce } from '../integrations/CardinalCommerce';
 import DomMethods from '../shared/DomMethods';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
@@ -9,7 +10,18 @@ import RegisterFrames from './RegisterFrames.class';
  * Defines all non field elements of form and their placement on merchant site.
  */
 export default class CommonFrames extends RegisterFrames {
-  private static FORM: HTMLFormElement = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR) as HTMLFormElement;
+  get merchantForm(): any {
+    return document.getElementById(Selectors.MERCHANT_FORM_SELECTOR);
+  }
+
+  set requestTypes(requestTypes: string[]) {
+    this._requestTypes = requestTypes;
+  }
+
+  get requestTypes(): string[] {
+    return this._requestTypes;
+  }
+  private static readonly COMPLETED_REQUEST_TYPES = ['AUTH', 'CACHETOKENISE'];
   public elementsToRegister: HTMLElement[];
   public elementsTargets: any;
   private notificationFrameMounted: HTMLElement;
@@ -21,11 +33,12 @@ export default class CommonFrames extends RegisterFrames {
   private submitOnError: boolean;
   private submitFields: string[];
   private gatewayUrl: string;
+  private _requestTypes: string[];
 
   constructor(
     jwt: any,
     origin: any,
-    componentIds: [],
+    componentIds: {},
     styles: IStyles,
     submitOnSuccess: boolean,
     submitOnError: boolean,
@@ -70,7 +83,6 @@ export default class CommonFrames extends RegisterFrames {
       this.notificationFrameMounted = this.notificationFrame.mount(Selectors.NOTIFICATION_FRAME_IFRAME, '-1');
       this.elementsToRegister.push(this.notificationFrameMounted);
     }
-
     this.controlFrame.create(Selectors.CONTROL_FRAME_COMPONENT_NAME, this.styles, {
       gatewayUrl: this.gatewayUrl,
       jwt: this.jwt,
@@ -107,27 +119,61 @@ export default class CommonFrames extends RegisterFrames {
   }
 
   private _setMerchantInputListeners() {
-    const els = DomMethods.getAllFormElements(document.getElementById(Selectors.MERCHANT_FORM_SELECTOR));
+    const els = DomMethods.getAllFormElements(this.merchantForm);
     for (const el of els) {
       el.addEventListener('input', this.onInput.bind(this));
     }
   }
 
-  private onTransactionComplete(data: any) {
-    if (
-      (this.submitOnSuccess &&
-        data.errorcode === '0' &&
-        ['AUTH', 'CACHETOKENISE'].includes(data.requesttypedescription)) ||
+  private _isThreedComplete(data: any) {
+    if (this.requestTypes[this.requestTypes.length - 1] === 'THREEDQUERY') {
+      return (
+        // @ts-ignore
+        (!CardinalCommerce._isCardEnrolledAndNotFrictionless(data) && data.requesttypedescription === 'THREEDQUERY') ||
+        data.threedresponse !== undefined
+      );
+    }
+    return false;
+  }
+
+  private _isTransactionFinished(data: any) {
+    if (CommonFrames.COMPLETED_REQUEST_TYPES.includes(data.requesttypedescription)) {
+      return true;
+    } else if (this._isThreedComplete(data)) {
+      return true;
+    }
+    return false;
+  }
+
+  private _shouldSubmitForm(data: any) {
+    return (
+      (this.submitOnSuccess && data.errorcode === '0' && this._isTransactionFinished(data)) ||
       (this.submitOnError && data.errorcode !== '0')
-    ) {
-      DomMethods.addDataToForm(CommonFrames.FORM, data, this.submitFields);
-      CommonFrames.FORM.submit();
+    );
+  }
+
+  private getSubmitFields(data: any) {
+    const fields = this.submitFields;
+    if (data.hasOwnProperty('jwt')) {
+      fields.push('jwt');
+    }
+    if (data.hasOwnProperty('threedresponse')) {
+      fields.push('threedresponse');
+    }
+    return fields;
+  }
+
+  private _onTransactionComplete(data: any) {
+    if (this._shouldSubmitForm(data)) {
+      const form = this.merchantForm;
+      DomMethods.addDataToForm(form, data, this.getSubmitFields(data));
+      form.submit();
     }
   }
 
   private _setTransactionCompleteListener() {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE, (data: any) => {
-      this.onTransactionComplete(data);
+      this._onTransactionComplete(data);
     });
   }
 }

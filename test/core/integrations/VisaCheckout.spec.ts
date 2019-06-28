@@ -9,7 +9,7 @@ describe('Visa Checkout class', () => {
     const { config, url } = VisaCheckoutFixture();
     const jwt =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
-    instance = new VisaCheckout(config, false, jwt, url);
+    instance = new VisaCheckout(config, jwt, url);
     body = document.body;
   });
 
@@ -396,17 +396,18 @@ describe('Visa Checkout class', () => {
   describe('_processPayment()', () => {
     // then
     it('should process AUTH call getResponseMessage and setNotification for success with tokenise false', async () => {
-      instance.payment.processPayment = jest.fn().mockResolvedValueOnce({ myData: 'response' });
+      instance.payment.processPayment = jest
+        .fn()
+        .mockResolvedValueOnce({ response: { myData: 'respData' }, jwt: 'ajwtvalue' });
       instance.getResponseMessage = jest.fn();
       instance.setNotification = jest.fn();
       instance.responseMessage = 'MYRESPONSE';
-      instance._tokenise = false;
       instance._walletSource = 'VISACHECKOUT';
       instance.paymentDetails = 'TOKEN';
       await instance._processPayment();
       expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
       expect(instance.payment.processPayment).toHaveBeenCalledWith(
-        { requesttypedescription: 'AUTH' },
+        ['AUTH'],
         { walletsource: 'VISACHECKOUT', wallettoken: 'TOKEN' },
         {}
       );
@@ -418,17 +419,19 @@ describe('Visa Checkout class', () => {
 
     // then
     it('should process CACHETOKEN call getResponseMessage and setNotification for success with tokenise true', async () => {
-      instance.payment.processPayment = jest.fn().mockResolvedValueOnce({ myData: 'response' });
+      instance.payment.processPayment = jest
+        .fn()
+        .mockResolvedValueOnce({ response: { myData: 'respData' }, jwt: 'ajwtvalue' });
       instance.getResponseMessage = jest.fn();
       instance.setNotification = jest.fn();
       instance.responseMessage = 'MYRESPONSE';
-      instance._tokenise = true;
+      instance._requestTypes = ['CACHETOKENISE'];
       instance._walletSource = 'VISACHECKOUT';
       instance.paymentDetails = 'TOKEN';
       await instance._processPayment();
       expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
       expect(instance.payment.processPayment).toHaveBeenCalledWith(
-        { requesttypedescription: 'CACHETOKENISE' },
+        ['CACHETOKENISE'],
         { walletsource: 'VISACHECKOUT', wallettoken: 'TOKEN' },
         {}
       );
@@ -440,17 +443,18 @@ describe('Visa Checkout class', () => {
 
     // then
     it('should process AUTH call getResponseMessage and setNotification for error with tokenise false', async () => {
-      instance.payment.processPayment = jest.fn().mockRejectedValueOnce({ myData: 'response' });
+      instance.payment.processPayment = jest
+        .fn()
+        .mockRejectedValueOnce({ response: { myData: 'respData' }, jwt: 'ajwtvalue' });
       instance.getResponseMessage = jest.fn();
       instance.setNotification = jest.fn();
       instance.responseMessage = 'MYRESPONSE';
-      instance._tokenise = false;
       instance._walletSource = 'VISACHECKOUT';
       instance.paymentDetails = 'TOKEN';
       await instance._processPayment();
       expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
       expect(instance.payment.processPayment).toHaveBeenCalledWith(
-        { requesttypedescription: 'AUTH' },
+        ['AUTH'],
         { walletsource: 'VISACHECKOUT', wallettoken: 'TOKEN' },
         {}
       );
@@ -502,7 +506,8 @@ function VisaCheckoutFixture() {
     merchantId: '2ig278`13b123872121h31h20e',
     buttonSettings: { size: '154', color: 'neutral' },
     settings: { displayName: 'My Test Site' },
-    paymentRequest: { subtotal: '20.00' }
+    paymentRequest: { subtotal: '20.00' },
+    requestTypes: ['AUTH']
   };
   const productionAssets = {
     sdk: 'https://secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js',
