@@ -237,7 +237,7 @@ describe('CardinalCommerce class', () => {
       it('should set up subscribers to control frame setup, threedquery and threedinit events', () => {
         instance.messageBus.subscribeOnParent = jest.fn();
         instance._initSubscriptions();
-        expect(instance.messageBus.subscribeOnParent).toHaveBeenCalledTimes(3);
+        expect(instance.messageBus.subscribeOnParent.mock.calls.length).toBe(4);
         expect(instance.messageBus.subscribeOnParent.mock.calls[0][0]).toBe('LOAD_CONTROL_FRAME');
         // Annonymous function so can't test using toHaveBeenCalledWith
         expect(instance.messageBus.subscribeOnParent.mock.calls[0][1]).toBeInstanceOf(Function);
@@ -246,10 +246,11 @@ describe('CardinalCommerce class', () => {
         // Annonymous function so can't test using toHaveBeenCalledWith
         expect(instance.messageBus.subscribeOnParent.mock.calls[1][1]).toBeInstanceOf(Function);
         expect(instance.messageBus.subscribeOnParent.mock.calls[1].length).toBe(2);
-        expect(instance.messageBus.subscribeOnParent.mock.calls[2][0]).toBe('THREEDQUERY');
+        expect(instance.messageBus.subscribeOnParent.mock.calls[2][0]).toBe('BY_PASS_INIT');
         // Annonymous function so can't test using toHaveBeenCalledWith
         expect(instance.messageBus.subscribeOnParent.mock.calls[2][1]).toBeInstanceOf(Function);
         expect(instance.messageBus.subscribeOnParent.mock.calls[2].length).toBe(2);
+        expect(instance.messageBus.subscribeOnParent.mock.calls[3][0]).toBe('THREEDQUERY');
       });
 
       it('should call _onLoadControlFrame if eventType is LOAD_CONTROL_FRAME', () => {
@@ -380,15 +381,18 @@ describe('CardinalCommerce class', () => {
     });
 
     describe('CardinalCommerce._threeDQueryRequest', () => {
-      const original = CardinalCommerce.isCardEnrolledAndNotFrictionless;
+      // @ts-ignore
+      const original = CardinalCommerce._isCardEnrolledAndNotFrictionless;
 
       afterEach(() => {
-        CardinalCommerce.isCardEnrolledAndNotFrictionless = original;
+        // @ts-ignore
+        CardinalCommerce._isCardEnrolledAndNotFrictionless = original;
       });
 
       // then
       it('should authenticate card if enrolled or frictionless', () => {
-        CardinalCommerce.isCardEnrolledAndNotFrictionless = jest.fn().mockReturnValueOnce(true);
+        // @ts-ignore
+        CardinalCommerce._isCardEnrolledAndNotFrictionless = jest.fn().mockReturnValueOnce(true);
         instance._authenticateCard = jest.fn();
         instance._authorizePayment = jest.fn();
         instance._threeDQueryRequest({ transactionreference: '1-2-3' });
@@ -397,7 +401,8 @@ describe('CardinalCommerce class', () => {
       });
 
       it('should authorise payment if NOT (enrolled or frictionless)', () => {
-        CardinalCommerce.isCardEnrolledAndNotFrictionless = jest.fn().mockReturnValueOnce(false);
+        // @ts-ignore
+        CardinalCommerce._isCardEnrolledAndNotFrictionless = jest.fn().mockReturnValueOnce(false);
         instance._authenticateCard = jest.fn();
         instance._authorizePayment = jest.fn();
         instance._threeDQueryRequest({ transactionreference: '1-2-3' });
@@ -424,7 +429,8 @@ describe('CardinalCommerce class', () => {
             threedpayload: 'payload',
             transactionreference: '1-2-3'
           };
-          expect(CardinalCommerce.isCardEnrolledAndNotFrictionless(response)).toBe(expected);
+          // @ts-ignore
+          expect(CardinalCommerce._isCardEnrolledAndNotFrictionless(response)).toBe(expected);
         }
       );
     });

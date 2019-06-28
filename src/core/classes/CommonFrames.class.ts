@@ -128,7 +128,8 @@ export default class CommonFrames extends RegisterFrames {
   private _isThreedComplete(data: any) {
     if (this.requestTypes[this.requestTypes.length - 1] === 'THREEDQUERY') {
       return (
-        (!CardinalCommerce.isCardEnrolledAndNotFrictionless(data) && data.requesttypedescription === 'THREEDQUERY') ||
+        // @ts-ignore
+        (!CardinalCommerce._isCardEnrolledAndNotFrictionless(data) && data.requesttypedescription === 'THREEDQUERY') ||
         data.threedresponse !== undefined
       );
     }

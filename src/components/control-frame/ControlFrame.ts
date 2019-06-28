@@ -89,6 +89,9 @@ export default class ControlFrame extends Frame {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES, (data: any) => {
       this.onSetRequestTypesEvent(data);
     });
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BY_PASS_INIT, (cachetoken: string) => {
+      this.onByPassInitEvent(cachetoken);
+    });
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
       this.onThreeDInitEvent();
     });
@@ -153,6 +156,10 @@ export default class ControlFrame extends Frame {
     this.requestThreeDInit();
   }
 
+  private onByPassInitEvent(data: string) {
+    this.requestByPassInit(data);
+  }
+
   private onProcessPaymentEvent(data: any) {
     this._processPayment(data);
   }
@@ -165,6 +172,14 @@ export default class ControlFrame extends Frame {
       };
       this._messageBus.publish(messageBusEvent, true);
     });
+  }
+
+  private requestByPassInit(cachetoken: string) {
+    this._payment.byPassInitRequest(cachetoken);
+    const messageBusEvent: IMessageBusEvent = {
+      type: MessageBus.EVENTS_PUBLIC.BY_PASS_INIT
+    };
+    this._messageBus.publish(messageBusEvent, true);
   }
 
   // @TODO STJS-205 refactor into Payments

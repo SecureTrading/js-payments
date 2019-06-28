@@ -23,6 +23,7 @@ export default class MessageBus {
   };
   public static EVENTS_PUBLIC = {
     BIN_PROCESS: 'BIN_PROCESS',
+    BY_PASS_INIT: 'BY_PASS_INIT',
     LOAD_CARDINAL: 'LOAD_CARDINAL',
     LOAD_CONTROL_FRAME: 'LOAD_CONTROL_FRAME',
     NOTIFICATION: 'NOTIFICATION',

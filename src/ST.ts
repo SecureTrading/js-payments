@@ -187,6 +187,7 @@ class ST {
   }
 
   private componentIds: {};
+  private cachetoken: string;
   private gatewayUrl: string;
   private jwt: string;
   private origin: string;
@@ -194,11 +195,18 @@ class ST {
   private submitFields: string[];
   private submitOnError: boolean;
   private submitOnSuccess: boolean;
-  private tokenise: boolean;
+  private threedinit: string;
   private readonly config: IConfig;
   private commonFrames: CommonFrames;
 
   constructor(config: IConfig) {
+    if (config.init) {
+      const {
+        init: { cachetoken, threedinit }
+      } = config;
+      this.threedinit = threedinit;
+      this.cachetoken = cachetoken;
+    }
     this.config = ST._addDefaults(config);
     ST._validateConfig(this.config, IConfigSchema);
     this._setClassProperties(this.config);
@@ -257,7 +265,7 @@ class ST {
    */
   private CardinalCommerce(config: IWalletConfig) {
     const cardinal = environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce;
-    return new cardinal(config.startOnLoad, this.jwt, config.requestTypes);
+    return new cardinal(config.startOnLoad, this.jwt, config.requestTypes, this.cachetoken, this.threedinit);
   }
 
   /**
@@ -269,6 +277,7 @@ class ST {
     const {
       componentIds,
       jwt,
+      init,
       origin,
       styles,
       submitFields,
@@ -279,6 +288,9 @@ class ST {
     } = config;
     this.componentIds = componentIds;
     this.jwt = jwt;
+    if (init) {
+      this.cachetoken = init.cachetoken;
+    }
     this.origin = origin;
     this.styles = styles;
     this.submitFields = submitFields;

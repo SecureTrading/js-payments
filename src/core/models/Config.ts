@@ -6,6 +6,7 @@ interface IConfig {
   datacenterurl?: string;
   formId?: string;
   jwt: string;
+  init?: IByPassInit;
   origin?: string;
   styles?: IStyles;
   submitFields?: string[];
@@ -25,7 +26,13 @@ interface IWalletConfig {
   requestTypes?: string[];
 }
 
+interface IByPassInit {
+  threedinit: string;
+  cachetoken: string;
+}
+
 const IConfigSchema: Joi.JoiObject = Joi.object().keys({
+  cachetoken: Joi.string(),
   componentIds: Joi.object().keys({
     animatedCard: Joi.string().required(),
     cardNumber: Joi.string().required(),
@@ -35,13 +42,15 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
   }),
   datacenterurl: Joi.string(),
   formId: Joi.string(),
+  init: Joi.object(),
   jwt: Joi.string().required(),
   origin: Joi.string(),
   requestTypes: Joi.array().allow([Joi.string()]),
   styles: Joi.object(),
   submitFields: Joi.array().allow([Joi.string()]),
   submitOnError: Joi.boolean(),
-  submitOnSuccess: Joi.boolean()
+  submitOnSuccess: Joi.boolean(),
+  threedinit: Joi.string()
 });
 
 const IComponentsConfigSchema = Joi.object().keys({
@@ -51,4 +60,4 @@ const IComponentsConfigSchema = Joi.object().keys({
   startOnLoad: Joi.boolean()
 });
 
-export { IConfig, IConfigSchema, IComponentsConfig, IComponentsConfigSchema, IWalletConfig };
+export { IByPassInit, IConfig, IConfigSchema, IComponentsConfig, IComponentsConfigSchema, IWalletConfig };
