@@ -155,19 +155,6 @@ describe('ExpirationDate', () => {
       // @ts-ignore
       expect(spy).toBeCalled();
     });
-
-    // then
-    it('should set proper input value and call validate', () => {
-      // @ts-ignore
-      instance._inputElement.value = inputTestvalue;
-      instance.validation.validate = jest.fn();
-      // @ts-ignore
-      instance.onInput(event);
-      // @ts-ignore
-      expect(instance._inputElement.value).toEqual(inputTestvalue);
-      // @ts-ignore
-      expect(instance.validation.validate).toBeCalled();
-    });
   });
 
   // given
@@ -179,20 +166,7 @@ describe('ExpirationDate', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
-      instance.isMaxLengthReached = jest.fn().mockReturnValue(true);
-      // @ts-ignore
       instance.onKeyPress(event);
-    });
-    //then
-    it('should call isMaxLengthReached', () => {
-      // @ts-ignore
-      expect(instance.isMaxLengthReached).toBeCalled();
-    });
-
-    //then
-    it('should call event.preventDefault', () => {
-      // @ts-ignore
-      expect(event.preventDefault).toBeCalled();
     });
   });
 
@@ -229,19 +203,6 @@ describe('ExpirationDate', () => {
     // then
     it('should call sendState', () => {
       // expect(spy).toBeCalledTimes(1);
-    });
-  });
-
-  // given
-  describe('isMaxLengthReached() ', () => {
-    const { instance } = expirationDateFixture();
-    const inputTestValue: string = '12/12';
-    // then
-    it('should return true if input value greater than date length', () => {
-      // @ts-ignore
-      instance._inputElement.value = inputTestValue;
-      // @ts-ignore;
-      expect(instance.isMaxLengthReached()).toEqual(true);
     });
   });
 
