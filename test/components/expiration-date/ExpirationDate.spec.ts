@@ -1,4 +1,6 @@
 import each from 'jest-each';
+import AnimatedCard from '../../../src/components/animated-card/AnimatedCard';
+import SpyInstance = jest.SpyInstance;
 import ExpirationDate from '../../../src/components/expiration-date/ExpirationDate';
 import Language from '../../../src/core/shared/Language';
 import Selectors from '../../../src/core/shared/Selectors';
@@ -205,42 +207,6 @@ describe('ExpirationDate', () => {
     });
   });
 
-  // @TODO: problem with paste event
-  // given
-  describe('onPaste()', () => {
-    const { instance } = expirationDateFixture();
-    // ts-ignore
-    (window as any).ClipboardEvent = class ClipboardEvent {
-      public type: string;
-
-      constructor(type: string) {
-        this.type = type;
-      }
-
-      public preventDefault = jest.fn();
-      public getData = jest.fn();
-      public clipboardData = {
-        dataType: 'text',
-        data: 'some data'
-      };
-    };
-    // let event: ClipboardEvent = new ClipboardEvent('paste');
-
-    let spy: jest.SpyInstance;
-
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      spy = jest.spyOn(instance, 'sendState');
-      // @ts-ignore
-      // instance.onPaste(event);
-    });
-    // then
-    it('should call sendState', () => {
-      // expect(spy).toBeCalledTimes(1);
-    });
-  });
-
   // given
   describe('sendState()', () => {
     const { instance } = expirationDateFixture();
@@ -283,6 +249,108 @@ describe('ExpirationDate', () => {
       instance._date = [2, 0];
       // @ts-ignore
       expect(instance._getISOFormatDate()).toEqual('02');
+    });
+  });
+
+  // given
+  describe('_setSelectionRange()', () => {
+    // when
+    const { instance } = expirationDateFixture();
+    const event = new KeyboardEvent('keypress', { key: 'Delete' });
+    // @ts-ignore
+
+    beforeEach(() => {
+      // @ts-ignore
+      instance._setSelectionRange(event, 0, 0);
+    });
+
+    // then
+    it('should set selection range when delete key has been pressed', () => {
+      // @ts-ignore
+      expect(instance._inputElement.selectionStart).toEqual(0);
+      // @ts-ignore
+      expect(instance._inputElement.selectionEnd).toEqual(0);
+    });
+  });
+
+  // given
+  describe('_getValidatedDate', () => {
+    const { instance } = expirationDateFixture();
+    let spy: SpyInstance;
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      spy = jest.spyOn(instance, '_getFixedDateString');
+      // @ts-ignore
+      instance._getValidatedDate('12');
+    });
+
+    // then
+    it('should _getFixedDateString() function be called', () => {
+      expect(spy).toHaveBeenCalled();
+    });
+
+    // then
+    it('should return 01, if first two chars are equal 0', () => {
+      // @ts-ignore
+      expect(instance._getValidatedDate('00')).toEqual('01');
+    });
+
+    // then
+    it('should return 12, if first two chars are greater than 12', () => {
+      // @ts-ignore
+      expect(instance._getValidatedDate('13')).toEqual('12');
+    });
+
+    // then
+    each([['2', '02'], ['3', '03'], ['4', '04'], ['5', '05'], ['6', '06'], ['7', '07'], ['8', '08'], ['9', '09']]).it(
+      'should return given number, with preceded zero',
+      (givenValue: string, expectedValue: string) => {
+        // @ts-ignore
+        expect(instance._getValidatedDate(givenValue)).toEqual(expectedValue);
+      }
+    );
+  });
+
+  //given
+  describe('onKeyPress()', () => {
+    const { instance } = expirationDateFixture();
+    const event = new KeyboardEvent('keypress');
+    let spy: SpyInstance;
+
+    beforeEach(() => {
+      // @ts-ignore
+      spy = jest.spyOn(ExpirationDate.prototype, 'onKeyPress');
+    });
+    // then
+    it('should call parent function', () => {
+      // @ts-ignore
+      instance.onKeyPress(event);
+      // @ts-ignore
+      expect(spy).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('onPaste()', () => {
+    const { instance } = expirationDateFixture();
+    let spy: SpyInstance;
+    // const event = new ClipboardEvent('paste', {
+    //   // @ts-ignore
+    //   dataType: 'text/plain',
+    //   data: '123\r123'
+    // });
+
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      spy = jest.spyOn(ExpirationDate.prototype, 'onPaste');
+    });
+    // then
+    it.skip('should call parent function', () => {
+      // @ts-ignore
+      instance.onPaste(event);
+      expect(spy).toHaveBeenCalled();
     });
   });
 });
