@@ -102,6 +102,25 @@ describe('Element class', () => {
       expect(actual.className).toBe('myID');
       expect(actual.getAttribute('src')).toBe('https://example.com');
       expect(actual.getAttribute('name')).toBe('myID');
+      expect(actual.getAttribute('allowtransparency')).toBe('true');
+      expect(actual.getAttribute('scrolling')).toBe('no');
+      expect(actual.getAttribute('frameborder')).toBe('0');
+      expect(actual.getAttribute('tabindex')).toBe(null);
+    });
+
+    // then
+    it('should create iframe element with tabindex', () => {
+      instance.iframeSrc = 'https://example.com';
+      const actual = instance.mount('myID2', '-1');
+      expect(actual.tagName).toBe('IFRAME');
+      expect(actual.id).toBe('myID2');
+      expect(actual.className).toBe('myID2');
+      expect(actual.getAttribute('src')).toBe('https://example.com');
+      expect(actual.getAttribute('name')).toBe('myID2');
+      expect(actual.getAttribute('allowtransparency')).toBe('true');
+      expect(actual.getAttribute('scrolling')).toBe('no');
+      expect(actual.getAttribute('frameborder')).toBe('0');
+      expect(actual.getAttribute('tabindex')).toBe('-1');
     });
   });
 

@@ -6,14 +6,14 @@ export default class Payment {
   private _stTransport: StTransport;
   private _cardinalCommerceCacheToken: string;
 
-  constructor(jwt: string) {
-    this._stTransport = new StTransport({ jwt });
+  constructor(jwt: string, gatewayUrl: string, parentOrigin?: string) {
+    this._stTransport = new StTransport({ jwt, gatewayUrl }, parentOrigin);
   }
 
   public walletVerify(wallet: IWalletVerify) {
     const requestBody: IStRequest = Object.assign(
       {
-        requesttypedescription: 'WALLETVERIFY'
+        requesttypedescriptions: ['WALLETVERIFY']
       },
       wallet
     );
@@ -21,31 +21,39 @@ export default class Payment {
   }
 
   public processPayment(
-    requestType: object,
+    requestTypes: string[],
     payment: ICard | IWallet,
     merchantData: IMerchantData,
     additionalData?: any
   ): Promise<object> {
-    const requestBody: IStRequest = Object.assign(requestType, additionalData, merchantData, payment);
+    const requestBody: IStRequest = Object.assign(
+      { requesttypedescriptions: requestTypes },
+      additionalData,
+      merchantData,
+      payment
+    );
     return this._stTransport.sendRequest(requestBody);
   }
 
   public threeDInitRequest() {
     const requestBody: IStRequest = {
-      requesttypedescription: 'JSINIT'
+      requesttypedescriptions: ['JSINIT']
     };
-    return this._stTransport.sendRequest(requestBody).then(responseBody => {
-      // @ts-ignore
-      this._cardinalCommerceCacheToken = responseBody.cachetoken;
-      return responseBody;
+    return this._stTransport.sendRequest(requestBody).then((result: any) => {
+      this._cardinalCommerceCacheToken = result.response.cachetoken;
+      return result;
     });
   }
 
-  public threeDQueryRequest(card: ICard, merchantData: IMerchantData): Promise<object> {
+  public byPassInitRequest(cachetoken: string) {
+    this._cardinalCommerceCacheToken = cachetoken;
+  }
+
+  public threeDQueryRequest(requestTypes: string[], card: ICard, merchantData: IMerchantData): Promise<object> {
     const requestBody: IStRequest = Object.assign(
       {
         cachetoken: this._cardinalCommerceCacheToken,
-        requesttypedescription: 'THREEDQUERY',
+        requesttypedescriptions: requestTypes,
         termurl: 'https://termurl.com' // TODO this shouldn't be needed but currently the backend needs this
       },
       merchantData,

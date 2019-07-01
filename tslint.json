@@ -25,5 +25,11 @@
     "max-line-length": {
       "options": [120]
     }
+  },
+  "linterOptions": {
+    "exclude": [
+      "node_modules",
+      "./src/**/*.spec.ts" // exclude all that contain "spec.ts" in name
+    ]
   }
 }

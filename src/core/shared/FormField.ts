@@ -6,48 +6,50 @@ import { Translator } from './Translator';
 import Validation from './Validation';
 
 export default class FormField extends Frame {
+  private static FOCUSED_FIELD_STATE = { 'data-pristine': false, 'data-dirty': true };
+  public validation: Validation;
   protected _inputSelector: string;
-  protected _messageSelector: string;
   protected _labelSelector: string;
+  protected _messageSelector: string;
   protected _inputElement: HTMLInputElement;
-  protected _messageElement: HTMLParagraphElement;
   protected _labelElement: HTMLLabelElement;
+  protected _messageElement: HTMLDivElement;
   private _translator: Translator;
 
   constructor(inputSelector: string, messageSelector: string, labelSelector: string) {
     super();
-    // @ts-ignore
-    this._inputElement = document.getElementById(inputSelector);
-    // @ts-ignore
-    this._messageElement = document.getElementById(messageSelector);
-    // @ts-ignore
-    this._labelElement = document.getElementById(labelSelector);
+
+    this._inputElement = document.getElementById(inputSelector) as HTMLInputElement;
+    this._labelElement = document.getElementById(labelSelector) as HTMLLabelElement;
+    this._messageElement = document.getElementById(messageSelector) as HTMLInputElement;
 
     this._inputSelector = inputSelector;
-    this._messageSelector = messageSelector;
     this._labelSelector = labelSelector;
-    this.setInputListeners();
+    this._messageSelector = messageSelector;
+    this._setInputListeners();
     this.onInit();
   }
 
   public onInit() {
     super.onInit();
     this._translator = new Translator(this._params.locale);
-    this.setLabelText();
+    this.validation = new Validation();
+    this._setLabelText();
+    this._addTabListener();
+    this._setValidationAttributes({ 'data-clicked': false });
   }
 
-  public getLabel(): string {
+  /**
+   * Gets translated label for input field.
+   */
+  protected getLabel(): string {
     throw new Error(Language.translations.NOT_IMPLEMENTED_ERROR);
-  }
-
-  protected setLabelText() {
-    this._labelElement.innerHTML = this._translator.translate(this.getLabel());
   }
 
   protected _getAllowedStyles() {
     let allowed = super._getAllowedStyles();
     const input = `#${this._inputSelector}`;
-    const inputError = `${input}:invalid:focus`;
+    const inputError = `#${this._inputSelector}.error-field`;
     const inputPlaceholder = `${input}::placeholder`;
     const message = `#${this._messageSelector}`;
     const label = `label[for=${this._inputSelector}]`;
@@ -106,26 +108,32 @@ export default class FormField extends Frame {
   }
 
   protected onInput(event: Event) {
+    Validation.setCustomValidationError(this._inputElement, '');
     this.format(this._inputElement.value);
-    this.validate();
   }
 
   protected onFocus(event: Event) {
-    this.focus();
+    this._focus();
+    this._inputElement.focus();
   }
 
-  protected onBlur(event: Event) {
-    this.blur();
+  protected onClick(event: Event) {
+    this._click();
+  }
+
+  protected onBlur() {
+    this.validation.validate(this._inputElement, this._messageElement);
+    this._blur();
   }
 
   protected onPaste(event: ClipboardEvent) {
     let clipboardData: string;
-
     event.preventDefault();
-
     clipboardData = event.clipboardData.getData('text/plain');
     this._inputElement.value = Formatter.trimNonNumeric(clipboardData);
-    this.validate();
+    Validation.setCustomValidationError(this._inputElement, '');
+    this.format(this._inputElement.value);
+    this.validation.validate(this._inputElement, this._messageElement);
   }
 
   protected setAttributes(attributes: object) {
@@ -136,36 +144,28 @@ export default class FormField extends Frame {
     }
   }
 
-  /**
-   * Method placed errorMessage inside chosen container (specified by id).
-   * @param messageText
-   */
-  protected setMessage(messageText: string) {
-    this._messageElement.innerText = this._translator.translate(messageText);
-  }
-
   protected setValue(value: string) {
     this._inputElement.value = value;
-  }
-
-  protected validate() {
-    const validationMessage: string = Validation.getValidationMessage(this._inputElement.validity);
-    this.setMessage(validationMessage);
   }
 
   protected format(data: string) {
     this._inputElement.value = data;
   }
 
-  protected blur() {
+  private _blur() {
     this._inputElement.blur();
   }
 
-  protected focus() {
+  private _click() {
+    this._inputElement.click();
+  }
+
+  private _focus() {
+    this.setAttributes(FormField.FOCUSED_FIELD_STATE);
     this._inputElement.focus();
   }
 
-  private setInputListeners() {
+  private _setInputListeners() {
     this._inputElement.addEventListener('paste', (event: ClipboardEvent) => {
       this.onPaste(event);
     });
@@ -182,8 +182,36 @@ export default class FormField extends Frame {
       this.onFocus(event);
     });
 
-    this._inputElement.addEventListener('blur', (event: Event) => {
-      this.onBlur(event);
+    this._inputElement.addEventListener('blur', () => {
+      this.onBlur();
     });
+
+    this._inputElement.addEventListener('click', (event: Event) => {
+      this.onClick(event);
+    });
+  }
+
+  private _addTabListener() {
+    window.addEventListener('focus', event => {
+      this.onFocus(event);
+    });
+  }
+
+  /**
+   * Sets all necessary validation attributes.
+   * @param attributes
+   * @private
+   */
+  private _setValidationAttributes(attributes?: object) {
+    this.setAttributes({
+      'data-dirty': false,
+      'data-pristine': true,
+      'data-validity': false,
+      ...attributes
+    });
+  }
+
+  private _setLabelText() {
+    this._labelElement.innerHTML = this._translator.translate(this.getLabel());
   }
 }

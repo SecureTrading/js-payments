@@ -70,9 +70,9 @@ export default class Element {
   public create(elementName: string, styles?: IStyles, params?: object) {
     const componentAddress = Element.getComponentAddress(elementName);
     // @ts-ignore
-    const componentStyles = new URLSearchParams(styles).toString(); // @TODO: add polyfill for IE
+    const componentStyles = new URLSearchParams(styles).toString();
     // @ts-ignore
-    const componentParams = new URLSearchParams(params).toString(); // @TODO: add polyfill for IE
+    const componentParams = new URLSearchParams(params).toString();
 
     this._name = elementName;
     this._iframeSrc = `${componentAddress}?${componentStyles}${componentParams ? '&' + componentParams : ''}`;
@@ -82,10 +82,16 @@ export default class Element {
    * Method returns 'iframed input', styled and ready to be registered in clients form
    * @param fieldId ID of field on which iframe input field will be mounted
    */
-  public mount(fieldId: string) {
+  public mount(fieldId: string, tabindex?: string) {
     const iframe = Element.createFormElement('iframe', fieldId);
     iframe.setAttribute('src', this.iframeSrc);
     iframe.setAttribute('name', fieldId);
+    iframe.setAttribute('allowtransparency', 'true');
+    iframe.setAttribute('scrolling', 'no');
+    iframe.setAttribute('frameborder', '0');
+    if (tabindex !== undefined) {
+      iframe.setAttribute('tabindex', tabindex);
+    }
     return iframe;
   }
 }

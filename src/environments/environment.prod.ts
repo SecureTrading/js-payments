@@ -11,15 +11,9 @@ export const environment = {
     },
     SONGBIRD_URL: 'https://songbirdstag.cardinalcommerce.com/cardinalcruise/v1/songbird.js'
   },
-  FRAME_URL: 'https://webservices.securetrading.net/js',
+  FRAME_URL: 'https://webservices.securetrading.net/js/v2',
   GATEWAY_URL,
   NOTIFICATION_TTL: 7000,
-  ST_URLS: {
-    MOCK: {
-      AUTH: `${MOCK_GATEWAY_URL}/auth`,
-      THREEDQUERY_URL: `${MOCK_GATEWAY_URL}/threeDQuery`
-    }
-  },
   VISA_CHECKOUT_URLS: {
     LIVE_BUTTON_URL: 'https://secure.checkout.visa.com/wallet-services-web/xo/button.png',
     LIVE_SDK: 'https://secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js',

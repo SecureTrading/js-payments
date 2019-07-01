@@ -4,7 +4,7 @@ import { IStRequest, StCodec } from './StCodec.class';
 
 export interface IStTransportParams {
   jwt: string;
-  gatewayUrl?: string;
+  gatewayUrl: string;
 }
 
 /***
@@ -26,7 +26,6 @@ export default class StTransport {
   public get codec() {
     return this._codec;
   }
-  public static GATEWAY_URL = environment.GATEWAY_URL;
   public static DEFAULT_FETCH_OPTIONS = {
     headers: {
       Accept: StCodec.CONTENT_TYPE,
@@ -42,9 +41,9 @@ export default class StTransport {
   private gatewayUrl: string;
   private _codec: StCodec;
 
-  constructor(params: IStTransportParams) {
-    this.gatewayUrl = 'gatewayUrl' in params ? params.gatewayUrl : StTransport.GATEWAY_URL;
-    this._codec = new StCodec(params.jwt);
+  constructor(params: IStTransportParams, parentOrigin?: string) {
+    this.gatewayUrl = params.gatewayUrl;
+    this._codec = new StCodec(params.jwt, parentOrigin);
   }
 
   /**
@@ -56,7 +55,11 @@ export default class StTransport {
     return this.fetchRetry(this.gatewayUrl, {
       ...StTransport.DEFAULT_FETCH_OPTIONS,
       body: this._codec.encode(requestObject)
-    }).then(this._codec.decode);
+    })
+      .then(this._codec.decode)
+      .catch(() => {
+        return this._codec.decode({});
+      });
   }
 
   /**

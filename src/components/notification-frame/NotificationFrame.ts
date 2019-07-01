@@ -95,15 +95,15 @@ export default class NotificationFrame extends Frame {
   public setDataNotificationColorAttribute(messageType: string) {
     if (this.notificationFrameElement) {
       if (messageType === NotificationFrame.MESSAGE_TYPES.error) {
-        this.notificationFrameElement.dataset.notificationColor = 'red';
+        this.notificationFrameElement.setAttribute('data-notification-color', 'red');
       } else if (messageType === NotificationFrame.MESSAGE_TYPES.info) {
-        this.notificationFrameElement.dataset.notificationColor = 'grey';
+        this.notificationFrameElement.setAttribute('data-notification-color', 'grey');
       } else if (messageType === NotificationFrame.MESSAGE_TYPES.success) {
-        this.notificationFrameElement.dataset.notificationColor = 'green';
+        this.notificationFrameElement.setAttribute('data-notification-color', 'green');
       } else if (messageType === NotificationFrame.MESSAGE_TYPES.warning) {
-        this.notificationFrameElement.dataset.notificationColor = 'yellow';
+        this.notificationFrameElement.setAttribute('data-notification-color', 'yellow');
       } else {
-        this.notificationFrameElement.dataset.notificationColor = 'undefined';
+        this.notificationFrameElement.setAttribute('data-notification-color', 'undefined');
       }
     }
   }

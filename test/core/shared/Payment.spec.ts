@@ -1,6 +1,5 @@
 import Payment from '../../../src/core/shared/Payment';
 import StTransport from '../../../src/core/classes/StTransport.class';
-import { StJwt } from '../../../src/core/shared/StJwt';
 
 // given
 describe('Payment class', () => {
@@ -10,7 +9,7 @@ describe('Payment class', () => {
   let { card, wallet, walletverify } = paymentFixture();
   // when
   beforeAll(() => {
-    instance = new Payment(jwt);
+    instance = new Payment(jwt, 'https://example.com');
     // @ts-ignore
     instance._stTransport.sendRequest = jest.fn();
   });
@@ -31,7 +30,7 @@ describe('Payment class', () => {
       instance.walletVerify(walletverify);
       // @ts-ignore
       expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
-        requesttypedescription: 'WALLETVERIFY',
+        requesttypedescriptions: ['WALLETVERIFY'],
         walletsource: 'APPLEPAY',
         walletmerchantid: '123456789',
         walletvalidationurl: 'https://example.com',
@@ -44,35 +43,29 @@ describe('Payment class', () => {
   describe('Payment.processPayment', () => {
     // then
     it('should send AUTH request with card', () => {
-      instance.processPayment({ requesttypedescription: 'AUTH' }, card, {
+      instance.processPayment(['AUTH'], card, {
         merchant: 'data'
       });
       // @ts-ignore
       expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
         ...card,
-        requesttypedescription: 'AUTH',
+        requesttypedescriptions: ['AUTH'],
         merchant: 'data'
       });
     });
     // then
     it('should send CACHETOKENISE request', () => {
-      instance.processPayment(
-        {
-          requesttypedescription: 'CACHETOKENISE'
-        },
-        card,
-        {}
-      );
+      instance.processPayment(['CACHETOKENISE'], card, {});
       // @ts-ignore
       expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
         ...card,
-        requesttypedescription: 'CACHETOKENISE'
+        requesttypedescriptions: ['CACHETOKENISE']
       });
     });
     // then
     it('should send AUTH request with card and additional data', () => {
       instance.processPayment(
-        { requesttypedescription: 'AUTH' },
+        ['AUTH'],
         card,
         { pan: 'overridden', merchant: 'data' },
         {
@@ -83,28 +76,28 @@ describe('Payment class', () => {
       // @ts-ignore
       expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
         ...card,
-        requesttypedescription: 'AUTH',
+        requesttypedescriptions: ['AUTH'],
         merchant: 'data',
         additional: 'some data'
       });
     });
     // then
     it('should send AUTH request with wallet', () => {
-      instance.processPayment({ requesttypedescription: 'AUTH' }, wallet, {
+      instance.processPayment(['AUTH'], wallet, {
         merchant: 'data'
       });
       // @ts-ignore
       expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
         walletsource: 'APPLEPAY',
         wallettoken: 'encryptedpaymentdata',
-        requesttypedescription: 'AUTH',
+        requesttypedescriptions: ['AUTH'],
         merchant: 'data'
       });
     });
     // then
     it('should send AUTH request with wallet and additional data', () => {
       instance.processPayment(
-        { requesttypedescription: 'AUTH' },
+        ['AUTH'],
         wallet,
         {
           wallettoken: 'overridden',
@@ -119,14 +112,14 @@ describe('Payment class', () => {
       expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
         walletsource: 'APPLEPAY',
         wallettoken: 'encryptedpaymentdata',
-        requesttypedescription: 'AUTH',
+        requesttypedescriptions: ['AUTH'],
         merchant: 'data',
         extra: 'some value'
       });
     }); // then
     it('should send CACHETOKENISE request with wallet and additional data', () => {
       instance.processPayment(
-        { requesttypedescription: 'CACHETOKENISE' },
+        ['CACHETOKENISE'],
         wallet,
         {
           wallettoken: 'overridden',
@@ -141,7 +134,7 @@ describe('Payment class', () => {
       expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
         walletsource: 'APPLEPAY',
         wallettoken: 'encryptedpaymentdata',
-        requesttypedescription: 'CACHETOKENISE',
+        requesttypedescriptions: ['CACHETOKENISE'],
         merchant: 'data',
         extra: 'some value'
       });
@@ -160,7 +153,7 @@ describe('Payment class', () => {
       instance.threeDInitRequest();
       // @ts-ignore
       expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
-        requesttypedescription: 'JSINIT'
+        requesttypedescriptions: ['JSINIT']
       });
     });
   });
@@ -170,7 +163,7 @@ describe('Payment class', () => {
     it('should send THREEDQUERY request', () => {
       // @ts-ignore
       instance._cardinalCommerceCacheToken = 'cardinalcachetoken';
-      instance.threeDQueryRequest(card, {
+      instance.threeDQueryRequest(['THREEDQUERY'], card, {
         pan: 'overridden',
         merchant: 'data'
       });
@@ -178,7 +171,7 @@ describe('Payment class', () => {
       // @ts-ignore
       expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
         ...card,
-        requesttypedescription: 'THREEDQUERY',
+        requesttypedescriptions: ['THREEDQUERY'],
         merchant: 'data',
         termurl: 'https://termurl.com',
         cachetoken: 'cardinalcachetoken'

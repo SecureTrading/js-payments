@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Secure Trading Receipt</title>
+  </head>
+
+  <body>
+    <h1>Receipt page</h1>
+    <p>JWT:</p>
+    <p id="jwt"></p>
+    <p>ThreeD Response:</p>
+    <p id="threedresponse"></p>
+    <p>Error code:</p>
+    <p id="errorcode"></p>
+    <p>Error message:</p>
+    <p id="errormessage"></p>
+  </body>
+  <script>
+    (function() {
+      const parsedUrl = new URL(window.location.href);
+      document.getElementById('jwt').innerHTML = parsedUrl.searchParams.get('jwt', '');
+      document.getElementById('threedresponse').innerHTML = parsedUrl.searchParams.get('threedresponse', '');
+      document.getElementById('errorcode').innerHTML = parsedUrl.searchParams.get('errorcode', '');
+      document.getElementById('errormessage').innerHTML = parsedUrl.searchParams.get('errormessage', '');
+    })();
+  </script>
+</html>

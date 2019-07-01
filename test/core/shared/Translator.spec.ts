@@ -1,8 +1,25 @@
 import { Translator } from '../../../src/core/shared/Translator';
 import Language from '../../../src/core/shared/Language';
-import de_DE from '../../../src/core/translations/de_DE';
-import en_GB from '../../../src/core/translations/en_GB';
-import fr_FR from '../../../src/core/translations/fr_FR';
+// @ts-ignore
+import cy_GB from '../../../src/core/translations/cy_GB.json';
+// @ts-ignore
+import da_DK from '../../../src/core/translations/da_DK.json';
+// @ts-ignore
+import de_DE from '../../../src/core/translations/de_DE.json';
+// @ts-ignore
+import en_GB from '../../../src/core/translations/en_GB.json';
+// @ts-ignore
+import en_US from '../../../src/core/translations/en_US.json';
+// @ts-ignore
+import es_ES from '../../../src/core/translations/es_ES.json';
+// @ts-ignore
+import fr_FR from '../../../src/core/translations/fr_FR.json';
+// @ts-ignore
+import nl_NL from '../../../src/core/translations/nl_NL.json';
+// @ts-ignore
+import no_NO from '../../../src/core/translations/no_NO.json';
+// @ts-ignore
+import sv_SE from '../../../src/core/translations/sv_SE.json';
 
 describe('translate()', () => {
   it('should leave english unchanged', () => {
@@ -24,7 +41,7 @@ describe('translate()', () => {
   });
 
   it('should have translations for all Language parameters', () => {
-    let translations = [en_GB, fr_FR, de_DE];
+    let translations = [en_GB, cy_GB, da_DK, de_DE, en_US, es_ES, fr_FR, nl_NL, no_NO, sv_SE];
     for (let i in translations) {
       let translation: any = translations[i];
       let language: any = Language.translations;

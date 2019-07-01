@@ -1,9 +1,12 @@
 import each from 'jest-each';
+import SpyInstance = jest.SpyInstance;
 import CardNumber from '../../../src/components/card-number/CardNumber';
 import Selectors from '../../../src/core/shared/Selectors';
 import FormField from '../../../src/core/shared/FormField';
+import MessageBus from './../../../src/core/shared/MessageBus';
 
 jest.mock('./../../../src/core/shared/MessageBus');
+jest.mock('./../../../src/core/shared/Validation');
 
 // given
 describe('CardNumber', () => {
@@ -20,7 +23,6 @@ describe('CardNumber', () => {
     document.body.appendChild(inputElement);
     document.body.appendChild(labelElement);
     document.body.appendChild(messageElement);
-    FormField.prototype.getLabel = jest.fn(); // Not implemented in FormField
   });
 
   // then
@@ -39,6 +41,28 @@ describe('CardNumber', () => {
   });
 
   // given
+  describe('CardNumber.CARD_NUMBER_FOR_BIN_PROCESS', () => {
+    // then
+    it('should return input element', () => {
+      // @ts-ignore
+      expect(CardNumber.CARD_NUMBER_FOR_BIN_PROCESS('4111111111111111')).toEqual('411111');
+    });
+  });
+
+  // given
+  describe('CardNumber.ifFieldExists', () => {
+    // then
+    it('should return input element', () => {
+      expect(CardNumber.ifFieldExists()).toBeTruthy();
+    });
+
+    // then
+    it('should return input element', () => {
+      expect(CardNumber.ifFieldExists()).toBeInstanceOf(HTMLInputElement);
+    });
+  });
+
+  // given
   describe('CardNumber.luhnCheck', () => {
     // then
     each(testCardNumbers).it('should check card number and return correct Luhn check', (cardNumber, expected) => {
@@ -47,7 +71,7 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('CardNumber.setCardNumberAttributes', () => {
+  describe('setCardNumberAttributes', () => {
     // then
     it('should set proper card number attributes given in params', () => {
       cardNumberInstance.setCardNumberAttributes({
@@ -59,10 +83,18 @@ describe('CardNumber', () => {
       expect(cardNumberInstance.cardNumberField.getAttribute('secondAttribute')).toEqual('Like a sir');
       expect(cardNumberInstance.cardNumberField.getAttribute('thirdAttribute')).toEqual('Pepe the Frog');
     });
+
+    // then
+    it('should remove attribute from input', () => {
+      cardNumberInstance.setCardNumberAttributes({
+        firstAttribute: false
+      });
+      expect(cardNumberInstance.cardNumberField.getAttribute('firstAttribute')).toBeNull();
+    });
   });
 
   // given
-  describe('CardNumber.formatCardNumber', () => {
+  describe('formatCardNumber', () => {
     // then
     each(formattedCards).it('should format card number properly', (given, accepted) => {
       expect(cardNumberInstance.formatCardNumber(given)).toEqual(accepted);
@@ -85,37 +117,28 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('CardNumber.getMaxLengthOfCardNumber', () => {
-    const { cardNumberCorrect } = CardNumberFixture();
+  describe('getMaxLengthOfCardNumber()', () => {
+    const { cardNumberCorrect, unrecognizedCardNumber } = CardNumberFixture();
     const maxLengthOfCardNumber = 21;
+    const numberOfWhitespaces = 0;
 
     // then
     it('should return max length of card number', () => {
       expect(cardNumberInstance.getMaxLengthOfCardNumber(cardNumberCorrect)).toEqual(maxLengthOfCardNumber);
     });
-  });
-
-  // given
-  describe('CardNumber.setMinMaxLengthOfCard', () => {
-    let expectedMinMax: any;
-    const { cardNumberCorrect } = CardNumberFixture();
-
-    // when
-    beforeEach(() => {
-      expectedMinMax = {
-        maxlength: 21,
-        minlength: 16
-      };
-    });
 
     // then
-    it('should set max and min attributes of card number', () => {
-      expect(cardNumberInstance.setMinMaxLengthOfCard(cardNumberCorrect)).toEqual(expectedMinMax);
+    it(`should return numberOfWhitespaces equals: ${numberOfWhitespaces} when cardFormat is not defined`, () => {
+      // @ts-ignore
+      expect(cardNumberInstance.getMaxLengthOfCardNumber(unrecognizedCardNumber)).toEqual(
+        // @ts-ignore
+        CardNumber.STANDARD_CARD_LENGTH
+      );
     });
   });
 
   // given
-  describe('CardNumber.getCardFormat', () => {
+  describe('getCardFormat()', () => {
     const { unrecognizedCardNumber, cardNumberCorrect, receivedObject } = CardNumberFixture();
 
     // then
@@ -130,7 +153,7 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('CardNumber.getPossibleCardLength', () => {
+  describe('getPossibleCardLength()', () => {
     const { unrecognizedCardNumber, cardNumberCorrect, receivedObject } = CardNumberFixture();
 
     // then
@@ -145,7 +168,7 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('CardNumber.getSecurityCodeLength', () => {
+  describe('getSecurityCodeLength()', () => {
     const { unrecognizedCardNumber, cardNumberCorrect, receivedObject } = CardNumberFixture();
 
     // then
@@ -160,15 +183,13 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('CardNumber.getFormFieldState', () => {
-    let publishSecurityCodeLengthSpy: any;
-    let formatCardNumberSpy: any;
-    let setMinMaxLengthOfCardSpy: any;
+  describe('getFormFieldState()', () => {
+    let publishSecurityCodeLengthSpy: SpyInstance;
+    let formatCardNumberSpy: SpyInstance;
     // when
     beforeEach(() => {
       publishSecurityCodeLengthSpy = jest.spyOn(cardNumberInstance, 'publishSecurityCodeLength');
       formatCardNumberSpy = jest.spyOn(cardNumberInstance, 'formatCardNumber');
-      setMinMaxLengthOfCardSpy = jest.spyOn(cardNumberInstance, 'setMinMaxLengthOfCard');
       cardNumberInstance.getFormFieldState();
     });
     // then
@@ -180,10 +201,246 @@ describe('CardNumber', () => {
     it('should formatCardNumber has been called', () => {
       expect(formatCardNumberSpy).toHaveBeenCalled();
     });
+  });
+
+  // given
+  describe('isMaxLengthReached()', () => {
+    const isMaxLengthReachedCases = [
+      ['4', false],
+      ['40000', false],
+      ['40000000000', false],
+      ['4000000000000', false],
+      ['400000000000000', false],
+      ['400000000000000000000', true]
+    ];
+    const { instance } = CardNumberFixture();
+    // then
+    each(isMaxLengthReachedCases).it('should return proper boolean value', (given: string, expected: boolean) => {
+      // @ts-ignore
+      instance._inputElement.value = given;
+      // @ts-ignore
+      expect(instance.isMaxLengthReached()).toEqual(expected);
+    });
+  });
+
+  // given
+  describe('setFocusListener()', () => {
+    const { instance } = CardNumberFixture();
+    let spy: SpyInstance;
+
+    beforeEach(() => {
+      // @ts-ignore
+      spy = jest.spyOn(instance, 'format');
+      // @ts-ignore
+      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
+        callback();
+      });
+      instance.setFocusListener();
+    });
+    // then
+    it('should set MessageBus listener function', () => {
+      // @ts-ignore
+      expect(instance._messageBus.subscribe.mock.calls[0][0]).toBe(MessageBus.EVENTS.FOCUS_CARD_NUMBER);
+      // @ts-ignore
+      expect(instance._messageBus.subscribe.mock.calls[0][1]).toBeInstanceOf(Function);
+      // @ts-ignore
+      expect(instance._messageBus.subscribe).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call format function', () => {
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  // given
+  describe('onBlur()', () => {
+    let spy: SpyInstance;
+    let spyState: SpyInstance;
+    const { instance } = CardNumberFixture();
+
+    beforeEach(() => {
+      spy = jest.spyOn(instance, 'luhnCheck');
+      // @ts-ignore
+      spyState = jest.spyOn(instance, 'sendState');
+      // @ts-ignore
+      instance.onBlur();
+    });
+    // then
+    it('onBlur', () => {
+      expect(spy).toHaveBeenCalled();
+    });
+    it('onBlur', () => {
+      expect(spyState).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('onKeyPress()', () => {
+    let spy: SpyInstance;
+    const { instance } = CardNumberFixture();
+    const event: KeyboardEvent = new KeyboardEvent('keypress', { key: 'a' });
+    const preventDefault = jest.spyOn(event, 'preventDefault');
+
+    beforeEach(() => {
+      // @ts-ignore
+      spy = jest.spyOn(instance, 'isMaxLengthReached').mockReturnValueOnce(true);
+      // @ts-ignore
+      instance.onKeyPress(event);
+    });
+    // then
+    it('should trigger isMaxLengthReached function', () => {
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
 
     // then
-    it('should setMinMaxLengthOfCard has been called', () => {
-      expect(setMinMaxLengthOfCardSpy).toHaveBeenCalled();
+    it('should trigger isMaxLengthReached function and prevents default event ', () => {
+      expect(preventDefault).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('onInput()', () => {
+    let spy: SpyInstance;
+    let spySendState: SpyInstance;
+    const { instance } = CardNumberFixture();
+    const event = new Event('input');
+
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      spy = jest.spyOn(instance, 'isMaxLengthReached').mockReturnValueOnce(true);
+      // @ts-ignore
+      spySendState = jest.spyOn(instance, 'sendState');
+      // @ts-ignore
+      instance.getMaxLengthOfCardNumber = jest.fn().mockReturnValueOnce(15);
+      // @ts-ignore
+      instance.onInput(event);
+    });
+
+    // then
+    it('should call isMaxLengthReached', () => {
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    // then
+    it('should call sendState', () => {
+      expect(spySendState).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  // given
+  describe('setDisableListener()', () => {
+    const { instance } = CardNumberFixture();
+
+    function subscribeMock(state: boolean) {
+      // @ts-ignore
+      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
+        callback(state);
+      });
+      instance.setDisableListener();
+    }
+
+    // then
+    it('should set attribute disabled', () => {
+      subscribeMock(true);
+      // @ts-ignore
+      expect(instance._inputElement.hasAttribute('disabled')).toEqual(true);
+    });
+
+    // then
+    it('should add class st-input--disabled', () => {
+      subscribeMock(true);
+      // @ts-ignore
+      expect(instance._inputElement.classList.contains('st-input--disabled')).toEqual(true);
+    });
+
+    // then
+    it('should remove attribute disabled', () => {
+      subscribeMock(false);
+      // @ts-ignore
+      expect(instance._inputElement.hasAttribute('disabled')).toEqual(false);
+    });
+
+    // then
+    it('should remove class st-input--disabled', () => {
+      subscribeMock(false);
+      // @ts-ignore
+      expect(instance._inputElement.classList.contains('st-input--disabled')).toEqual(false);
+    });
+  });
+
+  // given
+  describe('onPaste()', () => {
+    const { instance } = CardNumberFixture();
+    let spyIsMaxLengthReached: SpyInstance;
+    let spySendState: SpyInstance;
+    // @ts-ignore
+    // @TODO clipboard event is not recognizable.
+    // const event: ClipboardEvent = new ClipboardEvent('paste');
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      spyIsMaxLengthReached = jest.spyOn(instance, 'isMaxLengthReached').mockReturnValueOnce(true);
+      // @ts-ignore
+      spySendState = jest.spyOn(instance, 'sendState');
+      // @ts-ignore
+      // instance.onPaste(event);
+    });
+
+    // then
+    it('should call isMaxLengthReached', () => {
+      //expect(spyIsMaxLengthReached).toHaveBeenCalledTimes(1);
+    });
+
+    // then
+    it('should call sendState', () => {
+      // (spySendState).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  // given
+  describe('sendState()', () => {
+    const { instance } = CardNumberFixture();
+
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._messageBus.publish = jest.fn().mockImplementation(() => {});
+    });
+
+    // then
+    it('should call publish method exactly one time', () => {
+      instance.getFormFieldState = jest.fn().mockReturnValueOnce({ value: '11111', validity: false });
+      // @ts-ignore
+      instance.sendState();
+      // @ts-ignore
+      expect(instance._messageBus.publish).toHaveBeenCalledTimes(1);
+    });
+
+    // then
+    it('should call publish method exactly two times', () => {
+      instance.getFormFieldState = jest.fn().mockReturnValueOnce({ value: '111111', validity: true });
+      // @ts-ignore
+      instance.sendState();
+      // @ts-ignore
+      expect(instance._messageBus.publish).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  // given
+  describe('onFocus()', () => {
+    // when
+    const { instance } = CardNumberFixture();
+    const event: Event = new Event('focus');
+    // @ts-ignore
+    instance._inputElement.focus = jest.fn();
+
+    // then
+    it('should call super function', () => {
+      // @ts-ignore
+      instance.onFocus(event);
+      // @ts-ignore
+      expect(instance._inputElement.focus).toHaveBeenCalled();
     });
   });
 });
@@ -201,6 +458,7 @@ function CardNumberFixture() {
   let inputElement = createElement('input');
   let labelElement = document.createElement('label');
   let messageElement = createElement('p');
+  const instance = new CardNumber();
   const cardNumberCorrect = '3000 000000 000111';
   const unrecognizedCardNumber = '8989 8989 6899 9999';
   const receivedObject = {
@@ -238,7 +496,8 @@ function CardNumberFixture() {
     ['5000000000000611', '5000 0000 0000 0611'],
     ['5100000000000511', '5100 0000 0000 0511'],
     ['3089500000000000021', '3089 5000 0000 0000021'],
-    ['4111110000000211', '4111 1100 0000 0211']
+    ['4111110000000211', '4111 1100 0000 0211'],
+    ['123456789', '123456789']
   ];
   labelElement.id = Selectors.CARD_NUMBER_LABEL;
   inputElement.id = Selectors.CARD_NUMBER_INPUT;
@@ -246,6 +505,7 @@ function CardNumberFixture() {
 
   return {
     cardNumberInstance,
+    instance,
     inputElement,
     labelElement,
     messageElement,

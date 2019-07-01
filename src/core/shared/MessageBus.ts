@@ -4,30 +4,43 @@ import Utils from './Utils';
 export default class MessageBus {
   public static SUBSCRIBERS: string = 'ST_SUBSCRIBERS';
   public static EVENTS = {
+    BLOCK_CARD_NUMBER: 'BLOCK_CARD_NUMBER',
+    BLOCK_EXPIRATION_DATE: 'BLOCK_EXPIRATION_DATE',
+    BLOCK_FORM: 'BLOCK_FORM',
+    BLOCK_SECURITY_CODE: 'BLOCK_SECURITY_CODE',
     CHANGE_CARD_NUMBER: 'CHANGE_CARD_NUMBER',
     CHANGE_EXPIRATION_DATE: 'CHANGE_EXPIRATION_DATE',
     CHANGE_SECURITY_CODE: 'CHANGE_SECURITY_CODE',
-    CHANGE_SECURITY_CODE_LENGTH: 'CHANGE_SECURITY_CODE_LENGTH'
+    CHANGE_SECURITY_CODE_LENGTH: 'CHANGE_SECURITY_CODE_LENGTH',
+    FOCUS_CARD_NUMBER: 'FOCUS_CARD_NUMBER',
+    FOCUS_EXPIRATION_DATE: 'FOCUS_EXPIRATION_DATE',
+    FOCUS_SECURITY_CODE: 'FOCUS_SECURITY_CODE',
+    VALIDATE_CARD_NUMBER_FIELD: 'VALIDATE_CARD_NUMBER_FIELD',
+    VALIDATE_EXPIRATION_DATE_FIELD: 'VALIDATE_EXPIRATION_DATE_FIELD',
+    VALIDATE_FORM: 'VALIDATE_FORM',
+    VALIDATE_MERCHANT_FIELD: 'VALIDATE_MERCHANT_FIELD',
+    VALIDATE_SECURITY_CODE_FIELD: 'VALIDATE_SECURITY_CODE_FIELD'
   };
   public static EVENTS_PUBLIC = {
-    AUTH: 'AUTH',
     BIN_PROCESS: 'BIN_PROCESS',
-    CACHETOKENISE: 'CACHETOKENISE',
+    BY_PASS_INIT: 'BY_PASS_INIT',
     LOAD_CARDINAL: 'LOAD_CARDINAL',
     LOAD_CONTROL_FRAME: 'LOAD_CONTROL_FRAME',
     NOTIFICATION: 'NOTIFICATION',
+    PROCESS_PAYMENTS: 'PROCESS_PAYMENTS',
+    SET_REQUEST_TYPES: 'SET_REQUEST_TYPES',
     SUBMIT_FORM: 'SUBMIT_FORM',
     THREEDINIT: 'THREEDINIT',
     THREEDQUERY: 'THREEDQUERY',
-    UPDATE_MERCHANT_FIELDS: 'UPDATE_MERCHANT_FIELDS',
-    WALLETVERIFY: 'WALLETVERIFY'
+    TRANSACTION_COMPLETE: 'TRANSACTION_COMPLETE',
+    UPDATE_MERCHANT_FIELDS: 'UPDATE_MERCHANT_FIELDS'
   };
   private readonly _parentOrigin: string;
   private readonly _frameOrigin: string;
   private _subscriptions: any = {};
 
   constructor(parentOrigin?: string) {
-    this._parentOrigin = parentOrigin;
+    this._parentOrigin = parentOrigin ? parentOrigin : '*';
     this._frameOrigin = new URL(environment.FRAME_URL).origin;
     this.registerMessageListener();
   }
@@ -53,6 +66,11 @@ export default class MessageBus {
   public publishFromParent(event: IMessageBusEvent, frameName: string) {
     // @ts-ignore
     window.frames[frameName].postMessage(event, this._frameOrigin);
+  }
+
+  public publishToSelf(event: IMessageBusEvent) {
+    // @ts-ignore
+    window.postMessage(event, window.location.origin);
   }
 
   public subscribe(eventType: string, callback: any) {

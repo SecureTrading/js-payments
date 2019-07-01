@@ -1,11 +1,18 @@
 {
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "outDir": "./dist/",
     "sourceMap": true,
     "noImplicitAny": true,
     "module": "commonjs",
     "target": "es5",
+    "resolveJsonModule": true,
     "jsx": "react"
   },
-  "include": ["./src/**/*"]
+  "include": ["./src/**/*"],
+  "exclude": [
+    "node_modules",
+    "./src/**/*.spec.ts" // exclude all that contain "spec.ts" in name
+  ]
 }

@@ -1,8 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-const ManifestPlugin = require('webpack-manifest-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
@@ -10,14 +9,18 @@ const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 module.exports = {
   entry: {
     main: './src/components/index.ts',
-    componentControlFrame: './src/components/control-frame/control-frame.ts',
-    stjs: './src/stjs.ts',
-    example: './example/index.ts'
+    'control-frame': './src/components/control-frame/control-frame.ts',
+    st: './src/ST.ts',
+    example: './example/index.ts',
+    immediateExample: './example/immediate.ts',
+    receipt: './example/receipt.ts',
+    byPassExample: './example/bypass.ts'
   },
   output: {
-    filename: '[name].bundle.js',
+    filename: '[name].js',
     path: path.join(__dirname, 'dist'),
-    library: '[name]',
+    library: 'SecureTrading',
+    libraryExport: 'default',
     libraryTarget: 'var',
     publicPath: ''
   },
@@ -69,19 +72,32 @@ module.exports = {
       templateParameters: {
         partial: 'controlFrame'
       },
-      chunks: ['componentControlFrame']
+      chunks: ['control-frame']
     }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: './example/index.html',
-      chunks: ['example'],
-      favicon: './favicon.ico'
+      chunks: ['example']
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'immediate.html',
+      template: './example/immediate.html',
+      chunks: ['immediateExample']
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'receipt.html',
+      template: './example/receipt.html',
+      chunks: ['receipt']
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'bypass.html',
+      template: './example/bypass.html',
+      chunks: ['byPassExample']
     }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css'
     }),
-    new ManifestPlugin(),
     new StyleLintPlugin(),
     new FriendlyErrorsWebpackPlugin(),
     new webpack.DefinePlugin({
@@ -109,9 +125,15 @@ module.exports = {
         use: ['file-loader']
       },
       {
-        test: /\.tsx?$/,
-        use: 'ts-loader',
-        exclude: /node_modules/
+        test: /\.tsx?|js$/,
+        use: 'babel-loader',
+        include: [
+          path.join(__dirname, 'src'),
+          path.join(__dirname, 'test'),
+          path.join(__dirname, 'example'),
+          path.join(__dirname, 'node_modules/ts-money'),
+          path.join(__dirname, 'node_modules/joi-browser')
+        ]
       },
       {
         test: /\.ts$/,
@@ -119,23 +141,17 @@ module.exports = {
         use: [
           {
             loader: 'tslint-loader',
-            options: { emitErrors: true }
+            options: {
+              emitErrors: true
+            }
           }
         ],
         exclude: /node_modules/
-      },
-      {
-        test: /\.po$/,
-        use: [
-          {
-            loader: 'i18next-po-loader',
-            options: {}
-          }
-        ]
       }
     ]
   },
   resolve: {
+    alias: { joi: 'joi-browser' },
     extensions: ['.ts', '.js']
   }
 };
