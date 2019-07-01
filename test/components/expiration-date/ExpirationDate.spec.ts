@@ -1,3 +1,4 @@
+import each from 'jest-each';
 import ExpirationDate from '../../../src/components/expiration-date/ExpirationDate';
 import Language from '../../../src/core/shared/Language';
 import Selectors from '../../../src/core/shared/Selectors';
@@ -16,6 +17,40 @@ describe('ExpirationDate', () => {
     // then
     it('should return input element', () => {
       expect(ExpirationDate.ifFieldExists()).toBeInstanceOf(HTMLInputElement);
+    });
+  });
+  // given
+  describe('ExpirationDate.addLeadingZero()', () => {
+    // when
+    const oneToNine: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    const oneToTwelve: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
+    // then
+    each(oneToNine).it(`should return string value for each of ${oneToTwelve}`, (value: number) => {
+      // @ts-ignore
+      expect(typeof ExpirationDate.addLeadingZero(value)).toEqual('string');
+    });
+
+    // then
+    each(oneToNine).it(
+      `should return string with leading zero if indicated number equals ${oneToNine}`,
+      (value: number) => {
+        // @ts-ignore
+        expect(ExpirationDate.addLeadingZero(value)).toEqual(`${ExpirationDate.LEADING_ZERO}${value}`);
+      }
+    );
+
+    // then
+
+    it(`should return only number indicated when number is greater or equal than ${
+      // @ts-ignore
+      ExpirationDate.LEADING_ZERO
+    }`, () => {
+      // @ts-ignore
+      expect(ExpirationDate.addLeadingZero(ExpirationDate.LEADING_ZERO_LIMIT)).toEqual(
+        // @ts-ignore
+        `${ExpirationDate.LEADING_ZERO_LIMIT}`
+      );
     });
   });
 
@@ -221,6 +256,33 @@ describe('ExpirationDate', () => {
     // then
     it('should call publish()', () => {
       expect(spy).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('_getISOFormatDate()', () => {
+    const { instance } = expirationDateFixture();
+    // then
+    it('should return full date when second array element is truthy', () => {
+      // @ts-ignore
+      instance._date = [1, 33];
+      // @ts-ignore
+      expect(instance._getISOFormatDate()).toEqual('01/33');
+    });
+    // then
+    it('should return first array element when it is equal zero', () => {
+      // @ts-ignore
+      instance._date = [0, 0];
+      // @ts-ignore
+      expect(instance._getISOFormatDate()).toEqual(0);
+    });
+
+    // then
+    it('should return first array element with leading zero when it is not equal 1', () => {
+      // @ts-ignore
+      instance._date = [2, 0];
+      // @ts-ignore
+      expect(instance._getISOFormatDate()).toEqual('02');
     });
   });
 });
