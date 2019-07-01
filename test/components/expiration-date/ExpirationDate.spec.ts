@@ -1,5 +1,4 @@
 import each from 'jest-each';
-import AnimatedCard from '../../../src/components/animated-card/AnimatedCard';
 import SpyInstance = jest.SpyInstance;
 import ExpirationDate from '../../../src/components/expiration-date/ExpirationDate';
 import Language from '../../../src/core/shared/Language';
@@ -256,10 +255,13 @@ describe('ExpirationDate', () => {
   describe('_setSelectionRange()', () => {
     // when
     const { instance } = expirationDateFixture();
-    const event = new KeyboardEvent('keypress', { key: 'Delete' });
+    // @ts-ignore
+    const event = new KeyboardEvent('keypress', { keyCode: 46 });
     // @ts-ignore
 
     beforeEach(() => {
+      // @ts-ignore
+      instance._inputElement.setSelectionRange = jest.fn();
       // @ts-ignore
       instance._setSelectionRange(event, 0, 0);
     });
@@ -270,6 +272,12 @@ describe('ExpirationDate', () => {
       expect(instance._inputElement.selectionStart).toEqual(0);
       // @ts-ignore
       expect(instance._inputElement.selectionEnd).toEqual(0);
+    });
+
+    // then
+    it('should setSelectionRange method be called', () => {
+      // @ts-ignore
+      expect(instance._inputElement.setSelectionRange).toHaveBeenCalled();
     });
   });
 
@@ -335,11 +343,7 @@ describe('ExpirationDate', () => {
   describe('onPaste()', () => {
     const { instance } = expirationDateFixture();
     let spy: SpyInstance;
-    // const event = new ClipboardEvent('paste', {
-    //   // @ts-ignore
-    //   dataType: 'text/plain',
-    //   data: '123\r123'
-    // });
+    // const event = new ClipboardEvent('paste');
 
     // when
     beforeEach(() => {
@@ -350,6 +354,26 @@ describe('ExpirationDate', () => {
     it.skip('should call parent function', () => {
       // @ts-ignore
       instance.onPaste(event);
+      expect(spy).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('onKeyUp()', () => {
+    const { instance } = expirationDateFixture();
+    let spy: SpyInstance;
+    const event = new KeyboardEvent('keyup');
+
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      spy = jest.spyOn(instance, '_setSelectionRange');
+    });
+
+    // then
+    it('should call _setSelectionRange function', () => {
+      // @ts-ignore
+      instance.onKeyUp(event);
       expect(spy).toHaveBeenCalled();
     });
   });
