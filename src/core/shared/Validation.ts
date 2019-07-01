@@ -174,10 +174,11 @@ export default class Validation extends Frame {
    * Validate particular form input.
    * @param inputElement
    * @param messageElement
+   * @param customErrorMessage
    */
-  public validate(inputElement: HTMLInputElement, messageElement?: HTMLElement) {
+  public validate(inputElement: HTMLInputElement, messageElement?: HTMLElement, customErrorMessage?: string) {
     this.toggleErrorClass(inputElement);
-    this.setMessage(inputElement, messageElement);
+    this.setMessage(inputElement, messageElement, customErrorMessage);
   }
 
   /**
@@ -202,11 +203,14 @@ export default class Validation extends Frame {
    * Method placed errorMessage inside chosen container (specified by id).
    * @param inputElement
    * @param messageElement
+   * @param customErrorMessage
    */
-  private setMessage(inputElement: HTMLInputElement, messageElement?: HTMLElement) {
+  private setMessage(inputElement: HTMLInputElement, messageElement?: HTMLElement, customErrorMessage?: string) {
     const messageText = Validation.getValidationMessage(inputElement.validity);
-    if (messageElement) {
+    if (messageElement && !customErrorMessage) {
       messageElement.innerText = this._translator.translate(messageText);
+    } else if (messageElement && customErrorMessage) {
+      messageElement.innerText = this._translator.translate(customErrorMessage);
     }
   }
 }
