@@ -206,11 +206,11 @@ export default class Validation extends Frame {
    * @param customErrorMessage
    */
   private setMessage(inputElement: HTMLInputElement, messageElement?: HTMLElement, customErrorMessage?: string) {
-    const messageText = Validation.getValidationMessage(inputElement.validity);
-    if (messageElement && !customErrorMessage) {
-      messageElement.innerText = this._translator.translate(messageText);
-    } else if (messageElement && customErrorMessage) {
+    const validityState = Validation.getValidationMessage(inputElement.validity);
+    if (messageElement && customErrorMessage) {
       messageElement.innerText = this._translator.translate(customErrorMessage);
+    } else {
+      messageElement.innerText = this._translator.translate(validityState);
     }
   }
 }
