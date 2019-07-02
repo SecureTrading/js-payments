@@ -67,7 +67,7 @@ jobs:
       script:
         - npm run behave -- test_chrome_74_osxs_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: firefox 66, Windows 10"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = feature-ST-266-run-tests-on-master
       script:
         - npm run behave -- test_firefox_66_w10_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: firefox 65, Windows 8.1"
