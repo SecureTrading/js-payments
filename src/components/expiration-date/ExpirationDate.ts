@@ -198,7 +198,7 @@ export default class ExpirationDate extends FormField {
       return currentDate[0];
     } else if (currentDate[0] && currentDate[1]) {
       return currentDate[0] + '/' + currentDate[1];
-    } else if (currentDate[0] && currentDate[1] === '' && previousDate[1] !== '') {
+    } else {
       return '';
     }
   }

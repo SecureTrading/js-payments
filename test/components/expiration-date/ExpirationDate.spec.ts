@@ -194,12 +194,15 @@ describe('ExpirationDate', () => {
   describe('_getISOFormatDate()', () => {
     const { instance } = expirationDateFixture();
     // then
-    it('should return full date when second array element is truthy', () => {});
+    it('should return only month if user deletes previous / last character between slash', () => {
+      // @ts-ignore
+      expect(instance._getISOFormatDate(['11', '2'], ['11', ''])).toEqual('11');
+    });
     // then
-    it('should return first array element when it is equal zero', () => {});
-
-    // then
-    it('should return first array element with leading zero when it is not equal 1', () => {});
+    it('should return empty string if array of string is empty', () => {
+      // @ts-ignore
+      expect(instance._getISOFormatDate(['1', ''], ['', ''])).toEqual('');
+    });
   });
 
   // given
