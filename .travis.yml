@@ -3,7 +3,7 @@ env:
     - DOCKER_BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
     - DOCKER_BRANCH=${DOCKER_BRANCH//[\@\/]/-}
     - AUTOMATION_TEST_TAG=${AUTOMATION_TEST_TAG}
-    - BRANCH_WITH_FULL_TESTS = ${BRANCH_WITH_FULL_TESTS}
+    - BRANCH_WITH_FULL_TESTS = feature/ST-266-run-tests-on-master
 language: node_js
 node_js:
   - '10'
