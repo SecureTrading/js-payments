@@ -154,10 +154,10 @@ export default class CommonFrames extends RegisterFrames {
 
   private getSubmitFields(data: any) {
     const fields = this.submitFields;
-    if (data.hasOwnProperty('jwt')) {
+    if (data.hasOwnProperty('jwt') && fields.indexOf('jwt') === -1) {
       fields.push('jwt');
     }
-    if (data.hasOwnProperty('threedresponse')) {
+    if (data.hasOwnProperty('threedresponse') && fields.indexOf('threedresponse') === -1) {
       fields.push('threedresponse');
     }
     return fields;
