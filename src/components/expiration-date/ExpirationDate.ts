@@ -24,6 +24,15 @@ export default class ExpirationDate extends FormField {
     return `${number < ExpirationDate.LEADING_ZERO_LIMIT ? ExpirationDate.LEADING_ZERO : ''}${number}`;
   }
 
+  /**
+   * Filters the non-digits from given string.
+   * @param value
+   * @private
+   */
+  private static _clearNonDigitsChars = (value: string) => {
+    return value.replace(ExpirationDate.ONLY_DIGITS_REGEXP, '');
+  };
+
   private _date: any;
 
   constructor() {
@@ -151,15 +160,6 @@ export default class ExpirationDate extends FormField {
     const formattedDate = this._getISOFormatDate();
     this._inputElement.value = formattedDate ? formattedDate : this._inputElement.value;
   }
-
-  /**
-   * Filters the non-digits from given string.
-   * @param value
-   * @private
-   */
-  private static _clearNonDigitsChars = (value: string) => {
-    return value.replace(ExpirationDate.ONLY_DIGITS_REGEXP, '');
-  };
 
   /**
    * Sets cursor on selected range (most common usage here at the beginning of input).

@@ -5,6 +5,13 @@ import MessageBus from './MessageBus';
 import { Translator } from './Translator';
 import Validation from './Validation';
 
+/**
+ * Base class describes each form field / component.
+ * Children classes:
+ *  - CardNumber
+ *  - ExpirationDate
+ *  - SecurityCode
+ */
 export default class FormField extends Frame {
   private static FOCUSED_FIELD_STATE = { 'data-pristine': false, 'data-dirty': true };
   public validation: Validation;
@@ -95,8 +102,6 @@ export default class FormField extends Frame {
     };
   }
 
-  protected onKeyUp(event: KeyboardEvent) {}
-
   protected onKeyPress(event: KeyboardEvent) {
     if (!Validation.isCharNumber(event)) {
       event.preventDefault();
@@ -174,10 +179,6 @@ export default class FormField extends Frame {
 
     this._inputElement.addEventListener('keypress', (event: KeyboardEvent) => {
       this.onKeyPress(event);
-    });
-
-    this._inputElement.addEventListener('keyup', (event: KeyboardEvent) => {
-      this.onKeyUp(event);
     });
 
     this._inputElement.addEventListener('input', (event: Event) => {
