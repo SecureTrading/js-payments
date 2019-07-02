@@ -185,7 +185,6 @@ export default class ControlFrame extends Frame {
   // @TODO STJS-205 refactor into Payments
   private _processPayment(data: IResponseData) {
     if (this._postThreeDRequestTypes.length === 0) {
-      StCodec.publishResponse(this._threeDQueryResult.response, this._threeDQueryResult.jwt, data.threedresponse);
       this.setNotification(NotificationType.Success, Language.translations.PAYMENT_SUCCESS);
     } else {
       this._payment
