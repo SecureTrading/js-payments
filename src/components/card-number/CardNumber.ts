@@ -244,7 +244,7 @@ export default class CardNumber extends FormField {
     const cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     if (!luhn) {
       cardNumberField.setCustomValidity(Language.translations.VALIDATION_ERROR_CARD);
-      this.validation.validate(this._inputElement, this._messageElement);
+      this.validation.validate(this._inputElement, this._messageElement, Language.translations.VALIDATION_ERROR_CARD);
     } else {
       cardNumberField.setCustomValidity('');
     }
