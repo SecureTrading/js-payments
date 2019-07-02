@@ -1,4 +1,3 @@
-import Formatter from '../../core/shared/Formatter';
 import FormField from '../../core/shared/FormField';
 import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
@@ -10,19 +9,11 @@ import Selectors from '../../core/shared/Selectors';
 export default class ExpirationDate extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.EXPIRATION_DATE_INPUT) as HTMLInputElement;
-  private static DELETE_KEY_CODE = 46;
+  private static BLOCKS = [2, 2];
   private static DISABLE_FIELD_CLASS = 'st-input--disabled';
   private static DISABLE_STATE = 'disabled';
   private static INPUT_PATTERN: string = '^(0[1-9]|1[0-2])\\/([0-9]{2})$';
-  private static LEADING_ZERO = '0';
-  private static LEADING_ZERO_LIMIT = 10;
   private static ONLY_DIGITS_REGEXP = /[^\d]/g;
-  private static BLOCKS = [2, 2];
-  private static DATE_PATTERN = ['m', 'y'];
-
-  private static addLeadingZero(number: number): string {
-    return `${number < ExpirationDate.LEADING_ZERO_LIMIT ? ExpirationDate.LEADING_ZERO : ''}${number}`;
-  }
 
   /**
    * Filters the non-digits from given string.
@@ -33,7 +24,9 @@ export default class ExpirationDate extends FormField {
     return value.replace(ExpirationDate.ONLY_DIGITS_REGEXP, '');
   };
 
-  private _date: any;
+  private _date: string[] = ['', ''];
+  private _inputSelectionStart: number;
+  private _inputSelectionEnd: number;
 
   constructor() {
     super(Selectors.EXPIRATION_DATE_INPUT, Selectors.EXPIRATION_DATE_MESSAGE, Selectors.EXPIRATION_DATE_LABEL);
@@ -84,7 +77,7 @@ export default class ExpirationDate extends FormField {
    * @param date
    */
   protected format(date: string) {
-    this.setValue(Formatter.maskExpirationDate(date));
+    this.setValue(date);
   }
 
   /**
@@ -109,7 +102,10 @@ export default class ExpirationDate extends FormField {
    */
   protected onInput(event: Event) {
     super.onInput(event);
+    this._inputSelectionStart = this._inputElement.selectionStart;
+    this._inputSelectionEnd = this._inputElement.selectionEnd;
     this._setFormattedDate();
+    this._inputElement.setSelectionRange(this._inputSelectionStart, this._inputSelectionEnd);
     this.sendState();
   }
 
@@ -119,14 +115,7 @@ export default class ExpirationDate extends FormField {
    */
   protected onKeyPress(event: KeyboardEvent) {
     super.onKeyPress(event);
-  }
-
-  /**
-   * Extends onKeyPress event with max length check.
-   * @param event
-   */
-  protected onKeyUp(event: KeyboardEvent) {
-    this._setSelectionRange(event, 0, 0);
+    this._inputElement.focus();
   }
 
   /**
@@ -156,22 +145,9 @@ export default class ExpirationDate extends FormField {
    * @private
    */
   private _setFormattedDate() {
-    this._getValidatedDate(this._inputElement.value);
-    const formattedDate = this._getISOFormatDate();
-    this._inputElement.value = formattedDate ? formattedDate : this._inputElement.value;
-  }
-
-  /**
-   * Sets cursor on selected range (most common usage here at the beginning of input).
-   * @param event
-   * @param min
-   * @param max
-   * @private
-   */
-  private _setSelectionRange(event: KeyboardEvent, min: number, max: number) {
-    if (event.keyCode === ExpirationDate.DELETE_KEY_CODE) {
-      this._inputElement.setSelectionRange(min, max);
-    }
+    const validatedDate = this._getValidatedDate(this._inputElement.value);
+    this._inputElement.value = validatedDate ? validatedDate : this._inputElement.value;
+    return validatedDate;
   }
 
   /**
@@ -183,22 +159,10 @@ export default class ExpirationDate extends FormField {
     let date: string = ExpirationDate._clearNonDigitsChars(value);
     let result: string = '';
 
-    ExpirationDate.BLOCKS.forEach((length, index) => {
+    ExpirationDate.BLOCKS.forEach(length => {
       if (date.length > 0) {
-        let sub = date.slice(0, length);
-        const sub0 = sub.slice(0, 1);
+        const sub = date.slice(0, length);
         const rest = date.slice(length);
-
-        if (ExpirationDate.DATE_PATTERN[index] === 'm') {
-          if (sub === '00') {
-            sub = '01';
-          } else if (parseInt(sub0, 10) > 1) {
-            sub = '0' + sub0;
-          } else if (parseInt(sub, 10) > 12) {
-            sub = '12';
-          }
-        }
-
         result += sub;
         date = rest;
       }
@@ -211,40 +175,31 @@ export default class ExpirationDate extends FormField {
    * @param value
    */
   private _getFixedDateString(value: string) {
-    let date: number[] = [];
-    const datePattern = ExpirationDate.DATE_PATTERN;
+    let date: string[];
     let month;
     let year;
-
-    month = parseInt(value.slice(0, 2), 10);
-    year = parseInt(value.slice(2, 4), 10);
+    month = value.slice(0, 2);
+    year = value.slice(2, 4);
     date = [month, year];
-    this._date = date;
-
-    return date.length === 0
-      ? value
-      : datePattern.reduce((previous, current) => {
-          switch (current) {
-            case 'm':
-              return previous + (date[0] === 0 ? '' : ExpirationDate.addLeadingZero(date[0]));
-            case 'y':
-              return previous;
-          }
-        }, '');
+    return this._getISOFormatDate(this._date, date);
   }
 
   /**
    * Formats indicated string to date in format: mm/yy.
    */
-  private _getISOFormatDate = () => {
-    if (this._date[1]) {
-      return ExpirationDate.addLeadingZero(this._date[0]) + '/' + this._date[1];
-    } else if (this._date[0] === 0) {
-      return this._date[0];
-    } else if (this._date[0] && this._date[0] !== 1) {
-      return ExpirationDate.addLeadingZero(this._date[0]);
-    } else {
-      return undefined;
+  private _getISOFormatDate(previousDate: string[], currentDate: string[]) {
+    this._date = currentDate;
+    // @ts-ignore
+    if (currentDate[0].length === 2 && currentDate[1].length === 0 && previousDate[1].length === 0) {
+      this._inputSelectionEnd = this._inputSelectionEnd + 1;
+      this._inputSelectionStart = this._inputSelectionStart + 1;
+      return currentDate[0] + '/';
+    } else if (currentDate[0].length === 2 && currentDate[1].length === 0 && previousDate[1].length === 1) {
+      return currentDate[0];
+    } else if (currentDate[0] && currentDate[1]) {
+      return currentDate[0] + '/' + currentDate[1];
+    } else if (currentDate[0] && currentDate[1] === '' && previousDate[1] !== '') {
+      return '';
     }
-  };
+  }
 }
