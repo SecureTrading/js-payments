@@ -3,6 +3,7 @@ env:
     - DOCKER_BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
     - DOCKER_BRANCH=${DOCKER_BRANCH//[\@\/]/-}
     - AUTOMATION_TEST_TAG=${AUTOMATION_TEST_TAG}
+    - BRANCH_WITH_FULL_TESTS = ${BRANCH_WITH_FULL_TESTS}
 language: node_js
 node_js:
   - '10'
@@ -31,183 +32,183 @@ jobs:
         - npm run coverage
         - npm run snyk
     - name: "Behavioural test: chrome 74, Windows 10"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_chrome_74_w10_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: chrome 73, Windows 10"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_chrome_73_w10_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: chrome 74, Windows 8.1"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_chrome_74_w81_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: chrome 73, Windows 8"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_chrome_73_w8_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: chrome 74, Windows 7"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_chrome_74_w7_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: chrome 74, OS X Mojave"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_chrome_74_osxmoj_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: chrome 73, OS X Mojave"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_chrome_73_osxmoj_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: chrome 74, OS X High Sierra"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_chrome_74_osxhs_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: chrome 74, OS X Sierra"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_chrome_74_osxs_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: firefox 66, Windows 10"
-      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = feature/ST-266-run-tests-on-master
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_firefox_66_w10_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: firefox 65, Windows 8.1"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_firefox_65_w81_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: firefox 66, Windows 7"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_firefox_66_w7_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: firefox 66, OS X Mojave"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_firefox_66_osxmoj_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: firefox 65, OS X High Sierra"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_firefox_65_osxhs_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: firefox 66, OS X Sierra"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_firefox_66_osxs_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: ie 11, Windows 10"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_ie_11_w10_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: ie 10, Windows 8"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_ie_10_w8_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: edge 18, Windows 10"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_edge_18_w10_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: edge 17, Windows 10"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_edge_17_w10_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: safari 12.0, OS X Mojave"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_safari_12_0_osxmoj_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: safari 11.1, OS X High Sierra"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_safari_11_1_osxhs_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: safari 10.1, OS X Sierra"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_safari_10_1_osxs_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: Samsung Galaxy Note 9, Android 8.1"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_galaxyNote9_8_1_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: Samsung Galaxy S9, Android 8.0"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_galaxyS9_8_0_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: Samsung Galaxy S9 Plus, Android 9.0"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_galaxyS9Plus_9_0_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: Samsung Galaxy S8, Android 7.0"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_galaxyS8_7_0_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: Samsung Galaxy S7, Android 6.0"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_galaxyS7_6_0_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: Samsung Galaxy Tab S3, Android 7.0"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_galaxyTabS3_7_0_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: Google Pixel 3, Android 9.0"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_Pixel3_9_0_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: Google Pixel, Android 8.0"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_Pixel_8_0_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: Google Pixel, Android 7.1"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_Pixel_7_1_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: Google Nexus 6, Android 6.0"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_Nexus6_6_0_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: Google Nexus 9, Android 5.1"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_Nexus9_5_1_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: Google Nexus 5, Android 4.4"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_Nexus5_4_4_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: iPhone XS, iOS 12.0"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_iPhoneXS_12_0_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: iPhone XS Max, iOS 12.0"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_iPhoneXS_Max_12_0_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: iPhone XR, iOS 12.0"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_iPhoneXR_12_0_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: iPhone X, iOS 11.0"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_iPhoneX_11_0_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: iPhone 8, iOS 11.0"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_iPhone8_11_0_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: iPhone SE, iOS 11.0"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_iPhoneSE_11_0_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: iPad Pro 12.9 2018, iOS 12.0"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_iPadPro12_12_0_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: iPad Mini 4, iOS 11.0"
-      if: env(AUTOMATION_TEST_TAG)=fullTest
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_iPadMini4_11_0_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: chrome 74, Windows 10"
-      if: env(AUTOMATION_TEST_TAG)=smokeTest
+      if: env(AUTOMATION_TEST_TAG)=smokeTest AND NOT(branch = BRANCH_WITH_FULL_TESTS)
       script:
         - npm run behave -- test_chrome_74_w10_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: iPhone X, iOS 11.0"
-      if: env(AUTOMATION_TEST_TAG)=smokeTest
+      if: env(AUTOMATION_TEST_TAG)=smokeTest AND NOT(branch = BRANCH_WITH_FULL_TESTS)
       script:
         - npm run behave -- test_iPhoneX_11_0_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: ie 11, Windows 10"
-      if: env(AUTOMATION_TEST_TAG)=smokeTest
+      if: env(AUTOMATION_TEST_TAG)=smokeTest AND NOT(branch = BRANCH_WITH_FULL_TESTS)
       script:
         - npm run behave -- test_ie_11_w10_$AUTOMATION_TEST_TAG
 after_success:
