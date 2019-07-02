@@ -80,7 +80,7 @@ jobs:
       script:
         - npm run behave -- test_firefox_66_w7_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: firefox 66, OS X Mojave"
-      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = BRANCH_WITH_FULL_TESTS
+      if: env(AUTOMATION_TEST_TAG)=fullTest OR branch = $BRANCH_WITH_FULL_TESTS
       script:
         - npm run behave -- test_firefox_66_osxmoj_$AUTOMATION_TEST_TAG
     - name: "Behavioural test: firefox 65, OS X High Sierra"
