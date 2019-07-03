@@ -235,7 +235,7 @@ describe('ExpirationDate', () => {
     });
 
     // then
-    each([['2', undefined], ['33', '33/'], ['444', '44/4']]).it(
+    each([['2', ''], ['33', '33/'], ['444', '44/4']]).it(
       'should return given number, with preceded zero',
       (givenValue: string, expectedValue: string) => {
         // @ts-ignore
