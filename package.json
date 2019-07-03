@@ -97,7 +97,7 @@
     "@babel/runtime": "^7.4.5",
     "@types/joi": "^14.3.3",
     "@types/jwt-decode": "^2.2.1",
-    "i18next": "^17.0.4",
+    "i18next": "^17.0.6",
     "joi": "^14.3.1",
     "joi-browser": "^13.4.0",
     "jwt-decode": "^2.2.0",
