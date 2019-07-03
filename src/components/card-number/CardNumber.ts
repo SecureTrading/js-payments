@@ -243,8 +243,12 @@ export default class CardNumber extends FormField {
   private _luhnCheckValidation(luhn: boolean) {
     const cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     if (!luhn) {
-      cardNumberField.setCustomValidity(Language.translations.VALIDATION_ERROR_CARD);
-      this.validation.validate(this._inputElement, this._messageElement, Language.translations.VALIDATION_ERROR_CARD);
+      cardNumberField.setCustomValidity(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
+      this.validation.validate(
+        this._inputElement,
+        this._messageElement,
+        Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH
+      );
     } else {
       cardNumberField.setCustomValidity('');
     }

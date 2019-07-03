@@ -20,7 +20,6 @@ class Language {
     PAYMENT_SUCCESS: 'Payment has been successfully processed',
     PROCESSING: 'Processing',
     VALIDATION_ERROR: 'Invalid field',
-    VALIDATION_ERROR_CARD: 'Card number is invalid',
     VALIDATION_ERROR_FIELD_IS_REQUIRED: 'Field is required',
     VALIDATION_ERROR_PATTERN_MISMATCH: 'Value mismatch pattern',
     VALIDATION_ERROR_VALUE_TOO_SHORT: 'Value is too short'
@@ -42,7 +41,6 @@ class Language {
     PAYMENT_SUCCESS: string;
     PROCESSING: string;
     VALIDATION_ERROR: string;
-    VALIDATION_ERROR_CARD: string;
     VALIDATION_ERROR_FIELD_IS_REQUIRED: string;
     VALIDATION_ERROR_PATTERN_MISMATCH: string;
     VALIDATION_ERROR_VALUE_TOO_SHORT: string;
