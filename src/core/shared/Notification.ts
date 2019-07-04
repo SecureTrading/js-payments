@@ -3,11 +3,12 @@ import MessageBus from './MessageBus';
 import Selectors from './Selectors';
 
 /**
- * @class
  * Defines Notification component which gives information for user about payment status.
  */
 export default class Notification {
   private _messageBus: MessageBus;
+  private _notificationEvent: INotificationEvent;
+  private _messageBusEvent: IMessageBusEvent;
 
   constructor() {
     this._messageBus = new MessageBus();
@@ -57,16 +58,13 @@ export default class Notification {
    * @private
    */
   private _setNotification(type: string, content: string, publishFromParent?: boolean) {
-    const notificationEvent: INotificationEvent = {
-      content,
-      type
-    };
-    const messageBusEvent: IMessageBusEvent = {
-      data: notificationEvent,
+    this._notificationEvent = { content, type };
+    this._messageBusEvent = {
+      data: this._notificationEvent,
       type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
     };
     publishFromParent
-      ? this._messageBus.publishFromParent(messageBusEvent, Selectors.NOTIFICATION_FRAME_IFRAME)
-      : this._messageBus.publish(messageBusEvent);
+      ? this._messageBus.publishFromParent(this._messageBusEvent, Selectors.NOTIFICATION_FRAME_IFRAME)
+      : this._messageBus.publish(this._messageBusEvent);
   }
 }
