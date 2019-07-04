@@ -1,9 +1,7 @@
 import { environment } from '../../environments/environment';
 import { IWalletConfig } from '../models/Config';
-import { INotificationEvent, NotificationType } from '../models/NotificationEvent';
 import MessageBus from '../shared/MessageBus';
 import Notification from '../shared/Notification';
-import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import DomMethods from './../shared/DomMethods';
 import Language from './../shared/Language';
@@ -81,8 +79,8 @@ export class VisaCheckout {
   private _paymentStatus: string;
   private _paymentDetails: string;
   private _responseMessage: string;
-  private _livestatus: number = 0;
-  private _placement: string = 'body';
+  private readonly _livestatus: number = 0;
+  private readonly _placement: string = 'body';
   private _buttonSettings: any;
   private _payment: Payment;
   private _walletSource: string = 'VISACHECKOUT';
@@ -219,13 +217,13 @@ export class VisaCheckout {
   protected _onError() {
     this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
     this.getResponseMessage(this.paymentStatus);
-    this._notification.error(this.responseMessage);
+    this._notification.error(this.responseMessage, true);
   }
 
   protected _onCancel() {
     this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.WARNING;
     this.getResponseMessage(this.paymentStatus);
-    this._notification.warning(this.responseMessage);
+    this._notification.warning(this.responseMessage, true);
   }
 
   /**
