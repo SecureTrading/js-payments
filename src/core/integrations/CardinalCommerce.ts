@@ -35,12 +35,12 @@ export class CardinalCommerce {
   public messageBus: MessageBus;
   private _cardinalCommerceJWT: string;
   private _cardinalCommerceCacheToken: string;
-  private _cachetoken: string;
+  private readonly _cachetoken: string;
   private _threedQueryTransactionReference: string;
   private readonly _startOnLoad: boolean;
   private _jwt: string;
-  private _requestTypes: string[];
-  private _threedinit: string;
+  private readonly _requestTypes: string[];
+  private readonly _threedinit: string;
   private _notification: Notification;
 
   constructor(startOnLoad: boolean, jwt: string, requestTypes: string[], cachetoken?: string, threedinit?: string) {
