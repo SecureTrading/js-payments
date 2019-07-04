@@ -1,7 +1,7 @@
 import VisaCheckout from '../../../src/core/integrations/VisaCheckout';
 
 // given
-describe('Visa Checkout class', () => {
+describe('Visa Checkout', () => {
   let body: object;
   let instance: any;
   // when
