@@ -174,17 +174,7 @@ export default class ControlFrame extends Frame {
       }
       this._notification.success(Language.translations.PAYMENT_SUCCESS);
     } else {
-      this._payment
-        .processPayment(this._postThreeDRequestTypes, this._card, this._merchantFormData, data)
-        .then((result: any) => result.response)
-        .then((respData: object) => {
-          this._notification.success(Language.translations.PAYMENT_SUCCESS);
-          this._validation.blockForm(false);
-          return respData;
-        })
-        .catch(() => {
-          this._notification.error(Language.translations.PAYMENT_ERROR);
-        });
+      this._payment.controlFrameFlow(this._postThreeDRequestTypes, this._card, this._merchantFormData, data);
     }
   }
 

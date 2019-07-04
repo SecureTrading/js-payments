@@ -1,6 +1,7 @@
 import { IStRequest } from '../classes/StCodec.class';
 import StTransport from '../classes/StTransport.class';
 import { IMerchantData } from '../models/MerchantData';
+import Language from './Language';
 import Notification from './Notification';
 import Validation from './Validation';
 
@@ -44,7 +45,7 @@ export default class Payment {
    * @param merchantData
    * @param additionalData
    */
-  public processPayment(
+  private _processPayment(
     requestTypes: string[],
     payment: ICard | IWallet,
     merchantData: IMerchantData,
@@ -56,8 +57,29 @@ export default class Payment {
       merchantData,
       payment
     );
-    return this._stTransport.sendRequest(this._processPaymentRequestBody);
+    return this._stTransport.sendRequest(this._processPaymentRequestBody).then(({ response }: any) => response);
   }
+
+  public controlFrameFlow(
+    requestTypes: string[],
+    payment: ICard | IWallet,
+    merchantData: IMerchantData,
+    additionalData: any
+  ) {
+    this._processPayment(requestTypes, payment, merchantData, additionalData)
+      .then((respData: object) => {
+        this._notification.success(Language.translations.PAYMENT_SUCCESS);
+        this._validation.blockForm(false);
+        return respData;
+      })
+      .catch(() => {
+        this._notification.error(Language.translations.PAYMENT_ERROR);
+      });
+  }
+
+  public processPaymentVisaCheckout() {}
+
+  public processPaymentonApplePay() {}
 
   /**
    * Triggers 3DInitRequest and save cardinalCommerceCacheToken.
