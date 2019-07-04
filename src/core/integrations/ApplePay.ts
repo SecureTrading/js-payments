@@ -1,11 +1,10 @@
 import StTransport from '../classes/StTransport.class';
 import { IWalletConfig } from '../models/Config';
-import { INotificationEvent, NotificationType } from '../models/NotificationEvent';
 import DomMethods from '../shared/DomMethods';
 import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
+import Notification from '../shared/Notification';
 import Payment from '../shared/Payment';
-import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 
 const ApplePaySession = (window as any).ApplePaySession;
@@ -107,11 +106,13 @@ export class ApplePay {
   private _jwt: string;
   private _applePayButtonProps: any = {};
   private _payment: Payment;
+  private _notification: Notification;
   private requestTypes: string[];
 
   constructor(config: IWalletConfig, jwt: string, gatewayUrl: string) {
     const { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId, requestTypes } = config;
     this.jwt = jwt;
+    this._notification = new Notification();
     this.merchantId = merchantId;
     this.placement = placement;
     this.payment = new Payment(jwt, gatewayUrl);
@@ -259,7 +260,7 @@ export class ApplePay {
       this.paymentRequest.total.amount = this.stJwtInstance.mainamount;
       this.paymentRequest.currencyCode = this.stJwtInstance.currencyiso3a;
     } else {
-      this.setNotification(NotificationType.Error, Language.translations.APPLE_PAY_AMOUNT_AND_CURRENCY);
+      this._notification.error(Language.translations.APPLE_PAY_AMOUNT_AND_CURRENCY, true);
     }
     return this.paymentRequest;
   }
@@ -301,7 +302,7 @@ export class ApplePay {
         .catch(error => {
           const { errorcode, errormessage } = error;
           this.onValidateMerchantResponseFailure(error);
-          this.setNotification(NotificationType.Error, `${errorcode}: ${errormessage}`);
+          this._notification.error(`${errorcode}: ${errormessage}`, true);
         });
     };
   }
@@ -332,12 +333,12 @@ export class ApplePay {
         )
         .then((result: any) => result.response)
         .then((data: object) => {
-          this.setNotification(NotificationType.Success, Language.translations.PAYMENT_SUCCESS);
+          this._notification.success(Language.translations.PAYMENT_SUCCESS, true);
           this.session.completePayment({ status: this.getPaymentSuccessStatus(), errors: [] });
           return data;
         })
         .catch((data: object) => {
-          this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
+          this._notification.error(Language.translations.PAYMENT_ERROR, true);
           // TODO STJS-242 should create an ApplePayError which maps billing and customer errors
           // to apple pay versions and adds it to errors array
           this.session.completePayment({ status: this.getPaymentFailureStatus(), errors: [] });
@@ -350,7 +351,7 @@ export class ApplePay {
    */
   public onPaymentCanceled() {
     this.session.oncancel = (event: any) => {
-      this.setNotification(NotificationType.Warning, Language.translations.PAYMENT_CANCELLED);
+      this._notification.warning(Language.translations.PAYMENT_CANCELLED, true);
     };
   }
 
@@ -374,7 +375,7 @@ export class ApplePay {
    */
   public onValidateMerchantResponseFailure(error: any) {
     this.session.abort();
-    this.setNotification(NotificationType.Error, Language.translations.MERCHANT_VALIDATION_FAILURE);
+    this._notification.error(Language.translations.MERCHANT_VALIDATION_FAILURE, true);
   }
 
   /**
@@ -407,23 +408,6 @@ export class ApplePay {
         newTotal: { label: this.paymentRequest.total.label, amount: this.paymentRequest.total.amount, type: 'final' }
       });
     };
-  }
-
-  /**
-   * Send postMessage to notificationFrame component, to inform user about payment status
-   * @param type
-   * @param content
-   */
-  public setNotification(type: string, content: string) {
-    const notificationEvent: INotificationEvent = {
-      content,
-      type
-    };
-    const messageBusEvent: IMessageBusEvent = {
-      data: notificationEvent,
-      type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
-    };
-    this.messageBus.publishFromParent(messageBusEvent, Selectors.NOTIFICATION_FRAME_IFRAME);
   }
 
   /**
