@@ -423,7 +423,7 @@ export class ApplePay {
   }
 
   /**
-   * Sets Apple Pay button and begins Apple Pay flow
+   * Sets Apple Pay button and begins Apple Pay flow.
    */
   public applePayProcess() {
     if (this.checkApplePayAvailability()) {
