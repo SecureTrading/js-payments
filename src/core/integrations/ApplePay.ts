@@ -81,15 +81,15 @@ export class ApplePay {
   public static VERSION_5_SUPPORTED_NETWORKS = ApplePay.BASIC_SUPPORTED_NETWORKS.concat(['elo', 'mada']);
 
   public applePayVersion: number;
-  public buttonText: string;
   public buttonStyle: string;
+  public buttonText: string;
   public merchantId: string;
+  public merchantSession: any;
   public messageBus: MessageBus;
+  public paymentDetails: string;
   public paymentRequest: any;
   public placement: string;
-  public paymentDetails: string;
   public session: any;
-  public merchantSession: any;
   public sitesecurity: string;
   public stJwtInstance: StJwt;
   public stTransportInstance: StTransport;
@@ -135,7 +135,7 @@ export class ApplePay {
    * If yes, returns ApplePaySession object, if not returns undefined.
    */
   public ifApplePayIsAvailable() {
-    return ApplePaySession ? true : false;
+    return !!ApplePaySession;
   }
 
   /**
