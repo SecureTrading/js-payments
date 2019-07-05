@@ -65,21 +65,6 @@ export default class ControlFrame extends Frame {
     return super.getAllowedParams().concat(['origin', 'jwt', 'gatewayUrl']);
   }
 
-  private onCardNumberStateChange(data: IFormFieldState) {
-    this._formFields.cardNumber.validity = data.validity;
-    this._formFields.cardNumber.value = data.value;
-  }
-
-  private onExpirationDateStateChange(data: IFormFieldState) {
-    this._formFields.expirationDate.validity = data.validity;
-    this._formFields.expirationDate.value = data.value;
-  }
-
-  private onSecurityCodeStateChange(data: IFormFieldState) {
-    this._formFields.securityCode.validity = data.validity;
-    this._formFields.securityCode.value = data.value;
-  }
-
   private initSubscriptions() {
     this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: IFormFieldState) => {
       this.onCardNumberStateChange(data);
@@ -113,8 +98,19 @@ export default class ControlFrame extends Frame {
     });
   }
 
-  private storeMerchantData(data: any) {
-    this._merchantFormData = data;
+  private onCardNumberStateChange(data: IFormFieldState) {
+    this._formFields.cardNumber.validity = data.validity;
+    this._formFields.cardNumber.value = data.value;
+  }
+
+  private onExpirationDateStateChange(data: IFormFieldState) {
+    this._formFields.expirationDate.validity = data.validity;
+    this._formFields.expirationDate.value = data.value;
+  }
+
+  private onSecurityCodeStateChange(data: IFormFieldState) {
+    this._formFields.securityCode.validity = data.validity;
+    this._formFields.securityCode.value = data.value;
   }
 
   private onSetRequestTypesEvent(data: any) {
@@ -157,24 +153,6 @@ export default class ControlFrame extends Frame {
     }
   }
 
-  private requestThreeDInit() {
-    this._payment.threeDInitRequest().then((result: any) => {
-      const messageBusEvent: IMessageBusEvent = {
-        data: result.response,
-        type: MessageBus.EVENTS_PUBLIC.THREEDINIT
-      };
-      this._messageBus.publish(messageBusEvent, true);
-    });
-  }
-
-  private requestByPassInit(cachetoken: string) {
-    this._payment.byPassInitRequest(cachetoken);
-    const messageBusEvent: IMessageBusEvent = {
-      type: MessageBus.EVENTS_PUBLIC.BY_PASS_INIT
-    };
-    this._messageBus.publish(messageBusEvent, true);
-  }
-
   /**
    * Process 3DResponse.
    * @param data
@@ -206,8 +184,16 @@ export default class ControlFrame extends Frame {
       });
   }
 
+  private requestByPassInit(cachetoken: string) {
+    this._payment.byPassInitRequest(cachetoken);
+    const messageBusEvent: IMessageBusEvent = {
+      type: MessageBus.EVENTS_PUBLIC.BY_PASS_INIT
+    };
+    this._messageBus.publish(messageBusEvent, true);
+  }
+
   /**
-   *
+   * Sends threeDQueryRequest depends on validity status.
    * @param data
    */
   private requestPayment(data: any) {
@@ -241,5 +227,19 @@ export default class ControlFrame extends Frame {
     } else {
       this._validation.setFormValidity(formValidity);
     }
+  }
+
+  private requestThreeDInit() {
+    this._payment.threeDInitRequest().then((result: any) => {
+      const messageBusEvent: IMessageBusEvent = {
+        data: result.response,
+        type: MessageBus.EVENTS_PUBLIC.THREEDINIT
+      };
+      this._messageBus.publish(messageBusEvent, true);
+    });
+  }
+
+  private storeMerchantData(data: any) {
+    this._merchantFormData = data;
   }
 }
