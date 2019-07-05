@@ -5,18 +5,16 @@ import VisaCheckout from './VisaCheckout';
 class VisaCheckoutMock extends VisaCheckout {
   /**
    * Init configuration and payment data
-   * @protected
    */
-  protected _initPaymentConfiguration() {
+  protected initPaymentConfiguration() {
     // Do nothing on mock because we don't want to use V.
   }
 
   /**
    * Sets action on appended mocked Visa Checkout button
-   * @protected
    */
-  protected _paymentStatusHandler() {
-    DomMethods.addListener(this._visaCheckoutButtonProps.id, 'click', () => {
+  protected paymentStatusHandler() {
+    DomMethods.addListener(this.visaCheckoutButtonProps.id, 'click', () => {
       this._handleMockedData();
     });
   }
@@ -39,11 +37,11 @@ class VisaCheckoutMock extends VisaCheckout {
    */
   private _proceedFlowWithMockedData(payment: any, status: string) {
     if (status === 'SUCCESS') {
-      this._onSuccess(payment);
+      this.onSuccess(payment);
     } else if (status === 'ERROR') {
-      this._onError();
+      this.onError();
     } else if (status === 'WARNING') {
-      this._onCancel();
+      this.onCancel();
     }
   }
 }

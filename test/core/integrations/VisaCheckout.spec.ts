@@ -14,7 +14,7 @@ describe('Visa Checkout', () => {
   });
 
   // given
-  describe('_setInitConfiguration()', () => {
+  describe('setInitConfiguration()', () => {
     // then
     it('should set _initConfiguration', () => {
       instance._initConfiguration = { start: 'with value', paymentRequest: {} };
@@ -44,7 +44,7 @@ describe('Visa Checkout', () => {
   });
 
   // given
-  describe('_getInitPaymentRequest()', () => {
+  describe('getInitPaymentRequest()', () => {
     // then
     it('should return paymentRequest config', () => {
       instance._initConfiguration.paymentRequest = { original: 'data', overrideMe: 'unchanged' };
@@ -116,7 +116,7 @@ describe('Visa Checkout', () => {
   });
 
   // given
-  describe('_createVisaButton()', () => {
+  describe('createVisaButton()', () => {
     const { fakeVisaButton } = VisaCheckoutFixture();
 
     // then
@@ -139,11 +139,11 @@ describe('Visa Checkout', () => {
     });
     it('should init script on button', () => {});
     // then
-    it('should triggers _paymentStatusHandler for each status (cancel, error, success)', () => {});
+    it('should triggers paymentStatusHandler for each status (cancel, error, success)', () => {});
   });
 
   // given
-  describe('_attachVisaButton()', () => {
+  describe('attachVisaButton()', () => {
     // then
     it('should prepared structure be equal to real document object ', () => {
       expect(instance._attachVisaButton()).toEqual(body);
@@ -171,16 +171,16 @@ describe('Visa Checkout', () => {
   // given
   describe('_initVisaFlow()', () => {
     // @ts-ignore
-    const initPayment = VisaCheckout.prototype._initPaymentConfiguration;
+    const initPayment = VisaCheckout.prototype.initPaymentConfiguration;
     // @ts-ignore
-    const statusHandler = VisaCheckout.prototype._paymentStatusHandler;
+    const statusHandler = VisaCheckout.prototype.paymentStatusHandler;
 
     // then
     it('should call load handler', () => {
       // @ts-ignore
-      const spy = jest.spyOn(VisaCheckout.prototype, '_initPaymentConfiguration').mockImplementation(() => {});
+      const spy = jest.spyOn(VisaCheckout.prototype, 'initPaymentConfiguration').mockImplementation(() => {});
       // @ts-ignore
-      const spy2 = jest.spyOn(VisaCheckout.prototype, '_paymentStatusHandler').mockImplementation(() => {});
+      const spy2 = jest.spyOn(VisaCheckout.prototype, 'paymentStatusHandler').mockImplementation(() => {});
       instance._initVisaFlow();
       const ev = document.createEvent('Event');
       ev.initEvent('load', false, false);
@@ -192,13 +192,13 @@ describe('Visa Checkout', () => {
 
     afterEach(() => {
       // @ts-ignore
-      VisaCheckout.prototype._initPaymentConfiguration = initPayment;
+      VisaCheckout.prototype.initPaymentConfiguration = initPayment;
       // @ts-ignore
-      VisaCheckout.prototype._paymentStatusHandler = statusHandler;
+      VisaCheckout.prototype.paymentStatusHandler = statusHandler;
     });
   });
 
-  describe('_paymentStatusHandler()', () => {
+  describe('paymentStatusHandler()', () => {
     // then
     it('should trigger V.on functions with proper configuration', () => {
       const { fakeV } = VisaCheckoutFixture();
@@ -217,7 +217,7 @@ describe('Visa Checkout', () => {
       expect(fakeV.on.mock.calls[2][1]).toBeInstanceOf(Function);
     });
     // then
-    it('should trigger V.on payment.success and call _onSuccess', () => {
+    it('should trigger V.on payment.success and call onSuccess', () => {
       instance._onSuccess = jest.fn();
       instance._onError = jest.fn();
       instance._onCancel = jest.fn();
@@ -257,7 +257,7 @@ describe('Visa Checkout', () => {
       expect(instance._onCancel).toHaveBeenCalledTimes(0);
     });
     // then
-    it('should trigger V.on payment.cancel and call _onCancel', () => {
+    it('should trigger V.on payment.cancel and call onCancel', () => {
       instance._onSuccess = jest.fn();
       instance._onError = jest.fn();
       instance._onCancel = jest.fn();
@@ -279,7 +279,7 @@ describe('Visa Checkout', () => {
   });
 
   // given
-  describe('_initPaymentConfiguration()', () => {
+  describe('initPaymentConfiguration()', () => {
     // then
     it('should trigger V.init function with proper configuration', () => {
       const { fakeV } = VisaCheckoutFixture();
@@ -324,7 +324,7 @@ describe('Visa Checkout', () => {
     });
   });
   // given
-  describe('_onSuccess()', () => {
+  describe('onSuccess()', () => {
     // then
     it('should set paymentDetails and paymentStatus and call _processPayment', () => {
       instance._processPayment = jest.fn();
@@ -353,7 +353,7 @@ describe('Visa Checkout', () => {
   });
 
   // given
-  describe('_onCancel()', () => {
+  describe('onCancel()', () => {
     // then
     it('should set paymentStatus and call _getResponseMessage and _setNotification', () => {
       instance.getResponseMessage = jest.fn();
