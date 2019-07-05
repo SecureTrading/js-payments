@@ -11,24 +11,6 @@ export default class ControlFrame extends Frame {
   private _payment: Payment;
   private _isPaymentReady: boolean = false;
   private _merchantFormData: IMerchantData;
-  private _formFields: {
-    cardNumber: IFormFieldState;
-    expirationDate: IFormFieldState;
-    securityCode: IFormFieldState;
-  } = {
-    cardNumber: {
-      validity: false,
-      value: ''
-    },
-    expirationDate: {
-      validity: false,
-      value: ''
-    },
-    securityCode: {
-      validity: false,
-      value: ''
-    }
-  };
   private _card: ICard;
   private _validation: Validation;
   private _preThreeDRequestTypes: string[];
@@ -50,14 +32,42 @@ export default class ControlFrame extends Frame {
     this.onLoad();
   }
 
+  private _formFields: {
+    cardNumber: IFormFieldState;
+    expirationDate: IFormFieldState;
+    securityCode: IFormFieldState;
+  } = {
+    cardNumber: {
+      validity: false,
+      value: ''
+    },
+    expirationDate: {
+      validity: false,
+      value: ''
+    },
+    securityCode: {
+      validity: false,
+      value: ''
+    }
+  };
+
   protected _getAllowedParams() {
     return super._getAllowedParams().concat(['origin', 'jwt', 'gatewayUrl']);
   }
 
-  protected _getAllowedStyles() {
-    // @TODO: remove
-    const allowed = super._getAllowedStyles();
-    return allowed;
+  private onCardNumberStateChange(data: IFormFieldState) {
+    this._formFields.cardNumber.validity = data.validity;
+    this._formFields.cardNumber.value = data.value;
+  }
+
+  private onExpirationDateStateChange(data: IFormFieldState) {
+    this._formFields.expirationDate.validity = data.validity;
+    this._formFields.expirationDate.value = data.value;
+  }
+
+  private onSecurityCodeStateChange(data: IFormFieldState) {
+    this._formFields.securityCode.validity = data.validity;
+    this._formFields.securityCode.value = data.value;
   }
 
   private initSubscriptions() {
@@ -83,7 +93,7 @@ export default class ControlFrame extends Frame {
       this.onLoadCardinal();
     });
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS, (data: any) => {
-      this.onProcessPaymentEvent(data);
+      this._onProcessPaymentEvent(data);
     });
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, (data?: any) => {
       this.onSubmit(data);
@@ -121,21 +131,6 @@ export default class ControlFrame extends Frame {
     this._isPaymentReady = true;
   }
 
-  private onCardNumberStateChange(data: IFormFieldState) {
-    this._formFields.cardNumber.validity = data.validity;
-    this._formFields.cardNumber.value = data.value;
-  }
-
-  private onExpirationDateStateChange(data: IFormFieldState) {
-    this._formFields.expirationDate.validity = data.validity;
-    this._formFields.expirationDate.value = data.value;
-  }
-
-  private onSecurityCodeStateChange(data: IFormFieldState) {
-    this._formFields.securityCode.validity = data.validity;
-    this._formFields.securityCode.value = data.value;
-  }
-
   private onThreeDInitEvent() {
     this.requestThreeDInit();
   }
@@ -144,8 +139,12 @@ export default class ControlFrame extends Frame {
     this.requestByPassInit(data);
   }
 
-  private onProcessPaymentEvent(data: any) {
-    this._processPayment(data);
+  private _onProcessPaymentEvent(data: IResponseData) {
+    if (this._postThreeDRequestTypes.length === 0) {
+      this._processThreeDResponse(data);
+    } else {
+      this._processPayment(data);
+    }
   }
 
   private requestThreeDInit() {
@@ -166,65 +165,57 @@ export default class ControlFrame extends Frame {
     this._messageBus.publish(messageBusEvent, true);
   }
 
-  // @TODO STJS-205 refactor into Payments
-  private _processPayment(data: IResponseData) {
-    if (this._postThreeDRequestTypes.length === 0) {
-      if (data.threedresponse !== undefined) {
-        StCodec.publishResponse(this._threeDQueryResult.response, this._threeDQueryResult.jwt, data.threedresponse);
-      }
-      this._notification.success(Language.translations.PAYMENT_SUCCESS);
-    } else {
-      this._payment.controlFrameFlow(this._postThreeDRequestTypes, this._card, this._merchantFormData, data);
+  /**
+   * Process 3DResponse.
+   * @param data
+   * @private
+   */
+  private _processThreeDResponse(data: IResponseData) {
+    if (data.threedresponse !== undefined) {
+      StCodec.publishResponse(this._threeDQueryResult.response, this._threeDQueryResult.jwt, data.threedresponse);
     }
+    this._notification.success(Language.translations.PAYMENT_SUCCESS);
   }
 
-  private setFormValidity(state: any) {
-    const validationEvent: IMessageBusEvent = {
-      data: { ...state },
-      type: MessageBus.EVENTS.VALIDATE_FORM
-    };
-    this._messageBus.publish(validationEvent, true);
+  /**
+   * Process payment flow.
+   * @param data
+   * @private
+   */
+  private _processPayment(data: IResponseData) {
+    this._payment
+      .processPayment(this._postThreeDRequestTypes, this._card, this._merchantFormData, data)
+      .then(() => {
+        this._notification.success(Language.translations.PAYMENT_SUCCESS);
+      })
+      .catch(() => {
+        this._notification.error(Language.translations.PAYMENT_ERROR);
+      })
+      .finally(() => {
+        this._validation.blockForm(false);
+      });
   }
 
+  /**
+   *
+   * @param data
+   */
   private requestPayment(data: any) {
     const dataInJwt = data ? data.dataInJwt : false;
-    let isFormValid: boolean;
-    const formValidity = {
-      cardNumber: this._formFields.cardNumber.validity,
-      expirationDate: this._formFields.expirationDate.validity,
-      securityCode: this._formFields.securityCode.validity
+    const messageBusEvent: IMessageBusEvent = {
+      type: MessageBus.EVENTS_PUBLIC.THREEDQUERY
     };
-    if (dataInJwt) {
-      isFormValid = true;
-      this._isPaymentReady = true;
-    } else {
-      isFormValid =
-        this._formFields.cardNumber.validity &&
-        this._formFields.expirationDate.validity &&
-        this._formFields.securityCode.validity;
-
-      this._card = {
-        expirydate: this._formFields.expirationDate.value,
-        pan: this._formFields.cardNumber.value,
-        securitycode: this._formFields.securityCode.value
-      };
-    }
-
-    if (this._isPaymentReady && isFormValid) {
-      const validation = new Validation();
-      const messageBusEvent: IMessageBusEvent = {
-        type: MessageBus.EVENTS_PUBLIC.THREEDQUERY
-      };
+    const { validity, card } = this._validation.formValidation(dataInJwt, this._isPaymentReady, this._formFields);
+    if (validity) {
       this._payment
-        .threeDQueryRequest(this._preThreeDRequestTypes, this._card, this._merchantFormData)
+        .threeDQueryRequest(this._preThreeDRequestTypes, card, this._merchantFormData)
         .then((result: any) => {
           this._threeDQueryResult = result;
           messageBusEvent.data = result.response;
-          validation.blockForm(true);
           this._messageBus.publish(messageBusEvent, true);
         });
     } else {
-      this.setFormValidity(formValidity);
+      this._validation.setFormValidity(validity);
     }
   }
 }

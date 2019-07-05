@@ -9,6 +9,7 @@ import { StJwt } from '../shared/StJwt';
 
 const ApplePaySession = (window as any).ApplePaySession;
 const ApplePayError = (window as any).ApplePayError;
+
 /**
  * Apple Pay flow:
  * 1. Check if ApplePaySession class exists
@@ -144,6 +145,7 @@ export class ApplePay {
   public ifBrowserSupportsApplePayVersion = (version: number) => {
     return ApplePaySession.supportsVersion(version);
   };
+
   /**
    * Sets the latest possible ApplePay version
    */
@@ -321,7 +323,6 @@ export class ApplePay {
   public onPaymentAuthorized() {
     this.session.onpaymentauthorized = (event: any) => {
       this.paymentDetails = JSON.stringify(event.payment);
-      // @TODO STJS-205 refactor into Payments
       return this.payment
         .processPayment(
           this.requestTypes,
@@ -331,16 +332,13 @@ export class ApplePay {
           },
           DomMethods.parseMerchantForm()
         )
-        .then((result: any) => result.response)
-        .then((data: object) => {
+        .then(() => {
           this._notification.success(Language.translations.PAYMENT_SUCCESS, true);
           this.session.completePayment({ status: this.getPaymentSuccessStatus(), errors: [] });
-          return data;
         })
-        .catch((data: object) => {
+        .catch(() => {
           this._notification.error(Language.translations.PAYMENT_ERROR, true);
           // TODO STJS-242 should create an ApplePayError which maps billing and customer errors
-          // to apple pay versions and adds it to errors array
           this.session.completePayment({ status: this.getPaymentFailureStatus(), errors: [] });
         });
     };

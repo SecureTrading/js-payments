@@ -79,6 +79,10 @@ export default class Validation extends Frame {
   public validation: IValidation;
   protected _messageBus: MessageBus;
   private _translator: Translator;
+  private _isFormValid: boolean;
+  private _formValidity: object;
+  private _isPaymentReady: boolean;
+  private _card: ICard;
 
   constructor() {
     super();
@@ -95,7 +99,6 @@ export default class Validation extends Frame {
   public backendValidation(inputElement: HTMLInputElement, messageElement: HTMLElement, event: string) {
     this._messageBus.subscribe(event, (data: IMessageBusValidateField) => {
       this.checkBackendValidity(data, inputElement, messageElement);
-      this.validate(inputElement, messageElement);
     });
   }
 
@@ -181,6 +184,31 @@ export default class Validation extends Frame {
     this.setMessage(inputElement, messageElement, customErrorMessage);
   }
 
+  public formValidation(
+    dataInJwt: boolean,
+    paymentReady: boolean,
+    formFields: any
+  ): { validity: boolean; card: ICard } {
+    this._isPaymentReady = paymentReady;
+    if (dataInJwt) {
+      this._isFormValid = true;
+      this._isPaymentReady = true;
+    } else {
+      this._isFormValid =
+        formFields.cardNumber.validity && formFields.expirationDate.validity && formFields.securityCode.validity;
+      this._card = {
+        expirydate: formFields.expirationDate.value,
+        pan: formFields.cardNumber.value,
+        securitycode: formFields.securityCode.value
+      };
+    }
+
+    if (this._isPaymentReady && this._isFormValid) {
+      this.blockForm(true);
+    }
+    return { validity: this._isPaymentReady && this._isFormValid, card: this._card };
+  }
+
   /**
    * Extended onInit() method from Frame.ts class.
    */
@@ -212,5 +240,13 @@ export default class Validation extends Frame {
     } else {
       messageElement.innerText = this._translator.translate(validityState);
     }
+  }
+
+  public setFormValidity(state: any) {
+    const validationEvent: IMessageBusEvent = {
+      data: { ...state },
+      type: MessageBus.EVENTS.VALIDATE_FORM
+    };
+    this._messageBus.publish(validationEvent, true);
   }
 }
