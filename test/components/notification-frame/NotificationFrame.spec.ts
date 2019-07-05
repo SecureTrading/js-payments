@@ -196,21 +196,6 @@ describe('Component NotificationFrame class', () => {
     });
   });
 
-  describe('NotificationFrame.getAllowedStyles', () => {
-    it('should return allowed styles', () => {
-      // @ts-ignore
-      let styles = instance._getAllowedStyles();
-      expect(styles['background-color-notification']).toMatchObject({
-        property: 'background-color',
-        selector: '#st-notification-frame'
-      });
-      expect(styles['space-outset-notification-warning']).toMatchObject({
-        property: 'margin',
-        selector: 'notification-frame--warning#st-notification-frame'
-      });
-    });
-  });
-
   describe('NotificationFrame.setAttributeClass', () => {
     beforeEach(() => {
       instance = new NotificationFrame();
