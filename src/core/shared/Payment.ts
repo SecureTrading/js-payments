@@ -10,11 +10,11 @@ import Validation from './Validation';
 export default class Payment {
   private _cardinalCommerceCacheToken: string;
   private _notification: Notification;
-  private _stTransport: StTransport;
-  private _validation: Validation;
   private _processPaymentRequestBody: IStRequest;
+  private _stTransport: StTransport;
   private _threeDInitRequestBody: IStRequest;
   private _threeDQueryRequestBody: IStRequest;
+  private _validation: Validation;
   private readonly _walletVerifyRequest: IStRequest;
 
   constructor(jwt: string, gatewayUrl: string, parentOrigin?: string) {
@@ -63,7 +63,7 @@ export default class Payment {
    * Triggers 3DInitRequest and save cardinalCommerceCacheToken.
    */
   public threeDInitRequest() {
-    return this._stTransport.sendRequest(this._threeDInitRequestBody).then((result: any) => {
+    return this._stTransport.sendRequest(this._threeDInitRequestBody).then((result: { jwt: string; response: any }) => {
       this._cardinalCommerceCacheToken = result.response.cachetoken;
       return result;
     });
