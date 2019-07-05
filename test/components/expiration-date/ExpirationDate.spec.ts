@@ -1,3 +1,5 @@
+import each from 'jest-each';
+import SpyInstance = jest.SpyInstance;
 import ExpirationDate from '../../../src/components/expiration-date/ExpirationDate';
 import Language from '../../../src/core/shared/Language';
 import Selectors from '../../../src/core/shared/Selectors';
@@ -155,19 +157,6 @@ describe('ExpirationDate', () => {
       // @ts-ignore
       expect(spy).toBeCalled();
     });
-
-    // then
-    it('should set proper input value and call validate', () => {
-      // @ts-ignore
-      instance._inputElement.value = inputTestvalue;
-      instance.validation.validate = jest.fn();
-      // @ts-ignore
-      instance.onInput(event);
-      // @ts-ignore
-      expect(instance._inputElement.value).toEqual(inputTestvalue);
-      // @ts-ignore
-      expect(instance.validation.validate).toBeCalled();
-    });
   });
 
   // given
@@ -179,69 +168,7 @@ describe('ExpirationDate', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
-      instance.isMaxLengthReached = jest.fn().mockReturnValue(true);
-      // @ts-ignore
       instance.onKeyPress(event);
-    });
-    //then
-    it('should call isMaxLengthReached', () => {
-      // @ts-ignore
-      expect(instance.isMaxLengthReached).toBeCalled();
-    });
-
-    //then
-    it('should call event.preventDefault', () => {
-      // @ts-ignore
-      expect(event.preventDefault).toBeCalled();
-    });
-  });
-
-  // @TODO: problem with paste event
-  // given
-  describe('onPaste()', () => {
-    const { instance } = expirationDateFixture();
-    // ts-ignore
-    (window as any).ClipboardEvent = class ClipboardEvent {
-      public type: string;
-
-      constructor(type: string) {
-        this.type = type;
-      }
-
-      public preventDefault = jest.fn();
-      public getData = jest.fn();
-      public clipboardData = {
-        dataType: 'text',
-        data: 'some data'
-      };
-    };
-    // let event: ClipboardEvent = new ClipboardEvent('paste');
-
-    let spy: jest.SpyInstance;
-
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      spy = jest.spyOn(instance, 'sendState');
-      // @ts-ignore
-      // instance.onPaste(event);
-    });
-    // then
-    it('should call sendState', () => {
-      // expect(spy).toBeCalledTimes(1);
-    });
-  });
-
-  // given
-  describe('isMaxLengthReached() ', () => {
-    const { instance } = expirationDateFixture();
-    const inputTestValue: string = '12/12';
-    // then
-    it('should return true if input value greater than date length', () => {
-      // @ts-ignore
-      instance._inputElement.value = inputTestValue;
-      // @ts-ignore;
-      expect(instance.isMaxLengthReached()).toEqual(true);
     });
   });
 
@@ -261,6 +188,60 @@ describe('ExpirationDate', () => {
     it('should call publish()', () => {
       expect(spy).toHaveBeenCalled();
     });
+  });
+
+  // given
+  describe('_getISOFormatDate()', () => {
+    const { instance } = expirationDateFixture();
+    // then
+    it('should return only month if user deletes previous / last character between slash', () => {
+      // @ts-ignore
+      expect(instance._getISOFormatDate(['11', '2'], ['11', ''])).toEqual('11');
+    });
+    // then
+    it('should return empty string if array of string is empty', () => {
+      // @ts-ignore
+      expect(instance._getISOFormatDate(['1', ''], ['', ''])).toEqual('');
+    });
+  });
+
+  // given
+  describe('_getValidatedDate', () => {
+    const { instance } = expirationDateFixture();
+    let spy: SpyInstance;
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      spy = jest.spyOn(instance, '_getFixedDateString');
+      // @ts-ignore
+      instance._getValidatedDate('12');
+    });
+
+    // then
+    it('should _getFixedDateString() function be called', () => {
+      expect(spy).toHaveBeenCalled();
+    });
+
+    // then
+    it('should return 01, if first two chars are equal 0', () => {
+      // @ts-ignore
+      expect(instance._getValidatedDate('00')).toEqual('00/');
+    });
+
+    // then
+    it('should return 12, if first two chars are greater than 12', () => {
+      // @ts-ignore
+      expect(instance._getValidatedDate('13')).toEqual('13/');
+    });
+
+    // then
+    each([['2', ''], ['33', '33/'], ['444', '44/4']]).it(
+      'should return given number, with preceded zero',
+      (givenValue: string, expectedValue: string) => {
+        // @ts-ignore
+        expect(instance._getValidatedDate(givenValue)).toEqual(expectedValue);
+      }
+    );
   });
 });
 

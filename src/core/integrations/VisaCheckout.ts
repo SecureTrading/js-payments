@@ -1,8 +1,7 @@
 import { environment } from '../../environments/environment';
 import { IWalletConfig } from '../models/Config';
-import { INotificationEvent, NotificationType } from '../models/NotificationEvent';
 import MessageBus from '../shared/MessageBus';
-import Selectors from '../shared/Selectors';
+import Notification from '../shared/Notification';
 import { StJwt } from '../shared/StJwt';
 import DomMethods from './../shared/DomMethods';
 import Language from './../shared/Language';
@@ -80,11 +79,12 @@ export class VisaCheckout {
   private _paymentStatus: string;
   private _paymentDetails: string;
   private _responseMessage: string;
-  private _livestatus: number = 0;
-  private _placement: string = 'body';
+  private readonly _livestatus: number = 0;
+  private readonly _placement: string = 'body';
   private _buttonSettings: any;
   private _payment: Payment;
   private _walletSource: string = 'VISACHECKOUT';
+  private _notification: Notification;
 
   /**
    * Init configuration (temporary with some test data).
@@ -103,6 +103,7 @@ export class VisaCheckout {
 
   constructor(config: IWalletConfig, jwt: string, gatewayUrl: string) {
     this.messageBus = new MessageBus();
+    this._notification = new Notification();
     const { merchantId, livestatus, placement, settings, paymentRequest, buttonSettings, requestTypes } = config;
     const stJwt = new StJwt(jwt);
     this.payment = new Payment(jwt, gatewayUrl);
@@ -153,23 +154,6 @@ export class VisaCheckout {
   public _createVisaButton = () => DomMethods.createHtmlElement.apply(this, [this._visaCheckoutButtonProps, 'img']);
 
   /**
-   * Send postMessage to notificationFrame component, to inform user about payment status
-   * @param type
-   * @param content
-   */
-  public setNotification(type: string, content: string) {
-    const notificationEvent: INotificationEvent = {
-      content,
-      type
-    };
-    const messageBusEvent: IMessageBusEvent = {
-      data: notificationEvent,
-      type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
-    };
-    this.messageBus.publishFromParent(messageBusEvent, Selectors.NOTIFICATION_FRAME_IFRAME);
-  }
-
-  /**
    * Attaches Visa Button to specified element, if element is undefined Visa Checkout button is appended to body
    * @protected
    */
@@ -214,13 +198,13 @@ export class VisaCheckout {
       .then((data: object) => {
         this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
         this.getResponseMessage(this.paymentStatus);
-        this.setNotification(NotificationType.Success, this.responseMessage);
+        this._notification.success(this.responseMessage, true);
         return data;
       })
       .catch(() => {
         this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
         this.getResponseMessage(this.paymentStatus);
-        this.setNotification(NotificationType.Error, this.responseMessage);
+        this._notification.error(this.responseMessage, true);
       });
   }
 
@@ -233,13 +217,13 @@ export class VisaCheckout {
   protected _onError() {
     this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
     this.getResponseMessage(this.paymentStatus);
-    this.setNotification(this.paymentStatus, this.responseMessage);
+    this._notification.error(this.responseMessage, true);
   }
 
   protected _onCancel() {
     this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.WARNING;
     this.getResponseMessage(this.paymentStatus);
-    this.setNotification(this.paymentStatus, this.responseMessage);
+    this._notification.warning(this.responseMessage, true);
   }
 
   /**

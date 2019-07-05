@@ -65,29 +65,6 @@ describe('CardinalCommerce class', () => {
     });
   });
 
-  describe('CardinalCommerce.setNotification', () => {
-    // then
-    it('should call publishFromParent with SUCCESS', () => {
-      instance.messageBus.publishFromParent = jest.fn();
-      instance.setNotification('SUCCESS', 'MYCONTENT');
-      expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
-      expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
-        { data: { content: 'MYCONTENT', type: 'SUCCESS' }, type: 'NOTIFICATION' },
-        'st-notification-frame-iframe'
-      );
-    });
-    // then
-    it('should call publishFromParent with ERROR', () => {
-      instance.messageBus.publishFromParent = jest.fn();
-      instance.setNotification('ERROR', 'ANOTHER');
-      expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
-      expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
-        { data: { content: 'ANOTHER', type: 'ERROR' }, type: 'NOTIFICATION' },
-        'st-notification-frame-iframe'
-      );
-    });
-  });
-
   describe('CardinalCommerce._performBinDetection', () => {
     // then
     it('should call cardinal bin process', () => {

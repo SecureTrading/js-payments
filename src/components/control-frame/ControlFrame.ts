@@ -1,9 +1,9 @@
 import { StCodec } from '../../core/classes/StCodec.class';
 import { IMerchantData } from '../../core/models/MerchantData';
-import { INotificationEvent, NotificationType } from '../../core/models/NotificationEvent';
 import Frame from '../../core/shared/Frame';
 import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
+import Notification from '../../core/shared/Notification';
 import Payment from '../../core/shared/Payment';
 import Validation from '../../core/shared/Validation';
 
@@ -34,6 +34,7 @@ export default class ControlFrame extends Frame {
   private _preThreeDRequestTypes: string[];
   private _postThreeDRequestTypes: string[];
   private _threeDQueryResult: any;
+  private _notification: Notification;
 
   constructor() {
     super();
@@ -44,26 +45,9 @@ export default class ControlFrame extends Frame {
     super.onInit();
     this._payment = new Payment(this._params.jwt, this._params.gatewayUrl, this._params.origin);
     this._validation = new Validation();
+    this._notification = new Notification();
     this.initSubscriptions();
     this.onLoad();
-  }
-
-  /**
-   * Send postMessage to notificationFrame component, to inform user about payment status
-   * @param type
-   * @param content
-   */
-  // @TODO STJS-205 refactor into Payments
-  public setNotification(type: string, content: string) {
-    const notificationEvent: INotificationEvent = {
-      content,
-      type
-    };
-    const messageBusEvent: IMessageBusEvent = {
-      data: notificationEvent,
-      type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
-    };
-    this._messageBus.publish(messageBusEvent);
   }
 
   protected _getAllowedParams() {
@@ -188,18 +172,18 @@ export default class ControlFrame extends Frame {
       if (data.threedresponse !== undefined) {
         StCodec.publishResponse(this._threeDQueryResult.response, this._threeDQueryResult.jwt, data.threedresponse);
       }
-      this.setNotification(NotificationType.Success, Language.translations.PAYMENT_SUCCESS);
+      this._notification.success(Language.translations.PAYMENT_SUCCESS);
     } else {
       this._payment
         .processPayment(this._postThreeDRequestTypes, this._card, this._merchantFormData, data)
         .then((result: any) => result.response)
         .then((respData: object) => {
-          this.setNotification(NotificationType.Success, Language.translations.PAYMENT_SUCCESS);
+          this._notification.success(Language.translations.PAYMENT_SUCCESS);
           this._validation.blockForm(false);
           return respData;
         })
         .catch(() => {
-          this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
+          this._notification.error(Language.translations.PAYMENT_ERROR);
         });
     }
   }

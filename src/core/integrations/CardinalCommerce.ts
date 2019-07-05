@@ -8,10 +8,10 @@ import {
   PAYMENT_BRAND,
   PAYMENT_EVENTS
 } from '../models/CardinalCommerce';
-import { INotificationEvent, NotificationType } from '../models/NotificationEvent';
 import DomMethods from '../shared/DomMethods';
 import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
+import Notification from '../shared/Notification';
 import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
@@ -35,12 +35,13 @@ export class CardinalCommerce {
   public messageBus: MessageBus;
   private _cardinalCommerceJWT: string;
   private _cardinalCommerceCacheToken: string;
-  private _cachetoken: string;
+  private readonly _cachetoken: string;
   private _threedQueryTransactionReference: string;
   private readonly _startOnLoad: boolean;
   private _jwt: string;
-  private _requestTypes: string[];
-  private _threedinit: string;
+  private readonly _requestTypes: string[];
+  private readonly _threedinit: string;
+  private _notification: Notification;
 
   constructor(startOnLoad: boolean, jwt: string, requestTypes: string[], cachetoken?: string, threedinit?: string) {
     this._startOnLoad = startOnLoad;
@@ -49,25 +50,8 @@ export class CardinalCommerce {
     this._cachetoken = cachetoken ? cachetoken : '';
     this._requestTypes = requestTypes;
     this.messageBus = new MessageBus();
+    this._notification = new Notification();
     this._onInit();
-  }
-
-  /**
-   * Send postMessage to notificationFrame component, to inform user about payment status
-   * @param type
-   * @param content
-   */
-  public setNotification(type: string, content: string) {
-    // @TODO STJS-205 refactor into Payments
-    const notificationEvent: INotificationEvent = {
-      content,
-      type
-    };
-    const messageBusEvent: IMessageBusEvent = {
-      data: notificationEvent,
-      type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
-    };
-    this.messageBus.publishFromParent(messageBusEvent, Selectors.NOTIFICATION_FRAME_IFRAME);
   }
 
   /**
@@ -158,7 +142,7 @@ export class CardinalCommerce {
       this._authorizePayment({ threedresponse: jwt });
     } else {
       this.messageBus.publishToSelf(notificationEvent);
-      this.setNotification(NotificationType.Error, Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
+      this._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE, true);
     }
   }
 
