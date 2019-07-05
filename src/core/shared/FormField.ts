@@ -53,8 +53,8 @@ export default class FormField extends Frame {
     throw new Error(Language.translations.NOT_IMPLEMENTED_ERROR);
   }
 
-  protected _getAllowedStyles() {
-    let allowed = super._getAllowedStyles();
+  protected getAllowedStyles() {
+    let allowed = super.getAllowedStyles();
     const input = `#${this._inputSelector}`;
     const inputError = `#${this._inputSelector}.error-field`;
     const inputPlaceholder = `${input}::placeholder`;

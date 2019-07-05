@@ -1,3 +1,4 @@
+import { date } from 'joi';
 import { StCodec } from '../classes/StCodec.class';
 import { IErrorData, IMessageBusValidateField, IValidation } from '../models/Validation';
 import Frame from './Frame';
@@ -59,7 +60,7 @@ export default class Validation extends Frame {
    * @param validityState
    * @private
    */
-  private static getValidationMessage(validityState: ValidityState): string {
+  public static getValidationMessage(validityState: ValidityState): string {
     const { customError, patternMismatch, valid, valueMissing } = validityState;
     let validationMessage: string = '';
     if (!valid) {
@@ -80,7 +81,6 @@ export default class Validation extends Frame {
   protected _messageBus: MessageBus;
   private _translator: Translator;
   private _isFormValid: boolean;
-  private _formValidity: object;
   private _isPaymentReady: boolean;
   private _card: ICard;
 
@@ -98,6 +98,9 @@ export default class Validation extends Frame {
    */
   public backendValidation(inputElement: HTMLInputElement, messageElement: HTMLElement, event: string) {
     this._messageBus.subscribe(event, (data: IMessageBusValidateField) => {
+      if (!data.message) {
+        data.message = Validation.getValidationMessage(inputElement.validity);
+      }
       this.checkBackendValidity(data, inputElement, messageElement);
     });
   }
@@ -184,6 +187,12 @@ export default class Validation extends Frame {
     this.setMessage(inputElement, messageElement, customErrorMessage);
   }
 
+  /**
+   *
+   * @param dataInJwt
+   * @param paymentReady
+   * @param formFields
+   */
   public formValidation(
     dataInJwt: boolean,
     paymentReady: boolean,
@@ -242,6 +251,10 @@ export default class Validation extends Frame {
     }
   }
 
+  /**
+   *
+   * @param state
+   */
   public setFormValidity(state: any) {
     const validationEvent: IMessageBusEvent = {
       data: { ...state },

@@ -198,8 +198,8 @@ export default class CardNumber extends FormField {
     });
   }
 
-  protected _getAllowedParams() {
-    return super._getAllowedParams().concat(['origin']);
+  protected getAllowedParams() {
+    return super.getAllowedParams().concat(['origin']);
   }
 
   protected onBlur() {

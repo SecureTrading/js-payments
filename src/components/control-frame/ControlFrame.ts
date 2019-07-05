@@ -7,6 +7,9 @@ import Notification from '../../core/shared/Notification';
 import Payment from '../../core/shared/Payment';
 import Validation from '../../core/shared/Validation';
 
+/**
+ *
+ */
 export default class ControlFrame extends Frame {
   private _payment: Payment;
   private _isPaymentReady: boolean = false;
@@ -23,6 +26,9 @@ export default class ControlFrame extends Frame {
     this.onInit();
   }
 
+  /**
+   *
+   */
   public onInit() {
     super.onInit();
     this._payment = new Payment(this._params.jwt, this._params.gatewayUrl, this._params.origin);
@@ -51,8 +57,12 @@ export default class ControlFrame extends Frame {
     }
   };
 
-  protected _getAllowedParams() {
-    return super._getAllowedParams().concat(['origin', 'jwt', 'gatewayUrl']);
+  /**
+   *
+   * @private
+   */
+  protected getAllowedParams() {
+    return super.getAllowedParams().concat(['origin', 'jwt', 'gatewayUrl']);
   }
 
   private onCardNumberStateChange(data: IFormFieldState) {
@@ -205,6 +215,20 @@ export default class ControlFrame extends Frame {
     const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.THREEDQUERY
     };
+    const formValidity = {
+      cardNumber: {
+        state: this._formFields.cardNumber.validity,
+        message: ''
+      },
+      expirationDate: {
+        state: this._formFields.expirationDate.validity,
+        message: ''
+      },
+      securityCode: {
+        state: this._formFields.expirationDate.validity,
+        message: ''
+      }
+    };
     const { validity, card } = this._validation.formValidation(dataInJwt, this._isPaymentReady, this._formFields);
     if (validity) {
       this._payment
@@ -215,7 +239,7 @@ export default class ControlFrame extends Frame {
           this._messageBus.publish(messageBusEvent, true);
         });
     } else {
-      this._validation.setFormValidity(validity);
+      this._validation.setFormValidity(formValidity);
     }
   }
 }

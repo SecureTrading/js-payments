@@ -196,7 +196,7 @@ describe('Component NotificationFrame class', () => {
     });
   });
 
-  describe('NotificationFrame._getAllowedStyles', () => {
+  describe('NotificationFrame.getAllowedStyles', () => {
     it('should return allowed styles', () => {
       // @ts-ignore
       let styles = instance._getAllowedStyles();
