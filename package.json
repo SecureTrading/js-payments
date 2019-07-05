@@ -25,7 +25,9 @@
     "testdocker": "docker pull \"securetrading1/js-payments-testing:$DOCKER_BRANCH\" && docker run -d -p 8443:8443 -p 8760:8760 -it \"securetrading1/js-payments-testing:$DOCKER_BRANCH\"",
     "behave": "npm run testdocker && cd js-payments-testing && make",
     "export:translations": "cross-env-shell i18next-conv -l '$npm_package_config_locale' -s ./src/core/translations/$npm_package_config_locale.json -t ./translations/$npm_package_config_locale.po",
-    "import:translations": "cross-env-shell i18next-conv -l '$npm_package_config_locale' -s ./translations/$npm_package_config_locale.po -t ./src/core/translations/$npm_package_config_locale.json"
+    "import:translations": "cross-env-shell i18next-conv -l '$npm_package_config_locale' -s ./translations/$npm_package_config_locale.po -t ./src/core/translations/$npm_package_config_locale.json",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -74,7 +76,7 @@
     "postcss-scss": "^2.0.0",
     "prettier": "1.18.2",
     "sass-loader": "^7.1.0",
-    "snyk": "^1.189.0",
+    "snyk": "^1.192.0",
     "source-map-loader": "^0.2.4",
     "stylelint": "^10.1.0",
     "stylelint-webpack-plugin": "^0.10.5",
@@ -106,5 +108,6 @@
     "url-polyfill": "^1.1.5",
     "validate": "^4.5.1",
     "whatwg-fetch": "^3.0.0"
-  }
+  },
+  "snyk": true
 }
