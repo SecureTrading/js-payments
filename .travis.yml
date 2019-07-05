@@ -12,6 +12,7 @@ before_install:
   - npm install -g npm@latest
 install:
   - npm install
+  - npm run prepare
   - npm run prod
 jobs:
   include:
