@@ -14,7 +14,7 @@ export default class RegisterFrames {
   public origin: any;
   private stJwt: StJwt;
 
-  constructor(jwt: any, origin: any, componentIds: [], styles: IStyles) {
+  constructor(jwt: any, origin: any, componentIds: {}, styles: IStyles) {
     this.styles = styles;
     this.componentIds = componentIds;
     this.elementsTargets = this.setElementsFields();

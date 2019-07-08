@@ -1,7 +1,7 @@
 import VisaCheckout from '../../../src/core/integrations/VisaCheckout';
 
 // given
-describe('Visa Checkout class', () => {
+describe('Visa Checkout', () => {
   let body: object;
   let instance: any;
   // when
@@ -9,7 +9,7 @@ describe('Visa Checkout class', () => {
     const { config, url } = VisaCheckoutFixture();
     const jwt =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
-    instance = new VisaCheckout(config, false, jwt, url);
+    instance = new VisaCheckout(config, jwt, url);
     body = document.body;
   });
 
@@ -341,14 +341,14 @@ describe('Visa Checkout class', () => {
     // then
     it('should set paymentStatus and call _getResponseMessage and _setNotification', () => {
       instance.getResponseMessage = jest.fn();
-      instance.setNotification = jest.fn();
+      instance._notification.error = jest.fn();
       instance.responseMessage = 'MY MESSAGE';
       instance._onError();
       expect(instance.paymentStatus).toBe('ERROR');
       expect(instance.getResponseMessage).toHaveBeenCalledTimes(1);
       expect(instance.getResponseMessage).toHaveBeenCalledWith('ERROR');
-      expect(instance.setNotification).toHaveBeenCalledTimes(1);
-      expect(instance.setNotification).toHaveBeenCalledWith('ERROR', 'MY MESSAGE');
+      expect(instance._notification.error).toHaveBeenCalledTimes(1);
+      expect(instance._notification.error).toHaveBeenCalledWith('MY MESSAGE', true);
     });
   });
 
@@ -357,14 +357,14 @@ describe('Visa Checkout class', () => {
     // then
     it('should set paymentStatus and call _getResponseMessage and _setNotification', () => {
       instance.getResponseMessage = jest.fn();
-      instance.setNotification = jest.fn();
+      instance._notification.warning = jest.fn();
       instance.responseMessage = 'MY MESSAGE';
       instance._onCancel();
       expect(instance.paymentStatus).toBe('WARNING');
       expect(instance.getResponseMessage).toHaveBeenCalledTimes(1);
       expect(instance.getResponseMessage).toHaveBeenCalledWith('WARNING');
-      expect(instance.setNotification).toHaveBeenCalledTimes(1);
-      expect(instance.setNotification).toHaveBeenCalledWith('WARNING', 'MY MESSAGE');
+      expect(instance._notification.warning).toHaveBeenCalledTimes(1);
+      expect(instance._notification.warning).toHaveBeenCalledWith('MY MESSAGE', true);
     });
   });
 
@@ -396,92 +396,72 @@ describe('Visa Checkout class', () => {
   describe('_processPayment()', () => {
     // then
     it('should process AUTH call getResponseMessage and setNotification for success with tokenise false', async () => {
-      instance.payment.processPayment = jest.fn().mockResolvedValueOnce({ myData: 'response' });
+      instance.payment.processPayment = jest
+        .fn()
+        .mockResolvedValueOnce({ response: { myData: 'respData' }, jwt: 'ajwtvalue' });
       instance.getResponseMessage = jest.fn();
-      instance.setNotification = jest.fn();
+      instance._notification.success = jest.fn();
       instance.responseMessage = 'MYRESPONSE';
-      instance._tokenise = false;
       instance._walletSource = 'VISACHECKOUT';
       instance.paymentDetails = 'TOKEN';
       await instance._processPayment();
       expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
       expect(instance.payment.processPayment).toHaveBeenCalledWith(
-        { requesttypedescription: 'AUTH' },
+        ['AUTH'],
         { walletsource: 'VISACHECKOUT', wallettoken: 'TOKEN' },
         {}
       );
       expect(instance.getResponseMessage).toHaveBeenCalledTimes(1);
       expect(instance.getResponseMessage).toHaveBeenCalledWith('SUCCESS');
-      expect(instance.setNotification).toHaveBeenCalledTimes(1);
-      expect(instance.setNotification).toHaveBeenCalledWith('SUCCESS', 'MYRESPONSE');
+      expect(instance._notification.success).toHaveBeenCalledTimes(1);
+      expect(instance._notification.success).toHaveBeenCalledWith('MYRESPONSE', true);
     });
 
     // then
     it('should process CACHETOKEN call getResponseMessage and setNotification for success with tokenise true', async () => {
-      instance.payment.processPayment = jest.fn().mockResolvedValueOnce({ myData: 'response' });
+      instance.payment.processPayment = jest
+        .fn()
+        .mockResolvedValueOnce({ response: { myData: 'respData' }, jwt: 'ajwtvalue' });
       instance.getResponseMessage = jest.fn();
-      instance.setNotification = jest.fn();
+      instance._notification.success = jest.fn();
       instance.responseMessage = 'MYRESPONSE';
-      instance._tokenise = true;
+      instance._requestTypes = ['CACHETOKENISE'];
       instance._walletSource = 'VISACHECKOUT';
       instance.paymentDetails = 'TOKEN';
       await instance._processPayment();
       expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
       expect(instance.payment.processPayment).toHaveBeenCalledWith(
-        { requesttypedescription: 'CACHETOKENISE' },
+        ['CACHETOKENISE'],
         { walletsource: 'VISACHECKOUT', wallettoken: 'TOKEN' },
         {}
       );
       expect(instance.getResponseMessage).toHaveBeenCalledTimes(1);
       expect(instance.getResponseMessage).toHaveBeenCalledWith('SUCCESS');
-      expect(instance.setNotification).toHaveBeenCalledTimes(1);
-      expect(instance.setNotification).toHaveBeenCalledWith('SUCCESS', 'MYRESPONSE');
+      expect(instance._notification.success).toHaveBeenCalledTimes(1);
+      expect(instance._notification.success).toHaveBeenCalledWith('MYRESPONSE', true);
     });
 
     // then
     it('should process AUTH call getResponseMessage and setNotification for error with tokenise false', async () => {
-      instance.payment.processPayment = jest.fn().mockRejectedValueOnce({ myData: 'response' });
+      instance.payment.processPayment = jest
+        .fn()
+        .mockRejectedValueOnce({ response: { myData: 'respData' }, jwt: 'ajwtvalue' });
       instance.getResponseMessage = jest.fn();
-      instance.setNotification = jest.fn();
+      instance._notification.error = jest.fn();
       instance.responseMessage = 'MYRESPONSE';
-      instance._tokenise = false;
       instance._walletSource = 'VISACHECKOUT';
       instance.paymentDetails = 'TOKEN';
       await instance._processPayment();
       expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
       expect(instance.payment.processPayment).toHaveBeenCalledWith(
-        { requesttypedescription: 'AUTH' },
+        ['AUTH'],
         { walletsource: 'VISACHECKOUT', wallettoken: 'TOKEN' },
         {}
       );
       expect(instance.getResponseMessage).toHaveBeenCalledTimes(1);
       expect(instance.getResponseMessage).toHaveBeenCalledWith('ERROR');
-      expect(instance.setNotification).toHaveBeenCalledTimes(1);
-      expect(instance.setNotification).toHaveBeenCalledWith('ERROR', 'MYRESPONSE');
-    });
-  });
-
-  // given
-  describe('setNotification()', () => {
-    // then
-    it('should call publishFromParent with SUCCESS', () => {
-      instance.messageBus.publishFromParent = jest.fn();
-      instance.setNotification('SUCCESS', 'MYCONTENT');
-      expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
-      expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
-        { data: { content: 'MYCONTENT', type: 'SUCCESS' }, type: 'NOTIFICATION' },
-        'st-notification-frame-iframe'
-      );
-    });
-    // then
-    it('should call publishFromParent with ERROR', () => {
-      instance.messageBus.publishFromParent = jest.fn();
-      instance.setNotification('ERROR', 'ANOTHER');
-      expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
-      expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
-        { data: { content: 'ANOTHER', type: 'ERROR' }, type: 'NOTIFICATION' },
-        'st-notification-frame-iframe'
-      );
+      expect(instance._notification.error).toHaveBeenCalledTimes(1);
+      expect(instance._notification.error).toHaveBeenCalledWith('MYRESPONSE', true);
     });
   });
 });
@@ -502,7 +482,8 @@ function VisaCheckoutFixture() {
     merchantId: '2ig278`13b123872121h31h20e',
     buttonSettings: { size: '154', color: 'neutral' },
     settings: { displayName: 'My Test Site' },
-    paymentRequest: { subtotal: '20.00' }
+    paymentRequest: { subtotal: '20.00' },
+    requestTypes: ['AUTH']
   };
   const productionAssets = {
     sdk: 'https://secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js',

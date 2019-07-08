@@ -1,11 +1,10 @@
 import StTransport from '../classes/StTransport.class';
-import { IMerchantData } from '../models/MerchantData';
-import { INotificationEvent, NotificationType } from '../models/NotificationEvent';
+import { IWalletConfig } from '../models/Config';
 import DomMethods from '../shared/DomMethods';
 import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
+import Notification from '../shared/Notification';
 import Payment from '../shared/Payment';
-import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 
 const ApplePaySession = (window as any).ApplePaySession;
@@ -107,17 +106,19 @@ export class ApplePay {
   private _jwt: string;
   private _applePayButtonProps: any = {};
   private _payment: Payment;
-  private tokenise: boolean;
+  private _notification: Notification;
+  private requestTypes: string[];
 
-  constructor(config: any, tokenise: boolean, jwt: string, gatewayUrl: string) {
-    const { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId } = config;
+  constructor(config: IWalletConfig, jwt: string, gatewayUrl: string) {
+    const { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId, requestTypes } = config;
     this.jwt = jwt;
+    this._notification = new Notification();
     this.merchantId = merchantId;
     this.placement = placement;
     this.payment = new Payment(jwt, gatewayUrl);
     this.paymentRequest = paymentRequest;
     this.sitesecurity = sitesecurity;
-    this.tokenise = tokenise;
+    this.requestTypes = requestTypes;
     this.validateMerchantRequestData.walletmerchantid = merchantId;
     this.stJwtInstance = new StJwt(jwt);
     this.stTransportInstance = new StTransport({
@@ -187,6 +188,7 @@ export class ApplePay {
       ? (this.buttonText = buttonText)
       : (this.buttonText = ApplePay.AVAILABLE_BUTTON_TEXTS[0]);
 
+    // tslint:disable-next-line: max-line-length
     this._applePayButtonProps.style = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${
       this.buttonText
     }; -apple-pay-button-style: ${this.buttonStyle}`;
@@ -258,7 +260,7 @@ export class ApplePay {
       this.paymentRequest.total.amount = this.stJwtInstance.mainamount;
       this.paymentRequest.currencyCode = this.stJwtInstance.currencyiso3a;
     } else {
-      this.setNotification(NotificationType.Error, Language.translations.APPLE_PAY_AMOUNT_AND_CURRENCY);
+      this._notification.error(Language.translations.APPLE_PAY_AMOUNT_AND_CURRENCY, true);
     }
     return this.paymentRequest;
   }
@@ -294,13 +296,13 @@ export class ApplePay {
       this.validateMerchantRequestData.walletvalidationurl = event.validationURL;
       return this.payment
         .walletVerify(this.validateMerchantRequestData)
-        .then(response => {
-          this.onValidateMerchantResponseSuccess(response);
+        .then((result: any) => {
+          this.onValidateMerchantResponseSuccess(result.response);
         })
         .catch(error => {
           const { errorcode, errormessage } = error;
           this.onValidateMerchantResponseFailure(error);
-          this.setNotification(NotificationType.Error, `${errorcode}: ${errormessage}`);
+          this._notification.error(`${errorcode}: ${errormessage}`, true);
         });
     };
   }
@@ -322,21 +324,21 @@ export class ApplePay {
       // @TODO STJS-205 refactor into Payments
       return this.payment
         .processPayment(
-          { requesttypedescription: this.tokenise ? 'CACHETOKENISE' : 'AUTH' },
+          this.requestTypes,
           {
             walletsource: this.validateMerchantRequestData.walletsource,
             wallettoken: this.paymentDetails
           },
           DomMethods.parseMerchantForm()
         )
-        .then((response: object) => response)
+        .then((result: any) => result.response)
         .then((data: object) => {
-          this.setNotification(NotificationType.Success, Language.translations.PAYMENT_SUCCESS);
+          this._notification.success(Language.translations.PAYMENT_SUCCESS, true);
           this.session.completePayment({ status: this.getPaymentSuccessStatus(), errors: [] });
           return data;
         })
         .catch((data: object) => {
-          this.setNotification(NotificationType.Error, Language.translations.PAYMENT_ERROR);
+          this._notification.error(Language.translations.PAYMENT_ERROR, true);
           // TODO STJS-242 should create an ApplePayError which maps billing and customer errors
           // to apple pay versions and adds it to errors array
           this.session.completePayment({ status: this.getPaymentFailureStatus(), errors: [] });
@@ -349,7 +351,7 @@ export class ApplePay {
    */
   public onPaymentCanceled() {
     this.session.oncancel = (event: any) => {
-      this.setNotification(NotificationType.Warning, Language.translations.PAYMENT_CANCELLED);
+      this._notification.warning(Language.translations.PAYMENT_CANCELLED, true);
     };
   }
 
@@ -373,7 +375,7 @@ export class ApplePay {
    */
   public onValidateMerchantResponseFailure(error: any) {
     this.session.abort();
-    this.setNotification(NotificationType.Error, Language.translations.MERCHANT_VALIDATION_FAILURE);
+    this._notification.error(Language.translations.MERCHANT_VALIDATION_FAILURE, true);
   }
 
   /**
@@ -406,23 +408,6 @@ export class ApplePay {
         newTotal: { label: this.paymentRequest.total.label, amount: this.paymentRequest.total.amount, type: 'final' }
       });
     };
-  }
-
-  /**
-   * Send postMessage to notificationFrame component, to inform user about payment status
-   * @param type
-   * @param content
-   */
-  public setNotification(type: string, content: string) {
-    const notificationEvent: INotificationEvent = {
-      content,
-      type
-    };
-    const messageBusEvent: IMessageBusEvent = {
-      data: notificationEvent,
-      type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
-    };
-    this.messageBus.publishFromParent(messageBusEvent, Selectors.NOTIFICATION_FRAME_IFRAME);
   }
 
   /**

@@ -5,6 +5,13 @@ import MessageBus from './MessageBus';
 import { Translator } from './Translator';
 import Validation from './Validation';
 
+/**
+ * Base class describes each form field / component.
+ * Children classes:
+ *  - CardNumber
+ *  - ExpirationDate
+ *  - SecurityCode
+ */
 export default class FormField extends Frame {
   private static FOCUSED_FIELD_STATE = { 'data-pristine': false, 'data-dirty': true };
   public validation: Validation;

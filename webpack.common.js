@@ -14,7 +14,8 @@ module.exports = {
     controlFrame: './src/components/control-frame/control-frame.ts',
     example: './example/index.ts',
     immediateExample: './example/immediate.ts',
-    receipt: './example/receipt.ts'
+    receipt: './example/receipt.ts',
+    byPassExample: './example/bypass.ts'
   },
   output: {
     filename: '[name].js',
@@ -112,6 +113,11 @@ module.exports = {
       filename: 'receipt.html',
       template: './example/receipt.html',
       chunks: ['receipt']
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'bypass.html',
+      template: './example/bypass.html',
+      chunks: ['byPassExample']
     }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
