@@ -78,9 +78,8 @@
       </div>
       <div id="st-animated-card" class="st-animated-card-wrapper"></div>
     </form>
-    <!--    <script type="text/javascript" src="st.js"></script>-->
     <script type="text/javascript" src="st.js"></script>
-    <script type="text/javascript">
+    <script>
       (function() {
         var parsedUrl = new URL(window.location.href);
 
@@ -92,7 +91,6 @@
           'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU2MDk1NDA4OC45Njc5MDM0LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.ehveog4Xds-ak2yOhSgzZd-yzu4JZoC-a3xKqY_HJOU';
 
         var jwt = parsedUrl.searchParams.get('jwt') || cardinalJwt;
-        // @TODO: SecureTrading global object is undefined, it looks like splitChunks spoils it or the configuration is wrong:
         var st = SecureTrading({
           jwt: jwt, // Can't use property shorthand because it isn't supported by IE
           styles: {
