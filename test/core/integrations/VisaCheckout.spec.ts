@@ -327,12 +327,12 @@ describe('Visa Checkout', () => {
   describe('onSuccess()', () => {
     // then
     it('should set paymentDetails and paymentStatus and call _processPayment', () => {
-      instance._processPayment = jest.fn();
+      instance.payment.processPayment = jest.fn().mockReturnValue(new Promise(resolve => resolve()));
       const payment = { status: 'SUCCESS', another: 'value' };
       instance.onSuccess(payment);
       expect(instance.paymentDetails).toBe('{"status":"SUCCESS","another":"value"}');
       expect(instance.paymentStatus).toBe('SUCCESS');
-      expect(instance.processPayment).toHaveBeenCalledTimes(1);
+      expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -393,50 +393,42 @@ describe('Visa Checkout', () => {
   });
 
   // then
-  it('should process CACHETOKEN call getResponseMessage and setNotification for success with tokenise true', async () => {
+  it('should process CACHETOKEN call getResponseMessage and setNotification for success with tokenise true', () => {
     instance.payment.processPayment = jest
       .fn()
       .mockResolvedValueOnce({ response: { myData: 'respData' }, jwt: 'ajwtvalue' });
-    instance.getResponseMessage = jest.fn();
+    instance._getResponseMessage = jest.fn();
     instance._notification.success = jest.fn();
     instance.responseMessage = 'MYRESPONSE';
-    instance._requestTypes = ['CACHETOKENISE'];
+    instance.requestTypes = ['CACHETOKENISE'];
     instance._walletSource = 'VISACHECKOUT';
     instance.paymentDetails = 'TOKEN';
-    await instance._processPayment();
+    instance.onSuccess({ token: 'TOKEN' });
     expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
     expect(instance.payment.processPayment).toHaveBeenCalledWith(
       ['CACHETOKENISE'],
-      { walletsource: 'VISACHECKOUT', wallettoken: 'TOKEN' },
+      { walletsource: 'VISACHECKOUT', wallettoken: '{"token":"TOKEN"}' },
       {}
     );
-    expect(instance.getResponseMessage).toHaveBeenCalledTimes(1);
-    expect(instance.getResponseMessage).toHaveBeenCalledWith('SUCCESS');
-    expect(instance._notification.success).toHaveBeenCalledTimes(1);
-    expect(instance._notification.success).toHaveBeenCalledWith('MYRESPONSE', true);
   });
 
   // then
-  it('should process AUTH call getResponseMessage and setNotification for error with tokenise false', async () => {
+  it('should process AUTH call getResponseMessage and setNotification for error with tokenise false', () => {
     instance.payment.processPayment = jest
       .fn()
       .mockRejectedValueOnce({ response: { myData: 'respData' }, jwt: 'ajwtvalue' });
-    instance.getResponseMessage = jest.fn();
+    instance._getResponseMessage = jest.fn();
     instance._notification.error = jest.fn();
     instance.responseMessage = 'MYRESPONSE';
     instance._walletSource = 'VISACHECKOUT';
     instance.paymentDetails = 'TOKEN';
-    await instance._processPayment();
+    instance.onSuccess({ token: 'TOKEN' });
     expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
     expect(instance.payment.processPayment).toHaveBeenCalledWith(
       ['AUTH'],
-      { walletsource: 'VISACHECKOUT', wallettoken: 'TOKEN' },
+      { walletsource: 'VISACHECKOUT', wallettoken: '{"token":"TOKEN"}' },
       {}
     );
-    expect(instance.getResponseMessage).toHaveBeenCalledTimes(1);
-    expect(instance.getResponseMessage).toHaveBeenCalledWith('ERROR');
-    expect(instance._notification.error).toHaveBeenCalledTimes(1);
-    expect(instance._notification.error).toHaveBeenCalledWith('MYRESPONSE', true);
   });
 });
 
