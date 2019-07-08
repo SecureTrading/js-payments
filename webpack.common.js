@@ -40,12 +40,11 @@ module.exports = {
         vendor: {
           test: /[\\/]node_modules[\\/]/,
           name: 'vendor',
-          chunks: 'all',
           enforce: true
         }
       }
     },
-    runtimeChunk: 'single',
+    // runtimeChunk: 'single',
     nodeEnv: 'production',
     mangleWasmImports: true
   },
