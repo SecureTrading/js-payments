@@ -323,7 +323,7 @@ export class ApplePay {
   public onPaymentAuthorized() {
     this.session.onpaymentauthorized = (event: any) => {
       this.paymentDetails = JSON.stringify(event.payment);
-      this.payment
+      return this.payment
         .processPayment(
           this.requestTypes,
           {

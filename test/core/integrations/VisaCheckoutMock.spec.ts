@@ -23,7 +23,7 @@ describe('Visa Checkout Mock class', () => {
       // @ts-ignore
       global.V = fakeV;
       instance._initConfiguration = { myDummy: 'config' };
-      instance._initPaymentConfiguration();
+      instance.initPaymentConfiguration();
       expect(fakeV.init).toHaveBeenCalledTimes(0);
     });
   });
@@ -33,7 +33,7 @@ describe('Visa Checkout Mock class', () => {
     // then
     it('should add dom listener to mock button and if clicked call _handleMockedData', () => {
       instance._handleMockedData = jest.fn();
-      instance._paymentStatusHandler();
+      instance.paymentStatusHandler();
       const element = document.getElementById('v-button');
       const ev = new MouseEvent('click');
       element.dispatchEvent(ev);
