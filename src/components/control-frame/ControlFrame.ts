@@ -20,24 +20,6 @@ export default class ControlFrame extends Frame {
   private _postThreeDRequestTypes: string[];
   private _threeDQueryResult: any;
   private _notification: Notification;
-
-  constructor() {
-    super();
-    this.onInit();
-  }
-
-  /**
-   *
-   */
-  public onInit() {
-    super.onInit();
-    this._payment = new Payment(this._params.jwt, this._params.gatewayUrl, this._params.origin);
-    this._validation = new Validation();
-    this._notification = new Notification();
-    this.initSubscriptions();
-    this.onLoad();
-  }
-
   private _formFields: {
     cardNumber: IFormFieldState;
     expirationDate: IFormFieldState;
@@ -56,6 +38,23 @@ export default class ControlFrame extends Frame {
       value: ''
     }
   };
+
+  constructor() {
+    super();
+    this.onInit();
+  }
+
+  /**
+   *
+   */
+  public onInit() {
+    super.onInit();
+    this._payment = new Payment(this._params.jwt, this._params.gatewayUrl, this._params.origin);
+    this._validation = new Validation();
+    this._notification = new Notification();
+    this.initSubscriptions();
+    this.onLoad();
+  }
 
   /**
    *
@@ -203,16 +202,16 @@ export default class ControlFrame extends Frame {
     };
     const formValidity = {
       cardNumber: {
-        state: this._formFields.cardNumber.validity,
-        message: ''
+        message: '',
+        state: this._formFields.cardNumber.validity
       },
       expirationDate: {
-        state: this._formFields.expirationDate.validity,
-        message: ''
+        message: '',
+        state: this._formFields.expirationDate.validity
       },
       securityCode: {
-        state: this._formFields.expirationDate.validity,
-        message: ''
+        message: '',
+        state: this._formFields.expirationDate.validity
       }
     };
     const { validity, card } = this._validation.formValidation(dataInJwt, this._isPaymentReady, this._formFields);

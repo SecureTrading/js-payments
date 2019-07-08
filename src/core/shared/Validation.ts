@@ -45,15 +45,6 @@ export default class Validation extends Frame {
     inputElement.setCustomValidity(errorContent);
   }
 
-  private static BACKEND_ERROR_FIELDS_NAMES = {
-    cardNumber: 'pan',
-    expirationDate: 'expirydate',
-    securityCode: 'securitycode'
-  };
-  private static ENTER_KEY_CODE = 13;
-  private static ONLY_DIGITS_REGEXP = /^[0-9]*$/;
-  private static readonly MERCHANT_EXTRA_FIELDS_PREFIX = 'billing';
-
   /**
    * Gets validity state from input object and sets proper Validation message.
    * @param validityState
@@ -75,6 +66,15 @@ export default class Validation extends Frame {
     }
     return validationMessage;
   }
+
+  private static BACKEND_ERROR_FIELDS_NAMES = {
+    cardNumber: 'pan',
+    expirationDate: 'expirydate',
+    securityCode: 'securitycode'
+  };
+  private static ENTER_KEY_CODE = 13;
+  private static ONLY_DIGITS_REGEXP = /^[0-9]*$/;
+  private static readonly MERCHANT_EXTRA_FIELDS_PREFIX = 'billing';
 
   public validation: IValidation;
   protected _messageBus: MessageBus;
@@ -187,39 +187,6 @@ export default class Validation extends Frame {
   }
 
   /**
-   * Extended onInit() method from Frame.ts class.
-   */
-  protected onInit() {
-    super.onInit();
-    this._translator = new Translator(this._params.locale);
-  }
-
-  /**
-   * Add or remove error class from input field.
-   * @param inputElement
-   */
-  private toggleErrorClass = (inputElement: HTMLInputElement) => {
-    inputElement.validity.valid
-      ? inputElement.classList.remove(Validation.ERROR_FIELD_CLASS)
-      : inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
-  };
-
-  /**
-   * Method placed errorMessage inside chosen container (specified by id).
-   * @param inputElement
-   * @param messageElement
-   * @param customErrorMessage
-   */
-  private setMessage(inputElement: HTMLInputElement, messageElement?: HTMLElement, customErrorMessage?: string) {
-    const validityState = Validation.getValidationMessage(inputElement.validity);
-    if (messageElement && customErrorMessage) {
-      messageElement.innerText = this._translator.translate(customErrorMessage);
-    } else {
-      messageElement.innerText = this._translator.translate(validityState);
-    }
-  }
-
-  /**
    * Validation process method.
    * @param dataInJwt
    * @param paymentReady
@@ -260,5 +227,38 @@ export default class Validation extends Frame {
       type: MessageBus.EVENTS.VALIDATE_FORM
     };
     this._messageBus.publish(validationEvent, true);
+  }
+
+  /**
+   * Extended onInit() method from Frame.ts class.
+   */
+  protected onInit() {
+    super.onInit();
+    this._translator = new Translator(this._params.locale);
+  }
+
+  /**
+   * Add or remove error class from input field.
+   * @param inputElement
+   */
+  private toggleErrorClass = (inputElement: HTMLInputElement) => {
+    inputElement.validity.valid
+      ? inputElement.classList.remove(Validation.ERROR_FIELD_CLASS)
+      : inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
+  };
+
+  /**
+   * Method placed errorMessage inside chosen container (specified by id).
+   * @param inputElement
+   * @param messageElement
+   * @param customErrorMessage
+   */
+  private setMessage(inputElement: HTMLInputElement, messageElement?: HTMLElement, customErrorMessage?: string) {
+    const validityState = Validation.getValidationMessage(inputElement.validity);
+    if (messageElement && customErrorMessage) {
+      messageElement.innerText = this._translator.translate(customErrorMessage);
+    } else {
+      messageElement.innerText = this._translator.translate(validityState);
+    }
   }
 }
