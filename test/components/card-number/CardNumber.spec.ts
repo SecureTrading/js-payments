@@ -276,20 +276,13 @@ describe('CardNumber', () => {
 
   // given
   describe('onKeyPress()', () => {
-    let spy: SpyInstance;
     const { instance } = CardNumberFixture();
     const event: KeyboardEvent = new KeyboardEvent('keypress', { key: 'a' });
     const preventDefault = jest.spyOn(event, 'preventDefault');
 
     beforeEach(() => {
       // @ts-ignore
-      spy = jest.spyOn(instance, 'isMaxLengthReached').mockReturnValueOnce(true);
-      // @ts-ignore
       instance.onKeyPress(event);
-    });
-    // then
-    it('should trigger isMaxLengthReached function', () => {
-      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     // then
@@ -315,11 +308,6 @@ describe('CardNumber', () => {
       instance.getMaxLengthOfCardNumber = jest.fn().mockReturnValueOnce(15);
       // @ts-ignore
       instance.onInput(event);
-    });
-
-    // then
-    it('should call isMaxLengthReached', () => {
-      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     // then

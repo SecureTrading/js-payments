@@ -104,10 +104,10 @@ export default class SecurityCode extends FormField {
   protected onInput(event: Event) {
     super.onInput(event);
     this._inputElement.value = Formatter.trimNonNumeric(this._inputElement.value);
-    if (this._inputElement.value.length >= this.securityCodeLength) {
-      this._inputElement.value = this._inputElement.value.substring(0, this.securityCodeLength);
-      this.validation.validate(this._inputElement, this._messageElement);
-    }
+    // if (this._inputElement.value.length >= this.securityCodeLength) {
+    this._inputElement.value = this._inputElement.value.substring(0, this.securityCodeLength);
+    this.validation.validate(this._inputElement, this._messageElement);
+    // }
     this.sendState();
   }
 
@@ -118,9 +118,7 @@ export default class SecurityCode extends FormField {
    */
   protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
-    if (this.isMaxLengthReached()) {
-      this._inputElement.value = this._inputElement.value.substring(0, this.securityCodeLength);
-    }
+    this._inputElement.value = this._inputElement.value.substring(0, this.securityCodeLength);
     this.sendState();
   }
 
@@ -131,9 +129,6 @@ export default class SecurityCode extends FormField {
    */
   protected onKeyPress(event: KeyboardEvent) {
     super.onKeyPress(event);
-    if (this.isMaxLengthReached()) {
-      event.preventDefault();
-    }
   }
 
   /**
@@ -173,9 +168,4 @@ export default class SecurityCode extends FormField {
   private setSecurityCodePattern(securityCodePattern: string) {
     this.setAttributes({ pattern: securityCodePattern });
   }
-
-  /**
-   * Checks if the max length of security code is reached
-   */
-  private isMaxLengthReached = (): boolean => this._inputElement.value.length >= this.securityCodeLength;
 }
