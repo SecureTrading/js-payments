@@ -223,17 +223,13 @@ export default class CardNumber extends FormField {
   protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
     this.getMaxLengthOfCardNumber(this._inputElement.value);
-    if (this.isMaxLengthReached()) {
-      this._inputElement.value = this._inputElement.value.substring(0, this.cardNumberLength);
-    }
+    this._inputElement.value = this._inputElement.value.substring(0, this.cardNumberLength);
     this.sendState();
   }
 
   protected onKeyPress(event: KeyboardEvent) {
     super.onKeyPress(event);
   }
-
-  private isMaxLengthReached = () => this._inputElement.value.length >= this.cardNumberLength;
 
   private _luhnCheckValidation(luhn: boolean) {
     const cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
