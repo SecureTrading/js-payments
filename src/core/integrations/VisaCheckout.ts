@@ -185,7 +185,7 @@ export class VisaCheckout {
         this._getResponseMessage(this.paymentStatus);
         this._notification.success(this.responseMessage, true);
       })
-      .catch(() => {
+      .catch((error: any) => {
         this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
         this._getResponseMessage(this.paymentStatus);
         this._notification.error(this.responseMessage, true);
