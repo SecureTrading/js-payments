@@ -1,4 +1,3 @@
-import Formatter from '../../core/shared/Formatter';
 import FormField from '../../core/shared/FormField';
 import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
@@ -103,7 +102,6 @@ export default class ExpirationDate extends FormField {
    */
   protected onInput(event: Event) {
     super.onInput(event);
-    this._inputElement.value = Formatter.trimNonNumeric(this._inputElement.value);
     this._inputSelectionStart = this._inputElement.selectionStart;
     this._inputSelectionEnd = this._inputElement.selectionEnd;
     this._setFormattedDate();

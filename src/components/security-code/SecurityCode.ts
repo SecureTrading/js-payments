@@ -104,8 +104,10 @@ export default class SecurityCode extends FormField {
   protected onInput(event: Event) {
     super.onInput(event);
     this._inputElement.value = Formatter.trimNonNumeric(this._inputElement.value);
+    // if (this._inputElement.value.length >= this.securityCodeLength) {
     this._inputElement.value = this._inputElement.value.substring(0, this.securityCodeLength);
     this.validation.validate(this._inputElement, this._messageElement);
+    // }
     this.sendState();
   }
 
