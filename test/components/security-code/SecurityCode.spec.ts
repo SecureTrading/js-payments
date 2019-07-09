@@ -182,62 +182,6 @@ describe('SecurityCode', () => {
   });
 
   // given
-  describe('onPaste()', () => {
-    const { instance } = SecurityCodeFixture();
-    let spyIsMaxLengthReached: jest.SpyInstance;
-    let spySendState: jest.SpyInstance;
-    // @ts-ignore
-    // @TODO clipboard event is not recognizable.
-    // const event: ClipboardEvent = new ClipboardEvent('paste');
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      spyIsMaxLengthReached = jest.spyOn(instance, 'isMaxLengthReached').mockReturnValueOnce(true);
-      // @ts-ignore
-      spySendState = jest.spyOn(instance, 'sendState');
-      // @ts-ignore
-      //  instance.onPaste(event);
-    });
-
-    // then
-    it('should call isMaxLengthReached', () => {
-      // expect(spyIsMaxLengthReached).toHaveBeenCalledTimes(1);
-    });
-
-    // then
-    it('should call sendState', () => {
-      // (spySendState).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  // given
-  describe('onKeyPress', () => {
-    const { instance } = SecurityCodeFixture();
-    // @ts-ignore
-    instance.securityCodeLength = 4;
-    // @ts-ignore
-    const event = new KeyboardEvent('keydown', { keyCode: 37 });
-    event.preventDefault = jest.fn();
-    // then
-    it('should isMaxLengthReached method has been called', () => {
-      // @ts-ignore
-      const spy = jest.spyOn(instance, 'isMaxLengthReached').mockReturnValueOnce(false);
-      // @ts-ignore
-      instance.onKeyPress(event);
-      expect(spy).toHaveBeenCalled();
-    });
-
-    // then
-    it('should preventDefault method has been called', () => {
-      // @ts-ignore
-      const spy = jest.spyOn(instance, 'isMaxLengthReached').mockReturnValueOnce(true);
-      // @ts-ignore
-      instance.onKeyPress(event);
-      expect(event.preventDefault).toHaveBeenCalled();
-    });
-  });
-
-  // given
   describe('sendState', () => {
     const { instance } = SecurityCodeFixture();
     it('should publish method has been called', () => {
@@ -286,43 +230,13 @@ describe('SecurityCode', () => {
 
   // given
   describe('setSecurityCodePattern', () => {
-    const pattern = 'some243pa%^tern';
     const { instance } = SecurityCodeFixture();
     // @ts-ignore
-    instance.setSecurityCodePattern(pattern);
+    instance.setSecurityCodePattern('^[0-9]{3}$');
     // then
     it('should set pattern attribute on input field', () => {
       // @ts-ignore
-      expect(instance._inputElement.getAttribute('pattern')).toEqual(pattern);
-    });
-  });
-
-  // given
-  describe('isMaxLengthReached', () => {
-    const { instance } = SecurityCodeFixture();
-    let value = '123';
-    let valueMax = '1234';
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance.securityCodeLength = 4;
-    });
-
-    // then
-    it('should return false if max length has not been reached', () => {
-      // @ts-ignore
-      instance._inputElement.value = value;
-      // @ts-ignore
-      expect(instance.isMaxLengthReached()).toEqual(false);
-    });
-
-    // then
-    it('should return true if max length has been reached', () => {
-      const { instance } = SecurityCodeFixture();
-      // @ts-ignore
-      instance._inputElement.value = valueMax;
-      // @ts-ignore
-      expect(instance.isMaxLengthReached()).toEqual(true);
+      expect(instance._inputElement.getAttribute('pattern')).toEqual('^[0-9]{3}$');
     });
   });
 });
