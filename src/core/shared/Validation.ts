@@ -164,7 +164,7 @@ export default class Validation extends Frame {
    */
   public setError(inputElement: HTMLInputElement, messageElement: HTMLElement, message: string) {
     inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
-    if (messageElement) {
+    if (messageElement && messageElement.innerText !== 'Value mismatch pattern') {
       messageElement.innerText = this._translator.translate(message);
     }
     inputElement.setCustomValidity(message);
@@ -179,6 +179,22 @@ export default class Validation extends Frame {
   public validate(inputElement: HTMLInputElement, messageElement?: HTMLElement, customErrorMessage?: string) {
     this.toggleErrorClass(inputElement);
     this.setMessage(inputElement, messageElement, customErrorMessage);
+  }
+
+  /**
+   *
+   * @param luhn
+   * @param field
+   * @param input
+   * @param label
+   */
+  public luhnCheckValidation(luhn: boolean, field: HTMLInputElement, input: HTMLInputElement, message: HTMLDivElement) {
+    if (!luhn) {
+      field.setCustomValidity(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
+      this.validate(input, message, Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
+    } else {
+      field.setCustomValidity('');
+    }
   }
 
   /**
@@ -207,8 +223,10 @@ export default class Validation extends Frame {
    */
   private setMessage(inputElement: HTMLInputElement, messageElement?: HTMLElement, customErrorMessage?: string) {
     const validityState = Validation.getValidationMessage(inputElement.validity);
-    if (messageElement && customErrorMessage) {
+    if (messageElement && customErrorMessage && inputElement.getAttribute('id') !== 'st-card-number-input') {
       messageElement.innerText = this._translator.translate(customErrorMessage);
+    } else if (messageElement && inputElement.value && inputElement.getAttribute('id') === 'st-card-number-input') {
+      messageElement.innerText = this._translator.translate(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
     } else {
       messageElement.innerText = this._translator.translate(validityState);
     }

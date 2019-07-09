@@ -25,6 +25,7 @@ export default class CardNumber extends FormField {
   public isCardNumberValid: boolean;
   public validity: Validation;
   private cardNumberLength: number;
+  private fieldInstance: HTMLInputElement = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
 
   constructor() {
     super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE, Selectors.CARD_NUMBER_LABEL);
@@ -65,7 +66,7 @@ export default class CardNumber extends FormField {
     }
 
     const luhnCheck = sum && sum % 10 === 0;
-    this._luhnCheckValidation(luhnCheck);
+    this.validity.luhnCheckValidation(luhnCheck, this.fieldInstance, this._inputElement, this._messageElement);
     return luhnCheck;
   }
 
@@ -239,20 +240,6 @@ export default class CardNumber extends FormField {
   }
 
   private isMaxLengthReached = () => this._inputElement.value.length >= this.cardNumberLength;
-
-  private _luhnCheckValidation(luhn: boolean) {
-    const cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
-    if (!luhn) {
-      cardNumberField.setCustomValidity(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
-      this.validation.validate(
-        this._inputElement,
-        this._messageElement,
-        Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH
-      );
-    } else {
-      cardNumberField.setCustomValidity('');
-    }
-  }
 
   private sendState() {
     const { value, validity } = this.getFormFieldState();
