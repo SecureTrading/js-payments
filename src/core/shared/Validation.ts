@@ -3,12 +3,13 @@ import { IErrorData, IMessageBusValidateField, IValidation } from '../models/Val
 import Frame from './Frame';
 import Language from './Language';
 import MessageBus from './MessageBus';
+import Selectors from './Selectors';
 import { Translator } from './Translator';
 
 const {
   VALIDATION_ERROR_FIELD_IS_REQUIRED,
   VALIDATION_ERROR_PATTERN_MISMATCH,
-  VALIDATION_ERROR
+  VALIDATION_ERROR,
 } = Language.translations;
 
 /**
@@ -48,7 +49,7 @@ export default class Validation extends Frame {
   private static BACKEND_ERROR_FIELDS_NAMES = {
     cardNumber: 'pan',
     expirationDate: 'expirydate',
-    securityCode: 'securitycode'
+    securityCode: 'securitycode',
   };
   private static ENTER_KEY_CODE = 13;
   private static ONLY_DIGITS_REGEXP = /^[0-9]*$/;
@@ -105,7 +106,7 @@ export default class Validation extends Frame {
   public blockForm(state: boolean) {
     const messageBusEvent: IMessageBusEvent = {
       data: state,
-      type: MessageBus.EVENTS.BLOCK_FORM
+      type: MessageBus.EVENTS.BLOCK_FORM,
     };
     this._messageBus.publish(messageBusEvent, true);
     return state;
@@ -120,7 +121,7 @@ export default class Validation extends Frame {
   public checkBackendValidity(
     data: IMessageBusValidateField,
     inputElement: HTMLInputElement,
-    messageElement?: HTMLElement
+    messageElement?: HTMLElement,
   ) {
     this.setError(inputElement, messageElement, data.message);
   }
@@ -133,7 +134,7 @@ export default class Validation extends Frame {
     const { errordata, errormessage } = StCodec.getErrorData(errorData);
     const validationEvent: IMessageBusEvent = {
       data: { field: errordata[0], message: errormessage },
-      type: ''
+      type: '',
     };
 
     if (errordata[0] === Validation.BACKEND_ERROR_FIELDS_NAMES.cardNumber) {
@@ -177,8 +178,8 @@ export default class Validation extends Frame {
    * @param customErrorMessage
    */
   public validate(inputElement: HTMLInputElement, messageElement?: HTMLElement, customErrorMessage?: string) {
-    this.toggleErrorClass(inputElement);
-    this.setMessage(inputElement, messageElement, customErrorMessage);
+    this._toggleErrorClass(inputElement);
+    this._setMessage(inputElement, messageElement, customErrorMessage);
   }
 
   /**
@@ -209,7 +210,7 @@ export default class Validation extends Frame {
    * Add or remove error class from input field.
    * @param inputElement
    */
-  private toggleErrorClass = (inputElement: HTMLInputElement) => {
+  private _toggleErrorClass = (inputElement: HTMLInputElement) => {
     inputElement.validity.valid
       ? inputElement.classList.remove(Validation.ERROR_FIELD_CLASS)
       : inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
@@ -221,14 +222,40 @@ export default class Validation extends Frame {
    * @param messageElement
    * @param customErrorMessage
    */
-  private setMessage(inputElement: HTMLInputElement, messageElement?: HTMLElement, customErrorMessage?: string) {
+  private _setMessage(inputElement: HTMLInputElement, messageElement?: HTMLElement, customErrorMessage?: string) {
+    const isCardNumberInput: boolean = inputElement.getAttribute('id') === Selectors.CARD_NUMBER_INPUT;
     const validityState = Validation.getValidationMessage(inputElement.validity);
-    if (messageElement && customErrorMessage && inputElement.getAttribute('id') !== 'st-card-number-input') {
-      messageElement.innerText = this._translator.translate(customErrorMessage);
-    } else if (messageElement && inputElement.value && inputElement.getAttribute('id') === 'st-card-number-input') {
-      messageElement.innerText = this._translator.translate(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
+    messageElement.innerText = this._getProperTranslation(
+      inputElement,
+      isCardNumberInput,
+      validityState,
+      messageElement,
+      customErrorMessage,
+    );
+  }
+
+  /**
+   * Returns adequate translation to specific field.
+   * @param inputElement
+   * @param isCardNumberInput
+   * @param validityState
+   * @param messageElement
+   * @param customErrorMessage
+   * @private
+   */
+  private _getProperTranslation(
+    inputElement: HTMLInputElement,
+    isCardNumberInput: boolean,
+    validityState: string,
+    messageElement?: HTMLElement,
+    customErrorMessage?: string,
+  ) {
+    if (messageElement && customErrorMessage && !isCardNumberInput) {
+      return this._translator.translate(customErrorMessage);
+    } else if (messageElement && inputElement.value && isCardNumberInput) {
+      return this._translator.translate(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
     } else {
-      messageElement.innerText = this._translator.translate(validityState);
+      return this._translator.translate(validityState);
     }
   }
 }
