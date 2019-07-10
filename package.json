@@ -105,7 +105,7 @@
     "jwt-decode": "^2.2.0",
     "location-origin": "^1.1.4",
     "ts-money": "^0.4.6",
-    "url-polyfill": "^1.1.5",
+    "url-polyfill": "^1.1.6",
     "validate": "^4.5.1",
     "whatwg-fetch": "^3.0.0"
   },
