@@ -1,7 +1,7 @@
 {
     "Timeout": "Timeout",
     "Field is required": "Field is required",
-    "An error has occurred": "An error has occurred",
+    "An error occurred": "An error occurred",
     "Merchant validation failure": "Merchant validation failure",
     "Payment has been cancelled": "Payment has been cancelled",
     "Value mismatch pattern": "Value mismatch pattern",
@@ -16,9 +16,9 @@
     "Security code": "Security code",
     "Ok": "Payment has been successfully processed",
     "Method not implemented": "Method not implemented",
-    "Form is invalid": "Form is invalid",
+    "Form is not valid": "Form is not valid",
     "Pay": "Pay",
-    "Processing...": "Processing...",
+    "Processing": "Processing...",
     "Invalid field": "Invalid field",
     "Card number is invalid": "Card number is invalid"
 }
