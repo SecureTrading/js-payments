@@ -16,24 +16,24 @@ describe('Visa Checkout Mock class', () => {
   });
 
   // given
-  describe('_initPaymentConfiguration()', () => {
+  describe('initPaymentConfiguration()', () => {
     // then
     it('should not call V.init', () => {
       const { fakeV } = VisaCheckoutMockFixture();
       // @ts-ignore
       global.V = fakeV;
       instance._initConfiguration = { myDummy: 'config' };
-      instance._initPaymentConfiguration();
+      instance.initPaymentConfiguration();
       expect(fakeV.init).toHaveBeenCalledTimes(0);
     });
   });
 
   // given
-  describe('_paymentStatusHandler()', () => {
+  describe('paymentStatusHandler()', () => {
     // then
     it('should add dom listener to mock button and if clicked call _handleMockedData', () => {
       instance._handleMockedData = jest.fn();
-      instance._paymentStatusHandler();
+      instance.paymentStatusHandler();
       const element = document.getElementById('v-button');
       const ev = new MouseEvent('click');
       element.dispatchEvent(ev);
@@ -60,40 +60,40 @@ describe('Visa Checkout Mock class', () => {
   describe('_proceedFlowWithMockedData()', () => {
     // when
     beforeEach(() => {
-      instance._onSuccess = jest.fn();
-      instance._onError = jest.fn();
-      instance._onCancel = jest.fn();
+      instance.onSuccess = jest.fn();
+      instance.onError = jest.fn();
+      instance.onCancel = jest.fn();
     });
     // then
-    it('should call _onSuccess if status SUCCESS with payment', () => {
+    it('should call onSuccess if status SUCCESS with payment', () => {
       instance._proceedFlowWithMockedData('PAYMENT', 'SUCCESS');
-      expect(instance._onSuccess).toHaveBeenCalledTimes(1);
-      expect(instance._onSuccess).toHaveBeenCalledWith('PAYMENT');
-      expect(instance._onError).toHaveBeenCalledTimes(0);
-      expect(instance._onCancel).toHaveBeenCalledTimes(0);
+      expect(instance.onSuccess).toHaveBeenCalledTimes(1);
+      expect(instance.onSuccess).toHaveBeenCalledWith('PAYMENT');
+      expect(instance.onError).toHaveBeenCalledTimes(0);
+      expect(instance.onCancel).toHaveBeenCalledTimes(0);
     });
     // then
     it('should call _onError if status ERROR', () => {
       instance._proceedFlowWithMockedData('PAYMENT', 'ERROR');
-      expect(instance._onSuccess).toHaveBeenCalledTimes(0);
-      expect(instance._onError).toHaveBeenCalledTimes(1);
-      expect(instance._onError).toHaveBeenCalledWith();
-      expect(instance._onCancel).toHaveBeenCalledTimes(0);
+      expect(instance.onSuccess).toHaveBeenCalledTimes(0);
+      expect(instance.onError).toHaveBeenCalledTimes(1);
+      expect(instance.onError).toHaveBeenCalledWith();
+      expect(instance.onCancel).toHaveBeenCalledTimes(0);
     });
     // then
-    it('should call _onCancel if status WARNING', () => {
+    it('should call onCancel if status WARNING', () => {
       instance._proceedFlowWithMockedData('PAYMENT', 'WARNING');
-      expect(instance._onSuccess).toHaveBeenCalledTimes(0);
-      expect(instance._onError).toHaveBeenCalledTimes(0);
-      expect(instance._onCancel).toHaveBeenCalledTimes(1);
-      expect(instance._onCancel).toHaveBeenCalledWith();
+      expect(instance.onSuccess).toHaveBeenCalledTimes(0);
+      expect(instance.onError).toHaveBeenCalledTimes(0);
+      expect(instance.onCancel).toHaveBeenCalledTimes(1);
+      expect(instance.onCancel).toHaveBeenCalledWith();
     });
     // then
     it('should call nothing if unknown status', () => {
       instance._proceedFlowWithMockedData('PAYMENT', 'UNKNOWN');
-      expect(instance._onSuccess).toHaveBeenCalledTimes(0);
-      expect(instance._onError).toHaveBeenCalledTimes(0);
-      expect(instance._onCancel).toHaveBeenCalledTimes(0);
+      expect(instance.onSuccess).toHaveBeenCalledTimes(0);
+      expect(instance.onError).toHaveBeenCalledTimes(0);
+      expect(instance.onCancel).toHaveBeenCalledTimes(0);
     });
   });
 });
