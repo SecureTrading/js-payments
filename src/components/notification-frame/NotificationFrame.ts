@@ -121,8 +121,8 @@ export default class NotificationFrame extends Frame {
     }
   }
 
-  protected _getAllowedStyles() {
-    let allowed = super._getAllowedStyles();
+  protected getAllowedStyles() {
+    let allowed = super.getAllowedStyles();
     const notification = `#${NotificationFrame.ELEMENT_ID}`;
     const error = `.${NotificationFrame.ELEMENT_CLASSES.error}${notification}`;
     const success = `${NotificationFrame.ELEMENT_CLASSES.success}${notification}`;
