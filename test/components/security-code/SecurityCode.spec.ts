@@ -230,13 +230,14 @@ describe('SecurityCode', () => {
 
   // given
   describe('setSecurityCodePattern', () => {
+    const pattern = 'some243pa%^tern';
     const { instance } = SecurityCodeFixture();
-    // @ts-ignore
-    instance.setSecurityCodePattern('^[0-9]{3}$');
     // then
     it('should set pattern attribute on input field', () => {
       // @ts-ignore
-      expect(instance._inputElement.getAttribute('pattern')).toEqual('^[0-9]{3}$');
+      instance.setSecurityCodePattern(pattern);
+      // @ts-ignore
+      expect(instance._inputElement.getAttribute('pattern')).toEqual(pattern);
     });
   });
 });

@@ -110,10 +110,9 @@ class AnimatedCard extends Frame {
 
   /**
    * Inherited function from Frame.ts, concats 'defaultPaymentType', 'paymentTypes' parameters.
-   * @protected
    */
-  protected _getAllowedParams() {
-    return super._getAllowedParams().concat(['defaultPaymentType', 'paymentTypes']);
+  protected getAllowedParams() {
+    return super.getAllowedParams().concat(['defaultPaymentType', 'paymentTypes']);
   }
 
   /**
