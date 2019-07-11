@@ -26,7 +26,7 @@ describe('Frame', () => {
     let frame = new Frame();
     window.history.pushState({}, 'Test Title', url);
     // @ts-ignore
-    frame._getAllowedParams = jest.fn().mockReturnValueOnce(['locale', 'origin']);
+    frame.getAllowedParams = jest.fn().mockReturnValueOnce(['locale', 'origin']);
     let actual = frame.parseUrl();
     expect(actual.length).toBe(expected.length);
     expect(actual).toMatchObject(expected);

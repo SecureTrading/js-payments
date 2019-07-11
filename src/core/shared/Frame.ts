@@ -20,7 +20,7 @@ export default class Frame {
     const parsedUrl = new URL(window.location.href);
     const styles: IStyles = {};
     const params: IParams = {};
-    const allowedParams = this._getAllowedParams();
+    const allowedParams = this.getAllowedParams();
     parsedUrl.searchParams.forEach((value, param) => {
       if (allowedParams.includes(param)) {
         params[param] = value;
@@ -33,7 +33,7 @@ export default class Frame {
   }
 
   public applyStyles() {
-    new Styler(this._getAllowedStyles()).inject(this._params.styles);
+    new Styler(this.getAllowedStyles()).inject(this._params.styles);
   }
 
   protected onInit() {
@@ -42,11 +42,11 @@ export default class Frame {
     this.applyStyles();
   }
 
-  protected _getAllowedParams() {
+  protected getAllowedParams() {
     return ['locale'];
   }
 
-  protected _getAllowedStyles() {
+  protected getAllowedStyles() {
     const allowed: IAllowedStyles = {
       'background-color-body': { property: 'background-color', selector: 'body' },
       'color-body': { property: 'color', selector: 'body' },

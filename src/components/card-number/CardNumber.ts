@@ -199,8 +199,8 @@ export default class CardNumber extends FormField {
     });
   }
 
-  protected _getAllowedParams() {
-    return super._getAllowedParams().concat(['origin']);
+  protected getAllowedParams() {
+    return super.getAllowedParams().concat(['origin']);
   }
 
   protected onBlur() {
@@ -217,29 +217,20 @@ export default class CardNumber extends FormField {
     super.onInput(event);
     this._inputElement.value = Formatter.trimNonNumericExceptSpace(this._inputElement.value);
     this.getMaxLengthOfCardNumber(this._inputElement.value);
-    if (this.isMaxLengthReached()) {
-      this._inputElement.value = this._inputElement.value.substring(0, this.cardNumberLength);
-    }
+    this._inputElement.value = this._inputElement.value.substring(0, this.cardNumberLength);
     this.sendState();
   }
 
   protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
     this.getMaxLengthOfCardNumber(this._inputElement.value);
-    if (this.isMaxLengthReached()) {
-      this._inputElement.value = this._inputElement.value.substring(0, this.cardNumberLength);
-    }
+    this._inputElement.value = this._inputElement.value.substring(0, this.cardNumberLength);
     this.sendState();
   }
 
   protected onKeyPress(event: KeyboardEvent) {
     super.onKeyPress(event);
-    if (this.isMaxLengthReached()) {
-      event.preventDefault();
-    }
   }
-
-  private isMaxLengthReached = () => this._inputElement.value.length >= this.cardNumberLength;
 
   private sendState() {
     const { value, validity } = this.getFormFieldState();

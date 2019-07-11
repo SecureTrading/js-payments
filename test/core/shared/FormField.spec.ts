@@ -65,16 +65,9 @@ describe('FormField', () => {
     const event: KeyboardEvent = new KeyboardEvent('keypress', { key: 'a' });
     // @ts-ignore
     const eventSuccess: KeyboardEvent = new KeyboardEvent('keypress', { keyCode: 13 });
-    const preventDefault = jest.spyOn(event, 'preventDefault');
     // @ts-ignore
     instance._messageBus.publish = jest.fn().mockImplementation(() => {});
 
-    // then
-    it('should trigger preventDefault function and prevents default event ', () => {
-      // @ts-ignore
-      instance.onKeyPress(event);
-      expect(preventDefault).toHaveBeenCalled();
-    });
     // then
     it('should trigger instance._messageBus.publish ', () => {
       // @ts-ignore
