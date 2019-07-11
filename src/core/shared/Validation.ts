@@ -169,11 +169,13 @@ export default class Validation extends Frame {
    * @param message
    */
   public setError(inputElement: HTMLInputElement, messageElement: HTMLElement, message: string) {
-    inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
-    if (messageElement && messageElement.innerText !== Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH) {
-      messageElement.innerText = this._translator.translate(message);
+    if (!inputElement.validity.valid) {
+      inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
+      if (messageElement && messageElement.innerText !== Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH) {
+        messageElement.innerText = this._translator.translate(message);
+      }
+      inputElement.setCustomValidity(message);
     }
-    inputElement.setCustomValidity(message);
   }
 
   /**
@@ -300,7 +302,7 @@ export default class Validation extends Frame {
   ) {
     if (messageElement && customErrorMessage && !isCardNumberInput) {
       return this._translator.translate(customErrorMessage);
-    } else if (messageElement && inputElement.value && isCardNumberInput) {
+    } else if (messageElement && inputElement.value && isCardNumberInput && !inputElement.validity.valid) {
       return this._translator.translate(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
     } else {
       return this._translator.translate(validityState);

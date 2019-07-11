@@ -207,7 +207,7 @@ describe('Validation', () => {
           messageElement,
           customErrorMessage
         )
-      ).toEqual(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
+      ).toEqual(someRandomMessage);
     });
     // then
     it(`should return '${someRandomMessage}' when it's card number input and has messageElement and customErrorMessage is not defined`, () => {
