@@ -341,31 +341,31 @@ export class ApplePay {
           // console.log(error);
           const translator = new Translator(new StJwt(this._jwt).locale);
           this._notification.error(Language.translations.PAYMENT_ERROR, true);
-          if (error.errorcode !== 0) {
-            var error = new ApplePayError('unknown');
-            error.message = translator.translate(error.errormessage);
-            if (error.errorcode === 30000) {
-              var errordata = String(error.getErrorData());
-              if (errordata.lastIndexOf('billing', 0) === 0) {
-                error.code = 'billingContactInvalid';
-                errordata = errordata.slice(7);
-              } else if (errordata.lastIndexOf('customer', 0) === 0) {
-                error.code = 'shippingContactInvalid';
-                errordata = errordata.slice(8);
-              }
+          // if (error.errorcode !== 0) {
+          //   var error = new ApplePayError('unknown');
+          //   error.message = translator.translate(error.errormessage);
+          //   if (error.errorcode === 30000) {
+          //     var errordata = String(error.getErrorData());
+          //     if (errordata.lastIndexOf('billing', 0) === 0) {
+          //       error.code = 'billingContactInvalid';
+          //       errordata = errordata.slice(7);
+          //     } else if (errordata.lastIndexOf('customer', 0) === 0) {
+          //       error.code = 'shippingContactInvalid';
+          //       errordata = errordata.slice(8);
+          //     }
 
-              // var map = SecureTradingData.ApplePayContactMap;
-              // if (typeof map[errordata] != 'undefined') {
-              //   error.contactField = map[errordata];
-              // } else if (error.code != 'unknown') {
-              //   error.code = 'addressUnserviceable';
-              // }
-            }
-            // if (error.code != 'unknown') {
-            //   completion.errors = [error];
-            // }
-            // completion.status = ApplePaySession.STATUS_FAILURE;
-          }
+          // var map = SecureTradingData.ApplePayContactMap;
+          // if (typeof map[errordata] != 'undefined') {
+          //   error.contactField = map[errordata];
+          // } else if (error.code != 'unknown') {
+          //   error.code = 'addressUnserviceable';
+          // }
+          // }
+          // if (error.code != 'unknown') {
+          //   completion.errors = [error];
+          // }
+          // completion.status = ApplePaySession.STATUS_FAILURE;
+          // }
           this.session.completePayment({ status: this.getPaymentFailureStatus(), errors: [] });
         });
     };
