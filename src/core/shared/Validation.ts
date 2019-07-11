@@ -9,7 +9,7 @@ import { Translator } from './Translator';
 const {
   VALIDATION_ERROR_FIELD_IS_REQUIRED,
   VALIDATION_ERROR_PATTERN_MISMATCH,
-  VALIDATION_ERROR,
+  VALIDATION_ERROR
 } = Language.translations;
 
 /**
@@ -111,7 +111,7 @@ export default class Validation extends Frame {
   public blockForm(state: boolean) {
     const messageBusEvent: IMessageBusEvent = {
       data: state,
-      type: MessageBus.EVENTS.BLOCK_FORM,
+      type: MessageBus.EVENTS.BLOCK_FORM
     };
     this._messageBus.publish(messageBusEvent, true);
     return state;
@@ -126,7 +126,7 @@ export default class Validation extends Frame {
   public checkBackendValidity(
     data: IMessageBusValidateField,
     inputElement: HTMLInputElement,
-    messageElement?: HTMLElement,
+    messageElement?: HTMLElement
   ) {
     this.setError(inputElement, messageElement, data.message);
   }
@@ -139,7 +139,7 @@ export default class Validation extends Frame {
     const { errordata, errormessage } = StCodec.getErrorData(errorData);
     const validationEvent: IMessageBusEvent = {
       data: { field: errordata[0], message: errormessage },
-      type: '',
+      type: ''
     };
 
     if (errordata[0] === Validation.BACKEND_ERROR_FIELDS_NAMES.cardNumber) {
@@ -278,7 +278,7 @@ export default class Validation extends Frame {
       isCardNumberInput,
       validityState,
       messageElement,
-      customErrorMessage,
+      customErrorMessage
     );
   }
 
@@ -296,7 +296,7 @@ export default class Validation extends Frame {
     isCardNumberInput: boolean,
     validityState: string,
     messageElement?: HTMLElement,
-    customErrorMessage?: string,
+    customErrorMessage?: string
   ) {
     if (messageElement && customErrorMessage && !isCardNumberInput) {
       return this._translator.translate(customErrorMessage);
