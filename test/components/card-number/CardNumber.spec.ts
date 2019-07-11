@@ -204,26 +204,6 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('isMaxLengthReached()', () => {
-    const isMaxLengthReachedCases = [
-      ['4', false],
-      ['40000', false],
-      ['40000000000', false],
-      ['4000000000000', false],
-      ['400000000000000', false],
-      ['400000000000000000000', true]
-    ];
-    const { instance } = CardNumberFixture();
-    // then
-    each(isMaxLengthReachedCases).it('should return proper boolean value', (given: string, expected: boolean) => {
-      // @ts-ignore
-      instance._inputElement.value = given;
-      // @ts-ignore
-      expect(instance.isMaxLengthReached()).toEqual(expected);
-    });
-  });
-
-  // given
   describe('setFocusListener()', () => {
     const { instance } = CardNumberFixture();
     let spy: SpyInstance;
@@ -275,30 +255,6 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('onKeyPress()', () => {
-    let spy: SpyInstance;
-    const { instance } = CardNumberFixture();
-    const event: KeyboardEvent = new KeyboardEvent('keypress', { key: 'a' });
-    const preventDefault = jest.spyOn(event, 'preventDefault');
-
-    beforeEach(() => {
-      // @ts-ignore
-      spy = jest.spyOn(instance, 'isMaxLengthReached').mockReturnValueOnce(true);
-      // @ts-ignore
-      instance.onKeyPress(event);
-    });
-    // then
-    it('should trigger isMaxLengthReached function', () => {
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
-
-    // then
-    it('should trigger isMaxLengthReached function and prevents default event ', () => {
-      expect(preventDefault).toHaveBeenCalled();
-    });
-  });
-
-  // given
   describe('onInput()', () => {
     let spy: SpyInstance;
     let spySendState: SpyInstance;
@@ -308,18 +264,11 @@ describe('CardNumber', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
-      spy = jest.spyOn(instance, 'isMaxLengthReached').mockReturnValueOnce(true);
-      // @ts-ignore
       spySendState = jest.spyOn(instance, 'sendState');
       // @ts-ignore
       instance.getMaxLengthOfCardNumber = jest.fn().mockReturnValueOnce(15);
       // @ts-ignore
       instance.onInput(event);
-    });
-
-    // then
-    it('should call isMaxLengthReached', () => {
-      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     // then
@@ -366,35 +315,6 @@ describe('CardNumber', () => {
       subscribeMock(false);
       // @ts-ignore
       expect(instance._inputElement.classList.contains('st-input--disabled')).toEqual(false);
-    });
-  });
-
-  // given
-  describe('onPaste()', () => {
-    const { instance } = CardNumberFixture();
-    let spyIsMaxLengthReached: SpyInstance;
-    let spySendState: SpyInstance;
-    // @ts-ignore
-    // @TODO clipboard event is not recognizable.
-    // const event: ClipboardEvent = new ClipboardEvent('paste');
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      spyIsMaxLengthReached = jest.spyOn(instance, 'isMaxLengthReached').mockReturnValueOnce(true);
-      // @ts-ignore
-      spySendState = jest.spyOn(instance, 'sendState');
-      // @ts-ignore
-      // instance.onPaste(event);
-    });
-
-    // then
-    it('should call isMaxLengthReached', () => {
-      //expect(spyIsMaxLengthReached).toHaveBeenCalledTimes(1);
-    });
-
-    // then
-    it('should call sendState', () => {
-      // (spySendState).toHaveBeenCalledTimes(1);
     });
   });
 

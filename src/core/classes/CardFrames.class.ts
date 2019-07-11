@@ -202,17 +202,20 @@ export default class CardFrames extends RegisterFrames {
   private validateFieldsAfterSubmit() {
     this.messageBus.subscribe(MessageBus.EVENTS.VALIDATE_FORM, (data: any) => {
       const { cardNumber, expirationDate, securityCode } = data;
-      const messageBusEvent: IMessageBusEvent = { data: 'test', type: '' };
-      if (!cardNumber) {
+      const messageBusEvent: IMessageBusEvent = { data: { message: '' }, type: '' };
+      if (!cardNumber.state) {
         messageBusEvent.type = MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD;
+        messageBusEvent.data.message = cardNumber.message;
         this.messageBus.publish(messageBusEvent);
       }
-      if (!expirationDate) {
+      if (!expirationDate.state) {
         messageBusEvent.type = MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD;
+        messageBusEvent.data.message = expirationDate.message;
         this.messageBus.publish(messageBusEvent);
       }
-      if (!securityCode) {
+      if (!securityCode.state) {
         messageBusEvent.type = MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD;
+        messageBusEvent.data.message = securityCode.message;
         this.messageBus.publish(messageBusEvent);
       }
     });

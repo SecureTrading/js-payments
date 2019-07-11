@@ -53,8 +53,8 @@ export default class FormField extends Frame {
     throw new Error(Language.translations.NOT_IMPLEMENTED_ERROR);
   }
 
-  protected _getAllowedStyles() {
-    let allowed = super._getAllowedStyles();
+  protected getAllowedStyles() {
+    let allowed = super.getAllowedStyles();
     const input = `#${this._inputSelector}`;
     const inputError = `#${this._inputSelector}.error-field`;
     const inputPlaceholder = `${input}::placeholder`;
@@ -103,14 +103,11 @@ export default class FormField extends Frame {
   }
 
   protected onKeyPress(event: KeyboardEvent) {
-    if (!Validation.isCharNumber(event)) {
-      event.preventDefault();
-      if (Validation.isEnter(event)) {
-        const messageBusEvent: IMessageBusEvent = {
-          type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
-        };
-        this._messageBus.publish(messageBusEvent);
-      }
+    if (Validation.isEnter(event)) {
+      const messageBusEvent: IMessageBusEvent = {
+        type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
+      };
+      this._messageBus.publish(messageBusEvent);
     }
   }
 
@@ -134,9 +131,11 @@ export default class FormField extends Frame {
   }
 
   protected onPaste(event: ClipboardEvent) {
-    let clipboardData: string;
+    let { clipboardData } = event;
     event.preventDefault();
+    // @ts-ignore
     clipboardData = event.clipboardData.getData('text/plain');
+    // @ts-ignore
     this._inputElement.value = Formatter.trimNonNumeric(clipboardData);
     Validation.setCustomValidationError(this._inputElement, '');
     this.format(this._inputElement.value);
