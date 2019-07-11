@@ -141,17 +141,6 @@ describe('Validation', () => {
       instance.backendValidation(inputElement, messageElement, MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD);
       expect(spy).toHaveBeenCalled();
     });
-
-    // then
-    it('should call validate()', () => {
-      // @ts-ignore
-      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
-        callback({ field: 'some-id', message: 'some random message' });
-      });
-      const spy = jest.spyOn(instance, 'validate');
-      instance.backendValidation(inputElement, messageElement, MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD);
-      expect(spy).toHaveBeenCalled();
-    });
   });
 
   // given
