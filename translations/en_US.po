@@ -15,8 +15,8 @@ msgstr "Timeout"
 msgid "Field is required"
 msgstr "Field is required"
 
-msgid "An error has occurred"
-msgstr "An error has occurred"
+msgid "An error occurred"
+msgstr "An error occurred"
 
 msgid "Merchant validation failure"
 msgstr "Merchant validation failure"
@@ -60,13 +60,13 @@ msgstr "Payment has been successfully processed"
 msgid "Method not implemented" 
 msgstr "Method not implemented"
 
-msgid "Form is invalid"
-msgstr "Form is invalid"
+msgid "Form is not valid"
+msgstr "Form is not valid"
 
 msgid "Pay"
 msgstr "Pay"
 
-msgid "Processing..."
+msgid "Processing"
 msgstr "Processing..."
 
 msgid "Invalid field"
