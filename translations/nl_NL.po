@@ -13,64 +13,64 @@ msgid "Timeout"
 msgstr "Timeout"
 
 msgid "Field is required"
-msgstr "Field is required"
+msgstr "Dit is een verplicht veld"
 
 msgid "An error occurred"
-msgstr "An error occurred"
+msgstr "Er is iets misgegaan"
 
 msgid "Merchant validation failure"
-msgstr "Merchant validation failure"
+msgstr "Validatie verkoper is mislukt"
 
 msgid "Payment has been cancelled"
-msgstr "Payment has been cancelled"
+msgstr "De betaling is geannuleerd"
 
 msgid "Value mismatch pattern"
-msgstr "Value mismatch pattern"
+msgstr "Invoer voldoet niet aan patroon"
 
 msgid "Invalid response"
-msgstr "Invalid response"
+msgstr "Ongeldig antwoord"
 
 msgid "Invalid request"
-msgstr "Invalid request"
+msgstr "Ongeldig verzoek"
 
 msgid "Value is too short"
-msgstr "Value is too short"
+msgstr "Invoer is te kort"
 
 msgid "Payment has been authorized"
-msgstr "Payment has been authorized"
+msgstr "De betaling is geautoriseerd"
 
 msgid "Amount and currency are not set"
-msgstr "Amount and currency are not set"
+msgstr "Bedrag en valuta zijn niet ingesteld"
 
 msgid "Payment has been successfully processed"
-msgstr "Payment has been successfully processed"
+msgstr "De betaling is verwerkt"
 
 msgid "Card number"
-msgstr "Card number"
+msgstr "Kaartnummer"
 
 msgid "Expiration date"
-msgstr "Expiration date"
+msgstr "Vervaldatum"
 
 msgid "Security code"
-msgstr "Security code"
+msgstr "Beveiligingscode"
 
 msgid "Ok"
-msgstr "Payment has been successfully processed"
+msgstr "De betaling is verwerkt"
 
 msgid "Method not implemented"
-msgstr "Method not implemented"
+msgstr "De methode is niet ge�mplementeerd�"
 
 msgid "Form is not valid"
-msgstr "Form is not valid"
+msgstr "Het formulier is ongeldig"
 
 msgid "Pay"
-msgstr "Pay"
+msgstr "Betalen"
 
 msgid "Processing..."
-msgstr "Processing..."
+msgstr "Bezig met verwerken..."
 
 msgid "Invalid field"
-msgstr "Invalid field"
+msgstr "Ongeldig veld"
 
 msgid "Card number is invalid"
-msgstr "Card number is invalid"
+msgstr "Het kaartnummer is ongeldig"

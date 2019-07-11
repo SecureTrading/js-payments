@@ -1,4 +1,4 @@
-msgid ""
+﻿msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
 "MIME-Version: 1.0\n"
@@ -11,67 +11,67 @@ msgstr ""
 "Language: cy_GB\n"
 
 msgid "Timeout"
-msgstr "Timeout"
+msgstr "Terfyn amser"
 
 msgid "Field is required"
-msgstr "Field is required"
+msgstr "Mae'r maes yn ofynnol"
 
 msgid "An error occurred"
-msgstr "An error occurred"
+msgstr "Digwyddodd gwall"
 
 msgid "Merchant validation failure"
-msgstr "Merchant validation failure"
+msgstr "Methiant i ddilysu masnachwr"
 
 msgid "Payment has been cancelled"
-msgstr "Payment has been cancelled"
+msgstr "Mae'r taliad wedi ei ganslo"
 
 msgid "Value mismatch pattern"
-msgstr "Value mismatch pattern"
+msgstr "Patrwm camgymhariad gwerth"
 
 msgid "Invalid response"
-msgstr "Invalid response"
+msgstr "Ymateb annilys"
 
 msgid "Invalid request"
-msgstr "Invalid request"
+msgstr "Cais annilys"
 
 msgid "Value is too short"
-msgstr "Value is too short"
+msgstr "Mae'r gwerth yn rhy fyr"
 
 msgid "Payment has been authorized"
-msgstr "Payment has been authorized"
+msgstr "Mae'r taliad wedi ei awdurdodi"
 
 msgid "Amount and currency are not set"
-msgstr "Amount and currency are not set"
+msgstr "Nid yw'r swm a'r arian wedi ei osod"
 
 msgid "Payment has been successfully processed"
-msgstr "Payment has been successfully processed"
+msgstr "Mae'r taliad wedi ei brosesu'n llwyddiannus"
 
 msgid "Card number"
-msgstr "Card number"
+msgstr "Rhif y cerdyn"
 
 msgid "Expiration date"
-msgstr "Expiration date"
+msgstr "Dyddiad dod i ben"
 
 msgid "Security code"
-msgstr "Security code"
+msgstr "Cod diogelwch"
 
 msgid "Ok"
-msgstr "Payment has been successfully processed"
+msgstr "Mae'r taliad wedi ei brosesu'n llwyddiannus"
 
 msgid "Method not implemented"
-msgstr "Method not implemented"
+msgstr "Nid yw'r dull wedi ei weithredu"
 
 msgid "Form is not valid"
-msgstr "Form is not valid"
+msgstr "Nid yw'r ffurflen yn ddilys"
 
 msgid "Pay"
-msgstr "Pay"
+msgstr "Talu"
 
 msgid "Processing..."
-msgstr "Processing..."
+msgstr "Wrthi'n prosesu..."
 
 msgid "Invalid field"
-msgstr "Invalid field"
+msgstr "Maes annilys"
 
 msgid "Card number is invalid"
-msgstr "Card number is invalid"
+msgstr "Mae rhif y cerdyn yn annilys"

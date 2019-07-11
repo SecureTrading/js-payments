@@ -1,4 +1,4 @@
-msgid ""
+﻿msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
 "MIME-Version: 1.0\n"
@@ -13,64 +13,64 @@ msgid "Timeout"
 msgstr "Timeout"
 
 msgid "Field is required"
-msgstr "Field is required"
+msgstr "Obligatoriskt fält"
 
 msgid "An error occurred"
-msgstr "An error occurred"
+msgstr "Ett fel inträffade"
 
 msgid "Merchant validation failure"
-msgstr "Merchant validation failure"
+msgstr "Verifiering av säljare misslyckades"
 
 msgid "Payment has been cancelled"
-msgstr "Payment has been cancelled"
+msgstr "Betalningen har avbrutits"
 
 msgid "Value mismatch pattern"
-msgstr "Value mismatch pattern"
+msgstr "Matchningsfel för värde"
 
 msgid "Invalid response"
-msgstr "Invalid response"
+msgstr "Ogiltigt svar"
 
 msgid "Invalid request"
-msgstr "Invalid request"
+msgstr "Ogiltig begäran"
 
 msgid "Value is too short"
-msgstr "Value is too short"
+msgstr "Värdet är för kort"
 
 msgid "Payment has been authorized"
-msgstr "Payment has been authorized"
+msgstr "Betalningen har godkänts"
 
 msgid "Amount and currency are not set"
-msgstr "Amount and currency are not set"
+msgstr "Summa och valuta har inte angetts"
 
 msgid "Payment has been successfully processed"
-msgstr "Payment has been successfully processed"
+msgstr "Betalningen lyckades"
 
 msgid "Card number"
-msgstr "Card number"
+msgstr "Kortnummer"
 
 msgid "Expiration date"
-msgstr "Expiration date"
+msgstr "Sista giltighetsdatum"
 
 msgid "Security code"
-msgstr "Security code"
+msgstr "Säkerhetskod"
 
 msgid "Ok"
-msgstr "Payment has been successfully processed"
+msgstr "Betalningen lyckades"
 
 msgid "Method not implemented"
-msgstr "Method not implemented"
+msgstr "Metoden har inte implementerats"
 
 msgid "Form is not valid"
-msgstr "Form is not valid"
+msgstr "Ogiltigt formulär"
 
 msgid "Pay"
-msgstr "Pay"
+msgstr "Betala"
 
 msgid "Processing..."
-msgstr "Processing..."
+msgstr "Bearbetar ..."
 
 msgid "Invalid field"
-msgstr "Invalid field"
+msgstr "Ogiltigt fält"
 
 msgid "Card number is invalid"
-msgstr "Card number is invalid"
+msgstr "Ogiltigt kortnummer"

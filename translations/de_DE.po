@@ -1,4 +1,4 @@
-msgid ""
+﻿msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
 "MIME-Version: 1.0\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Language: de_DE\n"
 
 msgid "Timeout"
-msgstr "Auszeit"
+msgstr "Zeitüberschreitung"
 
 msgid "Field is required"
 msgstr "Feld ist erforderlich"
@@ -25,7 +25,7 @@ msgid "Payment has been cancelled"
 msgstr "Zahlung wurde storniert"
 
 msgid "Value mismatch pattern"
-msgstr "Wertübereinstimmungsmuster"
+msgstr "Diskrepanzmuster der Werte"
 
 msgid "Invalid response"
 msgstr "Ungültige Antwort"
@@ -40,7 +40,7 @@ msgid "Payment has been authorized"
 msgstr "Zahlung wurde genehmigt"
 
 msgid "Amount and currency are not set"
-msgstr "Betrag und Währung werden nicht eingestellt"
+msgstr "Betrag und Währung sind nicht festgelegt"
 
 msgid "Payment has been successfully processed"
 msgstr "Zahlung wurde erfolgreich verarbeitet"
@@ -61,7 +61,7 @@ msgid "Method not implemented"
 msgstr "Methode nicht implementiert"
 
 msgid "Form is not valid"
-msgstr "Das Formular ist ungültig"
+msgstr "Formular ist ungültig"
 
 msgid "Pay"
 msgstr "Zahlen"
