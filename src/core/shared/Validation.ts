@@ -170,7 +170,7 @@ export default class Validation extends Frame {
    */
   public setError(inputElement: HTMLInputElement, messageElement: HTMLElement, message: string) {
     inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
-    if (messageElement && messageElement.innerText !== 'Value mismatch pattern') {
+    if (messageElement && messageElement.innerText !== Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH) {
       messageElement.innerText = this._translator.translate(message);
     }
     inputElement.setCustomValidity(message);
