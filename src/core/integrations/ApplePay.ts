@@ -10,6 +10,21 @@ import { Translator } from '../shared/Translator';
 
 const ApplePaySession = (window as any).ApplePaySession;
 const ApplePayError = (window as any).ApplePayError;
+const ApplePayContactMap: any = {
+  countryiso2a: 'countryCode',
+  email: 'emailAddress',
+  firstname: 'givenName',
+  lastname: 'familyName',
+  postcode: 'postalCode',
+  premise: 'addressLines',
+  telephone: 'phoneNumber',
+  town: 'locality'
+};
+
+interface AppleErrorObject {
+  errorcode: number;
+  data: any;
+}
 
 /**
  * Apple Pay flow:
@@ -110,6 +125,8 @@ export class ApplePay {
   private _payment: Payment;
   private _notification: Notification;
   private requestTypes: string[];
+  private _completion: { status: string; errors: [] };
+  private _translator: Translator;
 
   constructor(config: IWalletConfig, jwt: string, gatewayUrl: string) {
     const { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId, requestTypes } = config;
@@ -128,6 +145,7 @@ export class ApplePay {
       jwt
     });
     this.messageBus = new MessageBus();
+    this._translator = new Translator(this.stJwtInstance.locale);
     this.onInit(buttonText, buttonStyle);
   }
 
@@ -334,39 +352,15 @@ export class ApplePay {
           DomMethods.parseMerchantForm()
         )
         .then(() => {
+          this._completion = { status: this.getPaymentSuccessStatus(), errors: [] };
           this._notification.success(Language.translations.PAYMENT_SUCCESS, true);
-          this.session.completePayment({ status: this.getPaymentSuccessStatus(), errors: [] });
+          this.session.completePayment(this._completion);
         })
         .catch((error: any) => {
-          // console.log(error);
-          const translator = new Translator(new StJwt(this._jwt).locale);
+          this._completion = { status: this.getPaymentFailureStatus(), errors: [] };
           this._notification.error(Language.translations.PAYMENT_ERROR, true);
-          // if (error.errorcode !== 0) {
-          //   var error = new ApplePayError('unknown');
-          //   error.message = translator.translate(error.errormessage);
-          //   if (error.errorcode === 30000) {
-          //     var errordata = String(error.getErrorData());
-          //     if (errordata.lastIndexOf('billing', 0) === 0) {
-          //       error.code = 'billingContactInvalid';
-          //       errordata = errordata.slice(7);
-          //     } else if (errordata.lastIndexOf('customer', 0) === 0) {
-          //       error.code = 'shippingContactInvalid';
-          //       errordata = errordata.slice(8);
-          //     }
-
-          // var map = SecureTradingData.ApplePayContactMap;
-          // if (typeof map[errordata] != 'undefined') {
-          //   error.contactField = map[errordata];
-          // } else if (error.code != 'unknown') {
-          //   error.code = 'addressUnserviceable';
-          // }
-          // }
-          // if (error.code != 'unknown') {
-          //   completion.errors = [error];
-          // }
-          // completion.status = ApplePaySession.STATUS_FAILURE;
-          // }
-          this.session.completePayment({ status: this.getPaymentFailureStatus(), errors: [] });
+          this._handleApplePayError(error);
+          this.session.completePayment();
         });
     };
   }
@@ -458,6 +452,39 @@ export class ApplePay {
         }
       });
     }
+  }
+
+  /**
+   * Handles errors during ApplePay process.
+   * @param errorObject
+   * @private
+   */
+  private _handleApplePayError(errorObject: AppleErrorObject) {
+    let { errorcode } = errorObject;
+    let errordata = String(errorObject.data);
+    let error = new ApplePayError('unknown');
+    error.message = this._translator.translate(error.message);
+    if (errorcode !== 0) {
+      if (errorcode === 30000) {
+        if (errordata.lastIndexOf('billing', 0) === 0) {
+          error.code = 'billingContactInvalid';
+          errordata = errordata.slice(7);
+        } else if (errordata.lastIndexOf('customer', 0) === 0) {
+          error.code = 'shippingContactInvalid';
+          errordata = errordata.slice(8);
+        }
+        if (typeof ApplePayContactMap[errordata] !== 'undefined') {
+          error.contactField = ApplePayContactMap[errordata];
+        } else if (error.code !== 'unknown') {
+          error.code = 'addressUnserviceable';
+        }
+      }
+      if (error.code !== 'unknown') {
+        // @ts-ignore
+        this._completion.errors = [error];
+      }
+    }
+    return this._completion;
   }
 }
 
