@@ -58,7 +58,7 @@ msgid "Ok"
 msgstr "De betaling is verwerkt"
 
 msgid "Method not implemented"
-msgstr "De methode is niet ge�mplementeerd�"
+msgstr "De methode is niet geïmplementeerd"
 
 msgid "Form is not valid"
 msgstr "Het formulier is ongeldig"

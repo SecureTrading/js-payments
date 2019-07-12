@@ -16,7 +16,7 @@ msgid "Field is required"
 msgstr "Feltet skal udfyldes"
 
 msgid "An error occurred"
-msgstr "Der er opst�et en fejl"
+msgstr "Der er opstået en fejl"
 
 msgid "Merchant validation failure"
 msgstr "Fejl ved forhandlervalidering"
@@ -25,7 +25,7 @@ msgid "Payment has been cancelled"
 msgstr "Betaling er annulleret"
 
 msgid "Value mismatch pattern"
-msgstr "Uventede v�rdier"
+msgstr "Uventede værdier"
 
 msgid "Invalid response"
 msgstr "Ugyldigt svar"
@@ -34,28 +34,28 @@ msgid "Invalid request"
 msgstr "Ugyldig anmodning"
 
 msgid "Value is too short"
-msgstr "V�rdi er for kort"
+msgstr "Værdi er for kort"
 
 msgid "Payment has been authorized"
 msgstr "Betaling er godkendt"
 
 msgid "Amount and currency are not set"
-msgstr "Bel�b og valuta er ikke indstillet"
+msgstr "Beløb og valuta er ikke indstillet"
 
 msgid "Payment has been successfully processed"
-msgstr "Betaling er gennemf�rt"
+msgstr "Betaling er gennemført"
 
 msgid "Card number"
 msgstr "Kortnummer"
 
 msgid "Expiration date"
-msgstr "Udl�bsdato"
+msgstr "Udløbsdato"
 
 msgid "Security code"
 msgstr "Sikkerhedskode"
 
 msgid "Ok"
-msgstr "Betaling er gennemf�rt"
+msgstr "Betaling er gennemført"
 
 msgid "Method not implemented"
 msgstr "Metode ikke implementeret"
