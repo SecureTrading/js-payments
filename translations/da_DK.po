@@ -13,64 +13,64 @@ msgid "Timeout"
 msgstr "Timeout"
 
 msgid "Field is required"
-msgstr "Field is required"
+msgstr "Feltet skal udfyldes"
 
 msgid "An error occurred"
-msgstr "An error occurred"
+msgstr "Der er opstået en fejl"
 
 msgid "Merchant validation failure"
-msgstr "Merchant validation failure"
+msgstr "Fejl ved forhandlervalidering"
 
 msgid "Payment has been cancelled"
-msgstr "Payment has been cancelled"
+msgstr "Betaling er annulleret"
 
 msgid "Value mismatch pattern"
-msgstr "Value mismatch pattern"
+msgstr "Uventede værdier"
 
 msgid "Invalid response"
-msgstr "Invalid response"
+msgstr "Ugyldigt svar"
 
 msgid "Invalid request"
-msgstr "Invalid request"
+msgstr "Ugyldig anmodning"
 
 msgid "Value is too short"
-msgstr "Value is too short"
+msgstr "Værdi er for kort"
 
 msgid "Payment has been authorized"
-msgstr "Payment has been authorized"
+msgstr "Betaling er godkendt"
 
 msgid "Amount and currency are not set"
-msgstr "Amount and currency are not set"
+msgstr "Beløb og valuta er ikke indstillet"
 
 msgid "Payment has been successfully processed"
-msgstr "Payment has been successfully processed"
+msgstr "Betaling er gennemført"
 
 msgid "Card number"
-msgstr "Card number"
+msgstr "Kortnummer"
 
 msgid "Expiration date"
-msgstr "Expiration date"
+msgstr "Udløbsdato"
 
 msgid "Security code"
-msgstr "Security code"
+msgstr "Sikkerhedskode"
 
 msgid "Ok"
-msgstr "Payment has been successfully processed"
+msgstr "Betaling er gennemført"
 
 msgid "Method not implemented"
-msgstr "Method not implemented"
+msgstr "Metode ikke implementeret"
 
 msgid "Form is not valid"
-msgstr "Form is not valid"
+msgstr "Formular er ikke gyldig"
 
 msgid "Pay"
-msgstr "Pay"
+msgstr "Betal"
 
 msgid "Processing..."
-msgstr "Processing..."
+msgstr "Behandler..."
 
 msgid "Invalid field"
-msgstr "Invalid field"
+msgstr "Ugyldigt felt"
 
 msgid "Card number is invalid"
-msgstr "Card number is invalid"
+msgstr "Kortnummer er ugyldigt"
