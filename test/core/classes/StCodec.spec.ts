@@ -135,6 +135,33 @@ describe('StCodec class', () => {
         type: 'TRANSACTION_COMPLETE'
       });
     });
+
+    // then
+    it('should assing jwtResponse to eventData.jwt when it is defined', () => {
+      StCodec.publishResponse(
+        {
+          errorcode: '0',
+          errormessage: 'Ok'
+        },
+        'someJwtResponse'
+      );
+      // @ts-ignore
+      expect(StCodec._messageBus.publishToSelf).toHaveBeenCalledTimes(1);
+    });
+
+    // then
+    it('should assing threedresponse  to eventData.threedresponse  when it is defined', () => {
+      StCodec.publishResponse(
+        {
+          errorcode: '0',
+          errormessage: 'Ok'
+        },
+        'someJwtResponse',
+        'someThreedresponse'
+      );
+      // @ts-ignore
+      expect(StCodec._messageBus.publishToSelf).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('StCodec._createCommunicationError', () => {
