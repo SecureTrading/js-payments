@@ -9,6 +9,7 @@ import ApplePay from './core/integrations/ApplePay';
 import ApplePayMock from './core/integrations/ApplePayMock';
 import { CardinalCommerce } from './core/integrations/CardinalCommerce';
 import CardinalCommerceMock from './core/integrations/CardinalCommerceMock';
+import PayPal from './core/integrations/PayPal';
 import VisaCheckout from './core/integrations/VisaCheckout';
 import VisaCheckoutMock from './core/integrations/VisaCheckoutMock';
 import {
@@ -256,6 +257,11 @@ class ST {
     const visa = environment.testEnvironment ? VisaCheckoutMock : VisaCheckout;
     config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
     return new visa(config, this.jwt, this.gatewayUrl);
+  }
+
+  public PayPal() {
+    const paypal = PayPal;
+    return new paypal();
   }
 
   /**

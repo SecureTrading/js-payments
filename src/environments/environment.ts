@@ -25,6 +25,15 @@ export const environment = {
   FRAME_URL: `https://${HOST}:8443`,
   GATEWAY_URL,
   NOTIFICATION_TTL: 7000,
+  PAYPAL: {
+    LIVE_SDK:
+      'https://www.paypal.com/sdk/js?client-id=' +
+      'AXSgmfAp0cFlWOngo6CMLclw1BcoLtBOlp6_2Ns4iIACq3r8yzirZ5BlxyQqJlS2J4zoc5FM_iTssjon',
+    MOCK_DATA_URL: `${MOCK_GATEWAY_URL}/payPalStatus`,
+    TEST_SDK:
+      'https://www.paypal.com/sdk/js?client-id=' +
+      'AXSgmfAp0cFlWOngo6CMLclw1BcoLtBOlp6_2Ns4iIACq3r8yzirZ5BlxyQqJlS2J4zoc5FM_iTssjon'
+  },
   VISA_CHECKOUT_URLS: {
     LIVE_BUTTON_URL: 'https://secure.checkout.visa.com/wallet-services-web/xo/button.png',
     LIVE_SDK: 'https://secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js',
