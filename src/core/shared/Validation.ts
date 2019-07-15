@@ -3,6 +3,7 @@ import { IErrorData, IMessageBusValidateField, IValidation } from '../models/Val
 import Frame from './Frame';
 import Language from './Language';
 import MessageBus from './MessageBus';
+import Selectors from './Selectors';
 import { Translator } from './Translator';
 
 const {
@@ -168,11 +169,13 @@ export default class Validation extends Frame {
    * @param message
    */
   public setError(inputElement: HTMLInputElement, messageElement: HTMLElement, message: string) {
-    inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
-    if (messageElement) {
-      messageElement.innerText = this._translator.translate(message);
+    if (!inputElement.validity.valid) {
+      inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
+      if (messageElement && messageElement.innerText !== Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH) {
+        messageElement.innerText = this._translator.translate(message);
+      }
+      inputElement.setCustomValidity(message);
     }
-    inputElement.setCustomValidity(message);
   }
 
   /**
@@ -182,8 +185,24 @@ export default class Validation extends Frame {
    * @param customErrorMessage
    */
   public validate(inputElement: HTMLInputElement, messageElement?: HTMLElement, customErrorMessage?: string) {
-    this.toggleErrorClass(inputElement);
-    this.setMessage(inputElement, messageElement, customErrorMessage);
+    this._toggleErrorClass(inputElement);
+    this._setMessage(inputElement, messageElement, customErrorMessage);
+  }
+
+  /**
+   *
+   * @param luhn
+   * @param field
+   * @param input
+   * @param label
+   */
+  public luhnCheckValidation(luhn: boolean, field: HTMLInputElement, input: HTMLInputElement, message: HTMLDivElement) {
+    if (!luhn) {
+      field.setCustomValidity(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
+      this.validate(input, message, Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
+    } else {
+      field.setCustomValidity('');
+    }
   }
 
   /**
@@ -241,7 +260,7 @@ export default class Validation extends Frame {
    * Add or remove error class from input field.
    * @param inputElement
    */
-  private toggleErrorClass = (inputElement: HTMLInputElement) => {
+  private _toggleErrorClass = (inputElement: HTMLInputElement) => {
     inputElement.validity.valid
       ? inputElement.classList.remove(Validation.ERROR_FIELD_CLASS)
       : inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
@@ -253,12 +272,40 @@ export default class Validation extends Frame {
    * @param messageElement
    * @param customErrorMessage
    */
-  private setMessage(inputElement: HTMLInputElement, messageElement?: HTMLElement, customErrorMessage?: string) {
+  private _setMessage(inputElement: HTMLInputElement, messageElement?: HTMLElement, customErrorMessage?: string) {
+    const isCardNumberInput: boolean = inputElement.getAttribute('id') === Selectors.CARD_NUMBER_INPUT;
     const validityState = Validation.getValidationMessage(inputElement.validity);
-    if (messageElement && customErrorMessage) {
-      messageElement.innerText = this._translator.translate(customErrorMessage);
+    messageElement.innerText = this._getProperTranslation(
+      inputElement,
+      isCardNumberInput,
+      validityState,
+      messageElement,
+      customErrorMessage
+    );
+  }
+
+  /**
+   * Returns adequate translation to specific field.
+   * @param inputElement
+   * @param isCardNumberInput
+   * @param validityState
+   * @param messageElement
+   * @param customErrorMessage
+   * @private
+   */
+  private _getProperTranslation(
+    inputElement: HTMLInputElement,
+    isCardNumberInput: boolean,
+    validityState: string,
+    messageElement?: HTMLElement,
+    customErrorMessage?: string
+  ) {
+    if (messageElement && customErrorMessage && !isCardNumberInput) {
+      return this._translator.translate(customErrorMessage);
+    } else if (messageElement && inputElement.value && isCardNumberInput && !inputElement.validity.valid) {
+      return this._translator.translate(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
     } else {
-      messageElement.innerText = this._translator.translate(validityState);
+      return this._translator.translate(validityState);
     }
   }
 }
