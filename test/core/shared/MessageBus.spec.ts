@@ -1,7 +1,8 @@
 import MessageBus from '../../../src/core/shared/MessageBus';
 
 // given
-describe('MessageBus class', () => {
+describe('MessageBus', () => {
+  // given
   describe('MessageBus.constructor', () => {
     it('should set origins and event listener', () => {
       window.addEventListener = jest.fn();
@@ -18,6 +19,7 @@ describe('MessageBus class', () => {
       expect(call.length).toBe(2);
     });
 
+    // then
     it('should set origins and event listener', () => {
       window.addEventListener = jest.fn();
       let instance = new MessageBus('https://example.com');
@@ -34,11 +36,13 @@ describe('MessageBus class', () => {
     });
   });
 
+  // given
   describe('MessageBus.publish', () => {
     let event: any;
     let instance: MessageBus;
     let framePostMessage: Function;
 
+    // when
     beforeEach(() => {
       event = { type: 'MYEVENT', data: 'SOME EVENT DATA' };
       instance = new MessageBus('https://example.com');
@@ -53,6 +57,7 @@ describe('MessageBus class', () => {
       window.sessionStorage.setItem(MessageBus.SUBSCRIBERS, JSON.stringify({ MYEVENT: ['myframe'] }));
     });
 
+    // then
     it('should postMessage to parent', () => {
       window.parent.postMessage = jest.fn();
       instance.publish(event, true);
@@ -60,6 +65,7 @@ describe('MessageBus class', () => {
       expect(window.parent.postMessage).toHaveBeenCalledWith(event, 'https://example.com');
     });
 
+    // then
     it('should postMessage to subscribed', () => {
       window.parent.postMessage = jest.fn();
       instance.publish(event);
@@ -68,7 +74,9 @@ describe('MessageBus class', () => {
     });
   });
 
+  // given
   describe('MessageBus.publishFromParent', () => {
+    // then
     it('should postMessage to frame', () => {
       let event = { type: 'MYEVENT', data: 'SOME EVENT DATA' };
       let framePostMessage = jest.fn();
@@ -86,7 +94,28 @@ describe('MessageBus class', () => {
     });
   });
 
+  // given
+  describe('publishToSelf', () => {
+    let instance = new MessageBus();
+    const someRandomEvent = {
+      type: 'SOME_RANDOM_EVENT',
+      data: {}
+    };
+    // when
+    beforeEach(() => {
+      window.postMessage = jest.fn();
+      instance.publishToSelf(someRandomEvent);
+    });
+    // then
+    it('should call window.postMessage', () => {
+      expect(window.postMessage).toHaveBeenCalledTimes(1);
+      expect(window.postMessage).toHaveBeenCalledWith(someRandomEvent, window.location.origin);
+    });
+  });
+
+  // given
   describe('MessageBus.subscribeOnParent', () => {
+    // then
     it('should add callback to subscriptions', () => {
       let instance = new MessageBus();
       instance.subscribeOnParent('MYEVENT', 'MYCALLBACK');
@@ -111,7 +140,9 @@ describe('MessageBus class', () => {
     });
   });
 
+  // given
   describe('MessageBus.registerMessageListener', () => {
+    // then
     it('should register message listener', () => {
       let instance = new MessageBus();
       window.addEventListener = jest.fn();
@@ -123,6 +154,7 @@ describe('MessageBus class', () => {
     });
   });
 
+  // given
   describe('MessageBus._handleMessageEvent', () => {
     let subFunc: Function;
     let instance: MessageBus;
@@ -133,6 +165,7 @@ describe('MessageBus class', () => {
       instance._subscriptions['MYEVENTTYPE'] = subFunc;
     });
 
+    // then
     it('should call subscription on same origin', () => {
       // @ts-ignore
       instance._handleMessageEvent({
@@ -143,7 +176,8 @@ describe('MessageBus class', () => {
       expect(subFunc).toHaveBeenCalledWith('EVENT DATA');
     });
 
-    it('shouldnt call subscription on parent origin', () => {
+    // then
+    it(`shouldn't call subscription on parent origin`, () => {
       // @ts-ignore
       instance._handleMessageEvent({
         origin: 'https://parent.com',
@@ -152,7 +186,8 @@ describe('MessageBus class', () => {
       expect(subFunc).toHaveBeenCalledTimes(0);
     });
 
-    it('shouldnt call subscription on parent origin unless public', () => {
+    // then
+    it(`shouldn't call subscription on parent origin unless public`, () => {
       // @ts-ignore
       MessageBus.EVENTS_PUBLIC['MYEVENTTYPE'] = 'MYEVENTTYPE';
       // @ts-ignore
@@ -164,7 +199,8 @@ describe('MessageBus class', () => {
       expect(subFunc).toHaveBeenCalledWith('EVENT DATA');
     });
 
-    it('shouldnt call subscription on unknown origin even if public', () => {
+    // then
+    it(`shouldn't call subscription on unknown origin even if public`, () => {
       // @ts-ignore
       MessageBus.EVENTS_PUBLIC['MYEVENTTYPE'] = 'MYEVENTTYPE';
       // @ts-ignore
