@@ -1,4 +1,4 @@
-msgid ""
+﻿msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
 "MIME-Version: 1.0\n"
@@ -10,67 +10,67 @@ msgstr ""
 "Language: es_ES\n"
 
 msgid "Timeout"
-msgstr "Timeout"
+msgstr "Tiempo de espera agotado"
 
 msgid "Field is required"
-msgstr "Field is required"
+msgstr "Campo obligatorio"
 
 msgid "An error occurred"
-msgstr "An error occurred"
+msgstr "Se ha producido un error"
 
 msgid "Merchant validation failure"
-msgstr "Merchant validation failure"
+msgstr "Fallo de validación del vendedor"
 
 msgid "Payment has been cancelled"
-msgstr "Payment has been cancelled"
+msgstr "El pago se ha anulado"
 
 msgid "Value mismatch pattern"
-msgstr "Value mismatch pattern"
+msgstr "El valor no coincide con el patrón"
 
 msgid "Invalid response"
-msgstr "Invalid response"
+msgstr "Respuesta no válida"
 
 msgid "Invalid request"
-msgstr "Invalid request"
+msgstr "Solicitud no válida"
 
 msgid "Value is too short"
-msgstr "Value is too short"
+msgstr "El valor es demasiado corto"
 
 msgid "Payment has been authorized"
-msgstr "Payment has been authorized"
+msgstr "Se ha autorizado el pago"
 
 msgid "Amount and currency are not set"
-msgstr "Amount and currency are not set"
+msgstr "No se han indicado el importe ni la divisa"
 
 msgid "Payment has been successfully processed"
-msgstr "Payment has been successfully processed"
+msgstr "El pago se ha procesado correctamente"
 
 msgid "Card number"
-msgstr "Card number"
+msgstr "Número de tarjeta"
 
 msgid "Expiration date"
-msgstr "Expiration date"
+msgstr "Fecha de vencimiento"
 
 msgid "Security code"
-msgstr "Security code"
+msgstr "Código de seguridad"
 
 msgid "Ok"
-msgstr "Payment has been successfully processed"
+msgstr "El pago se ha procesado correctamente"
 
 msgid "Method not implemented"
-msgstr "Method not implemented"
+msgstr "Método no implementado"
 
 msgid "Form is not valid"
-msgstr "Form is not valid"
+msgstr "El formulario no es válido"
 
 msgid "Pay"
-msgstr "Pay"
+msgstr "Pagar"
 
 msgid "Processing..."
-msgstr "Processing..."
+msgstr "Procesando..."
 
 msgid "Invalid field"
-msgstr "Invalid field"
+msgstr "Campo no válido"
 
 msgid "Card number is invalid"
-msgstr "Card number is invalid"
+msgstr "El número de tarjeta no es válido"
