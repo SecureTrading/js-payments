@@ -57,5 +57,15 @@ describe('ControlFrame', () => {
   describe('_requestThreeDInit', () => {});
 
   // given
-  describe('_storeMerchantData', () => {});
+  describe('_storeMerchantData', () => {
+    const { instance } = controlFrameFixture();
+
+    // then
+    it('should set _merchantFormData', () => {});
+  });
 });
+
+function controlFrameFixture() {
+  const instance = new ControlFrame();
+  return { instance };
+}

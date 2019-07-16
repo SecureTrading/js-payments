@@ -1,4 +1,5 @@
 import { StCodec } from '../../core/classes/StCodec.class';
+import { IProcessPayments, ISetRequestTypes, ISubmitData } from '../../core/models/ControlFrame';
 import { IMerchantData } from '../../core/models/MerchantData';
 import Frame from '../../core/shared/Frame';
 import Language from '../../core/shared/Language';
@@ -78,7 +79,7 @@ class ControlFrame extends Frame {
     this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: IFormFieldState) => {
       this._onSecurityCodeStateChange(data);
     });
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES, (data: any) => {
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES, (data: ISetRequestTypes) => {
       this._onSetRequestTypesEvent(data);
     });
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BY_PASS_INIT, (cachetoken: string) => {
@@ -90,10 +91,12 @@ class ControlFrame extends Frame {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL, () => {
       this._onLoadCardinal();
     });
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS, (data: any) => {
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS, (data: IResponseData) => {
       this._onProcessPaymentEvent(data);
     });
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, (data?: any) => {
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, (data?: ISubmitData) => {
+      console.log('SUBMIT_FORM');
+      console.error(data);
       this._onSubmit(data);
     });
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS, (data: any) => {

@@ -23,7 +23,7 @@ export class MerchantFields {
    * @param messageElement
    * @param event
    */
-  public backendValidation(inputElement: HTMLInputElement, event: string, messageElement?: HTMLElement) {
+  public backendValidation(inputElement: HTMLInputElement, event: string, messageElement: HTMLElement) {
     this._messageBus.subscribe(event, (data: IMessageBusValidateField) => {
       this._validation.checkBackendValidity(data, inputElement, messageElement);
       this._validation.validate(inputElement, messageElement);
@@ -39,7 +39,10 @@ export class MerchantFields {
     for (let i = 0; i < this._merchantInputs.length; ++i) {
       if (this._merchantInputs[i].hasAttribute(MerchantFields.DATA_ATTRIBUTE_NAME)) {
         const input = document.getElementById(this._merchantInputs[i].id) as HTMLInputElement;
-        this.backendValidation(input, MessageBus.EVENTS.VALIDATE_MERCHANT_FIELD);
+        const container = document.createElement('div');
+        container.classList.add('error');
+        const messageElement = input.parentElement.appendChild(container);
+        this.backendValidation(input, MessageBus.EVENTS.VALIDATE_MERCHANT_FIELD, messageElement);
         input.addEventListener('keypress', () => {
           input.setCustomValidity('');
           input.classList.remove(Validation.ERROR_FIELD_CLASS);

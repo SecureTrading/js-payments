@@ -169,7 +169,8 @@ export default class Validation extends Frame {
    * @param message
    */
   public setError(inputElement: HTMLInputElement, messageElement: HTMLElement, message: string) {
-    if (!inputElement.validity.valid) {
+    // check if field is invalid or it's merchant field
+    if (!inputElement.validity.valid || inputElement.dataset.stName.indexOf('billing') !== -1) {
       inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
       if (messageElement && messageElement.innerText !== Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH) {
         messageElement.innerText = this._translator.translate(message);
@@ -184,7 +185,7 @@ export default class Validation extends Frame {
    * @param messageElement
    * @param customErrorMessage
    */
-  public validate(inputElement: HTMLInputElement, messageElement?: HTMLElement, customErrorMessage?: string) {
+  public validate(inputElement: HTMLInputElement, messageElement: HTMLElement, customErrorMessage?: string) {
     this._toggleErrorClass(inputElement);
     this._setMessage(inputElement, messageElement, customErrorMessage);
   }
