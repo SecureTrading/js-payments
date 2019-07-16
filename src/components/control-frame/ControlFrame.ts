@@ -187,8 +187,8 @@ class ControlFrame extends Frame {
    * @param data
    * @private
    */
-  private _onByPassInitEvent(data: string) {
-    this._requestByPassInit(data);
+  private _onByPassInitEvent(cachetoken: string) {
+    this._requestByPassInit(cachetoken);
   }
 
   /**
@@ -300,7 +300,7 @@ class ControlFrame extends Frame {
   }
 
   /**
-   *
+   * Assigned received merchant data.
    * @param data
    * @private
    */
