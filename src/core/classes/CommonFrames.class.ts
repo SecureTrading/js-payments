@@ -55,7 +55,7 @@ export default class CommonFrames extends RegisterFrames {
   }
 
   /**
-   *
+   * Gathers and launches methods needed on initializing object.
    */
   protected onInit() {
     this._initFormFields();

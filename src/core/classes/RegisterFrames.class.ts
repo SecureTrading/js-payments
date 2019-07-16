@@ -26,7 +26,7 @@ export default class RegisterFrames {
   }
 
   /**
-   *
+   * Gathers and launches methods needed on initializing object.
    */
   protected onInit() {
     this.registerElements(this.elementsToRegister, this.elementsTargets);

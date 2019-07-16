@@ -50,7 +50,7 @@ class CardFrames extends RegisterFrames {
   }
 
   /**
-   * Initializes cards and registers elements.
+   * Gathers and launches methods needed on initializing object.
    */
   protected onInit() {
     this._initCardFields();
