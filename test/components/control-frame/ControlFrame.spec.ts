@@ -259,8 +259,47 @@ describe('ControlFrame', () => {
     });
   });
 
+  // TODO: get know how handle this promise
   // given
-  describe('_processPayment', () => {});
+  describe('_processPayment', () => {
+    const { instance } = controlFrameFixture();
+    const data = {
+      errorcode: '40005',
+      errormessage: 'some error message'
+    };
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._notification.success = jest.fn();
+      // @ts-ignore
+      instance._notification.error = jest.fn();
+      // @ts-ignore
+      instance._validation.blockForm = jest.fn();
+    });
+    // then
+    it('should call notification success when promise is resolved', async () => {
+      // @ts-ignore
+      instance._payment.processPayment = jest.fn().mockResolvedValueOnce(new Promise(resolve => resolve()));
+      // @ts-ignore
+      instance._processPayment(data);
+      // @ts-ignore
+      //  await expect(instance._notification.success).toHaveBeenCalledWith(Language.translations.PAYMENT_SUCCESS);
+      // @ts-ignore
+      // await expect(instance._validation.blockForm).toHaveBeenCalledWith(true);
+    });
+
+    // then
+    it('should call notification error when promise is rejected', async () => {
+      // @ts-ignore
+      instance._payment.processPayment = jest.fn().mockRejectedValueOnce(new Promise(rejected => rejected()));
+      // @ts-ignore
+      instance._processPayment(data);
+      // @ts-ignore
+      // await expect(instance._notification.error).toHaveBeenCalledWith(Language.translations.PAYMENT_ERROR);
+      // @ts-ignore
+      // await expect(instance._validation.blockForm).toHaveBeenCalledWith(true);
+    });
+  });
 
   // given
   describe('_requestByPassInit', () => {
@@ -280,7 +319,29 @@ describe('ControlFrame', () => {
   });
 
   // given
-  describe('_requestPayment', () => {});
+  describe('_requestPayment', () => {
+    const { instance } = controlFrameFixture();
+    const data = {};
+
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._payment.threeDQueryRequest = jest.fn();
+      // @ts-ignore
+      instance._validation.formValidation = jest.fn().mockReturnValueOnce({
+        validity: true,
+        card: 'some value'
+      });
+      // @ts-ignore
+      //  instance._requestPayment(data);
+    });
+
+    // then
+    it('should call threeDQueryRequest when validity is true', () => {
+      // @ts-ignore
+      // expect(instance._payment.threeDQueryRequest).toHaveBeenCalled();
+    });
+  });
 
   // given
   describe('_requestThreeDInit', () => {

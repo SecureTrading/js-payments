@@ -9,7 +9,7 @@ import Payment from '../../core/shared/Payment';
 import Validation from '../../core/shared/Validation';
 
 /**
- *
+ * Defines frame which is essentially a hub which collects events and processes from whole library.
  */
 class ControlFrame extends Frame {
   private _payment: Payment;
@@ -40,13 +40,32 @@ class ControlFrame extends Frame {
     }
   };
 
+  private _formFieldsValidity = {
+    cardNumber: {
+      message: '',
+      state: this._formFields.cardNumber.validity
+    },
+    expirationDate: {
+      message: '',
+      state: this._formFields.expirationDate.validity
+    },
+    securityCode: {
+      message: '',
+      state: this._formFields.expirationDate.validity
+    }
+  };
+
+  private _threedqueryEvent: IMessageBusEvent = {
+    type: MessageBus.EVENTS_PUBLIC.THREEDQUERY
+  };
+
   constructor() {
     super();
     this.onInit();
   }
 
   /**
-   *
+   * Triggers methods needed on initializing class.
    */
   protected onInit() {
     super.onInit();
@@ -58,15 +77,14 @@ class ControlFrame extends Frame {
   }
 
   /**
-   *
-   * @private
+   * Gets allowed parameters including locale from parent class.
    */
   protected getAllowedParams() {
     return super.getAllowedParams().concat(['origin', 'jwt', 'gatewayUrl']);
   }
 
   /**
-   *
+   * Sets listeners for each MessageBus events.
    * @private
    */
   private _initSubscriptions() {
@@ -103,7 +121,7 @@ class ControlFrame extends Frame {
   }
 
   /**
-   *
+   * Handles validity and value of card number field.
    * @param data
    * @private
    */
@@ -113,7 +131,7 @@ class ControlFrame extends Frame {
   }
 
   /**
-   *
+   * Handles validity and value of expiration date field.
    * @param data
    * @private
    */
@@ -123,7 +141,7 @@ class ControlFrame extends Frame {
   }
 
   /**
-   *
+   * Handles validity and value of security code field.
    * @param data
    * @private
    */
@@ -133,7 +151,7 @@ class ControlFrame extends Frame {
   }
 
   /**
-   *
+   * Splits post and pre threedrequests types.
    * @param data
    * @private
    */
@@ -144,7 +162,7 @@ class ControlFrame extends Frame {
   }
 
   /**
-   *
+   * Handles submit action.
    * @param data
    * @private
    */
@@ -156,7 +174,7 @@ class ControlFrame extends Frame {
   }
 
   /**
-   *
+   * Triggers LOAD_CONTROL_FRAME event on init.
    * @private
    */
   private _onLoad() {
@@ -167,7 +185,7 @@ class ControlFrame extends Frame {
   }
 
   /**
-   *
+   * Sets payment as ready after Cardinal Commerce has been loaded.
    * @private
    */
   private _onLoadCardinal() {
@@ -175,7 +193,7 @@ class ControlFrame extends Frame {
   }
 
   /**
-   *
+   * Handles _onThreeDInitEvent.
    * @private
    */
   private _onThreeDInitEvent() {
@@ -183,8 +201,8 @@ class ControlFrame extends Frame {
   }
 
   /**
-   *
-   * @param data
+   * Handles _onByPassInitEvent with cachetoken.
+   * @param cachetoken
    * @private
    */
   private _onByPassInitEvent(cachetoken: string) {
@@ -192,7 +210,7 @@ class ControlFrame extends Frame {
   }
 
   /**
-   *
+   * Sets _processThreeDResponse or _processPayment depends on threedrequest types,
    * @param data
    * @private
    */
@@ -205,19 +223,20 @@ class ControlFrame extends Frame {
   }
 
   /**
-   * Process 3DResponse.
+   * Processes 3DResponse.
    * @param data
    * @private
    */
   private _processThreeDResponse(data: IResponseData) {
-    if (data.threedresponse !== undefined) {
-      StCodec.publishResponse(this._threeDQueryResult.response, this._threeDQueryResult.jwt, data.threedresponse);
+    const { threedresponse } = data;
+    if (threedresponse !== undefined) {
+      StCodec.publishResponse(this._threeDQueryResult.response, this._threeDQueryResult.jwt, threedresponse);
     }
     this._notification.success(Language.translations.PAYMENT_SUCCESS);
   }
 
   /**
-   * Process payment flow.
+   * Processes payment flow.
    * @param data
    * @private
    */
@@ -236,7 +255,7 @@ class ControlFrame extends Frame {
   }
 
   /**
-   *
+   * Triggers byPassInitRequest and publish this event with data.
    * @param cachetoken
    * @private
    */
@@ -254,39 +273,22 @@ class ControlFrame extends Frame {
    */
   private _requestPayment(data: any) {
     const dataInJwt = data ? data.dataInJwt : false;
-    const messageBusEvent: IMessageBusEvent = {
-      type: MessageBus.EVENTS_PUBLIC.THREEDQUERY
-    };
-    const formValidity = {
-      cardNumber: {
-        message: '',
-        state: this._formFields.cardNumber.validity
-      },
-      expirationDate: {
-        message: '',
-        state: this._formFields.expirationDate.validity
-      },
-      securityCode: {
-        message: '',
-        state: this._formFields.expirationDate.validity
-      }
-    };
     const { validity, card } = this._validation.formValidation(dataInJwt, this._isPaymentReady, this._formFields);
     if (validity) {
       this._payment
         .threeDQueryRequest(this._preThreeDRequestTypes, card, this._merchantFormData)
         .then((result: any) => {
           this._threeDQueryResult = result;
-          messageBusEvent.data = result.response;
-          this._messageBus.publish(messageBusEvent, true);
+          this._threedqueryEvent.data = result.response;
+          this._messageBus.publish(this._threedqueryEvent, true);
         });
     } else {
-      this._validation.setFormValidity(formValidity);
+      this._validation.setFormValidity(this._formFieldsValidity);
     }
   }
 
   /**
-   *
+   * Triggers threeDInitRequest with MessageBus THREEDINIT event and publish this event with data.
    * @private
    */
   private _requestThreeDInit() {
