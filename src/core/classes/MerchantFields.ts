@@ -40,7 +40,7 @@ export class MerchantFields {
       if (this._merchantInputs[i].hasAttribute(MerchantFields.DATA_ATTRIBUTE_NAME)) {
         const input = document.getElementById(this._merchantInputs[i].id) as HTMLInputElement;
         const container = document.createElement('div');
-        container.classList.add('error');
+        container.classList.add('error-message');
         const messageElement = input.parentElement.appendChild(container);
         this.backendValidation(input, MessageBus.EVENTS.VALIDATE_MERCHANT_FIELD, messageElement);
         input.addEventListener('keypress', () => {
