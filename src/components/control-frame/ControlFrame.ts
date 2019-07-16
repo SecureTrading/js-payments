@@ -1,5 +1,5 @@
 import { StCodec } from '../../core/classes/StCodec.class';
-import { IProcessPayments, ISetRequestTypes, ISubmitData } from '../../core/models/ControlFrame';
+import { ISetRequestTypes, ISubmitData } from '../../core/models/ControlFrame';
 import { IMerchantData } from '../../core/models/MerchantData';
 import Frame from '../../core/shared/Frame';
 import Language from '../../core/shared/Language';
