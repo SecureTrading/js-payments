@@ -95,8 +95,6 @@ class ControlFrame extends Frame {
       this._onProcessPaymentEvent(data);
     });
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, (data?: ISubmitData) => {
-      console.log('SUBMIT_FORM');
-      console.error(data);
       this._onSubmit(data);
     });
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS, (data: any) => {

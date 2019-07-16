@@ -1,5 +1,7 @@
 import ControlFrame from '../../../src/components/control-frame/ControlFrame';
 
+jest.mock('./../../../src/core/shared/Payment');
+
 // given
 describe('ControlFrame', () => {
   // given
@@ -59,9 +61,21 @@ describe('ControlFrame', () => {
   // given
   describe('_storeMerchantData', () => {
     const { instance } = controlFrameFixture();
+    const data = 'some data';
+
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._storeMerchantData(data);
+      // @ts-ignore
+      instance._messageBus.publish = jest.fn();
+    });
 
     // then
-    it('should set _merchantFormData', () => {});
+    it('should set _merchantFormData', () => {
+      // @ts-ignore
+      expect(instance._merchantFormData).toEqual(data);
+    });
   });
 });
 
