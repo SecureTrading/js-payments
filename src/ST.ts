@@ -27,7 +27,7 @@ import { environment } from './environments/environment';
  */
 class ST {
   /**
-   * Collect and set default values for config object.
+   * Collect and set default values for _config object.
    * @param config
    * @private
    */
@@ -96,7 +96,7 @@ class ST {
 
   /**
    * Uses HapiJS Joi library - object schema description language and validator for JavaScript objects.
-   * Checks config object data provided by merchant.
+   * Checks _config object data provided by merchant.
    * @param config
    * @param schema
    */
@@ -186,17 +186,17 @@ class ST {
     return cardFrames;
   }
 
-  private componentIds: {};
-  private cachetoken: string;
-  private gatewayUrl: string;
-  private jwt: string;
-  private origin: string;
-  private styles: IStyles;
-  private submitFields: string[];
-  private submitOnError: boolean;
-  private submitOnSuccess: boolean;
-  private threedinit: string;
-  private readonly config: IConfig;
+  private _componentIds: {};
+  private _cachetoken: string;
+  private _gatewayUrl: string;
+  private _jwt: string;
+  private _origin: string;
+  private _styles: IStyles;
+  private _submitFields: string[];
+  private _submitOnError: boolean;
+  private _submitOnSuccess: boolean;
+  private readonly _threedinit: string;
+  private readonly _config: IConfig;
   private commonFrames: CommonFrames;
 
   constructor(config: IConfig) {
@@ -204,21 +204,21 @@ class ST {
       const {
         init: { cachetoken, threedinit }
       } = config;
-      this.threedinit = threedinit;
-      this.cachetoken = cachetoken;
+      this._threedinit = threedinit;
+      this._cachetoken = cachetoken;
     }
-    this.config = ST._addDefaults(config);
-    ST._validateConfig(this.config, IConfigSchema);
-    this._setClassProperties(this.config);
+    this._config = ST._addDefaults(config);
+    ST._validateConfig(this._config, IConfigSchema);
+    this._setClassProperties(this._config);
     this.commonFrames = ST._configureCommonFrames(
-      this.jwt,
-      this.origin,
-      this.componentIds,
-      this.styles,
-      this.submitOnSuccess,
-      this.submitOnError,
-      this.submitFields,
-      this.gatewayUrl
+      this._jwt,
+      this._origin,
+      this._componentIds,
+      this._styles,
+      this._submitOnSuccess,
+      this._submitOnError,
+      this._submitFields,
+      this._gatewayUrl
     );
     ST._configureMerchantFields();
   }
@@ -231,7 +231,7 @@ class ST {
   public Components(config?: IComponentsConfig) {
     const { targetConfig } = ST._setConfigObject(config);
     ST._validateConfig(targetConfig, IComponentsConfigSchema);
-    ST._configureCardFrames(this.jwt, this.origin, this.componentIds, this.styles, targetConfig);
+    ST._configureCardFrames(this._jwt, this._origin, this._componentIds, this._styles, targetConfig);
     this.commonFrames.requestTypes = targetConfig.requestTypes;
     this.CardinalCommerce(targetConfig);
   }
@@ -244,7 +244,7 @@ class ST {
   public ApplePay(config: IWalletConfig) {
     const applepay = environment.testEnvironment ? ApplePayMock : ApplePay;
     config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
-    return new applepay(config, this.jwt, this.gatewayUrl);
+    return new applepay(config, this._jwt, this._gatewayUrl);
   }
 
   /**
@@ -255,7 +255,7 @@ class ST {
   public VisaCheckout(config: IWalletConfig) {
     const visa = environment.testEnvironment ? VisaCheckoutMock : VisaCheckout;
     config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
-    return new visa(config, this.jwt, this.gatewayUrl);
+    return new visa(config, this._jwt, this._gatewayUrl);
   }
 
   /**
@@ -265,7 +265,7 @@ class ST {
    */
   private CardinalCommerce(config: IWalletConfig) {
     const cardinal = environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce;
-    return new cardinal(config.startOnLoad, this.jwt, config.requestTypes, this.cachetoken, this.threedinit);
+    return new cardinal(config.startOnLoad, this._jwt, config.requestTypes, this._cachetoken, this._threedinit);
   }
 
   /**
@@ -286,17 +286,17 @@ class ST {
       datacenterurl,
       formId
     } = config;
-    this.componentIds = componentIds;
-    this.jwt = jwt;
+    this._componentIds = componentIds;
+    this._jwt = jwt;
     if (init) {
-      this.cachetoken = init.cachetoken;
+      this._cachetoken = init.cachetoken;
     }
-    this.origin = origin;
-    this.styles = styles;
-    this.submitFields = submitFields;
-    this.submitOnError = submitOnError;
-    this.submitOnSuccess = submitOnSuccess;
-    this.gatewayUrl = datacenterurl ? datacenterurl : environment.GATEWAY_URL;
+    this._origin = origin;
+    this._styles = styles;
+    this._submitFields = submitFields;
+    this._submitOnError = submitOnError;
+    this._submitOnSuccess = submitOnSuccess;
+    this._gatewayUrl = datacenterurl ? datacenterurl : environment.GATEWAY_URL;
     Selectors.MERCHANT_FORM_SELECTOR = formId ? formId : Selectors.MERCHANT_FORM_SELECTOR;
   }
 }
