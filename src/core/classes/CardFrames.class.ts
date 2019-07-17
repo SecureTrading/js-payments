@@ -25,6 +25,7 @@ class CardFrames extends RegisterFrames {
   private _expirationDate: Element;
   private _securityCode: Element;
   private _messageBus: MessageBus;
+  private _messageBusEvent: IMessageBusEvent = { data: { message: '' }, type: '' };
   private readonly _paymentTypes: string[];
   private readonly _defaultPaymentType: string;
   private _validation: Validation;
@@ -74,10 +75,10 @@ class CardFrames extends RegisterFrames {
    */
   protected setElementsFields() {
     return [
-      this.componentIds._cardNumber,
-      this.componentIds._expirationDate,
-      this.componentIds._securityCode,
-      this.componentIds._animatedCard
+      this.componentIds.cardNumber,
+      this.componentIds.expirationDate,
+      this.componentIds.securityCode,
+      this.componentIds.animatedCard
     ];
   }
 
@@ -215,28 +216,31 @@ class CardFrames extends RegisterFrames {
   }
 
   /**
-   *
+   * Validates all merchant form inputs after submit action.
    */
   private _validateFieldsAfterSubmit() {
     this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_FORM, (data: any) => {
+      console.log(data);
       const { cardNumber, expirationDate, securityCode } = data;
-      const messageBusEvent: IMessageBusEvent = { data: { message: '' }, type: '' };
-      if (!cardNumber.state) {
-        messageBusEvent.type = MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD;
-        messageBusEvent.data.message = cardNumber.message;
-        this._messageBus.publish(messageBusEvent);
-      }
-      if (!expirationDate.state) {
-        messageBusEvent.type = MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD;
-        messageBusEvent.data.message = expirationDate.message;
-        this._messageBus.publish(messageBusEvent);
-      }
-      if (!securityCode.state) {
-        messageBusEvent.type = MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD;
-        messageBusEvent.data.message = securityCode.message;
-        this._messageBus.publish(messageBusEvent);
-      }
+
+      !cardNumber.state && this._publishValidatedFieldState(cardNumber, MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD);
+      !expirationDate.state &&
+        this._publishValidatedFieldState(expirationDate, MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD);
+      !securityCode.state &&
+        this._publishValidatedFieldState(securityCode, MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD);
     });
+  }
+
+  /**
+   * Publishes validated event to MessageBus.
+   * @param field
+   * @param eventType
+   * @private
+   */
+  private _publishValidatedFieldState(field: any, eventType: any) {
+    this._messageBusEvent.type = eventType;
+    this._messageBusEvent.data.message = field.message;
+    this._messageBus.publish(this._messageBusEvent);
   }
 
   /**
@@ -253,8 +257,6 @@ class CardFrames extends RegisterFrames {
       element.textContent = this._translator.translate(Language.translations.PAY);
       element.classList.remove(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
     }
-
-    // @ts-ignore
     element.disabled = disabledState;
     return element;
   }

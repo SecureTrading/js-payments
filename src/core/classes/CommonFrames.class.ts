@@ -10,17 +10,6 @@ import RegisterFrames from './RegisterFrames.class';
  * Defines all non field elements of form and their placement on merchant site.
  */
 export default class CommonFrames extends RegisterFrames {
-  get merchantForm(): any {
-    return document.getElementById(Selectors.MERCHANT_FORM_SELECTOR);
-  }
-
-  set requestTypes(requestTypes: string[]) {
-    this._requestTypes = requestTypes;
-  }
-
-  get requestTypes(): string[] {
-    return this._requestTypes;
-  }
   private static readonly COMPLETED_REQUEST_TYPES = ['AUTH', 'CACHETOKENISE'];
   public elementsToRegister: HTMLElement[];
   public elementsTargets: any;
@@ -30,6 +19,7 @@ export default class CommonFrames extends RegisterFrames {
   private _controlFrame: Element;
   private _messageBus: MessageBus;
   private _requestTypes: string[];
+  private readonly _merchantForm: HTMLFormElement;
   private readonly _submitOnSuccess: boolean;
   private readonly _submitOnError: boolean;
   private readonly _submitFields: string[];
@@ -51,6 +41,7 @@ export default class CommonFrames extends RegisterFrames {
     this._submitFields = submitFields;
     this._gatewayUrl = gatewayUrl;
     this._messageBus = new MessageBus(origin);
+    this._merchantForm = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR) as HTMLFormElement;
     this.onInit();
   }
 
@@ -84,7 +75,7 @@ export default class CommonFrames extends RegisterFrames {
   protected setElementsFields() {
     const elements = [];
     if (this._shouldLoadNotificationFrame()) {
-      elements.push(this.componentIds._notificationFrame);
+      elements.push(this.componentIds.notificationFrame);
     }
     elements.push(Selectors.MERCHANT_FORM_SELECTOR); // Control frame is always needed so just append to form
     return elements;
@@ -132,7 +123,7 @@ export default class CommonFrames extends RegisterFrames {
    * @private
    */
   private _isThreedComplete(data: any) {
-    if (this.requestTypes[this.requestTypes.length - 1] === 'THREEDQUERY') {
+    if (this._requestTypes[this._requestTypes.length - 1] === 'THREEDQUERY') {
       return (
         // @ts-ignore
         (!CardinalCommerce._isCardEnrolledAndNotFrictionless(data) && data.requesttypedescription === 'THREEDQUERY') ||
@@ -175,7 +166,7 @@ export default class CommonFrames extends RegisterFrames {
    */
   private _onTransactionComplete(data: any) {
     if (this._shouldSubmitForm(data)) {
-      const form = this.merchantForm;
+      const form = this._merchantForm;
       DomMethods.addDataToForm(form, data, this._getSubmitFields(data));
       form.submit();
     }
@@ -186,7 +177,7 @@ export default class CommonFrames extends RegisterFrames {
    * @private
    */
   private _setMerchantInputListeners() {
-    const els = DomMethods.getAllFormElements(this.merchantForm);
+    const els = DomMethods.getAllFormElements(this._merchantForm);
     for (const el of els) {
       el.addEventListener('input', this._onInput.bind(this));
     }
