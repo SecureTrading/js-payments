@@ -1,6 +1,7 @@
 import ControlFrame from '../../../src/components/control-frame/ControlFrame';
 import { StCodec } from '../../../src/core/classes/StCodec.class';
 import Language from '../../../src/core/shared/Language';
+import MessageBus from '../../../src/core/shared/MessageBus';
 import SpyInstance = jest.SpyInstance;
 
 jest.mock('./../../../src/core/shared/Payment');
@@ -8,7 +9,28 @@ jest.mock('./../../../src/core/shared/Payment');
 // given
 describe('ControlFrame', () => {
   // given
-  describe('_initSubscriptions', () => {});
+  describe('_initSubscriptions', () => {
+    const { instance } = controlFrameFixture();
+    const messageBusEvent = {
+      type: ''
+    };
+
+    beforeEach(() => {
+      // @ts-ignore
+      instance._initSubscriptions();
+    });
+
+    // then
+    it('should call _onCardNumberStateChange when CHANGE_CARD_NUMBER event has been called', () => {
+      messageBusEvent.type = MessageBus.EVENTS.CHANGE_CARD_NUMBER;
+      // @ts-ignore
+      instance._onCardNumberStateChange = jest.fn();
+      // @ts-ignore
+      // instance._messageBus.publish(messageBusEvent);
+      // @ts-ignore
+      //  expect(instance._onCardNumberStateChange).toHaveBeenCalled();
+    });
+  });
 
   // given
   describe('_onCardNumberStateChange', () => {
@@ -328,18 +350,37 @@ describe('ControlFrame', () => {
       // @ts-ignore
       instance._payment.threeDQueryRequest = jest.fn();
       // @ts-ignore
+      instance._validation.setFormValidity = jest.fn();
+      // @ts-ignore
+      instance._messageBus.publish = jest.fn();
+    });
+
+    // then
+    it('should call instance._validation.setFormValidity when validity is false', () => {
+      // @ts-ignore
+      instance._payment.threeDQueryRequest = jest.fn().mockResolvedValueOnce({ result: { response: {} } });
+      // @ts-ignore
       instance._validation.formValidation = jest.fn().mockReturnValueOnce({
         validity: true,
         card: 'some value'
       });
       // @ts-ignore
-      //  instance._requestPayment(data);
+      instance._requestPayment(data);
+      // @ts-ignore
+      expect(instance._payment.threeDQueryRequest).toHaveBeenCalled();
     });
 
     // then
-    it('should call threeDQueryRequest when validity is true', () => {
+    it('should call instance._validation.setFormValidity when validity is false', () => {
       // @ts-ignore
-      // expect(instance._payment.threeDQueryRequest).toHaveBeenCalled();
+      instance._validation.formValidation = jest.fn().mockReturnValueOnce({
+        validity: false,
+        card: 'some value'
+      });
+      // @ts-ignore
+      instance._requestPayment(data);
+      // @ts-ignore
+      expect(instance._validation.setFormValidity).toHaveBeenCalled();
     });
   });
 
