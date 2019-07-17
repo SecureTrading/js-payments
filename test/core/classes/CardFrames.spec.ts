@@ -3,6 +3,46 @@ import CardFrames from '../../../src/core/classes/CardFrames.class';
 // given
 describe('CardFrames', () => {
   // given
+  describe('onInit', () => {
+    const { instance } = cardFramesFixture();
+    // when
+    beforeEach(() => {});
+
+    // then
+    it('', () => {});
+  });
+
+  // given
+  describe('registerElements', () => {
+    const { instance } = cardFramesFixture();
+    // when
+    beforeEach(() => {});
+
+    // then
+    it('', () => {});
+  });
+
+  // given
+  describe('setElementsFields', () => {
+    const { instance } = cardFramesFixture();
+    // when
+    beforeEach(() => {});
+
+    // then
+    it('', () => {});
+  });
+
+  // given
+  describe('_disableFormField', () => {
+    const { instance } = cardFramesFixture();
+    // when
+    beforeEach(() => {});
+
+    // then
+    it('', () => {});
+  });
+
+  // given
   describe('_disableSubmitButton', () => {
     const { instance } = cardFramesFixture();
     // when
@@ -14,10 +54,120 @@ describe('CardFrames', () => {
     });
 
     // then
-    it('should call _getSubmitButton', () => {
+    it('', () => {
       // @ts-ignore
       expect(instance._getSubmitButton).toHaveBeenCalled();
     });
+  });
+
+  // given
+  describe('_getSubmitButton', () => {
+    const { instance } = cardFramesFixture();
+    // when
+    beforeEach(() => {});
+
+    // then
+    it('', () => {});
+  });
+
+  // given
+  describe('_initCardFields', () => {
+    const { instance } = cardFramesFixture();
+    // when
+    beforeEach(() => {});
+
+    // then
+    it('', () => {});
+  });
+
+  // given
+  describe('_initSubscribes', () => {
+    const { instance } = cardFramesFixture();
+    // when
+    beforeEach(() => {});
+
+    // then
+    it('', () => {});
+  });
+
+  // given
+  describe('_onInput', () => {
+    const { instance } = cardFramesFixture();
+    // when
+    beforeEach(() => {});
+
+    // then
+    it('', () => {});
+  });
+
+  // given
+  describe('_setMerchantInputListeners', () => {
+    const { instance } = cardFramesFixture();
+    // when
+    beforeEach(() => {});
+
+    // then
+    it('', () => {});
+  });
+
+  // given
+  describe('_submitFormListener', () => {
+    const { instance } = cardFramesFixture();
+    // when
+    beforeEach(() => {});
+
+    // then
+    it('', () => {});
+  });
+
+  // given
+  describe('_subscribeBlockSubmit', () => {
+    const { instance } = cardFramesFixture();
+    // when
+    beforeEach(() => {});
+
+    // then
+    it('', () => {});
+  });
+
+  // given
+  describe('_publishSubmitEvent', () => {
+    const { instance } = cardFramesFixture();
+    // when
+    beforeEach(() => {});
+
+    // then
+    it('', () => {});
+  });
+
+  // given
+  describe('_validateFieldsAfterSubmit', () => {
+    const { instance } = cardFramesFixture();
+    // when
+    beforeEach(() => {});
+
+    // then
+    it('', () => {});
+  });
+
+  // given
+  describe('_publishValidatedFieldState', () => {
+    const { instance } = cardFramesFixture();
+    // when
+    beforeEach(() => {});
+
+    // then
+    it('', () => {});
+  });
+
+  // given
+  describe('_setSubmitButtonProperties', () => {
+    const { instance } = cardFramesFixture();
+    // when
+    beforeEach(() => {});
+
+    // then
+    it('', () => {});
   });
 });
 
