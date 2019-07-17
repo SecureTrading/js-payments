@@ -26,13 +26,9 @@ export default class RegisterFrames {
   }
 
   /**
-   * Defines iframe elements to add
+   * Triggers methods needed on init.
    */
-  public setElementsFields(): any {
-    return [];
-  }
-
-  public _onInit() {
+  protected onInit() {
     this.registerElements(this.elementsToRegister, this.elementsTargets);
   }
 
@@ -41,10 +37,17 @@ export default class RegisterFrames {
    * @param fields
    * @param targets
    */
-  public registerElements(fields: HTMLElement[], targets: string[]) {
+  protected registerElements(fields: HTMLElement[], targets: string[]) {
     targets.map((item, index) => {
       const itemToChange = document.getElementById(item);
       itemToChange.appendChild(fields[index]);
     });
+  }
+
+  /**
+   * Defines iframe elements to add
+   */
+  protected setElementsFields(): string[] {
+    return [];
   }
 }

@@ -44,7 +44,7 @@ export default class CardFrames extends RegisterFrames {
     this.validation = new Validation();
     this.messageBus = new MessageBus();
     this._initSubscribes();
-    this._onInit();
+    this.onInit();
     this._translator = new Translator(this.params.locale);
     this.getSubmitButton();
   }
@@ -69,7 +69,7 @@ export default class CardFrames extends RegisterFrames {
   /**
    * Defines form elements for card payments
    */
-  public setElementsFields() {
+  protected setElementsFields(): string[] {
     return [
       this.componentIds.cardNumber,
       this.componentIds.expirationDate,
@@ -81,7 +81,7 @@ export default class CardFrames extends RegisterFrames {
   /**
    *
    */
-  public _onInit() {
+  protected onInit() {
     this.initCardFields();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
   }
@@ -125,7 +125,7 @@ export default class CardFrames extends RegisterFrames {
    * @param fields
    * @param targets
    */
-  public registerElements(fields: HTMLElement[], targets: string[]) {
+  protected registerElements(fields: HTMLElement[], targets: string[]) {
     targets.map((item, index) => {
       const itemToChange = document.getElementById(item);
       itemToChange.appendChild(fields[index]);

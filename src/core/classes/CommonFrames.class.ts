@@ -51,13 +51,13 @@ export default class CommonFrames extends RegisterFrames {
     this.submitFields = submitFields;
     this.gatewayUrl = gatewayUrl;
     this.messageBus = new MessageBus(origin);
-    this._onInit();
+    this.onInit();
   }
 
   /**
    * Defines form elements for notifications and control frame
    */
-  public setElementsFields() {
+  protected setElementsFields(): string[] {
     const elements = [];
     if (this.shouldLoadNotificationFrame()) {
       elements.push(this.componentIds.notificationFrame);
@@ -66,7 +66,7 @@ export default class CommonFrames extends RegisterFrames {
     return elements;
   }
 
-  public _onInit() {
+  protected onInit() {
     this.initFormFields();
     this._setMerchantInputListeners();
     this._setTransactionCompleteListener();
@@ -97,7 +97,7 @@ export default class CommonFrames extends RegisterFrames {
    * @param fields
    * @param targets
    */
-  public registerElements(fields: HTMLElement[], targets: string[]) {
+  protected registerElements(fields: HTMLElement[], targets: string[]) {
     targets.map((item, index) => {
       const itemToChange = document.getElementById(item);
       if (fields[index]) {
