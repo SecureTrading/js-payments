@@ -47,7 +47,7 @@ describe('RegisterFrames', () => {
   describe('setElementsFields', () => {
     const { instance } = registerFramesFixture();
     // then
-    it('should return an empty array', () => {
+    it('should return an empty array as preparation for children classes', () => {
       // @ts-ignore
       expect(instance.setElementsFields()).toEqual([]);
     });
@@ -60,10 +60,10 @@ function registerFramesFixture() {
   document.body.innerHTML = form;
   const componentsIds = {};
   const cardNumberField = document.createElement('input');
-  cardNumberField.setAttribute('id', 'cardNumber');
   const expirationDateField = document.createElement('input');
-  expirationDateField.setAttribute('id', 'expirationDate');
   const securityCodeField = document.createElement('input');
+  cardNumberField.setAttribute('id', 'cardNumber');
+  expirationDateField.setAttribute('id', 'expirationDate');
   securityCodeField.setAttribute('id', 'securityCode');
   const fields: HTMLElement[] = [cardNumberField, expirationDateField, securityCodeField];
   const targets = ['st-card-number', 'st-expiration-date', 'st-security-code'];

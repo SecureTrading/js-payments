@@ -55,24 +55,6 @@ export default class CommonFrames extends RegisterFrames {
   }
 
   /**
-   * Defines form elements for notifications and control frame
-   */
-  protected setElementsFields(): string[] {
-    const elements = [];
-    if (this.shouldLoadNotificationFrame()) {
-      elements.push(this.componentIds.notificationFrame);
-    }
-    elements.push(Selectors.MERCHANT_FORM_SELECTOR); // Control frame is always needed so just append to form
-    return elements;
-  }
-
-  protected onInit() {
-    this.initFormFields();
-    this._setMerchantInputListeners();
-    this._setTransactionCompleteListener();
-    this.registerElements(this.elementsToRegister, this.elementsTargets);
-  }
-  /**
    * Inits necessary fields - notification and control frame
    */
   public initFormFields() {
@@ -90,6 +72,25 @@ export default class CommonFrames extends RegisterFrames {
     });
     this.controlFrameMounted = this.controlFrame.mount(Selectors.CONTROL_FRAME_IFRAME, '-1');
     this.elementsToRegister.push(this.controlFrameMounted);
+  }
+
+  /**
+   * Defines form elements for notifications and control frame
+   */
+  protected setElementsFields(): string[] {
+    const elements = [];
+    if (this.shouldLoadNotificationFrame()) {
+      elements.push(this.componentIds.notificationFrame);
+    }
+    elements.push(Selectors.MERCHANT_FORM_SELECTOR); // Control frame is always needed so just append to form
+    return elements;
+  }
+
+  protected onInit() {
+    this.initFormFields();
+    this._setMerchantInputListeners();
+    this._setTransactionCompleteListener();
+    this.registerElements(this.elementsToRegister, this.elementsTargets);
   }
 
   /**

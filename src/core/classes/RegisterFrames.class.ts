@@ -8,10 +8,10 @@ export default class RegisterFrames {
   public styles: IStyles;
   public params: any;
   public elementsToRegister: HTMLElement[];
-  public elementsTargets: any;
+  public elementsTargets: string[];
   public componentIds: any;
-  public jwt: any;
-  public origin: any;
+  public jwt: string;
+  public origin: string;
   private stJwt: StJwt;
 
   constructor(jwt: any, origin: any, componentIds: {}, styles: IStyles) {
@@ -38,10 +38,7 @@ export default class RegisterFrames {
    * @param targets
    */
   protected registerElements(fields: HTMLElement[], targets: string[]) {
-    targets.map((item, index) => {
-      const itemToChange = document.getElementById(item);
-      itemToChange.appendChild(fields[index]);
-    });
+    targets.map((item, index) => document.getElementById(item).appendChild(fields[index]));
   }
 
   /**

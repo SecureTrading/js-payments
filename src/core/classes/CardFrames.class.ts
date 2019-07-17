@@ -67,26 +67,6 @@ export default class CardFrames extends RegisterFrames {
   }
 
   /**
-   * Defines form elements for card payments
-   */
-  protected setElementsFields(): string[] {
-    return [
-      this.componentIds.cardNumber,
-      this.componentIds.expirationDate,
-      this.componentIds.securityCode,
-      this.componentIds.animatedCard
-    ];
-  }
-
-  /**
-   *
-   */
-  protected onInit() {
-    this.initCardFields();
-    this.registerElements(this.elementsToRegister, this.elementsTargets);
-  }
-
-  /**
    * Inits credit card and animated card fields (if merchant wanted this type of payment)
    */
   public initCardFields() {
@@ -118,6 +98,26 @@ export default class CardFrames extends RegisterFrames {
     this.animatedCard.create(Selectors.ANIMATED_CARD_COMPONENT_NAME, {}, animatedCardConfig);
     this.animatedCardMounted = this.animatedCard.mount(Selectors.ANIMATED_CARD_COMPONENT_FRAME, '-1');
     this.elementsToRegister.push(this.animatedCardMounted);
+  }
+
+  /**
+   * Defines form elements for card payments
+   */
+  protected setElementsFields(): string[] {
+    return [
+      this.componentIds.cardNumber,
+      this.componentIds.expirationDate,
+      this.componentIds.securityCode,
+      this.componentIds.animatedCard
+    ];
+  }
+
+  /**
+   *
+   */
+  protected onInit() {
+    this.initCardFields();
+    this.registerElements(this.elementsToRegister, this.elementsTargets);
   }
 
   /**
