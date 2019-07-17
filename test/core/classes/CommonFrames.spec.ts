@@ -169,7 +169,7 @@ describe('CommonFrames', () => {
     });
   });
 
-  describe('getSubmitFields()', () => {
+  describe('_getSubmitFields()', () => {
     // when
     const { instance } = commonFramesFixture();
 
@@ -179,7 +179,7 @@ describe('CommonFrames', () => {
       // @ts-ignore
       instance.submitFields = ['a', 'b', 'c'];
       // @ts-ignore
-      const result = instance.getSubmitFields(data);
+      const result = instance._getSubmitFields(data);
       expect(result).toEqual(['a', 'b', 'c']);
     });
     // then
@@ -188,7 +188,7 @@ describe('CommonFrames', () => {
       // @ts-ignore
       instance.submitFields = ['a', 'b', 'c'];
       // @ts-ignore
-      const result = instance.getSubmitFields(data);
+      const result = instance._getSubmitFields(data);
       expect(result).toEqual(['a', 'b', 'c', 'jwt']);
     });
     // then
@@ -197,7 +197,7 @@ describe('CommonFrames', () => {
       // @ts-ignore
       instance.submitFields = ['a', 'b', 'c'];
       // @ts-ignore
-      const result = instance.getSubmitFields(data);
+      const result = instance._getSubmitFields(data);
       expect(result).toEqual(['a', 'b', 'c', 'jwt', 'threedresponse']);
     });
   });
