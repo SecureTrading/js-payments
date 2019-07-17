@@ -2,12 +2,12 @@ import ControlFrame from '../../../src/components/control-frame/ControlFrame';
 import { StCodec } from '../../../src/core/classes/StCodec.class';
 import Language from '../../../src/core/shared/Language';
 import MessageBus from '../../../src/core/shared/MessageBus';
-import SpyInstance = jest.SpyInstance;
 
 jest.mock('./../../../src/core/shared/Payment');
 
 // given
 describe('ControlFrame', () => {
+  // TODO: get know how handle this promise
   // given
   describe('_initSubscriptions', () => {
     const { instance } = controlFrameFixture();
@@ -25,10 +25,6 @@ describe('ControlFrame', () => {
       messageBusEvent.type = MessageBus.EVENTS.CHANGE_CARD_NUMBER;
       // @ts-ignore
       instance._onCardNumberStateChange = jest.fn();
-      // @ts-ignore
-      // instance._messageBus.publish(messageBusEvent);
-      // @ts-ignore
-      //  expect(instance._onCardNumberStateChange).toHaveBeenCalled();
     });
   });
 
@@ -304,10 +300,6 @@ describe('ControlFrame', () => {
       instance._payment.processPayment = jest.fn().mockResolvedValueOnce(new Promise(resolve => resolve()));
       // @ts-ignore
       instance._processPayment(data);
-      // @ts-ignore
-      //  await expect(instance._notification.success).toHaveBeenCalledWith(Language.translations.PAYMENT_SUCCESS);
-      // @ts-ignore
-      // await expect(instance._validation.blockForm).toHaveBeenCalledWith(true);
     });
 
     // then
@@ -316,10 +308,6 @@ describe('ControlFrame', () => {
       instance._payment.processPayment = jest.fn().mockRejectedValueOnce(new Promise(rejected => rejected()));
       // @ts-ignore
       instance._processPayment(data);
-      // @ts-ignore
-      // await expect(instance._notification.error).toHaveBeenCalledWith(Language.translations.PAYMENT_ERROR);
-      // @ts-ignore
-      // await expect(instance._validation.blockForm).toHaveBeenCalledWith(true);
     });
   });
 
