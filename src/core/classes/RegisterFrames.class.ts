@@ -5,16 +5,16 @@ import { IStyles } from '../shared/Styler';
  * Defines all non field elements of form and their placement on merchant site.
  */
 export default class RegisterFrames {
-  public styles: IStyles;
-  public params: any;
-  public elementsToRegister: HTMLElement[];
-  public elementsTargets: any;
-  public componentIds: any;
-  public jwt: any;
-  public origin: any;
+  protected styles: IStyles;
+  protected params: any;
+  protected elementsToRegister: HTMLElement[];
+  protected elementsTargets: string[];
+  protected jwt: string;
+  protected origin: string;
+  protected componentIds: any;
   private stJwt: StJwt;
 
-  constructor(jwt: any, origin: any, componentIds: {}, styles: IStyles) {
+  constructor(jwt: string, origin: string, componentIds: {}, styles: IStyles) {
     this.styles = styles;
     this.componentIds = componentIds;
     this.elementsTargets = this.setElementsFields();

@@ -1,4 +1,5 @@
 import Element from '../Element';
+import { IValidationMessageBus } from '../models/Validation';
 import DomMethods from '../shared/DomMethods';
 import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
@@ -219,10 +220,8 @@ class CardFrames extends RegisterFrames {
    * Validates all merchant form inputs after submit action.
    */
   private _validateFieldsAfterSubmit() {
-    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_FORM, (data: any) => {
-      console.log(data);
+    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_FORM, (data: IValidationMessageBus) => {
       const { cardNumber, expirationDate, securityCode } = data;
-
       !cardNumber.state && this._publishValidatedFieldState(cardNumber, MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD);
       !expirationDate.state &&
         this._publishValidatedFieldState(expirationDate, MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD);
