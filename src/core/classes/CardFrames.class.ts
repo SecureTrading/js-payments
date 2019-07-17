@@ -32,8 +32,8 @@ class CardFrames extends RegisterFrames {
   private _translator: Translator;
 
   constructor(
-    jwt: any,
-    origin: any,
+    jwt: string,
+    origin: string,
     componentIds: {},
     styles: IStyles,
     paymentTypes: string[],

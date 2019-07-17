@@ -10,6 +10,14 @@ import RegisterFrames from './RegisterFrames.class';
  * Defines all non field elements of form and their placement on merchant site.
  */
 export default class CommonFrames extends RegisterFrames {
+  set requestTypes(requestTypes: string[]) {
+    this._requestTypes = requestTypes;
+  }
+
+  get requestTypes(): string[] {
+    return this._requestTypes;
+  }
+
   private static readonly COMPLETED_REQUEST_TYPES = ['AUTH', 'CACHETOKENISE'];
   public elementsToRegister: HTMLElement[];
   public elementsTargets: any;
@@ -123,7 +131,7 @@ export default class CommonFrames extends RegisterFrames {
    * @private
    */
   private _isThreedComplete(data: any) {
-    if (this._requestTypes[this._requestTypes.length - 1] === 'THREEDQUERY') {
+    if (this.requestTypes[this.requestTypes.length - 1] === 'THREEDQUERY') {
       return (
         // @ts-ignore
         (!CardinalCommerce._isCardEnrolledAndNotFrictionless(data) && data.requesttypedescription === 'THREEDQUERY') ||
