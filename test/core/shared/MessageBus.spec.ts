@@ -3,7 +3,8 @@ import MessageBus from '../../../src/core/shared/MessageBus';
 // given
 describe('MessageBus', () => {
   // given
-  describe('MessageBus.constructor', () => {
+  describe('constructor()', () => {
+    // then
     it('should set origins and event listener', () => {
       window.addEventListener = jest.fn();
       let instance = new MessageBus();
@@ -37,7 +38,7 @@ describe('MessageBus', () => {
   });
 
   // given
-  describe('MessageBus.publish', () => {
+  describe('publish()', () => {
     let event: any;
     let instance: MessageBus;
     let framePostMessage: Function;
@@ -75,7 +76,7 @@ describe('MessageBus', () => {
   });
 
   // given
-  describe('MessageBus.publishFromParent', () => {
+  describe('publishFromParent()', () => {
     // then
     it('should postMessage to frame', () => {
       let event = { type: 'MYEVENT', data: 'SOME EVENT DATA' };
@@ -95,17 +96,19 @@ describe('MessageBus', () => {
   });
 
   // given
-  describe('publishToSelf', () => {
+  describe('publishToSelf()', () => {
     let instance = new MessageBus();
     const someRandomEvent = {
       type: 'SOME_RANDOM_EVENT',
       data: {}
     };
+
     // when
     beforeEach(() => {
       window.postMessage = jest.fn();
       instance.publishToSelf(someRandomEvent);
     });
+
     // then
     it('should call window.postMessage', () => {
       expect(window.postMessage).toHaveBeenCalledTimes(1);
@@ -114,7 +117,7 @@ describe('MessageBus', () => {
   });
 
   // given
-  describe('MessageBus.subscribeOnParent', () => {
+  describe('subscribeOnParent()', () => {
     // then
     it('should add callback to subscriptions', () => {
       let instance = new MessageBus();
@@ -141,13 +144,13 @@ describe('MessageBus', () => {
   });
 
   // given
-  describe('MessageBus.registerMessageListener', () => {
+  describe('registerMessageListener()', () => {
     // then
     it('should register message listener', () => {
       let instance = new MessageBus();
       window.addEventListener = jest.fn();
       // @ts-ignore
-      instance.registerMessageListener();
+      instance._registerMessageListener();
       expect(window.addEventListener).toHaveBeenCalledTimes(1);
       // @ts-ignore
       expect(window.addEventListener).toHaveBeenCalledWith('message', instance._handleMessageEvent);
@@ -155,9 +158,11 @@ describe('MessageBus', () => {
   });
 
   // given
-  describe('MessageBus._handleMessageEvent', () => {
+  describe('_handleMessageEvent()', () => {
     let subFunc: Function;
     let instance: MessageBus;
+
+    // when
     beforeEach(() => {
       instance = new MessageBus('https://parent.com');
       subFunc = jest.fn();
