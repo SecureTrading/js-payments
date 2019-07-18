@@ -74,6 +74,7 @@ describe('Component NotificationFrame class', () => {
     it('should set messageBus listener', () => {
       // @ts-ignore
       instance._messageBus.subscribe = jest.fn();
+      // @ts-ignore
       instance._onMessage();
       // @ts-ignore
       expect(instance._messageBus.subscribe.mock.calls[0][0]).toBe('NOTIFICATION');
@@ -86,8 +87,10 @@ describe('Component NotificationFrame class', () => {
 
   describe('NotificationFrame._notificationEvent', () => {
     it('should set message and call other functions', () => {
-      instance.insertContent = jest.fn();
-      instance.setAttributeClass = jest.fn();
+      // @ts-ignore
+      instance._insertContent = jest.fn();
+      // @ts-ignore
+      instance._setAttributeClass = jest.fn();
 
       // @ts-ignore
       instance._notificationEvent({
@@ -95,8 +98,10 @@ describe('Component NotificationFrame class', () => {
         content: 'my error content'
       });
 
-      expect(instance.insertContent).toHaveBeenCalledTimes(1);
-      expect(instance.setAttributeClass).toHaveBeenCalledTimes(1);
+      // @ts-ignore
+      expect(instance._insertContent).toHaveBeenCalledTimes(1);
+      // @ts-ignore
+      expect(instance._setAttributeClass).toHaveBeenCalledTimes(1);
       // @ts-ignore
       expect(instance._message).toMatchObject({
         type: 'error',
@@ -114,7 +119,8 @@ describe('Component NotificationFrame class', () => {
       // @ts-ignore
       instance.notificationFrameElement = document.getElementById(elementId) as HTMLElement;
       instance._message = errorMessage;
-      instance.insertContent();
+      // @ts-ignore
+      instance._insertContent();
     });
 
     // then
@@ -134,7 +140,8 @@ describe('Component NotificationFrame class', () => {
       instance.notificationFrameElement = document.getElementById(elementId) as HTMLElement;
       instance._message = { content: 'Field is required', type: 'error' };
       instance._translator = new Translator('fr_FR');
-      instance.insertContent();
+      // @ts-ignore
+      instance._insertContent();
     });
 
     // then
@@ -154,15 +161,21 @@ describe('Component NotificationFrame class', () => {
     const { errorMessage } = NotificationFrameFixture();
 
     beforeEach(() => {
+      // @ts-ignore
       instance._onMessage();
-      insertContentSpy = jest.spyOn(instance, 'insertContent');
-      setAttributeClassSpy = jest.spyOn(instance, 'setAttributeClass');
-      insertContentMethod = instance.insertContent();
-      setAttributeClassMethod = instance.setAttributeClass();
+      // @ts-ignore
+      insertContentSpy = jest.spyOn(instance, '_insertContent');
+      // @ts-ignore
+      setAttributeClassSpy = jest.spyOn(instance, '_setAttributeClass');
+      // @ts-ignore
+      insertContentMethod = instance._insertContent();
+      // @ts-ignore
+      setAttributeClassMethod = instance._setAttributeClass();
     });
 
     // then
     it('should set message data', () => {
+      // @ts-ignore
       instance._onMessage();
       // @ts-ignore
       expect(instance._message).toMatchObject(errorMessage);
@@ -207,7 +220,8 @@ describe('Component NotificationFrame class', () => {
       instance.notificationFrameElement = document.createElement('div');
       // @ts-ignore
       instance._autoHide = jest.fn();
-      instance.setAttributeClass();
+      // @ts-ignore
+      instance._setAttributeClass();
       expect(instance.notificationFrameElement.className).toBe('notification-frame--error');
       // @ts-ignore
       expect(instance._autoHide).toHaveBeenCalledTimes(1);
@@ -219,7 +233,8 @@ describe('Component NotificationFrame class', () => {
       instance.notificationFrameElement = document.createElement('div');
       // @ts-ignore
       instance._autoHide = jest.fn();
-      instance.setAttributeClass();
+      // @ts-ignore
+      instance._setAttributeClass();
       expect(instance.notificationFrameElement.className).toBe('notification-frame--warning');
       // @ts-ignore
       expect(instance._autoHide).toHaveBeenCalledTimes(1);
@@ -231,7 +246,8 @@ describe('Component NotificationFrame class', () => {
       instance.notificationFrameElement = document.createElement('div');
       // @ts-ignore
       instance._autoHide = jest.fn();
-      instance.setAttributeClass();
+      // @ts-ignore
+      instance._setAttributeClass();
       expect(instance.notificationFrameElement.className).toBe('');
       // @ts-ignore
       expect(instance._autoHide).toHaveBeenCalledTimes(0);
@@ -245,7 +261,8 @@ describe('Component NotificationFrame class', () => {
       expect(instance.notificationFrameElement.textContent).toBe('ORIGINAL');
       // @ts-ignore
       instance._message = { type: 'error', content: 'NEW VALUE' };
-      instance.insertContent();
+      // @ts-ignore
+      instance._insertContent();
       expect(instance.notificationFrameElement.textContent).toBe('NEW VALUE');
     });
   });
