@@ -2,20 +2,16 @@ import Payment from '../../../src/core/shared/Payment';
 import StTransport from '../../../src/core/classes/StTransport.class';
 
 // given
-describe('Payment class', () => {
-  const jwt =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0ZXN0X2p3dF9pc3N1ZXIiLCJwYXlsb2FkIjp7InNpdGVyZWZlcmVuY2UiOiJleGFtcGxlMTIzNDUiLCJiYXNlYW1vdW50IjoiMTAwMCIsImN1cnJlbmN5aXNvM2EiOiJHQlAifSwiaWF0IjoxNTE2MjM5MDIyfQ.jPuLMHxK3fznVddzkRoYC94hgheBXI1Y7zHAr7qNCig';
-  let instance: Payment;
-  let { card, wallet, walletverify } = paymentFixture();
+describe('Payment', () => {
+  let { card, wallet, walletverify, instance } = paymentFixture();
   // when
   beforeAll(() => {
-    instance = new Payment(jwt, 'https://example.com');
     // @ts-ignore
     instance._stTransport.sendRequest = jest.fn();
   });
 
   // given
-  describe('Payment.constructor', () => {
+  describe('constructor()', () => {
     // then
     it('should set attributes to payment instance', () => {
       // @ts-ignore
@@ -24,7 +20,7 @@ describe('Payment class', () => {
   });
 
   // given
-  describe('Payment.walletVerify', () => {
+  describe('walletVerify()', () => {
     // then
     it('should send WALLETVERIFY request with walletverify', () => {
       instance.walletVerify(walletverify);
@@ -40,7 +36,15 @@ describe('Payment class', () => {
   });
 
   // given
-  describe('Payment.processPayment', () => {
+  describe('byPassInitRequest()', () => {
+    const cachetoken = 'somecachetoken';
+    instance.byPassInitRequest(cachetoken);
+    // @ts-ignore
+    expect(instance._cardinalCommerceCacheToken).toEqual(cachetoken);
+  });
+
+  // given
+  describe('processPayment()', () => {
     // then
     it('should send AUTH request with card', () => {
       instance.processPayment(['AUTH'], card, {
@@ -140,8 +144,9 @@ describe('Payment class', () => {
       });
     });
   });
+
   // given
-  describe('Payment.threeDInitRequest', () => {
+  describe('threeDInitRequest', () => {
     // then
     it('should send JSINIT request', () => {
       // @ts-ignore
@@ -156,9 +161,16 @@ describe('Payment class', () => {
         requesttypedescriptions: ['JSINIT']
       });
     });
+
+    // then
+    it('should return resolved value', async () => {
+      // @ts-ignore
+      await expect(instance.threeDInitRequest).toEqual(instance._cardinalCommerceCacheToken);
+    });
   });
+
   // given
-  describe('Payment.threeDQueryRequest', () => {
+  describe('threeDQueryRequest', () => {
     // then
     it('should send THREEDQUERY request', () => {
       // @ts-ignore
@@ -181,6 +193,10 @@ describe('Payment class', () => {
 });
 
 function paymentFixture() {
+  const jwt =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0ZXN0X2p3dF9pc3N1ZXIiLCJwYXlsb2FkIjp7InNpdGVyZWZlcmVuY2UiOiJleGFtcGxlMTIzNDUiLCJiYXNlYW1vdW50IjoiMTAwMCIsImN1cnJlbmN5aXNvM2EiOiJHQlAifSwiaWF0IjoxNTE2MjM5MDIyfQ.jPuLMHxK3fznVddzkRoYC94hgheBXI1Y7zHAr7qNCig';
+  let instance: Payment;
+  instance = new Payment(jwt, 'https://example.com');
   const card = {
     expirydate: '10/22',
     pan: '4111111111111111',
@@ -196,5 +212,5 @@ function paymentFixture() {
     walletvalidationurl: 'https://example.com',
     walletrequestdomain: 'https://example2.com'
   };
-  return { card, wallet, walletverify };
+  return { card, wallet, walletverify, instance, jwt };
 }
