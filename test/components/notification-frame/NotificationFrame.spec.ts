@@ -1,16 +1,19 @@
+import SpyInstance = jest.SpyInstance;
 import NotificationFrame from '../../../src/components/notification-frame/NotificationFrame';
 import { Translator } from '../../../src/core/shared/Translator';
 
 // given
-describe('Component NotificationFrame class', () => {
+describe('NotificationFrame', () => {
+  // when
+  const { elementId, instance } = notificationFrameFixture();
+
   // given
-  const { elementId } = NotificationFrameFixture();
-  let { instance } = NotificationFrameFixture();
-  describe('NotificationFrame._getElement', () => {
+  describe('_getElement()', () => {
     // when
     beforeEach(() => {
       document.body.innerHTML = '<div id="st-notification-frame" class="notification-frame">Some example error</div>';
     });
+
     // then
     it('should return DOM element instance', () => {
       let actual = NotificationFrame.getElement(elementId);
@@ -19,11 +22,12 @@ describe('Component NotificationFrame class', () => {
     });
   });
 
-  describe('NotificationFrame.ifFieldExists', () => {
+  describe('ifFieldExists()', () => {
     // when
     beforeEach(() => {
       document.body.innerHTML = '<div id="st-notification-frame" class="notification-frame">Some example error</div>';
     });
+
     // then
     it('should return DOM element instance', () => {
       let actual = NotificationFrame.ifFieldExists();
@@ -32,7 +36,9 @@ describe('Component NotificationFrame class', () => {
     });
   });
 
-  describe('NotificationFrame.notificationFrameElement get and set', () => {
+  // given
+  describe('notificationFrameElement get and set', () => {
+    // then
     it('should be able to set and get notificationFrameElement', () => {
       instance.notificationFrameElement = document.createElement('input');
       expect(instance.notificationFrameElement.tagName).toBe('INPUT');
@@ -40,9 +46,9 @@ describe('Component NotificationFrame class', () => {
   });
 
   // given
-  describe('NotificationFrame._getMessageClass', () => {
-    let { messageClasses } = NotificationFrameFixture();
-    let { messageTypes } = NotificationFrameFixture();
+  describe('_getMessageClass()', () => {
+    // when
+    let { messageClasses, messageTypes } = notificationFrameFixture();
 
     // then
     it(`should return ${messageClasses.errorMessage} class when input type is: ${messageTypes.error}`, () => {
@@ -70,7 +76,9 @@ describe('Component NotificationFrame class', () => {
     });
   });
 
-  describe('NotificationFrame._onMessage', () => {
+  // given
+  describe('_onMessage()', () => {
+    // then
     it('should set messageBus listener', () => {
       // @ts-ignore
       instance._messageBus.subscribe = jest.fn();
@@ -85,7 +93,9 @@ describe('Component NotificationFrame class', () => {
     });
   });
 
-  describe('NotificationFrame._notificationEvent', () => {
+  // given
+  describe('_notificationEvent()', () => {
+    // then
     it('should set message and call other functions', () => {
       // @ts-ignore
       instance._insertContent = jest.fn();
@@ -111,8 +121,8 @@ describe('Component NotificationFrame class', () => {
   });
 
   // given
-  describe('NotificationFrame.insertContent', () => {
-    let { elementId, errorMessage } = NotificationFrameFixture();
+  describe('insertContent()', () => {
+    let { elementId, errorMessage } = notificationFrameFixture();
     // when
     beforeEach(() => {
       document.body.innerHTML = '<div id="st-notification-frame" class="notification-frame">Some example error</div>';
@@ -130,9 +140,11 @@ describe('Component NotificationFrame class', () => {
     });
   });
 
-  describe('NotificationFrame.insertContent translated', () => {
-    let { elementId } = NotificationFrameFixture();
+  // given
+  describe('insertContent() translated', () => {
+    let { elementId } = notificationFrameFixture();
     let instance = new NotificationFrame();
+
     // when
     beforeEach(() => {
       document.body.innerHTML = '<div id="st-notification-frame" class="notification-frame">Some example error</div>';
@@ -152,14 +164,15 @@ describe('Component NotificationFrame class', () => {
   });
 
   // given
-  describe('NotificationFrame._errorMessageListener', () => {
-    let insertContentSpy: any;
-    let setAttributeClassSpy: any;
+  describe('_errorMessageListener()', () => {
+    let insertContentSpy: SpyInstance;
+    let setAttributeClassSpy: SpyInstance;
     let insertContentMethod;
     let setAttributeClassMethod;
     const functionCalls = 1;
-    const { errorMessage } = NotificationFrameFixture();
+    const { errorMessage } = notificationFrameFixture();
 
+    // when
     beforeEach(() => {
       // @ts-ignore
       instance._onMessage();
@@ -194,7 +207,9 @@ describe('Component NotificationFrame class', () => {
     });
   });
 
-  describe('NotificationFrame._autoHide', () => {
+  // given
+  describe('_autoHide()', () => {
+    // then
     it('should remove class after timeout', () => {
       // @ts-ignore
       NotificationFrame.NOTIFICATION_TTL = 0;
@@ -209,11 +224,60 @@ describe('Component NotificationFrame class', () => {
     });
   });
 
-  describe('NotificationFrame.setAttributeClass', () => {
+  // given
+  describe('_setDataNotificationColorAttribute()', () => {
+    const { instance } = notificationFrameFixture();
+
+    // when
     beforeEach(() => {
-      instance = new NotificationFrame();
+      instance.notificationFrameElement.setAttribute = jest.fn();
     });
 
+    // then
+    it('should call setAttribute with red color', () => {
+      // @ts-ignore
+      instance._setDataNotificationColorAttribute(NotificationFrame.MESSAGE_TYPES.error);
+      expect(instance.notificationFrameElement.setAttribute).toHaveBeenCalledWith('data-notification-color', 'red');
+    });
+
+    // then
+    it('should call setAttribute with grey color', () => {
+      // @ts-ignore
+      instance._setDataNotificationColorAttribute(NotificationFrame.MESSAGE_TYPES.info);
+      expect(instance.notificationFrameElement.setAttribute).toHaveBeenCalledWith('data-notification-color', 'grey');
+    });
+
+    // then
+    it('should call setAttribute with green color', () => {
+      // @ts-ignore
+      instance._setDataNotificationColorAttribute(NotificationFrame.MESSAGE_TYPES.success);
+      expect(instance.notificationFrameElement.setAttribute).toHaveBeenCalledWith('data-notification-color', 'green');
+    });
+
+    // then
+    it('should call setAttribute with yellow color', () => {
+      // @ts-ignore
+      instance._setDataNotificationColorAttribute(NotificationFrame.MESSAGE_TYPES.warning);
+      expect(instance.notificationFrameElement.setAttribute).toHaveBeenCalledWith('data-notification-color', 'yellow');
+    });
+
+    // then
+    it('should call setAttribute with undefined color', () => {
+      // @ts-ignore
+      instance._setDataNotificationColorAttribute('some other types');
+      expect(instance.notificationFrameElement.setAttribute).toHaveBeenCalledWith(
+        'data-notification-color',
+        'undefined'
+      );
+    });
+  });
+
+  // given
+  describe('setAttributeClass()', () => {
+    // when
+    const { instance } = notificationFrameFixture();
+
+    // then
     it('should add error class', () => {
       // @ts-ignore
       instance._message = { type: 'ERROR' };
@@ -227,6 +291,7 @@ describe('Component NotificationFrame class', () => {
       expect(instance._autoHide).toHaveBeenCalledTimes(1);
     });
 
+    // then
     it('should add warning class', () => {
       // @ts-ignore
       instance._message = { type: 'WARNING' };
@@ -240,7 +305,8 @@ describe('Component NotificationFrame class', () => {
       expect(instance._autoHide).toHaveBeenCalledTimes(1);
     });
 
-    it('shouldnt add unknown class', () => {
+    // then
+    it(`shouldn't add unknown class`, () => {
       // @ts-ignore
       instance._message = { type: 'ANOTHER' };
       instance.notificationFrameElement = document.createElement('div');
@@ -254,7 +320,9 @@ describe('Component NotificationFrame class', () => {
     });
   });
 
-  describe('NotificationFrame.insertContent', () => {
+  // given
+  describe('insertContent()', () => {
+    // then
     it('should set text content', () => {
       instance.notificationFrameElement = document.createElement('div');
       instance.notificationFrameElement.textContent = 'ORIGINAL';
@@ -266,9 +334,51 @@ describe('Component NotificationFrame class', () => {
       expect(instance.notificationFrameElement.textContent).toBe('NEW VALUE');
     });
   });
+
+  // given
+  describe('_autoHide()', () => {
+    // then
+    it('should set text content', () => {
+      instance.notificationFrameElement = document.createElement('div');
+      instance.notificationFrameElement.textContent = 'ORIGINAL';
+      expect(instance.notificationFrameElement.textContent).toBe('ORIGINAL');
+      // @ts-ignore
+      instance._message = { type: 'error', content: 'NEW VALUE' };
+      // @ts-ignore
+      instance._insertContent();
+      expect(instance.notificationFrameElement.textContent).toBe('NEW VALUE');
+    });
+  });
+
+  // given
+  describe('_autoHide()', () => {
+    const notificationElementClass = 'some class';
+
+    // when
+    beforeEach(() => {
+      instance.notificationFrameElement.classList.remove = jest.fn();
+    });
+
+    // then
+    it('should window.setTimeout been called', () => {
+      window.setTimeout = jest.fn();
+      // @ts-ignore
+      instance._autoHide(notificationElementClass);
+      expect(window.setTimeout).toHaveBeenCalled();
+    });
+
+    // then
+    it('should notificationElementClass has been removed', async () => {
+      // @ts-ignore
+      instance._autoHide(notificationElementClass);
+      await window.setTimeout(() => {
+        expect(instance.notificationFrameElement.className).toBe(notificationElementClass);
+      }, 50);
+    });
+  });
 });
 
-function NotificationFrameFixture() {
+function notificationFrameFixture() {
   const instance = new NotificationFrame();
   const messageTypes = {
     error: 'ERROR',
@@ -287,5 +397,6 @@ function NotificationFrameFixture() {
   };
   const notificationFrameHtml = '<div id="st-notification-frame" class="notification-frame">Some example error</div>';
   const elementId = 'st-notification-frame';
+  document.body.innerHTML = notificationFrameHtml;
   return { elementId, errorMessage, instance, messageClasses, messageTypes, notificationFrameHtml };
 }

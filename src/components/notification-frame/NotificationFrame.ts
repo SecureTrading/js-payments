@@ -205,7 +205,7 @@ class NotificationFrame extends Frame {
   }
 
   /**
-   *
+   * _autoHide
    * @param notificationElementClass
    * @private
    */
@@ -217,7 +217,7 @@ class NotificationFrame extends Frame {
   }
 
   /**
-   *
+   * _notificationEvent
    * @param data
    * @private
    */
