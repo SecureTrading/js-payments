@@ -7,36 +7,6 @@ import Selectors from '../../../src/core/shared/Selectors';
 // given
 describe('CardFrames', () => {
   // given
-  describe('onInit', () => {
-    const { instance } = cardFramesFixture();
-    // when
-    beforeEach(() => {});
-
-    // then
-    it('', () => {});
-  });
-
-  // given
-  describe('registerElements', () => {
-    const { instance } = cardFramesFixture();
-    // when
-    beforeEach(() => {});
-
-    // then
-    it('', () => {});
-  });
-
-  // given
-  describe('setElementsFields', () => {
-    const { instance } = cardFramesFixture();
-    // when
-    beforeEach(() => {});
-
-    // then
-    it('', () => {});
-  });
-
-  // given
   describe('_disableFormField', () => {
     const { instance } = cardFramesFixture();
     const data = true;
@@ -84,36 +54,6 @@ describe('CardFrames', () => {
       // @ts-ignore
       expect(instance._setSubmitButtonProperties).toHaveBeenCalled();
     });
-  });
-
-  // given
-  describe('_getSubmitButton', () => {
-    const { instance } = cardFramesFixture();
-    // when
-    beforeEach(() => {});
-
-    // then
-    it('', () => {});
-  });
-
-  // given
-  describe('_initCardFields', () => {
-    const { instance } = cardFramesFixture();
-    // when
-    beforeEach(() => {});
-
-    // then
-    it('', () => {});
-  });
-
-  // given
-  describe('_initSubscribes', () => {
-    const { instance } = cardFramesFixture();
-    // when
-    beforeEach(() => {});
-
-    // then
-    it('', () => {});
   });
 
   // given
