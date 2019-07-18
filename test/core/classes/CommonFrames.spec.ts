@@ -1,4 +1,6 @@
 import CommonFrames from '../../../src/core/classes/CommonFrames.class';
+import DomMethods from '../../../src/core/shared/DomMethods';
+import MessageBus from '../../../src/core/shared/MessageBus';
 import Selectors from '../../../src/core/shared/Selectors';
 
 // given
@@ -50,6 +52,7 @@ describe('CommonFrames', () => {
     });
   });
 
+  // given
   describe('_isTransactionFinished()', () => {
     // when
     const { instance } = commonFramesFixture();
@@ -82,6 +85,7 @@ describe('CommonFrames', () => {
     });
   });
 
+  // given
   describe('_shouldSubmitForm()', () => {
     // when
     const { instance } = commonFramesFixture();
@@ -120,6 +124,7 @@ describe('CommonFrames', () => {
     });
   });
 
+  // given
   describe('_getSubmitFields()', () => {
     // when
     const { instance } = commonFramesFixture();
@@ -160,6 +165,56 @@ describe('CommonFrames', () => {
           ['a', 'b', 'c']
         )
       ).toEqual(['a', 'b', 'c', 'jwt', 'threedresponse']);
+    });
+  });
+
+  // given
+  describe('_onInput()', () => {
+    const { instance } = commonFramesFixture();
+    const event = new Event('input');
+    const messageBusEvent = {
+      data: {},
+      type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
+    };
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._messageBus.publishFromParent = jest.fn();
+      // @ts-ignore
+      instance._onInput(event);
+    });
+
+    // then
+    it('should publishFromParent has been called', () => {
+      // @ts-ignore
+      expect(instance._messageBus.publishFromParent).toHaveBeenCalledWith(
+        messageBusEvent,
+        Selectors.CONTROL_FRAME_IFRAME
+      );
+    });
+  });
+
+  // given
+  describe('_onTransactionComplete()', () => {
+    const { instance } = commonFramesFixture();
+    const data = {
+      errorcode: '0',
+      errormessage: 'Ok'
+    };
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._shouldSubmitForm = jest.fn().mockReturnValueOnce(true);
+      // @ts-ignore
+      DomMethods.addDataToForm = jest.fn();
+      // @ts-ignore
+      instance._onTransactionComplete(data);
+    });
+
+    // then
+    it('should call _merchantForm() method', () => {
+      // @ts-ignore
+      expect(DomMethods.addDataToForm).toHaveBeenCalled();
     });
   });
 });
