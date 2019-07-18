@@ -16,7 +16,7 @@ describe('CardinalCommerce', () => {
   // when
   beforeEach(() => {
     document.body.innerHTML = `<iframe id='st-control-frame-iframe'>
-    </iframe><input id='JWTContainer_byPassInitRequest' value="${jwt}" />`;
+    </iframe><input id='JWTContainer' value="${jwt}" />`;
     instance = new CardinalCommerce(false, jwt, ['THREEDQUERY', 'AUTH']);
   });
 
