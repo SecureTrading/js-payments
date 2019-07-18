@@ -236,7 +236,7 @@ class CardFrames extends RegisterFrames {
    * @param eventType
    * @private
    */
-  private _publishValidatedFieldState(field: any, eventType: any) {
+  private _publishValidatedFieldState(field: { message: string; state: boolean }, eventType: string) {
     this._messageBusEvent.type = eventType;
     this._messageBusEvent.data.message = field.message;
     this._messageBus.publish(this._messageBusEvent);

@@ -1,4 +1,5 @@
 import CardFrames from '../../../src/core/classes/CardFrames.class';
+import MessageBus from '../../../src/core/shared/MessageBus';
 import Selectors from '../../../src/core/shared/Selectors';
 
 // given
@@ -36,11 +37,25 @@ describe('CardFrames', () => {
   // given
   describe('_disableFormField', () => {
     const { instance } = cardFramesFixture();
+    const data = true;
+    const type = MessageBus.EVENTS.BLOCK_CARD_NUMBER;
+    const messageBusEvent = {
+      data,
+      type
+    };
     // when
-    beforeEach(() => {});
+    beforeEach(() => {
+      // @ts-ignore
+      instance._messageBus.publish = jest.fn();
+      // @ts-ignore
+      instance._disableFormField(data, type);
+    });
 
     // then
-    it('', () => {});
+    it('should call publish method', () => {
+      // @ts-ignore
+      expect(instance._messageBus.publish).toHaveBeenCalledWith(messageBusEvent);
+    });
   });
 
   // given
@@ -94,11 +109,26 @@ describe('CardFrames', () => {
   // given
   describe('_onInput', () => {
     const { instance } = cardFramesFixture();
+    const messageBusEvent = {
+      data: {},
+      type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
+    };
     // when
-    beforeEach(() => {});
+    beforeEach(() => {
+      // @ts-ignore
+      instance._messageBus.publishFromParent = jest.fn();
+      // @ts-ignore
+      instance._onInput();
+    });
 
     // then
-    it('', () => {});
+    it('should call publishFromParent method', () => {
+      // @ts-ignore
+      expect(instance._messageBus.publishFromParent).toHaveBeenCalledWith(
+        messageBusEvent,
+        Selectors.CONTROL_FRAME_IFRAME
+      );
+    });
   });
 
   // given
@@ -134,11 +164,22 @@ describe('CardFrames', () => {
   // given
   describe('_publishSubmitEvent', () => {
     const { instance } = cardFramesFixture();
+    const submitFormEvent = {
+      type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
+    };
     // when
-    beforeEach(() => {});
+    beforeEach(() => {
+      // @ts-ignore
+      instance._messageBus.publish = jest.fn();
+      // @ts-ignore
+      instance._publishSubmitEvent();
+    });
 
     // then
-    it('', () => {});
+    it('should call publish method', () => {
+      // @ts-ignore
+      expect(instance._messageBus.publish).toHaveBeenCalledWith(submitFormEvent);
+    });
   });
 
   // given
@@ -154,11 +195,32 @@ describe('CardFrames', () => {
   // given
   describe('_publishValidatedFieldState', () => {
     const { instance } = cardFramesFixture();
+    const field = { message: 'fuuuuuu', state: true };
+    const eventType = MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD;
     // when
-    beforeEach(() => {});
+    beforeEach(() => {
+      // @ts-ignore
+      instance._messageBus.publish = jest.fn();
+      // @ts-ignore
+      instance._publishValidatedFieldState(field, eventType);
+    });
 
     // then
-    it('', () => {});
+    it('should set messageBusEvent properties', () => {
+      // @ts-ignore
+      expect(instance._messageBusEvent.type).toEqual(MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD);
+      // @ts-ignore
+      expect(instance._messageBusEvent.data.message).toEqual(field.message);
+    });
+
+    // then
+    it('should set messageBusEvent properties', () => {
+      // @ts-ignore
+      expect(instance._messageBus.publish).toHaveBeenCalledWith({
+        type: MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD,
+        data: { message: field.message }
+      });
+    });
   });
 
   // given
