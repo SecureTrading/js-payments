@@ -2,6 +2,7 @@ import FormField from '../../../src/core/shared/FormField';
 import Language from '../../../src/core/shared/Language';
 
 jest.mock('./../../../src/core/shared/Validation');
+
 // given
 describe('FormField', () => {
   // given
@@ -16,6 +17,7 @@ describe('FormField', () => {
       }).toThrow();
     });
   });
+
   // given
   describe('onClick()', () => {
     let spy: jest.SpyInstance;
@@ -33,6 +35,7 @@ describe('FormField', () => {
       expect(spy).toBeCalled();
     });
   });
+
   // given
   describe('onFocus()', () => {
     const { instance } = FormFieldFixture();
@@ -46,6 +49,7 @@ describe('FormField', () => {
       expect(mockFocus).toBeCalledTimes(2);
     });
   });
+
   // given
   describe('onInput()', () => {
     const { instance } = FormFieldFixture();
@@ -59,6 +63,7 @@ describe('FormField', () => {
       expect(spy).toBeCalledTimes(1);
     });
   });
+
   // given
   describe('onKeyPress()', () => {
     const { instance } = FormFieldFixture();
@@ -76,6 +81,7 @@ describe('FormField', () => {
       // expect(instance._messageBus.publish).toHaveBeenCalled();
     });
   });
+
   // given
   describe('setAttributes()', () => {
     const { instance } = FormFieldFixture();
@@ -93,6 +99,7 @@ describe('FormField', () => {
       expect(instance._inputElement.getAttribute('minlength')).toEqual(inputAttributes.minlength.toString());
     });
   });
+
   // given
   describe('_setInputListeners()', () => {
     const { instance } = FormFieldFixture();
