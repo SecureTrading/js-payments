@@ -1,5 +1,8 @@
+import Formatter from '../../../src/core/shared/Formatter';
 import FormField from '../../../src/core/shared/FormField';
 import Language from '../../../src/core/shared/Language';
+import MessageBus from '../../../src/core/shared/MessageBus';
+import Validation from '../../../src/core/shared/Validation';
 
 jest.mock('./../../../src/core/shared/Validation');
 
@@ -65,20 +68,80 @@ describe('FormField', () => {
   });
 
   // given
+  describe('onPaste()', () => {
+    const { instance } = FormFieldFixture();
+    const event = {
+      clipboardData: {
+        getData: jest.fn()
+      },
+      preventDefault: jest.fn()
+    };
+
+    // @ts-ignore
+    instance._inputElement = document.createElement('input');
+    // @ts-ignore
+    instance._messageElement = document.createElement('div');
+
+    beforeEach(() => {
+      // instance._inputValue.value = '123';
+      Formatter.trimNonNumeric = jest.fn().mockReturnValueOnce('123');
+      Validation.setCustomValidationError = jest.fn();
+      // @ts-ignore
+      instance.format = jest.fn();
+
+      // @ts-ignore
+      instance.onPaste(event);
+    });
+
+    // then
+    it('should event.preventDefault() has been called', () => {
+      expect(event.preventDefault).toHaveBeenCalled();
+    });
+
+    // then
+    it('should Validation.setCustomValidationError method has been called', () => {
+      expect(Validation.setCustomValidationError).toHaveBeenCalled();
+    });
+
+    // then
+    it('should instance._inputElement.value has been equal to pasted value', () => {
+      // @ts-ignore
+      expect(instance._inputElement.value).toEqual('123');
+    });
+
+    // then
+    it('should format method has been called', () => {
+      // @ts-ignore
+      expect(instance.format).toHaveBeenCalledWith(instance._inputElement.value);
+    });
+
+    // then
+    it('should validate method has been called with inputElement and messageElement', () => {
+      // @ts-ignore
+      expect(instance.validation.validate).toHaveBeenCalledWith(instance._inputElement, instance._messageElement);
+    });
+  });
+
+  // given
   describe('onKeyPress()', () => {
     const { instance } = FormFieldFixture();
-    const event: KeyboardEvent = new KeyboardEvent('keypress', { key: 'a' });
-    // @ts-ignore
-    const eventSuccess: KeyboardEvent = new KeyboardEvent('keypress', { keyCode: 13 });
-    // @ts-ignore
-    instance._messageBus.publish = jest.fn().mockImplementation(() => {});
+    const messageBusEvent = {
+      type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
+    };
+
+    // when
+    beforeEach(() => {
+      Validation.isEnter = jest.fn().mockReturnValue(true);
+      // @ts-ignore
+      instance._messageBus.publish = jest.fn();
+      // @ts-ignore
+      instance.onKeyPress();
+    });
 
     // then
     it('should trigger instance._messageBus.publish ', () => {
       // @ts-ignore
-      instance.onKeyPress(eventSuccess);
-      // @ts-ignore
-      // expect(instance._messageBus.publish).toHaveBeenCalled();
+      expect(instance._messageBus.publish).toHaveBeenCalledWith(messageBusEvent);
     });
   });
 
@@ -103,18 +166,116 @@ describe('FormField', () => {
   // given
   describe('_setInputListeners()', () => {
     const { instance } = FormFieldFixture();
+
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._inputElement.addEventListener = jest.fn().mockImplementation((event, callback) => {
+        callback();
+      });
+    });
+
+    // when
+    beforeAll(() => {
+      // @ts-ignore
+      instance.onPaste = jest.fn();
+      // @ts-ignore
+      instance.onKeyPress = jest.fn();
+      // @ts-ignore
+      instance.onInput = jest.fn();
+      // @ts-ignore
+      instance.onFocus = jest.fn();
+      // @ts-ignore
+      instance.onBlur = jest.fn();
+      // @ts-ignore
+      instance.onClick = jest.fn();
+    });
+
     // then
-    it('should call onPaste listener', () => {});
+    it('should call onPaste listener', () => {
+      // @ts-ignore
+      instance._setInputListeners();
+      // @ts-ignore
+      expect(instance.onPaste).toHaveBeenCalled();
+    });
+
     // then
-    it('should call onKeyPress listener', () => {});
+    it('should call onKeyPress listener', () => {
+      // @ts-ignore
+      instance._setInputListeners();
+      // @ts-ignore
+      expect(instance.onKeyPress).toHaveBeenCalled();
+    });
+
     // then
-    it('should call onInput listener', () => {});
+    it('should call onInput listener', () => {
+      // @ts-ignore
+      instance._setInputListeners();
+      // @ts-ignore
+      expect(instance.onInput).toHaveBeenCalled();
+    });
+
     // then
-    it('should call onFocus listener', () => {});
+    it('should call onFocus listener', () => {
+      // @ts-ignore
+      instance._setInputListeners();
+      // @ts-ignore
+      expect(instance.onFocus).toHaveBeenCalled();
+    });
+
     // then
-    it('should call onBlur listener', () => {});
+    it('should call onBlur listener', () => {
+      // @ts-ignore
+      instance._setInputListeners();
+      // @ts-ignore
+      expect(instance.onBlur).toHaveBeenCalled();
+    });
+
     // then
-    it('should call onClick listener', () => {});
+    it('should call onClick listener', () => {
+      // @ts-ignore
+      instance._setInputListeners();
+      // @ts-ignore
+      expect(instance.onClick).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('_setLabelText()', () => {
+    const { instance } = FormFieldFixture();
+
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance.getLabel = jest.fn();
+      // @ts-ignore
+      instance._setLabelText();
+    });
+    it('should call an error', () => {
+      // @ts-ignore
+      expect(instance.getLabel).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('_addTabListener', () => {
+    const { instance } = FormFieldFixture();
+    // when
+    beforeEach(() => {
+      window.addEventListener = jest.fn().mockImplementationOnce((event, callback) => {
+        callback();
+      });
+      // @ts-ignore
+      instance.onFocus = jest.fn();
+      // @ts-ignore
+      instance._addTabListener();
+    });
+
+    // then
+    it('should call onFocus', () => {
+      // @ts-ignore
+      expect(instance.onFocus).toHaveBeenCalled();
+    });
   });
 });
 
