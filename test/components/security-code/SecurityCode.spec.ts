@@ -1,4 +1,5 @@
 import SecurityCode from '../../../src/components/security-code/SecurityCode';
+import Formatter from '../../../src/core/shared/Formatter';
 import Selectors from '../../../src/core/shared/Selectors';
 import FormField from '../../../src/core/shared/FormField';
 
@@ -62,7 +63,7 @@ describe('SecurityCode', () => {
 
   // given
   describe('setFocusListener', () => {
-    const { instance } = SecurityCodeFixture();
+    const { instance } = securityCodeFixture();
     let spy: jest.SpyInstance;
 
     // when
@@ -83,7 +84,7 @@ describe('SecurityCode', () => {
 
   // given
   describe('setDisableListener', () => {
-    const { instance } = SecurityCodeFixture();
+    const { instance } = securityCodeFixture();
     // then
     it('should set attribute disabled and add class to classList', () => {
       // @ts-ignore
@@ -114,14 +115,15 @@ describe('SecurityCode', () => {
 
   // given
   describe('onBlur', () => {
-    const { instance } = SecurityCodeFixture();
+    const { instance } = securityCodeFixture();
     // @ts-ignore
-    const spySendState = jest.spyOn(instance, 'sendState');
+    const spySendState = jest.spyOn(instance, '_sendState');
 
     beforeEach(() => {
       // @ts-ignore
       instance.onBlur();
     });
+
     // then
     it('should publish method has been called', () => {
       // @ts-ignore
@@ -138,7 +140,7 @@ describe('SecurityCode', () => {
   // given
   describe('onFocus()', () => {
     // when
-    const { instance } = SecurityCodeFixture();
+    const { instance } = securityCodeFixture();
     const event: Event = new Event('focus');
     // @ts-ignore
     instance._inputElement.focus = jest.fn();
@@ -154,39 +156,84 @@ describe('SecurityCode', () => {
 
   // given
   describe('onInput', () => {
-    const { instance } = SecurityCodeFixture();
+    const { instance } = securityCodeFixture();
     // @ts-ignore
-    const spySendState = jest.spyOn(instance, 'sendState');
+    instance._sendState = jest.fn();
     const event = new Event('input');
 
-    beforeEach(() => {});
-
-    // then
-    it('should call sendState', () => {
-      // @ts-ignore
-      instance._inputElement.value = '12';
-      // @ts-ignore
-      instance.onInput(event);
-      expect(spySendState).toHaveBeenCalled();
-    });
-
-    // then
-    it('should trim too long value', () => {
+    beforeEach(() => {
       // @ts-ignore
       instance._inputElement.value = '1234';
       // @ts-ignore
       instance.onInput(event);
+    });
+
+    // then
+    it('should call sendState', () => {
+      // @ts-ignore
+      expect(instance._sendState).toHaveBeenCalled();
+    });
+
+    // then
+    it('should trim too long value', () => {
       // @ts-ignore
       expect(instance._inputElement.value).toEqual('123');
     });
   });
 
   // given
+  describe('onPaste()', () => {
+    // when
+    const { instance } = securityCodeFixture();
+
+    // when
+    beforeEach(() => {
+      Formatter.trimNonNumeric = jest.fn().mockReturnValueOnce('123');
+      const event = {
+        clipboardData: {
+          getData: jest.fn()
+        },
+        preventDefault: jest.fn()
+      };
+      // @ts-ignore
+      instance._sendState = jest.fn();
+      // @ts-ignore
+      instance.onPaste(event);
+    });
+
+    // then
+    it('should call _sendState method', () => {
+      // @ts-ignore
+      expect(instance._sendState).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('onKeyPress()', () => {
+    const { instance } = securityCodeFixture();
+    const event = new KeyboardEvent('keypress');
+
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      SecurityCode.prototype.onKeyPress = jest.fn();
+      // @ts-ignore
+      instance.onKeyPress(event);
+    });
+
+    // then
+    it('should call onKeyPress', () => {
+      // @ts-ignore
+      expect(SecurityCode.prototype.onKeyPress).toHaveBeenCalledWith(event);
+    });
+  });
+
+  // given
   describe('_sendState', () => {
-    const { instance } = SecurityCodeFixture();
+    const { instance } = securityCodeFixture();
     it('should publish method has been called', () => {
       // @ts-ignore
-      instance.sendState();
+      instance._sendState();
       // @ts-ignore
       expect(instance._messageBus.publish).toHaveBeenCalled();
     });
@@ -194,7 +241,7 @@ describe('SecurityCode', () => {
 
   // given
   describe('_subscribeSecurityCodeChange', () => {
-    const { instance } = SecurityCodeFixture();
+    const { instance } = securityCodeFixture();
     let spySecurityCodePattern: jest.SpyInstance;
 
     // then
@@ -205,9 +252,9 @@ describe('SecurityCode', () => {
         callback(SecurityCode.STANDARD_INPUT_LENGTH);
       });
       // @ts-ignore
-      instance.subscribeSecurityCodeChange();
+      instance._subscribeSecurityCodeChange();
       // @ts-ignore
-      spySecurityCodePattern = jest.spyOn(instance, 'setSecurityCodePattern');
+      spySecurityCodePattern = jest.spyOn(instance, '_setSecurityCodePattern');
       // @ts-ignore
       // expect(spySecurityCodePattern).toBeCalled();
       // @ts-ignore
@@ -222,7 +269,7 @@ describe('SecurityCode', () => {
         callback(SecurityCode.SPECIAL_INPUT_LENGTH);
       });
       // @ts-ignore
-      instance.subscribeSecurityCodeChange();
+      instance._subscribeSecurityCodeChange();
       // @ts-ignore
       expect(instance.securityCodeLength).toEqual(SecurityCode.SPECIAL_INPUT_LENGTH);
     });
@@ -231,18 +278,18 @@ describe('SecurityCode', () => {
   // given
   describe('_setSecurityCodePattern', () => {
     const pattern = 'some243pa%^tern';
-    const { instance } = SecurityCodeFixture();
+    const { instance } = securityCodeFixture();
     // then
     it('should set pattern attribute on input field', () => {
       // @ts-ignore
-      instance.setSecurityCodePattern(pattern);
+      instance._setSecurityCodePattern(pattern);
       // @ts-ignore
       expect(instance._inputElement.getAttribute('pattern')).toEqual(pattern);
     });
   });
 });
 
-function SecurityCodeFixture() {
+function securityCodeFixture() {
   const html =
     '<form id="st-security-code" class="security-code" novalidate=""><label id="st-security-code-label" for="st-security-code-input" class="security-code__label security-code__label--required">Security code</label><input id="st-security-code-input" class="security-code__input error-field" type="text" autocomplete="off" autocorrect="off" spellcheck="false" inputmode="numeric" required="" data-dirty="true" data-pristine="false" data-validity="false" data-clicked="false" pattern="^[0-9]{3}$"><div id="st-security-code-message" class="security-code__message">Field is required</div></form>';
   document.body.innerHTML = html;
