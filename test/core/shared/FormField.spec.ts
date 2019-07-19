@@ -10,7 +10,7 @@ jest.mock('./../../../src/core/shared/Validation');
 describe('FormField', () => {
   // given
   describe('getLabel()', () => {
-    const { instance } = FormFieldFixture();
+    const { instance } = formFieldFixture();
     // then
     it('should throw exception', () => {
       // @ts-ignore
@@ -24,7 +24,7 @@ describe('FormField', () => {
   // given
   describe('onClick()', () => {
     let spy: jest.SpyInstance;
-    const { instance } = FormFieldFixture();
+    const { instance } = formFieldFixture();
 
     beforeEach(() => {
       const event = new Event('click');
@@ -41,7 +41,7 @@ describe('FormField', () => {
 
   // given
   describe('onFocus()', () => {
-    const { instance } = FormFieldFixture();
+    const { instance } = formFieldFixture();
     let spy: jest.SpyInstance;
     // then
     it('should focus on input element', () => {
@@ -55,7 +55,7 @@ describe('FormField', () => {
 
   // given
   describe('onInput()', () => {
-    const { instance } = FormFieldFixture();
+    const { instance } = formFieldFixture();
     let spy: jest.SpyInstance;
     // then
     it('should input on input element', () => {
@@ -69,7 +69,7 @@ describe('FormField', () => {
 
   // given
   describe('onKeyPress()', () => {
-    const { instance } = FormFieldFixture();
+    const { instance } = formFieldFixture();
     const messageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
@@ -92,7 +92,7 @@ describe('FormField', () => {
 
   // given
   describe('onPaste()', () => {
-    const { instance } = FormFieldFixture();
+    const { instance } = formFieldFixture();
     const event = {
       clipboardData: {
         getData: jest.fn()
@@ -147,7 +147,7 @@ describe('FormField', () => {
 
   // given
   describe('_addTabListener', () => {
-    const { instance } = FormFieldFixture();
+    const { instance } = formFieldFixture();
     // when
     beforeEach(() => {
       window.addEventListener = jest.fn().mockImplementationOnce((event, callback) => {
@@ -168,7 +168,7 @@ describe('FormField', () => {
 
   // given
   describe('_setInputListeners()', () => {
-    const { instance } = FormFieldFixture();
+    const { instance } = formFieldFixture();
 
     // when
     beforeEach(() => {
@@ -245,7 +245,7 @@ describe('FormField', () => {
 
   // given
   describe('_setLabelText()', () => {
-    const { instance } = FormFieldFixture();
+    const { instance } = formFieldFixture();
 
     // when
     beforeEach(() => {
@@ -261,7 +261,7 @@ describe('FormField', () => {
   });
 });
 
-function FormFieldFixture() {
+function formFieldFixture() {
   let inputElement: HTMLInputElement;
   let labelElement: HTMLLabelElement;
   let messageElement: HTMLParagraphElement;
