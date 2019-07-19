@@ -68,6 +68,29 @@ describe('FormField', () => {
   });
 
   // given
+  describe('onKeyPress()', () => {
+    const { instance } = FormFieldFixture();
+    const messageBusEvent = {
+      type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
+    };
+
+    // when
+    beforeEach(() => {
+      Validation.isEnter = jest.fn().mockReturnValue(true);
+      // @ts-ignore
+      instance._messageBus.publish = jest.fn();
+      // @ts-ignore
+      instance.onKeyPress();
+    });
+
+    // then
+    it('should trigger instance._messageBus.publish ', () => {
+      // @ts-ignore
+      expect(instance._messageBus.publish).toHaveBeenCalledWith(messageBusEvent);
+    });
+  });
+
+  // given
   describe('onPaste()', () => {
     const { instance } = FormFieldFixture();
     const event = {
@@ -123,43 +146,23 @@ describe('FormField', () => {
   });
 
   // given
-  describe('onKeyPress()', () => {
+  describe('_addTabListener', () => {
     const { instance } = FormFieldFixture();
-    const messageBusEvent = {
-      type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
-    };
-
     // when
     beforeEach(() => {
-      Validation.isEnter = jest.fn().mockReturnValue(true);
+      window.addEventListener = jest.fn().mockImplementationOnce((event, callback) => {
+        callback();
+      });
       // @ts-ignore
-      instance._messageBus.publish = jest.fn();
+      instance.onFocus = jest.fn();
       // @ts-ignore
-      instance.onKeyPress();
+      instance._addTabListener();
     });
 
     // then
-    it('should trigger instance._messageBus.publish ', () => {
+    it('should call onFocus', () => {
       // @ts-ignore
-      expect(instance._messageBus.publish).toHaveBeenCalledWith(messageBusEvent);
-    });
-  });
-
-  // given
-  describe('setAttributes()', () => {
-    const { instance } = FormFieldFixture();
-    // then
-    it('should set attributes to HTML input element', () => {
-      let inputAttributes = {
-        maxlength: 10,
-        minlength: 1
-      };
-      // @ts-ignore
-      instance.setAttributes(inputAttributes);
-      // @ts-ignore
-      expect(instance._inputElement.getAttribute('maxlength')).toEqual(inputAttributes.maxlength.toString());
-      // @ts-ignore
-      expect(instance._inputElement.getAttribute('minlength')).toEqual(inputAttributes.minlength.toString());
+      expect(instance.onFocus).toHaveBeenCalled();
     });
   });
 
@@ -256,27 +259,6 @@ describe('FormField', () => {
       expect(instance.getLabel).toHaveBeenCalled();
     });
   });
-
-  // given
-  describe('_addTabListener', () => {
-    const { instance } = FormFieldFixture();
-    // when
-    beforeEach(() => {
-      window.addEventListener = jest.fn().mockImplementationOnce((event, callback) => {
-        callback();
-      });
-      // @ts-ignore
-      instance.onFocus = jest.fn();
-      // @ts-ignore
-      instance._addTabListener();
-    });
-
-    // then
-    it('should call onFocus', () => {
-      // @ts-ignore
-      expect(instance.onFocus).toHaveBeenCalled();
-    });
-  });
 });
 
 function FormFieldFixture() {
@@ -294,7 +276,7 @@ function FormFieldFixture() {
   document.body.appendChild(inputElement);
   document.body.appendChild(messageElement);
   // @ts-ignore
-  FormField.prototype.getLabel = jest.fn(); // Not implemented in FormField
+  FormField.prototype.getLabel = jest.fn();
   const instance = new FormField('st-form-field-input', 'st-form-field-message', 'st-form-field-label');
   return { instance, inputElement, messageElement, labelElement };
 }

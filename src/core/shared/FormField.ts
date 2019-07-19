@@ -46,7 +46,7 @@ export default class FormField extends Frame {
   }
 
   /**
-   *
+   * format()
    * @param data
    */
   protected format(data: string) {
