@@ -22,8 +22,8 @@ export default class SecurityCode extends FormField {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
     this.securityCodeLength = SecurityCode.STANDARD_INPUT_LENGTH;
     this.binLookup = new BinLookup();
-    this.setSecurityCodePattern(Formatter.STANDARD_LENGTH_PATTERN);
-    this.subscribeSecurityCodeChange();
+    this._setSecurityCodePattern(Formatter.STANDARD_LENGTH_PATTERN);
+    this._subscribeSecurityCodeChange();
     this.setFocusListener();
     this.setDisableListener();
     this.validation.backendValidation(
@@ -73,7 +73,7 @@ export default class SecurityCode extends FormField {
    */
   protected onBlur() {
     super.onBlur();
-    this.sendState();
+    this._sendState();
     const messageBusEvent: IMessageBusEvent = {
       data: false,
       type: MessageBus.EVENTS.FOCUS_SECURITY_CODE
@@ -88,7 +88,7 @@ export default class SecurityCode extends FormField {
    */
   protected onFocus(event: Event) {
     super.onFocus(event);
-    this.sendState();
+    this._sendState();
     const messageBusEvent: IMessageBusEvent = {
       data: true,
       type: MessageBus.EVENTS.FOCUS_SECURITY_CODE
@@ -105,7 +105,7 @@ export default class SecurityCode extends FormField {
     super.onInput(event);
     this._inputElement.value = Formatter.trimNonNumeric(this._inputElement.value);
     this._inputElement.value = this._inputElement.value.substring(0, this.securityCodeLength);
-    this.sendState();
+    this._sendState();
   }
 
   /**
@@ -116,7 +116,7 @@ export default class SecurityCode extends FormField {
   protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
     this._inputElement.value = this._inputElement.value.substring(0, this.securityCodeLength);
-    this.sendState();
+    this._sendState();
   }
 
   /**
@@ -131,8 +131,9 @@ export default class SecurityCode extends FormField {
   /**
    * Inherited and extended function from parent class.
    * Sets communication with MessageBus.
+   * @private
    */
-  private sendState() {
+  private _sendState() {
     const formFieldState: IFormFieldState = this.getState();
     const messageBusEvent: IMessageBusEvent = {
       data: formFieldState,
@@ -143,8 +144,9 @@ export default class SecurityCode extends FormField {
 
   /**
    * Listens to Security Code length change event,
+   * @private
    */
-  private subscribeSecurityCodeChange() {
+  private _subscribeSecurityCodeChange() {
     this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (length: number) => {
       let securityCodePattern = Formatter.STANDARD_LENGTH_PATTERN;
       this.securityCodeLength = SecurityCode.STANDARD_INPUT_LENGTH;
@@ -152,7 +154,7 @@ export default class SecurityCode extends FormField {
         securityCodePattern = Formatter.SPECIAL_LENGTH_PATTERN;
         this.securityCodeLength = SecurityCode.SPECIAL_INPUT_LENGTH;
       }
-      this.setSecurityCodePattern(securityCodePattern);
+      this._setSecurityCodePattern(securityCodePattern);
       return securityCodePattern;
     });
   }
@@ -161,8 +163,9 @@ export default class SecurityCode extends FormField {
    * Sets values of Security Code field (maxlength, minlength and placeholder) according to data form BinLookup.
    * If length is not specified it takes 3 as length.
    * @param securityCodePattern
+   * @private
    */
-  private setSecurityCodePattern(securityCodePattern: string) {
+  private _setSecurityCodePattern(securityCodePattern: string) {
     this.setAttributes({ pattern: securityCodePattern });
   }
 }

@@ -24,7 +24,7 @@ describe('SecurityCode', () => {
     securityCode = new SecurityCode();
   });
 
-  // then
+  // given
   describe('init', () => {
     // then
     it('should create instance of classes SecurityCode and FormField representing form field', () => {
@@ -33,7 +33,7 @@ describe('SecurityCode', () => {
     });
   });
 
-  // then
+  // given
   describe('ifFieldExists', () => {
     let ifFieldExists: HTMLInputElement;
     // when
@@ -52,7 +52,7 @@ describe('SecurityCode', () => {
     });
   });
 
-  // then
+  // given
   describe('getLabel', () => {
     // then
     it('should have a label', () => {
@@ -182,7 +182,7 @@ describe('SecurityCode', () => {
   });
 
   // given
-  describe('sendState', () => {
+  describe('_sendState', () => {
     const { instance } = SecurityCodeFixture();
     it('should publish method has been called', () => {
       // @ts-ignore
@@ -193,7 +193,7 @@ describe('SecurityCode', () => {
   });
 
   // given
-  describe('subscribeSecurityCodeChange', () => {
+  describe('_subscribeSecurityCodeChange', () => {
     const { instance } = SecurityCodeFixture();
     let spySecurityCodePattern: jest.SpyInstance;
 
@@ -229,7 +229,7 @@ describe('SecurityCode', () => {
   });
 
   // given
-  describe('setSecurityCodePattern', () => {
+  describe('_setSecurityCodePattern', () => {
     const pattern = 'some243pa%^tern';
     const { instance } = SecurityCodeFixture();
     // then
