@@ -276,7 +276,9 @@ function formFieldFixture() {
   document.body.appendChild(inputElement);
   document.body.appendChild(messageElement);
   // @ts-ignore
-  FormField.prototype.getLabel = jest.fn();
+  FormField.prototype.getLabel = jest.fn().mockReturnValueOnce(() => {
+    throw new Error(Language.translations.NOT_IMPLEMENTED_ERROR);
+  });
   const instance = new FormField('st-form-field-input', 'st-form-field-message', 'st-form-field-label');
   return { instance, inputElement, messageElement, labelElement };
 }
