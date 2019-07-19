@@ -4,9 +4,6 @@ import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
 
-/**
- * Defines specific Expiration Date validation methods and attributes
- */
 export default class ExpirationDate extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.EXPIRATION_DATE_INPUT) as HTMLInputElement;
@@ -82,11 +79,11 @@ export default class ExpirationDate extends FormField {
   }
 
   /**
-   * Extends onBlur method and triggers sendState().
+   * Extends onBlur method and triggers _sendState().
    */
   protected onBlur() {
     super.onBlur();
-    this.sendState();
+    this._sendState();
   }
 
   /**
@@ -108,7 +105,7 @@ export default class ExpirationDate extends FormField {
     this._inputSelectionEnd = this._inputElement.selectionEnd;
     this._setFormattedDate();
     this._inputElement.setSelectionRange(this._inputSelectionStart, this._inputSelectionEnd);
-    this.sendState();
+    this._sendState();
   }
 
   /**
@@ -127,13 +124,13 @@ export default class ExpirationDate extends FormField {
   protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
     this._setFormattedDate();
-    this.sendState();
+    this._sendState();
   }
 
   /**
    * Propagates expiration date change to MessageBus
    */
-  private sendState() {
+  private _sendState() {
     const formFieldState: IFormFieldState = this.getState();
     const messageBusEvent: IMessageBusEvent = {
       data: formFieldState,
