@@ -301,4 +301,5 @@ class ST {
   }
 }
 
+export { ST };
 export default (config: IConfig) => new ST(config);
