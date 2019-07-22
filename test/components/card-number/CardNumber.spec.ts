@@ -18,7 +18,7 @@ describe('CardNumber', () => {
     testCardNumbers,
     labelElement,
     formattedCards
-  } = CardNumberFixture();
+  } = cardNumberFixture();
   // when
   beforeAll(() => {
     document.body.appendChild(inputElement);
@@ -67,7 +67,7 @@ describe('CardNumber', () => {
   describe('CardNumber.luhnCheck', () => {
     // then
     each(testCardNumbers).it('should check card number and return correct Luhn check', (cardNumber, expected) => {
-      expect(CardNumberFixture().cardNumberInstance.luhnCheck(cardNumber)).toEqual(expected);
+      expect(cardNumberFixture().cardNumberInstance.luhnCheck(cardNumber)).toEqual(expected);
     });
   });
 
@@ -104,7 +104,7 @@ describe('CardNumber', () => {
 
   // given
   describe('CardNumber.getBinLookupDetails', () => {
-    const { unrecognizedCardNumber, cardNumberCorrect, receivedObject } = CardNumberFixture();
+    const { unrecognizedCardNumber, cardNumberCorrect, receivedObject } = cardNumberFixture();
 
     // then
     it('should return undefined if card is not recognized', () => {
@@ -119,7 +119,7 @@ describe('CardNumber', () => {
 
   // given
   describe('getMaxLengthOfCardNumber()', () => {
-    const { cardNumberCorrect, unrecognizedCardNumber } = CardNumberFixture();
+    const { cardNumberCorrect, unrecognizedCardNumber } = cardNumberFixture();
     const maxLengthOfCardNumber = 21;
     const numberOfWhitespaces = 0;
 
@@ -140,7 +140,7 @@ describe('CardNumber', () => {
 
   // given
   describe('getCardFormat()', () => {
-    const { unrecognizedCardNumber, cardNumberCorrect, receivedObject } = CardNumberFixture();
+    const { unrecognizedCardNumber, cardNumberCorrect, receivedObject } = cardNumberFixture();
 
     // then
     it('should return undefined if card format is not recognized', () => {
@@ -155,7 +155,7 @@ describe('CardNumber', () => {
 
   // given
   describe('getPossibleCardLength()', () => {
-    const { unrecognizedCardNumber, cardNumberCorrect, receivedObject } = CardNumberFixture();
+    const { unrecognizedCardNumber, cardNumberCorrect, receivedObject } = cardNumberFixture();
 
     // then
     it('should return undefined if card format is not recognized', () => {
@@ -170,7 +170,7 @@ describe('CardNumber', () => {
 
   // given
   describe('getSecurityCodeLength()', () => {
-    const { unrecognizedCardNumber, cardNumberCorrect, receivedObject } = CardNumberFixture();
+    const { unrecognizedCardNumber, cardNumberCorrect, receivedObject } = cardNumberFixture();
 
     // then
     it('should return undefined if card format is not recognized', () => {
@@ -206,7 +206,7 @@ describe('CardNumber', () => {
 
   // given
   describe('setFocusListener()', () => {
-    const { instance } = CardNumberFixture();
+    const { instance } = cardNumberFixture();
     let spy: SpyInstance;
 
     beforeEach(() => {
@@ -237,7 +237,7 @@ describe('CardNumber', () => {
   describe('onBlur()', () => {
     let spy: SpyInstance;
     let spyState: SpyInstance;
-    const { instance } = CardNumberFixture();
+    const { instance } = cardNumberFixture();
 
     beforeEach(() => {
       spy = jest.spyOn(instance, 'luhnCheck');
@@ -259,7 +259,7 @@ describe('CardNumber', () => {
   describe('onInput()', () => {
     let spy: SpyInstance;
     let spySendState: SpyInstance;
-    const { instance } = CardNumberFixture();
+    const { instance } = cardNumberFixture();
     const event = new Event('input');
 
     // when
@@ -280,7 +280,7 @@ describe('CardNumber', () => {
 
   // given
   describe('setDisableListener()', () => {
-    const { instance } = CardNumberFixture();
+    const { instance } = cardNumberFixture();
 
     function subscribeMock(state: boolean) {
       // @ts-ignore
@@ -321,7 +321,7 @@ describe('CardNumber', () => {
 
   // given
   describe('sendState()', () => {
-    const { instance } = CardNumberFixture();
+    const { instance } = cardNumberFixture();
 
     // when
     beforeEach(() => {
@@ -351,7 +351,7 @@ describe('CardNumber', () => {
   // given
   describe('onFocus()', () => {
     // when
-    const { instance } = CardNumberFixture();
+    const { instance } = cardNumberFixture();
     const event: Event = new Event('focus');
     // @ts-ignore
     instance._inputElement.focus = jest.fn();
@@ -368,7 +368,7 @@ describe('CardNumber', () => {
   // given
   describe('onPaste()', () => {
     // when
-    const { instance } = CardNumberFixture();
+    const { instance } = cardNumberFixture();
     const event = {
       clipboardData: {
         getData: jest.fn()
@@ -390,7 +390,7 @@ describe('CardNumber', () => {
   });
 });
 
-function CardNumberFixture() {
+function cardNumberFixture() {
   const html =
     '<form id="st-card-number" class="card-number" novalidate=""><label id="st-card-number-label" for="st-card-number-input" class="card-number__label card-number__label--required">Card number</label><input id="st-card-number-input" class="card-number__input" type="text" autocomplete="off" required="" data-luhn-check="true" maxlength="NaN" minlength="19"><p id="st-card-number-message" class="card-number__message"></p></form>';
   document.body.innerHTML = html;
