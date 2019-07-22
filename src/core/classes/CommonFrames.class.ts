@@ -9,7 +9,7 @@ import RegisterFrames from './RegisterFrames.class';
 /**
  * Defines all non field elements of form and their placement on merchant site.
  */
-export default class CommonFrames extends RegisterFrames {
+class CommonFrames extends RegisterFrames {
   get merchantForm(): any {
     return document.getElementById(Selectors.MERCHANT_FORM_SELECTOR);
   }
@@ -177,3 +177,4 @@ export default class CommonFrames extends RegisterFrames {
     });
   }
 }
+export default CommonFrames;

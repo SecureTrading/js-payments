@@ -1,14 +1,14 @@
 import ST from './../src/ST';
 
 jest.mock('./../src/core/shared/DomMethods');
+jest.mock('./../src/core/classes/CommonFrames.class');
 
 // given
 describe('ST', () => {
+  const { config, instance } = stFixture();
   beforeEach(() => {});
   // given
   describe('_addDefaults()', () => {
-    const { config, instance } = stFixture();
-
     // when
     beforeEach(() => {});
   });
@@ -37,7 +37,16 @@ describe('ST', () => {
   // given
   describe('CardinalCommerce', () => {});
   // given
-  describe('_setClassProperties', () => {});
+  describe('_setClassProperties', () => {
+    // when
+    beforeEach(() => {
+      instance._setClassProperties(config);
+    });
+    // then
+    it('should set jwt', () => {
+      expect(instance._jwt).toEqual(config.jwt);
+    });
+  });
 });
 
 function stFixture() {
