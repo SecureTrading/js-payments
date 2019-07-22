@@ -10,10 +10,10 @@ import Validation from '../../core/shared/Validation';
 export default class CardNumber extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
-  private static WHITESPACES_DECREASE_NUMBER = 2;
-  private static LUHN_CHECK_ARRAY: any = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
-  private static STANDARD_CARD_LENGTH = 19;
   private static CARD_NUMBER_FOR_BIN_PROCESS = (cardNumber: string) => cardNumber.slice(0, 6);
+  private static LUHN_CHECK_ARRAY: number[] = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
+  private static STANDARD_CARD_LENGTH: number = 19;
+  private static WHITESPACES_DECREASE_NUMBER: number = 2;
 
   public binLookup: BinLookup;
   public validity: Validation;
@@ -41,24 +41,41 @@ export default class CardNumber extends FormField {
     this._sendState();
   }
 
+  /**
+   * getAllowedParams()
+   */
   protected getAllowedParams() {
     return super.getAllowedParams().concat(['origin']);
   }
 
+  /**
+   * getLabel()
+   */
   protected getLabel(): string {
     return Language.translations.LABEL_CARD_NUMBER;
   }
 
+  /**
+   * onBlur()
+   */
   protected onBlur() {
     super.onBlur();
     this._luhnCheck(this._inputElement.value);
     this._sendState();
   }
 
+  /**
+   * onFocus()
+   * @param event
+   */
   protected onFocus(event: Event) {
     super.onFocus(event);
   }
 
+  /**
+   * onInput()
+   * @param event
+   */
   protected onInput(event: Event) {
     super.onInput(event);
     this._inputElement.value = Formatter.trimNonNumericExceptSpace(this._inputElement.value);
@@ -271,6 +288,10 @@ export default class CardNumber extends FormField {
     });
   }
 
+  /**
+   *
+   * @private
+   */
   private _sendState() {
     const { value, validity } = this._getFormFieldState();
     const messageBusEvent: IMessageBusEvent = {

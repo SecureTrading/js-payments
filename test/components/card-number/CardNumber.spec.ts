@@ -38,6 +38,7 @@ describe('CardNumber', () => {
 
   // then
   it('should have a label', () => {
+    // @ts-ignore
     expect(cardNumberInstance.getLabel()).toBe('Card number');
   });
 
@@ -64,10 +65,11 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('CardNumber.luhnCheck', () => {
+  describe('_luhnCheck()', () => {
     // then
     each(testCardNumbers).it('should check card number and return correct Luhn check', (cardNumber, expected) => {
-      expect(cardNumberFixture().cardNumberInstance.luhnCheck(cardNumber)).toEqual(expected);
+      // @ts-ignore
+      expect(cardNumberFixture().cardNumberInstance._luhnCheck(cardNumber)).toEqual(expected);
     });
   });
 
@@ -75,22 +77,28 @@ describe('CardNumber', () => {
   describe('setCardNumberAttributes', () => {
     // then
     it('should set proper card number attributes given in params', () => {
-      cardNumberInstance.setCardNumberAttributes({
+      // @ts-ignore
+      cardNumberInstance._setCardNumberAttributes({
         firstAttribute: 'FUUUUUUUUUUUUUU',
         secondAttribute: 'Like a sir',
         thirdAttribute: 'Pepe the Frog'
       });
-      expect(cardNumberInstance.cardNumberField.getAttribute('firstAttribute')).toEqual('FUUUUUUUUUUUUUU');
-      expect(cardNumberInstance.cardNumberField.getAttribute('secondAttribute')).toEqual('Like a sir');
-      expect(cardNumberInstance.cardNumberField.getAttribute('thirdAttribute')).toEqual('Pepe the Frog');
+      // @ts-ignore
+      expect(cardNumberInstance._cardNumberField.getAttribute('firstAttribute')).toEqual('FUUUUUUUUUUUUUU');
+      // @ts-ignore
+      expect(cardNumberInstance._cardNumberField.getAttribute('secondAttribute')).toEqual('Like a sir');
+      // @ts-ignore
+      expect(cardNumberInstance._cardNumberField.getAttribute('thirdAttribute')).toEqual('Pepe the Frog');
     });
 
     // then
     it('should remove attribute from input', () => {
-      cardNumberInstance.setCardNumberAttributes({
+      // @ts-ignore
+      cardNumberInstance._setCardNumberAttributes({
         firstAttribute: false
       });
-      expect(cardNumberInstance.cardNumberField.getAttribute('firstAttribute')).toBeNull();
+      // @ts-ignore
+      expect(cardNumberInstance._cardNumberField.getAttribute('firstAttribute')).toBeNull();
     });
   });
 
@@ -98,7 +106,8 @@ describe('CardNumber', () => {
   describe('formatCardNumber', () => {
     // then
     each(formattedCards).it('should format card number properly', (given, accepted) => {
-      expect(cardNumberInstance.formatCardNumber(given)).toEqual(accepted);
+      // @ts-ignore
+      expect(cardNumberInstance._formatCardNumber(given)).toEqual(accepted);
     });
   });
 
@@ -108,12 +117,14 @@ describe('CardNumber', () => {
 
     // then
     it('should return undefined if card is not recognized', () => {
-      expect(cardNumberInstance.getBinLookupDetails(unrecognizedCardNumber)).toEqual(undefined);
+      // @ts-ignore
+      expect(cardNumberInstance._getBinLookupDetails(unrecognizedCardNumber)).toEqual(undefined);
     });
 
     // then
     it('should return binLookup object if card is recognized', () => {
-      expect(cardNumberInstance.getBinLookupDetails(cardNumberCorrect)).toStrictEqual(receivedObject);
+      // @ts-ignore
+      expect(cardNumberInstance._getBinLookupDetails(cardNumberCorrect)).toStrictEqual(receivedObject);
     });
   });
 
@@ -125,13 +136,14 @@ describe('CardNumber', () => {
 
     // then
     it('should return max length of card number', () => {
-      expect(cardNumberInstance.getMaxLengthOfCardNumber(cardNumberCorrect)).toEqual(maxLengthOfCardNumber);
+      // @ts-ignore
+      expect(cardNumberInstance._getMaxLengthOfCardNumber(cardNumberCorrect)).toEqual(maxLengthOfCardNumber);
     });
 
     // then
     it(`should return numberOfWhitespaces equals: ${numberOfWhitespaces} when cardFormat is not defined`, () => {
       // @ts-ignore
-      expect(cardNumberInstance.getMaxLengthOfCardNumber(unrecognizedCardNumber)).toEqual(
+      expect(cardNumberInstance._getMaxLengthOfCardNumber(unrecognizedCardNumber)).toEqual(
         // @ts-ignore
         CardNumber.STANDARD_CARD_LENGTH
       );
@@ -144,12 +156,14 @@ describe('CardNumber', () => {
 
     // then
     it('should return undefined if card format is not recognized', () => {
-      expect(cardNumberInstance.getCardFormat(unrecognizedCardNumber)).toEqual(undefined);
+      // @ts-ignore
+      expect(cardNumberInstance._getCardFormat(unrecognizedCardNumber)).toEqual(undefined);
     });
 
     // then
     it('should return card format regexp if card format is recognized', () => {
-      expect(cardNumberInstance.getCardFormat(cardNumberCorrect)).toEqual(receivedObject.format);
+      // @ts-ignore
+      expect(cardNumberInstance._getCardFormat(cardNumberCorrect)).toEqual(receivedObject.format);
     });
   });
 
@@ -159,12 +173,14 @@ describe('CardNumber', () => {
 
     // then
     it('should return undefined if card format is not recognized', () => {
-      expect(cardNumberInstance.getPossibleCardLength(unrecognizedCardNumber)).toEqual(undefined);
+      // @ts-ignore
+      expect(cardNumberInstance._getPossibleCardLength(unrecognizedCardNumber)).toEqual(undefined);
     });
 
     // then
     it('should return possible card length if card format is recognized', () => {
-      expect(cardNumberInstance.getPossibleCardLength(cardNumberCorrect)).toEqual(receivedObject.length);
+      // @ts-ignore
+      expect(cardNumberInstance._getPossibleCardLength(cardNumberCorrect)).toEqual(receivedObject.length);
     });
   });
 
@@ -174,24 +190,29 @@ describe('CardNumber', () => {
 
     // then
     it('should return undefined if card format is not recognized', () => {
-      expect(cardNumberInstance.getSecurityCodeLength(unrecognizedCardNumber)).toEqual(undefined);
+      // @ts-ignore
+      expect(cardNumberInstance._getSecurityCodeLength(unrecognizedCardNumber)).toEqual(undefined);
     });
 
     // then
     it('should return possible cvc lengths if card format is recognized', () => {
-      expect(cardNumberInstance.getSecurityCodeLength(cardNumberCorrect)).toEqual(receivedObject.cvcLength[0]);
+      // @ts-ignore
+      expect(cardNumberInstance._getSecurityCodeLength(cardNumberCorrect)).toEqual(receivedObject.cvcLength[0]);
     });
   });
 
   // given
-  describe('getFormFieldState()', () => {
+  describe('_getFormFieldState()', () => {
     let publishSecurityCodeLengthSpy: SpyInstance;
     let formatCardNumberSpy: SpyInstance;
     // when
     beforeEach(() => {
-      publishSecurityCodeLengthSpy = jest.spyOn(cardNumberInstance, 'publishSecurityCodeLength');
-      formatCardNumberSpy = jest.spyOn(cardNumberInstance, 'formatCardNumber');
-      cardNumberInstance.getFormFieldState();
+      // @ts-ignore
+      publishSecurityCodeLengthSpy = jest.spyOn(cardNumberInstance, '_publishSecurityCodeLength');
+      // @ts-ignore
+      formatCardNumberSpy = jest.spyOn(cardNumberInstance, '_formatCardNumber');
+      // @ts-ignore
+      cardNumberInstance._getFormFieldState();
     });
     // then
     it('should publishSecurityCodeLength has been called', () => {
@@ -216,7 +237,8 @@ describe('CardNumber', () => {
       instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
         callback();
       });
-      instance.setFocusListener();
+      // @ts-ignore
+      instance._setFocusListener();
     });
     // then
     it('should set MessageBus listener function', () => {
@@ -240,9 +262,10 @@ describe('CardNumber', () => {
     const { instance } = cardNumberFixture();
 
     beforeEach(() => {
-      spy = jest.spyOn(instance, 'luhnCheck');
       // @ts-ignore
-      spyState = jest.spyOn(instance, 'sendState');
+      spy = jest.spyOn(instance, '_luhnCheck');
+      // @ts-ignore
+      spyState = jest.spyOn(instance, '_sendState');
       // @ts-ignore
       instance.onBlur();
     });
@@ -265,7 +288,7 @@ describe('CardNumber', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
-      spySendState = jest.spyOn(instance, 'sendState');
+      spySendState = jest.spyOn(instance, '_sendState');
       // @ts-ignore
       instance.getMaxLengthOfCardNumber = jest.fn().mockReturnValueOnce(15);
       // @ts-ignore
@@ -273,7 +296,7 @@ describe('CardNumber', () => {
     });
 
     // then
-    it('should call sendState', () => {
+    it('should call _sendState', () => {
       expect(spySendState).toHaveBeenCalledTimes(1);
     });
   });
@@ -287,7 +310,8 @@ describe('CardNumber', () => {
       instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
         callback(state);
       });
-      instance.setDisableListener();
+      // @ts-ignore
+      instance._setDisableListener();
     }
 
     // then
@@ -320,7 +344,7 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('sendState()', () => {
+  describe('_sendState()', () => {
     const { instance } = cardNumberFixture();
 
     // when
@@ -331,18 +355,20 @@ describe('CardNumber', () => {
 
     // then
     it('should call publish method exactly one time', () => {
-      instance.getFormFieldState = jest.fn().mockReturnValueOnce({ value: '11111', validity: false });
       // @ts-ignore
-      instance.sendState();
+      instance._getFormFieldState = jest.fn().mockReturnValueOnce({ value: '11111', validity: false });
+      // @ts-ignore
+      instance._sendState();
       // @ts-ignore
       expect(instance._messageBus.publish).toHaveBeenCalledTimes(1);
     });
 
     // then
     it('should call publish method exactly two times', () => {
-      instance.getFormFieldState = jest.fn().mockReturnValueOnce({ value: '111111', validity: true });
       // @ts-ignore
-      instance.sendState();
+      instance._getFormFieldState = jest.fn().mockReturnValueOnce({ value: '111111', validity: true });
+      // @ts-ignore
+      instance._sendState();
       // @ts-ignore
       expect(instance._messageBus.publish).toHaveBeenCalledTimes(2);
     });
@@ -376,16 +402,17 @@ describe('CardNumber', () => {
       preventDefault: jest.fn()
     };
     // @ts-ignore
-    instance.sendState = jest.fn();
-    instance.getMaxLengthOfCardNumber = jest.fn();
+    instance._sendState = jest.fn();
+    // @ts-ignore
+    instance._getMaxLengthOfCardNumber = jest.fn();
     Formatter.trimNonNumeric = jest.fn().mockReturnValueOnce('41111111');
 
     // then
-    it('should sendState', () => {
+    it('should _sendState', () => {
       // @ts-ignore
       instance.onPaste(event);
       // @ts-ignore
-      expect(instance.sendState).toHaveBeenCalled();
+      expect(instance._sendState).toHaveBeenCalled();
     });
   });
 });
