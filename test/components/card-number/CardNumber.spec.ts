@@ -1,6 +1,7 @@
 import each from 'jest-each';
 import SpyInstance = jest.SpyInstance;
 import CardNumber from '../../../src/components/card-number/CardNumber';
+import Formatter from '../../../src/core/shared/Formatter';
 import Selectors from '../../../src/core/shared/Selectors';
 import FormField from '../../../src/core/shared/FormField';
 import MessageBus from './../../../src/core/shared/MessageBus';
@@ -361,6 +362,30 @@ describe('CardNumber', () => {
       instance.onFocus(event);
       // @ts-ignore
       expect(instance._inputElement.focus).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('onPaste()', () => {
+    // when
+    const { instance } = CardNumberFixture();
+    const event = {
+      clipboardData: {
+        getData: jest.fn()
+      },
+      preventDefault: jest.fn()
+    };
+    // @ts-ignore
+    instance.sendState = jest.fn();
+    instance.getMaxLengthOfCardNumber = jest.fn();
+    Formatter.trimNonNumeric = jest.fn().mockReturnValueOnce('41111111');
+
+    // then
+    it('should sendState', () => {
+      // @ts-ignore
+      instance.onPaste(event);
+      // @ts-ignore
+      expect(instance.sendState).toHaveBeenCalled();
     });
   });
 });
