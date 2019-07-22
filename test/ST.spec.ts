@@ -2,10 +2,11 @@ import ST from './../src/ST';
 
 jest.mock('./../src/core/shared/DomMethods');
 jest.mock('./../src/core/classes/CommonFrames.class');
+jest.mock('./../src/core/classes/CardFrames.class');
 
 // given
 describe('ST', () => {
-  const { config, instance } = stFixture();
+  const { config, instance, cacheConfig } = stFixture();
   beforeEach(() => {});
   // given
   describe('_addDefaults()', () => {
@@ -29,9 +30,29 @@ describe('ST', () => {
   // given
   describe('_configureCardFrames()', () => {});
   // given
-  describe('Components', () => {});
+  describe('Components', () => {
+    const { instance } = stFixture();
+
+    // when
+    beforeEach(() => {
+      instance.CardinalCommerce = jest.fn();
+      instance.instance.Components();
+    });
+
+    // then
+    it('should call CardinalCommerce method', () => {
+      expect(instance.CardinalCommerce).toHaveBeenCalled();
+    });
+  });
   // given
-  describe('ApplePay', () => {});
+  describe('ApplePay', () => {
+    const { instance } = stFixture();
+
+    // then
+    it('should return ApplePay configuration object', () => {
+      expect(instance.ApplePay()).toEqual(true);
+    });
+  });
   // given
   describe('VisaCheckout', () => {});
   // given
@@ -39,12 +60,17 @@ describe('ST', () => {
   // given
   describe('_setClassProperties', () => {
     // when
-    beforeEach(() => {
-      instance._setClassProperties(config);
-    });
+    beforeEach(() => {});
     // then
-    it('should set jwt', () => {
+    it('should set all settings properly', () => {
+      instance._setClassProperties(config);
       expect(instance._jwt).toEqual(config.jwt);
+    });
+
+    // then
+    it('should set cachetoken when init is set', () => {
+      instance._setClassProperties(cacheConfig);
+      expect(instance._submitOnSuccess).toEqual(false);
     });
   });
 });
@@ -65,6 +91,24 @@ function stFixture() {
     },
     submitOnSuccess: false
   };
+
+  const cacheConfig = {
+    componentIds: ['securetrading-card', 'securetrading-expiration-date', 'securetrading-security-code'],
+    jwt: config.jwt,
+    init: {
+      threedinit:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJSZWZlcmVuY2VJZCI6IjQyLWYzYThjNDk0YWNkYzY2MDcyOTc4YzY0ODg4ZWY5Mjk4ZDE4YWE1ZDRkMzUwNjBmZTQzNmFmN2M1YzI1NDVhM2QiLCJpc3MiOiI1YzEyODg0NWMxMWI5MjIwZGMwNDZlOGUiLCJqdGkiOiI0Mi1mM2E4YzQ5NGFjZGM2NjA3Mjk3OGM2NDg4OGVmOTI5OGQxOGFhNWQ0ZDM1MDYwZmU0MzZhZjdjNWMyNTQ1YTNkIiwiaWF0IjoxNTYxNzI2ODA5LCJQYXlsb2FkIjp7Ik9yZGVyRGV0YWlscyI6eyJBbW91bnQiOjEwMDAsIkN1cnJlbmN5Q29kZSI6IjgyNiJ9fSwiT3JnVW5pdElkIjoiNWMxMTNlOGU2ZmUzZDEyNDYwMTQxODY4In0.GIpwP_MWbocwOkexF_AE1Bo0LuIYsXWFcKWog4EaygA',
+      cachetoken:
+        'eyJkYXRhY2VudGVydXJsIjogbnVsbCwgImNhY2hldG9rZW4iOiAiNDItZjNhOGM0OTRhY2RjNjYwNzI5NzhjNjQ4ODhlZjkyOThkMThhYTVkNGQzNTA2MGZlNDM2YWY3YzVjMjU0NWEzZCJ9'
+    },
+    origin: 'https://someorigin.com',
+    styles: config.styles,
+    submitFields: false,
+    submitOnError: false,
+    submitOnSuccess: false,
+    datacenterurl: 'https://example.com',
+    formId: 'example-form'
+  };
   const instance: any = ST(config);
-  return { config, instance };
+  return { cacheConfig, config, instance };
 }
