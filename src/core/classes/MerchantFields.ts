@@ -1,4 +1,5 @@
 import { IMessageBusValidateField } from '../models/Validation';
+import DomMethods from '../shared/DomMethods';
 import MessageBus from '../shared/MessageBus';
 import Validation from '../shared/Validation';
 
@@ -26,7 +27,9 @@ export class MerchantFields {
     for (let i = 0; i < this._merchantInputs.length; ++i) {
       if (this._merchantInputs[i].hasAttribute(MerchantFields.DATA_ATTRIBUTE_NAME)) {
         const input = document.getElementById(this._merchantInputs[i].id) as HTMLInputElement;
-        this._backendValidation(input, MessageBus.EVENTS.VALIDATE_MERCHANT_FIELD);
+        input.insertAdjacentHTML('afterend', `<div class="error-label"></div>`);
+        const messageContainer: HTMLElement = input.nextSibling as HTMLElement;
+        this._backendValidation(input, MessageBus.EVENTS.VALIDATE_MERCHANT_FIELD, messageContainer);
         this._addKeypressListener(input);
         merchantFieldsNamesArray.push(this._merchantInputs[i].getAttribute(MerchantFields.DATA_ATTRIBUTE_NAME));
       }
@@ -43,6 +46,7 @@ export class MerchantFields {
     input.addEventListener('keypress', () => {
       input.setCustomValidity('');
       input.classList.remove(Validation.ERROR_FIELD_CLASS);
+      input.nextSibling.textContent = '';
     });
   }
 

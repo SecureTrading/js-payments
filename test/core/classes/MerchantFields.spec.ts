@@ -56,13 +56,16 @@ describe('MerchantField', () => {
   // given
   describe('_addKeypressListener()', () => {
     const { instance } = merchantFieldsFixture();
+    const body = document.createElement('div');
     const element = document.createElement('input');
-
+    body.appendChild(element);
+    element.insertAdjacentHTML('afterend', `<div class="error-label"></div>`);
     // when
     beforeEach(() => {
       element.addEventListener = jest.fn();
       element.setCustomValidity = jest.fn();
       element.classList.remove = jest.fn();
+      element.nextSibling.textContent = 'error';
     });
     // then
     it('should call addEventListener', () => {
