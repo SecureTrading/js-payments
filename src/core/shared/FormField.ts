@@ -130,6 +130,10 @@ export default class FormField extends Frame {
     this._blur();
   }
 
+  protected onTouch(event: Event) {
+    this._touch();
+  }
+
   protected onPaste(event: ClipboardEvent) {
     let { clipboardData } = event;
     event.preventDefault();
@@ -171,6 +175,11 @@ export default class FormField extends Frame {
     this._inputElement.focus();
   }
 
+  private _touch() {
+    this.setAttributes(FormField.FOCUSED_FIELD_STATE);
+    this._inputElement.focus();
+  }
+
   private _setInputListeners() {
     this._inputElement.addEventListener('paste', (event: ClipboardEvent) => {
       this.onPaste(event);
@@ -194,6 +203,10 @@ export default class FormField extends Frame {
 
     this._inputElement.addEventListener('click', (event: Event) => {
       this.onClick(event);
+    });
+
+    this._inputElement.addEventListener('touchstart', (event: Event) => {
+      this.onTouch(event);
     });
   }
 

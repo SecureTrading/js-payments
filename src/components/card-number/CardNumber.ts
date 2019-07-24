@@ -232,6 +232,10 @@ export default class CardNumber extends FormField {
     super.onKeyPress(event);
   }
 
+  protected onTouch(event: Event) {
+    super.onTouch(event);
+  }
+
   private sendState() {
     const { value, validity } = this.getFormFieldState();
     const messageBusEvent: IMessageBusEvent = {

@@ -120,6 +120,10 @@ export default class ExpirationDate extends FormField {
     this._inputElement.focus();
   }
 
+  protected onTouch(event: Event) {
+    super.onTouch(event);
+  }
+
   /**
    * Extends onPaste method with formatting and masking.
    * @param event

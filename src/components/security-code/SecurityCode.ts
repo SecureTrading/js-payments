@@ -122,6 +122,10 @@ export default class SecurityCode extends FormField {
     super.onKeyPress(event);
   }
 
+  protected onTouch(event: Event) {
+    super.onTouch(event);
+  }
+
   /**
    * Inherited and extended function from parent class.
    * Sets communication with MessageBus.
