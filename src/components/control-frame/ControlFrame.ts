@@ -39,6 +39,16 @@ export default class ControlFrame extends Frame {
     }
   };
 
+  private _messageBusEventCardNumber: IMessageBusEvent = {
+    type: MessageBus.EVENTS.BLUR_CARD_NUMBER
+  };
+  private _messageBusEventExpirationDate: IMessageBusEvent = {
+    type: MessageBus.EVENTS.BLUR_EXPIRATION_DATE
+  };
+  private _messageBusEventSecurityCode: IMessageBusEvent = {
+    type: MessageBus.EVENTS.BLUR_SECURITY_CODE
+  };
+
   constructor() {
     super();
     this.onInit();
@@ -224,18 +234,9 @@ export default class ControlFrame extends Frame {
           this._messageBus.publish(messageBusEvent, true);
         });
     } else {
-      const messageBusEventCardNumber: IMessageBusEvent = {
-        type: MessageBus.EVENTS.BLUR_CARD_NUMBER
-      };
-      const messageBusEventExpirationDate: IMessageBusEvent = {
-        type: MessageBus.EVENTS.BLUR_EXPIRATION_DATE
-      };
-      const messageBusEventSecurityCode: IMessageBusEvent = {
-        type: MessageBus.EVENTS.BLUR_SECURITY_CODE
-      };
-      this._messageBus.publish(messageBusEventCardNumber);
-      this._messageBus.publish(messageBusEventExpirationDate);
-      this._messageBus.publish(messageBusEventSecurityCode);
+      this._messageBus.publish(this._messageBusEventCardNumber);
+      this._messageBus.publish(this._messageBusEventExpirationDate);
+      this._messageBus.publish(this._messageBusEventSecurityCode);
       this._validation.setFormValidity(formValidity);
     }
   }
