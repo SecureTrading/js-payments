@@ -205,7 +205,7 @@ export default class FormField extends Frame {
       this.onClick(event);
     });
 
-    this._inputElement.addEventListener('touchstart', (event: Event) => {
+    this._inputElement.addEventListener('touchend', (event: Event) => {
       this.onTouch(event);
     });
   }

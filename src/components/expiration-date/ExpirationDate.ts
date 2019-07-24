@@ -33,6 +33,7 @@ export default class ExpirationDate extends FormField {
     super(Selectors.EXPIRATION_DATE_INPUT, Selectors.EXPIRATION_DATE_MESSAGE, Selectors.EXPIRATION_DATE_LABEL);
     this.setAttributes({ pattern: ExpirationDate.INPUT_PATTERN });
     this.setFocusListener();
+    this.setBlurListener();
     this.setDisableListener();
     this.validation.backendValidation(
       this._inputElement,
@@ -68,6 +69,13 @@ export default class ExpirationDate extends FormField {
    */
   public setFocusListener() {
     this._messageBus.subscribe(MessageBus.EVENTS.FOCUS_EXPIRATION_DATE, () => {
+      this.format(this._inputElement.value);
+      this.validation.validate(this._inputElement, this._messageElement);
+    });
+  }
+
+  public setBlurListener() {
+    this._messageBus.subscribe(MessageBus.EVENTS.BLUR_EXPIRATION_DATE, () => {
       this.format(this._inputElement.value);
       this.validation.validate(this._inputElement, this._messageElement);
     });

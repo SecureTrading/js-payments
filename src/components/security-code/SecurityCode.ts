@@ -25,6 +25,7 @@ export default class SecurityCode extends FormField {
     this.setSecurityCodePattern(Formatter.STANDARD_LENGTH_PATTERN);
     this.subscribeSecurityCodeChange();
     this.setFocusListener();
+    this.setBlurListener();
     this.setDisableListener();
     this.validation.backendValidation(
       this._inputElement,
@@ -45,6 +46,13 @@ export default class SecurityCode extends FormField {
    */
   public setFocusListener() {
     this._messageBus.subscribe(MessageBus.EVENTS.FOCUS_SECURITY_CODE, () => {
+      this.format(this._inputElement.value);
+      this.validation.validate(this._inputElement, this._messageElement);
+    });
+  }
+
+  public setBlurListener() {
+    this._messageBus.subscribe(MessageBus.EVENTS.BLUR_SECURITY_CODE, () => {
       this.format(this._inputElement.value);
       this.validation.validate(this._inputElement, this._messageElement);
     });
