@@ -130,10 +130,6 @@ export default class FormField extends Frame {
     this._blur();
   }
 
-  protected onTouch(event: Event) {
-    this._touch();
-  }
-
   protected onPaste(event: ClipboardEvent) {
     let { clipboardData } = event;
     event.preventDefault();
@@ -154,6 +150,16 @@ export default class FormField extends Frame {
     }
   }
 
+  /**
+   * Takes MessageBus Event and sets .subscribe() handler.
+   * @param event
+   */
+  protected setEventListener(event: string) {
+    this._messageBus.subscribe(event, () => {
+      this._validateInput();
+    });
+  }
+
   protected setValue(value: string) {
     this._inputElement.value = value;
   }
@@ -171,11 +177,6 @@ export default class FormField extends Frame {
   }
 
   private _focus() {
-    this.setAttributes(FormField.FOCUSED_FIELD_STATE);
-    this._inputElement.focus();
-  }
-
-  private _touch() {
     this.setAttributes(FormField.FOCUSED_FIELD_STATE);
     this._inputElement.focus();
   }
@@ -204,10 +205,15 @@ export default class FormField extends Frame {
     this._inputElement.addEventListener('click', (event: Event) => {
       this.onClick(event);
     });
+  }
 
-    this._inputElement.addEventListener('touchend', (event: Event) => {
-      this.onTouch(event);
-    });
+  /**
+   * Triggers format and validation methods on given input field.
+   * @private
+   */
+  private _validateInput() {
+    this.format(this._inputElement.value);
+    this.validation.validate(this._inputElement, this._messageElement);
   }
 
   private _addTabListener() {

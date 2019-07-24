@@ -179,20 +179,6 @@ export default class CardNumber extends FormField {
     };
   }
 
-  public setFocusListener() {
-    this._messageBus.subscribe(MessageBus.EVENTS.FOCUS_CARD_NUMBER, () => {
-      this.format(this._inputElement.value);
-      this.validation.validate(this._inputElement, this._messageElement);
-    });
-  }
-
-  public setBlurListener() {
-    this._messageBus.subscribe(MessageBus.EVENTS.BLUR_CARD_NUMBER, () => {
-      this.format(this._inputElement.value);
-      this.validation.validate(this._inputElement, this._messageElement);
-    });
-  }
-
   public setDisableListener() {
     this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_CARD_NUMBER, (state: boolean) => {
       if (state) {
@@ -205,6 +191,20 @@ export default class CardNumber extends FormField {
         this._inputElement.classList.remove('st-input--disabled');
       }
     });
+  }
+
+  /**
+   * Sets focus listener, controls focusing on input field.
+   */
+  protected setFocusListener() {
+    super.setEventListener(MessageBus.EVENTS.FOCUS_CARD_NUMBER);
+  }
+
+  /**
+   * Sets blur listener, controls blurring on input field.*
+   */
+  protected setBlurListener() {
+    super.setEventListener(MessageBus.EVENTS.BLUR_CARD_NUMBER);
   }
 
   protected getAllowedParams() {
@@ -238,10 +238,6 @@ export default class CardNumber extends FormField {
 
   protected onKeyPress(event: KeyboardEvent) {
     super.onKeyPress(event);
-  }
-
-  protected onTouch(event: Event) {
-    super.onTouch(event);
   }
 
   private sendState() {
