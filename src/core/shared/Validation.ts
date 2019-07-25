@@ -169,13 +169,11 @@ export default class Validation extends Frame {
    * @param message
    */
   public setError(inputElement: HTMLInputElement, messageElement: HTMLElement, message: string) {
-    if (!inputElement.validity.valid) {
-      inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
-      if (messageElement && messageElement.innerText !== Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH) {
-        messageElement.innerText = this._translator.translate(message);
-      }
-      inputElement.setCustomValidity(message);
+    inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
+    if (messageElement && messageElement.innerText !== Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH) {
+      messageElement.innerText = this._translator.translate(message);
     }
+    inputElement.setCustomValidity(message);
   }
 
   /**
@@ -272,7 +270,7 @@ export default class Validation extends Frame {
    * @param messageElement
    * @param customErrorMessage
    */
-  private _setMessage(inputElement: HTMLInputElement, messageElement?: HTMLElement, customErrorMessage?: string) {
+  private _setMessage(inputElement: HTMLInputElement, messageElement: HTMLElement, customErrorMessage?: string) {
     const isCardNumberInput: boolean = inputElement.getAttribute('id') === Selectors.CARD_NUMBER_INPUT;
     const validityState = Validation.getValidationMessage(inputElement.validity);
     messageElement.innerText = this._getProperTranslation(
