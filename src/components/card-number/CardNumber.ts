@@ -31,7 +31,8 @@ export default class CardNumber extends FormField {
     this.validity = new Validation();
     this._isCardNumberValid = true;
     this._cardNumberLength = CardNumber.STANDARD_CARD_LENGTH;
-    this._setFocusListener();
+    this.setFocusListener();
+    this.setBlurListener();
     this._setDisableListener();
     this.validation.backendValidation(
       this._inputElement,
@@ -94,6 +95,21 @@ export default class CardNumber extends FormField {
   protected onKeyPress(event: KeyboardEvent) {
     super.onKeyPress(event);
   }
+
+  /**
+   * Sets focus listener, controls focusing on input field.
+   */
+  protected setFocusListener() {
+    super.setEventListener(MessageBus.EVENTS.FOCUS_CARD_NUMBER);
+  }
+
+  /**
+   * Sets blur listener, controls blurring on input field.*
+   */
+  protected setBlurListener() {
+    super.setEventListener(MessageBus.EVENTS.BLUR_CARD_NUMBER);
+  }
+
 
   /**
    * Luhn Algorithm
@@ -257,17 +273,6 @@ export default class CardNumber extends FormField {
       validity,
       value: this._cardNumberValue
     };
-  }
-
-  /**
-   *
-   * @private
-   */
-  private _setFocusListener() {
-    this._messageBus.subscribe(MessageBus.EVENTS.FOCUS_CARD_NUMBER, () => {
-      this.format(this._inputElement.value);
-      this.validation.validate(this._inputElement, this._messageElement);
-    });
   }
 
   /**

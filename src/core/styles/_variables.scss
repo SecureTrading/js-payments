@@ -69,6 +69,6 @@ $space-inset-input: ($space-m - $border-size-input) $space-s;
 $space-inset-notification: ($space-m - $border-size-input) $space-s ($space-m + $border-size-input);
 $space-inset-button: ($space-m - $border-size-button) ($space-l - $border-size-button);
 
-$space-outset-input: 0 0 ($line-height-input + $space-xs);
+$space-outset-input: 0 0 ($space-xs);
 $space-outset-label: 0 0 $space-xs;
 $space-outset-message: $space-xs 0 0;
