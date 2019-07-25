@@ -321,36 +321,6 @@ describe('NotificationFrame', () => {
   });
 
   // given
-  describe('insertContent()', () => {
-    // then
-    it('should set text content', () => {
-      instance.notificationFrameElement = document.createElement('div');
-      instance.notificationFrameElement.textContent = 'ORIGINAL';
-      expect(instance.notificationFrameElement.textContent).toBe('ORIGINAL');
-      // @ts-ignore
-      instance._message = { type: 'error', content: 'NEW VALUE' };
-      // @ts-ignore
-      instance._insertContent();
-      expect(instance.notificationFrameElement.textContent).toBe('NEW VALUE');
-    });
-  });
-
-  // given
-  describe('_autoHide()', () => {
-    // then
-    it('should set text content', () => {
-      instance.notificationFrameElement = document.createElement('div');
-      instance.notificationFrameElement.textContent = 'ORIGINAL';
-      expect(instance.notificationFrameElement.textContent).toBe('ORIGINAL');
-      // @ts-ignore
-      instance._message = { type: 'error', content: 'NEW VALUE' };
-      // @ts-ignore
-      instance._insertContent();
-      expect(instance.notificationFrameElement.textContent).toBe('NEW VALUE');
-    });
-  });
-
-  // given
   describe('_autoHide()', () => {
     const notificationElementClass = 'some class';
 
