@@ -24,6 +24,7 @@ export default class SecurityCode extends FormField {
     this.binLookup = new BinLookup();
     this._setSecurityCodePattern(Formatter.STANDARD_LENGTH_PATTERN);
     this._subscribeSecurityCodeChange();
+    this.setBlurListener();
     this.setFocusListener();
     this.setDisableListener();
     this.validation.backendValidation(
@@ -41,16 +42,6 @@ export default class SecurityCode extends FormField {
   }
 
   /**
-   * Sets focus listener, controls focusing on input field.
-   */
-  public setFocusListener() {
-    this._messageBus.subscribe(MessageBus.EVENTS.FOCUS_SECURITY_CODE, () => {
-      this.format(this._inputElement.value);
-      this.validation.validate(this._inputElement, this._messageElement);
-    });
-  }
-
-  /**
    * Listens to event which controls blocking input components.
    */
   public setDisableListener() {
@@ -65,6 +56,20 @@ export default class SecurityCode extends FormField {
         this._inputElement.classList.remove(SecurityCode.DISABLED_ATTRIBUTE_CLASS);
       }
     });
+  }
+
+  /**
+   * Sets focus listener, controls focusing on input field.
+   */
+  protected setFocusListener() {
+    super.setEventListener(MessageBus.EVENTS.FOCUS_SECURITY_CODE);
+  }
+
+  /**
+   * Sets blur listener, controls blurring on input field.*
+   */
+  protected setBlurListener() {
+    super.setEventListener(MessageBus.EVENTS.BLUR_SECURITY_CODE);
   }
 
   /**
