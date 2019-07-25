@@ -170,6 +170,7 @@ export default class CardFrames extends RegisterFrames {
   private submitFormListener() {
     document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).addEventListener('submit', (event: Event) => {
       event.preventDefault();
+
       this.publishSubmitEvent();
     });
   }

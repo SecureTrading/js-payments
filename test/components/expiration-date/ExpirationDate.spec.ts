@@ -76,6 +76,7 @@ describe('ExpirationDate', () => {
       });
       // @ts-ignore
       spy = jest.spyOn(instance, 'format');
+      // @ts-ignore
       instance.setFocusListener();
     });
     // then
