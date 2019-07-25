@@ -342,7 +342,7 @@ describe('AnimatedCard', () => {
   });
 
   // given
-  describe('onExpirationDateChanged()', () => {
+  describe('_onExpirationDateChanged()', () => {
     // when
     let { instance } = animatedCardFixture();
     let dataObject = {
@@ -363,6 +363,48 @@ describe('AnimatedCard', () => {
   });
 
   // given
+  describe('_onCardNumberChanged()', () => {
+    let { instance } = animatedCardFixture();
+    const data = {
+      formattedValue: '',
+      value: '340'
+    };
+    beforeEach(() => {
+      // @ts-ignore
+      instance._cardDetails.type = AnimatedCard.CARD_TYPES.AMEX;
+    });
+
+    // then
+    it('should return security code xtended when card type is Amex', () => {
+      // @ts-ignore
+      instance._onCardNumberChanged(data);
+      // @ts-ignore
+      expect(instance._cardDetails.securityCode).toEqual(AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED);
+    });
+  });
+
+  // given
+  describe('_onSecurityCodeChanged()', () => {
+    let { instance } = animatedCardFixture();
+    const data = {
+      formattedValue: '',
+      value: ''
+    };
+    beforeEach(() => {
+      // @ts-ignore
+      instance._cardDetails.type = AnimatedCard.CARD_TYPES.AMEX;
+    });
+
+    // then
+    it('should return security code xtended when card type is Amex', () => {
+      // @ts-ignore
+      instance._onSecurityCodeChanged(data);
+      // @ts-ignore
+      expect(instance._cardDetails.securityCode).toEqual(AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED);
+    });
+  });
+
+  // given
   describe('setLogo()', () => {
     const { instance } = animatedCardFixture();
     const logo = diners;
@@ -376,7 +418,18 @@ describe('AnimatedCard', () => {
       instance._setLogo();
     });
 
+    // then
     it('should set logo', () => {
+      expect(DomMethods.setProperty.apply).toHaveBeenCalled();
+    });
+
+    // then
+    it('should only set logo when img markup already exist', () => {
+      const img = document.createElement('img');
+      // @ts-ignore
+      const wrapper = document.getElementById(AnimatedCard.CARD_CLASSES.CLASS_LOGO_WRAPPER);
+      img.setAttribute('id', Selectors.ANIMATED_CARD_PAYMENT_LOGO_ID);
+      wrapper.appendChild(img);
       expect(DomMethods.setProperty.apply).toHaveBeenCalled();
     });
   });
