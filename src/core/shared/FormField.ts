@@ -200,7 +200,6 @@ export default class FormField extends Frame {
     });
   }
 
-
   /**
    *
    * @param value
