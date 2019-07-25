@@ -11,6 +11,31 @@ class GoogleAnalytics {
     GoogleAnalytics.GA_MEASUREMENT_ID
   }-Y', 'auto');ga('send', 'pageview');`;
   private static GA_SCRIPT_SRC: string = 'https://www.google-analytics.com/analytics.js';
+  private static GA_DISABLE_COOKIES: string = `ga('create', 'UA-${
+    GoogleAnalytics.GA_MEASUREMENT_ID
+  }-Y', {'storage': 'none'});`;
+  private static GA_IP_ANONYMIZATION: string = `ga('set', 'anonymizeIp', true);`;
+  private static GA_DISABLE_ADVERTISING_FEATURES: string = `ga('set', 'allowAdFeatures', false);`;
+
+  /**
+   *
+   * @private
+   */
+  private static _returnScriptWithFeatures() {
+    return `${GoogleAnalytics.GA_INIT_SCRIPT_CONTENT}
+    ${GoogleAnalytics.GA_DISABLE_COOKIES}
+    ${GoogleAnalytics.GA_IP_ANONYMIZATION}
+    ${GoogleAnalytics.GA_DISABLE_ADVERTISING_FEATURES}`;
+  }
+
+  /**
+   *
+   * @private
+   */
+  private static _disableUserIDTracking() {
+    // @ts-ignore
+    return (window[`ga-disable-UA-${GoogleAnalytics.GA_MEASUREMENT_ID}-Y`] = true);
+  }
 
   private _communicate: string;
   private _gaLibrary: HTMLScriptElement;
@@ -36,6 +61,7 @@ class GoogleAnalytics {
           .then(response => {
             this._insertGALibrary();
             console.info(response);
+            GoogleAnalytics._disableUserIDTracking();
           })
           .catch(error => {
             console.error(error);
@@ -55,7 +81,7 @@ class GoogleAnalytics {
     return new Promise((resolve, reject) => {
       this._gaScript = document.createElement('script');
       this._gaScript.type = 'text/javascript';
-      this._gaScriptContent = document.createTextNode(GoogleAnalytics.GA_INIT_SCRIPT_CONTENT);
+      this._gaScriptContent = document.createTextNode(GoogleAnalytics._returnScriptWithFeatures());
       this._gaScript.appendChild(this._gaScriptContent);
       resolve((this._communicate = 'Script has been created'));
       reject((this._communicate = 'Script has not been created'));
