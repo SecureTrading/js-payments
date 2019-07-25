@@ -61,4 +61,5 @@ export class MerchantFields {
       this._validation.checkBackendValidity(data, inputElement, messageElement);
       this._validation.validate(inputElement, messageElement);
     });
+  }
 }
