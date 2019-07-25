@@ -18,7 +18,7 @@ class GoogleAnalytics {
   private static GA_DISABLE_ADVERTISING_FEATURES: string = `ga('set', 'allowAdFeatures', false);`;
 
   /**
-   *
+   * Adds all required features by interpolating static strings.
    * @private
    */
   private static _returnScriptWithFeatures() {
@@ -29,7 +29,7 @@ class GoogleAnalytics {
   }
 
   /**
-   *
+   * Disables User ID tracking (User Opt-out).
    * @private
    */
   private static _disableUserIDTracking() {
