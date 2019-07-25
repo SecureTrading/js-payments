@@ -1,5 +1,7 @@
 import GoogleAnalytics from '../../../src/core/integrations/GoogleAnalytics';
 
+jest.mock('./../../../src/core/shared/MessageBus');
+
 // given
 describe('GoogleAnalytics', () => {
   const { instance } = googleAnalyticsFixture();
