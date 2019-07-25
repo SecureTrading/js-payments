@@ -1,13 +1,8 @@
-import { environment } from '../../environments/environment';
+import { IStTransportParams } from '../models/StTransport';
 import Utils from '../shared/Utils';
 import { IStRequest, StCodec } from './StCodec.class';
 
-export interface IStTransportParams {
-  jwt: string;
-  gatewayUrl: string;
-}
-
-/***
+/**
  * Establishes connection with ST, defines client.
  * example usage:
  *   st.sendRequest({
@@ -19,30 +14,29 @@ export interface IStTransportParams {
  *     sitereference: 'test_james38641'
  *   }).then();
  */
-export default class StTransport {
-  /**
-   * Getter for the codec
-   */
+class StTransport {
   public get codec() {
     return this._codec;
   }
-  public static DEFAULT_FETCH_OPTIONS = {
+
+  private static DEFAULT_FETCH_OPTIONS = {
     headers: {
       Accept: StCodec.CONTENT_TYPE,
       'Content-Type': StCodec.CONTENT_TYPE
     },
     method: 'post'
   };
-  public static TIMEOUT = 10000;
-  public static DELAY = 1000;
-  public static RETRY_LIMIT = 5;
-  public static RETRY_TIMEOUT = 10000;
 
-  private gatewayUrl: string;
-  private _codec: StCodec;
+  private static DELAY = 1000;
+  private static RETRY_LIMIT = 5;
+  private static RETRY_TIMEOUT = 10000;
+  private static TIMEOUT = 10000;
+
+  private readonly _codec: StCodec;
+  private _gatewayUrl: string;
 
   constructor(params: IStTransportParams, parentOrigin?: string) {
-    this.gatewayUrl = params.gatewayUrl;
+    this._gatewayUrl = params.gatewayUrl;
     this._codec = new StCodec(params.jwt, parentOrigin);
   }
 
@@ -52,7 +46,7 @@ export default class StTransport {
    * @return A Promise object that resolves the gateway response
    */
   public async sendRequest(requestObject: IStRequest) {
-    return this.fetchRetry(this.gatewayUrl, {
+    return this._fetchRetry(this._gatewayUrl, {
       ...StTransport.DEFAULT_FETCH_OPTIONS,
       body: this._codec.encode(requestObject)
     })
@@ -72,8 +66,9 @@ export default class StTransport {
    * @param retries The number of retries
    * @param retryTimeout The longest amount of time to spend retrying
    * @return A Promise that resolves to a fetch response or rejects with an error
+   * @private
    */
-  public fetchRetry(
+  private _fetchRetry(
     url: string,
     options: object,
     connectTimeout = StTransport.TIMEOUT,
@@ -89,3 +84,5 @@ export default class StTransport {
     );
   }
 }
+
+export default StTransport;
