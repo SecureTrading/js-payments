@@ -238,7 +238,7 @@ describe('CardNumber', () => {
         callback();
       });
       // @ts-ignore
-      instance._setFocusListener();
+      instance.setFocusListener();
     });
     // then
     it('should set MessageBus listener function', () => {
