@@ -21,13 +21,10 @@ body {
   border-color: $border-color-notification-error;
 }
 
-.error-message {
+.error-label {
   font-size: 1.3rem;
   line-height: 1.6rem;
-  margin: .4rem 0 0;
   color: #ff4545;
-  position: absolute;
-  bottom: 0;
 }
 
 @-webkit-keyframes autofill {

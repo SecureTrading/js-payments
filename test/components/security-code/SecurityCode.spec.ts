@@ -73,6 +73,7 @@ describe('SecurityCode', () => {
       instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
         callback();
       });
+      // @ts-ignore
       instance.setFocusListener();
     });
     // then
