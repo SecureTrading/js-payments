@@ -1,5 +1,4 @@
 import DomMethods from '../shared/DomMethods';
-import Notification from '../shared/Notification';
 
 /**
  * Creates HTML markups <script> and add Google Analytics source to it.
@@ -18,6 +17,15 @@ class GoogleAnalytics {
   private static GA_DISABLE_ADVERTISING_FEATURES: string = `ga('set', 'allowAdFeatures', false);`;
 
   /**
+   * Disables User ID tracking (User Opt-out).
+   * @private
+   */
+  private static _disableUserIDTracking() {
+    // @ts-ignore
+    return (window[`ga-disable-UA-${GoogleAnalytics.GA_MEASUREMENT_ID}-Y`] = true);
+  }
+
+  /**
    * Adds all required features by interpolating static strings.
    * @private
    */
@@ -28,23 +36,12 @@ class GoogleAnalytics {
     ${GoogleAnalytics.GA_DISABLE_ADVERTISING_FEATURES}`;
   }
 
-  /**
-   * Disables User ID tracking (User Opt-out).
-   * @private
-   */
-  private static _disableUserIDTracking() {
-    // @ts-ignore
-    return (window[`ga-disable-UA-${GoogleAnalytics.GA_MEASUREMENT_ID}-Y`] = true);
-  }
-
   private _communicate: string;
   private _gaLibrary: HTMLScriptElement;
   private _gaScript: HTMLScriptElement;
   private _gaScriptContent: Text;
-  private _notification: Notification;
 
   constructor() {
-    this._notification = new Notification();
     this._onInit();
   }
 
@@ -89,6 +86,16 @@ class GoogleAnalytics {
   }
 
   /**
+   * Inserts GA library after the GA script created by _createGAScript().
+   * @private
+   */
+  private _insertGALibrary() {
+    this._gaLibrary = DomMethods.insertScript('head', GoogleAnalytics.GA_SCRIPT_SRC);
+    this._gaLibrary.async = true;
+    document.head.appendChild(this._gaLibrary);
+  }
+
+  /**
    * Appends GA script if it has been successfully created by __createGAScript().
    * @private
    */
@@ -98,16 +105,6 @@ class GoogleAnalytics {
       resolve((this._communicate = 'Script has been appended'));
       reject((this._communicate = 'Script has not been appended'));
     });
-  }
-
-  /**
-   * Inserts GA library after the GA script created by _createGAScript().
-   * @private
-   */
-  private _insertGALibrary() {
-    this._gaLibrary = DomMethods.insertScript('head', GoogleAnalytics.GA_SCRIPT_SRC);
-    this._gaLibrary.async = true;
-    document.head.appendChild(this._gaLibrary);
   }
 }
 

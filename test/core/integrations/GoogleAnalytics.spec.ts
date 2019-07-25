@@ -5,8 +5,18 @@ jest.mock('./../../../src/core/shared/MessageBus');
 // given
 describe('GoogleAnalytics', () => {
   const { instance } = googleAnalyticsFixture();
+
   // when
-  beforeEach(() => {});
+  beforeEach(() => {
+    // @ts-ignore
+    instance._onInit = jest.fn();
+  });
+
+  // then
+  it('should call _onInit function', () => {
+    // @ts-ignore
+    expect(instance._onInit).toHaveBeenCalledTimes(1);
+  });
 
   // given
   describe('_createGAScript', () => {
@@ -21,7 +31,7 @@ describe('GoogleAnalytics', () => {
   });
 
   // given
-  describe('_insertGAScript', () => {
+  describe('_insertGALibrary', () => {
     // when
     beforeEach(() => {});
 
@@ -30,12 +40,18 @@ describe('GoogleAnalytics', () => {
   });
 
   // given
-  describe('_insertGALibrary', () => {
+  describe('_insertGAScript', () => {
     // when
-    beforeEach(() => {});
+    beforeEach(() => {
+      // @ts-ignore
+      instance._insertGAScript();
+    });
 
     // then
-    it('spec name', () => {});
+    it('should append GA script', () => {
+      // @ts-ignore
+      // expect(document.head).toContain(instance._gaScript);
+    });
   });
 });
 
