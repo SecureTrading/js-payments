@@ -560,6 +560,7 @@ describe('CardinalCommerce', () => {
       data: { requestTypes },
       type: MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES
     };
+    let spyPublish: SpyInstance;
     // when
     beforeEach(() => {
       element = document.createElement('iframe');
@@ -569,13 +570,13 @@ describe('CardinalCommerce', () => {
         .mockImplementationOnce((event, callback) => {
           callback();
         });
-      instance.messageBus.publish = jest.fn();
+      spyPublish = jest.spyOn(instance.messageBus, 'publishFromParent');
     });
 
     // then
-    it('should call messageBus.publish', () => {
+    it('should call messageBus.publishFromParent', () => {
       instance._publishRequestTypesEvent(requestTypes);
-      expect(instance.messageBus.publish).toHaveBeenCalledWith(messageBusEvent);
+      expect(spyPublish).toHaveBeenCalledWith(messageBusEvent, 'st-control-frame-iframe');
     });
   });
 });
