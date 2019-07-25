@@ -110,7 +110,6 @@ export default class CardNumber extends FormField {
     super.setEventListener(MessageBus.EVENTS.BLUR_CARD_NUMBER);
   }
 
-
   /**
    * Luhn Algorithm
    * From the right:
