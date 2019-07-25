@@ -21,6 +21,12 @@ body {
   border-color: $border-color-notification-error;
 }
 
+.error-label {
+  font-size: 1.3rem;
+  line-height: 1.6rem;
+  color: #ff4545;
+}
+
 @-webkit-keyframes autofill {
   to {
     background-color: #f8d7da;
