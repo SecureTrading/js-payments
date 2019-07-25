@@ -13,7 +13,6 @@ import Validation from './Validation';
  *  - SecurityCode
  */
 export default class FormField extends Frame {
-  private static FOCUSED_FIELD_STATE = { 'data-pristine': false, 'data-dirty': true };
   public validation: Validation;
   protected _inputSelector: string;
   protected _labelSelector: string;
@@ -25,11 +24,9 @@ export default class FormField extends Frame {
 
   constructor(inputSelector: string, messageSelector: string, labelSelector: string) {
     super();
-
     this._inputElement = document.getElementById(inputSelector) as HTMLInputElement;
     this._labelElement = document.getElementById(labelSelector) as HTMLLabelElement;
     this._messageElement = document.getElementById(messageSelector) as HTMLInputElement;
-
     this._inputSelector = inputSelector;
     this._labelSelector = labelSelector;
     this._messageSelector = messageSelector;
@@ -37,22 +34,28 @@ export default class FormField extends Frame {
     this.onInit();
   }
 
+  /**
+   *
+   */
   public onInit() {
     super.onInit();
     this._translator = new Translator(this._params.locale);
     this.validation = new Validation();
     this._setLabelText();
     this._addTabListener();
-    this._setValidationAttributes({ 'data-clicked': false });
   }
 
   /**
-   * Gets translated label for input field.
+   * format()
+   * @param data
    */
-  protected getLabel(): string {
-    throw new Error(Language.translations.NOT_IMPLEMENTED_ERROR);
+  protected format(data: string) {
+    this._inputElement.value = data;
   }
 
+  /**
+   *
+   */
   protected getAllowedStyles() {
     let allowed = super.getAllowedStyles();
     const input = `#${this._inputSelector}`;
@@ -95,6 +98,16 @@ export default class FormField extends Frame {
     return allowed;
   }
 
+  /**
+   *
+   */
+  protected getLabel(): string {
+    throw new Error(Language.translations.NOT_IMPLEMENTED_ERROR);
+  }
+
+  /**
+   *
+   */
   protected getState(): IFormFieldState {
     return {
       validity: this._inputElement.validity.valid,
@@ -102,6 +115,44 @@ export default class FormField extends Frame {
     };
   }
 
+  /**
+   *
+   */
+  protected onBlur() {
+    this.validation.validate(this._inputElement, this._messageElement);
+    this._blur();
+  }
+
+  /**
+   *
+   * @param event
+   */
+  protected onClick(event: Event) {
+    this._click();
+  }
+
+  /**
+   *
+   * @param event
+   */
+  protected onFocus(event: Event) {
+    this._focus();
+    this._inputElement.focus();
+  }
+
+  /**
+   *
+   * @param event
+   */
+  protected onInput(event: Event) {
+    Validation.setCustomValidationError(this._inputElement, '');
+    this.format(this._inputElement.value);
+  }
+
+  /**
+   *
+   * @param event
+   */
   protected onKeyPress(event: KeyboardEvent) {
     if (Validation.isEnter(event)) {
       const messageBusEvent: IMessageBusEvent = {
@@ -111,25 +162,10 @@ export default class FormField extends Frame {
     }
   }
 
-  protected onInput(event: Event) {
-    Validation.setCustomValidationError(this._inputElement, '');
-    this.format(this._inputElement.value);
-  }
-
-  protected onFocus(event: Event) {
-    this._focus();
-    this._inputElement.focus();
-  }
-
-  protected onClick(event: Event) {
-    this._click();
-  }
-
-  protected onBlur() {
-    this.validation.validate(this._inputElement, this._messageElement);
-    this._blur();
-  }
-
+  /**
+   *
+   * @param event
+   */
   protected onPaste(event: ClipboardEvent) {
     let { clipboardData } = event;
     event.preventDefault();
@@ -142,6 +178,10 @@ export default class FormField extends Frame {
     this.validation.validate(this._inputElement, this._messageElement);
   }
 
+  /**
+   *
+   * @param attributes
+   */
   protected setAttributes(attributes: object) {
     // tslint:disable-next-line:forin
     for (const attribute in attributes) {
@@ -160,27 +200,53 @@ export default class FormField extends Frame {
     });
   }
 
+
+  /**
+   *
+   * @param value
+   */
   protected setValue(value: string) {
     this._inputElement.value = value;
   }
 
-  protected format(data: string) {
-    this._inputElement.value = data;
+  /**
+   *
+   * @private
+   */
+  private _addTabListener() {
+    window.addEventListener('focus', event => {
+      this.onFocus(event);
+    });
   }
 
+  /**
+   *
+   * @private
+   */
   private _blur() {
     this._inputElement.blur();
   }
 
+  /**
+   *
+   * @private
+   */
   private _click() {
     this._inputElement.click();
   }
 
+  /**
+   *
+   * @private
+   */
   private _focus() {
-    this.setAttributes(FormField.FOCUSED_FIELD_STATE);
     this._inputElement.focus();
   }
 
+  /**
+   *
+   * @private
+   */
   private _setInputListeners() {
     this._inputElement.addEventListener('paste', (event: ClipboardEvent) => {
       this.onPaste(event);
@@ -208,35 +274,19 @@ export default class FormField extends Frame {
   }
 
   /**
+   *
+   * @private
+   */
+  private _setLabelText() {
+    this._labelElement.innerHTML = this._translator.translate(this.getLabel());
+  }
+
+  /**
    * Triggers format and validation methods on given input field.
    * @private
    */
   private _validateInput() {
     this.format(this._inputElement.value);
     this.validation.validate(this._inputElement, this._messageElement);
-  }
-
-  private _addTabListener() {
-    window.addEventListener('focus', event => {
-      this.onFocus(event);
-    });
-  }
-
-  /**
-   * Sets all necessary validation attributes.
-   * @param attributes
-   * @private
-   */
-  private _setValidationAttributes(attributes?: object) {
-    this.setAttributes({
-      'data-dirty': false,
-      'data-pristine': true,
-      'data-validity': false,
-      ...attributes
-    });
-  }
-
-  private _setLabelText() {
-    this._labelElement.innerHTML = this._translator.translate(this.getLabel());
   }
 }

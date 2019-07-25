@@ -5,16 +5,16 @@ import { IStyles } from '../shared/Styler';
  * Defines all non field elements of form and their placement on merchant site.
  */
 export default class RegisterFrames {
-  public styles: IStyles;
-  public params: any;
-  public elementsToRegister: HTMLElement[];
-  public elementsTargets: any;
-  public componentIds: any;
-  public jwt: any;
-  public origin: any;
+  protected styles: IStyles;
+  protected params: any;
+  protected elementsToRegister: HTMLElement[];
+  protected elementsTargets: string[];
+  protected jwt: string;
+  protected origin: string;
+  protected componentIds: any;
   private stJwt: StJwt;
 
-  constructor(jwt: any, origin: any, componentIds: {}, styles: IStyles) {
+  constructor(jwt: string, origin: string, componentIds: {}, styles: IStyles) {
     this.styles = styles;
     this.componentIds = componentIds;
     this.elementsTargets = this.setElementsFields();
@@ -26,13 +26,9 @@ export default class RegisterFrames {
   }
 
   /**
-   * Defines iframe elements to add
+   * Gathers and launches methods needed on initializing object.
    */
-  public setElementsFields(): any {
-    return [];
-  }
-
-  public _onInit() {
+  protected onInit() {
     this.registerElements(this.elementsToRegister, this.elementsTargets);
   }
 
@@ -41,10 +37,17 @@ export default class RegisterFrames {
    * @param fields
    * @param targets
    */
-  public registerElements(fields: HTMLElement[], targets: string[]) {
+  protected registerElements(fields: HTMLElement[], targets: string[]) {
     targets.map((item, index) => {
       const itemToChange = document.getElementById(item);
       itemToChange.appendChild(fields[index]);
     });
+  }
+
+  /**
+   * Defines iframe elements to add
+   */
+  protected setElementsFields(): any {
+    return [];
   }
 }
