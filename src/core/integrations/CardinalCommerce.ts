@@ -227,7 +227,7 @@ export class CardinalCommerce {
       type: MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES
     };
     document.getElementById(Selectors.CONTROL_FRAME_IFRAME).addEventListener('load', () => {
-      this.messageBus.publish(messageBusEvent);
+      this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
     });
   }
 
