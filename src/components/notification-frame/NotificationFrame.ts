@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
  * NotificationFrame class
  * Defines component for displaying payment status messages
  */
-export default class NotificationFrame extends Frame {
+class NotificationFrame extends Frame {
   get notificationFrameElement(): HTMLElement {
     return this._notificationFrameElement;
   }
@@ -64,63 +64,12 @@ export default class NotificationFrame extends Frame {
   constructor() {
     super();
     this.notificationFrameElement = NotificationFrame.getElement(NotificationFrame.ELEMENT_ID);
-
     this.onInit();
   }
 
-  public onInit() {
-    super.onInit();
-    this._translator = new Translator(this._params.locale);
-    this._onMessage();
-  }
-
   /**
-   * Listens to postMessage event, receives message from it and triggers method for inserting content into div
+   *
    */
-  public _onMessage() {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, this._notificationEvent);
-  }
-  /**
-   * Inserts content of incoming text info into div
-   */
-  public insertContent() {
-    if (this.notificationFrameElement) {
-      this.notificationFrameElement.textContent = this._translator.translate(this._message.content);
-    }
-  }
-
-  /**
-   * Sets data-* attributes for QA purposes
-   */
-  public setDataNotificationColorAttribute(messageType: string) {
-    if (this.notificationFrameElement) {
-      if (messageType === NotificationFrame.MESSAGE_TYPES.error) {
-        this.notificationFrameElement.setAttribute('data-notification-color', 'red');
-      } else if (messageType === NotificationFrame.MESSAGE_TYPES.info) {
-        this.notificationFrameElement.setAttribute('data-notification-color', 'grey');
-      } else if (messageType === NotificationFrame.MESSAGE_TYPES.success) {
-        this.notificationFrameElement.setAttribute('data-notification-color', 'green');
-      } else if (messageType === NotificationFrame.MESSAGE_TYPES.warning) {
-        this.notificationFrameElement.setAttribute('data-notification-color', 'yellow');
-      } else {
-        this.notificationFrameElement.setAttribute('data-notification-color', 'undefined');
-      }
-    }
-  }
-
-  /**
-   * Sets proper class to message container
-   * @private
-   */
-  public setAttributeClass() {
-    const notificationElementClass = NotificationFrame._getMessageClass(this._message.type);
-    if (this.notificationFrameElement && notificationElementClass) {
-      this.notificationFrameElement.classList.add(notificationElementClass);
-      this.setDataNotificationColorAttribute(this._message.type);
-      this._autoHide(notificationElementClass);
-    }
-  }
-
   protected getAllowedStyles() {
     let allowed = super.getAllowedStyles();
     const notification = `#${NotificationFrame.ELEMENT_ID}`;
@@ -198,6 +147,68 @@ export default class NotificationFrame extends Frame {
     return allowed;
   }
 
+  /**
+   *
+   */
+  protected onInit() {
+    super.onInit();
+    this._translator = new Translator(this._params.locale);
+    this._onMessage();
+  }
+
+  /**
+   * Listens to postMessage event, receives message from it and triggers method for inserting content into div
+   */
+  private _onMessage() {
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, this._notificationEvent);
+  }
+
+  /**
+   * Inserts content of incoming text info into div
+   */
+  private _insertContent() {
+    if (this.notificationFrameElement) {
+      this.notificationFrameElement.textContent = this._translator.translate(this._message.content);
+    }
+  }
+
+  /**
+   * Sets data-* attributes for QA purposes
+   */
+  private _setDataNotificationColorAttribute(messageType: string) {
+    if (this.notificationFrameElement) {
+      if (messageType === NotificationFrame.MESSAGE_TYPES.error) {
+        this.notificationFrameElement.setAttribute('data-notification-color', 'red');
+      } else if (messageType === NotificationFrame.MESSAGE_TYPES.info) {
+        this.notificationFrameElement.setAttribute('data-notification-color', 'grey');
+      } else if (messageType === NotificationFrame.MESSAGE_TYPES.success) {
+        this.notificationFrameElement.setAttribute('data-notification-color', 'green');
+      } else if (messageType === NotificationFrame.MESSAGE_TYPES.warning) {
+        this.notificationFrameElement.setAttribute('data-notification-color', 'yellow');
+      } else {
+        this.notificationFrameElement.setAttribute('data-notification-color', 'undefined');
+      }
+    }
+  }
+
+  /**
+   * Sets proper class to message container
+   * @private
+   */
+  private _setAttributeClass() {
+    const notificationElementClass = NotificationFrame._getMessageClass(this._message.type);
+    if (this.notificationFrameElement && notificationElementClass) {
+      this.notificationFrameElement.classList.add(notificationElementClass);
+      this._setDataNotificationColorAttribute(this._message.type);
+      this._autoHide(notificationElementClass);
+    }
+  }
+
+  /**
+   * _autoHide
+   * @param notificationElementClass
+   * @private
+   */
   private _autoHide(notificationElementClass: string) {
     const timeoutId = window.setTimeout(() => {
       this.notificationFrameElement.classList.remove(notificationElementClass);
@@ -205,9 +216,16 @@ export default class NotificationFrame extends Frame {
     }, NotificationFrame.NOTIFICATION_TTL);
   }
 
+  /**
+   * _notificationEvent
+   * @param data
+   * @private
+   */
   private _notificationEvent = (data: INotificationEvent) => {
     this._message = data;
-    this.insertContent();
-    this.setAttributeClass();
+    this._insertContent();
+    this._setAttributeClass();
   };
 }
+
+export default NotificationFrame;

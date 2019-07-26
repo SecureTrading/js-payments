@@ -3,22 +3,20 @@ import MessageBus from '../../../src/core/shared/MessageBus';
 
 // given
 describe('Notification', () => {
-  let notify: Notification;
-
+  const { instance } = notificationFixture();
   // when
   beforeEach(() => {
-    notify = new Notification();
     // @ts-ignore
-    notify._messageBus.publish = jest.fn();
+    instance._messageBus.publish = jest.fn();
   });
 
   // given
   describe('error()', () => {
     // then
     it('should send error notification', () => {
-      notify.error('abc');
+      instance.error('abc');
       // @ts-ignore
-      expect(notify._messageBus.publish).toHaveBeenCalledWith({
+      expect(instance._messageBus.publish).toHaveBeenCalledWith({
         data: {
           content: 'abc',
           type: 'ERROR'
@@ -32,9 +30,9 @@ describe('Notification', () => {
   describe('info()', () => {
     // then
     it('should send info notification', () => {
-      notify.info('abc');
+      instance.info('abc');
       // @ts-ignore
-      expect(notify._messageBus.publish).toHaveBeenCalledWith({
+      expect(instance._messageBus.publish).toHaveBeenCalledWith({
         data: {
           content: 'abc',
           type: 'INFO'
@@ -48,9 +46,9 @@ describe('Notification', () => {
   describe('success()', () => {
     // then
     it('should send info success', () => {
-      notify.success('abc');
+      instance.success('abc');
       // @ts-ignore
-      expect(notify._messageBus.publish).toHaveBeenCalledWith({
+      expect(instance._messageBus.publish).toHaveBeenCalledWith({
         data: {
           content: 'abc',
           type: 'SUCCESS'
@@ -64,9 +62,9 @@ describe('Notification', () => {
   describe('warning()', () => {
     // then
     it('should send info warning', () => {
-      notify.warning('abc');
+      instance.warning('abc');
       // @ts-ignore
-      expect(notify._messageBus.publish).toHaveBeenCalledWith({
+      expect(instance._messageBus.publish).toHaveBeenCalledWith({
         data: {
           content: 'abc',
           type: 'WARNING'
@@ -76,3 +74,8 @@ describe('Notification', () => {
     });
   });
 });
+
+function notificationFixture() {
+  const instance: Notification = new Notification();
+  return { instance };
+}
