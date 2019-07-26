@@ -1,4 +1,6 @@
 import CommonFrames from '../../../src/core/classes/CommonFrames.class';
+import DomMethods from '../../../src/core/shared/DomMethods';
+import MessageBus from '../../../src/core/shared/MessageBus';
 import Selectors from '../../../src/core/shared/Selectors';
 
 // given
@@ -19,14 +21,17 @@ describe('CommonFrames', () => {
     it('should be complete', () => {
       expect(isThreedComplete(['THREEDQUERY'], { requesttypedescription: 'THREEDQUERY' })).toEqual(true);
     });
+
     // then
     it('should not be complete if not a THREEDQUERY', () => {
       expect(isThreedComplete(['THREEDQUERY'], { requesttypedescription: 'RISKDEC' })).toEqual(false);
     });
+
     // then
     it('should not be complete if THREEDQUERY not last request type', () => {
       expect(isThreedComplete(['THREEDQUERY', 'AUTH'], { requesttypedescription: 'THREEDQUERY' })).toEqual(false);
     });
+
     // then
     it('should not be complete if THREEDQUERY but enrolled and non-frictionless', () => {
       expect(
@@ -37,6 +42,7 @@ describe('CommonFrames', () => {
         })
       ).toEqual(false);
     });
+
     // then
     it('should not be complete if THREEDQUERY but enrolled unless threedresponse is available', () => {
       expect(
@@ -50,6 +56,7 @@ describe('CommonFrames', () => {
     });
   });
 
+  // given
   describe('_isTransactionFinished()', () => {
     // when
     const { instance } = commonFramesFixture();
@@ -64,16 +71,19 @@ describe('CommonFrames', () => {
     it('should be finished if AUTH', () => {
       expect(isTransactionFinishedFixture({ requesttypedescription: 'AUTH' })).toEqual(true);
     });
+
     // then
     it('should be finished if CACHETOKENISE', () => {
       expect(isTransactionFinishedFixture({ requesttypedescription: 'CACHETOKENISE' })).toEqual(true);
     });
+
     // then
     it('should be finished if _isThreedComplete is true', () => {
       // @ts-ignore
       instance._isThreedComplete = jest.fn().mockReturnValueOnce(true);
       expect(isTransactionFinishedFixture({ requesttypedescription: 'THREEDQUERY' })).toEqual(true);
     });
+
     // then
     it('should not be finished if _isThreedComplete is false', () => {
       // @ts-ignore
@@ -82,6 +92,7 @@ describe('CommonFrames', () => {
     });
   });
 
+  // given
   describe('_shouldSubmitForm()', () => {
     // when
     const { instance } = commonFramesFixture();
@@ -102,10 +113,12 @@ describe('CommonFrames', () => {
     it('should submit if submit on success true', () => {
       expect(shouldSubmitFormFixture('0', true, true, false)).toEqual(true);
     });
+
     // then
     it('should not submit if submit on success false', () => {
       expect(shouldSubmitFormFixture('0', true, false, true)).toEqual(false);
     });
+
     // then
     it('should not submit if transaction finished is false', () => {
       expect(shouldSubmitFormFixture('0', false, true, false)).toEqual(false);
@@ -160,6 +173,125 @@ describe('CommonFrames', () => {
           ['a', 'b', 'c']
         )
       ).toEqual(['a', 'b', 'c', 'jwt', 'threedresponse']);
+    });
+  });
+  // given
+  describe('_onInput()', () => {
+    const { instance } = commonFramesFixture();
+    const event = new Event('input');
+    const messageBusEvent = {
+      data: {},
+      type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
+    };
+
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._messageBus.publishFromParent = jest.fn();
+      // @ts-ignore
+      instance._onInput(event);
+    });
+
+    // then
+    it('should publishFromParent has been called', () => {
+      // @ts-ignore
+      expect(instance._messageBus.publishFromParent).toHaveBeenCalledWith(
+        messageBusEvent,
+        Selectors.CONTROL_FRAME_IFRAME
+      );
+    });
+  });
+
+  // given
+  describe('_onTransactionComplete()', () => {
+    const { instance } = commonFramesFixture();
+    const data = {
+      errorcode: '0',
+      errormessage: 'Ok'
+    };
+
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._shouldSubmitForm = jest.fn().mockReturnValueOnce(true);
+      // @ts-ignore
+      DomMethods.addDataToForm = jest.fn();
+      // @ts-ignore
+      instance._onTransactionComplete(data);
+    });
+
+    // then
+    it('should call _merchantForm() method', () => {
+      // @ts-ignore
+      expect(DomMethods.addDataToForm).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('_setTransactionCompleteListener()', () => {
+    const { instance } = commonFramesFixture();
+    const data = {
+      errorcode: '0',
+      errormessage: 'Ok'
+    };
+
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._onTransactionComplete = jest.fn();
+    });
+
+    // then
+    it('should call _merchantForm() method', () => {
+      // @ts-ignore
+      instance._messageBus.subscribe = jest.fn().mockImplementationOnce((event, callback) => {
+        callback(data);
+      });
+      // @ts-ignore
+      instance._setTransactionCompleteListener();
+      // @ts-ignore
+      expect(instance._onTransactionComplete).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('_shouldLoadNotificationFrame()', () => {
+    // when
+    const { instance } = commonFramesFixture();
+
+    function shouldLoadNotificationFrameFixture(submitOnError: boolean, submitOnSuccess: boolean) {
+      // @ts-ignore
+      instance._submitOnError = submitOnError;
+      // @ts-ignore
+      instance._submitOnSuccess = submitOnSuccess;
+      // @ts-ignore
+      return !(instance._submitOnError && instance._submitOnSuccess);
+    }
+
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._shouldLoadNotificationFrame();
+    });
+
+    // then
+    it('should return false if both _submitOnError and _submitOnSuccess are true', () => {
+      expect(shouldLoadNotificationFrameFixture(true, true)).toEqual(false);
+    });
+
+    // then
+    it('should return true if both _submitOnError and _submitOnSuccess are false', () => {
+      expect(shouldLoadNotificationFrameFixture(false, false)).toEqual(true);
+    });
+
+    // then
+    it('should return true if _submitOnError is false and _submitOnSuccess is true', () => {
+      expect(shouldLoadNotificationFrameFixture(false, true)).toEqual(true);
+    });
+
+    // then
+    it('should return true if _submitOnError is true and _submitOnSuccess is false', () => {
+      expect(shouldLoadNotificationFrameFixture(true, false)).toEqual(true);
     });
   });
 });

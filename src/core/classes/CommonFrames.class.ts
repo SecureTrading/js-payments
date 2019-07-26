@@ -9,7 +9,10 @@ import RegisterFrames from './RegisterFrames.class';
 /**
  * Defines all non field elements of form and their placement on merchant site.
  */
-export default class CommonFrames extends RegisterFrames {
+class CommonFrames extends RegisterFrames {
+  get merchantForm(): any {
+    return document.getElementById(Selectors.MERCHANT_FORM_SELECTOR);
+  }
   set requestTypes(requestTypes: string[]) {
     this._requestTypes = requestTypes;
   }
@@ -34,8 +37,8 @@ export default class CommonFrames extends RegisterFrames {
   private readonly _gatewayUrl: string;
 
   constructor(
-    jwt: any,
-    origin: any,
+    jwt: string,
+    origin: string,
     componentIds: {},
     styles: IStyles,
     submitOnSuccess: boolean,
@@ -90,7 +93,7 @@ export default class CommonFrames extends RegisterFrames {
   }
 
   /**
-   *
+   * _getSubmitFields
    * @param data
    * @private
    */
@@ -126,7 +129,7 @@ export default class CommonFrames extends RegisterFrames {
   }
 
   /**
-   *
+   * _isThreedComplete
    * @param data
    * @private
    */
@@ -142,7 +145,7 @@ export default class CommonFrames extends RegisterFrames {
   }
 
   /**
-   *
+   * _isTransactionFinished
    * @param data
    * @private
    */
@@ -156,7 +159,7 @@ export default class CommonFrames extends RegisterFrames {
   }
 
   /**
-   *
+   * _onInput
    * @param event
    */
   private _onInput(event: Event) {
@@ -168,7 +171,7 @@ export default class CommonFrames extends RegisterFrames {
   }
 
   /**
-   *
+   * _onTransactionComplete
    * @param data
    * @private
    */
@@ -181,7 +184,7 @@ export default class CommonFrames extends RegisterFrames {
   }
 
   /**
-   *
+   * _setMerchantInputListeners
    * @private
    */
   private _setMerchantInputListeners() {
@@ -192,7 +195,7 @@ export default class CommonFrames extends RegisterFrames {
   }
 
   /**
-   *
+   * _setTransactionCompleteListener
    * @private
    */
   private _setTransactionCompleteListener() {
@@ -202,7 +205,7 @@ export default class CommonFrames extends RegisterFrames {
   }
 
   /**
-   *
+   * _shouldLoadNotificationFrame
    * @private
    */
   private _shouldLoadNotificationFrame() {
@@ -210,7 +213,7 @@ export default class CommonFrames extends RegisterFrames {
   }
 
   /**
-   *
+   * _shouldSubmitForm
    * @param data
    * @private
    */
@@ -221,3 +224,4 @@ export default class CommonFrames extends RegisterFrames {
     );
   }
 }
+export default CommonFrames;
