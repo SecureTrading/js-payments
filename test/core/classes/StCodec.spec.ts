@@ -4,8 +4,9 @@ import Language from '../../../src/core/shared/Language';
 import { StCodec } from '../../../src/core/classes/StCodec.class';
 import { Translator } from '../../../src/core/shared/Translator';
 
+// given
 describe('StCodec class', () => {
-  const { instance, jwt, responseJwt } = stCodecFixture();
+  const { instance, jwt } = stCodecFixture();
   const ridRegex = 'J-[\\da-z]{8}';
   const requestid = expect.stringMatching(new RegExp('^' + ridRegex + '$'));
   let str: StCodec;
@@ -16,6 +17,7 @@ describe('StCodec class', () => {
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NjExMTUyMDksInBheWxvYWQiOnsicmVxdWVzdHJlZmVyZW5jZSI6IlczMy0wcm0wZ2N5eCIsInJlc3BvbnNlIjpbeyJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImFjcXVpcmVycmVzcG9uc2Vjb2RlIjoiMDAiLCJhdXRoY29kZSI6IlRFU1Q1NiIsImJhc2VhbW91bnQiOiIxMDAiLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwiZGNjZW5hYmxlZCI6IjAiLCJlcnJvcmNvZGUiOiIwIiwiZXJyb3JtZXNzYWdlIjoiT2siLCJpc3N1ZXIiOiJTZWN1cmVUcmFkaW5nIFRlc3QgSXNzdWVyMSIsImlzc3VlcmNvdW50cnlpc28yYSI6IlVTIiwibGl2ZXN0YXR1cyI6IjAiLCJtYXNrZWRwYW4iOiI0MTExMTEjIyMjIyMwMjExIiwibWVyY2hhbnRjb3VudHJ5aXNvMmEiOiJHQiIsIm1lcmNoYW50bmFtZSI6IndlYnNlcnZpY2UgVU5JQ09ERSBtZXJjaGFudG5hbWUiLCJtZXJjaGFudG51bWJlciI6IjAwMDAwMDAwIiwib3BlcmF0b3JuYW1lIjoid2Vic2VydmljZXNAc2VjdXJldHJhZGluZy5jb20iLCJvcmRlcnJlZmVyZW5jZSI6IkFVVEhfVklTQV9QT1NULVBBU1MtSlNPTi1KU09OIiwicGF5bWVudHR5cGVkZXNjcmlwdGlvbiI6IlZJU0EiLCJyZXF1ZXN0dHlwZWRlc2NyaXB0aW9uIjoiQVVUSCIsInNlY3VyaXR5cmVzcG9uc2VhZGRyZXNzIjoiMiIsInNlY3VyaXR5cmVzcG9uc2Vwb3N0Y29kZSI6IjIiLCJzZWN1cml0eXJlc3BvbnNlc2VjdXJpdHljb2RlIjoiMiIsInNldHRsZWR1ZWRhdGUiOiIyMDE5LTAyLTIxIiwic2V0dGxlc3RhdHVzIjoiMCIsInNwbGl0ZmluYWxudW1iZXIiOiIxIiwidGlkIjoiMjc4ODI3ODgiLCJ0cmFuc2FjdGlvbnJlZmVyZW5jZSI6IjMzLTktODAxNjgiLCJ0cmFuc2FjdGlvbnN0YXJ0ZWR0aW1lc3RhbXAiOiIyMDE5LTAyLTIxIDEwOjA2OjM1In1dLCJzZWNyYW5kIjoiWktBVk1za1dRIiwidmVyc2lvbiI6IjEuMDAifX0.lLHIs5UsXht0IyFCGEF_x7AM4u_lOWX47J5cCuakqtc'
   };
 
+  // given
   describe('StCodec.verifyResponseObject', () => {
     // @ts-ignore
     const originalIsInvalid = StCodec._isInvalidResponse;
@@ -25,6 +27,8 @@ describe('StCodec class', () => {
     const originalDetermineResp = StCodec._determineResponse;
     // @ts-ignore
     const originalHandleValid = StCodec._handleValidGatewayResponse;
+
+    // when
     beforeEach(() => {
       // @ts-ignore
       StCodec._isInvalidResponse = jest.fn();
@@ -35,6 +39,7 @@ describe('StCodec class', () => {
       // @ts-ignore
       StCodec._handleValidGatewayResponse = jest.fn();
     });
+
     afterEach(() => {
       // @ts-ignore
       StCodec._isInvalidResponse = originalIsInvalid;
@@ -46,6 +51,7 @@ describe('StCodec class', () => {
       StCodec._handleValidGatewayResponse = originalHandleValid;
     });
 
+    // then
     it('handles a valid response', () => {
       // @ts-ignore
       StCodec._isInvalidResponse.mockReturnValueOnce(false);
@@ -62,6 +68,7 @@ describe('StCodec class', () => {
       expect(StCodec._handleValidGatewayResponse).toHaveBeenCalledTimes(1);
     });
 
+    // then
     it('handles an invalid response', () => {
       // @ts-ignore
       StCodec._isInvalidResponse.mockReturnValueOnce(true);
@@ -77,8 +84,11 @@ describe('StCodec class', () => {
     });
   });
 
+  // given
   describe('StCodec.publishResponse', () => {
     let translator: Translator;
+
+    //when
     beforeEach(() => {
       // @ts-ignore
       translator = new Translator('en_GB');
@@ -89,6 +99,7 @@ describe('StCodec class', () => {
       StCodec._messageBus.publishToSelf = jest.fn();
     });
 
+    // then
     it('should translate and publish result to parent', () => {
       // @ts-ignore
       StCodec._parentOrigin = 'https://example.com';
@@ -114,6 +125,7 @@ describe('StCodec class', () => {
       expect(StCodec._messageBus.publishToSelf).toHaveBeenCalledTimes(0);
     });
 
+    // then
     it('should translate and publish result to itself', () => {
       // @ts-ignore
       StCodec._parentOrigin = undefined;
@@ -135,9 +147,38 @@ describe('StCodec class', () => {
         type: 'TRANSACTION_COMPLETE'
       });
     });
+
+    // then
+    it('should assing jwtResponse to eventData.jwt when it is defined', () => {
+      StCodec.publishResponse(
+        {
+          errorcode: '0',
+          errormessage: 'Ok'
+        },
+        'someJwtResponse'
+      );
+      // @ts-ignore
+      expect(StCodec._messageBus.publishToSelf).toHaveBeenCalledTimes(1);
+    });
+
+    // then
+    it('should assing threedresponse  to eventData.threedresponse  when it is defined', () => {
+      StCodec.publishResponse(
+        {
+          errorcode: '0',
+          errormessage: 'Ok'
+        },
+        'someJwtResponse',
+        'someThreedresponse'
+      );
+      // @ts-ignore
+      expect(StCodec._messageBus.publishToSelf).toHaveBeenCalledTimes(1);
+    });
   });
 
+  // given
   describe('StCodec._createCommunicationError', () => {
+    // then
     it('return valid error response', () => {
       // @ts-ignore
       expect(StCodec._createCommunicationError()).toMatchObject({
@@ -147,7 +188,9 @@ describe('StCodec class', () => {
     });
   });
 
+  // given
   describe('StCodec._handleInvalidResponse', () => {
+    // then
     it('should call publishResponse and error notification and return the error object', () => {
       let spy1 = jest.spyOn(StCodec, 'publishResponse');
       // @ts-ignore
@@ -163,7 +206,9 @@ describe('StCodec class', () => {
     });
   });
 
+  // given
   describe('StCodec._determineResponse', () => {
+    // then
     each([
       [{ response: [{ requesttypedescription: 'AUTH' }] }, { requesttypedescription: 'AUTH' }],
       [
@@ -205,11 +250,13 @@ describe('StCodec class', () => {
     });
   });
 
+  // given
   describe('StCodec._handleValidGatewayResponse', () => {
     const originalPublishResponse = StCodec.publishResponse;
     const originalGetErrorData = StCodec.getErrorData;
     let spy: any;
 
+    // when
     beforeEach(() => {
       StCodec.publishResponse = jest.fn();
       StCodec.getErrorData = jest.fn((data: any) => originalGetErrorData(data));
@@ -222,10 +269,10 @@ describe('StCodec class', () => {
       StCodec.getErrorData = originalGetErrorData;
     });
 
+    // then
     it('should handle successful response', () => {
       const content = { errorcode: '0', errormessage: 'Ok', requesttypedescription: 'AUTH' };
       const jwt = 'jwtString';
-
       // @ts-ignore
       StCodec._handleValidGatewayResponse(content, jwt);
       expect(spy).toHaveBeenCalledTimes(0);
@@ -235,6 +282,7 @@ describe('StCodec class', () => {
       expect(content.errormessage).toBe('Ok');
     });
 
+    // then
     it('should raise if error response', () => {
       const content = { errorcode: '50000', errormessage: 'Timeout', requesttypedescription: 'AUTH' };
       const jwt = 'jwtString';
@@ -247,6 +295,7 @@ describe('StCodec class', () => {
       expect(StCodec.publishResponse).toHaveBeenCalledWith(content, jwt);
     });
 
+    // then
     it('should raise if field error response and call getErrorData', () => {
       const content = {
         errorcode: '30000',
@@ -265,7 +314,9 @@ describe('StCodec class', () => {
     });
   });
 
+  // given
   describe('StCodec._decodeResponseJwt', () => {
+    // then
     it('should return decoded JWT payload', () => {
       const jwt =
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJwYXlsb2FkIjp7InNvbWV0aGluZyI6InRoYXRzIGRlY29kZWQifX0.OCxORAco0sqzWR1nd4-MUajfrAHGgGSf4d_AAjmrNlU';
@@ -281,24 +332,30 @@ describe('StCodec class', () => {
       expect(mock).toHaveBeenCalledTimes(0);
     });
 
+    // then
     it('should call reject on failure', () => {
       const jwt = 'INVALID';
       const mock = jest.fn();
       // @ts-ignore
-      const resp = StCodec._decodeResponseJwt(jwt, mock);
+      StCodec._decodeResponseJwt(jwt, mock);
       expect(mock).toHaveBeenCalledTimes(1);
       expect(mock).toHaveBeenCalledWith(new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
     });
   });
 
+  // given
   describe('StCodec._createRequestId', () => {
+    // when
     beforeEach(() => {
-      str = new StCodec(jwt);
+      str = new StCodec(jwt, 'https://example.com');
     });
 
+    // then
     it('generates a request id', () => {
       expect(StCodec._createRequestId()).toEqual(requestid);
     });
+
+    // then
     it('generates reasonably unique ids', () => {
       const attempts = 99999;
       const results = new Set();
@@ -309,13 +366,16 @@ describe('StCodec class', () => {
     });
   });
 
+  // given
   describe('StCodec.buildRequestObject', () => {
+    // when
     beforeEach(() => {
       str = new StCodec(jwt);
       // @ts-ignore
       StCodec.publishResponse = jest.fn();
     });
 
+    // then
     each([
       [
         { pan: '4111111111111111', expirydate: '12/12', securitycode: '321' },
@@ -338,13 +398,16 @@ describe('StCodec class', () => {
     });
   });
 
+  // given
   describe('StCodec.encode', () => {
+    // when
     beforeEach(() => {
       str = new StCodec(jwt);
       // @ts-ignore
       StCodec.publishResponse = jest.fn();
     });
 
+    // then
     each([
       [
         { pan: '4111111111111111', requesttypedescriptions: ['AUTH'] },
@@ -377,6 +440,7 @@ describe('StCodec class', () => {
       expect(str.buildRequestObject).toHaveBeenCalledWith(request);
     });
 
+    //then
     it('should refuse to build a request with an invalid rtd', () => {
       expect(() =>
         str.encode({
@@ -386,6 +450,7 @@ describe('StCodec class', () => {
       ).toThrow(Error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST));
     });
 
+    // then
     it('should refuse to build a request with if any of the rtd are invalid', () => {
       expect(() =>
         str.encode({
@@ -396,13 +461,16 @@ describe('StCodec class', () => {
     });
   });
 
+  // given
   describe('StCodec._isInvalidResponse', () => {
+    // when
     beforeEach(() => {
       str = new StCodec(jwt);
       // @ts-ignore
       StCodec.publishResponse = jest.fn();
     });
 
+    // then
     each([
       [{}, true],
       [{ response: [{}] }, true],
@@ -416,7 +484,9 @@ describe('StCodec class', () => {
     });
   });
 
+  // given
   describe('StCodec.decode', () => {
+    // when
     beforeEach(() => {
       str = new StCodec(jwt);
       // @ts-ignore
@@ -425,6 +495,7 @@ describe('StCodec class', () => {
         .mockReturnValueOnce(Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
     });
 
+    // then
     it('should decode a valid response', async () => {
       instance.verifyResponseObject = jest.fn().mockReturnValueOnce({ verified: 'data' });
       await expect(
@@ -438,6 +509,7 @@ describe('StCodec class', () => {
       expect(instance.verifyResponseObject).toHaveBeenCalledWith(expectedResult, fullResponse.jwt);
     });
 
+    // then
     it('should error an invalid response', async () => {
       await expect(str.decode({})).rejects.toThrow(Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
       // @ts-ignore
@@ -449,8 +521,6 @@ describe('StCodec class', () => {
 function stCodecFixture() {
   const jwt =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
-  const responseJwt =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NjExMDk1MDQsInBheWxvYWQiOnsicmVxdWVzdHJlZmVyZW5jZSI6Ilc0Mi10NGU0Y3I5NSIsInZlcnNpb24iOiIxLjAwIiwicmVzcG9uc2UiOlt7InRyYW5zYWN0aW9uc3RhcnRlZHRpbWVzdGFtcCI6IjIwMTktMDYtMjEgMDk6MzE6NDQiLCJwYXJlbnR0cmFuc2FjdGlvbnJlZmVyZW5jZSI6IjQyLTktODAwMzgiLCJjdXN0b21lcm91dHB1dCI6IlJFU1VMVCIsImxpdmVzdGF0dXMiOiIwIiwibWVyY2hhbnRuYW1lIjoiVGVzdCBVbml0dGVzdCBTaXRlIiwic3BsaXRmaW5hbG51bWJlciI6IjEiLCJ4aWQiOiJZa0pNTTBKM1ZuaHNabTE2U25kSWVYQm1NakE9IiwiZGNjZW5hYmxlZCI6IjAiLCJzZXR0bGVkdWVkYXRlIjoiMjAxOS0wNi0yMSIsImVycm9yY29kZSI6IjAiLCJ0aWQiOiIyNzg4MDAwMCIsImlzc3VlciI6IlNlY3VyZVRyYWRpbmcgVGVzdCBJc3N1ZXIxIiwibWVyY2hhbnRudW1iZXIiOiIwMDAwMDAwMCIsIm1lcmNoYW50Y291bnRyeWlzbzJhIjoiR0IiLCJzdGF0dXMiOiJZIiwidHJhbnNhY3Rpb25yZWZlcmVuY2UiOiI0Mi05LTgwMDM5IiwidGhyZWVkdmVyc2lvbiI6IjEuMC4yIiwicGF5bWVudHR5cGVkZXNjcmlwdGlvbiI6IlZJU0EiLCJiYXNlYW1vdW50IjoiMTAwMCIsImVjaSI6IjA1IiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjYXZ2IjoiQUFBQkFXRmxtUUFBQUFCalJXV1pFRUZnRno4PSIsImFjcXVpcmVycmVzcG9uc2Vjb2RlIjoiMDAiLCJyZXF1ZXN0dHlwZWRlc2NyaXB0aW9uIjoiQVVUSCIsInNlY3VyaXR5cmVzcG9uc2VzZWN1cml0eWNvZGUiOiIyIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsImF1dGhjb2RlIjoiVEVTVDk4IiwiZXJyb3JtZXNzYWdlIjoiT2siLCJpc3N1ZXJjb3VudHJ5aXNvMmEiOiJVUyIsIm1hc2tlZHBhbiI6IjQxMTExMSMjIyMjIzExMTEiLCJzZWN1cml0eXJlc3BvbnNlcG9zdGNvZGUiOiIwIiwiZW5yb2xsZWQiOiJZIiwic2VjdXJpdHlyZXNwb25zZWFkZHJlc3MiOiIwIiwib3BlcmF0b3JuYW1lIjoibGl2ZTJfYXV0b2p3dCIsInNldHRsZXN0YXR1cyI6IjAifV0sInNlY3JhbmQiOiJJWEhCQ2g5In19.ab4CU-ZiRz1ZbxBISjQfzrQeXULPW2YWdAS4lKPANws';
   const instance = StCodec;
-  return { instance, jwt, responseJwt };
+  return { instance, jwt };
 }
