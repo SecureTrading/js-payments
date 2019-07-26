@@ -16,7 +16,7 @@ const {
  * Base class for validation, aggregates common methods and attributes for all subclasses
  */
 export default class Validation extends Frame {
-  public static ERROR_FIELD_CLASS = 'error-field';
+  public static ERROR_FIELD_CLASS: string = 'error-field';
 
   /**
    * Method for prevent inserting non digits
@@ -73,6 +73,7 @@ export default class Validation extends Frame {
     expirationDate: 'expirydate',
     securityCode: 'securitycode'
   };
+  private static DATASET_ST_NAME: string = 'data-st-name';
   private static ENTER_KEY_CODE = 13;
   private static ONLY_DIGITS_REGEXP = /^[0-9]*$/;
   private static readonly MERCHANT_EXTRA_FIELDS_PREFIX = 'billing';
@@ -169,8 +170,9 @@ export default class Validation extends Frame {
    * @param message
    */
   public setError(inputElement: HTMLInputElement, messageElement: HTMLElement, message: string) {
-    if (inputElement.dataset.stName) {
-      if (inputElement.dataset.stName.indexOf('billing') !== -1) {
+    const dataStName = inputElement.getAttribute(Validation.DATASET_ST_NAME);
+    if (dataStName) {
+      if (dataStName.indexOf(Validation.MERCHANT_EXTRA_FIELDS_PREFIX) !== -1) {
         this._assignErrorDetails(inputElement, messageElement, message);
       }
     }
