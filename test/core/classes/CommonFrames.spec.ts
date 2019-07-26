@@ -123,19 +123,16 @@ describe('CommonFrames', () => {
     it('should not submit if transaction finished is false', () => {
       expect(shouldSubmitFormFixture('0', false, true, false)).toEqual(false);
     });
-
     // then
     it('should not submit if errorcode is not 0 and submit on error is false', () => {
       expect(shouldSubmitFormFixture('3000', true, true, false)).toEqual(false);
     });
-
     // then
     it('should submit if errorcode is not 0 but submit on error is true', () => {
       expect(shouldSubmitFormFixture('30000', true, true, true)).toEqual(true);
     });
   });
 
-  // given
   describe('_getSubmitFields()', () => {
     // when
     const { instance } = commonFramesFixture();
@@ -152,7 +149,6 @@ describe('CommonFrames', () => {
     it('should return submit fields', () => {
       expect(getSubmitFieldsFixture({ something: 'a value' }, ['a', 'b', 'c'])).toEqual(['a', 'b', 'c']);
     });
-
     // then
     it('should return submit fields plus jwt', () => {
       expect(
@@ -165,7 +161,6 @@ describe('CommonFrames', () => {
         )
       ).toEqual(['a', 'b', 'c', 'jwt']);
     });
-
     // then
     it('should return submit fields plus jwt and threedresponse', () => {
       expect(
@@ -180,7 +175,6 @@ describe('CommonFrames', () => {
       ).toEqual(['a', 'b', 'c', 'jwt', 'threedresponse']);
     });
   });
-
   // given
   describe('_onInput()', () => {
     const { instance } = commonFramesFixture();
