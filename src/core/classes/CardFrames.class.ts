@@ -44,7 +44,7 @@ export default class CardFrames extends RegisterFrames {
     this.validation = new Validation();
     this.messageBus = new MessageBus();
     this._initSubscribes();
-    this._onInit();
+    this.onInit();
     this._translator = new Translator(this.params.locale);
     this.getSubmitButton();
   }
@@ -64,26 +64,6 @@ export default class CardFrames extends RegisterFrames {
       type: eventName
     };
     this.messageBus.publish(messageBusEvent);
-  }
-
-  /**
-   * Defines form elements for card payments
-   */
-  public setElementsFields() {
-    return [
-      this.componentIds.cardNumber,
-      this.componentIds.expirationDate,
-      this.componentIds.securityCode,
-      this.componentIds.animatedCard
-    ];
-  }
-
-  /**
-   *
-   */
-  public _onInit() {
-    this.initCardFields();
-    this.registerElements(this.elementsToRegister, this.elementsTargets);
   }
 
   /**
@@ -121,11 +101,31 @@ export default class CardFrames extends RegisterFrames {
   }
 
   /**
+   * Defines form elements for card payments
+   */
+  protected setElementsFields(): string[] {
+    return [
+      this.componentIds.cardNumber,
+      this.componentIds.expirationDate,
+      this.componentIds.securityCode,
+      this.componentIds.animatedCard
+    ];
+  }
+
+  /**
+   *
+   */
+  protected onInit() {
+    this.initCardFields();
+    this.registerElements(this.elementsToRegister, this.elementsTargets);
+  }
+
+  /**
    * Register fields in clients form
    * @param fields
    * @param targets
    */
-  public registerElements(fields: HTMLElement[], targets: string[]) {
+  protected registerElements(fields: HTMLElement[], targets: string[]) {
     targets.map((item, index) => {
       const itemToChange = document.getElementById(item);
       itemToChange.appendChild(fields[index]);
