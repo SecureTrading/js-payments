@@ -6,6 +6,7 @@ const StyleLintPlugin = require('stylelint-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
   entry: {
@@ -38,18 +39,74 @@ module.exports = {
     splitChunks: {
       cacheGroups: {
         vendor: {
-          test: /[\\/]node_modules[\\/]/,
+          test(module, chunks) {
+            if (!module.context.includes('node_modules')) {
+              return false;
+            }
+            return !['lodash', 'joi-browser', 'sockjs', 'core-js', 'i18next', 'html-entities', 'ts-money'].some(str =>
+              module.context.includes(str)
+            );
+          },
           name: 'vendor',
-          enforce: true
+          chunks: 'all'
+        },
+        lodash: {
+          test(module, chunks) {
+            return ['lodash'].some(str => module.context.includes(str));
+          },
+          name: 'lodash',
+          chunks: 'all'
+        },
+        joiBrowser: {
+          test(module, chunks) {
+            return ['joi-browser'].some(str => module.context.includes(str));
+          },
+          name: 'joiBrowser',
+          chunks: 'all'
+        },
+        sockjs: {
+          test(module, chunks) {
+            return ['sockjs'].some(str => module.context.includes(str));
+          },
+          name: 'sockjs',
+          chunks: 'all'
+        },
+        corejs: {
+          test(module, chunks) {
+            return ['core-js'].some(str => module.context.includes(str));
+          },
+          name: 'corejs',
+          chunks: 'all'
+        },
+        i18next: {
+          test(module, chunks) {
+            return ['i18next'].some(str => module.context.includes(str));
+          },
+          name: 'i18next',
+          chunks: 'all'
+        },
+        html5Entities: {
+          test(module, chunks) {
+            return ['html-entities'].some(str => module.context.includes(str));
+          },
+          name: 'htmlEntities',
+          chunks: 'all'
+        },
+        tsMoney: {
+          test(module, chunks) {
+            return ['ts-money'].some(str => module.context.includes(str));
+          },
+          name: 'tsMoney',
+          chunks: 'all'
         }
       }
     },
     // runtimeChunk: 'single',
-    nodeEnv: 'production',
     mangleWasmImports: true
   },
   plugins: [
     new CleanWebpackPlugin(),
+    new BundleAnalyzerPlugin(),
     new HtmlWebpackPlugin({
       filename: 'card-number.html',
       template: './src/components/index.html',
