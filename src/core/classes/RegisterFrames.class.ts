@@ -5,16 +5,16 @@ import { IStyles } from '../shared/Styler';
  * Defines all non field elements of form and their placement on merchant site.
  */
 export default class RegisterFrames {
-  public styles: IStyles;
-  public params: any;
-  public elementsToRegister: HTMLElement[];
-  public elementsTargets: string[];
-  public componentIds: any;
-  public jwt: string;
-  public origin: string;
+  protected styles: IStyles;
+  protected params: any;
+  protected elementsToRegister: HTMLElement[];
+  protected elementsTargets: string[];
+  protected jwt: string;
+  protected origin: string;
+  protected componentIds: any;
   private stJwt: StJwt;
 
-  constructor(jwt: any, origin: any, componentIds: {}, styles: IStyles) {
+  constructor(jwt: string, origin: string, componentIds: {}, styles: IStyles) {
     this.styles = styles;
     this.componentIds = componentIds;
     this.elementsTargets = this.setElementsFields();
@@ -26,7 +26,7 @@ export default class RegisterFrames {
   }
 
   /**
-   * Triggers methods needed on init.
+   * Gathers and launches methods needed on initializing object.
    */
   protected onInit() {
     this.registerElements(this.elementsToRegister, this.elementsTargets);
@@ -38,13 +38,16 @@ export default class RegisterFrames {
    * @param targets
    */
   protected registerElements(fields: HTMLElement[], targets: string[]) {
-    targets.map((item, index) => document.getElementById(item).appendChild(fields[index]));
+    targets.map((item, index) => {
+      const itemToChange = document.getElementById(item);
+      itemToChange.appendChild(fields[index]);
+    });
   }
 
   /**
    * Defines iframe elements to add
    */
-  protected setElementsFields(): string[] {
+  protected setElementsFields(): any {
     return [];
   }
 }

@@ -9,11 +9,10 @@ import RegisterFrames from './RegisterFrames.class';
 /**
  * Defines all non field elements of form and their placement on merchant site.
  */
-export default class CommonFrames extends RegisterFrames {
+class CommonFrames extends RegisterFrames {
   get merchantForm(): any {
     return document.getElementById(Selectors.MERCHANT_FORM_SELECTOR);
   }
-
   set requestTypes(requestTypes: string[]) {
     this._requestTypes = requestTypes;
   }
@@ -21,23 +20,25 @@ export default class CommonFrames extends RegisterFrames {
   get requestTypes(): string[] {
     return this._requestTypes;
   }
+
   private static readonly COMPLETED_REQUEST_TYPES = ['AUTH', 'CACHETOKENISE'];
   public elementsToRegister: HTMLElement[];
   public elementsTargets: any;
-  private notificationFrameMounted: HTMLElement;
-  private controlFrameMounted: HTMLElement;
-  private notificationFrame: Element;
-  private controlFrame: Element;
-  private messageBus: MessageBus;
-  private submitOnSuccess: boolean;
-  private submitOnError: boolean;
-  private submitFields: string[];
-  private gatewayUrl: string;
+  private _notificationFrameMounted: HTMLElement;
+  private _controlFrameMounted: HTMLElement;
+  private _notificationFrame: Element;
+  private _controlFrame: Element;
+  private _messageBus: MessageBus;
   private _requestTypes: string[];
+  private readonly _merchantForm: HTMLFormElement;
+  private readonly _submitOnSuccess: boolean;
+  private readonly _submitOnError: boolean;
+  private readonly _submitFields: string[];
+  private readonly _gatewayUrl: string;
 
   constructor(
-    jwt: any,
-    origin: any,
+    jwt: string,
+    origin: string,
     componentIds: {},
     styles: IStyles,
     submitOnSuccess: boolean,
@@ -46,48 +47,20 @@ export default class CommonFrames extends RegisterFrames {
     gatewayUrl: string
   ) {
     super(jwt, origin, componentIds, styles);
-    this.submitOnSuccess = submitOnSuccess;
-    this.submitOnError = submitOnError;
-    this.submitFields = submitFields;
-    this.gatewayUrl = gatewayUrl;
-    this.messageBus = new MessageBus(origin);
+    this._submitOnSuccess = submitOnSuccess;
+    this._submitOnError = submitOnError;
+    this._submitFields = submitFields;
+    this._gatewayUrl = gatewayUrl;
+    this._messageBus = new MessageBus(origin);
+    this._merchantForm = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR) as HTMLFormElement;
     this.onInit();
   }
 
   /**
-   * Inits necessary fields - notification and control frame
+   * Gathers and launches methods needed on initializing object.
    */
-  public initFormFields() {
-    this.notificationFrame = new Element();
-    this.controlFrame = new Element();
-    if (this.shouldLoadNotificationFrame()) {
-      this.notificationFrame.create(Selectors.NOTIFICATION_FRAME_COMPONENT_NAME, this.styles, this.params);
-      this.notificationFrameMounted = this.notificationFrame.mount(Selectors.NOTIFICATION_FRAME_IFRAME, '-1');
-      this.elementsToRegister.push(this.notificationFrameMounted);
-    }
-    this.controlFrame.create(Selectors.CONTROL_FRAME_COMPONENT_NAME, this.styles, {
-      gatewayUrl: this.gatewayUrl,
-      jwt: this.jwt,
-      origin: this.origin
-    });
-    this.controlFrameMounted = this.controlFrame.mount(Selectors.CONTROL_FRAME_IFRAME, '-1');
-    this.elementsToRegister.push(this.controlFrameMounted);
-  }
-
-  /**
-   * Defines form elements for notifications and control frame
-   */
-  protected setElementsFields(): string[] {
-    const elements = [];
-    if (this.shouldLoadNotificationFrame()) {
-      elements.push(this.componentIds.notificationFrame);
-    }
-    elements.push(Selectors.MERCHANT_FORM_SELECTOR); // Control frame is always needed so just append to form
-    return elements;
-  }
-
   protected onInit() {
-    this.initFormFields();
+    this._initFormFields();
     this._setMerchantInputListeners();
     this._setTransactionCompleteListener();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
@@ -107,25 +80,59 @@ export default class CommonFrames extends RegisterFrames {
     });
   }
 
-  private shouldLoadNotificationFrame() {
-    return !(this.submitOnError && this.submitOnSuccess);
-  }
-
-  private onInput(event: Event) {
-    const messageBusEvent = {
-      data: DomMethods.parseMerchantForm(),
-      type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
-    };
-    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
-  }
-
-  private _setMerchantInputListeners() {
-    const els = DomMethods.getAllFormElements(this.merchantForm);
-    for (const el of els) {
-      el.addEventListener('input', this.onInput.bind(this));
+  /**
+   * Defines form elements for notifications and control frame
+   */
+  protected setElementsFields() {
+    const elements = [];
+    if (this._shouldLoadNotificationFrame()) {
+      elements.push(this.componentIds.notificationFrame);
     }
+    elements.push(Selectors.MERCHANT_FORM_SELECTOR); // Control frame is always needed so just append to form
+    return elements;
   }
 
+  /**
+   * _getSubmitFields
+   * @param data
+   * @private
+   */
+  private _getSubmitFields(data: any) {
+    const fields = this._submitFields;
+    if (data.hasOwnProperty('jwt') && fields.indexOf('jwt') === -1) {
+      fields.push('jwt');
+    }
+    if (data.hasOwnProperty('threedresponse') && fields.indexOf('threedresponse') === -1) {
+      fields.push('threedresponse');
+    }
+    return fields;
+  }
+
+  /**
+   * Inits necessary fields - notification and control frame
+   */
+  private _initFormFields() {
+    this._notificationFrame = new Element();
+    this._controlFrame = new Element();
+    if (this._shouldLoadNotificationFrame()) {
+      this._notificationFrame.create(Selectors.NOTIFICATION_FRAME_COMPONENT_NAME, this.styles, this.params);
+      this._notificationFrameMounted = this._notificationFrame.mount(Selectors.NOTIFICATION_FRAME_IFRAME, '-1');
+      this.elementsToRegister.push(this._notificationFrameMounted);
+    }
+    this._controlFrame.create(Selectors.CONTROL_FRAME_COMPONENT_NAME, this.styles, {
+      gatewayUrl: this._gatewayUrl,
+      jwt: this.jwt,
+      origin: this.origin
+    });
+    this._controlFrameMounted = this._controlFrame.mount(Selectors.CONTROL_FRAME_IFRAME, '-1');
+    this.elementsToRegister.push(this._controlFrameMounted);
+  }
+
+  /**
+   * _isThreedComplete
+   * @param data
+   * @private
+   */
   private _isThreedComplete(data: any) {
     if (this.requestTypes[this.requestTypes.length - 1] === 'THREEDQUERY') {
       return (
@@ -137,6 +144,11 @@ export default class CommonFrames extends RegisterFrames {
     return false;
   }
 
+  /**
+   * _isTransactionFinished
+   * @param data
+   * @private
+   */
   private _isTransactionFinished(data: any) {
     if (CommonFrames.COMPLETED_REQUEST_TYPES.includes(data.requesttypedescription)) {
       return true;
@@ -146,35 +158,70 @@ export default class CommonFrames extends RegisterFrames {
     return false;
   }
 
-  private _shouldSubmitForm(data: any) {
-    return (
-      (this.submitOnSuccess && data.errorcode === '0' && this._isTransactionFinished(data)) ||
-      (this.submitOnError && data.errorcode !== '0')
-    );
+  /**
+   * _onInput
+   * @param event
+   */
+  private _onInput(event: Event) {
+    const messageBusEvent = {
+      data: DomMethods.parseMerchantForm(),
+      type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
+    };
+    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
-  private getSubmitFields(data: any) {
-    const fields = this.submitFields;
-    if (data.hasOwnProperty('jwt') && fields.indexOf('jwt') === -1) {
-      fields.push('jwt');
-    }
-    if (data.hasOwnProperty('threedresponse') && fields.indexOf('threedresponse') === -1) {
-      fields.push('threedresponse');
-    }
-    return fields;
-  }
-
+  /**
+   * _onTransactionComplete
+   * @param data
+   * @private
+   */
   private _onTransactionComplete(data: any) {
     if (this._shouldSubmitForm(data)) {
-      const form = this.merchantForm;
-      DomMethods.addDataToForm(form, data, this.getSubmitFields(data));
+      const form = this._merchantForm;
+      DomMethods.addDataToForm(form, data, this._getSubmitFields(data));
       form.submit();
     }
   }
 
+  /**
+   * _setMerchantInputListeners
+   * @private
+   */
+  private _setMerchantInputListeners() {
+    const els = DomMethods.getAllFormElements(this._merchantForm);
+    for (const el of els) {
+      el.addEventListener('input', this._onInput.bind(this));
+    }
+  }
+
+  /**
+   * _setTransactionCompleteListener
+   * @private
+   */
   private _setTransactionCompleteListener() {
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE, (data: any) => {
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE, (data: any) => {
       this._onTransactionComplete(data);
     });
   }
+
+  /**
+   * _shouldLoadNotificationFrame
+   * @private
+   */
+  private _shouldLoadNotificationFrame() {
+    return !(this._submitOnError && this._submitOnSuccess);
+  }
+
+  /**
+   * _shouldSubmitForm
+   * @param data
+   * @private
+   */
+  private _shouldSubmitForm(data: any) {
+    return (
+      (this._submitOnSuccess && data.errorcode === '0' && this._isTransactionFinished(data)) ||
+      (this._submitOnError && data.errorcode !== '0')
+    );
+  }
 }
+export default CommonFrames;
