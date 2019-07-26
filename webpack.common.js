@@ -47,57 +47,58 @@ module.exports = {
               module.context.includes(str)
             );
           },
-          name: 'vendor',
-          chunks: 'all'
+          name: 'vendor'
+          // @TODO this property let us reduce the bundle size 5 times ! Unfortunately it doesn't work with output: {library } property.
+          // chunks: 'all'
         },
         lodash: {
           test(module, chunks) {
             return ['lodash'].some(str => module.context.includes(str));
           },
-          name: 'lodash',
-          chunks: 'all'
+          name: 'lodash'
+          // chunks: 'all'
         },
         joiBrowser: {
           test(module, chunks) {
             return ['joi-browser'].some(str => module.context.includes(str));
           },
-          name: 'joiBrowser',
-          chunks: 'all'
+          name: 'joiBrowser'
+          // chunks: 'all'
         },
         sockjs: {
           test(module, chunks) {
             return ['sockjs'].some(str => module.context.includes(str));
           },
-          name: 'sockjs',
-          chunks: 'all'
+          name: 'sockjs'
+          // chunks: 'all'
         },
         corejs: {
           test(module, chunks) {
             return ['core-js'].some(str => module.context.includes(str));
           },
-          name: 'corejs',
-          chunks: 'all'
+          name: 'corejs'
+          // chunks: 'all'
         },
         i18next: {
           test(module, chunks) {
             return ['i18next'].some(str => module.context.includes(str));
           },
-          name: 'i18next',
-          chunks: 'all'
+          name: 'i18next'
+          // chunks: 'all'
         },
         html5Entities: {
           test(module, chunks) {
             return ['html-entities'].some(str => module.context.includes(str));
           },
-          name: 'htmlEntities',
-          chunks: 'all'
+          name: 'htmlEntities'
+          // chunks: 'all'
         },
         tsMoney: {
           test(module, chunks) {
             return ['ts-money'].some(str => module.context.includes(str));
           },
-          name: 'tsMoney',
-          chunks: 'all'
+          name: 'tsMoney'
+          // chunks: 'all'
         }
       }
     },
