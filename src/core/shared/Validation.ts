@@ -169,13 +169,13 @@ export default class Validation extends Frame {
    * @param message
    */
   public setError(inputElement: HTMLInputElement, messageElement: HTMLElement, message: string) {
-    // check if field is invalid or it's merchant field
-    if (!inputElement.validity.valid || inputElement.dataset.stName.indexOf('billing') !== -1) {
-      inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
-      if (messageElement && messageElement.innerText !== Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH) {
-        messageElement.innerText = this._translator.translate(message);
+    if (inputElement.dataset.stName) {
+      if (inputElement.dataset.stName.indexOf('billing') !== -1) {
+        this._assignErrorDetails(inputElement, messageElement, message);
       }
-      inputElement.setCustomValidity(message);
+    }
+    if (!inputElement.validity.valid) {
+      this._assignErrorDetails(inputElement, messageElement, message);
     }
   }
 
@@ -308,5 +308,20 @@ export default class Validation extends Frame {
     } else {
       return this._translator.translate(validityState);
     }
+  }
+
+  /**
+   *
+   * @param inputElement
+   * @param messageElement
+   * @param message
+   * @private
+   */
+  private _assignErrorDetails(inputElement: HTMLInputElement, messageElement: HTMLElement, message: string) {
+    inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
+    if (messageElement && messageElement.innerText !== Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH) {
+      messageElement.innerText = this._translator.translate(message);
+    }
+    inputElement.setCustomValidity(message);
   }
 }
