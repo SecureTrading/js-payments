@@ -6,37 +6,65 @@ jest.mock('./../../../src/core/shared/MessageBus');
 describe('GoogleAnalytics', () => {
   const { instance } = googleAnalyticsFixture();
 
-  // when
-  beforeEach(() => {
-    // @ts-ignore
-    instance._onInit = jest.fn();
-  });
+  // given
+  describe('GoogleAnalytics', () => {
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._createGAScript = jest.fn().mockRejectedValueOnce(new Error('Async error'));
+      // @ts-ignore
+      instance._onInit();
+    });
 
-  // then
-  it('should call _onInit function', () => {
-    // @ts-ignore
-    // expect(instance._onInit).toHaveBeenCalledTimes(1);
+    // then
+    it('should call _onInit function', () => {
+      // @ts-ignore
+      // expect(instance._createGAScript).toThrowError();
+    });
   });
 
   // given
   describe('_createGAScript', () => {
     // when
-    beforeEach(() => {});
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._createGAScript = jest.fn().mockResolvedValueOnce(GoogleAnalytics.TRANSLATION_SCRIPT_SUCCEEDED);
+      // @ts-ignore
+      instance._onInit();
+    });
 
     // then
-    it('spec name', () => {
+    it('should call _createGAScript function', () => {
       // dummy test
-      expect(instance).toBeTruthy();
+      // @ts-ignore
+      expect(instance._createGAScript).toHaveBeenCalledTimes(1);
     });
   });
 
   // given
   describe('_insertGALibrary', () => {
     // when
-    beforeEach(() => {});
+    beforeEach(() => {
+      // @ts-ignore
+      document.head.appendChild = jest.fn();
+    });
 
     // then
-    it('spec name', () => {});
+    it('should append script', async () => {
+      // @ts-ignore
+      const data = await instance._insertGAScript();
+      // @ts-ignore
+      expect(data).toEqual(GoogleAnalytics.TRANSLATION_SCRIPT_APPENDED);
+    });
+
+    //
+    it('should call document.head.appendChild', async () => {
+      // @ts-ignore
+      await instance._insertGAScript();
+      // @ts-ignore
+      expect(document.head.appendChild).toHaveBeenCalled();
+    });
   });
 
   // given
