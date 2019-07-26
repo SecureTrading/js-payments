@@ -222,11 +222,15 @@ class CardFrames extends RegisterFrames {
   private _validateFieldsAfterSubmit() {
     this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_FORM, (data: IValidationMessageBus) => {
       const { cardNumber, expirationDate, securityCode } = data;
-      !cardNumber.state && this._publishValidatedFieldState(cardNumber, MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD);
-      !expirationDate.state &&
+      if (!cardNumber.state) {
+        this._publishValidatedFieldState(cardNumber, MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD);
+      }
+      if (!expirationDate.state) {
         this._publishValidatedFieldState(expirationDate, MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD);
-      !securityCode.state &&
+      }
+      if (!securityCode.state) {
         this._publishValidatedFieldState(securityCode, MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD);
+      }
     });
   }
 
