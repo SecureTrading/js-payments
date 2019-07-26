@@ -15,6 +15,10 @@ class GoogleAnalytics {
   }-Y', {'storage': 'none'});`;
   private static GA_IP_ANONYMIZATION: string = `ga('set', 'anonymizeIp', true);`;
   private static GA_DISABLE_ADVERTISING_FEATURES: string = `ga('set', 'allowAdFeatures', false);`;
+  private static TRANSLATION_SCRIPT_SUCCEEDED: string = 'Google Analytics: script has been created';
+  private static TRANSLATION_SCRIPT_FAILED: string = 'Google Analytics: an error occurred loading script';
+  private static TRANSLATION_SCRIPT_APPENDED: string = 'Google Analytics: script has been appended';
+  private static TRANSLATION_SCRIPT_APPENDED_FAILURE: string = 'Google Analytics: an error occurred appending script';
 
   /**
    * Disables User ID tracking (User Opt-out).
@@ -61,11 +65,11 @@ class GoogleAnalytics {
             GoogleAnalytics._disableUserIDTracking();
           })
           .catch(error => {
-            console.error(error);
+            throw new Error(error);
           });
       })
       .catch(error => {
-        console.error(error);
+        throw new Error(error);
       });
   }
 
@@ -80,8 +84,8 @@ class GoogleAnalytics {
       this._gaScript.type = 'text/javascript';
       this._gaScriptContent = document.createTextNode(GoogleAnalytics._returnScriptWithFeatures());
       this._gaScript.appendChild(this._gaScriptContent);
-      resolve((this._communicate = 'Script has been created'));
-      reject((this._communicate = 'Script has not been created'));
+      resolve((this._communicate = GoogleAnalytics.TRANSLATION_SCRIPT_SUCCEEDED));
+      reject((this._communicate = GoogleAnalytics.TRANSLATION_SCRIPT_FAILED));
     });
   }
 
@@ -102,8 +106,8 @@ class GoogleAnalytics {
   private _insertGAScript() {
     return new Promise((resolve, reject) => {
       document.head.appendChild(this._gaScript);
-      resolve((this._communicate = 'Script has been appended'));
-      reject((this._communicate = 'Script has not been appended'));
+      resolve((this._communicate = GoogleAnalytics.TRANSLATION_SCRIPT_APPENDED));
+      reject((this._communicate = GoogleAnalytics.TRANSLATION_SCRIPT_APPENDED_FAILURE));
     });
   }
 }
