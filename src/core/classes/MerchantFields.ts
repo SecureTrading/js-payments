@@ -1,10 +1,9 @@
 import { IMessageBusValidateField } from '../models/Validation';
-import DomMethods from '../shared/DomMethods';
 import MessageBus from '../shared/MessageBus';
 import Validation from '../shared/Validation';
 
 /**
- * Represents merchant fields which are marked as required.
+ * Represents merchant fields which must be validated.
  */
 export class MerchantFields {
   private static readonly DATA_ATTRIBUTE_NAME: string = 'data-st-name';
