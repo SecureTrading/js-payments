@@ -170,15 +170,7 @@ export default class Validation extends Frame {
    * @param message
    */
   public setError(inputElement: HTMLInputElement, messageElement: HTMLElement, message: string) {
-    const dataStName = inputElement.getAttribute(Validation.DATASET_ST_NAME);
-    if (dataStName) {
-      if (dataStName.indexOf(Validation.MERCHANT_EXTRA_FIELDS_PREFIX) !== -1) {
-        this._assignErrorDetails(inputElement, messageElement, message);
-      }
-    }
-    if (!inputElement.validity.valid) {
-      this._assignErrorDetails(inputElement, messageElement, message);
-    }
+    this._assignErrorDetails(inputElement, messageElement, message);
   }
 
   /**
