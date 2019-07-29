@@ -69,7 +69,6 @@ class StCodec {
    * @return The content of the response that can be used in the following processes
    */
   public static verifyResponseObject(responseData: any, jwtResponse: string): object {
-    console.error(responseData);
     // Ought we keep hold of the requestreference (eg. log it to console)
     // So that we can link these requests up with the gateway?
     if (StCodec._isInvalidResponse(responseData)) {

@@ -21,11 +21,6 @@ const ApplePayContactMap: any = {
   town: 'locality'
 };
 
-interface AppleErrorObject {
-  errorcode: number;
-  data: any;
-}
-
 /**
  * Apple Pay flow:
  * 1. Check if ApplePaySession class exists
@@ -132,6 +127,10 @@ export class ApplePay {
   constructor(config: IWalletConfig, jwt: string, gatewayUrl: string) {
     const { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId, requestTypes } = config;
     this.jwt = jwt;
+    this._completion = {
+      status: this.getPaymentSuccessStatus(),
+      errors: []
+    };
     this._notification = new Notification();
     this._merchantId = merchantId;
     this._placement = placement;
@@ -354,16 +353,25 @@ export class ApplePay {
           },
           DomMethods.parseMerchantForm()
         )
-        .then(() => {
-          this._completion = { status: this.getPaymentSuccessStatus(), errors: [] };
-          this._notification.success(Language.translations.PAYMENT_SUCCESS, true);
+        .then((response: any) => {
+          const { errorcode } = response;
+          if (this._ifBrowserSupportsApplePayVersion(this.applePayVersion)) {
+            if (errorcode !== '0') {
+              this._handleApplePayError(response);
+            }
+          } else {
+            if (errorcode === '0') {
+              this._completion.status = this.getPaymentSuccessStatus();
+              this._notification.success(Language.translations.PAYMENT_SUCCESS, true);
+            } else {
+              this._completion.status = this.getPaymentFailureStatus();
+              this._notification.error(Language.translations.PAYMENT_ERROR, true);
+            }
+          }
           this._session.completePayment(this._completion);
         })
-        .catch((error: any) => {
-          this._completion = { status: this.getPaymentFailureStatus(), errors: [] };
+        .catch(() => {
           this._notification.error(Language.translations.PAYMENT_ERROR, true);
-          this._handleApplePayError(error);
-          this._session.completePayment();
         });
     };
   }
@@ -477,33 +485,30 @@ export class ApplePay {
    * @param errorObject
    * @private
    */
-  private _handleApplePayError(errorObject: AppleErrorObject) {
-    let { errorcode } = errorObject;
-    let errordata = String(errorObject.data);
+  private _handleApplePayError(errorObject: any) {
+    const { errorcode, errormessage } = errorObject;
+    let errordata = String(errorObject.data); // not sure this line - I can't force ApplePay to throw such error.
     let error = new ApplePayError('unknown');
-    error.message = this._translator.translate(error.message);
-    console.error('error object');
-    console.error(errorObject);
-    if (errorcode !== 0) {
-      if (errorcode === 30000) {
-        if (errordata.lastIndexOf('billing', 0) === 0) {
-          error.code = 'billingContactInvalid';
-          errordata = errordata.slice(7);
-        } else if (errordata.lastIndexOf('customer', 0) === 0) {
-          error.code = 'shippingContactInvalid';
-          errordata = errordata.slice(8);
-        }
-        if (typeof ApplePayContactMap[errordata] !== 'undefined') {
-          error.contactField = ApplePayContactMap[errordata];
-        } else if (error.code !== 'unknown') {
-          error.code = 'addressUnserviceable';
-        }
+    error.message = this._translator.translate(errormessage);
+    if (errorcode === 30000) {
+      if (errordata.lastIndexOf('billing', 0) === 0) {
+        error.code = 'billingContactInvalid';
+        errordata = errordata.slice(7);
+      } else if (errordata.lastIndexOf('customer', 0) === 0) {
+        error.code = 'shippingContactInvalid';
+        errordata = errordata.slice(8);
       }
-      if (error.code !== 'unknown') {
-        // @ts-ignore
-        this._completion.errors = [error];
+      if (typeof ApplePayContactMap[errordata] !== 'undefined') {
+        error.contactField = ApplePayContactMap[errordata];
+      } else if (error.code !== 'unknown') {
+        error.code = 'addressUnserviceable';
       }
     }
+    if (error.code !== 'unknown') {
+      // @ts-ignore
+      this._completion.errors = [error];
+    }
+
     return this._completion;
   }
 }
