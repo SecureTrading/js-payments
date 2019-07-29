@@ -46,9 +46,14 @@ export default class MessageBus {
   constructor(parentOrigin?: string) {
     this._parentOrigin = parentOrigin ? parentOrigin : '*';
     this._frameOrigin = new URL(environment.FRAME_URL).origin;
-    this.registerMessageListener();
+    this._registerMessageListener();
   }
 
+  /**
+   * publish()
+   * @param event
+   * @param publishToParent
+   */
   public publish(event: IMessageBusEvent, publishToParent?: boolean) {
     let subscribersStore;
 
@@ -67,16 +72,30 @@ export default class MessageBus {
     }
   }
 
+  /**
+   * publishFromParent()
+   * @param event
+   * @param frameName
+   */
   public publishFromParent(event: IMessageBusEvent, frameName: string) {
     // @ts-ignore
     window.frames[frameName].postMessage(event, this._frameOrigin);
   }
 
+  /**
+   * publishToSelf()
+   * @param event
+   */
   public publishToSelf(event: IMessageBusEvent) {
     // @ts-ignore
     window.postMessage(event, window.location.origin);
   }
 
+  /**
+   * subscribe()
+   * @param eventType
+   * @param callback
+   */
   public subscribe(eventType: string, callback: any) {
     let subscribers;
     const subscriber = window.name;
@@ -97,25 +116,37 @@ export default class MessageBus {
     this._subscriptions[eventType] = callback;
   }
 
+  /**
+   * subscribeOnParent()
+   * @param eventType
+   * @param callback
+   */
   public subscribeOnParent(eventType: string, callback: any) {
     this._subscriptions[eventType] = callback;
   }
 
+  /**
+   * _handleMessageEvent()
+   * @param event
+   * @private
+   */
   private _handleMessageEvent = (event: MessageEvent) => {
     const messageBusEvent: IMessageBusEvent = event.data;
     const isPublicEvent = Utils.inArray(Object.keys(MessageBus.EVENTS_PUBLIC), messageBusEvent.type);
     const isCallbackAllowed =
       event.origin === this._frameOrigin || (event.origin === this._parentOrigin && isPublicEvent);
-    let subscribersStore = window.sessionStorage.getItem(MessageBus.SUBSCRIBERS);
-
-    subscribersStore = JSON.parse(subscribersStore);
-
+    const subscribersStore = window.sessionStorage.getItem(MessageBus.SUBSCRIBERS);
+    JSON.parse(subscribersStore);
     if (isCallbackAllowed && this._subscriptions[messageBusEvent.type]) {
       this._subscriptions[messageBusEvent.type](messageBusEvent.data);
     }
   };
 
-  private registerMessageListener() {
+  /**
+   * _registerMessageListener()
+   * @private
+   */
+  private _registerMessageListener() {
     window.addEventListener('message', this._handleMessageEvent);
   }
 }

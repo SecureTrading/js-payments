@@ -50,6 +50,10 @@ class StCodec {
     );
   }
 
+  /**
+   *
+   * @param data
+   */
   public static getErrorData(data: any) {
     const { errordata, errormessage, requesttypedescription } = data;
     return {
@@ -119,6 +123,10 @@ class StCodec {
   ];
   private static STATUS_CODES = { invalidfield: '30000', ok: '0', declined: '70000' };
 
+  /**
+   *
+   * @private
+   */
   private static _createCommunicationError() {
     return {
       errorcode: '50003',
@@ -126,12 +134,21 @@ class StCodec {
     } as IResponseData;
   }
 
+  /**
+   *
+   * @private
+   */
   private static _handleInvalidResponse() {
     StCodec.publishResponse(StCodec._createCommunicationError());
     StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
     return new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
   }
 
+  /**
+   *
+   * @param responseData
+   * @private
+   */
   private static _isInvalidResponse(responseData: any) {
     return !(
       responseData &&
@@ -141,6 +158,11 @@ class StCodec {
     );
   }
 
+  /**
+   *
+   * @param responseData
+   * @private
+   */
   private static _determineResponse(responseData: any) {
     let responseContent: IResponseData;
     responseData.response.forEach((r: any) => {
@@ -154,6 +176,12 @@ class StCodec {
     return responseContent;
   }
 
+  /**
+   *
+   * @param responseContent
+   * @param jwtResponse
+   * @private
+   */
   private static _handleValidGatewayResponse(responseContent: IResponseData, jwtResponse: string) {
     const translator = new Translator(StCodec._locale);
     const validation = new Validation();
@@ -172,6 +200,12 @@ class StCodec {
     StCodec.publishResponse(responseContent, jwtResponse);
   }
 
+  /**
+   *
+   * @param jwt
+   * @param reject
+   * @private
+   */
   private static _decodeResponseJwt(jwt: string, reject: (error: Error) => void) {
     let decoded: any;
     try {

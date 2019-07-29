@@ -1,6 +1,8 @@
 import each from 'jest-each';
+import { date } from 'joi';
 import SpyInstance = jest.SpyInstance;
 import ExpirationDate from '../../../src/components/expiration-date/ExpirationDate';
+import Formatter from '../../../src/core/shared/Formatter';
 import Language from '../../../src/core/shared/Language';
 import Selectors from '../../../src/core/shared/Selectors';
 
@@ -110,12 +112,12 @@ describe('ExpirationDate', () => {
     //when
     beforeEach(() => {
       // @ts-ignore
-      spy = jest.spyOn(instance, 'sendState');
+      spy = jest.spyOn(instance, '_sendState');
       // @ts-ignore
       instance.onBlur();
     });
     // then
-    it('should call sendState()', () => {
+    it('should call _sendState()', () => {
       expect(spy).toHaveBeenCalled();
     });
   });
@@ -149,10 +151,10 @@ describe('ExpirationDate', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
-      spy = jest.spyOn(instance, 'sendState');
+      spy = jest.spyOn(instance, '_sendState');
     });
     // then
-    it('should call sendState method', () => {
+    it('should call _sendState method', () => {
       // @ts-ignore
       instance.onInput(event);
       // @ts-ignore
@@ -160,21 +162,62 @@ describe('ExpirationDate', () => {
     });
   });
 
-  // given
-  describe('onKeyPress()', () => {
+  describe('onPaste()', () => {
     const { instance } = expirationDateFixture();
-    // @ts-ignore
-    const event: KeyboardEvent = new KeyboardEvent('keypress', { key: 1 });
-    event.preventDefault = jest.fn();
-    // when
+    const event = {
+      clipboardData: {
+        getData: jest.fn()
+      },
+      preventDefault: jest.fn()
+    };
+
+    // given
     beforeEach(() => {
       // @ts-ignore
-      instance.onKeyPress(event);
+      instance._sendState = jest.fn();
+      // @ts-ignore
+      instance._setFormattedDate = jest.fn();
+      Formatter.trimNonNumeric = jest.fn().mockReturnValueOnce('12');
+      // @ts-ignore
+      instance.onPaste(event);
+    });
+
+    // then
+    it('should call _sendState() method', () => {
+      // @ts-ignore
+      expect(instance._sendState).toHaveBeenCalled();
+    });
+
+    // then
+    it('should call _setFormattedDate() method', () => {
+      // @ts-ignore
+      expect(instance._setFormattedDate).toHaveBeenCalled();
     });
   });
 
   // given
-  describe('sendState()', () => {
+  describe('onKeyPress()', () => {
+    const { instance } = expirationDateFixture();
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      const event: KeyboardEvent = new KeyboardEvent('keypress', { key: 1 });
+      event.preventDefault = jest.fn();
+      // @ts-ignore
+      instance._inputElement.focus = jest.fn();
+      // @ts-ignore
+      instance.onKeyPress(event);
+    });
+
+    // then
+    it('should call focus() method', () => {
+      // @ts-ignore
+      expect(instance._inputElement.focus).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('_sendState()', () => {
     const { instance } = expirationDateFixture();
     let spy: jest.SpyInstance;
 
@@ -183,7 +226,7 @@ describe('ExpirationDate', () => {
       // @ts-ignore;
       spy = jest.spyOn(instance._messageBus, 'publish');
       // @ts-ignore;
-      instance.sendState();
+      instance._sendState();
     });
     // then
     it('should call publish()', () => {
@@ -243,6 +286,30 @@ describe('ExpirationDate', () => {
         expect(instance._getValidatedDate(givenValue)).toEqual(expectedValue);
       }
     );
+  });
+
+  // given
+  describe('_setFormattedDate', () => {
+    // when
+    const { instance } = expirationDateFixture();
+    const dates = [
+      ['', ''],
+      ['11', '11/'],
+      ['1111', '11/11'],
+      ['0709', '07/09'],
+      ['9999', '99/99'],
+      ['123456789', '12/34']
+    ];
+
+    // then
+    each(dates).it('should set proper input value', (received, expected) => {
+      // @ts-ignore
+      instance._inputElement.value = received;
+      // @ts-ignore
+      instance._setFormattedDate();
+      // @ts-ignore
+      expect(instance._inputElement.value).toEqual(expected);
+    });
   });
 });
 
