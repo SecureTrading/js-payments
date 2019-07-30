@@ -17,6 +17,7 @@ class CardFrames extends RegisterFrames {
   private static SUBMIT_BUTTON_AS_INPUT_MARKUP = 'input[type="submit"]';
   private static SUBMIT_BUTTON_DISABLED_CLASS = 'st-button-submit__disabled';
 
+  private readonly _animatedCardAsDefault: boolean;
   private _animatedCardMounted: HTMLElement;
   private _cardNumberMounted: HTMLElement;
   private _expirationDateMounted: HTMLElement;
@@ -38,13 +39,15 @@ class CardFrames extends RegisterFrames {
     componentIds: {},
     styles: IStyles,
     paymentTypes: string[],
-    defaultPaymentType: string
+    defaultPaymentType: string,
+    animatedCard: boolean
   ) {
     super(jwt, origin, componentIds, styles);
     this._paymentTypes = paymentTypes;
     this._defaultPaymentType = defaultPaymentType;
     this._validation = new Validation();
     this._messageBus = new MessageBus();
+    this._animatedCardAsDefault = animatedCard;
     this._initSubscribes();
     this.onInit();
     this._translator = new Translator(this.params.locale);
@@ -75,12 +78,16 @@ class CardFrames extends RegisterFrames {
    * Defines form elements for card payments
    */
   protected setElementsFields() {
-    return [
+    const basicConfiguration = [
       this.componentIds.cardNumber,
       this.componentIds.expirationDate,
-      this.componentIds.securityCode,
-      this.componentIds.animatedCard
+      this.componentIds.securityCode
     ];
+    if (this._animatedCardAsDefault) {
+      return [...basicConfiguration, this.componentIds.animatedCard];
+    } else {
+      return [...basicConfiguration];
+    }
   }
 
   /**
@@ -139,17 +146,19 @@ class CardFrames extends RegisterFrames {
     this._securityCodeMounted = this._securityCode.mount(Selectors.SECURITY_CODE_IFRAME);
     this.elementsToRegister.push(this._securityCodeMounted);
 
-    const animatedCardConfig = { ...this.params };
-    if (this._paymentTypes !== undefined) {
-      animatedCardConfig.paymentTypes = this._paymentTypes;
-    }
-    if (this._defaultPaymentType !== undefined) {
-      animatedCardConfig.defaultPaymentType = this._defaultPaymentType;
-    }
+    if (this._animatedCardAsDefault) {
+      const animatedCardConfig = { ...this.params };
+      if (this._paymentTypes !== undefined) {
+        animatedCardConfig.paymentTypes = this._paymentTypes;
+      }
+      if (this._defaultPaymentType !== undefined) {
+        animatedCardConfig.defaultPaymentType = this._defaultPaymentType;
+      }
 
-    this._animatedCard.create(Selectors.ANIMATED_CARD_COMPONENT_NAME, {}, animatedCardConfig);
-    this._animatedCardMounted = this._animatedCard.mount(Selectors.ANIMATED_CARD_COMPONENT_FRAME, '-1');
-    this.elementsToRegister.push(this._animatedCardMounted);
+      this._animatedCard.create(Selectors.ANIMATED_CARD_COMPONENT_NAME, {}, animatedCardConfig);
+      this._animatedCardMounted = this._animatedCard.mount(Selectors.ANIMATED_CARD_COMPONENT_FRAME, '-1');
+      this.elementsToRegister.push(this._animatedCardMounted);
+    }
   }
 
   /**

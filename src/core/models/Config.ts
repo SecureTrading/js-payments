@@ -2,6 +2,7 @@ import Joi from 'joi';
 import { IStyles } from '../shared/Styler';
 
 interface IConfig {
+  animatedCard?: boolean;
   componentIds?: any;
   datacenterurl?: string;
   formId?: string;
@@ -15,6 +16,7 @@ interface IConfig {
 }
 
 interface IComponentsConfig {
+  animatedCard?: boolean;
   defaultPaymentType: string;
   paymentTypes?: string[];
   startOnLoad?: boolean;
@@ -32,9 +34,10 @@ interface IByPassInit {
 }
 
 const IConfigSchema: Joi.JoiObject = Joi.object().keys({
+  animatedCard: Joi.boolean(),
   cachetoken: Joi.string(),
   componentIds: Joi.object().keys({
-    animatedCard: Joi.string().required(),
+    animatedCard: Joi.string(),
     cardNumber: Joi.string().required(),
     expirationDate: Joi.string().required(),
     notificationFrame: Joi.string().required(),
@@ -54,6 +57,7 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
 });
 
 const IComponentsConfigSchema = Joi.object().keys({
+  animatedCard: Joi.boolean(),
   defaultPaymentType: Joi.string(),
   paymentTypes: Joi.array().allow([Joi.string()]),
   requestTypes: Joi.array().allow([Joi.string()]),
