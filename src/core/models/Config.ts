@@ -16,7 +16,6 @@ interface IConfig {
 }
 
 interface IComponentsConfig {
-  animatedCard?: boolean;
   defaultPaymentType: string;
   paymentTypes?: string[];
   startOnLoad?: boolean;
@@ -57,7 +56,6 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
 });
 
 const IComponentsConfigSchema = Joi.object().keys({
-  animatedCard: Joi.boolean(),
   defaultPaymentType: Joi.string(),
   paymentTypes: Joi.array().allow([Joi.string()]),
   requestTypes: Joi.array().allow([Joi.string()]),

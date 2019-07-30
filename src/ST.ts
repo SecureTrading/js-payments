@@ -21,7 +21,6 @@ import {
 import Selectors from './core/shared/Selectors';
 import { IStyles } from './core/shared/Styler';
 import { environment } from './environments/environment';
-import Notification from './core/shared/Notification';
 
 /**
  * Establishes connection with ST, defines client.
@@ -97,16 +96,6 @@ class ST {
    */
   private static _addDefaultComponentIds(config: IConfig) {
     const defaultComponentIds: IConfig = config;
-    const defaultComponents = {
-      cardNumber: Selectors.CARD_NUMBER_INPUT_SELECTOR,
-      expirationDate: Selectors.EXPIRATION_DATE_INPUT_SELECTOR,
-      notificationFrame: Selectors.NOTIFICATION_FRAME_ID,
-      securityCode: Selectors.SECURITY_CODE_INPUT_SELECTOR
-    };
-    const extendedConfiguration = {
-      animatedCard: Selectors.ANIMATED_CARD_INPUT_SELECTOR,
-      ...defaultComponents
-    };
 
     // try {
     //   ST._hasConfigurationObjectsSameLength(config);
@@ -116,8 +105,8 @@ class ST {
     // }
 
     defaultComponentIds.componentIds = config.animatedCard
-      ? { ...extendedConfiguration, ...config.componentIds }
-      : { ...defaultComponents, ...config.componentIds };
+      ? { ...ST.EXTENDED_CONFIGURATION, ...config.componentIds }
+      : { ...ST.DEFAULT_COMPONENTS, ...config.componentIds };
     defaultComponentIds.styles = config.styles ? config.styles : {};
 
     return defaultComponentIds;
@@ -159,7 +148,6 @@ class ST {
   private static _setConfigObject(config: IComponentsConfig) {
     let targetConfig: IComponentsConfig;
     targetConfig = config ? config : ({} as IComponentsConfig);
-    targetConfig.animatedCard = config ? config.animatedCard : false;
     targetConfig.startOnLoad = targetConfig.startOnLoad !== undefined ? targetConfig.startOnLoad : false;
     targetConfig.requestTypes =
       targetConfig.requestTypes !== undefined ? targetConfig.requestTypes : ['THREEDQUERY', 'AUTH'];
@@ -214,6 +202,8 @@ class ST {
    * @param componentIds
    * @param styles
    * @param config
+   * @param animatedCard
+   * @private
    */
   private static _configureCardFrames(
     jwt: string,
