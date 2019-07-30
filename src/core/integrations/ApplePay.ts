@@ -117,9 +117,9 @@ export class ApplePay {
   private _payment: Payment;
   private _notification: Notification;
   private _requestTypes: string[];
-  private _completion: { status: string; errors: [] };
   private _translator: Translator;
 
+  private readonly _completion: { status: string; errors: [] };
   private readonly _merchantId: string;
   private readonly _paymentRequest: any;
   private readonly _placement: string;
@@ -355,20 +355,9 @@ export class ApplePay {
         )
         .then((response: any) => {
           const { errorcode } = response;
-          if (this._ifBrowserSupportsApplePayVersion(this.applePayVersion)) {
-            if (errorcode !== '0') {
-              this._handleApplePayError(response);
-            }
-          } else {
-            if (errorcode === '0') {
-              this._completion.status = this.getPaymentSuccessStatus();
-              this._notification.success(Language.translations.PAYMENT_SUCCESS, true);
-            } else {
-              this._completion.status = this.getPaymentFailureStatus();
-              this._notification.error(Language.translations.PAYMENT_ERROR, true);
-            }
-          }
+          this._handleApplePayError(response);
           this._session.completePayment(this._completion);
+          this._displayNotification(errorcode);
         })
         .catch(() => {
           this._notification.error(Language.translations.PAYMENT_ERROR, true);
@@ -486,30 +475,51 @@ export class ApplePay {
    * @private
    */
   private _handleApplePayError(errorObject: any) {
-    const { errorcode, errormessage } = errorObject;
-    let errordata = String(errorObject.data); // not sure this line - I can't force ApplePay to throw such error.
-    let error = new ApplePayError('unknown');
-    error.message = this._translator.translate(errormessage);
-    if (errorcode === 30000) {
-      if (errordata.lastIndexOf('billing', 0) === 0) {
-        error.code = 'billingContactInvalid';
-        errordata = errordata.slice(7);
-      } else if (errordata.lastIndexOf('customer', 0) === 0) {
-        error.code = 'shippingContactInvalid';
-        errordata = errordata.slice(8);
+    const { errorcode } = errorObject;
+    if (this._ifBrowserSupportsApplePayVersion(this.applePayVersion)) {
+      if (errorcode !== '0') {
+        const { errorcode, errormessage } = errorObject;
+        let errordata = String(errorObject.data); // not sure this line - I can't force ApplePay to throw such error.
+        let error = new ApplePayError('unknown');
+        error.message = this._translator.translate(errormessage);
+        if (errorcode === 30000) {
+          if (errordata.lastIndexOf('billing', 0) === 0) {
+            error.code = 'billingContactInvalid';
+            errordata = errordata.slice(7);
+          } else if (errordata.lastIndexOf('customer', 0) === 0) {
+            error.code = 'shippingContactInvalid';
+            errordata = errordata.slice(8);
+          }
+          if (typeof ApplePayContactMap[errordata] !== 'undefined') {
+            error.contactField = ApplePayContactMap[errordata];
+          } else if (error.code !== 'unknown') {
+            error.code = 'addressUnserviceable';
+          }
+        }
+        if (error.code !== 'unknown') {
+          // @ts-ignore
+          this._completion.errors = [error];
+        }
       }
-      if (typeof ApplePayContactMap[errordata] !== 'undefined') {
-        error.contactField = ApplePayContactMap[errordata];
-      } else if (error.code !== 'unknown') {
-        error.code = 'addressUnserviceable';
-      }
-    }
-    if (error.code !== 'unknown') {
-      // @ts-ignore
-      this._completion.errors = [error];
     }
 
+    if (errorcode === '0') {
+      this._completion.status = this.getPaymentSuccessStatus();
+    } else {
+      this._completion.status = this.getPaymentFailureStatus();
+    }
     return this._completion;
+  }
+
+  /**
+   * Chooses and triggers proper notification after payment.
+   * @param errorcode
+   * @private
+   */
+  private _displayNotification(errorcode: string) {
+    errorcode === '0'
+      ? this._notification.success(Language.translations.PAYMENT_SUCCESS, true)
+      : this._notification.error(Language.translations.PAYMENT_ERROR, true);
   }
 }
 
