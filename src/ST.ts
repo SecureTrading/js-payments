@@ -59,7 +59,7 @@ class ST {
     defaultFeatures.origin = config.origin ? config.origin : window.location.origin;
     defaultFeatures.submitOnSuccess = config.submitOnSuccess !== undefined ? config.submitOnSuccess : true;
     defaultFeatures.submitOnError = config.submitOnError !== undefined ? config.submitOnError : false;
-    // defaultFeatures.animatedCard = config.animatedCard ? config.animatedCard : false;
+    defaultFeatures.animatedCard = config.animatedCard ? config.animatedCard : false;
     return defaultFeatures;
   }
 
@@ -109,9 +109,7 @@ class ST {
     //   : { ...ST.DEFAULT_COMPONENTS, ...componentIds };
     defaultConfig.styles = styles ? styles : {};
 
-    defaultConfig.componentIds = config.componentIds
-      ? { ...ST.DEFAULT_COMPONENTS, ...componentIds }
-      : ST.DEFAULT_COMPONENTS;
+    defaultConfig.componentIds = componentIds ? { ...ST.DEFAULT_COMPONENTS, ...componentIds } : ST.DEFAULT_COMPONENTS;
 
     return defaultConfig;
   }
@@ -178,8 +176,7 @@ class ST {
     submitOnSuccess: boolean,
     submitOnError: boolean,
     submitFields: string[],
-    gatewayUrl: string,
-    animatedCard: boolean
+    gatewayUrl: string
   ) {
     return new CommonFrames(
       jwt,
@@ -189,8 +186,7 @@ class ST {
       submitOnSuccess,
       submitOnError,
       submitFields,
-      gatewayUrl,
-      animatedCard
+      gatewayUrl
     );
   }
 
@@ -222,7 +218,7 @@ class ST {
     const { defaultPaymentType, paymentTypes, startOnLoad } = config;
     let cardFrames: object;
     if (!startOnLoad) {
-      cardFrames = new CardFrames(jwt, origin, componentIds, styles, paymentTypes, defaultPaymentType, animatedCard);
+      cardFrames = new CardFrames(jwt, origin, componentIds, styles, paymentTypes, defaultPaymentType);
     }
     return cardFrames;
   }
@@ -261,8 +257,7 @@ class ST {
       this._submitOnSuccess,
       this._submitOnError,
       this._submitFields,
-      this._gatewayUrl,
-      this._animatedCard
+      this._gatewayUrl
     );
     ST._configureMerchantFields();
   }
