@@ -59,7 +59,7 @@ class ST {
     defaultFeatures.origin = config.origin ? config.origin : window.location.origin;
     defaultFeatures.submitOnSuccess = config.submitOnSuccess !== undefined ? config.submitOnSuccess : true;
     defaultFeatures.submitOnError = config.submitOnError !== undefined ? config.submitOnError : false;
-    defaultFeatures.animatedCard = config.animatedCard ? config.animatedCard : false;
+    // defaultFeatures.animatedCard = config.animatedCard ? config.animatedCard : false;
     return defaultFeatures;
   }
 
@@ -104,10 +104,14 @@ class ST {
     //   throw new Error('Configuration object is not correct');
     // }
 
-    defaultConfig.componentIds = animatedCard
-      ? { ...ST.EXTENDED_CONFIGURATION, ...componentIds }
-      : { ...ST.DEFAULT_COMPONENTS, ...componentIds };
+    // defaultConfig.componentIds = animatedCard
+    //   ? { ...ST.EXTENDED_CONFIGURATION, ...componentIds }
+    //   : { ...ST.DEFAULT_COMPONENTS, ...componentIds };
     defaultConfig.styles = styles ? styles : {};
+
+    defaultConfig.componentIds = config.componentIds
+      ? { ...ST.DEFAULT_COMPONENTS, ...componentIds }
+      : ST.DEFAULT_COMPONENTS;
 
     return defaultConfig;
   }
@@ -174,7 +178,8 @@ class ST {
     submitOnSuccess: boolean,
     submitOnError: boolean,
     submitFields: string[],
-    gatewayUrl: string
+    gatewayUrl: string,
+    animatedCard: boolean
   ) {
     return new CommonFrames(
       jwt,
@@ -184,7 +189,8 @@ class ST {
       submitOnSuccess,
       submitOnError,
       submitFields,
-      gatewayUrl
+      gatewayUrl,
+      animatedCard
     );
   }
 
@@ -255,7 +261,8 @@ class ST {
       this._submitOnSuccess,
       this._submitOnError,
       this._submitFields,
-      this._gatewayUrl
+      this._gatewayUrl,
+      this._animatedCard
     );
     ST._configureMerchantFields();
   }

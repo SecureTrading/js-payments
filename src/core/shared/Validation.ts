@@ -312,7 +312,6 @@ export default class Validation extends Frame {
    * @private
    */
   private _assignErrorDetails(inputElement: HTMLInputElement, messageElement: HTMLElement, message: string) {
-    inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
     if (messageElement && messageElement.innerText !== Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH) {
       messageElement.innerText = this._translator.translate(message);
     }

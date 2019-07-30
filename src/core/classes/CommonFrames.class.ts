@@ -24,6 +24,7 @@ class CommonFrames extends RegisterFrames {
   private static readonly COMPLETED_REQUEST_TYPES = ['AUTH', 'CACHETOKENISE'];
   public elementsToRegister: HTMLElement[];
   public elementsTargets: any;
+  private _animatedCard: boolean;
   private _notificationFrameMounted: HTMLElement;
   private _controlFrameMounted: HTMLElement;
   private _notificationFrame: Element;
@@ -44,9 +45,11 @@ class CommonFrames extends RegisterFrames {
     submitOnSuccess: boolean,
     submitOnError: boolean,
     submitFields: string[],
-    gatewayUrl: string
+    gatewayUrl: string,
+    animatedCard: boolean
   ) {
-    super(jwt, origin, componentIds, styles);
+    super(jwt, origin, componentIds, styles, animatedCard);
+    this._animatedCard = animatedCard;
     this._submitOnSuccess = submitOnSuccess;
     this._submitOnError = submitOnError;
     this._submitFields = submitFields;
@@ -210,6 +213,10 @@ class CommonFrames extends RegisterFrames {
    */
   private _shouldLoadNotificationFrame() {
     return !(this._submitOnError && this._submitOnSuccess);
+  }
+
+  private _shouldLoadAnimatedCard() {
+    return this._animatedCard;
   }
 
   /**
