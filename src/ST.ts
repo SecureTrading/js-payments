@@ -95,8 +95,8 @@ class ST {
    * @private
    */
   private static _addDefaultComponentIds(config: IConfig) {
-    const defaultComponentIds: IConfig = config;
-
+    const defaultConfig: IConfig = config;
+    const { animatedCard, componentIds, styles } = config;
     // try {
     //   ST._hasConfigurationObjectsSameLength(config);
     // } catch (e) {
@@ -104,12 +104,12 @@ class ST {
     //   throw new Error('Configuration object is not correct');
     // }
 
-    defaultComponentIds.componentIds = config.animatedCard
-      ? { ...ST.EXTENDED_CONFIGURATION, ...config.componentIds }
-      : { ...ST.DEFAULT_COMPONENTS, ...config.componentIds };
-    defaultComponentIds.styles = config.styles ? config.styles : {};
+    defaultConfig.componentIds = animatedCard
+      ? { ...ST.EXTENDED_CONFIGURATION, ...componentIds }
+      : { ...ST.DEFAULT_COMPONENTS, ...componentIds };
+    defaultConfig.styles = styles ? styles : {};
 
-    return defaultComponentIds;
+    return defaultConfig;
   }
 
   /**
