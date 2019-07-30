@@ -104,12 +104,15 @@ class ST {
     //   throw new Error('Configuration object is not correct');
     // }
 
-    // defaultConfig.componentIds = animatedCard
-    //   ? { ...ST.EXTENDED_CONFIGURATION, ...componentIds }
-    //   : { ...ST.DEFAULT_COMPONENTS, ...componentIds };
     defaultConfig.styles = styles ? styles : {};
 
-    defaultConfig.componentIds = componentIds ? { ...ST.DEFAULT_COMPONENTS, ...componentIds } : ST.DEFAULT_COMPONENTS;
+    if (animatedCard) {
+      defaultConfig.componentIds = componentIds
+        ? { ...ST.EXTENDED_CONFIGURATION, ...componentIds }
+        : ST.EXTENDED_CONFIGURATION;
+    } else {
+      defaultConfig.componentIds = componentIds ? { ...ST.DEFAULT_COMPONENTS, ...componentIds } : ST.DEFAULT_COMPONENTS;
+    }
 
     return defaultConfig;
   }
