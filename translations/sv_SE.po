@@ -66,8 +66,8 @@ msgstr "Ogiltigt formulär"
 msgid "Pay"
 msgstr "Betala"
 
-msgid "Processing..."
-msgstr "Bearbetar ..."
+msgid "Processing"
+msgstr "Bearbetar"
 
 msgid "Invalid field"
 msgstr "Ogiltigt fält"

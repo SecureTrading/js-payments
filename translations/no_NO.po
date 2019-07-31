@@ -66,8 +66,8 @@ msgstr "Blanketten er ikke gyldig"
 msgid "Pay"
 msgstr "Betal"
 
-msgid "Processing..."
-msgstr "Behandler..."
+msgid "Processing"
+msgstr "Behandler"
 
 msgid "Invalid field"
 msgstr "Ugyldig felt"
