@@ -155,6 +155,7 @@ export default class FormField extends Frame {
    */
   protected onKeyPress(event: KeyboardEvent) {
     if (Validation.isEnter(event)) {
+      event.preventDefault();
       const messageBusEvent: IMessageBusEvent = {
         type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
       };

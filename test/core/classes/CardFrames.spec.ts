@@ -288,7 +288,7 @@ describe('CardFrames', () => {
     it('should mark button as disabled when disabledState is true', () => {
       // @ts-ignore
       instance._setSubmitButtonProperties(button, true);
-      expect(button.textContent).toEqual(Language.translations.PROCESSING);
+      expect(button.textContent).toEqual(`${Language.translations.PROCESSING} ...`);
       // @ts-ignore
       expect(button.classList.contains(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS)).toEqual(true);
       expect(button.disabled).toEqual(true);
