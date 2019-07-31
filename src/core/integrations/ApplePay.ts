@@ -482,7 +482,7 @@ export class ApplePay {
         let errordata = String(errorObject.data); // not sure this line - I can't force ApplePay to throw such error.
         let error = new ApplePayError('unknown');
         error.message = this._translator.translate(errormessage);
-        if (errorcode === 30000) {
+        if (errorcode === '30000') {
           if (errordata.lastIndexOf('billing', 0) === 0) {
             error.code = 'billingContactInvalid';
             errordata = errordata.slice(7);
