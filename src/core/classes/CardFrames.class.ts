@@ -31,6 +31,8 @@ class CardFrames extends RegisterFrames {
   private readonly _defaultPaymentType: string;
   private _validation: Validation;
   private _translator: Translator;
+  private _payMessage: string;
+  private _processingMessage: string;
 
   constructor(
     jwt: string,
@@ -49,6 +51,8 @@ class CardFrames extends RegisterFrames {
     this.onInit();
     this._translator = new Translator(this.params.locale);
     this._getSubmitButton();
+    this._payMessage = this._translator.translate(Language.translations.PAY);
+    this._processingMessage = `${this._translator.translate(Language.translations.PROCESSING)} ...`;
   }
 
   /**
@@ -254,10 +258,10 @@ class CardFrames extends RegisterFrames {
    */
   private _setSubmitButtonProperties(element: any, disabledState: boolean) {
     if (disabledState) {
-      element.textContent = this._translator.translate(Language.translations.PROCESSING);
+      element.textContent = this._processingMessage;
       element.classList.add(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
     } else {
-      element.textContent = this._translator.translate(Language.translations.PAY);
+      element.textContent = this._payMessage;
       element.classList.remove(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
     }
     element.disabled = disabledState;
