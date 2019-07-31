@@ -18,7 +18,7 @@ class Language {
     PAYMENT_CANCELLED: 'Payment has been cancelled',
     PAYMENT_ERROR: 'An error occurred',
     PAYMENT_SUCCESS: 'Payment has been successfully processed',
-    PROCESSING: 'Processing...',
+    PROCESSING: 'Processing',
     VALIDATION_ERROR: 'Invalid field',
     VALIDATION_ERROR_FIELD_IS_REQUIRED: 'Field is required',
     VALIDATION_ERROR_PATTERN_MISMATCH: 'Value mismatch pattern',
