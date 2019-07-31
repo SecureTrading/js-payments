@@ -10,7 +10,7 @@
   ],
   "config": {
     "host": "localhost",
-    "locale": "en_GB"
+    "locale": "de_DE"
   },
   "scripts": {
     "build": "webpack --config webpack.prod.js",

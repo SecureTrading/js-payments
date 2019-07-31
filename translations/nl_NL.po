@@ -66,8 +66,8 @@ msgstr "Het formulier is ongeldig"
 msgid "Pay"
 msgstr "Betalen"
 
-msgid "Processing..."
-msgstr "Bezig met verwerken..."
+msgid "Processing"
+msgstr "Bezig met verwerken"
 
 msgid "Invalid field"
 msgstr "Ongeldig veld"
