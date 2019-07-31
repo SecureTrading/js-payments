@@ -97,21 +97,25 @@ class ST {
   private static _addDefaultComponentIds(config: IConfig) {
     const defaultConfig: IConfig = config;
     const { animatedCard, componentIds, styles } = config;
-    // try {
-    //   ST._hasConfigurationObjectsSameLength(config);
-    // } catch (e) {
-    //   alert(e);
-    //   throw new Error('Configuration object is not correct');
-    // }
 
     defaultConfig.styles = styles ? styles : {};
+    defaultConfig.componentIds = componentIds ? componentIds : {};
+
+    try {
+      ST._hasConfigurationObjectsSameLength(defaultConfig.componentIds);
+    } catch (e) {
+      alert(e);
+      throw new Error(e);
+    }
 
     if (animatedCard) {
-      defaultConfig.componentIds = componentIds
-        ? { ...ST.EXTENDED_CONFIGURATION, ...componentIds }
+      defaultConfig.componentIds = defaultConfig.componentIds
+        ? { ...ST.EXTENDED_CONFIGURATION, ...defaultConfig.componentIds }
         : ST.EXTENDED_CONFIGURATION;
     } else {
-      defaultConfig.componentIds = componentIds ? { ...ST.DEFAULT_COMPONENTS, ...componentIds } : ST.DEFAULT_COMPONENTS;
+      defaultConfig.componentIds = defaultConfig.componentIds
+        ? { ...ST.DEFAULT_COMPONENTS, ...defaultConfig.componentIds }
+        : ST.DEFAULT_COMPONENTS;
     }
 
     return defaultConfig;
@@ -119,15 +123,15 @@ class ST {
 
   /**
    *
-   * @param config
+   * @param componentIds
    * @private
    */
-  private static _hasConfigurationObjectsSameLength(config: any): boolean {
-    const isConfigurationExtended = Object.keys(config).length !== 4;
+  private static _hasConfigurationObjectsSameLength(componentIds: any): boolean {
+    const isConfigurationExtended = Object.keys(componentIds).length !== 4;
     if (isConfigurationExtended) {
-      return Object.keys(config.componentIds).length === Object.keys(ST.EXTENDED_CONFIGURATION).length;
+      return Object.keys(componentIds).length === Object.keys(ST.EXTENDED_CONFIGURATION).length;
     } else {
-      return Object.keys(config.componentIds).length === Object.keys(ST.DEFAULT_COMPONENTS).length;
+      return Object.keys(componentIds).length === Object.keys(ST.DEFAULT_COMPONENTS).length;
     }
   }
 
