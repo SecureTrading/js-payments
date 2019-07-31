@@ -73,20 +73,29 @@ describe('FormField', () => {
     const messageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
+    const event = new KeyboardEvent('Enter');
 
     // when
     beforeEach(() => {
       Validation.isEnter = jest.fn().mockReturnValue(true);
       // @ts-ignore
       instance._messageBus.publish = jest.fn();
+      event.preventDefault = jest.fn();
+
       // @ts-ignore
-      instance.onKeyPress();
+      instance.onKeyPress(event);
     });
 
     // then
     it('should trigger instance._messageBus.publish ', () => {
       // @ts-ignore
       expect(instance._messageBus.publish).toHaveBeenCalledWith(messageBusEvent);
+    });
+
+    // then
+    it('should call event.preventDefault() ', () => {
+      // @ts-ignore
+      expect(event.preventDefault).toHaveBeenCalled();
     });
   });
 
