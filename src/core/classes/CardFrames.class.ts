@@ -17,6 +17,7 @@ class CardFrames extends RegisterFrames {
   private static SUBMIT_BUTTON_AS_INPUT_MARKUP = 'input[type="submit"]';
   private static SUBMIT_BUTTON_DISABLED_CLASS = 'st-button-submit__disabled';
 
+  protected hasAnimatedCard: boolean;
   private _animatedCardMounted: HTMLElement;
   private _cardNumberMounted: HTMLElement;
   private _expirationDateMounted: HTMLElement;
@@ -38,9 +39,11 @@ class CardFrames extends RegisterFrames {
     componentIds: {},
     styles: IStyles,
     paymentTypes: string[],
-    defaultPaymentType: string
+    defaultPaymentType: string,
+    animatedCard: boolean
   ) {
-    super(jwt, origin, componentIds, styles);
+    super(jwt, origin, componentIds, styles, animatedCard);
+    this.hasAnimatedCard = animatedCard;
     this._paymentTypes = paymentTypes;
     this._defaultPaymentType = defaultPaymentType;
     this._validation = new Validation();
@@ -75,12 +78,16 @@ class CardFrames extends RegisterFrames {
    * Defines form elements for card payments
    */
   protected setElementsFields() {
-    return [
-      this.componentIds.cardNumber,
-      this.componentIds.expirationDate,
-      this.componentIds.securityCode,
-      this.componentIds.animatedCard
-    ];
+    if (this.hasAnimatedCard) {
+      return [
+        this.componentIds.cardNumber,
+        this.componentIds.expirationDate,
+        this.componentIds.securityCode,
+        this.componentIds.animatedCard
+      ];
+    } else {
+      return [this.componentIds.cardNumber, this.componentIds.expirationDate, this.componentIds.securityCode];
+    }
   }
 
   /**

@@ -215,12 +215,13 @@ class ST {
     origin: string,
     componentIds: {},
     styles: {},
-    config: IComponentsConfig
+    config: IComponentsConfig,
+    animatedCard: boolean
   ) {
     const { defaultPaymentType, paymentTypes, startOnLoad } = config;
     let cardFrames: object;
     if (!startOnLoad) {
-      cardFrames = new CardFrames(jwt, origin, componentIds, styles, paymentTypes, defaultPaymentType);
+      cardFrames = new CardFrames(jwt, origin, componentIds, styles, paymentTypes, defaultPaymentType, animatedCard);
     }
     return cardFrames;
   }
@@ -272,7 +273,14 @@ class ST {
   public Components(config?: IComponentsConfig) {
     const { targetConfig } = ST._setConfigObject(config);
     ST._validateConfig(targetConfig, IComponentsConfigSchema);
-    ST._configureCardFrames(this._jwt, this._origin, this._componentIds, this._styles, targetConfig);
+    ST._configureCardFrames(
+      this._jwt,
+      this._origin,
+      this._componentIds,
+      this._styles,
+      targetConfig,
+      this._animatedCard
+    );
     this.commonFrames.requestTypes = targetConfig.requestTypes;
     this.CardinalCommerce(targetConfig);
   }
