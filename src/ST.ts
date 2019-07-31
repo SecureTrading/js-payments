@@ -91,7 +91,6 @@ class ST {
   /**
    * Adds default component Ids if merchant didn't specified once.
    * @param config
-   * @param animatedCardComponent
    * @private
    */
   private static _addDefaultComponentIds(config: IConfig) {
@@ -101,12 +100,7 @@ class ST {
     defaultConfig.styles = styles ? styles : {};
     defaultConfig.componentIds = componentIds ? componentIds : {};
 
-    try {
-      ST._hasConfigurationObjectsSameLength(defaultConfig.componentIds);
-    } catch (e) {
-      alert(e);
-      throw new Error(e);
-    }
+    ST._hasConfigurationObjectsSameLength(defaultConfig.componentIds);
 
     if (animatedCard) {
       defaultConfig.componentIds = defaultConfig.componentIds
@@ -122,17 +116,20 @@ class ST {
   }
 
   /**
-   *
+   * Checks if configuration object provided by merchant corresponds to default in library.
    * @param componentIds
    * @private
    */
   private static _hasConfigurationObjectsSameLength(componentIds: any): boolean {
-    const isConfigurationExtended = Object.keys(componentIds).length !== 4;
-    if (isConfigurationExtended) {
-      return Object.keys(componentIds).length === Object.keys(ST.EXTENDED_CONFIGURATION).length;
-    } else {
-      return Object.keys(componentIds).length === Object.keys(ST.DEFAULT_COMPONENTS).length;
+    const isConfigurationCorrect: boolean =
+      Object.keys(componentIds).length === Object.keys(ST.EXTENDED_CONFIGURATION).length ||
+      Object.keys(componentIds).length === Object.keys(ST.DEFAULT_COMPONENTS).length ||
+      Object.keys(componentIds).length === 0;
+    if (!isConfigurationCorrect) {
+      alert('Form fields configuration is not correct');
+      throw new Error('Form fields configuration is not correct');
     }
+    return isConfigurationCorrect;
   }
 
   /**
