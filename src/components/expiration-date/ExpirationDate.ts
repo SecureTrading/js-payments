@@ -192,18 +192,30 @@ export default class ExpirationDate extends FormField {
    * Formats indicated string to date in format: mm/yy.
    */
   private _getISOFormatDate(previousDate: string[], currentDate: string[]) {
+    console.log('Previous date: ' + previousDate);
+    console.log('Current date: ' + currentDate);
     this._date = currentDate;
-    // @ts-ignore
-    if (currentDate[0].length === 2 && currentDate[1].length === 0 && previousDate[1].length === 0) {
+
+    if (currentDate[0].length === 0) {
+      return '';
+    } else if (currentDate[0].length === 2 && currentDate[1].length === 0 && previousDate[1].length === 0) {
       this._inputSelectionEnd = this._inputSelectionEnd + 1;
       this._inputSelectionStart = this._inputSelectionStart + 1;
-      return currentDate[0] + '/';
-    } else if (currentDate[0].length === 2 && currentDate[1].length === 0 && previousDate[1].length === 1) {
-      return currentDate[0];
-    } else if (currentDate[0] && currentDate[1]) {
       return currentDate[0] + '/' + currentDate[1];
     } else {
-      return '';
+      return currentDate[0];
     }
+    // @ts-ignore
+    // if (currentDate[0].length === 2 && currentDate[1].length === 0 && previousDate[1].length === 0) {
+    //   this._inputSelectionEnd = this._inputSelectionEnd + 1;
+    //   this._inputSelectionStart = this._inputSelectionStart + 1;
+    //   return currentDate[0] + '/';
+    // } else if (currentDate[0].length === 2 && currentDate[1].length === 0 && previousDate[1].length === 1) {
+    //   return currentDate[0];
+    // } else if (currentDate[0] && currentDate[1]) {
+    //   return currentDate[0] + '/' + currentDate[1];
+    // } else {
+    //   return '';
+    // }
   }
 }
