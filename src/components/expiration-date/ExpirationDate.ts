@@ -23,6 +23,7 @@ export default class ExpirationDate extends FormField {
   };
 
   private _date: string[] = ['', ''];
+  private _currentKeyCode: number;
   private _inputSelectionStart: number;
   private _inputSelectionEnd: number;
 
@@ -122,6 +123,11 @@ export default class ExpirationDate extends FormField {
     this._inputElement.focus();
   }
 
+  protected onKeyup(event: KeyboardEvent) {
+    super.onKeyup(event);
+    this._currentKeyCode = event.keyCode;
+  }
+
   /**
    * Extends onPaste method with formatting and masking.
    * @param event
@@ -192,30 +198,32 @@ export default class ExpirationDate extends FormField {
    * Formats indicated string to date in format: mm/yy.
    */
   private _getISOFormatDate(previousDate: string[], currentDate: string[]) {
-    console.log('Previous date: ' + previousDate);
-    console.log('Current date: ' + currentDate);
+    // console.log('Previous date: ' + previousDate);
+    // console.log('Current date: ' + currentDate);
     this._date = currentDate;
+    const selectionStart = this._inputElement.selectionStart;
+    const selectionEnd = this._inputElement.selectionEnd;
+    // console.log(selectionStart);
+    // console.log(selectionEnd);
 
-    if (currentDate[0].length === 0) {
+    if (!currentDate[0].length) {
       return '';
-    } else if (currentDate[0].length === 2 && currentDate[1].length === 0 && previousDate[1].length === 0) {
-      this._inputSelectionEnd = this._inputSelectionEnd + 1;
-      this._inputSelectionStart = this._inputSelectionStart + 1;
-      return currentDate[0] + '/' + currentDate[1];
-    } else {
+    } else if (currentDate[0].length && currentDate[1].length === 0) {
       return currentDate[0];
+    } else if (currentDate[0].length === 2 && currentDate[1].length === 1 && previousDate[1].length === 0) {
+      // this._inputSelectionEnd = this._inputSelectionEnd + 1;
+      // this._inputSelectionStart = this._inputSelectionStart + 1;
+      return currentDate[0] + '/' + currentDate[1];
+    } else if (
+      currentDate[0].length === 2 &&
+      currentDate[1].length === 1 &&
+      (previousDate[1].length === 1 || previousDate[1].length === 2)
+    ) {
+      // this._inputSelectionEnd = selectionEnd;
+      // this._inputSelectionStart = selectionStart;
+      return currentDate[0] + '/' + currentDate[1];
+    } else if (currentDate[0].length === 2 && currentDate[1].length === 2) {
+      return currentDate[0] + '/' + currentDate[1];
     }
-    // @ts-ignore
-    // if (currentDate[0].length === 2 && currentDate[1].length === 0 && previousDate[1].length === 0) {
-    //   this._inputSelectionEnd = this._inputSelectionEnd + 1;
-    //   this._inputSelectionStart = this._inputSelectionStart + 1;
-    //   return currentDate[0] + '/';
-    // } else if (currentDate[0].length === 2 && currentDate[1].length === 0 && previousDate[1].length === 1) {
-    //   return currentDate[0];
-    // } else if (currentDate[0] && currentDate[1]) {
-    //   return currentDate[0] + '/' + currentDate[1];
-    // } else {
-    //   return '';
-    // }
   }
 }
