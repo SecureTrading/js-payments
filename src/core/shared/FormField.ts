@@ -149,9 +149,8 @@ export default class FormField extends Frame {
     this.format(this._inputElement.value);
   }
 
-  protected onKeyup(event: KeyboardEvent) {
-    event.preventDefault();
-  }
+  protected onKeyup(event: KeyboardEvent) {}
+  protected onKeydown(event: KeyboardEvent) {}
 
   /**
    *
@@ -258,6 +257,10 @@ export default class FormField extends Frame {
 
     this._inputElement.addEventListener('keypress', (event: KeyboardEvent) => {
       this.onKeyPress(event);
+    });
+
+    this._inputElement.addEventListener('keydown', (event: KeyboardEvent) => {
+      this.onKeydown(event);
     });
 
     this._inputElement.addEventListener('keyup', (event: KeyboardEvent) => {

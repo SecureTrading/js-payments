@@ -106,11 +106,9 @@ export default class ExpirationDate extends FormField {
    */
   protected onInput(event: Event) {
     super.onInput(event);
+    console.log('oninput');
     this._inputElement.value = Formatter.trimNonNumeric(this._inputElement.value);
-    this._inputSelectionStart = this._inputElement.selectionStart;
-    this._inputSelectionEnd = this._inputElement.selectionEnd;
     this._setFormattedDate();
-    this._inputElement.setSelectionRange(this._inputSelectionStart, this._inputSelectionEnd);
     this._sendState();
   }
 
@@ -120,12 +118,19 @@ export default class ExpirationDate extends FormField {
    */
   protected onKeyPress(event: KeyboardEvent) {
     super.onKeyPress(event);
+    console.log('onkeypress');
     this._inputElement.focus();
   }
 
-  protected onKeyup(event: KeyboardEvent) {
-    super.onKeyup(event);
+  protected onKeydown(event: KeyboardEvent) {
+    super.onKeydown(event);
+    console.log('onkeydown');
     this._currentKeyCode = event.keyCode;
+    this._inputSelectionStart = this._inputElement.selectionStart;
+    this._inputSelectionEnd = this._inputElement.selectionEnd;
+    console.log(this._inputSelectionStart);
+    console.log(this._inputSelectionEnd);
+    console.log(this._currentKeyCode);
   }
 
   /**
@@ -157,6 +162,12 @@ export default class ExpirationDate extends FormField {
   private _setFormattedDate() {
     const validatedDate = this._getValidatedDate(this._inputElement.value);
     this._inputElement.value = validatedDate ? validatedDate : this._inputElement.value;
+    console.log(this._inputSelectionEnd);
+    console.log(this._inputSelectionStart);
+    console.log(this._currentKeyCode);
+    if (this._currentKeyCode === 46) {
+      this._inputElement.setSelectionRange(this._inputSelectionStart, this._inputSelectionEnd);
+    }
     return validatedDate;
   }
 
