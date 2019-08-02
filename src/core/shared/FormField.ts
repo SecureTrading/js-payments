@@ -197,7 +197,6 @@ export default class FormField extends Frame {
    */
   protected setEventListener(event: string) {
     this._messageBus.subscribe(event, () => {
-      console.log(event);
       this._validateInput();
     });
   }
