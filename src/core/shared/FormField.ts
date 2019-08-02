@@ -153,7 +153,9 @@ export default class FormField extends Frame {
    *
    * @param event
    */
-  protected onKeydown(event: KeyboardEvent) {}
+  protected onKeydown(event: KeyboardEvent) {
+    return event;
+  }
 
   /**
    *
