@@ -193,7 +193,7 @@ export default class CardFrames extends RegisterFrames {
     const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
-    this.messageBus.publish(messageBusEvent);
+    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
   /**
