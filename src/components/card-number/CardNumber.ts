@@ -76,11 +76,6 @@ export default class CardNumber extends FormField {
    */
   protected onFocus(event: Event) {
     super.onFocus(event);
-    const messageBusEvent: IMessageBusEvent = {
-      data: true,
-      type: MessageBus.EVENTS.FOCUS_CARD_NUMBER
-    };
-    this._messageBus.publish(messageBusEvent);
   }
 
   /**
