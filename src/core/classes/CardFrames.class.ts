@@ -224,7 +224,7 @@ class CardFrames extends RegisterFrames {
     const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
-    this._messageBus.publish(messageBusEvent);
+    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
   /**

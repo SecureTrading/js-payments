@@ -163,15 +163,15 @@ describe('CardFrames', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
-      instance._messageBus.publish = jest.fn();
+      instance._messageBus.publishFromParent = jest.fn();
       // @ts-ignore
       instance._publishSubmitEvent();
     });
 
     // then
-    it('should call publish method', () => {
+    it('should call publishFromParent method', () => {
       // @ts-ignore
-      expect(instance._messageBus.publish).toHaveBeenCalledWith(submitFormEvent);
+      expect(instance._messageBus.publishFromParent).toHaveBeenCalledWith(submitFormEvent, 'st-control-frame-iframe');
     });
   });
 
