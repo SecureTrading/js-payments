@@ -322,7 +322,8 @@ function cardFramesFixture() {
     },
     {},
     ['VISA,MASTERCARD,AMEX'],
-    'AMEX'
+    'AMEX',
+    true
   );
   return { instance };
 }

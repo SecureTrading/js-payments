@@ -44,9 +44,10 @@ class CommonFrames extends RegisterFrames {
     submitOnSuccess: boolean,
     submitOnError: boolean,
     submitFields: string[],
-    gatewayUrl: string
+    gatewayUrl: string,
+    animatedCard: boolean
   ) {
-    super(jwt, origin, componentIds, styles);
+    super(jwt, origin, componentIds, styles, animatedCard);
     this._submitOnSuccess = submitOnSuccess;
     this._submitOnError = submitOnError;
     this._submitFields = submitFields;

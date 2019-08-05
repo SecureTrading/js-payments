@@ -309,8 +309,9 @@ function commonFramesFixture() {
     notificationFrame: Selectors.NOTIFICATION_FRAME_ID,
     securityCode: Selectors.SECURITY_CODE_INPUT_SELECTOR
   };
+  const animatedCard = true;
   const gatewayUrl: string = 'https://webservices.securetrading.net/jwt/';
-  const instance = new CommonFrames(jwt, origin, componentsIds, {}, false, false, [], gatewayUrl);
+  const instance = new CommonFrames(jwt, origin, componentsIds, {}, false, false, [], gatewayUrl, animatedCard);
 
   return { instance };
 }

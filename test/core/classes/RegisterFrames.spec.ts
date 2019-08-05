@@ -58,6 +58,7 @@ function registerFramesFixture() {
   const form =
     '<form><div id="st-card-number"></div><div id="st-expiration-date"></div><div id="st-security-code"></div></form>';
   document.body.innerHTML = form;
+  const animatedCard: boolean = true;
   const componentsIds = {};
   const cardNumberField = document.createElement('input');
   const expirationDateField = document.createElement('input');
@@ -77,6 +78,6 @@ function registerFramesFixture() {
     'font-size-input': '12px',
     'line-height-input': '12px'
   };
-  const instance = new RegisterFrames(jwt, origin, componentsIds, styles);
+  const instance = new RegisterFrames(jwt, origin, componentsIds, styles, animatedCard);
   return { instance, fields, targets, cardNumberField, securityCodeField, expirationDateField };
 }
