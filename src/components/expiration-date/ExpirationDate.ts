@@ -116,10 +116,6 @@ export default class ExpirationDate extends FormField {
   protected onBlur() {
     super.onBlur();
     this._sendState();
-    const messageBusEvent: IMessageBusEvent = {
-      type: MessageBus.EVENTS.FOCUS_EXPIRATION_DATE
-    };
-    this._messageBus.publish(messageBusEvent);
   }
 
   /**

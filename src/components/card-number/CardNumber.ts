@@ -63,11 +63,6 @@ export default class CardNumber extends FormField {
     super.onBlur();
     this._luhnCheck(this._inputElement.value);
     this._sendState();
-    const messageBusEvent: IMessageBusEvent = {
-      data: true,
-      type: MessageBus.EVENTS.FOCUS_CARD_NUMBER
-    };
-    this._messageBus.publish(messageBusEvent);
   }
 
   /**
