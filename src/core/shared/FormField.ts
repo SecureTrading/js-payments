@@ -153,6 +153,14 @@ export default class FormField extends Frame {
    *
    * @param event
    */
+  protected onKeydown(event: KeyboardEvent) {
+    return event;
+  }
+
+  /**
+   *
+   * @param event
+   */
   protected onKeyPress(event: KeyboardEvent) {
     if (Validation.isEnter(event)) {
       event.preventDefault();
@@ -254,6 +262,10 @@ export default class FormField extends Frame {
 
     this._inputElement.addEventListener('keypress', (event: KeyboardEvent) => {
       this.onKeyPress(event);
+    });
+
+    this._inputElement.addEventListener('keydown', (event: KeyboardEvent) => {
+      this.onKeydown(event);
     });
 
     this._inputElement.addEventListener('input', (event: Event) => {
