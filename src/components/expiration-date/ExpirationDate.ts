@@ -146,6 +146,7 @@ export default class ExpirationDate extends FormField {
     this._currentKeyCode = event.keyCode;
     this._inputSelectionStart = this._inputElement.selectionStart;
     this._inputSelectionEnd = this._inputElement.selectionEnd;
+    return event;
   }
 
   /**
