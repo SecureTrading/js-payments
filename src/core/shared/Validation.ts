@@ -99,9 +99,6 @@ export default class Validation extends Frame {
    */
   public backendValidation(inputElement: HTMLInputElement, messageElement: HTMLElement, event: string) {
     this._messageBus.subscribe(event, (data: IMessageBusValidateField) => {
-      if (!data.message) {
-        data.message = Validation.getValidationMessage(inputElement.validity);
-      }
       this.checkBackendValidity(data, inputElement, messageElement);
     });
   }
@@ -129,7 +126,7 @@ export default class Validation extends Frame {
     inputElement: HTMLInputElement,
     messageElement?: HTMLElement
   ) {
-    this.setError(inputElement, messageElement, data.message);
+    this.setError(inputElement, messageElement, data);
   }
 
   /**
@@ -169,8 +166,8 @@ export default class Validation extends Frame {
    * @param messageElement
    * @param message
    */
-  public setError(inputElement: HTMLInputElement, messageElement: HTMLElement, message: string) {
-    this._assignErrorDetails(inputElement, messageElement, message);
+  public setError(inputElement: HTMLInputElement, messageElement: HTMLElement, data: IMessageBusValidateField) {
+    this._assignErrorDetails(inputElement, messageElement, data);
   }
 
   /**
@@ -308,13 +305,20 @@ export default class Validation extends Frame {
    *
    * @param inputElement
    * @param messageElement
-   * @param message
+   * @param data
    * @private
    */
-  private _assignErrorDetails(inputElement: HTMLInputElement, messageElement: HTMLElement, message: string) {
-    inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
-    if (messageElement && messageElement.innerText !== Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH) {
-      messageElement.innerText = this._translator.translate(message);
+  private _assignErrorDetails(
+    inputElement: HTMLInputElement,
+    messageElement: HTMLElement,
+    data: IMessageBusValidateField
+  ) {
+    if (messageElement && data.message) {
+      if (messageElement.innerText !== Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH) {
+        messageElement.innerText = this._translator.translate(data.message);
+        inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
+        inputElement.setCustomValidity(data.message);
+      }
     }
     inputElement.setCustomValidity(message);
   }
