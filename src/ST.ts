@@ -180,7 +180,8 @@ class ST {
     submitOnSuccess: boolean,
     submitOnError: boolean,
     submitFields: string[],
-    gatewayUrl: string
+    gatewayUrl: string,
+    animatedCard: boolean
   ) {
     return new CommonFrames(
       jwt,
@@ -190,7 +191,8 @@ class ST {
       submitOnSuccess,
       submitOnError,
       submitFields,
-      gatewayUrl
+      gatewayUrl,
+      animatedCard
     );
   }
 
@@ -261,7 +263,8 @@ class ST {
       this._submitOnSuccess,
       this._submitOnError,
       this._submitFields,
-      this._gatewayUrl
+      this._gatewayUrl,
+      this._animatedCard
     );
     ST._configureMerchantFields();
   }
