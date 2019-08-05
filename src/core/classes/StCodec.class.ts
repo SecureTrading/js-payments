@@ -138,8 +138,10 @@ class StCodec {
    * @private
    */
   private static _handleInvalidResponse() {
+    const validation = new Validation();
     StCodec.publishResponse(StCodec._createCommunicationError());
     StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
+    validation.blockForm(false);
     return new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
   }
 
