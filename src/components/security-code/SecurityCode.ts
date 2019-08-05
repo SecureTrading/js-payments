@@ -62,7 +62,7 @@ export default class SecurityCode extends FormField {
    * Sets focus listener, controls focusing on input field.
    */
   protected setFocusListener() {
-    super.setEventListener(MessageBus.EVENTS.FOCUS_SECURITY_CODE);
+    super.setEventListener(MessageBus.EVENTS.FOCUS_SECURITY_CODE, false);
   }
 
   /**
