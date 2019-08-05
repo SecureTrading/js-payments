@@ -119,8 +119,8 @@ export default class FormField extends Frame {
    *
    */
   protected onBlur() {
-    this.validation.validate(this._inputElement, this._messageElement);
     this._blur();
+    this.validation.validate(this._inputElement, this._messageElement);
   }
 
   /**
@@ -137,7 +137,6 @@ export default class FormField extends Frame {
    */
   protected onFocus(event: Event) {
     this._focus();
-    this._inputElement.focus();
   }
 
   /**
@@ -202,10 +201,11 @@ export default class FormField extends Frame {
   /**
    * Takes MessageBus Event and sets .subscribe() handler.
    * @param event
+   * @param validate
    */
-  protected setEventListener(event: string) {
+  protected setEventListener(event: string, validate: boolean = true) {
     this._messageBus.subscribe(event, () => {
-      this._validateInput();
+      validate && this._validateInput();
     });
   }
 
