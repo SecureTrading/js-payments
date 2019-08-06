@@ -320,6 +320,6 @@ export default class Validation extends Frame {
         inputElement.setCustomValidity(message);
       }
     }
-    inputElement.setCustomValidity(message);
+    inputElement.setCustomValidity(data.message);
   }
 }
