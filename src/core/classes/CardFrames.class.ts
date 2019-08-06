@@ -32,8 +32,8 @@ class CardFrames extends RegisterFrames {
   private readonly _defaultPaymentType: string;
   private _validation: Validation;
   private _translator: Translator;
-  private _payMessage: string;
-  private _processingMessage: string;
+  private readonly _payMessage: string;
+  private readonly _processingMessage: string;
 
   constructor(
     jwt: string,
@@ -133,20 +133,21 @@ class CardFrames extends RegisterFrames {
    * Inits credit card and animated card fields (if merchant wanted this type of payment)
    */
   private _initCardFields() {
+    const { cardNumber, securityCode, expirationDate } = this.styles;
     this._cardNumber = new Element();
     this._expirationDate = new Element();
     this._securityCode = new Element();
     this._animatedCard = new Element();
 
-    this._cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, this.styles, { ...this.params, origin: this.origin });
+    this._cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, cardNumber, { ...this.params, origin: this.origin });
     this._cardNumberMounted = this._cardNumber.mount(Selectors.CARD_NUMBER_IFRAME);
     this.elementsToRegister.push(this._cardNumberMounted);
 
-    this._expirationDate.create(Selectors.EXPIRATION_DATE_COMPONENT_NAME, this.styles, this.params);
+    this._expirationDate.create(Selectors.EXPIRATION_DATE_COMPONENT_NAME, expirationDate, this.params);
     this._expirationDateMounted = this._expirationDate.mount(Selectors.EXPIRATION_DATE_IFRAME);
     this.elementsToRegister.push(this._expirationDateMounted);
 
-    this._securityCode.create(Selectors.SECURITY_CODE_COMPONENT_NAME, this.styles, this.params);
+    this._securityCode.create(Selectors.SECURITY_CODE_COMPONENT_NAME, securityCode, this.params);
     this._securityCodeMounted = this._securityCode.mount(Selectors.SECURITY_CODE_IFRAME);
     this.elementsToRegister.push(this._securityCodeMounted);
 

@@ -62,28 +62,6 @@ describe('SecurityCode', () => {
   });
 
   // given
-  describe('setFocusListener', () => {
-    const { instance } = securityCodeFixture();
-    let spy: jest.SpyInstance;
-
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      spy = jest.spyOn(instance, 'format');
-      // @ts-ignore
-      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
-        callback();
-      });
-      // @ts-ignore
-      instance.setFocusListener();
-    });
-    // then
-    it('should call format method', () => {
-      expect(spy).toBeCalledTimes(1);
-    });
-  });
-
-  // given
   describe('setDisableListener', () => {
     const { instance } = securityCodeFixture();
     // then

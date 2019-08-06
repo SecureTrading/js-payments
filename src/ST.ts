@@ -170,6 +170,7 @@ class ST {
    * @param submitOnError
    * @param submitFields
    * @param gatewayUrl
+   * @param animatedCard
    * @private
    */
   private static _configureCommonFrames(
@@ -217,7 +218,7 @@ class ST {
     jwt: string,
     origin: string,
     componentIds: {},
-    styles: {},
+    styles: IStyles,
     config: IComponentsConfig,
     animatedCard: boolean
   ) {
@@ -230,7 +231,7 @@ class ST {
   }
 
   private _componentIds: {};
-  private _animatedCard: boolean;
+  private readonly _animatedCard: boolean;
   private _cachetoken: string;
   private _gatewayUrl: string;
   private _jwt: string;

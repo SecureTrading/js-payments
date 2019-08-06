@@ -84,7 +84,7 @@
         var parsedUrl = new URL(window.location.href);
 
         var cardinalJwt =
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU2NTAwODAzNS41NDAzMzg4LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.10eRcwdA2HJJq8DbpgQjPFLOmgSRSq4-QKRp8IeqrZc';
+          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU2NTEwNzk1MC45MTA2OTk2LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.qsiytVfJQ3i1EIUMT6WxeUY-I0bVkIiPAWf0-SvBQS8';
         var cardinalJwtFR =
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU3NDExNDIzLjI0NTQ3LCJwYXlsb2FkIjp7ImN1c3RvbWVydG93biI6IkJhbmdvciIsImJpbGxpbmdwb3N0Y29kZSI6IlRFMTIgM1NUIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsImN1c3RvbWVycHJlbWlzZSI6IjEyIiwiYmlsbGluZ2xhc3RuYW1lIjoiTmFtZSIsImxvY2FsZSI6ImZyX0ZSIiwiYmFzZWFtb3VudCI6IjEwMDAiLCJiaWxsaW5nZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiYmlsbGluZ3ByZW1pc2UiOiIxMiIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0MSIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiYmlsbGluZ3N0cmVldCI6IlRlc3Qgc3RyZWV0IiwiY3VzdG9tZXJzdHJlZXQiOiJUZXN0IHN0cmVldCIsImN1c3RvbWVycG9zdGNvZGUiOiJURTEyIDNTVCIsImN1c3RvbWVybGFzdG5hbWUiOiJOYW1lIiwiYmlsbGluZ3RlbGVwaG9uZSI6IjAxMjM0IDExMTIyMiIsImJpbGxpbmdmaXJzdG5hbWUiOiJUZXN0IiwiYmlsbGluZ3Rvd24iOiJCYW5nb3IiLCJiaWxsaW5ndGVsZXBob25ldHlwZSI6Ik0ifX0.OQ7PaErcXj7vmR4ob_uzXv3LqoLYmD3tP6cof2FCfkQ';
         var applePayVisaCheckoutJwt =
@@ -95,11 +95,33 @@
         var st = SecureTrading({
           jwt: jwt, // Can't use property shorthand because it isn't supported by IE
           styles: {
-            'background-color-input': 'AliceBlue',
-            'background-color-input-error': '#f8d7da',
-            'color-input-error': '#721c24',
-            'font-size-input': '12px',
-            'line-height-input': '12px'
+            cardNumber: {
+              'background-color-input': '#0099FF',
+              'background-color-input-error': '#e5e8ac',
+              'color-input-error': '#721c24',
+              'font-size-input': '9px',
+              'line-height-input': '9px'
+            },
+            expirationDate: {
+              'background-color-input': '#EC33FF',
+              'background-color-input-error': '#f8d7da',
+              'color-input-error': '#55FF33',
+              'font-size-input': '12px',
+              'line-height-input': '12px'
+            },
+            securityCode: {
+              'background-color-input': '#FFF333',
+              'background-color-input-error': '#f8d7da',
+              'color-input-error': '#3358FF',
+              'font-size-input': '20px',
+              'line-height-input': '20px'
+            },
+            notificationFrame: {
+              'color-error': '#FFF333'
+            },
+            controlFrame: {
+              'color-error': '#3358FF'
+            }
           },
           animatedCard: true,
           submitOnSuccess: false
