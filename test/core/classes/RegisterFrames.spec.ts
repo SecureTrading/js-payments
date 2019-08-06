@@ -72,11 +72,27 @@ function registerFramesFixture() {
     'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTYyODU0NjQ3LjgyNTUyMTIsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.vqCAI0quQ2oShuirr6iRGNgVfv2YsR_v3Q9smhVx5PM';
   const origin = 'https://example.com';
   const styles = {
-    'background-color-input': 'AliceBlue',
-    'background-color-input-error': '#f8d7da',
-    'color-input-error': '#721c24',
-    'font-size-input': '12px',
-    'line-height-input': '12px'
+    cardNumber: {
+      'background-color-input': 'AliceBlue',
+      'background-color-input-error': '#f8d7da',
+      'color-input-error': '#721c24',
+      'font-size-input': '12px',
+      'line-height-input': '12px'
+    },
+    expirationDate: {
+      'background-color-input': 'AliceBlue',
+      'background-color-input-error': '#f8d7da',
+      'color-input-error': '#721c24',
+      'font-size-input': '12px',
+      'line-height-input': '12px'
+    },
+    securityCode: {
+      'background-color-input': 'AliceBlue',
+      'background-color-input-error': '#f8d7da',
+      'color-input-error': '#721c24',
+      'font-size-input': '12px',
+      'line-height-input': '12px'
+    }
   };
   const instance = new RegisterFrames(jwt, origin, componentsIds, styles, animatedCard);
   return { instance, fields, targets, cardNumberField, securityCodeField, expirationDateField };
