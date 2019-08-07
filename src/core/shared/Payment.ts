@@ -65,7 +65,6 @@ export default class Payment {
    */
   public threeDInitRequest() {
     return this._stTransport.sendRequest(this._threeDInitRequestBody).then((result: { jwt: string; response: any }) => {
-      console.log(result);
       const {
         payload: { jwt, response }
       } = new StJwt(result.jwt);
