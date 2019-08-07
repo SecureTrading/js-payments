@@ -2,6 +2,7 @@ import { IStRequest } from '../classes/StCodec.class';
 import StTransport from '../classes/StTransport.class';
 import { IMerchantData } from '../models/MerchantData';
 import Notification from './Notification';
+import { StJwt } from './StJwt';
 import Validation from './Validation';
 
 /**
@@ -64,8 +65,13 @@ export default class Payment {
    */
   public threeDInitRequest() {
     return this._stTransport.sendRequest(this._threeDInitRequestBody).then((result: { jwt: string; response: any }) => {
-      this._cardinalCommerceCacheToken = result.response.cachetoken;
-      return result;
+      const {
+        payload: { jwt, response }
+      } = new StJwt(result.jwt);
+      const threeDInitResult = { jwt, response: response[0] };
+      // @ts-ignore
+      this._cardinalCommerceCacheToken = threeDInitResult.response.cachetoken;
+      return threeDInitResult;
     });
   }
 
