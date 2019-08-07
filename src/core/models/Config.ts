@@ -10,7 +10,7 @@ interface IConfig {
   init?: IByPassInit;
   origin?: string;
   styles?: IStyles;
-  submitCallback?: void;
+  submitCallback?: any;
   submitFields?: string[];
   submitOnSuccess?: boolean;
   submitOnError?: boolean;

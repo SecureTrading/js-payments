@@ -27,7 +27,7 @@ class CommonFrames extends RegisterFrames {
   private _controlFrame: Element;
   private _messageBus: MessageBus;
   private _requestTypes: string[];
-  private _submitCallback: void;
+  private _submitCallback: any;
   private readonly _merchantForm: HTMLFormElement;
   private readonly _submitOnSuccess: boolean;
   private readonly _submitOnError: boolean;
@@ -44,7 +44,7 @@ class CommonFrames extends RegisterFrames {
     submitFields: string[],
     gatewayUrl: string,
     animatedCard: boolean,
-    submitCallback: void
+    submitCallback: any
   ) {
     super(jwt, origin, componentIds, styles, animatedCard, submitCallback);
     this._submitOnSuccess = submitOnSuccess;
@@ -54,7 +54,6 @@ class CommonFrames extends RegisterFrames {
     this._messageBus = new MessageBus(origin);
     this._merchantForm = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR) as HTMLFormElement;
     this._submitCallback = submitCallback;
-    console.log(submitCallback);
     this.onInit();
   }
 
@@ -178,11 +177,11 @@ class CommonFrames extends RegisterFrames {
    * @private
    */
   private _onTransactionComplete(data: any) {
-    console.log(this._submitCallback);
     if (this._shouldSubmitForm(data)) {
       const form = this._merchantForm;
       DomMethods.addDataToForm(form, data, this._getSubmitFields(data));
-      form.submit();
+      // form.submit();
+      this._submitCallback();
     }
   }
 

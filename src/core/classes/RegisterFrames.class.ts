@@ -13,7 +13,7 @@ export default class RegisterFrames {
   protected origin: string;
   protected componentIds: any;
   protected hasAnimatedCard: boolean;
-  protected submitCallback: void;
+  protected submitCallback: any;
   private stJwt: StJwt;
 
   constructor(
@@ -22,7 +22,7 @@ export default class RegisterFrames {
     componentIds: {},
     styles: IStyles,
     animatedCard: boolean,
-    submitCallback: void
+    submitCallback: any
   ) {
     this.styles = styles;
     this.componentIds = componentIds;
