@@ -166,11 +166,6 @@ describe('Payment', () => {
 
   // given
   describe('threeDInitRequest()', () => {
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-    });
-    ``;
     // then
     it('should send JSINIT request', () => {
       // @ts-ignore
