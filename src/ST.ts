@@ -170,6 +170,8 @@ class ST {
    * @param submitOnError
    * @param submitFields
    * @param gatewayUrl
+   * @param animatedCard
+   * @param submitCallback
    * @private
    */
   private static _configureCommonFrames(
@@ -181,7 +183,8 @@ class ST {
     submitOnError: boolean,
     submitFields: string[],
     gatewayUrl: string,
-    animatedCard: boolean
+    animatedCard: boolean,
+    submitCallback: void
   ) {
     return new CommonFrames(
       jwt,
@@ -192,7 +195,8 @@ class ST {
       submitOnError,
       submitFields,
       gatewayUrl,
-      animatedCard
+      animatedCard,
+      submitCallback
     );
   }
 
@@ -236,6 +240,7 @@ class ST {
   private _jwt: string;
   private _origin: string;
   private _styles: IStyles;
+  private _submitCallback: void;
   private _submitFields: string[];
   private _submitOnError: boolean;
   private _submitOnSuccess: boolean;
@@ -252,6 +257,7 @@ class ST {
       this._cachetoken = cachetoken;
     }
     this._animatedCard = config.animatedCard;
+    this._submitCallback = config.submitCallback;
     this._config = ST._addDefaults(config);
     ST._validateConfig(this._config, IConfigSchema);
     this._setClassProperties(this._config);
@@ -264,7 +270,8 @@ class ST {
       this._submitOnError,
       this._submitFields,
       this._gatewayUrl,
-      this._animatedCard
+      this._animatedCard,
+      this._submitCallback
     );
     ST._configureMerchantFields();
   }

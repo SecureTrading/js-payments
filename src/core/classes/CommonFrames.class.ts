@@ -10,9 +10,6 @@ import RegisterFrames from './RegisterFrames.class';
  * Defines all non field elements of form and their placement on merchant site.
  */
 class CommonFrames extends RegisterFrames {
-  get merchantForm(): any {
-    return document.getElementById(Selectors.MERCHANT_FORM_SELECTOR);
-  }
   set requestTypes(requestTypes: string[]) {
     this._requestTypes = requestTypes;
   }
@@ -30,6 +27,7 @@ class CommonFrames extends RegisterFrames {
   private _controlFrame: Element;
   private _messageBus: MessageBus;
   private _requestTypes: string[];
+  private _submitCallback: void;
   private readonly _merchantForm: HTMLFormElement;
   private readonly _submitOnSuccess: boolean;
   private readonly _submitOnError: boolean;
@@ -45,15 +43,18 @@ class CommonFrames extends RegisterFrames {
     submitOnError: boolean,
     submitFields: string[],
     gatewayUrl: string,
-    animatedCard: boolean
+    animatedCard: boolean,
+    submitCallback: void
   ) {
-    super(jwt, origin, componentIds, styles, animatedCard);
+    super(jwt, origin, componentIds, styles, animatedCard, submitCallback);
     this._submitOnSuccess = submitOnSuccess;
     this._submitOnError = submitOnError;
     this._submitFields = submitFields;
     this._gatewayUrl = gatewayUrl;
     this._messageBus = new MessageBus(origin);
     this._merchantForm = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR) as HTMLFormElement;
+    this._submitCallback = submitCallback;
+    console.log(submitCallback);
     this.onInit();
   }
 
@@ -177,6 +178,7 @@ class CommonFrames extends RegisterFrames {
    * @private
    */
   private _onTransactionComplete(data: any) {
+    console.log(this._submitCallback);
     if (this._shouldSubmitForm(data)) {
       const form = this._merchantForm;
       DomMethods.addDataToForm(form, data, this._getSubmitFields(data));
