@@ -4,17 +4,16 @@ import DomMethods from '../shared/DomMethods';
  * Creates HTML markups <script> and add Google Analytics source to it.
  */
 class GoogleAnalytics {
-  private static GA_MEASUREMENT_ID: number = 144576082;
+  private static GA_MEASUREMENT_ID: string = '42057093-5';
   private static GA_INIT_SCRIPT_CONTENT: string = `window.ga=window.ga||function(){(ga.q=ga.q||[]).
-  push(arguments)};ga.l=+new Date;ga('create', 'UA-${
-    GoogleAnalytics.GA_MEASUREMENT_ID
-  }-Y', 'auto');ga('send', 'pageview');`;
+  push(arguments)};ga.l=+new Date;
+`;
   private static GA_SCRIPT_SRC: string = 'https://www.google-analytics.com/analytics.js';
-  private static GA_DISABLE_COOKIES: string = `ga('create', 'UA-${
-    GoogleAnalytics.GA_MEASUREMENT_ID
-  }-Y', {'storage': 'none'});`;
+  private static GA_DISABLE_COOKIES: string = `ga('create', 'UA-${GoogleAnalytics.GA_MEASUREMENT_ID}'
+  , {'storage': 'none'});`;
   private static GA_IP_ANONYMIZATION: string = `ga('set', 'anonymizeIp', true);`;
   private static GA_DISABLE_ADVERTISING_FEATURES: string = `ga('set', 'allowAdFeatures', false);`;
+  private static GA_PAGE_VIEW: string = `ga('send', 'pageview');`;
   private static TRANSLATION_SCRIPT_SUCCEEDED: string = 'Google Analytics: script has been created';
   private static TRANSLATION_SCRIPT_FAILED: string = 'Google Analytics: an error occurred loading script';
   private static TRANSLATION_SCRIPT_APPENDED: string = 'Google Analytics: script has been appended';
@@ -37,7 +36,8 @@ class GoogleAnalytics {
     return `${GoogleAnalytics.GA_INIT_SCRIPT_CONTENT}
     ${GoogleAnalytics.GA_DISABLE_COOKIES}
     ${GoogleAnalytics.GA_IP_ANONYMIZATION}
-    ${GoogleAnalytics.GA_DISABLE_ADVERTISING_FEATURES}`;
+    ${GoogleAnalytics.GA_DISABLE_ADVERTISING_FEATURES}
+    ${GoogleAnalytics.GA_PAGE_VIEW}`;
   }
 
   private _communicate: string;
@@ -55,13 +55,13 @@ class GoogleAnalytics {
    * @private
    */
   private _onInit() {
+    this._insertGALibrary();
     this._createGAScript()
-      .then(response => {
-        console.info(response);
+      .then(() => {
+        // console.info(response);
         this._insertGAScript()
-          .then(response => {
-            this._insertGALibrary();
-            console.info(response);
+          .then(() => {
+            // console.info(response);
             GoogleAnalytics._disableUserIDTracking();
           })
           .catch(error => {
