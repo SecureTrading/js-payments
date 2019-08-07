@@ -27,6 +27,18 @@ import { environment } from './environments/environment';
  * Establishes connection with ST, defines client.
  */
 class ST {
+  private static DEFAULT_COMPONENTS = {
+    cardNumber: Selectors.CARD_NUMBER_INPUT_SELECTOR,
+    expirationDate: Selectors.EXPIRATION_DATE_INPUT_SELECTOR,
+    notificationFrame: Selectors.NOTIFICATION_FRAME_ID,
+    securityCode: Selectors.SECURITY_CODE_INPUT_SELECTOR
+  };
+
+  private static EXTENDED_CONFIGURATION = {
+    animatedCard: Selectors.ANIMATED_CARD_INPUT_SELECTOR,
+    ...ST.DEFAULT_COMPONENTS
+  };
+
   /**
    * Collect and set default values for _config object.
    * @param config
@@ -48,6 +60,7 @@ class ST {
     defaultFeatures.origin = config.origin ? config.origin : window.location.origin;
     defaultFeatures.submitOnSuccess = config.submitOnSuccess !== undefined ? config.submitOnSuccess : true;
     defaultFeatures.submitOnError = config.submitOnError !== undefined ? config.submitOnError : false;
+    defaultFeatures.animatedCard = config.animatedCard ? config.animatedCard : false;
     return defaultFeatures;
   }
 
@@ -82,17 +95,42 @@ class ST {
    * @private
    */
   private static _addDefaultComponentIds(config: IConfig) {
-    const defaultComponentIds: IConfig = config;
-    const componentIds = {
-      animatedCard: Selectors.ANIMATED_CARD_INPUT_SELECTOR,
-      cardNumber: Selectors.CARD_NUMBER_INPUT_SELECTOR,
-      expirationDate: Selectors.EXPIRATION_DATE_INPUT_SELECTOR,
-      notificationFrame: Selectors.NOTIFICATION_FRAME_ID,
-      securityCode: Selectors.SECURITY_CODE_INPUT_SELECTOR
-    };
-    defaultComponentIds.componentIds = config.componentIds ? { ...componentIds, ...config.componentIds } : componentIds;
-    defaultComponentIds.styles = config.styles ? config.styles : {};
-    return defaultComponentIds;
+    const defaultConfig: IConfig = config;
+    const { animatedCard, componentIds, styles } = config;
+
+    defaultConfig.styles = styles ? styles : {};
+    defaultConfig.componentIds = componentIds ? componentIds : {};
+
+    ST._hasConfigurationObjectsSameLength(defaultConfig.componentIds);
+
+    if (animatedCard) {
+      defaultConfig.componentIds = defaultConfig.componentIds
+        ? { ...ST.EXTENDED_CONFIGURATION, ...defaultConfig.componentIds }
+        : ST.EXTENDED_CONFIGURATION;
+    } else {
+      defaultConfig.componentIds = defaultConfig.componentIds
+        ? { ...ST.DEFAULT_COMPONENTS, ...defaultConfig.componentIds }
+        : ST.DEFAULT_COMPONENTS;
+    }
+
+    return defaultConfig;
+  }
+
+  /**
+   * Checks if configuration object provided by merchant corresponds to default in library.
+   * @param componentIds
+   * @private
+   */
+  private static _hasConfigurationObjectsSameLength(componentIds: any): boolean {
+    const isConfigurationCorrect: boolean =
+      Object.keys(componentIds).length === Object.keys(ST.EXTENDED_CONFIGURATION).length ||
+      Object.keys(componentIds).length === Object.keys(ST.DEFAULT_COMPONENTS).length ||
+      Object.keys(componentIds).length === 0;
+    if (!isConfigurationCorrect) {
+      alert('Form fields configuration is not correct');
+      throw new Error('Form fields configuration is not correct');
+    }
+    return isConfigurationCorrect;
   }
 
   /**
@@ -143,7 +181,8 @@ class ST {
     submitOnSuccess: boolean,
     submitOnError: boolean,
     submitFields: string[],
-    gatewayUrl: string
+    gatewayUrl: string,
+    animatedCard: boolean
   ) {
     return new CommonFrames(
       jwt,
@@ -153,7 +192,8 @@ class ST {
       submitOnSuccess,
       submitOnError,
       submitFields,
-      gatewayUrl
+      gatewayUrl,
+      animatedCard
     );
   }
 
@@ -171,23 +211,27 @@ class ST {
    * @param componentIds
    * @param styles
    * @param config
+   * @param animatedCard
+   * @private
    */
   private static _configureCardFrames(
     jwt: string,
     origin: string,
     componentIds: {},
     styles: {},
-    config: IComponentsConfig
+    config: IComponentsConfig,
+    animatedCard: boolean
   ) {
     const { defaultPaymentType, paymentTypes, startOnLoad } = config;
     let cardFrames: object;
     if (!startOnLoad) {
-      cardFrames = new CardFrames(jwt, origin, componentIds, styles, paymentTypes, defaultPaymentType);
+      cardFrames = new CardFrames(jwt, origin, componentIds, styles, paymentTypes, defaultPaymentType, animatedCard);
     }
     return cardFrames;
   }
 
   private _componentIds: {};
+  private _animatedCard: boolean;
   private _cachetoken: string;
   private _gatewayUrl: string;
   private _jwt: string;
@@ -209,6 +253,7 @@ class ST {
       this._threedinit = threedinit;
       this._cachetoken = cachetoken;
     }
+    this._animatedCard = config.animatedCard;
     this._config = ST._addDefaults(config);
     ST._validateConfig(this._config, IConfigSchema);
     this._setClassProperties(this._config);
@@ -220,7 +265,8 @@ class ST {
       this._submitOnSuccess,
       this._submitOnError,
       this._submitFields,
-      this._gatewayUrl
+      this._gatewayUrl,
+      this._animatedCard
     );
     ST._configureMerchantFields();
   }
@@ -233,7 +279,14 @@ class ST {
   public Components(config?: IComponentsConfig) {
     const { targetConfig } = ST._setConfigObject(config);
     ST._validateConfig(targetConfig, IComponentsConfigSchema);
-    ST._configureCardFrames(this._jwt, this._origin, this._componentIds, this._styles, targetConfig);
+    ST._configureCardFrames(
+      this._jwt,
+      this._origin,
+      this._componentIds,
+      this._styles,
+      targetConfig,
+      this._animatedCard
+    );
     this.commonFrames.requestTypes = targetConfig.requestTypes;
     this.CardinalCommerce(targetConfig);
   }

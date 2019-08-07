@@ -17,6 +17,7 @@ class CardFrames extends RegisterFrames {
   private static SUBMIT_BUTTON_AS_INPUT_MARKUP = 'input[type="submit"]';
   private static SUBMIT_BUTTON_DISABLED_CLASS = 'st-button-submit__disabled';
 
+  protected hasAnimatedCard: boolean;
   private _animatedCardMounted: HTMLElement;
   private _cardNumberMounted: HTMLElement;
   private _expirationDateMounted: HTMLElement;
@@ -31,6 +32,8 @@ class CardFrames extends RegisterFrames {
   private readonly _defaultPaymentType: string;
   private _validation: Validation;
   private _translator: Translator;
+  private _payMessage: string;
+  private _processingMessage: string;
 
   constructor(
     jwt: string,
@@ -38,9 +41,11 @@ class CardFrames extends RegisterFrames {
     componentIds: {},
     styles: IStyles,
     paymentTypes: string[],
-    defaultPaymentType: string
+    defaultPaymentType: string,
+    animatedCard: boolean
   ) {
-    super(jwt, origin, componentIds, styles);
+    super(jwt, origin, componentIds, styles, animatedCard);
+    this.hasAnimatedCard = animatedCard;
     this._paymentTypes = paymentTypes;
     this._defaultPaymentType = defaultPaymentType;
     this._validation = new Validation();
@@ -49,6 +54,8 @@ class CardFrames extends RegisterFrames {
     this.onInit();
     this._translator = new Translator(this.params.locale);
     this._getSubmitButton();
+    this._payMessage = this._translator.translate(Language.translations.PAY);
+    this._processingMessage = `${this._translator.translate(Language.translations.PROCESSING)} ...`;
   }
 
   /**
@@ -75,12 +82,16 @@ class CardFrames extends RegisterFrames {
    * Defines form elements for card payments
    */
   protected setElementsFields() {
-    return [
-      this.componentIds.cardNumber,
-      this.componentIds.expirationDate,
-      this.componentIds.securityCode,
-      this.componentIds.animatedCard
-    ];
+    if (this.hasAnimatedCard) {
+      return [
+        this.componentIds.cardNumber,
+        this.componentIds.expirationDate,
+        this.componentIds.securityCode,
+        this.componentIds.animatedCard
+      ];
+    } else {
+      return [this.componentIds.cardNumber, this.componentIds.expirationDate, this.componentIds.securityCode];
+    }
   }
 
   /**
@@ -213,7 +224,7 @@ class CardFrames extends RegisterFrames {
     const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
-    this._messageBus.publish(messageBusEvent);
+    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
   /**
@@ -222,11 +233,15 @@ class CardFrames extends RegisterFrames {
   private _validateFieldsAfterSubmit() {
     this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_FORM, (data: IValidationMessageBus) => {
       const { cardNumber, expirationDate, securityCode } = data;
-      !cardNumber.state && this._publishValidatedFieldState(cardNumber, MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD);
-      !expirationDate.state &&
+      if (!cardNumber.state) {
+        this._publishValidatedFieldState(cardNumber, MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD);
+      }
+      if (!expirationDate.state) {
         this._publishValidatedFieldState(expirationDate, MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD);
-      !securityCode.state &&
+      }
+      if (!securityCode.state) {
         this._publishValidatedFieldState(securityCode, MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD);
+      }
     });
   }
 
@@ -250,10 +265,10 @@ class CardFrames extends RegisterFrames {
    */
   private _setSubmitButtonProperties(element: any, disabledState: boolean) {
     if (disabledState) {
-      element.textContent = this._translator.translate(Language.translations.PROCESSING);
+      element.textContent = this._processingMessage;
       element.classList.add(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
     } else {
-      element.textContent = this._translator.translate(Language.translations.PAY);
+      element.textContent = this._payMessage;
       element.classList.remove(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
     }
     element.disabled = disabledState;

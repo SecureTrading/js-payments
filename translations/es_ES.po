@@ -66,8 +66,8 @@ msgstr "El formulario no es válido"
 msgid "Pay"
 msgstr "Pagar"
 
-msgid "Processing..."
-msgstr "Procesando..."
+msgid "Processing"
+msgstr "Procesando"
 
 msgid "Invalid field"
 msgstr "Campo no válido"

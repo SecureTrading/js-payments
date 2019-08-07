@@ -66,8 +66,8 @@ msgstr "Le formulaire n'est pas valide"
 msgid "Pay"
 msgstr "Payer"
 
-msgid "Processing..."
-msgstr "Traitement en cours..."
+msgid "Processing"
+msgstr "Traitement en cours"
 
 msgid "Invalid field"
 msgstr "Champ incorrect"

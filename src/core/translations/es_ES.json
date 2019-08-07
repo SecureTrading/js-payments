@@ -18,7 +18,7 @@
   "Method not implemented": "Método no implementado",
   "Form is not valid": "El formulario no es válido",
   "Pay": "Pagar",
-  "Processing...": "Procesando...",
+  "Processing": "Procesando",
   "Invalid field": "Campo no válido",
   "Card number is invalid": "El número de tarjeta no es válido"
 }

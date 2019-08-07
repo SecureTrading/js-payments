@@ -129,7 +129,7 @@ describe('Validation', () => {
   // given
   describe('backendValidation()', () => {
     // when
-    const { instance, inputElement, messageElement } = validationFixture();
+    const { instance, inputElementMerchant, messageElement } = validationFixture();
 
     // then
     it('should call checkBackendValidity()', () => {
@@ -138,18 +138,18 @@ describe('Validation', () => {
         callback({ field: 'some-id', message: 'some random message' });
       });
       const spy = jest.spyOn(instance, 'checkBackendValidity');
-      instance.backendValidation(inputElement, messageElement, MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD);
+      instance.backendValidation(inputElementMerchant, messageElement, MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD);
       expect(spy).toHaveBeenCalled();
     });
   });
 
   // given
   describe('checkBackendValidity()', () => {
-    const { instance, inputElement, messageElement, backendValidityData } = validationFixture();
+    const { instance, inputElementMerchant, messageElement, backendValidityData } = validationFixture();
     // then
     it('should trigger setError function', () => {
       const spy = jest.spyOn(instance, 'setError');
-      instance.checkBackendValidity(backendValidityData, inputElement, messageElement);
+      instance.checkBackendValidity(backendValidityData, inputElementMerchant, messageElement);
       expect(spy).toHaveBeenCalled();
     });
   });
@@ -250,6 +250,8 @@ describe('Validation', () => {
 function validationFixture() {
   const instance: Validation = new Validation();
   const inputElement = document.createElement('input');
+  const inputElementMerchant = document.createElement('input');
+  inputElementMerchant.setAttribute('data-st-name', 'billingemail');
   const messageElement = document.createElement('label');
   const someRandomMessage = 'Release the Kraken!';
   const keyCodeForOther = 71;
@@ -299,6 +301,7 @@ function validationFixture() {
   ];
   return {
     inputElement,
+    inputElementMerchant,
     instance,
     messageElement,
     someRandomMessage,
