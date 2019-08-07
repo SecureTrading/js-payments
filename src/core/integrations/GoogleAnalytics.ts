@@ -1,14 +1,15 @@
+import { environment } from '../../environments/environment';
 import DomMethods from '../shared/DomMethods';
 
 /**
  * Creates HTML markups <script> and add Google Analytics source to it.
  */
 class GoogleAnalytics {
-  private static GA_MEASUREMENT_ID: string = '42057093-5';
+  private static GA_MEASUREMENT_ID: string = environment.GA_MEASUREMENT_ID;
   private static GA_INIT_SCRIPT_CONTENT: string = `window.ga=window.ga||function(){(ga.q=ga.q||[]).
   push(arguments)};ga.l=+new Date;
 `;
-  private static GA_SCRIPT_SRC: string = 'https://www.google-analytics.com/analytics.js';
+  private static GA_SCRIPT_SRC: string = environment.GA_SCRIPT_SRC;
   private static GA_DISABLE_COOKIES: string = `ga('create', 'UA-${GoogleAnalytics.GA_MEASUREMENT_ID}'
   , {'storage': 'none'});`;
   private static GA_IP_ANONYMIZATION: string = `ga('set', 'anonymizeIp', true);`;
