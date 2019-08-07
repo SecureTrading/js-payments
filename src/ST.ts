@@ -231,7 +231,6 @@ class ST {
   }
 
   private _componentIds: {};
-  private _animatedCard: boolean;
   private _cachetoken: string;
   private _gatewayUrl: string;
   private _jwt: string;
@@ -240,8 +239,9 @@ class ST {
   private _submitFields: string[];
   private _submitOnError: boolean;
   private _submitOnSuccess: boolean;
-  private readonly _threedinit: string;
+  private readonly _animatedCard: boolean;
   private readonly _config: IConfig;
+  private readonly _threedinit: string;
   private commonFrames: CommonFrames;
 
   constructor(config: IConfig) {

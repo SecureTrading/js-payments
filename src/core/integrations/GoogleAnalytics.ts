@@ -51,6 +51,19 @@ class GoogleAnalytics {
   }
 
   /**
+   * Make GA send function available from class.
+   */
+  public sendGaData(hitType: string, eventCategory: string, eventAction: string, eventLabel: string) {
+    // @ts-ignore
+    window['ga']('send', {
+      hitType,
+      eventCategory,
+      eventAction,
+      eventLabel
+    });
+  }
+
+  /**
    * Initializes Google Analytics scripts on merchants page.
    * Gathers all methods needed to establish GGoogle Analytics functionality.
    * @private
