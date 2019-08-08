@@ -215,6 +215,8 @@ describe('CommonFrames', () => {
       // @ts-ignore
       instance._shouldSubmitForm = jest.fn().mockReturnValueOnce(true);
       // @ts-ignore
+      instance._submitCallback = jest.fn();
+      // @ts-ignore
       DomMethods.addDataToForm = jest.fn();
       // @ts-ignore
       instance._onTransactionComplete(data);
@@ -311,7 +313,21 @@ function commonFramesFixture() {
   };
   const animatedCard = true;
   const gatewayUrl: string = 'https://webservices.securetrading.net/jwt/';
-  const instance = new CommonFrames(jwt, origin, componentsIds, {}, false, false, [], gatewayUrl, animatedCard);
+  const submitCallback = function() {
+    return { prop: 'testobject' };
+  };
+  const instance = new CommonFrames(
+    jwt,
+    origin,
+    componentsIds,
+    {},
+    false,
+    false,
+    [],
+    gatewayUrl,
+    animatedCard,
+    submitCallback
+  );
 
   return { instance };
 }
