@@ -119,7 +119,7 @@ export class ApplePay {
   private _requestTypes: string[];
   private _translator: Translator;
 
-  private readonly _completion: { status: string; errors: [] };
+  private readonly _completion: { errors: []; status: string };
   private readonly _merchantId: string;
   private readonly _paymentRequest: any;
   private readonly _placement: string;
@@ -128,8 +128,8 @@ export class ApplePay {
     const { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId, requestTypes } = config;
     this.jwt = jwt;
     this._completion = {
-      status: this.getPaymentSuccessStatus(),
-      errors: []
+      errors: [],
+      status: this.getPaymentSuccessStatus()
     };
     this._notification = new Notification();
     this._merchantId = merchantId;
@@ -478,9 +478,9 @@ export class ApplePay {
     const { errorcode } = errorObject;
     if (this._ifBrowserSupportsApplePayVersion(this.applePayVersion)) {
       if (errorcode !== '0') {
-        const { errorcode, errormessage } = errorObject;
+        const { errormessage } = errorObject;
         let errordata = String(errorObject.data); // not sure this line - I can't force ApplePay to throw such error.
-        let error = new ApplePayError('unknown');
+        const error = new ApplePayError('unknown');
         error.message = this._translator.translate(errormessage);
         if (errorcode === '30000') {
           if (errordata.lastIndexOf('billing', 0) === 0) {
