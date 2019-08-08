@@ -272,12 +272,12 @@ class StCodec {
    * @Param responseObject The response object from the fetch promise
    * @return A Promise that resolves the body content (or raise an error casing the fetch to be rejected)
    */
-  public decode(responseObject: Response | {}): Promise<object> {
-    return new Promise((resolve, reject) => {
+  public async decode(responseObject: Response | {}): Promise<object> {
+    let decoded: any;
+    const promise = await new Promise((resolve, reject) => {
       if ('json' in responseObject) {
         responseObject.json().then(responseData => {
-          const decoded = StCodec._decodeResponseJwt(responseData.jwt, reject);
-          this._jwt = decoded.jwt;
+          decoded = StCodec._decodeResponseJwt(responseData.jwt, reject);
           resolve({
             jwt: responseData.jwt,
             response: StCodec.verifyResponseObject(decoded.payload, responseData.jwt)
@@ -287,6 +287,16 @@ class StCodec {
         reject(StCodec._handleInvalidResponse());
       }
     });
+    // // @ts-ignore
+    // console.log(promise);
+    // // @ts-ignore
+    // console.log(this._jwt === promise.jwt);
+    // @ts-ignore
+    this._jwt = promise.jwt;
+    // // @ts-ignore
+    // console.log(this._jwt === promise.jwt);
+    // @ts-ignore
+    return promise;
   }
 }
 
