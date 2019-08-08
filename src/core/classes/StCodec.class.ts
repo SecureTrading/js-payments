@@ -218,7 +218,7 @@ class StCodec {
   }
 
   private readonly _requestId: string;
-  private readonly _jwt: string;
+  private _jwt: string;
 
   constructor(jwt: string, parentOrigin?: string) {
     this._requestId = StCodec._createRequestId();
@@ -277,6 +277,7 @@ class StCodec {
       if ('json' in responseObject) {
         responseObject.json().then(responseData => {
           const decoded = StCodec._decodeResponseJwt(responseData.jwt, reject);
+          this._jwt = decoded.jwt;
           resolve({
             jwt: responseData.jwt,
             response: StCodec.verifyResponseObject(decoded.payload, responseData.jwt)
