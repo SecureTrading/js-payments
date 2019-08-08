@@ -13,6 +13,7 @@ class CommonFrames extends RegisterFrames {
   get merchantForm(): any {
     return document.getElementById(Selectors.MERCHANT_FORM_SELECTOR);
   }
+
   set requestTypes(requestTypes: string[]) {
     this._requestTypes = requestTypes;
   }
@@ -113,7 +114,12 @@ class CommonFrames extends RegisterFrames {
    * Inits necessary fields - notification and control frame
    */
   private _initFormFields() {
-    const { notificationFrame, controlFrame } = this.styles;
+    const { defaultStyles } = this.styles;
+    let { notificationFrame, controlFrame } = this.styles;
+
+    notificationFrame = Object.assign({}, defaultStyles, notificationFrame);
+    controlFrame = Object.assign({}, defaultStyles, controlFrame);
+
     this._notificationFrame = new Element();
     this._controlFrame = new Element();
     if (this._shouldLoadNotificationFrame()) {
@@ -226,4 +232,5 @@ class CommonFrames extends RegisterFrames {
     );
   }
 }
+
 export default CommonFrames;

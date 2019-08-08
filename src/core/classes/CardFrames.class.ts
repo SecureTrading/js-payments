@@ -133,7 +133,12 @@ class CardFrames extends RegisterFrames {
    * Inits credit card and animated card fields (if merchant wanted this type of payment)
    */
   private _initCardFields() {
-    const { cardNumber, securityCode, expirationDate } = this.styles;
+    const { defaultStyles } = this.styles;
+    let { cardNumber, securityCode, expirationDate } = this.styles;
+    cardNumber = Object.assign({}, defaultStyles, cardNumber);
+    securityCode = Object.assign({}, defaultStyles, securityCode);
+    expirationDate = Object.assign({}, defaultStyles, expirationDate);
+
     this._cardNumber = new Element();
     this._expirationDate = new Element();
     this._securityCode = new Element();
