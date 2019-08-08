@@ -36,7 +36,6 @@ export class CardinalCommerce {
   private _cardinalCommerceJWT: string;
   private _cardinalCommerceCacheToken: string;
   private readonly _cachetoken: string;
-  private _threedQueryTransactionReference: string;
   private readonly _startOnLoad: boolean;
   private _jwt: string;
   private readonly _requestTypes: string[];
@@ -60,7 +59,6 @@ export class CardinalCommerce {
    * Cardinal.continue(PAYMENT_BRAND, CONTINUE_DATA, ORDER_OBJECT, NEW_JWT)
    */
   protected _authenticateCard(responseObject: IThreeDQueryResponse) {
-    this._threedQueryTransactionReference = responseObject.transactionreference;
     Cardinal.continue(
       PAYMENT_BRAND,
       {
@@ -289,7 +287,6 @@ export class CardinalCommerce {
     if (CardinalCommerce._isCardEnrolledAndNotFrictionless(responseObject)) {
       this._authenticateCard(responseObject);
     } else {
-      this._threedQueryTransactionReference = responseObject.transactionreference;
       this._authorizePayment();
     }
   }
