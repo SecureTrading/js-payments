@@ -55,12 +55,7 @@ class GoogleAnalytics {
    */
   public sendGaData(hitType: string, eventCategory: string, eventAction: string, eventLabel: string) {
     // @ts-ignore
-    window['ga']('send', {
-      hitType,
-      eventCategory,
-      eventAction,
-      eventLabel
-    });
+    window.ga('send', { hitType, eventCategory, eventAction, eventLabel });
   }
 
   /**
@@ -72,10 +67,8 @@ class GoogleAnalytics {
     this._insertGALibrary();
     this._createGAScript()
       .then(() => {
-        // console.info(response);
         this._insertGAScript()
           .then(() => {
-            // console.info(response);
             GoogleAnalytics._disableUserIDTracking();
           })
           .catch(error => {

@@ -11,6 +11,7 @@ import ApplePay from '../../../src/core/integrations/ApplePay';
 import DomMethods from '../../../src/core/shared/DomMethods';
 
 jest.mock('./../../../src/core/shared/MessageBus');
+jest.mock('../../../src/core/integrations/GoogleAnalytics');
 
 // given
 describe('Apple Pay', () => {
