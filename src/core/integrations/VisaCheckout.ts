@@ -71,7 +71,6 @@ export class VisaCheckout {
   };
 
   private _buttonSettings: any;
-  private _ga: GoogleAnalytics;
   private _payment: Payment;
   private _paymentDetails: string;
   private _paymentStatus: string;
@@ -103,7 +102,6 @@ export class VisaCheckout {
     const { merchantId, livestatus, placement, settings, paymentRequest, buttonSettings, requestTypes } = config;
     const stJwt = new StJwt(jwt);
     this.payment = new Payment(jwt, gatewayUrl);
-    this._ga = new GoogleAnalytics();
     this._livestatus = livestatus;
     this._placement = placement;
     this.requestTypes = requestTypes;
@@ -187,7 +185,7 @@ export class VisaCheckout {
         this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
         this._getResponseMessage(this.paymentStatus);
         this._notification.success(this.responseMessage, true);
-        this._ga.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment success');
+        GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment success');
       })
       .catch(() => {
         this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
@@ -203,7 +201,7 @@ export class VisaCheckout {
     this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
     this._getResponseMessage(this.paymentStatus);
     this._notification.error(this.responseMessage, true);
-    this._ga.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment error');
+    GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment error');
   }
 
   /**
@@ -213,7 +211,7 @@ export class VisaCheckout {
     this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.WARNING;
     this._getResponseMessage(this.paymentStatus);
     this._notification.warning(this.responseMessage, true);
-    this._ga.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment canceled');
+    GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment canceled');
   }
 
   /**

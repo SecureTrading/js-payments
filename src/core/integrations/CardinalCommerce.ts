@@ -43,7 +43,6 @@ export class CardinalCommerce {
   private readonly _requestTypes: string[];
   private readonly _threedinit: string;
   private _notification: Notification;
-  private _ga: GoogleAnalytics;
 
   constructor(startOnLoad: boolean, jwt: string, requestTypes: string[], cachetoken?: string, threedinit?: string) {
     this._startOnLoad = startOnLoad;
@@ -53,7 +52,6 @@ export class CardinalCommerce {
     this._requestTypes = requestTypes;
     this.messageBus = new MessageBus();
     this._notification = new Notification();
-    this._ga = new GoogleAnalytics();
     this._onInit();
   }
 
@@ -86,11 +84,11 @@ export class CardinalCommerce {
     Cardinal.configure(environment.CARDINAL_COMMERCE.CONFIG);
     Cardinal.on(PAYMENT_EVENTS.SETUP_COMPLETE, () => {
       this._onCardinalSetupComplete();
-      this._ga.sendGaData('event', 'Cardinal', 'init', 'Cardinal Setup Completed');
+      GoogleAnalytics.sendGaData('event', 'Cardinal', 'init', 'Cardinal Setup Completed');
     });
     Cardinal.on(PAYMENT_EVENTS.VALIDATED, (data: IOnCardinalValidated, jwt: string) => {
       this._onCardinalValidated(data, jwt);
-      this._ga.sendGaData('event', 'Cardinal', 'validate', 'Cardinal payment validated');
+      GoogleAnalytics.sendGaData('event', 'Cardinal', 'validate', 'Cardinal payment validated');
     });
 
     Cardinal.setup(PAYMENT_EVENTS.INIT, {
@@ -186,7 +184,7 @@ export class CardinalCommerce {
       type: MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS
     };
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
-    this._ga.sendGaData('event', 'Cardinal', 'auth', 'Cardinal auth completed');
+    GoogleAnalytics.sendGaData('event', 'Cardinal', 'auth', 'Cardinal auth completed');
   }
 
   /**
@@ -296,7 +294,7 @@ export class CardinalCommerce {
   private _threeDQueryRequest(responseObject: IThreeDQueryResponse) {
     if (CardinalCommerce._isCardEnrolledAndNotFrictionless(responseObject)) {
       this._authenticateCard(responseObject);
-      this._ga.sendGaData('event', 'Cardinal', 'auth', 'Cardinal card authenticated');
+      GoogleAnalytics.sendGaData('event', 'Cardinal', 'auth', 'Cardinal card authenticated');
     } else {
       this._threedQueryTransactionReference = responseObject.transactionreference;
       this._authorizePayment();

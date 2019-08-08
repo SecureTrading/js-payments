@@ -105,7 +105,6 @@ export class ApplePay {
     walletvalidationurl: ''
   };
 
-  private _ga: GoogleAnalytics;
   private _jwt: string;
   private _applePayButtonProps: any = {};
   private _payment: Payment;
@@ -114,7 +113,6 @@ export class ApplePay {
 
   constructor(config: IWalletConfig, jwt: string, gatewayUrl: string) {
     const { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId, requestTypes } = config;
-    this._ga = new GoogleAnalytics();
     this.jwt = jwt;
     this._notification = new Notification();
     this.merchantId = merchantId;
@@ -303,13 +301,18 @@ export class ApplePay {
         .walletVerify(this.validateMerchantRequestData)
         .then((result: any) => {
           this.onValidateMerchantResponseSuccess(result.response);
-          this._ga.sendGaData('event', 'Apple Pay', 'merchant validation', 'Apple Pay merchant validated');
+          GoogleAnalytics.sendGaData('event', 'Apple Pay', 'merchant validation', 'Apple Pay merchant validated');
         })
         .catch(error => {
           const { errorcode, errormessage } = error;
           this.onValidateMerchantResponseFailure(error);
           this._notification.error(`${errorcode}: ${errormessage}`, true);
-          this._ga.sendGaData('event', 'Apple Pay', 'merchant validation', 'Apple Pay merchant validation failure');
+          GoogleAnalytics.sendGaData(
+            'event',
+            'Apple Pay',
+            'merchant validation',
+            'Apple Pay merchant validation failure'
+          );
         });
     };
   }
@@ -340,7 +343,7 @@ export class ApplePay {
         .then(() => {
           this._notification.success(Language.translations.PAYMENT_SUCCESS, true);
           this.session.completePayment({ status: this.getPaymentSuccessStatus(), errors: [] });
-          this._ga.sendGaData('event', 'Apple Pay', 'payment', 'Apple Pay payment completed');
+          GoogleAnalytics.sendGaData('event', 'Apple Pay', 'payment', 'Apple Pay payment completed');
         })
         .catch(() => {
           this._notification.error(Language.translations.PAYMENT_ERROR, true);
@@ -356,7 +359,7 @@ export class ApplePay {
   public onPaymentCanceled() {
     this.session.oncancel = (event: any) => {
       this._notification.warning(Language.translations.PAYMENT_CANCELLED, true);
-      this._ga.sendGaData('event', 'Apple Pay', 'payment status', 'Apple Pay payment cancelled');
+      GoogleAnalytics.sendGaData('event', 'Apple Pay', 'payment status', 'Apple Pay payment cancelled');
     };
   }
 
@@ -435,7 +438,7 @@ export class ApplePay {
       this.checkApplePayWalletCardAvailability().then((canMakePayments: boolean) => {
         if (canMakePayments) {
           this.applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
-          this._ga.sendGaData('event', 'Apple Pay', 'init', 'Apple Pay can make payments');
+          GoogleAnalytics.sendGaData('event', 'Apple Pay', 'init', 'Apple Pay can make payments');
         }
       });
     }

@@ -5,6 +5,14 @@ import DomMethods from '../shared/DomMethods';
  * Creates HTML markups <script> and add Google Analytics source to it.
  */
 class GoogleAnalytics {
+  /**
+   * Make GA send function available from class.
+   */
+  public static sendGaData(hitType: string, eventCategory: string, eventAction: string, eventLabel: string) {
+    // @ts-ignore
+    window.ga('send', { hitType, eventCategory, eventAction, eventLabel });
+  }
+
   private static GA_MEASUREMENT_ID: string = environment.GA_MEASUREMENT_ID;
   private static GA_INIT_SCRIPT_CONTENT: string = `window.ga=window.ga||function(){(ga.q=ga.q||[]).
   push(arguments)};ga.l=+new Date;
@@ -48,14 +56,6 @@ class GoogleAnalytics {
 
   constructor() {
     this._onInit();
-  }
-
-  /**
-   * Make GA send function available from class.
-   */
-  public sendGaData(hitType: string, eventCategory: string, eventAction: string, eventLabel: string) {
-    // @ts-ignore
-    window.ga('send', { hitType, eventCategory, eventAction, eventLabel });
   }
 
   /**
