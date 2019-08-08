@@ -119,8 +119,8 @@ export default class FormField extends Frame {
    *
    */
   protected onBlur() {
-    this.validation.validate(this._inputElement, this._messageElement);
     this._blur();
+    this.validation.validate(this._inputElement, this._messageElement);
   }
 
   /**
@@ -137,7 +137,6 @@ export default class FormField extends Frame {
    */
   protected onFocus(event: Event) {
     this._focus();
-    this._inputElement.focus();
   }
 
   /**
@@ -147,6 +146,14 @@ export default class FormField extends Frame {
   protected onInput(event: Event) {
     Validation.setCustomValidationError(this._inputElement, '');
     this.format(this._inputElement.value);
+  }
+
+  /**
+   *
+   * @param event
+   */
+  protected onKeydown(event: KeyboardEvent) {
+    return event;
   }
 
   /**
@@ -194,10 +201,12 @@ export default class FormField extends Frame {
   /**
    * Takes MessageBus Event and sets .subscribe() handler.
    * @param event
+   * @param validate
    */
-  protected setEventListener(event: string) {
+  protected setEventListener(event: string, validate: boolean = true) {
     this._messageBus.subscribe(event, () => {
-      this._validateInput();
+      // tslint:disable-next-line: no-unused-expression
+      validate && this._validateInput();
     });
   }
 
@@ -254,6 +263,10 @@ export default class FormField extends Frame {
 
     this._inputElement.addEventListener('keypress', (event: KeyboardEvent) => {
       this.onKeyPress(event);
+    });
+
+    this._inputElement.addEventListener('keydown', (event: KeyboardEvent) => {
+      this.onKeydown(event);
     });
 
     this._inputElement.addEventListener('input', (event: Event) => {

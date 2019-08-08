@@ -49,7 +49,7 @@ describe('FormField', () => {
       const mockFocus = (instance._inputElement.focus = jest.fn());
       // @ts-ignore
       instance.onFocus();
-      expect(mockFocus).toBeCalledTimes(2);
+      expect(mockFocus).toBeCalledTimes(1);
     });
   });
 
