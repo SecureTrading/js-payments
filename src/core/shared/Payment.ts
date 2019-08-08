@@ -70,7 +70,7 @@ export default class Payment {
       } = new StJwt(result.jwt);
       const threeDInitResult = { jwt, response: response[0] };
       // @ts-ignore
-      this._cardinalCommerceCacheToken = threeDInitResult.response.cachetoken;
+      this._cardinalCommerceCacheToken = result.response.cachetoken;
       return threeDInitResult;
     });
   }

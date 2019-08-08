@@ -172,8 +172,6 @@ export class CardinalCommerce {
     if (data) {
       // @ts-ignore
       data.cachetoken = this._cardinalCommerceCacheToken;
-      // @ts-ignore
-      data.parenttransactionreference = this._threedQueryTransactionReference;
     }
 
     const messageBusEvent: IMessageBusEvent = {
