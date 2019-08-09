@@ -51,7 +51,7 @@ class StCodec {
   }
 
   /**
-   *
+   * Returns error data with error message and request type description.
    * @param data
    */
   public static getErrorData(data: any) {
@@ -124,7 +124,7 @@ class StCodec {
   private static STATUS_CODES = { invalidfield: '30000', ok: '0', declined: '70000' };
 
   /**
-   *
+   * Returns 50003 communication error.
    * @private
    */
   private static _createCommunicationError() {
@@ -135,7 +135,7 @@ class StCodec {
   }
 
   /**
-   *
+   * Blocks form, returns an error and set notification after invalid response.
    * @private
    */
   private static _handleInvalidResponse() {
@@ -147,7 +147,7 @@ class StCodec {
   }
 
   /**
-   *
+   * Checks if response has invalid status by checking version response length and if they're not undefined.
    * @param responseData
    * @private
    */
@@ -161,7 +161,7 @@ class StCodec {
   }
 
   /**
-   *
+   * Returns response content, if it's not specified after checkin customeroutput assigns first one.
    * @param responseData
    * @private
    */
@@ -179,7 +179,8 @@ class StCodec {
   }
 
   /**
-   *
+   * Blocks form, returns an error and set notification after valid gateway response.
+   * Publishes response and set proper validation.
    * @param responseContent
    * @param jwtResponse
    * @private
@@ -203,7 +204,7 @@ class StCodec {
   }
 
   /**
-   *
+   * Decodes JWT using jwt-decode library.
    * @param jwt
    * @param reject
    * @private
