@@ -174,7 +174,8 @@ class CommonFrames extends RegisterFrames {
 
   /**
    * Function which is triggered each time transaction has been completed.
-   * It calls submitCallback specified (or not by merchant) and submits or not (also specified by merchant) form as well.
+   * It calls submitCallback specified (or not by merchant) and submits or not
+   * (also specified by merchant) form as well.
    * @param data
    * @private
    */
