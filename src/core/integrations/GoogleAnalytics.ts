@@ -22,7 +22,7 @@ class GoogleAnalytics {
   , {'storage': 'none'});`;
   private static GA_IP_ANONYMIZATION: string = `ga('set', 'anonymizeIp', true);`;
   private static GA_DISABLE_ADVERTISING_FEATURES: string = `ga('set', 'allowAdFeatures', false);`;
-  private static GA_PAGE_VIEW: string = `ga('send', 'pageview');`;
+  private static GA_PAGE_VIEW: string = `ga('send', 'pageview', location.pathname);`;
   private static TRANSLATION_SCRIPT_SUCCEEDED: string = 'Google Analytics: script has been created';
   private static TRANSLATION_SCRIPT_FAILED: string = 'Google Analytics: an error occurred loading script';
   private static TRANSLATION_SCRIPT_APPENDED: string = 'Google Analytics: script has been appended';
