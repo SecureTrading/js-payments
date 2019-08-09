@@ -233,19 +233,19 @@ class ST {
     return cardFrames;
   }
 
-  private _componentIds: {};
-  private _animatedCard: boolean;
   private _cachetoken: string;
+  private _componentIds: {};
   private _gatewayUrl: string;
   private _jwt: string;
   private _origin: string;
   private _styles: IStyles;
-  private _submitCallback: any;
   private _submitFields: string[];
   private _submitOnError: boolean;
   private _submitOnSuccess: boolean;
-  private readonly _threedinit: string;
+  private readonly _animatedCard: boolean;
   private readonly _config: IConfig;
+  private readonly _submitCallback: any;
+  private readonly _threedinit: string;
   private commonFrames: CommonFrames;
 
   constructor(config: IConfig) {
