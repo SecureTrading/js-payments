@@ -57,7 +57,7 @@ export class CardinalCommerce {
   /**
    * Handles continue action from Cardinal Commerce, retrieve overlay with iframe which target is on AcsUrl
    * and handles the rest of process.
-   * Cardinal.continue(PAYMENT_BRAND, CONTINUE_DATA, ORDER_OBJECT, NEW_JWT)
+   * Cardinal.continue(PAYMENT_Bparenttransactionreference RAND, CONTINUE_DATA, ORDER_OBJECT, NEW_JWT)
    */
   protected _authenticateCard(responseObject: IThreeDQueryResponse) {
     this._threedQueryTransactionReference = responseObject.transactionreference;
