@@ -184,7 +184,7 @@ class ST {
     submitFields: string[],
     gatewayUrl: string,
     animatedCard: boolean,
-    submitCallback: any
+    submitCallback?: any
   ) {
     return new CommonFrames(
       jwt,

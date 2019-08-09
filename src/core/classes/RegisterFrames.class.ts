@@ -22,7 +22,7 @@ export default class RegisterFrames {
     componentIds: {},
     styles: IStyles,
     animatedCard: boolean,
-    submitCallback: any
+    submitCallback?: any
   ) {
     this.styles = styles;
     this.componentIds = componentIds;

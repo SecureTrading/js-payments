@@ -180,7 +180,7 @@ class CommonFrames extends RegisterFrames {
    * @private
    */
   private _onTransactionComplete(data: any) {
-    this._submitCallback(data);
+    this._submitCallback && this._submitCallback(data);
     if (this._shouldSubmitForm(data)) {
       const form = this._merchantForm;
       DomMethods.addDataToForm(form, data, this._getSubmitFields(data));
