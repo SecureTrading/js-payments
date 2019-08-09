@@ -10,10 +10,6 @@ import RegisterFrames from './RegisterFrames.class';
  * Defines all non field elements of form and their placement on merchant site.
  */
 class CommonFrames extends RegisterFrames {
-  set requestTypes(requestTypes: string[]) {
-    this._requestTypes = requestTypes;
-  }
-
   get requestTypes(): string[] {
     return this._requestTypes;
   }
@@ -180,7 +176,9 @@ class CommonFrames extends RegisterFrames {
    * @private
    */
   private _onTransactionComplete(data: any) {
-    this._submitCallback && this._submitCallback(data);
+    if (this._submitCallback) {
+      this._submitCallback(data);
+    }
     if (this._shouldSubmitForm(data)) {
       const form = this._merchantForm;
       DomMethods.addDataToForm(form, data, this._getSubmitFields(data));

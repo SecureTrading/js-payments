@@ -210,22 +210,39 @@ describe('CommonFrames', () => {
       errormessage: 'Ok'
     };
 
+    const dataWithError = {
+      errorcode: '30000',
+      errormessage: 'Invalid field'
+    };
+
     // when
     beforeEach(() => {
       // @ts-ignore
       instance._shouldSubmitForm = jest.fn().mockReturnValueOnce(true);
       // @ts-ignore
-      instance._submitCallback = jest.fn();
-      // @ts-ignore
       DomMethods.addDataToForm = jest.fn();
-      // @ts-ignore
-      instance._onTransactionComplete(data);
     });
 
     // then
-    it('should call _merchantForm() method', () => {
+    it(`should call addDataToForm() and _submitCallback() method with ${data}`, () => {
+      // @ts-ignore
+      instance._submitCallback = jest.fn().mockImplementationOnce(data => data);
+      // @ts-ignore
+      instance._onTransactionComplete(data);
       // @ts-ignore
       expect(DomMethods.addDataToForm).toHaveBeenCalled();
+      // @ts-ignore
+      expect(instance._submitCallback).toHaveBeenCalledWith(data);
+    });
+
+    // then
+    it(`should call _submitCallback() method with ${dataWithError}`, () => {
+      // @ts-ignore
+      instance._submitCallback = jest.fn().mockImplementationOnce(dataWithError => dataWithError);
+      // @ts-ignore
+      instance._onTransactionComplete(dataWithError);
+      // @ts-ignore
+      expect(instance._submitCallback).toHaveBeenCalledWith(dataWithError);
     });
   });
 
