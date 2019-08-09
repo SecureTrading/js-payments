@@ -55,8 +55,7 @@ export class CardinalCommerce {
   }
 
   /**
-   * Handles continue action from Cardinal Commer
-   * e, retrieve overlay with iframe which target is on AcsUrl
+   * Handles continue action from Cardinal Commerce, retrieve overlay with iframe which target is on AcsUrl
    * and handles the rest of process.
    * Cardinal.continue(PAYMENT_BRAND, CONTINUE_DATA, ORDER_OBJECT, NEW_JWT)
    */
