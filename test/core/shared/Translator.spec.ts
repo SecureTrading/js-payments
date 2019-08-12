@@ -21,6 +21,8 @@ import no_NO from '../../../src/core/translations/no_NO.json';
 // @ts-ignore
 import sv_SE from '../../../src/core/translations/sv_SE.json';
 
+localStorage.merchantTranslations = '{"Some translation":"Jakieś tłumaczenie"}';
+
 describe('translate()', () => {
   it('should leave english unchanged', () => {
     let translator = new Translator('en_GB');

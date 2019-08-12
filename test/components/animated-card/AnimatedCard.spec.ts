@@ -7,6 +7,7 @@ import Selectors from '../../../src/core/shared/Selectors';
 import { Translator } from '../../../src/core/shared/Translator';
 
 jest.mock('./../../../src/core/shared/MessageBus');
+localStorage.merchantTranslations = '{"Some translation":"Jakieś tłumaczenie"}';
 
 // given
 describe('AnimatedCard', () => {

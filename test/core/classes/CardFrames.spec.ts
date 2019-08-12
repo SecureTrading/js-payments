@@ -3,6 +3,7 @@ import DomMethods from '../../../src/core/shared/DomMethods';
 import Language from '../../../src/core/shared/Language';
 import MessageBus from '../../../src/core/shared/MessageBus';
 import Selectors from '../../../src/core/shared/Selectors';
+localStorage.merchantTranslations = '{"Some translation":"Jakieś tłumaczenie"}';
 
 // given
 describe('CardFrames', () => {

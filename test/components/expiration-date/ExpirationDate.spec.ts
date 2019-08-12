@@ -1,5 +1,4 @@
 import each from 'jest-each';
-import { date } from 'joi';
 import SpyInstance = jest.SpyInstance;
 import ExpirationDate from '../../../src/components/expiration-date/ExpirationDate';
 import Formatter from '../../../src/core/shared/Formatter';
@@ -7,6 +6,9 @@ import Language from '../../../src/core/shared/Language';
 import Selectors from '../../../src/core/shared/Selectors';
 
 jest.mock('./../../../src/core/shared/MessageBus');
+
+localStorage.merchantTranslations =
+  '{"Timeout":"Limit czasu","An error occurred":"Wystąpił błąd","Merchant validation failure":"Błąd weryfikacji sprzedawcy","Payment has been cancelled":"Płatność została anulowana","Value mismatch pattern":"Błędny format","Invalid response":"Niepoprawna odpowiedź","Invalid request":"Nieprawidłowe żądanie","Value is too short":"Wartość jest za krótka","Payment has been authorized":"Płatność została autoryzowana","Amount and currency are not set":"Kwota i waluta nie są ustawione","Payment has been successfully processed":"Płatność została pomyślnie przetworzona","Card number":"Numer karty","Expiration date":"Data ważności","Security code":"Kod bezpieczeństwa","Ok":"Płatność została pomyślnie przetworzona","Method not implemented":"Metoda nie została zaimplementowana","Form is not valid":"Formularz jest nieprawidłowy","Pay":"Zapłać","Processing":"Przetwarzanie","Invalid field":"Nieprawidłowe pole","Card number is invalid":"Numer karty jest nieprawidłowy"}';
 
 // given
 describe('ExpirationDate', () => {
