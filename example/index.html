@@ -104,18 +104,8 @@
           animatedCard: true,
           submitOnSuccess: false,
           submitCallback: function someFancyfunction(data) {
-            var promise = new Promise(function(resolve, reject) {
-              setTimeout(function() {
-                resolve('foo');
-              }, 300);
-            });
-            promise
-              .then(() => {
-                console.error('success');
-              })
-              .catch(() => {
-                console.error('failure');
-              });
+            var testVariable = 'This is what we have got after submit' + data;
+            console.log(testVariable);
           }
         });
 
