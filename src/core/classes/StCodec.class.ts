@@ -51,7 +51,7 @@ class StCodec {
   }
 
   /**
-   *
+   * Returns error data with error message and request type description.
    * @param data
    */
   public static getErrorData(data: any) {
@@ -110,6 +110,7 @@ class StCodec {
   private static _locale: string;
   private static _messageBus = new MessageBus();
   private static _parentOrigin: string;
+  private static _jwt: string;
   private static REQUESTS_WITH_ERROR_MESSAGES = [
     'AUTH',
     'CACHETOKENISE',
@@ -123,7 +124,7 @@ class StCodec {
   private static STATUS_CODES = { invalidfield: '30000', ok: '0', declined: '70000' };
 
   /**
-   *
+   * Returns 50003 communication error.
    * @private
    */
   private static _createCommunicationError() {
@@ -134,7 +135,7 @@ class StCodec {
   }
 
   /**
-   *
+   * Blocks form, returns an error and set notification after invalid response.
    * @private
    */
   private static _handleInvalidResponse() {
@@ -146,7 +147,7 @@ class StCodec {
   }
 
   /**
-   *
+   * Checks if response has invalid status by checking version response length and if they're not undefined.
    * @param responseData
    * @private
    */
@@ -160,7 +161,7 @@ class StCodec {
   }
 
   /**
-   *
+   * Returns response content, if it's not specified after checkin customeroutput assigns first one.
    * @param responseData
    * @private
    */
@@ -178,7 +179,8 @@ class StCodec {
   }
 
   /**
-   *
+   * Blocks form, returns an error and set notification after valid gateway response.
+   * Publishes response and set proper validation.
    * @param responseContent
    * @param jwtResponse
    * @private
@@ -202,7 +204,7 @@ class StCodec {
   }
 
   /**
-   *
+   * Decodes JWT using jwt-decode library.
    * @param jwt
    * @param reject
    * @private
@@ -218,12 +220,11 @@ class StCodec {
   }
 
   private readonly _requestId: string;
-  private readonly _jwt: string;
 
   constructor(jwt: string, parentOrigin?: string) {
     this._requestId = StCodec._createRequestId();
-    this._jwt = jwt;
-    StCodec._locale = new StJwt(this._jwt).locale;
+    StCodec._jwt = jwt;
+    StCodec._locale = new StJwt(StCodec._jwt).locale;
     StCodec._parentOrigin = parentOrigin;
     if (parentOrigin) {
       StCodec._messageBus = new MessageBus(parentOrigin);
@@ -238,12 +239,12 @@ class StCodec {
   public buildRequestObject(requestData: object): object {
     return {
       acceptcustomeroutput: '1.00',
-      jwt: this._jwt,
+      jwt: StCodec._jwt,
       request: [
         {
           ...requestData,
           requestid: this._requestId,
-          sitereference: new StJwt(this._jwt).sitereference
+          sitereference: new StJwt(StCodec._jwt).sitereference
         }
       ],
       version: StCodec.VERSION
@@ -272,13 +273,15 @@ class StCodec {
    * @Param responseObject The response object from the fetch promise
    * @return A Promise that resolves the body content (or raise an error casing the fetch to be rejected)
    */
-  public decode(responseObject: Response | {}): Promise<object> {
-    return new Promise((resolve, reject) => {
+  public async decode(responseObject: Response | {}): Promise<object> {
+    let decoded: any;
+    const promise = await new Promise((resolve, reject) => {
       if ('json' in responseObject) {
         responseObject.json().then(responseData => {
-          const decoded = StCodec._decodeResponseJwt(responseData.jwt, reject);
+          decoded = StCodec._decodeResponseJwt(responseData.jwt, reject);
           resolve({
             jwt: responseData.jwt,
+            merchantJwt: decoded.payload.jwt,
             response: StCodec.verifyResponseObject(decoded.payload, responseData.jwt)
           });
         });
@@ -286,6 +289,10 @@ class StCodec {
         reject(StCodec._handleInvalidResponse());
       }
     });
+    // @ts-ignore
+    StCodec._jwt = promise.merchantJwt;
+    // @ts-ignore
+    return promise;
   }
 }
 
