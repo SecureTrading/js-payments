@@ -251,6 +251,7 @@ class ST {
       this._threedinit = threedinit;
       this._cachetoken = cachetoken;
     }
+    localStorage.setItem('merchantTranslations', JSON.stringify(config.translations));
     this._animatedCard = config.animatedCard;
     this._config = ST._addDefaults(config);
     ST._validateConfig(this._config, IConfigSchema);

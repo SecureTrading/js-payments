@@ -42,5 +42,12 @@ export class Translator {
     });
   }
 
-  public translate = (text: string) => i18next.t(text);
+  public translate = (text: string) => {
+    const json = JSON.parse(localStorage.merchantTranslations);
+    if (Object.keys(json).includes(text)) {
+      return json[text];
+    } else {
+      return i18next.t(text, { content: text });
+    }
+  };
 }

@@ -291,6 +291,7 @@ export default class FormField extends Frame {
    * @private
    */
   private _setLabelText() {
+    console.log(this.getLabel());
     this._labelElement.innerHTML = this._translator.translate(this.getLabel());
   }
 
