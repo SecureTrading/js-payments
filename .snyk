@@ -13,7 +13,7 @@ ignore:
   'npm:mem:20180117':
     - npm-merge-driver > yargs > os-locale > mem:
         reason: N/A to our package
-        expires: '2019-08-10T07:18:57.497Z'
+        expires: '2019-09-11T10:19:41.746Z'
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   SNYK-JS-LODASH-450202:
