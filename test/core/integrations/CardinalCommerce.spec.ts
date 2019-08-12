@@ -111,7 +111,6 @@ describe('CardinalCommerce', () => {
         { Cart: [], OrderDetails: { TransactionId: 'cardinal-tx-id' } },
         jwt
       );
-      expect(instance._threedQueryTransactionReference).toBe('1-2-3');
     });
   });
 
@@ -443,13 +442,12 @@ describe('CardinalCommerce', () => {
     it('should publish control iframe event with AUTH', () => {
       instance.messageBus.publishFromParent = jest.fn();
       instance._cardinalCommerceCacheToken = 'tokenValue';
-      instance._threedQueryTransactionReference = '1-2-3';
       instance._authorizePayment({ some: 'value', cachetoken: 'OVERRIDDEN' });
       expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
       expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
         {
           type: 'PROCESS_PAYMENTS',
-          data: { some: 'value', cachetoken: 'tokenValue', parenttransactionreference: '1-2-3' }
+          data: { some: 'value', cachetoken: 'tokenValue' }
         },
         'st-control-frame-iframe'
       );
@@ -458,11 +456,10 @@ describe('CardinalCommerce', () => {
     it('should publish control iframe event with AUTH with no data', () => {
       instance.messageBus.publishFromParent = jest.fn();
       instance._cardinalCommerceCacheToken = 'tokenValue';
-      instance._threedQueryTransactionReference = '1-2-3';
       instance._authorizePayment();
       expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
       expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
-        { type: 'PROCESS_PAYMENTS', data: { cachetoken: 'tokenValue', parenttransactionreference: '1-2-3' } },
+        { type: 'PROCESS_PAYMENTS', data: { cachetoken: 'tokenValue' } },
         'st-control-frame-iframe'
       );
     });
@@ -471,13 +468,12 @@ describe('CardinalCommerce', () => {
       instance.messageBus.publishFromParent = jest.fn();
       instance._tokenise = true;
       instance._cardinalCommerceCacheToken = 'tokenValue';
-      instance._threedQueryTransactionReference = '1-2-3';
       instance._authorizePayment({ some: 'value', cachetoken: 'OVERRIDDEN' });
       expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
       expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
         {
           type: 'PROCESS_PAYMENTS',
-          data: { some: 'value', cachetoken: 'tokenValue', parenttransactionreference: '1-2-3' }
+          data: { some: 'value', cachetoken: 'tokenValue' }
         },
         'st-control-frame-iframe'
       );
