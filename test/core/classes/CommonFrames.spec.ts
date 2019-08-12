@@ -205,6 +205,8 @@ describe('CommonFrames', () => {
   // given
   describe('_onTransactionComplete()', () => {
     const { instance } = commonFramesFixture();
+    // @ts-ignore
+    instance._requestTypes = ['THREEDQUERY'];
     const data = {
       errorcode: '0',
       errormessage: 'Ok'
@@ -219,6 +221,8 @@ describe('CommonFrames', () => {
     beforeEach(() => {
       // @ts-ignore
       instance._shouldSubmitForm = jest.fn().mockReturnValueOnce(true);
+      // @ts-ignore
+      instance._isTransactionFinished = jest.fn().mockReturnValueOnce(true);
       // @ts-ignore
       DomMethods.addDataToForm = jest.fn();
     });

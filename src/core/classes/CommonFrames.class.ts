@@ -180,7 +180,7 @@ class CommonFrames extends RegisterFrames {
    * @private
    */
   private _onTransactionComplete(data: any) {
-    if (this._submitCallback) {
+    if ((this._isTransactionFinished(data) || data.errorcode !== '0') && this._submitCallback) {
       this._submitCallback(data);
     }
     if (this._shouldSubmitForm(data)) {
