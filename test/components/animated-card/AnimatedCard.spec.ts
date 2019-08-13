@@ -371,11 +371,13 @@ describe('AnimatedCard', () => {
     };
     beforeEach(() => {
       // @ts-ignore
+      instance._cardDetails.securityCode = '';
+      // @ts-ignore
       instance._cardDetails.type = AnimatedCard.CARD_TYPES.AMEX;
     });
 
     // then
-    it('should return security code xtended when card type is Amex', () => {
+    it('should return security code extended when card type is Amex', () => {
       // @ts-ignore
       instance._onCardNumberChanged(data);
       // @ts-ignore
