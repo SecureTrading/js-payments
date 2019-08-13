@@ -103,4 +103,28 @@ export default class Utils {
    * @param array
    */
   public static getLastElementOfArray = (array: number[]) => array && array.slice(-1).pop();
+
+  /**
+   * Sets data to localStorage, previously converts
+   * them to string depends on type given.
+   * @param name
+   * @param data
+   */
+  public static setLocalStorageItem(name: string, data: any) {
+    const type = typeof data;
+    const isObject = type === 'object' && type !== null;
+    const dataToSet = isObject ? JSON.stringify(data) : data.toString();
+    localStorage.setItem(name, dataToSet);
+  }
+
+  /**
+   * Sets data to localStorage, previously converts
+   * them to string depends on type given.
+   * @param name
+   * @param storage
+   */
+  public static getLocalStorageItem(name: string, storage: string) {
+    const json = JSON.parse(storage);
+    return Object.keys(json).includes(name) ? json[name] : '';
+  }
 }

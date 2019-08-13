@@ -20,6 +20,7 @@ import {
 } from './core/models/Config';
 import Selectors from './core/shared/Selectors';
 import { IStyles } from './core/shared/Styler';
+import Utils from './core/shared/Utils';
 import { environment } from './environments/environment';
 
 /**
@@ -37,6 +38,7 @@ class ST {
     animatedCard: Selectors.ANIMATED_CARD_INPUT_SELECTOR,
     ...ST.DEFAULT_COMPONENTS
   };
+  private static TRANSLATION_STORAGE_NAME = 'merchantTranslations';
 
   /**
    * Collect and set default values for _config object.
@@ -249,17 +251,18 @@ class ST {
   private commonFrames: CommonFrames;
 
   constructor(config: IConfig) {
-    if (config.init) {
+    const { animatedCard, init, submitCallback, translations } = config;
+    if (init) {
       const {
         init: { cachetoken, threedinit }
       } = config;
       this._threedinit = threedinit;
       this._cachetoken = cachetoken;
     }
-    localStorage.setItem('merchantTranslations', JSON.stringify(config.translations));
-    this._animatedCard = config.animatedCard;
-    this._submitCallback = config.submitCallback;
+    this._animatedCard = animatedCard;
+    this._submitCallback = submitCallback;
     this._config = ST._addDefaults(config);
+    Utils.setLocalStorageItem(ST.TRANSLATION_STORAGE_NAME, translations);
     ST._validateConfig(this._config, IConfigSchema);
     this._setClassProperties(this._config);
     this.commonFrames = ST._configureCommonFrames(
