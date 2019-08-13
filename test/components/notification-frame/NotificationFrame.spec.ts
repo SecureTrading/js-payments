@@ -1,7 +1,6 @@
 import SpyInstance = jest.SpyInstance;
 import NotificationFrame from '../../../src/components/notification-frame/NotificationFrame';
 import { Translator } from '../../../src/core/shared/Translator';
-localStorage.merchantTranslations = '{"Some translation":"Jakieś tłumaczenie"}';
 
 // given
 describe('NotificationFrame', () => {

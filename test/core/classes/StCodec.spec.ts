@@ -3,7 +3,6 @@ import JwtDecode from 'jwt-decode';
 import Language from '../../../src/core/shared/Language';
 import { StCodec } from '../../../src/core/classes/StCodec.class';
 import { Translator } from '../../../src/core/shared/Translator';
-localStorage.merchantTranslations = '{"Some translation":"Jakieś tłumaczenie"}';
 
 // given
 describe('StCodec class', () => {
