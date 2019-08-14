@@ -7,6 +7,7 @@ import { StJwt } from '../shared/StJwt';
 import DomMethods from './../shared/DomMethods';
 import Language from './../shared/Language';
 import Payment from './../shared/Payment';
+import GoogleAnalytics from './GoogleAnalytics';
 
 declare const V: any;
 
@@ -184,6 +185,7 @@ export class VisaCheckout {
         this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
         this._getResponseMessage(this.paymentStatus);
         this._notification.success(this.responseMessage, true);
+        GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment success');
       })
       .catch(() => {
         this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
@@ -199,6 +201,7 @@ export class VisaCheckout {
     this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
     this._getResponseMessage(this.paymentStatus);
     this._notification.error(this.responseMessage, true);
+    GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment error');
   }
 
   /**
@@ -208,6 +211,7 @@ export class VisaCheckout {
     this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.WARNING;
     this._getResponseMessage(this.paymentStatus);
     this._notification.warning(this.responseMessage, true);
+    GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment canceled');
   }
 
   /**

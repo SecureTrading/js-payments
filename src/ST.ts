@@ -9,6 +9,7 @@ import ApplePay from './core/integrations/ApplePay';
 import ApplePayMock from './core/integrations/ApplePayMock';
 import { CardinalCommerce } from './core/integrations/CardinalCommerce';
 import CardinalCommerceMock from './core/integrations/CardinalCommerceMock';
+import GoogleAnalytics from './core/integrations/GoogleAnalytics';
 import VisaCheckout from './core/integrations/VisaCheckout';
 import VisaCheckoutMock from './core/integrations/VisaCheckoutMock';
 import {
@@ -171,6 +172,7 @@ class ST {
    * @param submitFields
    * @param gatewayUrl
    * @param animatedCard
+   * @param submitCallback
    * @private
    */
   private static _configureCommonFrames(
@@ -182,7 +184,8 @@ class ST {
     submitOnError: boolean,
     submitFields: string[],
     gatewayUrl: string,
-    animatedCard: boolean
+    animatedCard: boolean,
+    submitCallback?: any
   ) {
     return new CommonFrames(
       jwt,
@@ -193,7 +196,8 @@ class ST {
       submitOnError,
       submitFields,
       gatewayUrl,
-      animatedCard
+      animatedCard,
+      submitCallback
     );
   }
 
@@ -230,9 +234,9 @@ class ST {
     return cardFrames;
   }
 
-  private _componentIds: {};
   private readonly _animatedCard: boolean;
   private _cachetoken: string;
+  private _componentIds: {};
   private _gatewayUrl: string;
   private _jwt: string;
   private _origin: string;
@@ -240,11 +244,13 @@ class ST {
   private _submitFields: string[];
   private _submitOnError: boolean;
   private _submitOnSuccess: boolean;
-  private readonly _threedinit: string;
   private readonly _config: IConfig;
+  private readonly _submitCallback: any;
+  private readonly _threedinit: string;
   private commonFrames: CommonFrames;
 
   constructor(config: IConfig) {
+    const ga = new GoogleAnalytics();
     if (config.init) {
       const {
         init: { cachetoken, threedinit }
@@ -253,6 +259,7 @@ class ST {
       this._cachetoken = cachetoken;
     }
     this._animatedCard = config.animatedCard;
+    this._submitCallback = config.submitCallback;
     this._config = ST._addDefaults(config);
     ST._validateConfig(this._config, IConfigSchema);
     this._setClassProperties(this._config);
@@ -265,7 +272,8 @@ class ST {
       this._submitOnError,
       this._submitFields,
       this._gatewayUrl,
-      this._animatedCard
+      this._animatedCard,
+      this._submitCallback
     );
     ST._configureMerchantFields();
   }

@@ -1,4 +1,5 @@
 import VisaCheckout from '../../../src/core/integrations/VisaCheckout';
+jest.mock('../../../src/core/integrations/GoogleAnalytics');
 
 // given
 describe('Visa Checkout', () => {
