@@ -9,6 +9,7 @@ import ApplePay from './core/integrations/ApplePay';
 import ApplePayMock from './core/integrations/ApplePayMock';
 import { CardinalCommerce } from './core/integrations/CardinalCommerce';
 import CardinalCommerceMock from './core/integrations/CardinalCommerceMock';
+import GoogleAnalytics from './core/integrations/GoogleAnalytics';
 import VisaCheckout from './core/integrations/VisaCheckout';
 import VisaCheckoutMock from './core/integrations/VisaCheckoutMock';
 import {
@@ -249,6 +250,7 @@ class ST {
   private commonFrames: CommonFrames;
 
   constructor(config: IConfig) {
+    const ga = new GoogleAnalytics();
     if (config.init) {
       const {
         init: { cachetoken, threedinit }

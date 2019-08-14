@@ -7,6 +7,7 @@ import DomMethods from '../../../src/core/shared/DomMethods';
 import Selectors from '../../../src/core/shared/Selectors';
 
 jest.mock('./../../../src/core/shared/MessageBus');
+jest.mock('./../../../src/core/integrations/GoogleAnalytics');
 
 // given
 describe('CardinalCommerce', () => {
