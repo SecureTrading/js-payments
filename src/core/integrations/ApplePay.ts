@@ -7,6 +7,7 @@ import Notification from '../shared/Notification';
 import Payment from '../shared/Payment';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
+import GoogleAnalytics from './GoogleAnalytics';
 
 const ApplePaySession = (window as any).ApplePaySession;
 const ApplePayError = (window as any).ApplePayError;
@@ -328,11 +329,18 @@ export class ApplePay {
         .walletVerify(this._validateMerchantRequestData)
         .then(({ response }: any) => {
           this._onValidateMerchantResponseSuccess(response);
+          GoogleAnalytics.sendGaData('event', 'Apple Pay', 'merchant validation', 'Apple Pay merchant validated');
         })
         .catch(error => {
           const { errorcode, errormessage } = error;
           this._onValidateMerchantResponseFailure(error);
           this._notification.error(`${errorcode}: ${errormessage}`, true);
+          GoogleAnalytics.sendGaData(
+            'event',
+            'Apple Pay',
+            'merchant validation',
+            'Apple Pay merchant validation failure'
+          );
         });
     };
   }
@@ -358,6 +366,7 @@ export class ApplePay {
           this._handleApplePayError(response);
           this._session.completePayment(this._completion);
           this._displayNotification(errorcode);
+          GoogleAnalytics.sendGaData('event', 'Apple Pay', 'payment', 'Apple Pay payment completed');
         })
         .catch(() => {
           this._notification.error(Language.translations.PAYMENT_ERROR, true);
@@ -381,6 +390,7 @@ export class ApplePay {
   private _onPaymentCanceled() {
     this._session.oncancel = (event: any) => {
       this._notification.warning(Language.translations.PAYMENT_CANCELLED, true);
+      GoogleAnalytics.sendGaData('event', 'Apple Pay', 'payment status', 'Apple Pay payment cancelled');
     };
   }
 
@@ -464,6 +474,7 @@ export class ApplePay {
       this.checkApplePayWalletCardAvailability().then((canMakePayments: boolean) => {
         if (canMakePayments) {
           this._applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
+          GoogleAnalytics.sendGaData('event', 'Apple Pay', 'init', 'Apple Pay can make payments');
         }
       });
     }

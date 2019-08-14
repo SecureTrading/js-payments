@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.0-beta.2
+
+### Added
+
+- Merchant callback is now available.
+- Improved JWT flow security.
+- Added ability to switch off/on Animated Card.
+
+### Changed
+
+- Expiration date formatting has been changed to more intuitive and smooth.
+- Improved unit tests coverage.
+- Updated dependencies and fixed vulnerabilities (eg. Prototype Pollution in Lodash).
+
+### Fixed
+
+- Form fields clearing after pressing 'Enter' button.
+- Missing translations.
+- Fields highlighting issues (highlighting on red when field has been validated positively).
+- Blocking form after succeeded payment in some cases.
+
 ## 2.0.0-beta.1
 
 ### Added

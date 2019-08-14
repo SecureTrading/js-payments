@@ -10,6 +10,7 @@ interface IConfig {
   init?: IByPassInit;
   origin?: string;
   styles?: IStyles;
+  submitCallback?: any;
   submitFields?: string[];
   submitOnSuccess?: boolean;
   submitOnError?: boolean;
@@ -49,6 +50,7 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
   origin: Joi.string(),
   requestTypes: Joi.array().allow([Joi.string()]),
   styles: Joi.object(),
+  submitCallback: Joi.func(),
   submitFields: Joi.array().allow([Joi.string()]),
   submitOnError: Joi.boolean(),
   submitOnSuccess: Joi.boolean(),

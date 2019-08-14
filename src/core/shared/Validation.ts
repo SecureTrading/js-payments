@@ -73,7 +73,6 @@ export default class Validation extends Frame {
     expirationDate: 'expirydate',
     securityCode: 'securitycode'
   };
-  private static DATASET_ST_NAME: string = 'data-st-name';
   private static ENTER_KEY_CODE = 13;
   private static ONLY_DIGITS_REGEXP = /^[0-9]*$/;
   private static readonly MERCHANT_EXTRA_FIELDS_PREFIX = 'billing';
@@ -313,11 +312,12 @@ export default class Validation extends Frame {
     messageElement: HTMLElement,
     data: IMessageBusValidateField
   ) {
-    if (messageElement && data.message) {
+    const { message } = data;
+    if (messageElement && message) {
       if (messageElement.innerText !== Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH) {
-        messageElement.innerText = this._translator.translate(data.message);
+        messageElement.innerText = this._translator.translate(message);
         inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
-        inputElement.setCustomValidity(data.message);
+        inputElement.setCustomValidity(message);
       }
     }
     inputElement.setCustomValidity(data.message);
