@@ -8,8 +8,17 @@ export interface IGroupedStyles {
   [key: string]: ISubStyles;
 }
 
-export interface IStyles {
+export interface IStyle {
   [identifier: string]: string;
+}
+
+export interface IStyles {
+  defaultStyles?: IStyle;
+  cardNumber?: IStyle;
+  expirationDate?: IStyle;
+  securityCode?: IStyle;
+  notificationFrame?: IStyle;
+  controlFrame?: IStyle;
 }
 
 export interface IAllowedStyles {
@@ -39,15 +48,15 @@ export class Styler {
     this._allowed = allowed;
   }
 
-  public inject(styles: IStyles) {
+  public inject(styles: IStyle) {
     DomMethods.insertStyle(this._getStyleString(styles));
   }
 
   /**
    * Validates that the provided styles will only allow the expected values to be overridden
    */
-  private _filter(styles: IStyles) {
-    const filtered: IStyles = {};
+  private _filter(styles: IStyle) {
+    const filtered: IStyle = {};
     // tslint:disable-next-line:forin
     for (const style in styles) {
       if (this._allowed.hasOwnProperty(style)) {
@@ -57,7 +66,12 @@ export class Styler {
     return filtered;
   }
 
-  private _group(styles: IStyles) {
+  /**
+   *
+   * @param styles
+   * @private
+   */
+  private _group(styles: IStyle) {
     const grouped: IGroupedStyles = {};
     // tslint:disable-next-line:forin
     for (const style in styles) {
@@ -70,7 +84,12 @@ export class Styler {
     return grouped;
   }
 
-  private _getStyleString(styles: IStyles) {
+  /**
+   *
+   * @param styles
+   * @private
+   */
+  private _getStyleString(styles: IStyle) {
     styles = this._filter(styles);
     const groupedStyles = this._group(styles);
     let tag;

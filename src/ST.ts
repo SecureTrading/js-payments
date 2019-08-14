@@ -222,7 +222,7 @@ class ST {
     jwt: string,
     origin: string,
     componentIds: {},
-    styles: {},
+    styles: IStyles,
     config: IComponentsConfig,
     animatedCard: boolean
   ) {
@@ -234,6 +234,7 @@ class ST {
     return cardFrames;
   }
 
+  private readonly _animatedCard: boolean;
   private _cachetoken: string;
   private _componentIds: {};
   private _gatewayUrl: string;
@@ -243,7 +244,6 @@ class ST {
   private _submitFields: string[];
   private _submitOnError: boolean;
   private _submitOnSuccess: boolean;
-  private readonly _animatedCard: boolean;
   private readonly _config: IConfig;
   private readonly _submitCallback: any;
   private readonly _threedinit: string;
