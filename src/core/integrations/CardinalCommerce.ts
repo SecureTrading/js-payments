@@ -37,7 +37,6 @@ export class CardinalCommerce {
   private _cardinalCommerceJWT: string;
   private _cardinalCommerceCacheToken: string;
   private readonly _cachetoken: string;
-  private _threedQueryTransactionReference: string;
   private readonly _startOnLoad: boolean;
   private _jwt: string;
   private readonly _requestTypes: string[];
@@ -61,7 +60,6 @@ export class CardinalCommerce {
    * Cardinal.continue(PAYMENT_BRAND, CONTINUE_DATA, ORDER_OBJECT, NEW_JWT)
    */
   protected _authenticateCard(responseObject: IThreeDQueryResponse) {
-    this._threedQueryTransactionReference = responseObject.transactionreference;
     Cardinal.continue(
       PAYMENT_BRAND,
       {
@@ -175,8 +173,6 @@ export class CardinalCommerce {
     if (data) {
       // @ts-ignore
       data.cachetoken = this._cardinalCommerceCacheToken;
-      // @ts-ignore
-      data.parenttransactionreference = this._threedQueryTransactionReference;
     }
 
     const messageBusEvent: IMessageBusEvent = {
@@ -296,7 +292,6 @@ export class CardinalCommerce {
       this._authenticateCard(responseObject);
       GoogleAnalytics.sendGaData('event', 'Cardinal', 'auth', 'Cardinal card authenticated');
     } else {
-      this._threedQueryTransactionReference = responseObject.transactionreference;
       this._authorizePayment();
     }
   }
