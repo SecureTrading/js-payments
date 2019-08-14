@@ -187,7 +187,7 @@ export class VisaCheckout {
         this._notification.success(this.responseMessage, true);
         GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment success');
       })
-      .catch(() => {
+      .catch((error: any) => {
         this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
         this._getResponseMessage(this.paymentStatus);
         this._notification.error(this.responseMessage, true);

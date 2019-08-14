@@ -6,10 +6,21 @@ import MessageBus from '../shared/MessageBus';
 import Notification from '../shared/Notification';
 import Payment from '../shared/Payment';
 import { StJwt } from '../shared/StJwt';
+import { Translator } from '../shared/Translator';
 import GoogleAnalytics from './GoogleAnalytics';
 
 const ApplePaySession = (window as any).ApplePaySession;
 const ApplePayError = (window as any).ApplePayError;
+const ApplePayContactMap: any = {
+  countryiso2a: 'countryCode',
+  email: 'emailAddress',
+  firstname: 'givenName',
+  lastname: 'familyName',
+  postcode: 'postalCode',
+  premise: 'addressLines',
+  telephone: 'phoneNumber',
+  town: 'locality'
+};
 
 /**
  * Apple Pay flow:
@@ -19,7 +30,7 @@ const ApplePayError = (window as any).ApplePayError;
  * 3. Call setSupportedNetworks() to set available networks which are supported
  *    in this particular version of Apple Pay.
  * 4. Call setAmountAndCurrency() to set amount and currency hidden in provided JWT.
- * 5. Call createApplePayButton(), setApplePayButtonProps() and addApplePayButton)
+ * 5. Call createApplePayButton(), _setApplePayButtonProps() and addApplePayButton)
  *    to provide styled button for launching Apple Pay Process.
  * 6. Call applePayProcess() which checks by canMakePayments() and canMakePaymentsWithActiveCard(merchantID)
  *    the capability of device for making Apple Pay payments and if there is at least one card in  users Wallet.
@@ -57,12 +68,12 @@ export class ApplePay {
     return this._jwt;
   }
 
-  public static APPLE_PAY_BUTTON_ID: string = 'st-apple-pay';
-  public static APPLE_PAY_MIN_VERSION: number = 2;
-  public static APPLE_PAY_MAX_VERSION: number = 5;
-  public static AVAILABLE_BUTTON_STYLES = ['black', 'white', 'white-outline'];
-  public static AVAILABLE_BUTTON_TEXTS = ['plain', 'buy', 'book', 'donate', 'check-out', 'subscribe'];
-  public static BASIC_SUPPORTED_NETWORKS = [
+  private static APPLE_PAY_BUTTON_ID: string = 'st-apple-pay';
+  private static APPLE_PAY_MIN_VERSION: number = 2;
+  private static APPLE_PAY_MAX_VERSION: number = 5;
+  private static AVAILABLE_BUTTON_STYLES = ['black', 'white', 'white-outline'];
+  private static AVAILABLE_BUTTON_TEXTS = ['plain', 'buy', 'book', 'donate', 'check-out', 'subscribe'];
+  private static BASIC_SUPPORTED_NETWORKS = [
     'amex',
     'chinaUnionPay',
     'discover',
@@ -72,33 +83,30 @@ export class ApplePay {
     'privateLabel',
     'visa'
   ];
-  public static VERSION_3_4_SUPPORTED_NETWORKS = ApplePay.BASIC_SUPPORTED_NETWORKS.concat([
+  private static VERSION_3_4_SUPPORTED_NETWORKS = ApplePay.BASIC_SUPPORTED_NETWORKS.concat([
     'cartesBancaires',
     'eftpos',
     'electron',
     'maestro',
     'vPay'
   ]);
-  public static VERSION_5_SUPPORTED_NETWORKS = ApplePay.BASIC_SUPPORTED_NETWORKS.concat(['elo', 'mada']);
+  private static VERSION_5_SUPPORTED_NETWORKS = ApplePay.BASIC_SUPPORTED_NETWORKS.concat(['elo', 'mada']);
 
-  public applePayVersion: number;
-  public buttonStyle: string;
-  public buttonText: string;
-  public merchantId: string;
-  public merchantSession: any;
-  public messageBus: MessageBus;
-  public paymentDetails: string;
-  public paymentRequest: any;
-  public placement: string;
-  public session: any;
-  public sitesecurity: string;
-  public stJwtInstance: StJwt;
-  public stTransportInstance: StTransport;
+  protected applePayVersion: number;
+  protected paymentDetails: string;
+  private _buttonStyle: string;
+  private _buttonText: string;
+  private _merchantSession: any;
+  private _messageBus: MessageBus;
+  private _session: any;
+  private _sitesecurity: string;
+  private _stJwtInstance: StJwt;
+  private _stTransportInstance: StTransport;
 
   /**
    * All object properties are required for WALLETVERIFY request call to ST.
    */
-  public validateMerchantRequestData = {
+  private _validateMerchantRequestData = {
     walletmerchantid: '',
     walletrequestdomain: window.location.hostname,
     walletsource: 'APPLEPAY',
@@ -109,50 +117,53 @@ export class ApplePay {
   private _applePayButtonProps: any = {};
   private _payment: Payment;
   private _notification: Notification;
-  private requestTypes: string[];
+  private _requestTypes: string[];
+  private _translator: Translator;
+
+  private readonly _completion: { errors: []; status: string };
+  private readonly _merchantId: string;
+  private readonly _paymentRequest: any;
+  private readonly _placement: string;
 
   constructor(config: IWalletConfig, jwt: string, gatewayUrl: string) {
     const { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId, requestTypes } = config;
     this.jwt = jwt;
+    this._completion = {
+      errors: [],
+      status: this.getPaymentSuccessStatus()
+    };
     this._notification = new Notification();
-    this.merchantId = merchantId;
-    this.placement = placement;
+    this._merchantId = merchantId;
+    this._placement = placement;
     this.payment = new Payment(jwt, gatewayUrl);
-    this.paymentRequest = paymentRequest;
-    this.sitesecurity = sitesecurity;
-    this.requestTypes = requestTypes;
-    this.validateMerchantRequestData.walletmerchantid = merchantId;
-    this.stJwtInstance = new StJwt(jwt);
-    this.stTransportInstance = new StTransport({
+    this._paymentRequest = paymentRequest;
+    this._sitesecurity = sitesecurity;
+    this._requestTypes = requestTypes;
+    this._validateMerchantRequestData.walletmerchantid = merchantId;
+    this._stJwtInstance = new StJwt(jwt);
+    this._stTransportInstance = new StTransport({
       gatewayUrl,
       jwt
     });
-    this.messageBus = new MessageBus();
-    this.onInit(buttonText, buttonStyle);
+    this._messageBus = new MessageBus();
+    this._translator = new Translator(this._stJwtInstance.locale);
+    this._onInit(buttonText, buttonStyle);
   }
 
   /**
    * Checks if ApplePaySession object is available
    * If yes, returns ApplePaySession object, if not returns undefined.
    */
-  public ifApplePayIsAvailable() {
+  protected ifApplePayIsAvailable() {
     return !!ApplePaySession;
   }
 
   /**
-   * Checks whether user uses Safari and if it's version supports Apple Pay
-   * @param version
-   */
-  public ifBrowserSupportsApplePayVersion = (version: number) => {
-    return ApplePaySession.supportsVersion(version);
-  };
-
-  /**
    * Sets the latest possible ApplePay version
    */
-  public setApplePayVersion() {
+  protected setApplePayVersion() {
     for (let i = ApplePay.APPLE_PAY_MAX_VERSION; i >= ApplePay.APPLE_PAY_MIN_VERSION; --i) {
-      if (this.ifBrowserSupportsApplePayVersion(i)) {
+      if (this._ifBrowserSupportsApplePayVersion(i)) {
         this.applePayVersion = i;
         return;
       } else if (i === ApplePay.APPLE_PAY_MIN_VERSION) {
@@ -163,18 +174,55 @@ export class ApplePay {
   }
 
   /**
-   * Sets supported networks based on version of Apple Pay
+   * Creates Apple Pay button with props specified by Merchant (buttonText, buttonStyle)
    */
-  public setSupportedNetworks() {
+  protected createApplePayButton() {
+    return DomMethods.createHtmlElement.apply(this, [this._applePayButtonProps, 'div']);
+  }
+
+  /**
+   * Checks whether ApplePay is available on current device
+   */
+  protected checkApplePayAvailability() {
+    return ApplePaySession && ApplePaySession.canMakePayments();
+  }
+
+  /**
+   * Checks whether ApplePay is available on current device and also if it us at least one active card in Wallet
+   */
+  protected checkApplePayWalletCardAvailability() {
+    return ApplePaySession.canMakePaymentsWithActiveCard(this._merchantId);
+  }
+
+  /**
+   * Gets Apple Pay session object based on Apple Pay version number and ApplePayPaymentRequest
+   */
+  protected getApplePaySessionObject() {
+    return new ApplePaySession(this.applePayVersion, this._paymentRequest);
+  }
+
+  protected getPaymentSuccessStatus() {
+    return ApplePaySession.STATUS_SUCCESS;
+  }
+
+  protected getPaymentFailureStatus() {
+    return ApplePaySession.STATUS_FAILURE;
+  }
+
+  /**
+   * Sets supported networks based on version of Apple Pay
+   * @private
+   */
+  private _setSupportedNetworks() {
     if (this.applePayVersion <= ApplePay.APPLE_PAY_MIN_VERSION) {
-      this.paymentRequest.supportedNetworks = ApplePay.BASIC_SUPPORTED_NETWORKS;
+      this._paymentRequest.supportedNetworks = ApplePay.BASIC_SUPPORTED_NETWORKS;
     } else if (
       this.applePayVersion > ApplePay.APPLE_PAY_MIN_VERSION &&
       this.applePayVersion < ApplePay.APPLE_PAY_MAX_VERSION
     ) {
-      this.paymentRequest.supportedNetworks = ApplePay.VERSION_3_4_SUPPORTED_NETWORKS;
+      this._paymentRequest.supportedNetworks = ApplePay.VERSION_3_4_SUPPORTED_NETWORKS;
     } else {
-      this.paymentRequest.supportedNetworks = ApplePay.VERSION_5_SUPPORTED_NETWORKS;
+      this._paymentRequest.supportedNetworks = ApplePay.VERSION_5_SUPPORTED_NETWORKS;
     }
   }
 
@@ -182,44 +230,42 @@ export class ApplePay {
    * Sets styles and texts provided by Merchant on init
    * @param buttonText
    * @param buttonStyle
+   * @private
    */
-  public setApplePayButtonProps(buttonText: string, buttonStyle: string) {
-    this.ifApplePayButtonStyleIsValid(buttonStyle)
-      ? (this.buttonStyle = buttonStyle)
-      : (this.buttonStyle = ApplePay.AVAILABLE_BUTTON_STYLES[0]);
-    this.ifApplePayButtonTextIsValid(buttonText)
-      ? (this.buttonText = buttonText)
-      : (this.buttonText = ApplePay.AVAILABLE_BUTTON_TEXTS[0]);
+  private _setApplePayButtonProps(buttonText: string, buttonStyle: string) {
+    this._ifApplePayButtonStyleIsValid(buttonStyle)
+      ? (this._buttonStyle = buttonStyle)
+      : (this._buttonStyle = ApplePay.AVAILABLE_BUTTON_STYLES[0]);
+    this._ifApplePayButtonTextIsValid(buttonText)
+      ? (this._buttonText = buttonText)
+      : (this._buttonText = ApplePay.AVAILABLE_BUTTON_TEXTS[0]);
 
     // tslint:disable-next-line: max-line-length
     this._applePayButtonProps.style = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${
-      this.buttonText
-    }; -apple-pay-button-style: ${this.buttonStyle}`;
-  }
-
-  /**
-   * Creates Apple Pay button with props specified by Merchant (buttonText, buttonStyle)
-   */
-  public createApplePayButton() {
-    return DomMethods.createHtmlElement.apply(this, [this._applePayButtonProps, 'div']);
+      this._buttonText
+    }; -apple-pay-button-style: ${this._buttonStyle}`;
   }
 
   /**
    * Adds Apple Pay button to DOM
+   * @private
    */
-  public addApplePayButton = () => DomMethods.appendChildIntoDOM(this.placement, this.createApplePayButton());
+  private _addApplePayButton = () => DomMethods.appendChildIntoDOM(this._placement, this.createApplePayButton());
 
   /**
    * Checks if provided button text is one of the available for Apple Pay
    * @param buttonText
+   * @private
    */
-  public ifApplePayButtonTextIsValid = (buttonText: string) => ApplePay.AVAILABLE_BUTTON_TEXTS.includes(buttonText);
+  private _ifApplePayButtonTextIsValid = (buttonText: string) => ApplePay.AVAILABLE_BUTTON_TEXTS.includes(buttonText);
 
   /**
    * Checks if provided button style is one of the available for Apple Pay
    * @param buttonStyle
+   * @private
    */
-  public ifApplePayButtonStyleIsValid = (buttonStyle: string) => ApplePay.AVAILABLE_BUTTON_STYLES.includes(buttonStyle);
+  private _ifApplePayButtonStyleIsValid = (buttonStyle: string) =>
+    ApplePay.AVAILABLE_BUTTON_STYLES.includes(buttonStyle);
 
   /**
    * Simple handler for generated Apple Pay button.
@@ -227,45 +273,26 @@ export class ApplePay {
    * this action needs to be triggered by user himself by tapping/clicking button 'Pay'
    * @param elementId
    * @param event
+   * @private
    */
-  public applePayButtonClickHandler = (elementId: string, event: string) => {
+  private _applePayButtonClickHandler = (elementId: string, event: string) => {
     document.getElementById(elementId).addEventListener(event, () => {
-      this.paymentProcess();
+      this._paymentProcess();
     });
   };
 
   /**
-   * Checks whether ApplePay is available on current device
-   */
-  public checkApplePayAvailability() {
-    return ApplePaySession && ApplePaySession.canMakePayments();
-  }
-
-  /**
-   * Checks whether ApplePay is available on current device and also if it us at least one active card in Wallet
-   */
-  public checkApplePayWalletCardAvailability() {
-    return ApplePaySession.canMakePaymentsWithActiveCard(this.merchantId);
-  }
-
-  /**
-   * Gets Apple Pay session object based on Apple Pay version number and ApplePayPaymentRequest
-   */
-  public getApplePaySessionObject() {
-    return new ApplePaySession(this.applePayVersion, this.paymentRequest);
-  }
-
-  /**
    * Sets details encrypted in JWT into payment request
+   * @private
    */
-  public setAmountAndCurrency() {
-    if (this.paymentRequest.total.amount && this.paymentRequest.currencyCode) {
-      this.paymentRequest.total.amount = this.stJwtInstance.mainamount;
-      this.paymentRequest.currencyCode = this.stJwtInstance.currencyiso3a;
+  private _setAmountAndCurrency() {
+    if (this._paymentRequest.total.amount && this._paymentRequest.currencyCode) {
+      this._paymentRequest.total.amount = this._stJwtInstance.mainamount;
+      this._paymentRequest.currencyCode = this._stJwtInstance.currencyiso3a;
     } else {
       this._notification.error(Language.translations.APPLE_PAY_AMOUNT_AND_CURRENCY, true);
     }
-    return this.paymentRequest;
+    return this._paymentRequest;
   }
 
   /**
@@ -276,14 +303,14 @@ export class ApplePay {
    * @param buttonStyle
    * @private
    */
-  public onInit(buttonText: string, buttonStyle: string) {
+  private _onInit(buttonText: string, buttonStyle: string) {
     if (this.ifApplePayIsAvailable()) {
       this.setApplePayVersion();
-      this.setSupportedNetworks();
-      this.setAmountAndCurrency();
-      this.setApplePayButtonProps(buttonText, buttonStyle);
-      this.addApplePayButton();
-      this.applePayProcess();
+      this._setSupportedNetworks();
+      this._setAmountAndCurrency();
+      this._setApplePayButtonProps(buttonText, buttonStyle);
+      this._addApplePayButton();
+      this._applePayProcess();
     }
   }
 
@@ -293,19 +320,20 @@ export class ApplePay {
    *
    * If successful, Apple Pay servers will return a merchant session object
    * which will be used in response to completeMerchantValidation
+   * @private
    */
-  public onValidateMerchantRequest() {
-    this.session.onvalidatemerchant = (event: any) => {
-      this.validateMerchantRequestData.walletvalidationurl = event.validationURL;
+  private _onValidateMerchantRequest() {
+    this._session.onvalidatemerchant = (event: any) => {
+      this._validateMerchantRequestData.walletvalidationurl = event.validationURL;
       return this.payment
-        .walletVerify(this.validateMerchantRequestData)
-        .then((result: any) => {
-          this.onValidateMerchantResponseSuccess(result.response);
+        .walletVerify(this._validateMerchantRequestData)
+        .then(({ response }: any) => {
+          this._onValidateMerchantResponseSuccess(response);
           GoogleAnalytics.sendGaData('event', 'Apple Pay', 'merchant validation', 'Apple Pay merchant validated');
         })
         .catch(error => {
           const { errorcode, errormessage } = error;
-          this.onValidateMerchantResponseFailure(error);
+          this._onValidateMerchantResponseFailure(error);
           this._notification.error(`${errorcode}: ${errormessage}`, true);
           GoogleAnalytics.sendGaData(
             'event',
@@ -317,47 +345,50 @@ export class ApplePay {
     };
   }
 
-  public getPaymentSuccessStatus() {
-    return ApplePaySession.STATUS_SUCCESS;
-  }
-
-  public getPaymentFailureStatus() {
-    return ApplePaySession.STATUS_FAILURE;
-  }
-
   /**
    * Handles onpaymentauthorized event and completes payment
+   * @private
    */
-  public onPaymentAuthorized() {
-    this.session.onpaymentauthorized = (event: any) => {
+  private _onPaymentAuthorized() {
+    this._session.onpaymentauthorized = (event: any) => {
       this.paymentDetails = JSON.stringify(event.payment);
       return this.payment
         .processPayment(
-          this.requestTypes,
+          this._requestTypes,
           {
-            walletsource: this.validateMerchantRequestData.walletsource,
+            walletsource: this._validateMerchantRequestData.walletsource,
             wallettoken: this.paymentDetails
           },
           DomMethods.parseMerchantForm()
         )
-        .then(() => {
-          this._notification.success(Language.translations.PAYMENT_SUCCESS, true);
-          this.session.completePayment({ status: this.getPaymentSuccessStatus(), errors: [] });
+        .then((response: any) => {
+          const { errorcode } = response;
+          this._handleApplePayError(response);
+          this._session.completePayment(this._completion);
+          this._displayNotification(errorcode);
           GoogleAnalytics.sendGaData('event', 'Apple Pay', 'payment', 'Apple Pay payment completed');
         })
         .catch(() => {
           this._notification.error(Language.translations.PAYMENT_ERROR, true);
-          // TODO STJS-242 should create an ApplePayError which maps billing and customer errors
-          this.session.completePayment({ status: this.getPaymentFailureStatus(), errors: [] });
         });
     };
   }
 
   /**
-   * Handles oncancel event and set notification about it
+   * Checks whether user uses Safari and if it's version supports Apple Pay
+   * @param version
+   * @private
    */
-  public onPaymentCanceled() {
-    this.session.oncancel = (event: any) => {
+  private _ifBrowserSupportsApplePayVersion = (version: number) => {
+    return ApplePaySession.supportsVersion(version);
+  };
+
+  /**
+   * Handles oncancel event and set notification about it
+   * @private
+   */
+  private _onPaymentCanceled() {
+    this._session.oncancel = (event: any) => {
       this._notification.warning(Language.translations.PAYMENT_CANCELLED, true);
       GoogleAnalytics.sendGaData('event', 'Apple Pay', 'payment status', 'Apple Pay payment cancelled');
     };
@@ -366,82 +397,140 @@ export class ApplePay {
   /**
    * Handles merchant validation success response
    * @param response
+   * @private
    */
-  public onValidateMerchantResponseSuccess(response: any) {
-    if (response.walletsession) {
-      this.merchantSession = JSON.parse(response.walletsession);
-      this.validateMerchantRequestData.walletmerchantid = this.merchantSession.merchantIdentifier;
-      this.session.completeMerchantValidation(this.merchantSession);
+  private _onValidateMerchantResponseSuccess(response: any) {
+    const { requestid, walletsession } = response;
+    if (walletsession) {
+      this._merchantSession = JSON.parse(walletsession);
+      this._session.completeMerchantValidation(this._merchantSession);
     } else {
-      this.onValidateMerchantResponseFailure(response.requestid);
+      this._onValidateMerchantResponseFailure(requestid);
     }
   }
 
   /**
    * Handles merchant validation error response
    * @param error
+   * @private
    */
-  public onValidateMerchantResponseFailure(error: any) {
-    this.session.abort();
+  private _onValidateMerchantResponseFailure(error: any) {
+    this._session.abort();
     this._notification.error(Language.translations.MERCHANT_VALIDATION_FAILURE, true);
   }
 
   /**
    * Sets payment sheet interactions handlers: onpaymentmethodselected,
    * onshippingmethodselected, onshippingcontactselected
+   * @private
    */
-  public subscribeStatusHandlers() {
-    this.session.onpaymentmethodselected = (event: any) => {
+  private _subscribeStatusHandlers() {
+    this._session.onpaymentmethodselected = (event: any) => {
       const { paymentMethod } = event;
-      this.session.completePaymentMethodSelection({
+      this._session.completePaymentMethodSelection({
         // what is type ??
         newTotal: {
-          amount: this.paymentRequest.total.amount,
-          label: this.paymentRequest.total.label,
+          amount: this._paymentRequest.total.amount,
+          label: this._paymentRequest.total.label,
           type: 'final'
         }
       });
     };
 
-    this.session.onshippingmethodselected = (event: any) => {
+    this._session.onshippingmethodselected = (event: any) => {
       const { paymentMethod } = event;
-      this.session.completeShippingMethodSelection({
-        newTotal: { label: this.paymentRequest.total.label, amount: this.paymentRequest.total.amount, type: 'final' }
+      this._session.completeShippingMethodSelection({
+        newTotal: { label: this._paymentRequest.total.label, amount: this._paymentRequest.total.amount, type: 'final' }
       });
     };
 
-    this.session.onshippingcontactselected = (event: any) => {
+    this._session.onshippingcontactselected = (event: any) => {
       const { shippingContact } = event;
-      this.session.completeShippingContactSelection({
-        newTotal: { label: this.paymentRequest.total.label, amount: this.paymentRequest.total.amount, type: 'final' }
+      this._session.completeShippingContactSelection({
+        newTotal: { label: this._paymentRequest.total.label, amount: this._paymentRequest.total.amount, type: 'final' }
       });
     };
   }
 
   /**
    * Begins Apple Pay payment flow.
+   * @private
    */
-  public paymentProcess() {
-    this.session = this.getApplePaySessionObject();
-    this.onValidateMerchantRequest();
-    this.subscribeStatusHandlers();
-    this.onPaymentAuthorized();
-    this.onPaymentCanceled();
-    this.session.begin();
+  private _paymentProcess() {
+    this._session = this.getApplePaySessionObject();
+    this._onValidateMerchantRequest();
+    this._subscribeStatusHandlers();
+    this._onPaymentAuthorized();
+    this._onPaymentCanceled();
+    this._session.begin();
   }
 
   /**
    * Sets Apple Pay button and begins Apple Pay flow.
+   * @private
    */
-  public applePayProcess() {
+  private _applePayProcess() {
     if (this.checkApplePayAvailability()) {
       this.checkApplePayWalletCardAvailability().then((canMakePayments: boolean) => {
         if (canMakePayments) {
-          this.applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
+          this._applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
           GoogleAnalytics.sendGaData('event', 'Apple Pay', 'init', 'Apple Pay can make payments');
         }
       });
     }
+  }
+
+  /**
+   * Handles errors during ApplePay process.
+   * @param errorObject
+   * @private
+   */
+  private _handleApplePayError(errorObject: any) {
+    const { errorcode } = errorObject;
+    if (this._ifBrowserSupportsApplePayVersion(this.applePayVersion)) {
+      if (errorcode !== '0') {
+        const { errormessage } = errorObject;
+        let errordata = String(errorObject.data); // not sure this line - I can't force ApplePay to throw such error.
+        const error = new ApplePayError('unknown');
+        error.message = this._translator.translate(errormessage);
+        if (errorcode === '30000') {
+          if (errordata.lastIndexOf('billing', 0) === 0) {
+            error.code = 'billingContactInvalid';
+            errordata = errordata.slice(7);
+          } else if (errordata.lastIndexOf('customer', 0) === 0) {
+            error.code = 'shippingContactInvalid';
+            errordata = errordata.slice(8);
+          }
+          if (typeof ApplePayContactMap[errordata] !== 'undefined') {
+            error.contactField = ApplePayContactMap[errordata];
+          } else if (error.code !== 'unknown') {
+            error.code = 'addressUnserviceable';
+          }
+        }
+        if (error.code !== 'unknown') {
+          // @ts-ignore
+          this._completion.errors = [error];
+        }
+      }
+    }
+
+    if (errorcode === '0') {
+      this._completion.status = this.getPaymentSuccessStatus();
+    } else {
+      this._completion.status = this.getPaymentFailureStatus();
+    }
+    return this._completion;
+  }
+
+  /**
+   * Chooses and triggers proper notification after payment.
+   * @param errorcode
+   * @private
+   */
+  private _displayNotification(errorcode: string) {
+    errorcode === '0'
+      ? this._notification.success(Language.translations.PAYMENT_SUCCESS, true)
+      : this._notification.error(Language.translations.PAYMENT_ERROR, true);
   }
 }
 
