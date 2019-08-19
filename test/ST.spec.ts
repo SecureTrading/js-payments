@@ -19,6 +19,7 @@ jest.mock('./../src/core/integrations/VisaCheckout');
 jest.mock('./../src/core/integrations/VisaCheckoutMock');
 jest.mock('./../src/core/integrations/ApplePay');
 jest.mock('./../src/core/integrations/ApplePayMock');
+jest.mock('./../src/core/integrations/GoogleAnalytics');
 
 // given
 describe('ST', () => {
@@ -169,11 +170,27 @@ function stFixture() {
       'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU2MDk0NjM4Ny4yNDIzMzQ0LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiNDExMTExMTExMTExMTExMSIsImV4cGlyeWRhdGUiOiIwMS8yMCIsInNlY3VyaXR5Y29kZSI6IjEyMyJ9fQ.UssdRcocpaeAqd-jDXpxWeWiKIX-W7zlpy0UWrDE5vg', // Can't use property shorthand because it isn't supported by IE
     origin: 'https://someorigin.com',
     styles: {
-      'background-color-input': 'AliceBlue',
-      'background-color-input-error': '#f8d7da',
-      'color-input-error': '#721c24',
-      'font-size-input': '12px',
-      'line-height-input': '12px'
+      cardNumber: {
+        'background-color-input': 'AliceBlue',
+        'background-color-input-error': '#f8d7da',
+        'color-input-error': '#721c24',
+        'font-size-input': '12px',
+        'line-height-input': '12px'
+      },
+      expirationDate: {
+        'background-color-input': 'AliceBlue',
+        'background-color-input-error': '#f8d7da',
+        'color-input-error': '#721c24',
+        'font-size-input': '12px',
+        'line-height-input': '12px'
+      },
+      securityCode: {
+        'background-color-input': 'AliceBlue',
+        'background-color-input-error': '#f8d7da',
+        'color-input-error': '#721c24',
+        'font-size-input': '12px',
+        'line-height-input': '12px'
+      }
     },
     submitOnError: false,
     submitOnSuccess: false,
