@@ -25,6 +25,7 @@ body {
     max-width: 36rem;
     width: 100%;
     margin: 1rem;
+    transform-style: preserve-3d;
   }
 
   @media screen and (max-width: 22rem) {
@@ -75,9 +76,8 @@ body {
     top: 0;
     left: 0;
     background: $default-gradient;
-    backface-visibility: hidden;
     transition: 1.2s ease-in-out;
-    transform-style: preserve-3d;
+    backface-visibility: hidden;
     border-radius: 1.5rem;
     box-shadow: 0 0 2rem 0 rgba(0, 0, 0, 0.24);
     box-sizing: border-box;
