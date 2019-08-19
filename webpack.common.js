@@ -5,14 +5,15 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
   entry: {
-    st: './src/ST.ts',
     main: './src/components/index.ts',
-    controlFrame: './src/components/control-frame/control-frame.ts',
+    'control-frame': './src/components/control-frame/control-frame.ts',
+    st: './src/ST.ts',
     example: './example/index.ts',
     immediateExample: './example/immediate.ts',
     receipt: './example/receipt.ts',
@@ -180,6 +181,14 @@ module.exports = {
       filename: '[name].css',
       chunkFilename: '[id].css'
     }),
+    new CopyPlugin([
+      {
+        from: 'src/images',
+        to: 'images',
+        test: /([^/]+)\/(.+)\.png$/,
+        force: true
+      }
+    ]),
     new StyleLintPlugin(),
     new FriendlyErrorsWebpackPlugin(),
     new webpack.DefinePlugin({

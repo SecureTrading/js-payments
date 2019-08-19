@@ -1,9 +1,9 @@
 import MessageBus from '../../core/shared/MessageBus';
-import { IAllowedStyles, IStyles, Styler } from './Styler';
+import { IAllowedStyles, IStyle, Styler } from './Styler';
 
 interface IParams {
   [name: string]: object | string;
-  styles?: IStyles;
+  styles?: IStyle;
   locale?: string;
   origin?: string;
   jwt?: string;
@@ -18,7 +18,7 @@ export default class Frame {
 
   public parseUrl() {
     const parsedUrl = new URL(window.location.href);
-    const styles: IStyles = {};
+    const styles: IStyle = {};
     const params: IParams = {};
     const allowedParams = this.getAllowedParams();
     parsedUrl.searchParams.forEach((value, param) => {

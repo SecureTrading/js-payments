@@ -1,5 +1,6 @@
 import SecurityCode from '../../../src/components/security-code/SecurityCode';
 import Formatter from '../../../src/core/shared/Formatter';
+import MessageBus from '../../../src/core/shared/MessageBus';
 import Selectors from '../../../src/core/shared/Selectors';
 import FormField from '../../../src/core/shared/FormField';
 
@@ -58,28 +59,6 @@ describe('SecurityCode', () => {
     // then
     it('should have a label', () => {
       expect(securityCode.getLabel()).toBe('Security code');
-    });
-  });
-
-  // given
-  describe('setFocusListener', () => {
-    const { instance } = securityCodeFixture();
-    let spy: jest.SpyInstance;
-
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      spy = jest.spyOn(instance, 'format');
-      // @ts-ignore
-      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
-        callback();
-      });
-      // @ts-ignore
-      instance.setFocusListener();
-    });
-    // then
-    it('should call format method', () => {
-      expect(spy).toBeCalledTimes(1);
     });
   });
 

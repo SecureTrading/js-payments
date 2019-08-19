@@ -235,6 +235,7 @@ class AnimatedCard extends Frame {
         AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED;
     }
     this._cardDetails.logo = AnimatedCard._getLogo(this._cardDetails.type);
+    console.log(this._cardDetails.logo);
   }
 
   /**
@@ -325,10 +326,15 @@ class AnimatedCard extends Frame {
   private _onCardNumberChanged(data: ISubscribeObject) {
     const { formattedValue, value } = data;
     this._cardDetails.type = this._setCardType(value);
-    this._cardDetails.securityCode =
-      this._cardDetails.type === AnimatedCard.CARD_TYPES.AMEX
-        ? AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED
-        : AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
+
+    if (this._cardDetails.securityCode === '') {
+      if (this._cardDetails.type === AnimatedCard.CARD_TYPES.AMEX) {
+        this._cardDetails.securityCode = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED;
+      } else {
+        this._cardDetails.securityCode = AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE;
+      }
+    }
+
     this._cardDetails.cardNumber = AnimatedCard._setCardDetail(
       formattedValue,
       AnimatedCard.CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER

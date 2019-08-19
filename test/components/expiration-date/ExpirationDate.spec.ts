@@ -240,12 +240,12 @@ describe('ExpirationDate', () => {
     // then
     it('should return only month if user deletes previous / last character between slash', () => {
       // @ts-ignore
-      expect(instance._getISOFormatDate(['11', '2'], ['11', ''])).toEqual('11');
+      expect(ExpirationDate._getISOFormatDate(['11', '2'], ['11', ''])).toEqual('11');
     });
     // then
     it('should return empty string if array of string is empty', () => {
       // @ts-ignore
-      expect(instance._getISOFormatDate(['1', ''], ['', ''])).toEqual('');
+      expect(ExpirationDate._getISOFormatDate(['1', ''], ['', ''])).toEqual('');
     });
   });
 
@@ -269,17 +269,17 @@ describe('ExpirationDate', () => {
     // then
     it('should return 01, if first two chars are equal 0', () => {
       // @ts-ignore
-      expect(instance._getValidatedDate('00')).toEqual('00/');
+      expect(instance._getValidatedDate('00')).toEqual('00');
     });
 
     // then
     it('should return 12, if first two chars are greater than 12', () => {
       // @ts-ignore
-      expect(instance._getValidatedDate('13')).toEqual('13/');
+      expect(instance._getValidatedDate('13')).toEqual('13');
     });
 
     // then
-    each([['2', ''], ['33', '33/'], ['444', '44/4']]).it(
+    each([['2', '2'], ['33', '33'], ['444', '44/4']]).it(
       'should return given number, with preceded zero',
       (givenValue: string, expectedValue: string) => {
         // @ts-ignore
@@ -294,7 +294,7 @@ describe('ExpirationDate', () => {
     const { instance } = expirationDateFixture();
     const dates = [
       ['', ''],
-      ['11', '11/'],
+      ['11', '11'],
       ['1111', '11/11'],
       ['0709', '07/09'],
       ['9999', '99/99'],

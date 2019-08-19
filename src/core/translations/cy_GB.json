@@ -18,7 +18,7 @@
   "Method not implemented": "Nid yw'r dull wedi ei weithredu",
   "Form is not valid": "Nid yw'r ffurflen yn ddilys",
   "Pay": "Talu",
-  "Processing...": "Wrthi'n prosesu...",
+  "Processing": "Wrthi'n prosesu",
   "Invalid field": "Maes annilys",
   "Card number is invalid": "Mae rhif y cerdyn yn annilys"
 }

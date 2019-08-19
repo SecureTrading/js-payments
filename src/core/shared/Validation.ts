@@ -16,7 +16,7 @@ const {
  * Base class for validation, aggregates common methods and attributes for all subclasses
  */
 export default class Validation extends Frame {
-  public static ERROR_FIELD_CLASS = 'error-field';
+  public static ERROR_FIELD_CLASS: string = 'error-field';
 
   /**
    * Method for prevent inserting non digits
@@ -98,9 +98,6 @@ export default class Validation extends Frame {
    */
   public backendValidation(inputElement: HTMLInputElement, messageElement: HTMLElement, event: string) {
     this._messageBus.subscribe(event, (data: IMessageBusValidateField) => {
-      if (!data.message) {
-        data.message = Validation.getValidationMessage(inputElement.validity);
-      }
       this.checkBackendValidity(data, inputElement, messageElement);
     });
   }
@@ -128,7 +125,7 @@ export default class Validation extends Frame {
     inputElement: HTMLInputElement,
     messageElement?: HTMLElement
   ) {
-    this.setError(inputElement, messageElement, data.message);
+    this.setError(inputElement, messageElement, data);
   }
 
   /**
@@ -168,12 +165,8 @@ export default class Validation extends Frame {
    * @param messageElement
    * @param message
    */
-  public setError(inputElement: HTMLInputElement, messageElement: HTMLElement, message: string) {
-    inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
-    if (messageElement && messageElement.innerText !== Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH) {
-      messageElement.innerText = this._translator.translate(message);
-    }
-    inputElement.setCustomValidity(message);
+  public setError(inputElement: HTMLInputElement, messageElement: HTMLElement, data: IMessageBusValidateField) {
+    this._assignErrorDetails(inputElement, messageElement, data);
   }
 
   /**
@@ -182,7 +175,7 @@ export default class Validation extends Frame {
    * @param messageElement
    * @param customErrorMessage
    */
-  public validate(inputElement: HTMLInputElement, messageElement?: HTMLElement, customErrorMessage?: string) {
+  public validate(inputElement: HTMLInputElement, messageElement: HTMLElement, customErrorMessage?: string) {
     this._toggleErrorClass(inputElement);
     this._setMessage(inputElement, messageElement, customErrorMessage);
   }
@@ -305,5 +298,28 @@ export default class Validation extends Frame {
     } else {
       return this._translator.translate(validityState);
     }
+  }
+
+  /**
+   *
+   * @param inputElement
+   * @param messageElement
+   * @param data
+   * @private
+   */
+  private _assignErrorDetails(
+    inputElement: HTMLInputElement,
+    messageElement: HTMLElement,
+    data: IMessageBusValidateField
+  ) {
+    const { message } = data;
+    if (messageElement && message) {
+      if (messageElement.innerText !== Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH) {
+        messageElement.innerText = this._translator.translate(message);
+        inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
+        inputElement.setCustomValidity(message);
+      }
+    }
+    inputElement.setCustomValidity(data.message);
   }
 }

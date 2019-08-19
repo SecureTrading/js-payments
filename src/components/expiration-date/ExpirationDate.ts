@@ -7,9 +7,11 @@ import Selectors from '../../core/shared/Selectors';
 export default class ExpirationDate extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.EXPIRATION_DATE_INPUT) as HTMLInputElement;
-  private static BLOCKS = [2, 2];
-  private static DISABLE_FIELD_CLASS = 'st-input--disabled';
-  private static DISABLE_STATE = 'disabled';
+  private static BACKSPACE_KEY_CODE: number = 8;
+  private static BLOCKS: number[] = [2, 2];
+  private static DELETE_KEY_CODE: number = 46;
+  private static DISABLE_FIELD_CLASS: string = 'st-input--disabled';
+  private static DISABLE_STATE: string = 'disabled';
   private static INPUT_PATTERN: string = '^(0[1-9]|1[0-2])\\/([0-9]{2})$';
   private static ONLY_DIGITS_REGEXP = /[^\d]/g;
 
@@ -22,6 +24,31 @@ export default class ExpirationDate extends FormField {
     return value.replace(ExpirationDate.ONLY_DIGITS_REGEXP, '');
   };
 
+  /**
+   * Formats indicated string to date in format: mm/yy.
+   */
+  private static _getISOFormatDate(previousDate: string[], currentDate: string[]) {
+    const currentDateMonth = currentDate[0];
+    const currentDateYear = currentDate[1];
+    const previousDateYear = previousDate[1];
+
+    if (!currentDateMonth.length) {
+      return '';
+    } else if (currentDateMonth.length && currentDateYear.length === 0) {
+      return currentDateMonth;
+    } else if (currentDateMonth.length === 2 && currentDateYear.length === 1 && previousDateYear.length === 0) {
+      return currentDateMonth + '/' + currentDateYear;
+    } else if (
+      (currentDateMonth.length === 2 &&
+        currentDateYear.length === 1 &&
+        (previousDateYear.length === 1 || previousDateYear.length === 2)) ||
+      (currentDateMonth.length === 2 && currentDateYear.length === 2)
+    ) {
+      return currentDateMonth + '/' + currentDateYear;
+    }
+  }
+
+  private _currentKeyCode: number;
   private _date: string[] = ['', ''];
   private _inputSelectionStart: number;
   private _inputSelectionEnd: number;
@@ -106,11 +133,20 @@ export default class ExpirationDate extends FormField {
   protected onInput(event: Event) {
     super.onInput(event);
     this._inputElement.value = Formatter.trimNonNumeric(this._inputElement.value);
+    this._setFormattedDate();
+    this._sendState();
+  }
+
+  /**
+   * Triggers event when user is releasing key.
+   * @param event
+   */
+  protected onKeydown(event: KeyboardEvent) {
+    super.onKeydown(event);
+    this._currentKeyCode = event.keyCode;
     this._inputSelectionStart = this._inputElement.selectionStart;
     this._inputSelectionEnd = this._inputElement.selectionEnd;
-    this._setFormattedDate();
-    this._inputElement.setSelectionRange(this._inputSelectionStart, this._inputSelectionEnd);
-    this._sendState();
+    return event;
   }
 
   /**
@@ -133,25 +169,17 @@ export default class ExpirationDate extends FormField {
   }
 
   /**
-   * Propagates expiration date change to MessageBus
+   * Returns fixed date in array.
+   * @param value
    */
-  private _sendState() {
-    const formFieldState: IFormFieldState = this.getState();
-    const messageBusEvent: IMessageBusEvent = {
-      data: formFieldState,
-      type: MessageBus.EVENTS.CHANGE_EXPIRATION_DATE
-    };
-    this._messageBus.publish(messageBusEvent);
-  }
-
-  /**
-   * Validates and formats given string and set it in the expiration date input.
-   * @private
-   */
-  private _setFormattedDate() {
-    const validatedDate = this._getValidatedDate(this._inputElement.value);
-    this._inputElement.value = validatedDate ? validatedDate : this._inputElement.value;
-    return validatedDate;
+  private _getFixedDateString(value: string) {
+    let date: string[];
+    let month;
+    let year;
+    month = value.slice(0, 2);
+    year = value.slice(2, 4);
+    date = [month, year];
+    return ExpirationDate._getISOFormatDate(this._date, date);
   }
 
   /**
@@ -175,35 +203,48 @@ export default class ExpirationDate extends FormField {
   }
 
   /**
-   *
-   * @param value
+   * Checks whether pressed key is 'Backspace' or 'Delete'.
+   * @private
    */
-  private _getFixedDateString(value: string) {
-    let date: string[];
-    let month;
-    let year;
-    month = value.slice(0, 2);
-    year = value.slice(2, 4);
-    date = [month, year];
-    return this._getISOFormatDate(this._date, date);
+  private _isPressedKeyDelete(): boolean {
+    return (
+      this._currentKeyCode === ExpirationDate.DELETE_KEY_CODE ||
+      this._currentKeyCode === ExpirationDate.BACKSPACE_KEY_CODE
+    );
   }
 
   /**
-   * Formats indicated string to date in format: mm/yy.
+   * Returns validated date or empty value if nothing's indicated.
+   * @param validatedDate
+   * @private
    */
-  private _getISOFormatDate(previousDate: string[], currentDate: string[]) {
-    this._date = currentDate;
-    // @ts-ignore
-    if (currentDate[0].length === 2 && currentDate[1].length === 0 && previousDate[1].length === 0) {
-      this._inputSelectionEnd = this._inputSelectionEnd + 1;
-      this._inputSelectionStart = this._inputSelectionStart + 1;
-      return currentDate[0] + '/';
-    } else if (currentDate[0].length === 2 && currentDate[1].length === 0 && previousDate[1].length === 1) {
-      return currentDate[0];
-    } else if (currentDate[0] && currentDate[1]) {
-      return currentDate[0] + '/' + currentDate[1];
-    } else {
-      return '';
+  private _returnValidatedDate(validatedDate: any) {
+    return (this._inputElement.value = validatedDate ? validatedDate : this._inputElement.value);
+  }
+
+  /**
+   * Propagates expiration date change to MessageBus
+   * @private
+   */
+  private _sendState() {
+    const formFieldState: IFormFieldState = this.getState();
+    const messageBusEvent: IMessageBusEvent = {
+      data: formFieldState,
+      type: MessageBus.EVENTS.CHANGE_EXPIRATION_DATE
+    };
+    this._messageBus.publish(messageBusEvent);
+  }
+
+  /**
+   * Validates and formats given string and set it in the expiration date input.
+   * @private
+   */
+  private _setFormattedDate() {
+    const validatedDate = this._getValidatedDate(this._inputElement.value);
+    this._returnValidatedDate(validatedDate);
+    if (this._isPressedKeyDelete()) {
+      this._inputElement.setSelectionRange(this._inputSelectionStart, this._inputSelectionEnd);
     }
+    return validatedDate;
   }
 }

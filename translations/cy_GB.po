@@ -67,8 +67,8 @@ msgstr "Nid yw'r ffurflen yn ddilys"
 msgid "Pay"
 msgstr "Talu"
 
-msgid "Processing..."
-msgstr "Wrthi'n prosesu..."
+msgid "Processing"
+msgstr "Wrthi'n prosesu"
 
 msgid "Invalid field"
 msgstr "Maes annilys"

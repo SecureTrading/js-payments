@@ -12,11 +12,22 @@ export default class RegisterFrames {
   protected jwt: string;
   protected origin: string;
   protected componentIds: any;
+  protected hasAnimatedCard: boolean;
+  protected submitCallback: any;
   private stJwt: StJwt;
 
-  constructor(jwt: string, origin: string, componentIds: {}, styles: IStyles) {
+  constructor(
+    jwt: string,
+    origin: string,
+    componentIds: {},
+    styles: IStyles,
+    animatedCard: boolean,
+    submitCallback?: any
+  ) {
     this.styles = styles;
     this.componentIds = componentIds;
+    this.submitCallback = submitCallback;
+    this.hasAnimatedCard = animatedCard;
     this.elementsTargets = this.setElementsFields();
     this.elementsToRegister = [];
     this.jwt = jwt;

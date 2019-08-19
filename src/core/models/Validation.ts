@@ -14,4 +14,10 @@ interface IValidation {
   securitycode: boolean;
 }
 
-export { IErrorData, IMessageBusValidateField, IValidation };
+interface IValidationMessageBus {
+  cardNumber: { message: string; state: boolean };
+  expirationDate: { message: string; state: boolean };
+  securityCode: { message: string; state: boolean };
+}
+
+export { IErrorData, IMessageBusValidateField, IValidation, IValidationMessageBus };
