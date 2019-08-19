@@ -22,6 +22,7 @@ import {
 import Selectors from './core/shared/Selectors';
 import { IStyles } from './core/shared/Styler';
 import { environment } from './environments/environment';
+import './core/imports/images';
 
 /**
  * Establishes connection with ST, defines client.

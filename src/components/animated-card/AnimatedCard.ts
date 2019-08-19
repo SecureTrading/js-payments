@@ -235,6 +235,7 @@ class AnimatedCard extends Frame {
         AnimatedCard.CARD_DETAILS_PLACEHOLDERS.SECURITY_CODE_EXTENDED;
     }
     this._cardDetails.logo = AnimatedCard._getLogo(this._cardDetails.type);
+    console.log(this._cardDetails.logo);
   }
 
   /**
