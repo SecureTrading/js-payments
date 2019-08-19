@@ -177,8 +177,14 @@ export default class FormField extends Frame {
   protected onPaste(event: ClipboardEvent) {
     let { clipboardData } = event;
     event.preventDefault();
-    // @ts-ignore
-    clipboardData = clipboardData.getData('text/plain');
+    if (typeof clipboardData === 'undefined') {
+      // @ts-ignore
+      clipboardData = window.clipboardData.getData('Text');
+    } else {
+      // @ts-ignore
+      clipboardData = event.clipboardData.getData('text/plain');
+    }
+
     // @ts-ignore
     this._inputElement.value = Formatter.trimNonNumeric(clipboardData);
     Validation.setCustomValidationError(this._inputElement, '');

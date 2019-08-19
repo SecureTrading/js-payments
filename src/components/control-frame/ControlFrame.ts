@@ -256,7 +256,7 @@ class ControlFrame extends Frame {
       .then(() => {
         this._notification.success(Language.translations.PAYMENT_SUCCESS);
       })
-      .catch(() => {
+      .catch((error: any) => {
         this._notification.error(Language.translations.PAYMENT_ERROR);
       })
       .finally(() => {
