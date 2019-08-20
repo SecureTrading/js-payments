@@ -8,6 +8,7 @@ const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+var HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
 
 module.exports = {
   entry: {
@@ -37,73 +38,18 @@ module.exports = {
       })
     ],
     // @TODO: splitChunks is not working properly - the application doesnt recognize SecureTrading global object (is undefined) and form fields are not loaded.
+    // @TODO this property let us reduce the bundle size 5 times ! Unfortunately it doesn't work with output: {library } property.
     splitChunks: {
       cacheGroups: {
         vendor: {
-          test(module, chunks) {
-            if (!module.context.includes('node_modules')) {
-              return false;
-            }
-            return !['lodash', 'joi-browser', 'sockjs', 'core-js', 'i18next', 'html-entities', 'ts-money'].some(str =>
-              module.context.includes(str)
-            );
-          },
-          name: 'vendor'
-          // @TODO this property let us reduce the bundle size 5 times ! Unfortunately it doesn't work with output: {library } property.
-          // chunks: 'all'
-        },
-        lodash: {
-          test(module, chunks) {
-            return ['lodash'].some(str => module.context.includes(str));
-          },
-          name: 'lodash'
-          // chunks: 'all'
-        },
-        joiBrowser: {
-          test(module, chunks) {
-            return ['joi-browser'].some(str => module.context.includes(str));
-          },
-          name: 'joiBrowser'
-          // chunks: 'all'
-        },
-        sockjs: {
-          test(module, chunks) {
-            return ['sockjs'].some(str => module.context.includes(str));
-          },
-          name: 'sockjs'
-          // chunks: 'all'
-        },
-        corejs: {
-          test(module, chunks) {
-            return ['core-js'].some(str => module.context.includes(str));
-          },
-          name: 'corejs'
-          // chunks: 'all'
-        },
-        i18next: {
-          test(module, chunks) {
-            return ['i18next'].some(str => module.context.includes(str));
-          },
-          name: 'i18next'
-          // chunks: 'all'
-        },
-        html5Entities: {
-          test(module, chunks) {
-            return ['html-entities'].some(str => module.context.includes(str));
-          },
-          name: 'htmlEntities'
-          // chunks: 'all'
-        },
-        tsMoney: {
-          test(module, chunks) {
-            return ['ts-money'].some(str => module.context.includes(str));
-          },
-          name: 'tsMoney'
-          // chunks: 'all'
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendor',
+          enforce: true,
+          chunks: 'all'
         }
       }
     },
-    // runtimeChunk: 'single',
+    runtimeChunk: 'single',
     mangleWasmImports: true
   },
   plugins: [
@@ -177,6 +123,7 @@ module.exports = {
       template: './example/bypass.html',
       chunks: ['byPassExample']
     }),
+    // new HtmlWebpackTagsPlugin({ tags: ['vendor.js', 'st.js'], append: true }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css'
