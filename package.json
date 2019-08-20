@@ -23,7 +23,7 @@
     "coverage": "jest --coverage",
     "snyk": "snyk test --dev --org=secure-trading",
     "testdocker": "docker pull \"securetrading1/js-payments-testing:$DOCKER_BRANCH\" && docker run -d -p 8443:8443 -p 8760:8760 -it \"securetrading1/js-payments-testing:$DOCKER_BRANCH\"",
-    "behave": "npm run testdocker && cd js-payments-testing && make",
+    "behave": "npm run testdocker && cd js-payments-testing &&",
     "export:translations": "cross-env-shell i18next-conv -l '$npm_package_config_locale' -s ./src/core/translations/$npm_package_config_locale.json -t ./translations/$npm_package_config_locale.po",
     "import:translations": "cross-env-shell i18next-conv -l '$npm_package_config_locale' -s ./translations/$npm_package_config_locale.po -t ./src/core/translations/$npm_package_config_locale.json",
     "snyk-protect": "snyk protect",
