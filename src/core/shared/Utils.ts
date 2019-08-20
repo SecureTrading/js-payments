@@ -106,7 +106,7 @@ export default class Utils {
 
   /**
    * Sets data to localStorage, previously converts
-   * them to string depends on type given.
+   * them to string depends on type given.getPaymentSuccessStatus
    * @param name
    * @param data
    */
