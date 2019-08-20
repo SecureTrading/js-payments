@@ -24,12 +24,14 @@
   "jsRules": {
     "max-line-length": {
       "options": [120]
-    }
+    },
+    "prefer-for-of": false
   },
   "linterOptions": {
     "exclude": [
       "node_modules",
-      "./src/**/*.spec.ts" // exclude all that contain "spec.ts" in name
+      "./src/**/*.spec.ts"
+      // exclude all that contain "spec.ts" in name
     ]
   }
 }

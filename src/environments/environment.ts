@@ -24,6 +24,8 @@ export const environment = {
   // @ts-ignore
   FRAME_URL: `https://${HOST}:8443`,
   GATEWAY_URL,
+  GA_MEASUREMENT_ID: '42057093-5',
+  GA_SCRIPT_SRC: 'https://www.google-analytics.com/analytics_debug.js',
   NOTIFICATION_TTL: 7000,
   PAYPAL: {
     LIVE_SDK:

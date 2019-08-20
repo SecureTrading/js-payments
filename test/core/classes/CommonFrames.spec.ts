@@ -123,19 +123,16 @@ describe('CommonFrames', () => {
     it('should not submit if transaction finished is false', () => {
       expect(shouldSubmitFormFixture('0', false, true, false)).toEqual(false);
     });
-
     // then
     it('should not submit if errorcode is not 0 and submit on error is false', () => {
       expect(shouldSubmitFormFixture('3000', true, true, false)).toEqual(false);
     });
-
     // then
     it('should submit if errorcode is not 0 but submit on error is true', () => {
       expect(shouldSubmitFormFixture('30000', true, true, true)).toEqual(true);
     });
   });
 
-  // given
   describe('_getSubmitFields()', () => {
     // when
     const { instance } = commonFramesFixture();
@@ -152,7 +149,6 @@ describe('CommonFrames', () => {
     it('should return submit fields', () => {
       expect(getSubmitFieldsFixture({ something: 'a value' }, ['a', 'b', 'c'])).toEqual(['a', 'b', 'c']);
     });
-
     // then
     it('should return submit fields plus jwt', () => {
       expect(
@@ -165,7 +161,6 @@ describe('CommonFrames', () => {
         )
       ).toEqual(['a', 'b', 'c', 'jwt']);
     });
-
     // then
     it('should return submit fields plus jwt and threedresponse', () => {
       expect(
@@ -180,7 +175,6 @@ describe('CommonFrames', () => {
       ).toEqual(['a', 'b', 'c', 'jwt', 'threedresponse']);
     });
   });
-
   // given
   describe('_onInput()', () => {
     const { instance } = commonFramesFixture();
@@ -211,9 +205,16 @@ describe('CommonFrames', () => {
   // given
   describe('_onTransactionComplete()', () => {
     const { instance } = commonFramesFixture();
+    // @ts-ignore
+    instance._requestTypes = ['THREEDQUERY'];
     const data = {
       errorcode: '0',
       errormessage: 'Ok'
+    };
+
+    const dataWithError = {
+      errorcode: '30000',
+      errormessage: 'Invalid field'
     };
 
     // when
@@ -221,15 +222,31 @@ describe('CommonFrames', () => {
       // @ts-ignore
       instance._shouldSubmitForm = jest.fn().mockReturnValueOnce(true);
       // @ts-ignore
-      DomMethods.addDataToForm = jest.fn();
+      instance._isTransactionFinished = jest.fn().mockReturnValueOnce(true);
       // @ts-ignore
-      instance._onTransactionComplete(data);
+      DomMethods.addDataToForm = jest.fn();
     });
 
     // then
-    it('should call _merchantForm() method', () => {
+    it(`should call addDataToForm() and _submitCallback() method with ${data}`, () => {
+      // @ts-ignore
+      instance._submitCallback = jest.fn().mockImplementationOnce(data => data);
+      // @ts-ignore
+      instance._onTransactionComplete(data);
       // @ts-ignore
       expect(DomMethods.addDataToForm).toHaveBeenCalled();
+      // @ts-ignore
+      expect(instance._submitCallback).toHaveBeenCalledWith(data);
+    });
+
+    // then
+    it(`should call _submitCallback() method with ${dataWithError}`, () => {
+      // @ts-ignore
+      instance._submitCallback = jest.fn().mockImplementationOnce(dataWithError => dataWithError);
+      // @ts-ignore
+      instance._onTransactionComplete(dataWithError);
+      // @ts-ignore
+      expect(instance._submitCallback).toHaveBeenCalledWith(dataWithError);
     });
   });
 
@@ -315,8 +332,23 @@ function commonFramesFixture() {
     notificationFrame: Selectors.NOTIFICATION_FRAME_ID,
     securityCode: Selectors.SECURITY_CODE_INPUT_SELECTOR
   };
+  const animatedCard = true;
   const gatewayUrl: string = 'https://webservices.securetrading.net/jwt/';
-  const instance = new CommonFrames(jwt, origin, componentsIds, {}, false, false, [], gatewayUrl);
+  const submitCallback = function() {
+    return { prop: 'testobject' };
+  };
+  const instance = new CommonFrames(
+    jwt,
+    origin,
+    componentsIds,
+    {},
+    false,
+    false,
+    [],
+    gatewayUrl,
+    animatedCard,
+    submitCallback
+  );
 
   return { instance };
 }

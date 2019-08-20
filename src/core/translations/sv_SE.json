@@ -18,7 +18,7 @@
   "Method not implemented": "Metoden har inte implementerats",
   "Form is not valid": "Ogiltigt formulär",
   "Pay": "Betala",
-  "Processing...": "Bearbetar ...",
+  "Processing": "Bearbetar",
   "Invalid field": "Ogiltigt fält",
   "Card number is invalid": "Ogiltigt kortnummer"
 }

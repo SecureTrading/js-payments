@@ -1,5 +1,5 @@
 import Selectors from './shared/Selectors';
-import { IStyles } from './shared/Styler';
+import { IStyle } from './shared/Styler';
 /***
  * Defines input with iframe source
  * Can be styled by predefined JSON.
@@ -67,7 +67,7 @@ export default class Element {
    * @param params
    * @param styles
    */
-  public create(elementName: string, styles?: IStyles, params?: object) {
+  public create(elementName: string, styles?: IStyle, params?: object) {
     const componentAddress = Element.getComponentAddress(elementName);
     // @ts-ignore
     const componentStyles = new URLSearchParams(styles).toString();

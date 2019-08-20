@@ -19,6 +19,8 @@ export const environment = {
   },
   FRAME_URL,
   GATEWAY_URL,
+  GA_MEASUREMENT_ID: '42057093-5',
+  GA_SCRIPT_SRC: 'https://www.google-analytics.com/analytics_debug.js',
   NOTIFICATION_TTL: 14000,
   VISA_CHECKOUT_URLS: {
     MOCK_DATA_URL: `${MOCK_THIRD_PARTY_URL}/visaPaymentStatus`,

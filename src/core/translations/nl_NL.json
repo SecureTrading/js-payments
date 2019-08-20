@@ -18,7 +18,7 @@
   "Method not implemented": "De methode is niet geïmplementeerd",
   "Form is not valid": "Het formulier is ongeldig",
   "Pay": "Betalen",
-  "Processing...": "Bezig met verwerken...",
+  "Processing": "Bezig met verwerken",
   "Invalid field": "Ongeldig veld",
   "Card number is invalid": "Het kaartnummer is ongeldig"
 }
