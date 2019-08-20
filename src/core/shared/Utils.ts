@@ -111,10 +111,12 @@ export default class Utils {
    * @param data
    */
   public static setLocalStorageItem(name: string, data: any) {
-    const type = typeof data;
-    const isObject = type === 'object' && type !== null;
-    const dataToSet = isObject ? JSON.stringify(data) : data.toString();
-    localStorage.setItem(name, dataToSet);
+    if (data) {
+      const type = typeof data;
+      const isObject = type === 'object' && type !== null;
+      const dataToSet = isObject ? JSON.stringify(data) : data.toString();
+      localStorage.setItem(name, dataToSet);
+    }
   }
 
   /**
