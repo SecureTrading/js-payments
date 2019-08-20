@@ -1,7 +1,6 @@
 import each from 'jest-each';
 import { cardsLogos } from '../../../src/components/animated-card/animated-card-logos';
 import AnimatedCard from './../../../src/components/animated-card/AnimatedCard';
-import { diners } from '../../../src/core/imports/images';
 import DomMethods from '../../../src/core/shared/DomMethods';
 import Selectors from '../../../src/core/shared/Selectors';
 import { Translator } from '../../../src/core/shared/Translator';
@@ -409,7 +408,7 @@ describe('AnimatedCard', () => {
   // given
   describe('setLogo()', () => {
     const { instance } = animatedCardFixture();
-    const logo = diners;
+    const logo = cardsLogos.diners;
     // when
     beforeEach(() => {
       // @ts-ignore
