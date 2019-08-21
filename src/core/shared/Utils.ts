@@ -126,7 +126,9 @@ export default class Utils {
    * @param storage
    */
   public static getLocalStorageItem(name: string, storage: string) {
-    const json = JSON.parse(storage);
-    return Object.keys(json).includes(name) ? json[name] : '';
+    if (storage) {
+      const json = JSON.parse(storage);
+      return Object.keys(json).includes(name) ? json[name] : '';
+    }
   }
 }
