@@ -130,7 +130,7 @@ export class ApplePay {
     this.jwt = jwt;
     this._completion = {
       errors: [],
-      status: this.getPaymentSuccessStatus()
+      status: ApplePaySession ? this.getPaymentSuccessStatus() : ''
     };
     this._notification = new Notification();
     this._merchantId = merchantId;

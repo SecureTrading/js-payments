@@ -4,6 +4,7 @@ import DomMethods from '../shared/DomMethods';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
 import { IStyles } from '../shared/Styler';
+import Validation from '../shared/Validation';
 import RegisterFrames from './RegisterFrames.class';
 
 /**
@@ -27,6 +28,7 @@ class CommonFrames extends RegisterFrames {
   private _notificationFrame: Element;
   private _notificationFrameMounted: HTMLElement;
   private _requestTypes: string[];
+  private _validation: Validation;
   private readonly _gatewayUrl: string;
   private readonly _merchantForm: HTMLFormElement;
   private readonly _submitCallback: any;
@@ -50,6 +52,7 @@ class CommonFrames extends RegisterFrames {
     this._gatewayUrl = gatewayUrl;
     this._messageBus = new MessageBus(origin);
     this._merchantForm = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR) as HTMLFormElement;
+    this._validation = new Validation();
     this._submitCallback = submitCallback;
     this._submitFields = submitFields;
     this._submitOnError = submitOnError;
@@ -187,6 +190,7 @@ class CommonFrames extends RegisterFrames {
    */
   private _onTransactionComplete(data: any) {
     if ((this._isTransactionFinished(data) || data.errorcode !== '0') && this._submitCallback) {
+      this._validation.blockForm(false);
       this._submitCallback(data);
     }
     if (this._shouldSubmitForm(data)) {
