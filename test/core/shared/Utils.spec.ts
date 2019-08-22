@@ -1,6 +1,8 @@
 import each from 'jest-each';
 import Utils from '../../../src/core/shared/Utils';
 
+localStorage.setItem = jest.fn();
+
 // given
 describe('Utils', () => {
   // given
@@ -112,5 +114,45 @@ describe('Utils', () => {
         expect(promissory.mock.calls.length).toBe(expected);
       }
     );
+  });
+
+  // given
+  describe('setLocalStorageItem', () => {
+    const storageName = 'incyWincySpider';
+    const data = { spider: 'incyWincy' };
+    const dataNoObject = 123456789;
+
+    function setLocalStorageItemFixture(name: string, storage: any) {
+      Utils.setLocalStorageItem(name, storage);
+    }
+
+    // then
+    it('should set storage with given name', () => {
+      setLocalStorageItemFixture(storageName, data);
+      expect(localStorage.getItem(storageName)).toEqual('{"spider":"incyWincy"}');
+    });
+
+    // then
+    it('should set storage with given name when data specified in params is not an object', () => {
+      setLocalStorageItemFixture(storageName, dataNoObject);
+      expect(localStorage.getItem(storageName)).toEqual('123456789');
+    });
+  });
+
+  // given
+  describe('getLocalStorageItem', () => {
+    const storageName = 'spider';
+    const fakeStorageName = 'pająk';
+    const data = '{"spider":"incyWincy"}';
+
+    // then
+    it('should get storage item name if it exists', () => {
+      expect(Utils.getLocalStorageItem(storageName, data)).toEqual('incyWincy');
+    });
+
+    // then
+    it('should return empty string when storage with given name is not specified', () => {
+      expect(Utils.getLocalStorageItem(fakeStorageName, data)).toEqual('');
+    });
   });
 });

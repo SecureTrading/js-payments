@@ -140,6 +140,30 @@ describe('ST', () => {
 function stFixture() {
   document.body.innerHTML =
     '<form id="st-form" class="example-form"> <h1 class="example-form__title"> Secure Trading<span>AMOUNT: <strong>10.00 GBP</strong></span> </h1> <div class="example-form__section example-form__section--horizontal"> <div class="example-form__group"> <label for="example-form-name" class="example-form__label example-form__label--required">NAME</label> <input id="example-form-name" class="example-form__input" type="text" placeholder="John Doe" autocomplete="name" /> </div> <div class="example-form__group"> <label for="example-form-email" class="example-form__label example-form__label--required">E-MAIL</label> <input id="example-form-email" class="example-form__input" type="email" placeholder="test@mail.com" autocomplete="email" /> </div> <div class="example-form__group"> <label for="example-form-phone" class="example-form__label example-form__label--required">PHONE</label> <input id="example-form-phone" class="example-form__input" type="tel" placeholder="+00 000 000 000" autocomplete="tel" /> </div> </div> <div class="example-form__spacer"></div> <div class="example-form__section"> <div id="st-notification-frame" class="example-form__group"></div> <div id="st-card-number" class="example-form__group"></div> <div id="st-expiration-date" class="example-form__group"></div> <div id="st-security-code" class="example-form__group"></div> <div id="st-error-container" class="example-form__group"></div> <div class="example-form__spacer"></div> </div> <div class="example-form__section"> <div class="example-form__group"> <button type="submit" class="example-form__button">PAY</button> </div> </div> <div class="example-form__section"> <div id="st-control-frame" class="example-form__group"></div> <div id="st-visa-checkout" class="example-form__group"></div> <div id="st-apple-pay" class="example-form__group"></div> </div> <div id="st-animated-card" class="st-animated-card-wrapper"></div> </form>';
+  const translations = {
+    Timeout: 'Limit czasu',
+    'Field is required': 'Pole jest wymagane',
+    'An error occurred': 'Wystąpił błąd',
+    'Merchant validation failure': 'Błąd weryfikacji sprzedawcy',
+    'Payment has been cancelled': 'Płatność została anulowana',
+    'Value mismatch pattern': 'Błędny format',
+    'Invalid response': 'Niepoprawna odpowiedź',
+    'Invalid request': 'Nieprawidłowe żądanie',
+    'Value is too short': 'Wartość jest za krótka',
+    'Payment has been authorized': 'Płatność została autoryzowana',
+    'Amount and currency are not set': 'Kwota i waluta nie są ustawione',
+    'Payment has been successfully processed': 'Płatność została pomyślnie przetworzona',
+    'Card number': 'Numer karty',
+    'Expiration date': 'Data ważności',
+    'Security code': 'Kod bezpieczeństwa',
+    Ok: 'Płatność została pomyślnie przetworzona',
+    'Method not implemented': 'Metoda nie została zaimplementowana',
+    'Form is not valid': 'Formularz jest nieprawidłowy',
+    Pay: 'Zapłać',
+    Processing: 'Przetwarzanie',
+    'Invalid field': 'Nieprawidłowe pole',
+    'Card number is invalid': 'Numer karty jest nieprawidłowy'
+  };
   const config = {
     animatedCard: true,
     jwt:
@@ -169,7 +193,8 @@ function stFixture() {
       }
     },
     submitOnError: false,
-    submitOnSuccess: false
+    submitOnSuccess: false,
+    translations: { ...translations }
   };
 
   const cacheConfig = {
@@ -186,7 +211,8 @@ function stFixture() {
     submitOnError: false,
     submitOnSuccess: false,
     datacenterurl: 'https://example.com',
-    formId: 'example-form'
+    formId: 'example-form',
+    translations: { ...translations }
   };
   const applePayConfig = {
     buttonStyle: 'white-outline',
