@@ -282,12 +282,8 @@ class StCodec {
         responseObject.json().then(responseData => {
           decoded = StCodec._decodeResponseJwt(responseData.jwt, reject);
           if (decoded && decoded.payload.response[0].errorcode === '0') {
-            // tslint:disable-next-line
-            console.log('USING NEW JWT');
             StCodec._jwt = decoded.payload.jwt;
           } else {
-            // tslint:disable-next-line
-            console.log('USING ORIGINAL JWT');
             StCodec._jwt = StCodec._originalJwt;
           }
           resolve({
