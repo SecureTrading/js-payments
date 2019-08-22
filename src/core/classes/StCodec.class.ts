@@ -111,6 +111,7 @@ class StCodec {
   private static _messageBus = new MessageBus();
   private static _parentOrigin: string;
   private static _jwt: string;
+  private static _originalJwt: string;
   private static REQUESTS_WITH_ERROR_MESSAGES = [
     'AUTH',
     'CACHETOKENISE',
@@ -224,6 +225,7 @@ class StCodec {
   constructor(jwt: string, parentOrigin?: string) {
     this._requestId = StCodec._createRequestId();
     StCodec._jwt = jwt;
+    StCodec._originalJwt = jwt;
     StCodec._locale = new StJwt(StCodec._jwt).locale;
     StCodec._parentOrigin = parentOrigin;
     if (parentOrigin) {
@@ -279,18 +281,25 @@ class StCodec {
       if ('json' in responseObject) {
         responseObject.json().then(responseData => {
           decoded = StCodec._decodeResponseJwt(responseData.jwt, reject);
+          if (decoded && decoded.payload.response[0].errorcode === '0') {
+            // tslint:disable-next-line
+            console.log('USING NEW JWT');
+            StCodec._jwt = decoded.payload.jwt;
+          } else {
+            // tslint:disable-next-line
+            console.log('USING ORIGINAL JWT');
+            StCodec._jwt = StCodec._originalJwt;
+          }
           resolve({
             jwt: responseData.jwt,
-            merchantJwt: decoded.payload.jwt,
             response: StCodec.verifyResponseObject(decoded.payload, responseData.jwt)
           });
         });
       } else {
+        StCodec._jwt = StCodec._originalJwt;
         reject(StCodec._handleInvalidResponse());
       }
     });
-    // @ts-ignore
-    StCodec._jwt = promise.merchantJwt;
     // @ts-ignore
     return promise;
   }
