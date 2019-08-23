@@ -288,7 +288,6 @@ class StCodec {
           }
           resolve({
             jwt: responseData.jwt,
-            merchantJwt: decoded.payload.jwt,
             response: StCodec.verifyResponseObject(decoded.payload, responseData.jwt)
           });
         });
