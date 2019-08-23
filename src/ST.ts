@@ -21,7 +21,6 @@ import {
 } from './core/models/Config';
 import Selectors from './core/shared/Selectors';
 import { IStyles } from './core/shared/Styler';
-import Utils from './core/shared/Utils';
 import { environment } from './environments/environment';
 
 /**
@@ -39,7 +38,6 @@ class ST {
     animatedCard: Selectors.ANIMATED_CARD_INPUT_SELECTOR,
     ...ST.DEFAULT_COMPONENTS
   };
-  private static TRANSLATION_STORAGE_NAME = 'merchantTranslations';
 
   /**
    * Collect and set default values for _config object.
@@ -253,18 +251,16 @@ class ST {
 
   constructor(config: IConfig) {
     const ga = new GoogleAnalytics();
-    const { animatedCard, init, submitCallback, translations } = config;
-    if (init) {
+    if (config.init) {
       const {
         init: { cachetoken, threedinit }
       } = config;
       this._threedinit = threedinit;
       this._cachetoken = cachetoken;
     }
-    this._animatedCard = animatedCard;
-    this._submitCallback = submitCallback;
+    this._animatedCard = config.animatedCard;
+    this._submitCallback = config.submitCallback;
     this._config = ST._addDefaults(config);
-    Utils.setLocalStorageItem(ST.TRANSLATION_STORAGE_NAME, translations);
     ST._validateConfig(this._config, IConfigSchema);
     this._setClassProperties(this._config);
     this.commonFrames = ST._configureCommonFrames(

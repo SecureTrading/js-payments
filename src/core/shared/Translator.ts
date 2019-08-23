@@ -20,7 +20,6 @@ import nl_NL from '../translations/nl_NL.json';
 import no_NO from '../translations/no_NO.json';
 // @ts-ignore
 import sv_SE from '../translations/sv_SE.json';
-import Utils from './Utils';
 
 // TODO docstring - class to act as adapter in case we ever change out the translator mechanism
 export class Translator {
@@ -43,12 +42,5 @@ export class Translator {
     });
   }
 
-  /**
-   * Translates given text or gets it when it's defined by merchant in config.
-   * @param text
-   */
-  public translate = (text: string) => {
-    const translation = Utils.getLocalStorageItem(text, localStorage.merchantTranslations);
-    return translation ? translation : i18next.t(text, { content: text });
-  };
+  public translate = (text: string) => i18next.t(text);
 }
