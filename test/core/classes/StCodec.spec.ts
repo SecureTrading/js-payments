@@ -520,19 +520,6 @@ describe('StCodec class', () => {
       // @ts-ignore
       expect(StCodec._handleInvalidResponse).toHaveBeenCalledTimes(1);
     });
-
-    // then
-    it('should pass original JWT when errorcode of received response is not equal 0', async () => {
-      const { jwt } = stCodecFixture();
-      // @ts-ignore
-      await str.decode({
-        json: () => {
-          return new Promise(resolve => resolve(fullResponseError));
-        }
-      });
-      // @ts-ignore
-      expect(StCodec._jwt).toEqual(jwt);
-    });
   });
 });
 

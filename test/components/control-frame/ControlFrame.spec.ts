@@ -7,7 +7,6 @@ jest.mock('./../../../src/core/shared/Payment');
 
 // given
 describe('ControlFrame', () => {
-  // TODO: get know how handle this promise
   // given
   describe('_initSubscriptions', () => {
     const { instance } = controlFrameFixture();
@@ -409,6 +408,23 @@ describe('ControlFrame', () => {
     it('should set _merchantFormData', () => {
       // @ts-ignore
       expect(instance._merchantFormData).toEqual(data);
+    });
+  });
+
+  // given
+  describe('_onResetJWT', () => {
+    const { instance } = controlFrameFixture();
+    // when
+    beforeEach(() => {
+      StCodec.jwt = '1234';
+      StCodec.originalJwt = '56789';
+      // @ts-ignore
+      instance._onResetJWT();
+    });
+    // then
+    it('should set STCodec.jwt', () => {
+      // @ts-ignore
+      expect(StCodec.jwt).toEqual(StCodec.originalJwt);
     });
   });
 });
