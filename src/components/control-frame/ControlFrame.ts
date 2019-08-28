@@ -128,6 +128,9 @@ class ControlFrame extends Frame {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS, (data: any) => {
       this._storeMerchantData(data);
     });
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.RESET_JWT, () => {
+      this._onResetJWT();
+    });
   }
 
   /**
@@ -138,6 +141,14 @@ class ControlFrame extends Frame {
   private _onCardNumberStateChange(data: IFormFieldState) {
     this._formFields.cardNumber.validity = data.validity;
     this._formFields.cardNumber.value = data.value;
+  }
+
+  /**
+   * Resets JWT in case of Error
+   * @private
+   */
+  private _onResetJWT() {
+    StCodec.jwt = StCodec.originalJwt;
   }
 
   /**

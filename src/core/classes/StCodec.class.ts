@@ -33,6 +33,8 @@ class StCodec {
     'ACCOUNTCHECK'
   ];
   public static MINIMUM_REQUEST_FIELDS = 1;
+  public static jwt: string;
+  public static originalJwt: string;
 
   /**
    * Generate a unique ID for a request
@@ -110,7 +112,6 @@ class StCodec {
   private static _locale: string;
   private static _messageBus = new MessageBus();
   private static _parentOrigin: string;
-  private static _jwt: string;
   private static REQUESTS_WITH_ERROR_MESSAGES = [
     'AUTH',
     'CACHETOKENISE',
@@ -223,8 +224,9 @@ class StCodec {
 
   constructor(jwt: string, parentOrigin?: string) {
     this._requestId = StCodec._createRequestId();
-    StCodec._jwt = jwt;
-    StCodec._locale = new StJwt(StCodec._jwt).locale;
+    StCodec.jwt = jwt;
+    StCodec.originalJwt = jwt;
+    StCodec._locale = new StJwt(StCodec.jwt).locale;
     StCodec._parentOrigin = parentOrigin;
     if (parentOrigin) {
       StCodec._messageBus = new MessageBus(parentOrigin);
@@ -239,12 +241,12 @@ class StCodec {
   public buildRequestObject(requestData: object): object {
     return {
       acceptcustomeroutput: '1.00',
-      jwt: StCodec._jwt,
+      jwt: StCodec.jwt,
       request: [
         {
           ...requestData,
           requestid: this._requestId,
-          sitereference: new StJwt(StCodec._jwt).sitereference
+          sitereference: new StJwt(StCodec.jwt).sitereference
         }
       ],
       version: StCodec.VERSION
@@ -279,18 +281,21 @@ class StCodec {
       if ('json' in responseObject) {
         responseObject.json().then(responseData => {
           decoded = StCodec._decodeResponseJwt(responseData.jwt, reject);
+          if (decoded && decoded.payload.response[0].errorcode === '0') {
+            StCodec.jwt = decoded.payload.jwt;
+          } else {
+            StCodec.jwt = StCodec.originalJwt;
+          }
           resolve({
             jwt: responseData.jwt,
-            merchantJwt: decoded.payload.jwt,
             response: StCodec.verifyResponseObject(decoded.payload, responseData.jwt)
           });
         });
       } else {
+        StCodec.jwt = StCodec.originalJwt;
         reject(StCodec._handleInvalidResponse());
       }
     });
-    // @ts-ignore
-    StCodec._jwt = promise.merchantJwt;
     // @ts-ignore
     return promise;
   }
