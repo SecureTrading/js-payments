@@ -139,6 +139,10 @@ export class CardinalCommerce {
     if (ON_CARDINAL_VALIDATED_STATUS.includes(ActionCode)) {
       this._authorizePayment({ threedresponse: jwt });
     } else {
+      const resetNotificationEvent: IMessageBusEvent = {
+        type: MessageBus.EVENTS_PUBLIC.RESET_JWT
+      };
+      this.messageBus.publishFromParent(resetNotificationEvent, Selectors.CONTROL_FRAME_IFRAME);
       this.messageBus.publishToSelf(notificationEvent);
       this._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE, true);
     }
