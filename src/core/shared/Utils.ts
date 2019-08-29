@@ -115,7 +115,6 @@ export default class Utils {
       const type = typeof data;
       const isObject = type === 'object' && type !== null;
       const dataToSet = isObject ? JSON.stringify(data) : data.toString();
-      localStorage.removeItem(name); // In case left from another session we want to blank it
       localStorage.setItem(name, dataToSet);
     }
   }
@@ -126,8 +125,7 @@ export default class Utils {
    * @param name
    * @param storage
    */
-  public static getLocalStorageItem(name: string, storageName: string) {
-    const storage = localStorage.getItem(storageName);
+  public static getLocalStorageItem(name: string, storage: string) {
     if (storage) {
       const json = JSON.parse(storage);
       return Object.keys(json).includes(name) ? json[name] : '';

@@ -48,7 +48,7 @@ export class Translator {
    * @param text
    */
   public translate = (text: string) => {
-    const translation = Utils.getLocalStorageItem(text, 'merchantTranslations');
+    const translation = Utils.getLocalStorageItem(text, localStorage.getItem('merchantTranslations'));
     return translation ? translation : i18next.t(text, { content: text });
   };
 }
