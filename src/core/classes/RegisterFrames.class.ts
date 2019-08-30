@@ -12,7 +12,6 @@ export default class RegisterFrames {
   protected jwt: string;
   protected origin: string;
   protected componentIds: any;
-  protected hasAnimatedCard: boolean;
   protected submitCallback: any;
   private stJwt: StJwt;
 

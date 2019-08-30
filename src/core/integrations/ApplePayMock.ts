@@ -1,8 +1,7 @@
-import { cardsLogos } from '../../components/animated-card/animated-card-logos';
 import DomMethods from '../shared/DomMethods';
 import ApplePay from './ApplePay';
 import ApplePaySessionMock from './ApplePaySessionMock';
-
+const applePayButton: string = '../../../images/apple-pay.png';
 /**
  * Mocked version of Apple Pay setting test environment for Apple Pay automated tests.
  */
@@ -44,7 +43,7 @@ class ApplePayMock extends ApplePay {
    * @public
    */
   public createApplePayButton() {
-    return DomMethods.createHtmlElement.apply(this, [{ src: cardsLogos.applePay, id: 'st-apple-pay' }, 'img']);
+    return DomMethods.createHtmlElement.apply(this, [{ src: applePayButton, id: 'st-apple-pay' }, 'img']);
   }
 }
 
