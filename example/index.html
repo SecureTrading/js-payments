@@ -94,7 +94,6 @@
 
         var st = SecureTrading({
           jwt: jwt, // Can't use property shorthand because it isn't supported by IE
-          animatedCard: true,
           submitOnSuccess: false,
           submitCallback: function someFancyfunction(data) {
             var stringified = JSON.stringify(data);

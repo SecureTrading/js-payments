@@ -326,29 +326,16 @@ function commonFramesFixture() {
     'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU2MDk0NjM4Ny4yNDIzMzQ0LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiNDExMTExMTExMTExMTExMSIsImV4cGlyeWRhdGUiOiIwMS8yMCIsInNlY3VyaXR5Y29kZSI6IjEyMyJ9fQ.UssdRcocpaeAqd-jDXpxWeWiKIX-W7zlpy0UWrDE5vg';
   const origin: string = 'https://example.com';
   const componentsIds = {
-    animatedCard: Selectors.ANIMATED_CARD_INPUT_SELECTOR,
     cardNumber: Selectors.CARD_NUMBER_INPUT_SELECTOR,
     expirationDate: Selectors.EXPIRATION_DATE_INPUT_SELECTOR,
     notificationFrame: Selectors.NOTIFICATION_FRAME_ID,
     securityCode: Selectors.SECURITY_CODE_INPUT_SELECTOR
   };
-  const animatedCard = true;
   const gatewayUrl: string = 'https://webservices.securetrading.net/jwt/';
   const submitCallback = function() {
     return { prop: 'testobject' };
   };
-  const instance = new CommonFrames(
-    jwt,
-    origin,
-    componentsIds,
-    {},
-    false,
-    false,
-    [],
-    gatewayUrl,
-    animatedCard,
-    submitCallback
-  );
+  const instance = new CommonFrames(jwt, origin, componentsIds, {}, false, false, [], gatewayUrl, submitCallback);
 
   return { instance };
 }
