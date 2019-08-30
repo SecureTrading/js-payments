@@ -36,7 +36,6 @@ class ST {
   };
 
   private static EXTENDED_CONFIGURATION = {
-    animatedCard: Selectors.ANIMATED_CARD_INPUT_SELECTOR,
     ...ST.DEFAULT_COMPONENTS
   };
   private static TRANSLATION_STORAGE_NAME = 'merchantTranslations';
@@ -62,7 +61,6 @@ class ST {
     defaultFeatures.origin = config.origin ? config.origin : window.location.origin;
     defaultFeatures.submitOnSuccess = config.submitOnSuccess !== undefined ? config.submitOnSuccess : true;
     defaultFeatures.submitOnError = config.submitOnError !== undefined ? config.submitOnError : false;
-    defaultFeatures.animatedCard = config.animatedCard ? config.animatedCard : false;
     return defaultFeatures;
   }
 
@@ -98,22 +96,15 @@ class ST {
    */
   private static _addDefaultComponentIds(config: IConfig) {
     const defaultConfig: IConfig = config;
-    const { animatedCard, componentIds, styles } = config;
+    const { componentIds, styles } = config;
 
     defaultConfig.styles = styles ? styles : {};
     defaultConfig.componentIds = componentIds ? componentIds : {};
 
     ST._hasConfigurationObjectsSameLength(defaultConfig.componentIds);
-
-    if (animatedCard) {
-      defaultConfig.componentIds = defaultConfig.componentIds
-        ? { ...ST.EXTENDED_CONFIGURATION, ...defaultConfig.componentIds }
-        : ST.EXTENDED_CONFIGURATION;
-    } else {
-      defaultConfig.componentIds = defaultConfig.componentIds
-        ? { ...ST.DEFAULT_COMPONENTS, ...defaultConfig.componentIds }
-        : ST.DEFAULT_COMPONENTS;
-    }
+    defaultConfig.componentIds = defaultConfig.componentIds
+      ? { ...ST.DEFAULT_COMPONENTS, ...defaultConfig.componentIds }
+      : ST.DEFAULT_COMPONENTS;
 
     return defaultConfig;
   }
@@ -173,7 +164,6 @@ class ST {
    * @param submitOnError
    * @param submitFields
    * @param gatewayUrl
-   * @param animatedCard
    * @param submitCallback
    * @private
    */
@@ -186,7 +176,6 @@ class ST {
     submitOnError: boolean,
     submitFields: string[],
     gatewayUrl: string,
-    animatedCard: boolean,
     submitCallback?: any
   ) {
     return new CommonFrames(
@@ -198,7 +187,6 @@ class ST {
       submitOnError,
       submitFields,
       gatewayUrl,
-      animatedCard,
       submitCallback
     );
   }
@@ -217,7 +205,6 @@ class ST {
    * @param componentIds
    * @param styles
    * @param config
-   * @param animatedCard
    * @private
    */
   private static _configureCardFrames(
@@ -225,18 +212,16 @@ class ST {
     origin: string,
     componentIds: {},
     styles: IStyles,
-    config: IComponentsConfig,
-    animatedCard: boolean
+    config: IComponentsConfig
   ) {
     const { defaultPaymentType, paymentTypes, startOnLoad } = config;
     let cardFrames: object;
     if (!startOnLoad) {
-      cardFrames = new CardFrames(jwt, origin, componentIds, styles, paymentTypes, defaultPaymentType, animatedCard);
+      cardFrames = new CardFrames(jwt, origin, componentIds, styles, paymentTypes, defaultPaymentType);
     }
     return cardFrames;
   }
 
-  private readonly _animatedCard: boolean;
   private _cachetoken: string;
   private _componentIds: {};
   private _gatewayUrl: string;
@@ -253,7 +238,7 @@ class ST {
 
   constructor(config: IConfig) {
     const ga = new GoogleAnalytics();
-    const { animatedCard, init, submitCallback, translations } = config;
+    const { init, submitCallback, translations } = config;
     if (init) {
       const {
         init: { cachetoken, threedinit }
@@ -261,7 +246,6 @@ class ST {
       this._threedinit = threedinit;
       this._cachetoken = cachetoken;
     }
-    this._animatedCard = animatedCard;
     this._submitCallback = submitCallback;
     this._config = ST._addDefaults(config);
     Utils.setLocalStorageItem(ST.TRANSLATION_STORAGE_NAME, translations);
@@ -276,7 +260,6 @@ class ST {
       this._submitOnError,
       this._submitFields,
       this._gatewayUrl,
-      this._animatedCard,
       this._submitCallback
     );
     ST._configureMerchantFields();
@@ -290,14 +273,7 @@ class ST {
   public Components(config?: IComponentsConfig) {
     const { targetConfig } = ST._setConfigObject(config);
     ST._validateConfig(targetConfig, IComponentsConfigSchema);
-    ST._configureCardFrames(
-      this._jwt,
-      this._origin,
-      this._componentIds,
-      this._styles,
-      targetConfig,
-      this._animatedCard
-    );
+    ST._configureCardFrames(this._jwt, this._origin, this._componentIds, this._styles, targetConfig);
     this.commonFrames.requestTypes = targetConfig.requestTypes;
     this.CardinalCommerce(targetConfig);
   }

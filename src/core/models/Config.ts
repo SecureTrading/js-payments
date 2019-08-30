@@ -38,7 +38,6 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
   animatedCard: Joi.boolean(),
   cachetoken: Joi.string(),
   componentIds: Joi.object().keys({
-    animatedCard: Joi.string(),
     cardNumber: Joi.string().required(),
     expirationDate: Joi.string().required(),
     notificationFrame: Joi.string().required(),

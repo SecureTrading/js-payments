@@ -45,10 +45,9 @@ class CommonFrames extends RegisterFrames {
     submitOnError: boolean,
     submitFields: string[],
     gatewayUrl: string,
-    animatedCard: boolean,
     submitCallback: any
   ) {
-    super(jwt, origin, componentIds, styles, animatedCard, submitCallback);
+    super(jwt, origin, componentIds, styles, submitCallback);
     this._gatewayUrl = gatewayUrl;
     this._messageBus = new MessageBus(origin);
     this._merchantForm = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR) as HTMLFormElement;

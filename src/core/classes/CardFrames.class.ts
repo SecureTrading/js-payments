@@ -17,12 +17,9 @@ class CardFrames extends RegisterFrames {
   private static SUBMIT_BUTTON_AS_INPUT_MARKUP = 'input[type="submit"]';
   private static SUBMIT_BUTTON_DISABLED_CLASS = 'st-button-submit__disabled';
 
-  protected hasAnimatedCard: boolean;
-  private _animatedCardMounted: HTMLElement;
   private _cardNumberMounted: HTMLElement;
   private _expirationDateMounted: HTMLElement;
   private _securityCodeMounted: HTMLElement;
-  private _animatedCard: Element;
   private _cardNumber: Element;
   private _expirationDate: Element;
   private _securityCode: Element;
@@ -41,11 +38,9 @@ class CardFrames extends RegisterFrames {
     componentIds: {},
     styles: IStyles,
     paymentTypes: string[],
-    defaultPaymentType: string,
-    animatedCard: boolean
+    defaultPaymentType: string
   ) {
-    super(jwt, origin, componentIds, styles, animatedCard);
-    this.hasAnimatedCard = animatedCard;
+    super(jwt, origin, componentIds, styles);
     this._paymentTypes = paymentTypes;
     this._defaultPaymentType = defaultPaymentType;
     this._validation = new Validation();
@@ -82,16 +77,7 @@ class CardFrames extends RegisterFrames {
    * Defines form elements for card payments
    */
   protected setElementsFields() {
-    if (this.hasAnimatedCard) {
-      return [
-        this.componentIds.cardNumber,
-        this.componentIds.expirationDate,
-        this.componentIds.securityCode,
-        this.componentIds.animatedCard
-      ];
-    } else {
-      return [this.componentIds.cardNumber, this.componentIds.expirationDate, this.componentIds.securityCode];
-    }
+    return [this.componentIds.cardNumber, this.componentIds.expirationDate, this.componentIds.securityCode];
   }
 
   /**
@@ -130,7 +116,7 @@ class CardFrames extends RegisterFrames {
   };
 
   /**
-   * Inits credit card and animated card fields (if merchant wanted this type of payment)
+   * Inits credit card and fields (if merchant wanted this type of payment)
    */
   private _initCardFields() {
     const { defaultStyles } = this.styles;
@@ -142,7 +128,6 @@ class CardFrames extends RegisterFrames {
     this._cardNumber = new Element();
     this._expirationDate = new Element();
     this._securityCode = new Element();
-    this._animatedCard = new Element();
 
     this._cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, cardNumber, { ...this.params, origin: this.origin });
     this._cardNumberMounted = this._cardNumber.mount(Selectors.CARD_NUMBER_IFRAME);
@@ -155,18 +140,6 @@ class CardFrames extends RegisterFrames {
     this._securityCode.create(Selectors.SECURITY_CODE_COMPONENT_NAME, securityCode, this.params);
     this._securityCodeMounted = this._securityCode.mount(Selectors.SECURITY_CODE_IFRAME);
     this.elementsToRegister.push(this._securityCodeMounted);
-
-    const animatedCardConfig = { ...this.params };
-    if (this._paymentTypes !== undefined) {
-      animatedCardConfig.paymentTypes = this._paymentTypes;
-    }
-    if (this._defaultPaymentType !== undefined) {
-      animatedCardConfig.defaultPaymentType = this._defaultPaymentType;
-    }
-
-    this._animatedCard.create(Selectors.ANIMATED_CARD_COMPONENT_NAME, {}, animatedCardConfig);
-    this._animatedCardMounted = this._animatedCard.mount(Selectors.ANIMATED_CARD_COMPONENT_FRAME, '-1');
-    this.elementsToRegister.push(this._animatedCardMounted);
   }
 
   /**
