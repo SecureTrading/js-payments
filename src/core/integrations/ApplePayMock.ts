@@ -2,6 +2,8 @@ import DomMethods from '../shared/DomMethods';
 import ApplePay from './ApplePay';
 import ApplePaySessionMock from './ApplePaySessionMock';
 
+const applePay: string = '../../../images/apple-pay.png';
+
 /**
  * Mocked version of Apple Pay setting test environment for Apple Pay automated tests.
  */
