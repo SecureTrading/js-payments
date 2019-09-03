@@ -1,4 +1,3 @@
-import { cardsLogos } from '../../components/animated-card/animated-card-logos';
 import DomMethods from '../shared/DomMethods';
 import ApplePay from './ApplePay';
 import ApplePaySessionMock from './ApplePaySessionMock';
@@ -44,7 +43,7 @@ class ApplePayMock extends ApplePay {
    * @public
    */
   public createApplePayButton() {
-    return DomMethods.createHtmlElement.apply(this, [{ src: cardsLogos.applePay, id: 'st-apple-pay' }, 'img']);
+    return DomMethods.createHtmlElement.apply(this, [{ src: applePay, id: 'st-apple-pay' }, 'img']);
   }
 }
 

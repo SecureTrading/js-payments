@@ -1,6 +1,6 @@
-import './animated-card.scss';
-import AnimatedCard from './AnimatedCard';
+// TODO: here will be our new standalone version of animated card imported.
 
 (() => {
-  return AnimatedCard.ifCardExists() && new AnimatedCard();
+  // @ts-ignore
+  console.log('Card component from remote library');
 })();
