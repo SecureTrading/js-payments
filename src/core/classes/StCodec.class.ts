@@ -197,13 +197,11 @@ class StCodec {
         }
         validation.blockForm(false);
         StCodec.publishResponse(responseContent, jwtResponse);
-        console.log(`_handleValidGatewayResponse ${responseContent}${jwtResponse}`);
         StCodec._notification.error(responseContent.errormessage);
         throw new Error(responseContent.errormessage);
       }
     }
     StCodec.publishResponse(responseContent, jwtResponse);
-    console.log(`_handleValidGatewayResponse ${responseContent}${jwtResponse}`);
   }
 
   /**

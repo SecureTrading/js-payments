@@ -253,9 +253,6 @@ class ControlFrame extends Frame {
     if (threedresponse !== undefined) {
       StCodec.publishResponse(this._threeDQueryResult.response, this._threeDQueryResult.jwt, threedresponse);
     }
-    console.log(
-      `_processThreeDResponse ${this._threeDQueryResult.response}${this._threeDQueryResult.jwt}${threedresponse}`
-    );
     this._notification.success(Language.translations.PAYMENT_SUCCESS);
   }
 

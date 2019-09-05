@@ -1,4 +1,3 @@
-import { StCodec } from '../classes/StCodec.class';
 import StTransport from '../classes/StTransport.class';
 import { IWalletConfig } from '../models/Config';
 import DomMethods from '../shared/DomMethods';
