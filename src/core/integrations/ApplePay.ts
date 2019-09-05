@@ -365,6 +365,7 @@ export class ApplePay {
           const { errorcode } = response;
           this._handleApplePayError(response);
           this._session.completePayment(this._completion);
+          localStorage.setItem('completePayment', 'true');
           this._displayNotification(errorcode);
           GoogleAnalytics.sendGaData('event', 'Apple Pay', 'payment', 'Apple Pay payment completed');
         })

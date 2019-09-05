@@ -189,6 +189,7 @@ class CommonFrames extends RegisterFrames {
    * @private
    */
   private _onTransactionComplete(data: any) {
+    // TODO: check if popup in Apple Pay is closed
     if ((this._isTransactionFinished(data) || data.errorcode !== '0') && this._submitCallback) {
       this._validation.blockForm(false);
       this._submitCallback(data);
@@ -217,7 +218,15 @@ class CommonFrames extends RegisterFrames {
    */
   private _setTransactionCompleteListener() {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE, (data: any) => {
-      this._onTransactionComplete(data);
+      if (data.walletsource === 'APPLEPAY') {
+        setTimeout(() => {
+          if (localStorage.completePayment === 'true') {
+            this._onTransactionComplete(data);
+          }
+        }, 3000);
+      } else {
+        this._onTransactionComplete(data);
+      }
     });
   }
 
