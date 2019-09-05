@@ -1,3 +1,4 @@
+import { StCodec } from '../classes/StCodec.class';
 import StTransport from '../classes/StTransport.class';
 import { IWalletConfig } from '../models/Config';
 import DomMethods from '../shared/DomMethods';
@@ -365,6 +366,7 @@ export class ApplePay {
           const { errorcode } = response;
           this._handleApplePayError(response);
           this._session.completePayment(this._completion);
+          localStorage.setItem('completePayment', 'true');
           this._displayNotification(errorcode);
           GoogleAnalytics.sendGaData('event', 'Apple Pay', 'payment', 'Apple Pay payment completed');
         })
