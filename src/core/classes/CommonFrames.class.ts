@@ -220,7 +220,7 @@ class CommonFrames extends RegisterFrames {
   private _setTransactionCompleteListener() {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE, (data: any) => {
       if (data.walletsource === 'APPLEPAY') {
-        let localStore = localStorage.getItem('completePayment');
+        const localStore = localStorage.getItem('completePayment');
         setTimeout(() => {
           if (localStore === 'true') {
             this._onTransactionComplete(data);
