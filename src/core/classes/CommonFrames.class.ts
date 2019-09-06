@@ -190,7 +190,6 @@ class CommonFrames extends RegisterFrames {
    * @private
    */
   private _onTransactionComplete(data: any) {
-    // TODO: check if popup in Apple Pay is closed
     if ((this._isTransactionFinished(data) || data.errorcode !== '0') && this._submitCallback) {
       this._validation.blockForm(false);
       this._submitCallback(data);
