@@ -1,4 +1,3 @@
-import LocalStore from 'local-observable-store';
 import Element from '../Element';
 import { CardinalCommerce } from '../integrations/CardinalCommerce';
 import DomMethods from '../shared/DomMethods';
@@ -29,7 +28,6 @@ class CommonFrames extends RegisterFrames {
   private _notificationFrame: Element;
   private _notificationFrameMounted: HTMLElement;
   private _requestTypes: string[];
-  private _localStore = new LocalStore();
   private _localStoreValue: string;
   private readonly _gatewayUrl: string;
   private readonly _merchantForm: HTMLFormElement;
@@ -60,8 +58,6 @@ class CommonFrames extends RegisterFrames {
     this._submitFields = submitFields;
     this._submitOnError = submitOnError;
     this._submitOnSuccess = submitOnSuccess;
-    this._localStore.sync('completePayment');
-    this._localStoreValue = this._localStore.get('completePayment');
     this.onInit();
   }
 
@@ -224,21 +220,12 @@ class CommonFrames extends RegisterFrames {
   private _setTransactionCompleteListener() {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE, (data: any) => {
       if (data.walletsource === 'APPLEPAY') {
-        this._localStore.sync('completePayment');
-        let localStore = this._localStore.get('completePayment');
-        this._localStore.watchValue('completePayment', function onPropertyUpdated(
-          newValue: any,
-          action: any,
-          oldValue: any
-        ) {
-          console.log(newValue);
-          console.log(action);
-          console.log(oldValue);
-          localStore = newValue;
-        });
-        if (localStore === 'true') {
-          this._onTransactionComplete(data);
-        }
+        let localStore = localStorage.getItem('completePayment');
+        setTimeout(() => {
+          if (localStore === 'true') {
+            this._onTransactionComplete(data);
+          }
+        }, 3000);
       } else {
         this._onTransactionComplete(data);
       }

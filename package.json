@@ -104,7 +104,6 @@
     "joi": "^14.3.1",
     "joi-browser": "^13.4.0",
     "jwt-decode": "^2.2.0",
-    "local-observable-store": "0.0.3",
     "location-origin": "^1.1.4",
     "ts-money": "^0.4.6",
     "url-polyfill": "^1.1.7",

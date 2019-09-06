@@ -1,4 +1,3 @@
-import LocalStore from 'local-observable-store';
 import StTransport from '../classes/StTransport.class';
 import { IWalletConfig } from '../models/Config';
 import DomMethods from '../shared/DomMethods';
@@ -120,7 +119,6 @@ export class ApplePay {
   private _notification: Notification;
   private _requestTypes: string[];
   private _translator: Translator;
-  private _localStore: any;
 
   private readonly _completion: { errors: []; status: string };
   private readonly _merchantId: string;
@@ -130,11 +128,11 @@ export class ApplePay {
   constructor(config: IWalletConfig, jwt: string, gatewayUrl: string) {
     const { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId, requestTypes } = config;
     this.jwt = jwt;
+    localStorage.setItem('completePayment', '');
     this._completion = {
       errors: [],
       status: ApplePaySession ? this.getPaymentSuccessStatus() : ''
     };
-    this._localStore = new LocalStore();
     this._notification = new Notification();
     this._merchantId = merchantId;
     this._placement = placement;
@@ -368,7 +366,7 @@ export class ApplePay {
           const { errorcode } = response;
           this._handleApplePayError(response);
           this._session.completePayment(this._completion);
-          this._localStore.setItem('completePayment', JSON.stringify({ completePayment: 'true' }));
+          localStorage.setItem('completePayment', 'true');
           this._displayNotification(errorcode);
           GoogleAnalytics.sendGaData('event', 'Apple Pay', 'payment', 'Apple Pay payment completed');
         })
@@ -461,7 +459,7 @@ export class ApplePay {
    * @private
    */
   private _paymentProcess() {
-    this._localStore.setItem('completePayment', JSON.stringify({ completePayment: 'false' }));
+    localStorage.setItem('completePayment', 'false');
     this._session = this.getApplePaySessionObject();
     this._onValidateMerchantRequest();
     this._subscribeStatusHandlers();
