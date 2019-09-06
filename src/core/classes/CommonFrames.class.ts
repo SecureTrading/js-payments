@@ -1,3 +1,4 @@
+import LocalStore from 'local-observable-store';
 import Element from '../Element';
 import { CardinalCommerce } from '../integrations/CardinalCommerce';
 import DomMethods from '../shared/DomMethods';
@@ -28,6 +29,7 @@ class CommonFrames extends RegisterFrames {
   private _notificationFrame: Element;
   private _notificationFrameMounted: HTMLElement;
   private _requestTypes: string[];
+  private _localStore = new LocalStore();
   private readonly _gatewayUrl: string;
   private readonly _merchantForm: HTMLFormElement;
   private _validation: Validation;
@@ -219,11 +221,11 @@ class CommonFrames extends RegisterFrames {
   private _setTransactionCompleteListener() {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE, (data: any) => {
       if (data.walletsource === 'APPLEPAY') {
-        setTimeout(() => {
-          if (localStorage.completePayment === 'true') {
-            this._onTransactionComplete(data);
-          }
-        }, 3000);
+        this._localStore.sync('completePayment');
+        const localStore = this._localStore.get('completePayment');
+        if (localStore === 'true') {
+          this._onTransactionComplete(data);
+        }
       } else {
         this._onTransactionComplete(data);
       }
