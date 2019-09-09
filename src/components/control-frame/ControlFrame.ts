@@ -90,7 +90,7 @@ class ControlFrame extends Frame {
    * Gets allowed parameters including locale from parent class.
    */
   protected getAllowedParams() {
-    return super.getAllowedParams().concat(['origin', 'jwt', 'gatewayUrl']);
+    return super.getAllowedParams().concat(['jwt', 'gatewayUrl']);
   }
 
   /**
