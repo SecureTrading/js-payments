@@ -28,6 +28,7 @@ class CommonFrames extends RegisterFrames {
   private _notificationFrame: Element;
   private _notificationFrameMounted: HTMLElement;
   private _requestTypes: string[];
+  private _localStoreValue: string;
   private readonly _gatewayUrl: string;
   private readonly _merchantForm: HTMLFormElement;
   private _validation: Validation;
@@ -211,7 +212,16 @@ class CommonFrames extends RegisterFrames {
    */
   private _setTransactionCompleteListener() {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE, (data: any) => {
-      this._onTransactionComplete(data);
+      if (data.walletsource === 'APPLEPAY') {
+        const localStore = localStorage.getItem('completePayment');
+        setTimeout(() => {
+          if (localStore === 'true') {
+            this._onTransactionComplete(data);
+          }
+        }, 3000);
+      } else {
+        this._onTransactionComplete(data);
+      }
     });
   }
 

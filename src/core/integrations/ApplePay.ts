@@ -113,6 +113,7 @@ export class ApplePay {
   constructor(config: IWalletConfig, jwt: string, gatewayUrl: string) {
     const { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId, requestTypes } = config;
     this.jwt = jwt;
+    localStorage.setItem('completePayment', '');
     this._notification = new Notification();
     this.merchantId = merchantId;
     this.placement = placement;
@@ -191,9 +192,7 @@ export class ApplePay {
       : (this.buttonText = ApplePay.AVAILABLE_BUTTON_TEXTS[0]);
 
     // tslint:disable-next-line: max-line-length
-    this._applePayButtonProps.style = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${
-      this.buttonText
-    }; -apple-pay-button-style: ${this.buttonStyle}`;
+    this._applePayButtonProps.style = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${this.buttonText}; -apple-pay-button-style: ${this.buttonStyle}`;
   }
 
   /**
@@ -335,11 +334,13 @@ export class ApplePay {
         .then(() => {
           this._notification.success(Language.translations.PAYMENT_SUCCESS, true);
           this.session.completePayment({ status: this.getPaymentSuccessStatus(), errors: [] });
+          localStorage.setItem('completePayment', 'true');
         })
         .catch(() => {
           this._notification.error(Language.translations.PAYMENT_ERROR, true);
           // TODO STJS-242 should create an ApplePayError which maps billing and customer errors
           this.session.completePayment({ status: this.getPaymentFailureStatus(), errors: [] });
+          localStorage.setItem('completePayment', 'true');
         });
     };
   }
@@ -412,6 +413,7 @@ export class ApplePay {
    * Begins Apple Pay payment flow.
    */
   public paymentProcess() {
+    localStorage.setItem('completePayment', 'false');
     this.session = this.getApplePaySessionObject();
     this.onValidateMerchantRequest();
     this.subscribeStatusHandlers();
