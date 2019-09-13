@@ -97,7 +97,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
-    "@babel/runtime": "^7.5.5",
+    "@babel/runtime": "^7.6.0",
     "@types/joi": "^14.3.3",
     "@types/jwt-decode": "^2.2.1",
     "i18next": "^17.0.14",
