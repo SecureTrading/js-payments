@@ -122,9 +122,10 @@ class CardFrames extends RegisterFrames {
    * Gets submit button whether is input or button markup.
    */
   private _getSubmitButton = () => {
+    const form = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR);
     const button =
-      document.querySelector(CardFrames.SUBMIT_BUTTON_AS_BUTTON_MARKUP) ||
-      document.querySelector(CardFrames.SUBMIT_BUTTON_AS_INPUT_MARKUP);
+      form.querySelector(CardFrames.SUBMIT_BUTTON_AS_BUTTON_MARKUP) ||
+      form.querySelector(CardFrames.SUBMIT_BUTTON_AS_INPUT_MARKUP);
     button.textContent = this._translator.translate(Language.translations.PAY);
     return button;
   };
