@@ -24,6 +24,8 @@ All notable changes to this project will be documented in this file.
 - Blocking form after succeeded payment in some cases.
 - Button targetting is now restricted to the st-form payment form only rather than the whole document.
 - VisaCheckout/ApplePay messages correctly display at the end of the payment.
+- Correct the supported networks for v3 of ApplePay.
+- Fix the link to the Browser Stack README badge.
 
 ## 2.0.0-beta.1
 
