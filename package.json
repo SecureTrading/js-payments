@@ -96,7 +96,7 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.4.4",
+    "@babel/polyfill": "^7.6.0",
     "@babel/runtime": "^7.6.0",
     "@types/joi": "^14.3.3",
     "@types/jwt-decode": "^2.2.1",
