@@ -57,7 +57,7 @@ export class ApplePay {
   }
 
   public static APPLE_PAY_BUTTON_ID: string = 'st-apple-pay';
-  public static APPLE_PAY_MIN_VERSION: number = 2;
+  public static APPLE_PAY_MIN_VERSION: number = 3;
   public static APPLE_PAY_MAX_VERSION: number = 5;
   public static AVAILABLE_BUTTON_STYLES = ['black', 'white', 'white-outline'];
   public static AVAILABLE_BUTTON_TEXTS = ['plain', 'buy', 'book', 'donate', 'check-out', 'subscribe'];
@@ -71,7 +71,7 @@ export class ApplePay {
     'privateLabel',
     'visa'
   ];
-  public static VERSION_3_4_SUPPORTED_NETWORKS = ApplePay.BASIC_SUPPORTED_NETWORKS.concat([
+  public static VERSION_4_SUPPORTED_NETWORKS = ApplePay.BASIC_SUPPORTED_NETWORKS.concat([
     'cartesBancaires',
     'eftpos',
     'electron',
@@ -172,7 +172,7 @@ export class ApplePay {
       this.applePayVersion > ApplePay.APPLE_PAY_MIN_VERSION &&
       this.applePayVersion < ApplePay.APPLE_PAY_MAX_VERSION
     ) {
-      this.paymentRequest.supportedNetworks = ApplePay.VERSION_3_4_SUPPORTED_NETWORKS;
+      this.paymentRequest.supportedNetworks = ApplePay.VERSION_4_SUPPORTED_NETWORKS;
     } else {
       this.paymentRequest.supportedNetworks = ApplePay.VERSION_5_SUPPORTED_NETWORKS;
     }

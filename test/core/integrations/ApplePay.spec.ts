@@ -38,13 +38,13 @@ describe('Apple Pay', () => {
     it('should return true if browser supported', () => {
       const { instance } = ApplePayFixture();
       (window as any).ApplePaySession.supportsVersion = jest.fn().mockReturnValue(true);
-      expect(instance.ifBrowserSupportsApplePayVersion(3)).toBeTruthy();
+      expect(instance.ifBrowserSupportsApplePayVersion(4)).toBeTruthy();
     });
     // then
     it('should return false if browser supported', () => {
       const { instance } = ApplePayFixture();
       (window as any).ApplePaySession.supportsVersion = jest.fn().mockReturnValue(false);
-      expect(instance.ifBrowserSupportsApplePayVersion(3)).not.toBeTruthy();
+      expect(instance.ifBrowserSupportsApplePayVersion(4)).not.toBeTruthy();
     });
   });
 
@@ -115,12 +115,12 @@ describe('Apple Pay', () => {
 
     // then
     it(`should set proper networks when Apple Pay version is equal ${applePayVersions[2]}`, () => {
-      setPropertiesForVersion(applePayVersions[2], ApplePay.VERSION_3_4_SUPPORTED_NETWORKS);
+      setPropertiesForVersion(applePayVersions[2], ApplePay.VERSION_4_SUPPORTED_NETWORKS);
     });
 
     // then
     it(`should set proper networks when Apple Pay version is equal ${applePayVersions[1]}`, () => {
-      setPropertiesForVersion(applePayVersions[1], ApplePay.VERSION_3_4_SUPPORTED_NETWORKS);
+      setPropertiesForVersion(applePayVersions[1], ApplePay.BASIC_SUPPORTED_NETWORKS);
     });
 
     // then
