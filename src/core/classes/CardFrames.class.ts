@@ -122,9 +122,10 @@ class CardFrames extends RegisterFrames {
    * Gets submit button whether is input or button markup.
    */
   private _getSubmitButton = () => {
+    const form = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR);
     const button =
-      document.querySelector(CardFrames.SUBMIT_BUTTON_AS_BUTTON_MARKUP) ||
-      document.querySelector(CardFrames.SUBMIT_BUTTON_AS_INPUT_MARKUP);
+      form.querySelector(CardFrames.SUBMIT_BUTTON_AS_BUTTON_MARKUP) ||
+      form.querySelector(CardFrames.SUBMIT_BUTTON_AS_INPUT_MARKUP);
     button.textContent = this._translator.translate(Language.translations.PAY);
     return button;
   };
@@ -138,7 +139,7 @@ class CardFrames extends RegisterFrames {
     this._securityCode = new Element();
     this._animatedCard = new Element();
 
-    this._cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, this.styles, { ...this.params, origin: this.origin });
+    this._cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, this.styles, this.params);
     this._cardNumberMounted = this._cardNumber.mount(Selectors.CARD_NUMBER_IFRAME);
     this.elementsToRegister.push(this._cardNumberMounted);
 
