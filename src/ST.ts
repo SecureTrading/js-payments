@@ -19,6 +19,7 @@ import {
   IConfigSchema,
   IWalletConfig
 } from './core/models/Config';
+import MessageBus from './core/shared/MessageBus';
 import Selectors from './core/shared/Selectors';
 import { IStyles } from './core/shared/Styler';
 import Utils from './core/shared/Utils';
@@ -250,10 +251,13 @@ class ST {
   private readonly _submitCallback: any;
   private readonly _threedinit: string;
   private commonFrames: CommonFrames;
+  private _messageBus: MessageBus;
+  private _updateJWT: boolean;
 
   constructor(config: IConfig) {
     const ga = new GoogleAnalytics();
-    const { animatedCard, init, submitCallback, translations } = config;
+    this._messageBus = new MessageBus();
+    const { animatedCard, init, submitCallback, translations, updateJWT } = config;
     if (init) {
       const {
         init: { cachetoken, threedinit }
@@ -264,6 +268,7 @@ class ST {
     this._animatedCard = animatedCard;
     this._submitCallback = submitCallback;
     this._config = ST._addDefaults(config);
+    this._updateJWT = updateJWT;
     Utils.setLocalStorageItem(ST.TRANSLATION_STORAGE_NAME, translations);
     ST._validateConfig(this._config, IConfigSchema);
     this._setClassProperties(this._config);
@@ -324,6 +329,13 @@ class ST {
     return new visa(config, this._jwt, this._gatewayUrl);
   }
 
+  public updateJWT() {
+    const messageBusEvent: IMessageBusEvent = {
+      type: MessageBus.EVENTS_PUBLIC.THREEDINIT
+    };
+    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+  }
+
   /**
    * Initializes Cardinal Commerce configuration.
    * @param config
@@ -331,7 +343,14 @@ class ST {
    */
   private CardinalCommerce(config: IWalletConfig) {
     const cardinal = environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce;
-    return new cardinal(config.startOnLoad, this._jwt, config.requestTypes, this._cachetoken, this._threedinit);
+    return new cardinal(
+      config.startOnLoad,
+      this._jwt,
+      config.requestTypes,
+      this._cachetoken,
+      this._threedinit,
+      this._updateJWT
+    );
   }
 
   /**

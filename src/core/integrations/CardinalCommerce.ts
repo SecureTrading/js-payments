@@ -42,13 +42,22 @@ export class CardinalCommerce {
   private readonly _requestTypes: string[];
   private readonly _threedinit: string;
   private _notification: Notification;
+  private _updateJWT: boolean;
 
-  constructor(startOnLoad: boolean, jwt: string, requestTypes: string[], cachetoken?: string, threedinit?: string) {
+  constructor(
+    startOnLoad: boolean,
+    jwt: string,
+    requestTypes: string[],
+    cachetoken?: string,
+    threedinit?: string,
+    updateJWT?: boolean
+  ) {
     this._startOnLoad = startOnLoad;
     this._jwt = jwt;
     this._threedinit = threedinit;
     this._cachetoken = cachetoken ? cachetoken : '';
     this._requestTypes = requestTypes;
+    this._updateJWT = updateJWT;
     this.messageBus = new MessageBus();
     this._notification = new Notification();
     this._onInit();
@@ -235,8 +244,10 @@ export class CardinalCommerce {
   private _onLoadControlFrame() {
     if (this._cachetoken) {
       this._byPassInitRequest();
-    } else {
+    } else if (!this._updateJWT) {
       this._threeDInitRequest();
+    } else {
+      return false;
     }
   }
 

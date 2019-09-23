@@ -14,6 +14,7 @@ interface IConfig {
   submitFields?: string[];
   submitOnSuccess?: boolean;
   submitOnError?: boolean;
+  updateJWT?: boolean;
   translations?: {};
 }
 
@@ -56,7 +57,8 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
   submitOnError: Joi.boolean(),
   submitOnSuccess: Joi.boolean(),
   threedinit: Joi.string(),
-  translations: Joi.object()
+  translations: Joi.object(),
+  updateJWT: Joi.boolean()
 });
 
 const IComponentsConfigSchema = Joi.object().keys({
