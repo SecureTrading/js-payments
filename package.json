@@ -1,6 +1,6 @@
 {
   "name": "js-payments",
-  "version": "2.0.0-beta.1",
+  "version": "2.0.0-beta.2",
   "description": "> A JavaScript interface for allowing tokenisation and authorisation of payments through SecureTrading.",
   "private": true,
   "browserslist": [
@@ -21,7 +21,7 @@
     "prod": "npm run build",
     "test": "jest --watchAll",
     "coverage": "jest --coverage",
-    "snyk": "snyk test --dev --org=secure-trading",
+    "snyk": "snyk test --org=secure-trading",
     "testdocker": "docker pull \"securetrading1/js-payments-testing:$DOCKER_BRANCH\" && docker run -d -p 8443:8443 -p 8760:8760 -it \"securetrading1/js-payments-testing:$DOCKER_BRANCH\"",
     "behave": "npm run testdocker && cd js-payments-testing &&",
     "export:translations": "cross-env-shell i18next-conv -l '$npm_package_config_locale' -s ./src/core/translations/$npm_package_config_locale.json -t ./translations/$npm_package_config_locale.po",
