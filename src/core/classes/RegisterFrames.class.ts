@@ -33,7 +33,7 @@ export default class RegisterFrames {
     this.jwt = jwt;
     this.stJwt = new StJwt(jwt);
     this.origin = origin;
-    this.params = { locale: this.stJwt.locale };
+    this.params = { locale: this.stJwt.locale, origin: this.origin };
   }
 
   /**
