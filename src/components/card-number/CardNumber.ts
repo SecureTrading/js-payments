@@ -43,13 +43,6 @@ export default class CardNumber extends FormField {
   }
 
   /**
-   * getAllowedParams()
-   */
-  protected getAllowedParams() {
-    return super.getAllowedParams().concat(['origin']);
-  }
-
-  /**
    * getLabel()
    */
   protected getLabel(): string {
