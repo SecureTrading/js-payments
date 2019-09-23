@@ -69,7 +69,7 @@ export class ApplePay {
   }
 
   private static APPLE_PAY_BUTTON_ID: string = 'st-apple-pay';
-  private static APPLE_PAY_MIN_VERSION: number = 2;
+  private static APPLE_PAY_MIN_VERSION: number = 3;
   private static APPLE_PAY_MAX_VERSION: number = 5;
   private static AVAILABLE_BUTTON_STYLES = ['black', 'white', 'white-outline'];
   private static AVAILABLE_BUTTON_TEXTS = ['plain', 'buy', 'book', 'donate', 'check-out', 'subscribe'];
@@ -83,7 +83,7 @@ export class ApplePay {
     'privateLabel',
     'visa'
   ];
-  private static VERSION_3_4_SUPPORTED_NETWORKS = ApplePay.BASIC_SUPPORTED_NETWORKS.concat([
+  private static VERSION_4_SUPPORTED_NETWORKS = ApplePay.BASIC_SUPPORTED_NETWORKS.concat([
     'cartesBancaires',
     'eftpos',
     'electron',
@@ -130,8 +130,9 @@ export class ApplePay {
     this.jwt = jwt;
     this._completion = {
       errors: [],
-      status: this.getPaymentSuccessStatus()
+      status: ApplePaySession ? this.getPaymentSuccessStatus() : ''
     };
+    localStorage.setItem('completePayment', '');
     this._notification = new Notification();
     this._merchantId = merchantId;
     this._placement = placement;
@@ -220,7 +221,7 @@ export class ApplePay {
       this.applePayVersion > ApplePay.APPLE_PAY_MIN_VERSION &&
       this.applePayVersion < ApplePay.APPLE_PAY_MAX_VERSION
     ) {
-      this._paymentRequest.supportedNetworks = ApplePay.VERSION_3_4_SUPPORTED_NETWORKS;
+      this._paymentRequest.supportedNetworks = ApplePay.VERSION_4_SUPPORTED_NETWORKS;
     } else {
       this._paymentRequest.supportedNetworks = ApplePay.VERSION_5_SUPPORTED_NETWORKS;
     }
@@ -241,9 +242,7 @@ export class ApplePay {
       : (this._buttonText = ApplePay.AVAILABLE_BUTTON_TEXTS[0]);
 
     // tslint:disable-next-line: max-line-length
-    this._applePayButtonProps.style = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${
-      this._buttonText
-    }; -apple-pay-button-style: ${this._buttonStyle}`;
+    this._applePayButtonProps.style = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${this._buttonText}; -apple-pay-button-style: ${this._buttonStyle}`;
   }
 
   /**
@@ -367,9 +366,12 @@ export class ApplePay {
           this._session.completePayment(this._completion);
           this._displayNotification(errorcode);
           GoogleAnalytics.sendGaData('event', 'Apple Pay', 'payment', 'Apple Pay payment completed');
+          localStorage.setItem('completePayment', 'true');
         })
         .catch(() => {
           this._notification.error(Language.translations.PAYMENT_ERROR, true);
+          this._session.completePayment({ status: this.getPaymentFailureStatus(), errors: [] });
+          localStorage.setItem('completePayment', 'true');
         });
     };
   }
@@ -457,6 +459,7 @@ export class ApplePay {
    * @private
    */
   private _paymentProcess() {
+    localStorage.setItem('completePayment', 'false');
     this._session = this.getApplePaySessionObject();
     this._onValidateMerchantRequest();
     this._subscribeStatusHandlers();

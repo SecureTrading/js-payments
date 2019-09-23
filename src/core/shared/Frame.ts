@@ -43,7 +43,7 @@ export default class Frame {
   }
 
   protected getAllowedParams() {
-    return ['locale'];
+    return ['locale', 'origin'];
   }
 
   protected getAllowedStyles() {

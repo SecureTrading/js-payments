@@ -4,6 +4,7 @@ import DomMethods from '../shared/DomMethods';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
 import { IStyles } from '../shared/Styler';
+import Validation from '../shared/Validation';
 import RegisterFrames from './RegisterFrames.class';
 
 /**
@@ -18,7 +19,7 @@ class CommonFrames extends RegisterFrames {
     this._requestTypes = requestTypes;
   }
 
-  private static readonly COMPLETED_REQUEST_TYPES = ['AUTH', 'CACHETOKENISE'];
+  private static readonly COMPLETED_REQUEST_TYPES = ['AUTH', 'CACHETOKENISE', 'ACCOUNTCHECK'];
   public elementsTargets: any;
   public elementsToRegister: HTMLElement[];
   private _controlFrame: Element;
@@ -27,8 +28,10 @@ class CommonFrames extends RegisterFrames {
   private _notificationFrame: Element;
   private _notificationFrameMounted: HTMLElement;
   private _requestTypes: string[];
+  private _localStoreValue: string;
   private readonly _gatewayUrl: string;
   private readonly _merchantForm: HTMLFormElement;
+  private _validation: Validation;
   private readonly _submitCallback: any;
   private readonly _submitFields: string[];
   private readonly _submitOnError: boolean;
@@ -50,6 +53,7 @@ class CommonFrames extends RegisterFrames {
     this._gatewayUrl = gatewayUrl;
     this._messageBus = new MessageBus(origin);
     this._merchantForm = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR) as HTMLFormElement;
+    this._validation = new Validation();
     this._submitCallback = submitCallback;
     this._submitFields = submitFields;
     this._submitOnError = submitOnError;
@@ -187,6 +191,7 @@ class CommonFrames extends RegisterFrames {
    */
   private _onTransactionComplete(data: any) {
     if ((this._isTransactionFinished(data) || data.errorcode !== '0') && this._submitCallback) {
+      this._validation.blockForm(false);
       this._submitCallback(data);
     }
     if (this._shouldSubmitForm(data)) {
@@ -213,7 +218,16 @@ class CommonFrames extends RegisterFrames {
    */
   private _setTransactionCompleteListener() {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE, (data: any) => {
-      this._onTransactionComplete(data);
+      if (data.walletsource === 'APPLEPAY') {
+        const localStore = localStorage.getItem('completePayment');
+        setTimeout(() => {
+          if (localStore === 'true') {
+            this._onTransactionComplete(data);
+          }
+        }, 3000);
+      } else {
+        this._onTransactionComplete(data);
+      }
     });
   }
 
