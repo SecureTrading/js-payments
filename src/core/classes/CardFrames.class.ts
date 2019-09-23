@@ -145,7 +145,7 @@ class CardFrames extends RegisterFrames {
     this._securityCode = new Element();
     this._animatedCard = new Element();
 
-    this._cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, cardNumber, { ...this.params, origin: this.origin });
+    this._cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, cardNumber, this.params);
     this._cardNumberMounted = this._cardNumber.mount(Selectors.CARD_NUMBER_IFRAME);
     this.elementsToRegister.push(this._cardNumberMounted);
 
