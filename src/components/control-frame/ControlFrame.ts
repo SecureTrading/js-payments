@@ -188,10 +188,6 @@ class ControlFrame extends Frame {
    * @private
    */
   private _onSubmit(data: any) {
-    // if (this._updateJWT) {
-    //   // @TODO: trigger submit.form();
-    //
-    // }
     if (data !== undefined && data.requestTypes !== undefined) {
       this._onSetRequestTypesEvent(data);
     }
