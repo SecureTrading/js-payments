@@ -224,6 +224,7 @@ class StCodec {
 
   public static updateJWTValue(newJWT: string) {
     StCodec.jwt = newJWT ? newJWT : StCodec.jwt;
+    console.log(newJWT);
     return newJWT;
   }
 
