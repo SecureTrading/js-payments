@@ -5,6 +5,7 @@ import 'whatwg-fetch';
 import CardFrames from './core/classes/CardFrames.class';
 import CommonFrames from './core/classes/CommonFrames.class';
 import { MerchantFields } from './core/classes/MerchantFields';
+import { StCodec } from './core/classes/StCodec.class';
 import ApplePay from './core/integrations/ApplePay';
 import ApplePayMock from './core/integrations/ApplePayMock';
 import { CardinalCommerce } from './core/integrations/CardinalCommerce';
@@ -329,11 +330,8 @@ class ST {
     return new visa(config, this._jwt, this._gatewayUrl);
   }
 
-  public updateJWT() {
-    const messageBusEvent: IMessageBusEvent = {
-      type: MessageBus.EVENTS_PUBLIC.THREEDINIT
-    };
-    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+  public updateJWT(newJWT: string) {
+    StCodec.updateJWTValue(newJWT);
   }
 
   /**

@@ -222,6 +222,11 @@ class StCodec {
 
   private readonly _requestId: string;
 
+  public static updateJWTValue(newJWT: string) {
+    StCodec.jwt = newJWT ? newJWT : StCodec.jwt;
+    return newJWT;
+  }
+
   constructor(jwt: string, parentOrigin?: string) {
     this._requestId = StCodec._createRequestId();
     StCodec.jwt = jwt;

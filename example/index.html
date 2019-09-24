@@ -97,7 +97,7 @@
         var parsedUrl = new URL(window.location.href);
 
         var cardinalJwt =
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU2OTIzNzcyNy42NjY2NTE3LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.bRb_qxifHl8ujd4i6X9BpJwBzr5wvrYzxNgavH8kWzg';
+          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU2OTMyMTg3Ny42Mjk1Nzk1LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.cFNLRRIPMm46JHNb1He1USJzjn5wyjtVVSL2KDvU7N4';
         var cardinalJwtFR =
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU3NDExNDIzLjI0NTQ3LCJwYXlsb2FkIjp7ImN1c3RvbWVydG93biI6IkJhbmdvciIsImJpbGxpbmdwb3N0Y29kZSI6IlRFMTIgM1NUIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsImN1c3RvbWVycHJlbWlzZSI6IjEyIiwiYmlsbGluZ2xhc3RuYW1lIjoiTmFtZSIsImxvY2FsZSI6ImZyX0ZSIiwiYmFzZWFtb3VudCI6IjEwMDAiLCJiaWxsaW5nZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiYmlsbGluZ3ByZW1pc2UiOiIxMiIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0MSIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiYmlsbGluZ3N0cmVldCI6IlRlc3Qgc3RyZWV0IiwiY3VzdG9tZXJzdHJlZXQiOiJUZXN0IHN0cmVldCIsImN1c3RvbWVycG9zdGNvZGUiOiJURTEyIDNTVCIsImN1c3RvbWVybGFzdG5hbWUiOiJOYW1lIiwiYmlsbGluZ3RlbGVwaG9uZSI6IjAxMjM0IDExMTIyMiIsImJpbGxpbmdmaXJzdG5hbWUiOiJUZXN0IiwiYmlsbGluZ3Rvd24iOiJCYW5nb3IiLCJiaWxsaW5ndGVsZXBob25ldHlwZSI6Ik0ifX0.OQ7PaErcXj7vmR4ob_uzXv3LqoLYmD3tP6cof2FCfkQ';
         var applePayVisaCheckoutJwt =
@@ -139,7 +139,7 @@
             }
           },
           animatedCard: true,
-          submitOnSuccess: false,
+          submitOnSuccess: true,
           submitCallback: function someFancyfunction(data) {
             var stringified = JSON.stringify(data);
             var testVariable = 'This is what we have got after submit' + stringified;
@@ -187,7 +187,9 @@
         });
 
         document.getElementById('example-form-amount').addEventListener('input', function() {
-          st.updateJWT();
+          st.updateJWT(
+            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU2OTMyMzg0My40MTY1MzUxLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.jnCkXy35b_jxnKzTIWKBP5BFw_m2NsRjnoGpyZ9xzzo'
+          );
         });
       })();
     </script>
