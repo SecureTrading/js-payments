@@ -191,7 +191,6 @@ class ControlFrame extends Frame {
     if (data !== undefined && data.requestTypes !== undefined) {
       this._onSetRequestTypesEvent(data);
     }
-
     this._requestPayment(data);
   }
 
@@ -295,8 +294,17 @@ class ControlFrame extends Frame {
    */
   private _requestPayment(data: any) {
     const dataInJwt = data ? data.dataInJwt : false;
-    const { validity, card } = this._validation.formValidation(dataInJwt, this._isPaymentReady, this._formFields);
+    console.log(dataInJwt);
+    const { validity, card } = this._validation.formValidation(
+      dataInJwt,
+      this._isPaymentReady,
+      this._formFields,
+      data.updateJWT
+    );
     if (validity) {
+      this._messageBus.publish({
+        type: MessageBus.EVENTS_PUBLIC.THREEDINIT
+      });
       this._payment
         .threeDQueryRequest(this._preThreeDRequestTypes, card, this._merchantFormData)
         .then((result: any) => {

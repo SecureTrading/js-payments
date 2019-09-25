@@ -34,6 +34,7 @@ class CardFrames extends RegisterFrames {
   private _translator: Translator;
   private readonly _payMessage: string;
   private readonly _processingMessage: string;
+  private _updateJWT: boolean;
 
   constructor(
     jwt: string,
@@ -42,7 +43,8 @@ class CardFrames extends RegisterFrames {
     styles: IStyles,
     paymentTypes: string[],
     defaultPaymentType: string,
-    animatedCard: boolean
+    animatedCard: boolean,
+    udpateJWT: boolean
   ) {
     super(jwt, origin, componentIds, styles, animatedCard);
     this.hasAnimatedCard = animatedCard;
@@ -53,6 +55,7 @@ class CardFrames extends RegisterFrames {
     this._initSubscribes();
     this.onInit();
     this._translator = new Translator(this.params.locale);
+    this._updateJWT = udpateJWT;
     this._getSubmitButton();
     this._payMessage = this._translator.translate(Language.translations.PAY);
     this._processingMessage = `${this._translator.translate(Language.translations.PROCESSING)} ...`;
@@ -208,7 +211,7 @@ class CardFrames extends RegisterFrames {
   private _submitFormListener() {
     document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).addEventListener('submit', (event: Event) => {
       event.preventDefault();
-      this._publishSubmitEvent();
+      this._publishSubmitEvent(this._updateJWT);
     });
   }
 
@@ -227,9 +230,10 @@ class CardFrames extends RegisterFrames {
   /**
    * Publishes message bus submit event.
    */
-  private _publishSubmitEvent() {
+  private _publishSubmitEvent(updateJWT: boolean) {
     const messageBusEvent: IMessageBusEvent = {
-      type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
+      type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM,
+      data: { updateJWT }
     };
     this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }

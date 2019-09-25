@@ -245,6 +245,7 @@ export class CardinalCommerce {
     if (this._cachetoken) {
       this._byPassInitRequest();
     } else if (!this._updateJWT) {
+      // @TODO: need to go back here when merchant submits the form
       this._threeDInitRequest();
     } else {
       return false;

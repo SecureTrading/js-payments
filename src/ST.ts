@@ -228,12 +228,22 @@ class ST {
     componentIds: {},
     styles: IStyles,
     config: IComponentsConfig,
-    animatedCard: boolean
+    animatedCard: boolean,
+    updateJWT: boolean
   ) {
     const { defaultPaymentType, paymentTypes, startOnLoad } = config;
     let cardFrames: object;
     if (!startOnLoad) {
-      cardFrames = new CardFrames(jwt, origin, componentIds, styles, paymentTypes, defaultPaymentType, animatedCard);
+      cardFrames = new CardFrames(
+        jwt,
+        origin,
+        componentIds,
+        styles,
+        paymentTypes,
+        defaultPaymentType,
+        animatedCard,
+        updateJWT
+      );
     }
     return cardFrames;
   }
@@ -302,7 +312,8 @@ class ST {
       this._componentIds,
       this._styles,
       targetConfig,
-      this._animatedCard
+      this._animatedCard,
+      this._updateJWT
     );
     this.commonFrames.requestTypes = targetConfig.requestTypes;
     this.CardinalCommerce(targetConfig);
