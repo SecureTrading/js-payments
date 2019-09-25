@@ -10,7 +10,10 @@ class GoogleAnalytics {
    */
   public static sendGaData(hitType: string, eventCategory: string, eventAction: string, eventLabel: string) {
     // @ts-ignore
-    window.ga('send', { hitType, eventCategory, eventAction, eventLabel });
+    if (window.ga) {
+      // @ts-ignore
+      window.ga('send', { hitType, eventCategory, eventAction, eventLabel });
+    }
   }
 
   private static GA_MEASUREMENT_ID: string = environment.GA_MEASUREMENT_ID;

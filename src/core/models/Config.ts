@@ -2,6 +2,7 @@ import Joi from 'joi';
 import { IStyles } from '../shared/Styler';
 
 interface IConfig {
+  analytics?: boolean;
   animatedCard: boolean;
   componentIds?: any;
   datacenterurl?: string;
@@ -36,6 +37,7 @@ interface IByPassInit {
 }
 
 const IConfigSchema: Joi.JoiObject = Joi.object().keys({
+  analytics: Joi.boolean(),
   animatedCard: Joi.boolean(),
   cachetoken: Joi.string(),
   componentIds: Joi.object().keys({

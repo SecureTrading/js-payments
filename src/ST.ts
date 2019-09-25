@@ -266,9 +266,11 @@ class ST {
   private _updateJWT: boolean;
 
   constructor(config: IConfig) {
-    const ga = new GoogleAnalytics();
     this._messageBus = new MessageBus();
-    const { animatedCard, init, submitCallback, translations, updateJWT } = config;
+    const { analytics, animatedCard, init, submitCallback, translations, updateJWT } = config;
+    if (analytics) {
+      const ga = new GoogleAnalytics();
+    }
     if (init) {
       const {
         init: { cachetoken, threedinit }
