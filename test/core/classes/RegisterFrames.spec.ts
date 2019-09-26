@@ -52,6 +52,31 @@ describe('RegisterFrames', () => {
       expect(instance.setElementsFields()).toEqual([]);
     });
   });
+  // given
+  describe('_getStyles', () => {
+    const { instance } = registerFramesFixture();
+    // then
+    it('should return empty as defaultStyles', () => {
+      const styles = {};
+      // @ts-ignore
+      const actual = instance._getStyles(styles);
+      expect(actual).toEqual({ defaultStyles: {} });
+    });
+    // then
+    it('should return flat structure as defaultStyles', () => {
+      const styles = { 'my-style': 'something' };
+      // @ts-ignore
+      const actual = instance._getStyles(styles);
+      expect(actual).toEqual({ defaultStyles: { 'my-style': 'something' } });
+    });
+    // then
+    it('should return nested structure as nested structure', () => {
+      const styles = { cardNumber: { 'my-style': 'something' } };
+      // @ts-ignore
+      const actual = instance._getStyles(styles);
+      expect(actual).toEqual({ cardNumber: { 'my-style': 'something' } });
+    });
+  });
 });
 
 function registerFramesFixture() {

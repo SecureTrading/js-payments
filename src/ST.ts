@@ -252,8 +252,10 @@ class ST {
   private commonFrames: CommonFrames;
 
   constructor(config: IConfig) {
-    const ga = new GoogleAnalytics();
-    const { animatedCard, init, submitCallback, translations } = config;
+    const { analytics, animatedCard, init, submitCallback, translations } = config;
+    if (analytics) {
+      const ga = new GoogleAnalytics();
+    }
     if (init) {
       const {
         init: { cachetoken, threedinit }

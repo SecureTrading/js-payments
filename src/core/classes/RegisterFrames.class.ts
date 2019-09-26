@@ -24,7 +24,7 @@ export default class RegisterFrames {
     animatedCard: boolean,
     submitCallback?: any
   ) {
-    this.styles = styles;
+    this.styles = this._getStyles(styles);
     this.componentIds = componentIds;
     this.submitCallback = submitCallback;
     this.hasAnimatedCard = animatedCard;
@@ -60,5 +60,20 @@ export default class RegisterFrames {
    */
   protected setElementsFields(): any {
     return [];
+  }
+
+  /**
+   * Set defaultStyles if styles are defined as a flat structure
+   * @param styles
+   */
+  private _getStyles(styles: any) {
+    // If we have an object as a value then we assume we are in the new format otherwise we are a flat array
+    for (const key in styles) {
+      if (styles[key] instanceof Object) {
+        return styles;
+      }
+    }
+    styles = { defaultStyles: styles };
+    return styles;
   }
 }
