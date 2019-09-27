@@ -97,7 +97,7 @@
         var parsedUrl = new URL(window.location.href);
 
         var cardinalJwt =
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU2OTQwODU4Ni4wOTkyMzkzLCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIxMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.pg4Qisz_Gv5lPvyNTAY-LUdyJ68dO9K67592Dr5Dt4o';
+          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU2OTU3MDQxMS43MTE3Nzg0LCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIxMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.Z-xRrTVFxH5JQeBFandirjxebUyM9YhbQE8pHk5ndxA';
         var cardinalJwtFR =
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU3NDExNDIzLjI0NTQ3LCJwYXlsb2FkIjp7ImN1c3RvbWVydG93biI6IkJhbmdvciIsImJpbGxpbmdwb3N0Y29kZSI6IlRFMTIgM1NUIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsImN1c3RvbWVycHJlbWlzZSI6IjEyIiwiYmlsbGluZ2xhc3RuYW1lIjoiTmFtZSIsImxvY2FsZSI6ImZyX0ZSIiwiYmFzZWFtb3VudCI6IjEwMDAiLCJiaWxsaW5nZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiYmlsbGluZ3ByZW1pc2UiOiIxMiIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0MSIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiYmlsbGluZ3N0cmVldCI6IlRlc3Qgc3RyZWV0IiwiY3VzdG9tZXJzdHJlZXQiOiJUZXN0IHN0cmVldCIsImN1c3RvbWVycG9zdGNvZGUiOiJURTEyIDNTVCIsImN1c3RvbWVybGFzdG5hbWUiOiJOYW1lIiwiYmlsbGluZ3RlbGVwaG9uZSI6IjAxMjM0IDExMTIyMiIsImJpbGxpbmdmaXJzdG5hbWUiOiJUZXN0IiwiYmlsbGluZ3Rvd24iOiJCYW5nb3IiLCJiaWxsaW5ndGVsZXBob25ldHlwZSI6Ik0ifX0.OQ7PaErcXj7vmR4ob_uzXv3LqoLYmD3tP6cof2FCfkQ';
         var applePayVisaCheckoutJwt =
@@ -112,24 +112,25 @@
               'background-color-input': 'AliceBlue'
             },
             cardNumber: {
-              'background-color-input-error': '#e5e8ac',
-              'color-input-error': '#721c24',
-              'font-size-input': '9px',
-              'line-height-input': '9px'
+              'background-color-input': '#F4F5F7',
+              'background-color-input-error': '#F4F5F7',
+              'color-input-error': '#000',
+              'font-size-input': '14px',
+              'line-height-input': '12px'
             },
             expirationDate: {
-              'background-color-input': 'red',
+              'background-color-input': '#F4F5F7',
               'background-color-input-error': '#f8d7da',
-              'color-input-error': '#55FF33',
-              'font-size-input': '12px',
+              'color-input-error': '#000',
+              'font-size-input': '14px',
               'line-height-input': '12px'
             },
             securityCode: {
-              'background-color-input': '#FFF333',
+              'background-color-input': '#F4F5F7',
               'background-color-input-error': '#f8d7da',
-              'color-input-error': '#3358FF',
-              'font-size-input': '20px',
-              'line-height-input': '20px'
+              'color-input-error': '#000',
+              'font-size-input': '14px',
+              'line-height-input': '12px'
             },
             notificationFrame: {
               'color-error': '#FFF333'
@@ -189,7 +190,7 @@
 
         document.getElementById('example-form-amount').addEventListener('input', function() {
           st.updateJWT(
-            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU2OTQwODYxMS41MDg0ODk4LCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIxMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.X2BjLGo5rtF818G3QSM6x5sGi_EgQFe5yu1lBiv0pwQ'
+            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU2OTU3MDQxMS43MTE3Nzg0LCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIxMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.Z-xRrTVFxH5JQeBFandirjxebUyM9YhbQE8pHk5ndxA'
           );
         });
       })();
