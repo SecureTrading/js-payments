@@ -108,6 +108,11 @@ class StCodec {
     }
   }
 
+  public static updateJWTValue(newJWT: string) {
+    StCodec.jwt = newJWT ? newJWT : StCodec.jwt;
+    return newJWT;
+  }
+
   private static _notification = new Notification();
   private static _locale: string;
   private static _messageBus = new MessageBus();
@@ -221,12 +226,6 @@ class StCodec {
   }
 
   private readonly _requestId: string;
-
-  public static updateJWTValue(newJWT: string) {
-    StCodec.jwt = newJWT ? newJWT : StCodec.jwt;
-    console.log(newJWT);
-    return newJWT;
-  }
 
   constructor(jwt: string, parentOrigin?: string) {
     this._requestId = StCodec._createRequestId();

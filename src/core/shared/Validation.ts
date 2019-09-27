@@ -226,8 +226,8 @@ export default class Validation extends Frame {
       this.blockForm(true);
     }
     return {
-      validity: (this._isPaymentReady && this._isFormValid) || (updateJWT && this._isFormValid),
-      card: this._card
+      card: this._card,
+      validity: (this._isPaymentReady && this._isFormValid) || (updateJWT && this._isFormValid)
     };
   }
 

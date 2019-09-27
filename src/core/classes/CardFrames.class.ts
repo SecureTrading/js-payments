@@ -232,8 +232,8 @@ class CardFrames extends RegisterFrames {
    */
   private _publishSubmitEvent(updateJWT: boolean) {
     const messageBusEvent: IMessageBusEvent = {
-      type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM,
-      data: { updateJWT }
+      data: { updateJWT },
+      type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
     this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }

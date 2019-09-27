@@ -294,7 +294,6 @@ class ControlFrame extends Frame {
    */
   private _requestPayment(data: any) {
     const dataInJwt = data ? data.dataInJwt : false;
-    console.log(dataInJwt);
     const { validity, card } = this._validation.formValidation(
       dataInJwt,
       this._isPaymentReady,
