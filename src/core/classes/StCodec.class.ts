@@ -110,6 +110,7 @@ class StCodec {
 
   public static updateJWTValue(newJWT: string) {
     StCodec.jwt = newJWT ? newJWT : StCodec.jwt;
+    StCodec.originalJwt = newJWT ? newJWT : StCodec.originalJwt;
     return newJWT;
   }
 
