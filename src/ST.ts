@@ -344,6 +344,7 @@ class ST {
   }
 
   public updateJWT(newJWT: string) {
+    this._jwt = newJWT;
     StCodec.updateJWTValue(newJWT);
   }
 
