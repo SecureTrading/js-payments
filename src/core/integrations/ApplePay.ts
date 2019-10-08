@@ -120,35 +120,25 @@ export class ApplePay {
   private _requestTypes: string[];
   private _translator: Translator;
 
+  private _merchantId: string;
+  private _paymentRequest: any;
+  private _placement: string;
   private readonly _completion: { errors: []; status: string };
-  private readonly _merchantId: string;
-  private readonly _paymentRequest: any;
-  private readonly _placement: string;
 
   constructor(config: IWalletConfig, jwt: string, gatewayUrl: string) {
-    const { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId, requestTypes } = config;
+    this._notification = new Notification();
+    this._messageBus = new MessageBus();
+    localStorage.setItem('completePayment', '');
     this.jwt = jwt;
     this._completion = {
       errors: [],
       status: ApplePaySession ? this.getPaymentSuccessStatus() : ''
     };
-    localStorage.setItem('completePayment', '');
-    this._notification = new Notification();
-    this._merchantId = merchantId;
-    this._placement = placement;
-    this.payment = new Payment(jwt, gatewayUrl);
-    this._paymentRequest = paymentRequest;
-    this._sitesecurity = sitesecurity;
-    this._requestTypes = requestTypes;
-    this._validateMerchantRequestData.walletmerchantid = merchantId;
-    this._stJwtInstance = new StJwt(jwt);
-    this._stTransportInstance = new StTransport({
-      gatewayUrl,
-      jwt
+    this._configurePaymentProcess(jwt, config, gatewayUrl);
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
+      const { newJwt } = data;
+      this._configurePaymentProcess(newJwt, config, gatewayUrl);
     });
-    this._messageBus = new MessageBus();
-    this._translator = new Translator(this._stJwtInstance.locale);
-    this._onInit(buttonText, buttonStyle);
   }
 
   /**
@@ -208,6 +198,32 @@ export class ApplePay {
 
   protected getPaymentFailureStatus() {
     return ApplePaySession.STATUS_FAILURE;
+  }
+
+  /**
+   * Gathers all of the init methods, sets payment info, attach Apple Pay button and add handlers.
+   * Used in constructor on library init and when updateJWT method has been called.
+   * @param jwt
+   * @param config
+   * @param gatewayUrl
+   * @private
+   */
+  private _configurePaymentProcess(jwt: string, config: IWalletConfig, gatewayUrl: string) {
+    const { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId, requestTypes } = config;
+    this._merchantId = merchantId;
+    this._placement = placement;
+    this.payment = new Payment(jwt, gatewayUrl);
+    this._paymentRequest = paymentRequest;
+    this._sitesecurity = sitesecurity;
+    this._requestTypes = requestTypes;
+    this._validateMerchantRequestData.walletmerchantid = merchantId;
+    this._stJwtInstance = new StJwt(jwt);
+    this._stTransportInstance = new StTransport({
+      gatewayUrl,
+      jwt
+    });
+    this._translator = new Translator(this._stJwtInstance.locale);
+    this._onInit(buttonText, buttonStyle);
   }
 
   /**
