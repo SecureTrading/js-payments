@@ -220,6 +220,7 @@ class ST {
    * @param styles
    * @param config
    * @param animatedCard
+   * @param updateJWT
    * @private
    */
   private static _configureCardFrames(

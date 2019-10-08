@@ -108,9 +108,20 @@ class StCodec {
     }
   }
 
+  /**
+   * Changes JWT on demand.
+   * @param newJWT
+   */
   public static updateJWTValue(newJWT: string) {
     StCodec.jwt = newJWT ? newJWT : StCodec.jwt;
     StCodec.originalJwt = newJWT ? newJWT : StCodec.originalJwt;
+    const messageBusEvent: IMessageBusEvent = {
+      data: {
+        newJwt: StCodec.jwt
+      },
+      type: MessageBus.EVENTS_PUBLIC.UPDATE_JWT
+    };
+    StCodec._messageBus.publish(messageBusEvent, true);
     return newJWT;
   }
 

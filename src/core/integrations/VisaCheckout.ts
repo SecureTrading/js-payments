@@ -59,8 +59,6 @@ export class VisaCheckout {
     SUCCESS: 'payment.success'
   };
 
-  public messageBus: MessageBus;
-
   protected requestTypes: string[];
   protected visaCheckoutButtonProps: any = {
     alt: 'Visa Checkout',
@@ -71,6 +69,7 @@ export class VisaCheckout {
   };
 
   private _buttonSettings: any;
+  private _messageBus: MessageBus;
   private _payment: Payment;
   private _paymentDetails: string;
   private _paymentStatus: string;
@@ -78,8 +77,9 @@ export class VisaCheckout {
   private _sdkAddress: string = environment.VISA_CHECKOUT_URLS.TEST_SDK;
   private _walletSource: string = 'VISACHECKOUT';
   private _notification: Notification;
-  private readonly _livestatus: number = 0;
-  private readonly _placement: string = 'body';
+  private _stJwt: StJwt;
+  private _livestatus: number = 0;
+  private _placement: string = 'body';
 
   /**
    * Init configuration (temporary with some test data).
@@ -97,19 +97,14 @@ export class VisaCheckout {
   };
 
   constructor(config: IWalletConfig, jwt: string, gatewayUrl: string) {
-    this.messageBus = new MessageBus();
+    this._messageBus = new MessageBus();
     this._notification = new Notification();
-    const { merchantId, livestatus, placement, settings, paymentRequest, buttonSettings, requestTypes } = config;
-    const stJwt = new StJwt(jwt);
-    this.payment = new Payment(jwt, gatewayUrl);
-    this._livestatus = livestatus;
-    this._placement = placement;
-    this.requestTypes = requestTypes;
-    this.setInitConfiguration(paymentRequest, settings, stJwt, merchantId);
-    this._buttonSettings = this._setConfiguration({ locale: stJwt.locale }, settings);
-    this.customizeVisaButton(buttonSettings);
-    this._setLiveStatus();
-    this._initVisaFlow();
+    this._stJwt = new StJwt(jwt);
+    this._configurePaymentProcess(jwt, config, gatewayUrl);
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
+      const { newJwt } = data;
+      this._configurePaymentProcess(newJwt, config, gatewayUrl);
+    });
   }
 
   /**
@@ -238,6 +233,29 @@ export class VisaCheckout {
     V.on(VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.CANCEL, () => {
       this.onCancel();
     });
+  }
+
+  /**
+   * Gathers all of the init methods, sets payment info, attach VISA button and add handlers.
+   * Used in constructor on library init and when updateJWT method has been called.
+   * @param jwt
+   * @param config
+   * @param gatewayUrl
+   * @private
+   */
+  private _configurePaymentProcess(jwt: string, config: IWalletConfig, gatewayUrl: string) {
+    const { merchantId, livestatus, placement, settings, paymentRequest, buttonSettings, requestTypes } = config;
+    this._stJwt = new StJwt(jwt);
+    this.payment = new Payment(jwt, gatewayUrl);
+    this._livestatus = livestatus;
+    this._placement = placement;
+    this.requestTypes = requestTypes;
+    this.setInitConfiguration(paymentRequest, settings, this._stJwt, merchantId);
+    this._buttonSettings = this._setConfiguration({ locale: this._stJwt.locale }, settings);
+    this.customizeVisaButton(buttonSettings);
+    this._setLiveStatus();
+    DomMethods.removeAllChildren(this._placement);
+    this._initVisaFlow();
   }
 
   /**
