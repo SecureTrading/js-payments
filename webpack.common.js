@@ -107,6 +107,14 @@ module.exports = {
         force: true
       }
     ]),
+    new CopyPlugin([
+      {
+        from: 'src/json',
+        to: 'json',
+        test: /([^/]+)\/(.+)\.json$/,
+        force: true
+      }
+    ]),
     new StyleLintPlugin(),
     new FriendlyErrorsWebpackPlugin(),
     new webpack.DefinePlugin({
