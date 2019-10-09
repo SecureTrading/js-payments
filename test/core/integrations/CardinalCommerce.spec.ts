@@ -368,7 +368,7 @@ describe('CardinalCommerce', () => {
       expect(DomMethods.insertScript).toHaveBeenCalledTimes(1);
       expect(DomMethods.insertScript).toHaveBeenCalledWith(
         'head',
-        'https://songbirdstag.cardinalcommerce.com/cardinalcruise/v1/songbird.js'
+        'https://songbirdstag.cardinalcommerce.com/edge/v1/songbird.js'
       );
       expect(script.addEventListener).toHaveBeenCalledTimes(1);
       // @ts-ignore

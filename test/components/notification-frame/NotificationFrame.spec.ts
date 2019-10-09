@@ -331,7 +331,7 @@ describe('NotificationFrame', () => {
 
     // then
     it('should window.setTimeout been called', () => {
-      window.setTimeout = jest.fn();
+      jest.spyOn(window, 'setTimeout');
       // @ts-ignore
       instance._autoHide(notificationElementClass);
       expect(window.setTimeout).toHaveBeenCalled();
