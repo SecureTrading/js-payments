@@ -9,7 +9,7 @@ export const environment = {
     MOCK: {
       AUTHENTICATE_CARD_URL: `${MOCK_GATEWAY_URL}/cardinalAuthenticateCard`
     },
-    SONGBIRD_URL: 'https://songbirdstag.cardinalcommerce.com/cardinalcruise/v1/songbird.js'
+    SONGBIRD_URL: 'https://songbird.cardinalcommerce.com/edge/v1/songbird.js'
   },
   FRAME_URL: 'https://webservices.securetrading.net/js/v2',
   GATEWAY_URL,
