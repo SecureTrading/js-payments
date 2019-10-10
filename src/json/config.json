@@ -39,7 +39,7 @@
   "analyticsConfig": true,
   "animatedCardConfig": true,
   "submitOnSuccessConfig": false,
-  "submitCallbackConfig": "function someFancyfunction(data) {var stringified = JSON.stringify(data);var testVariable = 'This is what we have got after submit' + stringified;console.log(testVariable);}",
+  "submitCallbackConfig": "",
   "translationsConfig": {
     "An error occurred": "Wystąpił błąd"
   },

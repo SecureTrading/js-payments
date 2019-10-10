@@ -90,7 +90,6 @@
             return response.json();
           })
           .then(function(data) {
-            window.configurationData = data;
             configurationInit(ST, data);
           });
 
@@ -103,7 +102,6 @@
             analyticsConfig,
             animatedCardConfig,
             submitOnSuccessConfig,
-            submitCallbackConfig,
             translationsConfig,
             componentsConfig,
             applePayConfig,
@@ -126,7 +124,11 @@
             analytics: analyticsConfig,
             animatedCard: animatedCardConfig,
             submitOnSuccess: submitOnSuccessConfig,
-            // submitCallback: JSON.parse(submitCallbackConfig),
+            submitCallback: function someFancyfunction(data) {
+              var stringified = JSON.stringify(data);
+              var testVariable = 'This is what we have got after submit' + stringified;
+              console.log(testVariable);
+            },
             translations: translationsConfig
           });
           st.Components(componentsConfig);
