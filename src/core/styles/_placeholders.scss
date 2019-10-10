@@ -64,8 +64,6 @@
   line-height: $line-height-message; // @param
   margin: $space-outset-message; // @param
   color: $color-error; // @param
-  position: absolute;
-  bottom: 0;
 }
 
 %button {
