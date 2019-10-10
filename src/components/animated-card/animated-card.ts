@@ -1,6 +1,1 @@
-import './animated-card.scss';
-import AnimatedCard from './AnimatedCard';
-
-(() => {
-  return AnimatedCard.ifCardExists() && new AnimatedCard();
-})();
+// TODO: here will be our new standalone version of animated card imported.
