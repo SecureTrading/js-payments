@@ -141,7 +141,7 @@
             : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU2MDk1NDA4OC45Njc5MDM0LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.ehveog4Xds-ak2yOhSgzZd-yzu4JZoC-a3xKqY_HJOU';
           var jwt = parsedUrl.searchParams.get('jwt') || cardinalJwt;
           var st = ST({
-            jwt: cardinalJwt,
+            jwt: jwt,
             styles: secureTradingConfig.stylesConfig,
             analytics: analyticsConfig,
             animatedCard: animatedCardConfig,
@@ -149,7 +149,6 @@
             submitCallback: function someFancyfunction(data) {
               var stringified = JSON.stringify(data);
               var testVariable = 'This is what we have got after submit' + stringified;
-              console.log(testVariable);
             },
             translations: translationsConfig
           });
