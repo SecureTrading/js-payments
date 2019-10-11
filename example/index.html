@@ -90,8 +90,30 @@
             return response.json();
           })
           .then(function(data) {
-            configurationInit(ST, data);
+            if (data) {
+              configurationInit(ST, data);
+            } else {
+              fetchDefaultConfig();
+            }
+          })
+          .catch(function() {
+            fetchDefaultConfig();
           });
+
+        function fetchDefaultConfig() {
+          fetch('./../json/config.json')
+            .then(function(response) {
+              if (response.status !== 200) {
+                return Promise.reject('Default configuration has not been set !');
+              }
+              return response.json();
+            })
+            .then(function(data) {
+              if (data) {
+                configurationInit(ST, data);
+              }
+            });
+        }
 
         function configurationInit(ST, data) {
           const {
