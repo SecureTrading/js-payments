@@ -8,7 +8,6 @@ const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-var HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
 
 module.exports = {
   entry: {
@@ -44,13 +43,12 @@ module.exports = {
         vendor: {
           test: /[\\/]node_modules[\\/]/,
           name: 'vendor',
-          enforce: true,
-          chunks: 'all'
+          enforce: true
         }
       }
-    },
-    runtimeChunk: 'single',
-    mangleWasmImports: true
+    }
+    // runtimeChunk: 'single',
+    // mangleWasmImports: true
   },
   plugins: [
     new CleanWebpackPlugin(),
