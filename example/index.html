@@ -116,19 +116,17 @@
         }
 
         function configurationInit(ST, data) {
-          const {
-            cardinalJwtConfig,
-            cardinalJwtFRConfig,
-            applePayVisaCheckoutJwtConfig,
-            secureTradingConfig,
-            analyticsConfig,
-            animatedCardConfig,
-            submitOnSuccessConfig,
-            translationsConfig,
-            componentsConfig,
-            applePayConfig,
-            visaCheckoutConfig
-          } = data;
+          const cardinalJwtConfig = data.cardinalJwtConfig;
+          const cardinalJwtFRConfig = data.cardinalJwtFRConfig;
+          const applePayVisaCheckoutJwtConfig = data.applePayVisaCheckoutJwtConfig;
+          const secureTradingConfig = data.secureTradingConfig;
+          const analyticsConfig = data.analyticsConfig;
+          const animatedCardConfig = data.animatedCardConfig;
+          const submitOnSuccessConfig = data.submitOnSuccessConfig;
+          const translationsConfig = data.translationsConfig;
+          const componentsConfig = data.componentsConfig;
+          const applePayConfig = data.applePayConfig;
+          const visaCheckoutConfig = data.visaCheckoutConfig;
           var parsedUrl = new URL(window.location.href);
           var cardinalJwt = cardinalJwtConfig
             ? cardinalJwtConfig
