@@ -37,20 +37,31 @@ export class CardinalCommerce {
   private _cardinalCommerceJWT: string;
   private _cardinalCommerceCacheToken: string;
   private readonly _cachetoken: string;
+  private readonly _livestatus: number = 0;
   private readonly _startOnLoad: boolean;
   private _jwt: string;
   private readonly _requestTypes: string[];
   private readonly _threedinit: string;
   private _notification: Notification;
+  private _sdkAddress: string = environment.CARDINAL_COMMERCE.SONGBIRD_TEST_URL;
 
-  constructor(startOnLoad: boolean, jwt: string, requestTypes: string[], cachetoken?: string, threedinit?: string) {
+  constructor(
+    startOnLoad: boolean,
+    jwt: string,
+    requestTypes: string[],
+    livestatus: number,
+    cachetoken?: string,
+    threedinit?: string
+  ) {
     this._startOnLoad = startOnLoad;
     this._jwt = jwt;
     this._threedinit = threedinit;
+    this._livestatus = livestatus;
     this._cachetoken = cachetoken ? cachetoken : '';
     this._requestTypes = requestTypes;
     this.messageBus = new MessageBus();
     this._notification = new Notification();
+    this._setLiveStatus();
     this._onInit();
   }
 
@@ -162,7 +173,7 @@ export class CardinalCommerce {
    * Inserts songbird.js and load script.
    */
   protected _threeDSetup() {
-    DomMethods.insertScript('head', environment.CARDINAL_COMMERCE.SONGBIRD_URL).addEventListener('load', () => {
+    DomMethods.insertScript('head', this._sdkAddress).addEventListener('load', () => {
       this._onCardinalLoad();
     });
   }
@@ -273,6 +284,16 @@ export class CardinalCommerce {
       type: MessageBus.EVENTS_PUBLIC.BY_PASS_INIT
     };
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+  }
+
+  /**
+   * Checks if we are processing live transactions or not
+   * @private
+   */
+  private _setLiveStatus() {
+    if (this._livestatus) {
+      this._sdkAddress = environment.CARDINAL_COMMERCE.SONGBIRD_LIVE_URL;
+    }
   }
 
   /**
