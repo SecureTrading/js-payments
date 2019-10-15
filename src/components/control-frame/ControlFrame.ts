@@ -131,6 +131,11 @@ class ControlFrame extends Frame {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.RESET_JWT, () => {
       this._onResetJWT();
     });
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
+      const { newJwt } = data;
+      this._onUpdateJWT(newJwt);
+      this._onLoad();
+    });
   }
 
   /**
@@ -149,6 +154,10 @@ class ControlFrame extends Frame {
    */
   private _onResetJWT() {
     StCodec.jwt = StCodec.originalJwt;
+  }
+
+  private _onUpdateJWT(jwt: string) {
+    StCodec.jwt = jwt;
   }
 
   /**
@@ -294,11 +303,12 @@ class ControlFrame extends Frame {
    */
   private _requestPayment(data: any) {
     const dataInJwt = data ? data.dataInJwt : false;
+    const updateJwt = data ? data.updateJWT : false;
     const { validity, card } = this._validation.formValidation(
       dataInJwt,
       this._isPaymentReady,
       this._formFields,
-      data.updateJWT
+      updateJwt
     );
     if (validity) {
       this._messageBus.publish({

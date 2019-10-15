@@ -2,6 +2,7 @@ import JwtDecode from 'jwt-decode';
 import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
 import Notification from '../shared/Notification';
+import Selectors from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
 import Validation from '../shared/Validation';
@@ -122,6 +123,7 @@ class StCodec {
       type: MessageBus.EVENTS_PUBLIC.UPDATE_JWT
     };
     StCodec._messageBus.publish(messageBusEvent, true);
+    StCodec._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
     return newJWT;
   }
 
