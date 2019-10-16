@@ -261,6 +261,7 @@ class ST {
   private _submitOnError: boolean;
   private _submitOnSuccess: boolean;
   private readonly _config: IConfig;
+  private readonly _livestatus: number = 0;
   private readonly _submitCallback: any;
   private readonly _threedinit: string;
   private commonFrames: CommonFrames;
@@ -269,7 +270,7 @@ class ST {
 
   constructor(config: IConfig) {
     this._messageBus = new MessageBus();
-    const { analytics, animatedCard, init, submitCallback, translations, updateJWT } = config;
+    const { analytics, animatedCard, init, livestatus, submitCallback, translations, updateJWT } = config;
     if (analytics) {
       const ga = new GoogleAnalytics();
     }
@@ -280,6 +281,7 @@ class ST {
       this._threedinit = threedinit;
       this._cachetoken = cachetoken;
     }
+    this._livestatus = livestatus;
     this._animatedCard = animatedCard;
     this._submitCallback = submitCallback;
     this._config = ST._addDefaults(config);
@@ -342,7 +344,7 @@ class ST {
   public VisaCheckout(config: IWalletConfig) {
     const visa = environment.testEnvironment ? VisaCheckoutMock : VisaCheckout;
     config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
-    return new visa(config, this._jwt, this._gatewayUrl);
+    return new visa(config, this._jwt, this._gatewayUrl, this._livestatus);
   }
 
   public updateJWT(newJWT: string) {
@@ -360,7 +362,14 @@ class ST {
    */
   private CardinalCommerce(config: IWalletConfig) {
     const cardinal = environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce;
-    return new cardinal(config.startOnLoad, this._jwt, config.requestTypes, this._cachetoken, this._threedinit);
+    return new cardinal(
+      config.startOnLoad,
+      this._jwt,
+      config.requestTypes,
+      this._livestatus,
+      this._cachetoken,
+      this._threedinit
+    );
   }
 
   /**

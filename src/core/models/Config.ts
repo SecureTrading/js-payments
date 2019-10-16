@@ -9,6 +9,7 @@ interface IConfig {
   formId?: string;
   jwt: string;
   init?: IByPassInit;
+  livestatus?: number;
   origin?: string;
   styles?: IStyles;
   submitCallback?: any;
@@ -51,6 +52,7 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
   formId: Joi.string(),
   init: Joi.object(),
   jwt: Joi.string().required(),
+  livestatus: Joi.number(),
   origin: Joi.string(),
   requestTypes: Joi.array().allow([Joi.string()]),
   styles: Joi.object(),

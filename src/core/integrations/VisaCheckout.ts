@@ -96,10 +96,11 @@ export class VisaCheckout {
     settings: {}
   };
 
-  constructor(config: IWalletConfig, jwt: string, gatewayUrl: string) {
+  constructor(config: IWalletConfig, jwt: string, gatewayUrl: string, livestatus?: number) {
     this._messageBus = new MessageBus();
     this._notification = new Notification();
     this._stJwt = new StJwt(jwt);
+    this._livestatus = livestatus;
     this._configurePaymentProcess(jwt, config, gatewayUrl);
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
       const { newJwt } = data;
