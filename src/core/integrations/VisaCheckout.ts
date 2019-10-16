@@ -96,10 +96,10 @@ export class VisaCheckout {
     settings: {}
   };
 
-  constructor(config: IWalletConfig, jwt: string, gatewayUrl: string) {
+  constructor(config: IWalletConfig, jwt: string, gatewayUrl: string, livestatus?: number) {
     this.messageBus = new MessageBus();
     this._notification = new Notification();
-    const { merchantId, livestatus, placement, settings, paymentRequest, buttonSettings, requestTypes } = config;
+    const { merchantId, placement, settings, paymentRequest, buttonSettings, requestTypes } = config;
     const stJwt = new StJwt(jwt);
     this.payment = new Payment(jwt, gatewayUrl);
     this._livestatus = livestatus;
