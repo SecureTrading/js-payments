@@ -11,7 +11,7 @@ describe('Visa Checkout Mock class', () => {
     const { config, livestatus } = VisaCheckoutMockFixture();
     const jwt =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
-    instance = new VisaCheckoutMock(config, livestatus, jwt, 'https://example.com');
+    instance = new VisaCheckoutMock(config, jwt, 'https://example.com', livestatus);
     body = document.body;
   });
 

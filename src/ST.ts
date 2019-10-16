@@ -325,7 +325,7 @@ class ST {
   public VisaCheckout(config: IWalletConfig) {
     const visa = environment.testEnvironment ? VisaCheckoutMock : VisaCheckout;
     config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
-    return new visa(config, this._livestatus, this._jwt, this._gatewayUrl);
+    return new visa(config, this._jwt, this._gatewayUrl, this._livestatus);
   }
 
   /**

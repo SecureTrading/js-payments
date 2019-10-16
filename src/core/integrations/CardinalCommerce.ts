@@ -49,7 +49,7 @@ export class CardinalCommerce {
     startOnLoad: boolean,
     jwt: string,
     requestTypes: string[],
-    livestatus: number,
+    livestatus?: number,
     cachetoken?: string,
     threedinit?: string
   ) {
