@@ -117,14 +117,20 @@ class CommonFrames extends RegisterFrames {
    * Inits necessary fields - notification and control frame
    */
   private _initFormFields() {
+    const { defaultStyles } = this.styles;
+    let { notificationFrame, controlFrame } = this.styles;
+
+    notificationFrame = Object.assign({}, defaultStyles, notificationFrame);
+    controlFrame = Object.assign({}, defaultStyles, controlFrame);
+
     this._notificationFrame = new Element();
     this._controlFrame = new Element();
     if (this._shouldLoadNotificationFrame()) {
-      this._notificationFrame.create(Selectors.NOTIFICATION_FRAME_COMPONENT_NAME, this.styles, this.params);
+      this._notificationFrame.create(Selectors.NOTIFICATION_FRAME_COMPONENT_NAME, notificationFrame, this.params);
       this._notificationFrameMounted = this._notificationFrame.mount(Selectors.NOTIFICATION_FRAME_IFRAME, '-1');
       this.elementsToRegister.push(this._notificationFrameMounted);
     }
-    this._controlFrame.create(Selectors.CONTROL_FRAME_COMPONENT_NAME, this.styles, {
+    this._controlFrame.create(Selectors.CONTROL_FRAME_COMPONENT_NAME, controlFrame, {
       gatewayUrl: this._gatewayUrl,
       jwt: this.jwt,
       origin: this.origin

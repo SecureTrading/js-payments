@@ -2,18 +2,21 @@ import Joi from 'joi';
 import { IStyles } from '../shared/Styler';
 
 interface IConfig {
+  analytics?: boolean;
   animatedCard: boolean;
   componentIds?: any;
   datacenterurl?: string;
   formId?: string;
   jwt: string;
   init?: IByPassInit;
+  livestatus?: number;
   origin?: string;
   styles?: IStyles;
   submitCallback?: any;
   submitFields?: string[];
   submitOnSuccess?: boolean;
   submitOnError?: boolean;
+  translations?: {};
 }
 
 interface IComponentsConfig {
@@ -34,6 +37,7 @@ interface IByPassInit {
 }
 
 const IConfigSchema: Joi.JoiObject = Joi.object().keys({
+  analytics: Joi.boolean(),
   animatedCard: Joi.boolean(),
   cachetoken: Joi.string(),
   componentIds: Joi.object().keys({
@@ -47,6 +51,7 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
   formId: Joi.string(),
   init: Joi.object(),
   jwt: Joi.string().required(),
+  livestatus: Joi.number(),
   origin: Joi.string(),
   requestTypes: Joi.array().allow([Joi.string()]),
   styles: Joi.object(),
@@ -54,7 +59,8 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
   submitFields: Joi.array().allow([Joi.string()]),
   submitOnError: Joi.boolean(),
   submitOnSuccess: Joi.boolean(),
-  threedinit: Joi.string()
+  threedinit: Joi.string(),
+  translations: Joi.object()
 });
 
 const IComponentsConfigSchema = Joi.object().keys({

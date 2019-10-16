@@ -9,6 +9,7 @@ import ApplePay from './core/integrations/ApplePay';
 import ApplePayMock from './core/integrations/ApplePayMock';
 import { CardinalCommerce } from './core/integrations/CardinalCommerce';
 import CardinalCommerceMock from './core/integrations/CardinalCommerceMock';
+import GoogleAnalytics from './core/integrations/GoogleAnalytics';
 import VisaCheckout from './core/integrations/VisaCheckout';
 import VisaCheckoutMock from './core/integrations/VisaCheckoutMock';
 import {
@@ -20,6 +21,7 @@ import {
 } from './core/models/Config';
 import Selectors from './core/shared/Selectors';
 import { IStyles } from './core/shared/Styler';
+import Utils from './core/shared/Utils';
 import { environment } from './environments/environment';
 
 /**
@@ -37,6 +39,7 @@ class ST {
     animatedCard: Selectors.ANIMATED_CARD_INPUT_SELECTOR,
     ...ST.DEFAULT_COMPONENTS
   };
+  private static TRANSLATION_STORAGE_NAME = 'merchantTranslations';
 
   /**
    * Collect and set default values for _config object.
@@ -221,7 +224,7 @@ class ST {
     jwt: string,
     origin: string,
     componentIds: {},
-    styles: {},
+    styles: IStyles,
     config: IComponentsConfig,
     animatedCard: boolean
   ) {
@@ -233,6 +236,7 @@ class ST {
     return cardFrames;
   }
 
+  private readonly _animatedCard: boolean;
   private _cachetoken: string;
   private _componentIds: {};
   private _gatewayUrl: string;
@@ -242,23 +246,29 @@ class ST {
   private _submitFields: string[];
   private _submitOnError: boolean;
   private _submitOnSuccess: boolean;
-  private readonly _animatedCard: boolean;
   private readonly _config: IConfig;
+  private readonly _livestatus: number = 0;
   private readonly _submitCallback: any;
   private readonly _threedinit: string;
   private commonFrames: CommonFrames;
 
   constructor(config: IConfig) {
-    if (config.init) {
+    const { analytics, animatedCard, init, livestatus, submitCallback, translations } = config;
+    if (analytics) {
+      const ga = new GoogleAnalytics();
+    }
+    if (init) {
       const {
         init: { cachetoken, threedinit }
       } = config;
       this._threedinit = threedinit;
       this._cachetoken = cachetoken;
     }
-    this._animatedCard = config.animatedCard;
-    this._submitCallback = config.submitCallback;
+    this._livestatus = livestatus;
+    this._animatedCard = animatedCard;
+    this._submitCallback = submitCallback;
     this._config = ST._addDefaults(config);
+    Utils.setLocalStorageItem(ST.TRANSLATION_STORAGE_NAME, translations);
     ST._validateConfig(this._config, IConfigSchema);
     this._setClassProperties(this._config);
     this.commonFrames = ST._configureCommonFrames(
@@ -315,7 +325,7 @@ class ST {
   public VisaCheckout(config: IWalletConfig) {
     const visa = environment.testEnvironment ? VisaCheckoutMock : VisaCheckout;
     config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
-    return new visa(config, this._jwt, this._gatewayUrl);
+    return new visa(config, this._jwt, this._gatewayUrl, this._livestatus);
   }
 
   /**
@@ -325,7 +335,14 @@ class ST {
    */
   private CardinalCommerce(config: IWalletConfig) {
     const cardinal = environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce;
-    return new cardinal(config.startOnLoad, this._jwt, config.requestTypes, this._cachetoken, this._threedinit);
+    return new cardinal(
+      config.startOnLoad,
+      this._jwt,
+      config.requestTypes,
+      this._livestatus,
+      this._cachetoken,
+      this._threedinit
+    );
   }
 
   /**

@@ -1,19 +1,22 @@
+import ApplePayErrorMock from '../../../src/core/integrations/ApplePayErrorMock';
 import ApplePaySessionMock from '../../../src/core/integrations/ApplePaySessionMock';
+
 (window as any).ApplePaySession = ApplePaySessionMock; // has to be defined before we import ApplePay
+(window as any).ApplePayError = ApplePayErrorMock; // has to be defined before we import ApplePay
 (window as any).ApplePaySession.supportsVersion = jest.fn();
 (window as any).ApplePaySession.canMakePayments = jest.fn();
 (window as any).ApplePaySession.canMakePaymentsWithActiveCard = jest.fn();
 (window as any).ApplePaySession.STATUS_SUCCESS = 'SUCCESS';
 const getType = require('jest-get-type');
-import Language from '../../../src/core/shared/Language';
-import { NotificationType } from '../../../src/core/models/NotificationEvent';
 import ApplePay from '../../../src/core/integrations/ApplePay';
 import DomMethods from '../../../src/core/shared/DomMethods';
+import Language from '../../../src/core/shared/Language';
 
 jest.mock('./../../../src/core/shared/MessageBus');
+jest.mock('../../../src/core/integrations/GoogleAnalytics');
 
 // given
-describe('Apple Pay', () => {
+describe('ApplePay', () => {
   // given
   describe('On init', () => {
     // then
@@ -24,60 +27,69 @@ describe('Apple Pay', () => {
   });
 
   // given
-  describe('Method ifApplePayIsAvailable', () => {
+  describe('ifApplePayIsAvailable()', () => {
     // then
     it('should return true if session exists', () => {
       const { instance } = ApplePayFixture();
+      // @ts-ignore
       expect(instance.ifApplePayIsAvailable()).toBeTruthy();
     });
   });
 
   // given
-  describe('Method ifBrowserSupportsApplePayVersion', () => {
+  describe('_ifBrowserSupportsApplePayVersion()', () => {
     // then
     it('should return true if browser supported', () => {
       const { instance } = ApplePayFixture();
       (window as any).ApplePaySession.supportsVersion = jest.fn().mockReturnValue(true);
-      expect(instance.ifBrowserSupportsApplePayVersion(4)).toBeTruthy();
+      // @ts-ignore
+      expect(instance._ifBrowserSupportsApplePayVersion(4)).toBeTruthy();
     });
     // then
     it('should return false if browser supported', () => {
       const { instance } = ApplePayFixture();
       (window as any).ApplePaySession.supportsVersion = jest.fn().mockReturnValue(false);
-      expect(instance.ifBrowserSupportsApplePayVersion(4)).not.toBeTruthy();
+      // @ts-ignore
+      expect(instance._ifBrowserSupportsApplePayVersion(4)).not.toBeTruthy();
     });
   });
 
   // given
-  describe('Method getApplePaySessionObject', () => {
+  describe('getApplePaySessionObject()', () => {
     // then
     it('should get object', () => {
       const { instance } = ApplePayFixture();
       (window as any).ApplePaySession = jest.fn();
+      // @ts-ignore
       const session = instance.getApplePaySessionObject();
       expect(session).toEqual({});
     });
   });
 
   // given
-  describe('Method checkApplePayWalletCardAvailability', () => {
+  describe('checkApplePayWalletCardAvailability()', () => {
     // then
     it('should check availability', () => {
       const { instance } = ApplePayFixture();
       (window as any).ApplePaySession.canMakePaymentsWithActiveCard = jest.fn();
-      instance.merchantId = '123456789';
+      // @ts-ignore
+      instance._merchantId = '123456789';
+      // @ts-ignore
       const availability = instance.checkApplePayWalletCardAvailability();
       expect(availability).toBe(undefined);
     });
   });
 
   // given
-  describe('Method getApplePaySession', () => {
+  describe('getApplePaySession()', () => {
     // then
     it('should set applePayVersion', () => {
       const { instance } = ApplePayFixture();
-      instance.ifBrowserSupportsApplePayVersion = jest.fn().mockReturnValueOnce(true);
+      // @ts-ignore
+      instance._ifBrowserSupportsApplePayVersion = jest.fn().mockReturnValueOnce(true);
+      // @ts-ignore
       instance.setApplePayVersion();
+      // @ts-ignore
       expect(instance.applePayVersion).toEqual(5);
     });
   });
@@ -97,40 +109,47 @@ describe('Apple Pay', () => {
   });
 
   // given
-  describe('Method setSupportedNetworks', () => {
+  describe('setSupportedNetworks()', () => {
     // when
     const { instance } = ApplePayFixture();
     const applePayVersions = [2, 3, 4, 5];
 
     function setPropertiesForVersion(version: number, networks: string[]) {
+      // @ts-ignore
       instance.applePayVersion = version;
-      instance.setSupportedNetworks();
-      expect(instance.paymentRequest.supportedNetworks).toEqual(networks);
+      // @ts-ignore
+      instance._setSupportedNetworks();
+      // @ts-ignore
+      expect(instance._paymentRequest.supportedNetworks).toEqual(networks);
     }
 
     // then
     it(`should set proper networks when Apple Pay version is equal ${applePayVersions[3]}`, () => {
+      // @ts-ignore
       setPropertiesForVersion(applePayVersions[3], ApplePay.VERSION_5_SUPPORTED_NETWORKS);
     });
 
     // then
     it(`should set proper networks when Apple Pay version is equal ${applePayVersions[2]}`, () => {
+      // @ts-ignore
       setPropertiesForVersion(applePayVersions[2], ApplePay.VERSION_4_SUPPORTED_NETWORKS);
     });
 
     // then
     it(`should set proper networks when Apple Pay version is equal ${applePayVersions[1]}`, () => {
+      // @ts-ignore
       setPropertiesForVersion(applePayVersions[1], ApplePay.BASIC_SUPPORTED_NETWORKS);
     });
 
     // then
     it(`should set proper networks when Apple Pay version is equal ${applePayVersions[0]}`, () => {
+      // @ts-ignore
       setPropertiesForVersion(applePayVersions[0], ApplePay.BASIC_SUPPORTED_NETWORKS);
     });
   });
 
   // given
-  describe('Method setApplePayButtonProps', () => {
+  describe('_setApplePayButtonProps()', () => {
     let buttonStyle: string;
     let buttonText: string;
     beforeEach(() => {
@@ -140,9 +159,12 @@ describe('Apple Pay', () => {
     // then
     it(`should set buttonText and buttonStyle if they are both from list of available values`, () => {
       const { instance } = ApplePayFixture();
-      instance.setApplePayButtonProps(buttonText, buttonStyle);
-      expect(instance.buttonText).toEqual(buttonText);
-      expect(instance.buttonStyle).toEqual(buttonStyle);
+      // @ts-ignore
+      instance._setApplePayButtonProps(buttonText, buttonStyle);
+      // @ts-ignore
+      expect(instance._buttonText).toEqual(buttonText);
+      // @ts-ignore
+      expect(instance._buttonStyle).toEqual(buttonStyle);
     });
 
     // then
@@ -150,119 +172,146 @@ describe('Apple Pay', () => {
       buttonStyle = 'NavajoWhite';
       buttonText = 'click here to pay with apple pay';
       const { instance } = ApplePayFixture();
-      instance.setApplePayButtonProps(buttonText, buttonStyle);
-      expect(instance.buttonText).toEqual(ApplePay.AVAILABLE_BUTTON_TEXTS[0]);
-      expect(instance.buttonStyle).toEqual(ApplePay.AVAILABLE_BUTTON_STYLES[0]);
+      // @ts-ignore
+      instance._setApplePayButtonProps(buttonText, buttonStyle);
+      // @ts-ignore
+      expect(instance._buttonText).toEqual(ApplePay.AVAILABLE_BUTTON_TEXTS[0]);
+      // @ts-ignore
+      expect(instance._buttonStyle).toEqual(ApplePay.AVAILABLE_BUTTON_STYLES[0]);
     });
 
     // then
     it('should set _applePayButtonProps style value', () => {
       const css = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${buttonText}; -apple-pay-button-style: ${buttonStyle}`;
       const { instance } = ApplePayFixture();
-      instance.setApplePayButtonProps(buttonText, buttonStyle);
+      // @ts-ignore
+      instance._setApplePayButtonProps(buttonText, buttonStyle);
       expect(instance.applePayButtonProps['style']).toEqual(css);
     });
   });
 
   // given
-  describe('Method createApplePayButton', () => {
+  describe('createApplePayButton()', () => {
     // then
     it('should return Apple Pay button with all props set', () => {
       const { instance } = ApplePayFixture();
       const css = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: donate; -apple-pay-button-style: white`;
       instance.applePayButtonProps['style'] = css;
+      // @ts-ignore
       const style = instance.createApplePayButton().getAttribute('style');
       expect(style).toEqual(style);
     });
   });
 
   // given
-  describe('Method addApplePayButton', () => {
+  describe('addApplePayButton()', () => {
     // then
     it('should add Apple Pay button to DOM', () => {
       const { instance } = ApplePayFixture();
-      instance.addApplePayButton();
-      const element = document.getElementById(instance.placement);
+      // @ts-ignore
+      instance._addApplePayButton();
+      // @ts-ignore
+      const element = document.getElementById(instance._placement);
       expect(element).toBeTruthy();
     });
   });
 
   // given
-  describe('Method ifApplePayButtonTextIsValid', () => {
+  describe('ifApplePayButtonTextIsValid()', () => {
     // then
     it('should return false if text is not from list of available', () => {
       const { instance } = ApplePayFixture();
-      expect(instance.ifApplePayButtonTextIsValid('click here to pay with apple pay')).toEqual(false);
+      // @ts-ignore
+      expect(instance._ifApplePayButtonTextIsValid('click here to pay with apple pay')).toEqual(false);
     });
 
     // then
     it('should return true if text is from list of available', () => {
       const { instance } = ApplePayFixture();
-      expect(instance.ifApplePayButtonTextIsValid('donate')).toEqual(true);
+      // @ts-ignore
+      expect(instance._ifApplePayButtonTextIsValid('donate')).toEqual(true);
     });
   });
 
   // given
-  describe('Method ifApplePayButtonStyleIsValid', () => {
+  describe('ifApplePayButtonStyleIsValid()', () => {
     // then
     it('should return false if style is not from lst of available', () => {
       const { instance } = ApplePayFixture();
-      expect(instance.ifApplePayButtonStyleIsValid('NavajoWhite')).toEqual(false);
+      // @ts-ignore
+      expect(instance._ifApplePayButtonStyleIsValid('NavajoWhite')).toEqual(false);
     });
 
     // then
     it('should return true if style is from lst of available', () => {
       const { instance } = ApplePayFixture();
-      expect(instance.ifApplePayButtonStyleIsValid('white')).toEqual(true);
+      // @ts-ignore
+      expect(instance._ifApplePayButtonStyleIsValid('white')).toEqual(true);
     });
   });
 
   // given
-  describe('Method applePayButtonClickHandler', () => {
+  describe('applePayButtonClickHandler()', () => {
     // then
     it('should trigger paymentProcess method after click', () => {
       const { instance } = ApplePayFixture();
-      instance.session = {};
-      Object.defineProperty(instance.session, 'begin', { value: '', writable: true });
-      instance.session.begin = jest.fn();
+      // @ts-ignore
+      instance._session = {};
+      // @ts-ignore
+      Object.defineProperty(instance._session, 'begin', { value: '', writable: true });
+      // @ts-ignore
+      instance._session.begin = jest.fn();
+      // @ts-ignore
       instance.getApplePaySessionObject = jest.fn().mockReturnValueOnce({});
-      instance.paymentProcess = jest.fn();
-      instance.applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
+      // @ts-ignore
+      instance._paymentProcess = jest.fn();
+      // @ts-ignore
+      instance._applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
 
       const ev = new MouseEvent('click', {
         view: window,
         bubbles: true,
         cancelable: true
       });
+      // @ts-ignore
       document.getElementById(ApplePay.APPLE_PAY_BUTTON_ID).dispatchEvent(ev);
-      expect(instance.paymentProcess).toHaveBeenCalledTimes(1);
-      expect(instance.paymentProcess).toHaveBeenCalledWith();
+      // @ts-ignore
+      expect(instance._paymentProcess).toHaveBeenCalledTimes(1);
+      // @ts-ignore
+      expect(instance._paymentProcess).toHaveBeenCalledWith();
     });
   });
 
   // given
-  describe('Method setAmountAndCurrency', () => {
+  describe('setAmountAndCurrency()', () => {
     // then
     it('should set amount depends on value in JWT', () => {
       const { instance } = ApplePayFixture();
-      instance.setAmountAndCurrency();
-      expect(instance.paymentRequest.total.amount).toEqual(instance.stJwtInstance.mainamount);
+      // @ts-ignore
+      instance._setAmountAndCurrency();
+      // @ts-ignore
+      expect(instance._paymentRequest.total.amount).toEqual(instance._stJwtInstance.mainamount);
     });
 
     // then
     it('should set currency depends on value in JWT', () => {
       const { instance } = ApplePayFixture();
-      instance.setAmountAndCurrency();
-      expect(instance.paymentRequest.currencyCode).toEqual(instance.stJwtInstance.currencyiso3a);
+      // @ts-ignore
+      instance._setAmountAndCurrency();
+      // @ts-ignore
+      expect(instance._paymentRequest.currencyCode).toEqual(instance._stJwtInstance.currencyiso3a);
     });
     // then
     it('should handle error notification if it cannot set the value because amount is not set', () => {
       const { instance } = ApplePayFixture();
-      instance.paymentRequest.total.amount = undefined;
-      instance.paymentRequest.currencyCode = 'SOMETHING';
+      // @ts-ignore
+      instance._paymentRequest.total.amount = undefined;
+      // @ts-ignore
+      instance._paymentRequest.currencyCode = 'SOMETHING';
       // @ts-ignore
       instance._notification.error = jest.fn();
-      instance.setAmountAndCurrency();
+      // @ts-ignore
+      instance._setAmountAndCurrency();
       // @ts-ignore
       expect(instance._notification.error).toHaveBeenCalledTimes(1);
       // @ts-ignore
@@ -271,11 +320,14 @@ describe('Apple Pay', () => {
     // then
     it('should handle error notification if it cannot set the value because currency is not set', () => {
       const { instance } = ApplePayFixture();
-      instance.paymentRequest.total.amount = 'SOMETHING';
-      instance.paymentRequest.currencyCode = undefined;
+      // @ts-ignore
+      instance._paymentRequest.total.amount = 'SOMETHING';
+      // @ts-ignore
+      instance._paymentRequest.currencyCode = undefined;
       // @ts-ignore
       instance._notification.error = jest.fn();
-      instance.setAmountAndCurrency();
+      // @ts-ignore
+      instance._setAmountAndCurrency();
       // @ts-ignore
       expect(instance._notification.error).toHaveBeenCalledTimes(1);
       // @ts-ignore
@@ -284,7 +336,7 @@ describe('Apple Pay', () => {
   });
 
   // given
-  describe('Method _onInit', () => {
+  describe('_onInit()', () => {
     let instance: ApplePay;
     let spyApplePayVersion: any;
     let spySetSupportedNetworks: any;
@@ -296,59 +348,77 @@ describe('Apple Pay', () => {
     // when
     beforeEach(() => {
       instance = ApplePayFixture().instance;
+      // @ts-ignore
       instance.ifApplePayIsAvailable = jest.fn().mockReturnValueOnce(true);
-      instance.ifBrowserSupportsApplePayVersion = jest.fn().mockReturnValueOnce(true);
+      // @ts-ignore
+      instance._ifBrowserSupportsApplePayVersion = jest.fn().mockReturnValueOnce(true);
+      // @ts-ignore
       spyApplePayVersion = jest.spyOn(instance, 'setApplePayVersion');
-      spySetSupportedNetworks = jest.spyOn(instance, 'setSupportedNetworks');
-      spySetAmountAndCurrency = jest.spyOn(instance, 'setAmountAndCurrency');
-      spySetApplePayButtonProps = jest.spyOn(instance, 'setApplePayButtonProps');
-      spyAddApplePayButton = jest.spyOn(instance, 'addApplePayButton');
-      spyApplePayProcess = jest.spyOn(instance, 'applePayProcess');
+      // @ts-ignore
+      spySetSupportedNetworks = jest.spyOn(instance, '_setSupportedNetworks');
+      // @ts-ignore
+      spySetAmountAndCurrency = jest.spyOn(instance, '_setAmountAndCurrency');
+      // @ts-ignore
+      spySetApplePayButtonProps = jest.spyOn(instance, '_setApplePayButtonProps');
+      // @ts-ignore
+      spyAddApplePayButton = jest.spyOn(instance, '_addApplePayButton');
+      // @ts-ignore
+      spyApplePayProcess = jest.spyOn(instance, '_applePayProcess');
     });
     // then
     it('should spyApplePayVersion be called', () => {
-      instance.onInit('donate', 'white');
+      // @ts-ignore
+      instance._onInit('donate', 'white');
       expect(spyApplePayVersion).toHaveBeenCalled();
     });
     // then
     it('should spySetSupportedNetworks be called', () => {
-      instance.onInit('donate', 'white');
+      // @ts-ignore
+      instance._onInit('donate', 'white');
       expect(spySetSupportedNetworks).toHaveBeenCalled();
     });
     // then
     it('should spySetAmountAndCurrency be called', () => {
-      instance.onInit('donate', 'white');
+      // @ts-ignore
+      instance._onInit('donate', 'white');
       expect(spySetAmountAndCurrency).toHaveBeenCalled();
     });
 
     // then
     it('should spySetApplePayButtonProps be called', () => {
-      instance.onInit('donate', 'white');
+      // @ts-ignore
+      instance._onInit('donate', 'white');
       expect(spySetApplePayButtonProps).toHaveBeenCalled();
     });
 
     // then
     it('should spyAddApplePayButton be called', () => {
-      instance.onInit('donate', 'white');
+      // @ts-ignore
+      instance._onInit('donate', 'white');
       expect(spyAddApplePayButton).toHaveBeenCalled();
     });
 
     // then
     it('should spyApplePayProcess be called', () => {
-      instance.onInit('donate', 'white');
+      // @ts-ignore
+      instance._onInit('donate', 'white');
       expect(spyApplePayProcess).toHaveBeenCalled();
     });
   });
 
   // given
-  describe('Method onValidateMerchantRequest', () => {
+  describe('onValidateMerchantRequest()', () => {
     // then
     it('should onvalidatemerchant handler has been set', () => {
       const { instance } = ApplePayFixture();
-      instance.session = {};
-      Object.defineProperty(instance.session, 'onvalidatemerchant', { value: '', writable: true });
-      instance.onValidateMerchantRequest();
-      expect(getType(instance.session.onvalidatemerchant)).toBe('function');
+      // @ts-ignore
+      instance._session = {};
+      // @ts-ignore
+      Object.defineProperty(instance._session, 'onvalidatemerchant', { value: '', writable: true });
+      // @ts-ignore
+      instance._onValidateMerchantRequest();
+      // @ts-ignore
+      expect(getType(instance._session.onvalidatemerchant)).toBe('function');
     });
 
     it('should call onvalidatemerchant and set walletvalidationurl and process walletverify', async () => {
@@ -357,14 +427,19 @@ describe('Apple Pay', () => {
       instance.payment.walletVerify = jest
         .fn()
         .mockResolvedValueOnce({ response: { myData: 'respData' }, jwt: 'ajwtvalue' });
-      instance.onValidateMerchantResponseSuccess = jest.fn();
+      // @ts-ignore
+      instance._onValidateMerchantResponseSuccess = jest.fn();
       // @ts-ignore
       instance._notification.success = jest.fn();
-      instance.session = {};
-      Object.defineProperty(instance.session, 'onvalidatemerchant', { value: '', writable: true });
-      instance.onValidateMerchantRequest();
+      // @ts-ignore
+      instance._session = {};
+      // @ts-ignore
+      Object.defineProperty(instance._session, 'onvalidatemerchant', { value: '', writable: true });
+      // @ts-ignore
+      instance._onValidateMerchantRequest();
 
-      await instance.session.onvalidatemerchant({ validationURL: 'https://example.com' });
+      // @ts-ignore
+      await instance._session.onvalidatemerchant({ validationURL: 'https://example.com' });
 
       expect(instance.payment.walletVerify).toHaveBeenCalledTimes(1);
       expect(instance.payment.walletVerify).toHaveBeenCalledWith({
@@ -373,9 +448,12 @@ describe('Apple Pay', () => {
         walletsource: 'APPLEPAY',
         walletvalidationurl: 'https://example.com'
       });
-      expect(instance.validateMerchantRequestData.walletvalidationurl).toBe('https://example.com');
-      expect(instance.onValidateMerchantResponseSuccess).toHaveBeenCalledTimes(1);
-      expect(instance.onValidateMerchantResponseSuccess).toHaveBeenCalledWith({ myData: 'respData' });
+      // @ts-ignore
+      expect(instance._validateMerchantRequestData.walletvalidationurl).toBe('https://example.com');
+      // @ts-ignore
+      expect(instance._onValidateMerchantResponseSuccess).toHaveBeenCalledTimes(1);
+      // @ts-ignore
+      expect(instance._onValidateMerchantResponseSuccess).toHaveBeenCalledWith({ myData: 'respData' });
       // @ts-ignore
       expect(instance._notification.success).toHaveBeenCalledTimes(0);
     });
@@ -386,14 +464,19 @@ describe('Apple Pay', () => {
       instance.payment.walletVerify = jest
         .fn()
         .mockRejectedValueOnce({ errorcode: '30000', errormessage: 'Invalid field' });
-      instance.onValidateMerchantResponseFailure = jest.fn();
+      // @ts-ignore
+      instance._onValidateMerchantResponseFailure = jest.fn();
       // @ts-ignore
       instance._notification.error = jest.fn();
-      instance.session = {};
-      Object.defineProperty(instance.session, 'onvalidatemerchant', { value: '', writable: true });
-      instance.onValidateMerchantRequest();
+      // @ts-ignore
+      instance._session = {};
+      // @ts-ignore
+      Object.defineProperty(instance._session, 'onvalidatemerchant', { value: '', writable: true });
+      // @ts-ignore
+      instance._onValidateMerchantRequest();
 
-      await instance.session.onvalidatemerchant({ validationURL: 'https://example.com' });
+      // @ts-ignore
+      await instance._session.onvalidatemerchant({ validationURL: 'https://example.com' });
 
       expect(instance.payment.walletVerify).toHaveBeenCalledTimes(1);
       expect(instance.payment.walletVerify).toHaveBeenCalledWith({
@@ -402,9 +485,12 @@ describe('Apple Pay', () => {
         walletsource: 'APPLEPAY',
         walletvalidationurl: 'https://example.com'
       });
-      expect(instance.validateMerchantRequestData.walletvalidationurl).toBe('https://example.com');
-      expect(instance.onValidateMerchantResponseFailure).toHaveBeenCalledTimes(1);
-      expect(instance.onValidateMerchantResponseFailure).toHaveBeenCalledWith({
+      // @ts-ignore
+      expect(instance._validateMerchantRequestData.walletvalidationurl).toBe('https://example.com');
+      // @ts-ignore
+      expect(instance._onValidateMerchantResponseFailure).toHaveBeenCalledTimes(1);
+      // @ts-ignore
+      expect(instance._onValidateMerchantResponseFailure).toHaveBeenCalledWith({
         errorcode: '30000',
         errormessage: 'Invalid field'
       });
@@ -416,32 +502,42 @@ describe('Apple Pay', () => {
   });
 
   // given
-  describe('Method onPaymentAuthorized', () => {
+  describe('onPaymentAuthorized()', () => {
     // then
     it('should onpaymentauthorized handler has been set', () => {
       const { instance } = ApplePayFixture();
-      instance.session = {};
-      Object.defineProperty(instance.session, 'onpaymentauthorized', { value: '', writable: true });
-      instance.onPaymentAuthorized();
-      expect(getType(instance.session.onpaymentauthorized)).toBe('function');
+      // @ts-ignore
+      instance._session = {};
+      // @ts-ignore
+      Object.defineProperty(instance._session, 'onpaymentauthorized', { value: '', writable: true });
+      // @ts-ignore
+      instance._onPaymentAuthorized();
+      // @ts-ignore
+      expect(getType(instance._session.onpaymentauthorized)).toBe('function');
     });
 
     it('should call onpaymentauthorized and set paymentDetails and process successful AUTH', async () => {
       const { instance } = ApplePayFixture();
 
-      instance.payment.processPayment = jest.fn().mockResolvedValueOnce({ myData: 'response' });
+      instance.payment.processPayment = jest.fn().mockResolvedValueOnce({ response: { errorcode: '0' } });
       // @ts-ignore
-      instance._notification.success = jest.fn();
+      instance._displayNotification = jest.fn();
+      // @ts-ignore
+      instance._handleApplePayError = jest.fn();
       DomMethods.parseMerchantForm = jest.fn().mockReturnValueOnce({ billingfirstname: 'BOB' });
+      // @ts-ignore
       instance.getPaymentSuccessStatus = jest.fn().mockReturnValueOnce('SUCCESS');
       // @ts-ignore
-      instance.tokenise = false;
-      instance.validateMerchantRequestData.walletsource = 'APPLEPAY';
-      instance.session = { completePayment: jest.fn() };
-      Object.defineProperty(instance.session, 'onpaymentauthorized', { value: '', writable: true });
-      instance.onPaymentAuthorized();
+      instance._validateMerchantRequestData.walletsource = 'APPLEPAY';
+      // @ts-ignore
+      instance._session = { completePayment: jest.fn() };
+      // @ts-ignore
+      Object.defineProperty(instance._session, 'onpaymentauthorized', { value: '', writable: true });
+      // @ts-ignore
+      instance._onPaymentAuthorized();
 
-      await instance.session.onpaymentauthorized({ payment: { TOKEN: 'TOKEN DATA' } });
+      // @ts-ignore
+      await instance._session.onpaymentauthorized({ payment: { TOKEN: 'TOKEN DATA' } });
 
       expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
       expect(instance.payment.processPayment).toHaveBeenCalledWith(
@@ -450,29 +546,37 @@ describe('Apple Pay', () => {
         { billingfirstname: 'BOB' }
       );
       // @ts-ignore
-      expect(instance._notification.success).toHaveBeenCalledTimes(1);
+      expect(instance._displayNotification).toHaveBeenCalledTimes(1);
       // @ts-ignore
-      expect(instance._notification.success).toHaveBeenCalledWith('Payment has been successfully processed', true);
-      expect(instance.session.completePayment).toHaveBeenCalledTimes(1);
-      expect(instance.session.completePayment).toHaveBeenCalledWith({ status: 'SUCCESS', errors: [] });
+      expect(instance._session.completePayment).toHaveBeenCalledTimes(1);
+      // @ts-ignore
+      expect(instance._handleApplePayError).toHaveBeenCalledWith({ response: { errorcode: '0' } });
     });
 
     it('should call onpaymentauthorized and set paymentDetails and process successful CACHETOKEN', async () => {
       const { instance } = ApplePayFixture();
 
-      instance.payment.processPayment = jest.fn().mockResolvedValueOnce({ myData: 'response' });
+      instance.payment.processPayment = jest.fn().mockResolvedValueOnce({ response: { errorcode: '0' } });
       // @ts-ignore
-      instance._notification.success = jest.fn();
+      instance._displayNotification = jest.fn();
+      // @ts-ignore
+      instance._handleApplePayError = jest.fn();
       DomMethods.parseMerchantForm = jest.fn().mockReturnValueOnce({ billingfirstname: 'BOB' });
+      // @ts-ignore
       instance.getPaymentSuccessStatus = jest.fn().mockReturnValueOnce('SUCCESS');
       // @ts-ignore
-      instance.requestTypes = ['CACHETOKENISE'];
-      instance.validateMerchantRequestData.walletsource = 'APPLEPAY';
-      instance.session = { completePayment: jest.fn() };
-      Object.defineProperty(instance.session, 'onpaymentauthorized', { value: '', writable: true });
-      instance.onPaymentAuthorized();
+      instance._requestTypes = ['CACHETOKENISE'];
+      // @ts-ignore
+      instance._validateMerchantRequestData.walletsource = 'APPLEPAY';
+      // @ts-ignore
+      instance._session = { completePayment: jest.fn() };
+      // @ts-ignore
+      Object.defineProperty(instance._session, 'onpaymentauthorized', { value: '', writable: true });
+      // @ts-ignore
+      instance._onPaymentAuthorized();
 
-      await instance.session.onpaymentauthorized({ payment: { TOKEN: 'TOKEN DATA' } });
+      // @ts-ignore
+      await instance._session.onpaymentauthorized({ payment: { TOKEN: 'TOKEN DATA' } });
 
       expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
       expect(instance.payment.processPayment).toHaveBeenCalledWith(
@@ -481,11 +585,12 @@ describe('Apple Pay', () => {
         { billingfirstname: 'BOB' }
       );
       // @ts-ignore
-      expect(instance._notification.success).toHaveBeenCalledTimes(1);
+      expect(instance._displayNotification).toHaveBeenCalledTimes(1);
       // @ts-ignore
-      expect(instance._notification.success).toHaveBeenCalledWith('Payment has been successfully processed', true);
-      expect(instance.session.completePayment).toHaveBeenCalledTimes(1);
-      expect(instance.session.completePayment).toHaveBeenCalledWith({ status: 'SUCCESS', errors: [] });
+      // @ts-ignore
+      expect(instance._session.completePayment).toHaveBeenCalledTimes(1);
+      // @ts-ignore
+      expect(instance._handleApplePayError).toHaveBeenCalledWith({ response: { errorcode: '0' } });
     });
 
     it('should call onpaymentauthorized and set paymentDetails and handle failure', async () => {
@@ -494,16 +599,22 @@ describe('Apple Pay', () => {
       instance.payment.processPayment = jest.fn().mockRejectedValueOnce({ myData: 'response' });
       // @ts-ignore
       instance._notification.error = jest.fn();
+      // @ts-ignore
+      instance._handleApplePayError = jest.fn();
       DomMethods.parseMerchantForm = jest.fn().mockReturnValueOnce({ billingfirstname: 'BOB' });
+      // @ts-ignore
       instance.getPaymentFailureStatus = jest.fn().mockReturnValueOnce('FAILURE');
       // @ts-ignore
-      instance.tokenise = false;
-      instance.validateMerchantRequestData.walletsource = 'APPLEPAY';
-      instance.session = { completePayment: jest.fn() };
-      Object.defineProperty(instance.session, 'onpaymentauthorized', { value: '', writable: true });
-      instance.onPaymentAuthorized();
+      instance._validateMerchantRequestData.walletsource = 'APPLEPAY';
+      // @ts-ignore
+      instance._session = { completePayment: jest.fn() };
+      // @ts-ignore
+      Object.defineProperty(instance._session, 'onpaymentauthorized', { value: '', writable: true });
+      // @ts-ignore
+      instance._onPaymentAuthorized();
 
-      await instance.session.onpaymentauthorized({ payment: { TOKEN: 'TOKEN DATA' } });
+      // @ts-ignore
+      await instance._session.onpaymentauthorized({ payment: { TOKEN: 'TOKEN DATA' } });
 
       expect(instance.payment.processPayment).toHaveBeenCalledTimes(1);
       expect(instance.payment.processPayment).toHaveBeenCalledWith(
@@ -513,18 +624,15 @@ describe('Apple Pay', () => {
       );
       // @ts-ignore
       expect(instance._notification.error).toHaveBeenCalledTimes(1);
-      // @ts-ignore
-      expect(instance._notification.error).toHaveBeenCalledWith('An error occurred', true);
-      expect(instance.session.completePayment).toHaveBeenCalledTimes(1);
-      expect(instance.session.completePayment).toHaveBeenCalledWith({ status: 'FAILURE', errors: [] });
     });
   });
 
   // given
-  describe('Method getPaymentSuccessStatus', () => {
+  describe('getPaymentSuccessStatus()', () => {
     // then
     it('should return success', () => {
       const { instance } = ApplePayFixture();
+      // @ts-ignore
       expect(instance.getPaymentSuccessStatus()).toBe('SUCCESS');
     });
   });
@@ -534,23 +642,29 @@ describe('Apple Pay', () => {
     // then
     it('should return error', () => {
       const { instance } = ApplePayFixture();
+      // @ts-ignore
       expect(instance.getPaymentFailureStatus()).toBe('FAILURE');
     });
   });
 
   // given
-  describe('Method onPaymentCanceled', () => {
+  describe('onPaymentCanceled()', () => {
     // then
     it('should oncancel handler has been set', () => {
       const { instance } = ApplePayFixture();
-      instance.session = {};
-      Object.defineProperty(instance.session, 'oncancel', { value: '', writable: true });
-      instance.onPaymentCanceled();
-      expect(getType(instance.session.oncancel)).toBe('function');
+      // @ts-ignore
+      instance._session = {};
+      // @ts-ignore
+      Object.defineProperty(instance._session, 'oncancel', { value: '', writable: true });
+      // @ts-ignore
+      instance._onPaymentCanceled();
+      // @ts-ignore
+      expect(getType(instance._session.oncancel)).toBe('function');
 
       // @ts-ignore
       instance._notification.warning = jest.fn();
-      instance.session.oncancel({});
+      // @ts-ignore
+      instance._session.oncancel({});
       // @ts-ignore
       expect(instance._notification.warning).toHaveBeenCalledTimes(1);
       // @ts-ignore
@@ -558,44 +672,41 @@ describe('Apple Pay', () => {
     });
   });
   // given
-  describe('Method onValidateMerchantResponseSuccess', () => {
+  describe('_onValidateMerchantResponseSuccess()', () => {
     // then
-    it('should set walletmerchantid if walletsession is set ', () => {
-      const response = { walletsession: '{"merchantIdentifier":123456}' };
-      const { instance } = ApplePayFixture();
-      instance.session = {};
-      instance.session.completeMerchantValidation = jest.fn();
-      instance.onValidateMerchantResponseSuccess(response);
-      // @ts-ignore
-      expect(instance.validateMerchantRequestData.walletmerchantid).toEqual(123456);
-    });
-
-    // then
-    it('should call onValidateMerchantResponseFailure if walletsession is not set ', () => {
+    it('should call _onValidateMerchantResponseSuccess if walletsession is not set ', () => {
       const response = { walletsession: '' };
       const { instance } = ApplePayFixture();
-      instance.session = {};
-      instance.session.abort = jest.fn();
-      const spy = jest.spyOn(instance, 'onValidateMerchantResponseFailure');
-      instance.onValidateMerchantResponseSuccess(response);
+      // @ts-ignore
+      instance._session = {};
+      // @ts-ignore
+      instance._session.abort = jest.fn();
+      // @ts-ignore
+      const spy = jest.spyOn(instance, '_onValidateMerchantResponseSuccess');
+      // @ts-ignore
+      instance._onValidateMerchantResponseSuccess(response);
       expect(spy).toHaveBeenCalled();
     });
   });
   // given
-  describe('Method onValidateMerchantResponseFailure', () => {
+  describe('_onValidateMerchantResponseFailure()', () => {
     // then
     it('should setNotification has been called', () => {
       const { instance } = ApplePayFixture();
-      const spy = jest.spyOn(instance, 'onValidateMerchantResponseFailure');
-      instance.session = {};
-      instance.session.abort = jest.fn();
-      instance.onValidateMerchantResponseFailure('some error');
+      // @ts-ignore
+      const spy = jest.spyOn(instance, '_onValidateMerchantResponseFailure');
+      // @ts-ignore
+      instance._session = {};
+      // @ts-ignore
+      instance._session.abort = jest.fn();
+      // @ts-ignore
+      instance._onValidateMerchantResponseFailure('some error');
       expect(spy).toHaveBeenCalled();
     });
   });
 
   // given
-  describe('Method subscribeStatusHandlers', () => {
+  describe('subscribeStatusHandlers()', () => {
     let sessionObjectFake: object;
     let instance: any;
     beforeEach(() => {
@@ -608,55 +719,55 @@ describe('Apple Pay', () => {
         onshippingcontactselected: undefined,
         onshippingmethodselected: undefined
       };
-      instance.session = sessionObjectFake;
-      instance.paymentRequest = { total: { amount: '10.00', label: 'someLabel' } };
+      instance._session = sessionObjectFake;
+      instance._paymentRequest = { total: { amount: '10.00', label: 'someLabel' } };
     });
     // then
     it('should set callback functions', () => {
-      instance.subscribeStatusHandlers();
-      expect(instance.session.onpaymentmethodselected).toBeInstanceOf(Function);
-      expect(instance.session.onshippingcontactselected).toBeInstanceOf(Function);
-      expect(instance.session.onshippingmethodselected).toBeInstanceOf(Function);
+      instance._subscribeStatusHandlers();
+      expect(instance._session.onpaymentmethodselected).toBeInstanceOf(Function);
+      expect(instance._session.onshippingcontactselected).toBeInstanceOf(Function);
+      expect(instance._session.onshippingmethodselected).toBeInstanceOf(Function);
     });
 
     // then
     it('calling onpaymentmethodselected should call completePaymentMethodSelection', () => {
-      instance.subscribeStatusHandlers();
-      instance.session.onpaymentmethodselected({ paymentMethod: 'MYMETHOD' });
-      expect(instance.session.completePaymentMethodSelection).toHaveBeenCalledTimes(1);
-      expect(instance.session.completePaymentMethodSelection).toHaveBeenCalledWith({
+      instance._subscribeStatusHandlers();
+      instance._session.onpaymentmethodselected({ paymentMethod: 'MYMETHOD' });
+      expect(instance._session.completePaymentMethodSelection).toHaveBeenCalledTimes(1);
+      expect(instance._session.completePaymentMethodSelection).toHaveBeenCalledWith({
         newTotal: {
           amount: '10.00',
           label: 'someLabel',
           type: 'final'
         }
       });
-      expect(instance.session.completeShippingMethodSelection).toHaveBeenCalledTimes(0);
-      expect(instance.session.completeShippingContactSelection).toHaveBeenCalledTimes(0);
+      expect(instance._session.completeShippingMethodSelection).toHaveBeenCalledTimes(0);
+      expect(instance._session.completeShippingContactSelection).toHaveBeenCalledTimes(0);
     });
     // then
     it('calling onshippingmethodselected should call completeShippingMethodSelection', () => {
-      instance.subscribeStatusHandlers();
-      instance.session.onshippingmethodselected({ paymentMethod: 'MYMETHOD' });
-      expect(instance.session.completePaymentMethodSelection).toHaveBeenCalledTimes(0);
-      expect(instance.session.completeShippingMethodSelection).toHaveBeenCalledTimes(1);
-      expect(instance.session.completeShippingMethodSelection).toHaveBeenCalledWith({
+      instance._subscribeStatusHandlers();
+      instance._session.onshippingmethodselected({ paymentMethod: 'MYMETHOD' });
+      expect(instance._session.completePaymentMethodSelection).toHaveBeenCalledTimes(0);
+      expect(instance._session.completeShippingMethodSelection).toHaveBeenCalledTimes(1);
+      expect(instance._session.completeShippingMethodSelection).toHaveBeenCalledWith({
         newTotal: {
           amount: '10.00',
           label: 'someLabel',
           type: 'final'
         }
       });
-      expect(instance.session.completeShippingContactSelection).toHaveBeenCalledTimes(0);
+      expect(instance._session.completeShippingContactSelection).toHaveBeenCalledTimes(0);
     });
     // then
     it('calling onshippingmethodselected should call completeShippingContactSelection', () => {
-      instance.subscribeStatusHandlers();
-      instance.session.onshippingcontactselected({ paymentMethod: 'MYMETHOD' });
-      expect(instance.session.completePaymentMethodSelection).toHaveBeenCalledTimes(0);
-      expect(instance.session.completeShippingMethodSelection).toHaveBeenCalledTimes(0);
-      expect(instance.session.completeShippingContactSelection).toHaveBeenCalledTimes(1);
-      expect(instance.session.completeShippingContactSelection).toHaveBeenCalledWith({
+      instance._subscribeStatusHandlers();
+      instance._session.onshippingcontactselected({ paymentMethod: 'MYMETHOD' });
+      expect(instance._session.completePaymentMethodSelection).toHaveBeenCalledTimes(0);
+      expect(instance._session.completeShippingMethodSelection).toHaveBeenCalledTimes(0);
+      expect(instance._session.completeShippingContactSelection).toHaveBeenCalledTimes(1);
+      expect(instance._session.completeShippingContactSelection).toHaveBeenCalledWith({
         newTotal: {
           amount: '10.00',
           label: 'someLabel',
@@ -667,7 +778,7 @@ describe('Apple Pay', () => {
   });
 
   // given
-  describe('Method paymentProcess', () => {
+  describe('paymentProcess()', () => {
     let sessionObjectFake: object;
     beforeEach(() => {
       sessionObjectFake = { begin: jest.fn() };
@@ -676,64 +787,169 @@ describe('Apple Pay', () => {
     // then
     it('should call correct functions', () => {
       const { instance } = ApplePayFixture();
+      // @ts-ignore
       instance.getApplePaySessionObject = jest.fn().mockReturnValueOnce(sessionObjectFake);
-      instance.onValidateMerchantRequest = jest.fn();
-      instance.subscribeStatusHandlers = jest.fn();
-      instance.onPaymentAuthorized = jest.fn();
-      instance.onPaymentCanceled = jest.fn();
+      // @ts-ignore
+      instance._onValidateMerchantRequest = jest.fn();
+      // @ts-ignore
+      instance._subscribeStatusHandlers = jest.fn();
+      // @ts-ignore
+      instance._onPaymentAuthorized = jest.fn();
+      // @ts-ignore
+      instance._onPaymentCanceled = jest.fn();
 
-      instance.paymentProcess();
+      // @ts-ignore
+      instance._paymentProcess();
+      // @ts-ignore
       expect(instance.getApplePaySessionObject).toHaveBeenCalled();
-      expect(instance.onValidateMerchantRequest).toHaveBeenCalled();
-      expect(instance.subscribeStatusHandlers).toHaveBeenCalled();
-      expect(instance.onPaymentAuthorized).toHaveBeenCalled();
-      expect(instance.onPaymentCanceled).toHaveBeenCalled();
+      // @ts-ignore
+      expect(instance._onValidateMerchantRequest).toHaveBeenCalled();
+      // @ts-ignore
+      expect(instance._subscribeStatusHandlers).toHaveBeenCalled();
+      // @ts-ignore
+      expect(instance._onPaymentAuthorized).toHaveBeenCalled();
+      // @ts-ignore
+      expect(instance._onPaymentCanceled).toHaveBeenCalled();
 
-      expect(instance.session.begin).toHaveBeenCalled();
+      // @ts-ignore
+      expect(instance._session.begin).toHaveBeenCalled();
     });
   });
 
   // given
-  describe('Method applePayProcess', () => {
+  describe('applePayProcess()', () => {
     // then
     it('should do nothing if checkApplePayAvailability returns false', () => {
       const { instance } = ApplePayFixture();
+      // @ts-ignore
       instance.checkApplePayAvailability = jest.fn().mockReturnValueOnce(false);
+      // @ts-ignore
       instance.checkApplePayWalletCardAvailability = jest.fn();
-      instance.applePayProcess();
+      // @ts-ignore
+      instance._applePayProcess();
+      // @ts-ignore
       expect(instance.checkApplePayAvailability).toHaveBeenCalledTimes(1);
+      // @ts-ignore
       expect(instance.checkApplePayWalletCardAvailability).not.toHaveBeenCalled();
     });
     // then
     it('should call only canMakePayments if checkApplePayAvailability returns true and canMakePayments returns false', async () => {
       const { instance } = ApplePayFixture();
       jest.resetAllMocks();
+      // @ts-ignore
       jest.spyOn(instance, 'checkApplePayAvailability').mockReturnValueOnce(true);
+      // @ts-ignore
       jest.spyOn(instance, 'checkApplePayWalletCardAvailability').mockReturnValue(
         new Promise(function(resolve, reject) {
           resolve(false);
         })
       );
-      jest.spyOn(instance, 'applePayButtonClickHandler');
-      await instance.applePayProcess();
+      // @ts-ignore
+      jest.spyOn(instance, '_applePayButtonClickHandler');
+      // @ts-ignore
+      await instance._applePayProcess();
+      // @ts-ignore
       expect(instance.checkApplePayWalletCardAvailability).toHaveBeenCalled();
-      expect(instance.applePayButtonClickHandler).not.toHaveBeenCalled();
+      // @ts-ignore
+      expect(instance._applePayButtonClickHandler).not.toHaveBeenCalled();
     });
 
     // then
     it('should call applePayButtonClickHandler if checkApplePayAvailability returns true and canMakePayments returns true', async () => {
       const { instance } = ApplePayFixture();
       jest.resetAllMocks();
+      // @ts-ignore
       jest.spyOn(instance, 'checkApplePayAvailability').mockReturnValueOnce(true);
+      // @ts-ignore
       jest.spyOn(instance, 'checkApplePayWalletCardAvailability').mockReturnValue(
         new Promise(function(resolve, reject) {
           resolve(true);
         })
       );
-      jest.spyOn(instance, 'applePayButtonClickHandler');
-      await instance.applePayProcess();
+      // @ts-ignore
+      jest.spyOn(instance, '_applePayButtonClickHandler');
+      // @ts-ignore
+      await instance._applePayProcess();
+      // @ts-ignore
       expect(instance.checkApplePayWalletCardAvailability).toHaveBeenCalled();
-      expect(instance.applePayButtonClickHandler).toHaveBeenCalled();
+      // @ts-ignore
+      expect(instance._applePayButtonClickHandler).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('_displayNotification()', () => {
+    const { instance } = ApplePayFixture();
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._notification.success = jest.fn();
+      // @ts-ignore
+      instance._notification.error = jest.fn();
+    });
+
+    // then
+    it('should call success notification when errorcode is equal 0', () => {
+      // @ts-ignore
+      instance._displayNotification('0');
+      // @ts-ignore
+      expect(instance._notification.success).toHaveBeenCalledWith(Language.translations.PAYMENT_SUCCESS, true);
+    });
+
+    // then
+    it('should call error notification when errorcode is not equal 0', () => {
+      // @ts-ignore
+      instance._displayNotification('30000');
+      // @ts-ignore
+      expect(instance._notification.error).toHaveBeenCalledWith(Language.translations.PAYMENT_ERROR, true);
+    });
+  });
+
+  // given
+  describe('_handleApplePayError()', () => {
+    const errorObject = { errorcode: '', errormessage: 'Some error message', data: {} };
+    const { instance } = ApplePayFixture();
+
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance.getPaymentSuccessStatus = jest.fn();
+      // @ts-ignore
+      instance.getPaymentFailureStatus = jest.fn();
+      // @ts-ignore
+      instance._translator.translate = jest.fn();
+    });
+
+    // then
+    it(`should call getPaymentSuccessStatus() when browser doesn't support ApplePay version and error code equals 0`, () => {
+      errorObject.errorcode = '0';
+      // @ts-ignore
+      instance._ifBrowserSupportsApplePayVersion = jest.fn().mockReturnValueOnce(false);
+      // @ts-ignore
+      instance._handleApplePayError(errorObject);
+      // @ts-ignore
+      expect(instance.getPaymentSuccessStatus).toHaveBeenCalledTimes(1);
+    });
+
+    // then
+    it(`should call getPaymentFailureStatus() when browser doesn't support ApplePay version and error code equals 30000`, () => {
+      errorObject.errorcode = '30000';
+      // @ts-ignore
+      instance._ifBrowserSupportsApplePayVersion = jest.fn().mockReturnValueOnce(false);
+      // @ts-ignore
+      instance._handleApplePayError(errorObject);
+      // @ts-ignore
+      expect(instance.getPaymentFailureStatus).toHaveBeenCalledTimes(1);
+    });
+    // then
+    it(`should call _translator.translate() when browser supports ApplePay version and error code equals 30000`, () => {
+      errorObject.errorcode = '30000';
+      // @ts-ignore
+      instance._ifBrowserSupportsApplePayVersion = jest.fn().mockReturnValueOnce(true);
+      // @ts-ignore
+      instance._handleApplePayError(errorObject);
+      // @ts-ignore
+      expect(instance._translator.translate).toHaveBeenCalledWith(errorObject.errormessage);
     });
   });
 });

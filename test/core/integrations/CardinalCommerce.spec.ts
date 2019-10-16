@@ -7,6 +7,7 @@ import DomMethods from '../../../src/core/shared/DomMethods';
 import Selectors from '../../../src/core/shared/Selectors';
 
 jest.mock('./../../../src/core/shared/MessageBus');
+jest.mock('./../../../src/core/integrations/GoogleAnalytics');
 
 // given
 describe('CardinalCommerce', () => {
@@ -17,7 +18,7 @@ describe('CardinalCommerce', () => {
   beforeEach(() => {
     document.body.innerHTML = `<iframe id='st-control-frame-iframe'>
     </iframe><input id='JWTContainer' value="${jwt}" />`;
-    instance = new CardinalCommerce(false, jwt, ['THREEDQUERY', 'AUTH']);
+    instance = new CardinalCommerce(false, jwt, ['THREEDQUERY', 'AUTH'], 0);
   });
 
   // given

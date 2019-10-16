@@ -1,15 +1,17 @@
 import VisaCheckout from '../../../src/core/integrations/VisaCheckout';
 
+jest.mock('../../../src/core/integrations/GoogleAnalytics');
+
 // given
 describe('Visa Checkout', () => {
   let body: object;
   let instance: any;
   // when
   beforeEach(() => {
-    const { config, url } = VisaCheckoutFixture();
+    const { config, livestatus, url } = VisaCheckoutFixture();
     const jwt =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
-    instance = new VisaCheckout(config, jwt, url);
+    instance = new VisaCheckout(config, jwt, url, livestatus);
     body = document.body;
   });
 
@@ -444,7 +446,6 @@ function VisaCheckoutFixture() {
   };
   const config = {
     name: 'VISA',
-    livestatus: 0,
     merchantId: '2ig278`13b123872121h31h20e',
     buttonSettings: { size: '154', color: 'neutral' },
     settings: { displayName: 'My Test Site' },
@@ -461,6 +462,7 @@ function VisaCheckoutFixture() {
       config.buttonSettings.color
     }&size=${config.buttonSettings.size}`
   };
+  const livestatus: number = 0;
   const fakeVisaButton = document.createElement('img');
   fakeVisaButton.setAttribute('src', visaButttonProps.src);
   fakeVisaButton.setAttribute('class', visaButttonProps.class);
@@ -475,5 +477,5 @@ function VisaCheckoutFixture() {
   const url = 'https://example.com';
   const fakeV = { init: jest.fn(), on: jest.fn() };
 
-  return { config, fakeVisaButton, sdkMarkup, productionAssets, sandboxAssets, fakeV, url };
+  return { config, fakeVisaButton, livestatus, sdkMarkup, productionAssets, sandboxAssets, fakeV, url };
 }
