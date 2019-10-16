@@ -247,7 +247,7 @@ class ST {
   private _submitOnError: boolean;
   private _submitOnSuccess: boolean;
   private readonly _config: IConfig;
-  private readonly _livestatus: number;
+  private readonly _livestatus: number = 0;
   private readonly _submitCallback: any;
   private readonly _threedinit: string;
   private commonFrames: CommonFrames;
