@@ -18,7 +18,7 @@ describe('CardinalCommerce', () => {
   beforeEach(() => {
     document.body.innerHTML = `<iframe id='st-control-frame-iframe'>
     </iframe><input id='JWTContainer' value="${jwt}" />`;
-    instance = new CardinalCommerce(false, jwt, ['THREEDQUERY', 'AUTH']);
+    instance = new CardinalCommerce(false, jwt, ['THREEDQUERY', 'AUTH'], 0);
   });
 
   // given
@@ -369,7 +369,7 @@ describe('CardinalCommerce', () => {
       expect(DomMethods.insertScript).toHaveBeenCalledTimes(1);
       expect(DomMethods.insertScript).toHaveBeenCalledWith(
         'head',
-        'https://songbirdstag.cardinalcommerce.com/cardinalcruise/v1/songbird.js'
+        'https://songbirdstag.cardinalcommerce.com/edge/v1/songbird.js'
       );
       expect(script.addEventListener).toHaveBeenCalledTimes(1);
       // @ts-ignore

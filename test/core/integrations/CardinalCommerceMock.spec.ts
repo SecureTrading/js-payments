@@ -9,7 +9,7 @@ describe('CardinalCommerce class', () => {
   beforeEach(() => {
     document.body.innerHTML = `<iframe id='st-control-frame-iframe'>
     </iframe><input id='JWTContainer' value="${jwt}" />`;
-    instance = new CardinalCommerceMock(false, jwt, ['THREEDQUERY', 'AUTH']);
+    instance = new CardinalCommerceMock(false, jwt, ['THREEDQUERY', 'AUTH'], 0);
   });
 
   // given
