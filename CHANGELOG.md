@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.0
+
+### Added
+
+- Allow CSS customisation to individual fields
+- Add support to submit analytics to ST Google Analytics account to improve library usage tracking (disabled by default)
+
+### Changed
+
+- Update Cardinal commerce to use live URL if livestatus is set to 1 - new config option for ST
+- Move images out of js bundle into separate directory
+
+### Fixed
+
+- In IE animation of card would appear to blink instead of rotate
+- Transactions in IE fixed
+
 ## 2.0.0-beta.2
 
 ### Added
