@@ -1,5 +1,6 @@
 import Joi from 'joi';
 import 'location-origin';
+import _ from 'lodash';
 import 'url-polyfill';
 import 'whatwg-fetch';
 import CardFrames from './core/classes/CardFrames.class';
@@ -346,7 +347,10 @@ class ST {
 
   public updateJWT(newJWT: string) {
     this._jwt = newJWT;
-    StCodec.updateJWTValue(newJWT);
+    const bounced = _.debounce(() => {
+      StCodec.updateJWTValue(newJWT);
+    }, 900);
+    bounced();
   }
 
   /**

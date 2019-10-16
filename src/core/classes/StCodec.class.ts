@@ -124,7 +124,6 @@ class StCodec {
     };
     StCodec._messageBus.publish(messageBusEvent, true);
     StCodec._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
-    return newJWT;
   }
 
   private static _notification = new Notification();
