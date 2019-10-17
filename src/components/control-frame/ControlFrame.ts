@@ -129,11 +129,11 @@ class ControlFrame extends Frame {
       this._storeMerchantData(data);
     });
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.RESET_JWT, () => {
-      this._onResetJWT();
+      ControlFrame._onResetJWT();
     });
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
       const { newJwt } = data;
-      this._onUpdateJWT(newJwt);
+      ControlFrame._onUpdateJWT(newJwt);
       this._onLoad();
     });
   }
@@ -152,12 +152,18 @@ class ControlFrame extends Frame {
    * Resets JWT in case of Error
    * @private
    */
-  private _onResetJWT() {
+  private static _onResetJWT() {
     StCodec.jwt = StCodec.originalJwt;
   }
 
-  private _onUpdateJWT(jwt: string) {
+  /**
+   * Updates jwt and originalJwt with the new version specified by merchant.
+   * @param jwt
+   * @private
+   */
+  private static _onUpdateJWT(jwt: string) {
     StCodec.jwt = jwt;
+    StCodec.originalJwt = jwt;
   }
 
   /**

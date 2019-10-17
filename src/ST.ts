@@ -347,12 +347,19 @@ class ST {
     return new visa(config, this._jwt, this._gatewayUrl, this._livestatus);
   }
 
+  /**
+   * @param newJWT
+   */
   public updateJWT(newJWT: string) {
-    this._jwt = newJWT;
-    const bounced = _.debounce(() => {
-      StCodec.updateJWTValue(newJWT);
-    }, 900);
-    bounced();
+    if (newJWT) {
+      this._jwt = newJWT;
+      const bounced = _.debounce(() => {
+        StCodec.updateJWTValue(newJWT);
+      }, 900);
+      bounced();
+    } else {
+      throw Error('Jwt has not been specified');
+    }
   }
 
   /**
