@@ -216,6 +216,16 @@ describe('Validation', () => {
         instance._getProperTranslation(inputElement, isNotCardNumberInput, someRandomMessage, messageElement)
       ).toEqual(someRandomMessage);
     });
+    // then
+    it(`should return '${
+      Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH
+    }' when it's card number input and has messageElement and it's not valid`, () => {
+      inputElement.setCustomValidity('test');
+      expect(
+        // @ts-ignore
+        instance._getProperTranslation(inputElement, isCardNumberInput, someRandomMessage, messageElement)
+      ).toEqual(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
+    });
   });
 
   // given
@@ -243,6 +253,70 @@ describe('Validation', () => {
       inputElement.setCustomValidity = jest.fn();
       instance.luhnCheckValidation(luhnFailed, inputElement, inputElement, divElement);
       expect(inputElement.setCustomValidity).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('formValidation', () => {
+    const { instance } = validationFixture();
+    const formFields = {
+      expirationDate: { value: 'expirydate', validity: true },
+      cardNumber: { value: 'pan', validity: false },
+      securityCode: { value: 'securitycode', validity: true }
+    };
+    // when
+    beforeEach(() => {
+      instance.blockForm = jest.fn();
+    });
+
+    // then
+    it('should set _isFormValid and _isPaymentReady to true', () => {
+      instance.formValidation(true, true, formFields);
+      // @ts-ignore
+      expect(instance._isFormValid).toEqual(true);
+      // @ts-ignore
+      expect(instance._isPaymentReady).toEqual(true);
+    });
+
+    // then
+    it('should call blockForm method if _isFormValid and _isPaymentReady are true', () => {
+      instance.formValidation(true, true, formFields);
+      // @ts-ignore
+      expect(instance.blockForm).toHaveBeenCalled();
+    });
+
+    // then
+    it('should set _isFormValid and _card variables if dataInJwt is false', () => {
+      instance.formValidation(false, true, formFields);
+      // @ts-ignore
+      expect(instance._isFormValid).toEqual(false);
+      // @ts-ignore
+      expect(instance._card).toEqual({
+        expirydate: 'expirydate',
+        pan: 'pan',
+        securitycode: 'securitycode'
+      });
+    });
+  });
+
+  // given
+  describe('setFormValidity', () => {
+    const { instance } = validationFixture();
+    const validationEvent = {
+      data: { testValue: 'test value' },
+      type: MessageBus.EVENTS.VALIDATE_FORM
+    };
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._messageBus.publish = jest.fn();
+      instance.setFormValidity({ testValue: 'test value' });
+    });
+
+    // then
+    it('should call publish event', () => {
+      // @ts-ignore
+      expect(instance._messageBus.publish).toHaveBeenCalledWith(validationEvent, true);
     });
   });
 });
