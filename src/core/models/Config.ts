@@ -6,6 +6,7 @@ interface IConfig {
   animatedCard: boolean;
   componentIds?: any;
   datacenterurl?: string;
+  deferInit?: boolean;
   formId?: string;
   jwt: string;
   init?: IByPassInit;
@@ -16,7 +17,6 @@ interface IConfig {
   submitFields?: string[];
   submitOnSuccess?: boolean;
   submitOnError?: boolean;
-  updateJWT?: boolean;
   translations?: {};
 }
 
@@ -49,6 +49,7 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
     securityCode: Joi.string().required()
   }),
   datacenterurl: Joi.string(),
+  deferInit: Joi.boolean(),
   formId: Joi.string(),
   init: Joi.object(),
   jwt: Joi.string().required(),
@@ -61,8 +62,7 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
   submitOnError: Joi.boolean(),
   submitOnSuccess: Joi.boolean(),
   threedinit: Joi.string(),
-  translations: Joi.object(),
-  updateJWT: Joi.boolean()
+  translations: Joi.object()
 });
 
 const IComponentsConfigSchema = Joi.object().keys({

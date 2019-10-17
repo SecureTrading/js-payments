@@ -221,7 +221,7 @@ class ST {
    * @param styles
    * @param config
    * @param animatedCard
-   * @param updateJWT
+   * @param deferInit
    * @private
    */
   private static _configureCardFrames(
@@ -231,7 +231,7 @@ class ST {
     styles: IStyles,
     config: IComponentsConfig,
     animatedCard: boolean,
-    updateJWT: boolean
+    deferInit: boolean
   ) {
     const { defaultPaymentType, paymentTypes, startOnLoad } = config;
     let cardFrames: object;
@@ -244,7 +244,7 @@ class ST {
         paymentTypes,
         defaultPaymentType,
         animatedCard,
-        updateJWT
+        deferInit
       );
     }
     return cardFrames;
@@ -266,11 +266,11 @@ class ST {
   private readonly _threedinit: string;
   private commonFrames: CommonFrames;
   private _messageBus: MessageBus;
-  private _updateJWT: boolean;
+  private _deferInit: boolean;
 
   constructor(config: IConfig) {
     this._messageBus = new MessageBus();
-    const { analytics, animatedCard, init, livestatus, submitCallback, translations, updateJWT } = config;
+    const { analytics, animatedCard, init, livestatus, submitCallback, translations, deferInit } = config;
     if (analytics) {
       const ga = new GoogleAnalytics();
     }
@@ -285,7 +285,7 @@ class ST {
     this._animatedCard = animatedCard;
     this._submitCallback = submitCallback;
     this._config = ST._addDefaults(config);
-    this._updateJWT = updateJWT;
+    this._deferInit = deferInit;
     Utils.setLocalStorageItem(ST.TRANSLATION_STORAGE_NAME, translations);
     ST._validateConfig(this._config, IConfigSchema);
     this._setClassProperties(this._config);
@@ -319,7 +319,7 @@ class ST {
       this._styles,
       targetConfig,
       this._animatedCard,
-      this._updateJWT
+      this._deferInit
     );
     this.commonFrames.requestTypes = targetConfig.requestTypes;
     this.CardinalCommerce(targetConfig);

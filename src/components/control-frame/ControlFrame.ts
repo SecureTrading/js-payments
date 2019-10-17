@@ -303,12 +303,12 @@ class ControlFrame extends Frame {
    */
   private _requestPayment(data: any) {
     const dataInJwt = data ? data.dataInJwt : false;
-    const updateJwt = data ? data.updateJWT : false;
+    const deferInit = data ? data.deferInit : false;
     const { validity, card } = this._validation.formValidation(
       dataInJwt,
       this._isPaymentReady,
       this._formFields,
-      updateJwt
+      deferInit
     );
     if (validity) {
       this._messageBus.publish({

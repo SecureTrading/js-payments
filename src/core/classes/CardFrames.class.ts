@@ -27,14 +27,14 @@ class CardFrames extends RegisterFrames {
   private _expirationDate: Element;
   private _securityCode: Element;
   private _messageBus: MessageBus;
-  private _messageBusEvent: IMessageBusEvent = { data: { message: '' }, type: '' };
-  private readonly _paymentTypes: string[];
-  private readonly _defaultPaymentType: string;
   private _validation: Validation;
   private _translator: Translator;
+  private _messageBusEvent: IMessageBusEvent = { data: { message: '' }, type: '' };
+  private readonly _deferInit: boolean;
+  private readonly _defaultPaymentType: string;
+  private readonly _paymentTypes: string[];
   private readonly _payMessage: string;
   private readonly _processingMessage: string;
-  private _updateJWT: boolean;
 
   constructor(
     jwt: string,
@@ -44,7 +44,7 @@ class CardFrames extends RegisterFrames {
     paymentTypes: string[],
     defaultPaymentType: string,
     animatedCard: boolean,
-    udpateJWT: boolean
+    deferInit: boolean
   ) {
     super(jwt, origin, componentIds, styles, animatedCard);
     this.hasAnimatedCard = animatedCard;
@@ -55,7 +55,7 @@ class CardFrames extends RegisterFrames {
     this._initSubscribes();
     this.onInit();
     this._translator = new Translator(this.params.locale);
-    this._updateJWT = udpateJWT;
+    this._deferInit = deferInit;
     this._getSubmitButton();
     this._payMessage = this._translator.translate(Language.translations.PAY);
     this._processingMessage = `${this._translator.translate(Language.translations.PROCESSING)} ...`;
@@ -211,7 +211,7 @@ class CardFrames extends RegisterFrames {
   private _submitFormListener() {
     document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).addEventListener('submit', (event: Event) => {
       event.preventDefault();
-      this._publishSubmitEvent(this._updateJWT);
+      this._publishSubmitEvent(this._deferInit);
     });
   }
 
@@ -230,9 +230,9 @@ class CardFrames extends RegisterFrames {
   /**
    * Publishes message bus submit event.
    */
-  private _publishSubmitEvent(updateJWT: boolean) {
+  private _publishSubmitEvent(deferInit: boolean) {
     const messageBusEvent: IMessageBusEvent = {
-      data: { updateJWT },
+      data: { deferInit },
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
     this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);

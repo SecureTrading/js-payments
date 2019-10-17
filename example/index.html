@@ -114,6 +114,7 @@
           },
           analytics: true,
           animatedCard: true,
+          deferInit: true,
           livestatus: 0,
           submitOnSuccess: false,
           submitCallback: function someFancyfunction(data) {
@@ -123,8 +124,7 @@
           },
           translations: {
             'An error occurred': 'Wystąpił błąd'
-          },
-          updateJWT: true // @TODO change the name of variable
+          }
         });
 
         st.Components();
