@@ -12,6 +12,24 @@ import Validation from '../../core/shared/Validation';
  * Defines frame which is essentially a hub which collects events and processes from whole library.
  */
 class ControlFrame extends Frame {
+  /**
+   * Resets JWT in case of Error
+   * @private
+   */
+  private static _onResetJWT() {
+    StCodec.jwt = StCodec.originalJwt;
+  }
+
+  /**
+   * Updates jwt and originalJwt with the new version specified by merchant.
+   * @param jwt
+   * @private
+   */
+  private static _onUpdateJWT(jwt: string) {
+    StCodec.jwt = jwt;
+    StCodec.originalJwt = jwt;
+  }
+
   private _payment: Payment;
   private _isPaymentReady: boolean = false;
   private _merchantFormData: IMerchantData;
@@ -146,24 +164,6 @@ class ControlFrame extends Frame {
   private _onCardNumberStateChange(data: IFormFieldState) {
     this._formFields.cardNumber.validity = data.validity;
     this._formFields.cardNumber.value = data.value;
-  }
-
-  /**
-   * Resets JWT in case of Error
-   * @private
-   */
-  private static _onResetJWT() {
-    StCodec.jwt = StCodec.originalJwt;
-  }
-
-  /**
-   * Updates jwt and originalJwt with the new version specified by merchant.
-   * @param jwt
-   * @private
-   */
-  private static _onUpdateJWT(jwt: string) {
-    StCodec.jwt = jwt;
-    StCodec.originalJwt = jwt;
   }
 
   /**
