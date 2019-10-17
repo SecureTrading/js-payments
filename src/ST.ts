@@ -353,10 +353,11 @@ class ST {
   public updateJWT(newJWT: string) {
     if (newJWT) {
       this._jwt = newJWT;
-      const bounced = _.debounce(() => {
-        StCodec.updateJWTValue(newJWT);
-      }, 900);
-      bounced();
+      (() => {
+        _.debounce(() => {
+          StCodec.updateJWTValue(newJWT);
+        }, 900);
+      })();
     } else {
       throw Error('Jwt has not been specified');
     }
