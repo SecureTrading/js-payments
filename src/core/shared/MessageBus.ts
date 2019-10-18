@@ -38,6 +38,7 @@ export default class MessageBus {
     THREEDINIT: 'THREEDINIT',
     THREEDQUERY: 'THREEDQUERY',
     TRANSACTION_COMPLETE: 'TRANSACTION_COMPLETE',
+    UPDATE_JWT: 'UPDATE_JWT',
     UPDATE_MERCHANT_FIELDS: 'UPDATE_MERCHANT_FIELDS'
   };
   private readonly _parentOrigin: string;
