@@ -270,7 +270,7 @@ class ST {
   private _deferInit: boolean;
 
   constructor(config: IConfig) {
-    const { analytics, animatedCard,deferInit, init, livestatus, submitCallback, translations } = config;
+    const { analytics, animatedCard, deferInit, init, livestatus, submitCallback, translations } = config;
     if (init) {
       const { cachetoken, threedinit } = init;
       this._cachetoken = cachetoken;
