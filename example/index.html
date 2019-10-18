@@ -15,6 +15,19 @@
       <h1 class="example-form__title">
         Secure Trading<span>AMOUNT: <strong>10.00 GBP</strong></span>
       </h1>
+      <div class="example-form__section example-form__section--horizontal">
+        <div class="example-form__group">
+          <label for="example-form-name" class="example-form__label">AMOUNT</label>
+          <input
+            id="example-form-amount"
+            class="example-form__input"
+            type="number"
+            placeholder=""
+            name="myBillAmount"
+            data-st-name="billingamount"
+          />
+        </div>
+      </div>
 
       <div class="example-form__section example-form__section--horizontal">
         <div class="example-form__group">
@@ -130,6 +143,11 @@
           st.ApplePay(stConfig.applePay);
           st.VisaCheckout(stConfig.visaCheckout);
         }
+        document.getElementById('example-form-amount').addEventListener('input', function() {
+          st.updateJWT(
+            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3MTE0NDkzMS4xNjU3MzI0LCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIyMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.JDKLxPKlue6cpqsg6wFl_ToiTL5Nb4nJsMWBnuwYMcw'
+          );
+        });
       })();
     </script>
   </body>

@@ -160,6 +160,19 @@ class DomMethods {
       }
     });
   }
+
+  /**
+   * Delete all child nodes from given target.
+   * @param placement
+   */
+  public static removeAllChildren(placement: string) {
+    const element: HTMLElement = document.getElementById(placement);
+    if (element) {
+      while (element.lastChild) {
+        element.removeChild(element.lastChild);
+      }
+    }
+  }
 }
 
 export default DomMethods;
