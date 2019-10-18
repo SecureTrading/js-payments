@@ -556,18 +556,34 @@ describe('ControlFrame', () => {
 
   // given
   describe('_onResetJWT', () => {
-    const { instance } = controlFrameFixture();
     // when
     beforeEach(() => {
       StCodec.jwt = '1234';
       StCodec.originalJwt = '56789';
       // @ts-ignore
-      instance._onResetJWT();
+      ControlFrame._onResetJWT();
     });
     // then
     it('should set STCodec.jwt', () => {
       // @ts-ignore
       expect(StCodec.jwt).toEqual(StCodec.originalJwt);
+    });
+  });
+
+  // given
+  describe('_onUpdateJWT', () => {
+    // when
+    beforeEach(() => {
+      StCodec.jwt = '1234';
+      StCodec.originalJwt = '56789';
+      // @ts-ignore
+      ControlFrame._onUpdateJWT('997');
+    });
+
+    // then
+    it('should update jwt and originalJwt', () => {
+      expect(StCodec.jwt).toEqual('997');
+      expect(StCodec.originalJwt).toEqual('997');
     });
   });
 });

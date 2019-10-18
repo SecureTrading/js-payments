@@ -15,6 +15,19 @@
       <h1 class="example-form__title">
         Secure Trading<span>AMOUNT: <strong>10.00 GBP</strong></span>
       </h1>
+      <div class="example-form__section example-form__section--horizontal">
+        <div class="example-form__group">
+          <label for="example-form-name" class="example-form__label">AMOUNT</label>
+          <input
+            id="example-form-amount"
+            class="example-form__input"
+            type="number"
+            placeholder=""
+            name="myBillAmount"
+            data-st-name="billingamount"
+          />
+        </div>
+      </div>
 
       <div class="example-form__section example-form__section--horizontal">
         <div class="example-form__group">
@@ -84,7 +97,7 @@
         var parsedUrl = new URL(window.location.href);
 
         var cardinalJwt =
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3MTEyNjgyMi4wMTc4ODM1LCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIxMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.wGfzB3u81IUEzD4UHL83UB36dxgMhkC8iQnU335bwK0';
+          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3MTE0NTAwMi45NTA1NTYzLCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIxMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.xMzIFwcQG5glQuJ5XKowLs8KDNm3IjiLjAehZSfbjZw';
         var cardinalJwtFR =
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU3NDExNDIzLjI0NTQ3LCJwYXlsb2FkIjp7ImN1c3RvbWVydG93biI6IkJhbmdvciIsImJpbGxpbmdwb3N0Y29kZSI6IlRFMTIgM1NUIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsImN1c3RvbWVycHJlbWlzZSI6IjEyIiwiYmlsbGluZ2xhc3RuYW1lIjoiTmFtZSIsImxvY2FsZSI6ImZyX0ZSIiwiYmFzZWFtb3VudCI6IjEwMDAiLCJiaWxsaW5nZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiYmlsbGluZ3ByZW1pc2UiOiIxMiIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0MSIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiYmlsbGluZ3N0cmVldCI6IlRlc3Qgc3RyZWV0IiwiY3VzdG9tZXJzdHJlZXQiOiJUZXN0IHN0cmVldCIsImN1c3RvbWVycG9zdGNvZGUiOiJURTEyIDNTVCIsImN1c3RvbWVybGFzdG5hbWUiOiJOYW1lIiwiYmlsbGluZ3RlbGVwaG9uZSI6IjAxMjM0IDExMTIyMiIsImJpbGxpbmdmaXJzdG5hbWUiOiJUZXN0IiwiYmlsbGluZ3Rvd24iOiJCYW5nb3IiLCJiaWxsaW5ndGVsZXBob25ldHlwZSI6Ik0ifX0.OQ7PaErcXj7vmR4ob_uzXv3LqoLYmD3tP6cof2FCfkQ';
         var applePayVisaCheckoutJwt =
@@ -101,6 +114,7 @@
           },
           analytics: true,
           animatedCard: true,
+          deferInit: true,
           livestatus: 0,
           submitOnSuccess: false,
           submitCallback: function someFancyfunction(data) {
@@ -145,6 +159,12 @@
           settings: {
             displayName: 'My Test Site'
           }
+        });
+
+        document.getElementById('example-form-amount').addEventListener('input', function() {
+          st.updateJWT(
+            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3MTE0NDkzMS4xNjU3MzI0LCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIyMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.JDKLxPKlue6cpqsg6wFl_ToiTL5Nb4nJsMWBnuwYMcw'
+          );
         });
       })();
     </script>

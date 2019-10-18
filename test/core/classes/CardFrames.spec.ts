@@ -158,6 +158,10 @@ describe('CardFrames', () => {
   describe('_publishSubmitEvent', () => {
     const { instance } = cardFramesFixture();
     const submitFormEvent = {
+      data: {
+        // @ts-ignore
+        updateJWT: undefined
+      },
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
     // when
@@ -323,7 +327,8 @@ function cardFramesFixture() {
     {},
     ['VISA,MASTERCARD,AMEX'],
     'AMEX',
-    true
+    true,
+    false
   );
   return { instance };
 }

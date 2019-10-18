@@ -1,3 +1,4 @@
+import { StCodec } from '../src/core/classes/StCodec.class';
 import ApplePay from '../src/core/integrations/ApplePay';
 import ApplePayMock from '../src/core/integrations/ApplePayMock';
 import CardinalCommerceMock from '../src/core/integrations/CardinalCommerceMock';
@@ -133,6 +134,37 @@ describe('ST', () => {
       instance._setClassProperties(config);
       expect(instance._gatewayUrl).toEqual(environment.GATEWAY_URL);
       expect(Selectors.MERCHANT_FORM_SELECTOR).toEqual(Selectors.MERCHANT_FORM_SELECTOR);
+    });
+  });
+
+  // given
+  describe('updateJWT()', () => {
+    const lodash = require.requireActual('lodash');
+
+    // when
+    beforeEach(() => {
+      StCodec.updateJWTValue = jest.fn();
+      instance.updateJWT('somenewjwtvalue');
+      lodash.debounce = jest.fn().mockImplementationOnce(() => {
+        StCodec.updateJWTValue('somenewjwtvalue');
+      });
+    });
+
+    // then
+    it('should assign new jwt value', () => {
+      expect(instance._jwt).toEqual('somenewjwtvalue');
+    });
+
+    // then
+    it('should call updateJWTValue', () => {
+      expect(StCodec.updateJWTValue).toHaveBeenCalled();
+    });
+
+    // then
+    it('should throw an error if newJwt is not specified', () => {
+      expect(() => {
+        instance.updateJWT(null);
+      }).toThrow();
     });
   });
 });

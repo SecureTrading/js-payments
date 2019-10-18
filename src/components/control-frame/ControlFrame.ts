@@ -12,6 +12,24 @@ import Validation from '../../core/shared/Validation';
  * Defines frame which is essentially a hub which collects events and processes from whole library.
  */
 class ControlFrame extends Frame {
+  /**
+   * Resets JWT in case of Error
+   * @private
+   */
+  private static _onResetJWT() {
+    StCodec.jwt = StCodec.originalJwt;
+  }
+
+  /**
+   * Updates jwt and originalJwt with the new version specified by merchant.
+   * @param jwt
+   * @private
+   */
+  private static _onUpdateJWT(jwt: string) {
+    StCodec.jwt = jwt;
+    StCodec.originalJwt = jwt;
+  }
+
   private _payment: Payment;
   private _isPaymentReady: boolean = false;
   private _merchantFormData: IMerchantData;
@@ -209,7 +227,12 @@ class ControlFrame extends Frame {
    */
   private _initResetJwtEvent() {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.RESET_JWT, () => {
-      this._onResetJWT();
+      ControlFrame._onResetJWT();
+    });
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
+      const { newJwt } = data;
+      ControlFrame._onUpdateJWT(newJwt);
+      this._onLoad();
     });
   }
 
@@ -221,14 +244,6 @@ class ControlFrame extends Frame {
   private _onCardNumberStateChange(data: IFormFieldState) {
     this._formFields.cardNumber.validity = data.validity;
     this._formFields.cardNumber.value = data.value;
-  }
-
-  /**
-   * Resets JWT in case of Error
-   * @private
-   */
-  private _onResetJWT() {
-    StCodec.jwt = StCodec.originalJwt;
   }
 
   /**
@@ -374,8 +389,17 @@ class ControlFrame extends Frame {
    */
   private _requestPayment(data: any) {
     const dataInJwt = data ? data.dataInJwt : false;
-    const { validity, card } = this._validation.formValidation(dataInJwt, this._isPaymentReady, this._formFields);
+    const deferInit = data ? data.deferInit : false;
+    const { validity, card } = this._validation.formValidation(
+      dataInJwt,
+      this._isPaymentReady,
+      this._formFields,
+      deferInit
+    );
     if (validity) {
+      this._messageBus.publish({
+        type: MessageBus.EVENTS_PUBLIC.THREEDINIT
+      });
       this._payment
         .threeDQueryRequest(this._preThreeDRequestTypes, card, this._merchantFormData)
         .then((result: any) => {

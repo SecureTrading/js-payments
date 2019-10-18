@@ -6,6 +6,7 @@ interface IConfig {
   animatedCard: boolean;
   componentIds?: any;
   datacenterurl?: string;
+  deferInit?: boolean;
   formId?: string;
   jwt: string;
   init?: IByPassInit;
@@ -48,6 +49,7 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
     securityCode: Joi.string().required()
   }),
   datacenterurl: Joi.string(),
+  deferInit: Joi.boolean(),
   formId: Joi.string(),
   init: Joi.object(),
   jwt: Joi.string().required(),
