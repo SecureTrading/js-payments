@@ -1,5 +1,6 @@
 import Selectors from './shared/Selectors';
 import { IStyle } from './shared/Styler';
+
 /***
  * Defines input with iframe source
  * Can be styled by predefined JSON.
@@ -10,7 +11,7 @@ export default class Element {
    * @param name Component name
    * @returns URL of input iframe
    */
-  public static getComponentAddress(name: string) {
+  public static getComponentAddress(name: string): string {
     if (name === Selectors.CARD_NUMBER_COMPONENT_NAME) {
       return Selectors.CARD_NUMBER_COMPONENT;
     } else if (name === Selectors.SECURITY_CODE_COMPONENT_NAME) {
@@ -23,6 +24,8 @@ export default class Element {
       return Selectors.ANIMATED_CARD_COMPONENT;
     } else if (name === Selectors.CONTROL_FRAME_COMPONENT_NAME) {
       return Selectors.CONTROL_FRAME_COMPONENT;
+    } else {
+      return '';
     }
   }
 
