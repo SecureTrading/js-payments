@@ -45,6 +45,8 @@ export default class ExpirationDate extends FormField {
       (currentDateMonth.length === 2 && currentDateYear.length === 2)
     ) {
       return currentDateMonth + '/' + currentDateYear;
+    } else {
+      return '';
     }
   }
 
