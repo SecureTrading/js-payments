@@ -18,6 +18,7 @@ describe('DomMethods', () => {
       expect(document.head.innerHTML).toBe('<script src="http://example.com/test.js"></script>');
     });
   });
+
   // given
   describe('DomMethods.insertStyle', () => {
     // then
