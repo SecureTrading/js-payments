@@ -64,8 +64,10 @@ class DomMethods {
     const child = document.getElementById(childId);
     if (parent && child) {
       parent.removeChild(child);
+      return parent;
+    } else {
+      return parent;
     }
-    return parent;
   }
 
   /**
@@ -160,6 +162,7 @@ class DomMethods {
         element.removeChild(element.lastChild);
       }
     }
+    return element;
   }
 }
 
