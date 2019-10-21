@@ -158,15 +158,26 @@ describe('ControlFrame', () => {
 
   // given
   describe('_initResetJwtEvent()', () => {
+    const obj = { data: { newJwt: 'some jwt' } };
+
     // then
     it('should call _initResetJwtEvent when RESET_JWT event has been called', () => {
       // @ts-ignore
-      instance._onResetJWT = jest.fn();
-      messageBusEvent.type = MessageBus.EVENTS_PUBLIC.RESET_JWT;
+      instance._messageBus.subscribe = jest
+        .fn()
+        .mockImplementationOnce((even, callback) => {
+          callback();
+        })
+        .mockImplementationOnce((even, callback) => {
+          callback(obj);
+        });
+      // @ts-ignore
+      instance._onLoad = jest.fn();
+
       // @ts-ignore
       instance._initResetJwtEvent();
       // @ts-ignore
-      expect(instance._onResetJWT).toHaveBeenCalled();
+      expect(instance._onLoad).toHaveBeenCalled();
     });
   });
 
@@ -558,8 +569,8 @@ describe('ControlFrame', () => {
   describe('_onResetJWT', () => {
     // when
     beforeEach(() => {
-      StCodec.jwt = '1234';
       StCodec.originalJwt = '56789';
+      StCodec.jwt = '1234';
       // @ts-ignore
       ControlFrame._onResetJWT();
     });
