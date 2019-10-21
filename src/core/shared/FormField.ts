@@ -45,17 +45,10 @@ export default class FormField extends Frame {
     this._addTabListener();
   }
 
-  /**
-   * format()
-   * @param data
-   */
   protected format(data: string) {
     this._inputElement.value = data;
   }
 
-  /**
-   *
-   */
   protected getAllowedStyles() {
     let allowed = super.getAllowedStyles();
     const input = `#${this._inputSelector}`;
@@ -98,16 +91,10 @@ export default class FormField extends Frame {
     return allowed;
   }
 
-  /**
-   *
-   */
   protected getLabel(): string {
     throw new Error(Language.translations.NOT_IMPLEMENTED_ERROR);
   }
 
-  /**
-   *
-   */
   protected getState(): IFormFieldState {
     return {
       validity: this._inputElement.validity.valid,
@@ -115,51 +102,28 @@ export default class FormField extends Frame {
     };
   }
 
-  /**
-   *
-   */
   protected onBlur() {
     this._blur();
     this.validation.validate(this._inputElement, this._messageElement);
   }
 
-  /**
-   *
-   * @param event
-   */
   protected onClick(event: Event) {
     this._click();
   }
 
-  /**
-   *
-   * @param event
-   */
   protected onFocus(event: Event) {
     this._focus();
   }
 
-  /**
-   *
-   * @param event
-   */
   protected onInput(event: Event) {
     Validation.setCustomValidationError(this._inputElement, '');
     this.format(this._inputElement.value);
   }
 
-  /**
-   *
-   * @param event
-   */
   protected onKeydown(event: KeyboardEvent) {
     return event;
   }
 
-  /**
-   *
-   * @param event
-   */
   protected onKeyPress(event: KeyboardEvent) {
     if (Validation.isEnter(event)) {
       event.preventDefault();
@@ -170,10 +134,6 @@ export default class FormField extends Frame {
     }
   }
 
-  /**
-   *
-   * @param event
-   */
   protected onPaste(event: ClipboardEvent) {
     let { clipboardData } = event;
     event.preventDefault();
@@ -192,10 +152,6 @@ export default class FormField extends Frame {
     this.validation.validate(this._inputElement, this._messageElement);
   }
 
-  /**
-   *
-   * @param attributes
-   */
   protected setAttributes(attributes: object) {
     // tslint:disable-next-line:forin
     for (const attribute in attributes) {
@@ -216,52 +172,28 @@ export default class FormField extends Frame {
     });
   }
 
-  /**
-   *
-   * @param value
-   */
   protected setValue(value: string) {
     this._inputElement.value = value;
   }
 
-  /**
-   *
-   * @private
-   */
   private _addTabListener() {
     window.addEventListener('focus', event => {
       this.onFocus(event);
     });
   }
 
-  /**
-   *
-   * @private
-   */
   private _blur() {
     this._inputElement.blur();
   }
 
-  /**
-   *
-   * @private
-   */
   private _click() {
     this._inputElement.click();
   }
 
-  /**
-   *
-   * @private
-   */
   private _focus() {
     this._inputElement.focus();
   }
 
-  /**
-   *
-   * @private
-   */
   private _setInputListeners() {
     this._inputElement.addEventListener('paste', (event: ClipboardEvent) => {
       this.onPaste(event);
@@ -292,10 +224,6 @@ export default class FormField extends Frame {
     });
   }
 
-  /**
-   *
-   * @private
-   */
   private _setLabelText() {
     this._labelElement.innerHTML = this._translator.translate(this.getLabel());
   }
