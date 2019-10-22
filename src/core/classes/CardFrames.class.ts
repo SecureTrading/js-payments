@@ -27,6 +27,7 @@ class CardFrames extends RegisterFrames {
   private _expirationDate: Element;
   private _securityCode: Element;
   private _messageBus: MessageBus;
+  private _submitButtons: string[];
   private _validation: Validation;
   private _translator: Translator;
   private _messageBusEvent: IMessageBusEvent = { data: { message: '' }, type: '' };
@@ -44,12 +45,14 @@ class CardFrames extends RegisterFrames {
     paymentTypes: string[],
     defaultPaymentType: string,
     animatedCard: boolean,
-    deferInit: boolean
+    deferInit: boolean,
+    submitButtons: string[]
   ) {
     super(jwt, origin, componentIds, styles, animatedCard);
     this.hasAnimatedCard = animatedCard;
     this._paymentTypes = paymentTypes;
     this._defaultPaymentType = defaultPaymentType;
+    this._submitButtons = submitButtons;
     this._validation = new Validation();
     this._messageBus = new MessageBus();
     this._initSubscribes();

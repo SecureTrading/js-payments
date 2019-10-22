@@ -246,7 +246,8 @@ class ST {
         paymentTypes,
         defaultPaymentType,
         animatedCard,
-        deferInit
+        deferInit,
+        submitButtons
       );
     }
     return cardFrames;
