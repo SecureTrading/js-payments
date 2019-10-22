@@ -267,10 +267,20 @@ class ST {
   private commonFrames: CommonFrames;
   private _messageBus: MessageBus;
   private _deferInit: boolean;
+  private _submitButtons: string[];
 
   constructor(config: IConfig) {
     this._messageBus = new MessageBus();
-    const { analytics, animatedCard, init, livestatus, submitCallback, translations, deferInit } = config;
+    const {
+      analytics,
+      animatedCard,
+      init,
+      livestatus,
+      submitButtons,
+      submitCallback,
+      translations,
+      deferInit
+    } = config;
     if (analytics) {
       const ga = new GoogleAnalytics();
     }
@@ -283,6 +293,7 @@ class ST {
     }
     this._livestatus = livestatus;
     this._animatedCard = animatedCard;
+    this._submitButtons = submitButtons;
     this._submitCallback = submitCallback;
     this._config = ST._addDefaults(config);
     this._deferInit = deferInit;
@@ -302,6 +313,7 @@ class ST {
       this._submitCallback
     );
     ST._configureMerchantFields();
+    console.log(this._submitButtons);
   }
 
   /**

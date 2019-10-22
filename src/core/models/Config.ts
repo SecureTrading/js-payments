@@ -13,6 +13,7 @@ interface IConfig {
   livestatus?: number;
   origin?: string;
   styles?: IStyles;
+  submitButtons?: string[];
   submitCallback?: any;
   submitFields?: string[];
   submitOnSuccess?: boolean;
@@ -29,6 +30,7 @@ interface IComponentsConfig {
 
 interface IWalletConfig {
   [key: string]: any;
+
   requestTypes?: string[];
 }
 
@@ -57,6 +59,7 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
   origin: Joi.string(),
   requestTypes: Joi.array().allow([Joi.string()]),
   styles: Joi.object(),
+  submitButtons: Joi.array(),
   submitCallback: Joi.func(),
   submitFields: Joi.array().allow([Joi.string()]),
   submitOnError: Joi.boolean(),
