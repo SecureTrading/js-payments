@@ -222,6 +222,7 @@ class ST {
    * @param config
    * @param animatedCard
    * @param deferInit
+   * @param submitButtons
    * @private
    */
   private static _configureCardFrames(
@@ -231,7 +232,8 @@ class ST {
     styles: IStyles,
     config: IComponentsConfig,
     animatedCard: boolean,
-    deferInit: boolean
+    deferInit: boolean,
+    submitButtons: string[]
   ) {
     const { defaultPaymentType, paymentTypes, startOnLoad } = config;
     let cardFrames: object;
@@ -331,7 +333,8 @@ class ST {
       this._styles,
       targetConfig,
       this._animatedCard,
-      this._deferInit
+      this._deferInit,
+      this._submitButtons
     );
     this.commonFrames.requestTypes = targetConfig.requestTypes;
     this.CardinalCommerce(targetConfig);
