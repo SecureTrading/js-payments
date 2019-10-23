@@ -7,23 +7,177 @@ jest.mock('./../../../src/core/shared/Payment');
 
 // given
 describe('ControlFrame', () => {
-  // given
-  describe('_initSubscriptions', () => {
-    const { instance } = controlFrameFixture();
-    const messageBusEvent = {
-      type: ''
-    };
+  const { data, instance, messageBusEvent } = controlFrameFixture();
 
-    beforeEach(() => {
-      // @ts-ignore
-      instance._initSubscriptions();
+  beforeEach(() => {
+    // @ts-ignore
+    instance._messageBus.subscribe = jest.fn().mockImplementationOnce((event, callback) => {
+      callback(data);
     });
+  });
 
+  // given
+  describe('_initChangeCardNumberEvent()', () => {
     // then
     it('should call _onCardNumberStateChange when CHANGE_CARD_NUMBER event has been called', () => {
-      messageBusEvent.type = MessageBus.EVENTS.CHANGE_CARD_NUMBER;
       // @ts-ignore
       instance._onCardNumberStateChange = jest.fn();
+      messageBusEvent.type = MessageBus.EVENTS.CHANGE_CARD_NUMBER;
+      // @ts-ignore
+      instance._initChangeCardNumberEvent();
+      // @ts-ignore
+      expect(instance._onCardNumberStateChange).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('_onExpirationDateStateChange()', () => {
+    // then
+    it('should call _onExpirationDateStateChange when CHANGE_EXPIRATION_DATE event has been called', () => {
+      // @ts-ignore
+      instance._onExpirationDateStateChange = jest.fn();
+      messageBusEvent.type = MessageBus.EVENTS.CHANGE_EXPIRATION_DATE;
+      // @ts-ignore
+      instance._initChangeExpirationDateEvent();
+      // @ts-ignore
+      expect(instance._onExpirationDateStateChange).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('_onSecurityCodeStateChange()', () => {
+    // then
+    it('should call _onSecurityCodeStateChange when CHANGE_SECURITY_CODE event has been called', () => {
+      // @ts-ignore
+      instance._onSecurityCodeStateChange = jest.fn();
+      messageBusEvent.type = MessageBus.EVENTS.CHANGE_SECURITY_CODE;
+      // @ts-ignore
+      instance._initChangeSecurityCodeEvent();
+      // @ts-ignore
+      expect(instance._onSecurityCodeStateChange).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('_initSetRequestTypesEvent()', () => {
+    // then
+    it('should call _onSetRequestTypesEvent when SET_REQUEST_TYPES event has been called', () => {
+      // @ts-ignore
+      instance._onSetRequestTypesEvent = jest.fn();
+      messageBusEvent.type = MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES;
+      // @ts-ignore
+      instance._initSetRequestTypesEvent();
+      // @ts-ignore
+      expect(instance._onSetRequestTypesEvent).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('_initByPassInitEvent()', () => {
+    // then
+    it('should call _onByPassInitEvent when BY_PASS_INIT event has been called', () => {
+      // @ts-ignore
+      instance._onByPassInitEvent = jest.fn();
+      messageBusEvent.type = MessageBus.EVENTS_PUBLIC.BY_PASS_INIT;
+      // @ts-ignore
+      instance._initByPassInitEvent();
+      // @ts-ignore
+      expect(instance._onByPassInitEvent).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('_initThreedinitEvent()', () => {
+    // then
+    it('should call _onThreeDInitEvent when THREEDINIT event has been called', () => {
+      // @ts-ignore
+      instance._onThreeDInitEvent = jest.fn();
+      messageBusEvent.type = MessageBus.EVENTS_PUBLIC.THREEDINIT;
+      // @ts-ignore
+      instance._initThreedinitEvent();
+      // @ts-ignore
+      expect(instance._onThreeDInitEvent).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('_initLoadCardinalEvent()', () => {
+    // then
+    it('should call _onLoadCardinal when LOAD_CARDINAL event has been called', () => {
+      // @ts-ignore
+      instance._onLoadCardinal = jest.fn();
+      messageBusEvent.type = MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL;
+      // @ts-ignore
+      instance._initLoadCardinalEvent();
+      // @ts-ignore
+      expect(instance._onLoadCardinal).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('_initProcessPaymentsEvent()', () => {
+    // then
+    it('should call _onProcessPaymentEvent when PROCESS_PAYMENTS event has been called', () => {
+      // @ts-ignore
+      instance._onProcessPaymentEvent = jest.fn();
+      messageBusEvent.type = MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS;
+      // @ts-ignore
+      instance._initProcessPaymentsEvent();
+      // @ts-ignore
+      expect(instance._onProcessPaymentEvent).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('_initSubmitFormEvent()', () => {
+    // then
+    it('should call _onSubmit when SUBMIT_FORM event has been called', () => {
+      // @ts-ignore
+      instance._onSubmit = jest.fn();
+      messageBusEvent.type = MessageBus.EVENTS_PUBLIC.SUBMIT_FORM;
+      // @ts-ignore
+      instance._initSubmitFormEvent();
+      // @ts-ignore
+      expect(instance._onSubmit).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('_initUpdateMerchantFieldsEvent()', () => {
+    // then
+    it('should call _storeMerchantData when UPDATE_MERCHANT_FIELDS event has been called', () => {
+      // @ts-ignore
+      instance._storeMerchantData = jest.fn();
+      messageBusEvent.type = MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS;
+      // @ts-ignore
+      instance._initUpdateMerchantFieldsEvent();
+      // @ts-ignore
+      expect(instance._storeMerchantData).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('_initResetJwtEvent()', () => {
+    const obj = { data: { newJwt: 'some jwt' } };
+
+    // then
+    it('should call _initResetJwtEvent when RESET_JWT event has been called', () => {
+      // @ts-ignore
+      instance._messageBus.subscribe = jest
+        .fn()
+        .mockImplementationOnce((even, callback) => {
+          callback();
+        })
+        .mockImplementationOnce((even, callback) => {
+          callback(obj);
+        });
+      // @ts-ignore
+      instance._onLoad = jest.fn();
+
+      // @ts-ignore
+      instance._initResetJwtEvent();
+      // @ts-ignore
+      expect(instance._onLoad).toHaveBeenCalled();
     });
   });
 
@@ -415,8 +569,8 @@ describe('ControlFrame', () => {
   describe('_onResetJWT', () => {
     // when
     beforeEach(() => {
-      StCodec.jwt = '1234';
       StCodec.originalJwt = '56789';
+      StCodec.jwt = '1234';
       // @ts-ignore
       ControlFrame._onResetJWT();
     });
@@ -447,5 +601,12 @@ describe('ControlFrame', () => {
 
 function controlFrameFixture() {
   const instance = new ControlFrame();
-  return { instance };
+  const messageBusEvent = {
+    type: ''
+  };
+  const data = {
+    validity: true,
+    value: 'test value'
+  };
+  return { data, instance, messageBusEvent };
 }
