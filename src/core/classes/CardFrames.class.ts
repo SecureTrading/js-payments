@@ -129,7 +129,9 @@ class CardFrames extends RegisterFrames {
     const button: HTMLButtonElement | HTMLInputElement = document.getElementById(this._buttonId) as
       | HTMLButtonElement
       | HTMLInputElement;
-    return button && this._setSubmitButtonProperties(button, state);
+    if (button) {
+      this._setSubmitButtonProperties(button, state);
+    }
   }
 
   /**
@@ -227,7 +229,7 @@ class CardFrames extends RegisterFrames {
    * Listens to html submit form event, blocks default event, disables submit button and publish event to Message Bus.
    */
   private _submitFormListener() {
-    this._submitButton.addEventListener('click', (event: Event) => {
+    this._submitButton.addEventListener('click', () => {
       this._publishSubmitEvent(this._deferInit);
     });
   }
