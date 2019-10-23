@@ -28,7 +28,6 @@ class CommonFrames extends RegisterFrames {
   private _notificationFrame: Element;
   private _notificationFrameMounted: HTMLElement;
   private _requestTypes: string[];
-  private _localStoreValue: string;
   private readonly _gatewayUrl: string;
   private readonly _merchantForm: HTMLFormElement;
   private _validation: Validation;

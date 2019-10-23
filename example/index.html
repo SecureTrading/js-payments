@@ -79,8 +79,9 @@
       </div>
 
       <div class="example-form__section">
-        <div class="example-form__group">
-          <button type="submit" class="example-form__button"></button>
+        <div class="example-form__group example-form__group--submit">
+          <button type="submit" class="example-form__button">Back</button>
+          <button type="submit" class="example-form__button" id="merchant-submit-button">Submit</button>
         </div>
       </div>
 
@@ -97,7 +98,7 @@
         var parsedUrl = new URL(window.location.href);
 
         var cardinalJwt =
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3MTE0NTAwMi45NTA1NTYzLCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIxMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.xMzIFwcQG5glQuJ5XKowLs8KDNm3IjiLjAehZSfbjZw';
+          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3MTgzMTk3NC4yOTU5OTE3LCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIxMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.LrqYsd7GSTILb618TXKtW5jHNUlKa92zDO2K7FnLNxE';
         var cardinalJwtFR =
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU3NDExNDIzLjI0NTQ3LCJwYXlsb2FkIjp7ImN1c3RvbWVydG93biI6IkJhbmdvciIsImJpbGxpbmdwb3N0Y29kZSI6IlRFMTIgM1NUIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsImN1c3RvbWVycHJlbWlzZSI6IjEyIiwiYmlsbGluZ2xhc3RuYW1lIjoiTmFtZSIsImxvY2FsZSI6ImZyX0ZSIiwiYmFzZWFtb3VudCI6IjEwMDAiLCJiaWxsaW5nZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiYmlsbGluZ3ByZW1pc2UiOiIxMiIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0MSIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiYmlsbGluZ3N0cmVldCI6IlRlc3Qgc3RyZWV0IiwiY3VzdG9tZXJzdHJlZXQiOiJUZXN0IHN0cmVldCIsImN1c3RvbWVycG9zdGNvZGUiOiJURTEyIDNTVCIsImN1c3RvbWVybGFzdG5hbWUiOiJOYW1lIiwiYmlsbGluZ3RlbGVwaG9uZSI6IjAxMjM0IDExMTIyMiIsImJpbGxpbmdmaXJzdG5hbWUiOiJUZXN0IiwiYmlsbGluZ3Rvd24iOiJCYW5nb3IiLCJiaWxsaW5ndGVsZXBob25ldHlwZSI6Ik0ifX0.OQ7PaErcXj7vmR4ob_uzXv3LqoLYmD3tP6cof2FCfkQ';
         var applePayVisaCheckoutJwt =
@@ -116,11 +117,7 @@
           animatedCard: true,
           deferInit: true,
           livestatus: 0,
-          submitButtons: [
-            { id: 'st-submit-button-1', content: 'Submit 1' },
-            { id: 'st-submit-button-2', content: 'Submit 2' },
-            { id: 'st-submit-button-3', content: 'Submit 3' }
-          ],
+          buttonId: 'merchant-submit-button',
           submitOnSuccess: false,
           submitCallback: function someFancyfunction(data) {
             var stringified = JSON.stringify(data);

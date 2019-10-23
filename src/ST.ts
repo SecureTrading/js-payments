@@ -222,7 +222,7 @@ class ST {
    * @param config
    * @param animatedCard
    * @param deferInit
-   * @param submitButtons
+   * @param buttonId
    * @private
    */
   private static _configureCardFrames(
@@ -233,7 +233,7 @@ class ST {
     config: IComponentsConfig,
     animatedCard: boolean,
     deferInit: boolean,
-    submitButtons: string[]
+    buttonId: string
   ) {
     const { defaultPaymentType, paymentTypes, startOnLoad } = config;
     let cardFrames: object;
@@ -247,7 +247,7 @@ class ST {
         defaultPaymentType,
         animatedCard,
         deferInit,
-        submitButtons
+        buttonId
       );
     }
     return cardFrames;
@@ -270,20 +270,11 @@ class ST {
   private commonFrames: CommonFrames;
   private _messageBus: MessageBus;
   private _deferInit: boolean;
-  private _submitButtons: string[];
+  private _buttonId: string;
 
   constructor(config: IConfig) {
     this._messageBus = new MessageBus();
-    const {
-      analytics,
-      animatedCard,
-      init,
-      livestatus,
-      submitButtons,
-      submitCallback,
-      translations,
-      deferInit
-    } = config;
+    const { analytics, animatedCard, init, livestatus, buttonId, submitCallback, translations, deferInit } = config;
     if (analytics) {
       const ga = new GoogleAnalytics();
     }
@@ -296,7 +287,7 @@ class ST {
     }
     this._livestatus = livestatus;
     this._animatedCard = animatedCard;
-    this._submitButtons = submitButtons;
+    this._buttonId = buttonId;
     this._submitCallback = submitCallback;
     this._config = ST._addDefaults(config);
     this._deferInit = deferInit;
@@ -316,7 +307,6 @@ class ST {
       this._submitCallback
     );
     ST._configureMerchantFields();
-    console.log(this._submitButtons);
   }
 
   /**
@@ -335,7 +325,7 @@ class ST {
       targetConfig,
       this._animatedCard,
       this._deferInit,
-      this._submitButtons
+      this._buttonId
     );
     this.commonFrames.requestTypes = targetConfig.requestTypes;
     this.CardinalCommerce(targetConfig);

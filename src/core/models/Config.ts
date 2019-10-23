@@ -4,6 +4,7 @@ import { IStyles } from '../shared/Styler';
 interface IConfig {
   analytics?: boolean;
   animatedCard: boolean;
+  buttonId?: string;
   componentIds?: any;
   datacenterurl?: string;
   deferInit?: boolean;
@@ -13,7 +14,6 @@ interface IConfig {
   livestatus?: number;
   origin?: string;
   styles?: IStyles;
-  submitButtons?: string[];
   submitCallback?: any;
   submitFields?: string[];
   submitOnSuccess?: boolean;
@@ -42,6 +42,7 @@ interface IByPassInit {
 const IConfigSchema: Joi.JoiObject = Joi.object().keys({
   analytics: Joi.boolean(),
   animatedCard: Joi.boolean(),
+  buttonId: Joi.string(),
   cachetoken: Joi.string(),
   componentIds: Joi.object().keys({
     animatedCard: Joi.string(),
@@ -59,7 +60,6 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
   origin: Joi.string(),
   requestTypes: Joi.array().allow([Joi.string()]),
   styles: Joi.object(),
-  submitButtons: Joi.array(),
   submitCallback: Joi.func(),
   submitFields: Joi.array().allow([Joi.string()]),
   submitOnError: Joi.boolean(),
