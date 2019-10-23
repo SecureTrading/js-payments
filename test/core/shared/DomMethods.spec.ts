@@ -18,6 +18,7 @@ describe('DomMethods', () => {
       expect(document.head.innerHTML).toBe('<script src="http://example.com/test.js"></script>');
     });
   });
+
   // given
   describe('DomMethods.insertStyle', () => {
     // then
@@ -97,12 +98,70 @@ describe('DomMethods', () => {
     const { htmlForParentAndChild } = createFormFixture();
     beforeEach(() => {
       document.body.innerHTML = htmlForParentAndChild;
-      DomMethods.removeChildFromDOM('st-form', 'some-title');
     });
 
     // then
     it('should remove child element from DOM', () => {
+      DomMethods.removeChildFromDOM('st-form', 'some-title');
       expect(document.getElementById('st-form').childElementCount).toEqual(0);
+    });
+
+    // then
+    it('should return unchanged parent element if child is not specified', () => {
+      expect(DomMethods.removeChildFromDOM('st-form', '')).toEqual(document.getElementById('st-form'));
+    });
+
+    // then
+    it('should return null parent element if parent is not specified', () => {
+      expect(DomMethods.removeChildFromDOM('', 'some-title')).toEqual(null);
+    });
+
+    // then
+    it('should return null parent element if parent and child are not specified', () => {
+      expect(DomMethods.removeChildFromDOM('', '')).toEqual(null);
+    });
+  });
+
+  // given
+  describe('DomMethods.removeAllChildren', () => {
+    // when
+    beforeEach(() => {
+      const element = document.createElement('div');
+      const child1 = document.createElement('input');
+      const child2 = document.createElement('img');
+      const child3 = document.createElement('div');
+      element.id = 'some-id';
+      document.body.appendChild(element);
+      document
+        .getElementById('some-id')
+        .appendChild(child1)
+        .appendChild(child2)
+        .appendChild(child3);
+    });
+    // then
+    it('should remove all children of specified element', () => {
+      expect(DomMethods.removeAllChildren('some-id').childNodes.length).toEqual(0);
+    });
+  });
+
+  // given
+  describe('DomMethods.addClass', () => {
+    const element: HTMLDivElement = document.createElement('div');
+    // then
+    it('should add class with given name to classList of element', () => {
+      DomMethods.addClass(element, 'some-class');
+      expect(element.classList.contains('some-class')).toEqual(true);
+    });
+  });
+
+  // given
+  describe('DomMethods.removeClass', () => {
+    const element: HTMLDivElement = document.createElement('div');
+    element.classList.add('blah');
+    // then
+    it('should remove class with given name to classList of element', () => {
+      DomMethods.removeClass(element, 'blah');
+      expect(element.classList.contains('blah')).toEqual(false);
     });
   });
 });

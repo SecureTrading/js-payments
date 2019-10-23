@@ -7,25 +7,43 @@ describe('GoogleAnalytics', () => {
   const { instance } = googleAnalyticsFixture();
 
   // given
-  describe('GoogleAnalytics', () => {
+  describe('_onInit', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
-      instance._createGAScript = jest.fn().mockRejectedValueOnce(new Error('Async error'));
+      instance._insertGALibrary = jest.fn();
       // @ts-ignore
-      instance._onInit();
+      instance._createGAScript = jest.fn().mockResolvedValueOnce({});
     });
 
     // then
-    it('should call _onInit function', () => {
+    it('should call _insertGALibrary and GoogleAnalytics._disableUserIDTracking', () => {
       // @ts-ignore
-      // expect(instance._createGAScript).toThrowError();
+      instance._onInit();
+      // @ts-ignore
+      expect(instance._insertGALibrary).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('sendGaData', () => {
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      window.ga = jest.fn();
+      // @ts-ignore
+      GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment error');
+    });
+
+    // then
+    it('should call send method from google analytics', () => {
+      // @ts-ignore
+      expect(window.ga).toHaveBeenCalled();
     });
   });
 
   // given
   describe('_createGAScript', () => {
-    // when
     // when
     beforeEach(() => {
       // @ts-ignore
