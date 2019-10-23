@@ -116,7 +116,11 @@
           animatedCard: true,
           deferInit: true,
           livestatus: 0,
-          submitButtons: ['st-submit-button-1', 'st-submit-button-2', 'st-submit-button-3'],
+          submitButtons: [
+            { id: 'st-submit-button-1', content: 'Submit 1' },
+            { id: 'st-submit-button-2', content: 'Submit 2' },
+            { id: 'st-submit-button-3', content: 'Submit 3' }
+          ],
           submitOnSuccess: false,
           submitCallback: function someFancyfunction(data) {
             var stringified = JSON.stringify(data);

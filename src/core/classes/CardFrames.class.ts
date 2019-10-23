@@ -59,7 +59,7 @@ class CardFrames extends RegisterFrames {
     this.onInit();
     this._translator = new Translator(this.params.locale);
     this._deferInit = deferInit;
-    this._getSubmitButton();
+    this._attachButtons();
     this._payMessage = this._translator.translate(Language.translations.PAY);
     this._processingMessage = `${this._translator.translate(Language.translations.PROCESSING)} ...`;
   }
@@ -135,6 +135,17 @@ class CardFrames extends RegisterFrames {
     button.textContent = this._translator.translate(Language.translations.PAY);
     return button;
   };
+
+  private _attachButtons() {
+    if (this._submitButtons.length) {
+      const test = this._submitButtons.map(item => {
+        console.log(item);
+        return item;
+      });
+    } else {
+      this._getSubmitButton();
+    }
+  }
 
   /**
    * Inits credit card and animated card fields (if merchant wanted this type of payment)
