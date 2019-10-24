@@ -15,6 +15,7 @@ import GoogleAnalytics from './core/integrations/GoogleAnalytics';
 import VisaCheckout from './core/integrations/VisaCheckout';
 import VisaCheckoutMock from './core/integrations/VisaCheckoutMock';
 import {
+  IByPassInit,
   IComponentsConfig,
   IComponentsConfigSchema,
   IConfig,
@@ -266,29 +267,25 @@ class ST {
   private readonly _config: IConfig;
   private readonly _livestatus: number = 0;
   private readonly _submitCallback: any;
-  private readonly _threedinit: string;
+  private _threedinit: string;
   private commonFrames: CommonFrames;
   private _messageBus: MessageBus;
   private _deferInit: boolean;
   private _buttonId: string;
 
   constructor(config: IConfig) {
-    this._messageBus = new MessageBus();
-    const { analytics, animatedCard, init, livestatus, buttonId, submitCallback, translations, deferInit } = config;
-    if (analytics) {
-      const ga = new GoogleAnalytics();
-    }
+    const { analytics, animatedCard, buttonId, deferInit, init, livestatus, submitCallback, translations } = config;
     if (init) {
-      const {
-        init: { cachetoken, threedinit }
-      } = config;
-      this._threedinit = threedinit;
+      const { cachetoken, threedinit } = init;
       this._cachetoken = cachetoken;
+      this._threedinit = threedinit;
     }
+    this._messageBus = new MessageBus();
     this._livestatus = livestatus;
     this._animatedCard = animatedCard;
     this._buttonId = buttonId;
     this._submitCallback = submitCallback;
+    this._initGoogleAnalytics(analytics);
     this._config = ST._addDefaults(config);
     this._deferInit = deferInit;
     Utils.setLocalStorageItem(ST.TRANSLATION_STORAGE_NAME, translations);
@@ -384,6 +381,18 @@ class ST {
       this._cachetoken,
       this._threedinit
     );
+  }
+
+  /**
+   * @param init
+   * @private
+   */
+  private _initGoogleAnalytics(init: boolean) {
+    if (init) {
+      const ga = new GoogleAnalytics();
+    } else {
+      return false;
+    }
   }
 
   /**
