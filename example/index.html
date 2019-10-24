@@ -94,73 +94,55 @@
     <script type="text/javascript" src="st.js"></script>
     <script>
       (function() {
-        var parsedUrl = new URL(window.location.href);
-
-        var cardinalJwt =
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3MTE0NTAwMi45NTA1NTYzLCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIxMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.xMzIFwcQG5glQuJ5XKowLs8KDNm3IjiLjAehZSfbjZw';
-        var cardinalJwtFR =
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU3NDExNDIzLjI0NTQ3LCJwYXlsb2FkIjp7ImN1c3RvbWVydG93biI6IkJhbmdvciIsImJpbGxpbmdwb3N0Y29kZSI6IlRFMTIgM1NUIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsImN1c3RvbWVycHJlbWlzZSI6IjEyIiwiYmlsbGluZ2xhc3RuYW1lIjoiTmFtZSIsImxvY2FsZSI6ImZyX0ZSIiwiYmFzZWFtb3VudCI6IjEwMDAiLCJiaWxsaW5nZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiYmlsbGluZ3ByZW1pc2UiOiIxMiIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0MSIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiYmlsbGluZ3N0cmVldCI6IlRlc3Qgc3RyZWV0IiwiY3VzdG9tZXJzdHJlZXQiOiJUZXN0IHN0cmVldCIsImN1c3RvbWVycG9zdGNvZGUiOiJURTEyIDNTVCIsImN1c3RvbWVybGFzdG5hbWUiOiJOYW1lIiwiYmlsbGluZ3RlbGVwaG9uZSI6IjAxMjM0IDExMTIyMiIsImJpbGxpbmdmaXJzdG5hbWUiOiJUZXN0IiwiYmlsbGluZ3Rvd24iOiJCYW5nb3IiLCJiaWxsaW5ndGVsZXBob25ldHlwZSI6Ik0ifX0.OQ7PaErcXj7vmR4ob_uzXv3LqoLYmD3tP6cof2FCfkQ';
-        var applePayVisaCheckoutJwt =
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU2MDk1NDA4OC45Njc5MDM0LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.ehveog4Xds-ak2yOhSgzZd-yzu4JZoC-a3xKqY_HJOU';
-
-        var jwt = parsedUrl.searchParams.get('jwt') || cardinalJwt;
-
-        var st = SecureTrading({
-          jwt: jwt, // Can't use property shorthand because it isn't supported by IE
-          styles: {
-            defaultStyles: {
-              'background-color-input': 'AliceBlue'
+        var ST = SecureTrading;
+        window
+          .fetch('https://merchant.example.com:8443/config.json')
+          .then(function(response) {
+            if (response.status !== 200) {
+              return Promise.reject('Configuration has not been set !');
             }
-          },
-          analytics: true,
-          animatedCard: true,
-          deferInit: true,
-          livestatus: 0,
-          submitOnSuccess: false,
-          submitCallback: function someFancyfunction(data) {
+            return response.json();
+          })
+          .then(function(data) {
+            if (data) {
+              configurationInit(ST, data);
+            } else {
+              fetchDefaultConfig();
+            }
+          })
+          .catch(function() {
+            fetchDefaultConfig();
+          });
+
+        function fetchDefaultConfig() {
+          fetch('./../json/config.json')
+            .then(function(response) {
+              if (response.status !== 200) {
+                return Promise.reject('Default configuration has not been set !');
+              }
+              return response.json();
+            })
+            .then(function(data) {
+              if (data) {
+                configurationInit(ST, data);
+              }
+            });
+        }
+
+        function configurationInit(ST, data) {
+          var stConfig = data;
+          var parsedUrl = new URL(window.location.href);
+          stConfig.jwt = parsedUrl.searchParams.get('jwt') || stConfig.jwt;
+          var st = ST(stConfig);
+
+          st.submitCallback = function someFancyfunction(data) {
             var stringified = JSON.stringify(data);
             var testVariable = 'This is what we have got after submit' + stringified;
-            console.log(testVariable);
-          },
-          translations: {
-            'An error occurred': 'Wystąpił błąd'
-          }
-        });
-
-        st.Components();
-
-        st.ApplePay({
-          buttonStyle: 'white-outline',
-          buttonText: 'donate',
-          merchantId: 'merchant.net.securetrading.test',
-          paymentRequest: {
-            countryCode: 'US',
-            currencyCode: 'USD',
-            merchantCapabilities: ['supports3DS', 'supportsCredit', 'supportsDebit'],
-            supportedNetworks: [],
-            total: {
-              label: 'Secure Trading Merchant',
-              amount: '10.00'
-            }
-          },
-          placement: 'st-apple-pay'
-        });
-
-        st.VisaCheckout({
-          buttonSettings: {
-            size: '154',
-            color: 'neutral'
-          },
-          merchantId: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4',
-          paymentRequest: {
-            subtotal: '20.00'
-          },
-          placement: 'st-visa-checkout',
-          settings: {
-            displayName: 'My Test Site'
-          }
-        });
-
+          };
+          st.Components(stConfig.components);
+          st.ApplePay(stConfig.applePay);
+          st.VisaCheckout(stConfig.visaCheckout);
+        }
         document.getElementById('example-form-amount').addEventListener('input', function() {
           st.updateJWT(
             'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3MTE0NDkzMS4xNjU3MzI0LCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIyMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.JDKLxPKlue6cpqsg6wFl_ToiTL5Nb4nJsMWBnuwYMcw'
