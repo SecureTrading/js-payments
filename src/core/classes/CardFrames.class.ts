@@ -147,8 +147,8 @@ class CardFrames extends RegisterFrames {
       button =
         form.querySelector(CardFrames.SUBMIT_BUTTON_AS_BUTTON_MARKUP) ||
         form.querySelector(CardFrames.SUBMIT_BUTTON_AS_INPUT_MARKUP);
-      button.textContent = this._payMessage;
     }
+    button.textContent = this._payMessage;
     this._submitButton = button;
     return button;
   };
