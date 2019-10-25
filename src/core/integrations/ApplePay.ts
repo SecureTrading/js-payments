@@ -172,10 +172,10 @@ export class ApplePay {
   }
 
   /**
-   * Checks whether ApplePay is available on current device
+   * Checks whether user is logged to Apple Pay account.
    */
-  protected checkApplePayAvailability() {
-    return ApplePaySession && ApplePaySession.canMakePayments();
+  protected isUserLoggedToAppleAccount(): boolean {
+    return ApplePaySession.canMakePayments();
   }
 
   /**
@@ -491,13 +491,17 @@ export class ApplePay {
    * @private
    */
   private _applePayProcess() {
-    if (this.checkApplePayAvailability()) {
-      this.checkApplePayWalletCardAvailability().then((canMakePayments: boolean) => {
-        if (canMakePayments) {
-          this._applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
-          GoogleAnalytics.sendGaData('event', 'Apple Pay', 'init', 'Apple Pay can make payments');
-        }
-      });
+    if (ApplePaySession) {
+      if (this.isUserLoggedToAppleAccount()) {
+        this.checkApplePayWalletCardAvailability().then((canMakePayments: boolean) => {
+          if (canMakePayments) {
+            this._applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
+            GoogleAnalytics.sendGaData('event', 'Apple Pay', 'init', 'Apple Pay can make payments');
+          }
+        });
+      } else {
+        this._notification.error(Language.translations.APPLE_PAY_NOT_LOGGED, true);
+      }
     }
   }
 

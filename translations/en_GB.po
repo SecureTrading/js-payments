@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2019-07-31T14:46:41.067Z\n"
-"PO-Revision-Date: 2019-07-31T14:46:41.067Z\n"
+"POT-Creation-Date: 2019-10-25T11:55:38.328Z\n"
+"PO-Revision-Date: 2019-10-25T11:55:38.328Z\n"
 "Language: en_GB\n"
 
 msgid "Timeout"
@@ -74,3 +74,6 @@ msgstr "Invalid field"
 
 msgid "Card number is invalid"
 msgstr "Card number is invalid"
+
+msgid "You are not logged to Apple account"
+msgstr "You are not logged to Apple account"

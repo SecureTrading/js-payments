@@ -18,7 +18,7 @@ class ApplePayMock extends ApplePay {
     this.applePayVersion = 5;
   }
 
-  public checkApplePayAvailability() {
+  public isUserLoggedToAppleAccount() {
     return true;
   }
 
