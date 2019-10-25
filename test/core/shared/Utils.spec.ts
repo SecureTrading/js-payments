@@ -123,7 +123,7 @@ describe('Utils', () => {
     const dataNoObject = 123456789;
 
     function setLocalStorageItemFixture(name: string, storage: any) {
-      Utils.setLocalStorageItem(name, storage);
+      return Utils.setLocalStorageItem(name, storage);
     }
 
     // then
@@ -136,6 +136,11 @@ describe('Utils', () => {
     it('should set storage with given name when data specified in params is not an object', () => {
       setLocalStorageItemFixture(storageName, dataNoObject);
       expect(localStorage.getItem(storageName)).toEqual('123456789');
+    });
+
+    // then
+    it('should return false when data parameter is not specified', () => {
+      expect(setLocalStorageItemFixture(storageName, null)).toEqual(false);
     });
   });
 
@@ -153,6 +158,24 @@ describe('Utils', () => {
     // then
     it('should return empty string when storage with given name is not specified', () => {
       expect(Utils.getLocalStorageItem(fakeStorageName, data)).toEqual('');
+    });
+
+    // then
+    it('should return false when data parameter is not specified', () => {
+      expect(Utils.getLocalStorageItem(fakeStorageName, '')).toEqual(false);
+    });
+  });
+
+  // given
+  describe('Utils.stripChars', () => {
+    // then
+    it('should return string with only digits when regex is not specified', () => {
+      expect(Utils.stripChars('s1o2me3t4es5t   val6ue', false)).toEqual('123456');
+    });
+
+    // then
+    it('should adjust string to given regex', () => {
+      expect(Utils.stripChars('Quit  yo jibba  jabba !', /\s/g)).toEqual('Quityojibbajabba!');
     });
   });
 });

@@ -15,9 +15,7 @@ module.exports = {
     'control-frame': './src/components/control-frame/control-frame.ts',
     st: './src/ST.ts',
     example: './example/index.ts',
-    immediateExample: './example/immediate.ts',
-    receipt: './example/receipt.ts',
-    byPassExample: './example/bypass.ts'
+    receipt: './example/receipt.ts'
   },
   output: {
     filename: '[name].js',
@@ -107,21 +105,10 @@ module.exports = {
       chunks: ['example']
     }),
     new HtmlWebpackPlugin({
-      filename: 'immediate.html',
-      template: './example/immediate.html',
-      chunks: ['immediateExample']
-    }),
-    new HtmlWebpackPlugin({
       filename: 'receipt.html',
       template: './example/receipt.html',
       chunks: ['receipt']
     }),
-    new HtmlWebpackPlugin({
-      filename: 'bypass.html',
-      template: './example/bypass.html',
-      chunks: ['byPassExample']
-    }),
-    // new HtmlWebpackTagsPlugin({ tags: ['vendor.js', 'st.js'], append: true }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css'
@@ -131,6 +118,14 @@ module.exports = {
         from: 'src/images',
         to: 'images',
         test: /([^/]+)\/(.+)\.png$/,
+        force: true
+      }
+    ]),
+    new CopyPlugin([
+      {
+        from: 'src/json',
+        to: 'json',
+        test: /([^/]+)\/(.+)\.json$/,
         force: true
       }
     ]),

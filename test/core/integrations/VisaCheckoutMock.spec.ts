@@ -8,10 +8,10 @@ describe('Visa Checkout Mock class', () => {
 
   // when
   beforeEach(() => {
-    const { config } = VisaCheckoutMockFixture();
+    const { config, livestatus } = VisaCheckoutMockFixture();
     const jwt =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
-    instance = new VisaCheckoutMock(config, jwt, 'https://example.com');
+    instance = new VisaCheckoutMock(config, jwt, 'https://example.com', livestatus);
     body = document.body;
   });
 
@@ -101,9 +101,9 @@ describe('Visa Checkout Mock class', () => {
 function VisaCheckoutMockFixture() {
   const html = '<button id="v-button" />';
   document.body.innerHTML = html;
+  const livestatus: number = 0;
   const config = {
     name: 'VISA',
-    livestatus: 0,
     merchantId: '2ig278`13b123872121h31h20e',
     buttonSettings: { size: '154', color: 'neutral' },
     settings: { displayName: 'My Test Site' },
@@ -111,5 +111,5 @@ function VisaCheckoutMockFixture() {
   };
   const fakeV = { init: jest.fn(), on: jest.fn() };
 
-  return { config, fakeV };
+  return { config, fakeV, livestatus };
 }

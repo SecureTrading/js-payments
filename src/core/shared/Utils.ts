@@ -87,15 +87,17 @@ export default class Utils {
   }
 
   /**
-   * Clear whitespaces in expression.
+   * Clear chars in expression.
    * @param string
    * @param regex
    */
   public static stripChars(string: string, regex: any) {
-    if (typeof regex === 'undefined') {
+    if (typeof regex === 'undefined' || !Boolean(regex)) {
       regex = /[\D+]/g;
+      return string.replace(regex, '');
+    } else {
+      return string.replace(regex, '');
     }
-    return string.replace(regex, '');
   }
 
   /**
@@ -116,6 +118,8 @@ export default class Utils {
       const isObject = type === 'object' && type !== null;
       const dataToSet = isObject ? JSON.stringify(data) : data.toString();
       localStorage.setItem(name, dataToSet);
+    } else {
+      return false;
     }
   }
 
@@ -129,6 +133,8 @@ export default class Utils {
     if (storage) {
       const json = JSON.parse(storage);
       return Object.keys(json).includes(name) ? json[name] : '';
+    } else {
+      return false;
     }
   }
 }

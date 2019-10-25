@@ -216,6 +216,37 @@ describe('ExpirationDate', () => {
   });
 
   // given
+  describe('onKeydown()', () => {
+    const { instance } = expirationDateFixture();
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      const event: KeyboardEvent = new KeyboardEvent('keydown', { keyCode: 34 });
+      event.preventDefault = jest.fn();
+      // @ts-ignore
+      instance.onKeydown(event);
+    });
+
+    // then
+    it('should set _currentKeyCode', () => {
+      // @ts-ignore
+      expect(instance._currentKeyCode).toEqual(34);
+    });
+
+    // then
+    it('should set _inputSelectionStart', () => {
+      // @ts-ignore
+      expect(instance._inputSelectionStart).toEqual(0);
+    });
+
+    // then
+    it('should set _inputSelectionEnd', () => {
+      // @ts-ignore
+      expect(instance._inputSelectionEnd).toEqual(0);
+    });
+  });
+
+  // given
   describe('_sendState()', () => {
     const { instance } = expirationDateFixture();
     let spy: jest.SpyInstance;
@@ -235,12 +266,26 @@ describe('ExpirationDate', () => {
 
   // given
   describe('_getISOFormatDate()', () => {
-    const { instance } = expirationDateFixture();
     // then
     it('should return only month if user deletes previous / last character between slash', () => {
       // @ts-ignore
       expect(ExpirationDate._getISOFormatDate(['11', '2'], ['11', ''])).toEqual('11');
     });
+
+    // then
+    it('', () => {
+      // @ts-ignore
+      expect(ExpirationDate._getISOFormatDate(['11', '1'], ['11', ''])).toEqual('11');
+      // @ts-ignore
+      expect(ExpirationDate._getISOFormatDate(['11', '11'], ['11', '1'])).toEqual('11/1');
+    });
+
+    // then
+    it('should return empty string if none of statements are true', () => {
+      // @ts-ignore
+      expect(ExpirationDate._getISOFormatDate(['111', '333'], ['1111', '32432'])).toEqual('');
+    });
+
     // then
     it('should return empty string if array of string is empty', () => {
       // @ts-ignore
@@ -308,6 +353,18 @@ describe('ExpirationDate', () => {
       instance._setFormattedDate();
       // @ts-ignore
       expect(instance._inputElement.value).toEqual(expected);
+    });
+
+    // then
+    it('should call setSelectionRange when pressed key is delete', () => {
+      // @ts-ignore
+      instance._isPressedKeyDelete = jest.fn().mockReturnValueOnce(true);
+      // @ts-ignore
+      instance._inputElement.setSelectionRange = jest.fn();
+      // @ts-ignore
+      instance._setFormattedDate();
+      // @ts-ignore
+      expect(instance._inputElement.setSelectionRange).toHaveBeenCalled();
     });
   });
 });

@@ -14,18 +14,6 @@ class DomMethods {
   }
 
   /**
-   * Sets defined property in DOM
-   * @param attr
-   * @param value
-   * @param elementId
-   */
-  public static setProperty(attr: string, value: string, elementId: string) {
-    const element = document.getElementById(elementId);
-    element.setAttribute(attr, value);
-    return element;
-  }
-
-  /**
    * Appends styles to head element.
    * @param contents
    */
@@ -76,8 +64,10 @@ class DomMethods {
     const child = document.getElementById(childId);
     if (parent && child) {
       parent.removeChild(child);
+      return parent;
+    } else {
+      return parent;
     }
-    return parent;
   }
 
   /**
@@ -159,6 +149,20 @@ class DomMethods {
         );
       }
     });
+  }
+
+  /**
+   * Delete all child nodes from given target.
+   * @param placement
+   */
+  public static removeAllChildren(placement: string) {
+    const element: HTMLElement = document.getElementById(placement);
+    if (element) {
+      while (element.lastChild) {
+        element.removeChild(element.lastChild);
+      }
+    }
+    return element;
   }
 }
 

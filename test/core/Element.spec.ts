@@ -3,7 +3,7 @@ import Element from '../../src/core/Element';
 import Selectors from '../../src/core/shared/Selectors';
 
 // given
-describe('Element class', () => {
+describe('Element', () => {
   //when
   let instance: Element,
     mockObject: object,
@@ -48,6 +48,7 @@ describe('Element class', () => {
       expect(Element.getComponentAddress('notificationFrame')).toEqual(Selectors.NOTIFICATION_FRAME_COMPONENT);
       expect(Element.getComponentAddress('controlFrame')).toEqual(Selectors.CONTROL_FRAME_COMPONENT);
       expect(Element.getComponentAddress('animatedCard')).toEqual(Selectors.ANIMATED_CARD_COMPONENT);
+      expect(Element.getComponentAddress('someOtherComponentWhichIsNotThere')).toEqual('');
     });
 
     // then
