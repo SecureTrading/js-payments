@@ -2,7 +2,7 @@
   "analytics": true,
   "animatedCard": true,
   "deferInit": true,
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3MTQzNjU0MS4wODAzNzQsInBheWxvYWQiOnsibWFpbmFtb3VudCI6IjEwLjAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.6C_JSPjdj9vT7TDtocgIwp05p7VLRNs80fIun5Y00uc",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3MjAwNDg2My4yNjI1ODYsInBheWxvYWQiOnsibWFpbmFtb3VudCI6IjEwLjAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.cxfuyxERUVVh7r6X4w_Dk9jQgyiK5DVkH0k9a3YO_SM",
   "styles": {
     "defaultStyles": {
       "background-color-input": "AliceBlue"

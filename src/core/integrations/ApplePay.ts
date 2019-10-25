@@ -500,7 +500,9 @@ export class ApplePay {
           }
         });
       } else {
-        this._notification.error(Language.translations.APPLE_PAY_NOT_LOGGED, true);
+        document.getElementById(ApplePay.APPLE_PAY_BUTTON_ID).addEventListener('click', () => {
+          this._notification.error(Language.translations.APPLE_PAY_NOT_LOGGED, true);
+        });
       }
     }
   }
