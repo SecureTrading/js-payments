@@ -291,10 +291,6 @@ export default class Validation extends Frame {
     };
   }
 
-  /**
-   * Send a request through the MessageBus to trigger form validation.
-   * @param state
-   */
   public setFormValidity(state: any) {
     const validationEvent: IMessageBusEvent = {
       data: { ...state },
@@ -303,9 +299,6 @@ export default class Validation extends Frame {
     this._messageBus.publish(validationEvent, true);
   }
 
-  /**
-   * Extended onInit() method from Frame.ts class.
-   */
   protected onInit() {
     super.onInit();
     this._messageBus = new MessageBus();
@@ -314,22 +307,12 @@ export default class Validation extends Frame {
     this._translator = new Translator(this._params.locale);
   }
 
-  /**
-   * Add or remove error class from input field.
-   * @param inputElement
-   */
   private _toggleErrorClass = (inputElement: HTMLInputElement) => {
     inputElement.validity.valid
       ? inputElement.classList.remove(Validation.ERROR_FIELD_CLASS)
       : inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
   };
 
-  /**
-   * Method placed errorMessage inside chosen container (specified by id).
-   * @param inputElement
-   * @param messageElement
-   * @param customErrorMessage
-   */
   private _setMessage(inputElement: HTMLInputElement, messageElement: HTMLElement, customErrorMessage?: string) {
     const isCardNumberInput: boolean = inputElement.getAttribute('id') === Selectors.CARD_NUMBER_INPUT;
     const validityState = Validation.getValidationMessage(inputElement.validity);
@@ -342,15 +325,6 @@ export default class Validation extends Frame {
     );
   }
 
-  /**
-   * Returns adequate translation to specific field.
-   * @param inputElement
-   * @param isCardNumberInput
-   * @param validityState
-   * @param messageElement
-   * @param customErrorMessage
-   * @private
-   */
   private _getProperTranslation(
     inputElement: HTMLInputElement,
     isCardNumberInput: boolean,
@@ -367,13 +341,6 @@ export default class Validation extends Frame {
     }
   }
 
-  /**
-   *
-   * @param inputElement
-   * @param messageElement
-   * @param data
-   * @private
-   */
   private _assignErrorDetails(
     inputElement: HTMLInputElement,
     messageElement: HTMLElement,

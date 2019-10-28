@@ -12,10 +12,6 @@ class Formatter extends Validation {
   };
   private _date: string[] = ['', ''];
 
-  constructor(locale: string) {
-    super(locale);
-  }
-
   public number(cardNumber: string, id: string) {
     super.cardNumber(cardNumber);
     const element: HTMLInputElement = document.getElementById(id) as HTMLInputElement;

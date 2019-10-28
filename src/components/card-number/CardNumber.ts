@@ -17,6 +17,7 @@ export default class CardNumber extends FormField {
 
   public binLookup: BinLookup;
   public validity: Validation;
+  private _formatter: Formatter;
   private _cardNumberFormatted: string;
   private _cardNumberLength: number;
   private _cardNumberValue: string;
@@ -29,6 +30,7 @@ export default class CardNumber extends FormField {
     this._cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     this.binLookup = new BinLookup();
     this.validity = new Validation();
+    this._formatter = new Formatter();
     this._isCardNumberValid = true;
     this._cardNumberLength = CardNumber.STANDARD_CARD_LENGTH;
     this.setFocusListener();
@@ -72,7 +74,6 @@ export default class CardNumber extends FormField {
    */
   protected onInput(event: Event) {
     super.onInput(event);
-    this._inputElement.value = Formatter.trimNonNumericExceptSpace(this._inputElement.value);
     this._getMaxLengthOfCardNumber(this._inputElement.value);
     this._inputElement.value = this._inputElement.value.substring(0, this._cardNumberLength);
     this._sendState();
