@@ -28,7 +28,7 @@ export default class CardNumber extends FormField {
     super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE, Selectors.CARD_NUMBER_LABEL);
     this._cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     this.binLookup = new BinLookup();
-    this.validity = new Validation('en');
+    this.validity = new Validation();
     this._isCardNumberValid = true;
     this._cardNumberLength = CardNumber.STANDARD_CARD_LENGTH;
     this.setFocusListener();
@@ -54,7 +54,7 @@ export default class CardNumber extends FormField {
    */
   protected onBlur() {
     super.onBlur();
-    this._luhnCheck(this._inputElement.value);
+    this.validation.luhnCheck(this._inputElement);
     this._sendState();
   }
 
@@ -101,34 +101,6 @@ export default class CardNumber extends FormField {
    */
   protected setBlurListener() {
     super.setEventListener(MessageBus.EVENTS.BLUR_CARD_NUMBER);
-  }
-
-  /**
-   * Luhn Algorithm
-   * From the right:
-   *    Step 1: take the value of this digit
-   *    Step 2: if the offset from the end is even
-   *    Step 3: double the value, then sum the digits
-   *    Step 4: if sum of those above is divisible by ten, YOU PASS THE LUHN !
-   * @param cardNumber
-   * @private
-   */
-  private _luhnCheck(cardNumber: string) {
-    const cardNumberWithoutSpaces = cardNumber.replace(/\s/g, '');
-    let bit = 1;
-    let cardNumberLength = cardNumberWithoutSpaces.length;
-    let sum = 0;
-
-    while (cardNumberLength) {
-      const val = parseInt(cardNumberWithoutSpaces.charAt(--cardNumberLength), 10);
-      bit = bit ^ 1;
-      const algorithmValue = bit ? CardNumber.LUHN_CHECK_ARRAY[val] : val;
-      sum += algorithmValue;
-    }
-
-    const luhnCheck = sum && sum % 10 === 0;
-    this.validity.luhnCheckValidation(luhnCheck, this._fieldInstance, this._inputElement, this._messageElement);
-    return luhnCheck;
   }
 
   /**

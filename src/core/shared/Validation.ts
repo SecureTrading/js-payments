@@ -20,6 +20,27 @@ const {
  */
 export default class Validation extends Frame {
   public static ERROR_FIELD_CLASS: string = 'error-field';
+  protected static STANDARD_FORMAT_PATTERN: string = '(\\d{1,4})(\\d{1,4})?(\\d{1,4})?(\\d+)?';
+  private static BACKSPACE_KEY_CODE: number = 8;
+  private static CARD_NUMBER_DEFAULT_LENGTH: number = 16;
+  private static DELETE_KEY_CODE: number = 46;
+  private static MATCH_CHARS = /[^\d]/g;
+  private static MATCH_DIGITS = /^[0-9]*$/;
+  private static SECURITY_CODE_DEFAULT_LENGTH: number = 3;
+  private static LUHN_CHECK_ARRAY: number[] = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
+  private static ERROR_CLASS: string = 'error';
+  private static CURSOR_SINGLE_SKIP: number = 1;
+  private static CURSOR_DOUBLE_SKIP: number = 2;
+
+  /**
+   * Method for prevent inserting non digits
+   * @param event
+   */
+  public static isCharNumber(event: KeyboardEvent) {
+    const key: string = event.key;
+    const regex = new RegExp(Validation.ONLY_DIGITS_REGEXP);
+    return regex.test(key);
+  }
 
   /**
    * Method to determine whether enter key is pressed
@@ -61,8 +82,6 @@ export default class Validation extends Frame {
     return validationMessage;
   }
 
-  protected static STANDARD_FORMAT_PATTERN: string = '(\\d{1,4})(\\d{1,4})?(\\d{1,4})?(\\d+)?';
-
   private static BACKEND_ERROR_FIELDS_NAMES = {
     cardNumber: 'pan',
     expirationDate: 'expirydate',
@@ -71,40 +90,25 @@ export default class Validation extends Frame {
   private static ENTER_KEY_CODE = 13;
   private static ONLY_DIGITS_REGEXP = /^[0-9]*$/;
   private static readonly MERCHANT_EXTRA_FIELDS_PREFIX = 'billing';
-  private static BACKSPACE_KEY_CODE: number = 8;
-  private static CARD_NUMBER_DEFAULT_LENGTH: number = 16;
-  private static DELETE_KEY_CODE: number = 46;
-  private static MATCH_CHARS = /[^\d]/g;
-  private static MATCH_DIGITS = /^[0-9]*$/;
-  private static SECURITY_CODE_DEFAULT_LENGTH: number = 3;
-  private static LUHN_CHECK_ARRAY: number[] = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
-  private static ERROR_CLASS: string = 'error';
-  private static CURSOR_SINGLE_SKIP: number = 1;
-  private static CURSOR_DOUBLE_SKIP: number = 2;
 
   public validation: IValidation;
-  protected binLookup: BinLookup;
   protected _messageBus: MessageBus;
-
+  protected binLookup: BinLookup;
   protected cardNumberValue: string;
   protected expirationDateValue: string;
   protected securityCodeValue: string;
   private _translator: Translator;
-  private _isFormValid: boolean;
-  private _isPaymentReady: boolean;
-  private _card: ICard;
   private _currentKeyCode: number;
   private _selectionRangeEnd: number;
   private _selectionRangeStart: number;
   private _matchDigitsRegexp: RegExp;
   private _cursorSkip: number = 0;
+  private _isFormValid: boolean;
+  private _isPaymentReady: boolean;
+  private _card: ICard;
 
-  constructor(locale: string) {
+  constructor() {
     super();
-    this.binLookup = new BinLookup();
-    this._translator = new Translator(locale);
-    this._matchDigitsRegexp = new RegExp(Validation.MATCH_DIGITS);
-    this._messageBus = new MessageBus();
     this.onInit();
   }
 
@@ -118,6 +122,63 @@ export default class Validation extends Frame {
     this._messageBus.subscribe(event, (data: IMessageBusValidateField) => {
       this.checkBackendValidity(data, inputElement, messageElement);
     });
+  }
+
+  public setKeyDownProperties(element: HTMLInputElement, event: KeyboardEvent) {
+    this._currentKeyCode = event.keyCode;
+    this._selectionRangeStart = element.selectionStart;
+    this._selectionRangeEnd = element.selectionEnd;
+  }
+
+  public keepCursorAtSamePosition(element: HTMLInputElement) {
+    const lengthFormatted: number = element.value.length;
+    const isLastCharSlash: boolean = element.value.charAt(lengthFormatted - 2) === '/';
+    const start: number = this._selectionRangeStart;
+    const end: number = this._selectionRangeEnd;
+
+    if (this._isPressedKeyDelete()) {
+      element.setSelectionRange(start, end);
+    } else if (this._isPressedKeyBackspace()) {
+      element.setSelectionRange(start - Validation.CURSOR_SINGLE_SKIP, end - Validation.CURSOR_SINGLE_SKIP);
+    } else if (isLastCharSlash) {
+      ++this._cursorSkip;
+      element.setSelectionRange(start + Validation.CURSOR_DOUBLE_SKIP, end + Validation.CURSOR_DOUBLE_SKIP);
+    } else if (element.value.charAt(end) === ' ') {
+      ++this._cursorSkip;
+      element.setSelectionRange(start + Validation.CURSOR_DOUBLE_SKIP, end + Validation.CURSOR_DOUBLE_SKIP);
+    } else {
+      element.setSelectionRange(start + Validation.CURSOR_SINGLE_SKIP, end + Validation.CURSOR_SINGLE_SKIP);
+    }
+  }
+
+  public luhnCheck(element: HTMLInputElement) {
+    const { value } = element;
+    this._luhnAlgorithm(value) ? element.setCustomValidity('') : element.setCustomValidity('luhn');
+  }
+
+  /**
+   * Luhn Algorithm
+   * From the right:
+   *    Step 1: take the value of this digit
+   *    Step 2: if the offset from the end is even
+   *    Step 3: double the value, then sum the digits
+   *    Step 4: if sum of those above is divisible by ten, YOU PASS THE LUHN !
+   * @param cardNumber
+   * @private
+   */
+  private _luhnAlgorithm(cardNumber: string): boolean {
+    const cardNumberWithoutSpaces = cardNumber.replace(/\s/g, '');
+    let bit = 1;
+    let cardNumberLength = cardNumberWithoutSpaces.length;
+    let sum = 0;
+
+    while (cardNumberLength) {
+      const val = parseInt(cardNumberWithoutSpaces.charAt(--cardNumberLength), 10);
+      bit = bit ^ 1;
+      const algorithmValue = bit ? Validation.LUHN_CHECK_ARRAY[val] : val;
+      sum += algorithmValue;
+    }
+    return sum && sum % 10 === 0;
   }
 
   /**
@@ -187,12 +248,20 @@ export default class Validation extends Frame {
     this._assignErrorDetails(inputElement, messageElement, data);
   }
 
-  /**
-   * Validation process method.
-   * @param dataInJwt
-   * @param paymentReady
-   * @param formFields
-   */
+  public validate(inputElement: HTMLInputElement, messageElement: HTMLElement, customErrorMessage?: string) {
+    this._toggleErrorClass(inputElement);
+    this._setMessage(inputElement, messageElement, customErrorMessage);
+  }
+
+  public luhnCheckValidation(luhn: boolean, field: HTMLInputElement, input: HTMLInputElement, message: HTMLDivElement) {
+    if (!luhn) {
+      field.setCustomValidity(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
+      this.validate(input, message, Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
+    } else {
+      field.setCustomValidity('');
+    }
+  }
+
   public formValidation(
     dataInJwt: boolean,
     paymentReady: boolean,
@@ -239,6 +308,9 @@ export default class Validation extends Frame {
    */
   protected onInit() {
     super.onInit();
+    this._messageBus = new MessageBus();
+    this.binLookup = new BinLookup();
+    this._matchDigitsRegexp = new RegExp(Validation.MATCH_DIGITS);
     this._translator = new Translator(this._params.locale);
   }
 
@@ -318,82 +390,34 @@ export default class Validation extends Frame {
     inputElement.setCustomValidity(data.message);
   }
 
-  /**
-   *
-   * @param luhn
-   * @param field
-   * @param input
-   * @param label
-   */
-  public luhnCheckValidation(luhn: boolean, field: HTMLInputElement, input: HTMLInputElement, message: HTMLDivElement) {
-    if (!luhn) {
-      field.setCustomValidity(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
-      this.validate(input, message, Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
-    } else {
-      field.setCustomValidity('');
-    }
+  protected getCardDetails(cardNumber: string = ''): BrandDetailsType {
+    return this.binLookup.binLookup(cardNumber);
   }
 
-  public setKeyDownProperties(element: HTMLInputElement, event: KeyboardEvent) {
-    this._currentKeyCode = event.keyCode;
-    this._selectionRangeStart = element.selectionStart;
-    this._selectionRangeEnd = element.selectionEnd;
+  protected _isPressedKeyBackspace(): boolean {
+    return this._currentKeyCode === Validation.BACKSPACE_KEY_CODE;
   }
 
-  public keepCursorAtSamePosition(element: HTMLInputElement) {
-    const lengthFormatted: number = element.value.length;
-    const isLastCharSlash: boolean = element.value.charAt(lengthFormatted - 2) === '/';
-    const start: number = this._selectionRangeStart;
-    const end: number = this._selectionRangeEnd;
-
-    if (this._isPressedKeyDelete()) {
-      element.setSelectionRange(start, end);
-    } else if (this._isPressedKeyBackspace()) {
-      element.setSelectionRange(start - Validation.CURSOR_SINGLE_SKIP, end - Validation.CURSOR_SINGLE_SKIP);
-    } else if (isLastCharSlash) {
-      ++this._cursorSkip;
-      element.setSelectionRange(start + Validation.CURSOR_DOUBLE_SKIP, end + Validation.CURSOR_DOUBLE_SKIP);
-    } else if (element.value.charAt(end) === ' ') {
-      ++this._cursorSkip;
-      element.setSelectionRange(start + Validation.CURSOR_DOUBLE_SKIP, end + Validation.CURSOR_DOUBLE_SKIP);
-    } else {
-      element.setSelectionRange(start + Validation.CURSOR_SINGLE_SKIP, end + Validation.CURSOR_SINGLE_SKIP);
-    }
+  protected _isPressedKeyDelete(): boolean {
+    return this._currentKeyCode === Validation.DELETE_KEY_CODE;
   }
 
-  public luhnCheck(element: HTMLInputElement) {
-    const { value } = element;
-    this._luhnAlgorithm(value) ? element.setCustomValidity('') : element.setCustomValidity('luhn');
+  protected limitLength(value: string, length: number): string {
+    return value.substring(0, length);
   }
 
-  public validate(element: HTMLInputElement, errorContainer: HTMLElement) {
-    const { customError, patternMismatch, valid, valueMissing } = element.validity;
-    if (!valid) {
-      if (valueMissing) {
-        this._setError(element, errorContainer, 'Field is required');
-      } else if (patternMismatch) {
-        this._setError(element, errorContainer, 'Value mismatch pattern');
-      } else if (customError) {
-        this._setError(element, errorContainer, 'Value mismatch pattern');
-      } else {
-        this._setError(element, errorContainer, 'Invalid field');
-      }
-    } else {
-      this._removeError(element, errorContainer);
-    }
+  protected removeNonDigits(value: string): string {
+    return value.replace(Validation.MATCH_CHARS, '');
   }
 
-  public onPaste(event: ClipboardEvent) {
-    let { clipboardData } = event;
-    event.preventDefault();
-    if (typeof clipboardData === 'undefined') {
-      // @ts-ignore
-      clipboardData = window.clipboardData.getData('Text');
-    } else {
-      // @ts-ignore
-      clipboardData = event.clipboardData.getData('text/plain');
-    }
-    return clipboardData;
+  private _setError(element: HTMLInputElement, errorContainer: HTMLElement, errorMessage: string) {
+    element.classList.add(Validation.ERROR_CLASS);
+    errorContainer.textContent = this._translator.translate(errorMessage);
+  }
+
+  private _removeError(element: HTMLInputElement, errorContainer: HTMLElement) {
+    element.classList.remove(Validation.ERROR_CLASS);
+    errorContainer.textContent = '';
   }
 
   protected cardNumber(value: string) {
@@ -415,60 +439,5 @@ export default class Validation extends Frame {
     const cardLength = Utils.getLastElementOfArray(cardDetails.cvcLength);
     const length = cardDetails.type && cardLength ? cardLength : Validation.SECURITY_CODE_DEFAULT_LENGTH;
     this.securityCodeValue = this.limitLength(this.securityCodeValue, length);
-  }
-
-  protected getCardDetails(cardNumber: string = ''): BrandDetailsType {
-    return this.binLookup.binLookup(cardNumber);
-  }
-
-  protected limitLength(value: string, length: number): string {
-    return value.substring(0, length);
-  }
-
-  protected removeNonDigits(value: string): string {
-    return value.replace(Validation.MATCH_CHARS, '');
-  }
-
-  protected _isPressedKeyBackspace(): boolean {
-    return this._currentKeyCode === Validation.BACKSPACE_KEY_CODE;
-  }
-
-  protected _isPressedKeyDelete(): boolean {
-    return this._currentKeyCode === Validation.DELETE_KEY_CODE;
-  }
-
-  /**
-   * Luhn Algorithm
-   * From the right:
-   *    Step 1: take the value of this digit
-   *    Step 2: if the offset from the end is even
-   *    Step 3: double the value, then sum the digits
-   *    Step 4: if sum of those above is divisible by ten, YOU PASS THE LUHN !
-   * @param cardNumber
-   * @private
-   */
-  private _luhnAlgorithm(cardNumber: string): boolean {
-    const cardNumberWithoutSpaces = cardNumber.replace(/\s/g, '');
-    let bit = 1;
-    let cardNumberLength = cardNumberWithoutSpaces.length;
-    let sum = 0;
-
-    while (cardNumberLength) {
-      const val = parseInt(cardNumberWithoutSpaces.charAt(--cardNumberLength), 10);
-      bit = bit ^ 1;
-      const algorithmValue = bit ? Validation.LUHN_CHECK_ARRAY[val] : val;
-      sum += algorithmValue;
-    }
-    return sum && sum % 10 === 0;
-  }
-
-  private _setError(element: HTMLInputElement, errorContainer: HTMLElement, errorMessage: string) {
-    element.classList.add(Validation.ERROR_CLASS);
-    errorContainer.textContent = this._translator.translate(errorMessage);
-  }
-
-  private _removeError(element: HTMLInputElement, errorContainer: HTMLElement) {
-    element.classList.remove(Validation.ERROR_CLASS);
-    errorContainer.textContent = '';
   }
 }
