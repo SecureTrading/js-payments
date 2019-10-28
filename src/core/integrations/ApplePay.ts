@@ -492,15 +492,21 @@ export class ApplePay {
    */
   private _applePayProcess() {
     if (ApplePaySession) {
+      alert('session');
       if (this.isUserLoggedToAppleAccount()) {
+        alert('logged');
         this.checkApplePayWalletCardAvailability().then((canMakePayments: boolean) => {
           if (canMakePayments) {
+            alert('can make payments');
             this._applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
             GoogleAnalytics.sendGaData('event', 'Apple Pay', 'init', 'Apple Pay can make payments');
+          } else {
+            alert('cannot make payments');
           }
         });
       } else {
         document.getElementById(ApplePay.APPLE_PAY_BUTTON_ID).addEventListener('click', () => {
+          alert('notlogged');
           this._notification.error(Language.translations.APPLE_PAY_NOT_LOGGED, true);
         });
       }
