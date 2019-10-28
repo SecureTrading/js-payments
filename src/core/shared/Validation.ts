@@ -1,4 +1,5 @@
 import { StCodec } from '../classes/StCodec.class';
+import { BrandDetailsType } from '../imports/cardtype';
 import { IErrorData, IMessageBusValidateField, IValidation } from '../models/Validation';
 import BinLookup from './BinLookup';
 import Frame from './Frame';
@@ -6,6 +7,7 @@ import Language from './Language';
 import MessageBus from './MessageBus';
 import Selectors from './Selectors';
 import { Translator } from './Translator';
+import Utils from './Utils';
 
 const {
   VALIDATION_ERROR_FIELD_IS_REQUIRED,
@@ -186,33 +188,6 @@ export default class Validation extends Frame {
   }
 
   /**
-   * Validate particular form input.
-   * @param inputElement
-   * @param messageElement
-   * @param customErrorMessage
-   */
-  public validate(inputElement: HTMLInputElement, messageElement: HTMLElement, customErrorMessage?: string) {
-    this._toggleErrorClass(inputElement);
-    this._setMessage(inputElement, messageElement, customErrorMessage);
-  }
-
-  /**
-   *
-   * @param luhn
-   * @param field
-   * @param input
-   * @param label
-   */
-  public luhnCheckValidation(luhn: boolean, field: HTMLInputElement, input: HTMLInputElement, message: HTMLDivElement) {
-    if (!luhn) {
-      field.setCustomValidity(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
-      this.validate(input, message, Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
-    } else {
-      field.setCustomValidity('');
-    }
-  }
-
-  /**
    * Validation process method.
    * @param dataInJwt
    * @param paymentReady
@@ -343,277 +318,157 @@ export default class Validation extends Frame {
     inputElement.setCustomValidity(data.message);
   }
 
-  // public setKeyDownProperties(element: HTMLInputElement, event: KeyboardEvent) {
-  //   this._currentKeyCode = event.keyCode;
-  //   this._selectionRangeStart = element.selectionStart;
-  //   this._selectionRangeEnd = element.selectionEnd;
-  // }
-  //
-  // public keepCursorAtSamePosition(element: HTMLInputElement) {
-  //   const lengthFormatted: number = element.value.length;
-  //   const isLastCharSlash: boolean = element.value.charAt(lengthFormatted - 2) === '/';
-  //   const start: number = this._selectionRangeStart;
-  //   const end: number = this._selectionRangeEnd;
-  //
-  //   if (this._isPressedKeyDelete()) {
-  //     element.setSelectionRange(start, end);
-  //   } else if (this._isPressedKeyBackspace()) {
-  //     element.setSelectionRange(start - Validation.CURSOR_SINGLE_SKIP, end - Validation.CURSOR_SINGLE_SKIP);
-  //   } else if (isLastCharSlash) {
-  //     ++this._cursorSkip;
-  //     element.setSelectionRange(start + Validation.CURSOR_DOUBLE_SKIP, end + Validation.CURSOR_DOUBLE_SKIP);
-  //   } else if (element.value.charAt(end) === ' ') {
-  //     ++this._cursorSkip;
-  //     element.setSelectionRange(start + Validation.CURSOR_DOUBLE_SKIP, end + Validation.CURSOR_DOUBLE_SKIP);
-  //   } else {
-  //     element.setSelectionRange(start + Validation.CURSOR_SINGLE_SKIP, end + Validation.CURSOR_SINGLE_SKIP);
-  //   }
-  // }
-  //
-  // public luhnCheck(element: HTMLInputElement) {
-  //   const { value } = element;
-  //   this._luhnAlgorithm(value) ? element.setCustomValidity('') : element.setCustomValidity('luhn');
-  // }
-  //
-  // public validate(element: HTMLInputElement, errorContainer: HTMLElement) {
-  //   const { customError, patternMismatch, valid, valueMissing } = element.validity;
-  //   if (!valid) {
-  //     if (valueMissing) {
-  //       this._setError(element, errorContainer, 'Field is required');
-  //     } else if (patternMismatch) {
-  //       this._setError(element, errorContainer, 'Value mismatch pattern');
-  //     } else if (customError) {
-  //       this._setError(element, errorContainer, 'Value mismatch pattern');
-  //     } else {
-  //       this._setError(element, errorContainer, 'Invalid field');
-  //     }
-  //   } else {
-  //     this._removeError(element, errorContainer);
-  //   }
-  // }
-  //
-  // public onPaste(event: ClipboardEvent) {
-  //   let { clipboardData } = event;
-  //   event.preventDefault();
-  //   if (typeof clipboardData === 'undefined') {
-  //     // @ts-ignore
-  //     clipboardData = window.clipboardData.getData('Text');
-  //   } else {
-  //     // @ts-ignore
-  //     clipboardData = event.clipboardData.getData('text/plain');
-  //   }
-  //   return clipboardData;
-  // }
-  //
-  // protected cardNumber(value: string) {
-  //   this.cardNumberValue = this.removeNonDigits(value);
-  //   const cardDetails = this.getCardDetails(this.cardNumberValue);
-  //   const length = cardDetails.type
-  //     ? Utils.getLastElementOfArray(cardDetails.length)
-  //     : Validation.CARD_NUMBER_DEFAULT_LENGTH;
-  //   this.cardNumberValue = this.limitLength(this.cardNumberValue, length);
-  // }
-  //
-  // protected expirationDate(value: string) {
-  //   this.expirationDateValue = this.removeNonDigits(value);
-  // }
-  //
-  // protected securityCode(value: string) {
-  //   this.securityCodeValue = this.removeNonDigits(value);
-  //   const cardDetails = this.getCardDetails(this.cardNumberValue);
-  //   const cardLength = Utils.getLastElementOfArray(cardDetails.cvcLength);
-  //   const length = cardDetails.type && cardLength ? cardLength : Validation.SECURITY_CODE_DEFAULT_LENGTH;
-  //   this.securityCodeValue = this.limitLength(this.securityCodeValue, length);
-  // }
-  //
-  // protected getCardDetails(cardNumber: string = ''): BrandDetailsType {
-  //   return this.binLookup.binLookup(cardNumber);
-  // }
-  //
-  // protected _isPressedKeyBackspace(): boolean {
-  //   return this._currentKeyCode === Validation.BACKSPACE_KEY_CODE;
-  // }
-  //
-  // protected _isPressedKeyDelete(): boolean {
-  //   return this._currentKeyCode === Validation.DELETE_KEY_CODE;
-  // }
-  //
-  // protected limitLength(value: string, length: number): string {
-  //   return value.substring(0, length);
-  // }
-  //
-  // protected removeNonDigits(value: string): string {
-  //   return value.replace(Validation.MATCH_CHARS, '');
-  // }
-  //
-  // /**
-  //  * Luhn Algorithm
-  //  * From the right:
-  //  *    Step 1: take the value of this digit
-  //  *    Step 2: if the offset from the end is even
-  //  *    Step 3: double the value, then sum the digits
-  //  *    Step 4: if sum of those above is divisible by ten, YOU PASS THE LUHN !
-  //  * @param cardNumber
-  //  * @private
-  //  */
-  // private _luhnAlgorithm(cardNumber: string): boolean {
-  //   const cardNumberWithoutSpaces = cardNumber.replace(/\s/g, '');
-  //   let bit = 1;
-  //   let cardNumberLength = cardNumberWithoutSpaces.length;
-  //   let sum = 0;
-  //
-  //   while (cardNumberLength) {
-  //     const val = parseInt(cardNumberWithoutSpaces.charAt(--cardNumberLength), 10);
-  //     bit = bit ^ 1;
-  //     const algorithmValue = bit ? Validation.LUHN_CHECK_ARRAY[val] : val;
-  //     sum += algorithmValue;
-  //   }
-  //   return sum && sum % 10 === 0;
-  // }
-  //
-  // private _setError(element: HTMLInputElement, errorContainer: HTMLElement, errorMessage: string) {
-  //   element.classList.add(Validation.ERROR_CLASS);
-  //   errorContainer.textContent = this._translator.translate(errorMessage);
-  // }
-  //
-  // private _removeError(element: HTMLInputElement, errorContainer: HTMLElement) {
-  //   element.classList.remove(Validation.ERROR_CLASS);
-  //   errorContainer.textContent = '';
-  // }  // public setKeyDownProperties(element: HTMLInputElement, event: KeyboardEvent) {
-  //   this._currentKeyCode = event.keyCode;
-  //   this._selectionRangeStart = element.selectionStart;
-  //   this._selectionRangeEnd = element.selectionEnd;
-  // }
-  //
-  // public keepCursorAtSamePosition(element: HTMLInputElement) {
-  //   const lengthFormatted: number = element.value.length;
-  //   const isLastCharSlash: boolean = element.value.charAt(lengthFormatted - 2) === '/';
-  //   const start: number = this._selectionRangeStart;
-  //   const end: number = this._selectionRangeEnd;
-  //
-  //   if (this._isPressedKeyDelete()) {
-  //     element.setSelectionRange(start, end);
-  //   } else if (this._isPressedKeyBackspace()) {
-  //     element.setSelectionRange(start - Validation.CURSOR_SINGLE_SKIP, end - Validation.CURSOR_SINGLE_SKIP);
-  //   } else if (isLastCharSlash) {
-  //     ++this._cursorSkip;
-  //     element.setSelectionRange(start + Validation.CURSOR_DOUBLE_SKIP, end + Validation.CURSOR_DOUBLE_SKIP);
-  //   } else if (element.value.charAt(end) === ' ') {
-  //     ++this._cursorSkip;
-  //     element.setSelectionRange(start + Validation.CURSOR_DOUBLE_SKIP, end + Validation.CURSOR_DOUBLE_SKIP);
-  //   } else {
-  //     element.setSelectionRange(start + Validation.CURSOR_SINGLE_SKIP, end + Validation.CURSOR_SINGLE_SKIP);
-  //   }
-  // }
-  //
-  // public luhnCheck(element: HTMLInputElement) {
-  //   const { value } = element;
-  //   this._luhnAlgorithm(value) ? element.setCustomValidity('') : element.setCustomValidity('luhn');
-  // }
-  //
-  // public validate(element: HTMLInputElement, errorContainer: HTMLElement) {
-  //   const { customError, patternMismatch, valid, valueMissing } = element.validity;
-  //   if (!valid) {
-  //     if (valueMissing) {
-  //       this._setError(element, errorContainer, 'Field is required');
-  //     } else if (patternMismatch) {
-  //       this._setError(element, errorContainer, 'Value mismatch pattern');
-  //     } else if (customError) {
-  //       this._setError(element, errorContainer, 'Value mismatch pattern');
-  //     } else {
-  //       this._setError(element, errorContainer, 'Invalid field');
-  //     }
-  //   } else {
-  //     this._removeError(element, errorContainer);
-  //   }
-  // }
-  //
-  // public onPaste(event: ClipboardEvent) {
-  //   let { clipboardData } = event;
-  //   event.preventDefault();
-  //   if (typeof clipboardData === 'undefined') {
-  //     // @ts-ignore
-  //     clipboardData = window.clipboardData.getData('Text');
-  //   } else {
-  //     // @ts-ignore
-  //     clipboardData = event.clipboardData.getData('text/plain');
-  //   }
-  //   return clipboardData;
-  // }
-  //
-  // protected cardNumber(value: string) {
-  //   this.cardNumberValue = this.removeNonDigits(value);
-  //   const cardDetails = this.getCardDetails(this.cardNumberValue);
-  //   const length = cardDetails.type
-  //     ? Utils.getLastElementOfArray(cardDetails.length)
-  //     : Validation.CARD_NUMBER_DEFAULT_LENGTH;
-  //   this.cardNumberValue = this.limitLength(this.cardNumberValue, length);
-  // }
-  //
-  // protected expirationDate(value: string) {
-  //   this.expirationDateValue = this.removeNonDigits(value);
-  // }
-  //
-  // protected securityCode(value: string) {
-  //   this.securityCodeValue = this.removeNonDigits(value);
-  //   const cardDetails = this.getCardDetails(this.cardNumberValue);
-  //   const cardLength = Utils.getLastElementOfArray(cardDetails.cvcLength);
-  //   const length = cardDetails.type && cardLength ? cardLength : Validation.SECURITY_CODE_DEFAULT_LENGTH;
-  //   this.securityCodeValue = this.limitLength(this.securityCodeValue, length);
-  // }
-  //
-  // protected getCardDetails(cardNumber: string = ''): BrandDetailsType {
-  //   return this.binLookup.binLookup(cardNumber);
-  // }
-  //
-  // protected _isPressedKeyBackspace(): boolean {
-  //   return this._currentKeyCode === Validation.BACKSPACE_KEY_CODE;
-  // }
-  //
-  // protected _isPressedKeyDelete(): boolean {
-  //   return this._currentKeyCode === Validation.DELETE_KEY_CODE;
-  // }
-  //
-  // protected limitLength(value: string, length: number): string {
-  //   return value.substring(0, length);
-  // }
-  //
-  // protected removeNonDigits(value: string): string {
-  //   return value.replace(Validation.MATCH_CHARS, '');
-  // }
-  //
-  // /**
-  //  * Luhn Algorithm
-  //  * From the right:
-  //  *    Step 1: take the value of this digit
-  //  *    Step 2: if the offset from the end is even
-  //  *    Step 3: double the value, then sum the digits
-  //  *    Step 4: if sum of those above is divisible by ten, YOU PASS THE LUHN !
-  //  * @param cardNumber
-  //  * @private
-  //  */
-  // private _luhnAlgorithm(cardNumber: string): boolean {
-  //   const cardNumberWithoutSpaces = cardNumber.replace(/\s/g, '');
-  //   let bit = 1;
-  //   let cardNumberLength = cardNumberWithoutSpaces.length;
-  //   let sum = 0;
-  //
-  //   while (cardNumberLength) {
-  //     const val = parseInt(cardNumberWithoutSpaces.charAt(--cardNumberLength), 10);
-  //     bit = bit ^ 1;
-  //     const algorithmValue = bit ? Validation.LUHN_CHECK_ARRAY[val] : val;
-  //     sum += algorithmValue;
-  //   }
-  //   return sum && sum % 10 === 0;
-  // }
-  //
-  // private _setError(element: HTMLInputElement, errorContainer: HTMLElement, errorMessage: string) {
-  //   element.classList.add(Validation.ERROR_CLASS);
-  //   errorContainer.textContent = this._translator.translate(errorMessage);
-  // }
-  //
-  // private _removeError(element: HTMLInputElement, errorContainer: HTMLElement) {
-  //   element.classList.remove(Validation.ERROR_CLASS);
-  //   errorContainer.textContent = '';
-  // }
+  /**
+   *
+   * @param luhn
+   * @param field
+   * @param input
+   * @param label
+   */
+  public luhnCheckValidation(luhn: boolean, field: HTMLInputElement, input: HTMLInputElement, message: HTMLDivElement) {
+    if (!luhn) {
+      field.setCustomValidity(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
+      this.validate(input, message, Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
+    } else {
+      field.setCustomValidity('');
+    }
+  }
+
+  public setKeyDownProperties(element: HTMLInputElement, event: KeyboardEvent) {
+    this._currentKeyCode = event.keyCode;
+    this._selectionRangeStart = element.selectionStart;
+    this._selectionRangeEnd = element.selectionEnd;
+  }
+
+  public keepCursorAtSamePosition(element: HTMLInputElement) {
+    const lengthFormatted: number = element.value.length;
+    const isLastCharSlash: boolean = element.value.charAt(lengthFormatted - 2) === '/';
+    const start: number = this._selectionRangeStart;
+    const end: number = this._selectionRangeEnd;
+
+    if (this._isPressedKeyDelete()) {
+      element.setSelectionRange(start, end);
+    } else if (this._isPressedKeyBackspace()) {
+      element.setSelectionRange(start - Validation.CURSOR_SINGLE_SKIP, end - Validation.CURSOR_SINGLE_SKIP);
+    } else if (isLastCharSlash) {
+      ++this._cursorSkip;
+      element.setSelectionRange(start + Validation.CURSOR_DOUBLE_SKIP, end + Validation.CURSOR_DOUBLE_SKIP);
+    } else if (element.value.charAt(end) === ' ') {
+      ++this._cursorSkip;
+      element.setSelectionRange(start + Validation.CURSOR_DOUBLE_SKIP, end + Validation.CURSOR_DOUBLE_SKIP);
+    } else {
+      element.setSelectionRange(start + Validation.CURSOR_SINGLE_SKIP, end + Validation.CURSOR_SINGLE_SKIP);
+    }
+  }
+
+  public luhnCheck(element: HTMLInputElement) {
+    const { value } = element;
+    this._luhnAlgorithm(value) ? element.setCustomValidity('') : element.setCustomValidity('luhn');
+  }
+
+  public validate(element: HTMLInputElement, errorContainer: HTMLElement) {
+    const { customError, patternMismatch, valid, valueMissing } = element.validity;
+    if (!valid) {
+      if (valueMissing) {
+        this._setError(element, errorContainer, 'Field is required');
+      } else if (patternMismatch) {
+        this._setError(element, errorContainer, 'Value mismatch pattern');
+      } else if (customError) {
+        this._setError(element, errorContainer, 'Value mismatch pattern');
+      } else {
+        this._setError(element, errorContainer, 'Invalid field');
+      }
+    } else {
+      this._removeError(element, errorContainer);
+    }
+  }
+
+  public onPaste(event: ClipboardEvent) {
+    let { clipboardData } = event;
+    event.preventDefault();
+    if (typeof clipboardData === 'undefined') {
+      // @ts-ignore
+      clipboardData = window.clipboardData.getData('Text');
+    } else {
+      // @ts-ignore
+      clipboardData = event.clipboardData.getData('text/plain');
+    }
+    return clipboardData;
+  }
+
+  protected cardNumber(value: string) {
+    this.cardNumberValue = this.removeNonDigits(value);
+    const cardDetails = this.getCardDetails(this.cardNumberValue);
+    const length = cardDetails.type
+      ? Utils.getLastElementOfArray(cardDetails.length)
+      : Validation.CARD_NUMBER_DEFAULT_LENGTH;
+    this.cardNumberValue = this.limitLength(this.cardNumberValue, length);
+  }
+
+  protected expirationDate(value: string) {
+    this.expirationDateValue = this.removeNonDigits(value);
+  }
+
+  protected securityCode(value: string) {
+    this.securityCodeValue = this.removeNonDigits(value);
+    const cardDetails = this.getCardDetails(this.cardNumberValue);
+    const cardLength = Utils.getLastElementOfArray(cardDetails.cvcLength);
+    const length = cardDetails.type && cardLength ? cardLength : Validation.SECURITY_CODE_DEFAULT_LENGTH;
+    this.securityCodeValue = this.limitLength(this.securityCodeValue, length);
+  }
+
+  protected getCardDetails(cardNumber: string = ''): BrandDetailsType {
+    return this.binLookup.binLookup(cardNumber);
+  }
+
+  protected limitLength(value: string, length: number): string {
+    return value.substring(0, length);
+  }
+
+  protected removeNonDigits(value: string): string {
+    return value.replace(Validation.MATCH_CHARS, '');
+  }
+
+  protected _isPressedKeyBackspace(): boolean {
+    return this._currentKeyCode === Validation.BACKSPACE_KEY_CODE;
+  }
+
+  protected _isPressedKeyDelete(): boolean {
+    return this._currentKeyCode === Validation.DELETE_KEY_CODE;
+  }
+
+  /**
+   * Luhn Algorithm
+   * From the right:
+   *    Step 1: take the value of this digit
+   *    Step 2: if the offset from the end is even
+   *    Step 3: double the value, then sum the digits
+   *    Step 4: if sum of those above is divisible by ten, YOU PASS THE LUHN !
+   * @param cardNumber
+   * @private
+   */
+  private _luhnAlgorithm(cardNumber: string): boolean {
+    const cardNumberWithoutSpaces = cardNumber.replace(/\s/g, '');
+    let bit = 1;
+    let cardNumberLength = cardNumberWithoutSpaces.length;
+    let sum = 0;
+
+    while (cardNumberLength) {
+      const val = parseInt(cardNumberWithoutSpaces.charAt(--cardNumberLength), 10);
+      bit = bit ^ 1;
+      const algorithmValue = bit ? Validation.LUHN_CHECK_ARRAY[val] : val;
+      sum += algorithmValue;
+    }
+    return sum && sum % 10 === 0;
+  }
+
+  private _setError(element: HTMLInputElement, errorContainer: HTMLElement, errorMessage: string) {
+    element.classList.add(Validation.ERROR_CLASS);
+    errorContainer.textContent = this._translator.translate(errorMessage);
+  }
+
+  private _removeError(element: HTMLInputElement, errorContainer: HTMLElement) {
+    element.classList.remove(Validation.ERROR_CLASS);
+    errorContainer.textContent = '';
+  }
 }
