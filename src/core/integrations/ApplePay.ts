@@ -140,7 +140,6 @@ export class ApplePay {
     this._paymentRequest = paymentRequest;
     this._sitesecurity = sitesecurity;
     this._requestTypes = requestTypes;
-    this._validateMerchantRequestData.walletmerchantid = merchantId;
     this._stJwtInstance = new StJwt(jwt);
     this._stTransportInstance = new StTransport({
       gatewayUrl,
@@ -326,6 +325,7 @@ export class ApplePay {
   private _onValidateMerchantRequest() {
     this._session.onvalidatemerchant = (event: any) => {
       this._validateMerchantRequestData.walletvalidationurl = event.validationURL;
+      this._validateMerchantRequestData.walletmerchantid = this._merchantId;
       return this.payment
         .walletVerify(this._validateMerchantRequestData)
         .then(({ response }: any) => {
