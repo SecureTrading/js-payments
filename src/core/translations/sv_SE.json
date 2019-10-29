@@ -20,5 +20,6 @@
   "Pay": "Betala",
   "Processing": "Bearbetar",
   "Invalid field": "Ogiltigt fält",
-  "Card number is invalid": "Ogiltigt kortnummer"
+  "Card number is invalid": "Ogiltigt kortnummer",
+  "You are not logged to Apple account": "Du är inte inloggad på Apple-konto"
 }

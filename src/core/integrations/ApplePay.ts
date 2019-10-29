@@ -182,10 +182,10 @@ export class ApplePay {
   }
 
   /**
-   * Checks whether ApplePay is available on current device
+   * Checks whether user is logged to Apple Pay account.
    */
-  protected checkApplePayAvailability() {
-    return ApplePaySession && ApplePaySession.canMakePayments();
+  protected isUserLoggedToAppleAccount(): boolean {
+    return ApplePaySession.canMakePayments();
   }
 
   /**
@@ -432,7 +432,6 @@ export class ApplePay {
     this._session.onpaymentmethodselected = (event: any) => {
       const { paymentMethod } = event;
       this._session.completePaymentMethodSelection({
-        // what is type ??
         newTotal: {
           amount: this._paymentRequest.total.amount,
           label: this._paymentRequest.total.label,
@@ -475,13 +474,24 @@ export class ApplePay {
    * @private
    */
   private _applePayProcess() {
-    if (this.checkApplePayAvailability()) {
-      this.checkApplePayWalletCardAvailability().then((canMakePayments: boolean) => {
-        if (canMakePayments) {
-          this._applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
-          GoogleAnalytics.sendGaData('event', 'Apple Pay', 'init', 'Apple Pay can make payments');
-        }
-      });
+    if (ApplePaySession) {
+      if (this.isUserLoggedToAppleAccount()) {
+        this.checkApplePayWalletCardAvailability().then((canMakePayments: boolean) => {
+          if (canMakePayments) {
+            this._applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
+            GoogleAnalytics.sendGaData('event', 'Apple Pay', 'init', 'Apple Pay can make payments');
+          } else {
+            this._addButtonHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click', 'error', 'You dont have any cards in wallet');
+          }
+        });
+      } else {
+        this._addButtonHandler(
+          ApplePay.APPLE_PAY_BUTTON_ID,
+          'click',
+          'error',
+          Language.translations.APPLE_PAY_NOT_LOGGED
+        );
+      }
     }
   }
 
@@ -536,6 +546,35 @@ export class ApplePay {
     errorcode === '0'
       ? this._notification.success(Language.translations.PAYMENT_SUCCESS, true)
       : this._notification.error(Language.translations.PAYMENT_ERROR, true);
+  }
+
+  /**
+   * Adds handler to ApplePay button, when default actions has not been specified (payment proceed).
+   * @param id
+   * @param event
+   * @param notification
+   * @param message
+   * @private
+   */
+  private _addButtonHandler(id: string, event: string, notification: string, message: string) {
+    const element: HTMLButtonElement = document.getElementById(id) as HTMLButtonElement;
+    const eventType: string = event ? event : 'click';
+    const notificationType: string = notification;
+    if (element) {
+      element.addEventListener(eventType, () => {
+        if (notificationType === 'success') {
+          this._notification.success(message, true);
+        } else if (notificationType === 'error') {
+          this._notification.error(message, true);
+        } else if (notificationType === 'warning') {
+          this._notification.warning(message, true);
+        } else {
+          this._notification.info(message, true);
+        }
+      });
+    } else {
+      return false;
+    }
   }
 }
 

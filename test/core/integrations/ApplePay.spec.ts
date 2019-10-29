@@ -819,25 +819,25 @@ describe('ApplePay', () => {
   // given
   describe('applePayProcess()', () => {
     // then
-    it('should do nothing if checkApplePayAvailability returns false', () => {
+    it('should do nothing if isUserLoggedToAppleAccount returns false', () => {
       const { instance } = ApplePayFixture();
       // @ts-ignore
-      instance.checkApplePayAvailability = jest.fn().mockReturnValueOnce(false);
+      instance.isUserLoggedToAppleAccount = jest.fn().mockReturnValueOnce(false);
       // @ts-ignore
       instance.checkApplePayWalletCardAvailability = jest.fn();
       // @ts-ignore
       instance._applePayProcess();
       // @ts-ignore
-      expect(instance.checkApplePayAvailability).toHaveBeenCalledTimes(1);
+      expect(instance.isUserLoggedToAppleAccount).toHaveBeenCalledTimes(1);
       // @ts-ignore
       expect(instance.checkApplePayWalletCardAvailability).not.toHaveBeenCalled();
     });
     // then
-    it('should call only canMakePayments if checkApplePayAvailability returns true and canMakePayments returns false', async () => {
+    it('should call only canMakePayments if isUserLoggedToAppleAccount returns true and canMakePayments returns false', async () => {
       const { instance } = ApplePayFixture();
       jest.resetAllMocks();
       // @ts-ignore
-      jest.spyOn(instance, 'checkApplePayAvailability').mockReturnValueOnce(true);
+      jest.spyOn(instance, 'isUserLoggedToAppleAccount').mockReturnValueOnce(true);
       // @ts-ignore
       jest.spyOn(instance, 'checkApplePayWalletCardAvailability').mockReturnValue(
         new Promise(function(resolve, reject) {
@@ -855,11 +855,11 @@ describe('ApplePay', () => {
     });
 
     // then
-    it('should call applePayButtonClickHandler if checkApplePayAvailability returns true and canMakePayments returns true', async () => {
+    it('should call applePayButtonClickHandler if isUserLoggedToAppleAccount returns true and canMakePayments returns true', async () => {
       const { instance } = ApplePayFixture();
       jest.resetAllMocks();
       // @ts-ignore
-      jest.spyOn(instance, 'checkApplePayAvailability').mockReturnValueOnce(true);
+      jest.spyOn(instance, 'isUserLoggedToAppleAccount').mockReturnValueOnce(true);
       // @ts-ignore
       jest.spyOn(instance, 'checkApplePayWalletCardAvailability').mockReturnValue(
         new Promise(function(resolve, reject) {
