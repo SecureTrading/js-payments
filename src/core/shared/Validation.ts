@@ -20,17 +20,6 @@ const {
  */
 export default class Validation extends Frame {
   public static ERROR_FIELD_CLASS: string = 'error-field';
-  protected static STANDARD_FORMAT_PATTERN: string = '(\\d{1,4})(\\d{1,4})?(\\d{1,4})?(\\d+)?';
-  private static BACKSPACE_KEY_CODE: number = 8;
-  private static CARD_NUMBER_DEFAULT_LENGTH: number = 16;
-  private static DELETE_KEY_CODE: number = 46;
-  private static MATCH_CHARS = /[^\d]/g;
-  private static MATCH_DIGITS = /^[0-9]*$/;
-  private static SECURITY_CODE_DEFAULT_LENGTH: number = 3;
-  private static LUHN_CHECK_ARRAY: number[] = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
-  private static ERROR_CLASS: string = 'error';
-  private static CURSOR_SINGLE_SKIP: number = 1;
-  private static CURSOR_DOUBLE_SKIP: number = 2;
 
   /**
    * Method for prevent inserting non digits
@@ -82,6 +71,17 @@ export default class Validation extends Frame {
     return validationMessage;
   }
 
+  protected static STANDARD_FORMAT_PATTERN: string = '(\\d{1,4})(\\d{1,4})?(\\d{1,4})?(\\d+)?';
+  private static BACKSPACE_KEY_CODE: number = 8;
+  private static CARD_NUMBER_DEFAULT_LENGTH: number = 16;
+  private static DELETE_KEY_CODE: number = 46;
+  private static MATCH_CHARS = /[^\d]/g;
+  private static MATCH_DIGITS = /^[0-9]*$/;
+  private static SECURITY_CODE_DEFAULT_LENGTH: number = 3;
+  private static LUHN_CHECK_ARRAY: number[] = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
+  private static ERROR_CLASS: string = 'error';
+  private static CURSOR_SINGLE_SKIP: number = 1;
+  private static CURSOR_DOUBLE_SKIP: number = 2;
   private static BACKEND_ERROR_FIELDS_NAMES = {
     cardNumber: 'pan',
     expirationDate: 'expirydate',
