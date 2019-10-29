@@ -2,7 +2,7 @@
   "analytics": true,
   "animatedCard": true,
   "deferInit": true,
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3MjI2NzEwOC45MDE2OTg0LCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIxMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.uTl1lagIUR1fN0YIpVH7qLgIZrt0ZdXLBA_Tp17iGqo",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3MjM0MzY1NS40NDI0MjU1LCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIxMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ._D4EzMVYkgXyoYhC_1tFPUFvmWV7OGcnP52yVgL6IHo",
   "styles": {
     "defaultStyles": {
       "background-color-input": "AliceBlue"
@@ -41,17 +41,17 @@
   },
   "components": {},
   "applePay": {
-    "buttonStyle": "white-outline",
-    "buttonText": "donate",
-    "merchantId": "merchant.net.securetrading.test",
+    "buttonStyle": "black",
+    "buttonText": "check-out",
+    "merchantId": "merchant.net.securetrading",
     "paymentRequest": {
-      "countryCode": "US",
-      "currencyCode": "USD",
+      "countryCode": "GB",
+      "currencyCode": "GBP",
       "merchantCapabilities": ["supports3DS", "supportsCredit", "supportsDebit"],
-      "supportedNetworks": [],
+      "supportedNetworks": ["visa", "mastercard"],
       "total": {
-        "label": "Secure Trading Merchant",
-        "amount": "10.00"
+        "label": "Total",
+        "amount": "48.95"
       }
     },
     "placement": "st-apple-pay"

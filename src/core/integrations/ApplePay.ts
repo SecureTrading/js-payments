@@ -211,6 +211,8 @@ export class ApplePay {
   private _configurePaymentProcess(jwt: string, config: IWalletConfig, gatewayUrl: string) {
     const { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId, requestTypes } = config;
     this._merchantId = merchantId;
+    console.log(merchantId);
+    console.log(this._merchantId);
     this._placement = placement;
     this.payment = new Payment(jwt, gatewayUrl);
     this._paymentRequest = paymentRequest;
@@ -448,7 +450,6 @@ export class ApplePay {
     this._session.onpaymentmethodselected = (event: any) => {
       const { paymentMethod } = event;
       this._session.completePaymentMethodSelection({
-        // what is type ??
         newTotal: {
           amount: this._paymentRequest.total.amount,
           label: this._paymentRequest.total.label,
@@ -492,24 +493,45 @@ export class ApplePay {
    */
   private _applePayProcess() {
     if (ApplePaySession) {
-      alert('session');
       if (this.isUserLoggedToAppleAccount()) {
-        alert('logged');
         this.checkApplePayWalletCardAvailability().then((canMakePayments: boolean) => {
           if (canMakePayments) {
             alert('can make payments');
             this._applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
             GoogleAnalytics.sendGaData('event', 'Apple Pay', 'init', 'Apple Pay can make payments');
           } else {
-            alert('cannot make payments');
+            this._addButtonHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click', 'error', 'You dont have any cards in wallet');
           }
         });
       } else {
-        document.getElementById(ApplePay.APPLE_PAY_BUTTON_ID).addEventListener('click', () => {
-          alert('notlogged');
-          this._notification.error(Language.translations.APPLE_PAY_NOT_LOGGED, true);
-        });
+        this._addButtonHandler(
+          ApplePay.APPLE_PAY_BUTTON_ID,
+          'click',
+          'error',
+          Language.translations.APPLE_PAY_NOT_LOGGED
+        );
       }
+    }
+  }
+
+  private _addButtonHandler(id: string, event: string, notification: string, message: string) {
+    const element: HTMLButtonElement = document.getElementById(id) as HTMLButtonElement;
+    const eventType: string = event ? event : 'click';
+    const notificationType: string = notification;
+    if (element) {
+      element.addEventListener(eventType, () => {
+        if (notificationType === 'success') {
+          this._notification.success(message, true);
+        } else if (notificationType === 'error') {
+          this._notification.error(message, true);
+        } else if (notificationType === 'warning') {
+          this._notification.warning(message, true);
+        } else {
+          this._notification.info(message, true);
+        }
+      });
+    } else {
+      return false;
     }
   }
 
