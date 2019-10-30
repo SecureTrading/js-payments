@@ -687,6 +687,23 @@ describe('ApplePay', () => {
       instance._onValidateMerchantResponseSuccess(response);
       expect(spy).toHaveBeenCalled();
     });
+
+    // then
+    it('should set merchantSession if walletsession is set and call _session.completeMerchantValidation with merchantSession', () => {
+      const response = { walletsession: '{"someproperty":"somewalletsession"}' };
+      const { instance } = ApplePayFixture();
+      // @ts-ignore
+      instance._session = {
+        abort: jest.fn(),
+        completeMerchantValidation: jest.fn()
+      };
+      // @ts-ignore
+      instance._onValidateMerchantResponseSuccess(response);
+      // @ts-ignore
+      expect(instance._merchantSession).toEqual({ someproperty: 'somewalletsession' });
+      // @ts-ignore
+      expect(instance._session.completeMerchantValidation).toHaveBeenCalledWith({ someproperty: 'somewalletsession' });
+    });
   });
   // given
   describe('_onValidateMerchantResponseFailure()', () => {
@@ -948,6 +965,74 @@ describe('ApplePay', () => {
       instance._handleApplePayError(errorObject);
       // @ts-ignore
       expect(instance._translator.translate).toHaveBeenCalledWith(errorObject.errormessage);
+    });
+  });
+
+  // given
+  describe('_addButtonHandler()', () => {
+    const { instance } = ApplePayFixture();
+    // @ts-ignore
+    const id: string = ApplePay.APPLE_PAY_BUTTON_ID;
+    const fakeId: string = 'blah';
+    const event: string = 'click';
+    const message: string = Language.translations.APPLE_PAY_NOT_LOGGED;
+
+    // then
+    it(`should call notification with success if notification type is success`, () => {
+      document.getElementById(id).addEventListener = jest.fn().mockImplementationOnce((event, callback) => {
+        callback();
+      });
+      // @ts-ignore
+      instance._notification.success = jest.fn();
+      // @ts-ignore
+      instance._addButtonHandler(id, event, 'success', message);
+      // @ts-ignore
+      expect(instance._notification.success).toHaveBeenCalledWith(message, true);
+    });
+
+    // then
+    it(`should call notification with error if notification type is error`, () => {
+      document.getElementById(id).addEventListener = jest.fn().mockImplementationOnce((event, callback) => {
+        callback();
+      });
+      // @ts-ignore
+      instance._notification.error = jest.fn();
+      // @ts-ignore
+      instance._addButtonHandler(id, event, 'error', message);
+      // @ts-ignore
+      expect(instance._notification.error).toHaveBeenCalledWith(message, true);
+    });
+
+    // then
+    it(`should call notification with warning if notification type is warning`, () => {
+      document.getElementById(id).addEventListener = jest.fn().mockImplementationOnce((event, callback) => {
+        callback();
+      });
+      // @ts-ignore
+      instance._notification.warning = jest.fn();
+      // @ts-ignore
+      instance._addButtonHandler(id, event, 'warning', message);
+      // @ts-ignore
+      expect(instance._notification.warning).toHaveBeenCalledWith(message, true);
+    });
+
+    // then
+    it(`should call notification with info if notification type is different than previous`, () => {
+      document.getElementById(id).addEventListener = jest.fn().mockImplementationOnce((event, callback) => {
+        callback();
+      });
+      // @ts-ignore
+      instance._notification.info = jest.fn();
+      // @ts-ignore
+      instance._addButtonHandler(id, event, 'info', message);
+      // @ts-ignore
+      expect(instance._notification.info).toHaveBeenCalledWith(message, true);
+    });
+
+    // then
+    it(`should return false if element doesn't exist`, () => {
+      // @ts-ignore
+      expect(instance._addButtonHandler('somerandomid', event, 'info', message)).toEqual(false);
     });
   });
 });
