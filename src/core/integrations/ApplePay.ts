@@ -480,8 +480,6 @@ export class ApplePay {
           if (canMakePayments) {
             this._applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
             GoogleAnalytics.sendGaData('event', 'Apple Pay', 'init', 'Apple Pay can make payments');
-          } else {
-            this._addButtonHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click', 'error', 'You dont have any cards in wallet');
           }
         });
       } else {
