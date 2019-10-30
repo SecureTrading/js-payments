@@ -850,8 +850,6 @@ describe('ApplePay', () => {
       await instance._applePayProcess();
       // @ts-ignore
       expect(instance.checkApplePayWalletCardAvailability).toHaveBeenCalled();
-      // @ts-ignore
-      expect(instance._applePayButtonClickHandler).not.toHaveBeenCalled();
     });
 
     // then
