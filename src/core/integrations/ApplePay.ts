@@ -476,11 +476,9 @@ export class ApplePay {
   private _applePayProcess() {
     if (ApplePaySession) {
       if (this.isUserLoggedToAppleAccount()) {
-        this.checkApplePayWalletCardAvailability().then((canMakePayments: boolean) => {
-          if (canMakePayments) {
-            this._applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
-            GoogleAnalytics.sendGaData('event', 'Apple Pay', 'init', 'Apple Pay can make payments');
-          }
+        this.checkApplePayWalletCardAvailability().then(() => {
+          this._applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
+          GoogleAnalytics.sendGaData('event', 'Apple Pay', 'init', 'Apple Pay can make payments');
         });
       } else {
         this._addButtonHandler(
