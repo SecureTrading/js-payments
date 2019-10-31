@@ -63,6 +63,11 @@ export class CardinalCommerce {
     this._notification = new Notification();
     this._setLiveStatus();
     this._onInit();
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
+      const { newJwt } = data;
+      this._jwt = newJwt;
+      this._onInit();
+    });
   }
 
   /**

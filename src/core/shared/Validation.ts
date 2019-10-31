@@ -205,7 +205,8 @@ export default class Validation extends Frame {
   public formValidation(
     dataInJwt: boolean,
     paymentReady: boolean,
-    formFields: any
+    formFields: any,
+    deferInit: boolean
   ): { validity: boolean; card: ICard } {
     this._isPaymentReady = paymentReady;
     if (dataInJwt) {
@@ -221,10 +222,13 @@ export default class Validation extends Frame {
       };
     }
 
-    if (this._isPaymentReady && this._isFormValid) {
+    if ((this._isPaymentReady && this._isFormValid) || (deferInit && this._isFormValid)) {
       this.blockForm(true);
     }
-    return { validity: this._isPaymentReady && this._isFormValid, card: this._card };
+    return {
+      card: this._card,
+      validity: (this._isPaymentReady && this._isFormValid) || (deferInit && this._isFormValid)
+    };
   }
 
   /**

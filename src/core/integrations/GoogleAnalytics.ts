@@ -13,6 +13,8 @@ class GoogleAnalytics {
     if (window.ga) {
       // @ts-ignore
       window.ga('send', { hitType, eventCategory, eventAction, eventLabel });
+    } else {
+      return false;
     }
   }
 

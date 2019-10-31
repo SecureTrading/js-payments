@@ -4,8 +4,10 @@ import { IStyles } from '../shared/Styler';
 interface IConfig {
   analytics?: boolean;
   animatedCard: boolean;
+  buttonId?: string;
   componentIds?: any;
   datacenterurl?: string;
+  deferInit?: boolean;
   formId?: string;
   jwt: string;
   init?: IByPassInit;
@@ -28,6 +30,7 @@ interface IComponentsConfig {
 
 interface IWalletConfig {
   [key: string]: any;
+
   requestTypes?: string[];
 }
 
@@ -39,6 +42,23 @@ interface IByPassInit {
 const IConfigSchema: Joi.JoiObject = Joi.object().keys({
   analytics: Joi.boolean(),
   animatedCard: Joi.boolean(),
+  applePay: {
+    buttonStyle: Joi.string(),
+    buttonText: Joi.string(),
+    merchantId: Joi.string(),
+    paymentRequest: {
+      countryCode: Joi.string(),
+      currencyCode: Joi.string(),
+      merchantCapabilities: Joi.array(),
+      supportedNetworks: Joi.array(),
+      total: {
+        amount: Joi.string(),
+        label: Joi.string()
+      }
+    },
+    placement: Joi.string()
+  },
+  buttonId: Joi.string(),
   cachetoken: Joi.string(),
   componentIds: Joi.object().keys({
     animatedCard: Joi.string(),
@@ -47,7 +67,9 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
     notificationFrame: Joi.string().required(),
     securityCode: Joi.string().required()
   }),
+  components: Joi.object(),
   datacenterurl: Joi.string(),
+  deferInit: Joi.boolean(),
   formId: Joi.string(),
   init: Joi.object(),
   jwt: Joi.string().required(),
@@ -55,12 +77,27 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
   origin: Joi.string(),
   requestTypes: Joi.array().allow([Joi.string()]),
   styles: Joi.object(),
-  submitCallback: Joi.func(),
+  submitCallback: Joi.any(),
   submitFields: Joi.array().allow([Joi.string()]),
   submitOnError: Joi.boolean(),
   submitOnSuccess: Joi.boolean(),
   threedinit: Joi.string(),
-  translations: Joi.object()
+  translations: Joi.object(),
+  visaCheckout: {
+    buttonSettings: {
+      color: Joi.string(),
+      size: Joi.string()
+    },
+    livestatus: Joi.number(),
+    merchantId: Joi.string(),
+    paymentRequest: {
+      subtotal: Joi.string()
+    },
+    placement: Joi.string(),
+    settings: {
+      displayName: Joi.string()
+    }
+  }
 });
 
 const IComponentsConfigSchema = Joi.object().keys({

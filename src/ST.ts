@@ -1,10 +1,12 @@
 import Joi from 'joi';
 import 'location-origin';
+import _ from 'lodash';
 import 'url-polyfill';
 import 'whatwg-fetch';
 import CardFrames from './core/classes/CardFrames.class';
 import CommonFrames from './core/classes/CommonFrames.class';
 import { MerchantFields } from './core/classes/MerchantFields';
+import { StCodec } from './core/classes/StCodec.class';
 import ApplePay from './core/integrations/ApplePay';
 import ApplePayMock from './core/integrations/ApplePayMock';
 import { CardinalCommerce } from './core/integrations/CardinalCommerce';
@@ -13,12 +15,14 @@ import GoogleAnalytics from './core/integrations/GoogleAnalytics';
 import VisaCheckout from './core/integrations/VisaCheckout';
 import VisaCheckoutMock from './core/integrations/VisaCheckoutMock';
 import {
+  IByPassInit,
   IComponentsConfig,
   IComponentsConfigSchema,
   IConfig,
   IConfigSchema,
   IWalletConfig
 } from './core/models/Config';
+import MessageBus from './core/shared/MessageBus';
 import Selectors from './core/shared/Selectors';
 import { IStyles } from './core/shared/Styler';
 import Utils from './core/shared/Utils';
@@ -218,6 +222,8 @@ class ST {
    * @param styles
    * @param config
    * @param animatedCard
+   * @param deferInit
+   * @param buttonId
    * @private
    */
   private static _configureCardFrames(
@@ -226,12 +232,24 @@ class ST {
     componentIds: {},
     styles: IStyles,
     config: IComponentsConfig,
-    animatedCard: boolean
+    animatedCard: boolean,
+    deferInit: boolean,
+    buttonId: string
   ) {
     const { defaultPaymentType, paymentTypes, startOnLoad } = config;
     let cardFrames: object;
     if (!startOnLoad) {
-      cardFrames = new CardFrames(jwt, origin, componentIds, styles, paymentTypes, defaultPaymentType, animatedCard);
+      cardFrames = new CardFrames(
+        jwt,
+        origin,
+        componentIds,
+        styles,
+        paymentTypes,
+        defaultPaymentType,
+        animatedCard,
+        deferInit,
+        buttonId
+      );
     }
     return cardFrames;
   }
@@ -249,25 +267,27 @@ class ST {
   private readonly _config: IConfig;
   private readonly _livestatus: number = 0;
   private readonly _submitCallback: any;
-  private readonly _threedinit: string;
+  private _threedinit: string;
   private commonFrames: CommonFrames;
+  private _messageBus: MessageBus;
+  private _deferInit: boolean;
+  private _buttonId: string;
 
   constructor(config: IConfig) {
-    const { analytics, animatedCard, init, livestatus, submitCallback, translations } = config;
-    if (analytics) {
-      const ga = new GoogleAnalytics();
-    }
+    const { analytics, animatedCard, buttonId, deferInit, init, livestatus, submitCallback, translations } = config;
     if (init) {
-      const {
-        init: { cachetoken, threedinit }
-      } = config;
-      this._threedinit = threedinit;
+      const { cachetoken, threedinit } = init;
       this._cachetoken = cachetoken;
+      this._threedinit = threedinit;
     }
+    this._messageBus = new MessageBus();
     this._livestatus = livestatus;
     this._animatedCard = animatedCard;
+    this._buttonId = buttonId;
     this._submitCallback = submitCallback;
+    this._initGoogleAnalytics(analytics);
     this._config = ST._addDefaults(config);
+    this._deferInit = deferInit;
     Utils.setLocalStorageItem(ST.TRANSLATION_STORAGE_NAME, translations);
     ST._validateConfig(this._config, IConfigSchema);
     this._setClassProperties(this._config);
@@ -300,7 +320,9 @@ class ST {
       this._componentIds,
       this._styles,
       targetConfig,
-      this._animatedCard
+      this._animatedCard,
+      this._deferInit,
+      this._buttonId
     );
     this.commonFrames.requestTypes = targetConfig.requestTypes;
     this.CardinalCommerce(targetConfig);
@@ -329,6 +351,22 @@ class ST {
   }
 
   /**
+   * @param newJWT
+   */
+  public updateJWT(newJWT: string) {
+    if (newJWT) {
+      this._jwt = newJWT;
+      (() => {
+        _.debounce(() => {
+          StCodec.updateJWTValue(newJWT);
+        }, 900);
+      })();
+    } else {
+      throw Error('Jwt has not been specified');
+    }
+  }
+
+  /**
    * Initializes Cardinal Commerce configuration.
    * @param config
    * @constructor
@@ -343,6 +381,18 @@ class ST {
       this._cachetoken,
       this._threedinit
     );
+  }
+
+  /**
+   * @param init
+   * @private
+   */
+  private _initGoogleAnalytics(init: boolean) {
+    if (init) {
+      const ga = new GoogleAnalytics();
+    } else {
+      return false;
+    }
   }
 
   /**
