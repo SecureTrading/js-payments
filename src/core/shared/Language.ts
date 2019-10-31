@@ -5,6 +5,7 @@
 class Language {
   private static _translations = {
     APPLE_PAY_AMOUNT_AND_CURRENCY: 'Amount and currency are not set',
+    APPLE_PAY_NOT_LOGGED: 'You are not logged to Apple account',
     COMMUNICATION_ERROR_INVALID_REQUEST: 'Invalid request',
     COMMUNICATION_ERROR_INVALID_RESPONSE: 'Invalid response',
     COMMUNICATION_ERROR_TIMEOUT: 'Timeout',
@@ -26,6 +27,7 @@ class Language {
   };
   static get translations(): {
     APPLE_PAY_AMOUNT_AND_CURRENCY: string;
+    APPLE_PAY_NOT_LOGGED: string;
     COMMUNICATION_ERROR_INVALID_REQUEST: string;
     COMMUNICATION_ERROR_INVALID_RESPONSE: string;
     COMMUNICATION_ERROR_TIMEOUT: string;
