@@ -67,6 +67,12 @@ body {
   iframe {
     @extend %iframe;
   }
+
+  &--submit {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 .example-form__spacer {

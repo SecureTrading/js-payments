@@ -4,6 +4,7 @@ import { IStyles } from '../shared/Styler';
 interface IConfig {
   analytics?: boolean;
   animatedCard: boolean;
+  buttonId?: string;
   componentIds?: any;
   datacenterurl?: string;
   deferInit?: boolean;
@@ -57,6 +58,7 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
     },
     placement: Joi.string()
   },
+  buttonId: Joi.string(),
   cachetoken: Joi.string(),
   componentIds: Joi.object().keys({
     animatedCard: Joi.string(),

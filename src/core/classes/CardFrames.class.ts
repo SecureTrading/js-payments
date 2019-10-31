@@ -30,6 +30,8 @@ class CardFrames extends RegisterFrames {
   private _validation: Validation;
   private _translator: Translator;
   private _messageBusEvent: IMessageBusEvent = { data: { message: '' }, type: '' };
+  private _submitButton: HTMLInputElement | HTMLButtonElement;
+  private readonly _buttonId: string;
   private readonly _deferInit: boolean;
   private readonly _defaultPaymentType: string;
   private readonly _paymentTypes: string[];
@@ -44,27 +46,30 @@ class CardFrames extends RegisterFrames {
     paymentTypes: string[],
     defaultPaymentType: string,
     animatedCard: boolean,
-    deferInit: boolean
+    deferInit: boolean,
+    buttonId: string
   ) {
     super(jwt, origin, componentIds, styles, animatedCard);
-    this.hasAnimatedCard = animatedCard;
-    this._paymentTypes = paymentTypes;
-    this._defaultPaymentType = defaultPaymentType;
     this._validation = new Validation();
     this._messageBus = new MessageBus();
-    this._initSubscribes();
-    this.onInit();
     this._translator = new Translator(this.params.locale);
+    this.hasAnimatedCard = animatedCard;
+    this._buttonId = buttonId;
     this._deferInit = deferInit;
-    this._getSubmitButton();
+    this._defaultPaymentType = defaultPaymentType;
+    this._paymentTypes = paymentTypes;
     this._payMessage = this._translator.translate(Language.translations.PAY);
     this._processingMessage = `${this._translator.translate(Language.translations.PROCESSING)} ...`;
+    this.onInit();
   }
 
   /**
    * Gathers and launches methods needed on initializing object.
    */
   protected onInit() {
+    this._preventFormSubmit();
+    this._setSubmitButton();
+    this._initSubscribes();
     this._initCardFields();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
   }
@@ -97,6 +102,10 @@ class CardFrames extends RegisterFrames {
     }
   }
 
+  private _preventFormSubmit() {
+    return document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).setAttribute('onsubmit', 'event.preventDefault()');
+  }
+
   /**
    *
    * @param state
@@ -117,19 +126,30 @@ class CardFrames extends RegisterFrames {
    * @private
    */
   private _disableSubmitButton(state: boolean) {
-    const element = this._getSubmitButton();
-    return element && this._setSubmitButtonProperties(element, state);
+    const button: HTMLButtonElement | HTMLInputElement = document.getElementById(this._buttonId) as
+      | HTMLButtonElement
+      | HTMLInputElement;
+    if (button) {
+      this._setSubmitButtonProperties(button, state);
+    }
   }
 
   /**
-   * Gets submit button whether is input or button markup.
+   * Sets submit button whether is input or button markup.
+   * Chooses between specified by merchant or default one.
    */
-  private _getSubmitButton = () => {
+  private _setSubmitButton = () => {
     const form = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR);
-    const button =
-      form.querySelector(CardFrames.SUBMIT_BUTTON_AS_BUTTON_MARKUP) ||
-      form.querySelector(CardFrames.SUBMIT_BUTTON_AS_INPUT_MARKUP);
-    button.textContent = this._translator.translate(Language.translations.PAY);
+    let button: HTMLInputElement | HTMLButtonElement = this._buttonId
+      ? (document.getElementById(this._buttonId) as HTMLButtonElement | HTMLInputElement)
+      : null;
+    if (!button) {
+      button =
+        form.querySelector(CardFrames.SUBMIT_BUTTON_AS_BUTTON_MARKUP) ||
+        form.querySelector(CardFrames.SUBMIT_BUTTON_AS_INPUT_MARKUP);
+    }
+    button.textContent = this._payMessage;
+    this._submitButton = button;
     return button;
   };
 
@@ -209,8 +229,7 @@ class CardFrames extends RegisterFrames {
    * Listens to html submit form event, blocks default event, disables submit button and publish event to Message Bus.
    */
   private _submitFormListener() {
-    document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).addEventListener('submit', (event: Event) => {
-      event.preventDefault();
+    this._submitButton.addEventListener('click', () => {
       this._publishSubmitEvent(this._deferInit);
     });
   }
