@@ -20,5 +20,6 @@
   "Pay": "Talu",
   "Processing": "Wrthi'n prosesu",
   "Invalid field": "Maes annilys",
-  "Card number is invalid": "Mae rhif y cerdyn yn annilys"
+  "Card number is invalid": "Mae rhif y cerdyn yn annilys",
+  "You are not logged to Apple account": "Nid ydych wedi mewngofnodi i gyfrif Apple"
 }

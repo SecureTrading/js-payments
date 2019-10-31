@@ -1,0 +1,394 @@
+@import './variables.scss';
+
+html,
+body {
+  display: flex !important;
+  flex: 1;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.st-animated-card {
+  width: 100%;
+  perspective: 100rem;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    max-height: 23rem;
+    height: 100%;
+    max-width: 36rem;
+    width: 100%;
+    margin: 1rem;
+    transform-style: preserve-3d;
+  }
+
+  @media screen and (max-width: 22rem) {
+    &__content {
+      max-height: 20.5rem;
+      max-width: 32rem;
+    }
+
+    &__chip-logo {
+      max-width: 4rem;
+    }
+  }
+
+  @media screen and (max-width: 19rem) {
+    &__content {
+      max-height: 17rem;
+      max-width: 27rem;
+    }
+
+    &__chip-logo {
+      max-width: 4rem;
+    }
+  }
+
+  @media screen and (max-width: 16rem) {
+    &__content {
+      max-height: 15.5rem;
+      max-width: 24rem;
+    }
+
+    &__chip-logo {
+      max-width: 3rem;
+    }
+  }
+
+  &__front,
+  &__back {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  &__front,
+  &__back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: $default-gradient;
+    backface-visibility: hidden;
+    border-radius: 1.5rem;
+    box-shadow: 0 0 2rem 0 rgba(0, 0, 0, 0.24);
+    box-sizing: border-box;
+    z-index: 2;
+    padding: 1.5rem 2.5rem;
+  }
+
+  &__amex,
+  &__astropaycard,
+  &__diners,
+  &__discover,
+  &__jcb,
+  &__maestro,
+  &__mastercard,
+  &__piba,
+  &__visa {
+    border-radius: 1.5rem 1.5rem 1.5rem 1.5rem;
+  }
+
+  .st-animated-card__payment-logo-img {
+    @include centerLogo(2rem, 1rem);
+  }
+
+  @mixin cardType($bgr) {
+    background: $bgr;
+  }
+
+  .st-animated-card__payment-logo--default {
+    background: transparent;
+  }
+
+  &__default {
+    @include cardType($default-gradient);
+  }
+
+  &__amex {
+    @include cardType($amex-gradient);
+  }
+
+  &__astropaycard {
+    @include cardType($astro-pay-gradient);
+
+    .st-animated-card__signature {
+      background-color: rgba(172, 172, 172, 0.25);
+    }
+  }
+
+  &__diners {
+    @include cardType($diners-gradient);
+  }
+
+  &__discover {
+    @include cardType($discover-gradient);
+  }
+
+  &__jcb {
+    @include cardType($jcb-gradient);
+  }
+
+  &__maestro {
+    @include cardType($maestro-gradient);
+  }
+
+  &__mastercard {
+    @include cardType($master-card-gradient);
+
+    .st-animated-card__signature {
+      background-color: rgba(172, 172, 172, 0.25);
+    }
+  }
+
+  &__piba {
+    @include cardType($piba-gradient);
+  }
+
+  &__visa {
+    @include cardType($visa-gradient);
+  }
+
+  &__front {
+    &::after,
+    &::before {
+      position: absolute;
+      content: '';
+      opacity: 0.1;
+      background: $before-after-oval-gradient;
+    }
+
+    &::after {
+      height: 21rem;
+      width: 12rem;
+      bottom: 0;
+      left: 0;
+      border-radius: 0 79rem 41rem 4rem;
+    }
+
+    &::before {
+      height: 24rem;
+      width: 38rem;
+      border-radius: 238rem 98rem 38rem 5rem;
+      left: 3rem;
+      top: 9rem;
+    }
+  }
+
+  &__back {
+    @include flipY(180deg);
+  }
+
+  &__front {
+    @include flipY(0deg);
+  }
+
+  &__flip-card &__front {
+    @include flipY(-180deg);
+  }
+
+  &__flip-card &__back {
+    @include flipY(0deg);
+  }
+
+  &__content {
+    position: relative;
+  }
+
+  &__logos {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 50%;
+    z-index: 1;
+  }
+
+  &__chip-logo {
+    align-self: flex-end;
+  }
+
+  &__chip-logo-img {
+    max-width: 100%;
+    display: block;
+    height: auto;
+  }
+
+  &__payment-logo {
+    align-self: flex-start;
+    height: 12rem;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #fff;
+    border-radius: 0 0 0 10rem;
+    width: 12rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  @media screen and (max-width: 22rem) {
+    &__payment-logo {
+      width: 10rem;
+      height: 10rem;
+      border-radius: 0 0 0 9rem;
+    }
+
+    &__payment-logo-img {
+      max-width: 6rem;
+    }
+  }
+
+  @media screen and (max-width: 19rem) {
+    &__payment-logo {
+      width: 9rem;
+      height: 9rem;
+      border-radius: 0 0 0 7rem;
+    }
+
+    &__payment-logo-img {
+      max-width: 6rem;
+    }
+  }
+
+  @media screen and (max-width: 16rem) {
+    &__payment-logo {
+      width: 8rem;
+      height: 8rem;
+      border-radius: 0 0 0 7rem;
+    }
+
+    &__payment-logo-img {
+      max-width: 5rem;
+    }
+  }
+
+  &__label {
+    font-family: $card-font;
+    font-size: $card-label-font-size;
+    font-weight: bold;
+    color: $card-label-font-color;
+    text-transform: uppercase;
+    line-height: 1.1rem;
+  }
+
+  &__value {
+    font-family: $card-data-font;
+    font-size: $card-value-font-size;
+    font-weight: bold;
+    color: $card-value-font-color;
+    text-shadow: -0.1rem 0.1rem 0.4rem rgba(0, 0, 0, 0.5);
+    line-height: 2rem;
+    margin-top: 0.75rem;
+  }
+
+  @media screen and (max-width: 22rem) {
+    &__value {
+      font-size: 1.4rem;
+      margin-top: 0;
+    }
+
+    &__label {
+      font-size: 0.9rem;
+    }
+  }
+
+  @media screen and (max-width: 19rem) {
+    &__value {
+      font-size: 1.3rem;
+      margin-top: 0;
+    }
+
+    &__label {
+      font-size: 0.8rem;
+    }
+  }
+
+  @media screen and (max-width: 16rem) {
+    &__value {
+      font-size: 1.2rem;
+      margin-top: 0;
+    }
+
+    &__label {
+      font-size: 0.7rem;
+    }
+  }
+
+  &__pan {
+    height: 4rem;
+    margin-bottom: 1.25rem;
+  }
+
+  &__expiration-date-and-security-code {
+    display: flex;
+    align-items: center;
+  }
+
+  &__signature {
+    height: 10rem;
+    width: 100%;
+    background-color: $signature-field-color;
+    border-radius: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  &__security-code {
+    background-color: $security-code-field-color;
+    height: 4rem;
+    width: 23rem;
+    font-family: $card-font;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    padding-right: 2rem;
+    justify-content: flex-end;
+
+    &--front {
+      background-color: transparent;
+      width: 30%;
+      align-items: flex-start;
+      font-family: $card-data-font;
+      color: $card-label-font-color;
+      display: flex;
+      flex-direction: column;
+    }
+
+    &--front-hidden {
+      visibility: hidden;
+    }
+  }
+
+  @media screen and (max-width: 22rem) {
+    &__security-code {
+      width: 20rem;
+    }
+  }
+
+  @media screen and (max-width: 19rem) {
+    &__security-code {
+      width: 16rem;
+      height: 3rem;
+    }
+  }
+
+  @media screen and (max-width: 16rem) {
+    &__security-code {
+      width: 13rem;
+      height: 3rem;
+    }
+  }
+
+  &__expiration-date {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+  }
+}

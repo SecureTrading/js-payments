@@ -20,5 +20,6 @@
   "Pay": "Payer",
   "Processing": "Traitement en cours",
   "Invalid field": "Champ incorrect",
-  "Card number is invalid": "Le numéro de carte est incorrect"
+  "Card number is invalid": "Le numéro de carte est incorrect",
+  "You are not logged to Apple account": "Vous n'êtes pas connecté à un compte Apple"
 }
