@@ -18,6 +18,8 @@ All notable changes to this project will be documented in this file.
 
 - In IE animation of card would appear to blink instead of rotate
 - Transactions in IE fixed
+- ApplePay will now be able to process a second payment in the case the transaction was cancelled
+- ApplyPay will display the add new card overlay if no valid cards are inside the customers wallet
 
 ## 2.0.0-beta.2
 
