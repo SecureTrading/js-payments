@@ -10,7 +10,6 @@ import Validation from '../../core/shared/Validation';
 export default class CardNumber extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
-  private static LUHN_CHECK_ARRAY: number[] = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
   private static STANDARD_CARD_LENGTH: number = 19;
   private static WHITESPACES_DECREASE_NUMBER: number = 2;
   private static CARD_NUMBER_FOR_BIN_PROCESS = (cardNumber: string) => cardNumber.slice(0, 6);
@@ -22,7 +21,6 @@ export default class CardNumber extends FormField {
   private _cardNumberLength: number;
   private _cardNumberValue: string;
   private _isCardNumberValid: boolean;
-  private _fieldInstance: HTMLInputElement = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
   private readonly _cardNumberField: HTMLInputElement;
 
   constructor() {
@@ -44,39 +42,29 @@ export default class CardNumber extends FormField {
     this._sendState();
   }
 
-  /**
-   * getLabel()
-   */
   protected getLabel(): string {
     return Language.translations.LABEL_CARD_NUMBER;
   }
 
-  /**
-   * onBlur()
-   */
   protected onBlur() {
     super.onBlur();
     this.validation.luhnCheck(this._inputElement);
-    this.validation.validate(this._inputElement, this._messageElement);
     this._sendState();
   }
 
-  /**
-   * onFocus()
-   * @param event
-   */
   protected onFocus(event: Event) {
     super.onFocus(event);
   }
 
-  /**
-   * onInput()
-   * @param event
-   */
   protected onInput(event: Event) {
     super.onInput(event);
-    this._getMaxLengthOfCardNumber(this._inputElement.value);
-    this._inputElement.value = this._inputElement.value.substring(0, this._cardNumberLength);
+    const { value, nonformat } = this._formatter.number(
+      this.getContent(this._inputElement.value, 'MM/DD'),
+      Selectors.CARD_NUMBER_INPUT
+    );
+    console.log(value, nonformat);
+    // this._getMaxLengthOfCardNumber(this._inputElement.value);
+    this._inputElement.value = value.substring(0, this._cardNumberLength);
     this._sendState();
   }
 
@@ -173,43 +161,18 @@ export default class CardNumber extends FormField {
     this._messageBus.publish(messageBusEvent);
   }
 
-  /**
-   *
-   * @param cardNumber
-   * @private
-   */
   private _getBinLookupDetails = (cardNumber: string) =>
     this.binLookup.binLookup(cardNumber).type ? this.binLookup.binLookup(cardNumber) : undefined;
 
-  /**
-   *
-   * @param cardNumber
-   * @private
-   */
   private _getCardFormat = (cardNumber: string) =>
     this._getBinLookupDetails(cardNumber) ? this._getBinLookupDetails(cardNumber).format : undefined;
 
-  /**
-   *
-   * @param cardNumber
-   * @private
-   */
   private _getPossibleCardLength = (cardNumber: string) =>
     this._getBinLookupDetails(cardNumber) ? this._getBinLookupDetails(cardNumber).length : undefined;
 
-  /**
-   *
-   * @param cardNumber
-   * @private
-   */
   private _getSecurityCodeLength = (cardNumber: string) =>
     this._getBinLookupDetails(cardNumber) ? this._getBinLookupDetails(cardNumber).cvcLength[0] : undefined;
 
-  /**
-   *
-   * @param cardNumber
-   * @private
-   */
   private _getMaxLengthOfCardNumber(cardNumber: string) {
     const cardLengthFromBin = this._getPossibleCardLength(cardNumber);
     const cardFormat = this._getCardFormat(cardNumber);
@@ -224,10 +187,6 @@ export default class CardNumber extends FormField {
     return this._cardNumberLength;
   }
 
-  /**
-   *
-   * @private
-   */
   private _getFormFieldState(): IFormFieldState {
     const { value, validity } = this.getState();
     this._publishSecurityCodeLength();
@@ -239,10 +198,6 @@ export default class CardNumber extends FormField {
     };
   }
 
-  /**
-   *
-   * @private
-   */
   private _setDisableListener() {
     this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_CARD_NUMBER, (state: boolean) => {
       if (state) {
@@ -257,10 +212,6 @@ export default class CardNumber extends FormField {
     });
   }
 
-  /**
-   *
-   * @private
-   */
   private _sendState() {
     const { value, validity } = this._getFormFieldState();
     const messageBusEvent: IMessageBusEvent = {
@@ -277,4 +228,6 @@ export default class CardNumber extends FormField {
     }
     this._messageBus.publish(messageBusEvent);
   }
+
+  protected getContent = (value: string, placeholder: string) => (value ? value : placeholder);
 }

@@ -13,16 +13,20 @@ export default class SecurityCode extends FormField {
   private static DISABLED_ATTRIBUTE_NAME: string = 'disabled';
   private static SPECIAL_INPUT_LENGTH: number = 4;
   private static STANDARD_INPUT_LENGTH: number = 3;
+  private static MATCH_EXACTLY_THREE_DIGITS: string = '^[0-9]{3}$';
+  private static MATCH_EXACTLY_FOUR_DIGITS: string = '^[0-9]{4}$';
 
   public binLookup: BinLookup;
 
   private securityCodeLength: number;
+  private _formatter: Formatter;
 
   constructor() {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
     this.securityCodeLength = SecurityCode.STANDARD_INPUT_LENGTH;
     this.binLookup = new BinLookup();
-    this._setSecurityCodePattern(Formatter.STANDARD_LENGTH_PATTERN);
+    this._formatter = new Formatter();
+    this._setSecurityCodePattern(SecurityCode.MATCH_EXACTLY_THREE_DIGITS);
     this._subscribeSecurityCodeChange();
     this.setBlurListener();
     this.setFocusListener();
@@ -83,6 +87,7 @@ export default class SecurityCode extends FormField {
       data: false,
       type: MessageBus.EVENTS.FOCUS_SECURITY_CODE
     };
+    this.validation.validate(this._inputElement, this._messageElement);
     this._messageBus.publish(messageBusEvent);
   }
 
@@ -108,8 +113,7 @@ export default class SecurityCode extends FormField {
    */
   protected onInput(event: Event) {
     super.onInput(event);
-    this._inputElement.value = Formatter.trimNonNumeric(this._inputElement.value);
-    this._inputElement.value = this._inputElement.value.substring(0, this.securityCodeLength);
+    this._inputElement.value = this._formatter.code(this._inputElement.value, Selectors.SECURITY_CODE_INPUT);
     this._sendState();
   }
 
@@ -153,10 +157,10 @@ export default class SecurityCode extends FormField {
    */
   private _subscribeSecurityCodeChange() {
     this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (length: number) => {
-      let securityCodePattern = Formatter.STANDARD_LENGTH_PATTERN;
+      let securityCodePattern = SecurityCode.MATCH_EXACTLY_THREE_DIGITS;
       this.securityCodeLength = SecurityCode.STANDARD_INPUT_LENGTH;
       if (length === SecurityCode.SPECIAL_INPUT_LENGTH) {
-        securityCodePattern = Formatter.SPECIAL_LENGTH_PATTERN;
+        securityCodePattern = SecurityCode.MATCH_EXACTLY_FOUR_DIGITS;
         this.securityCodeLength = SecurityCode.SPECIAL_INPUT_LENGTH;
       }
       this._setSecurityCodePattern(securityCodePattern);
