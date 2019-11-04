@@ -91,16 +91,14 @@ export default class CardNumber extends FormField {
     super.onKeyPress(event);
   }
 
-  /**
-   * Sets focus listener, controls focusing on input field.
-   */
+  protected onKeydown(event: KeyboardEvent) {
+    super.onKeydown(event);
+  }
+
   protected setFocusListener() {
     super.setEventListener(MessageBus.EVENTS.FOCUS_CARD_NUMBER);
   }
 
-  /**
-   * Sets blur listener, controls blurring on input field.*
-   */
   protected setBlurListener() {
     super.setEventListener(MessageBus.EVENTS.BLUR_CARD_NUMBER);
   }

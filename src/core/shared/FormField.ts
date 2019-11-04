@@ -116,12 +116,11 @@ export default class FormField extends Frame {
   }
 
   protected onInput(event: Event) {
+    if (this._inputElement === document.activeElement) {
+      this.validation.keepCursorAtSamePosition(this._inputElement);
+    }
     Validation.setCustomValidationError(this._inputElement, '');
     this.format(this._inputElement.value);
-  }
-
-  protected onKeydown(event: KeyboardEvent) {
-    return event;
   }
 
   protected onKeyPress(event: KeyboardEvent) {
@@ -134,9 +133,16 @@ export default class FormField extends Frame {
     }
   }
 
+  protected onKeydown(event: KeyboardEvent) {
+    this.validation.setKeyDownProperties(this._inputElement, event);
+  }
+
   protected onPaste(event: ClipboardEvent) {
     let { clipboardData } = event;
     event.preventDefault();
+    if (this._inputElement === document.activeElement) {
+      this.validation.keepCursorAtSamePosition(this._inputElement);
+    }
     if (typeof clipboardData === 'undefined') {
       // @ts-ignore
       clipboardData = window.clipboardData.getData('Text');

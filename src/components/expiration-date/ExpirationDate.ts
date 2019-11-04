@@ -54,6 +54,7 @@ export default class ExpirationDate extends FormField {
   private _date: string[] = ['', ''];
   private _inputSelectionStart: number;
   private _inputSelectionEnd: number;
+  private _formatter: Formatter;
 
   constructor() {
     super(Selectors.EXPIRATION_DATE_INPUT, Selectors.EXPIRATION_DATE_MESSAGE, Selectors.EXPIRATION_DATE_LABEL);
@@ -66,6 +67,7 @@ export default class ExpirationDate extends FormField {
       this._messageElement,
       MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD
     );
+    this._formatter = new Formatter();
   }
 
   /**
@@ -134,7 +136,7 @@ export default class ExpirationDate extends FormField {
    */
   protected onInput(event: Event) {
     super.onInput(event);
-    this._inputElement.value = Formatter.trimNonNumeric(this._inputElement.value);
+    this._inputElement.value = this._formatter.date(this._inputElement.value, Selectors.EXPIRATION_DATE_INPUT);
     this._setFormattedDate();
     this._sendState();
   }
