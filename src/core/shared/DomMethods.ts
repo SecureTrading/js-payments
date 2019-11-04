@@ -76,8 +76,10 @@ class DomMethods {
     const child = document.getElementById(childId);
     if (parent && child) {
       parent.removeChild(child);
+      return parent;
+    } else {
+      return parent;
     }
-    return parent;
   }
 
   /**
@@ -159,6 +161,20 @@ class DomMethods {
         );
       }
     });
+  }
+
+  /**
+   * Delete all child nodes from given target.
+   * @param placement
+   */
+  public static removeAllChildren(placement: string) {
+    const element: HTMLElement = document.getElementById(placement);
+    if (element) {
+      while (element.lastChild) {
+        element.removeChild(element.lastChild);
+      }
+    }
+    return element;
   }
 }
 
