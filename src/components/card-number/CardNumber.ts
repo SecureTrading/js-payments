@@ -57,6 +57,7 @@ export default class CardNumber extends FormField {
   protected onBlur() {
     super.onBlur();
     this.validation.luhnCheck(this._inputElement);
+    this.validation.validate(this._inputElement, this._messageElement);
     this._sendState();
   }
 
