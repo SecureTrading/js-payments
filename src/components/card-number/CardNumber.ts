@@ -87,6 +87,8 @@ export default class CardNumber extends FormField {
     super.setEventListener(MessageBus.EVENTS.BLUR_CARD_NUMBER);
   }
 
+  protected getContent = (value: string, placeholder?: string) => (value ? value : placeholder);
+
   /**
    * Sets multiple attributes on card number input.
    * @param attributes
@@ -222,8 +224,5 @@ export default class CardNumber extends FormField {
       this._messageBus.publish(binProcessEvent, true);
     }
     this._messageBus.publish(messageBusEvent);
-    console.log(messageBusEvent);
   }
-
-  protected getContent = (value: string, placeholder?: string) => (value ? value : placeholder);
 }

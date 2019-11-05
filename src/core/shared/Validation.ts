@@ -92,12 +92,12 @@ export default class Validation extends Frame {
   private static readonly MERCHANT_EXTRA_FIELDS_PREFIX = 'billing';
 
   public validation: IValidation;
-  protected _messageBus: MessageBus;
-  protected binLookup: BinLookup;
   public cardDetails: any;
   public securityCodeValue: string;
   public cardNumberValue: string;
   public expirationDateValue: string;
+  protected _messageBus: MessageBus;
+  protected binLookup: BinLookup;
   private _translator: Translator;
   private _currentKeyCode: number;
   private _selectionRangeEnd: number;
@@ -155,31 +155,6 @@ export default class Validation extends Frame {
   public luhnCheck(element: HTMLInputElement) {
     const { value } = element;
     this._luhnAlgorithm(value) ? element.setCustomValidity('') : element.setCustomValidity('luhn');
-  }
-
-  /**
-   * Luhn Algorithm
-   * From the right:
-   *    Step 1: take the value of this digit
-   *    Step 2: if the offset from the end is even
-   *    Step 3: double the value, then sum the digits
-   *    Step 4: if sum of those above is divisible by ten, YOU PASS THE LUHN !
-   * @param cardNumber
-   * @private
-   */
-  private _luhnAlgorithm(cardNumber: string): boolean {
-    const cardNumberWithoutSpaces = cardNumber.replace(/\s/g, '');
-    let bit = 1;
-    let cardNumberLength = cardNumberWithoutSpaces.length;
-    let sum = 0;
-
-    while (cardNumberLength) {
-      const val = parseInt(cardNumberWithoutSpaces.charAt(--cardNumberLength), 10);
-      bit = bit ^ 1;
-      const algorithmValue = bit ? Validation.LUHN_CHECK_ARRAY[val] : val;
-      sum += algorithmValue;
-    }
-    return sum && sum % 10 === 0;
   }
 
   /**
@@ -308,6 +283,68 @@ export default class Validation extends Frame {
     this._translator = new Translator(this._params.locale);
   }
 
+  protected _isPressedKeyBackspace(): boolean {
+    return this._currentKeyCode === Validation.BACKSPACE_KEY_CODE;
+  }
+
+  protected _isPressedKeyDelete(): boolean {
+    return this._currentKeyCode === Validation.DELETE_KEY_CODE;
+  }
+
+  protected limitLength(value: string, length: number): string {
+    return value.substring(0, length);
+  }
+
+  protected removeNonDigits(value: string): string {
+    return value.replace(Validation.MATCH_CHARS, '');
+  }
+
+  protected getCardDetails(cardNumber: string = ''): BrandDetailsType {
+    return this.binLookup.binLookup(cardNumber);
+  }
+
+  protected cardNumber(value: string) {
+    this.cardNumberValue = this.removeNonDigits(value);
+    this.cardDetails = this.getCardDetails(this.cardNumberValue);
+    const length = this.cardDetails.type
+      ? Utils.getLastElementOfArray(this.cardDetails.length)
+      : Validation.CARD_NUMBER_DEFAULT_LENGTH;
+    this.cardNumberValue = this.limitLength(this.cardNumberValue, length);
+  }
+
+  protected expirationDate(value: string) {
+    this.expirationDateValue = this.removeNonDigits(value);
+  }
+
+  protected securityCode(value: string, length: number) {
+    this.securityCodeValue = this.limitLength(this.removeNonDigits(value), length);
+  }
+
+  /**
+   * Luhn Algorithm
+   * From the right:
+   *    Step 1: take the value of this digit
+   *    Step 2: if the offset from the end is even
+   *    Step 3: double the value, then sum the digits
+   *    Step 4: if sum of those above is divisible by ten, YOU PASS THE LUHN !
+   * @param cardNumber
+   * @private
+   */
+  private _luhnAlgorithm(cardNumber: string): boolean {
+    const cardNumberWithoutSpaces = cardNumber.replace(/\s/g, '');
+    let bit = 1;
+    let cardNumberLength = cardNumberWithoutSpaces.length;
+    let sum = 0;
+
+    while (cardNumberLength) {
+      const val = parseInt(cardNumberWithoutSpaces.charAt(--cardNumberLength), 10);
+      bit = bit ^ 1;
+      const algorithmValue = bit ? Validation.LUHN_CHECK_ARRAY[val] : val;
+      sum += algorithmValue;
+    }
+    return sum && sum % 10 === 0;
+  }
+
   private _toggleErrorClass = (inputElement: HTMLInputElement) => {
     inputElement.validity.valid
       ? inputElement.classList.remove(Validation.ERROR_FIELD_CLASS)
@@ -358,26 +395,6 @@ export default class Validation extends Frame {
     inputElement.setCustomValidity(data.message);
   }
 
-  protected getCardDetails(cardNumber: string = ''): BrandDetailsType {
-    return this.binLookup.binLookup(cardNumber);
-  }
-
-  protected _isPressedKeyBackspace(): boolean {
-    return this._currentKeyCode === Validation.BACKSPACE_KEY_CODE;
-  }
-
-  protected _isPressedKeyDelete(): boolean {
-    return this._currentKeyCode === Validation.DELETE_KEY_CODE;
-  }
-
-  protected limitLength(value: string, length: number): string {
-    return value.substring(0, length);
-  }
-
-  protected removeNonDigits(value: string): string {
-    return value.replace(Validation.MATCH_CHARS, '');
-  }
-
   private _setError(element: HTMLInputElement, errorContainer: HTMLElement, errorMessage: string) {
     element.classList.add(Validation.ERROR_CLASS);
     errorContainer.textContent = this._translator.translate(errorMessage);
@@ -386,22 +403,5 @@ export default class Validation extends Frame {
   private _removeError(element: HTMLInputElement, errorContainer: HTMLElement) {
     element.classList.remove(Validation.ERROR_CLASS);
     errorContainer.textContent = '';
-  }
-
-  protected cardNumber(value: string) {
-    this.cardNumberValue = this.removeNonDigits(value);
-    this.cardDetails = this.getCardDetails(this.cardNumberValue);
-    const length = this.cardDetails.type
-      ? Utils.getLastElementOfArray(this.cardDetails.length)
-      : Validation.CARD_NUMBER_DEFAULT_LENGTH;
-    this.cardNumberValue = this.limitLength(this.cardNumberValue, length);
-  }
-
-  protected expirationDate(value: string) {
-    this.expirationDateValue = this.removeNonDigits(value);
-  }
-
-  protected securityCode(value: string, length: number) {
-    this.securityCodeValue = this.limitLength(this.removeNonDigits(value), length);
   }
 }
