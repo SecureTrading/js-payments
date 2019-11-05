@@ -115,8 +115,6 @@ describe('FormField', () => {
     instance._messageElement = document.createElement('div');
 
     beforeEach(() => {
-      // instance._inputValue.value = '123';
-      Formatter.trimNonNumeric = jest.fn().mockReturnValueOnce('123');
       Validation.setCustomValidationError = jest.fn();
       // @ts-ignore
       instance.format = jest.fn();
@@ -133,12 +131,6 @@ describe('FormField', () => {
     // then
     it('should Validation.setCustomValidationError method has been called', () => {
       expect(Validation.setCustomValidationError).toHaveBeenCalled();
-    });
-
-    // then
-    it('should instance._inputElement.value has been equal to pasted value', () => {
-      // @ts-ignore
-      expect(instance._inputElement.value).toEqual('123');
     });
 
     // then

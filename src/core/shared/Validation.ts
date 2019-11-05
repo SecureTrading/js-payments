@@ -94,9 +94,10 @@ export default class Validation extends Frame {
   public validation: IValidation;
   protected _messageBus: MessageBus;
   protected binLookup: BinLookup;
-  protected cardNumberValue: string;
-  protected expirationDateValue: string;
-  protected securityCodeValue: string;
+  public cardDetails: any;
+  public securityCodeValue: string;
+  public cardNumberValue: string;
+  public expirationDateValue: string;
   private _translator: Translator;
   private _currentKeyCode: number;
   private _selectionRangeEnd: number;
@@ -389,9 +390,9 @@ export default class Validation extends Frame {
 
   protected cardNumber(value: string) {
     this.cardNumberValue = this.removeNonDigits(value);
-    const cardDetails = this.getCardDetails(this.cardNumberValue);
-    const length = cardDetails.type
-      ? Utils.getLastElementOfArray(cardDetails.length)
+    this.cardDetails = this.getCardDetails(this.cardNumberValue);
+    const length = this.cardDetails.type
+      ? Utils.getLastElementOfArray(this.cardDetails.length)
       : Validation.CARD_NUMBER_DEFAULT_LENGTH;
     this.cardNumberValue = this.limitLength(this.cardNumberValue, length);
   }
@@ -400,11 +401,7 @@ export default class Validation extends Frame {
     this.expirationDateValue = this.removeNonDigits(value);
   }
 
-  protected securityCode(value: string) {
-    this.securityCodeValue = this.removeNonDigits(value);
-    const cardDetails = this.getCardDetails(this.cardNumberValue);
-    const cardLength = Utils.getLastElementOfArray(cardDetails.cvcLength);
-    const length = cardDetails.type && cardLength ? cardLength : Validation.SECURITY_CODE_DEFAULT_LENGTH;
-    this.securityCodeValue = this.limitLength(this.securityCodeValue, length);
+  protected securityCode(value: string, length: number) {
+    this.securityCodeValue = this.limitLength(this.removeNonDigits(value), length);
   }
 }

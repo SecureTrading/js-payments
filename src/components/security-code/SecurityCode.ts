@@ -113,7 +113,11 @@ export default class SecurityCode extends FormField {
    */
   protected onInput(event: Event) {
     super.onInput(event);
-    this._inputElement.value = this._formatter.code(this._inputElement.value, Selectors.SECURITY_CODE_INPUT);
+    this._inputElement.value = this._formatter.code(
+      this._inputElement.value,
+      this.securityCodeLength,
+      Selectors.SECURITY_CODE_INPUT
+    );
     this._sendState();
   }
 

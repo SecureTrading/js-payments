@@ -1,7 +1,6 @@
 import each from 'jest-each';
 import SpyInstance = jest.SpyInstance;
 import CardNumber from '../../../src/components/card-number/CardNumber';
-import Formatter from '../../../src/core/shared/Formatter';
 import Selectors from '../../../src/core/shared/Selectors';
 import FormField from '../../../src/core/shared/FormField';
 import MessageBus from './../../../src/core/shared/MessageBus';
@@ -61,15 +60,6 @@ describe('CardNumber', () => {
     // then
     it('should return input element', () => {
       expect(CardNumber.ifFieldExists()).toBeInstanceOf(HTMLInputElement);
-    });
-  });
-
-  // given
-  describe('_luhnCheck()', () => {
-    // then
-    each(testCardNumbers).it('should check card number and return correct Luhn check', (cardNumber, expected) => {
-      // @ts-ignore
-      expect(cardNumberFixture().cardNumberInstance._luhnCheck(cardNumber)).toEqual(expected);
     });
   });
 
@@ -257,47 +247,43 @@ describe('CardNumber', () => {
 
   // given
   describe('onBlur()', () => {
-    let spy: SpyInstance;
-    let spyState: SpyInstance;
     const { instance } = cardNumberFixture();
+    // @ts-ignore
+    instance._inputElement.value = '4111';
 
     beforeEach(() => {
-      // @ts-ignore
-      spy = jest.spyOn(instance, '_luhnCheck');
-      // @ts-ignore
-      spyState = jest.spyOn(instance, '_sendState');
+      instance.validation.luhnCheck = jest.fn();
+      instance.validation.validate = jest.fn();
       // @ts-ignore
       instance.onBlur();
     });
     // then
-    it('onBlur', () => {
-      expect(spy).toHaveBeenCalled();
+    it('luhnCheck', () => {
+      expect(instance.validation.luhnCheck).toHaveBeenCalled();
     });
-    it('onBlur', () => {
-      expect(spyState).toHaveBeenCalled();
+    it('validate', () => {
+      expect(instance.validation.validate).toHaveBeenCalled();
     });
   });
 
   // given
   describe('onInput()', () => {
-    let spy: SpyInstance;
     let spySendState: SpyInstance;
     const { instance } = cardNumberFixture();
+    // @ts-ignore
+    instance._formatter.number = jest.fn().mockReturnValueOnce({value: '4111'});
     const event = new Event('input');
 
     // when
     beforeEach(() => {
-      // @ts-ignore
-      spySendState = jest.spyOn(instance, '_sendState');
-      // @ts-ignore
-      instance.getMaxLengthOfCardNumber = jest.fn().mockReturnValueOnce(15);
       // @ts-ignore
       instance.onInput(event);
     });
 
     // then
     it('should call _sendState', () => {
-      expect(spySendState).toHaveBeenCalledTimes(1);
+      // @ts-ignore
+      expect(instance._inputElement.value).toEqual('4111');
     });
   });
 
@@ -405,7 +391,6 @@ describe('CardNumber', () => {
     instance._sendState = jest.fn();
     // @ts-ignore
     instance._getMaxLengthOfCardNumber = jest.fn();
-    Formatter.trimNonNumeric = jest.fn().mockReturnValueOnce('41111111');
 
     // then
     it('should _sendState', () => {

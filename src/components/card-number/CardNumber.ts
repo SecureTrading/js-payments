@@ -49,6 +49,7 @@ export default class CardNumber extends FormField {
   protected onBlur() {
     super.onBlur();
     this.validation.luhnCheck(this._inputElement);
+    this.validation.validate(this._inputElement, this._messageElement);
     this._sendState();
   }
 
@@ -58,12 +59,7 @@ export default class CardNumber extends FormField {
 
   protected onInput(event: Event) {
     super.onInput(event);
-    const { value, nonformat } = this._formatter.number(
-      this.getContent(this._inputElement.value, 'MM/DD'),
-      Selectors.CARD_NUMBER_INPUT
-    );
-    console.log(value, nonformat);
-    // this._getMaxLengthOfCardNumber(this._inputElement.value);
+    const { value } = this._formatter.number(this.getContent(this._inputElement.value), Selectors.CARD_NUMBER_INPUT);
     this._inputElement.value = value.substring(0, this._cardNumberLength);
     this._sendState();
   }
@@ -218,7 +214,6 @@ export default class CardNumber extends FormField {
       data: this._getFormFieldState(),
       type: MessageBus.EVENTS.CHANGE_CARD_NUMBER
     };
-
     if (validity) {
       const binProcessEvent: IMessageBusEvent = {
         data: CardNumber.CARD_NUMBER_FOR_BIN_PROCESS(value),
@@ -227,7 +222,8 @@ export default class CardNumber extends FormField {
       this._messageBus.publish(binProcessEvent, true);
     }
     this._messageBus.publish(messageBusEvent);
+    console.log(messageBusEvent);
   }
 
-  protected getContent = (value: string, placeholder: string) => (value ? value : placeholder);
+  protected getContent = (value: string, placeholder?: string) => (value ? value : placeholder);
 }

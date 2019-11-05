@@ -67,8 +67,8 @@ class Formatter extends Validation {
     return fixedDate;
   }
 
-  public code(value: string, id?: string) {
-    super.securityCode(value);
+  public code(value: string, length: number, id?: string) {
+    super.securityCode(value, length);
     const element: HTMLInputElement = document.getElementById(id) as HTMLInputElement;
     element.value = this.securityCodeValue;
     return this.securityCodeValue;
