@@ -176,7 +176,6 @@ describe('ExpirationDate', () => {
       instance._sendState = jest.fn();
       // @ts-ignore
       instance._setFormattedDate = jest.fn();
-      Formatter.trimNonNumeric = jest.fn().mockReturnValueOnce('12');
       // @ts-ignore
       instance.onPaste(event);
     });

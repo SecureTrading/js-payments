@@ -167,7 +167,6 @@ describe('SecurityCode', () => {
 
     // when
     beforeEach(() => {
-      Formatter.trimNonNumeric = jest.fn().mockReturnValueOnce('123');
       const event = {
         clipboardData: {
           getData: jest.fn()
