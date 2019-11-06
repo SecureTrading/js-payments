@@ -2,6 +2,7 @@ import SecurityCode from '../../../src/components/security-code/SecurityCode';
 import Formatter from '../../../src/core/shared/Formatter';
 import Selectors from '../../../src/core/shared/Selectors';
 import FormField from '../../../src/core/shared/FormField';
+import Utils from '../../../src/core/shared/Utils';
 
 jest.mock('../../../src/core/shared/MessageBus');
 
@@ -173,6 +174,7 @@ describe('SecurityCode', () => {
         },
         preventDefault: jest.fn()
       };
+      Utils.stripChars = jest.fn().mockReturnValue('111');
       // @ts-ignore
       instance._sendState = jest.fn();
       // @ts-ignore

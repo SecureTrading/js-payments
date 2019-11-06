@@ -1,8 +1,8 @@
-import Formatter from './Formatter';
 import Frame from './Frame';
 import Language from './Language';
 import MessageBus from './MessageBus';
 import { Translator } from './Translator';
+import Utils from './Utils';
 import Validation from './Validation';
 
 /**
@@ -34,9 +34,6 @@ export default class FormField extends Frame {
     this.onInit();
   }
 
-  /**
-   *
-   */
   public onInit() {
     super.onInit();
     this._translator = new Translator(this._params.locale);
@@ -152,7 +149,7 @@ export default class FormField extends Frame {
     }
 
     // @ts-ignore
-    this._inputElement.value = clipboardData;
+    this._inputElement.value = Utils.stripChars(clipboardData, undefined);
     Validation.setCustomValidationError(this._inputElement, '');
     this.format(this._inputElement.value);
     this.validation.validate(this._inputElement, this._messageElement);
@@ -231,13 +228,9 @@ export default class FormField extends Frame {
   }
 
   private _setLabelText() {
-    this._labelElement.innerHTML = this._translator.translate(this.getLabel());
+    this._labelElement.textContent = this._translator.translate(this.getLabel());
   }
 
-  /**
-   * Triggers format and validation methods on given input field.
-   * @private
-   */
   private _validateInput() {
     this.format(this._inputElement.value);
     this.validation.validate(this._inputElement, this._messageElement);

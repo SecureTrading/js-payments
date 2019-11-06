@@ -21,6 +21,7 @@ export default class CardNumber extends FormField {
   private _cardNumberLength: number;
   private _cardNumberValue: string;
   private _isCardNumberValid: boolean;
+  private _fieldInstance: HTMLInputElement = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
   private readonly _cardNumberField: HTMLInputElement;
 
   constructor() {
@@ -48,8 +49,7 @@ export default class CardNumber extends FormField {
 
   protected onBlur() {
     super.onBlur();
-    this.validation.luhnCheck(this._inputElement);
-    this.validation.validate(this._inputElement, this._messageElement);
+    this.validation.luhnCheck(this._fieldInstance, this._inputElement, this._messageElement);
     this._sendState();
   }
 
@@ -89,11 +89,6 @@ export default class CardNumber extends FormField {
 
   protected getContent = (value: string, placeholder?: string) => (value ? value : placeholder);
 
-  /**
-   * Sets multiple attributes on card number input.
-   * @param attributes
-   * @private
-   */
   private _setCardNumberAttributes(attributes: any) {
     for (const attribute in attributes) {
       if (attributes.hasOwnProperty(attribute)) {

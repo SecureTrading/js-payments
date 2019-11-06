@@ -1,7 +1,7 @@
-import Formatter from '../../../src/core/shared/Formatter';
 import FormField from '../../../src/core/shared/FormField';
 import Language from '../../../src/core/shared/Language';
 import MessageBus from '../../../src/core/shared/MessageBus';
+import Utils from '../../../src/core/shared/Utils';
 import Validation from '../../../src/core/shared/Validation';
 
 jest.mock('./../../../src/core/shared/Validation');
@@ -112,12 +112,15 @@ describe('FormField', () => {
     // @ts-ignore
     instance._inputElement = document.createElement('input');
     // @ts-ignore
+    instance._inputElement.value = '44';
+    // @ts-ignore
     instance._messageElement = document.createElement('div');
 
     beforeEach(() => {
       Validation.setCustomValidationError = jest.fn();
       // @ts-ignore
       instance.format = jest.fn();
+      Utils.stripChars = jest.fn();
 
       // @ts-ignore
       instance.onPaste(event);

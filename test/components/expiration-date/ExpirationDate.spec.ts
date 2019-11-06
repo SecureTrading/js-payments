@@ -1,9 +1,9 @@
 import each from 'jest-each';
 import SpyInstance = jest.SpyInstance;
 import ExpirationDate from '../../../src/components/expiration-date/ExpirationDate';
-import Formatter from '../../../src/core/shared/Formatter';
 import Language from '../../../src/core/shared/Language';
 import Selectors from '../../../src/core/shared/Selectors';
+import Utils from '../../../src/core/shared/Utils';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 
@@ -172,6 +172,7 @@ describe('ExpirationDate', () => {
 
     // given
     beforeEach(() => {
+      Utils.stripChars = jest.fn().mockReturnValue('11');
       // @ts-ignore
       instance._sendState = jest.fn();
       // @ts-ignore
