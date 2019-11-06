@@ -1,6 +1,7 @@
 import Frame from './Frame';
 import Language from './Language';
 import MessageBus from './MessageBus';
+import Selectors from './Selectors';
 import { Translator } from './Translator';
 import Utils from './Utils';
 import Validation from './Validation';
@@ -233,6 +234,14 @@ export default class FormField extends Frame {
 
   private _validateInput() {
     this.format(this._inputElement.value);
+    if (this._inputElement.id === Selectors.CARD_NUMBER_INPUT) {
+      this.validation.luhnCheck(
+        // @ts-ignore
+        document.getElementById(Selectors.CARD_NUMBER_INPUT),
+        this._inputElement,
+        this._messageElement
+      );
+    }
     this.validation.validate(this._inputElement, this._messageElement);
   }
 }

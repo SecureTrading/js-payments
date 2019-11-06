@@ -87,7 +87,6 @@ export default class SecurityCode extends FormField {
       data: false,
       type: MessageBus.EVENTS.FOCUS_SECURITY_CODE
     };
-    this.validation.validate(this._inputElement, this._messageElement);
     this._messageBus.publish(messageBusEvent);
   }
 
