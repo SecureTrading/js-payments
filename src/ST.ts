@@ -272,7 +272,8 @@ class ST {
 
   constructor(config: IConfig) {
     const { analytics, animatedCard, deferInit, init, livestatus, submitCallback, translations } = config;
-    console.log(Card);
+    const card = new Card();
+    console.log(card);
     if (init) {
       const { cachetoken, threedinit } = init;
       this._cachetoken = cachetoken;
