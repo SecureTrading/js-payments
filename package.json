@@ -16,7 +16,7 @@
     "build": "webpack --config webpack.prod.js",
     "build:automated": "webpack --config webpack.test.js",
     "start:automated": "webpack-dev-server --color --progress --config webpack.test.js",
-    "start": "webpack-dev-server --color --progress --config webpack.dev.js",
+    "start": "webpack-dev-server --color --progress  --config webpack.dev.js",
     "example": "ws --rewrite '/* -> /dist/$1' --https",
     "prod": "npm run build",
     "test": "jest --watchAll",
@@ -98,6 +98,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.6.0",
     "@babel/runtime": "^7.6.3",
+    "@securetrading/js-payments-card": "file:../../Users/gmartowski/securetrading-js-payments-card-1.0.0.tgz",
     "@types/joi": "^14.3.3",
     "@types/jwt-decode": "^2.2.1",
     "@types/lodash": "^4.14.144",

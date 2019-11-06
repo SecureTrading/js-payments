@@ -18,6 +18,9 @@ module.exports = merge(common, {
     disableHostCheck: true,
     watchOptions: {
       ignored: ['node_modules']
+    },
+    stats: {
+      errorDetails: true
     }
   },
   plugins: [new ManifestPlugin(), new TypedocWebpackPlugin({}), new webpack.HotModuleReplacementPlugin()]
