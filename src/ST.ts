@@ -1,3 +1,4 @@
+import Card from '@securetrading/js-payments-card/dist/stcard.js';
 import Joi from 'joi';
 import 'location-origin';
 import _ from 'lodash';
@@ -275,6 +276,23 @@ class ST {
 
   constructor(config: IConfig) {
     const { analytics, animatedCard, buttonId, deferInit, init, livestatus, submitCallback, translations } = config;
+    const card = new Card({
+      locale: 'en_GB',
+      fields: {
+        inputs: {
+          cardNumber: 'st-card-number-input',
+          expirationDate: 'st-expiration-date-input',
+          securityCode: 'st-security-code-input'
+        },
+        errors: {
+          cardNumber: 'st-card-number-message',
+          expirationDate: 'st-expiration-date-message',
+          securityCode: 'st-security-code-message'
+        }
+      },
+      animatedCardContainer: 'st-animated-card'
+    });
+    console.log(card);
     if (init) {
       const { cachetoken, threedinit } = init;
       this._cachetoken = cachetoken;
