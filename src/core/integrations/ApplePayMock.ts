@@ -1,4 +1,3 @@
-import { cardsLogos } from '../../components/animated-card/animated-card-logos';
 import DomMethods from '../shared/DomMethods';
 import ApplePay from './ApplePay';
 import ApplePaySessionMock from './ApplePaySessionMock';
