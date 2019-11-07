@@ -20,5 +20,6 @@
   "Pay": "Pay",
   "Processing": "Processing",
   "Invalid field": "Invalid field",
-  "Card number is invalid": "Card number is invalid"
+  "Card number is invalid": "Card number is invalid",
+  "You are not logged to Apple account": "You are not logged to Apple account"
 }

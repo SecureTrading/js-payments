@@ -20,5 +20,6 @@
   "Pay": "Betalen",
   "Processing": "Bezig met verwerken",
   "Invalid field": "Ongeldig veld",
-  "Card number is invalid": "Het kaartnummer is ongeldig"
+  "Card number is invalid": "Het kaartnummer is ongeldig",
+  "You are not logged to Apple account": "U bent niet aangemeld bij een Apple-account"
 }

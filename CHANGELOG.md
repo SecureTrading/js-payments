@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.1
+
+### Added
+
+- Add updateJWT function to allow JWT to be changed after initial load. E.g. this could be used to change the amount the customer will be charged if the checkout allows modification to the cart contents after initial load.
+- Add ability to deferInit in order to allow updateJWT functionality. This is required so the JavaScript will not initialise the background steps for Cardinal Commerce until after the form is submitted allowing for the merchant generated JWT to be changed after the initial page load.
+
+### Changed
+
+- Add option for buttonId in config to allow a specific button to be targetted as the pay button (previously this was always targetting the first button only). If not specified this will keep the original behavior.
+- Improved behavioural tests to be able to more easily define more configuration options for additional test cases.
+
 ## 2.0.0
 
 ### Added
@@ -18,6 +30,8 @@ All notable changes to this project will be documented in this file.
 
 - In IE animation of card would appear to blink instead of rotate
 - Transactions in IE fixed
+- ApplePay will now be able to process a second payment in the case the transaction was cancelled
+- ApplyPay will display the add new card overlay if no valid cards are inside the customers wallet
 
 ## 2.0.0-beta.2
 

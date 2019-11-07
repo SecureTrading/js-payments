@@ -33,7 +33,7 @@ describe('Class ApplePayMock', () => {
   });
 
   // given
-  describe('ApplePayMock.checkApplePayAvailability', () => {
+  describe('ApplePayMock.isUserLoggedToAppleAccount', () => {
     // when
     let instance: any;
     beforeEach(() => {
@@ -42,7 +42,7 @@ describe('Class ApplePayMock', () => {
 
     // then
     it('should always return true', () => {
-      expect(instance.checkApplePayAvailability()).toBe(true);
+      expect(instance.isUserLoggedToAppleAccount()).toBe(true);
     });
   });
 
