@@ -81,8 +81,8 @@
       </div>
 
       <div class="example-form__section">
-        <div class="example-form__group">
-          <button type="submit" class="example-form__button"></button>
+        <div class="example-form__group example-form__group--submit">
+          <button type="submit" class="example-form__button" id="merchant-submit-button">Zapłać</button>
         </div>
       </div>
 
@@ -130,7 +130,6 @@
               }
             });
         }
-
         function configurationInit(ST, data) {
           var stConfig = data;
           var parsedUrl = new URL(window.location.href);

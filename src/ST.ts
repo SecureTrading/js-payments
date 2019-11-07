@@ -224,6 +224,7 @@ class ST {
    * @param config
    * @param animatedCard
    * @param deferInit
+   * @param buttonId
    * @private
    */
   private static _configureCardFrames(
@@ -233,7 +234,8 @@ class ST {
     styles: IStyles,
     config: IComponentsConfig,
     animatedCard: boolean,
-    deferInit: boolean
+    deferInit: boolean,
+    buttonId: string
   ) {
     const { defaultPaymentType, paymentTypes, startOnLoad } = config;
     let cardFrames: object;
@@ -246,7 +248,8 @@ class ST {
         paymentTypes,
         defaultPaymentType,
         animatedCard,
-        deferInit
+        deferInit,
+        buttonId
       );
     }
     return cardFrames;
@@ -269,9 +272,10 @@ class ST {
   private commonFrames: CommonFrames;
   private _messageBus: MessageBus;
   private _deferInit: boolean;
+  private _buttonId: string;
 
   constructor(config: IConfig) {
-    const { analytics, animatedCard, deferInit, init, livestatus, submitCallback, translations } = config;
+    const { analytics, animatedCard, buttonId, deferInit, init, livestatus, submitCallback, translations } = config;
     const card = new Card();
     console.log(card);
     if (init) {
@@ -282,6 +286,7 @@ class ST {
     this._messageBus = new MessageBus();
     this._livestatus = livestatus;
     this._animatedCard = animatedCard;
+    this._buttonId = buttonId;
     this._submitCallback = submitCallback;
     this._initGoogleAnalytics(analytics);
     this._config = ST._addDefaults(config);
@@ -319,7 +324,8 @@ class ST {
       this._styles,
       targetConfig,
       this._animatedCard,
-      this._deferInit
+      this._deferInit,
+      this._buttonId
     );
     this.commonFrames.requestTypes = targetConfig.requestTypes;
     this.CardinalCommerce(targetConfig);

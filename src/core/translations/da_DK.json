@@ -20,5 +20,6 @@
   "Pay": "Betal",
   "Processing": "Behandler",
   "Invalid field": "Ugyldigt felt",
-  "Card number is invalid": "Kortnummer er ugyldigt"
+  "Card number is invalid": "Kortnummer er ugyldigt",
+  "You are not logged to Apple account": "Du er ikke logget på Apple-konto"
 }
