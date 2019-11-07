@@ -46,7 +46,7 @@
     "@babel/plugin-transform-typescript": "^7.7.0",
     "@babel/preset-env": "^7.6.3",
     "@babel/preset-typescript": "^7.6.0",
-    "@types/jest": "^24.0.21",
+    "@types/jest": "^24.0.22",
     "@types/jest-each": "^24.3.0",
     "@types/jest-matchers": "^20.0.2",
     "babel-jest": "^24.9.0",
