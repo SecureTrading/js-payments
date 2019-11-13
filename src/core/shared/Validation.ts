@@ -124,6 +124,10 @@ export default class Validation extends Frame {
     });
   }
 
+  public isPressedKeyDelete(): boolean {
+    return this._currentKeyCode === Validation.DELETE_KEY_CODE;
+  }
+
   public setKeyDownProperties(element: HTMLInputElement, event: KeyboardEvent) {
     this._currentKeyCode = event.keyCode;
     this._selectionRangeStart = element.selectionStart;
@@ -136,7 +140,7 @@ export default class Validation extends Frame {
     const start: number = this._selectionRangeStart;
     const end: number = this._selectionRangeEnd;
 
-    if (this._isPressedKeyDelete()) {
+    if (this.isPressedKeyDelete()) {
       element.setSelectionRange(start, end);
     } else if (this._isPressedKeyBackspace()) {
       element.setSelectionRange(start - Validation.CURSOR_SINGLE_SKIP, end - Validation.CURSOR_SINGLE_SKIP);
@@ -285,10 +289,6 @@ export default class Validation extends Frame {
 
   protected _isPressedKeyBackspace(): boolean {
     return this._currentKeyCode === Validation.BACKSPACE_KEY_CODE;
-  }
-
-  protected _isPressedKeyDelete(): boolean {
-    return this._currentKeyCode === Validation.DELETE_KEY_CODE;
   }
 
   protected limitLength(value: string, length: number): string {

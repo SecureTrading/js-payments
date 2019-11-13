@@ -138,6 +138,7 @@ export default class ExpirationDate extends FormField {
     super.onInput(event);
     this._inputElement.value = this._formatter.date(this._inputElement.value, Selectors.EXPIRATION_DATE_INPUT);
     this._setFormattedDate();
+    this.validation.keepCursorAtSamePosition(this._inputElement);
     this._sendState();
   }
 
@@ -207,17 +208,6 @@ export default class ExpirationDate extends FormField {
   }
 
   /**
-   * Checks whether pressed key is 'Backspace' or 'Delete'.
-   * @private
-   */
-  private _isPressedKeyDelete(): boolean {
-    return (
-      this._currentKeyCode === ExpirationDate.DELETE_KEY_CODE ||
-      this._currentKeyCode === ExpirationDate.BACKSPACE_KEY_CODE
-    );
-  }
-
-  /**
    * Returns validated date or empty value if nothing's indicated.
    * @param validatedDate
    * @private
@@ -246,9 +236,6 @@ export default class ExpirationDate extends FormField {
   private _setFormattedDate() {
     const validatedDate = this._getValidatedDate(this._inputElement.value);
     this._returnValidatedDate(validatedDate);
-    if (this._isPressedKeyDelete()) {
-      this._inputElement.setSelectionRange(this._inputSelectionStart, this._inputSelectionEnd);
-    }
     return validatedDate;
   }
 }

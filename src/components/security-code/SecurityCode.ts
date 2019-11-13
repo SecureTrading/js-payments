@@ -117,6 +117,7 @@ export default class SecurityCode extends FormField {
       this.securityCodeLength,
       Selectors.SECURITY_CODE_INPUT
     );
+    this.validation.keepCursorAtSamePosition(this._inputElement);
     this._sendState();
   }
 

@@ -61,6 +61,7 @@ export default class CardNumber extends FormField {
     super.onInput(event);
     const { value } = this._formatter.number(this.getContent(this._inputElement.value), Selectors.CARD_NUMBER_INPUT);
     this._inputElement.value = value.substring(0, this._cardNumberLength);
+    this.validation.keepCursorAtSamePosition(this._inputElement);
     this._sendState();
   }
 

@@ -114,9 +114,7 @@ export default class FormField extends Frame {
   }
 
   protected onInput(event: Event) {
-    if (this._inputElement === document.activeElement) {
-      this.validation.keepCursorAtSamePosition(this._inputElement);
-    }
+    this.validation.keepCursorAtSamePosition(this._inputElement);
     Validation.setCustomValidationError(this._inputElement, '');
     this.format(this._inputElement.value);
   }
