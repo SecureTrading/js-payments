@@ -60,6 +60,7 @@ export default class CardNumber extends FormField {
   protected onInput(event: Event) {
     super.onInput(event);
     const { value } = this._formatter.number(this.getContent(this._inputElement.value), Selectors.CARD_NUMBER_INPUT);
+    this._hideSecurityCodeField(value);
     this._inputElement.value = value.substring(0, this._cardNumberLength);
     this.validation.keepCursorAtSamePosition(this._inputElement);
     this._sendState();
@@ -69,6 +70,7 @@ export default class CardNumber extends FormField {
     super.onPaste(event);
     this._getMaxLengthOfCardNumber(this._inputElement.value);
     this._inputElement.value = this._inputElement.value.substring(0, this._cardNumberLength);
+    this._hideSecurityCodeField(this._inputElement.value);
     this._sendState();
   }
 
@@ -204,6 +206,15 @@ export default class CardNumber extends FormField {
         this._inputElement.classList.remove('st-input--disabled');
       }
     });
+  }
+
+  private _hideSecurityCodeField(cardNumber: string) {
+    const isCardAmex: boolean = this.binLookup.binLookup(cardNumber).type === 'PIBA';
+    const messageBusEvent: IMessageBusEvent = {
+      data: isCardAmex,
+      type: MessageBus.EVENTS.HIDE_SECURITY_CODE
+    };
+    this._messageBus.publish(messageBusEvent);
   }
 
   private _sendState() {

@@ -36,6 +36,7 @@ export default class SecurityCode extends FormField {
       this._messageElement,
       MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD
     );
+    this._hideSecurityCodeListener();
   }
 
   /**
@@ -180,5 +181,21 @@ export default class SecurityCode extends FormField {
    */
   private _setSecurityCodePattern(securityCodePattern: string) {
     this.setAttributes({ pattern: securityCodePattern });
+  }
+
+  private _hideSecurityCodeListener() {
+    this._messageBus.subscribe(MessageBus.EVENTS.HIDE_SECURITY_CODE, (data: boolean) => {
+      this._toggleSecurityCodeField(data);
+    });
+  }
+
+  private _toggleSecurityCodeField(toggle: boolean) {
+    if (toggle) {
+      document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR).style.opacity = '0.5';
+      document.getElementById(Selectors.SECURITY_CODE_INPUT).setAttribute('disabled', 'disabled');
+    } else {
+      document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR).style.opacity = '1';
+      document.getElementById(Selectors.SECURITY_CODE_INPUT).removeAttribute('disabled');
+    }
   }
 }
