@@ -11,4 +11,3 @@ const card = new Card({
   locale: 'en_GB',
   animatedCardContainer: 'st-animated-card'
 });
-console.log(card);
