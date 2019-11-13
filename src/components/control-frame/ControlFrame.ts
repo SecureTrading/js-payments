@@ -402,6 +402,8 @@ class ControlFrame extends Frame {
           type: MessageBus.EVENTS_PUBLIC.THREEDINIT
         });
       }
+
+      // @TODO debug here
       this._payment
         .threeDQueryRequest(this._preThreeDRequestTypes, card, this._merchantFormData)
         .then((result: any) => {
