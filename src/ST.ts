@@ -214,18 +214,6 @@ class ST {
     return new MerchantFields();
   }
 
-  /**
-   *
-   * @param jwt
-   * @param origin
-   * @param componentIds
-   * @param styles
-   * @param config
-   * @param animatedCard
-   * @param deferInit
-   * @param buttonId
-   * @private
-   */
   private static _configureCardFrames(
     jwt: string,
     origin: string,
@@ -248,7 +236,8 @@ class ST {
         defaultPaymentType,
         animatedCard,
         deferInit,
-        buttonId
+        buttonId,
+        startOnLoad
       );
     }
     return cardFrames;
