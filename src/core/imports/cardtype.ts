@@ -31,11 +31,4 @@ const CARD_TYPES = {
   VISA: 'visa'
 };
 
-const CARD_DETAILS_PLACEHOLDERS = {
-  CARD_NUMBER: '\u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219 \u2219\u2219\u2219\u2219',
-  EXPIRATION_DATE: 'MM/YY',
-  SECURITY_CODE: '\u2219\u2219\u2219',
-  SECURITY_CODE_EXTENDED: '\u2219\u2219\u2219\u2219',
-  TYPE: 'default'
-};
-export { Brand, CardTreeNode, BrandDetailsType, cardTree, brandMapping, CARD_TYPES, CARD_DETAILS_PLACEHOLDERS };
+export { Brand, CardTreeNode, BrandDetailsType, cardTree, brandMapping, CARD_TYPES };

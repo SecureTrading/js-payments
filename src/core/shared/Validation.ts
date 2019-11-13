@@ -292,11 +292,15 @@ export default class Validation extends Frame {
   }
 
   protected limitLength(value: string, length: number): string {
-    return value.substring(0, length);
+    if (value) {
+      return value.substring(0, length);
+    }
   }
 
   protected removeNonDigits(value: string): string {
-    return value.replace(Validation.MATCH_CHARS, '');
+    if (value) {
+      return value.replace(Validation.MATCH_CHARS, '');
+    }
   }
 
   protected getCardDetails(cardNumber: string = ''): BrandDetailsType {
@@ -313,11 +317,11 @@ export default class Validation extends Frame {
   }
 
   protected expirationDate(value: string) {
-    this.expirationDateValue = this.removeNonDigits(value);
+    this.expirationDateValue = value ? this.removeNonDigits(value) : '';
   }
 
   protected securityCode(value: string, length: number) {
-    this.securityCodeValue = this.limitLength(this.removeNonDigits(value), length);
+    this.securityCodeValue = value ? this.limitLength(this.removeNonDigits(value), length) : '';
   }
 
   /**

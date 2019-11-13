@@ -1,4 +1,3 @@
-import { CARD_DETAILS_PLACEHOLDERS } from '../imports/cardtype';
 import Utils from './Utils';
 import Validation from './Validation';
 
@@ -43,8 +42,10 @@ class Formatter extends Validation {
       element.setSelectionRange(selectStart, selectEnd);
     }
     this._cardNumberFormatted = value;
-    this.cardNumberValue = value.replace(/\s/g, '');
-    value = value ? value : CARD_DETAILS_PLACEHOLDERS.CARD_NUMBER;
+    if (value) {
+      this.cardNumberValue = value.replace(/\s/g, '');
+    }
+    value = value ? value : '';
     return { value, nonformat: this.cardNumberValue };
   }
 
@@ -54,7 +55,7 @@ class Formatter extends Validation {
     let result: string = '';
 
     this._blocks.forEach(length => {
-      if (this.expirationDateValue.length > 0) {
+      if (this.expirationDateValue && this.expirationDateValue.length > 0) {
         const sub = this.expirationDateValue.slice(0, length);
         const rest = this.expirationDateValue.slice(length);
         result += sub;
@@ -63,14 +64,14 @@ class Formatter extends Validation {
     });
     let fixedDate = this._dateFixed(result);
     element.value = fixedDate;
-    fixedDate = fixedDate ? fixedDate : CARD_DETAILS_PLACEHOLDERS.EXPIRATION_DATE;
+    fixedDate = fixedDate ? fixedDate : '';
     return fixedDate;
   }
 
   public code(value: string, length: number, id?: string) {
     super.securityCode(value, length);
     const element: HTMLInputElement = document.getElementById(id) as HTMLInputElement;
-    element.value = this.securityCodeValue;
+    element.value = this.securityCodeValue ? this.securityCodeValue : '';
     return this.securityCodeValue;
   }
 

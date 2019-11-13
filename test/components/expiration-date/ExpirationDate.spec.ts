@@ -354,18 +354,6 @@ describe('ExpirationDate', () => {
       // @ts-ignore
       expect(instance._inputElement.value).toEqual(expected);
     });
-
-    // then
-    it('should call setSelectionRange when pressed key is delete', () => {
-      // @ts-ignore
-      instance._isPressedKeyDelete = jest.fn().mockReturnValueOnce(true);
-      // @ts-ignore
-      instance._inputElement.setSelectionRange = jest.fn();
-      // @ts-ignore
-      instance._setFormattedDate();
-      // @ts-ignore
-      expect(instance._inputElement.setSelectionRange).toHaveBeenCalled();
-    });
   });
 });
 
