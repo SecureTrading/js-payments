@@ -218,7 +218,6 @@ export class CardinalCommerce {
       this._onByPassJsInitEvent();
     });
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDQUERY, (data: any) => {
-      console.error('3dQuery');
       this._onThreeDQueryEvent(data);
     });
   }

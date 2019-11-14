@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import 'location-origin';
-import _ from 'lodash';
+import { debounce } from 'lodash';
 import 'url-polyfill';
 import 'whatwg-fetch';
 import CardFrames from './core/classes/CardFrames.class';
@@ -346,9 +346,8 @@ class ST {
     if (newJWT) {
       this._jwt = newJWT;
       (() => {
-        _.debounce(() => {
-          StCodec.updateJWTValue(newJWT);
-        }, 900);
+        const a = StCodec.updateJWTValue(newJWT);
+        debounce(() => a, 900);
       })();
     } else {
       throw Error('Jwt has not been specified');
