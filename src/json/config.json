@@ -1,9 +1,9 @@
 {
   "analytics": true,
   "animatedCard": false,
-  "deferInit": true,
+  "deferInit": false,
   "buttonId": "merchant-submit-button",
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3MzY0NzExMS45NTA1NzgyLCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIxMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.01HIqiu9K4Qh-9d8pHrZ2myN97TYCoNRDuggDZtsJS0",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3MzcxODU0MS41NzU0NywicGF5bG9hZCI6eyJtYWluYW1vdW50IjoiMTAuMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdF9qYW1lczM4NjQxIiwibG9jYWxlIjoiZW5fR0IifX0.dmiKui2yFaZGwf0WtOE8pv7arLSqJOcWH7gGsMLhC6Q",
   "styles": {
     "defaultStyles": {
       "background-color-input": "AliceBlue"
