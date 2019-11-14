@@ -394,7 +394,8 @@ function cardFramesFixture() {
     'AMEX',
     true,
     false,
-    'merchant-submit-button'
+    'merchant-submit-button',
+    false
   );
   return { instance };
 }
