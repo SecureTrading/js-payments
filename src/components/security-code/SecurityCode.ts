@@ -82,12 +82,12 @@ export default class SecurityCode extends FormField {
    */
   protected onBlur() {
     super.onBlur();
-    this._sendState();
     const messageBusEvent: IMessageBusEvent = {
       data: false,
       type: MessageBus.EVENTS.FOCUS_SECURITY_CODE
     };
     this._messageBus.publish(messageBusEvent);
+    this._sendState();
   }
 
   /**
@@ -97,12 +97,12 @@ export default class SecurityCode extends FormField {
    */
   protected onFocus(event: Event) {
     super.onFocus(event);
-    this._sendState();
     const messageBusEvent: IMessageBusEvent = {
       data: true,
       type: MessageBus.EVENTS.FOCUS_SECURITY_CODE
     };
     this._messageBus.publish(messageBusEvent);
+    this._sendState();
   }
 
   /**

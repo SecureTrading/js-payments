@@ -396,14 +396,18 @@ class ControlFrame extends Frame {
       this._formFields,
       deferInit
     );
+    console.error(validity);
     if (validity) {
       this._messageBus.publish({
         type: MessageBus.EVENTS_PUBLIC.THREEDINIT
       });
+      console.error('Merchant Data');
+      console.error(card);
       this._payment
         .threeDQueryRequest(this._preThreeDRequestTypes, card, this._merchantFormData)
         .then((result: any) => {
           this._threeDQueryResult = result;
+          console.error(result);
           this._threedqueryEvent.data = result.response;
           this._messageBus.publish(this._threedqueryEvent, true);
         });
