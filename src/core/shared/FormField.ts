@@ -166,11 +166,6 @@ export default class FormField extends Frame {
     }
   }
 
-  /**
-   * Takes MessageBus Event and sets .subscribe() handler.
-   * @param event
-   * @param validate
-   */
   protected setEventListener(event: string, validate: boolean = true) {
     this._messageBus.subscribe(event, () => {
       // tslint:disable-next-line: no-unused-expression

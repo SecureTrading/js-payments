@@ -184,6 +184,7 @@ export default class Validation extends Frame {
     inputElement: HTMLInputElement,
     messageElement?: HTMLElement
   ) {
+    console.error(inputElement, data, inputElement.value, inputElement.validity);
     this.setError(inputElement, messageElement, data);
   }
 
