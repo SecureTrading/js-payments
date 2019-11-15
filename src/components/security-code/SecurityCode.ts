@@ -61,6 +61,7 @@ export default class SecurityCode extends FormField {
 
   protected onBlur() {
     super.onBlur();
+    this.limitLength(this._securityCodeLength);
     const messageBusEvent: IMessageBusEvent = {
       data: false,
       type: MessageBus.EVENTS.FOCUS_SECURITY_CODE
@@ -71,6 +72,7 @@ export default class SecurityCode extends FormField {
 
   protected onFocus(event: Event) {
     super.onFocus(event);
+    this.limitLength(this._securityCodeLength);
     const messageBusEvent: IMessageBusEvent = {
       data: true,
       type: MessageBus.EVENTS.FOCUS_SECURITY_CODE
@@ -81,6 +83,7 @@ export default class SecurityCode extends FormField {
 
   protected onInput(event: Event) {
     super.onInput(event);
+    this.limitLength(this._securityCodeLength);
     this._inputElement.value = this._formatter.code(
       this._inputElement.value,
       this._securityCodeLength,
@@ -127,6 +130,7 @@ export default class SecurityCode extends FormField {
         this._setSecurityCodePattern(SecurityCode.MATCH_EXACTLY_FOUR_DIGITS);
         this._securityCodeLength = SecurityCode.SPECIAL_INPUT_LENGTH;
       } else {
+        console.error('Switch off DISABLED');
         this._setSecurityCodePattern(SecurityCode.MATCH_EXACTLY_THREE_DIGITS);
         this._securityCodeLength = SecurityCode.STANDARD_INPUT_LENGTH;
       }
@@ -139,13 +143,19 @@ export default class SecurityCode extends FormField {
 
   private _disableSecurityCodeListener() {
     this._messageBus.subscribe(MessageBus.EVENTS.DISABLE_SECURITY_CODE, (data: boolean) => {
+      this._toggleSecurityCodeValidation();
       this._toggleSecurityCode(data);
     });
   }
 
+  private _toggleSecurityCodeValidation() {
+    this.validation.removeError(this._inputElement, this._messageElement);
+    this._inputElement.setCustomValidity('');
+  }
+
   private _disableSecurityCode() {
     this._inputElement.removeAttribute(SecurityCode.REQUIRED_PARAM);
-    this._inputElement.setAttribute(SecurityCode.DISABLED_PARAM, SecurityCode.DISABLED_PARAM);
+    this._inputElement.disabled = true;
   }
 
   private _enableSecurityCode() {

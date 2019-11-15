@@ -4,28 +4,23 @@ import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
 
-export default class ExpirationDate extends FormField {
+class ExpirationDate extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.EXPIRATION_DATE_INPUT) as HTMLInputElement;
-  private static BACKSPACE_KEY_CODE: number = 8;
   private static BLOCKS: number[] = [2, 2];
-  private static DELETE_KEY_CODE: number = 46;
   private static DISABLE_FIELD_CLASS: string = 'st-input--disabled';
   private static DISABLE_STATE: string = 'disabled';
+  private static EXPIRATION_DATE_LENGTH: number = 5;
   private static INPUT_PATTERN: string = '^(0[1-9]|1[0-2])\\/([0-9]{2})$';
   private static ONLY_DIGITS_REGEXP = /[^\d]/g;
 
-  /**
-   * Filters the non-digits from given string.
-   * @param value
-   * @private
-   */
   private static _clearNonDigitsChars = (value: string) => {
     return value.replace(ExpirationDate.ONLY_DIGITS_REGEXP, '');
   };
 
   /**
-   * Formats indicated string to date in format: mm/yy.
+   * Formats indicated string to date format.
+   * Expected format is MM/YY.
    */
   private static _getISOFormatDate(previousDate: string[], currentDate: string[]) {
     const currentDateMonth = currentDate[0];
@@ -58,28 +53,26 @@ export default class ExpirationDate extends FormField {
 
   constructor() {
     super(Selectors.EXPIRATION_DATE_INPUT, Selectors.EXPIRATION_DATE_MESSAGE, Selectors.EXPIRATION_DATE_LABEL);
+    this._formatter = new Formatter();
+    this._init();
+  }
+
+  private _init() {
     this.setAttributes({ pattern: ExpirationDate.INPUT_PATTERN });
     this.setBlurListener();
-    this.setFocusListener();
     this.setDisableListener();
+    this.setFocusListener();
     this.validation.backendValidation(
       this._inputElement,
       this._messageElement,
       MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD
     );
-    this._formatter = new Formatter();
   }
 
-  /**
-   * Gets translated label content.
-   */
   public getLabel(): string {
     return Language.translations.LABEL_EXPIRATION_DATE;
   }
 
-  /**
-   * Listens to BLOCK_EXPIRATION_DATE event and toggle disable attribute and class.
-   */
   public setDisableListener() {
     this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_EXPIRATION_DATE, (state: boolean) => {
       if (state) {
@@ -92,60 +85,38 @@ export default class ExpirationDate extends FormField {
     });
   }
 
-  /**
-   * Sets focus listener, controls focusing on input field.
-   */
   protected setFocusListener() {
     super.setEventListener(MessageBus.EVENTS.FOCUS_EXPIRATION_DATE);
   }
 
-  /**
-   * Sets blur listener, controls blurring on input field.*
-   */
   protected setBlurListener() {
     super.setEventListener(MessageBus.EVENTS.BLUR_EXPIRATION_DATE);
   }
 
-  /**
-   * Formats indicated date using mask.
-   * @param date
-   */
   protected format(date: string) {
     this.setValue(date);
   }
 
-  /**
-   * Extends onBlur method and triggers _sendState().
-   */
   protected onBlur() {
     super.onBlur();
+    this.limitLength(ExpirationDate.EXPIRATION_DATE_LENGTH);
     this._sendState();
   }
 
-  /**
-   * Extends onFocus method.
-   * @param event
-   */
   protected onFocus(event: Event) {
     super.onFocus(event);
+    this.limitLength(ExpirationDate.EXPIRATION_DATE_LENGTH);
   }
 
-  /**
-   * Extends onInput method and adds masking and formatting.
-   * @param event
-   */
   protected onInput(event: Event) {
     super.onInput(event);
+    this.limitLength(ExpirationDate.EXPIRATION_DATE_LENGTH);
     this._inputElement.value = this._formatter.date(this._inputElement.value, Selectors.EXPIRATION_DATE_INPUT);
     this._setFormattedDate();
     this.validation.keepCursorAtSamePosition(this._inputElement);
     this._sendState();
   }
 
-  /**
-   * Triggers event when user is releasing key.
-   * @param event
-   */
   protected onKeydown(event: KeyboardEvent) {
     super.onKeydown(event);
     this._currentKeyCode = event.keyCode;
@@ -154,29 +125,18 @@ export default class ExpirationDate extends FormField {
     return event;
   }
 
-  /**
-   * Extends onKeyPress event with max length check.
-   * @param event
-   */
   protected onKeyPress(event: KeyboardEvent) {
     super.onKeyPress(event);
     this._inputElement.focus();
   }
 
-  /**
-   * Extends onPaste method with formatting and masking.
-   * @param event
-   */
   protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
+    this.limitLength(ExpirationDate.EXPIRATION_DATE_LENGTH);
     this._setFormattedDate();
     this._sendState();
   }
 
-  /**
-   * Returns fixed date in array.
-   * @param value
-   */
   private _getFixedDateString(value: string) {
     let date: string[];
     let month;
@@ -187,11 +147,6 @@ export default class ExpirationDate extends FormField {
     return ExpirationDate._getISOFormatDate(this._date, date);
   }
 
-  /**
-   * Validates indicated string.
-   * @param value
-   * @private
-   */
   private _getValidatedDate(value: string) {
     let date: string = ExpirationDate._clearNonDigitsChars(value);
     let result: string = '';
@@ -207,19 +162,10 @@ export default class ExpirationDate extends FormField {
     return this._getFixedDateString(result);
   }
 
-  /**
-   * Returns validated date or empty value if nothing's indicated.
-   * @param validatedDate
-   * @private
-   */
   private _returnValidatedDate(validatedDate: any) {
     return (this._inputElement.value = validatedDate ? validatedDate : this._inputElement.value);
   }
 
-  /**
-   * Propagates expiration date change to MessageBus
-   * @private
-   */
   private _sendState() {
     const formFieldState: IFormFieldState = this.getState();
     const messageBusEvent: IMessageBusEvent = {
@@ -229,13 +175,11 @@ export default class ExpirationDate extends FormField {
     this._messageBus.publish(messageBusEvent);
   }
 
-  /**
-   * Validates and formats given string and set it in the expiration date input.
-   * @private
-   */
   private _setFormattedDate() {
     const validatedDate = this._getValidatedDate(this._inputElement.value);
     this._returnValidatedDate(validatedDate);
     return validatedDate;
   }
 }
+
+export default ExpirationDate;

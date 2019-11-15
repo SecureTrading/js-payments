@@ -408,7 +408,7 @@ export default class Validation extends Frame {
     errorContainer.textContent = this._translator.translate(errorMessage);
   }
 
-  private _removeError(element: HTMLInputElement, errorContainer: HTMLElement) {
+  public removeError(element: HTMLInputElement, errorContainer: HTMLElement) {
     element.classList.remove(Validation.ERROR_CLASS);
     errorContainer.textContent = '';
   }

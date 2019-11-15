@@ -49,19 +49,21 @@ export default class CardNumber extends FormField {
 
   protected onBlur() {
     super.onBlur();
+    this.limitLength(this._cardNumberLength);
     this.validation.luhnCheck(this._fieldInstance, this._inputElement, this._messageElement);
     this._sendState();
   }
 
   protected onFocus(event: Event) {
     super.onFocus(event);
+    this.limitLength(this._cardNumberLength);
   }
 
   protected onInput(event: Event) {
     super.onInput(event);
     const { value } = this._formatter.number(this.getContent(this._inputElement.value), Selectors.CARD_NUMBER_INPUT);
     this._hideSecurityCodeField(value);
-    this._inputElement.value = value.substring(0, this._cardNumberLength);
+    this.limitLength(this._cardNumberLength);
     this.validation.keepCursorAtSamePosition(this._inputElement);
     this._sendState();
   }
@@ -69,7 +71,7 @@ export default class CardNumber extends FormField {
   protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
     this._getMaxLengthOfCardNumber(this._inputElement.value);
-    this._inputElement.value = this._inputElement.value.substring(0, this._cardNumberLength);
+    this.limitLength(this._cardNumberLength);
     this._hideSecurityCodeField(this._inputElement.value);
     this._sendState();
   }
