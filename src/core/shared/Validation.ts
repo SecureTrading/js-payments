@@ -15,45 +15,24 @@ const {
   VALIDATION_ERROR
 } = Language.translations;
 
-/**
- * Base class for validation, aggregates common methods and attributes for all subclasses
- */
 export default class Validation extends Frame {
   public static ERROR_FIELD_CLASS: string = 'error-field';
 
-  /**
-   * Method for prevent inserting non digits
-   * @param event
-   */
   public static isCharNumber(event: KeyboardEvent) {
     const key: string = event.key;
     const regex = new RegExp(Validation.ONLY_DIGITS_REGEXP);
     return regex.test(key);
   }
 
-  /**
-   * Method to determine whether enter key is pressed
-   * @param event
-   */
   public static isEnter(event: KeyboardEvent) {
     const keyCode: number = event.keyCode;
     return keyCode === Validation.ENTER_KEY_CODE;
   }
 
-  /**
-   * Sets custom validation error in validity input object.
-   * @param inputElement
-   * @param errorContent
-   */
   public static setCustomValidationError(inputElement: HTMLInputElement, errorContent: string) {
     inputElement.setCustomValidity(errorContent);
   }
 
-  /**
-   * Gets validity state from input object and sets proper Validation message.
-   * @param validityState
-   * @private
-   */
   public static getValidationMessage(validityState: ValidityState): string {
     const { customError, patternMismatch, valid, valueMissing } = validityState;
     let validationMessage: string = '';
@@ -112,12 +91,6 @@ export default class Validation extends Frame {
     this.onInit();
   }
 
-  /**
-   * Listens to backend validation event from MessageBus and sets proper validation actions.
-   * @param inputElement
-   * @param messageElement
-   * @param event
-   */
   public backendValidation(inputElement: HTMLInputElement, messageElement: HTMLElement, event: string) {
     this._messageBus.subscribe(event, (data: IMessageBusValidateField) => {
       this.checkBackendValidity(data, inputElement, messageElement);
@@ -161,9 +134,6 @@ export default class Validation extends Frame {
     this.luhnCheckValidation(isLuhnOk, field, input, message);
   }
 
-  /**
-   * Send request via MessageBus to let know if form should be blocked or not.
-   */
   public blockForm(state: boolean) {
     const messageBusEvent: IMessageBusEvent = {
       data: state,
@@ -173,12 +143,6 @@ export default class Validation extends Frame {
     return state;
   }
 
-  /**
-   * Triggers setError method with proper parameters.
-   * @param data
-   * @param inputElement
-   * @param messageElement
-   */
   public checkBackendValidity(
     data: IMessageBusValidateField,
     inputElement: HTMLInputElement,
@@ -188,10 +152,6 @@ export default class Validation extends Frame {
     this.setError(inputElement, messageElement, data);
   }
 
-  /**
-   * Gets backend error data and assign it to proper input field.
-   * @param errorData
-   */
   public getErrorData(errorData: IErrorData) {
     const { errordata, errormessage } = StCodec.getErrorData(errorData);
     const validationEvent: IMessageBusEvent = {
@@ -219,12 +179,6 @@ export default class Validation extends Frame {
     return { field: errordata[0], errormessage };
   }
 
-  /**
-   * Sets all necessary error properties on input and label.
-   * @param inputElement
-   * @param messageElement
-   * @param message
-   */
   public setError(inputElement: HTMLInputElement, messageElement: HTMLElement, data: IMessageBusValidateField) {
     this._assignErrorDetails(inputElement, messageElement, data);
   }
@@ -270,6 +224,11 @@ export default class Validation extends Frame {
       card: this._card,
       validity: (this._isPaymentReady && this._isFormValid) || (deferInit && this._isFormValid)
     };
+  }
+
+  public removeError(element: HTMLInputElement, errorContainer: HTMLElement) {
+    element.classList.remove(Validation.ERROR_CLASS);
+    errorContainer.textContent = '';
   }
 
   public setFormValidity(state: any) {
@@ -401,15 +360,5 @@ export default class Validation extends Frame {
       }
     }
     inputElement.setCustomValidity(data.message);
-  }
-
-  private _setError(element: HTMLInputElement, errorContainer: HTMLElement, errorMessage: string) {
-    element.classList.add(Validation.ERROR_CLASS);
-    errorContainer.textContent = this._translator.translate(errorMessage);
-  }
-
-  public removeError(element: HTMLInputElement, errorContainer: HTMLElement) {
-    element.classList.remove(Validation.ERROR_CLASS);
-    errorContainer.textContent = '';
   }
 }

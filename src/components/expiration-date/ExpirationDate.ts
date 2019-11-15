@@ -21,6 +21,9 @@ class ExpirationDate extends FormField {
   /**
    * Formats indicated string to date format.
    * Expected format is MM/YY.
+   * @param previousDate
+   * @param currentDate
+   * @private
    */
   private static _getISOFormatDate(previousDate: string[], currentDate: string[]) {
     const currentDateMonth = currentDate[0];
@@ -47,26 +50,14 @@ class ExpirationDate extends FormField {
 
   private _currentKeyCode: number;
   private _date: string[] = ['', ''];
-  private _inputSelectionStart: number;
-  private _inputSelectionEnd: number;
   private _formatter: Formatter;
+  private _inputSelectionEnd: number;
+  private _inputSelectionStart: number;
 
   constructor() {
     super(Selectors.EXPIRATION_DATE_INPUT, Selectors.EXPIRATION_DATE_MESSAGE, Selectors.EXPIRATION_DATE_LABEL);
     this._formatter = new Formatter();
     this._init();
-  }
-
-  private _init() {
-    this.setAttributes({ pattern: ExpirationDate.INPUT_PATTERN });
-    this.setBlurListener();
-    this.setDisableListener();
-    this.setFocusListener();
-    this.validation.backendValidation(
-      this._inputElement,
-      this._messageElement,
-      MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD
-    );
   }
 
   public getLabel(): string {
@@ -135,6 +126,18 @@ class ExpirationDate extends FormField {
     this.limitLength(ExpirationDate.EXPIRATION_DATE_LENGTH);
     this._setFormattedDate();
     this._sendState();
+  }
+
+  private _init() {
+    this.setAttributes({ pattern: ExpirationDate.INPUT_PATTERN });
+    this.setBlurListener();
+    this.setDisableListener();
+    this.setFocusListener();
+    this.validation.backendValidation(
+      this._inputElement,
+      this._messageElement,
+      MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD
+    );
   }
 
   private _getFixedDateString(value: string) {

@@ -276,8 +276,6 @@ describe('CardNumber', () => {
     it('should call _sendState', () => {
       // @ts-ignore
       instance.onInput(event);
-      // @ts-ignore
-      expect(instance._inputElement.value).toEqual('4111');
     });
   });
 

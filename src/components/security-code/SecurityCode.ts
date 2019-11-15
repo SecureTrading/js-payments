@@ -33,20 +33,6 @@ export default class SecurityCode extends FormField {
     this._init();
   }
 
-  private _init() {
-    this._setSecurityCodePattern(SecurityCode.MATCH_EXACTLY_THREE_DIGITS);
-    this._subscribeSecurityCodeChange();
-    this.setBlurListener();
-    this.setFocusListener();
-    this._setDisableListener();
-    this._disableSecurityCodeListener();
-    this.validation.backendValidation(
-      this._inputElement,
-      this._messageElement,
-      MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD
-    );
-  }
-
   public getLabel(): string {
     return Language.translations.LABEL_SECURITY_CODE;
   }
@@ -101,6 +87,20 @@ export default class SecurityCode extends FormField {
 
   protected onKeyPress(event: KeyboardEvent) {
     super.onKeyPress(event);
+  }
+
+  private _init() {
+    this._setSecurityCodePattern(SecurityCode.MATCH_EXACTLY_THREE_DIGITS);
+    this._subscribeSecurityCodeChange();
+    this.setBlurListener();
+    this.setFocusListener();
+    this._setDisableListener();
+    this._disableSecurityCodeListener();
+    this.validation.backendValidation(
+      this._inputElement,
+      this._messageElement,
+      MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD
+    );
   }
 
   private _sendState() {
