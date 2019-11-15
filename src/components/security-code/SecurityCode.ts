@@ -47,7 +47,8 @@ export default class SecurityCode extends FormField {
 
   protected onBlur() {
     super.onBlur();
-    this.limitLength(this._securityCodeLength);
+    console.log(this._securityCodeLength);
+    this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._securityCodeLength);
     const messageBusEvent: IMessageBusEvent = {
       data: false,
       type: MessageBus.EVENTS.FOCUS_SECURITY_CODE
@@ -58,7 +59,8 @@ export default class SecurityCode extends FormField {
 
   protected onFocus(event: Event) {
     super.onFocus(event);
-    this.limitLength(this._securityCodeLength);
+    console.log(this._securityCodeLength);
+    this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._securityCodeLength);
     const messageBusEvent: IMessageBusEvent = {
       data: true,
       type: MessageBus.EVENTS.FOCUS_SECURITY_CODE
@@ -69,7 +71,7 @@ export default class SecurityCode extends FormField {
 
   protected onInput(event: Event) {
     super.onInput(event);
-    this.limitLength(this._securityCodeLength);
+    this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._securityCodeLength);
     this._inputElement.value = this._formatter.code(
       this._inputElement.value,
       this._securityCodeLength,
@@ -81,7 +83,7 @@ export default class SecurityCode extends FormField {
 
   protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
-    this.limitLength(this._securityCodeLength);
+    this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._securityCodeLength);
     this._sendState();
   }
 

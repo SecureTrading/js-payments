@@ -29,6 +29,14 @@ export default class Validation extends Frame {
     return keyCode === Validation.ENTER_KEY_CODE;
   }
 
+  public static clearNonDigitsChars = (value: string) => {
+    return value.replace(Validation.ONLY_DIGITS_REGEXP, '');
+  };
+
+  public static trimNonNumericExceptSlash(data: string): string {
+    return data.trim().replace(Validation.DATA_NON_NUMERIC_EXCEPT_SLASH, '');
+  }
+
   public static setCustomValidationError(inputElement: HTMLInputElement, errorContent: string) {
     inputElement.setCustomValidity(errorContent);
   }
@@ -51,6 +59,8 @@ export default class Validation extends Frame {
   }
 
   protected static STANDARD_FORMAT_PATTERN: string = '(\\d{1,4})(\\d{1,4})?(\\d{1,4})?(\\d+)?';
+  private static ONLY_DIGITS_REGEXP = /[^\d]/g;
+  private static DATA_NON_NUMERIC_EXCEPT_SLASH: RegExp = /[^0-9\/]/g;
   private static BACKSPACE_KEY_CODE: number = 8;
   private static CARD_NUMBER_DEFAULT_LENGTH: number = 16;
   private static DELETE_KEY_CODE: number = 46;
@@ -66,7 +76,6 @@ export default class Validation extends Frame {
     securityCode: 'securitycode'
   };
   private static ENTER_KEY_CODE = 13;
-  private static ONLY_DIGITS_REGEXP = /^[0-9]*$/;
   private static readonly MERCHANT_EXTRA_FIELDS_PREFIX = 'billing';
 
   public validation: IValidation;
@@ -148,7 +157,6 @@ export default class Validation extends Frame {
     inputElement: HTMLInputElement,
     messageElement?: HTMLElement
   ) {
-    console.error(inputElement, data, inputElement.value, inputElement.validity);
     this.setError(inputElement, messageElement, data);
   }
 
@@ -215,11 +223,15 @@ export default class Validation extends Frame {
         pan: formFields.cardNumber.value,
         securitycode: formFields.securityCode.value
       };
+      console.error(this._isPaymentReady);
+      console.error(this._isFormValid);
+      console.error(deferInit);
     }
 
     if ((this._isPaymentReady && this._isFormValid) || (deferInit && this._isFormValid)) {
       this.blockForm(true);
     }
+    console.error(this._card);
     return {
       card: this._card,
       validity: (this._isPaymentReady && this._isFormValid) || (deferInit && this._isFormValid)
@@ -229,6 +241,10 @@ export default class Validation extends Frame {
   public removeError(element: HTMLInputElement, errorContainer: HTMLElement) {
     element.classList.remove(Validation.ERROR_CLASS);
     errorContainer.textContent = '';
+  }
+
+  public limitLength(value: string, length: number): string {
+    return value ? value.substring(0, length) : '';
   }
 
   public setFormValidity(state: any) {
@@ -249,12 +265,6 @@ export default class Validation extends Frame {
 
   protected _isPressedKeyBackspace(): boolean {
     return this._currentKeyCode === Validation.BACKSPACE_KEY_CODE;
-  }
-
-  protected limitLength(value: string, length: number): string {
-    if (value) {
-      return value.substring(0, length);
-    }
   }
 
   protected removeNonDigits(value: string): string {

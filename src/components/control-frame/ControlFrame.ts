@@ -412,6 +412,7 @@ class ControlFrame extends Frame {
           this._messageBus.publish(this._threedqueryEvent, true);
         });
     } else {
+      console.error(card);
       this._messageBus.publish(this._messageBusEventCardNumber);
       this._messageBus.publish(this._messageBusEventExpirationDate);
       this._messageBus.publish(this._messageBusEventSecurityCode);

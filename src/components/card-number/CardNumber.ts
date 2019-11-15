@@ -15,7 +15,7 @@ export default class CardNumber extends FormField {
   private static CARD_NUMBER_FOR_BIN_PROCESS = (cardNumber: string) => cardNumber.slice(0, 6);
 
   public binLookup: BinLookup;
-  public validity: Validation;
+  public validation: Validation;
   private _formatter: Formatter;
   private _cardNumberFormatted: string;
   private _cardNumberLength: number;
@@ -28,7 +28,7 @@ export default class CardNumber extends FormField {
     super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE, Selectors.CARD_NUMBER_LABEL);
     this._cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     this.binLookup = new BinLookup();
-    this.validity = new Validation();
+    this.validation = new Validation();
     this._formatter = new Formatter();
     this._isCardNumberValid = true;
     this._cardNumberLength = CardNumber.STANDARD_CARD_LENGTH;
@@ -49,21 +49,22 @@ export default class CardNumber extends FormField {
 
   protected onBlur() {
     super.onBlur();
-    this.limitLength(this._cardNumberLength);
+    this.validation.limitLength(this._inputElement.value, this._cardNumberLength);
     this.validation.luhnCheck(this._fieldInstance, this._inputElement, this._messageElement);
     this._sendState();
   }
 
   protected onFocus(event: Event) {
     super.onFocus(event);
-    this.limitLength(this._cardNumberLength);
+    this.validation.limitLength(this._inputElement.value, this._cardNumberLength);
   }
 
   protected onInput(event: Event) {
     super.onInput(event);
-    const { value } = this._formatter.number(this.getContent(this._inputElement.value), Selectors.CARD_NUMBER_INPUT);
-    this._hideSecurityCodeField(value);
-    this.limitLength(this._cardNumberLength);
+    this._inputElement.value = Validation.clearNonDigitsChars(this._inputElement.value);
+    this._getMaxLengthOfCardNumber(this._inputElement.value);
+    this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._cardNumberLength);
+    this._hideSecurityCodeField(this._inputElement.value);
     this.validation.keepCursorAtSamePosition(this._inputElement);
     this._sendState();
   }
@@ -71,7 +72,7 @@ export default class CardNumber extends FormField {
   protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
     this._getMaxLengthOfCardNumber(this._inputElement.value);
-    this.limitLength(this._cardNumberLength);
+    this.validation.limitLength(this._inputElement.value, this._cardNumberLength);
     this._hideSecurityCodeField(this._inputElement.value);
     this._sendState();
   }
@@ -91,8 +92,6 @@ export default class CardNumber extends FormField {
   protected setBlurListener() {
     super.setEventListener(MessageBus.EVENTS.BLUR_CARD_NUMBER);
   }
-
-  protected getContent = (value: string, placeholder?: string) => (value ? value : placeholder);
 
   private _setCardNumberAttributes(attributes: any) {
     for (const attribute in attributes) {
@@ -141,7 +140,7 @@ export default class CardNumber extends FormField {
       this._setCardNumberAttributes({ value });
       this._cardNumberField.setSelectionRange(selectStart, selectEnd);
     }
-    this._cardNumberFormatted = value;
+    this._cardNumberFormatted = value ? value : '';
     this._cardNumberValue = value.replace(/\s/g, '');
     return value;
   }

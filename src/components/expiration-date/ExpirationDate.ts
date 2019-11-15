@@ -90,19 +90,27 @@ class ExpirationDate extends FormField {
 
   protected onBlur() {
     super.onBlur();
-    this.limitLength(ExpirationDate.EXPIRATION_DATE_LENGTH);
+    this._inputElement.value = this.validation.limitLength(
+      this._inputElement.value,
+      ExpirationDate.EXPIRATION_DATE_LENGTH
+    );
     this._sendState();
   }
 
   protected onFocus(event: Event) {
     super.onFocus(event);
-    this.limitLength(ExpirationDate.EXPIRATION_DATE_LENGTH);
+    this._inputElement.value = this.validation.limitLength(
+      this._inputElement.value,
+      ExpirationDate.EXPIRATION_DATE_LENGTH
+    );
   }
 
   protected onInput(event: Event) {
     super.onInput(event);
-    this.limitLength(ExpirationDate.EXPIRATION_DATE_LENGTH);
-    this._inputElement.value = this._formatter.date(this._inputElement.value, Selectors.EXPIRATION_DATE_INPUT);
+    this._inputElement.value = this.validation.limitLength(
+      this._inputElement.value,
+      ExpirationDate.EXPIRATION_DATE_LENGTH
+    );
     this._setFormattedDate();
     this.validation.keepCursorAtSamePosition(this._inputElement);
     this._sendState();
@@ -123,7 +131,10 @@ class ExpirationDate extends FormField {
 
   protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
-    this.limitLength(ExpirationDate.EXPIRATION_DATE_LENGTH);
+    this._inputElement.value = this.validation.limitLength(
+      this._inputElement.value,
+      ExpirationDate.EXPIRATION_DATE_LENGTH
+    );
     this._setFormattedDate();
     this._sendState();
   }

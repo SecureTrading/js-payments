@@ -47,10 +47,6 @@ export default class FormField extends Frame {
     this._inputElement.value = data;
   }
 
-  protected limitLength(length: number) {
-    this._inputElement.value = this._inputElement.value.substring(0, length);
-  }
-
   protected getAllowedStyles() {
     let allowed = super.getAllowedStyles();
     const input = `#${this._inputSelector}`;
