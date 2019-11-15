@@ -114,7 +114,7 @@ export default class SecurityCode extends FormField {
 
   private _setDisableListener() {
     this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_SECURITY_CODE, (state: boolean) => {
-      if (state) {
+      if (state || this._securityCodeWrapper.style.opacity === SecurityCode.GREY_OUT) {
         this._inputElement.setAttribute(SecurityCode.DISABLED_ATTRIBUTE_NAME, SecurityCode.DISABLED_ATTRIBUTE_NAME);
         this._inputElement.classList.add(SecurityCode.DISABLED_ATTRIBUTE_CLASS);
       } else {
