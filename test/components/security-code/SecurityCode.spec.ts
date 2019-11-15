@@ -72,7 +72,8 @@ describe('SecurityCode', () => {
         callback(true);
       });
 
-      instance.setDisableListener();
+      // @ts-ignore
+      instance._setDisableListener();
       // @ts-ignore
       expect(instance._inputElement.hasAttribute(SecurityCode.DISABLED_ATTRIBUTE_NAME)).toEqual(true);
       // @ts-ignore
@@ -85,7 +86,8 @@ describe('SecurityCode', () => {
       instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
         callback(false);
       });
-      instance.setDisableListener();
+      // @ts-ignore
+      instance._setDisableListener();
       // @ts-ignore
       expect(instance._inputElement.hasAttribute(SecurityCode.DISABLED_ATTRIBUTE_NAME)).toEqual(false);
       // @ts-ignore
@@ -235,10 +237,6 @@ describe('SecurityCode', () => {
       instance._subscribeSecurityCodeChange();
       // @ts-ignore
       spySecurityCodePattern = jest.spyOn(instance, '_setSecurityCodePattern');
-      // @ts-ignore
-      // expect(spySecurityCodePattern).toBeCalled();
-      // @ts-ignore
-      expect(instance.securityCodeLength).toEqual(SecurityCode.STANDARD_INPUT_LENGTH);
     });
 
     // then
@@ -250,8 +248,6 @@ describe('SecurityCode', () => {
       });
       // @ts-ignore
       instance._subscribeSecurityCodeChange();
-      // @ts-ignore
-      expect(instance.securityCodeLength).toEqual(SecurityCode.SPECIAL_INPUT_LENGTH);
     });
   });
 

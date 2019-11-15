@@ -292,7 +292,7 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('setDisableListener()', () => {
+  describe('_setDisableListener()', () => {
     const { instance } = cardNumberFixture();
 
     function subscribeMock(state: boolean) {

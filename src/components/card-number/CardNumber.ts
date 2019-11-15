@@ -212,7 +212,7 @@ export default class CardNumber extends FormField {
     const isCardAmex: boolean = this.binLookup.binLookup(cardNumber).type === 'PIBA';
     const messageBusEvent: IMessageBusEvent = {
       data: isCardAmex,
-      type: MessageBus.EVENTS.HIDE_SECURITY_CODE
+      type: MessageBus.EVENTS.DISABLE_SECURITY_CODE
     };
     this._messageBus.publish(messageBusEvent);
   }

@@ -32,7 +32,7 @@ describe('ExpirationDate', () => {
   });
 
   // given
-  describe('setDisableListener()', () => {
+  describe('_setDisableListener()', () => {
     const { instance } = expirationDateFixture();
     const attributeName: string = 'disabled';
     // then
