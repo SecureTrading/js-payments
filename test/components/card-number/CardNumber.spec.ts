@@ -385,13 +385,15 @@ describe('CardNumber', () => {
   describe('onPaste()', () => {
     // when
     const { instance } = cardNumberFixture();
+    // @ts-ignore
+    instance._formatter.number = jest.fn().mockReturnValueOnce({ value: '4111' });
     const event = {
       clipboardData: {
         getData: jest.fn()
       },
       preventDefault: jest.fn()
     };
-    Utils.stripChars = jest.fn().mockReturnValueOnce('454');
+    Utils.stripChars = jest.fn().mockReturnValueOnce('4111');
     // @ts-ignore
     instance._sendState = jest.fn();
     // @ts-ignore
