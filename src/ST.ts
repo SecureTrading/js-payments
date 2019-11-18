@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import 'location-origin';
-import _ from 'lodash';
+import { debounce } from 'lodash';
 import 'url-polyfill';
 import 'whatwg-fetch';
 import CardFrames from './core/classes/CardFrames.class';
@@ -214,18 +214,6 @@ class ST {
     return new MerchantFields();
   }
 
-  /**
-   *
-   * @param jwt
-   * @param origin
-   * @param componentIds
-   * @param styles
-   * @param config
-   * @param animatedCard
-   * @param deferInit
-   * @param buttonId
-   * @private
-   */
   private static _configureCardFrames(
     jwt: string,
     origin: string,
@@ -248,7 +236,8 @@ class ST {
         defaultPaymentType,
         animatedCard,
         deferInit,
-        buttonId
+        buttonId,
+        startOnLoad
       );
     }
     return cardFrames;
@@ -357,9 +346,8 @@ class ST {
     if (newJWT) {
       this._jwt = newJWT;
       (() => {
-        _.debounce(() => {
-          StCodec.updateJWTValue(newJWT);
-        }, 900);
+        const a = StCodec.updateJWTValue(newJWT);
+        debounce(() => a, 900);
       })();
     } else {
       throw Error('Jwt has not been specified');
