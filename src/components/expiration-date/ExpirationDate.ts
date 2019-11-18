@@ -12,10 +12,10 @@ class ExpirationDate extends FormField {
   private static DISABLE_STATE: string = 'disabled';
   private static EXPIRATION_DATE_LENGTH: number = 5;
   private static INPUT_PATTERN: string = '^(0[1-9]|1[0-2])\\/([0-9]{2})$';
-  private static ONLY_DIGITS_REGEXP = /[^\d]/g;
+  private static ESCAPE_DIGITS_REGEXP = /[^\d]/g;
 
   private static _clearNonDigitsChars = (value: string) => {
-    return value.replace(ExpirationDate.ONLY_DIGITS_REGEXP, '');
+    return value.replace(ExpirationDate.ESCAPE_DIGITS_REGEXP, '');
   };
 
   /**

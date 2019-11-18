@@ -20,7 +20,7 @@ export default class Validation extends Frame {
 
   public static isCharNumber(event: KeyboardEvent) {
     const key: string = event.key;
-    const regex = new RegExp(Validation.ONLY_DIGITS_REGEXP);
+    const regex = new RegExp(Validation.ESCAPE_DIGITS_REGEXP);
     return regex.test(key);
   }
 
@@ -30,7 +30,7 @@ export default class Validation extends Frame {
   }
 
   public static clearNonDigitsChars = (value: string) => {
-    return value.replace(Validation.ONLY_DIGITS_REGEXP, '');
+    return value.replace(Validation.ESCAPE_DIGITS_REGEXP, '');
   };
 
   public static trimNonNumericExceptSlash(data: string): string {
@@ -59,7 +59,7 @@ export default class Validation extends Frame {
   }
 
   protected static STANDARD_FORMAT_PATTERN: string = '(\\d{1,4})(\\d{1,4})?(\\d{1,4})?(\\d+)?';
-  private static ONLY_DIGITS_REGEXP = /[^\d]/g;
+  private static ESCAPE_DIGITS_REGEXP = /[^\d]/g;
   private static DATA_NON_NUMERIC_EXCEPT_SLASH: RegExp = /[^0-9\/]/g;
   private static BACKSPACE_KEY_CODE: number = 8;
   private static CARD_NUMBER_DEFAULT_LENGTH: number = 16;
