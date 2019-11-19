@@ -10,21 +10,14 @@ class ExpirationDate extends FormField {
   private static BLOCKS: number[] = [2, 2];
   private static DISABLE_FIELD_CLASS: string = 'st-input--disabled';
   private static DISABLE_STATE: string = 'disabled';
+  private static ESCAPE_DIGITS_REGEXP: RegExp = /[^\d]/g;
   private static EXPIRATION_DATE_LENGTH: number = 5;
   private static INPUT_PATTERN: string = '^(0[1-9]|1[0-2])\\/([0-9]{2})$';
-  private static ESCAPE_DIGITS_REGEXP = /[^\d]/g;
 
   private static _clearNonDigitsChars = (value: string) => {
     return value.replace(ExpirationDate.ESCAPE_DIGITS_REGEXP, '');
   };
 
-  /**
-   * Formats indicated string to date format.
-   * Expected format is MM/YY.
-   * @param previousDate
-   * @param currentDate
-   * @private
-   */
   private static _getISOFormatDate(previousDate: string[], currentDate: string[]) {
     const currentDateMonth = currentDate[0];
     const currentDateYear = currentDate[1];
@@ -66,22 +59,16 @@ class ExpirationDate extends FormField {
 
   public setDisableListener() {
     this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_EXPIRATION_DATE, (state: boolean) => {
-      if (state) {
-        this._inputElement.setAttribute(ExpirationDate.DISABLE_STATE, 'true');
-        this._inputElement.classList.add(ExpirationDate.DISABLE_FIELD_CLASS);
-      } else {
-        this._inputElement.removeAttribute(ExpirationDate.DISABLE_STATE);
-        this._inputElement.classList.remove(ExpirationDate.DISABLE_FIELD_CLASS);
-      }
+      state ? this._disableInputField() : this._enableInputField();
     });
-  }
-
-  protected setFocusListener() {
-    super.setEventListener(MessageBus.EVENTS.FOCUS_EXPIRATION_DATE);
   }
 
   protected setBlurListener() {
     super.setEventListener(MessageBus.EVENTS.BLUR_EXPIRATION_DATE);
+  }
+
+  protected setFocusListener() {
+    super.setEventListener(MessageBus.EVENTS.FOCUS_EXPIRATION_DATE, false);
   }
 
   protected format(date: string) {
@@ -90,27 +77,18 @@ class ExpirationDate extends FormField {
 
   protected onBlur() {
     super.onBlur();
-    this._inputElement.value = this.validation.limitLength(
-      this._inputElement.value,
-      ExpirationDate.EXPIRATION_DATE_LENGTH
-    );
+    this._setInputValue(this._inputElement.value, ExpirationDate.EXPIRATION_DATE_LENGTH);
     this._sendState();
   }
 
   protected onFocus(event: Event) {
     super.onFocus(event);
-    this._inputElement.value = this.validation.limitLength(
-      this._inputElement.value,
-      ExpirationDate.EXPIRATION_DATE_LENGTH
-    );
+    this._setInputValue(this._inputElement.value, ExpirationDate.EXPIRATION_DATE_LENGTH);
   }
 
   protected onInput(event: Event) {
     super.onInput(event);
-    this._inputElement.value = this.validation.limitLength(
-      this._inputElement.value,
-      ExpirationDate.EXPIRATION_DATE_LENGTH
-    );
+    this._setInputValue(this._inputElement.value, ExpirationDate.EXPIRATION_DATE_LENGTH);
     this._setFormattedDate();
     this.validation.keepCursorAtSamePosition(this._inputElement);
     this._sendState();
@@ -131,10 +109,7 @@ class ExpirationDate extends FormField {
 
   protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
-    this._inputElement.value = this.validation.limitLength(
-      this._inputElement.value,
-      ExpirationDate.EXPIRATION_DATE_LENGTH
-    );
+    this._setInputValue(this._inputElement.value, ExpirationDate.EXPIRATION_DATE_LENGTH);
     this._setFormattedDate();
     this._sendState();
   }
@@ -193,6 +168,20 @@ class ExpirationDate extends FormField {
     const validatedDate = this._getValidatedDate(this._inputElement.value);
     this._returnValidatedDate(validatedDate);
     return validatedDate;
+  }
+
+  private _setInputValue(value: string, length: number) {
+    this._inputElement.value = this.validation.limitLength(value, length);
+  }
+
+  private _disableInputField() {
+    this._inputElement.setAttribute(ExpirationDate.DISABLE_STATE, 'true');
+    this._inputElement.classList.add(ExpirationDate.DISABLE_FIELD_CLASS);
+  }
+
+  private _enableInputField() {
+    this._inputElement.removeAttribute(ExpirationDate.DISABLE_STATE);
+    this._inputElement.classList.remove(ExpirationDate.DISABLE_FIELD_CLASS);
   }
 }
 

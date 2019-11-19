@@ -37,12 +37,12 @@ export default class SecurityCode extends FormField {
     return Language.translations.LABEL_SECURITY_CODE;
   }
 
-  protected setFocusListener() {
-    super.setEventListener(MessageBus.EVENTS.FOCUS_SECURITY_CODE, false);
-  }
-
   protected setBlurListener() {
     super.setEventListener(MessageBus.EVENTS.BLUR_SECURITY_CODE);
+  }
+
+  protected setFocusListener() {
+    super.setEventListener(MessageBus.EVENTS.FOCUS_SECURITY_CODE);
   }
 
   protected onBlur() {
@@ -57,12 +57,12 @@ export default class SecurityCode extends FormField {
 
   protected onFocus(event: Event) {
     super.onFocus(event);
+    this._sendState();
     const messageBusEvent: IMessageBusEvent = {
       data: true,
       type: MessageBus.EVENTS.FOCUS_SECURITY_CODE
     };
     this._messageBus.publish(messageBusEvent);
-    this._sendState();
   }
 
   protected onInput(event: Event) {
