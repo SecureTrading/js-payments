@@ -12,19 +12,10 @@ import Validation from '../../core/shared/Validation';
  * Defines frame which is essentially a hub which collects events and processes from whole library.
  */
 class ControlFrame extends Frame {
-  /**
-   * Resets JWT in case of Error
-   * @private
-   */
   private static _onResetJWT() {
     StCodec.jwt = StCodec.originalJwt;
   }
 
-  /**
-   * Updates jwt and originalJwt with the new version specified by merchant.
-   * @param jwt
-   * @private
-   */
   private static _onUpdateJWT(jwt: string) {
     StCodec.jwt = jwt;
     StCodec.originalJwt = jwt;
@@ -92,9 +83,6 @@ class ControlFrame extends Frame {
     this.onInit();
   }
 
-  /**
-   * Triggers methods needed on initializing class.
-   */
   protected onInit() {
     super.onInit();
     this._payment = new Payment(this._params.jwt, this._params.gatewayUrl, this._params.origin);
@@ -114,9 +102,6 @@ class ControlFrame extends Frame {
     this._onLoad();
   }
 
-  /**
-   * Gets allowed parameters including locale from parent class.
-   */
   protected getAllowedParams() {
     return super.getAllowedParams().concat(['jwt', 'gatewayUrl']);
   }
@@ -357,10 +342,6 @@ class ControlFrame extends Frame {
    * @private
    */
   private _processPayment(data: IResponseData) {
-    console.error('processPayment');
-    console.error(this._card);
-    console.error(this._merchantFormData);
-    console.error(data);
     this._payment
       .processPayment(this._postThreeDRequestTypes, this._card, this._merchantFormData, data)
       .then(() => {
@@ -387,10 +368,6 @@ class ControlFrame extends Frame {
     this._messageBus.publish(messageBusEvent, true);
   }
 
-  /**
-   * Sends threeDQueryRequest depends on validity status.
-   * @param data
-   */
   private _requestPayment(data: any) {
     const dataInJwt = data ? data.dataInJwt : false;
     const deferInit = data ? data.deferInit : false;
@@ -400,6 +377,7 @@ class ControlFrame extends Frame {
       this._formFields,
       deferInit
     );
+    console.log(validity);
     if (validity) {
       this._messageBus.publish({
         type: MessageBus.EVENTS_PUBLIC.THREEDINIT

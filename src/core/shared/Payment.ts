@@ -30,21 +30,10 @@ export default class Payment {
     };
   }
 
-  /**
-   * Change cardinalCommerceCacheToken during bypass process.
-   * @param cachetoken
-   */
   public byPassInitRequest(cachetoken: string) {
     this._cardinalCommerceCacheToken = cachetoken;
   }
 
-  /**
-   * Triggers common payment process.
-   * @param requestTypes
-   * @param payment
-   * @param merchantData
-   * @param additionalData
-   */
   public async processPayment(
     requestTypes: string[],
     payment: ICard | IWallet,
@@ -60,9 +49,6 @@ export default class Payment {
     return await this._stTransport.sendRequest(this._processPaymentRequestBody).then(({ response }: any) => response);
   }
 
-  /**
-   * Triggers 3DInitRequest and save cardinalCommerceCacheToken.
-   */
   public threeDInitRequest() {
     return this._stTransport.sendRequest(this._threeDInitRequestBody).then((result: { jwt: string; response: any }) => {
       const {
@@ -75,12 +61,6 @@ export default class Payment {
     });
   }
 
-  /**
-   * Triggers 3DQueryProcess.
-   * @param requestTypes
-   * @param card
-   * @param merchantData
-   */
   public threeDQueryRequest(requestTypes: string[], card: ICard, merchantData: IMerchantData): Promise<object> {
     this._threeDQueryRequestBody = Object.assign(
       {
@@ -91,13 +71,10 @@ export default class Payment {
       merchantData,
       card
     );
+    console.error(card);
     return this._stTransport.sendRequest(this._threeDQueryRequestBody);
   }
 
-  /**
-   * Triggers ApplePay wallet verify process.
-   * @param walletVerify
-   */
   public walletVerify(walletVerify: IWalletVerify) {
     Object.assign(this._walletVerifyRequest, walletVerify);
     return this._stTransport.sendRequest(this._walletVerifyRequest);

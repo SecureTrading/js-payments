@@ -41,12 +41,11 @@ class Formatter extends Validation {
       Utils.setElementAttributes({ value }, element);
       element.setSelectionRange(selectStart, selectEnd);
     }
-    this._cardNumberFormatted = value;
+    this._cardNumberFormatted = value ? value : '';
     if (value) {
       this.cardNumberValue = value.replace(/\s/g, '');
     }
-    value = value ? value : '';
-    return value;
+    return { formatted: this._cardNumberFormatted, nonformatted: this.cardNumberValue };
   }
 
   public date(value: string, id?: string) {

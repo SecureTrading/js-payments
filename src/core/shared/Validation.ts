@@ -187,7 +187,6 @@ export default class Validation extends Frame {
   }
 
   public validate(inputElement: HTMLInputElement, messageElement: HTMLElement, customErrorMessage?: string) {
-    console.error('valiate security code: ', inputElement.validity);
     this._toggleErrorClass(inputElement);
     this._setMessage(inputElement, messageElement, customErrorMessage);
   }

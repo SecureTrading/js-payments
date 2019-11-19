@@ -89,6 +89,9 @@ class StCodec {
    * @param threedresponse the response from Cardinal commerce after call to ACS
    */
   public static publishResponse(responseData: IResponseData, jwtResponse?: string, threedresponse?: string) {
+    console.error('publishResponse');
+    console.error(jwtResponse);
+    console.error(responseData);
     const translator = new Translator(StCodec._locale);
     responseData.errormessage = translator.translate(responseData.errormessage);
     const eventData = { ...responseData };
