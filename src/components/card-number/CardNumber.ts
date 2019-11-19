@@ -57,6 +57,7 @@ export default class CardNumber extends FormField {
   protected onFocus(event: Event) {
     super.onFocus(event);
     this.validation.limitLength(this._inputElement.value, this._cardNumberLength);
+    this._sendState();
   }
 
   protected onInput(event: Event) {
@@ -210,9 +211,9 @@ export default class CardNumber extends FormField {
   }
 
   private _hideSecurityCodeField(cardNumber: string) {
-    const isCardAmex: boolean = this.binLookup.binLookup(cardNumber).type === 'PIBA';
+    const isCardPiba: boolean = this.binLookup.binLookup(cardNumber).type === 'PIBA';
     const messageBusEvent: IMessageBusEvent = {
-      data: isCardAmex,
+      data: isCardPiba,
       type: MessageBus.EVENTS.DISABLE_SECURITY_CODE
     };
     this._messageBus.publish(messageBusEvent);

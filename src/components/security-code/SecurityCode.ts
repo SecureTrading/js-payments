@@ -47,20 +47,16 @@ export default class SecurityCode extends FormField {
 
   protected onBlur() {
     super.onBlur();
-    console.log(this._securityCodeLength);
-    this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._securityCodeLength);
+    this._sendState();
     const messageBusEvent: IMessageBusEvent = {
       data: false,
       type: MessageBus.EVENTS.FOCUS_SECURITY_CODE
     };
     this._messageBus.publish(messageBusEvent);
-    this._sendState();
   }
 
   protected onFocus(event: Event) {
     super.onFocus(event);
-    console.log(this._securityCodeLength);
-    this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._securityCodeLength);
     const messageBusEvent: IMessageBusEvent = {
       data: true,
       type: MessageBus.EVENTS.FOCUS_SECURITY_CODE
@@ -71,7 +67,6 @@ export default class SecurityCode extends FormField {
 
   protected onInput(event: Event) {
     super.onInput(event);
-    this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._securityCodeLength);
     this._inputElement.value = this._formatter.code(
       this._inputElement.value,
       this._securityCodeLength,
@@ -129,12 +124,14 @@ export default class SecurityCode extends FormField {
   private _subscribeSecurityCodeChange() {
     this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (length: number) => {
       if (length === SecurityCode.SPECIAL_INPUT_LENGTH) {
-        this._setSecurityCodePattern(SecurityCode.MATCH_EXACTLY_FOUR_DIGITS);
         this._securityCodeLength = SecurityCode.SPECIAL_INPUT_LENGTH;
+        this._setSecurityCodePattern(SecurityCode.MATCH_EXACTLY_FOUR_DIGITS);
+        this._sendState();
       } else {
-        console.error('Switch off DISABLED');
         this._setSecurityCodePattern(SecurityCode.MATCH_EXACTLY_THREE_DIGITS);
         this._securityCodeLength = SecurityCode.STANDARD_INPUT_LENGTH;
+        this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._securityCodeLength);
+        this._sendState();
       }
     });
   }

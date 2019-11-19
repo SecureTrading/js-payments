@@ -77,7 +77,6 @@ class StCodec {
     if (StCodec._isInvalidResponse(responseData)) {
       throw StCodec._handleInvalidResponse();
     }
-    console.error(responseData);
     const responseContent: IResponseData = StCodec._determineResponse(responseData);
     StCodec._handleValidGatewayResponse(responseContent, jwtResponse);
     return responseContent;

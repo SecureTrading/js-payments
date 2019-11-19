@@ -33,10 +33,6 @@ export default class Validation extends Frame {
     return value.replace(Validation.ESCAPE_DIGITS_REGEXP, '');
   };
 
-  public static trimNonNumericExceptSlash(data: string): string {
-    return data.trim().replace(Validation.DATA_NON_NUMERIC_EXCEPT_SLASH, '');
-  }
-
   public static setCustomValidationError(inputElement: HTMLInputElement, errorContent: string) {
     inputElement.setCustomValidity(errorContent);
   }
@@ -60,7 +56,6 @@ export default class Validation extends Frame {
 
   protected static STANDARD_FORMAT_PATTERN: string = '(\\d{1,4})(\\d{1,4})?(\\d{1,4})?(\\d+)?';
   private static ESCAPE_DIGITS_REGEXP = /[^\d]/g;
-  private static DATA_NON_NUMERIC_EXCEPT_SLASH: RegExp = /[^0-9\/]/g;
   private static BACKSPACE_KEY_CODE: number = 8;
   private static CARD_NUMBER_DEFAULT_LENGTH: number = 16;
   private static DELETE_KEY_CODE: number = 46;
@@ -192,6 +187,7 @@ export default class Validation extends Frame {
   }
 
   public validate(inputElement: HTMLInputElement, messageElement: HTMLElement, customErrorMessage?: string) {
+    console.error('valiate security code: ', inputElement.validity);
     this._toggleErrorClass(inputElement);
     this._setMessage(inputElement, messageElement, customErrorMessage);
   }
@@ -223,15 +219,11 @@ export default class Validation extends Frame {
         pan: formFields.cardNumber.value,
         securitycode: formFields.securityCode.value
       };
-      console.error(this._isPaymentReady);
-      console.error(this._isFormValid);
-      console.error(deferInit);
     }
 
     if ((this._isPaymentReady && this._isFormValid) || (deferInit && this._isFormValid)) {
       this.blockForm(true);
     }
-    console.error(this._card);
     return {
       card: this._card,
       validity: (this._isPaymentReady && this._isFormValid) || (deferInit && this._isFormValid)
