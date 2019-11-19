@@ -24,7 +24,7 @@ export default class Validation extends Frame {
     return regex.test(key);
   }
 
-  public static isEnter(event: KeyboardEvent) {
+  public static isKeyEnter(event: KeyboardEvent) {
     const keyCode: number = event.keyCode;
     return keyCode === Validation.ENTER_KEY_CODE;
   }

@@ -357,6 +357,10 @@ class ControlFrame extends Frame {
    * @private
    */
   private _processPayment(data: IResponseData) {
+    console.error('processPayment');
+    console.error(this._card);
+    console.error(this._merchantFormData);
+    console.error(data);
     this._payment
       .processPayment(this._postThreeDRequestTypes, this._card, this._merchantFormData, data)
       .then(() => {

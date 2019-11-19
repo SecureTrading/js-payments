@@ -6,13 +6,6 @@ import { Translator } from './Translator';
 import Utils from './Utils';
 import Validation from './Validation';
 
-/**
- * Base class describes each form field / component.
- * Children classes:
- *  - CardNumber
- *  - ExpirationDate
- *  - SecurityCode
- */
 export default class FormField extends Frame {
   public validation: Validation;
   protected _inputSelector: string;
@@ -21,10 +14,12 @@ export default class FormField extends Frame {
   protected _inputElement: HTMLInputElement;
   protected _labelElement: HTMLLabelElement;
   protected _messageElement: HTMLDivElement;
+  protected _cardNumberInput: HTMLInputElement;
   private _translator: Translator;
 
   constructor(inputSelector: string, messageSelector: string, labelSelector: string) {
     super();
+    this._cardNumberInput = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     this._inputElement = document.getElementById(inputSelector) as HTMLInputElement;
     this._labelElement = document.getElementById(labelSelector) as HTMLLabelElement;
     this._messageElement = document.getElementById(messageSelector) as HTMLInputElement;
@@ -120,7 +115,7 @@ export default class FormField extends Frame {
   }
 
   protected onKeyPress(event: KeyboardEvent) {
-    if (Validation.isEnter(event)) {
+    if (Validation.isKeyEnter(event)) {
       event.preventDefault();
       const messageBusEvent: IMessageBusEvent = {
         type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
@@ -155,7 +150,6 @@ export default class FormField extends Frame {
   }
 
   protected setAttributes(attributes: object) {
-    // tslint:disable-next-line:forin
     for (const attribute in attributes) {
       // @ts-ignore
       this._inputElement.setAttribute(attribute, attributes[attribute]);
@@ -164,13 +158,22 @@ export default class FormField extends Frame {
 
   protected setEventListener(event: string, validate: boolean = true) {
     this._messageBus.subscribe(event, () => {
-      // tslint:disable-next-line: no-unused-expression
-      validate && this._validateInput();
+      if (validate) {
+        this._validateInput();
+      }
     });
   }
 
   protected setValue(value: string) {
     this._inputElement.value = value;
+  }
+
+  protected setMessageBusEvent(event: string): IMessageBusEvent {
+    const formFieldState: IFormFieldState = this.getState();
+    return {
+      data: formFieldState,
+      type: event
+    };
   }
 
   private _addTabListener() {
@@ -228,12 +231,7 @@ export default class FormField extends Frame {
   private _validateInput() {
     this.format(this._inputElement.value);
     if (this._inputElement.id === Selectors.CARD_NUMBER_INPUT) {
-      this.validation.luhnCheck(
-        // @ts-ignore
-        document.getElementById(Selectors.CARD_NUMBER_INPUT),
-        this._inputElement,
-        this._messageElement
-      );
+      this.validation.luhnCheck(this._cardNumberInput, this._inputElement, this._messageElement);
     }
     this.validation.validate(this._inputElement, this._messageElement);
   }

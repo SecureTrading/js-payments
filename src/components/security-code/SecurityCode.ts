@@ -5,7 +5,7 @@ import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
 
-export default class SecurityCode extends FormField {
+class SecurityCode extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.SECURITY_CODE_INPUT) as HTMLInputElement;
   private static DISABLED_ATTRIBUTE_CLASS: string = 'st-input--disabled';
@@ -37,14 +37,6 @@ export default class SecurityCode extends FormField {
     return Language.translations.LABEL_SECURITY_CODE;
   }
 
-  protected setBlurListener() {
-    super.setEventListener(MessageBus.EVENTS.BLUR_SECURITY_CODE);
-  }
-
-  protected setFocusListener() {
-    super.setEventListener(MessageBus.EVENTS.FOCUS_SECURITY_CODE);
-  }
-
   protected onBlur() {
     super.onBlur();
     this._sendState();
@@ -67,6 +59,7 @@ export default class SecurityCode extends FormField {
 
   protected onInput(event: Event) {
     super.onInput(event);
+    this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._securityCodeLength);
     this._inputElement.value = this._formatter.code(
       this._inputElement.value,
       this._securityCodeLength,
@@ -87,10 +80,10 @@ export default class SecurityCode extends FormField {
   }
 
   private _init() {
+    super.setEventListener(MessageBus.EVENTS.FOCUS_SECURITY_CODE, false);
+    super.setEventListener(MessageBus.EVENTS.BLUR_SECURITY_CODE);
     this._setSecurityCodePattern(SecurityCode.MATCH_EXACTLY_THREE_DIGITS);
     this._subscribeSecurityCodeChange();
-    this.setBlurListener();
-    this.setFocusListener();
     this._setDisableListener();
     this._disableSecurityCodeListener();
     this.validation.backendValidation(
@@ -101,11 +94,7 @@ export default class SecurityCode extends FormField {
   }
 
   private _sendState() {
-    const formFieldState: IFormFieldState = this.getState();
-    const messageBusEvent: IMessageBusEvent = {
-      data: formFieldState,
-      type: MessageBus.EVENTS.CHANGE_SECURITY_CODE
-    };
+    const messageBusEvent: IMessageBusEvent = this.setMessageBusEvent(MessageBus.EVENTS.CHANGE_SECURITY_CODE);
     this._messageBus.publish(messageBusEvent);
   }
 
@@ -181,3 +170,5 @@ export default class SecurityCode extends FormField {
     }
   }
 }
+
+export default SecurityCode;

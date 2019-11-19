@@ -7,7 +7,7 @@ import Selectors from '../../core/shared/Selectors';
 import Utils from '../../core/shared/Utils';
 import Validation from '../../core/shared/Validation';
 
-export default class CardNumber extends FormField {
+class CardNumber extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
   private static STANDARD_CARD_LENGTH: number = 19;
@@ -185,7 +185,7 @@ export default class CardNumber extends FormField {
     return this._cardNumberLength;
   }
 
-  private _getFormFieldState(): IFormFieldState {
+  private _getCardNumberFieldState(): IFormFieldState {
     const { value, validity } = this.getState();
     this._publishSecurityCodeLength();
     this._formatCardNumber(value);
@@ -220,9 +220,9 @@ export default class CardNumber extends FormField {
   }
 
   private _sendState() {
-    const { value, validity } = this._getFormFieldState();
+    const { value, validity } = this._getCardNumberFieldState();
     const messageBusEvent: IMessageBusEvent = {
-      data: this._getFormFieldState(),
+      data: this._getCardNumberFieldState(),
       type: MessageBus.EVENTS.CHANGE_CARD_NUMBER
     };
     if (validity) {
@@ -235,3 +235,5 @@ export default class CardNumber extends FormField {
     this._messageBus.publish(messageBusEvent);
   }
 }
+
+export default CardNumber;
