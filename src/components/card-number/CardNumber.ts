@@ -61,11 +61,11 @@ class CardNumber extends FormField {
   protected onInput(event: Event) {
     super.onInput(event);
     this._getMaxLengthOfCardNumber();
+    this._hideSecurityCodeField(this._inputElement.value);
     this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._cardNumberLength);
     const { formatted, nonformatted } = this._formatter.number(this._inputElement.value, Selectors.CARD_NUMBER_INPUT);
     this._inputElement.value = formatted;
     this._cardNumberValue = nonformatted;
-    this._hideSecurityCodeField(this._inputElement.value);
     this.validation.keepCursorAtSamePosition(this._inputElement);
     this._sendState();
   }
@@ -73,11 +73,11 @@ class CardNumber extends FormField {
   protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
     this._getMaxLengthOfCardNumber();
+    this._hideSecurityCodeField(this._inputElement.value);
     this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._cardNumberLength);
     const { formatted, nonformatted } = this._formatter.number(this._inputElement.value, Selectors.CARD_NUMBER_INPUT);
     this._inputElement.value = formatted;
     this._cardNumberValue = nonformatted;
-    this._hideSecurityCodeField(this._inputElement.value);
     this._sendState();
   }
 
@@ -157,7 +157,9 @@ class CardNumber extends FormField {
   }
 
   private _hideSecurityCodeField(cardNumber: string) {
+    console.error(cardNumber);
     const isCardPiba: boolean = this.binLookup.binLookup(cardNumber).type === 'PIBA';
+    console.error(this.binLookup.binLookup(cardNumber).type);
     const messageBusEvent: IMessageBusEvent = {
       data: isCardPiba,
       type: MessageBus.EVENTS.DISABLE_SECURITY_CODE

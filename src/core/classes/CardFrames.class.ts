@@ -37,6 +37,7 @@ class CardFrames extends RegisterFrames {
   private readonly _paymentTypes: string[];
   private readonly _payMessage: string;
   private readonly _processingMessage: string;
+  private readonly _startOnLoad: boolean;
 
   constructor(
     jwt: string,
@@ -47,7 +48,8 @@ class CardFrames extends RegisterFrames {
     defaultPaymentType: string,
     animatedCard: boolean,
     deferInit: boolean,
-    buttonId: string
+    buttonId: string,
+    startOnLoad: boolean
   ) {
     super(jwt, origin, componentIds, styles, animatedCard);
     this._validation = new Validation();
@@ -56,6 +58,7 @@ class CardFrames extends RegisterFrames {
     this.hasAnimatedCard = animatedCard;
     this._buttonId = buttonId;
     this._deferInit = deferInit;
+    this._startOnLoad = startOnLoad;
     this._defaultPaymentType = defaultPaymentType;
     this._paymentTypes = paymentTypes;
     this._payMessage = this._translator.translate(Language.translations.PAY);
@@ -67,6 +70,7 @@ class CardFrames extends RegisterFrames {
    * Gathers and launches methods needed on initializing object.
    */
   protected onInit() {
+    this._deferJsinitOnLoad();
     this._preventFormSubmit();
     this._setSubmitButton();
     this._initSubscribes();
@@ -99,6 +103,12 @@ class CardFrames extends RegisterFrames {
       ];
     } else {
       return [this.componentIds.cardNumber, this.componentIds.expirationDate, this.componentIds.securityCode];
+    }
+  }
+
+  private _deferJsinitOnLoad() {
+    if (!this._deferInit && this._startOnLoad) {
+      this._publishSubmitEvent(true);
     }
   }
 

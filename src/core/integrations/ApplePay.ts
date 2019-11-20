@@ -231,15 +231,28 @@ export class ApplePay {
    * @private
    */
   private _setSupportedNetworks() {
+    let supportedNetworks;
     if (this.applePayVersion <= ApplePay.APPLE_PAY_MIN_VERSION) {
-      this._paymentRequest.supportedNetworks = ApplePay.BASIC_SUPPORTED_NETWORKS;
+      supportedNetworks = ApplePay.BASIC_SUPPORTED_NETWORKS;
     } else if (
       this.applePayVersion > ApplePay.APPLE_PAY_MIN_VERSION &&
       this.applePayVersion < ApplePay.APPLE_PAY_MAX_VERSION
     ) {
-      this._paymentRequest.supportedNetworks = ApplePay.VERSION_4_SUPPORTED_NETWORKS;
+      supportedNetworks = ApplePay.VERSION_4_SUPPORTED_NETWORKS;
     } else {
-      this._paymentRequest.supportedNetworks = ApplePay.VERSION_5_SUPPORTED_NETWORKS;
+      supportedNetworks = ApplePay.VERSION_5_SUPPORTED_NETWORKS;
+    }
+    if (this._paymentRequest.supportedNetworks.length > 0) {
+      const userDefinedSupportedNetworks: string[] = [];
+      let i;
+      for (i in supportedNetworks) {
+        if (this._paymentRequest.supportedNetworks.indexOf(supportedNetworks[i]) !== -1) {
+          userDefinedSupportedNetworks.push(supportedNetworks[i]);
+        }
+      }
+      this._paymentRequest.supportedNetworks = userDefinedSupportedNetworks;
+    } else {
+      this._paymentRequest.supportedNetworks = supportedNetworks;
     }
   }
 
