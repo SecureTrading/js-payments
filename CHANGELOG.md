@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 
 - Add option for buttonId in config to allow a specific button to be targetted as the pay button (previously this was always targetting the first button only). If not specified this will keep the original behavior.
 - Improved behavioural tests to be able to more easily define more configuration options for additional test cases.
+- Allow ApplePay supportedNetworks to be overridden in config rather than always using only the supported versions for the current device.
 
 ## 2.0.0
 

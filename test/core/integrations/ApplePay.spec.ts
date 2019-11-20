@@ -126,11 +126,29 @@ describe('ApplePay', () => {
     // then
     it(`should set proper networks when Apple Pay version is equal ${applePayVersions[3]}`, () => {
       // @ts-ignore
+      instance._paymentRequest.supportedNetworks = ApplePay.VERSION_5_SUPPORTED_NETWORKS;
+      // @ts-ignore
+      setPropertiesForVersion(applePayVersions[3], ApplePay.VERSION_5_SUPPORTED_NETWORKS);
+    });
+    // then
+    it(`should set subset of supported networks if merchant specifies subset ${applePayVersions[3]}`, () => {
+      // @ts-ignore
+      instance._paymentRequest.supportedNetworks = ['amex', 'visa'];
+      // @ts-ignore
+      setPropertiesForVersion(applePayVersions[3], ['amex', 'visa']);
+    });
+    // then
+    it(`should set full set of supported networks if merchant specifies empty array ${applePayVersions[3]}`, () => {
+      // @ts-ignore
+      instance._paymentRequest.supportedNetworks = [];
+      // @ts-ignore
       setPropertiesForVersion(applePayVersions[3], ApplePay.VERSION_5_SUPPORTED_NETWORKS);
     });
 
     // then
     it(`should set proper networks when Apple Pay version is equal ${applePayVersions[2]}`, () => {
+      // @ts-ignore
+      instance._paymentRequest.supportedNetworks = ApplePay.VERSION_4_SUPPORTED_NETWORKS;
       // @ts-ignore
       setPropertiesForVersion(applePayVersions[2], ApplePay.VERSION_4_SUPPORTED_NETWORKS);
     });
@@ -138,11 +156,15 @@ describe('ApplePay', () => {
     // then
     it(`should set proper networks when Apple Pay version is equal ${applePayVersions[1]}`, () => {
       // @ts-ignore
+      instance._paymentRequest.supportedNetworks = ApplePay.VERSION_5_SUPPORTED_NETWORKS;
+      // @ts-ignore
       setPropertiesForVersion(applePayVersions[1], ApplePay.BASIC_SUPPORTED_NETWORKS);
     });
 
     // then
     it(`should set proper networks when Apple Pay version is equal ${applePayVersions[0]}`, () => {
+      // @ts-ignore
+      instance._paymentRequest.supportedNetworks = ApplePay.VERSION_5_SUPPORTED_NETWORKS;
       // @ts-ignore
       setPropertiesForVersion(applePayVersions[0], ApplePay.BASIC_SUPPORTED_NETWORKS);
     });
