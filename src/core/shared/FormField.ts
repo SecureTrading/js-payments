@@ -150,6 +150,7 @@ export default class FormField extends Frame {
   }
 
   protected setAttributes(attributes: object) {
+    // tslint:disable-next-line:forin
     for (const attribute in attributes) {
       // @ts-ignore
       this._inputElement.setAttribute(attribute, attributes[attribute]);
