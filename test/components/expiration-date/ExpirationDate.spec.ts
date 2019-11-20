@@ -63,28 +63,6 @@ describe('ExpirationDate', () => {
   });
 
   // given
-  describe('setFocusListener()', () => {
-    const { instance } = expirationDateFixture();
-    let spy: jest.SpyInstance;
-
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
-        callback();
-      });
-      // @ts-ignore
-      spy = jest.spyOn(instance, 'format');
-      // @ts-ignore
-      instance.setFocusListener();
-    });
-    // then
-    it('should call format method', () => {
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  // given
   describe('format()', () => {
     const { instance } = expirationDateFixture();
     let spy: jest.SpyInstance;
@@ -161,39 +139,6 @@ describe('ExpirationDate', () => {
     });
   });
 
-  describe('onPaste()', () => {
-    const { instance } = expirationDateFixture();
-    const event = {
-      clipboardData: {
-        getData: jest.fn()
-      },
-      preventDefault: jest.fn()
-    };
-
-    // given
-    beforeEach(() => {
-      Utils.stripChars = jest.fn().mockReturnValue('11');
-      // @ts-ignore
-      instance._sendState = jest.fn();
-      // @ts-ignore
-      instance._setFormattedDate = jest.fn();
-      // @ts-ignore
-      instance.onPaste(event);
-    });
-
-    // then
-    it('should call _sendState() method', () => {
-      // @ts-ignore
-      expect(instance._sendState).toHaveBeenCalled();
-    });
-
-    // then
-    it('should call _setFormattedDate() method', () => {
-      // @ts-ignore
-      expect(instance._setFormattedDate).toHaveBeenCalled();
-    });
-  });
-
   // given
   describe('onKeyPress()', () => {
     const { instance } = expirationDateFixture();
@@ -261,98 +206,6 @@ describe('ExpirationDate', () => {
     // then
     it('should call publish()', () => {
       expect(spy).toHaveBeenCalled();
-    });
-  });
-
-  // given
-  describe('_getISOFormatDate()', () => {
-    // then
-    it('should return only month if user deletes previous / last character between slash', () => {
-      // @ts-ignore
-      expect(ExpirationDate._getISOFormatDate(['11', '2'], ['11', ''])).toEqual('11');
-    });
-
-    // then
-    it('', () => {
-      // @ts-ignore
-      expect(ExpirationDate._getISOFormatDate(['11', '1'], ['11', ''])).toEqual('11');
-      // @ts-ignore
-      expect(ExpirationDate._getISOFormatDate(['11', '11'], ['11', '1'])).toEqual('11/1');
-    });
-
-    // then
-    it('should return empty string if none of statements are true', () => {
-      // @ts-ignore
-      expect(ExpirationDate._getISOFormatDate(['111', '333'], ['1111', '32432'])).toEqual('');
-    });
-
-    // then
-    it('should return empty string if array of string is empty', () => {
-      // @ts-ignore
-      expect(ExpirationDate._getISOFormatDate(['1', ''], ['', ''])).toEqual('');
-    });
-  });
-
-  // given
-  describe('_getValidatedDate', () => {
-    const { instance } = expirationDateFixture();
-    let spy: SpyInstance;
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      spy = jest.spyOn(instance, '_getFixedDateString');
-      // @ts-ignore
-      instance._getValidatedDate('12');
-    });
-
-    // then
-    it('should _getFixedDateString() function be called', () => {
-      expect(spy).toHaveBeenCalled();
-    });
-
-    // then
-    it('should return 01, if first two chars are equal 0', () => {
-      // @ts-ignore
-      expect(instance._getValidatedDate('00')).toEqual('00');
-    });
-
-    // then
-    it('should return 12, if first two chars are greater than 12', () => {
-      // @ts-ignore
-      expect(instance._getValidatedDate('13')).toEqual('13');
-    });
-
-    // then
-    each([['2', '2'], ['33', '33'], ['444', '44/4']]).it(
-      'should return given number, with preceded zero',
-      (givenValue: string, expectedValue: string) => {
-        // @ts-ignore
-        expect(instance._getValidatedDate(givenValue)).toEqual(expectedValue);
-      }
-    );
-  });
-
-  // given
-  describe('_setFormattedDate', () => {
-    // when
-    const { instance } = expirationDateFixture();
-    const dates = [
-      ['', ''],
-      ['11', '11'],
-      ['1111', '11/11'],
-      ['0709', '07/09'],
-      ['9999', '99/99'],
-      ['123456789', '12/34']
-    ];
-
-    // then
-    each(dates).it('should set proper input value', (received, expected) => {
-      // @ts-ignore
-      instance._inputElement.value = received;
-      // @ts-ignore
-      instance._setFormattedDate();
-      // @ts-ignore
-      expect(instance._inputElement.value).toEqual(expected);
     });
   });
 });
