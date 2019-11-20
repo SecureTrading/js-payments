@@ -377,7 +377,6 @@ class ControlFrame extends Frame {
       this._formFields,
       deferInit
     );
-    console.log(validity);
     if (validity) {
       if (deferInit) {
         this._messageBus.publish({

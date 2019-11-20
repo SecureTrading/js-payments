@@ -71,7 +71,6 @@ export default class Payment {
       merchantData,
       card
     );
-    console.error(card);
     return this._stTransport.sendRequest(this._threeDQueryRequestBody);
   }
 

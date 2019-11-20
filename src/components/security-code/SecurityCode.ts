@@ -163,10 +163,12 @@ class SecurityCode extends FormField {
     if (disable) {
       this._clearInputValue();
       this._disableSecurityCode();
+      this._toggleSecurityCodeValidation();
       this._toggleSecurityCodeWrapper(SecurityCode.GREY_OUT);
     } else {
       this._enableSecurityCode();
       this._toggleSecurityCodeWrapper(SecurityCode.GREY_OUT_OFF);
+      this._inputElement.classList.remove(SecurityCode.DISABLED_ATTRIBUTE_CLASS);
     }
   }
 }

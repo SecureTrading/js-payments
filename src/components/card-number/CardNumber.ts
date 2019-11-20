@@ -49,7 +49,6 @@ class CardNumber extends FormField {
 
   protected onBlur() {
     super.onBlur();
-    this.validation.limitLength(this._inputElement.value, this._cardNumberLength);
     this.validation.luhnCheck(this._fieldInstance, this._inputElement, this._messageElement);
     this._sendState();
   }
@@ -60,24 +59,13 @@ class CardNumber extends FormField {
 
   protected onInput(event: Event) {
     super.onInput(event);
-    this._getMaxLengthOfCardNumber();
-    this._hideSecurityCodeField(this._inputElement.value);
-    this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._cardNumberLength);
-    const { formatted, nonformatted } = this._formatter.number(this._inputElement.value, Selectors.CARD_NUMBER_INPUT);
-    this._inputElement.value = formatted;
-    this._cardNumberValue = nonformatted;
-    this.validation.keepCursorAtSamePosition(this._inputElement);
+    this._setInputValue();
     this._sendState();
   }
 
   protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
-    this._getMaxLengthOfCardNumber();
-    this._hideSecurityCodeField(this._inputElement.value);
-    this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._cardNumberLength);
-    const { formatted, nonformatted } = this._formatter.number(this._inputElement.value, Selectors.CARD_NUMBER_INPUT);
-    this._inputElement.value = formatted;
-    this._cardNumberValue = nonformatted;
+    this._setInputValue();
     this._sendState();
   }
 
@@ -142,6 +130,16 @@ class CardNumber extends FormField {
     };
   }
 
+  private _setInputValue() {
+    this._getMaxLengthOfCardNumber();
+    this._hideSecurityCodeField(this._inputElement.value);
+    this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._cardNumberLength);
+    const { formatted, nonformatted } = this._formatter.number(this._inputElement.value, Selectors.CARD_NUMBER_INPUT);
+    this._inputElement.value = formatted;
+    this._cardNumberValue = nonformatted;
+    this.validation.keepCursorAtSamePosition(this._inputElement);
+  }
+
   private _setDisableListener() {
     this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_CARD_NUMBER, (state: boolean) => {
       if (state) {
@@ -157,9 +155,8 @@ class CardNumber extends FormField {
   }
 
   private _hideSecurityCodeField(cardNumber: string) {
-    console.error(cardNumber);
-    const isCardPiba: boolean = this.binLookup.binLookup(cardNumber).type === 'PIBA';
-    console.error(this.binLookup.binLookup(cardNumber).type);
+    const number: string = Validation.clearNonDigitsChars(cardNumber);
+    const isCardPiba: boolean = this.binLookup.binLookup(number).type === 'PIBA';
     const messageBusEvent: IMessageBusEvent = {
       data: isCardPiba,
       type: MessageBus.EVENTS.DISABLE_SECURITY_CODE
