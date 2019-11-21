@@ -34,6 +34,7 @@ class CardNumber extends FormField {
     this._cardNumberLength = CardNumber.STANDARD_CARD_LENGTH;
     this.setFocusListener();
     this.setBlurListener();
+    this.setSubmitListener();
     this._setDisableListener();
     this.validation.backendValidation(
       this._inputElement,
@@ -75,6 +76,10 @@ class CardNumber extends FormField {
 
   protected onKeydown(event: KeyboardEvent) {
     super.onKeydown(event);
+    if (Validation.isKeyEnter(event)) {
+      this.validation.luhnCheck(this._cardNumberInput, this._inputElement, this._messageElement);
+      this._sendState();
+    }
   }
 
   protected setFocusListener() {
@@ -83,6 +88,10 @@ class CardNumber extends FormField {
 
   protected setBlurListener() {
     super.setEventListener(MessageBus.EVENTS.BLUR_CARD_NUMBER);
+  }
+
+  protected setSubmitListener() {
+    super.setEventListener(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM);
   }
 
   private _publishSecurityCodeLength() {

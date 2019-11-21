@@ -117,6 +117,9 @@ export default class FormField extends Frame {
   protected onKeyPress(event: KeyboardEvent) {
     if (Validation.isKeyEnter(event)) {
       event.preventDefault();
+      if (this._inputElement.id === Selectors.CARD_NUMBER_INPUT) {
+        this.validation.luhnCheck(this._cardNumberInput, this._inputElement, this._messageElement);
+      }
       const messageBusEvent: IMessageBusEvent = {
         type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
       };
