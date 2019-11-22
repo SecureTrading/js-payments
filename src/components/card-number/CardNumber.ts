@@ -7,7 +7,7 @@ import Selectors from '../../core/shared/Selectors';
 import Utils from '../../core/shared/Utils';
 import Validation from '../../core/shared/Validation';
 
-export default class CardNumber extends FormField {
+class CardNumber extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
   private static STANDARD_CARD_LENGTH: number = 19;
@@ -15,7 +15,7 @@ export default class CardNumber extends FormField {
   private static CARD_NUMBER_FOR_BIN_PROCESS = (cardNumber: string) => cardNumber.slice(0, 6);
 
   public binLookup: BinLookup;
-  public validity: Validation;
+  public validation: Validation;
   private _formatter: Formatter;
   private _cardNumberFormatted: string;
   private _cardNumberLength: number;
@@ -28,12 +28,13 @@ export default class CardNumber extends FormField {
     super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE, Selectors.CARD_NUMBER_LABEL);
     this._cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     this.binLookup = new BinLookup();
-    this.validity = new Validation();
+    this.validation = new Validation();
     this._formatter = new Formatter();
     this._isCardNumberValid = true;
     this._cardNumberLength = CardNumber.STANDARD_CARD_LENGTH;
     this.setFocusListener();
     this.setBlurListener();
+    this.setSubmitListener();
     this._setDisableListener();
     this.validation.backendValidation(
       this._inputElement,
@@ -59,17 +60,13 @@ export default class CardNumber extends FormField {
 
   protected onInput(event: Event) {
     super.onInput(event);
-    const { value } = this._formatter.number(this.getContent(this._inputElement.value), Selectors.CARD_NUMBER_INPUT);
-    this._getMaxLengthOfCardNumber(value);
-    this._inputElement.value = value.substring(0, this._cardNumberLength);
+    this._setInputValue();
     this._sendState();
   }
 
   protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
-    const { value } = this._formatter.number(this.getContent(this._inputElement.value), Selectors.CARD_NUMBER_INPUT);
-    this._getMaxLengthOfCardNumber(value);
-    this._inputElement.value = value.substring(0, this._cardNumberLength);
+    this._setInputValue();
     this._sendState();
   }
 
@@ -79,6 +76,10 @@ export default class CardNumber extends FormField {
 
   protected onKeydown(event: KeyboardEvent) {
     super.onKeydown(event);
+    if (Validation.isKeyEnter(event)) {
+      this.validation.luhnCheck(this._cardNumberInput, this._inputElement, this._messageElement);
+      this._sendState();
+    }
   }
 
   protected setFocusListener() {
@@ -89,64 +90,10 @@ export default class CardNumber extends FormField {
     super.setEventListener(MessageBus.EVENTS.BLUR_CARD_NUMBER);
   }
 
-  protected getContent = (value: string, placeholder?: string) => (value ? value : placeholder);
-
-  private _setCardNumberAttributes(attributes: any) {
-    for (const attribute in attributes) {
-      if (attributes.hasOwnProperty(attribute)) {
-        const value = attributes[attribute];
-        if (Utils.inArray(['value'], attribute)) {
-          // @ts-ignore
-          this._cardNumberField[attribute] = value;
-        } else if (value === false) {
-          this._cardNumberField.removeAttribute(attribute);
-        } else {
-          this._cardNumberField.setAttribute(attribute, value);
-        }
-      }
-    }
+  protected setSubmitListener() {
+    super.setEventListener(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM);
   }
 
-  /**
-   * Live card formatting based on binLookup request.
-   * @param cardNumber
-   * @private
-   */
-  private _formatCardNumber(cardNumber: string) {
-    const format = this._getCardFormat(cardNumber);
-    const previousValue = cardNumber;
-    let value = previousValue;
-    let selectEnd = this._cardNumberField.selectionEnd;
-    let selectStart = this._cardNumberField.selectionStart;
-
-    if (format && value.length > 0) {
-      value = Utils.stripChars(value, undefined);
-      let matches = value.match(new RegExp(format, '')).slice(1);
-      if (Utils.inArray(matches, undefined)) {
-        matches = matches.slice(0, matches.indexOf(undefined));
-      }
-      const matched = matches.length;
-      if (this.binLookup.binLookup(value).format && matched > 1) {
-        const preMatched = previousValue.split(' ').length;
-        selectStart += matched - preMatched;
-        selectEnd += matched - preMatched;
-        value = matches.join(' ');
-      }
-    }
-
-    if (value !== previousValue) {
-      this._setCardNumberAttributes({ value });
-      this._cardNumberField.setSelectionRange(selectStart, selectEnd);
-    }
-    this._cardNumberFormatted = value;
-    this._cardNumberValue = value.replace(/\s/g, '');
-    return value;
-  }
-
-  /**
-   * Inform about security code length based on binLookup request.
-   * @private
-   */
   private _publishSecurityCodeLength() {
     const { value } = this.getState();
     const messageBusEvent: IMessageBusEvent = {
@@ -168,9 +115,9 @@ export default class CardNumber extends FormField {
   private _getSecurityCodeLength = (cardNumber: string) =>
     this._getBinLookupDetails(cardNumber) ? this._getBinLookupDetails(cardNumber).cvcLength[0] : undefined;
 
-  private _getMaxLengthOfCardNumber(cardNumber: string) {
-    const cardLengthFromBin = this._getPossibleCardLength(cardNumber);
-    const cardFormat = this._getCardFormat(cardNumber);
+  private _getMaxLengthOfCardNumber() {
+    const cardLengthFromBin = this._getPossibleCardLength(this._inputElement.value);
+    const cardFormat = this._getCardFormat(this._inputElement.value);
     let numberOfWhitespaces;
     if (cardFormat) {
       numberOfWhitespaces = cardFormat.split('d').length - CardNumber.WHITESPACES_DECREASE_NUMBER;
@@ -182,15 +129,24 @@ export default class CardNumber extends FormField {
     return this._cardNumberLength;
   }
 
-  private _getFormFieldState(): IFormFieldState {
-    const { value, validity } = this.getState();
+  private _getCardNumberFieldState(): IFormFieldState {
+    const { validity } = this.getState();
     this._publishSecurityCodeLength();
-    this._formatCardNumber(value);
     return {
       formattedValue: this._cardNumberFormatted,
       validity,
       value: this._cardNumberValue
     };
+  }
+
+  private _setInputValue() {
+    this._getMaxLengthOfCardNumber();
+    this._hideSecurityCodeField(this._inputElement.value);
+    this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._cardNumberLength);
+    const { formatted, nonformatted } = this._formatter.number(this._inputElement.value, Selectors.CARD_NUMBER_INPUT);
+    this._inputElement.value = formatted;
+    this._cardNumberValue = nonformatted;
+    this.validation.keepCursorAtSamePosition(this._inputElement);
   }
 
   private _setDisableListener() {
@@ -207,10 +163,20 @@ export default class CardNumber extends FormField {
     });
   }
 
-  private _sendState() {
-    const { value, validity } = this._getFormFieldState();
+  private _hideSecurityCodeField(cardNumber: string) {
+    const number: string = Validation.clearNonDigitsChars(cardNumber);
+    const isCardPiba: boolean = this.binLookup.binLookup(number).type === 'PIBA';
     const messageBusEvent: IMessageBusEvent = {
-      data: this._getFormFieldState(),
+      data: isCardPiba,
+      type: MessageBus.EVENTS.DISABLE_SECURITY_CODE
+    };
+    this._messageBus.publish(messageBusEvent);
+  }
+
+  private _sendState() {
+    const { value, validity } = this._getCardNumberFieldState();
+    const messageBusEvent: IMessageBusEvent = {
+      data: this._getCardNumberFieldState(),
       type: MessageBus.EVENTS.CHANGE_CARD_NUMBER
     };
     if (validity) {
@@ -223,3 +189,5 @@ export default class CardNumber extends FormField {
     this._messageBus.publish(messageBusEvent);
   }
 }
+
+export default CardNumber;

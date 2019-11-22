@@ -15,45 +15,28 @@ const {
   VALIDATION_ERROR
 } = Language.translations;
 
-/**
- * Base class for validation, aggregates common methods and attributes for all subclasses
- */
 export default class Validation extends Frame {
   public static ERROR_FIELD_CLASS: string = 'error-field';
 
-  /**
-   * Method for prevent inserting non digits
-   * @param event
-   */
   public static isCharNumber(event: KeyboardEvent) {
     const key: string = event.key;
-    const regex = new RegExp(Validation.ONLY_DIGITS_REGEXP);
+    const regex = new RegExp(Validation.ESCAPE_DIGITS_REGEXP);
     return regex.test(key);
   }
 
-  /**
-   * Method to determine whether enter key is pressed
-   * @param event
-   */
-  public static isEnter(event: KeyboardEvent) {
+  public static isKeyEnter(event: KeyboardEvent) {
     const keyCode: number = event.keyCode;
     return keyCode === Validation.ENTER_KEY_CODE;
   }
 
-  /**
-   * Sets custom validation error in validity input object.
-   * @param inputElement
-   * @param errorContent
-   */
+  public static clearNonDigitsChars = (value: string) => {
+    return value.replace(Validation.ESCAPE_DIGITS_REGEXP, '');
+  };
+
   public static setCustomValidationError(inputElement: HTMLInputElement, errorContent: string) {
     inputElement.setCustomValidity(errorContent);
   }
 
-  /**
-   * Gets validity state from input object and sets proper Validation message.
-   * @param validityState
-   * @private
-   */
   public static getValidationMessage(validityState: ValidityState): string {
     const { customError, patternMismatch, valid, valueMissing } = validityState;
     let validationMessage: string = '';
@@ -72,6 +55,7 @@ export default class Validation extends Frame {
   }
 
   protected static STANDARD_FORMAT_PATTERN: string = '(\\d{1,4})(\\d{1,4})?(\\d{1,4})?(\\d+)?';
+  private static ESCAPE_DIGITS_REGEXP = /[^\d]/g;
   private static BACKSPACE_KEY_CODE: number = 8;
   private static CARD_NUMBER_DEFAULT_LENGTH: number = 16;
   private static DELETE_KEY_CODE: number = 46;
@@ -87,7 +71,6 @@ export default class Validation extends Frame {
     securityCode: 'securitycode'
   };
   private static ENTER_KEY_CODE = 13;
-  private static ONLY_DIGITS_REGEXP = /^[0-9]*$/;
   private static readonly MERCHANT_EXTRA_FIELDS_PREFIX = 'billing';
 
   public validation: IValidation;
@@ -112,16 +95,14 @@ export default class Validation extends Frame {
     this.onInit();
   }
 
-  /**
-   * Listens to backend validation event from MessageBus and sets proper validation actions.
-   * @param inputElement
-   * @param messageElement
-   * @param event
-   */
   public backendValidation(inputElement: HTMLInputElement, messageElement: HTMLElement, event: string) {
     this._messageBus.subscribe(event, (data: IMessageBusValidateField) => {
       this.checkBackendValidity(data, inputElement, messageElement);
     });
+  }
+
+  public isPressedKeyDelete(): boolean {
+    return this._currentKeyCode === Validation.DELETE_KEY_CODE;
   }
 
   public setKeyDownProperties(element: HTMLInputElement, event: KeyboardEvent) {
@@ -136,7 +117,7 @@ export default class Validation extends Frame {
     const start: number = this._selectionRangeStart;
     const end: number = this._selectionRangeEnd;
 
-    if (this._isPressedKeyDelete()) {
+    if (this.isPressedKeyDelete()) {
       element.setSelectionRange(start, end);
     } else if (this._isPressedKeyBackspace()) {
       element.setSelectionRange(start - Validation.CURSOR_SINGLE_SKIP, end - Validation.CURSOR_SINGLE_SKIP);
@@ -157,9 +138,6 @@ export default class Validation extends Frame {
     this.luhnCheckValidation(isLuhnOk, field, input, message);
   }
 
-  /**
-   * Send request via MessageBus to let know if form should be blocked or not.
-   */
   public blockForm(state: boolean) {
     const messageBusEvent: IMessageBusEvent = {
       data: state,
@@ -169,12 +147,6 @@ export default class Validation extends Frame {
     return state;
   }
 
-  /**
-   * Triggers setError method with proper parameters.
-   * @param data
-   * @param inputElement
-   * @param messageElement
-   */
   public checkBackendValidity(
     data: IMessageBusValidateField,
     inputElement: HTMLInputElement,
@@ -183,10 +155,6 @@ export default class Validation extends Frame {
     this.setError(inputElement, messageElement, data);
   }
 
-  /**
-   * Gets backend error data and assign it to proper input field.
-   * @param errorData
-   */
   public getErrorData(errorData: IErrorData) {
     const { errordata, errormessage } = StCodec.getErrorData(errorData);
     const validationEvent: IMessageBusEvent = {
@@ -214,12 +182,6 @@ export default class Validation extends Frame {
     return { field: errordata[0], errormessage };
   }
 
-  /**
-   * Sets all necessary error properties on input and label.
-   * @param inputElement
-   * @param messageElement
-   * @param message
-   */
   public setError(inputElement: HTMLInputElement, messageElement: HTMLElement, data: IMessageBusValidateField) {
     this._assignErrorDetails(inputElement, messageElement, data);
   }
@@ -267,6 +229,15 @@ export default class Validation extends Frame {
     };
   }
 
+  public removeError(element: HTMLInputElement, errorContainer: HTMLElement) {
+    element.classList.remove(Validation.ERROR_CLASS);
+    errorContainer.textContent = '';
+  }
+
+  public limitLength(value: string, length: number): string {
+    return value ? value.substring(0, length) : '';
+  }
+
   public setFormValidity(state: any) {
     const validationEvent: IMessageBusEvent = {
       data: { ...state },
@@ -287,16 +258,10 @@ export default class Validation extends Frame {
     return this._currentKeyCode === Validation.BACKSPACE_KEY_CODE;
   }
 
-  protected _isPressedKeyDelete(): boolean {
-    return this._currentKeyCode === Validation.DELETE_KEY_CODE;
-  }
-
-  protected limitLength(value: string, length: number): string {
-    return value.substring(0, length);
-  }
-
   protected removeNonDigits(value: string): string {
-    return value.replace(Validation.MATCH_CHARS, '');
+    if (value) {
+      return value.replace(Validation.MATCH_CHARS, '');
+    }
   }
 
   protected getCardDetails(cardNumber: string = ''): BrandDetailsType {
@@ -313,11 +278,11 @@ export default class Validation extends Frame {
   }
 
   protected expirationDate(value: string) {
-    this.expirationDateValue = this.removeNonDigits(value);
+    this.expirationDateValue = value ? this.removeNonDigits(value) : '';
   }
 
   protected securityCode(value: string, length: number) {
-    this.securityCodeValue = this.limitLength(this.removeNonDigits(value), length);
+    this.securityCodeValue = value ? this.limitLength(this.removeNonDigits(value), length) : '';
   }
 
   /**
@@ -396,15 +361,5 @@ export default class Validation extends Frame {
       }
     }
     inputElement.setCustomValidity(data.message);
-  }
-
-  private _setError(element: HTMLInputElement, errorContainer: HTMLElement, errorMessage: string) {
-    element.classList.add(Validation.ERROR_CLASS);
-    errorContainer.textContent = this._translator.translate(errorMessage);
-  }
-
-  private _removeError(element: HTMLInputElement, errorContainer: HTMLElement) {
-    element.classList.remove(Validation.ERROR_CLASS);
-    errorContainer.textContent = '';
   }
 }

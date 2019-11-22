@@ -77,7 +77,7 @@ describe('FormField', () => {
 
     // when
     beforeEach(() => {
-      Validation.isEnter = jest.fn().mockReturnValue(true);
+      Validation.isKeyEnter = jest.fn().mockReturnValue(true);
       // @ts-ignore
       instance._messageBus.publish = jest.fn();
       event.preventDefault = jest.fn();

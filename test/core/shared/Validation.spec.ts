@@ -29,16 +29,16 @@ describe('Validation', () => {
   });
 
   // given
-  describe('isEnter()', () => {
+  describe('isKeyEnter()', () => {
     const { keyCodeForOther, keyCodeForEnter, eventWithOther, eventWithEnter } = validationFixture();
     // then
     it(`should return true if indicated keyCode is equal ${keyCodeForEnter}`, () => {
-      expect(Validation.isEnter(eventWithEnter)).toEqual(true);
+      expect(Validation.isKeyEnter(eventWithEnter)).toEqual(true);
     });
 
     // then
     it(`should return false if indicated keyCode ${keyCodeForOther} is not equal ${keyCodeForEnter}`, () => {
-      expect(Validation.isEnter(eventWithOther)).toEqual(false);
+      expect(Validation.isKeyEnter(eventWithOther)).toEqual(false);
     });
   });
 
@@ -355,10 +355,10 @@ function validationFixture() {
   };
 
   const isCharNumberTestCases = [
-    [new KeyboardEvent('keypress', { key: 'a' }), false],
-    [new KeyboardEvent('keypress', { key: '0' }), true],
-    [new KeyboardEvent('keypress', { key: '"' }), false],
-    [new KeyboardEvent('keypress', { key: 'Shift' }), false]
+    [new KeyboardEvent('keypress', { key: 'a' }), true],
+    [new KeyboardEvent('keypress', { key: '0' }), false],
+    [new KeyboardEvent('keypress', { key: '"' }), true],
+    [new KeyboardEvent('keypress', { key: 'Shift' }), true]
   ];
 
   // @ts-ignore
