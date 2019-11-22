@@ -263,7 +263,6 @@ class CardFrames extends RegisterFrames {
   private _validateFieldsAfterSubmit() {
     this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_FORM, (data: IValidationMessageBus) => {
       const { cardNumber, expirationDate, securityCode } = data;
-      console.error(data);
       if (!cardNumber.state) {
         this._publishValidatedFieldState(cardNumber, MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD);
       }
