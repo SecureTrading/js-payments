@@ -18,6 +18,7 @@ class CardFrames extends RegisterFrames {
   private static SUBMIT_BUTTON_DISABLED_CLASS = 'st-button-submit__disabled';
 
   protected hasAnimatedCard: boolean;
+  protected fieldsToSubmit: string[];
   private _animatedCardMounted: HTMLElement;
   private _cardNumberMounted: HTMLElement;
   private _expirationDateMounted: HTMLElement;
@@ -49,12 +50,14 @@ class CardFrames extends RegisterFrames {
     animatedCard: boolean,
     deferInit: boolean,
     buttonId: string,
-    startOnLoad: boolean
+    startOnLoad: boolean,
+    fieldsToSubmit: string[]
   ) {
-    super(jwt, origin, componentIds, styles, animatedCard);
+    super(jwt, origin, componentIds, styles, animatedCard, fieldsToSubmit);
     this._validation = new Validation();
     this._messageBus = new MessageBus();
     this._translator = new Translator(this.params.locale);
+    this.fieldsToSubmit = fieldsToSubmit;
     this.hasAnimatedCard = animatedCard;
     this._buttonId = buttonId;
     this._deferInit = deferInit;
@@ -63,6 +66,8 @@ class CardFrames extends RegisterFrames {
     this._paymentTypes = paymentTypes;
     this._payMessage = this._translator.translate(Language.translations.PAY);
     this._processingMessage = `${this._translator.translate(Language.translations.PROCESSING)} ...`;
+    console.error(this.fieldsToSubmit);
+    console.error(fieldsToSubmit);
     this.onInit();
   }
 
@@ -102,7 +107,23 @@ class CardFrames extends RegisterFrames {
         this.componentIds.animatedCard
       ];
     } else {
-      return [this.componentIds.cardNumber, this.componentIds.expirationDate, this.componentIds.securityCode];
+      console.error('dupa', this.fieldsToSubmit);
+      if (this.fieldsToSubmit.length) {
+        console.error('dup1a');
+        const components: string[] = [];
+        if (this.fieldsToSubmit.includes('card')) {
+          components.push(this.componentIds.cardNumber);
+        }
+        if (this.fieldsToSubmit.includes('date')) {
+          components.push(this.componentIds.expirationDate);
+        }
+        if (this.fieldsToSubmit.includes('code')) {
+          components.push(this.componentIds.securityCode);
+        }
+        return components;
+      } else {
+        return [this.componentIds.cardNumber, this.componentIds.expirationDate, this.componentIds.securityCode];
+      }
     }
   }
 
@@ -173,34 +194,55 @@ class CardFrames extends RegisterFrames {
     securityCode = Object.assign({}, defaultStyles, securityCode);
     expirationDate = Object.assign({}, defaultStyles, expirationDate);
 
-    this._cardNumber = new Element();
-    this._expirationDate = new Element();
-    this._securityCode = new Element();
-    this._animatedCard = new Element();
+    if (this.fieldsToSubmit.length) {
+      if (this.fieldsToSubmit.includes('card')) {
+        this._cardNumber = new Element();
+        this._cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, cardNumber, this.params);
+        this._cardNumberMounted = this._cardNumber.mount(Selectors.CARD_NUMBER_IFRAME);
+        this.elementsToRegister.push(this._cardNumberMounted);
+      }
+      if (this.fieldsToSubmit.includes('date')) {
+        this._expirationDate = new Element();
+        this._expirationDate.create(Selectors.EXPIRATION_DATE_COMPONENT_NAME, expirationDate, this.params);
+        this._expirationDateMounted = this._expirationDate.mount(Selectors.EXPIRATION_DATE_IFRAME);
+        this.elementsToRegister.push(this._expirationDateMounted);
+      }
+      if (this.fieldsToSubmit.includes('code')) {
+        this._securityCode = new Element();
+        this._securityCode.create(Selectors.SECURITY_CODE_COMPONENT_NAME, securityCode, this.params);
+        this._securityCodeMounted = this._securityCode.mount(Selectors.SECURITY_CODE_IFRAME);
+        this.elementsToRegister.push(this._securityCodeMounted);
+      }
+    } else {
+      this._cardNumber = new Element();
+      this._expirationDate = new Element();
+      this._securityCode = new Element();
+      this._animatedCard = new Element();
 
-    this._cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, cardNumber, this.params);
-    this._cardNumberMounted = this._cardNumber.mount(Selectors.CARD_NUMBER_IFRAME);
-    this.elementsToRegister.push(this._cardNumberMounted);
+      this._cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, cardNumber, this.params);
+      this._cardNumberMounted = this._cardNumber.mount(Selectors.CARD_NUMBER_IFRAME);
+      this.elementsToRegister.push(this._cardNumberMounted);
 
-    this._expirationDate.create(Selectors.EXPIRATION_DATE_COMPONENT_NAME, expirationDate, this.params);
-    this._expirationDateMounted = this._expirationDate.mount(Selectors.EXPIRATION_DATE_IFRAME);
-    this.elementsToRegister.push(this._expirationDateMounted);
+      this._expirationDate.create(Selectors.EXPIRATION_DATE_COMPONENT_NAME, expirationDate, this.params);
+      this._expirationDateMounted = this._expirationDate.mount(Selectors.EXPIRATION_DATE_IFRAME);
+      this.elementsToRegister.push(this._expirationDateMounted);
 
-    this._securityCode.create(Selectors.SECURITY_CODE_COMPONENT_NAME, securityCode, this.params);
-    this._securityCodeMounted = this._securityCode.mount(Selectors.SECURITY_CODE_IFRAME);
-    this.elementsToRegister.push(this._securityCodeMounted);
+      this._securityCode.create(Selectors.SECURITY_CODE_COMPONENT_NAME, securityCode, this.params);
+      this._securityCodeMounted = this._securityCode.mount(Selectors.SECURITY_CODE_IFRAME);
+      this.elementsToRegister.push(this._securityCodeMounted);
 
-    const animatedCardConfig = { ...this.params };
-    if (this._paymentTypes !== undefined) {
-      animatedCardConfig.paymentTypes = this._paymentTypes;
+      const animatedCardConfig = { ...this.params };
+      if (this._paymentTypes !== undefined) {
+        animatedCardConfig.paymentTypes = this._paymentTypes;
+      }
+      if (this._defaultPaymentType !== undefined) {
+        animatedCardConfig.defaultPaymentType = this._defaultPaymentType;
+      }
+
+      this._animatedCard.create(Selectors.ANIMATED_CARD_COMPONENT_NAME, {}, animatedCardConfig);
+      this._animatedCardMounted = this._animatedCard.mount(Selectors.ANIMATED_CARD_COMPONENT_FRAME, '-1');
+      this.elementsToRegister.push(this._animatedCardMounted);
     }
-    if (this._defaultPaymentType !== undefined) {
-      animatedCardConfig.defaultPaymentType = this._defaultPaymentType;
-    }
-
-    this._animatedCard.create(Selectors.ANIMATED_CARD_COMPONENT_NAME, {}, animatedCardConfig);
-    this._animatedCardMounted = this._animatedCard.mount(Selectors.ANIMATED_CARD_COMPONENT_FRAME, '-1');
-    this.elementsToRegister.push(this._animatedCardMounted);
   }
 
   /**

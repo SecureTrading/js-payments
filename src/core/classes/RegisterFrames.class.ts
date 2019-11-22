@@ -14,6 +14,7 @@ export default class RegisterFrames {
   protected componentIds: any;
   protected hasAnimatedCard: boolean;
   protected submitCallback: any;
+  protected fieldsToSubmit: string[];
   private stJwt: StJwt;
 
   constructor(
@@ -22,17 +23,21 @@ export default class RegisterFrames {
     componentIds: {},
     styles: IStyles,
     animatedCard: boolean,
+    fieldsToSubmit: string[],
     submitCallback?: any
   ) {
-    this.styles = this._getStyles(styles);
+    console.error(fieldsToSubmit);
+    this.fieldsToSubmit = fieldsToSubmit;
     this.componentIds = componentIds;
     this.submitCallback = submitCallback;
     this.hasAnimatedCard = animatedCard;
-    this.elementsTargets = this.setElementsFields();
     this.elementsToRegister = [];
     this.jwt = jwt;
-    this.stJwt = new StJwt(jwt);
     this.origin = origin;
+    this.styles = this._getStyles(styles);
+    this.elementsTargets = this.setElementsFields();
+    console.error(this.fieldsToSubmit);
+    this.stJwt = new StJwt(jwt);
     this.params = { locale: this.stJwt.locale, origin: this.origin };
   }
 
