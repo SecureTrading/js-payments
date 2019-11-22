@@ -1,6 +1,7 @@
-import './animated-card.scss';
-import AnimatedCard from './AnimatedCard';
+import '@securetrading/js-payments-card/dist/stcardstyle.css';
+import Card from '@securetrading/js-payments-card/stcard.js';
 
-(() => {
-  return AnimatedCard.ifCardExists() && new AnimatedCard();
-})();
+const card = new Card({
+  animatedCardContainer: 'st-animated-card',
+  locale: 'en_GB'
+});
