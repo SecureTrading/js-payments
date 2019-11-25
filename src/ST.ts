@@ -14,6 +14,7 @@ import CardinalCommerceMock from './core/integrations/CardinalCommerceMock';
 import GoogleAnalytics from './core/integrations/GoogleAnalytics';
 import VisaCheckout from './core/integrations/VisaCheckout';
 import VisaCheckoutMock from './core/integrations/VisaCheckoutMock';
+import Card from '@securetrading/js-payments-card/stcard.js';
 import {
   IByPassInit,
   IComponentsConfig,
@@ -293,7 +294,12 @@ class ST {
       this._submitCallback
     );
     ST._configureMerchantFields();
+    if (animatedCard) {
+      this.setAnimatedCardListeners();
+    }
   }
+
+  public setAnimatedCardListeners() {}
 
   /**
    * If startOnLoad is false, initializes all necessary components, otherwise proceeds immediate payment configuration.
