@@ -9,18 +9,21 @@ if (Card) {
   });
 
   const messageBus: MessageBus = new MessageBus();
-  messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, () => {
+  messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: IFormFieldState) => {
     console.error('CARD');
-    card.onCardNumberChange();
+    console.error(data);
+    card.onCardNumberInput();
   });
 
-  messageBus.subscribe(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, () => {
+  messageBus.subscribe(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, (data: IFormFieldState) => {
     console.error('CHANGE_EXPIRATION_DATE');
+    console.error(data);
     card.onCardNumberChange();
   });
 
-  messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, () => {
+  messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: IFormFieldState) => {
     console.error('CHANGE_SECURITY_CODE');
+    console.error(data);
     card.onCardNumberChange();
   });
 } else {
