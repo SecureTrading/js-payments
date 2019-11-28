@@ -14,7 +14,6 @@ import CardinalCommerceMock from './core/integrations/CardinalCommerceMock';
 import GoogleAnalytics from './core/integrations/GoogleAnalytics';
 import VisaCheckout from './core/integrations/VisaCheckout';
 import VisaCheckoutMock from './core/integrations/VisaCheckoutMock';
-import Card from '@securetrading/js-payments-card/stcard.js';
 import {
   IByPassInit,
   IComponentsConfig,
