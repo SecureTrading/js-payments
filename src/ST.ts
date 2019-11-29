@@ -227,7 +227,6 @@ class ST {
     const { defaultPaymentType, paymentTypes, startOnLoad } = config;
     let cardFrames: object;
     if (!startOnLoad) {
-      console.error(fieldsToSubmit);
       cardFrames = new CardFrames(
         jwt,
         origin,
@@ -263,7 +262,7 @@ class ST {
   private _messageBus: MessageBus;
   private readonly _deferInit: boolean;
   private readonly _buttonId: string;
-  private fieldsToSubmit: string[];
+  private readonly fieldsToSubmit: string[];
 
   constructor(config: IConfig) {
     const {

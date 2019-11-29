@@ -26,7 +26,6 @@ export default class RegisterFrames {
     fieldsToSubmit: string[],
     submitCallback?: any
   ) {
-    console.error(fieldsToSubmit);
     this.fieldsToSubmit = fieldsToSubmit;
     this.componentIds = componentIds;
     this.submitCallback = submitCallback;
@@ -36,7 +35,6 @@ export default class RegisterFrames {
     this.origin = origin;
     this.styles = this._getStyles(styles);
     this.elementsTargets = this.setElementsFields();
-    console.error(this.fieldsToSubmit);
     this.stJwt = new StJwt(jwt);
     this.params = { locale: this.stJwt.locale, origin: this.origin };
   }

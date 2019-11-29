@@ -58,6 +58,7 @@ export default class MessageBus {
    * @param publishToParent
    */
   public publish(event: IMessageBusEvent, publishToParent?: boolean) {
+    console.error(event);
     let subscribersStore;
 
     if (publishToParent) {

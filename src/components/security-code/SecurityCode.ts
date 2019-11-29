@@ -1,9 +1,11 @@
+import JwtDecode from 'jwt-decode';
 import BinLookup from '../../core/shared/BinLookup';
 import Formatter from '../../core/shared/Formatter';
 import FormField from '../../core/shared/FormField';
 import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
+import { StCodec } from '../../core/classes/StCodec.class';
 
 class SecurityCode extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
@@ -26,6 +28,7 @@ class SecurityCode extends FormField {
 
   constructor() {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
+    this._subscribeSecurityCodeChange();
     this._securityCodeWrapper = document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR) as HTMLElement;
     this._binLookup = new BinLookup();
     this._formatter = new Formatter();
@@ -82,8 +85,8 @@ class SecurityCode extends FormField {
   private _init() {
     super.setEventListener(MessageBus.EVENTS.FOCUS_SECURITY_CODE, false);
     super.setEventListener(MessageBus.EVENTS.BLUR_SECURITY_CODE);
-    this._setSecurityCodePattern(SecurityCode.MATCH_EXACTLY_THREE_DIGITS);
     this._subscribeSecurityCodeChange();
+    this._setSecurityCodePattern(SecurityCode.MATCH_EXACTLY_THREE_DIGITS);
     this._setDisableListener();
     this._disableSecurityCodeListener();
     this.validation.backendValidation(
@@ -112,6 +115,7 @@ class SecurityCode extends FormField {
 
   private _subscribeSecurityCodeChange() {
     this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (length: number) => {
+      console.error('działa');
       if (length === SecurityCode.SPECIAL_INPUT_LENGTH) {
         this._securityCodeLength = SecurityCode.SPECIAL_INPUT_LENGTH;
         this._setSecurityCodePattern(SecurityCode.MATCH_EXACTLY_FOUR_DIGITS);

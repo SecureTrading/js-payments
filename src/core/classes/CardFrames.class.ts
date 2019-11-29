@@ -8,6 +8,8 @@ import { IStyles } from '../shared/Styler';
 import { Translator } from '../shared/Translator';
 import Validation from '../shared/Validation';
 import RegisterFrames from './RegisterFrames.class';
+import JwtDecode from 'jwt-decode';
+import BinLookup from '../shared/BinLookup';
 
 /**
  * Defines all card elements of form and their placement on merchant site.
@@ -29,9 +31,11 @@ class CardFrames extends RegisterFrames {
   private _securityCode: Element;
   private _messageBus: MessageBus;
   private _validation: Validation;
+  private _binLookup: BinLookup;
   private _translator: Translator;
   private _messageBusEvent: IMessageBusEvent = { data: { message: '' }, type: '' };
   private _submitButton: HTMLInputElement | HTMLButtonElement;
+  private _jwt: string;
   private readonly _buttonId: string;
   private readonly _deferInit: boolean;
   private readonly _defaultPaymentType: string;
@@ -56,7 +60,9 @@ class CardFrames extends RegisterFrames {
     super(jwt, origin, componentIds, styles, animatedCard, fieldsToSubmit);
     this._validation = new Validation();
     this._messageBus = new MessageBus();
+    this._binLookup = new BinLookup();
     this._translator = new Translator(this.params.locale);
+    this._jwt = jwt;
     this.fieldsToSubmit = fieldsToSubmit;
     this.hasAnimatedCard = animatedCard;
     this._buttonId = buttonId;
@@ -66,9 +72,22 @@ class CardFrames extends RegisterFrames {
     this._paymentTypes = paymentTypes;
     this._payMessage = this._translator.translate(Language.translations.PAY);
     this._processingMessage = `${this._translator.translate(Language.translations.PROCESSING)} ...`;
-    console.error(this.fieldsToSubmit);
-    console.error(fieldsToSubmit);
     this.onInit();
+  }
+
+  protected getSecurityCodeDetails(jwt: string) {
+    const cardDetails = JwtDecode(jwt) as any;
+    let { cvcLength } = this._binLookup.binLookup(cardDetails.payload.pan);
+    let cvcMaxLength: number = cvcLength.slice(-1)[0];
+
+    const messageBusEvent: IMessageBusEvent = {
+      data: cvcMaxLength,
+      type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
+    };
+
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
+      this._messageBus.publish(messageBusEvent);
+    });
   }
 
   /**
@@ -81,6 +100,7 @@ class CardFrames extends RegisterFrames {
     this._initSubscribes();
     this._initCardFields();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
+    this.getSecurityCodeDetails(this._jwt);
   }
 
   /**
@@ -107,9 +127,7 @@ class CardFrames extends RegisterFrames {
         this.componentIds.animatedCard
       ];
     } else {
-      console.error('dupa', this.fieldsToSubmit);
       if (this.fieldsToSubmit.length) {
-        console.error('dup1a');
         const components: string[] = [];
         if (this.fieldsToSubmit.includes('card')) {
           components.push(this.componentIds.cardNumber);
