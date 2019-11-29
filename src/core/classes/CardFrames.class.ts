@@ -303,7 +303,7 @@ class CardFrames extends RegisterFrames {
    */
   private _publishSubmitEvent(deferInit: boolean) {
     const messageBusEvent: IMessageBusEvent = {
-      data: { deferInit },
+      data: { deferInit, fieldsToSubmit: this.fieldsToSubmit },
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
     this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);

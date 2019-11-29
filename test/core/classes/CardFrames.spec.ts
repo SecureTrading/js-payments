@@ -395,7 +395,8 @@ function cardFramesFixture() {
     true,
     false,
     'merchant-submit-button',
-    false
+    false,
+    ['pan', 'date', 'code']
   );
   return { instance };
 }

@@ -192,6 +192,7 @@ class ControlFrame extends Frame {
    */
   private _initSubmitFormEvent() {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, (data?: ISubmitData) => {
+      console.error('Control frame ', data.fieldsToSubmit);
       this._onSubmit(data);
     });
   }
@@ -375,8 +376,12 @@ class ControlFrame extends Frame {
       dataInJwt,
       this._isPaymentReady,
       this._formFields,
-      deferInit
+      deferInit,
+      data.fieldsToSubmit
     );
+    console.error(validity);
+    console.error(this._isPaymentReady);
+    console.error(this._formFields);
     if (validity) {
       if (deferInit) {
         this._messageBus.publish({

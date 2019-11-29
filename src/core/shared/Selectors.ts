@@ -43,17 +43,6 @@ export default class Selectors {
   public static readonly ANIMATED_CARD_COMPONENT: string = `${environment.FRAME_URL}/animated-card.html`;
 
   public static readonly ANIMATED_CARD_INPUT_SELECTOR: string = 'st-animated-card';
-  public static readonly ANIMATED_CARD_CREDIT_CARD_ID = 'st-animated-card-number';
-  public static readonly ANIMATED_CARD_EXPIRATION_DATE_ID = 'st-animated-card-expiration-date';
-  public static readonly ANIMATED_CARD_SECURITY_CODE_ID = 'st-animated-card-security-code';
-  public static readonly ANIMATED_CARD_SECURITY_CODE_FRONT_ID = 'st-animated-card-security-code-front';
-  public static readonly ANIMATED_CARD_SECURITY_CODE_FRONT_FIELD_ID = 'st-animated-card-security-code-front-field';
-  public static readonly ANIMATED_CARD_SIDE_FRONT: string = 'st-animated-card-side-front';
-  public static readonly ANIMATED_CARD_SIDE_BACK: string = 'st-animated-card-side-back';
-  public static readonly ANIMATED_CARD_PAYMENT_LOGO_ID: string = 'st-payment-logo';
   public static readonly ANIMATED_CARD_COMPONENT_FRAME: string = 'st-animated-card-iframe';
   public static readonly ANIMATED_CARD_COMPONENT_NAME: string = 'animatedCard';
-  public static readonly ANIMATED_CARD_CREDIT_CARD_LABEL = 'st-animated-card-card-number-label';
-  public static readonly ANIMATED_CARD_EXPIRATION_DATE_LABEL = 'st-animated-card-expiration-date-label';
-  public static readonly ANIMATED_CARD_SECURITY_CODE_LABEL = 'st-animated-card-security-code-label';
 }

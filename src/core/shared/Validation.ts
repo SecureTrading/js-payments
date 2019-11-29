@@ -204,15 +204,18 @@ export default class Validation extends Frame {
     dataInJwt: boolean,
     paymentReady: boolean,
     formFields: any,
-    deferInit: boolean
+    deferInit: boolean,
+    fieldsToSubmit: string[]
   ): { validity: boolean; card: ICard } {
     this._isPaymentReady = paymentReady;
     if (dataInJwt) {
       this._isFormValid = true;
       this._isPaymentReady = true;
     } else {
-      this._isFormValid =
-        formFields.cardNumber.validity && formFields.expirationDate.validity && formFields.securityCode.validity;
+      let cardNumberValidity: boolean = fieldsToSubmit.includes('pan') ? formFields.cardNumber.validity : true;
+      let expirationDateValidity: boolean = fieldsToSubmit.includes('date') ? formFields.expirationDate.validity : true;
+      let securityCodeValidity: boolean = fieldsToSubmit.includes('code') ? formFields.securityCode.validity : true;
+      this._isFormValid = cardNumberValidity && expirationDateValidity && securityCodeValidity;
       this._card = {
         expirydate: formFields.expirationDate.value,
         pan: formFields.cardNumber.value,

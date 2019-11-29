@@ -2,6 +2,8 @@ interface ISetRequestTypes {
   requestTypes: string[];
 }
 
-interface ISubmitData {}
+interface ISubmitData {
+  fieldsToSubmit?: string[];
+}
 
 export { ISetRequestTypes, ISubmitData };
