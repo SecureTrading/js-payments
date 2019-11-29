@@ -1,11 +1,9 @@
-import JwtDecode from 'jwt-decode';
 import BinLookup from '../../core/shared/BinLookup';
 import Formatter from '../../core/shared/Formatter';
 import FormField from '../../core/shared/FormField';
 import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
-import { StCodec } from '../../core/classes/StCodec.class';
 
 class SecurityCode extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
@@ -28,10 +26,10 @@ class SecurityCode extends FormField {
 
   constructor() {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
-    this._subscribeSecurityCodeChange();
-    this._securityCodeWrapper = document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR) as HTMLElement;
     this._binLookup = new BinLookup();
     this._formatter = new Formatter();
+    this._subscribeSecurityCodeChange();
+    this._securityCodeWrapper = document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR) as HTMLElement;
     this._securityCodeLength = SecurityCode.STANDARD_INPUT_LENGTH;
     this._init();
   }
@@ -43,43 +41,39 @@ class SecurityCode extends FormField {
   protected onBlur() {
     super.onBlur();
     this._sendState();
-    const messageBusEvent: IMessageBusEvent = {
-      data: false,
-      type: MessageBus.EVENTS.FOCUS_SECURITY_CODE
-    };
-    this._messageBus.publish(messageBusEvent);
+    this._broadcastFocusEvent(false, MessageBus.EVENTS.FOCUS_SECURITY_CODE);
   }
 
   protected onFocus(event: Event) {
     super.onFocus(event);
     this._sendState();
-    const messageBusEvent: IMessageBusEvent = {
-      data: true,
-      type: MessageBus.EVENTS.FOCUS_SECURITY_CODE
-    };
-    this._messageBus.publish(messageBusEvent);
+    this._broadcastFocusEvent(true, MessageBus.EVENTS.FOCUS_SECURITY_CODE);
   }
 
   protected onInput(event: Event) {
     super.onInput(event);
-    this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._securityCodeLength);
-    this._inputElement.value = this._formatter.code(
-      this._inputElement.value,
-      this._securityCodeLength,
-      Selectors.SECURITY_CODE_INPUT
-    );
+    this._setInputValue();
     this.validation.keepCursorAtSamePosition(this._inputElement);
     this._sendState();
   }
 
   protected onPaste(event: ClipboardEvent) {
     super.onPaste(event);
-    this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._securityCodeLength);
+    this._setInputValue();
     this._sendState();
   }
 
   protected onKeyPress(event: KeyboardEvent) {
     super.onKeyPress(event);
+  }
+
+  private _setInputValue() {
+    this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._securityCodeLength);
+    this._inputElement.value = this._formatter.code(
+      this._inputElement.value,
+      this._securityCodeLength,
+      Selectors.SECURITY_CODE_INPUT
+    );
   }
 
   private _init() {
@@ -96,6 +90,14 @@ class SecurityCode extends FormField {
     );
   }
 
+  private _broadcastFocusEvent(data: boolean, eventType: string) {
+    const messageBusEvent: IMessageBusEvent = {
+      data,
+      type: MessageBus.EVENTS.FOCUS_SECURITY_CODE
+    };
+    this._messageBus.publish(messageBusEvent);
+  }
+
   private _sendState() {
     const messageBusEvent: IMessageBusEvent = this.setMessageBusEvent(MessageBus.EVENTS.CHANGE_SECURITY_CODE);
     this._messageBus.publish(messageBusEvent);
@@ -103,29 +105,42 @@ class SecurityCode extends FormField {
 
   private _setDisableListener() {
     this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_SECURITY_CODE, (state: boolean) => {
-      if (state || this._securityCodeWrapper.style.opacity === SecurityCode.GREY_OUT) {
-        this._inputElement.setAttribute(SecurityCode.DISABLED_ATTRIBUTE_NAME, SecurityCode.DISABLED_ATTRIBUTE_NAME);
-        this._inputElement.classList.add(SecurityCode.DISABLED_ATTRIBUTE_CLASS);
-      } else {
-        this._inputElement.removeAttribute(SecurityCode.DISABLED_ATTRIBUTE_NAME);
-        this._inputElement.classList.remove(SecurityCode.DISABLED_ATTRIBUTE_CLASS);
-      }
+      return this._isSecurityCodeWrapperDisabled(state)
+        ? this._disableSecurityCodeInput
+        : this._enableSecurityCodeInput();
     });
+  }
+
+  private _isSecurityCodeWrapperDisabled(state: boolean): boolean {
+    return state || this._securityCodeWrapper.style.opacity === SecurityCode.GREY_OUT;
+  }
+
+  private _disableSecurityCodeInput() {
+    this._inputElement.setAttribute(SecurityCode.DISABLED_ATTRIBUTE_NAME, SecurityCode.DISABLED_ATTRIBUTE_NAME);
+    this._inputElement.classList.add(SecurityCode.DISABLED_ATTRIBUTE_CLASS);
+  }
+
+  private _enableSecurityCodeInput() {
+    this._inputElement.removeAttribute(SecurityCode.DISABLED_ATTRIBUTE_NAME);
+    this._inputElement.classList.remove(SecurityCode.DISABLED_ATTRIBUTE_CLASS);
+  }
+
+  private _setSecurityCodeProperties(length: number, pattern: string) {
+    this._securityCodeLength = length;
+    this._setSecurityCodePattern(pattern);
+    this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._securityCodeLength);
+  }
+
+  private _checkSecurityCodeLength(length: number) {
+    return length === SecurityCode.SPECIAL_INPUT_LENGTH
+      ? this._setSecurityCodeProperties(length, SecurityCode.MATCH_EXACTLY_FOUR_DIGITS)
+      : this._setSecurityCodeProperties(length, SecurityCode.MATCH_EXACTLY_THREE_DIGITS);
   }
 
   private _subscribeSecurityCodeChange() {
     this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (length: number) => {
-      console.error('działa');
-      if (length === SecurityCode.SPECIAL_INPUT_LENGTH) {
-        this._securityCodeLength = SecurityCode.SPECIAL_INPUT_LENGTH;
-        this._setSecurityCodePattern(SecurityCode.MATCH_EXACTLY_FOUR_DIGITS);
-        this._sendState();
-      } else {
-        this._setSecurityCodePattern(SecurityCode.MATCH_EXACTLY_THREE_DIGITS);
-        this._securityCodeLength = SecurityCode.STANDARD_INPUT_LENGTH;
-        this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._securityCodeLength);
-        this._sendState();
-      }
+      this._checkSecurityCodeLength(length);
+      this._sendState();
     });
   }
 

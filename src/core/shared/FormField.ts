@@ -16,6 +16,7 @@ export default class FormField extends Frame {
   protected _messageElement: HTMLDivElement;
   protected _cardNumberInput: HTMLInputElement;
   private _translator: Translator;
+  private _fieldsToSubmit: string[];
 
   constructor(inputSelector: string, messageSelector: string, labelSelector: string) {
     super();
@@ -121,6 +122,7 @@ export default class FormField extends Frame {
         this.validation.luhnCheck(this._cardNumberInput, this._inputElement, this._messageElement);
       }
       const messageBusEvent: IMessageBusEvent = {
+        data: { fieldsToSubmit: this.fieldsToSubmit },
         type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
       };
       this._messageBus.publish(messageBusEvent);

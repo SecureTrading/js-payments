@@ -1,5 +1,7 @@
+import JwtDecode from 'jwt-decode';
 import Element from '../Element';
 import { IValidationMessageBus } from '../models/Validation';
+import BinLookup from '../shared/BinLookup';
 import DomMethods from '../shared/DomMethods';
 import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
@@ -8,8 +10,6 @@ import { IStyles } from '../shared/Styler';
 import { Translator } from '../shared/Translator';
 import Validation from '../shared/Validation';
 import RegisterFrames from './RegisterFrames.class';
-import JwtDecode from 'jwt-decode';
-import BinLookup from '../shared/BinLookup';
 
 /**
  * Defines all card elements of form and their placement on merchant site.
@@ -18,7 +18,9 @@ class CardFrames extends RegisterFrames {
   private static SUBMIT_BUTTON_AS_BUTTON_MARKUP = 'button[type="submit"]';
   private static SUBMIT_BUTTON_AS_INPUT_MARKUP = 'input[type="submit"]';
   private static SUBMIT_BUTTON_DISABLED_CLASS = 'st-button-submit__disabled';
-
+  private static _preventFormSubmit() {
+    return document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).setAttribute('onsubmit', 'event.preventDefault()');
+  }
   protected hasAnimatedCard: boolean;
   protected fieldsToSubmit: string[];
   private _animatedCardMounted: HTMLElement;
@@ -35,8 +37,8 @@ class CardFrames extends RegisterFrames {
   private _translator: Translator;
   private _messageBusEvent: IMessageBusEvent = { data: { message: '' }, type: '' };
   private _submitButton: HTMLInputElement | HTMLButtonElement;
-  private _jwt: string;
   private readonly _buttonId: string;
+  private readonly _jwt: string;
   private readonly _deferInit: boolean;
   private readonly _defaultPaymentType: string;
   private readonly _paymentTypes: string[];
@@ -75,13 +77,15 @@ class CardFrames extends RegisterFrames {
     this.onInit();
   }
 
-  protected getSecurityCodeDetails(jwt: string) {
-    const cardDetails = JwtDecode(jwt) as any;
-    let { cvcLength } = this._binLookup.binLookup(cardDetails.payload.pan);
-    let cvcMaxLength: number = cvcLength.slice(-1)[0];
-
+  /**
+   * Broadcast security code length when there is only one field
+   * to be submit (cvv/cvc) and rest of them are in jwt.
+   * @param jwt
+   * @private
+   */
+  protected _broadcastSecurityCodeLength(jwt: string) {
     const messageBusEvent: IMessageBusEvent = {
-      data: cvcMaxLength,
+      data: this._getSecurityCodeLength(jwt),
       type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
     };
 
@@ -90,21 +94,18 @@ class CardFrames extends RegisterFrames {
     });
   }
 
-  /**
-   * Gathers and launches methods needed on initializing object.
-   */
   protected onInit() {
     this._deferJsinitOnLoad();
-    this._preventFormSubmit();
+    CardFrames._preventFormSubmit();
     this._setSubmitButton();
     this._initSubscribes();
     this._initCardFields();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
-    this.getSecurityCodeDetails(this._jwt);
+    this._broadcastSecurityCodeLength(this._jwt);
   }
 
   /**
-   * Register fields in clients form
+   * Registers and appends elements in users form.
    * @param fields
    * @param targets
    */
@@ -145,22 +146,24 @@ class CardFrames extends RegisterFrames {
     }
   }
 
+  /**
+   * Gets security code length based on BinLookup search.
+   * Method used in this class when there is only one field to be submit.
+   * @param jwt
+   * @private
+   */
+  private _getSecurityCodeLength(jwt: string): number {
+    const cardDetails = JwtDecode(jwt) as any;
+    const { cvcLength } = this._binLookup.binLookup(cardDetails.payload.pan);
+    return cvcLength.slice(-1)[0];
+  }
+
   private _deferJsinitOnLoad() {
     if (!this._deferInit && this._startOnLoad) {
       this._publishSubmitEvent(true);
     }
   }
 
-  private _preventFormSubmit() {
-    return document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).setAttribute('onsubmit', 'event.preventDefault()');
-  }
-
-  /**
-   *
-   * @param state
-   * @param eventName
-   * @private
-   */
   private _disableFormField(state: boolean, eventName: string) {
     const messageBusEvent: IMessageBusEvent = {
       data: state,

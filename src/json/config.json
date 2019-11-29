@@ -4,7 +4,7 @@
   "deferInit": false,
   "fieldsToSubmit": ["code"],
   "buttonId": "merchant-submit-button",
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NTAzNjE4NS40ODM5MTk0LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiNjAxMTAwMDAwMDAwMDMwMSIsImV4cGlyeWRhdGUiOiIwMS8yMiJ9fQ.OVK0NGY0X8rPDsIRZUEARPIHi6LUc_2LRUMLJ5vcNAQ",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NTA0Mjc3Mi42OTAzMjYsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdF9qYW1lczM4NjQxIiwibG9jYWxlIjoiZW5fR0IiLCJwYW4iOiI2MDExMDAwMDAwMDAwMzAxIiwiZXhwaXJ5ZGF0ZSI6IjAxLzIyIn19.RuVeIqSF59Dm0t6MmcaDTqby300WUTsBYFo_0UO_87I",
   "styles": {
     "defaultStyles": {
       "background-color-input": "AliceBlue"
