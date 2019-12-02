@@ -33,9 +33,7 @@ class CardFrames extends RegisterFrames {
   private _cardNumber: Element;
   private _expirationDate: Element;
   private _securityCode: Element;
-  private _messageBus: MessageBus;
   private _validation: Validation;
-  private _binLookup: BinLookup;
   private _translator: Translator;
   private _messageBusEvent: IMessageBusEvent = { data: { message: '' }, type: '' };
   private _submitButton: HTMLInputElement | HTMLButtonElement;
@@ -63,8 +61,8 @@ class CardFrames extends RegisterFrames {
   ) {
     super(jwt, origin, componentIds, styles, animatedCard, fieldsToSubmit);
     this._validation = new Validation();
-    this._messageBus = new MessageBus();
-    this._binLookup = new BinLookup();
+    this.messageBus = new MessageBus();
+    this.binLookup = new BinLookup();
     this._translator = new Translator(this.params.locale);
     this._jwt = jwt;
     this.fieldsToSubmit = fieldsToSubmit;
@@ -77,6 +75,15 @@ class CardFrames extends RegisterFrames {
     this._payMessage = this._translator.translate(Language.translations.PAY);
     this._processingMessage = `${this._translator.translate(Language.translations.PROCESSING)} ...`;
     this.onInit();
+    // @ts-ignore
+    const cardNumber: string = JwtDecode(jwt).payload.pan;
+    const cardType: boolean = this.binLookup.binLookup(cardNumber).type !== 'PIBA';
+    const messageBusEvent: IMessageBusEvent = {
+      data: cardType,
+      type: MessageBus.EVENTS.BLOCK_SECURITY_CODE
+    };
+    this.messageBus.publish(messageBusEvent);
+    console.error(messageBusEvent);
   }
 
   /**
@@ -91,8 +98,8 @@ class CardFrames extends RegisterFrames {
       type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
     };
 
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
-      this._messageBus.publish(messageBusEvent);
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
+      this.messageBus.publish(messageBusEvent);
     });
   }
 
@@ -130,18 +137,22 @@ class CardFrames extends RegisterFrames {
         this.componentIds.animatedCard
       ];
     } else {
-      if (this.fieldsToSubmit.length) {
-        const components: string[] = [];
-        if (this.fieldsToSubmit.includes('card')) {
-          components.push(this.componentIds.cardNumber);
+      if (this.fieldsToSubmit) {
+        if (this.fieldsToSubmit.length) {
+          const components: string[] = [];
+          if (this.fieldsToSubmit.includes('card')) {
+            components.push(this.componentIds.cardNumber);
+          }
+          if (this.fieldsToSubmit.includes('date')) {
+            components.push(this.componentIds.expirationDate);
+          }
+          if (this.fieldsToSubmit.includes('code')) {
+            components.push(this.componentIds.securityCode);
+          }
+          return components;
+        } else {
+          throw new Error('Fields for displaying has not been specified !');
         }
-        if (this.fieldsToSubmit.includes('date')) {
-          components.push(this.componentIds.expirationDate);
-        }
-        if (this.fieldsToSubmit.includes('code')) {
-          components.push(this.componentIds.securityCode);
-        }
-        return components;
       } else {
         return [this.componentIds.cardNumber, this.componentIds.expirationDate, this.componentIds.securityCode];
       }
@@ -156,7 +167,7 @@ class CardFrames extends RegisterFrames {
    */
   private _getSecurityCodeLength(jwt: string): number {
     const cardDetails = JwtDecode(jwt) as any;
-    const { cvcLength } = this._binLookup.binLookup(cardDetails.payload.pan);
+    const { cvcLength } = this.binLookup.binLookup(cardDetails.payload.pan);
     return cvcLength.slice(-1)[0];
   }
 
@@ -167,11 +178,12 @@ class CardFrames extends RegisterFrames {
   }
 
   private _disableFormField(state: boolean, eventName: string) {
+    console.error('BLOCK FORM');
     const messageBusEvent: IMessageBusEvent = {
       data: state,
       type: eventName
     };
-    this._messageBus.publish(messageBusEvent);
+    this.messageBus.publish(messageBusEvent);
   }
 
   /**
@@ -217,24 +229,28 @@ class CardFrames extends RegisterFrames {
     securityCode = Object.assign({}, defaultStyles, securityCode);
     expirationDate = Object.assign({}, defaultStyles, expirationDate);
 
-    if (this.fieldsToSubmit.length) {
-      if (this.fieldsToSubmit.includes('card')) {
-        this._cardNumber = new Element();
-        this._cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, cardNumber, this.params);
-        this._cardNumberMounted = this._cardNumber.mount(Selectors.CARD_NUMBER_IFRAME);
-        this.elementsToRegister.push(this._cardNumberMounted);
-      }
-      if (this.fieldsToSubmit.includes('date')) {
-        this._expirationDate = new Element();
-        this._expirationDate.create(Selectors.EXPIRATION_DATE_COMPONENT_NAME, expirationDate, this.params);
-        this._expirationDateMounted = this._expirationDate.mount(Selectors.EXPIRATION_DATE_IFRAME);
-        this.elementsToRegister.push(this._expirationDateMounted);
-      }
-      if (this.fieldsToSubmit.includes('code')) {
-        this._securityCode = new Element();
-        this._securityCode.create(Selectors.SECURITY_CODE_COMPONENT_NAME, securityCode, this.params);
-        this._securityCodeMounted = this._securityCode.mount(Selectors.SECURITY_CODE_IFRAME);
-        this.elementsToRegister.push(this._securityCodeMounted);
+    if (this.fieldsToSubmit) {
+      if (this.fieldsToSubmit.length) {
+        if (this.fieldsToSubmit.includes('card')) {
+          this._cardNumber = new Element();
+          this._cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, cardNumber, this.params);
+          this._cardNumberMounted = this._cardNumber.mount(Selectors.CARD_NUMBER_IFRAME);
+          this.elementsToRegister.push(this._cardNumberMounted);
+        }
+        if (this.fieldsToSubmit.includes('date')) {
+          this._expirationDate = new Element();
+          this._expirationDate.create(Selectors.EXPIRATION_DATE_COMPONENT_NAME, expirationDate, this.params);
+          this._expirationDateMounted = this._expirationDate.mount(Selectors.EXPIRATION_DATE_IFRAME);
+          this.elementsToRegister.push(this._expirationDateMounted);
+        }
+        if (this.fieldsToSubmit.includes('code')) {
+          this._securityCode = new Element();
+          this._securityCode.create(Selectors.SECURITY_CODE_COMPONENT_NAME, securityCode, this.params);
+          this._securityCodeMounted = this._securityCode.mount(Selectors.SECURITY_CODE_IFRAME);
+          this.elementsToRegister.push(this._securityCodeMounted);
+        }
+      } else {
+        throw new Error('Fields for displaying has not been specified !');
       }
     } else {
       this._cardNumber = new Element();
@@ -286,7 +302,7 @@ class CardFrames extends RegisterFrames {
       data: DomMethods.parseMerchantForm(),
       type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
     };
-    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
   /**
@@ -307,7 +323,7 @@ class CardFrames extends RegisterFrames {
     this._submitButton.addEventListener('click', () => {
       this._publishSubmitEvent(this._deferInit);
     });
-    this._messageBus.subscribeOnParent(MessageBus.EVENTS.CALL_SUBMIT_EVENT, () => {
+    this.messageBus.subscribeOnParent(MessageBus.EVENTS.CALL_SUBMIT_EVENT, () => {
       this._publishSubmitEvent(this._deferInit);
     });
   }
@@ -316,7 +332,7 @@ class CardFrames extends RegisterFrames {
    * Checks if submit button needs to be blocked.
    */
   private _subscribeBlockSubmit() {
-    this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (data: boolean) => {
+    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (data: boolean) => {
       this._disableSubmitButton(data);
       this._disableFormField(data, MessageBus.EVENTS.BLOCK_CARD_NUMBER);
       this._disableFormField(data, MessageBus.EVENTS.BLOCK_EXPIRATION_DATE);
@@ -332,14 +348,14 @@ class CardFrames extends RegisterFrames {
       data: { deferInit, fieldsToSubmit: this.fieldsToSubmit },
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
-    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
   /**
    * Validates all merchant form inputs after submit action.
    */
   private _validateFieldsAfterSubmit() {
-    this._messageBus.subscribe(MessageBus.EVENTS.VALIDATE_FORM, (data: IValidationMessageBus) => {
+    this.messageBus.subscribe(MessageBus.EVENTS.VALIDATE_FORM, (data: IValidationMessageBus) => {
       const { cardNumber, expirationDate, securityCode } = data;
       if (!cardNumber.state) {
         this._publishValidatedFieldState(cardNumber, MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD);
@@ -362,7 +378,7 @@ class CardFrames extends RegisterFrames {
   private _publishValidatedFieldState(field: { message: string; state: boolean }, eventType: string) {
     this._messageBusEvent.type = eventType;
     this._messageBusEvent.data.message = field.message;
-    this._messageBus.publish(this._messageBusEvent);
+    this.messageBus.publish(this._messageBusEvent);
   }
 
   /**

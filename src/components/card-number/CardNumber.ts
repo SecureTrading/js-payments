@@ -168,7 +168,7 @@ class CardNumber extends FormField {
     const isCardPiba: boolean = this.binLookup.binLookup(number).type === 'PIBA';
     const messageBusEvent: IMessageBusEvent = {
       data: isCardPiba,
-      type: MessageBus.EVENTS.DISABLE_SECURITY_CODE
+      type: MessageBus.EVENTS.BLOCK_SECURITY_CODE
     };
     this._messageBus.publish(messageBusEvent);
   }

@@ -16,7 +16,6 @@ export default class MessageBus {
     CHANGE_EXPIRATION_DATE: 'CHANGE_EXPIRATION_DATE',
     CHANGE_SECURITY_CODE: 'CHANGE_SECURITY_CODE',
     CHANGE_SECURITY_CODE_LENGTH: 'CHANGE_SECURITY_CODE_LENGTH',
-    DISABLE_SECURITY_CODE: 'HIDE_SECURITY_CODE',
     FOCUS_CARD_NUMBER: 'FOCUS_CARD_NUMBER',
     FOCUS_EXPIRATION_DATE: 'FOCUS_EXPIRATION_DATE',
     FOCUS_SECURITY_CODE: 'FOCUS_SECURITY_CODE',
@@ -62,8 +61,6 @@ export default class MessageBus {
     let subscribersStore;
 
     if (publishToParent) {
-      console.error(this._parentOrigin);
-      console.error(event);
       window.parent.postMessage(event, this._parentOrigin);
     } else {
       subscribersStore = window.sessionStorage.getItem(MessageBus.SUBSCRIBERS);
@@ -71,7 +68,6 @@ export default class MessageBus {
 
       if (subscribersStore[event.type]) {
         subscribersStore[event.type].forEach((frame: string) => {
-          console.error(frame);
           // @ts-ignore
           window.parent.frames[frame].postMessage(event, this._frameOrigin);
         });

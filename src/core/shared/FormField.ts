@@ -1,6 +1,5 @@
 import Frame from './Frame';
 import Language from './Language';
-import MessageBus from './MessageBus';
 import Selectors from './Selectors';
 import { Translator } from './Translator';
 import Utils from './Utils';
@@ -16,7 +15,6 @@ export default class FormField extends Frame {
   protected _messageElement: HTMLDivElement;
   protected _cardNumberInput: HTMLInputElement;
   private _translator: Translator;
-  private _fieldsToSubmit: string[];
 
   constructor(inputSelector: string, messageSelector: string, labelSelector: string) {
     super();

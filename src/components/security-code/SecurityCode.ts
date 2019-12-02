@@ -85,7 +85,6 @@ class SecurityCode extends FormField {
     this._subscribeSecurityCodeChange();
     this._setSecurityCodePattern(SecurityCode.MATCH_EXACTLY_THREE_DIGITS);
     this._setDisableListener();
-    this._disableSecurityCodeListener();
     this.validation.backendValidation(
       this._inputElement,
       this._messageElement,
@@ -108,9 +107,12 @@ class SecurityCode extends FormField {
 
   private _setDisableListener() {
     this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_SECURITY_CODE, (state: boolean) => {
-      return this._isSecurityCodeWrapperDisabled(state)
-        ? this._disableSecurityCodeInput
-        : this._enableSecurityCodeInput();
+      console.error(state);
+      if (this._isSecurityCodeWrapperDisabled(state)) {
+        this._disableSecurityCodeInput();
+      } else {
+        this._enableSecurityCodeInput();
+      }
     });
   }
 
@@ -119,6 +121,7 @@ class SecurityCode extends FormField {
   }
 
   private _disableSecurityCodeInput() {
+    console.error('disable');
     this._inputElement.setAttribute(SecurityCode.DISABLED_ATTRIBUTE_NAME, SecurityCode.DISABLED_ATTRIBUTE_NAME);
     this._inputElement.classList.add(SecurityCode.DISABLED_ATTRIBUTE_CLASS);
   }
@@ -149,13 +152,6 @@ class SecurityCode extends FormField {
 
   private _clearInputValue() {
     this._inputElement.value = '';
-  }
-
-  private _disableSecurityCodeListener() {
-    this._messageBus.subscribe(MessageBus.EVENTS.DISABLE_SECURITY_CODE, (data: boolean) => {
-      this._toggleSecurityCodeValidation();
-      this._toggleSecurityCode(data);
-    });
   }
 
   private _toggleSecurityCodeValidation() {

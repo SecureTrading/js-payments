@@ -281,7 +281,7 @@ class ST {
       this._cachetoken = cachetoken;
       this._threedinit = threedinit;
     }
-    this.fieldsToSubmit = fieldsToSubmit;
+    this.fieldsToSubmit = fieldsToSubmit ? fieldsToSubmit : ['card', 'date', 'code'];
     this._messageBus = new MessageBus();
     this._livestatus = livestatus;
     this._animatedCard = animatedCard;

@@ -191,7 +191,7 @@ class ControlFrame extends Frame {
    * @private
    */
   private _initSubmitFormEvent() {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, (data?: ISubmitData, fieldsToSubmit?: any) => {
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, (data?: ISubmitData) => {
       this._onSubmit(data);
     });
   }
