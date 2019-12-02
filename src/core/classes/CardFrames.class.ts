@@ -18,9 +18,11 @@ class CardFrames extends RegisterFrames {
   private static SUBMIT_BUTTON_AS_BUTTON_MARKUP = 'button[type="submit"]';
   private static SUBMIT_BUTTON_AS_INPUT_MARKUP = 'input[type="submit"]';
   private static SUBMIT_BUTTON_DISABLED_CLASS = 'st-button-submit__disabled';
+
   private static _preventFormSubmit() {
     return document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).setAttribute('onsubmit', 'event.preventDefault()');
   }
+
   protected hasAnimatedCard: boolean;
   protected fieldsToSubmit: string[];
   private _animatedCardMounted: HTMLElement;
@@ -303,6 +305,9 @@ class CardFrames extends RegisterFrames {
    */
   private _submitFormListener() {
     this._submitButton.addEventListener('click', () => {
+      this._publishSubmitEvent(this._deferInit);
+    });
+    this._messageBus.subscribeOnParent(MessageBus.EVENTS.CALL_SUBMIT_EVENT, () => {
       this._publishSubmitEvent(this._deferInit);
     });
   }

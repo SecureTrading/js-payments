@@ -4,6 +4,7 @@ import FormField from '../../core/shared/FormField';
 import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
+import Validation from '../../core/shared/Validation';
 
 class SecurityCode extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
@@ -23,11 +24,13 @@ class SecurityCode extends FormField {
   private _formatter: Formatter;
   private _securityCodeLength: number;
   private _securityCodeWrapper: HTMLElement;
+  private _validation: Validation;
 
   constructor() {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
     this._binLookup = new BinLookup();
     this._formatter = new Formatter();
+    this._validation = new Validation();
     this._subscribeSecurityCodeChange();
     this._securityCodeWrapper = document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR) as HTMLElement;
     this._securityCodeLength = SecurityCode.STANDARD_INPUT_LENGTH;
@@ -41,13 +44,13 @@ class SecurityCode extends FormField {
   protected onBlur() {
     super.onBlur();
     this._sendState();
-    this._broadcastFocusEvent(false, MessageBus.EVENTS.FOCUS_SECURITY_CODE);
+    this._broadcastEvent(false, MessageBus.EVENTS.FOCUS_SECURITY_CODE);
   }
 
   protected onFocus(event: Event) {
     super.onFocus(event);
     this._sendState();
-    this._broadcastFocusEvent(true, MessageBus.EVENTS.FOCUS_SECURITY_CODE);
+    this._broadcastEvent(true, MessageBus.EVENTS.FOCUS_SECURITY_CODE);
   }
 
   protected onInput(event: Event) {
@@ -90,10 +93,10 @@ class SecurityCode extends FormField {
     );
   }
 
-  private _broadcastFocusEvent(data: boolean, eventType: string) {
+  private _broadcastEvent(data: boolean, eventType: string) {
     const messageBusEvent: IMessageBusEvent = {
       data,
-      type: MessageBus.EVENTS.FOCUS_SECURITY_CODE
+      type: eventType
     };
     this._messageBus.publish(messageBusEvent);
   }

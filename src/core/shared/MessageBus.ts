@@ -11,6 +11,7 @@ export default class MessageBus {
     BLUR_CARD_NUMBER: 'BLUR_CARD_NUMBER',
     BLUR_EXPIRATION_DATE: 'BLUR_EXPIRATION_DATE',
     BLUR_SECURITY_CODE: 'BLUR_SECURITY_CODE',
+    CALL_SUBMIT_EVENT: 'CALL_SUBMIT_EVENT',
     CHANGE_CARD_NUMBER: 'CHANGE_CARD_NUMBER',
     CHANGE_EXPIRATION_DATE: 'CHANGE_EXPIRATION_DATE',
     CHANGE_SECURITY_CODE: 'CHANGE_SECURITY_CODE',
@@ -58,10 +59,11 @@ export default class MessageBus {
    * @param publishToParent
    */
   public publish(event: IMessageBusEvent, publishToParent?: boolean) {
-    console.error(event);
     let subscribersStore;
 
     if (publishToParent) {
+      console.error(this._parentOrigin);
+      console.error(event);
       window.parent.postMessage(event, this._parentOrigin);
     } else {
       subscribersStore = window.sessionStorage.getItem(MessageBus.SUBSCRIBERS);
@@ -69,6 +71,7 @@ export default class MessageBus {
 
       if (subscribersStore[event.type]) {
         subscribersStore[event.type].forEach((frame: string) => {
+          console.error(frame);
           // @ts-ignore
           window.parent.frames[frame].postMessage(event, this._frameOrigin);
         });

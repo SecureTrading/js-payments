@@ -147,6 +147,13 @@ export default class Validation extends Frame {
     return state;
   }
 
+  public callSubmitEvent() {
+    const messageBusEvent: IMessageBusEvent = {
+      type: MessageBus.EVENTS.CALL_SUBMIT_EVENT
+    };
+    this._messageBus.publish(messageBusEvent, true);
+  }
+
   public checkBackendValidity(
     data: IMessageBusValidateField,
     inputElement: HTMLInputElement,
