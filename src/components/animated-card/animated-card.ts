@@ -14,18 +14,18 @@ function setMessageBusSubscriber(event: string, func: () => void) {
 }
 
 // @ts-ignore
-if (Card) {
+if (Card && document.URL.includes('animated')) {
+  console.error('Jest karta 1');
   // @ts-ignore
   const card: Card = new Card({
-    locale: 'en_GB'
+    locale: 'en_GB',
+    animatedCardContainer: 'st-animated-card'
   });
 
-  // setMessageBusSubscriber(MessageBus.EVENTS.CHANGE_CARD_NUMBER, card.onCardNumberChange());
-  // setMessageBusSubscriber(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, card.onExpirationDateChange());
-  // setMessageBusSubscriber(MessageBus.EVENTS.CHANGE_SECURITY_CODE, card.onSecurityCodeChange());
-  // setMessageBusSubscriber(MessageBus.EVENTS.FOCUS_CARD_NUMBER, card.onFieldFocus());
-  // setMessageBusSubscriber(MessageBus.EVENTS.FOCUS_EXPIRATION_DATE, card.onFieldFocus());
-  // setMessageBusSubscriber(MessageBus.EVENTS.FOCUS_SECURITY_CODE, card.onFieldFocus());
-} else {
-  throw new Error('Animated card has not been loaded');
+  setMessageBusSubscriber(MessageBus.EVENTS.CHANGE_CARD_NUMBER, card.onCardNumberChange());
+  setMessageBusSubscriber(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, card.onExpirationDateChange());
+  setMessageBusSubscriber(MessageBus.EVENTS.CHANGE_SECURITY_CODE, card.onSecurityCodeChange());
+  setMessageBusSubscriber(MessageBus.EVENTS.FOCUS_CARD_NUMBER, card.onFieldFocus());
+  setMessageBusSubscriber(MessageBus.EVENTS.FOCUS_EXPIRATION_DATE, card.onFieldFocus());
+  setMessageBusSubscriber(MessageBus.EVENTS.FOCUS_SECURITY_CODE, card.onFieldFocus());
 }
