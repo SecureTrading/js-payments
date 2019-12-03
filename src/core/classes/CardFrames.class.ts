@@ -83,7 +83,6 @@ class CardFrames extends RegisterFrames {
       type: MessageBus.EVENTS.BLOCK_SECURITY_CODE
     };
     this.messageBus.publish(messageBusEvent);
-    console.error(messageBusEvent);
   }
 
   /**
@@ -178,7 +177,6 @@ class CardFrames extends RegisterFrames {
   }
 
   private _disableFormField(state: boolean, eventName: string) {
-    console.error('BLOCK FORM');
     const messageBusEvent: IMessageBusEvent = {
       data: state,
       type: eventName
