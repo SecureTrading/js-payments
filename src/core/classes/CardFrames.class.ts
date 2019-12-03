@@ -102,6 +102,17 @@ class CardFrames extends RegisterFrames {
     });
   }
 
+  protected _broadcastCardType(jwt: string) {
+    const messageBusEvent: IMessageBusEvent = {
+      data: this._getCardType(jwt) === 'PIBA',
+      type: MessageBus.EVENTS.BLOCK_SECURITY_CODE
+    };
+
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
+      this.messageBus.publish(messageBusEvent);
+    });
+  }
+
   protected onInit() {
     this._deferJsinitOnLoad();
     CardFrames._preventFormSubmit();
@@ -110,6 +121,7 @@ class CardFrames extends RegisterFrames {
     this._initCardFields();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
     this._broadcastSecurityCodeLength(this._jwt);
+    this._broadcastCardType(this._jwt);
   }
 
   /**
@@ -168,6 +180,11 @@ class CardFrames extends RegisterFrames {
     const cardDetails = JwtDecode(jwt) as any;
     const { cvcLength } = this.binLookup.binLookup(cardDetails.payload.pan);
     return cvcLength.slice(-1)[0];
+  }
+
+  private _getCardType(jwt: string): string {
+    const cardDetails = JwtDecode(jwt) as any;
+    return this.binLookup.binLookup(cardDetails.payload.pan).type;
   }
 
   private _deferJsinitOnLoad() {
