@@ -37,6 +37,7 @@ class CardFrames extends RegisterFrames {
   private _translator: Translator;
   private _messageBusEvent: IMessageBusEvent = { data: { message: '' }, type: '' };
   private _submitButton: HTMLInputElement | HTMLButtonElement;
+  private _cardType: boolean;
   private readonly _buttonId: string;
   private readonly _jwt: string;
   private readonly _deferInit: boolean;
@@ -84,6 +85,7 @@ class CardFrames extends RegisterFrames {
    * @private
    */
   protected _broadcastSecurityCodeProperties(jwt: string) {
+    this._cardType = this._getCardType(jwt) === 'PIBA';
     const messageBusEvent: IMessageBusEvent = {
       data: this._getSecurityCodeLength(jwt),
       type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
@@ -335,7 +337,9 @@ class CardFrames extends RegisterFrames {
       this._disableSubmitButton(data);
       this._disableFormField(data, MessageBus.EVENTS.BLOCK_CARD_NUMBER);
       this._disableFormField(data, MessageBus.EVENTS.BLOCK_EXPIRATION_DATE);
-      this._disableFormField(data, MessageBus.EVENTS.BLOCK_SECURITY_CODE);
+      if (!this._cardType) {
+        this._disableFormField(data, MessageBus.EVENTS.BLOCK_SECURITY_CODE);
+      }
     });
   }
 
