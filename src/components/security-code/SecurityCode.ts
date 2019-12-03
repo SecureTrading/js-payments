@@ -35,7 +35,6 @@ class SecurityCode extends FormField {
     this._securityCodeWrapper = document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR) as HTMLElement;
     this._securityCodeLength = SecurityCode.STANDARD_INPUT_LENGTH;
     this._init();
-    console.error(this._securityCodeLength);
   }
 
   public getLabel(): string {
@@ -72,7 +71,6 @@ class SecurityCode extends FormField {
   }
 
   private _setInputValue() {
-    console.error(this._securityCodeLength);
     this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._securityCodeLength);
     this._inputElement.value = this._formatter.code(
       this._inputElement.value,
@@ -109,7 +107,6 @@ class SecurityCode extends FormField {
 
   private _setDisableListener() {
     this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_SECURITY_CODE, (state: boolean) => {
-      console.error(state);
       if (this._isSecurityCodeWrapperDisabled(state)) {
         this._disableSecurityCodeInput();
       } else {
@@ -123,7 +120,6 @@ class SecurityCode extends FormField {
   }
 
   private _disableSecurityCodeInput() {
-    console.error('disable');
     this._inputElement.setAttribute(SecurityCode.DISABLED_ATTRIBUTE_NAME, SecurityCode.DISABLED_ATTRIBUTE_NAME);
     this._inputElement.classList.add(SecurityCode.DISABLED_ATTRIBUTE_CLASS);
   }
@@ -147,7 +143,6 @@ class SecurityCode extends FormField {
 
   private _subscribeSecurityCodeChange() {
     this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (length: number) => {
-      console.error(length);
       this._checkSecurityCodeLength(length);
       this._sendState();
     });

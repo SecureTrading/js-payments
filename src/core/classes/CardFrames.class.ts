@@ -75,14 +75,6 @@ class CardFrames extends RegisterFrames {
     this._payMessage = this._translator.translate(Language.translations.PAY);
     this._processingMessage = `${this._translator.translate(Language.translations.PROCESSING)} ...`;
     this.onInit();
-    // @ts-ignore
-    const cardNumber: string = JwtDecode(jwt).payload.pan;
-    const cardType: boolean = this.binLookup.binLookup(cardNumber).type !== 'PIBA';
-    const messageBusEvent: IMessageBusEvent = {
-      data: cardType,
-      type: MessageBus.EVENTS.BLOCK_SECURITY_CODE
-    };
-    this.messageBus.publish(messageBusEvent);
   }
 
   /**
@@ -91,25 +83,18 @@ class CardFrames extends RegisterFrames {
    * @param jwt
    * @private
    */
-  protected _broadcastSecurityCodeLength(jwt: string) {
+  protected _broadcastSecurityCodeProperties(jwt: string) {
     const messageBusEvent: IMessageBusEvent = {
       data: this._getSecurityCodeLength(jwt),
       type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
     };
-
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
-      this.messageBus.publish(messageBusEvent);
-    });
-  }
-
-  protected _broadcastCardType(jwt: string) {
-    const messageBusEvent: IMessageBusEvent = {
+    const messageBusEventCard: IMessageBusEvent = {
       data: this._getCardType(jwt) === 'PIBA',
       type: MessageBus.EVENTS.BLOCK_SECURITY_CODE
     };
-
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
       this.messageBus.publish(messageBusEvent);
+      this.messageBus.publish(messageBusEventCard);
     });
   }
 
@@ -120,8 +105,7 @@ class CardFrames extends RegisterFrames {
     this._initSubscribes();
     this._initCardFields();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
-    this._broadcastSecurityCodeLength(this._jwt);
-    this._broadcastCardType(this._jwt);
+    this._broadcastSecurityCodeProperties(this._jwt);
   }
 
   /**
