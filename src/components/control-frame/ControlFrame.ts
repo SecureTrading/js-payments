@@ -380,12 +380,14 @@ class ControlFrame extends Frame {
     );
     if (validity) {
       if (deferInit) {
-        this._messageBus.publish({
-          type: MessageBus.EVENTS_PUBLIC.THREEDINIT
-        });
+        this._messageBus.publish(
+          {
+            type: MessageBus.EVENTS_PUBLIC.THREEDINIT
+          },
+          true
+        );
       }
 
-      // @TODO debug here
       this._payment
         .threeDQueryRequest(this._preThreeDRequestTypes, card, this._merchantFormData)
         .then((result: any) => {

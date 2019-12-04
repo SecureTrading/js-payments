@@ -268,7 +268,12 @@ export class CardinalCommerce {
    * @private
    */
   private _onThreeDInitEvent(data: IThreeDInitResponse) {
-    const { cachetoken, threedinit } = data;
+    let cachetoken: string;
+    let threedinit: string;
+    if (data) {
+      cachetoken = data.cachetoken;
+      threedinit = data.threedinit;
+    }
     this._cardinalCommerceJWT = threedinit;
     this._cardinalCommerceCacheToken = cachetoken;
     this._threeDSetup();

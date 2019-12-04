@@ -66,7 +66,7 @@ class CardFrames extends RegisterFrames {
     this.binLookup = new BinLookup();
     this._translator = new Translator(this.params.locale);
     this._jwt = jwt;
-    this.fieldsToSubmit = fieldsToSubmit;
+    this.fieldsToSubmit = fieldsToSubmit.length ? fieldsToSubmit : ['pan', 'date', 'code'];
     this.hasAnimatedCard = animatedCard;
     this._buttonId = buttonId;
     this._deferInit = deferInit;
@@ -137,7 +137,7 @@ class CardFrames extends RegisterFrames {
       if (this.fieldsToSubmit) {
         const components: string[] = [];
         if (this.fieldsToSubmit.length) {
-          if (this.fieldsToSubmit.includes('card')) {
+          if (this.fieldsToSubmit.includes('pan')) {
             components.push(this.componentIds.cardNumber);
           }
           if (this.fieldsToSubmit.includes('date')) {
@@ -234,7 +234,7 @@ class CardFrames extends RegisterFrames {
 
     if (this.fieldsToSubmit) {
       if (this.fieldsToSubmit.length) {
-        if (this.fieldsToSubmit.includes('card')) {
+        if (this.fieldsToSubmit.includes('pan')) {
           this._cardNumber = new Element();
           this._cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, cardNumber, this.params);
           this._cardNumberMounted = this._cardNumber.mount(Selectors.CARD_NUMBER_IFRAME);

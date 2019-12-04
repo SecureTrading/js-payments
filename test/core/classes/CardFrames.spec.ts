@@ -159,7 +159,7 @@ describe('CardFrames', () => {
         updateJWT: undefined,
         // @ts-ignore
         deferInit: undefined,
-        fieldsToSubmit: ['card', 'date', 'code']
+        fieldsToSubmit: ['pan', 'date', 'code']
       },
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
@@ -397,7 +397,7 @@ function cardFramesFixture() {
     false,
     'merchant-submit-button',
     false,
-    ['card', 'date', 'code']
+    ['pan', 'date', 'code']
   );
   return { instance };
 }
