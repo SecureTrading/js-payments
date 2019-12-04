@@ -94,9 +94,11 @@ class CardFrames extends RegisterFrames {
       data: this._getCardType(jwt) === 'PIBA',
       type: MessageBus.EVENTS.BLOCK_SECURITY_CODE
     };
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
-      this.messageBus.publish(messageBusEvent);
-      this.messageBus.publish(messageBusEventCard);
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, (data: any) => {
+      if (!data.initReload) {
+        this.messageBus.publish(messageBusEvent);
+        this.messageBus.publish(messageBusEventCard);
+      }
     });
   }
 

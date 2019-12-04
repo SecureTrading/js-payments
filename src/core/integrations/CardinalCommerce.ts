@@ -100,6 +100,7 @@ export class CardinalCommerce {
       this._onCardinalSetupComplete();
       GoogleAnalytics.sendGaData('event', 'Cardinal', 'init', 'Cardinal Setup Completed');
     });
+
     Cardinal.on(PAYMENT_EVENTS.VALIDATED, (data: IOnCardinalValidated, jwt: string) => {
       this._onCardinalValidated(data, jwt);
       GoogleAnalytics.sendGaData('event', 'Cardinal', 'validate', 'Cardinal payment validated');

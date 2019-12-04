@@ -380,12 +380,7 @@ class ControlFrame extends Frame {
     );
     if (validity) {
       if (deferInit) {
-        this._messageBus.publish(
-          {
-            type: MessageBus.EVENTS_PUBLIC.THREEDINIT
-          },
-          true
-        );
+        this._requestThreeDInit();
       }
 
       this._payment
