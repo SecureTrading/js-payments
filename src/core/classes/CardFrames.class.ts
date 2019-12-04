@@ -168,13 +168,17 @@ class CardFrames extends RegisterFrames {
    */
   private _getSecurityCodeLength(jwt: string): number {
     const cardDetails = JwtDecode(jwt) as any;
-    const { cvcLength } = this.binLookup.binLookup(cardDetails.payload.pan);
-    return cvcLength.slice(-1)[0];
+    if (cardDetails.payload.pan) {
+      const { cvcLength } = this.binLookup.binLookup(cardDetails.payload.pan);
+      return cvcLength.slice(-1)[0];
+    }
   }
 
   private _getCardType(jwt: string): string {
     const cardDetails = JwtDecode(jwt) as any;
-    return this.binLookup.binLookup(cardDetails.payload.pan).type;
+    if (cardDetails.payload.pan) {
+      return this.binLookup.binLookup(cardDetails.payload.pan).type;
+    }
   }
 
   private _deferJsinitOnLoad() {
