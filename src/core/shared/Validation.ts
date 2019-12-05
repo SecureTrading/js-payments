@@ -139,8 +139,9 @@ export default class Validation extends Frame {
   }
 
   public blockForm(state: boolean) {
+    const isPiba: boolean = this.getCardDetails().type === 'PIBA';
     const messageBusEvent: IMessageBusEvent = {
-      data: state,
+      data: { state, isPiba },
       type: MessageBus.EVENTS.BLOCK_FORM
     };
     this._messageBus.publish(messageBusEvent, true);

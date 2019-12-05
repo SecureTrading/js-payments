@@ -90,14 +90,9 @@ class CardFrames extends RegisterFrames {
       data: this._getSecurityCodeLength(jwt),
       type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
     };
-    const messageBusEventCard: IMessageBusEvent = {
-      data: this._getCardType(jwt) === 'PIBA',
-      type: MessageBus.EVENTS.BLOCK_SECURITY_CODE
-    };
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, (data: any) => {
       if (!data.initReload) {
         this.messageBus.publish(messageBusEvent);
-        this.messageBus.publish(messageBusEventCard);
       }
     });
   }
@@ -187,11 +182,20 @@ class CardFrames extends RegisterFrames {
     }
   }
 
-  private _disableFormField(state: boolean, eventName: string) {
-    const messageBusEvent: IMessageBusEvent = {
-      data: state,
-      type: eventName
-    };
+  private _disableFormField(state: boolean, eventName: string, isPiba?: boolean) {
+    let messageBusEvent: IMessageBusEvent;
+    console.error('isPIOa', isPiba);
+    if (isPiba) {
+      messageBusEvent = {
+        data: true,
+        type: eventName
+      };
+    } else {
+      messageBusEvent = {
+        data: state,
+        type: eventName
+      };
+    }
     this.messageBus.publish(messageBusEvent);
   }
 
@@ -368,13 +372,11 @@ class CardFrames extends RegisterFrames {
    * Checks if submit button needs to be blocked.
    */
   private _subscribeBlockSubmit() {
-    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (data: boolean) => {
-      this._disableSubmitButton(data);
-      this._disableFormField(data, MessageBus.EVENTS.BLOCK_CARD_NUMBER);
-      this._disableFormField(data, MessageBus.EVENTS.BLOCK_EXPIRATION_DATE);
-      if (!this._cardType) {
-        this._disableFormField(data, MessageBus.EVENTS.BLOCK_SECURITY_CODE);
-      }
+    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (data: any) => {
+      this._disableSubmitButton(data.state);
+      this._disableFormField(data.state, MessageBus.EVENTS.BLOCK_CARD_NUMBER);
+      this._disableFormField(data.state, MessageBus.EVENTS.BLOCK_EXPIRATION_DATE);
+      this._disableFormField(data.state, MessageBus.EVENTS.BLOCK_SECURITY_CODE, data.isPiba);
     });
   }
 

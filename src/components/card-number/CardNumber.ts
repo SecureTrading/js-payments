@@ -141,7 +141,7 @@ class CardNumber extends FormField {
 
   private _setInputValue() {
     this._getMaxLengthOfCardNumber();
-    this._hideSecurityCodeField(this._inputElement.value);
+    this._disableSecurityCodeField(this._inputElement.value);
     this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._cardNumberLength);
     const { formatted, nonformatted } = this._formatter.number(this._inputElement.value, Selectors.CARD_NUMBER_INPUT);
     this._inputElement.value = formatted;
@@ -163,7 +163,7 @@ class CardNumber extends FormField {
     });
   }
 
-  private _hideSecurityCodeField(cardNumber: string) {
+  private _disableSecurityCodeField(cardNumber: string) {
     const number: string = Validation.clearNonDigitsChars(cardNumber);
     const isCardPiba: boolean = this.binLookup.binLookup(number).type === 'PIBA';
     const messageBusEvent: IMessageBusEvent = {

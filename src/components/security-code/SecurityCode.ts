@@ -16,7 +16,6 @@ class SecurityCode extends FormField {
   private static GREY_OUT_OFF: string = '1';
   private static MATCH_EXACTLY_FOUR_DIGITS: string = '^[0-9]{4}$';
   private static MATCH_EXACTLY_THREE_DIGITS: string = '^[0-9]{3}$';
-  private static REQUIRED_PARAM: string = 'required';
   private static SPECIAL_INPUT_LENGTH: number = 4;
   private static STANDARD_INPUT_LENGTH: number = 3;
 
@@ -107,26 +106,9 @@ class SecurityCode extends FormField {
 
   private _setDisableListener() {
     this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_SECURITY_CODE, (state: boolean) => {
-      if (this._isSecurityCodeWrapperDisabled(state)) {
-        this._disableSecurityCodeInput();
-      } else {
-        this._enableSecurityCodeInput();
-      }
+      console.error(state);
+      this._toggleSecurityCode(state);
     });
-  }
-
-  private _isSecurityCodeWrapperDisabled(state: boolean): boolean {
-    return state || this._securityCodeWrapper.style.opacity === SecurityCode.GREY_OUT;
-  }
-
-  private _disableSecurityCodeInput() {
-    this._inputElement.setAttribute(SecurityCode.DISABLED_ATTRIBUTE_NAME, SecurityCode.DISABLED_ATTRIBUTE_NAME);
-    this._inputElement.classList.add(SecurityCode.DISABLED_ATTRIBUTE_CLASS);
-  }
-
-  private _enableSecurityCodeInput() {
-    this._inputElement.removeAttribute(SecurityCode.DISABLED_ATTRIBUTE_NAME);
-    this._inputElement.classList.remove(SecurityCode.DISABLED_ATTRIBUTE_CLASS);
   }
 
   private _setSecurityCodeProperties(length: number, pattern: string) {
@@ -158,13 +140,13 @@ class SecurityCode extends FormField {
   }
 
   private _disableSecurityCode() {
-    this._inputElement.removeAttribute(SecurityCode.REQUIRED_PARAM);
-    this._inputElement.disabled = true;
+    this._inputElement.setAttribute(SecurityCode.DISABLED_ATTRIBUTE_NAME, SecurityCode.DISABLED_PARAM);
+    this._inputElement.classList.add(SecurityCode.DISABLED_ATTRIBUTE_CLASS);
   }
 
   private _enableSecurityCode() {
-    this._inputElement.removeAttribute(SecurityCode.DISABLED_PARAM);
-    this._inputElement.setAttribute(SecurityCode.REQUIRED_PARAM, SecurityCode.REQUIRED_PARAM);
+    this._inputElement.removeAttribute(SecurityCode.DISABLED_ATTRIBUTE_NAME);
+    this._inputElement.classList.remove(SecurityCode.DISABLED_ATTRIBUTE_CLASS);
   }
 
   private _setSecurityCodePattern(securityCodePattern: string) {
@@ -175,9 +157,8 @@ class SecurityCode extends FormField {
     this._securityCodeWrapper.style.opacity = state;
   }
 
-  private _toggleSecurityCode(disable: boolean) {
-    if (disable) {
-      this._clearInputValue();
+  private _toggleSecurityCode(disabled: boolean) {
+    if (disabled) {
       this._disableSecurityCode();
       this._toggleSecurityCodeValidation();
       this._toggleSecurityCodeWrapper(SecurityCode.GREY_OUT);
