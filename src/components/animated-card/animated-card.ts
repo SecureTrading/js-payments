@@ -5,7 +5,6 @@ import MessageBus from '../../core/shared/MessageBus';
 
 // @ts-ignore
 if (Card && document.URL.includes('animated')) {
-  console.error('Jest karta 1');
   // @ts-ignore
   const card: Card = new Card({
     animatedCardContainer: 'st-animated-card',
@@ -13,28 +12,24 @@ if (Card && document.URL.includes('animated')) {
   });
 
   (function() {
-    console.error('setMessageBusSubscriber');
     const messageBus: MessageBus = new MessageBus();
     messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: IFormFieldState) => {
       const { value } = data;
-      console.error(data);
       card.onCardNumberChange(value, true);
     });
     messageBus.subscribe(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, (data: IFormFieldState) => {
       const { value } = data;
-      console.error(data);
       card.onExpirationDateChange(value, true);
     });
     messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: IFormFieldState) => {
       const { value } = data;
-      console.error(data);
       card.onSecurityCodeChange(value, true);
     });
+    messageBus.subscribe(MessageBus.EVENTS.FOCUS_SECURITY_CODE, (data: IFormFieldState) => {
+      card.onFieldFocusOrBlur(data);
+    });
+    messageBus.subscribe(MessageBus.EVENTS.BLUR_SECURITY_CODE, (data: IFormFieldState) => {
+      card.onFieldFocusOrBlur(data);
+    });
   })();
-
-  // setMessageBusSubscriber(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, card.onExpirationDateChange());
-  // setMessageBusSubscriber(MessageBus.EVENTS.CHANGE_SECURITY_CODE, card.onSecurityCodeChange());
-  // setMessageBusSubscriber(MessageBus.EVENTS.FOCUS_CARD_NUMBER, card.onFieldFocus());
-  // setMessageBusSubscriber(MessageBus.EVENTS.FOCUS_EXPIRATION_DATE, card.onFieldFocus());
-  // setMessageBusSubscriber(MessageBus.EVENTS.FOCUS_SECURITY_CODE, card.onFieldFocus());
 }

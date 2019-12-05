@@ -99,7 +99,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.7.0",
     "@babel/runtime": "^7.7.4",
-    "@securetrading/js-payments-card": "file:../../Users/gmartowski/securetrading-js-payments-card-1.0.0.tgz",
+    "@securetrading/js-payments-card": "file:../../Users/gmartowski/securetrading-js-payments-card-1.0.4.tgz",
     "@types/joi": "^14.3.4",
     "@types/jwt-decode": "^2.2.1",
     "@types/lodash": "^4.14.149",
