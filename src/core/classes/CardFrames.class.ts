@@ -182,20 +182,11 @@ class CardFrames extends RegisterFrames {
     }
   }
 
-  private _disableFormField(state: boolean, eventName: string, isPiba?: boolean) {
-    let messageBusEvent: IMessageBusEvent;
-    console.error('isPIOa', isPiba);
-    if (isPiba) {
-      messageBusEvent = {
-        data: true,
-        type: eventName
-      };
-    } else {
-      messageBusEvent = {
-        data: state,
-        type: eventName
-      };
-    }
+  private _disableFormField(state: boolean, eventName: string) {
+    const messageBusEvent: IMessageBusEvent = {
+      data: state,
+      type: eventName
+    };
     this.messageBus.publish(messageBusEvent);
   }
 
@@ -372,11 +363,11 @@ class CardFrames extends RegisterFrames {
    * Checks if submit button needs to be blocked.
    */
   private _subscribeBlockSubmit() {
-    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (data: any) => {
-      this._disableSubmitButton(data.state);
-      this._disableFormField(data.state, MessageBus.EVENTS.BLOCK_CARD_NUMBER);
-      this._disableFormField(data.state, MessageBus.EVENTS.BLOCK_EXPIRATION_DATE);
-      this._disableFormField(data.state, MessageBus.EVENTS.BLOCK_SECURITY_CODE, data.isPiba);
+    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (state: boolean) => {
+      this._disableSubmitButton(state);
+      this._disableFormField(state, MessageBus.EVENTS.BLOCK_CARD_NUMBER);
+      this._disableFormField(state, MessageBus.EVENTS.BLOCK_EXPIRATION_DATE);
+      this._disableFormField(state, MessageBus.EVENTS.BLOCK_SECURITY_CODE);
     });
   }
 

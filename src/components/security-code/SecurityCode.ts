@@ -106,7 +106,6 @@ class SecurityCode extends FormField {
 
   private _setDisableListener() {
     this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_SECURITY_CODE, (state: boolean) => {
-      console.error(state);
       this._toggleSecurityCode(state);
     });
   }

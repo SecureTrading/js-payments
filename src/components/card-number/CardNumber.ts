@@ -50,12 +50,14 @@ class CardNumber extends FormField {
 
   protected onBlur() {
     super.onBlur();
+    this._disableSecurityCodeField(this._inputElement.value);
     this.validation.luhnCheck(this._fieldInstance, this._inputElement, this._messageElement);
     this._sendState();
   }
 
   protected onFocus(event: Event) {
     super.onFocus(event);
+    this._disableSecurityCodeField(this._inputElement.value);
   }
 
   protected onInput(event: Event) {
