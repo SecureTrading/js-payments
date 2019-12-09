@@ -40,11 +40,11 @@
   },
   "homepage": "https://github.com/SecureTrading/js-payments#readme",
   "devDependencies": {
-    "@babel/core": "^7.7.4",
+    "@babel/core": "^7.7.5",
     "@babel/plugin-proposal-class-properties": "^7.7.4",
     "@babel/plugin-transform-runtime": "^7.6.2",
     "@babel/plugin-transform-typescript": "^7.7.4",
-    "@babel/preset-env": "^7.7.4",
+    "@babel/preset-env": "^7.7.6",
     "@babel/preset-typescript": "^7.7.4",
     "@types/jest": "^24.0.23",
     "@types/jest-each": "^24.3.0",
@@ -98,7 +98,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.7.0",
-    "@babel/runtime": "^7.7.4",
+    "@babel/runtime": "^7.7.6",
     "@securetrading/js-payments-card": "^1.0.0-rc.1",
     "@types/joi": "^14.3.4",
     "@types/jwt-decode": "^2.2.1",
