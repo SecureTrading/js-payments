@@ -4,6 +4,8 @@ import Language from '../../../src/core/shared/Language';
 import MessageBus from '../../../src/core/shared/MessageBus';
 import Selectors from '../../../src/core/shared/Selectors';
 
+jest.mock('jwt-decode');
+
 // given
 describe('CardFrames', () => {
   // given

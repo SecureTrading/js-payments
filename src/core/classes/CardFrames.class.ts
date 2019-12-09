@@ -123,8 +123,6 @@ class CardFrames extends RegisterFrames {
    * Defines form elements for card payments
    */
   protected setElementsFields() {
-    console.error(this._jwt);
-    console.error(this._getCardType(this._jwt) === 'PIBA');
     if (this.hasAnimatedCard) {
       return [
         this.componentIds.cardNumber,
