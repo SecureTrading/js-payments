@@ -1,0 +1,35 @@
+import '@securetrading/js-payments-card/dist/stcardstyle.css';
+// @ts-ignore
+import Card from '@securetrading/js-payments-card/stcard.js';
+import MessageBus from '../../core/shared/MessageBus';
+
+// @ts-ignore
+if (Card && document.URL.includes('animated')) {
+  // @ts-ignore
+  const card: Card = new Card({
+    animatedCardContainer: 'st-animated-card',
+    locale: 'en_GB'
+  });
+
+  (function() {
+    const messageBus: MessageBus = new MessageBus();
+    messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: IFormFieldState) => {
+      const { value } = data;
+      card.onCardNumberChange(value, true);
+    });
+    messageBus.subscribe(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, (data: IFormFieldState) => {
+      const { value } = data;
+      card.onExpirationDateChange(value, true);
+    });
+    messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: IFormFieldState) => {
+      const { value } = data;
+      card.onSecurityCodeChange(value, true);
+    });
+    messageBus.subscribe(MessageBus.EVENTS.FOCUS_SECURITY_CODE, (data: IFormFieldState) => {
+      card.onFieldFocusOrBlur(data);
+    });
+    messageBus.subscribe(MessageBus.EVENTS.BLUR_SECURITY_CODE, (data: IFormFieldState) => {
+      card.onFieldFocusOrBlur(data);
+    });
+  })();
+}
