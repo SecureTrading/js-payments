@@ -11,7 +11,7 @@ if (Card && document.URL.includes('animated')) {
     locale: 'en_GB'
   });
 
-  (function() {
+  (() => {
     const messageBus: MessageBus = new MessageBus();
     messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: IFormFieldState) => {
       const { value } = data;
