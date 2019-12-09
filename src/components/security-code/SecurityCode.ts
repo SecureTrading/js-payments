@@ -129,10 +129,6 @@ class SecurityCode extends FormField {
     });
   }
 
-  private _clearInputValue() {
-    this._inputElement.value = '';
-  }
-
   private _toggleSecurityCodeValidation() {
     this.validation.removeError(this._inputElement, this._messageElement);
     this._inputElement.setCustomValidity('');

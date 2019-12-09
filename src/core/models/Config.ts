@@ -71,7 +71,7 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
   components: Joi.object(),
   datacenterurl: Joi.string(),
   deferInit: Joi.boolean(),
-  fieldsToSubmit: Joi.array().allow('pan', 'date', 'code'),
+  fieldsToSubmit: Joi.array().allow('pan', 'expirydate', 'securitycode'),
   formId: Joi.string(),
   init: Joi.object(),
   jwt: Joi.string().required(),

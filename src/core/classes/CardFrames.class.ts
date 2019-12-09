@@ -66,7 +66,7 @@ class CardFrames extends RegisterFrames {
     this.binLookup = new BinLookup();
     this._translator = new Translator(this.params.locale);
     this._jwt = jwt;
-    this.fieldsToSubmit = fieldsToSubmit.length ? fieldsToSubmit : ['pan', 'date', 'code'];
+    this.fieldsToSubmit = fieldsToSubmit.length ? fieldsToSubmit : ['pan', 'expirydate', 'securitycode'];
     this.hasAnimatedCard = animatedCard;
     this._buttonId = buttonId;
     this._deferInit = deferInit;
@@ -123,6 +123,8 @@ class CardFrames extends RegisterFrames {
    * Defines form elements for card payments
    */
   protected setElementsFields() {
+    console.error(this._jwt);
+    console.error(this._getCardType(this._jwt) === 'PIBA');
     if (this.hasAnimatedCard) {
       return [
         this.componentIds.cardNumber,
@@ -130,6 +132,19 @@ class CardFrames extends RegisterFrames {
         this.componentIds.securityCode,
         this.componentIds.animatedCard
       ];
+    } else if (this._jwt && this._getCardType(this._jwt) === 'PIBA') {
+      if (this.fieldsToSubmit) {
+        const components: string[] = [];
+        if (this.fieldsToSubmit.length) {
+          if (this.fieldsToSubmit.includes('pan')) {
+            components.push(this.componentIds.cardNumber);
+          }
+          if (this.fieldsToSubmit.includes('expirydate')) {
+            components.push(this.componentIds.expirationDate);
+          }
+        }
+        return components;
+      }
     } else {
       if (this.fieldsToSubmit) {
         const components: string[] = [];
@@ -137,10 +152,10 @@ class CardFrames extends RegisterFrames {
           if (this.fieldsToSubmit.includes('pan')) {
             components.push(this.componentIds.cardNumber);
           }
-          if (this.fieldsToSubmit.includes('date')) {
+          if (this.fieldsToSubmit.includes('expirydate')) {
             components.push(this.componentIds.expirationDate);
           }
-          if (this.fieldsToSubmit.includes('code')) {
+          if (this.fieldsToSubmit.includes('securitycode')) {
             components.push(this.componentIds.securityCode);
           }
         } else {
@@ -241,13 +256,13 @@ class CardFrames extends RegisterFrames {
           this._cardNumberMounted = this._cardNumber.mount(Selectors.CARD_NUMBER_IFRAME);
           this.elementsToRegister.push(this._cardNumberMounted);
         }
-        if (this.fieldsToSubmit.includes('date')) {
+        if (this.fieldsToSubmit.includes('expirydate')) {
           this._expirationDate = new Element();
           this._expirationDate.create(Selectors.EXPIRATION_DATE_COMPONENT_NAME, expirationDate, this.params);
           this._expirationDateMounted = this._expirationDate.mount(Selectors.EXPIRATION_DATE_IFRAME);
           this.elementsToRegister.push(this._expirationDateMounted);
         }
-        if (this.fieldsToSubmit.includes('code')) {
+        if (this.fieldsToSubmit.includes('securitycode')) {
           this._securityCode = new Element();
           this._securityCode.create(Selectors.SECURITY_CODE_COMPONENT_NAME, securityCode, this.params);
           this._securityCodeMounted = this._securityCode.mount(Selectors.SECURITY_CODE_IFRAME);

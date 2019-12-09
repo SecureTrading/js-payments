@@ -220,10 +220,12 @@ export default class Validation extends Frame {
       this._isPaymentReady = true;
     } else {
       const cardNumberValidity: boolean = fieldsToSubmit.includes('pan') ? formFields.cardNumber.validity : true;
-      const expirationDateValidity: boolean = fieldsToSubmit.includes('date')
+      const expirationDateValidity: boolean = fieldsToSubmit.includes('expirydate')
         ? formFields.expirationDate.validity
         : true;
-      const securityCodeValidity: boolean = fieldsToSubmit.includes('code') ? formFields.securityCode.validity : true;
+      const securityCodeValidity: boolean = fieldsToSubmit.includes('securitycode')
+        ? formFields.securityCode.validity
+        : true;
       this._isFormValid = cardNumberValidity && expirationDateValidity && securityCodeValidity;
       this._card = {
         expirydate: formFields.expirationDate.value,
