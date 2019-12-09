@@ -4,8 +4,6 @@ import Language from '../../../src/core/shared/Language';
 import MessageBus from '../../../src/core/shared/MessageBus';
 import Selectors from '../../../src/core/shared/Selectors';
 
-jest.mock('jwt-decode');
-
 // given
 describe('CardFrames', () => {
   // given
@@ -19,6 +17,8 @@ describe('CardFrames', () => {
     };
     // when
     beforeEach(() => {
+      // @ts-ignore
+      instance._broadcastSecurityCodeProperties = jest.fn();
       // @ts-ignore
       instance.messageBus.publish = jest.fn();
       // @ts-ignore
@@ -161,7 +161,7 @@ describe('CardFrames', () => {
         updateJWT: undefined,
         // @ts-ignore
         deferInit: undefined,
-        fieldsToSubmit: ['pan', 'date', 'code']
+        fieldsToSubmit: ['pan', 'expirydate', 'securitycode']
       },
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
@@ -372,9 +372,7 @@ describe('CardFrames', () => {
         // @ts-ignore
         instance.componentIds.cardNumber,
         // @ts-ignore
-        instance.componentIds.expirationDate,
-        // @ts-ignore
-        instance.componentIds.securityCode
+        instance.componentIds.expirationDate
       ]);
     });
   });
@@ -399,7 +397,7 @@ function cardFramesFixture() {
     false,
     'merchant-submit-button',
     false,
-    ['pan', 'date', 'code']
+    ['pan', 'expirydate', 'securitycode']
   );
   return { instance };
 }

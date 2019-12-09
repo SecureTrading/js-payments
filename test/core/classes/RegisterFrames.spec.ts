@@ -119,6 +119,10 @@ function registerFramesFixture() {
       'line-height-input': '12px'
     }
   };
-  const instance = new RegisterFrames(jwt, origin, componentsIds, styles, animatedCard, ['pan', 'date', 'code']);
+  const instance = new RegisterFrames(jwt, origin, componentsIds, styles, animatedCard, [
+    'pan',
+    'expirydate',
+    'securitycode'
+  ]);
   return { instance, fields, targets, cardNumberField, securityCodeField, expirationDateField };
 }
