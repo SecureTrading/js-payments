@@ -306,12 +306,7 @@ class ST {
       this._submitCallback
     );
     ST._configureMerchantFields();
-    if (animatedCard) {
-      this.setAnimatedCardListeners();
-    }
   }
-
-  public setAnimatedCardListeners() {}
 
   /**
    * If startOnLoad is false, initializes all necessary components, otherwise proceeds immediate payment configuration.
