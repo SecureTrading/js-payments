@@ -212,7 +212,8 @@ export default class Validation extends Frame {
     paymentReady: boolean,
     formFields: any,
     deferInit: boolean,
-    fieldsToSubmit: string[]
+    fieldsToSubmit: string[],
+    isPanPiba: boolean
   ): { validity: boolean; card: ICard } {
     this._isPaymentReady = paymentReady;
     if (dataInJwt) {
@@ -223,9 +224,8 @@ export default class Validation extends Frame {
       const expirationDateValidity: boolean = fieldsToSubmit.includes('expirydate')
         ? formFields.expirationDate.validity
         : true;
-      const securityCodeValidity: boolean = fieldsToSubmit.includes('securitycode')
-        ? formFields.securityCode.validity
-        : true;
+      const securityCodeValidity: boolean =
+        fieldsToSubmit.includes('securitycode') && !isPanPiba ? formFields.securityCode.validity : true;
       this._isFormValid = cardNumberValidity && expirationDateValidity && securityCodeValidity;
       this._card = {
         expirydate: formFields.expirationDate.value,

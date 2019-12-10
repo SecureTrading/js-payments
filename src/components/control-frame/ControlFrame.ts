@@ -1,3 +1,4 @@
+import JwtDecode from 'jwt-decode';
 import { StCodec } from '../../core/classes/StCodec.class';
 import { ISetRequestTypes, ISubmitData } from '../../core/models/ControlFrame';
 import { IMerchantData } from '../../core/models/MerchantData';
@@ -6,7 +7,9 @@ import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Notification from '../../core/shared/Notification';
 import Payment from '../../core/shared/Payment';
+import { IStJwtObj } from '../../core/shared/StJwt';
 import Validation from '../../core/shared/Validation';
+import BinLookup from '../../core/shared/BinLookup';
 
 /**
  * Defines frame which is essentially a hub which collects events and processes from whole library.
@@ -22,6 +25,7 @@ class ControlFrame extends Frame {
   }
 
   private _payment: Payment;
+  private _binLookup: BinLookup;
   private _isPaymentReady: boolean = false;
   private _merchantFormData: IMerchantData;
   private _card: ICard;
@@ -88,6 +92,7 @@ class ControlFrame extends Frame {
     this._payment = new Payment(this._params.jwt, this._params.gatewayUrl, this._params.origin);
     this._validation = new Validation();
     this._notification = new Notification();
+    this._binLookup = new BinLookup();
     this._initChangeCardNumberEvent();
     this._initChangeExpirationDateEvent();
     this._initChangeSecurityCodeEvent();
@@ -369,6 +374,8 @@ class ControlFrame extends Frame {
   }
 
   private _requestPayment(data: any) {
+    const pan: any = JwtDecode<IStJwtObj>(this._params.jwt).payload.pan;
+    const isPanPiba: boolean = this._binLookup.binLookup(pan).type === 'PIBA';
     const dataInJwt = data ? data.dataInJwt : false;
     const deferInit = data ? data.deferInit : false;
     const { validity, card } = this._validation.formValidation(
@@ -376,7 +383,8 @@ class ControlFrame extends Frame {
       this._isPaymentReady,
       this._formFields,
       deferInit,
-      data.fieldsToSubmit
+      data.fieldsToSubmit,
+      isPanPiba
     );
     if (validity) {
       if (deferInit) {

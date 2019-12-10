@@ -39,7 +39,7 @@ class CardFrames extends RegisterFrames {
   private _submitButton: HTMLInputElement | HTMLButtonElement;
   private _cardType: boolean;
   private readonly _buttonId: string;
-  private readonly _jwt: string;
+  private _jwt: string;
   private readonly _deferInit: boolean;
   private readonly _defaultPaymentType: string;
   private readonly _paymentTypes: string[];
@@ -122,7 +122,7 @@ class CardFrames extends RegisterFrames {
   /**
    * Defines form elements for card payments
    */
-  protected setElementsFields() {
+  protected setElementsFields(jwt?: string) {
     if (this.hasAnimatedCard) {
       return [
         this.componentIds.cardNumber,
@@ -130,7 +130,7 @@ class CardFrames extends RegisterFrames {
         this.componentIds.securityCode,
         this.componentIds.animatedCard
       ];
-    } else if (this._jwt && this._getCardType(this._jwt) === 'PIBA') {
+    } else if (jwt && this._getCardType(jwt) === 'PIBA') {
       if (this.fieldsToSubmit) {
         const components: string[] = [];
         if (this.fieldsToSubmit.length) {

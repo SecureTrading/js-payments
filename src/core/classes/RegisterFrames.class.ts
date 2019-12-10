@@ -40,7 +40,7 @@ export default class RegisterFrames {
     this.jwt = jwt;
     this.origin = origin;
     this.styles = this._getStyles(styles);
-    this.elementsTargets = this.setElementsFields();
+    this.elementsTargets = this.setElementsFields(jwt);
     this.stJwt = new StJwt(jwt);
     this.params = { locale: this.stJwt.locale, origin: this.origin };
   }
@@ -67,7 +67,7 @@ export default class RegisterFrames {
   /**
    * Defines iframe elements to add
    */
-  protected setElementsFields(): any {
+  protected setElementsFields(jwt?: string): any {
     return [];
   }
 
