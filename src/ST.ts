@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import JwtDecode from 'jwt-decode';
 import 'location-origin';
 import { debounce } from 'lodash';
 import 'url-polyfill';
@@ -24,6 +25,7 @@ import {
 } from './core/models/Config';
 import MessageBus from './core/shared/MessageBus';
 import Selectors from './core/shared/Selectors';
+import { IStJwtObj } from './core/shared/StJwt';
 import { IStyles } from './core/shared/Styler';
 import Utils from './core/shared/Utils';
 import { environment } from './environments/environment';
@@ -280,6 +282,7 @@ class ST {
     Utils.setLocalStorageItem(ST.TRANSLATION_STORAGE_NAME, translations);
     ST._validateConfig(this._config, IConfigSchema);
     this._setClassProperties(this._config);
+    Utils.setLocalStorageItem('locale', JwtDecode<IStJwtObj>(this._jwt).payload.locale);
     this.commonFrames = ST._configureCommonFrames(
       this._jwt,
       this._origin,
@@ -293,12 +296,7 @@ class ST {
       this._submitCallback
     );
     ST._configureMerchantFields();
-    if (animatedCard) {
-      this.setAnimatedCardListeners();
-    }
   }
-
-  public setAnimatedCardListeners() {}
 
   /**
    * If startOnLoad is false, initializes all necessary components, otherwise proceeds immediate payment configuration.
