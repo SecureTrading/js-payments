@@ -2,6 +2,7 @@ import JwtDecode from 'jwt-decode';
 import { StCodec } from '../../core/classes/StCodec.class';
 import { ISetRequestTypes, ISubmitData } from '../../core/models/ControlFrame';
 import { IMerchantData } from '../../core/models/MerchantData';
+import BinLookup from '../../core/shared/BinLookup';
 import Frame from '../../core/shared/Frame';
 import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
@@ -9,7 +10,6 @@ import Notification from '../../core/shared/Notification';
 import Payment from '../../core/shared/Payment';
 import { IStJwtObj } from '../../core/shared/StJwt';
 import Validation from '../../core/shared/Validation';
-import BinLookup from '../../core/shared/BinLookup';
 
 /**
  * Defines frame which is essentially a hub which collects events and processes from whole library.
