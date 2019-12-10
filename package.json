@@ -55,7 +55,7 @@
     "copy-webpack-plugin": "^5.1.0",
     "coveralls": "^3.0.9",
     "cross-env": "^6.0.3",
-    "css-loader": "^3.2.1",
+    "css-loader": "^3.3.0",
     "cssnano": "^4.1.10",
     "file-loader": "^5.0.2",
     "friendly-errors-webpack-plugin": "^1.7.0",
