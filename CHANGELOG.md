@@ -4,15 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## 2.0.2
 
-### Added
+### Fixed
 
--
--
-
-### Changed
-
--
--
+- Resolved serialize-javascript dependency: regular expressions Cross-Site Scripting (XSS) vulnerability.
+- Updated bunch of packages.
 
 ## 2.0.1
 
