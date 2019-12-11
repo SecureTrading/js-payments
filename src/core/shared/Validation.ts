@@ -162,6 +162,21 @@ export default class Validation extends Frame {
     this.setError(inputElement, messageElement, data);
   }
 
+  private _broadcastFormFieldError(errordata: string, event: IMessageBusEvent) {
+    if (errordata === Validation.BACKEND_ERROR_FIELDS_NAMES.cardNumber) {
+      event.type = MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD;
+      this._messageBus.publish(event);
+    }
+    if (errordata === Validation.BACKEND_ERROR_FIELDS_NAMES.expirationDate) {
+      event.type = MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD;
+      this._messageBus.publish(event);
+    }
+    if (errordata === Validation.BACKEND_ERROR_FIELDS_NAMES.securityCode) {
+      event.type = MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD;
+      this._messageBus.publish(event);
+    }
+  }
+
   public getErrorData(errorData: IErrorData) {
     const { errordata, errormessage } = StCodec.getErrorData(errorData);
     const validationEvent: IMessageBusEvent = {
@@ -169,18 +184,8 @@ export default class Validation extends Frame {
       type: ''
     };
 
-    if (errordata[0] === Validation.BACKEND_ERROR_FIELDS_NAMES.cardNumber) {
-      validationEvent.type = MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD;
-      this._messageBus.publish(validationEvent);
-    }
-    if (errordata[0] === Validation.BACKEND_ERROR_FIELDS_NAMES.expirationDate) {
-      validationEvent.type = MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD;
-      this._messageBus.publish(validationEvent);
-    }
-    if (errordata[0] === Validation.BACKEND_ERROR_FIELDS_NAMES.securityCode) {
-      validationEvent.type = MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD;
-      this._messageBus.publish(validationEvent);
-    }
+    this._broadcastFormFieldError(errordata[0], validationEvent);
+
     if (errordata.find((element: any) => element.includes(Validation.MERCHANT_EXTRA_FIELDS_PREFIX))) {
       validationEvent.type = MessageBus.EVENTS.VALIDATE_MERCHANT_FIELD;
       this._messageBus.publish(validationEvent, true);
