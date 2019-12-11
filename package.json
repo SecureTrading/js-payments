@@ -1,6 +1,6 @@
 {
   "name": "js-payments",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "> A JavaScript interface for allowing tokenisation and authorisation of payments through SecureTrading.",
   "private": true,
   "browserslist": [
@@ -70,7 +70,6 @@
     "local-web-server": "^3.0.7",
     "mini-css-extract-plugin": "^0.8.0",
     "node-sass": "^4.13.0",
-    "npm-merge-driver": "^2.3.5",
     "postcss-import": "^12.0.1",
     "postcss-loader": "^3.0.0",
     "postcss-preset-env": "^6.7.0",
