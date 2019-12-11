@@ -1,9 +1,11 @@
+import JwtDecode from 'jwt-decode';
 import ControlFrame from '../../../src/components/control-frame/ControlFrame';
 import { StCodec } from '../../../src/core/classes/StCodec.class';
 import Language from '../../../src/core/shared/Language';
 import MessageBus from '../../../src/core/shared/MessageBus';
 
 jest.mock('./../../../src/core/shared/Payment');
+jest.mock('jwt-decode');
 
 // given
 describe('ControlFrame', () => {
@@ -478,50 +480,6 @@ describe('ControlFrame', () => {
     it('should call byPassInitRequest', () => {
       // @ts-ignore
       expect(instance._payment.byPassInitRequest).toHaveBeenCalledWith(cachetoken);
-    });
-  });
-
-  // given
-  describe('_requestPayment', () => {
-    const { instance } = controlFrameFixture();
-    const data = {};
-
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._payment.threeDQueryRequest = jest.fn();
-      // @ts-ignore
-      instance._validation.setFormValidity = jest.fn();
-      // @ts-ignore
-      instance._messageBus.publish = jest.fn();
-    });
-
-    // then
-    it('should call instance._validation.setFormValidity when validity is false', () => {
-      // @ts-ignore
-      instance._payment.threeDQueryRequest = jest.fn().mockResolvedValueOnce({ result: { response: {} } });
-      // @ts-ignore
-      instance._validation.formValidation = jest.fn().mockReturnValueOnce({
-        validity: true,
-        card: 'some value'
-      });
-      // @ts-ignore
-      instance._requestPayment(data);
-      // @ts-ignore
-      expect(instance._payment.threeDQueryRequest).toHaveBeenCalled();
-    });
-
-    // then
-    it('should call instance._validation.setFormValidity when validity is false', () => {
-      // @ts-ignore
-      instance._validation.formValidation = jest.fn().mockReturnValueOnce({
-        validity: false,
-        card: 'some value'
-      });
-      // @ts-ignore
-      instance._requestPayment(data);
-      // @ts-ignore
-      expect(instance._validation.setFormValidity).toHaveBeenCalled();
     });
   });
 

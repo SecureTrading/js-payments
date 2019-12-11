@@ -373,9 +373,12 @@ class ControlFrame extends Frame {
     this._messageBus.publish(messageBusEvent, true);
   }
 
+  private _getPan() {
+    return JwtDecode<IStJwtObj>(this._params.jwt).payload.pan;
+  }
+
   private _requestPayment(data: any) {
-    const pan: any = JwtDecode<IStJwtObj>(this._params.jwt).payload.pan;
-    const isPanPiba: boolean = this._binLookup.binLookup(pan).type === 'PIBA';
+    const isPanPiba: boolean = this._binLookup.binLookup(this._getPan()).type === 'PIBA';
     const dataInJwt = data ? data.dataInJwt : false;
     const deferInit = data ? data.deferInit : false;
     const { validity, card } = this._validation.formValidation(

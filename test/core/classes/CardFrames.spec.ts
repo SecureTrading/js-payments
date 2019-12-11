@@ -372,7 +372,9 @@ describe('CardFrames', () => {
         // @ts-ignore
         instance.componentIds.cardNumber,
         // @ts-ignore
-        instance.componentIds.expirationDate
+        instance.componentIds.expirationDate,
+        // @ts-ignore
+        instance.componentIds.securityCode
       ]);
     });
   });
