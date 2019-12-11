@@ -172,7 +172,12 @@ class CardNumber extends FormField {
       data: isCardPiba,
       type: MessageBus.EVENTS.BLOCK_SECURITY_CODE
     };
+    const messageBusEventPiba: IMessageBusEvent = {
+      data: isCardPiba,
+      type: MessageBus.EVENTS.IS_CARD_WITHOUT_CVV
+    };
     this._messageBus.publish(messageBusEvent);
+    this._messageBus.publish(messageBusEventPiba);
   }
 
   private _sendState() {
