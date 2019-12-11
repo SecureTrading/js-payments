@@ -86,24 +86,6 @@ class CardFrames extends RegisterFrames {
     this._broadcastSecurityCodeProperties(this.jwt);
   }
 
-  private _setInitValues(
-    buttonId: string,
-    defaultPaymentType: string,
-    deferInit: boolean,
-    paymentTypes: any,
-    startOnLoad: boolean
-  ) {
-    this._validation = new Validation();
-    this._translator = new Translator(this.params.locale);
-    this._buttonId = buttonId;
-    this._deferInit = deferInit;
-    this._startOnLoad = startOnLoad;
-    this._defaultPaymentType = defaultPaymentType;
-    this._paymentTypes = paymentTypes;
-    this._payMessage = this._translator.translate(Language.translations.PAY);
-    this._processingMessage = `${this._translator.translate(Language.translations.PROCESSING)} ...`;
-  }
-
   /**
    * Registers and appends elements in users form.
    * @param fields
@@ -173,6 +155,25 @@ class CardFrames extends RegisterFrames {
       this.fieldsToSubmit.includes(CardFrames.EXPIRY_DATE_FIELD_NAME) &&
       this.fieldsToSubmit.includes(CardFrames.SECURITY_CODE_FIELD_NAME);
   }
+
+  /**
+   * Creates submit button whether is input or button markup.
+   * Chooses between specified by merchant or default one.
+   */
+  private _createSubmitButton = () => {
+    const form = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR);
+    let button: HTMLInputElement | HTMLButtonElement = this._buttonId
+      ? (document.getElementById(this._buttonId) as HTMLButtonElement | HTMLInputElement)
+      : null;
+    if (!button) {
+      button =
+        form.querySelector(CardFrames.SUBMIT_BUTTON_AS_BUTTON_MARKUP) ||
+        form.querySelector(CardFrames.SUBMIT_BUTTON_AS_INPUT_MARKUP);
+    }
+    button.textContent = this._payMessage;
+    this._submitButton = button;
+    return button;
+  };
 
   private _deferJsinitOnLoad() {
     if (!this._deferInit && this._startOnLoad) {
@@ -311,24 +312,23 @@ class CardFrames extends RegisterFrames {
     }
   }
 
-  /**
-   * Creates submit button whether is input or button markup.
-   * Chooses between specified by merchant or default one.
-   */
-  private _createSubmitButton = () => {
-    const form = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR);
-    let button: HTMLInputElement | HTMLButtonElement = this._buttonId
-      ? (document.getElementById(this._buttonId) as HTMLButtonElement | HTMLInputElement)
-      : null;
-    if (!button) {
-      button =
-        form.querySelector(CardFrames.SUBMIT_BUTTON_AS_BUTTON_MARKUP) ||
-        form.querySelector(CardFrames.SUBMIT_BUTTON_AS_INPUT_MARKUP);
-    }
-    button.textContent = this._payMessage;
-    this._submitButton = button;
-    return button;
-  };
+  private _setInitValues(
+    buttonId: string,
+    defaultPaymentType: string,
+    deferInit: boolean,
+    paymentTypes: any,
+    startOnLoad: boolean
+  ) {
+    this._validation = new Validation();
+    this._translator = new Translator(this.params.locale);
+    this._buttonId = buttonId;
+    this._deferInit = deferInit;
+    this._startOnLoad = startOnLoad;
+    this._defaultPaymentType = defaultPaymentType;
+    this._paymentTypes = paymentTypes;
+    this._payMessage = this._translator.translate(Language.translations.PAY);
+    this._processingMessage = `${this._translator.translate(Language.translations.PROCESSING)} ...`;
+  }
 
   private _setSubmitButtonProperties(element: any, disabledState: boolean) {
     if (disabledState) {
