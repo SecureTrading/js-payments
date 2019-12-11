@@ -1,8 +1,6 @@
 import JwtDecode from 'jwt-decode';
 import Element from '../Element';
-import { IFormFields } from '../models/CardFrames';
 import { IValidationMessageBus } from '../models/Validation';
-import BinLookup from '../shared/BinLookup';
 import DomMethods from '../shared/DomMethods';
 import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
@@ -16,8 +14,7 @@ import RegisterFrames from './RegisterFrames.class';
  * Defines all card elements of form and their placement on merchant site.
  */
 class CardFrames extends RegisterFrames {
-  private static COMPLETE_FORM_FIELDS: Array<string> = ['pan', 'expirydate', 'securitycode'];
-  private static NO_CVV_CARDS: Array<string> = ['PIBA'];
+  private static NO_CVV_CARDS: string[] = ['PIBA'];
   private static ON_SUBMIT_ACTION: string = 'onsubmit';
   private static PREVENT_DEFAULT_EVENT: string = 'event.preventDefault()';
   private static SUBMIT_BUTTON_AS_BUTTON_MARKUP: string = 'button[type="submit"]';
@@ -30,8 +27,6 @@ class CardFrames extends RegisterFrames {
       .setAttribute(CardFrames.ON_SUBMIT_ACTION, CardFrames.PREVENT_DEFAULT_EVENT);
   }
 
-  protected fieldsToSubmit: string[];
-  protected hasAnimatedCard: boolean;
   private _animatedCardMounted: HTMLElement;
   private _cardNumberMounted: HTMLElement;
   private _expirationDateMounted: HTMLElement;
@@ -45,14 +40,13 @@ class CardFrames extends RegisterFrames {
   private _messageBusEvent: IMessageBusEvent = { data: { message: '' }, type: '' };
   private _submitButton: HTMLInputElement | HTMLButtonElement;
   private _cardType: boolean;
-  private readonly _buttonId: string;
-  private readonly _jwt: string;
-  private readonly _deferInit: boolean;
-  private readonly _defaultPaymentType: string;
-  private readonly _paymentTypes: string[];
-  private readonly _payMessage: string;
-  private readonly _processingMessage: string;
-  private readonly _startOnLoad: boolean;
+  private _buttonId: string;
+  private _deferInit: boolean;
+  private _defaultPaymentType: string;
+  private _paymentTypes: string[];
+  private _payMessage: string;
+  private _processingMessage: string;
+  private _startOnLoad: boolean;
 
   constructor(
     jwt: string,
@@ -68,13 +62,31 @@ class CardFrames extends RegisterFrames {
     fieldsToSubmit: string[]
   ) {
     super(jwt, origin, componentIds, styles, animatedCard, fieldsToSubmit);
+    this._setInitValues(
+      animatedCard,
+      buttonId,
+      defaultPaymentType,
+      deferInit,
+      jwt,
+      fieldsToSubmit,
+      paymentTypes,
+      startOnLoad
+    );
+    this.onInit();
+  }
+
+  protected _setInitValues(
+    animatedCard: boolean,
+    buttonId: string,
+    defaultPaymentType: string,
+    deferInit: boolean,
+    jwt: string,
+    fieldsToSubmit: string[],
+    paymentTypes: any,
+    startOnLoad: boolean
+  ) {
     this._validation = new Validation();
-    this.messageBus = new MessageBus();
-    this.binLookup = new BinLookup();
     this._translator = new Translator(this.params.locale);
-    this._jwt = jwt;
-    this.fieldsToSubmit = fieldsToSubmit.length ? fieldsToSubmit : CardFrames.COMPLETE_FORM_FIELDS;
-    this.hasAnimatedCard = animatedCard;
     this._buttonId = buttonId;
     this._deferInit = deferInit;
     this._startOnLoad = startOnLoad;
@@ -82,7 +94,6 @@ class CardFrames extends RegisterFrames {
     this._paymentTypes = paymentTypes;
     this._payMessage = this._translator.translate(Language.translations.PAY);
     this._processingMessage = `${this._translator.translate(Language.translations.PROCESSING)} ...`;
-    this.onInit();
   }
 
   /**
@@ -111,7 +122,7 @@ class CardFrames extends RegisterFrames {
     this._initSubscribes();
     this._initCardFields();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
-    this._broadcastSecurityCodeProperties(this._jwt);
+    this._broadcastSecurityCodeProperties(this.jwt);
   }
 
   /**
