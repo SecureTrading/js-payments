@@ -316,18 +316,18 @@ describe('CardFrames', () => {
     // then
     it('should return button referred to id specified by merchant', () => {
       // @ts-ignore
-      expect(instance._setSubmitButton()).toEqual(document.getElementById('merchant-submit-button'));
+      expect(instance._createSubmitButton()).toEqual(document.getElementById('merchant-submit-button'));
     });
 
     it('should return first given submit button which has been specified in form', () => {
       // @ts-ignore
       instance._buttonId = 'blah';
       // @ts-ignore
-      expect(instance._setSubmitButton().nodeName).toEqual('BUTTON');
+      expect(instance._createSubmitButton().nodeName).toEqual('BUTTON');
       // @ts-ignore
-      expect(instance._setSubmitButton().getAttribute('class')).toEqual('example-form__button');
+      expect(instance._createSubmitButton().getAttribute('class')).toEqual('example-form__button');
       // @ts-ignore
-      expect(instance._setSubmitButton().getAttribute('type')).toEqual('submit');
+      expect(instance._createSubmitButton().getAttribute('type')).toEqual('submit');
     });
 
     // then
@@ -335,47 +335,11 @@ describe('CardFrames', () => {
       // @ts-ignore
       instance._buttonId = undefined;
       // @ts-ignore
-      expect(instance._setSubmitButton().nodeName).toEqual('BUTTON');
+      expect(instance._createSubmitButton().nodeName).toEqual('BUTTON');
       // @ts-ignore
-      expect(instance._setSubmitButton().getAttribute('class')).toEqual('example-form__button');
+      expect(instance._createSubmitButton().getAttribute('class')).toEqual('example-form__button');
       // @ts-ignore
-      expect(instance._setSubmitButton().getAttribute('type')).toEqual('submit');
-    });
-  });
-
-  // given
-  describe('setElementsFields', () => {
-    const { instance } = cardFramesFixture();
-    // then
-    it('should return array of component ids with animated card id included', () => {
-      // @ts-ignore
-      instance.hasAnimatedCard = true;
-      // @ts-ignore
-      expect(instance.setElementsFields()).toEqual([
-        // @ts-ignore
-        instance.componentIds.cardNumber,
-        // @ts-ignore
-        instance.componentIds.expirationDate,
-        // @ts-ignore
-        instance.componentIds.securityCode,
-        // @ts-ignore
-        instance.componentIds.animatedCard
-      ]);
-    });
-
-    // then
-    it('should return array of component ids without animated card id included if card was not specified in config', () => {
-      // @ts-ignore
-      instance.hasAnimatedCard = false;
-      // @ts-ignore
-      expect(instance.setElementsFields()).toEqual([
-        // @ts-ignore
-        instance.componentIds.cardNumber,
-        // @ts-ignore
-        instance.componentIds.expirationDate,
-        // @ts-ignore
-        instance.componentIds.securityCode
-      ]);
+      expect(instance._createSubmitButton().getAttribute('type')).toEqual('submit');
     });
   });
 });
