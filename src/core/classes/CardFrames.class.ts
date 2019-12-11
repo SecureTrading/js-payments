@@ -1,5 +1,6 @@
 import JwtDecode from 'jwt-decode';
 import Element from '../Element';
+import { IFormFields } from '../models/CardFrames';
 import { IValidationMessageBus } from '../models/Validation';
 import BinLookup from '../shared/BinLookup';
 import DomMethods from '../shared/DomMethods';
@@ -15,16 +16,22 @@ import RegisterFrames from './RegisterFrames.class';
  * Defines all card elements of form and their placement on merchant site.
  */
 class CardFrames extends RegisterFrames {
-  private static SUBMIT_BUTTON_AS_BUTTON_MARKUP = 'button[type="submit"]';
-  private static SUBMIT_BUTTON_AS_INPUT_MARKUP = 'input[type="submit"]';
-  private static SUBMIT_BUTTON_DISABLED_CLASS = 'st-button-submit__disabled';
+  private static COMPLETE_FORM_FIELDS: Array<string> = ['pan', 'expirydate', 'securitycode'];
+  private static NO_CVV_CARDS: Array<string> = ['PIBA'];
+  private static ON_SUBMIT_ACTION: string = 'onsubmit';
+  private static PREVENT_DEFAULT_EVENT: string = 'event.preventDefault()';
+  private static SUBMIT_BUTTON_AS_BUTTON_MARKUP: string = 'button[type="submit"]';
+  private static SUBMIT_BUTTON_AS_INPUT_MARKUP: string = 'input[type="submit"]';
+  private static SUBMIT_BUTTON_DISABLED_CLASS: string = 'st-button-submit__disabled';
 
   private static _preventFormSubmit() {
-    return document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).setAttribute('onsubmit', 'event.preventDefault()');
+    return document
+      .getElementById(Selectors.MERCHANT_FORM_SELECTOR)
+      .setAttribute(CardFrames.ON_SUBMIT_ACTION, CardFrames.PREVENT_DEFAULT_EVENT);
   }
 
-  protected hasAnimatedCard: boolean;
   protected fieldsToSubmit: string[];
+  protected hasAnimatedCard: boolean;
   private _animatedCardMounted: HTMLElement;
   private _cardNumberMounted: HTMLElement;
   private _expirationDateMounted: HTMLElement;
@@ -39,7 +46,7 @@ class CardFrames extends RegisterFrames {
   private _submitButton: HTMLInputElement | HTMLButtonElement;
   private _cardType: boolean;
   private readonly _buttonId: string;
-  private _jwt: string;
+  private readonly _jwt: string;
   private readonly _deferInit: boolean;
   private readonly _defaultPaymentType: string;
   private readonly _paymentTypes: string[];
@@ -66,7 +73,7 @@ class CardFrames extends RegisterFrames {
     this.binLookup = new BinLookup();
     this._translator = new Translator(this.params.locale);
     this._jwt = jwt;
-    this.fieldsToSubmit = fieldsToSubmit.length ? fieldsToSubmit : ['pan', 'expirydate', 'securitycode'];
+    this.fieldsToSubmit = fieldsToSubmit.length ? fieldsToSubmit : CardFrames.COMPLETE_FORM_FIELDS;
     this.hasAnimatedCard = animatedCard;
     this._buttonId = buttonId;
     this._deferInit = deferInit;
@@ -85,7 +92,7 @@ class CardFrames extends RegisterFrames {
    * @private
    */
   protected _broadcastSecurityCodeProperties(jwt: string) {
-    this._cardType = this._getCardType(jwt) === 'PIBA';
+    this._cardType = CardFrames.NO_CVV_CARDS.includes(this._getCardType(jwt));
     const messageBusEvent: IMessageBusEvent = {
       data: this._getSecurityCodeLength(jwt),
       type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
