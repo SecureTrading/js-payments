@@ -127,6 +127,16 @@ class SecurityCode extends FormField {
       this._checkSecurityCodeLength(length);
       this._sendState();
     });
+
+    this._messageBus.subscribe(MessageBus.EVENTS.IS_CARD_WITHOUT_CVV, (state: boolean) => {
+      if (state) {
+        this._clearInputValue();
+      }
+    });
+  }
+
+  private _clearInputValue() {
+    this._inputElement.value = '';
   }
 
   private _toggleSecurityCodeValidation() {

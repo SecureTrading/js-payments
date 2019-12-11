@@ -25,6 +25,7 @@ class ControlFrame extends Frame {
   }
 
   private _payment: Payment;
+  private _cardNumber: string;
   private _binLookup: BinLookup;
   private _isPaymentReady: boolean = false;
   private _merchantFormData: IMerchantData;
@@ -117,6 +118,7 @@ class ControlFrame extends Frame {
    */
   private _initChangeCardNumberEvent() {
     this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: IFormFieldState) => {
+      this._cardNumber = data.value;
       this._onCardNumberStateChange(data);
     });
   }
@@ -374,7 +376,8 @@ class ControlFrame extends Frame {
   }
 
   private _getPan() {
-    return JwtDecode<IStJwtObj>(this._params.jwt).payload.pan;
+    const decodedJwt: any = JwtDecode<IStJwtObj>(this._params.jwt);
+    return decodedJwt.payload.pan ? JwtDecode<IStJwtObj>(this._params.jwt).payload.pan : this._cardNumber;
   }
 
   private _requestPayment(data: any) {
