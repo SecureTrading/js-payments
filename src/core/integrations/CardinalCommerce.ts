@@ -44,6 +44,7 @@ export class CardinalCommerce {
   private readonly _threedinit: string;
   private _notification: Notification;
   private _sdkAddress: string = environment.CARDINAL_COMMERCE.SONGBIRD_TEST_URL;
+  private CALLED: boolean = false;
 
   constructor(
     startOnLoad: boolean,
@@ -90,6 +91,12 @@ export class CardinalCommerce {
     );
   }
 
+  protected _cardinalSetup() {
+    Cardinal.setup(PAYMENT_EVENTS.INIT, {
+      jwt: this._cardinalCommerceJWT
+    });
+  }
+
   /**
    * Initiate configuration of Cardinal Commerce
    * Initialize Cardinal Commerce mechanism with given JWT (by merchant).
@@ -104,10 +111,7 @@ export class CardinalCommerce {
       this._onCardinalValidated(data, jwt);
       GoogleAnalytics.sendGaData('event', 'Cardinal', 'validate', 'Cardinal payment validated');
     });
-
-    Cardinal.setup(PAYMENT_EVENTS.INIT, {
-      jwt: this._cardinalCommerceJWT
-    });
+    this._cardinalSetup();
   }
 
   /**
@@ -178,9 +182,14 @@ export class CardinalCommerce {
    * Inserts songbird.js and load script.
    */
   protected _threeDSetup() {
-    DomMethods.insertScript('head', this._sdkAddress).addEventListener('load', () => {
-      this._onCardinalLoad();
-    });
+    if (!this.CALLED) {
+      DomMethods.insertScript('head', this._sdkAddress).addEventListener('load', () => {
+        this._onCardinalLoad();
+      });
+    } else {
+      this._cardinalSetup();
+    }
+    this.CALLED = true;
   }
 
   /**
