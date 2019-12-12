@@ -41,9 +41,13 @@ class Validation extends Frame {
     return regex.test(key);
   }
 
-  public static isKeyEnter(event: KeyboardEvent) {
-    const keyCode: number = event.keyCode;
-    return keyCode === Validation.ENTER_KEY_CODE;
+  public static isKeyEnter(event: KeyboardEvent): boolean {
+    if (event) {
+      const keyCode: number = event.keyCode;
+      return keyCode === Validation.ENTER_KEY_CODE;
+    } else {
+      return false;
+    }
   }
 
   public static setCustomValidationError(errorContent: string, inputElement: HTMLInputElement) {
