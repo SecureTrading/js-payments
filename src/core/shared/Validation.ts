@@ -1,6 +1,5 @@
 import { StCodec } from '../classes/StCodec.class';
 import { BrandDetailsType } from '../imports/cardtype';
-import { IFormFields } from '../models/CardFrames';
 import { IErrorData, IMessageBusValidateField, IValidation } from '../models/Validation';
 import BinLookup from './BinLookup';
 import Frame from './Frame';
@@ -19,28 +18,12 @@ const {
 class Validation extends Frame {
   public static ERROR_FIELD_CLASS: string = 'error-field';
 
-  public static isCharNumber(event: KeyboardEvent) {
-    const key: string = event.key;
-    const regex = new RegExp(Validation.ESCAPE_DIGITS_REGEXP);
-    return regex.test(key);
-  }
-
-  public static isKeyEnter(event: KeyboardEvent) {
-    const keyCode: number = event.keyCode;
-    return keyCode === Validation.ENTER_KEY_CODE;
-  }
-
-  public static clearNonDigitsChars = (value: string) => {
+  public static clearNonDigitsChars(value: string): string {
     return value.replace(Validation.ESCAPE_DIGITS_REGEXP, Validation.CLEAR_VALUE);
-  };
-
-  public static setCustomValidationError(errorContent: string, inputElement: HTMLInputElement) {
-    inputElement.setCustomValidity(errorContent);
   }
 
   public static getValidationMessage(state: ValidityState): string {
     const { patternMismatch, valid, valueMissing } = state;
-
     if (!valid) {
       if (valueMissing) {
         return VALIDATION_ERROR_FIELD_IS_REQUIRED;
@@ -52,8 +35,25 @@ class Validation extends Frame {
     }
   }
 
+  public static isCharNumber(event: KeyboardEvent): boolean {
+    const key: string = event.key;
+    const regex = new RegExp(Validation.ESCAPE_DIGITS_REGEXP);
+    return regex.test(key);
+  }
+
+  public static isKeyEnter(event: KeyboardEvent) {
+    const keyCode: number = event.keyCode;
+    return keyCode === Validation.ENTER_KEY_CODE;
+  }
+
+  public static setCustomValidationError(errorContent: string, inputElement: HTMLInputElement) {
+    inputElement.setCustomValidity(errorContent);
+  }
+
   protected static STANDARD_FORMAT_PATTERN: string = '(\\d{1,4})(\\d{1,4})?(\\d{1,4})?(\\d+)?';
   private static CLEAR_VALUE: string = '';
+  private static SPACE_IN_PAN: string = ' ';
+  private static EXPIRATION_DATE_SLASH: string = '/';
   private static ID_PARAM_NAME: string = 'id';
   private static ESCAPE_DIGITS_REGEXP = /[^\d]/g;
   private static BACKSPACE_KEY_CODE: number = 8;
@@ -65,15 +65,15 @@ class Validation extends Frame {
   private static ERROR_CLASS: string = 'error';
   private static CURSOR_SINGLE_SKIP: number = 1;
   private static CURSOR_DOUBLE_SKIP: number = 2;
-  private static BACKEND_ERROR_FIELDS_NAMES = {
-    cardNumber: 'pan',
-    expirationDate: 'expirydate',
-    securityCode: 'securitycode'
-  };
-  private static ENTER_KEY_CODE = 13;
   private static CARD_NUMBER_FIELD_NAME: string = 'pan';
   private static EXPIRY_DATE_FIELD_NAME: string = 'expirydate';
   private static SECURITY_CODE_FIELD_NAME: string = 'securitycode';
+  private static BACKEND_ERROR_FIELDS_NAMES = {
+    cardNumber: Validation.CARD_NUMBER_FIELD_NAME,
+    expirationDate: Validation.EXPIRY_DATE_FIELD_NAME,
+    securityCode: Validation.SECURITY_CODE_FIELD_NAME
+  };
+  private static ENTER_KEY_CODE = 13;
   private static readonly MERCHANT_EXTRA_FIELDS_PREFIX = 'billing';
 
   /**
@@ -101,7 +101,7 @@ class Validation extends Frame {
     return sum && sum % 10 === 0;
   }
 
-  private static _setValidateEvent(errordata: string, event: IMessageBusEvent) {
+  private static _setValidateEvent(errordata: string, event: IMessageBusEvent): IMessageBusEvent {
     switch (errordata) {
       case Validation.BACKEND_ERROR_FIELDS_NAMES.cardNumber:
         event.type = MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD;
@@ -172,7 +172,8 @@ class Validation extends Frame {
 
   public keepCursorAtSamePosition(element: HTMLInputElement) {
     const lengthFormatted: number = element.value.length;
-    const isLastCharSlash: boolean = element.value.charAt(lengthFormatted - 2) === '/';
+    const isLastCharSlash: boolean =
+      element.value.charAt(lengthFormatted - Validation.CURSOR_DOUBLE_SKIP) === Validation.EXPIRATION_DATE_SLASH;
     const start: number = this._selectionRangeStart;
     const end: number = this._selectionRangeEnd;
 
@@ -183,7 +184,7 @@ class Validation extends Frame {
     } else if (isLastCharSlash) {
       ++this._cursorSkip;
       element.setSelectionRange(start + Validation.CURSOR_DOUBLE_SKIP, end + Validation.CURSOR_DOUBLE_SKIP);
-    } else if (element.value.charAt(end) === ' ') {
+    } else if (element.value.charAt(end) === Validation.SPACE_IN_PAN) {
       ++this._cursorSkip;
       element.setSelectionRange(start + Validation.CURSOR_DOUBLE_SKIP, end + Validation.CURSOR_DOUBLE_SKIP);
     } else {
@@ -208,7 +209,6 @@ class Validation extends Frame {
       type: MessageBus.EVENTS.BLOCK_FORM
     };
     this._messageBus.publish(messageBusEvent, true);
-    return state;
   }
 
   public callSubmitEvent() {
@@ -320,11 +320,11 @@ class Validation extends Frame {
   }
 
   protected expirationDate(value: string) {
-    this.expirationDateValue = value ? this.removeNonDigits(value) : '';
+    this.expirationDateValue = value ? this.removeNonDigits(value) : Validation.CLEAR_VALUE;
   }
 
   protected securityCode(value: string, length: number) {
-    this.securityCodeValue = value ? this.limitLength(this.removeNonDigits(value), length) : '';
+    this.securityCodeValue = value ? this.limitLength(this.removeNonDigits(value), length) : Validation.CLEAR_VALUE;
   }
 
   private _setMessage(inputElement: HTMLInputElement, messageElement: HTMLElement, customErrorMessage?: string) {
@@ -367,7 +367,7 @@ class Validation extends Frame {
     validityState: string,
     messageElement?: HTMLElement,
     customErrorMessage?: string
-  ) {
+  ): string {
     if (messageElement && customErrorMessage && !isCardNumberInput) {
       return this._translator.translate(customErrorMessage);
     } else if (messageElement && inputElement.value && isCardNumberInput && !inputElement.validity.valid) {
@@ -376,9 +376,6 @@ class Validation extends Frame {
       return this._translator.translate(validityState);
     }
   }
-
-  private _isFormReadyToSubmit = (deferInit: boolean) =>
-    (this._isPaymentReady && this._formValidity) || (deferInit && this._formValidity);
 
   private _assignErrorDetails(
     inputElement: HTMLInputElement,
@@ -399,6 +396,9 @@ class Validation extends Frame {
   private _broadcastFormFieldError(errordata: string, event: IMessageBusEvent) {
     this._messageBus.publish(Validation._setValidateEvent(errordata, event));
   }
+
+  private _isFormReadyToSubmit = (deferInit: boolean): boolean =>
+    (this._isPaymentReady && this._formValidity) || (deferInit && this._formValidity);
 }
 
 export default Validation;
