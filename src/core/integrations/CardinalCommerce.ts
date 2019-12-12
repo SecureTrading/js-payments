@@ -44,7 +44,7 @@ export class CardinalCommerce {
   private readonly _threedinit: string;
   private _notification: Notification;
   private _sdkAddress: string = environment.CARDINAL_COMMERCE.SONGBIRD_TEST_URL;
-  private CALLED: boolean = false;
+  private _called: boolean = false;
 
   constructor(
     startOnLoad: boolean,
@@ -182,14 +182,14 @@ export class CardinalCommerce {
    * Inserts songbird.js and load script.
    */
   protected _threeDSetup() {
-    if (!this.CALLED) {
+    if (!this._called) {
       DomMethods.insertScript('head', this._sdkAddress).addEventListener('load', () => {
         this._onCardinalLoad();
       });
     } else {
       this._cardinalSetup();
     }
-    this.CALLED = true;
+    this._called = true;
   }
 
   /**
