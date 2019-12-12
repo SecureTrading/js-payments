@@ -162,7 +162,7 @@ describe('CardNumber', () => {
       // @ts-ignore
       spy = jest.spyOn(instance, 'format');
       // @ts-ignore
-      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
+      instance.messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
         callback();
       });
       // @ts-ignore
@@ -171,11 +171,11 @@ describe('CardNumber', () => {
     // then
     it('should set MessageBus listener function', () => {
       // @ts-ignore
-      expect(instance._messageBus.subscribe.mock.calls[0][0]).toBe(MessageBus.EVENTS.FOCUS_CARD_NUMBER);
+      expect(instance.messageBus.subscribe.mock.calls[0][0]).toBe(MessageBus.EVENTS.FOCUS_CARD_NUMBER);
       // @ts-ignore
-      expect(instance._messageBus.subscribe.mock.calls[0][1]).toBeInstanceOf(Function);
+      expect(instance.messageBus.subscribe.mock.calls[0][1]).toBeInstanceOf(Function);
       // @ts-ignore
-      expect(instance._messageBus.subscribe).toHaveBeenCalledTimes(1);
+      expect(instance.messageBus.subscribe).toHaveBeenCalledTimes(1);
     });
 
     it('should call format function', () => {
@@ -189,7 +189,7 @@ describe('CardNumber', () => {
 
     function subscribeMock(state: boolean) {
       // @ts-ignore
-      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
+      instance.messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
         callback(state);
       });
       // @ts-ignore

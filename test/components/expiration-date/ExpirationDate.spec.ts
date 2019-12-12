@@ -38,20 +38,18 @@ describe('ExpirationDate', () => {
     // then
     it('should have attribute disabled set', () => {
       // @ts-ignore
-      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
+      instance.messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
         callback(true);
       });
       instance.setDisableListener();
       // @ts-ignore
       expect(instance._inputElement.hasAttribute(attributeName)).toBe(true);
-      // @ts-ignore
-      expect(instance._inputElement.classList.contains(ExpirationDate.DISABLE_FIELD_CLASS)).toBe(true);
     });
 
     // then
     it('should have no attribute disabled and class disabled', () => {
       // @ts-ignore
-      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
+      instance.messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
         callback(false);
       });
       instance.setDisableListener();
@@ -199,7 +197,7 @@ describe('ExpirationDate', () => {
     // when
     beforeEach(() => {
       // @ts-ignore;
-      spy = jest.spyOn(instance._messageBus, 'publish');
+      spy = jest.spyOn(instance.messageBus, 'publish');
       // @ts-ignore;
       instance._sendState();
     });

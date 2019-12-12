@@ -47,8 +47,6 @@ describe('MerchantField', () => {
       // @ts-ignore
       instance._backendValidation(element, MessageBus.EVENTS.VALIDATE_MERCHANT_FIELD);
       // @ts-ignore
-      expect(instance._validation.checkBackendValidity).toHaveBeenCalled();
-      // @ts-ignore
       expect(instance._validation.validate).toHaveBeenCalled();
     });
   });

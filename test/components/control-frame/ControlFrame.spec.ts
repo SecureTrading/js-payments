@@ -13,7 +13,7 @@ describe('ControlFrame', () => {
 
   beforeEach(() => {
     // @ts-ignore
-    instance._messageBus.subscribe = jest.fn().mockImplementationOnce((event, callback) => {
+    instance.messageBus.subscribe = jest.fn().mockImplementationOnce((event, callback) => {
       callback(data);
     });
   });
@@ -165,7 +165,7 @@ describe('ControlFrame', () => {
     // then
     it('should call _initResetJwtEvent when RESET_JWT event has been called', () => {
       // @ts-ignore
-      instance._messageBus.subscribe = jest
+      instance.messageBus.subscribe = jest
         .fn()
         .mockImplementationOnce((even, callback) => {
           callback();
@@ -513,7 +513,7 @@ describe('ControlFrame', () => {
       // @ts-ignore
       instance._storeMerchantData(data);
       // @ts-ignore
-      instance._messageBus.publish = jest.fn();
+      instance.messageBus.publish = jest.fn();
     });
 
     // then
