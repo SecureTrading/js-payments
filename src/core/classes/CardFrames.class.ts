@@ -72,7 +72,8 @@ class CardFrames extends RegisterFrames {
   ) {
     super(jwt, origin, componentIds, styles, animatedCard, fieldsToSubmit);
     this._setInitValues(buttonId, defaultPaymentType, deferInit, paymentTypes, startOnLoad);
-    this._configureFormFieldsAmount(jwt);
+    this.configureFormFieldsAmount(jwt);
+    this.setElementsFields();
     this.onInit();
   }
 
@@ -84,6 +85,30 @@ class CardFrames extends RegisterFrames {
     this._initCardFrames();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
     this._broadcastSecurityCodeProperties(this.jwt);
+  }
+
+  /**
+   * Checks how any inputs there are configured (1 or 3) and specified the type of card indicated.
+   * @param jwt
+   * @private
+   */
+  protected configureFormFieldsAmount(jwt: string) {
+    this._fieldsToSubmitLength = this.fieldsToSubmit.length;
+    this._isCardWithNoCvv = jwt && CardFrames.NO_CVV_CARDS.includes(this._getCardType(jwt));
+    this._noFieldConfiguration =
+      this._fieldsToSubmitLength === CardFrames.ONLY_CVV_NUMBER_OF_FIELDS &&
+      this._isCardWithNoCvv &&
+      this.fieldsToSubmit.includes(CardFrames.SECURITY_CODE_FIELD_NAME);
+    this._onlyCvvConfiguration =
+      this._fieldsToSubmitLength === CardFrames.ONLY_CVV_NUMBER_OF_FIELDS &&
+      !this._isCardWithNoCvv &&
+      this.fieldsToSubmit.includes(CardFrames.SECURITY_CODE_FIELD_NAME);
+    this._configurationForStandardCard =
+      this._fieldsToSubmitLength === CardFrames.COMPLETE_FORM_NUMBER_OF_FIELDS &&
+      !this._isCardWithNoCvv &&
+      this.fieldsToSubmit.includes(CardFrames.CARD_NUMBER_FIELD_NAME) &&
+      this.fieldsToSubmit.includes(CardFrames.EXPIRY_DATE_FIELD_NAME) &&
+      this.fieldsToSubmit.includes(CardFrames.SECURITY_CODE_FIELD_NAME);
   }
 
   /**
@@ -102,7 +127,7 @@ class CardFrames extends RegisterFrames {
   /**
    * Defines form elements for card payments
    */
-  protected setElementsFields(jwt?: string) {
+  protected setElementsFields() {
     if (this._configurationForStandardCard) {
       return [this.componentIds.cardNumber, this.componentIds.expirationDate, this.componentIds.securityCode];
     } else if (this._onlyCvvConfiguration) {
@@ -130,30 +155,6 @@ class CardFrames extends RegisterFrames {
         this.messageBus.publish(messageBusEvent);
       }
     });
-  }
-
-  /**
-   * Checks how any inputs there are configured (1 or 3) and specified the type of card indicated.
-   * @param jwt
-   * @private
-   */
-  private _configureFormFieldsAmount(jwt: string) {
-    this._fieldsToSubmitLength = this.fieldsToSubmit.length;
-    this._isCardWithNoCvv = jwt && CardFrames.NO_CVV_CARDS.includes(this._getCardType(jwt));
-    this._noFieldConfiguration =
-      this._fieldsToSubmitLength === CardFrames.ONLY_CVV_NUMBER_OF_FIELDS &&
-      this._isCardWithNoCvv &&
-      this.fieldsToSubmit.includes(CardFrames.SECURITY_CODE_FIELD_NAME);
-    this._onlyCvvConfiguration =
-      this._fieldsToSubmitLength === CardFrames.ONLY_CVV_NUMBER_OF_FIELDS &&
-      !this._isCardWithNoCvv &&
-      this.fieldsToSubmit.includes(CardFrames.SECURITY_CODE_FIELD_NAME);
-    this._configurationForStandardCard =
-      this._fieldsToSubmitLength === CardFrames.COMPLETE_FORM_NUMBER_OF_FIELDS &&
-      !this._isCardWithNoCvv &&
-      this.fieldsToSubmit.includes(CardFrames.CARD_NUMBER_FIELD_NAME) &&
-      this.fieldsToSubmit.includes(CardFrames.EXPIRY_DATE_FIELD_NAME) &&
-      this.fieldsToSubmit.includes(CardFrames.SECURITY_CODE_FIELD_NAME);
   }
 
   /**
