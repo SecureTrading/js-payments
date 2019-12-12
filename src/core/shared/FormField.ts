@@ -31,7 +31,7 @@ export default class FormField extends Frame {
 
   public onInit() {
     super.onInit();
-    this._translator = new Translator(this._params.locale);
+    this._translator = new Translator(this.params.locale);
     this.validation = new Validation();
     this._setLabelText();
     this._addTabListener();
@@ -108,8 +108,8 @@ export default class FormField extends Frame {
   }
 
   protected onInput(event: Event) {
-    this.validation.keepCursorAtSamePosition(this._inputElement);
-    Validation.setCustomValidationError(this._inputElement, '');
+    this.validation.keepCursorsPosition(this._inputElement);
+    Validation.setCustomValidationError('', this._inputElement);
     this.format(this._inputElement.value);
   }
 
@@ -125,14 +125,14 @@ export default class FormField extends Frame {
   }
 
   protected onKeydown(event: KeyboardEvent) {
-    this.validation.setKeyDownProperties(this._inputElement, event);
+    this.validation.setOnKeyDownProperties(this._inputElement, event);
   }
 
   protected onPaste(event: ClipboardEvent) {
     let { clipboardData } = event;
     event.preventDefault();
     if (this._inputElement === document.activeElement) {
-      this.validation.keepCursorAtSamePosition(this._inputElement);
+      this.validation.keepCursorsPosition(this._inputElement);
     }
     if (typeof clipboardData === 'undefined') {
       // @ts-ignore
@@ -144,7 +144,7 @@ export default class FormField extends Frame {
 
     // @ts-ignore
     this._inputElement.value = Utils.stripChars(clipboardData, undefined);
-    Validation.setCustomValidationError(this._inputElement, '');
+    Validation.setCustomValidationError('', this._inputElement);
     this.format(this._inputElement.value);
     this.validation.validate(this._inputElement, this._messageElement);
   }
@@ -158,7 +158,7 @@ export default class FormField extends Frame {
   }
 
   protected setEventListener(event: string, validate: boolean = true) {
-    this._messageBus.subscribe(event, () => {
+    this.messageBus.subscribe(event, () => {
       if (validate) {
         this._validateInput();
       }

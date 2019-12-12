@@ -58,7 +58,7 @@ export class MerchantFields {
    */
   private _backendValidation(inputElement: HTMLInputElement, event: string, messageElement?: HTMLElement) {
     this._messageBus.subscribe(event, (data: IMessageBusValidateField) => {
-      this._validation.checkBackendValidity(data, inputElement, messageElement);
+      this._validation.setError(inputElement, messageElement, data);
       this._validation.validate(inputElement, messageElement);
     });
   }
