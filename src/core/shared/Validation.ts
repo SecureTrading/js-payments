@@ -55,30 +55,30 @@ class Validation extends Frame {
   }
 
   protected static STANDARD_FORMAT_PATTERN: string = '(\\d{1,4})(\\d{1,4})?(\\d{1,4})?(\\d+)?';
-  private static CLEAR_VALUE: string = '';
-  private static SPACE_IN_PAN: string = ' ';
-  private static EXPIRATION_DATE_SLASH: string = '/';
-  private static ID_PARAM_NAME: string = 'id';
-  private static ESCAPE_DIGITS_REGEXP = /[^\d]/g;
   private static BACKSPACE_KEY_CODE: number = 8;
   private static CARD_NUMBER_DEFAULT_LENGTH: number = 16;
-  private static DELETE_KEY_CODE: number = 46;
-  private static MATCH_CHARS = /[^\d]/g;
-  private static MATCH_DIGITS = /^[0-9]*$/;
-  private static LUHN_CHECK_ARRAY: number[] = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
-  private static ERROR_CLASS: string = 'error';
+  private static CARD_NUMBER_FIELD_NAME: string = 'pan';
+  private static CLEAR_VALUE: string = '';
   private static CURSOR_SINGLE_SKIP: number = 1;
   private static CURSOR_DOUBLE_SKIP: number = 2;
-  private static CARD_NUMBER_FIELD_NAME: string = 'pan';
+  private static DELETE_KEY_CODE: number = 46;
+  private static ENTER_KEY_CODE = 13;
+  private static ERROR_CLASS: string = 'error';
+  private static ESCAPE_DIGITS_REGEXP = /[^\d]/g;
+  private static EXPIRATION_DATE_SLASH: string = '/';
   private static EXPIRY_DATE_FIELD_NAME: string = 'expirydate';
+  private static ID_PARAM_NAME: string = 'id';
+  private static MATCH_CHARS = /[^\d]/g;
+  private static MATCH_DIGITS = /^[0-9]*$/;
+  private static MERCHANT_EXTRA_FIELDS_PREFIX = 'billing';
+  private static LUHN_CHECK_ARRAY: number[] = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
   private static SECURITY_CODE_FIELD_NAME: string = 'securitycode';
+  private static SPACE_IN_PAN: string = ' ';
   private static BACKEND_ERROR_FIELDS_NAMES = {
     cardNumber: Validation.CARD_NUMBER_FIELD_NAME,
     expirationDate: Validation.EXPIRY_DATE_FIELD_NAME,
     securityCode: Validation.SECURITY_CODE_FIELD_NAME
   };
-  private static ENTER_KEY_CODE = 13;
-  private static readonly MERCHANT_EXTRA_FIELDS_PREFIX = 'billing';
 
   /**
    * Luhn Algorithm
@@ -120,7 +120,15 @@ class Validation extends Frame {
     return event;
   }
 
-  private static _isFormValid(formFields: any, fieldsToSubmit: string[], isPanPiba: boolean): boolean {
+  private static _isFormValid(
+    formFields: {
+      cardNumber: IFormFieldState;
+      expirationDate: IFormFieldState;
+      securityCode: IFormFieldState;
+    },
+    fieldsToSubmit: string[],
+    isPanPiba: boolean
+  ): boolean {
     return (
       (fieldsToSubmit.includes(Validation.CARD_NUMBER_FIELD_NAME) ? formFields.cardNumber.validity : true) &&
       (fieldsToSubmit.includes(Validation.EXPIRY_DATE_FIELD_NAME) ? formFields.expirationDate.validity : true) &&
@@ -136,22 +144,22 @@ class Validation extends Frame {
       : inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
   }
 
-  public validation: IValidation;
   public cardDetails: any;
-  public securityCodeValue: string;
   public cardNumberValue: string;
   public expirationDateValue: string;
-  protected _messageBus: MessageBus;
+  public securityCodeValue: string;
+  public validation: IValidation;
   protected binLookup: BinLookup;
-  private _translator: Translator;
+  protected messageBus: MessageBus;
+  private _card: ICard;
   private _currentKeyCode: number;
-  private _selectionRangeEnd: number;
-  private _selectionRangeStart: number;
-  private _matchDigitsRegexp: RegExp;
   private _cursorSkip: number = 0;
   private _formValidity: boolean;
   private _isPaymentReady: boolean;
-  private _card: ICard;
+  private _matchDigitsRegexp: RegExp;
+  private _selectionRangeEnd: number;
+  private _selectionRangeStart: number;
+  private _translator: Translator;
 
   constructor() {
     super();
@@ -159,29 +167,74 @@ class Validation extends Frame {
   }
 
   public backendValidation(inputElement: HTMLInputElement, messageElement: HTMLElement, event: string) {
-    this._messageBus.subscribe(event, (data: IMessageBusValidateField) => {
-      this.checkBackendValidity(data, inputElement, messageElement);
+    this.messageBus.subscribe(event, (data: IMessageBusValidateField) => {
+      this.setError(inputElement, messageElement, data);
     });
   }
 
-  public isPressedKeyDelete(): boolean {
-    return this._currentKeyCode === Validation.DELETE_KEY_CODE;
+  public blockForm(state: boolean) {
+    const messageBusEvent: IMessageBusEvent = {
+      data: state,
+      type: MessageBus.EVENTS.BLOCK_FORM
+    };
+    this.messageBus.publish(messageBusEvent, true);
   }
 
-  public setKeyDownProperties(element: HTMLInputElement, event: KeyboardEvent) {
-    this._currentKeyCode = event.keyCode;
-    this._selectionRangeStart = element.selectionStart;
-    this._selectionRangeEnd = element.selectionEnd;
+  public callSubmitEvent() {
+    const messageBusEvent: IMessageBusEvent = {
+      type: MessageBus.EVENTS.CALL_SUBMIT_EVENT
+    };
+    this.messageBus.publish(messageBusEvent, true);
   }
 
-  public keepCursorAtSamePosition(element: HTMLInputElement) {
+  public formValidation(
+    dataInJwt: boolean,
+    deferInit: boolean,
+    fieldsToSubmit: string[],
+    formFields: {
+      cardNumber: IFormFieldState;
+      expirationDate: IFormFieldState;
+      securityCode: IFormFieldState;
+    },
+    isPanPiba: boolean,
+    paymentReady: boolean
+  ): { card: ICard; validity: boolean } {
+    const isFormReadyToSubmit: boolean = this._isFormReadyToSubmit(deferInit);
+    this._setValidationResult(dataInJwt, fieldsToSubmit, formFields, isPanPiba, paymentReady);
+    if (isFormReadyToSubmit) {
+      this.blockForm(true);
+    }
+    return {
+      card: this._card,
+      validity: isFormReadyToSubmit
+    };
+  }
+
+  public getErrorData(errorData: IErrorData) {
+    const { errordata, errormessage } = StCodec.getErrorData(errorData);
+    const validationEvent: IMessageBusEvent = {
+      data: { field: errordata[0], message: errormessage },
+      type: Validation.CLEAR_VALUE
+    };
+
+    this._broadcastFormFieldError(errordata[0], validationEvent);
+
+    if (errordata.find((element: string) => element.includes(Validation.MERCHANT_EXTRA_FIELDS_PREFIX))) {
+      validationEvent.type = MessageBus.EVENTS.VALIDATE_MERCHANT_FIELD;
+      this.messageBus.publish(validationEvent, true);
+    }
+
+    return { field: errordata[0], errormessage };
+  }
+
+  public keepCursorsPosition(element: HTMLInputElement) {
     const lengthFormatted: number = element.value.length;
     const isLastCharSlash: boolean =
       element.value.charAt(lengthFormatted - Validation.CURSOR_DOUBLE_SKIP) === Validation.EXPIRATION_DATE_SLASH;
     const start: number = this._selectionRangeStart;
     const end: number = this._selectionRangeEnd;
 
-    if (this.isPressedKeyDelete()) {
+    if (this._isPressedKeyDelete()) {
       element.setSelectionRange(start, end);
     } else if (this._isPressedKeyBackspace()) {
       element.setSelectionRange(start - Validation.CURSOR_SINGLE_SKIP, end - Validation.CURSOR_SINGLE_SKIP);
@@ -207,72 +260,8 @@ class Validation extends Frame {
     }
   }
 
-  public blockForm(state: boolean) {
-    const messageBusEvent: IMessageBusEvent = {
-      data: state,
-      type: MessageBus.EVENTS.BLOCK_FORM
-    };
-    this._messageBus.publish(messageBusEvent, true);
-  }
-
-  public callSubmitEvent() {
-    const messageBusEvent: IMessageBusEvent = {
-      type: MessageBus.EVENTS.CALL_SUBMIT_EVENT
-    };
-    this._messageBus.publish(messageBusEvent, true);
-  }
-
-  public checkBackendValidity(
-    data: IMessageBusValidateField,
-    inputElement: HTMLInputElement,
-    messageElement?: HTMLElement
-  ) {
-    this.setError(inputElement, messageElement, data);
-  }
-
-  public getErrorData(errorData: IErrorData) {
-    const { errordata, errormessage } = StCodec.getErrorData(errorData);
-    const validationEvent: IMessageBusEvent = {
-      data: { field: errordata[0], message: errormessage },
-      type: Validation.CLEAR_VALUE
-    };
-
-    this._broadcastFormFieldError(errordata[0], validationEvent);
-
-    if (errordata.find((element: any) => element.includes(Validation.MERCHANT_EXTRA_FIELDS_PREFIX))) {
-      validationEvent.type = MessageBus.EVENTS.VALIDATE_MERCHANT_FIELD;
-      this._messageBus.publish(validationEvent, true);
-    }
-
-    return { field: errordata[0], errormessage };
-  }
-
-  public setError(inputElement: HTMLInputElement, messageElement: HTMLElement, data: IMessageBusValidateField) {
-    this._assignErrorDetails(inputElement, messageElement, data);
-  }
-
-  public validate(inputElement: HTMLInputElement, messageElement: HTMLElement, customErrorMessage?: string) {
-    Validation._toggleErrorClass(inputElement);
-    this._setMessage(inputElement, messageElement, customErrorMessage);
-  }
-
-  public formValidation(
-    dataInJwt: boolean,
-    deferInit: boolean,
-    fieldsToSubmit: string[],
-    formFields: any,
-    isPanPiba: boolean,
-    paymentReady: boolean
-  ): { card: ICard; validity: boolean } {
-    const isFormReadyToSubmit: boolean = this._isFormReadyToSubmit(deferInit);
-    this._setValidationResult(dataInJwt, fieldsToSubmit, formFields, isPanPiba, paymentReady);
-    if (isFormReadyToSubmit) {
-      this.blockForm(true);
-    }
-    return {
-      card: this._card,
-      validity: isFormReadyToSubmit
-    };
+  public limitLength(value: string, length: number): string {
+    return value ? value.substring(0, length) : Validation.CLEAR_VALUE;
   }
 
   public removeError(element: HTMLInputElement, errorContainer: HTMLElement) {
@@ -280,8 +269,25 @@ class Validation extends Frame {
     errorContainer.textContent = Validation.CLEAR_VALUE;
   }
 
-  public limitLength(value: string, length: number): string {
-    return value ? value.substring(0, length) : Validation.CLEAR_VALUE;
+  public setError(inputElement: HTMLInputElement, messageElement: HTMLElement, data: IMessageBusValidateField) {
+    const { message } = data;
+    if (
+      message &&
+      messageElement &&
+      messageElement.innerText !== Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH
+    ) {
+      messageElement.innerText = this._translator.translate(message);
+      inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
+      inputElement.setCustomValidity(message);
+    } else {
+      inputElement.setCustomValidity(message);
+    }
+  }
+
+  public setOnKeyDownProperties(element: HTMLInputElement, event: KeyboardEvent) {
+    this._currentKeyCode = event.keyCode;
+    this._selectionRangeStart = element.selectionStart;
+    this._selectionRangeEnd = element.selectionEnd;
   }
 
   public setFormValidity(state: any) {
@@ -289,19 +295,20 @@ class Validation extends Frame {
       data: { ...state },
       type: MessageBus.EVENTS.VALIDATE_FORM
     };
-    this._messageBus.publish(validationEvent, true);
+    this.messageBus.publish(validationEvent, true);
+  }
+
+  public validate(inputElement: HTMLInputElement, messageElement: HTMLElement, customErrorMessage?: string) {
+    Validation._toggleErrorClass(inputElement);
+    this._setMessage(inputElement, messageElement, customErrorMessage);
   }
 
   protected onInit() {
     super.onInit();
-    this._messageBus = new MessageBus();
+    this.messageBus = new MessageBus();
     this.binLookup = new BinLookup();
     this._matchDigitsRegexp = new RegExp(Validation.MATCH_DIGITS);
-    this._translator = new Translator(this._params.locale);
-  }
-
-  protected _isPressedKeyBackspace(): boolean {
-    return this._currentKeyCode === Validation.BACKSPACE_KEY_CODE;
+    this._translator = new Translator(this.params.locale);
   }
 
   protected removeNonDigits(value: string): string {
@@ -331,11 +338,42 @@ class Validation extends Frame {
     this.securityCodeValue = value ? this.limitLength(this.removeNonDigits(value), length) : Validation.CLEAR_VALUE;
   }
 
+  private _broadcastFormFieldError(errordata: string, event: IMessageBusEvent) {
+    this.messageBus.publish(Validation._setValidateEvent(errordata, event));
+  }
+
+  private _getTranslation(
+    inputElement: HTMLInputElement,
+    isCardNumberInput: boolean,
+    validityState: string,
+    messageElement?: HTMLElement,
+    customErrorMessage?: string
+  ): string {
+    if (messageElement && customErrorMessage && !isCardNumberInput) {
+      return this._translator.translate(customErrorMessage);
+    } else if (messageElement && inputElement.value && isCardNumberInput && !inputElement.validity.valid) {
+      return this._translator.translate(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
+    } else {
+      return this._translator.translate(validityState);
+    }
+  }
+
+  private _isFormReadyToSubmit = (deferInit: boolean): boolean =>
+    (this._isPaymentReady && this._formValidity) || (deferInit && this._formValidity);
+
+  private _isPressedKeyBackspace(): boolean {
+    return this._currentKeyCode === Validation.BACKSPACE_KEY_CODE;
+  }
+
+  private _isPressedKeyDelete(): boolean {
+    return this._currentKeyCode === Validation.DELETE_KEY_CODE;
+  }
+
   private _setMessage(inputElement: HTMLInputElement, messageElement: HTMLElement, customErrorMessage?: string) {
     const isCardNumberInput: boolean =
       inputElement.getAttribute(Validation.ID_PARAM_NAME) === Selectors.CARD_NUMBER_INPUT;
     const validityState = Validation.getValidationMessage(inputElement.validity);
-    messageElement.innerText = this._getProperTranslation(
+    messageElement.innerText = this._getTranslation(
       inputElement,
       isCardNumberInput,
       validityState,
@@ -347,7 +385,11 @@ class Validation extends Frame {
   private _setValidationResult(
     dataInJwt: boolean,
     fieldsToSubmit: string[],
-    formFields: any,
+    formFields: {
+      cardNumber: IFormFieldState;
+      expirationDate: IFormFieldState;
+      securityCode: IFormFieldState;
+    },
     isPanPiba: boolean,
     paymentReady: boolean
   ) {
@@ -364,45 +406,6 @@ class Validation extends Frame {
       };
     }
   }
-
-  private _getProperTranslation(
-    inputElement: HTMLInputElement,
-    isCardNumberInput: boolean,
-    validityState: string,
-    messageElement?: HTMLElement,
-    customErrorMessage?: string
-  ): string {
-    if (messageElement && customErrorMessage && !isCardNumberInput) {
-      return this._translator.translate(customErrorMessage);
-    } else if (messageElement && inputElement.value && isCardNumberInput && !inputElement.validity.valid) {
-      return this._translator.translate(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
-    } else {
-      return this._translator.translate(validityState);
-    }
-  }
-
-  private _assignErrorDetails(
-    inputElement: HTMLInputElement,
-    messageElement: HTMLElement,
-    data: IMessageBusValidateField
-  ) {
-    const { message } = data;
-    if (messageElement && message) {
-      if (messageElement.innerText !== Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH) {
-        messageElement.innerText = this._translator.translate(message);
-        inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
-        inputElement.setCustomValidity(message);
-      }
-    }
-    inputElement.setCustomValidity(data.message);
-  }
-
-  private _broadcastFormFieldError(errordata: string, event: IMessageBusEvent) {
-    this._messageBus.publish(Validation._setValidateEvent(errordata, event));
-  }
-
-  private _isFormReadyToSubmit = (deferInit: boolean): boolean =>
-    (this._isPaymentReady && this._formValidity) || (deferInit && this._formValidity);
 }
 
 export default Validation;
