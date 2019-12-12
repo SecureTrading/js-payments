@@ -42,7 +42,8 @@ export default class RegisterFrames {
     this.jwt = jwt;
     this.origin = origin;
     this.styles = this._getStyles(styles);
-    this.elementsTargets = this.setElementsFields(jwt);
+    this.configureFormFieldsAmount(jwt);
+    this.elementsTargets = this.setElementsFields();
     this.stJwt = new StJwt(jwt);
     this.params = { locale: this.stJwt.locale, origin: this.origin };
   }
@@ -66,10 +67,14 @@ export default class RegisterFrames {
     });
   }
 
+  protected configureFormFieldsAmount(jwt: string): any {
+    return [];
+  }
+
   /**
    * Defines iframe elements to add
    */
-  protected setElementsFields(jwt?: string): any {
+  protected setElementsFields(): any {
     return [];
   }
 
