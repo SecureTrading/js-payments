@@ -386,11 +386,11 @@ class ControlFrame extends Frame {
     const deferInit = data ? data.deferInit : false;
     const { validity, card } = this._validation.formValidation(
       dataInJwt,
-      this._isPaymentReady,
-      this._formFields,
       deferInit,
       data.fieldsToSubmit,
-      isPanPiba
+      this._formFields,
+      isPanPiba,
+      this._isPaymentReady
     );
     if (validity) {
       if (deferInit) {

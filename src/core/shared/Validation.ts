@@ -1,5 +1,6 @@
 import { StCodec } from '../classes/StCodec.class';
 import { BrandDetailsType } from '../imports/cardtype';
+import { IFormFields } from '../models/CardFrames';
 import { IErrorData, IMessageBusValidateField, IValidation } from '../models/Validation';
 import BinLookup from './BinLookup';
 import Frame from './Frame';
@@ -15,7 +16,7 @@ const {
   VALIDATION_ERROR
 } = Language.translations;
 
-export default class Validation extends Frame {
+class Validation extends Frame {
   public static ERROR_FIELD_CLASS: string = 'error-field';
 
   public static isCharNumber(event: KeyboardEvent) {
@@ -30,31 +31,30 @@ export default class Validation extends Frame {
   }
 
   public static clearNonDigitsChars = (value: string) => {
-    return value.replace(Validation.ESCAPE_DIGITS_REGEXP, '');
+    return value.replace(Validation.ESCAPE_DIGITS_REGEXP, Validation.CLEAR_VALUE);
   };
 
-  public static setCustomValidationError(inputElement: HTMLInputElement, errorContent: string) {
+  public static setCustomValidationError(errorContent: string, inputElement: HTMLInputElement) {
     inputElement.setCustomValidity(errorContent);
   }
 
-  public static getValidationMessage(validityState: ValidityState): string {
-    const { customError, patternMismatch, valid, valueMissing } = validityState;
-    let validationMessage: string = '';
+  public static getValidationMessage(state: ValidityState): string {
+    const { patternMismatch, valid, valueMissing } = state;
+
     if (!valid) {
       if (valueMissing) {
-        validationMessage = VALIDATION_ERROR_FIELD_IS_REQUIRED;
+        return VALIDATION_ERROR_FIELD_IS_REQUIRED;
       } else if (patternMismatch) {
-        validationMessage = VALIDATION_ERROR_PATTERN_MISMATCH;
-      } else if (customError) {
-        validationMessage = VALIDATION_ERROR;
+        return VALIDATION_ERROR_PATTERN_MISMATCH;
       } else {
-        validationMessage = VALIDATION_ERROR;
+        return VALIDATION_ERROR;
       }
     }
-    return validationMessage;
   }
 
   protected static STANDARD_FORMAT_PATTERN: string = '(\\d{1,4})(\\d{1,4})?(\\d{1,4})?(\\d+)?';
+  private static CLEAR_VALUE: string = '';
+  private static ID_PARAM_NAME: string = 'id';
   private static ESCAPE_DIGITS_REGEXP = /[^\d]/g;
   private static BACKSPACE_KEY_CODE: number = 8;
   private static CARD_NUMBER_DEFAULT_LENGTH: number = 16;
@@ -71,7 +71,66 @@ export default class Validation extends Frame {
     securityCode: 'securitycode'
   };
   private static ENTER_KEY_CODE = 13;
+  private static CARD_NUMBER_FIELD_NAME: string = 'pan';
+  private static EXPIRY_DATE_FIELD_NAME: string = 'expirydate';
+  private static SECURITY_CODE_FIELD_NAME: string = 'securitycode';
   private static readonly MERCHANT_EXTRA_FIELDS_PREFIX = 'billing';
+
+  /**
+   * Luhn Algorithm
+   * From the right:
+   *    Step 1: take the value of this digit
+   *    Step 2: if the offset from the end is even
+   *    Step 3: double the value, then sum the digits
+   *    Step 4: if sum of those above is divisible by ten, YOU PASS THE LUHN !
+   * @param cardNumber
+   * @private
+   */
+  private static _luhnAlgorithm(cardNumber: string): boolean {
+    const cardNumberWithoutSpaces = cardNumber.replace(/\s/g, Validation.CLEAR_VALUE);
+    let bit = 1;
+    let cardNumberLength = cardNumberWithoutSpaces.length;
+    let sum = 0;
+
+    while (cardNumberLength) {
+      const val = parseInt(cardNumberWithoutSpaces.charAt(--cardNumberLength), 10);
+      bit = bit ^ 1;
+      const algorithmValue = bit ? Validation.LUHN_CHECK_ARRAY[val] : val;
+      sum += algorithmValue;
+    }
+    return sum && sum % 10 === 0;
+  }
+
+  private static _setValidateEvent(errordata: string, event: IMessageBusEvent) {
+    switch (errordata) {
+      case Validation.BACKEND_ERROR_FIELDS_NAMES.cardNumber:
+        event.type = MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD;
+        break;
+      case Validation.BACKEND_ERROR_FIELDS_NAMES.expirationDate:
+        event.type = MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD;
+        break;
+      case Validation.BACKEND_ERROR_FIELDS_NAMES.securityCode:
+        event.type = MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD;
+        break;
+    }
+    return event;
+  }
+
+  private static _isFormValid(formFields: any, fieldsToSubmit: string[], isPanPiba: boolean): boolean {
+    return (
+      (fieldsToSubmit.includes(Validation.CARD_NUMBER_FIELD_NAME) ? formFields.cardNumber.validity : true) &&
+      (fieldsToSubmit.includes(Validation.EXPIRY_DATE_FIELD_NAME) ? formFields.expirationDate.validity : true) &&
+      (fieldsToSubmit.includes(Validation.SECURITY_CODE_FIELD_NAME) && !isPanPiba
+        ? formFields.securityCode.validity
+        : true)
+    );
+  }
+
+  private static _toggleErrorClass(inputElement: HTMLInputElement) {
+    inputElement.validity.valid
+      ? inputElement.classList.remove(Validation.ERROR_FIELD_CLASS)
+      : inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
+  }
 
   public validation: IValidation;
   public cardDetails: any;
@@ -86,7 +145,7 @@ export default class Validation extends Frame {
   private _selectionRangeStart: number;
   private _matchDigitsRegexp: RegExp;
   private _cursorSkip: number = 0;
-  private _isFormValid: boolean;
+  private _formValidity: boolean;
   private _isPaymentReady: boolean;
   private _card: ICard;
 
@@ -134,8 +193,13 @@ export default class Validation extends Frame {
 
   public luhnCheck(field: HTMLInputElement, input: HTMLInputElement, message: HTMLDivElement) {
     const { value } = input;
-    const isLuhnOk: boolean = this._luhnAlgorithm(value);
-    this.luhnCheckValidation(isLuhnOk, field, input, message);
+    const isLuhnOk: boolean = Validation._luhnAlgorithm(value);
+    if (!isLuhnOk) {
+      this.validate(input, message, Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
+      Validation.setCustomValidationError(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH, field);
+    } else {
+      Validation.setCustomValidationError(Validation.CLEAR_VALUE, field);
+    }
   }
 
   public blockForm(state: boolean) {
@@ -162,26 +226,11 @@ export default class Validation extends Frame {
     this.setError(inputElement, messageElement, data);
   }
 
-  private _broadcastFormFieldError(errordata: string, event: IMessageBusEvent) {
-    if (errordata === Validation.BACKEND_ERROR_FIELDS_NAMES.cardNumber) {
-      event.type = MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD;
-      this._messageBus.publish(event);
-    }
-    if (errordata === Validation.BACKEND_ERROR_FIELDS_NAMES.expirationDate) {
-      event.type = MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD;
-      this._messageBus.publish(event);
-    }
-    if (errordata === Validation.BACKEND_ERROR_FIELDS_NAMES.securityCode) {
-      event.type = MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD;
-      this._messageBus.publish(event);
-    }
-  }
-
   public getErrorData(errorData: IErrorData) {
     const { errordata, errormessage } = StCodec.getErrorData(errorData);
     const validationEvent: IMessageBusEvent = {
       data: { field: errordata[0], message: errormessage },
-      type: ''
+      type: Validation.CLEAR_VALUE
     };
 
     this._broadcastFormFieldError(errordata[0], validationEvent);
@@ -199,62 +248,36 @@ export default class Validation extends Frame {
   }
 
   public validate(inputElement: HTMLInputElement, messageElement: HTMLElement, customErrorMessage?: string) {
-    this._toggleErrorClass(inputElement);
+    Validation._toggleErrorClass(inputElement);
     this._setMessage(inputElement, messageElement, customErrorMessage);
-  }
-
-  public luhnCheckValidation(luhn: boolean, field: HTMLInputElement, input: HTMLInputElement, message: HTMLDivElement) {
-    if (!luhn) {
-      field.setCustomValidity(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
-      this.validate(input, message, Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
-    } else {
-      field.setCustomValidity('');
-    }
   }
 
   public formValidation(
     dataInJwt: boolean,
-    paymentReady: boolean,
-    formFields: any,
     deferInit: boolean,
     fieldsToSubmit: string[],
-    isPanPiba: boolean
-  ): { validity: boolean; card: ICard } {
-    this._isPaymentReady = paymentReady;
-    if (dataInJwt) {
-      this._isFormValid = true;
-      this._isPaymentReady = true;
-    } else {
-      const cardNumberValidity: boolean = fieldsToSubmit.includes('pan') ? formFields.cardNumber.validity : true;
-      const expirationDateValidity: boolean = fieldsToSubmit.includes('expirydate')
-        ? formFields.expirationDate.validity
-        : true;
-      const securityCodeValidity: boolean =
-        fieldsToSubmit.includes('securitycode') && !isPanPiba ? formFields.securityCode.validity : true;
-      this._isFormValid = cardNumberValidity && expirationDateValidity && securityCodeValidity;
-      this._card = {
-        expirydate: formFields.expirationDate.value,
-        pan: formFields.cardNumber.value,
-        securitycode: formFields.securityCode.value
-      };
-    }
-
-    if ((this._isPaymentReady && this._isFormValid) || (deferInit && this._isFormValid)) {
+    formFields: any,
+    isPanPiba: boolean,
+    paymentReady: boolean
+  ): { card: ICard; validity: boolean } {
+    const isFormReadyToSubmit: boolean = this._isFormReadyToSubmit(deferInit);
+    this._setValidationResult(dataInJwt, fieldsToSubmit, formFields, isPanPiba, paymentReady);
+    if (isFormReadyToSubmit) {
       this.blockForm(true);
     }
     return {
       card: this._card,
-      validity: (this._isPaymentReady && this._isFormValid) || (deferInit && this._isFormValid)
+      validity: isFormReadyToSubmit
     };
   }
 
   public removeError(element: HTMLInputElement, errorContainer: HTMLElement) {
     element.classList.remove(Validation.ERROR_CLASS);
-    errorContainer.textContent = '';
+    errorContainer.textContent = Validation.CLEAR_VALUE;
   }
 
   public limitLength(value: string, length: number): string {
-    return value ? value.substring(0, length) : '';
+    return value ? value.substring(0, length) : Validation.CLEAR_VALUE;
   }
 
   public setFormValidity(state: any) {
@@ -279,11 +302,11 @@ export default class Validation extends Frame {
 
   protected removeNonDigits(value: string): string {
     if (value) {
-      return value.replace(Validation.MATCH_CHARS, '');
+      return value.replace(Validation.MATCH_CHARS, Validation.CLEAR_VALUE);
     }
   }
 
-  protected getCardDetails(cardNumber: string = ''): BrandDetailsType {
+  protected getCardDetails(cardNumber: string = Validation.CLEAR_VALUE): BrandDetailsType {
     return this.binLookup.binLookup(cardNumber);
   }
 
@@ -304,42 +327,9 @@ export default class Validation extends Frame {
     this.securityCodeValue = value ? this.limitLength(this.removeNonDigits(value), length) : '';
   }
 
-  /**
-   * Luhn Algorithm
-   * From the right:
-   *    Step 1: take the value of this digit
-   *    Step 2: if the offset from the end is even
-   *    Step 3: double the value, then sum the digits
-   *    Step 4: if sum of those above is divisible by ten, YOU PASS THE LUHN !
-   * @param cardNumber
-   * @private
-   */
-  private _luhnAlgorithm(cardNumber: string): boolean {
-    const cardNumberWithoutSpaces = cardNumber.replace(/\s/g, '');
-    let bit = 1;
-    let cardNumberLength = cardNumberWithoutSpaces.length;
-    let sum = 0;
-
-    while (cardNumberLength) {
-      const val = parseInt(cardNumberWithoutSpaces.charAt(--cardNumberLength), 10);
-      bit = bit ^ 1;
-      const algorithmValue = bit ? Validation.LUHN_CHECK_ARRAY[val] : val;
-      sum += algorithmValue;
-    }
-    return sum && sum % 10 === 0;
-  }
-
-  private _toggleErrorClass = (inputElement: HTMLInputElement) => {
-    const isValid: boolean = inputElement.validity.valid;
-    if (isValid) {
-      inputElement.classList.remove(Validation.ERROR_FIELD_CLASS);
-    } else {
-      inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
-    }
-  };
-
   private _setMessage(inputElement: HTMLInputElement, messageElement: HTMLElement, customErrorMessage?: string) {
-    const isCardNumberInput: boolean = inputElement.getAttribute('id') === Selectors.CARD_NUMBER_INPUT;
+    const isCardNumberInput: boolean =
+      inputElement.getAttribute(Validation.ID_PARAM_NAME) === Selectors.CARD_NUMBER_INPUT;
     const validityState = Validation.getValidationMessage(inputElement.validity);
     messageElement.innerText = this._getProperTranslation(
       inputElement,
@@ -348,6 +338,27 @@ export default class Validation extends Frame {
       messageElement,
       customErrorMessage
     );
+  }
+
+  private _setValidationResult(
+    dataInJwt: boolean,
+    fieldsToSubmit: string[],
+    formFields: any,
+    isPanPiba: boolean,
+    paymentReady: boolean
+  ) {
+    if (dataInJwt) {
+      this._formValidity = true;
+      this._isPaymentReady = true;
+    } else {
+      this._formValidity = Validation._isFormValid(formFields, fieldsToSubmit, isPanPiba);
+      this._isPaymentReady = paymentReady;
+      this._card = {
+        expirydate: formFields.expirationDate.value,
+        pan: formFields.cardNumber.value,
+        securitycode: formFields.securityCode.value
+      };
+    }
   }
 
   private _getProperTranslation(
@@ -366,6 +377,9 @@ export default class Validation extends Frame {
     }
   }
 
+  private _isFormReadyToSubmit = (deferInit: boolean) =>
+    (this._isPaymentReady && this._formValidity) || (deferInit && this._formValidity);
+
   private _assignErrorDetails(
     inputElement: HTMLInputElement,
     messageElement: HTMLElement,
@@ -381,4 +395,10 @@ export default class Validation extends Frame {
     }
     inputElement.setCustomValidity(data.message);
   }
+
+  private _broadcastFormFieldError(errordata: string, event: IMessageBusEvent) {
+    this._messageBus.publish(Validation._setValidateEvent(errordata, event));
+  }
 }
+
+export default Validation;

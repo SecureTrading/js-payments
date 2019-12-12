@@ -109,7 +109,7 @@ export default class FormField extends Frame {
 
   protected onInput(event: Event) {
     this.validation.keepCursorAtSamePosition(this._inputElement);
-    Validation.setCustomValidationError(this._inputElement, '');
+    Validation.setCustomValidationError('', this._inputElement);
     this.format(this._inputElement.value);
   }
 
@@ -144,7 +144,7 @@ export default class FormField extends Frame {
 
     // @ts-ignore
     this._inputElement.value = Utils.stripChars(clipboardData, undefined);
-    Validation.setCustomValidationError(this._inputElement, '');
+    Validation.setCustomValidationError('', this._inputElement);
     this.format(this._inputElement.value);
     this.validation.validate(this._inputElement, this._messageElement);
   }
