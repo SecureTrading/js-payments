@@ -11,6 +11,7 @@ import ApplePay from './core/integrations/ApplePay';
 import ApplePayMock from './core/integrations/ApplePayMock';
 import { CardinalCommerce } from './core/integrations/CardinalCommerce';
 import CardinalCommerceMock from './core/integrations/CardinalCommerceMock';
+import Cybertonica from './core/integrations/Cybertonica';
 import GoogleAnalytics from './core/integrations/GoogleAnalytics';
 import VisaCheckout from './core/integrations/VisaCheckout';
 import VisaCheckoutMock from './core/integrations/VisaCheckoutMock';
@@ -315,6 +316,7 @@ class ST {
     );
     this.commonFrames.requestTypes = targetConfig.requestTypes;
     this.CardinalCommerce(targetConfig);
+    this.Cybertonica();
   }
 
   /**
@@ -369,6 +371,10 @@ class ST {
       this._cachetoken,
       this._threedinit
     );
+  }
+
+  private Cybertonica() {
+    return new Cybertonica();
   }
 
   /**

@@ -22,6 +22,9 @@ export const environment = {
   CARDINAL_COMMERCE_CONFIG: {
     logging: { level: 'on' }
   },
+  CYBERTONICA: {
+    CYBERTONICA_LIVE_URL: 'https://p.cybertonica.com/js/beacon.min.js'
+  },
   // @ts-ignore
   FRAME_URL: `https://${HOST}:8443`,
   GATEWAY_URL,
