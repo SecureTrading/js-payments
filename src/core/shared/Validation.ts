@@ -129,19 +129,25 @@ class Validation extends Frame {
     fieldsToSubmit: string[],
     isPanPiba: boolean
   ): boolean {
-    return (
-      (fieldsToSubmit.includes(Validation.CARD_NUMBER_FIELD_NAME) ? formFields.cardNumber.validity : true) &&
-      (fieldsToSubmit.includes(Validation.EXPIRY_DATE_FIELD_NAME) ? formFields.expirationDate.validity : true) &&
-      (fieldsToSubmit.includes(Validation.SECURITY_CODE_FIELD_NAME) && !isPanPiba
+    const isPanValid: boolean = fieldsToSubmit.includes(Validation.CARD_NUMBER_FIELD_NAME)
+      ? formFields.cardNumber.validity
+      : true;
+    const isExpiryDateValid: boolean = fieldsToSubmit.includes(Validation.EXPIRY_DATE_FIELD_NAME)
+      ? formFields.expirationDate.validity
+      : true;
+    const isSecurityCodeValid: boolean =
+      fieldsToSubmit.includes(Validation.SECURITY_CODE_FIELD_NAME) && !isPanPiba
         ? formFields.securityCode.validity
-        : true)
-    );
+        : true;
+    return isPanValid && isExpiryDateValid && isSecurityCodeValid;
   }
 
   private static _toggleErrorClass(inputElement: HTMLInputElement) {
-    inputElement.validity.valid
-      ? inputElement.classList.remove(Validation.ERROR_FIELD_CLASS)
-      : inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
+    if (inputElement.validity.valid) {
+      inputElement.classList.remove(Validation.ERROR_FIELD_CLASS);
+    } else {
+      inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
+    }
   }
 
   public cardDetails: any;
@@ -199,8 +205,8 @@ class Validation extends Frame {
     isPanPiba: boolean,
     paymentReady: boolean
   ): { card: ICard; validity: boolean } {
-    const isFormReadyToSubmit: boolean = this._isFormReadyToSubmit(deferInit);
     this._setValidationResult(dataInJwt, fieldsToSubmit, formFields, isPanPiba, paymentReady);
+    const isFormReadyToSubmit: boolean = this._isFormReadyToSubmit(deferInit);
     if (isFormReadyToSubmit) {
       this.blockForm(true);
     }
@@ -358,8 +364,9 @@ class Validation extends Frame {
     }
   }
 
-  private _isFormReadyToSubmit = (deferInit: boolean): boolean =>
-    (this._isPaymentReady && this._formValidity) || (deferInit && this._formValidity);
+  private _isFormReadyToSubmit(deferInit: boolean): boolean {
+    return (this._isPaymentReady && this._formValidity) || (deferInit && this._formValidity);
+  }
 
   private _isPressedKeyBackspace(): boolean {
     return this._currentKeyCode === Validation.BACKSPACE_KEY_CODE;
