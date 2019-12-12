@@ -7,6 +7,8 @@ import { IStyles } from '../shared/Styler';
  * Defines all non field elements of form and their placement on merchant site.
  */
 export default class RegisterFrames {
+  private static COMPLETE_FORM_FIELDS: string[] = ['pan', 'expirydate', 'securitycode'];
+
   protected styles: IStyles;
   protected params: any;
   protected elementsToRegister: HTMLElement[];
@@ -32,7 +34,7 @@ export default class RegisterFrames {
   ) {
     this.binLookup = new BinLookup();
     this.messageBus = new MessageBus();
-    this.fieldsToSubmit = fieldsToSubmit;
+    this.fieldsToSubmit = fieldsToSubmit.length ? fieldsToSubmit : RegisterFrames.COMPLETE_FORM_FIELDS;
     this.componentIds = componentIds;
     this.submitCallback = submitCallback;
     this.hasAnimatedCard = animatedCard;
@@ -40,7 +42,8 @@ export default class RegisterFrames {
     this.jwt = jwt;
     this.origin = origin;
     this.styles = this._getStyles(styles);
-    this.elementsTargets = this.setElementsFields(jwt);
+    this.configureFormFieldsAmount(jwt);
+    this.elementsTargets = this.setElementsFields();
     this.stJwt = new StJwt(jwt);
     this.params = { locale: this.stJwt.locale, origin: this.origin };
   }
@@ -64,10 +67,14 @@ export default class RegisterFrames {
     });
   }
 
+  protected configureFormFieldsAmount(jwt: string): any {
+    return [];
+  }
+
   /**
    * Defines iframe elements to add
    */
-  protected setElementsFields(jwt?: string): any {
+  protected setElementsFields(): any {
     return [];
   }
 

@@ -9,8 +9,9 @@ import Validation from '../../core/shared/Validation';
 class SecurityCode extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.SECURITY_CODE_INPUT) as HTMLInputElement;
-  private static DISABLED_ATTRIBUTE_CLASS: string = 'st-input--disabled';
-  private static DISABLED_ATTRIBUTE_NAME: string = 'disabled';
+  private static CLEAR_VALUE: string = '';
+  private static DISABLED_ATTRIBUTE: string = 'disabled';
+  private static DISABLED_CLASS: string = 'st-input--disabled';
   private static DISABLED_PARAM: string = 'disabled';
   private static GREY_OUT: string = '0.5';
   private static GREY_OUT_OFF: string = '1';
@@ -55,7 +56,7 @@ class SecurityCode extends FormField {
   protected onInput(event: Event) {
     super.onInput(event);
     this._setInputValue();
-    this.validation.keepCursorAtSamePosition(this._inputElement);
+    this.validation.keepCursorsPosition(this._inputElement);
     this._sendState();
   }
 
@@ -96,16 +97,16 @@ class SecurityCode extends FormField {
       data,
       type: eventType
     };
-    this._messageBus.publish(messageBusEvent);
+    this.messageBus.publish(messageBusEvent);
   }
 
   private _sendState() {
     const messageBusEvent: IMessageBusEvent = this.setMessageBusEvent(MessageBus.EVENTS.CHANGE_SECURITY_CODE);
-    this._messageBus.publish(messageBusEvent);
+    this.messageBus.publish(messageBusEvent);
   }
 
   private _setDisableListener() {
-    this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_SECURITY_CODE, (state: boolean) => {
+    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_SECURITY_CODE, (state: boolean) => {
       this._toggleSecurityCode(state);
     });
   }
@@ -123,12 +124,12 @@ class SecurityCode extends FormField {
   }
 
   private _subscribeSecurityCodeChange() {
-    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (length: number) => {
+    this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (length: number) => {
       this._checkSecurityCodeLength(length);
       this._sendState();
     });
 
-    this._messageBus.subscribe(MessageBus.EVENTS.IS_CARD_WITHOUT_CVV, (state: boolean) => {
+    this.messageBus.subscribe(MessageBus.EVENTS.IS_CARD_WITHOUT_CVV, (state: boolean) => {
       if (state) {
         this._clearInputValue();
       }
@@ -136,22 +137,22 @@ class SecurityCode extends FormField {
   }
 
   private _clearInputValue() {
-    this._inputElement.value = '';
+    this._inputElement.value = SecurityCode.CLEAR_VALUE;
   }
 
   private _toggleSecurityCodeValidation() {
     this.validation.removeError(this._inputElement, this._messageElement);
-    this._inputElement.setCustomValidity('');
+    this._inputElement.setCustomValidity(SecurityCode.CLEAR_VALUE);
   }
 
   private _disableSecurityCode() {
-    this._inputElement.setAttribute(SecurityCode.DISABLED_ATTRIBUTE_NAME, SecurityCode.DISABLED_PARAM);
-    this._inputElement.classList.add(SecurityCode.DISABLED_ATTRIBUTE_CLASS);
+    this._inputElement.setAttribute(SecurityCode.DISABLED_ATTRIBUTE, SecurityCode.DISABLED_PARAM);
+    this._inputElement.classList.add(SecurityCode.DISABLED_CLASS);
   }
 
   private _enableSecurityCode() {
-    this._inputElement.removeAttribute(SecurityCode.DISABLED_ATTRIBUTE_NAME);
-    this._inputElement.classList.remove(SecurityCode.DISABLED_ATTRIBUTE_CLASS);
+    this._inputElement.removeAttribute(SecurityCode.DISABLED_ATTRIBUTE);
+    this._inputElement.classList.remove(SecurityCode.DISABLED_CLASS);
   }
 
   private _setSecurityCodePattern(securityCodePattern: string) {
@@ -170,7 +171,7 @@ class SecurityCode extends FormField {
     } else {
       this._enableSecurityCode();
       this._toggleSecurityCodeWrapper(SecurityCode.GREY_OUT_OFF);
-      this._inputElement.classList.remove(SecurityCode.DISABLED_ATTRIBUTE_CLASS);
+      this._inputElement.classList.remove(SecurityCode.DISABLED_CLASS);
     }
   }
 }

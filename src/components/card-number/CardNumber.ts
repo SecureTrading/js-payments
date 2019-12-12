@@ -10,6 +10,9 @@ import Validation from '../../core/shared/Validation';
 class CardNumber extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
+  private static DISABLED_ATTRIBUTE: string = 'disabled';
+  private static DISABLED_CLASS: string = 'st-input--disabled';
+  private static NO_CVV_CARDS: string[] = ['PIBA'];
   private static STANDARD_CARD_LENGTH: number = 19;
   private static WHITESPACES_DECREASE_NUMBER: number = 2;
   private static CARD_NUMBER_FOR_BIN_PROCESS = (cardNumber: string) => cardNumber.slice(0, 6);
@@ -50,19 +53,19 @@ class CardNumber extends FormField {
 
   protected onBlur() {
     super.onBlur();
-    this._disableSecurityCodeField(this._inputElement.value);
+    this._disableSecurityCodeField(this._inputElement.value, true);
     this.validation.luhnCheck(this._fieldInstance, this._inputElement, this._messageElement);
     this._sendState();
   }
 
   protected onFocus(event: Event) {
     super.onFocus(event);
-    this._disableSecurityCodeField(this._inputElement.value);
+    this._disableSecurityCodeField(this._inputElement.value, true);
   }
 
   protected onInput(event: Event) {
     super.onInput(event);
-    this._setInputValue();
+    this._setInputValue(event);
     this._sendState();
   }
 
@@ -102,7 +105,7 @@ class CardNumber extends FormField {
       data: this._getSecurityCodeLength(value),
       type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
     };
-    this._messageBus.publish(messageBusEvent);
+    this.messageBus.publish(messageBusEvent);
   }
 
   private _getBinLookupDetails = (cardNumber: string) =>
@@ -141,43 +144,47 @@ class CardNumber extends FormField {
     };
   }
 
-  private _setInputValue() {
+  private _setInputValue(event?: Event) {
     this._getMaxLengthOfCardNumber();
-    this._disableSecurityCodeField(this._inputElement.value);
+    this._disableSecurityCodeField(this._inputElement.value, false, event);
     this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._cardNumberLength);
     const { formatted, nonformatted } = this._formatter.number(this._inputElement.value, Selectors.CARD_NUMBER_INPUT);
     this._inputElement.value = formatted;
     this._cardNumberValue = nonformatted;
-    this.validation.keepCursorAtSamePosition(this._inputElement);
+    this.validation.keepCursorsPosition(this._inputElement);
   }
 
   private _setDisableListener() {
-    this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_CARD_NUMBER, (state: boolean) => {
+    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_CARD_NUMBER, (state: boolean) => {
       if (state) {
         // @ts-ignore
-        this._inputElement.setAttribute('disabled', state);
-        this._inputElement.classList.add('st-input--disabled');
+        this._inputElement.setAttribute(CardNumber.DISABLED_ATTRIBUTE, state);
+        this._inputElement.classList.add(CardNumber.DISABLED_CLASS);
       } else {
         // @ts-ignore
-        this._inputElement.removeAttribute('disabled');
-        this._inputElement.classList.remove('st-input--disabled');
+        this._inputElement.removeAttribute(CardNumber.DISABLED_ATTRIBUTE);
+        this._inputElement.classList.remove(CardNumber.DISABLED_CLASS);
       }
     });
   }
 
-  private _disableSecurityCodeField(cardNumber: string) {
+  private _disableSecurityCodeField(cardNumber: string, isFocusOrBlur?: boolean, event?: Event) {
     const number: string = Validation.clearNonDigitsChars(cardNumber);
-    const isCardPiba: boolean = this.binLookup.binLookup(number).type === 'PIBA';
-    const messageBusEvent: IMessageBusEvent = {
-      data: isCardPiba,
-      type: MessageBus.EVENTS.BLOCK_SECURITY_CODE
-    };
+    const isCardPiba: boolean = CardNumber.NO_CVV_CARDS.includes(this.binLookup.binLookup(number).type);
+
     const messageBusEventPiba: IMessageBusEvent = {
       data: isCardPiba,
       type: MessageBus.EVENTS.IS_CARD_WITHOUT_CVV
     };
-    this._messageBus.publish(messageBusEvent);
-    this._messageBus.publish(messageBusEventPiba);
+    this.messageBus.publish(messageBusEventPiba);
+    // @ts-ignore
+    if (!Validation.isKeyEnter(event) || isFocusOrBlur) {
+      const messageBusEvent: IMessageBusEvent = {
+        data: isCardPiba,
+        type: MessageBus.EVENTS.BLOCK_SECURITY_CODE
+      };
+      this.messageBus.publish(messageBusEvent);
+    }
   }
 
   private _sendState() {
@@ -191,9 +198,9 @@ class CardNumber extends FormField {
         data: CardNumber.CARD_NUMBER_FOR_BIN_PROCESS(value),
         type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS
       };
-      this._messageBus.publish(binProcessEvent, true);
+      this.messageBus.publish(binProcessEvent, true);
     }
-    this._messageBus.publish(messageBusEvent);
+    this.messageBus.publish(messageBusEvent);
   }
 }
 

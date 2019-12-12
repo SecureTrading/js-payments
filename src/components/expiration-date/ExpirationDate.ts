@@ -7,8 +7,8 @@ import Selectors from '../../core/shared/Selectors';
 class ExpirationDate extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.EXPIRATION_DATE_INPUT) as HTMLInputElement;
-  private static DISABLE_FIELD_CLASS: string = 'st-input--disabled';
-  private static DISABLE_STATE: string = 'disabled';
+  private static DISABLED_ATTRIBUTE: string = 'disabled';
+  private static DISABLED_CLASS: string = 'st-input--disabled';
   private static EXPIRATION_DATE_LENGTH: number = 5;
   private static INPUT_PATTERN: string = '^(0[1-9]|1[0-2])\\/([0-9]{2})$';
 
@@ -28,7 +28,7 @@ class ExpirationDate extends FormField {
   }
 
   public setDisableListener() {
-    this._messageBus.subscribe(MessageBus.EVENTS.BLOCK_EXPIRATION_DATE, (state: boolean) => {
+    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_EXPIRATION_DATE, (state: boolean) => {
       state ? this._disableInputField() : this._enableInputField();
     });
   }
@@ -55,7 +55,7 @@ class ExpirationDate extends FormField {
       ExpirationDate.EXPIRATION_DATE_LENGTH
     );
     this._inputElement.value = this._formatter.date(this._inputElement.value, Selectors.EXPIRATION_DATE_INPUT);
-    this.validation.keepCursorAtSamePosition(this._inputElement);
+    this.validation.keepCursorsPosition(this._inputElement);
     this._sendState();
   }
 
@@ -96,17 +96,17 @@ class ExpirationDate extends FormField {
 
   private _sendState() {
     const messageBusEvent: IMessageBusEvent = this.setMessageBusEvent(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE);
-    this._messageBus.publish(messageBusEvent);
+    this.messageBus.publish(messageBusEvent);
   }
 
   private _disableInputField() {
-    this._inputElement.setAttribute(ExpirationDate.DISABLE_STATE, 'true');
-    this._inputElement.classList.add(ExpirationDate.DISABLE_FIELD_CLASS);
+    this._inputElement.setAttribute(ExpirationDate.DISABLED_ATTRIBUTE, 'true');
+    this._inputElement.classList.add(ExpirationDate.DISABLED_CLASS);
   }
 
   private _enableInputField() {
-    this._inputElement.removeAttribute(ExpirationDate.DISABLE_STATE);
-    this._inputElement.classList.remove(ExpirationDate.DISABLE_FIELD_CLASS);
+    this._inputElement.removeAttribute(ExpirationDate.DISABLED_ATTRIBUTE);
+    this._inputElement.classList.remove(ExpirationDate.DISABLED_CLASS);
   }
 }
 

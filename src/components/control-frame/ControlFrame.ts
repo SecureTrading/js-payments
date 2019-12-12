@@ -90,7 +90,7 @@ class ControlFrame extends Frame {
 
   protected onInit() {
     super.onInit();
-    this._payment = new Payment(this._params.jwt, this._params.gatewayUrl, this._params.origin);
+    this._payment = new Payment(this.params.jwt, this.params.gatewayUrl, this.params.origin);
     this._validation = new Validation();
     this._notification = new Notification();
     this._binLookup = new BinLookup();
@@ -117,7 +117,7 @@ class ControlFrame extends Frame {
    * @private
    */
   private _initChangeCardNumberEvent() {
-    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: IFormFieldState) => {
+    this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: IFormFieldState) => {
       this._cardNumber = data.value;
       this._onCardNumberStateChange(data);
     });
@@ -128,7 +128,7 @@ class ControlFrame extends Frame {
    * @private
    */
   private _initChangeExpirationDateEvent() {
-    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, (data: IFormFieldState) => {
+    this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, (data: IFormFieldState) => {
       this._onExpirationDateStateChange(data);
     });
   }
@@ -138,7 +138,7 @@ class ControlFrame extends Frame {
    * @private
    */
   private _initChangeSecurityCodeEvent() {
-    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: IFormFieldState) => {
+    this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: IFormFieldState) => {
       this._onSecurityCodeStateChange(data);
     });
   }
@@ -148,7 +148,7 @@ class ControlFrame extends Frame {
    * @private
    */
   private _initSetRequestTypesEvent() {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES, (data: ISetRequestTypes) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES, (data: ISetRequestTypes) => {
       this._onSetRequestTypesEvent(data);
     });
   }
@@ -158,7 +158,7 @@ class ControlFrame extends Frame {
    * @private
    */
   private _initByPassInitEvent() {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BY_PASS_INIT, (cachetoken: string) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BY_PASS_INIT, (cachetoken: string) => {
       this._onByPassInitEvent(cachetoken);
     });
   }
@@ -168,7 +168,7 @@ class ControlFrame extends Frame {
    * @private
    */
   private _initThreedinitEvent() {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
       this._onThreeDInitEvent();
     });
   }
@@ -178,7 +178,7 @@ class ControlFrame extends Frame {
    * @private
    */
   private _initLoadCardinalEvent() {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL, () => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL, () => {
       this._onLoadCardinal();
     });
   }
@@ -188,7 +188,7 @@ class ControlFrame extends Frame {
    * @private
    */
   private _initProcessPaymentsEvent() {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS, (data: IResponseData) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS, (data: IResponseData) => {
       this._onProcessPaymentEvent(data);
     });
   }
@@ -198,7 +198,7 @@ class ControlFrame extends Frame {
    * @private
    */
   private _initSubmitFormEvent() {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, (data?: ISubmitData) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, (data?: ISubmitData) => {
       this._onSubmit(data);
     });
   }
@@ -208,7 +208,7 @@ class ControlFrame extends Frame {
    * @private
    */
   private _initUpdateMerchantFieldsEvent() {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS, (data: any) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS, (data: any) => {
       this._storeMerchantData(data);
     });
   }
@@ -218,10 +218,10 @@ class ControlFrame extends Frame {
    * @private
    */
   private _initResetJwtEvent() {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.RESET_JWT, () => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.RESET_JWT, () => {
       ControlFrame._onResetJWT();
     });
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
       const { newJwt } = data;
       ControlFrame._onUpdateJWT(newJwt);
       this._onLoad();
@@ -289,7 +289,7 @@ class ControlFrame extends Frame {
     const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME
     };
-    this._messageBus.publish(messageBusEvent, true);
+    this.messageBus.publish(messageBusEvent, true);
   }
 
   /**
@@ -372,12 +372,12 @@ class ControlFrame extends Frame {
     const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.BY_PASS_INIT
     };
-    this._messageBus.publish(messageBusEvent, true);
+    this.messageBus.publish(messageBusEvent, true);
   }
 
   private _getPan() {
-    const decodedJwt: any = JwtDecode<IStJwtObj>(this._params.jwt);
-    return decodedJwt.payload.pan ? JwtDecode<IStJwtObj>(this._params.jwt).payload.pan : this._cardNumber;
+    const decodedJwt: any = JwtDecode<IStJwtObj>(this.params.jwt);
+    return decodedJwt.payload.pan ? JwtDecode<IStJwtObj>(this.params.jwt).payload.pan : this._cardNumber;
   }
 
   private _requestPayment(data: any) {
@@ -386,11 +386,11 @@ class ControlFrame extends Frame {
     const deferInit = data ? data.deferInit : false;
     const { validity, card } = this._validation.formValidation(
       dataInJwt,
-      this._isPaymentReady,
-      this._formFields,
       deferInit,
       data.fieldsToSubmit,
-      isPanPiba
+      this._formFields,
+      isPanPiba,
+      this._isPaymentReady
     );
     if (validity) {
       if (deferInit) {
@@ -402,12 +402,12 @@ class ControlFrame extends Frame {
         .then((result: any) => {
           this._threeDQueryResult = result;
           this._threedqueryEvent.data = result.response;
-          this._messageBus.publish(this._threedqueryEvent, true);
+          this.messageBus.publish(this._threedqueryEvent, true);
         });
     } else {
-      this._messageBus.publish(this._messageBusEventCardNumber);
-      this._messageBus.publish(this._messageBusEventExpirationDate);
-      this._messageBus.publish(this._messageBusEventSecurityCode);
+      this.messageBus.publish(this._messageBusEventCardNumber);
+      this.messageBus.publish(this._messageBusEventExpirationDate);
+      this.messageBus.publish(this._messageBusEventSecurityCode);
       this._validation.setFormValidity(this._formFieldsValidity);
     }
   }
@@ -422,7 +422,7 @@ class ControlFrame extends Frame {
         data: result.response,
         type: MessageBus.EVENTS_PUBLIC.THREEDINIT
       };
-      this._messageBus.publish(messageBusEvent, true);
+      this.messageBus.publish(messageBusEvent, true);
     });
   }
 
