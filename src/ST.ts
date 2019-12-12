@@ -16,7 +16,6 @@ import GoogleAnalytics from './core/integrations/GoogleAnalytics';
 import VisaCheckout from './core/integrations/VisaCheckout';
 import VisaCheckoutMock from './core/integrations/VisaCheckoutMock';
 import {
-  IByPassInit,
   IComponentsConfig,
   IComponentsConfigSchema,
   IConfig,
@@ -224,7 +223,8 @@ class ST {
     config: IComponentsConfig,
     animatedCard: boolean,
     deferInit: boolean,
-    buttonId: string
+    buttonId: string,
+    fieldsToSubmit: string[]
   ) {
     const { defaultPaymentType, paymentTypes, startOnLoad } = config;
     let cardFrames: object;
@@ -239,7 +239,8 @@ class ST {
         animatedCard,
         deferInit,
         buttonId,
-        startOnLoad
+        startOnLoad,
+        fieldsToSubmit
       );
     }
     return cardFrames;
@@ -258,19 +259,31 @@ class ST {
   private readonly _config: IConfig;
   private readonly _livestatus: number = 0;
   private readonly _submitCallback: any;
-  private _threedinit: string;
+  private readonly _threedinit: string;
   private commonFrames: CommonFrames;
   private _messageBus: MessageBus;
-  private _deferInit: boolean;
-  private _buttonId: string;
+  private readonly _deferInit: boolean;
+  private readonly _buttonId: string;
+  private readonly fieldsToSubmit: string[];
 
   constructor(config: IConfig) {
-    const { analytics, animatedCard, buttonId, deferInit, init, livestatus, submitCallback, translations } = config;
+    const {
+      analytics,
+      animatedCard,
+      buttonId,
+      deferInit,
+      fieldsToSubmit,
+      init,
+      livestatus,
+      submitCallback,
+      translations
+    } = config;
     if (init) {
       const { cachetoken, threedinit } = init;
       this._cachetoken = cachetoken;
       this._threedinit = threedinit;
     }
+    this.fieldsToSubmit = fieldsToSubmit ? fieldsToSubmit : ['pan', 'expirydate', 'securitycode'];
     this._messageBus = new MessageBus();
     this._livestatus = livestatus;
     this._animatedCard = animatedCard;
@@ -314,7 +327,8 @@ class ST {
       targetConfig,
       this._animatedCard,
       this._deferInit,
-      this._buttonId
+      this._buttonId,
+      this.fieldsToSubmit
     );
     this.commonFrames.requestTypes = targetConfig.requestTypes;
     this.CardinalCommerce(targetConfig);

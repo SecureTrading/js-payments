@@ -11,8 +11,6 @@ describe('Formatter', () => {
       expect(instance.date('123', Selectors.EXPIRATION_DATE_INPUT)).toEqual('12/3');
     });
   });
-
-  describe('code', () => {});
 });
 
 function formatterFixture() {

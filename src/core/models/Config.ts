@@ -8,6 +8,7 @@ interface IConfig {
   componentIds?: any;
   datacenterurl?: string;
   deferInit?: boolean;
+  fieldsToSubmit?: string[];
   formId?: string;
   jwt: string;
   init?: IByPassInit;
@@ -70,6 +71,7 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
   components: Joi.object(),
   datacenterurl: Joi.string(),
   deferInit: Joi.boolean(),
+  fieldsToSubmit: Joi.array().allow('pan', 'expirydate', 'securitycode'),
   formId: Joi.string(),
   init: Joi.object(),
   jwt: Joi.string().required(),

@@ -184,30 +184,6 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('onBlur()', () => {
-    const { instance } = cardNumberFixture();
-
-    beforeEach(() => {
-      // @ts-ignore
-      instance._inputElement.value = '4111';
-      instance.validation.luhnCheck = jest.fn();
-      Utils.stripChars = jest.fn().mockReturnValue('4111');
-      // @ts-ignore
-      instance._sendState = jest.fn();
-      // @ts-ignore
-      instance.onBlur();
-    });
-    // then
-    it('validation.luhnCheck has been called', () => {
-      expect(instance.validation.luhnCheck).toHaveBeenCalled();
-    });
-    it('_sendState has been called', () => {
-      // @ts-ignore
-      expect(instance._sendState).toHaveBeenCalled();
-    });
-  });
-
-  // given
   describe('_setDisableListener()', () => {
     const { instance } = cardNumberFixture();
 
@@ -246,23 +222,6 @@ describe('CardNumber', () => {
       subscribeMock(false);
       // @ts-ignore
       expect(instance._inputElement.classList.contains('st-input--disabled')).toEqual(false);
-    });
-  });
-
-  // given
-  describe('onFocus()', () => {
-    // when
-    const { instance } = cardNumberFixture();
-    const event: Event = new Event('focus');
-    // @ts-ignore
-    instance._inputElement.focus = jest.fn();
-
-    // then
-    it('should call super function', () => {
-      // @ts-ignore
-      instance.onFocus(event);
-      // @ts-ignore
-      expect(instance._inputElement.focus).toHaveBeenCalled();
     });
   });
 });
