@@ -23,12 +23,12 @@ describe('ControlFrame', () => {
     // then
     it('should call _onCardNumberStateChange when CHANGE_CARD_NUMBER event has been called', () => {
       // @ts-ignore
-      instance._onCardNumberStateChange = jest.fn();
+      ControlFrame._onFormFieldStateChange = jest.fn();
       messageBusEvent.type = MessageBus.EVENTS.CHANGE_CARD_NUMBER;
       // @ts-ignore
       instance._initChangeCardNumberEvent();
       // @ts-ignore
-      expect(instance._onCardNumberStateChange).toHaveBeenCalled();
+      expect(ControlFrame._onFormFieldStateChange).toHaveBeenCalled();
     });
   });
 
@@ -37,12 +37,12 @@ describe('ControlFrame', () => {
     // then
     it('should call _onExpirationDateStateChange when CHANGE_EXPIRATION_DATE event has been called', () => {
       // @ts-ignore
-      instance._onExpirationDateStateChange = jest.fn();
+      ControlFrame._onFormFieldStateChange = jest.fn();
       messageBusEvent.type = MessageBus.EVENTS.CHANGE_EXPIRATION_DATE;
       // @ts-ignore
       instance._initChangeExpirationDateEvent();
       // @ts-ignore
-      expect(instance._onExpirationDateStateChange).toHaveBeenCalled();
+      expect(ControlFrame._onFormFieldStateChange).toHaveBeenCalled();
     });
   });
 
@@ -51,12 +51,12 @@ describe('ControlFrame', () => {
     // then
     it('should call _onSecurityCodeStateChange when CHANGE_SECURITY_CODE event has been called', () => {
       // @ts-ignore
-      instance._onSecurityCodeStateChange = jest.fn();
+      ControlFrame._onFormFieldStateChange = jest.fn();
       messageBusEvent.type = MessageBus.EVENTS.CHANGE_SECURITY_CODE;
       // @ts-ignore
       instance._initChangeSecurityCodeEvent();
       // @ts-ignore
-      expect(instance._onSecurityCodeStateChange).toHaveBeenCalled();
+      expect(ControlFrame._onFormFieldStateChange).toHaveBeenCalled();
     });
   });
 
@@ -194,7 +194,7 @@ describe('ControlFrame', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
-      instance._onCardNumberStateChange(formFieldState);
+      ControlFrame._onFormFieldStateChange(instance._formFields.cardNumber, formFieldState);
     });
 
     // then
@@ -217,7 +217,7 @@ describe('ControlFrame', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
-      instance._onExpirationDateStateChange(formFieldState);
+      ControlFrame._onFormFieldStateChange(instance._formFields.expirationDate, formFieldState);
     });
 
     // then
@@ -240,7 +240,7 @@ describe('ControlFrame', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
-      instance._onSecurityCodeStateChange(formFieldState);
+      ControlFrame._onFormFieldStateChange(instance._formFields.securityCode, formFieldState);
     });
 
     // then

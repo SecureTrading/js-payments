@@ -88,7 +88,7 @@ class ControlFrame extends Frame {
   private _initChangeCardNumberEvent() {
     this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: IFormFieldState) => {
       this._cardNumber = data.value;
-      this._onCardNumberStateChange(data);
+      ControlFrame._onFormFieldStateChange(this._formFields.cardNumber, data);
     });
   }
 
@@ -98,7 +98,7 @@ class ControlFrame extends Frame {
    */
   private _initChangeExpirationDateEvent() {
     this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, (data: IFormFieldState) => {
-      this._onExpirationDateStateChange(data);
+      ControlFrame._onFormFieldStateChange(this._formFields.expirationDate, data);
     });
   }
 
@@ -108,7 +108,7 @@ class ControlFrame extends Frame {
    */
   private _initChangeSecurityCodeEvent() {
     this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: IFormFieldState) => {
-      this._onSecurityCodeStateChange(data);
+      ControlFrame._onFormFieldStateChange(this._formFields.securityCode, data);
     });
   }
 
@@ -197,34 +197,9 @@ class ControlFrame extends Frame {
     });
   }
 
-  /**
-   * Handles validity and value of card number field.
-   * @param data
-   * @private
-   */
-  private _onCardNumberStateChange(data: IFormFieldState) {
-    this._formFields.cardNumber.validity = data.validity;
-    this._formFields.cardNumber.value = data.value;
-  }
-
-  /**
-   * Handles validity and value of expiration date field.
-   * @param data
-   * @private
-   */
-  private _onExpirationDateStateChange(data: IFormFieldState) {
-    this._formFields.expirationDate.validity = data.validity;
-    this._formFields.expirationDate.value = data.value;
-  }
-
-  /**
-   * Handles validity and value of security code field.
-   * @param data
-   * @private
-   */
-  private _onSecurityCodeStateChange(data: IFormFieldState) {
-    this._formFields.securityCode.validity = data.validity;
-    this._formFields.securityCode.value = data.value;
+  private static _onFormFieldStateChange(field: IFormFieldState, data: IFormFieldState) {
+    field.validity = data.validity;
+    field.value = data.value;
   }
 
   /**
