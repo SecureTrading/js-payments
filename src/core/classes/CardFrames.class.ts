@@ -129,7 +129,12 @@ class CardFrames extends RegisterFrames {
    */
   protected setElementsFields() {
     if (this._configurationForStandardCard) {
-      return [this.componentIds.cardNumber, this.componentIds.expirationDate, this.componentIds.securityCode];
+      return [
+        this.componentIds.cardNumber,
+        this.componentIds.expirationDate,
+        this.componentIds.securityCode,
+        this.componentIds.animatedCard
+      ];
     } else if (this._onlyCvvConfiguration) {
       return [this.componentIds.securityCode];
     } else if (this._noFieldConfiguration) {
@@ -241,6 +246,7 @@ class CardFrames extends RegisterFrames {
   }
 
   private _initAnimatedCardFrame() {
+    console.error(this._configurationForStandardCard);
     this._animatedCard = new Element();
     const animatedCardConfig = { ...this.params };
     if (this._paymentTypes !== undefined) {
