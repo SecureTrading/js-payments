@@ -246,7 +246,6 @@ class CardFrames extends RegisterFrames {
   }
 
   private _initAnimatedCardFrame() {
-    console.error(this._configurationForStandardCard);
     this._animatedCard = new Element();
     const animatedCardConfig = { ...this.params };
     if (this._paymentTypes !== undefined) {
