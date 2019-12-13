@@ -23,6 +23,15 @@ import Validation from '../../core/shared/Validation';
  * Defines frame which is essentially a hub which collects events and processes from whole library.
  */
 class ControlFrame extends Frame {
+  private static ALLOWED_PARAMS: string[] = ['jwt', 'gatewayUrl'];
+  private static NON_CVV_CARDS: string[] = ['PIBA'];
+  private static THREEDQUERY_EVENT: string = 'THREEDQUERY';
+
+  private static _onFormFieldStateChange(field: IFormFieldState, data: IFormFieldState) {
+    field.validity = data.validity;
+    field.value = data.value;
+  }
+
   private static _onResetJWT() {
     StCodec.jwt = StCodec.originalJwt;
   }
@@ -32,9 +41,6 @@ class ControlFrame extends Frame {
     StCodec.originalJwt = jwt;
   }
 
-  private static ALLOWED_PARAMS: string[] = ['jwt', 'gatewayUrl'];
-  private static NON_CVV_CARDS: string[] = ['PIBA'];
-  private static THREEDQUERY_EVENT: string = 'THREEDQUERY';
   private _binLookup: BinLookup;
   private _card: ICard;
   private _cardNumber: string;
@@ -63,9 +69,9 @@ class ControlFrame extends Frame {
     this._setInstances();
     this._setFormFieldsValidities();
     this._setMessageBusEvents();
-    this._initChangeCardNumberEvent();
-    this._initChangeExpirationDateEvent();
-    this._initChangeSecurityCodeEvent();
+    this._initFormFieldChangeEvent(MessageBus.EVENTS.CHANGE_CARD_NUMBER, this._formFields.cardNumber);
+    this._initFormFieldChangeEvent(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, this._formFields.expirationDate);
+    this._initFormFieldChangeEvent(MessageBus.EVENTS.CHANGE_SECURITY_CODE, this._formFields.securityCode);
     this._initSetRequestTypesEvent();
     this._initByPassInitEvent();
     this._initThreedinitEvent();
@@ -81,34 +87,9 @@ class ControlFrame extends Frame {
     return super.getAllowedParams().concat(ControlFrame.ALLOWED_PARAMS);
   }
 
-  /**
-   * Sets listener for CHANGE_CARD_NUMBER MessageBus event.
-   * @private
-   */
-  private _initChangeCardNumberEvent() {
-    this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: IFormFieldState) => {
-      this._cardNumber = data.value;
-      ControlFrame._onFormFieldStateChange(this._formFields.cardNumber, data);
-    });
-  }
-
-  /**
-   * Sets listener for CHANGE_EXPIRATION_DATE MessageBus event.
-   * @private
-   */
-  private _initChangeExpirationDateEvent() {
-    this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, (data: IFormFieldState) => {
-      ControlFrame._onFormFieldStateChange(this._formFields.expirationDate, data);
-    });
-  }
-
-  /**
-   * Sets listener for CHANGE_SECURITY_CODE MessageBus event.
-   * @private
-   */
-  private _initChangeSecurityCodeEvent() {
-    this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: IFormFieldState) => {
-      ControlFrame._onFormFieldStateChange(this._formFields.securityCode, data);
+  private _initFormFieldChangeEvent(event: string, field: IFormFieldState) {
+    this.messageBus.subscribe(event, (data: IFormFieldState) => {
+      ControlFrame._onFormFieldStateChange(field, data);
     });
   }
 
@@ -195,11 +176,6 @@ class ControlFrame extends Frame {
       ControlFrame._onUpdateJWT(newJwt);
       this._onLoad();
     });
-  }
-
-  private static _onFormFieldStateChange(field: IFormFieldState, data: IFormFieldState) {
-    field.validity = data.validity;
-    field.value = data.value;
   }
 
   /**
