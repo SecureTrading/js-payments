@@ -188,17 +188,32 @@ describe('CardinalCommerce', () => {
   describe('_threeDSetup()', () => {
     // @ts-ignore
     const onLoad = CardinalCommerce.prototype._onCardinalLoad;
+    let spy: SpyInstance;
+    let spyCardinalSetup: SpyInstance;
+
+    beforeEach(() => {
+      // @ts-ignore
+      spy = jest.spyOn(CardinalCommerce.prototype, '_onCardinalLoad').mockImplementation(() => {});
+      spyCardinalSetup = jest.spyOn(instance, '_cardinalSetup').mockImplementation(() => {});
+      instance._threeDSetup();
+      instance._threeDSetup();
+      instance._threeDSetup();
+      instance._threeDSetup();
+      instance._threeDSetup();
+      instance._threeDSetup();
+      instance._threeDSetup();
+      instance._threeDSetup();
+    });
 
     // then
-    it('should call load handler', () => {
-      // @ts-ignore
-      const spy: SpyInstance = jest.spyOn(CardinalCommerce.prototype, '_onCardinalLoad').mockImplementation(() => {});
-      instance._threeDSetup();
-      const ev = document.createEvent('Event');
-      ev.initEvent('load', false, false);
-      const script = document.getElementsByTagName('script')[0];
-      script.dispatchEvent(ev);
-      expect(spy).toHaveBeenCalledTimes(1);
+    it(`shouldn't call onCardinalLoad more than one time and call _cardinalSetup 7 times instead`, () => {
+      const sdkCollection: HTMLCollection = document.head.getElementsByTagName('script');
+      const sdkNames: string[] = Object.keys(sdkCollection).map(item => {
+        // @ts-ignore
+        return (sdkCollection[item].src = 'https://songbirdstag.cardinalcommerce.com/edge/v1/songbird.js');
+      });
+      expect(spyCardinalSetup).toHaveBeenCalledTimes(7);
+      expect(sdkNames.length).toEqual(1);
     });
 
     afterEach(() => {
