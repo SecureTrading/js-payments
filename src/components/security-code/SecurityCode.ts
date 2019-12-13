@@ -133,6 +133,7 @@ class SecurityCode extends FormField {
       if (state) {
         this._clearInputValue();
       }
+      this._toggleSecurityCode(state);
     });
   }
 
@@ -159,18 +160,12 @@ class SecurityCode extends FormField {
     this.setAttributes({ pattern: securityCodePattern });
   }
 
-  private _toggleSecurityCodeWrapper(state: string) {
-    this._securityCodeWrapper.style.opacity = state;
-  }
-
   private _toggleSecurityCode(disabled: boolean) {
     if (disabled) {
       this._disableSecurityCode();
       this._toggleSecurityCodeValidation();
-      this._toggleSecurityCodeWrapper(SecurityCode.GREY_OUT);
     } else {
       this._enableSecurityCode();
-      this._toggleSecurityCodeWrapper(SecurityCode.GREY_OUT_OFF);
       this._inputElement.classList.remove(SecurityCode.DISABLED_CLASS);
     }
   }
