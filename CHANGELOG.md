@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 
 - Resolved serialize-javascript dependency: regular expressions Cross-Site Scripting (XSS) vulnerability.
 - Updated bunch of packages.
+- Fixed a bug which could cause duplicate payments if deferInit=true
 
 ## 2.0.1
 
