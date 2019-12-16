@@ -9,6 +9,7 @@ import {
   PAYMENT_EVENTS
 } from '../models/CardinalCommerce';
 import DomMethods from '../shared/DomMethods';
+import { IFormFieldState } from '../shared/FormFieldState';
 import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
 import Notification from '../shared/Notification';
