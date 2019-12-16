@@ -21,6 +21,7 @@ jest.mock('./../src/core/integrations/VisaCheckoutMock');
 jest.mock('./../src/core/integrations/ApplePay');
 jest.mock('./../src/core/integrations/ApplePayMock');
 jest.mock('./../src/core/integrations/GoogleAnalytics');
+jest.mock('./../src/core/integrations/Cybertonica');
 
 // given
 describe('ST', () => {
