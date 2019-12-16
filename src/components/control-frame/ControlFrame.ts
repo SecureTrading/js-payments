@@ -1,8 +1,16 @@
 import JwtDecode from 'jwt-decode';
 import { StCodec } from '../../core/classes/StCodec.class';
-import { ISetRequestTypes, ISubmitData } from '../../core/models/ControlFrame';
+import {
+  FormFieldsDetails,
+  FormFieldsValidity,
+  IFormFieldsDetails,
+  IFormFieldsValidity,
+  ISetRequestTypes,
+  ISubmitData
+} from '../../core/models/ControlFrame';
 import { IMerchantData } from '../../core/models/MerchantData';
 import BinLookup from '../../core/shared/BinLookup';
+import { IFormFieldState } from '../../core/shared/FormFieldState';
 import Frame from '../../core/shared/Frame';
 import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
@@ -15,6 +23,15 @@ import Validation from '../../core/shared/Validation';
  * Defines frame which is essentially a hub which collects events and processes from whole library.
  */
 class ControlFrame extends Frame {
+  private static ALLOWED_PARAMS: string[] = ['jwt', 'gatewayUrl'];
+  private static NON_CVV_CARDS: string[] = ['PIBA'];
+  private static THREEDQUERY_EVENT: string = 'THREEDQUERY';
+
+  private static _onFormFieldStateChange(field: IFormFieldState, data: IFormFieldState) {
+    field.validity = data.validity;
+    field.value = data.value;
+  }
+
   private static _onResetJWT() {
     StCodec.jwt = StCodec.originalJwt;
   }
@@ -24,64 +41,23 @@ class ControlFrame extends Frame {
     StCodec.originalJwt = jwt;
   }
 
-  private _payment: Payment;
-  private _cardNumber: string;
   private _binLookup: BinLookup;
-  private _isPaymentReady: boolean = false;
-  private _merchantFormData: IMerchantData;
   private _card: ICard;
-  private _validation: Validation;
-  private _preThreeDRequestTypes: string[];
-  private _postThreeDRequestTypes: string[];
-  private _threeDQueryResult: any;
+  private _cardNumber: string;
+  private _isPaymentReady: boolean = false;
+  private _formFields: IFormFieldsDetails = FormFieldsDetails;
+  private _formFieldsValidity: IFormFieldsValidity = FormFieldsValidity;
+  private _messageBusEventCardNumber: IMessageBusEvent;
+  private _messageBusEventExpirationDate: IMessageBusEvent;
+  private _messageBusEventSecurityCode: IMessageBusEvent;
+  private _merchantFormData: IMerchantData;
   private _notification: Notification;
-  private _formFields: {
-    cardNumber: IFormFieldState;
-    expirationDate: IFormFieldState;
-    securityCode: IFormFieldState;
-  } = {
-    cardNumber: {
-      validity: false,
-      value: ''
-    },
-    expirationDate: {
-      validity: false,
-      value: ''
-    },
-    securityCode: {
-      validity: false,
-      value: ''
-    }
-  };
-
-  private _formFieldsValidity = {
-    cardNumber: {
-      message: '',
-      state: this._formFields.cardNumber.validity
-    },
-    expirationDate: {
-      message: '',
-      state: this._formFields.expirationDate.validity
-    },
-    securityCode: {
-      message: '',
-      state: this._formFields.securityCode.validity
-    }
-  };
-
-  private _messageBusEventCardNumber: IMessageBusEvent = {
-    type: MessageBus.EVENTS.BLUR_CARD_NUMBER
-  };
-  private _messageBusEventExpirationDate: IMessageBusEvent = {
-    type: MessageBus.EVENTS.BLUR_EXPIRATION_DATE
-  };
-  private _messageBusEventSecurityCode: IMessageBusEvent = {
-    type: MessageBus.EVENTS.BLUR_SECURITY_CODE
-  };
-
-  private _threedqueryEvent: IMessageBusEvent = {
-    type: MessageBus.EVENTS_PUBLIC.THREEDQUERY
-  };
+  private _payment: Payment;
+  private _postThreeDRequestTypes: string[];
+  private _preThreeDRequestTypes: string[];
+  private _validation: Validation;
+  private _threeDQueryEvent: IMessageBusEvent;
+  private _threeDQueryResult: any;
 
   constructor() {
     super();
@@ -90,13 +66,12 @@ class ControlFrame extends Frame {
 
   protected onInit() {
     super.onInit();
-    this._payment = new Payment(this.params.jwt, this.params.gatewayUrl, this.params.origin);
-    this._validation = new Validation();
-    this._notification = new Notification();
-    this._binLookup = new BinLookup();
-    this._initChangeCardNumberEvent();
-    this._initChangeExpirationDateEvent();
-    this._initChangeSecurityCodeEvent();
+    this._setInstances();
+    this._setFormFieldsValidities();
+    this._setMessageBusEvents();
+    this._initFormFieldChangeEvent(MessageBus.EVENTS.CHANGE_CARD_NUMBER, this._formFields.cardNumber);
+    this._initFormFieldChangeEvent(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, this._formFields.expirationDate);
+    this._initFormFieldChangeEvent(MessageBus.EVENTS.CHANGE_SECURITY_CODE, this._formFields.securityCode);
     this._initSetRequestTypesEvent();
     this._initByPassInitEvent();
     this._initThreedinitEvent();
@@ -109,37 +84,12 @@ class ControlFrame extends Frame {
   }
 
   protected getAllowedParams() {
-    return super.getAllowedParams().concat(['jwt', 'gatewayUrl']);
+    return super.getAllowedParams().concat(ControlFrame.ALLOWED_PARAMS);
   }
 
-  /**
-   * Sets listener for CHANGE_CARD_NUMBER MessageBus event.
-   * @private
-   */
-  private _initChangeCardNumberEvent() {
-    this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: IFormFieldState) => {
-      this._cardNumber = data.value;
-      this._onCardNumberStateChange(data);
-    });
-  }
-
-  /**
-   * Sets listener for CHANGE_EXPIRATION_DATE MessageBus event.
-   * @private
-   */
-  private _initChangeExpirationDateEvent() {
-    this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, (data: IFormFieldState) => {
-      this._onExpirationDateStateChange(data);
-    });
-  }
-
-  /**
-   * Sets listener for CHANGE_SECURITY_CODE MessageBus event.
-   * @private
-   */
-  private _initChangeSecurityCodeEvent() {
-    this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: IFormFieldState) => {
-      this._onSecurityCodeStateChange(data);
+  private _initFormFieldChangeEvent(event: string, field: IFormFieldState) {
+    this.messageBus.subscribe(event, (data: IFormFieldState) => {
+      ControlFrame._onFormFieldStateChange(field, data);
     });
   }
 
@@ -229,42 +179,12 @@ class ControlFrame extends Frame {
   }
 
   /**
-   * Handles validity and value of card number field.
-   * @param data
-   * @private
-   */
-  private _onCardNumberStateChange(data: IFormFieldState) {
-    this._formFields.cardNumber.validity = data.validity;
-    this._formFields.cardNumber.value = data.value;
-  }
-
-  /**
-   * Handles validity and value of expiration date field.
-   * @param data
-   * @private
-   */
-  private _onExpirationDateStateChange(data: IFormFieldState) {
-    this._formFields.expirationDate.validity = data.validity;
-    this._formFields.expirationDate.value = data.value;
-  }
-
-  /**
-   * Handles validity and value of security code field.
-   * @param data
-   * @private
-   */
-  private _onSecurityCodeStateChange(data: IFormFieldState) {
-    this._formFields.securityCode.validity = data.validity;
-    this._formFields.securityCode.value = data.value;
-  }
-
-  /**
    * Splits post and pre threedrequests types.
    * @param data
    * @private
    */
   private _onSetRequestTypesEvent(data: any) {
-    const threeDIndex = data.requestTypes.indexOf('THREEDQUERY');
+    const threeDIndex = data.requestTypes.indexOf(ControlFrame.THREEDQUERY_EVENT);
     this._preThreeDRequestTypes = data.requestTypes.slice(0, threeDIndex + 1);
     this._postThreeDRequestTypes = data.requestTypes.slice(threeDIndex + 1, data.requestTypes.length);
   }
@@ -381,7 +301,7 @@ class ControlFrame extends Frame {
   }
 
   private _requestPayment(data: any) {
-    const isPanPiba: boolean = this._binLookup.binLookup(this._getPan()).type === 'PIBA';
+    const isPanPiba: boolean = ControlFrame.NON_CVV_CARDS.includes(this._binLookup.binLookup(this._getPan()).type);
     const dataInJwt = data ? data.dataInJwt : false;
     const deferInit = data ? data.deferInit : false;
     const { validity, card } = this._validation.formValidation(
@@ -401,8 +321,8 @@ class ControlFrame extends Frame {
         .threeDQueryRequest(this._preThreeDRequestTypes, card, this._merchantFormData)
         .then((result: any) => {
           this._threeDQueryResult = result;
-          this._threedqueryEvent.data = result.response;
-          this.messageBus.publish(this._threedqueryEvent, true);
+          this._threeDQueryEvent.data = result.response;
+          this.messageBus.publish(this._threeDQueryEvent, true);
         });
     } else {
       this.messageBus.publish(this._messageBusEventCardNumber);
@@ -426,11 +346,34 @@ class ControlFrame extends Frame {
     });
   }
 
-  /**
-   * Assigned received merchant data.
-   * @param data
-   * @private
-   */
+  private _setFormFieldsValidities() {
+    this._formFieldsValidity.cardNumber.state = this._formFields.cardNumber.validity;
+    this._formFieldsValidity.expirationDate.state = this._formFields.expirationDate.validity;
+    this._formFieldsValidity.securityCode.state = this._formFields.securityCode.validity;
+  }
+
+  private _setMessageBusEvents() {
+    this._messageBusEventCardNumber = {
+      type: MessageBus.EVENTS.BLUR_CARD_NUMBER
+    };
+    this._messageBusEventExpirationDate = {
+      type: MessageBus.EVENTS.BLUR_EXPIRATION_DATE
+    };
+    this._messageBusEventSecurityCode = {
+      type: MessageBus.EVENTS.BLUR_SECURITY_CODE
+    };
+    this._threeDQueryEvent = {
+      type: MessageBus.EVENTS_PUBLIC.THREEDQUERY
+    };
+  }
+
+  private _setInstances() {
+    this._payment = new Payment(this.params.jwt, this.params.gatewayUrl, this.params.origin);
+    this._validation = new Validation();
+    this._notification = new Notification();
+    this._binLookup = new BinLookup();
+  }
+
   private _storeMerchantData(data: any) {
     this._merchantFormData = data;
   }

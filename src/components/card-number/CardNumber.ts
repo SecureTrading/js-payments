@@ -1,6 +1,7 @@
 import BinLookup from '../../core/shared/BinLookup';
 import Formatter from '../../core/shared/Formatter';
 import FormField from '../../core/shared/FormField';
+import { IFormFieldState } from '../../core/shared/FormFieldState';
 import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';

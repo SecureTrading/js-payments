@@ -23,12 +23,12 @@ describe('ControlFrame', () => {
     // then
     it('should call _onCardNumberStateChange when CHANGE_CARD_NUMBER event has been called', () => {
       // @ts-ignore
-      instance._onCardNumberStateChange = jest.fn();
+      ControlFrame._onFormFieldStateChange = jest.fn();
       messageBusEvent.type = MessageBus.EVENTS.CHANGE_CARD_NUMBER;
       // @ts-ignore
-      instance._initChangeCardNumberEvent();
+      instance._initFormFieldChangeEvent(messageBusEvent.type, instance._formFields.cardNumber);
       // @ts-ignore
-      expect(instance._onCardNumberStateChange).toHaveBeenCalled();
+      expect(ControlFrame._onFormFieldStateChange).toHaveBeenCalled();
     });
   });
 
@@ -37,12 +37,12 @@ describe('ControlFrame', () => {
     // then
     it('should call _onExpirationDateStateChange when CHANGE_EXPIRATION_DATE event has been called', () => {
       // @ts-ignore
-      instance._onExpirationDateStateChange = jest.fn();
+      ControlFrame._onFormFieldStateChange = jest.fn();
       messageBusEvent.type = MessageBus.EVENTS.CHANGE_EXPIRATION_DATE;
       // @ts-ignore
-      instance._initChangeExpirationDateEvent();
+      instance._initFormFieldChangeEvent(messageBusEvent.type, instance._formFields.expirationDate);
       // @ts-ignore
-      expect(instance._onExpirationDateStateChange).toHaveBeenCalled();
+      expect(ControlFrame._onFormFieldStateChange).toHaveBeenCalled();
     });
   });
 
@@ -51,12 +51,12 @@ describe('ControlFrame', () => {
     // then
     it('should call _onSecurityCodeStateChange when CHANGE_SECURITY_CODE event has been called', () => {
       // @ts-ignore
-      instance._onSecurityCodeStateChange = jest.fn();
+      ControlFrame._onFormFieldStateChange = jest.fn();
       messageBusEvent.type = MessageBus.EVENTS.CHANGE_SECURITY_CODE;
       // @ts-ignore
-      instance._initChangeSecurityCodeEvent();
+      instance._initFormFieldChangeEvent(messageBusEvent.type, instance._formFields.securityCode);
       // @ts-ignore
-      expect(instance._onSecurityCodeStateChange).toHaveBeenCalled();
+      expect(ControlFrame._onFormFieldStateChange).toHaveBeenCalled();
     });
   });
 
@@ -180,75 +180,6 @@ describe('ControlFrame', () => {
       instance._initResetJwtEvent();
       // @ts-ignore
       expect(instance._onLoad).toHaveBeenCalled();
-    });
-  });
-
-  // given
-  describe('_onCardNumberStateChange', () => {
-    const { instance } = controlFrameFixture();
-    const formFieldState = {
-      validity: true,
-      value: '4111'
-    };
-
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._onCardNumberStateChange(formFieldState);
-    });
-
-    // then
-    it('should set validity and value params of this._formFields.cardNumber', () => {
-      // @ts-ignore
-      expect(instance._formFields.cardNumber.validity).toEqual(formFieldState.validity);
-      // @ts-ignore
-      expect(instance._formFields.cardNumber.value).toEqual(formFieldState.value);
-    });
-  });
-
-  // given
-  describe('_onExpirationDateStateChange', () => {
-    const { instance } = controlFrameFixture();
-    const formFieldState = {
-      validity: true,
-      value: '01/2'
-    };
-
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._onExpirationDateStateChange(formFieldState);
-    });
-
-    // then
-    it('should set validity and value params of this._formFields.expirationDate', () => {
-      // @ts-ignore
-      expect(instance._formFields.expirationDate.validity).toEqual(formFieldState.validity);
-      // @ts-ignore
-      expect(instance._formFields.expirationDate.value).toEqual(formFieldState.value);
-    });
-  });
-
-  // given
-  describe('_onSecurityCodeStateChange', () => {
-    const { instance } = controlFrameFixture();
-    const formFieldState = {
-      validity: true,
-      value: '12'
-    };
-
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._onSecurityCodeStateChange(formFieldState);
-    });
-
-    // then
-    it('should set validity and value params of this._formFields.securityCode', () => {
-      // @ts-ignore
-      expect(instance._formFields.securityCode.validity).toEqual(formFieldState.validity);
-      // @ts-ignore
-      expect(instance._formFields.securityCode.value).toEqual(formFieldState.value);
     });
   });
 

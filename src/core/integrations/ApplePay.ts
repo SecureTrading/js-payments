@@ -271,7 +271,9 @@ export class ApplePay {
       : (this._buttonText = ApplePay.AVAILABLE_BUTTON_TEXTS[0]);
 
     // tslint:disable-next-line: max-line-length
-    this._applePayButtonProps.style = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${this._buttonText}; -apple-pay-button-style: ${this._buttonStyle}`;
+    this._applePayButtonProps.style = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${
+      this._buttonText
+    }; -apple-pay-button-style: ${this._buttonStyle}`;
   }
 
   /**
