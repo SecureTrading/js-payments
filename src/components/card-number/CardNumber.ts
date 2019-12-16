@@ -18,7 +18,7 @@ class CardNumber extends FormField {
   private static STANDARD_CARD_LENGTH: number = 19;
   private static WHITESPACES_DECREASE_NUMBER: number = 2;
 
-  private static CARD_NUMBER_FOR_BIN_PROCESS = (cardNumber: string) => cardNumber.slice(0, 6);
+  private static _getCardNumberForBinProcess = (cardNumber: string) => cardNumber.slice(0, 6);
 
   public binLookup: BinLookup;
   public validation: Validation;
@@ -188,7 +188,7 @@ class CardNumber extends FormField {
     };
     if (validity) {
       const binProcessEvent: IMessageBusEvent = {
-        data: CardNumber.CARD_NUMBER_FOR_BIN_PROCESS(value),
+        data: CardNumber._getCardNumberForBinProcess(value),
         type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS
       };
       this.messageBus.publish(binProcessEvent, true);
