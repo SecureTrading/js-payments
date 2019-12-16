@@ -260,8 +260,8 @@ class Validation extends Frame {
     const { value } = input;
     const isLuhnOk: boolean = Validation._luhnAlgorithm(value);
     if (!isLuhnOk) {
-      this.validate(input, message, Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
       Validation.setCustomValidationError(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH, field);
+      this.validate(input, message, Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
     } else {
       Validation.setCustomValidationError(Validation.CLEAR_VALUE, field);
     }
