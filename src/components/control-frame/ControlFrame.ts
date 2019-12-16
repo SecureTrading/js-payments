@@ -3,6 +3,7 @@ import { StCodec } from '../../core/classes/StCodec.class';
 import {
   FormFieldsDetails,
   FormFieldsValidity,
+  IDecodedJwt,
   IFormFieldsDetails,
   IFormFieldsValidity,
   ISetRequestTypes,
@@ -44,6 +45,7 @@ class ControlFrame extends Frame {
   private _binLookup: BinLookup;
   private _card: ICard;
   private _cardNumber: string;
+  private _decodedJwt: IDecodedJwt;
   private _isPaymentReady: boolean = false;
   private _formFields: IFormFieldsDetails = FormFieldsDetails;
   private _formFieldsValidity: IFormFieldsValidity = FormFieldsValidity;
@@ -296,8 +298,8 @@ class ControlFrame extends Frame {
   }
 
   private _getPan() {
-    const decodedJwt: any = JwtDecode<IStJwtObj>(this.params.jwt);
-    return decodedJwt.payload.pan ? JwtDecode<IStJwtObj>(this.params.jwt).payload.pan : this._cardNumber;
+    this._decodedJwt = JwtDecode(this.params.jwt);
+    return this._decodedJwt.payload.pan ? JwtDecode<IDecodedJwt>(this.params.jwt).payload.pan : this._cardNumber;
   }
 
   private _requestPayment(data: any) {
