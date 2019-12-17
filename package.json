@@ -68,7 +68,7 @@
     "jest-get-type": "^24.9.0",
     "live-server": "^1.2.1",
     "local-web-server": "^3.0.7",
-    "mini-css-extract-plugin": "^0.8.0",
+    "mini-css-extract-plugin": "^0.8.2",
     "node-sass": "^4.13.0",
     "postcss-import": "^12.0.1",
     "postcss-loader": "^3.0.0",
