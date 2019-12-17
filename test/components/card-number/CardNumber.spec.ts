@@ -4,6 +4,7 @@ import CardNumber from '../../../src/components/card-number/CardNumber';
 import Selectors from '../../../src/core/shared/Selectors';
 import FormField from '../../../src/core/shared/FormField';
 import Utils from '../../../src/core/shared/Utils';
+import Validation from '../../../src/core/shared/Validation';
 import MessageBus from './../../../src/core/shared/MessageBus';
 
 jest.mock('./../../../src/core/shared/MessageBus');
@@ -11,14 +12,7 @@ jest.mock('./../../../src/core/shared/Validation');
 
 // given
 describe('CardNumber', () => {
-  let {
-    inputElement,
-    messageElement,
-    cardNumberInstance,
-    testCardNumbers,
-    labelElement,
-    formattedCards
-  } = cardNumberFixture();
+  let { inputElement, messageElement, cardNumberInstance, labelElement } = cardNumberFixture();
   // when
   beforeAll(() => {
     document.body.appendChild(inputElement);
@@ -43,11 +37,11 @@ describe('CardNumber', () => {
   });
 
   // given
-  describe('CardNumber.CARD_NUMBER_FOR_BIN_PROCESS', () => {
+  describe('CardNumber._getCardNumberForBinProcess()', () => {
     // then
     it('should return input element', () => {
       // @ts-ignore
-      expect(CardNumber.CARD_NUMBER_FOR_BIN_PROCESS('4111111111111111')).toEqual('411111');
+      expect(CardNumber._getCardNumberForBinProcess('4111111111111111')).toEqual('411111');
     });
   });
 
@@ -222,6 +216,275 @@ describe('CardNumber', () => {
       subscribeMock(false);
       // @ts-ignore
       expect(instance._inputElement.classList.contains('st-input--disabled')).toEqual(false);
+    });
+  });
+
+  // given
+  describe('onBlur', () => {
+    const { instance } = cardNumberFixture();
+
+    // when
+    beforeEach(() => {
+      instance.validation.luhnCheck = jest.fn();
+      // @ts-ignore
+      instance._sendState = jest.fn();
+      // @ts-ignore
+      instance.onBlur();
+    });
+
+    // then
+    it('should call Luhn check method with fieldInstance, inputElement and messageElement', () => {
+      // @ts-ignore
+      expect(instance.validation.luhnCheck).toHaveBeenCalledWith(
+        // @ts-ignore
+        instance._fieldInstance,
+        // @ts-ignore
+        instance._inputElement,
+        // @ts-ignore
+        instance._messageElement
+      );
+    });
+
+    // then
+    it('should call sendState method', () => {
+      // @ts-ignore
+      expect(instance._sendState).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('onFocus', () => {
+    const { instance } = cardNumberFixture();
+
+    const event: Event = new Event('focus');
+
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._disableSecurityCodeField = jest.fn();
+      // @ts-ignore
+      instance._inputElement.value = '4111';
+      // @ts-ignore
+      instance._inputElement.focus = jest.fn();
+      // @ts-ignore
+      instance.onFocus(event);
+    });
+    // then
+    it('should call element focus', () => {
+      // @ts-ignore
+      expect(instance._inputElement.focus).toBeCalled();
+    });
+
+    // then
+    it('should call _disableSecurityCodeField with input value', () => {
+      // @ts-ignore
+      expect(instance._disableSecurityCodeField).toHaveBeenCalledWith('4111');
+    });
+  });
+
+  // given
+  describe('onInput', () => {
+    const { instance } = cardNumberFixture();
+    const event: Event = new Event('input');
+
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._setInputValue = jest.fn();
+      // @ts-ignore
+      instance._sendState = jest.fn();
+      // @ts-ignore
+      instance.onInput(event);
+    });
+
+    // then
+    it('should call _setInputValue method', () => {
+      // @ts-ignore
+      expect(instance._setInputValue).toHaveBeenCalled();
+    });
+
+    // then
+    it('should call _sendState method', () => {
+      // @ts-ignore
+      expect(instance._sendState).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('onKeydown()', () => {
+    const { instance } = cardNumberFixture();
+    // @ts-ignore
+    const event: KeyboardEvent = new KeyboardEvent('keydown', { keyCode: 13 });
+
+    // then
+    it('should call validation.luhnCheck and sendState if key is equal to Enter keycode', () => {
+      // @ts-ignore
+      instance._sendState = jest.fn();
+      Validation.isKeyEnter = jest.fn().mockReturnValueOnce(true);
+      // @ts-ignore
+      instance.onKeydown(event);
+      expect(instance.validation.luhnCheck).toHaveBeenCalledWith(
+        // @ts-ignore
+        instance._cardNumberInput,
+        // @ts-ignore
+        instance._inputElement,
+        // @ts-ignore
+        instance._messageElement
+      );
+      // @ts-ignore
+      expect(instance._sendState).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('onPaste()', () => {
+    // when
+    const { instance } = cardNumberFixture();
+
+    // when
+    beforeEach(() => {
+      const event = {
+        clipboardData: {
+          getData: jest.fn()
+        },
+        preventDefault: jest.fn()
+      };
+      Utils.stripChars = jest.fn().mockReturnValue('41111');
+      // @ts-ignore
+      instance._sendState = jest.fn();
+      // @ts-ignore
+      instance._setInputValue = jest.fn();
+      // @ts-ignore
+      instance.onPaste(event);
+    });
+
+    // then
+    it('should call setInputValue and _sendState methods', () => {
+      // @ts-ignore
+      expect(instance._setInputValue).toHaveBeenCalled();
+      // @ts-ignore
+      expect(instance._sendState).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('_getMaxLengthOfCardNumber()', () => {
+    const { instance } = cardNumberFixture();
+    const panLengthWithoutSpaces: number = 15;
+    const numberOfWhitespaces: number = 3;
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._inputElement.value = '4111111111';
+    });
+    // then
+    it('should return max length of card number including whitespaces', () => {
+      Utils.getLastElementOfArray = jest.fn().mockReturnValueOnce(panLengthWithoutSpaces);
+      // @ts-ignore
+      expect(instance._getMaxLengthOfCardNumber()).toEqual(panLengthWithoutSpaces + numberOfWhitespaces);
+    });
+  });
+
+  // given
+  describe('_setInputValue()', () => {
+    const { instance } = cardNumberFixture();
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._getMaxLengthOfCardNumber = jest.fn();
+      // @ts-ignore
+      instance._disableSecurityCodeField = jest.fn();
+      // @ts-ignore
+      instance.validation.keepCursorsPosition = jest.fn();
+      // @ts-ignore
+      instance._formatter.number = jest
+        .fn()
+        .mockReturnValueOnce({ formatted: '4111 1111 1111 1111', nonformatted: '4111111111111111' });
+      // @ts-ignore
+      instance._setInputValue();
+    });
+
+    // then
+    it('should call _getMaxLengthOfCardNumber()', () => {
+      // @ts-ignore
+      expect(instance._getMaxLengthOfCardNumber).toHaveBeenCalled();
+    });
+
+    // then
+    it('should call _disableSecurityCodeField() with input value', () => {
+      // @ts-ignore
+      expect(instance._disableSecurityCodeField).toHaveBeenCalledWith(instance._inputElement.value);
+    });
+
+    // then
+    it('should call validation.keepCursorsPosition() with input instance', () => {
+      // @ts-ignore
+      expect(instance.validation.keepCursorsPosition).toHaveBeenCalledWith(instance._inputElement);
+    });
+
+    // then
+    it('should set formatted value to _inputElement.value and non-formatted value to _cardNumberValue ', () => {
+      // @ts-ignore
+      expect(instance._inputElement.value).toEqual('4111 1111 1111 1111');
+      // @ts-ignore
+      expect(instance._cardNumberValue).toEqual('4111111111111111');
+    });
+
+    // given
+    describe('_sendState()', () => {
+      // when
+      beforeEach(() => {
+        // @ts-ignore
+        instance.messageBus.publish = jest.fn();
+      });
+
+      it('should call messageBus publish twice if validity is true', () => {
+        // @ts-ignore
+        instance._getCardNumberFieldState = jest
+          .fn()
+          .mockReturnValueOnce({ value: '3089500000000000021', validity: true });
+        // @ts-ignore
+        instance._sendState();
+        // @ts-ignore
+        expect(instance.messageBus.publish.mock.calls[0][0]).toEqual({
+          type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS,
+          data: '308950'
+        });
+        // @ts-ignore
+        expect(instance.messageBus.publish.mock.calls[1][0]).toEqual({
+          type: MessageBus.EVENTS.CHANGE_CARD_NUMBER,
+          data: undefined
+        });
+      });
+
+      it('should call messageBus publish once if validity is false', () => {
+        // @ts-ignore
+        instance._getCardNumberFieldState = jest.fn().mockReturnValueOnce({ value: '3333333', validity: false });
+        // @ts-ignore
+        instance._sendState();
+        // @ts-ignore
+        expect(instance.messageBus.publish).toHaveBeenCalledTimes(1);
+      });
+    });
+  });
+
+  // given
+  describe('_disableSecurityCodeField()', () => {
+    const { instance } = cardNumberFixture();
+    const pan: string = '3089 5000 0000 0000021';
+    const messageBusEvent = {
+      data: true,
+      type: MessageBus.EVENTS.IS_CARD_WITHOUT_CVV
+    };
+    Validation.clearNonDigitsChars = jest.fn().mockReturnValueOnce('3089500000000000021');
+    // @ts-ignore
+    instance.messageBus.publish = jest.fn();
+    // then
+    it('should call publish method', () => {
+      // @ts-ignore
+      instance._disableSecurityCodeField(pan);
+      // @ts-ignore
+      expect(instance.messageBus.publish).toHaveBeenCalledWith(messageBusEvent);
     });
   });
 });
