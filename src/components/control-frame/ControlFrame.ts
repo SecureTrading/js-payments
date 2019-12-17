@@ -297,13 +297,10 @@ class ControlFrame extends Frame {
     this.messageBus.publish(messageBusEvent, true);
   }
 
-  private _getPan() {
-    this._decodedJwt = JwtDecode(this.params.jwt);
-    return this._decodedJwt.payload.pan ? JwtDecode<IDecodedJwt>(this.params.jwt).payload.pan : this._cardNumber;
-  }
-
   private _requestPayment(data: any) {
-    const isPanPiba: boolean = ControlFrame.NON_CVV_CARDS.includes(this._binLookup.binLookup(this._getPan()).type);
+    const isPanPiba: boolean = this._getPan()
+      ? ControlFrame.NON_CVV_CARDS.includes(this._binLookup.binLookup(this._getPan()).type)
+      : false;
     const dataInJwt = data ? data.dataInJwt : false;
     const deferInit = data ? data.deferInit : false;
     const { validity, card } = this._validation.formValidation(
@@ -367,6 +364,12 @@ class ControlFrame extends Frame {
     this._threeDQueryEvent = {
       type: MessageBus.EVENTS_PUBLIC.THREEDQUERY
     };
+  }
+
+  private _getPan(): string {
+    return JwtDecode<IDecodedJwt>(this.params.jwt).payload.pan
+      ? JwtDecode<IDecodedJwt>(this.params.jwt).payload.pan
+      : '';
   }
 
   private _setInstances() {
