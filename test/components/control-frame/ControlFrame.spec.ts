@@ -1,11 +1,10 @@
-import JwtDecode from 'jwt-decode';
 import ControlFrame from '../../../src/components/control-frame/ControlFrame';
 import { StCodec } from '../../../src/core/classes/StCodec.class';
+import { IFormFieldState } from '../../../src/core/shared/FormFieldState';
 import Language from '../../../src/core/shared/Language';
 import MessageBus from '../../../src/core/shared/MessageBus';
 
 jest.mock('./../../../src/core/shared/Payment');
-jest.mock('jwt-decode');
 
 // given
 describe('ControlFrame', () => {
@@ -15,6 +14,30 @@ describe('ControlFrame', () => {
     // @ts-ignore
     instance.messageBus.subscribe = jest.fn().mockImplementationOnce((event, callback) => {
       callback(data);
+    });
+  });
+
+  // given
+  describe('ControlFrame._onFormFieldStateChange()', () => {
+    const field: IFormFieldState = {
+      validity: false,
+      value: ''
+    };
+    const data: IFormFieldState = {
+      validity: true,
+      value: '411111111'
+    };
+
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      ControlFrame._onFormFieldStateChange(field, data);
+    });
+
+    // then
+    it('should set field properties: validity and value', () => {
+      expect(field.validity).toEqual(true);
+      expect(field.value).toEqual('411111111');
     });
   });
 
@@ -484,6 +507,84 @@ describe('ControlFrame', () => {
     it('should update jwt and originalJwt', () => {
       expect(StCodec.jwt).toEqual('997');
       expect(StCodec.originalJwt).toEqual('997');
+    });
+  });
+
+  // given
+  describe('_getPan()', () => {
+    // @ts-ignore
+    instance.params = {
+      jwt:
+        'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NjQ5MjA1NS44NjY1OSwicGF5bG9hZCI6eyJiYXNlYW1vdW50IjoiMTAwMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiIsInBhbiI6IjMwODk1MDAwMDAwMDAwMDAwMjEiLCJleHBpcnlkYXRlIjoiMDEvMjIifX0.lbNSlaDkbzG6dkm1uc83cc3XvUImysNj_7fkdo___fw'
+    };
+
+    // then
+    it('should return pan from jwt', () => {
+      // @ts-ignore
+      expect(instance._getPan()).toEqual('3089500000000000021');
+    });
+
+    // then
+    it('should return pan from jwt', () => {
+      // @ts-ignore
+      instance.params = {
+        jwt:
+          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NjU5MTYxMS43ODM3MzY1LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiNDExMTExMTExMTExMTExMSIsImV4cGlyeWRhdGUiOiIwMS8yMiIsInNlY3VyaXR5Y29kZSI6IjEyMyJ9fQ.Rkhsx1PCXnd_Kf-U9OvQRbp9lnNpFx5ClPpm4zx-hDM'
+      };
+      // @ts-ignore
+      expect(instance._getPan()).toEqual('4111111111111111');
+    });
+  });
+
+  // given
+  describe('_requestPayment()', () => {
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._threeDQueryEvent = { data: {} };
+      // @ts-ignore
+      instance._requestThreeDInit = jest.fn();
+      // @ts-ignore
+      instance.messageBus.publish = jest.fn();
+      // @ts-ignore
+      instance._validation.setFormValidity = jest.fn();
+      // @ts-ignore
+      instance._payment.threeDQueryRequest = jest.fn().mockResolvedValueOnce({
+        response: {}
+      });
+    });
+    // then
+    it('should call requestThreeDInit if validity is true and deferInit is true', () => {
+      // @ts-ignore
+      instance._validation.formValidation = jest.fn().mockReturnValueOnce({
+        validity: true,
+        data: { expirydate: '12/20', pan: '4111111111111', securitycode: '123' }
+      });
+      // @ts-ignore
+      instance._requestPayment({
+        deferInit: true,
+        dataInJwt: false,
+        fieldsToSubmit: ['pan', 'expirydate', 'securitycode']
+      });
+      // @ts-ignore
+      expect(instance._requestThreeDInit).toHaveBeenCalled();
+    });
+
+    // then
+    it('should call setFormValidity if validity is falsee', () => {
+      // @ts-ignore
+      instance._validation.formValidation = jest.fn().mockReturnValueOnce({
+        validity: false,
+        data: { expirydate: '', pan: '213214', securitycode: '' }
+      });
+      // @ts-ignore
+      instance._requestPayment({
+        deferInit: false,
+        dataInJwt: false,
+        fieldsToSubmit: ['pan', 'expirydate', 'securitycode']
+      });
+      // @ts-ignore
+      expect(instance._validation.setFormValidity).toHaveBeenCalled();
     });
   });
 });

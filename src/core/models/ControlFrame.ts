@@ -58,11 +58,28 @@ const FormFieldsValidity: IFormFieldsValidity = {
   }
 };
 
+interface IDecodedJwt {
+  iat?: number;
+  iss?: string;
+  payload: {
+    accounttypedescription: string;
+    baseamount: string;
+    currencyiso3a: string;
+    locale: string;
+    mainamount: string;
+    pan: string;
+    expirydate: string;
+    securitycode: string;
+    sitereference: string;
+  };
+}
+
 export {
   FormFieldsDetails,
   FormFieldsValidity,
+  IDecodedJwt,
+  IFormFieldsDetails,
   IFormFieldsValidity,
   ISetRequestTypes,
-  ISubmitData,
-  IFormFieldsDetails
+  ISubmitData
 };

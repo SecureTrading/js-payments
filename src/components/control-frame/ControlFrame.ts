@@ -3,6 +3,7 @@ import { StCodec } from '../../core/classes/StCodec.class';
 import {
   FormFieldsDetails,
   FormFieldsValidity,
+  IDecodedJwt,
   IFormFieldsDetails,
   IFormFieldsValidity,
   ISetRequestTypes,
@@ -44,6 +45,7 @@ class ControlFrame extends Frame {
   private _binLookup: BinLookup;
   private _card: ICard;
   private _cardNumber: string;
+  private _decodedJwt: IDecodedJwt;
   private _isPaymentReady: boolean = false;
   private _formFields: IFormFieldsDetails = FormFieldsDetails;
   private _formFieldsValidity: IFormFieldsValidity = FormFieldsValidity;
@@ -295,13 +297,10 @@ class ControlFrame extends Frame {
     this.messageBus.publish(messageBusEvent, true);
   }
 
-  private _getPan() {
-    const decodedJwt: any = JwtDecode<IStJwtObj>(this.params.jwt);
-    return decodedJwt.payload.pan ? JwtDecode<IStJwtObj>(this.params.jwt).payload.pan : this._cardNumber;
-  }
-
   private _requestPayment(data: any) {
-    const isPanPiba: boolean = ControlFrame.NON_CVV_CARDS.includes(this._binLookup.binLookup(this._getPan()).type);
+    const isPanPiba: boolean = this._getPan()
+      ? ControlFrame.NON_CVV_CARDS.includes(this._binLookup.binLookup(this._getPan()).type)
+      : false;
     const dataInJwt = data ? data.dataInJwt : false;
     const deferInit = data ? data.deferInit : false;
     const { validity, card } = this._validation.formValidation(
@@ -365,6 +364,12 @@ class ControlFrame extends Frame {
     this._threeDQueryEvent = {
       type: MessageBus.EVENTS_PUBLIC.THREEDQUERY
     };
+  }
+
+  private _getPan(): string {
+    return JwtDecode<IDecodedJwt>(this.params.jwt).payload.pan
+      ? JwtDecode<IDecodedJwt>(this.params.jwt).payload.pan
+      : '';
   }
 
   private _setInstances() {
