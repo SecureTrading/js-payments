@@ -446,7 +446,15 @@ describe('CardNumber', () => {
         // @ts-ignore
         instance._sendState();
         // @ts-ignore
-        expect(instance.messageBus.publish).toHaveBeenCalledTimes(2);
+        expect(instance.messageBus.publish.mock.calls[0][0]).toEqual({
+          type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS,
+          data: '308950'
+        });
+        // @ts-ignore
+        expect(instance.messageBus.publish.mock.calls[1][0]).toEqual({
+          type: MessageBus.EVENTS.CHANGE_CARD_NUMBER,
+          data: undefined
+        });
       });
 
       it('should call messageBus publish once if validity is false', () => {
