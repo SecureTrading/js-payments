@@ -107,6 +107,7 @@ class ControlFrame extends Frame {
     this._initByPassInitEvent();
     this._initThreedinitEvent();
     this._initLoadCardinalEvent();
+    this._initLoadCybertonicaEvent();
     this._initProcessPaymentsEvent();
     this._initSubmitFormEvent();
     this._initUpdateMerchantFieldsEvent();
@@ -181,20 +182,18 @@ class ControlFrame extends Frame {
     });
   }
 
-  /**
-   * Sets listener for LOAD_CARDINAL MessageBus event.
-   * @private
-   */
   private _initLoadCardinalEvent() {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL, () => {
-      this._onLoadCardinal();
+      this._onLoadIntegrationModule();
     });
   }
 
-  /**
-   * Sets listener for PROCESS_PAYMENTS MessageBus event.
-   * @private
-   */
+  private _initLoadCybertonicaEvent() {
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.LOAD_CYBERTONICA, () => {
+      this._onLoadIntegrationModule();
+    });
+  }
+
   private _initProcessPaymentsEvent() {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS, (data: IResponseData) => {
       this._onProcessPaymentEvent(data);
@@ -289,10 +288,6 @@ class ControlFrame extends Frame {
     this._requestPayment(data);
   }
 
-  /**
-   * Triggers LOAD_CONTROL_FRAME event on init.
-   * @private
-   */
   private _onLoad() {
     const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME
@@ -300,18 +295,10 @@ class ControlFrame extends Frame {
     this._messageBus.publish(messageBusEvent, true);
   }
 
-  /**
-   * Sets payment as ready after Cardinal Commerce has been loaded.
-   * @private
-   */
-  private _onLoadCardinal() {
+  private _onLoadIntegrationModule() {
     this._isPaymentReady = true;
   }
 
-  /**
-   * Handles _onThreeDInitEvent.
-   * @private
-   */
   private _onThreeDInitEvent() {
     this._requestThreeDInit();
   }
