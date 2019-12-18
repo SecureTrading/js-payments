@@ -21,7 +21,7 @@ interface IAfcybertonica {
   apiuser: string;
   collect_all: boolean;
   getInfoToSend: void;
-  init: void;
+  init: any;
   logEvent: void;
   postInfo: void;
 }

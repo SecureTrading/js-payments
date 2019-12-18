@@ -103,14 +103,14 @@ describe('ControlFrame', () => {
   // given
   describe('_initLoadCardinalEvent()', () => {
     // then
-    it('should call _onLoadCardinal when LOAD_CARDINAL event has been called', () => {
+    it('should call _onLoadIntegrationModule when LOAD_CARDINAL event has been called', () => {
       // @ts-ignore
-      instance._onLoadCardinal = jest.fn();
+      instance._onLoadIntegrationModule = jest.fn();
       messageBusEvent.type = MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL;
       // @ts-ignore
       instance._initLoadCardinalEvent();
       // @ts-ignore
-      expect(instance._onLoadCardinal).toHaveBeenCalled();
+      expect(instance._onLoadIntegrationModule).toHaveBeenCalled();
     });
   });
 
@@ -299,13 +299,13 @@ describe('ControlFrame', () => {
   });
 
   // given
-  describe('_onLoadCardinal', () => {
+  describe('_onLoadIntegrationModule', () => {
     const { instance } = controlFrameFixture();
 
     // when
     beforeEach(() => {
       // @ts-ignore
-      instance._onLoadCardinal();
+      instance._onLoadIntegrationModule();
     });
 
     // then

@@ -61,4 +61,4 @@ class Cybertonica {
   private _proceedTransaction(): void {}
 }
 
-export default Cybertonica;
+export { Cybertonica };

@@ -5,6 +5,7 @@ import CardinalCommerceMock from '../src/core/integrations/CardinalCommerceMock'
 import { CardinalCommerce } from '../src/core/integrations/CardinalCommerce';
 import VisaCheckout from '../src/core/integrations/VisaCheckout';
 import VisaCheckoutMock from '../src/core/integrations/VisaCheckoutMock';
+import { IAfcybertonica } from '../src/core/models/Cybertonica';
 import Selectors from '../src/core/shared/Selectors';
 import { environment } from '../src/environments/environment';
 import ST from './../src/ST';
@@ -26,6 +27,7 @@ jest.mock('./../src/core/integrations/Cybertonica');
 // given
 describe('ST', () => {
   const { config, cacheConfig, instance } = stFixture();
+
   // given
   describe('constructor()', () => {
     let stObject: any;
@@ -50,11 +52,17 @@ describe('ST', () => {
     // when
     beforeEach(() => {
       instance.CardinalCommerce = jest.fn();
+      instance.Cybertonica = jest.fn();
       instance.Components();
     });
 
     // then
     it('should call CardinalCommerce method', () => {
+      expect(instance.CardinalCommerce).toHaveBeenCalled();
+    });
+
+    // then
+    it('should call Cybertonica method', () => {
       expect(instance.CardinalCommerce).toHaveBeenCalled();
     });
   });
