@@ -64,7 +64,7 @@
     "i18next-conv": "^9.1.0",
     "jest": "^24.9.0",
     "jest-each": "^24.9.0",
-    "jest-fetch-mock": "^2.1.2",
+    "jest-fetch-mock": "^3.0.0",
     "jest-get-type": "^24.9.0",
     "live-server": "^1.2.1",
     "local-web-server": "^3.0.7",
