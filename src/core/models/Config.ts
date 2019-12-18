@@ -6,6 +6,7 @@ interface IConfig {
   animatedCard: boolean;
   buttonId?: string;
   componentIds?: any;
+  cybertonica?: { apikey: string };
   datacenterurl?: string;
   deferInit?: boolean;
   formId?: string;
@@ -68,6 +69,9 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
     securityCode: Joi.string().required()
   }),
   components: Joi.object(),
+  cybertonica: Joi.object().keys({
+    apikey: Joi.string()
+  }),
   datacenterurl: Joi.string(),
   deferInit: Joi.boolean(),
   formId: Joi.string(),

@@ -1,22 +1,25 @@
 import { environment } from '../../environments/environment';
-import { IAfcybertonica } from '../models/Cybertonica';
+import {
+  IAFCybertonica,
+  ICybertonicaInitQuery,
+  ICybertonicaPostQuery,
+  ICybertonicaPostResponse
+} from '../models/Cybertonica';
 import DomMethods from '../shared/DomMethods';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
 import Notification from '../shared/Notification';
 
-declare const AFCYBERTONICA: IAfcybertonica;
+declare const AFCYBERTONICA: IAFCybertonica;
 
 class Cybertonica {
   private static API_USER_NAME: string = 'test';
   private static LOAD_SCRIPT_LISTENER: string = 'load';
   private static SCRIPT_TARGET: string = 'head';
-  private _api_root: string;
-  private _collect_all: boolean;
-  private _deviceId: number;
   private _messageBus: MessageBus;
   private _notification: Notification;
-  private _refferer: string;
+  private _postData: ICybertonicaPostQuery = { tid: '', pan: '', expirydate: '', securitycode: '' };
+  private _scriptLoaded: boolean;
   private _sdkAddress: string;
   private _tid: string;
 
@@ -31,34 +34,77 @@ class Cybertonica {
     DomMethods.insertScript(Cybertonica.SCRIPT_TARGET, this._sdkAddress).addEventListener(
       Cybertonica.LOAD_SCRIPT_LISTENER,
       () => {
-        this._loadIntegrationScript();
-        this._messageBus.publishFromParent(
-          {
-            type: MessageBus.EVENTS_PUBLIC.LOAD_CYBERTONICA
-          },
-          Selectors.CONTROL_FRAME_IFRAME
-        );
+        this._loadIntegrationScript()
+          .then((response: boolean) => {
+            this._publishLoadingStatus(response);
+          })
+          .catch((error: boolean) => {
+            this._publishLoadingStatus(error);
+          });
       }
     );
   }
 
-  private _loadIntegrationScript(): void {
-    if (typeof AFCYBERTONICA !== undefined) {
+  private _loadIntegrationScript(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
       this._tid = AFCYBERTONICA.init(Cybertonica.API_USER_NAME);
-      this._deviceId = AFCYBERTONICA._deviceId;
-      this._refferer = AFCYBERTONICA._refferer;
-      this._api_root = AFCYBERTONICA.api_root;
-      this._collect_all = AFCYBERTONICA.collect_all;
-    }
+      resolve((this._scriptLoaded = true));
+      reject((this._scriptLoaded = false));
+    });
+  }
+
+  private _publishLoadingStatus(status: boolean): void {
+    this._messageBus.publishFromParent(
+      {
+        data: { cybertonicaLoadingStatus: status },
+        type: MessageBus.EVENTS_PUBLIC.LOAD_CYBERTONICA
+      },
+      Selectors.CONTROL_FRAME_IFRAME
+    );
+  }
+
+  private _publishPostResponse(status: ICybertonicaPostResponse) {
+    this._messageBus.publishFromParent(
+      {
+        data: { cybertonicaResponse: status },
+        type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
+      },
+      Selectors.CONTROL_FRAME_IFRAME
+    );
   }
 
   private _onInit(): void {
     this._loadSdk();
+    this._submitEventListener();
   }
 
-  private _postData(): void {}
-  private _getResponse(): void {}
-  private _proceedTransaction(): void {}
+  private _setPostData(tid: string, pan: string, expirydate: string, securitycode: string): ICybertonicaPostQuery {
+    this._postData.tid = tid;
+    this._postData.pan = pan;
+    this._postData.expirydate = expirydate;
+    this._postData.securitycode = securitycode;
+    return this._postData;
+  }
+
+  private _postQuery(data: ICybertonicaPostQuery): Promise<{}> {
+    return new Promise((resolve, reject) => {
+      resolve(data);
+      reject(false);
+    });
+  }
+
+  private _submitEventListener(): void {
+    this._messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.CYBERTONICA, (data: ICybertonicaInitQuery) => {
+      const { pan, expirydate, securitycode } = data;
+      this._setPostData(this._tid, pan, expirydate, securitycode);
+      this._postQuery(this._postData)
+        .then((response: ICybertonicaPostResponse) => this._publishPostResponse(response))
+        .catch(error => {
+          this._notification.error('Something went wrong :/', error);
+          throw new Error('Something went wrong :/');
+        });
+    });
+  }
 }
 
 export { Cybertonica };

@@ -5,7 +5,7 @@ import CardinalCommerceMock from '../src/core/integrations/CardinalCommerceMock'
 import { CardinalCommerce } from '../src/core/integrations/CardinalCommerce';
 import VisaCheckout from '../src/core/integrations/VisaCheckout';
 import VisaCheckoutMock from '../src/core/integrations/VisaCheckoutMock';
-import { IAfcybertonica } from '../src/core/models/Cybertonica';
+import { IAFCybertonica } from '../src/core/models/Cybertonica';
 import Selectors from '../src/core/shared/Selectors';
 import { environment } from '../src/environments/environment';
 import ST from './../src/ST';

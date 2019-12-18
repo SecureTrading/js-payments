@@ -22,6 +22,7 @@ export default class RegisterFrames {
     componentIds: {},
     styles: IStyles,
     animatedCard: boolean,
+    cybertonicaApiKey: string,
     submitCallback?: any
   ) {
     this.styles = this._getStyles(styles);

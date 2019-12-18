@@ -200,14 +200,30 @@ class ControlFrame extends Frame {
     });
   }
 
-  /**
-   * Sets listener for SUBMIT_FORM MessageBus event.
-   * @private
-   */
-  private _initSubmitFormEvent() {
+  private _initSubmitFormEvent(): void {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, (data?: ISubmitData) => {
-      this._onSubmit(data);
+      console.error(data);
+      this._proceedWith3DSecure(data);
     });
+  }
+
+  private _proceedWith3DSecure(data: ISubmitData): void {
+    data.cybertonicaApiKey ? this._callCybertonica(data) : this._onSubmit(data);
+  }
+
+  private _callCybertonica(data: ISubmitData): void {
+    this._messageBus.publish(
+      {
+        data: {
+          ...data,
+          pan: this._formFields.cardNumber.value,
+          expirydate: this._formFields.expirationDate.value,
+          securitycode: this._formFields.securityCode.value
+        },
+        type: MessageBus.EVENTS_PUBLIC.CYBERTONICA
+      },
+      true
+    );
   }
 
   /**
@@ -430,4 +446,4 @@ class ControlFrame extends Frame {
   }
 }
 
-export default ControlFrame;
+export { ControlFrame };

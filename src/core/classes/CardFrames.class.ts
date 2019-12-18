@@ -32,6 +32,7 @@ class CardFrames extends RegisterFrames {
   private _messageBusEvent: IMessageBusEvent = { data: { message: '' }, type: '' };
   private _submitButton: HTMLInputElement | HTMLButtonElement;
   private readonly _buttonId: string;
+  private readonly _cybertonicaApiKey: string;
   private readonly _deferInit: boolean;
   private readonly _defaultPaymentType: string;
   private readonly _paymentTypes: string[];
@@ -49,14 +50,16 @@ class CardFrames extends RegisterFrames {
     animatedCard: boolean,
     deferInit: boolean,
     buttonId: string,
-    startOnLoad: boolean
+    startOnLoad: boolean,
+    cybertonicaApiKey: string
   ) {
-    super(jwt, origin, componentIds, styles, animatedCard);
+    super(jwt, origin, componentIds, styles, animatedCard, cybertonicaApiKey);
     this._validation = new Validation();
     this._messageBus = new MessageBus();
     this._translator = new Translator(this.params.locale);
     this.hasAnimatedCard = animatedCard;
     this._buttonId = buttonId;
+    this._cybertonicaApiKey = cybertonicaApiKey;
     this._deferInit = deferInit;
     this._startOnLoad = startOnLoad;
     this._defaultPaymentType = defaultPaymentType;
@@ -261,7 +264,7 @@ class CardFrames extends RegisterFrames {
    */
   private _publishSubmitEvent(deferInit: boolean) {
     const messageBusEvent: IMessageBusEvent = {
-      data: { deferInit },
+      data: { deferInit, cybertonicaApiKey: this._cybertonicaApiKey },
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
     this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);

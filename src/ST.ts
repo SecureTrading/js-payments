@@ -33,6 +33,12 @@ import { environment } from './environments/environment';
  * Establishes connection with ST, defines client.
  */
 class ST {
+  get cybertonicaApiKey(): string {
+    return this._cybertonicaApiKey;
+  }
+  set cybertonicaApiKey(value: string) {
+    this._cybertonicaApiKey = value;
+  }
   private static DEFAULT_COMPONENTS = {
     cardNumber: Selectors.CARD_NUMBER_INPUT_SELECTOR,
     expirationDate: Selectors.EXPIRATION_DATE_INPUT_SELECTOR,
@@ -223,7 +229,8 @@ class ST {
     config: IComponentsConfig,
     animatedCard: boolean,
     deferInit: boolean,
-    buttonId: string
+    buttonId: string,
+    cybertonicaApiKey: string
   ) {
     const { defaultPaymentType, paymentTypes, startOnLoad } = config;
     let cardFrames: object;
@@ -238,7 +245,8 @@ class ST {
         animatedCard,
         deferInit,
         buttonId,
-        startOnLoad
+        startOnLoad,
+        cybertonicaApiKey
       );
     }
     return cardFrames;
@@ -260,6 +268,7 @@ class ST {
   private _threedinit: string;
   private commonFrames: CommonFrames;
   private _messageBus: MessageBus;
+  private _cybertonicaApiKey: string;
   private _deferInit: boolean;
   private _buttonId: string;
 
@@ -275,6 +284,7 @@ class ST {
     this._animatedCard = animatedCard;
     this._buttonId = buttonId;
     this._submitCallback = submitCallback;
+    this.cybertonicaApiKey = config.cybertonica.apikey ? config.cybertonica.apikey : '';
     this._initGoogleAnalytics(analytics);
     this._config = ST._addDefaults(config);
     this._deferInit = deferInit;
@@ -312,7 +322,8 @@ class ST {
       targetConfig,
       this._animatedCard,
       this._deferInit,
-      this._buttonId
+      this._buttonId,
+      this.cybertonicaApiKey
     );
     this.commonFrames.requestTypes = targetConfig.requestTypes;
     this.CardinalCommerce(targetConfig);

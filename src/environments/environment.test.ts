@@ -18,6 +18,9 @@ export const environment = {
     SONGBIRD_LIVE_URL: 'https://songbird.cardinalcommerce.com/edge/v1/songbird.js',
     SONGBIRD_TEST_URL: 'https://songbirdstag.cardinalcommerce.com/edge/v1/songbird.js'
   },
+  CYBERTONICA: {
+    CYBERTONICA_LIVE_URL: 'https://p.cybertonica.com/js/beacon.min.js'
+  },
   FRAME_URL,
   GATEWAY_URL,
   GA_MEASUREMENT_ID: '42057093-5',

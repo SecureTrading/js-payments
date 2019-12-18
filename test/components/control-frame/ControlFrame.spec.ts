@@ -1,4 +1,4 @@
-import ControlFrame from '../../../src/components/control-frame/ControlFrame';
+import { ControlFrame } from '../../../src/components/control-frame/ControlFrame';
 import { StCodec } from '../../../src/core/classes/StCodec.class';
 import Language from '../../../src/core/shared/Language';
 import MessageBus from '../../../src/core/shared/MessageBus';

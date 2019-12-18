@@ -1,15 +1,4 @@
-interface ICybertonicaPostQuery {
-  t: number;
-  timezone: number;
-  extid: string;
-  tid: string;
-  ip: string;
-  ext_fraud_sore: number;
-  query: [];
-  response_url: string;
-}
-
-interface IAfcybertonica {
+interface IAFCybertonica {
   _deviceId: number;
   _refferer: string;
   _sendEvents: void;
@@ -26,14 +15,22 @@ interface IAfcybertonica {
   postInfo: void;
 }
 
-interface ICybertonicaResponse {
-  action: string;
-  channel: string;
-  id: string;
-  rules: [];
-  score: number;
-  comments?: [];
-  tags?: [];
+interface ICybertonicaInitQuery {
+  deferInit: boolean;
+  cybertonicaApiKey: string;
+  expirydate: string;
+  pan: string;
+  securitycode: string;
+}
+interface ICybertonicaPostQuery {
+  expirydate: string;
+  pan: string;
+  securitycode: string;
+  tid: string;
 }
 
-export { IAfcybertonica, ICybertonicaPostQuery, ICybertonicaResponse };
+interface ICybertonicaPostResponse {
+  status: 'ALLOW' | 'CHALLENGE' | 'DENY';
+}
+
+export { IAFCybertonica, ICybertonicaInitQuery, ICybertonicaPostResponse, ICybertonicaPostQuery };
