@@ -55,6 +55,7 @@ class CardFrames extends RegisterFrames {
   private _noFieldConfiguration: boolean;
   private _onlyCvvConfiguration: boolean;
   private _configurationForStandardCard: boolean;
+  private _loadAnimatedCard: boolean;
 
   constructor(
     jwt: string,
@@ -70,7 +71,7 @@ class CardFrames extends RegisterFrames {
     fieldsToSubmit: string[]
   ) {
     super(jwt, origin, componentIds, styles, animatedCard, fieldsToSubmit);
-    this._setInitValues(buttonId, defaultPaymentType, deferInit, paymentTypes, startOnLoad);
+    this._setInitValues(buttonId, defaultPaymentType, deferInit, paymentTypes, startOnLoad, animatedCard);
     this.configureFormFieldsAmount(jwt);
     this.setElementsFields();
     this.onInit();
@@ -99,6 +100,7 @@ class CardFrames extends RegisterFrames {
       this.fieldsToSubmit.includes(CardFrames.SECURITY_CODE_FIELD_NAME);
     this._configurationForStandardCard =
       this._fieldsToSubmitLength === CardFrames.COMPLETE_FORM_NUMBER_OF_FIELDS &&
+      this._loadAnimatedCard &&
       !this._isCardWithNoCvv &&
       this.fieldsToSubmit.includes(CardFrames.CARD_NUMBER_FIELD_NAME) &&
       this.fieldsToSubmit.includes(CardFrames.EXPIRY_DATE_FIELD_NAME) &&
@@ -113,8 +115,10 @@ class CardFrames extends RegisterFrames {
     ) {
       targets.map((item, index) => {
         const element: HTMLElement = document.getElementById(item);
-        if (element) {
+        try {
           element.appendChild(fields[index]);
+        } catch (e) {
+          throw new Error(e);
         }
       });
     }
@@ -299,7 +303,8 @@ class CardFrames extends RegisterFrames {
     defaultPaymentType: string,
     deferInit: boolean,
     paymentTypes: any,
-    startOnLoad: boolean
+    startOnLoad: boolean,
+    loadAnimatedCard: boolean
   ): void {
     this._validation = new Validation();
     this._translator = new Translator(this.params.locale);
@@ -310,6 +315,7 @@ class CardFrames extends RegisterFrames {
     this._paymentTypes = paymentTypes;
     this._payMessage = this._translator.translate(Language.translations.PAY);
     this._processingMessage = `${this._translator.translate(Language.translations.PROCESSING)} ...`;
+    this._loadAnimatedCard = loadAnimatedCard;
   }
 
   private _setSubmitButtonProperties(element: any, disabledState: boolean): HTMLElement {
