@@ -137,7 +137,11 @@ class CardFrames extends RegisterFrames {
     } else if (this._noFieldConfiguration) {
       return [];
     } else {
-      return [this.componentIds.cardNumber, this.componentIds.expirationDate, this.componentIds.securityCode];
+      return [
+        this.componentIds.cardNumber, //
+        this.componentIds.expirationDate,
+        this.componentIds.securityCode
+      ];
     }
   }
 
