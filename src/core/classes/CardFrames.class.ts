@@ -10,7 +10,7 @@ import { Translator } from '../shared/Translator';
 import Validation from '../shared/Validation';
 import RegisterFrames from './RegisterFrames.class';
 
-class CardFrames extends RegisterFrames {
+export class CardFrames extends RegisterFrames {
   private static CARD_NUMBER_FIELD_NAME: string = 'pan';
   private static CLICK_EVENT: string = 'click';
   private static COMPLETE_FORM_NUMBER_OF_FIELDS: number = 3;
@@ -367,5 +367,3 @@ class CardFrames extends RegisterFrames {
     });
   }
 }
-
-export { CardFrames };
