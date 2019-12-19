@@ -4,7 +4,7 @@
   "deferInit": false,
   "fieldsToSubmit": ["pan", "expirydate", "securitycode"],
   "buttonId": "merchant-submit-button",
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NjY2MTUyNi4zMjU2MzE0LCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIxMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.NHUBwU3sjvP1iFDNwnyXhZy-_74Uh0X3Xw86IfQRCjI",
+  "jwt": "",
   "styles": {
     "defaultStyles": {
       "background-color-input": "AliceBlue"
@@ -37,7 +37,7 @@
   "applePay": {
     "buttonStyle": "white-outline",
     "buttonText": "donate",
-    "merchantId": "merchant.net.securetrading.test",
+    "merchantId": "",
     "paymentRequest": {
       "countryCode": "US",
       "currencyCode": "USD",
@@ -56,7 +56,7 @@
       "color": "neutral"
     },
     "livestatus": 0,
-    "merchantId": "SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4",
+    "merchantId": "",
     "paymentRequest": {
       "subtotal": "20.00"
     },
