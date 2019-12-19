@@ -1,4 +1,5 @@
 import CardFrames from '../../../src/core/classes/CardFrames.class';
+import { ICardFramesPublishEvent } from '../../../src/core/models/Card';
 import DomMethods from '../../../src/core/shared/DomMethods';
 import Language from '../../../src/core/shared/Language';
 import MessageBus from '../../../src/core/shared/MessageBus';
@@ -153,11 +154,13 @@ describe('CardFrames', () => {
   // given
   describe('_publishSubmitEvent', () => {
     const { instance } = cardFramesFixture();
+    const data: ICardFramesPublishEvent = {
+      cybertonicaApiKey: 'test',
+      deferInit: undefined,
+      updateJWT: undefined
+    };
     const submitFormEvent = {
-      data: {
-        // @ts-ignore
-        updateJWT: undefined
-      },
+      data,
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
     // when
@@ -395,7 +398,8 @@ function cardFramesFixture() {
     true,
     false,
     'merchant-submit-button',
-    false
+    false,
+    'test'
   );
   return { instance };
 }

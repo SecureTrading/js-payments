@@ -30,6 +30,11 @@ class Cybertonica {
     this._onInit();
   }
 
+  private _onInit(): void {
+    this._loadSdk();
+    this._submitEventListener();
+  }
+
   private _loadSdk(): void {
     DomMethods.insertScript(Cybertonica.SCRIPT_TARGET, this._sdkAddress).addEventListener(
       Cybertonica.LOAD_SCRIPT_LISTENER,
@@ -53,6 +58,13 @@ class Cybertonica {
     });
   }
 
+  private _postQuery(data: ICybertonicaPostQuery): Promise<{}> {
+    return new Promise((resolve, reject) => {
+      resolve(data);
+      reject(false);
+    });
+  }
+
   private _publishLoadingStatus(status: boolean): void {
     this._messageBus.publishFromParent(
       {
@@ -73,24 +85,12 @@ class Cybertonica {
     );
   }
 
-  private _onInit(): void {
-    this._loadSdk();
-    this._submitEventListener();
-  }
-
   private _setPostData(tid: string, pan: string, expirydate: string, securitycode: string): ICybertonicaPostQuery {
     this._postData.tid = tid;
     this._postData.pan = pan;
     this._postData.expirydate = expirydate;
     this._postData.securitycode = securitycode;
     return this._postData;
-  }
-
-  private _postQuery(data: ICybertonicaPostQuery): Promise<{}> {
-    return new Promise((resolve, reject) => {
-      resolve(data);
-      reject(false);
-    });
   }
 
   private _submitEventListener(): void {
