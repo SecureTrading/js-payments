@@ -10,13 +10,12 @@ import { Translator } from '../shared/Translator';
 import Validation from '../shared/Validation';
 import RegisterFrames from './RegisterFrames.class';
 
-/**
- * Defines all card elements of form and their placement on merchant site.
- */
 class CardFrames extends RegisterFrames {
   private static CARD_NUMBER_FIELD_NAME: string = 'pan';
+  private static CLICK_EVENT: string = 'click';
   private static COMPLETE_FORM_NUMBER_OF_FIELDS: number = 3;
   private static EXPIRY_DATE_FIELD_NAME: string = 'expirydate';
+  private static INPUT_EVENT: string = 'input';
   private static NO_CVV_CARDS: string[] = ['PIBA'];
   private static ONLY_CVV_NUMBER_OF_FIELDS: number = 1;
   private static ON_SUBMIT_ACTION: string = 'onsubmit';
@@ -87,11 +86,6 @@ class CardFrames extends RegisterFrames {
     this._broadcastSecurityCodeProperties(this.jwt);
   }
 
-  /**
-   * Checks how any inputs there are configured (1 or 3) and specified the type of card indicated.
-   * @param jwt
-   * @private
-   */
   protected configureFormFieldsAmount(jwt: string): void {
     this._fieldsToSubmitLength = this.fieldsToSubmit.length;
     this._isCardWithNoCvv = jwt && CardFrames.NO_CVV_CARDS.includes(this._getCardType(jwt));
@@ -111,11 +105,6 @@ class CardFrames extends RegisterFrames {
       this.fieldsToSubmit.includes(CardFrames.SECURITY_CODE_FIELD_NAME);
   }
 
-  /**
-   * Registers and appends elements in users form.
-   * @param fields
-   * @param targets
-   */
   protected registerElements(fields: HTMLElement[], targets: string[]): void {
     if (
       fields.length >= CardFrames.COMPLETE_FORM_NUMBER_OF_FIELDS &&
@@ -131,9 +120,6 @@ class CardFrames extends RegisterFrames {
     }
   }
 
-  /**
-   * Defines form elements for card payments
-   */
   protected setElementsFields(): string[] {
     if (this._configurationForStandardCard) {
       return [
@@ -151,12 +137,6 @@ class CardFrames extends RegisterFrames {
     }
   }
 
-  /**
-   * Broadcast security code length when there is only one field
-   * to be submit (cvv/cvc) and rest of them are in jwt.
-   * @param jwt
-   * @private
-   */
   private _broadcastSecurityCodeProperties(jwt: string): void {
     const messageBusEvent: IMessageBusEvent = {
       data: this._getSecurityCodeLength(jwt),
@@ -169,10 +149,6 @@ class CardFrames extends RegisterFrames {
     });
   }
 
-  /**
-   * Creates submit button whether is input or button markup.
-   * Chooses between specified by merchant or default one.
-   */
   private _createSubmitButton = (): HTMLInputElement | HTMLButtonElement => {
     const form = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR);
     let button: HTMLInputElement | HTMLButtonElement = this._buttonId
@@ -202,11 +178,6 @@ class CardFrames extends RegisterFrames {
     this.messageBus.publish(messageBusEvent);
   }
 
-  /**
-   * Finds submit button whether is input or button markup and sets properties.
-   * @param state
-   * @private
-   */
   private _disableSubmitButton(state: boolean): void {
     const button: HTMLButtonElement | HTMLInputElement = document.getElementById(this._buttonId) as
       | HTMLButtonElement
@@ -316,14 +287,10 @@ class CardFrames extends RegisterFrames {
     this.messageBus.publish(this._messageBusEvent);
   }
 
-  /**
-   * Binds all the form inputs and listen to onInput event.
-   * @private
-   */
   private _setMerchantInputListeners(): void {
     const els = DomMethods.getAllFormElements(document.getElementById(Selectors.MERCHANT_FORM_SELECTOR));
     for (const el of els) {
-      el.addEventListener('input', this._onInput.bind(this));
+      el.addEventListener(CardFrames.INPUT_EVENT, this._onInput.bind(this));
     }
   }
 
@@ -357,11 +324,8 @@ class CardFrames extends RegisterFrames {
     return element;
   }
 
-  /**
-   * Listens to html submit form event, blocks default event, disables submit button and publish event to Message Bus.
-   */
   private _submitFormListener(): void {
-    this._submitButton.addEventListener('click', () => {
+    this._submitButton.addEventListener(CardFrames.CLICK_EVENT, () => {
       this._publishSubmitEvent(this._deferInit);
     });
     this.messageBus.subscribeOnParent(MessageBus.EVENTS.CALL_SUBMIT_EVENT, () => {
@@ -369,9 +333,6 @@ class CardFrames extends RegisterFrames {
     });
   }
 
-  /**
-   * Checks if submit button needs to be blocked.
-   */
   private _subscribeBlockSubmit(): void {
     this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (state: boolean) => {
       this._disableSubmitButton(state);
