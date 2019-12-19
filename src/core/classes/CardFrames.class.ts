@@ -117,8 +117,8 @@ export class CardFrames extends RegisterFrames {
         const element: HTMLElement = document.getElementById(item);
         try {
           element.appendChild(fields[index]);
-        } catch (e) {
-          throw new Error(e);
+        } catch {
+          throw new Error(this._translator.translate(Language.translations.TARGET_ELEMENT_IS_NOT_SPECIFIED));
         }
       });
     }

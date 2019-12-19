@@ -20,6 +20,8 @@ class Language {
     PAYMENT_ERROR: 'An error occurred',
     PAYMENT_SUCCESS: 'Payment has been successfully processed',
     PROCESSING: 'Processing',
+    TARGET_ELEMENT_IS_NOT_SPECIFIED:
+      'A target element for the input field with id could not be found. Please check your configuration',
     VALIDATION_ERROR: 'Invalid field',
     VALIDATION_ERROR_FIELD_IS_REQUIRED: 'Field is required',
     VALIDATION_ERROR_PATTERN_MISMATCH: 'Value mismatch pattern',
@@ -42,6 +44,7 @@ class Language {
     PAYMENT_ERROR: string;
     PAYMENT_SUCCESS: string;
     PROCESSING: string;
+    TARGET_ELEMENT_IS_NOT_SPECIFIED: string;
     VALIDATION_ERROR: string;
     VALIDATION_ERROR_FIELD_IS_REQUIRED: string;
     VALIDATION_ERROR_PATTERN_MISMATCH: string;
