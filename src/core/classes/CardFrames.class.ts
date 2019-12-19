@@ -113,7 +113,7 @@ class CardFrames extends RegisterFrames {
       targets.length >= CardFrames.COMPLETE_FORM_NUMBER_OF_FIELDS &&
       fields.length === targets.length
     ) {
-      targets.map((item, index) => {
+      targets.forEach((item, index) => {
         const element: HTMLElement = document.getElementById(item);
         try {
           element.appendChild(fields[index]);
