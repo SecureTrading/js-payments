@@ -21,5 +21,6 @@
   "Processing": "Wrthi'n prosesu",
   "Invalid field": "Maes annilys",
   "Card number is invalid": "Mae rhif y cerdyn yn annilys",
-  "You are not logged to Apple account": "Nid ydych wedi mewngofnodi i gyfrif Apple"
+  "You are not logged to Apple account": "Nid ydych wedi mewngofnodi i gyfrif Apple",
+  "A target element for the input field with id could not be found. Please check your configuration": "Ni ellid dod o hyd i elfen darged ar gyfer y maes mewnbwn ag id. Gwiriwch eich cyfluniad"
 }
