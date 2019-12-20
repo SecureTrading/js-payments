@@ -115,7 +115,7 @@
           });
 
         function fetchDefaultConfig() {
-          fetch('./../json/config.json')
+          fetch('./../json/config.json.dist')
             .then(function(response) {
               if (response.status !== 200) {
                 return Promise.reject('Default configuration has not been set !');
