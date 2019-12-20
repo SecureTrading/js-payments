@@ -1,10 +1,10 @@
 {
   "analytics": true,
-  "animatedCard": true,
+  "animatedCard": false,
   "deferInit": false,
   "fieldsToSubmit": ["pan", "expirydate", "securitycode"],
   "buttonId": "merchant-submit-button",
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NjU5MTM0OS4xNzIyODI3LCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIxMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.X-fYUQTU3JY2LE6eWA4nJ56s-GaLm_vR7-ULaL3y08M",
+  "jwt": "",
   "styles": {
     "defaultStyles": {
       "background-color-input": "AliceBlue"
@@ -56,7 +56,7 @@
       "color": "neutral"
     },
     "livestatus": 0,
-    "merchantId": "SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4",
+    "merchantId": "DUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4",
     "paymentRequest": {
       "subtotal": "20.00"
     },

@@ -10,13 +10,12 @@ import { Translator } from '../shared/Translator';
 import Validation from '../shared/Validation';
 import RegisterFrames from './RegisterFrames.class';
 
-/**
- * Defines all card elements of form and their placement on merchant site.
- */
-class CardFrames extends RegisterFrames {
+export class CardFrames extends RegisterFrames {
   private static CARD_NUMBER_FIELD_NAME: string = 'pan';
+  private static CLICK_EVENT: string = 'click';
   private static COMPLETE_FORM_NUMBER_OF_FIELDS: number = 3;
   private static EXPIRY_DATE_FIELD_NAME: string = 'expirydate';
+  private static INPUT_EVENT: string = 'input';
   private static NO_CVV_CARDS: string[] = ['PIBA'];
   private static ONLY_CVV_NUMBER_OF_FIELDS: number = 1;
   private static ON_SUBMIT_ACTION: string = 'onsubmit';
@@ -56,6 +55,7 @@ class CardFrames extends RegisterFrames {
   private _noFieldConfiguration: boolean;
   private _onlyCvvConfiguration: boolean;
   private _configurationForStandardCard: boolean;
+  private _loadAnimatedCard: boolean;
 
   constructor(
     jwt: string,
@@ -71,13 +71,13 @@ class CardFrames extends RegisterFrames {
     fieldsToSubmit: string[]
   ) {
     super(jwt, origin, componentIds, styles, animatedCard, fieldsToSubmit);
-    this._setInitValues(buttonId, defaultPaymentType, deferInit, paymentTypes, startOnLoad);
+    this._setInitValues(buttonId, defaultPaymentType, deferInit, paymentTypes, startOnLoad, animatedCard);
     this.configureFormFieldsAmount(jwt);
     this.setElementsFields();
     this.onInit();
   }
 
-  protected onInit() {
+  protected onInit(): void {
     this._deferJsinitOnLoad();
     CardFrames._preventFormSubmit();
     this._createSubmitButton();
@@ -87,12 +87,7 @@ class CardFrames extends RegisterFrames {
     this._broadcastSecurityCodeProperties(this.jwt);
   }
 
-  /**
-   * Checks how any inputs there are configured (1 or 3) and specified the type of card indicated.
-   * @param jwt
-   * @private
-   */
-  protected configureFormFieldsAmount(jwt: string) {
+  protected configureFormFieldsAmount(jwt: string): void {
     this._fieldsToSubmitLength = this.fieldsToSubmit.length;
     this._isCardWithNoCvv = jwt && CardFrames.NO_CVV_CARDS.includes(this._getCardType(jwt));
     this._noFieldConfiguration =
@@ -105,29 +100,31 @@ class CardFrames extends RegisterFrames {
       this.fieldsToSubmit.includes(CardFrames.SECURITY_CODE_FIELD_NAME);
     this._configurationForStandardCard =
       this._fieldsToSubmitLength === CardFrames.COMPLETE_FORM_NUMBER_OF_FIELDS &&
+      this._loadAnimatedCard &&
       !this._isCardWithNoCvv &&
       this.fieldsToSubmit.includes(CardFrames.CARD_NUMBER_FIELD_NAME) &&
       this.fieldsToSubmit.includes(CardFrames.EXPIRY_DATE_FIELD_NAME) &&
       this.fieldsToSubmit.includes(CardFrames.SECURITY_CODE_FIELD_NAME);
   }
 
-  /**
-   * Registers and appends elements in users form.
-   * @param fields
-   * @param targets
-   */
-  protected registerElements(fields: HTMLElement[], targets: string[]) {
-    if (fields.length && targets.length) {
-      targets.map((item, index) => {
-        document.getElementById(item).appendChild(fields[index]);
+  protected registerElements(fields: HTMLElement[], targets: string[]): void {
+    if (
+      fields.length >= CardFrames.COMPLETE_FORM_NUMBER_OF_FIELDS &&
+      targets.length >= CardFrames.COMPLETE_FORM_NUMBER_OF_FIELDS &&
+      fields.length === targets.length
+    ) {
+      targets.forEach((item, index) => {
+        const element: HTMLElement = document.getElementById(item);
+        try {
+          element.appendChild(fields[index]);
+        } catch {
+          throw new Error(this._translator.translate(Language.translations.TARGET_ELEMENT_IS_NOT_SPECIFIED));
+        }
       });
     }
   }
 
-  /**
-   * Defines form elements for card payments
-   */
-  protected setElementsFields() {
+  protected setElementsFields(): string[] {
     if (this._configurationForStandardCard) {
       return [
         this.componentIds.cardNumber,
@@ -140,17 +137,15 @@ class CardFrames extends RegisterFrames {
     } else if (this._noFieldConfiguration) {
       return [];
     } else {
-      return false;
+      return [
+        this.componentIds.cardNumber, //
+        this.componentIds.expirationDate,
+        this.componentIds.securityCode
+      ];
     }
   }
 
-  /**
-   * Broadcast security code length when there is only one field
-   * to be submit (cvv/cvc) and rest of them are in jwt.
-   * @param jwt
-   * @private
-   */
-  private _broadcastSecurityCodeProperties(jwt: string) {
+  private _broadcastSecurityCodeProperties(jwt: string): void {
     const messageBusEvent: IMessageBusEvent = {
       data: this._getSecurityCodeLength(jwt),
       type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
@@ -162,11 +157,7 @@ class CardFrames extends RegisterFrames {
     });
   }
 
-  /**
-   * Creates submit button whether is input or button markup.
-   * Chooses between specified by merchant or default one.
-   */
-  private _createSubmitButton = () => {
+  private _createSubmitButton = (): HTMLInputElement | HTMLButtonElement => {
     const form = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR);
     let button: HTMLInputElement | HTMLButtonElement = this._buttonId
       ? (document.getElementById(this._buttonId) as HTMLButtonElement | HTMLInputElement)
@@ -181,13 +172,13 @@ class CardFrames extends RegisterFrames {
     return button;
   };
 
-  private _deferJsinitOnLoad() {
+  private _deferJsinitOnLoad(): void {
     if (!this._deferInit && this._startOnLoad) {
       this._publishSubmitEvent(true);
     }
   }
 
-  private _disableFormField(state: boolean, eventName: string) {
+  private _disableFormField(state: boolean, eventName: string): void {
     const messageBusEvent: IMessageBusEvent = {
       data: state,
       type: eventName
@@ -195,12 +186,7 @@ class CardFrames extends RegisterFrames {
     this.messageBus.publish(messageBusEvent);
   }
 
-  /**
-   * Finds submit button whether is input or button markup and sets properties.
-   * @param state
-   * @private
-   */
-  private _disableSubmitButton(state: boolean) {
+  private _disableSubmitButton(state: boolean): void {
     const button: HTMLButtonElement | HTMLInputElement = document.getElementById(this._buttonId) as
       | HTMLButtonElement
       | HTMLInputElement;
@@ -224,28 +210,28 @@ class CardFrames extends RegisterFrames {
     }
   }
 
-  private _initCardNumberFrame(styles: {}) {
+  private _initCardNumberFrame(styles: {}): void {
     this._cardNumber = new Element();
     this._cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, styles, this.params);
     this._cardNumberMounted = this._cardNumber.mount(Selectors.CARD_NUMBER_IFRAME);
     this.elementsToRegister.push(this._cardNumberMounted);
   }
 
-  private _initExpiryDateFrame(styles: {}) {
+  private _initExpiryDateFrame(styles: {}): void {
     this._expirationDate = new Element();
     this._expirationDate.create(Selectors.EXPIRATION_DATE_COMPONENT_NAME, styles, this.params);
     this._expirationDateMounted = this._expirationDate.mount(Selectors.EXPIRATION_DATE_IFRAME);
     this.elementsToRegister.push(this._expirationDateMounted);
   }
 
-  private _initSecurityCodeFrame(styles: {}) {
+  private _initSecurityCodeFrame(styles: {}): void {
     this._securityCode = new Element();
     this._securityCode.create(Selectors.SECURITY_CODE_COMPONENT_NAME, styles, this.params);
     this._securityCodeMounted = this._securityCode.mount(Selectors.SECURITY_CODE_IFRAME);
     this.elementsToRegister.push(this._securityCodeMounted);
   }
 
-  private _initAnimatedCardFrame() {
+  private _initAnimatedCardFrame(): void {
     this._animatedCard = new Element();
     const animatedCardConfig = { ...this.params };
     if (this._paymentTypes !== undefined) {
@@ -259,7 +245,7 @@ class CardFrames extends RegisterFrames {
     this.elementsToRegister.push(this._animatedCardMounted);
   }
 
-  private _initCardFrames() {
+  private _initCardFrames(): void {
     const { defaultStyles } = this.styles;
     let { cardNumber, securityCode, expirationDate } = this.styles;
     cardNumber = Object.assign({}, defaultStyles, cardNumber);
@@ -274,18 +260,20 @@ class CardFrames extends RegisterFrames {
       this._initSecurityCodeFrame(securityCode);
       this._initAnimatedCardFrame();
     } else {
-      return false;
+      this._initCardNumberFrame(cardNumber);
+      this._initExpiryDateFrame(expirationDate);
+      this._initSecurityCodeFrame(securityCode);
     }
   }
 
-  private _initSubscribes() {
+  private _initSubscribes(): void {
     this._submitFormListener();
     this._subscribeBlockSubmit();
     this._validateFieldsAfterSubmit();
     this._setMerchantInputListeners();
   }
 
-  private _onInput() {
+  private _onInput(): void {
     const messageBusEvent: IMessageBusEvent = {
       data: DomMethods.parseMerchantForm(),
       type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
@@ -293,7 +281,7 @@ class CardFrames extends RegisterFrames {
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
-  private _publishSubmitEvent(deferInit: boolean) {
+  private _publishSubmitEvent(deferInit: boolean): void {
     const messageBusEvent: IMessageBusEvent = {
       data: { deferInit, fieldsToSubmit: this.fieldsToSubmit },
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
@@ -301,20 +289,16 @@ class CardFrames extends RegisterFrames {
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
-  private _publishValidatedFieldState(field: { message: string; state: boolean }, eventType: string) {
+  private _publishValidatedFieldState(field: { message: string; state: boolean }, eventType: string): void {
     this._messageBusEvent.type = eventType;
     this._messageBusEvent.data.message = field.message;
     this.messageBus.publish(this._messageBusEvent);
   }
 
-  /**
-   * Binds all the form inputs and listen to onInput event.
-   * @private
-   */
-  private _setMerchantInputListeners() {
+  private _setMerchantInputListeners(): void {
     const els = DomMethods.getAllFormElements(document.getElementById(Selectors.MERCHANT_FORM_SELECTOR));
     for (const el of els) {
-      el.addEventListener('input', this._onInput.bind(this));
+      el.addEventListener(CardFrames.INPUT_EVENT, this._onInput.bind(this));
     }
   }
 
@@ -323,8 +307,9 @@ class CardFrames extends RegisterFrames {
     defaultPaymentType: string,
     deferInit: boolean,
     paymentTypes: any,
-    startOnLoad: boolean
-  ) {
+    startOnLoad: boolean,
+    loadAnimatedCard: boolean
+  ): void {
     this._validation = new Validation();
     this._translator = new Translator(this.params.locale);
     this._buttonId = buttonId;
@@ -334,9 +319,10 @@ class CardFrames extends RegisterFrames {
     this._paymentTypes = paymentTypes;
     this._payMessage = this._translator.translate(Language.translations.PAY);
     this._processingMessage = `${this._translator.translate(Language.translations.PROCESSING)} ...`;
+    this._loadAnimatedCard = loadAnimatedCard;
   }
 
-  private _setSubmitButtonProperties(element: any, disabledState: boolean) {
+  private _setSubmitButtonProperties(element: any, disabledState: boolean): HTMLElement {
     if (disabledState) {
       element.textContent = this._processingMessage;
       element.classList.add(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
@@ -348,11 +334,8 @@ class CardFrames extends RegisterFrames {
     return element;
   }
 
-  /**
-   * Listens to html submit form event, blocks default event, disables submit button and publish event to Message Bus.
-   */
-  private _submitFormListener() {
-    this._submitButton.addEventListener('click', () => {
+  private _submitFormListener(): void {
+    this._submitButton.addEventListener(CardFrames.CLICK_EVENT, () => {
       this._publishSubmitEvent(this._deferInit);
     });
     this.messageBus.subscribeOnParent(MessageBus.EVENTS.CALL_SUBMIT_EVENT, () => {
@@ -360,10 +343,7 @@ class CardFrames extends RegisterFrames {
     });
   }
 
-  /**
-   * Checks if submit button needs to be blocked.
-   */
-  private _subscribeBlockSubmit() {
+  private _subscribeBlockSubmit(): void {
     this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (state: boolean) => {
       this._disableSubmitButton(state);
       this._disableFormField(state, MessageBus.EVENTS.BLOCK_CARD_NUMBER);
@@ -372,7 +352,7 @@ class CardFrames extends RegisterFrames {
     });
   }
 
-  private _validateFieldsAfterSubmit() {
+  private _validateFieldsAfterSubmit(): void {
     this.messageBus.subscribe(MessageBus.EVENTS.VALIDATE_FORM, (data: IValidationMessageBus) => {
       const { cardNumber, expirationDate, securityCode } = data;
       if (!cardNumber.state) {
@@ -387,5 +367,3 @@ class CardFrames extends RegisterFrames {
     });
   }
 }
-
-export default CardFrames;

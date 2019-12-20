@@ -1,4 +1,4 @@
-import CardFrames from '../../../src/core/classes/CardFrames.class';
+import { CardFrames } from '../../../src/core/classes/CardFrames.class';
 import DomMethods from '../../../src/core/shared/DomMethods';
 import Language from '../../../src/core/shared/Language';
 import MessageBus from '../../../src/core/shared/MessageBus';
@@ -353,13 +353,12 @@ function cardFramesFixture() {
     {
       cardNumber: Selectors.CARD_NUMBER_INPUT_SELECTOR,
       expirationDate: Selectors.EXPIRATION_DATE_INPUT_SELECTOR,
-      notificationFrame: Selectors.NOTIFICATION_FRAME_ID,
       securityCode: Selectors.SECURITY_CODE_INPUT_SELECTOR
     },
     {},
     ['VISA,MASTERCARD,AMEX'],
     'AMEX',
-    false,
+    true,
     false,
     'merchant-submit-button',
     false,
