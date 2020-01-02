@@ -484,7 +484,7 @@ describe('ControlFrame', () => {
   // given
   describe('_requestPayment', () => {
     const { instance } = controlFrameFixture();
-    const data = {};
+    const data = { response: { status: '' } };
 
     // when
     beforeEach(() => {
