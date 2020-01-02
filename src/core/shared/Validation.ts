@@ -5,6 +5,7 @@ import Language from './Language';
 import MessageBus from './MessageBus';
 import Selectors from './Selectors';
 import { Translator } from './Translator';
+import { ICard } from '../models/Card';
 
 const {
   VALIDATION_ERROR_FIELD_IS_REQUIRED,

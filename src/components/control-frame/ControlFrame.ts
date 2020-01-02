@@ -7,6 +7,7 @@ import MessageBus from '../../core/shared/MessageBus';
 import Notification from '../../core/shared/Notification';
 import Payment from '../../core/shared/Payment';
 import Validation from '../../core/shared/Validation';
+import { ICard } from '../../core/models/Card';
 
 /**
  * Defines frame which is essentially a hub which collects events and processes from whole library.

@@ -4,6 +4,7 @@ import { IMerchantData } from '../models/MerchantData';
 import Notification from './Notification';
 import { StJwt } from './StJwt';
 import Validation from './Validation';
+import { ICard } from '../models/Card';
 
 /**
  * Gathers all payment processes and flows from library (immediate payment, wallet verify, APM's processes).
