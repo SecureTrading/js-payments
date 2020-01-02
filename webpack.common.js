@@ -6,7 +6,6 @@ const StyleLintPlugin = require('stylelint-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-const jwtDecode = require('jwt-decode');
 
 module.exports = {
   entry: {
@@ -98,13 +97,10 @@ module.exports = {
     ]),
     new CopyPlugin([
       {
-        from: path.resolve(__dirname, '/src/json'),
-        to: path.resolve(__dirname, '/dist/json/config.json'),
+        from: 'src/json',
+        to: 'json',
         test: /([^/]+)\/(.+)\.json$/,
-        force: true,
-        transform(content, path) {
-          return modify(content);
-        }
+        force: true
       }
     ]),
     new StyleLintPlugin(),
@@ -168,9 +164,3 @@ module.exports = {
     extensions: ['.ts', '.js']
   }
 };
-let config = require('./src/json/config.json.dist');
-function modify(buffer) {
-  const file = JSON.parse(buffer.toString());
-  file.jwt = config.jwt;
-  return JSON.stringify(file, null, 2);
-}
