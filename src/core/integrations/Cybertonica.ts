@@ -1,4 +1,5 @@
 import { environment } from '../../environments/environment';
+import { IAuthorizePaymentResponse } from '../models/CardinalCommerce';
 import {
   IAFCybertonica,
   ICybertonicaInitQuery,
@@ -9,24 +10,36 @@ import DomMethods from '../shared/DomMethods';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
 import Notification from '../shared/Notification';
+import { Translator } from '../shared/Translator';
+import GoogleAnalytics from './GoogleAnalytics';
 
 declare const AFCYBERTONICA: IAFCybertonica;
 
 class Cybertonica {
   private static API_USER_NAME: string = 'test';
+  private static ERROR_KEY: string = 'An error occurred';
   private static LOAD_SCRIPT_LISTENER: string = 'load';
+  private static LOCALE: string = 'locale';
   private static SCRIPT_TARGET: string = 'head';
   private _messageBus: MessageBus;
   private _notification: Notification;
-  private _postData: ICybertonicaPostQuery = { tid: '', pan: '', expirydate: '', securitycode: '' };
+  private _postData: ICybertonicaPostQuery = {
+    tid: '',
+    pan: '',
+    expirydate: '',
+    securitycode: '',
+    response: { status: 'DENY' }
+  };
   private _scriptLoaded: boolean;
   private _sdkAddress: string;
   private _tid: string;
+  private _translator: Translator;
 
   constructor() {
     this._sdkAddress = environment.CYBERTONICA.CYBERTONICA_LIVE_URL;
     this._messageBus = new MessageBus();
     this._notification = new Notification();
+    this._translator = new Translator(localStorage.getItem(Cybertonica.LOCALE));
     this._onInit();
   }
 
@@ -59,9 +72,14 @@ class Cybertonica {
   }
 
   private _postQuery(data: ICybertonicaPostQuery): Promise<{}> {
+    console.error(data);
+    data.response.status = 'CHALLENGE';
     return new Promise((resolve, reject) => {
-      resolve(data);
-      reject(false);
+      if (data.response.status === 'ALLOW' || data.response.status === 'CHALLENGE') {
+        resolve(data);
+      } else {
+        reject(false);
+      }
     });
   }
 
@@ -78,11 +96,12 @@ class Cybertonica {
   private _publishPostResponse(status: ICybertonicaPostResponse) {
     this._messageBus.publishFromParent(
       {
-        data: { cybertonicaResponse: status },
+        data: status,
         type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
       },
       Selectors.CONTROL_FRAME_IFRAME
     );
+    return status;
   }
 
   private _setPostData(tid: string, pan: string, expirydate: string, securitycode: string): ICybertonicaPostQuery {
@@ -93,15 +112,30 @@ class Cybertonica {
     return this._postData;
   }
 
+  private _authorizePayment(data?: object) {
+    data = data || {};
+
+    const messageBusEvent: IMessageBusEvent = {
+      data,
+      type: MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS
+    };
+    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    GoogleAnalytics.sendGaData('event', 'Cybertonica', 'auth', 'Cybertonica auth completed');
+  }
+
   private _submitEventListener(): void {
     this._messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.CYBERTONICA, (data: ICybertonicaInitQuery) => {
       const { pan, expirydate, securitycode } = data;
       this._setPostData(this._tid, pan, expirydate, securitycode);
       this._postQuery(this._postData)
         .then((response: ICybertonicaPostResponse) => this._publishPostResponse(response))
+        .then(response => this._authorizePayment(response))
         .catch(error => {
-          this._notification.error('Something went wrong :/', error);
-          throw new Error('Something went wrong :/');
+          this._notification.error(
+            this._translator.translate(this._translator.translate(Cybertonica.ERROR_KEY)),
+            error
+          );
+          throw new Error(this._translator.translate(Cybertonica.ERROR_KEY));
         });
     });
   }

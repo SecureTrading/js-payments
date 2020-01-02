@@ -6,7 +6,7 @@ interface IConfig {
   animatedCard: boolean;
   buttonId?: string;
   componentIds?: any;
-  cybertonica?: { apikey: string };
+  cybertonica?: ICybertonicaConfig;
   datacenterurl?: string;
   deferInit?: boolean;
   formId?: string;
@@ -40,6 +40,10 @@ interface IByPassInit {
   cachetoken: string;
 }
 
+interface ICybertonicaConfig {
+  apikey?: string;
+}
+
 const IConfigSchema: Joi.JoiObject = Joi.object().keys({
   analytics: Joi.boolean(),
   animatedCard: Joi.boolean(),
@@ -69,9 +73,7 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
     securityCode: Joi.string().required()
   }),
   components: Joi.object(),
-  cybertonica: Joi.object().keys({
-    apikey: Joi.string()
-  }),
+  cybertonica: Joi.object(),
   datacenterurl: Joi.string(),
   deferInit: Joi.boolean(),
   formId: Joi.string(),

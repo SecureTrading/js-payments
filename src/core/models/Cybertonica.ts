@@ -27,6 +27,7 @@ interface ICybertonicaPostQuery {
   pan: string;
   securitycode: string;
   tid: string;
+  response: ICybertonicaPostResponse;
 }
 
 interface ICybertonicaPostResponse {

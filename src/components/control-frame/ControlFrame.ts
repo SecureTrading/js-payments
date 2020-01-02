@@ -203,7 +203,6 @@ class ControlFrame extends Frame {
 
   private _initSubmitFormEvent(): void {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, (data?: ISubmitData) => {
-      console.error(data);
       this._proceedWith3DSecure(data);
     });
   }
@@ -400,21 +399,22 @@ class ControlFrame extends Frame {
       this._formFields,
       deferInit
     );
+    console.error(data);
     if (validity) {
       if (deferInit) {
         this._messageBus.publish({
           type: MessageBus.EVENTS_PUBLIC.THREEDINIT
         });
       }
-
-      // @TODO debug here
-      this._payment
-        .threeDQueryRequest(this._preThreeDRequestTypes, card, this._merchantFormData)
-        .then((result: any) => {
-          this._threeDQueryResult = result;
-          this._threedqueryEvent.data = result.response;
-          this._messageBus.publish(this._threedqueryEvent, true);
-        });
+      if (data.response.status !== 'ALLOW') {
+        this._payment
+          .threeDQueryRequest(this._preThreeDRequestTypes, card, this._merchantFormData)
+          .then((result: any) => {
+            this._threeDQueryResult = result;
+            this._threedqueryEvent.data = result.response;
+            this._messageBus.publish(this._threedqueryEvent, true);
+          });
+      }
     } else {
       this._messageBus.publish(this._messageBusEventCardNumber);
       this._messageBus.publish(this._messageBusEventExpirationDate);
