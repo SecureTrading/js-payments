@@ -67,7 +67,7 @@ class ST {
     defaultFeatures.origin = config.origin ? config.origin : window.location.origin;
     defaultFeatures.submitOnSuccess = config.submitOnSuccess !== undefined ? config.submitOnSuccess : true;
     defaultFeatures.submitOnError = config.submitOnError !== undefined ? config.submitOnError : false;
-    defaultFeatures.animatedCard = config.animatedCard ? config.animatedCard : false;
+    defaultFeatures.animatedCard = config.animatedCard !== undefined ? config.animatedCard : true;
     return defaultFeatures;
   }
 

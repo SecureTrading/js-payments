@@ -1,7 +1,3 @@
-/**
- * Defines Language properties and methods and aggregate translations from all parts of library
- */
-
 class Language {
   private static _translations = {
     APPLE_PAY_AMOUNT_AND_CURRENCY: 'Amount and currency are not set',

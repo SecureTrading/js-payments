@@ -73,8 +73,9 @@ export class CardFrames extends RegisterFrames {
     super(jwt, origin, componentIds, styles, animatedCard, fieldsToSubmit);
     this._setInitValues(buttonId, defaultPaymentType, deferInit, paymentTypes, startOnLoad, animatedCard);
     this.configureFormFieldsAmount(jwt);
-    this.setElementsFields();
+    this.elementsTargets = this.setElementsFields();
     this.onInit();
+    this.registerElements(this.elementsToRegister, this.elementsTargets);
   }
 
   protected onInit(): void {
@@ -83,7 +84,6 @@ export class CardFrames extends RegisterFrames {
     this._createSubmitButton();
     this._initSubscribes();
     this._initCardFrames();
-    this.registerElements(this.elementsToRegister, this.elementsTargets);
     this._broadcastSecurityCodeProperties(this.jwt);
   }
 
@@ -319,7 +319,7 @@ export class CardFrames extends RegisterFrames {
     this._paymentTypes = paymentTypes;
     this._payMessage = this._translator.translate(Language.translations.PAY);
     this._processingMessage = `${this._translator.translate(Language.translations.PROCESSING)} ...`;
-    this._loadAnimatedCard = loadAnimatedCard;
+    this._loadAnimatedCard = loadAnimatedCard !== undefined ? loadAnimatedCard : true;
   }
 
   private _setSubmitButtonProperties(element: any, disabledState: boolean): HTMLElement {

@@ -3,7 +3,7 @@ import { IStyles } from '../shared/Styler';
 
 interface IConfig {
   analytics?: boolean;
-  animatedCard: boolean;
+  animatedCard?: boolean;
   buttonId?: string;
   componentIds?: any;
   datacenterurl?: string;

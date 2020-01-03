@@ -44,15 +44,9 @@ export default class RegisterFrames {
     this.styles = this._getStyles(styles);
     this.configureFormFieldsAmount(jwt);
     this.elementsTargets = this.setElementsFields();
+    this.registerElements(this.elementsToRegister, this.elementsTargets);
     this.stJwt = new StJwt(jwt);
     this.params = { locale: this.stJwt.locale, origin: this.origin };
-  }
-
-  /**
-   * Gathers and launches methods needed on initializing object.
-   */
-  protected onInit() {
-    this.registerElements(this.elementsToRegister, this.elementsTargets);
   }
 
   /**
