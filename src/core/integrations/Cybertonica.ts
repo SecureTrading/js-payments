@@ -1,5 +1,4 @@
 import { environment } from '../../environments/environment';
-import { IAuthorizePaymentResponse } from '../models/CardinalCommerce';
 import {
   IAFCybertonica,
   ICybertonicaInitQuery,
@@ -8,8 +7,8 @@ import {
 } from '../models/Cybertonica';
 import DomMethods from '../shared/DomMethods';
 import MessageBus from '../shared/MessageBus';
-import Selectors from '../shared/Selectors';
 import Notification from '../shared/Notification';
+import Selectors from '../shared/Selectors';
 import { Translator } from '../shared/Translator';
 import GoogleAnalytics from './GoogleAnalytics';
 
@@ -21,14 +20,15 @@ class Cybertonica {
   private static LOAD_SCRIPT_LISTENER: string = 'load';
   private static LOCALE: string = 'locale';
   private static SCRIPT_TARGET: string = 'head';
+
   private _messageBus: MessageBus;
   private _notification: Notification;
   private _postData: ICybertonicaPostQuery = {
-    tid: '',
-    pan: '',
     expirydate: '',
+    pan: '',
+    response: { status: 'DENY' },
     securitycode: '',
-    response: { status: 'DENY' }
+    tid: ''
   };
   private _scriptLoaded: boolean;
   private _sdkAddress: string;
@@ -48,6 +48,23 @@ class Cybertonica {
     this._submitEventListener();
   }
 
+  private _authorizePayment(data: ICybertonicaPostResponse): void {
+    const messageBusEvent: IMessageBusEvent = {
+      data,
+      type: MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS
+    };
+    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    GoogleAnalytics.sendGaData('event', 'Cybertonica', 'auth', 'Cybertonica auth completed');
+  }
+
+  private _loadIntegrationScript(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this._tid = AFCYBERTONICA.init(Cybertonica.API_USER_NAME);
+      resolve((this._scriptLoaded = true));
+      reject((this._scriptLoaded = false));
+    });
+  }
+
   private _loadSdk(): void {
     DomMethods.insertScript(Cybertonica.SCRIPT_TARGET, this._sdkAddress).addEventListener(
       Cybertonica.LOAD_SCRIPT_LISTENER,
@@ -63,24 +80,10 @@ class Cybertonica {
     );
   }
 
-  private _loadIntegrationScript(): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      this._tid = AFCYBERTONICA.init(Cybertonica.API_USER_NAME);
-      resolve((this._scriptLoaded = true));
-      reject((this._scriptLoaded = false));
-    });
-  }
-
   private _postQuery(data: ICybertonicaPostQuery): Promise<{}> {
-    console.error(data);
     data.response.status = 'CHALLENGE';
-    return new Promise((resolve, reject) => {
-      if (data.response.status === 'ALLOW' || data.response.status === 'CHALLENGE') {
-        resolve(data);
-      } else {
-        reject(false);
-      }
-    });
+    // @TODO temporarly for test purposes - needs to have backend response here.
+    return new Promise((resolve, reject) => (this._shouldPaymentProceed(data) ? resolve(data) : reject(false)));
   }
 
   private _publishLoadingStatus(status: boolean): void {
@@ -93,7 +96,7 @@ class Cybertonica {
     );
   }
 
-  private _publishPostResponse(status: ICybertonicaPostResponse) {
+  private _publishPostResponse(status: ICybertonicaPostResponse): ICybertonicaPostResponse {
     this._messageBus.publishFromParent(
       {
         data: status,
@@ -112,16 +115,8 @@ class Cybertonica {
     return this._postData;
   }
 
-  private _authorizePayment(data?: object) {
-    data = data || {};
-
-    const messageBusEvent: IMessageBusEvent = {
-      data,
-      type: MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS
-    };
-    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
-    GoogleAnalytics.sendGaData('event', 'Cybertonica', 'auth', 'Cybertonica auth completed');
-  }
+  private _shouldPaymentProceed = (data: ICybertonicaPostQuery): boolean =>
+    data.response.status === 'ALLOW' || data.response.status === 'CHALLENGE';
 
   private _submitEventListener(): void {
     this._messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.CYBERTONICA, (data: ICybertonicaInitQuery) => {

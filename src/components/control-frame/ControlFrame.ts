@@ -1,4 +1,5 @@
 import { StCodec } from '../../core/classes/StCodec.class';
+import { ICard } from '../../core/models/Card';
 import { ISetRequestTypes, ISubmitData } from '../../core/models/ControlFrame';
 import { IMerchantData } from '../../core/models/MerchantData';
 import Frame from '../../core/shared/Frame';
@@ -7,7 +8,6 @@ import MessageBus from '../../core/shared/MessageBus';
 import Notification from '../../core/shared/Notification';
 import Payment from '../../core/shared/Payment';
 import Validation from '../../core/shared/Validation';
-import { ICard } from '../../core/models/Card';
 
 /**
  * Defines frame which is essentially a hub which collects events and processes from whole library.
@@ -216,8 +216,8 @@ class ControlFrame extends Frame {
       {
         data: {
           ...data,
-          pan: this._formFields.cardNumber.value,
           expirydate: this._formFields.expirationDate.value,
+          pan: this._formFields.cardNumber.value,
           securitycode: this._formFields.securityCode.value
         },
         type: MessageBus.EVENTS_PUBLIC.CYBERTONICA
@@ -399,7 +399,6 @@ class ControlFrame extends Frame {
       this._formFields,
       deferInit
     );
-    console.error(data);
     if (validity) {
       if (deferInit) {
         this._messageBus.publish({
