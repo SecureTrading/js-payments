@@ -65,6 +65,3 @@ typings/
 
 # Generated files folder
 dist/
-
-# JSON config files
-src/json/
