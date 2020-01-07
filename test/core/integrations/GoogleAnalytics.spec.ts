@@ -7,7 +7,7 @@ describe('GoogleAnalytics', () => {
   const { instance } = googleAnalyticsFixture();
 
   // given
-  describe('_onInit', () => {
+  describe('init()', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
@@ -18,8 +18,7 @@ describe('GoogleAnalytics', () => {
 
     // then
     it('should call _insertGALibrary and GoogleAnalytics._disableUserIDTracking', () => {
-      // @ts-ignore
-      instance._onInit();
+      instance.init();
       // @ts-ignore
       expect(instance._insertGALibrary).toHaveBeenCalled();
     });
@@ -48,13 +47,11 @@ describe('GoogleAnalytics', () => {
     beforeEach(() => {
       // @ts-ignore
       instance._createGAScript = jest.fn().mockResolvedValueOnce(GoogleAnalytics.TRANSLATION_SCRIPT_SUCCEEDED);
-      // @ts-ignore
-      instance._onInit();
+      instance.init();
     });
 
     // then
     it('should call _createGAScript function', () => {
-      // dummy test
       // @ts-ignore
       expect(instance._createGAScript).toHaveBeenCalledTimes(1);
     });
@@ -91,12 +88,6 @@ describe('GoogleAnalytics', () => {
     beforeEach(() => {
       // @ts-ignore
       instance._insertGAScript();
-    });
-
-    // then
-    it('should append GA script', () => {
-      // @ts-ignore
-      // expect(document.head).toContain(instance._gaScript);
     });
   });
 });

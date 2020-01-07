@@ -147,7 +147,7 @@ module.exports = {
           {
             loader: 'tslint-loader',
             options: {
-              emitErrors: false /*temporary*/
+              emitErrors: true
             }
           }
         ],

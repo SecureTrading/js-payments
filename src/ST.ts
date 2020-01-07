@@ -163,20 +163,6 @@ class ST {
     return { targetConfig };
   }
 
-  /**
-   *
-   * @param jwt
-   * @param origin
-   * @param componentIds
-   * @param styles
-   * @param submitOnSuccess
-   * @param submitOnError
-   * @param submitFields
-   * @param gatewayUrl
-   * @param animatedCard
-   * @param submitCallback
-   * @private
-   */
   private static _configureCommonFrames(
     jwt: string,
     origin: string,
@@ -203,9 +189,6 @@ class ST {
     );
   }
 
-  /**
-   * Adds fields form merchants form as part of library flow (eg. fields validation).
-   */
   private static _configureMerchantFields() {
     return new MerchantFields();
   }
@@ -262,7 +245,7 @@ class ST {
   private _buttonId: string;
 
   constructor(config: IConfig) {
-    const { analytics, animatedCard, buttonId, deferInit, init, livestatus, submitCallback, translations } = config;
+    const { animatedCard, buttonId, deferInit, init, livestatus, submitCallback, translations } = config;
     if (init) {
       const { cachetoken, threedinit } = init;
       this._cachetoken = cachetoken;
@@ -273,8 +256,6 @@ class ST {
     this._animatedCard = animatedCard;
     this._buttonId = buttonId;
     this._submitCallback = submitCallback;
-    this._googleAnalytics.init(analytics);
-    this._initGoogleAnalytics(analytics);
     this._config = ST._addDefaults(config);
     this._deferInit = deferInit;
     Utils.setLocalStorageItem(ST.TRANSLATION_STORAGE_NAME, translations);
@@ -313,31 +294,18 @@ class ST {
     this.CardinalCommerce(targetConfig);
   }
 
-  /**
-   * Initializes Apple Pay APM.
-   * @param config
-   * @constructor
-   */
   public ApplePay(config: IWalletConfig) {
     const applepay = environment.testEnvironment ? ApplePayMock : ApplePay;
     config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
     return new applepay(config, this._jwt, this._gatewayUrl);
   }
 
-  /**
-   * Initializes Visa Checkout APM.
-   * @param config
-   * @constructor
-   */
   public VisaCheckout(config: IWalletConfig) {
     const visa = environment.testEnvironment ? VisaCheckoutMock : VisaCheckout;
     config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
     return new visa(config, this._jwt, this._gatewayUrl, this._livestatus);
   }
 
-  /**
-   * @param newJWT
-   */
   public updateJWT(newJWT: string) {
     if (newJWT) {
       this._jwt = newJWT;
@@ -350,11 +318,6 @@ class ST {
     }
   }
 
-  /**
-   * Initializes Cardinal Commerce configuration.
-   * @param config
-   * @constructor
-   */
   private CardinalCommerce(config: IWalletConfig) {
     const cardinal = environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce;
     return new cardinal(
@@ -367,12 +330,9 @@ class ST {
     );
   }
 
-  private _initGoogleAnalytics(init: boolean) {
-    if (init) {
-      const ga = new GoogleAnalytics();
-    } else {
-      return false;
-    }
+  public googleAnalytics() {
+    this._googleAnalytics = new GoogleAnalytics();
+    this._googleAnalytics.init();
   }
 
   private _setClassProperties(config: IConfig) {

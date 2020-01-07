@@ -208,7 +208,6 @@ function stFixture() {
     apikey: 'test'
   };
   const config = {
-    analytics: true,
     animatedCard: true,
     cybertonica: { ...cybertonicaConfig },
     jwt:

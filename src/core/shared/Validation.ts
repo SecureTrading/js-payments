@@ -1,11 +1,11 @@
 import { StCodec } from '../classes/StCodec.class';
+import { ICard } from '../models/Card';
 import { IErrorData, IMessageBusValidateField, IValidation } from '../models/Validation';
 import Frame from './Frame';
 import Language from './Language';
 import MessageBus from './MessageBus';
 import Selectors from './Selectors';
 import { Translator } from './Translator';
-import { ICard } from '../models/Card';
 
 const {
   VALIDATION_ERROR_FIELD_IS_REQUIRED,
@@ -13,9 +13,6 @@ const {
   VALIDATION_ERROR
 } = Language.translations;
 
-/**
- * Base class for validation, aggregates common methods and attributes for all subclasses
- */
 export default class Validation extends Frame {
   public static ERROR_FIELD_CLASS: string = 'error-field';
 
@@ -181,13 +178,6 @@ export default class Validation extends Frame {
     this._setMessage(inputElement, messageElement, customErrorMessage);
   }
 
-  /**
-   *
-   * @param luhn
-   * @param field
-   * @param input
-   * @param label
-   */
   public luhnCheckValidation(luhn: boolean, field: HTMLInputElement, input: HTMLInputElement, message: HTMLDivElement) {
     if (!luhn) {
       field.setCustomValidity(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
@@ -305,13 +295,6 @@ export default class Validation extends Frame {
     }
   }
 
-  /**
-   *
-   * @param inputElement
-   * @param messageElement
-   * @param data
-   * @private
-   */
   private _assignErrorDetails(
     inputElement: HTMLInputElement,
     messageElement: HTMLElement,
