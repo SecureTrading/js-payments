@@ -1,9 +1,5 @@
 import { Cybertonica } from '../../../src/core/integrations/Cybertonica';
-import {
-  ICybertonicaInitQuery,
-  ICybertonicaPostQuery,
-  ICybertonicaPostResponse
-} from '../../../src/core/models/Cybertonica';
+import { ICybertonicaInitQuery, ICybertonicaPostQuery } from '../../../src/core/models/Cybertonica';
 import { environment } from '../../../src/environments/environment';
 
 // given
@@ -43,7 +39,7 @@ describe('Cybertonica', () => {
       }
     });
     // @ts-ignore
-    instance._postQuery = jest.fn().mockResolvedValueOnce(new Promise(resolve => resolve()));
+    instance._postQuery = jest.fn().mockResolvedValueOnce(Promise.resolve());
     // @ts-ignore
     instance._setPostData = jest.fn();
     // @ts-ignore
