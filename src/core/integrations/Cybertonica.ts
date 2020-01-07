@@ -90,8 +90,11 @@ class Cybertonica {
   private _loadIntegrationScript(): Promise<boolean> {
     return new Promise((resolve, reject) => {
       this._tid = AFCYBERTONICA.init(Cybertonica.API_USER_NAME);
-      resolve((this._scriptLoaded = true));
-      reject((this._scriptLoaded = false));
+      if (this._tid) {
+        resolve();
+      } else {
+        reject(this._translator.translate('An error occured'));
+      }
     });
   }
 
