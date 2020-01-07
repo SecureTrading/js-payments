@@ -108,11 +108,7 @@ export class CardFrames extends RegisterFrames {
   }
 
   protected registerElements(fields: HTMLElement[], targets: string[]): void {
-    if (
-      fields.length >= CardFrames.COMPLETE_FORM_NUMBER_OF_FIELDS &&
-      targets.length >= CardFrames.COMPLETE_FORM_NUMBER_OF_FIELDS &&
-      fields.length === targets.length
-    ) {
+    if (fields.length === targets.length) {
       targets.forEach((item, index) => {
         const element: HTMLElement = document.getElementById(item);
         try {
