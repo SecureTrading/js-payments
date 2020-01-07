@@ -59,16 +59,12 @@ class GoogleAnalytics {
   private _gaScript: HTMLScriptElement;
   private _gaScriptContent: Text;
 
-  constructor() {
-    this._onInit();
-  }
-
   /**
    * Initializes Google Analytics scripts on merchants page.
    * Gathers all methods needed to establish GGoogle Analytics functionality.
    * @private
    */
-  private _onInit() {
+  public init() {
     this._insertGALibrary();
     this._createGAScript()
       .then(() => {

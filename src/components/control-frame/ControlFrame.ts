@@ -12,7 +12,7 @@ import Validation from '../../core/shared/Validation';
 /**
  * Defines frame which is essentially a hub which collects events and processes from whole library.
  */
-class ControlFrame extends Frame {
+export class ControlFrame extends Frame {
   /**
    * Resets JWT in case of Error
    * @private
@@ -445,5 +445,3 @@ class ControlFrame extends Frame {
     this._merchantFormData = data;
   }
 }
-
-export { ControlFrame };

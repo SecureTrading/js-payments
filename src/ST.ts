@@ -245,6 +245,7 @@ class ST {
   private _cachetoken: string;
   private _componentIds: {};
   private _gatewayUrl: string;
+  private _googleAnalytics: GoogleAnalytics;
   private _jwt: string;
   private _origin: string;
   private _styles: IStyles;
@@ -272,6 +273,7 @@ class ST {
     this._animatedCard = animatedCard;
     this._buttonId = buttonId;
     this._submitCallback = submitCallback;
+    this._googleAnalytics.init(analytics);
     this._initGoogleAnalytics(analytics);
     this._config = ST._addDefaults(config);
     this._deferInit = deferInit;
