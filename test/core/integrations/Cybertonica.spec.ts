@@ -52,8 +52,6 @@ describe('Cybertonica', () => {
     instance._submitEventListener();
     // @ts-ignore
     expect(instance._setPostData).toHaveBeenCalled();
-    // @ts-ignore
-    expect(instance._authorizePayment).toHaveBeenCalled();
   });
 });
 
