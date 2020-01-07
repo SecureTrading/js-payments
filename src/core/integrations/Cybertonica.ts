@@ -23,13 +23,6 @@ class Cybertonica {
 
   private _messageBus: MessageBus;
   private _notification: Notification;
-  private _postData: ICybertonicaPostQuery = {
-    expirydate: '',
-    pan: '',
-    response: { status: 'DENY' },
-    securitycode: '',
-    tid: ''
-  };
   private _scriptLoaded: boolean;
   private _sdkAddress: string;
   private _tid: string;
@@ -65,8 +58,14 @@ class Cybertonica {
   private _submitEventListener(): void {
     this._messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.CYBERTONICA, (data: ICybertonicaInitQuery) => {
       const { pan, expirydate, securitycode } = data;
-      this._setPostData(this._tid, pan, expirydate, securitycode);
-      this._postQuery(this._postData)
+      const postData: ICybertonicaPostQuery = {
+        expirydate,
+        pan,
+        response: { status: 'DENY' },
+        securitycode,
+        tid: this._tid
+      };
+      this._postQuery(postData)
         .then((response: ICybertonicaPostResponse) => this._publishPostResponse(response))
         .then(response => this._authorizePayment(response))
         .catch(error => {
@@ -121,14 +120,6 @@ class Cybertonica {
       Selectors.CONTROL_FRAME_IFRAME
     );
     return status;
-  }
-
-  private _setPostData(tid: string, pan: string, expirydate: string, securitycode: string): ICybertonicaPostQuery {
-    this._postData.tid = tid;
-    this._postData.pan = pan;
-    this._postData.expirydate = expirydate;
-    this._postData.securitycode = securitycode;
-    return this._postData;
   }
 
   private _shouldPaymentProceed = (data: ICybertonicaPostQuery): boolean =>

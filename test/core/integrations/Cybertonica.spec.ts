@@ -25,11 +25,11 @@ describe('Cybertonica', () => {
       securitycode: '111'
     };
     const postData: ICybertonicaPostQuery = {
-      tid: 'test',
+      tid: undefined,
       expirydate: '11/22',
       pan: '4111111111111111',
       securitycode: '111',
-      response: { status: 'ALLOW' }
+      response: { status: 'DENY' }
     };
 
     // @ts-ignore
@@ -47,7 +47,7 @@ describe('Cybertonica', () => {
     // @ts-ignore
     instance._submitEventListener();
     // @ts-ignore
-    expect(instance._setPostData).toHaveBeenCalled();
+    expect(instance._postQuery).toHaveBeenCalledWith(postData);
   });
 });
 
