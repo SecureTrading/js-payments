@@ -47,6 +47,38 @@ class Cybertonica {
     this._submitEventListener();
   }
 
+  private _loadSdk(): void {
+    DomMethods.insertScript(Cybertonica.SCRIPT_TARGET, this._sdkAddress).addEventListener(
+      Cybertonica.LOAD_SCRIPT_LISTENER,
+      () => {
+        this._loadIntegrationScript()
+          .then((response: boolean) => {
+            this._publishLoadingStatus(response);
+          })
+          .catch((error: boolean) => {
+            this._publishLoadingStatus(error);
+          });
+      }
+    );
+  }
+
+  private _submitEventListener(): void {
+    this._messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.CYBERTONICA, (data: ICybertonicaInitQuery) => {
+      const { pan, expirydate, securitycode } = data;
+      this._setPostData(this._tid, pan, expirydate, securitycode);
+      this._postQuery(this._postData)
+        .then((response: ICybertonicaPostResponse) => this._publishPostResponse(response))
+        .then(response => this._authorizePayment(response))
+        .catch(error => {
+          this._notification.error(
+            this._translator.translate(this._translator.translate(Cybertonica.ERROR_KEY)),
+            error
+          );
+          throw new Error(this._translator.translate(Cybertonica.ERROR_KEY));
+        });
+    });
+  }
+
   private _authorizePayment(data: ICybertonicaPostResponse): void {
     const messageBusEvent: IMessageBusEvent = {
       data,
@@ -62,21 +94,6 @@ class Cybertonica {
       resolve((this._scriptLoaded = true));
       reject((this._scriptLoaded = false));
     });
-  }
-
-  private _loadSdk(): void {
-    DomMethods.insertScript(Cybertonica.SCRIPT_TARGET, this._sdkAddress).addEventListener(
-      Cybertonica.LOAD_SCRIPT_LISTENER,
-      () => {
-        this._loadIntegrationScript()
-          .then((response: boolean) => {
-            this._publishLoadingStatus(response);
-          })
-          .catch((error: boolean) => {
-            this._publishLoadingStatus(error);
-          });
-      }
-    );
   }
 
   private _postQuery(data: ICybertonicaPostQuery): Promise<{}> {
@@ -116,23 +133,6 @@ class Cybertonica {
 
   private _shouldPaymentProceed = (data: ICybertonicaPostQuery): boolean =>
     data.response.status === 'ALLOW' || data.response.status === 'CHALLENGE';
-
-  private _submitEventListener(): void {
-    this._messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.CYBERTONICA, (data: ICybertonicaInitQuery) => {
-      const { pan, expirydate, securitycode } = data;
-      this._setPostData(this._tid, pan, expirydate, securitycode);
-      this._postQuery(this._postData)
-        .then((response: ICybertonicaPostResponse) => this._publishPostResponse(response))
-        .then(response => this._authorizePayment(response))
-        .catch(error => {
-          this._notification.error(
-            this._translator.translate(this._translator.translate(Cybertonica.ERROR_KEY)),
-            error
-          );
-          throw new Error(this._translator.translate(Cybertonica.ERROR_KEY));
-        });
-    });
-  }
 }
 
 export { Cybertonica };
