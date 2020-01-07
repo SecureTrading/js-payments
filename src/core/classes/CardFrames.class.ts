@@ -1,4 +1,5 @@
 import Element from '../Element';
+import { Cybertonica } from '../integrations/Cybertonica';
 import { IValidationMessageBus } from '../models/Validation';
 import DomMethods from '../shared/DomMethods';
 import Language from '../shared/Language';
@@ -18,6 +19,7 @@ class CardFrames extends RegisterFrames {
   private static SUBMIT_BUTTON_DISABLED_CLASS = 'st-button-submit__disabled';
 
   protected hasAnimatedCard: boolean;
+  private _cybertonica: Cybertonica;
   private _animatedCardMounted: HTMLElement;
   private _cardNumberMounted: HTMLElement;
   private _expirationDateMounted: HTMLElement;
@@ -57,6 +59,7 @@ class CardFrames extends RegisterFrames {
     this._validation = new Validation();
     this._messageBus = new MessageBus();
     this._translator = new Translator(this.params.locale);
+    this._cybertonica = new Cybertonica();
     this.hasAnimatedCard = animatedCard;
     this._buttonId = buttonId;
     this._cybertonicaApiKey = cybertonicaApiKey;
@@ -73,6 +76,7 @@ class CardFrames extends RegisterFrames {
    * Gathers and launches methods needed on initializing object.
    */
   protected onInit() {
+    this._cybertonica.init();
     this._deferJsinitOnLoad();
     this._preventFormSubmit();
     this._setSubmitButton();

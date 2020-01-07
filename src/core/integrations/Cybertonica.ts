@@ -40,10 +40,9 @@ class Cybertonica {
     this._messageBus = new MessageBus();
     this._notification = new Notification();
     this._translator = new Translator(localStorage.getItem(Cybertonica.LOCALE));
-    this._onInit();
   }
 
-  private _onInit(): void {
+  public init(): void {
     this._loadSdk();
     this._submitEventListener();
   }

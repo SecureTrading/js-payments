@@ -138,7 +138,7 @@
             var stringified = JSON.stringify(data);
             var testVariable = 'This is what we have got after submit' + stringified;
           };
-          st.Components(stConfig.components);
+          st.Components(stConfig.cybertonica.apikey, stConfig.components);
           st.ApplePay(stConfig.applePay);
           st.VisaCheckout(stConfig.visaCheckout);
           document.getElementById('example-form-amount').addEventListener('input', function() {

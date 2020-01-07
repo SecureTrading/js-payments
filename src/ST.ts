@@ -11,12 +11,10 @@ import ApplePay from './core/integrations/ApplePay';
 import ApplePayMock from './core/integrations/ApplePayMock';
 import { CardinalCommerce } from './core/integrations/CardinalCommerce';
 import CardinalCommerceMock from './core/integrations/CardinalCommerceMock';
-import { Cybertonica } from './core/integrations/Cybertonica';
 import GoogleAnalytics from './core/integrations/GoogleAnalytics';
 import VisaCheckout from './core/integrations/VisaCheckout';
 import VisaCheckoutMock from './core/integrations/VisaCheckoutMock';
 import {
-  IByPassInit,
   IComponentsConfig,
   IComponentsConfigSchema,
   IConfig,
@@ -29,16 +27,7 @@ import { IStyles } from './core/shared/Styler';
 import Utils from './core/shared/Utils';
 import { environment } from './environments/environment';
 
-/**
- * Establishes connection with ST, defines client.
- */
 class ST {
-  get cybertonicaApiKey(): string {
-    return this._cybertonicaApiKey;
-  }
-  set cybertonicaApiKey(value: string) {
-    this._cybertonicaApiKey = value;
-  }
   private static DEFAULT_COMPONENTS = {
     cardNumber: Selectors.CARD_NUMBER_INPUT_SELECTOR,
     expirationDate: Selectors.EXPIRATION_DATE_INPUT_SELECTOR,
@@ -268,7 +257,6 @@ class ST {
   private _threedinit: string;
   private commonFrames: CommonFrames;
   private _messageBus: MessageBus;
-  private _cybertonicaApiKey: string;
   private _deferInit: boolean;
   private _buttonId: string;
 
@@ -284,7 +272,6 @@ class ST {
     this._animatedCard = animatedCard;
     this._buttonId = buttonId;
     this._submitCallback = submitCallback;
-    this.cybertonicaApiKey = config.cybertonica.apikey ? config.cybertonica.apikey : '';
     this._initGoogleAnalytics(analytics);
     this._config = ST._addDefaults(config);
     this._deferInit = deferInit;
@@ -306,12 +293,7 @@ class ST {
     ST._configureMerchantFields();
   }
 
-  /**
-   * If startOnLoad is false, initializes all necessary components, otherwise proceeds immediate payment configuration.
-   * @param config
-   * @constructor
-   */
-  public Components(config?: IComponentsConfig) {
+  public Components(cybertonicaApiKey: string, config?: IComponentsConfig) {
     const { targetConfig } = ST._setConfigObject(config);
     ST._validateConfig(targetConfig, IComponentsConfigSchema);
     ST._configureCardFrames(
@@ -323,11 +305,10 @@ class ST {
       this._animatedCard,
       this._deferInit,
       this._buttonId,
-      this.cybertonicaApiKey
+      cybertonicaApiKey
     );
     this.commonFrames.requestTypes = targetConfig.requestTypes;
     this.CardinalCommerce(targetConfig);
-    this.Cybertonica();
   }
 
   /**
@@ -384,14 +365,6 @@ class ST {
     );
   }
 
-  private Cybertonica() {
-    return new Cybertonica();
-  }
-
-  /**
-   * @param init
-   * @private
-   */
   private _initGoogleAnalytics(init: boolean) {
     if (init) {
       const ga = new GoogleAnalytics();
@@ -400,11 +373,6 @@ class ST {
     }
   }
 
-  /**
-   * Sets class properties based on configuration indicated by merchant.
-   * @param config
-   * @private
-   */
   private _setClassProperties(config: IConfig) {
     const {
       componentIds,
