@@ -12,11 +12,6 @@ describe('RegisterFrames', () => {
       // @ts-ignore
       instance.onInit();
     });
-    // then
-    it('should call registerElements method with elementsToRegister and elementsTargets', () => {
-      // @ts-ignore
-      expect(instance.registerElements).toHaveBeenCalledWith([], []);
-    });
   });
   // given
   describe('registerElements', () => {
