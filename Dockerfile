@@ -1,6 +1,7 @@
 FROM securetrading1/js-payments-image:master as builder
 
 COPY . /app/js-payments
+COPY src/environments/environment.test.ts /app/js-payments/src/environments/environment.ts
 WORKDIR /app/js-payments
 RUN npm rebuild node-sass
 RUN npm config set js-payments:host merchant.example.com
