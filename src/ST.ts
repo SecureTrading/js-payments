@@ -318,6 +318,11 @@ class ST {
     }
   }
 
+  public googleAnalytics() {
+    this._googleAnalytics = new GoogleAnalytics();
+    this._googleAnalytics.init();
+  }
+
   private CardinalCommerce(config: IWalletConfig) {
     const cardinal = environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce;
     return new cardinal(
@@ -328,11 +333,6 @@ class ST {
       this._cachetoken,
       this._threedinit
     );
-  }
-
-  public googleAnalytics() {
-    this._googleAnalytics = new GoogleAnalytics();
-    this._googleAnalytics.init();
   }
 
   private _setClassProperties(config: IConfig) {
