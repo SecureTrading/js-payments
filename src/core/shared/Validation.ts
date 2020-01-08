@@ -13,7 +13,6 @@ const {
 } = Language.translations;
 
 export default class Validation extends Frame {
-  private static readonly CLEAR_VALUE: string = '';
   public static ERROR_FIELD_CLASS: string = 'error-field';
 
   public static isCharNumber(event: KeyboardEvent) {
@@ -29,6 +28,23 @@ export default class Validation extends Frame {
 
   public static setCustomValidationError(inputElement: HTMLInputElement, errorContent: string) {
     inputElement.setCustomValidity(errorContent);
+  }
+
+  public static addErrorContainer(inputElement: HTMLInputElement, inputTarget: InsertPosition, errorContent: string) {
+    inputElement.insertAdjacentHTML(inputTarget, errorContent);
+  }
+
+  public static resetValidationProperties(input: HTMLInputElement): void {
+    input.setCustomValidity(Validation.CLEAR_VALUE);
+    input.classList.remove(Validation.ERROR_FIELD_CLASS);
+    input.nextSibling.textContent = Validation.CLEAR_VALUE;
+  }
+
+  public static returnInputAndErrorContainerPair(item: HTMLInputElement) {
+    return {
+      inputElement: document.getElementById(item.id) as HTMLInputElement,
+      messageElement: document.getElementById(item.id).nextSibling as HTMLElement
+    };
   }
 
   public static getValidationMessage(validityState: ValidityState): string {
@@ -48,14 +64,6 @@ export default class Validation extends Frame {
     return validationMessage;
   }
 
-  public static setMerchantInputErrorMessage(input: HTMLInputElement): void {
-    input.nextSibling.textContent = Validation.CLEAR_VALUE;
-  }
-
-  public static removeClassFromClassList(input: HTMLInputElement, className: string) {
-    input.classList.remove(className);
-  }
-
   private static BACKEND_ERROR_FIELDS_NAMES = {
     cardNumber: 'pan',
     expirationDate: 'expirydate',
@@ -64,6 +72,7 @@ export default class Validation extends Frame {
   private static ENTER_KEY_CODE = 13;
   private static ONLY_DIGITS_REGEXP = /^[0-9]*$/;
   private static readonly MERCHANT_EXTRA_FIELDS_PREFIX = 'billing';
+  private static readonly CLEAR_VALUE: string = '';
 
   public validation: IValidation;
   protected _messageBus: MessageBus;
@@ -230,7 +239,11 @@ export default class Validation extends Frame {
     const { message } = data;
     if (messageElement && message) {
       if (messageElement.innerText !== Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH) {
-        messageElement.innerText = this._translator.translate(message);
+        if (messageElement.innerText === undefined) {
+          inputElement.nextSibling.textContent = this._translator.translate(message);
+        } else {
+          messageElement.textContent = this._translator.translate(message);
+        }
         inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
         inputElement.setCustomValidity(message);
       }
