@@ -15,7 +15,6 @@ import GoogleAnalytics from './core/integrations/GoogleAnalytics';
 import VisaCheckout from './core/integrations/VisaCheckout';
 import VisaCheckoutMock from './core/integrations/VisaCheckoutMock';
 import {
-  IByPassInit,
   IComponentsConfig,
   IComponentsConfigSchema,
   IConfig,
@@ -28,9 +27,6 @@ import { IStyles } from './core/shared/Styler';
 import Utils from './core/shared/Utils';
 import { environment } from './environments/environment';
 
-/**
- * Establishes connection with ST, defines client.
- */
 class ST {
   private static DEFAULT_COMPONENTS = {
     cardNumber: Selectors.CARD_NUMBER_INPUT_SELECTOR,
@@ -45,22 +41,12 @@ class ST {
   };
   private static TRANSLATION_STORAGE_NAME = 'merchantTranslations';
 
-  /**
-   * Collect and set default values for _config object.
-   * @param config
-   * @private
-   */
   private static _addDefaults(config: IConfig) {
     const configWithFeatures = ST._addDefaultFeatures(config);
     const configWithSubmitFields = ST._addDefaultSubmitFields(configWithFeatures);
     return ST._addDefaultComponentIds(configWithSubmitFields);
   }
 
-  /**
-   * Adds default submit fields if merchant didn't specified once.
-   * @param config
-   * @private
-   */
   private static _addDefaultFeatures(config: IConfig) {
     const defaultFeatures: IConfig = config;
     defaultFeatures.origin = config.origin ? config.origin : window.location.origin;
@@ -70,11 +56,6 @@ class ST {
     return defaultFeatures;
   }
 
-  /**
-   * Adds default submit fields if merchant didn't specified once.
-   * @param config
-   * @private
-   */
   private static _addDefaultSubmitFields(config: IConfig) {
     const defaultSubmitFields: IConfig = config;
     defaultSubmitFields.submitFields = config.submitFields
@@ -95,11 +76,6 @@ class ST {
     return defaultSubmitFields;
   }
 
-  /**
-   * Adds default component Ids if merchant didn't specified once.
-   * @param config
-   * @private
-   */
   private static _addDefaultComponentIds(config: IConfig) {
     const defaultConfig: IConfig = config;
     const { animatedCard, componentIds, styles } = config;
@@ -122,11 +98,6 @@ class ST {
     return defaultConfig;
   }
 
-  /**
-   * Checks if configuration object provided by merchant corresponds to default in library.
-   * @param componentIds
-   * @private
-   */
   private static _hasConfigurationObjectsSameLength(componentIds: any): boolean {
     const isConfigurationCorrect: boolean =
       Object.keys(componentIds).length === Object.keys(ST.EXTENDED_CONFIGURATION).length ||
@@ -139,12 +110,6 @@ class ST {
     return isConfigurationCorrect;
   }
 
-  /**
-   * Uses HapiJS Joi library - object schema description language and validator for JavaScript objects.
-   * Checks _config object data provided by merchant.
-   * @param config
-   * @param schema
-   */
   private static _validateConfig(config: IConfig | IComponentsConfig, schema: Joi.JoiObject) {
     Joi.validate(config, schema, (error, value) => {
       if (error !== null) {
@@ -153,11 +118,6 @@ class ST {
     });
   }
 
-  /**
-   * Prepares target configuration object.
-   * @param config
-   * @private
-   */
   private static _setConfigObject(config: IComponentsConfig) {
     let targetConfig: IComponentsConfig;
     targetConfig = config ? config : ({} as IComponentsConfig);
@@ -167,20 +127,6 @@ class ST {
     return { targetConfig };
   }
 
-  /**
-   *
-   * @param jwt
-   * @param origin
-   * @param componentIds
-   * @param styles
-   * @param submitOnSuccess
-   * @param submitOnError
-   * @param submitFields
-   * @param gatewayUrl
-   * @param animatedCard
-   * @param submitCallback
-   * @private
-   */
   private static _configureCommonFrames(
     jwt: string,
     origin: string,
@@ -205,13 +151,6 @@ class ST {
       animatedCard,
       submitCallback
     );
-  }
-
-  /**
-   * Adds fields form merchants form as part of library flow (eg. fields validation).
-   */
-  private static _configureMerchantFields() {
-    return new MerchantFields();
   }
 
   private static _configureCardFrames(
@@ -297,11 +236,6 @@ class ST {
     this._merchantFields.init();
   }
 
-  /**
-   * If startOnLoad is false, initializes all necessary components, otherwise proceeds immediate payment configuration.
-   * @param config
-   * @constructor
-   */
   public Components(config?: IComponentsConfig) {
     const { targetConfig } = ST._setConfigObject(config);
     ST._validateConfig(targetConfig, IComponentsConfigSchema);
@@ -319,31 +253,18 @@ class ST {
     this.CardinalCommerce(targetConfig);
   }
 
-  /**
-   * Initializes Apple Pay APM.
-   * @param config
-   * @constructor
-   */
   public ApplePay(config: IWalletConfig) {
     const applepay = environment.testEnvironment ? ApplePayMock : ApplePay;
     config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
     return new applepay(config, this._jwt, this._gatewayUrl);
   }
 
-  /**
-   * Initializes Visa Checkout APM.
-   * @param config
-   * @constructor
-   */
   public VisaCheckout(config: IWalletConfig) {
     const visa = environment.testEnvironment ? VisaCheckoutMock : VisaCheckout;
     config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
     return new visa(config, this._jwt, this._gatewayUrl, this._livestatus);
   }
 
-  /**
-   * @param newJWT
-   */
   public updateJWT(newJWT: string) {
     if (newJWT) {
       this._jwt = newJWT;
@@ -356,11 +277,6 @@ class ST {
     }
   }
 
-  /**
-   * Initializes Cardinal Commerce configuration.
-   * @param config
-   * @constructor
-   */
   private CardinalCommerce(config: IWalletConfig) {
     const cardinal = environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce;
     return new cardinal(
@@ -373,10 +289,6 @@ class ST {
     );
   }
 
-  /**
-   * @param init
-   * @private
-   */
   private _initGoogleAnalytics(init: boolean) {
     if (init) {
       const ga = new GoogleAnalytics();
@@ -385,11 +297,6 @@ class ST {
     }
   }
 
-  /**
-   * Sets class properties based on configuration indicated by merchant.
-   * @param config
-   * @private
-   */
   private _setClassProperties(config: IConfig) {
     const {
       componentIds,
