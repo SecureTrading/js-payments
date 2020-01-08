@@ -42,7 +42,7 @@
   },
   "components": {},
   "cybertonica": {
-    "apikey": "test"
+    "apikey": ""
   },
   "applePay": {
     "buttonStyle": "white-outline",
