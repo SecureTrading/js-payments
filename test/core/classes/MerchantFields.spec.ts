@@ -4,85 +4,31 @@ import MessageBus from '../../../src/core/shared/MessageBus';
 // given
 describe('MerchantField', () => {
   // given
-  describe('findAllMerchantInputs()', () => {
+  describe('init()', () => {
     // when
-    const { receivedMerchantFieldsArray, instance } = merchantFieldsFixture();
-
-    // then
-    it('should return an array with fields names', () => {
-      expect(instance.findAllMerchantInputs()).toEqual(receivedMerchantFieldsArray);
-    });
-  });
-
-  // given
-  describe('backendValidation()', () => {
     const { instance } = merchantFieldsFixture();
-    const element = document.createElement('input');
-    const data = {
-      field: 'some field',
-      message: 'some message'
-    };
 
-    // then
-    it('should subscribe listener has been called', () => {
-      // @ts-ignore
-      instance._messageBus.subscribe = jest.fn();
-      // @ts-ignore
-      instance._validation.checkBackendValidity = jest.fn();
-      // @ts-ignore
-      instance._validation.validate = jest.fn();
-      // @ts-ignore
-      instance._backendValidation(element, MessageBus.EVENTS.VALIDATE_MERCHANT_FIELD);
-      // @ts-ignore
-      expect(instance._messageBus.subscribe).toHaveBeenCalled();
-    });
-
-    // then
-    it('should checkBackendValidity and validate methods has been called', () => {
-      // @ts-ignore
-      instance._messageBus.subscribe = jest.fn().mockImplementationOnce((event, callback) => {
-        callback(data);
-      });
-
-      // @ts-ignore
-      instance._backendValidation(element, MessageBus.EVENTS.VALIDATE_MERCHANT_FIELD);
-      // @ts-ignore
-      expect(instance._validation.checkBackendValidity).toHaveBeenCalled();
-      // @ts-ignore
-      expect(instance._validation.validate).toHaveBeenCalled();
-    });
-  });
-
-  // given
-  describe('_addKeypressListener()', () => {
-    const { instance } = merchantFieldsFixture();
-    const body = document.createElement('div');
-    const element = document.createElement('input');
-    body.appendChild(element);
-    element.insertAdjacentHTML('afterend', `<div class="error-label"></div>`);
     // when
     beforeEach(() => {
-      element.addEventListener = jest.fn();
-      element.setCustomValidity = jest.fn();
-      element.classList.remove = jest.fn();
-      element.nextSibling.textContent = 'error';
-    });
-    // then
-    it('should call addEventListener', () => {
       // @ts-ignore
-      instance._addKeypressListener(element);
-      expect(element.addEventListener).toHaveBeenCalled();
+      instance._onKeyPress = jest.fn();
+      instance.init();
     });
 
     // then
-    it('should call setCustomValidity and classList.remove', () => {
-      element.addEventListener = jest.fn().mockImplementationOnce((event, callback) => {
-        callback();
-      });
+    it('should call _onKeyPress', () => {
       // @ts-ignore
-      instance._addKeypressListener(element);
-      expect(element.setCustomValidity).toHaveBeenCalled();
-      expect(element.classList.remove).toHaveBeenCalled();
+      expect(instance._onKeyPress).toHaveBeenCalled();
+    });
+
+    // then
+    it('should return collection of merchant inputs', () => {
+      const firstName = document.getElementById('example-form-name');
+      const email = document.getElementById('example-form-email');
+      // @ts-ignore
+      expect(instance._getMerchantInputs()).toEqual({
+        inputs: [firstName, email]
+      });
     });
   });
 });

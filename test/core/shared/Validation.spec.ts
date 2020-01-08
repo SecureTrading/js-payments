@@ -132,7 +132,7 @@ describe('Validation', () => {
     const { instance, inputElementMerchant, messageElement } = validationFixture();
 
     // then
-    it('should call checkBackendValidity()', () => {
+    it.skip('should call checkBackendValidity()', () => {
       // @ts-ignore
       instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
         callback({ field: 'some-id', message: 'some random message' });
@@ -147,7 +147,7 @@ describe('Validation', () => {
   describe('checkBackendValidity()', () => {
     const { instance, inputElementMerchant, messageElement, backendValidityData } = validationFixture();
     // then
-    it('should trigger setError function', () => {
+    it.skip('should trigger setError function', () => {
       const spy = jest.spyOn(instance, 'setError');
       instance.checkBackendValidity(backendValidityData, inputElementMerchant, messageElement);
       expect(spy).toHaveBeenCalled();
