@@ -259,6 +259,7 @@ class ST {
   private _threedinit: string;
   private commonFrames: CommonFrames;
   private _messageBus: MessageBus;
+  private _merchantFields: MerchantFields;
   private _deferInit: boolean;
   private _buttonId: string;
 
@@ -270,6 +271,7 @@ class ST {
       this._threedinit = threedinit;
     }
     this._messageBus = new MessageBus();
+    this._merchantFields = new MerchantFields();
     this._livestatus = livestatus;
     this._animatedCard = animatedCard;
     this._buttonId = buttonId;
@@ -292,7 +294,7 @@ class ST {
       this._animatedCard,
       this._submitCallback
     );
-    ST._configureMerchantFields();
+    this._merchantFields.init();
   }
 
   /**
