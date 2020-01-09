@@ -6,7 +6,6 @@ const StyleLintPlugin = require('stylelint-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-const config = require('./src/json/credentials.json');
 
 module.exports = {
   entry: {
@@ -98,13 +97,10 @@ module.exports = {
     ]),
     new CopyPlugin([
       {
-        from: 'src/json/config.json',
+        from: 'src/json',
         to: 'json',
         test: /([^/]+)\/(.+)\.json$/,
-        force: true,
-        transform(content, path) {
-          return modifyConfigFile(content);
-        }
+        force: true
       }
     ]),
     new StyleLintPlugin(),
@@ -168,11 +164,3 @@ module.exports = {
     extensions: ['.ts', '.js']
   }
 };
-
-function modifyConfigFile(buffer) {
-  const file = JSON.parse(buffer.toString());
-  file.jwt = config.jwt;
-  file.applePay.merchantId = config.applePay.merchantId;
-  file.visaCheckout.merchantId = config.visaCheckout.merchantId;
-  return JSON.stringify(file, null, 2);
-}
