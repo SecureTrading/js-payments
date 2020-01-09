@@ -237,17 +237,29 @@ export default class Validation extends Frame {
     data: IMessageBusValidateField
   ) {
     const { message } = data;
-    if (messageElement && message) {
-      if (messageElement.innerText !== Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH) {
-        if (messageElement.innerText === undefined) {
-          inputElement.nextSibling.textContent = this._translator.translate(message);
-        } else {
-          messageElement.textContent = this._translator.translate(message);
-        }
-        inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
-        inputElement.setCustomValidity(message);
-      }
+
+    if (
+      messageElement &&
+      message &&
+      messageElement.innerText !== Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH &&
+      messageElement.innerText === undefined
+    ) {
+      inputElement.nextSibling.textContent = this._translator.translate(message);
+      inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
+      inputElement.setCustomValidity(message);
     }
-    inputElement.setCustomValidity(data.message);
+
+    if (
+      messageElement &&
+      message &&
+      messageElement.innerText !== Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH &&
+      messageElement.innerText !== undefined
+    ) {
+      messageElement.textContent = this._translator.translate(message);
+      inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
+      inputElement.setCustomValidity(message);
+    }
+
+    inputElement.setCustomValidity(message);
   }
 }
