@@ -1,4 +1,4 @@
 interface IMessageBusEvent {
-  type: string;
   data?: any;
+  type: string;
 }

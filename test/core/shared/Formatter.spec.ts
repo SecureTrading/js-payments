@@ -1,70 +1,23 @@
-import each from 'jest-each';
 import Formatter from '../../../src/core/shared/Formatter';
+import Selectors from '../../../src/core/shared/Selectors';
 
 // given
 describe('Formatter', () => {
-  // given
-  describe('Formatter.trimNonNumeric', () => {
-    // then
-    const { trimNonNumeric } = formatterFixture();
-    each(trimNonNumeric).it(
-      'should remove whitespaces and non-numeric characters from given string',
-      (given: string, expected: string) => {
-        expect(Formatter.trimNonNumeric(given)).toBe(expected);
-      }
-    );
-  });
+  describe('number', () => {});
 
-  // given
-  describe('Formatter.trimNonNumericExceptSlash', () => {
-    const { trimNonNumericExceptSlash } = formatterFixture();
-    // then
-    each(trimNonNumericExceptSlash).it(
-      'should remove whitespaces and non-numeric characters from given string except slash',
-      (given: string, expected: string) => {
-        expect(Formatter.trimNonNumericExceptSlash(given)).toBe(expected);
-      }
-    );
-  });
-
-  // given
-  describe('Formatter.trimNonNumericExceptSpace', () => {
-    const { trimNonNumericExceptSpace } = formatterFixture();
-    // then
-    each(trimNonNumericExceptSpace).it(
-      'should remove whitespaces and non-numeric characters from given string except space',
-      (given: string, expected: string) => {
-        expect(Formatter.trimNonNumericExceptSpace(given)).toBe(expected);
-      }
-    );
-  });
-
-  // given
-  describe('Formatter.maskExpirationDate', () => {
-    const { maskExpirationDate } = formatterFixture();
-    // then
-    each(maskExpirationDate).it('should return given date in format MM/YY', (given: string, expected: string) => {
-      expect(Formatter.maskExpirationDate(given)).toBe(expected);
+  describe('date', () => {
+    const { instance } = formatterFixture();
+    it('should return fixed date', () => {
+      expect(instance.date('123', Selectors.EXPIRATION_DATE_INPUT)).toEqual('12/3');
     });
-  });
-
-  // given
-  describe('Formatter.maskExpirationDateOnPaste', () => {
-    const { maskExpirationDateOnPaste } = formatterFixture();
-    beforeEach(() => {
-      Formatter.maskExpirationDateOnPaste('1111');
-    });
-    // then
-    each(maskExpirationDateOnPaste).it(
-      'should return given date in format MM/YY',
-      (given: string, expected: string) => {
-        expect(Formatter.maskExpirationDateOnPaste(given)).toEqual(expected);
-      }
-    );
   });
 });
 
 function formatterFixture() {
+  const html =
+    '<form id="st-expiration-date" class="expiration-date" novalidate=""> <label id="st-expiration-date-label" for="st-expiration-date-input" class="expiration-date__label expiration-date__label--required">Expiration date</label> <input id="st-expiration-date-input" class="expiration-date__input error-field" type="text" autocomplete="off" autocorrect="off" spellcheck="false" inputmode="numeric" required="" data-dirty="true" data-pristine="false" data-validity="false" data-clicked="false" pattern="^(0[1-9]|1[0-2])\\/([0-9]{2})$"> <div id="st-expiration-date-message" class="expiration-date__message">Field is required</div> </form>';
+  document.body.innerHTML = html;
+  const instance = new Formatter();
   const trimNonNumeric = [['123', '123'], ['  1  2  3  ', '123'], ['a1A2A3a', '123'], ['a 1 A2A 3a .! ', '123']];
   const trimNonNumericExceptSlash = [['1/2', '1/2'], ['///', '///'], ['df/33', '/33'], ['@#$333!!!#', '333']];
   const trimNonNumericExceptSpace = [['a 1  A2A 3a .! ', ' 1  2 3 '], ['3 33 34 ', '3 33 34'], ['11$% 11', '11 11']];
@@ -79,6 +32,7 @@ function formatterFixture() {
     ['aa3', '3']
   ];
   return {
+    instance,
     maskExpirationDate,
     maskExpirationDateOnPaste,
     trimNonNumeric,

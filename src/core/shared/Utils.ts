@@ -137,4 +137,24 @@ export default class Utils {
       return false;
     }
   }
+
+  /**
+   * Sets attributes for DOM element given in parameter.
+   * @param attributes
+   * @param element
+   */
+  public static setElementAttributes(attributes: any, element: HTMLInputElement) {
+    // tslint:disable-next-line: forin
+    for (const attribute in attributes) {
+      const value = attributes[attribute];
+      if (Utils.inArray(['value'], attribute)) {
+        // @ts-ignore
+        element[attribute] = value;
+      } else if (value === false) {
+        element.removeAttribute(attribute);
+      } else {
+        element.setAttribute(attribute, value);
+      }
+    }
+  }
 }

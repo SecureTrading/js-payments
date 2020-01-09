@@ -13,8 +13,8 @@ interface IParams {
 }
 
 export default class Frame {
-  protected _messageBus: MessageBus;
-  protected _params: IParams;
+  protected messageBus: MessageBus;
+  protected params: IParams;
 
   public parseUrl() {
     const parsedUrl = new URL(window.location.href);
@@ -33,12 +33,12 @@ export default class Frame {
   }
 
   public applyStyles() {
-    new Styler(this.getAllowedStyles()).inject(this._params.styles);
+    new Styler(this.getAllowedStyles()).inject(this.params.styles);
   }
 
   protected onInit() {
-    this._params = this.parseUrl();
-    this._messageBus = new MessageBus(this._params.origin);
+    this.params = this.parseUrl();
+    this.messageBus = new MessageBus(this.params.origin);
     this.applyStyles();
   }
 

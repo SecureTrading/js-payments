@@ -4,3 +4,5 @@ interface IFormFieldState {
   formattedValue?: string;
   customErrorMessage?: string;
 }
+
+export { IFormFieldState };
