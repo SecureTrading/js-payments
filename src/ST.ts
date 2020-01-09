@@ -245,7 +245,7 @@ class ST {
   private _buttonId: string;
 
   constructor(config: IConfig) {
-    const { animatedCard, buttonId, deferInit, init, livestatus, submitCallback, translations } = config;
+    const { analytics, animatedCard, buttonId, deferInit, init, livestatus, submitCallback, translations } = config;
     if (init) {
       const { cachetoken, threedinit } = init;
       this._cachetoken = cachetoken;
@@ -256,6 +256,7 @@ class ST {
     this._animatedCard = animatedCard;
     this._buttonId = buttonId;
     this._submitCallback = submitCallback;
+    this._analytics(analytics);
     this._config = ST._addDefaults(config);
     this._deferInit = deferInit;
     Utils.setLocalStorageItem(ST.TRANSLATION_STORAGE_NAME, translations);
@@ -318,9 +319,11 @@ class ST {
     }
   }
 
-  public googleAnalytics() {
-    this._googleAnalytics = new GoogleAnalytics();
-    this._googleAnalytics.init();
+  private _analytics(enable: boolean) {
+    if (enable) {
+      this._googleAnalytics = new GoogleAnalytics();
+      this._googleAnalytics.init();
+    }
   }
 
   private CardinalCommerce(config: IWalletConfig) {

@@ -2,6 +2,7 @@ import Joi from 'joi';
 import { IStyles } from '../shared/Styler';
 
 interface IConfig {
+  analytics?: boolean;
   animatedCard: boolean;
   buttonId?: string;
   componentIds?: any;
@@ -44,6 +45,7 @@ interface ICybertonicaConfig {
 }
 
 const IConfigSchema: Joi.JoiObject = Joi.object().keys({
+  analytics: Joi.boolean(),
   animatedCard: Joi.boolean(),
   applePay: {
     buttonStyle: Joi.string(),
