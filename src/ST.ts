@@ -41,22 +41,12 @@ class ST {
   };
   private static TRANSLATION_STORAGE_NAME = 'merchantTranslations';
 
-  /**
-   * Collect and set default values for _config object.
-   * @param config
-   * @private
-   */
   private static _addDefaults(config: IConfig) {
     const configWithFeatures = ST._addDefaultFeatures(config);
     const configWithSubmitFields = ST._addDefaultSubmitFields(configWithFeatures);
     return ST._addDefaultComponentIds(configWithSubmitFields);
   }
 
-  /**
-   * Adds default submit fields if merchant didn't specified once.
-   * @param config
-   * @private
-   */
   private static _addDefaultFeatures(config: IConfig) {
     const defaultFeatures: IConfig = config;
     defaultFeatures.origin = config.origin ? config.origin : window.location.origin;
@@ -66,11 +56,6 @@ class ST {
     return defaultFeatures;
   }
 
-  /**
-   * Adds default submit fields if merchant didn't specified once.
-   * @param config
-   * @private
-   */
   private static _addDefaultSubmitFields(config: IConfig) {
     const defaultSubmitFields: IConfig = config;
     defaultSubmitFields.submitFields = config.submitFields
@@ -91,11 +76,6 @@ class ST {
     return defaultSubmitFields;
   }
 
-  /**
-   * Adds default component Ids if merchant didn't specified once.
-   * @param config
-   * @private
-   */
   private static _addDefaultComponentIds(config: IConfig) {
     const defaultConfig: IConfig = config;
     const { animatedCard, componentIds, styles } = config;
@@ -118,11 +98,6 @@ class ST {
     return defaultConfig;
   }
 
-  /**
-   * Checks if configuration object provided by merchant corresponds to default in library.
-   * @param componentIds
-   * @private
-   */
   private static _hasConfigurationObjectsSameLength(componentIds: any): boolean {
     const isConfigurationCorrect: boolean =
       Object.keys(componentIds).length === Object.keys(ST.EXTENDED_CONFIGURATION).length ||
@@ -135,12 +110,6 @@ class ST {
     return isConfigurationCorrect;
   }
 
-  /**
-   * Uses HapiJS Joi library - object schema description language and validator for JavaScript objects.
-   * Checks _config object data provided by merchant.
-   * @param config
-   * @param schema
-   */
   private static _validateConfig(config: IConfig | IComponentsConfig, schema: Joi.JoiObject) {
     Joi.validate(config, schema, (error, value) => {
       if (error !== null) {
@@ -149,11 +118,6 @@ class ST {
     });
   }
 
-  /**
-   * Prepares target configuration object.
-   * @param config
-   * @private
-   */
   private static _setConfigObject(config: IComponentsConfig) {
     let targetConfig: IComponentsConfig;
     targetConfig = config ? config : ({} as IComponentsConfig);
@@ -228,7 +192,6 @@ class ST {
   private _cachetoken: string;
   private _componentIds: {};
   private _gatewayUrl: string;
-  private _googleAnalytics: GoogleAnalytics;
   private _jwt: string;
   private _origin: string;
   private _styles: IStyles;
@@ -256,7 +219,7 @@ class ST {
     this._animatedCard = animatedCard;
     this._buttonId = buttonId;
     this._submitCallback = submitCallback;
-    this._analytics(analytics);
+    this._initGoogleAnalytics(analytics);
     this._config = ST._addDefaults(config);
     this._deferInit = deferInit;
     Utils.setLocalStorageItem(ST.TRANSLATION_STORAGE_NAME, translations);
@@ -319,13 +282,6 @@ class ST {
     }
   }
 
-  private _analytics(enable: boolean) {
-    if (enable) {
-      this._googleAnalytics = new GoogleAnalytics();
-      this._googleAnalytics.init();
-    }
-  }
-
   private CardinalCommerce(config: IWalletConfig) {
     const cardinal = environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce;
     return new cardinal(
@@ -336,6 +292,14 @@ class ST {
       this._cachetoken,
       this._threedinit
     );
+  }
+
+  private _initGoogleAnalytics(init: boolean) {
+    if (init) {
+      const ga = new GoogleAnalytics();
+    } else {
+      return false;
+    }
   }
 
   private _setClassProperties(config: IConfig) {
