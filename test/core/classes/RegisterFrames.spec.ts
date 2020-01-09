@@ -12,6 +12,11 @@ describe('RegisterFrames', () => {
       // @ts-ignore
       instance.onInit();
     });
+    // then
+    it('should call registerElements method with elementsToRegister and elementsTargets', () => {
+      // @ts-ignore
+      expect(instance.registerElements).toHaveBeenCalledWith([], []);
+    });
   });
   // given
   describe('registerElements', () => {
@@ -114,10 +119,6 @@ function registerFramesFixture() {
       'line-height-input': '12px'
     }
   };
-  const instance = new RegisterFrames(jwt, origin, componentsIds, styles, animatedCard, [
-    'pan',
-    'expirydate',
-    'securitycode'
-  ]);
+  const instance = new RegisterFrames(jwt, origin, componentsIds, styles, animatedCard);
   return { instance, fields, targets, cardNumberField, securityCodeField, expirationDateField };
 }

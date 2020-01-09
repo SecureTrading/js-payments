@@ -42,7 +42,7 @@ describe('Frame', () => {
       expect(frame.parseUrl).toHaveBeenCalledTimes(1);
       expect(frame.applyStyles).toHaveBeenCalledTimes(1);
       // @ts-ignore
-      expect(frame.params).toMatchObject({ origin: 'https://example.com' });
+      expect(frame._params).toMatchObject({ origin: 'https://example.com' });
     });
   });
 });

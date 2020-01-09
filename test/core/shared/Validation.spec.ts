@@ -29,7 +29,7 @@ describe('Validation', () => {
   });
 
   // given
-  describe('isKeyEnter()', () => {
+  describe('isEnter()', () => {
     const { keyCodeForOther, keyCodeForEnter, eventWithOther, eventWithEnter } = validationFixture();
     // then
     it(`should return true if indicated keyCode is equal ${keyCodeForEnter}`, () => {
@@ -47,12 +47,12 @@ describe('Validation', () => {
     const { instance } = validationFixture();
     // then
     it('should return state of blocking action equals true if MessageBus event data is true', () => {
-      expect(instance.blockForm(true)).toBe(undefined);
+      expect(instance.blockForm(true)).toBe(true);
     });
 
     // then
     it('should return state of blocking action equals false if MessageBus event data is false', () => {
-      expect(instance.blockForm(false)).toBe(undefined);
+      expect(instance.blockForm(false)).toBe(false);
     });
   });
 
@@ -125,6 +125,35 @@ describe('Validation', () => {
       expect(inputElement.checkValidity()).toEqual(true);
     });
   });
+
+  // given
+  describe('backendValidation()', () => {
+    // when
+    const { instance, inputElementMerchant, messageElement } = validationFixture();
+
+    // then
+    it.skip('should call checkBackendValidity()', () => {
+      // @ts-ignore
+      instance._messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
+        callback({ field: 'some-id', message: 'some random message' });
+      });
+      const spy = jest.spyOn(instance, 'checkBackendValidity');
+      instance.backendValidation(inputElementMerchant, messageElement, MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD);
+      expect(spy).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('checkBackendValidity()', () => {
+    const { instance, inputElementMerchant, messageElement, backendValidityData } = validationFixture();
+    // then
+    it.skip('should trigger setError function', () => {
+      const spy = jest.spyOn(instance, 'setError');
+      instance.checkBackendValidity(backendValidityData, inputElementMerchant, messageElement);
+      expect(spy).toHaveBeenCalled();
+    });
+  });
+
   // given
   describe('_toggleErrorClass()', () => {
     const { instance, inputElement } = validationFixture();
@@ -132,7 +161,7 @@ describe('Validation', () => {
     it('should remove error class if field is valid', () => {
       inputElement.setCustomValidity('');
       // @ts-ignore
-      Validation._toggleErrorClass(inputElement);
+      instance._toggleErrorClass(inputElement);
       expect(inputElement.classList.contains(Validation.ERROR_FIELD_CLASS)).toEqual(false);
     });
 
@@ -140,13 +169,13 @@ describe('Validation', () => {
     it('should add error class if field is invalid', () => {
       inputElement.setCustomValidity('some error');
       // @ts-ignore
-      Validation._toggleErrorClass(inputElement);
+      instance._toggleErrorClass(inputElement);
       expect(inputElement.classList.contains(Validation.ERROR_FIELD_CLASS)).toEqual(true);
     });
   });
 
   // given
-  describe('_getTranslation()', () => {
+  describe('_getProperTranslation()', () => {
     const { instance, inputElement, messageElement, someRandomMessage } = validationFixture();
     const customErrorMessage = 'Some message';
     const isCardNumberInput = true;
@@ -155,7 +184,7 @@ describe('Validation', () => {
     it(`should return '${customErrorMessage}' when it's not card number input and has messageElement and customErrorMessage defined`, () => {
       expect(
         // @ts-ignore
-        instance._getTranslation(
+        instance._getProperTranslation(
           inputElement,
           isNotCardNumberInput,
           someRandomMessage,
@@ -171,14 +200,20 @@ describe('Validation', () => {
       inputElement.value = '123';
       expect(
         // @ts-ignore
-        instance._getTranslation(inputElement, isCardNumberInput, someRandomMessage, messageElement, customErrorMessage)
+        instance._getProperTranslation(
+          inputElement,
+          isCardNumberInput,
+          someRandomMessage,
+          messageElement,
+          customErrorMessage
+        )
       ).toEqual(someRandomMessage);
     });
     // then
     it(`should return '${someRandomMessage}' when it's card number input and has messageElement and customErrorMessage is not defined`, () => {
       expect(
         // @ts-ignore
-        instance._getTranslation(inputElement, isNotCardNumberInput, someRandomMessage, messageElement)
+        instance._getProperTranslation(inputElement, isNotCardNumberInput, someRandomMessage, messageElement)
       ).toEqual(someRandomMessage);
     });
     // then
@@ -188,8 +223,36 @@ describe('Validation', () => {
       inputElement.setCustomValidity('test');
       expect(
         // @ts-ignore
-        instance._getTranslation(inputElement, isCardNumberInput, someRandomMessage, messageElement)
+        instance._getProperTranslation(inputElement, isCardNumberInput, someRandomMessage, messageElement)
       ).toEqual(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
+    });
+  });
+
+  // given
+  describe('luhnCheckValidation', () => {
+    const { instance, inputElement, luhnPassed, luhnFailed, divElement } = validationFixture();
+
+    // then
+    it(`should call setCustomValidity with ${
+      Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH
+    } when luhn check passed`, () => {
+      inputElement.setCustomValidity = jest.fn();
+      instance.luhnCheckValidation(luhnPassed, inputElement, inputElement, divElement);
+      expect(inputElement.setCustomValidity).toBeCalled();
+    });
+
+    // then
+    it(`should call validate method when luhn check passed`, () => {
+      const spyValidate = jest.spyOn(instance, 'validate');
+      instance.luhnCheckValidation(luhnFailed, inputElement, inputElement, divElement);
+      expect(spyValidate).toHaveBeenCalled();
+    });
+
+    // then
+    it('should call setCustomValidity with empty string when luhn check passed', () => {
+      inputElement.setCustomValidity = jest.fn();
+      instance.luhnCheckValidation(luhnFailed, inputElement, inputElement, divElement);
+      expect(inputElement.setCustomValidity).toHaveBeenCalled();
     });
   });
 
@@ -208,26 +271,25 @@ describe('Validation', () => {
 
     // then
     it('should set _isFormValid and _isPaymentReady to true', () => {
+      instance.formValidation(true, true, formFields, false);
       // @ts-ignore
-      instance.formValidation(true, true, ['pan', 'expirydate', 'securitycode'], formFields, false, false);
-      // @ts-ignore
-      expect(instance._formValidity).toEqual(true);
+      expect(instance._isFormValid).toEqual(true);
       // @ts-ignore
       expect(instance._isPaymentReady).toEqual(true);
     });
 
     // then
     it('should call blockForm method if _isFormValid and _isPaymentReady are true', () => {
-      instance.formValidation(true, true, ['pan', 'expirydate', 'securitycode'], formFields, false, false);
+      instance.formValidation(true, true, formFields, false);
       // @ts-ignore
       expect(instance.blockForm).toHaveBeenCalled();
     });
 
     // then
     it('should set _isFormValid and _card variables if dataInJwt is false', () => {
-      instance.formValidation(false, true, ['pan', 'expirydate', 'securitycode'], formFields, false, false);
+      instance.formValidation(false, true, formFields, false);
       // @ts-ignore
-      expect(instance._formValidity).toEqual(false);
+      expect(instance._isFormValid).toEqual(false);
       // @ts-ignore
       expect(instance._card).toEqual({
         expirydate: 'expirydate',
@@ -247,14 +309,14 @@ describe('Validation', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
-      instance.messageBus.publish = jest.fn();
+      instance._messageBus.publish = jest.fn();
       instance.setFormValidity({ testValue: 'test value' });
     });
 
     // then
     it('should call publish event', () => {
       // @ts-ignore
-      expect(instance.messageBus.publish).toHaveBeenCalledWith(validationEvent, true);
+      expect(instance._messageBus.publish).toHaveBeenCalledWith(validationEvent, true);
     });
   });
 });

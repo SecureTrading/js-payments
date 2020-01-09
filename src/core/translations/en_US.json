@@ -21,6 +21,5 @@
   "Processing": "Processing",
   "Invalid field": "Invalid field",
   "Card number is invalid": "Card number is invalid",
-  "You are not logged to Apple account": "You are not logged to Apple account",
-  "A target element for the input field with id could not be found. Please check your configuration": "A target element for the input field with id could not be found. Please check your configuration"
+  "You are not logged to Apple account": "You are not logged to Apple account"
 }

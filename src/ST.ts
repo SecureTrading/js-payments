@@ -1,10 +1,9 @@
 import Joi from 'joi';
-import JwtDecode from 'jwt-decode';
 import 'location-origin';
 import { debounce } from 'lodash';
 import 'url-polyfill';
 import 'whatwg-fetch';
-import { CardFrames } from './core/classes/CardFrames.class';
+import CardFrames from './core/classes/CardFrames.class';
 import CommonFrames from './core/classes/CommonFrames.class';
 import { MerchantFields } from './core/classes/MerchantFields';
 import { StCodec } from './core/classes/StCodec.class';
@@ -24,7 +23,6 @@ import {
 } from './core/models/Config';
 import MessageBus from './core/shared/MessageBus';
 import Selectors from './core/shared/Selectors';
-import { IStJwtObj } from './core/shared/StJwt';
 import { IStyles } from './core/shared/Styler';
 import Utils from './core/shared/Utils';
 import { environment } from './environments/environment';
@@ -54,7 +52,7 @@ class ST {
     defaultFeatures.origin = config.origin ? config.origin : window.location.origin;
     defaultFeatures.submitOnSuccess = config.submitOnSuccess !== undefined ? config.submitOnSuccess : true;
     defaultFeatures.submitOnError = config.submitOnError !== undefined ? config.submitOnError : false;
-    defaultFeatures.animatedCard = config.animatedCard !== undefined ? config.animatedCard : true;
+    defaultFeatures.animatedCard = config.animatedCard ? config.animatedCard : false;
     return defaultFeatures;
   }
 
@@ -155,10 +153,6 @@ class ST {
     );
   }
 
-  private static _configureMerchantFields() {
-    return new MerchantFields();
-  }
-
   private static _configureCardFrames(
     jwt: string,
     origin: string,
@@ -167,8 +161,7 @@ class ST {
     config: IComponentsConfig,
     animatedCard: boolean,
     deferInit: boolean,
-    buttonId: string,
-    fieldsToSubmit: string[]
+    buttonId: string
   ) {
     const { defaultPaymentType, paymentTypes, startOnLoad } = config;
     let cardFrames: object;
@@ -183,8 +176,7 @@ class ST {
         animatedCard,
         deferInit,
         buttonId,
-        startOnLoad,
-        fieldsToSubmit
+        startOnLoad
       );
     }
     return cardFrames;
@@ -203,32 +195,20 @@ class ST {
   private readonly _config: IConfig;
   private readonly _livestatus: number = 0;
   private readonly _submitCallback: any;
-  private readonly _threedinit: string;
+  private _threedinit: string;
   private commonFrames: CommonFrames;
   private _messageBus: MessageBus;
   private _merchantFields: MerchantFields;
   private _deferInit: boolean;
   private _buttonId: string;
-  private readonly fieldsToSubmit: string[];
 
   constructor(config: IConfig) {
-    const {
-      analytics,
-      animatedCard,
-      buttonId,
-      deferInit,
-      fieldsToSubmit,
-      init,
-      livestatus,
-      submitCallback,
-      translations
-    } = config;
+    const { analytics, animatedCard, buttonId, deferInit, init, livestatus, submitCallback, translations } = config;
     if (init) {
       const { cachetoken, threedinit } = init;
       this._cachetoken = cachetoken;
       this._threedinit = threedinit;
     }
-    this.fieldsToSubmit = fieldsToSubmit ? fieldsToSubmit : ['pan', 'expirydate', 'securitycode'];
     this._messageBus = new MessageBus();
     this._merchantFields = new MerchantFields();
     this._livestatus = livestatus;
@@ -241,7 +221,6 @@ class ST {
     Utils.setLocalStorageItem(ST.TRANSLATION_STORAGE_NAME, translations);
     ST._validateConfig(this._config, IConfigSchema);
     this._setClassProperties(this._config);
-    Utils.setLocalStorageItem('locale', JwtDecode<IStJwtObj>(this._jwt).payload.locale);
     this.commonFrames = ST._configureCommonFrames(
       this._jwt,
       this._origin,
@@ -257,7 +236,7 @@ class ST {
     this._merchantFields.init();
   }
 
-  public Components(cybertonicaApiKey: string, config?: IComponentsConfig) {
+  public Components(config?: IComponentsConfig) {
     const { targetConfig } = ST._setConfigObject(config);
     ST._validateConfig(targetConfig, IComponentsConfigSchema);
     ST._configureCardFrames(
@@ -268,8 +247,7 @@ class ST {
       targetConfig,
       this._animatedCard,
       this._deferInit,
-      this._buttonId,
-      this.fieldsToSubmit
+      this._buttonId
     );
     this.commonFrames.requestTypes = targetConfig.requestTypes;
     this.CardinalCommerce(targetConfig);

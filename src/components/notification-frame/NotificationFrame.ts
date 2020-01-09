@@ -152,7 +152,7 @@ class NotificationFrame extends Frame {
    */
   protected onInit() {
     super.onInit();
-    this._translator = new Translator(this.params.locale);
+    this._translator = new Translator(this._params.locale);
     this._onMessage();
   }
 
@@ -160,7 +160,7 @@ class NotificationFrame extends Frame {
    * Listens to postMessage event, receives message from it and triggers method for inserting content into div
    */
   private _onMessage() {
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, this._notificationEvent);
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, this._notificationEvent);
   }
 
   /**

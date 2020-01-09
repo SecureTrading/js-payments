@@ -21,6 +21,5 @@
   "Processing": "Traitement en cours",
   "Invalid field": "Champ incorrect",
   "Card number is invalid": "Le numéro de carte est incorrect",
-  "You are not logged to Apple account": "Vous n'êtes pas connecté à un compte Apple",
-  "A target element for the input field with id could not be found. Please check your configuration": "Un élément cible pour le champ de saisie avec id est introuvable. Veuillez vérifier votre configuration"
+  "You are not logged to Apple account": "Vous n'êtes pas connecté à un compte Apple"
 }

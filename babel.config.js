@@ -13,8 +13,7 @@ module.exports = function(api) {
   const plugins = [
     '@babel/plugin-transform-typescript',
     '@babel/plugin-proposal-class-properties',
-    '@babel/plugin-transform-runtime',
-    '@babel/plugin-proposal-optional-catch-binding'
+    '@babel/plugin-transform-runtime'
   ];
 
   return {

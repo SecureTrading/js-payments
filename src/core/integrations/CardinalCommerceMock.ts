@@ -1,5 +1,4 @@
 import { environment } from '../../environments/environment';
-import { IFormFieldState } from '../shared/FormFieldState';
 import { CardinalCommerce } from './CardinalCommerce';
 
 export default class CardinalCommerceMock extends CardinalCommerce {
