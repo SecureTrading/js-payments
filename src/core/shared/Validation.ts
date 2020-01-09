@@ -238,28 +238,23 @@ export default class Validation extends Frame {
   ) {
     const { message } = data;
 
-    if (
-      messageElement &&
-      message &&
-      messageElement.innerText !== Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH &&
-      messageElement.innerText === undefined
-    ) {
+    inputElement.setCustomValidity(message);
+
+    if (!messageElement || !message) {
+      return;
+    }
+
+    if (messageElement.innerText === Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH) {
+      return;
+    }
+
+    if (messageElement.innerText === undefined) {
       inputElement.nextSibling.textContent = this._translator.translate(message);
-      inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
-      inputElement.setCustomValidity(message);
-    }
-
-    if (
-      messageElement &&
-      message &&
-      messageElement.innerText !== Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH &&
-      messageElement.innerText !== undefined
-    ) {
+    } else {
       messageElement.textContent = this._translator.translate(message);
-      inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
-      inputElement.setCustomValidity(message);
     }
 
+    inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
     inputElement.setCustomValidity(message);
   }
 }
