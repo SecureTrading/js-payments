@@ -208,7 +208,11 @@ export class ControlFrame extends Frame {
   }
 
   private _proceedWith3DSecure(data: ISubmitData): void {
-    data.cybertonicaApiKey ? this._callCybertonica(data) : this._onSubmit(data);
+    if (data && data.cybertonicaApiKey) {
+      this._callCybertonica(data);
+    } else {
+      this._onSubmit(data);
+    }
   }
 
   private _callCybertonica(data: ISubmitData): void {
@@ -405,7 +409,7 @@ export class ControlFrame extends Frame {
           type: MessageBus.EVENTS_PUBLIC.THREEDINIT
         });
       }
-      if (data.response.status !== 'ALLOW') {
+      if (!data || !data.response || data.response.status !== 'ALLOW') {
         this._payment
           .threeDQueryRequest(this._preThreeDRequestTypes, card, this._merchantFormData)
           .then((result: any) => {
