@@ -1,3 +1,5 @@
+import BinLookup from '../shared/BinLookup';
+import MessageBus from '../shared/MessageBus';
 import { StJwt } from '../shared/StJwt';
 import { IStyles } from '../shared/Styler';
 
@@ -5,6 +7,8 @@ import { IStyles } from '../shared/Styler';
  * Defines all non field elements of form and their placement on merchant site.
  */
 export default class RegisterFrames {
+  private static COMPLETE_FORM_FIELDS: string[] = ['pan', 'expirydate', 'securitycode'];
+
   protected styles: IStyles;
   protected params: any;
   protected elementsToRegister: HTMLElement[];
@@ -14,6 +18,9 @@ export default class RegisterFrames {
   protected componentIds: any;
   protected hasAnimatedCard: boolean;
   protected submitCallback: any;
+  protected fieldsToSubmit: string[];
+  protected binLookup: BinLookup;
+  protected messageBus: MessageBus;
   private stJwt: StJwt;
 
   constructor(
@@ -22,26 +29,25 @@ export default class RegisterFrames {
     componentIds: {},
     styles: IStyles,
     animatedCard: boolean,
+    fieldsToSubmit: string[],
     cybertonicaApiKey: string,
     submitCallback?: any
   ) {
-    this.styles = this._getStyles(styles);
+    this.binLookup = new BinLookup();
+    this.messageBus = new MessageBus();
+    this.fieldsToSubmit = fieldsToSubmit.length ? fieldsToSubmit : RegisterFrames.COMPLETE_FORM_FIELDS;
     this.componentIds = componentIds;
     this.submitCallback = submitCallback;
     this.hasAnimatedCard = animatedCard;
-    this.elementsTargets = this.setElementsFields();
     this.elementsToRegister = [];
     this.jwt = jwt;
-    this.stJwt = new StJwt(jwt);
     this.origin = origin;
-    this.params = { locale: this.stJwt.locale, origin: this.origin };
-  }
-
-  /**
-   * Gathers and launches methods needed on initializing object.
-   */
-  protected onInit() {
+    this.styles = this._getStyles(styles);
+    this.configureFormFieldsAmount(jwt);
+    this.elementsTargets = this.setElementsFields();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
+    this.stJwt = new StJwt(jwt);
+    this.params = { locale: this.stJwt.locale, origin: this.origin };
   }
 
   /**
@@ -54,6 +60,10 @@ export default class RegisterFrames {
       const itemToChange = document.getElementById(item);
       itemToChange.appendChild(fields[index]);
     });
+  }
+
+  protected configureFormFieldsAmount(jwt: string): any {
+    return [];
   }
 
   /**

@@ -1,7 +1,18 @@
+import JwtDecode from 'jwt-decode';
 import { StCodec } from '../../core/classes/StCodec.class';
 import { ICard } from '../../core/models/Card';
-import { ISetRequestTypes, ISubmitData } from '../../core/models/ControlFrame';
+import {
+  FormFieldsDetails,
+  FormFieldsValidity,
+  IDecodedJwt,
+  IFormFieldsDetails,
+  IFormFieldsValidity,
+  ISetRequestTypes,
+  ISubmitData
+} from '../../core/models/ControlFrame';
 import { IMerchantData } from '../../core/models/MerchantData';
+import BinLookup from '../../core/shared/BinLookup';
+import { IFormFieldState } from '../../core/shared/FormFieldState';
 import Frame from '../../core/shared/Frame';
 import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
@@ -13,97 +24,54 @@ import Validation from '../../core/shared/Validation';
  * Defines frame which is essentially a hub which collects events and processes from whole library.
  */
 export class ControlFrame extends Frame {
-  /**
-   * Resets JWT in case of Error
-   * @private
-   */
+  private static ALLOWED_PARAMS: string[] = ['jwt', 'gatewayUrl'];
+  private static NON_CVV_CARDS: string[] = ['PIBA'];
+  private static THREEDQUERY_EVENT: string = 'THREEDQUERY';
+
+  private static _onFormFieldStateChange(field: IFormFieldState, data: IFormFieldState) {
+    field.validity = data.validity;
+    field.value = data.value;
+  }
+
   private static _onResetJWT() {
     StCodec.jwt = StCodec.originalJwt;
   }
 
-  /**
-   * Updates jwt and originalJwt with the new version specified by merchant.
-   * @param jwt
-   * @private
-   */
   private static _onUpdateJWT(jwt: string) {
     StCodec.jwt = jwt;
     StCodec.originalJwt = jwt;
   }
 
-  private _payment: Payment;
-  private _isPaymentReady: boolean = false;
-  private _merchantFormData: IMerchantData;
+  private _binLookup: BinLookup;
   private _card: ICard;
-  private _validation: Validation;
-  private _preThreeDRequestTypes: string[];
-  private _postThreeDRequestTypes: string[];
-  private _threeDQueryResult: any;
+  private _isPaymentReady: boolean = false;
+  private _formFields: IFormFieldsDetails = FormFieldsDetails;
+  private _formFieldsValidity: IFormFieldsValidity = FormFieldsValidity;
+  private _messageBusEventCardNumber: IMessageBusEvent;
+  private _messageBusEventExpirationDate: IMessageBusEvent;
+  private _messageBusEventSecurityCode: IMessageBusEvent;
+  private _merchantFormData: IMerchantData;
   private _notification: Notification;
-  private _formFields: {
-    cardNumber: IFormFieldState;
-    expirationDate: IFormFieldState;
-    securityCode: IFormFieldState;
-  } = {
-    cardNumber: {
-      validity: false,
-      value: ''
-    },
-    expirationDate: {
-      validity: false,
-      value: ''
-    },
-    securityCode: {
-      validity: false,
-      value: ''
-    }
-  };
-
-  private _formFieldsValidity = {
-    cardNumber: {
-      message: '',
-      state: this._formFields.cardNumber.validity
-    },
-    expirationDate: {
-      message: '',
-      state: this._formFields.expirationDate.validity
-    },
-    securityCode: {
-      message: '',
-      state: this._formFields.expirationDate.validity
-    }
-  };
-
-  private _messageBusEventCardNumber: IMessageBusEvent = {
-    type: MessageBus.EVENTS.BLUR_CARD_NUMBER
-  };
-  private _messageBusEventExpirationDate: IMessageBusEvent = {
-    type: MessageBus.EVENTS.BLUR_EXPIRATION_DATE
-  };
-  private _messageBusEventSecurityCode: IMessageBusEvent = {
-    type: MessageBus.EVENTS.BLUR_SECURITY_CODE
-  };
-
-  private _threedqueryEvent: IMessageBusEvent = {
-    type: MessageBus.EVENTS_PUBLIC.THREEDQUERY
-  };
+  private _payment: Payment;
+  private _postThreeDRequestTypes: string[];
+  private _preThreeDRequestTypes: string[];
+  private _validation: Validation;
+  private _threeDQueryEvent: IMessageBusEvent;
+  private _threeDQueryResult: any;
 
   constructor() {
     super();
     this.onInit();
   }
 
-  /**
-   * Triggers methods needed on initializing class.
-   */
   protected onInit() {
     super.onInit();
-    this._payment = new Payment(this._params.jwt, this._params.gatewayUrl, this._params.origin);
-    this._validation = new Validation();
-    this._notification = new Notification();
-    this._initChangeCardNumberEvent();
-    this._initChangeExpirationDateEvent();
-    this._initChangeSecurityCodeEvent();
+    this._setInstances();
+    this._setFormFieldsValidities();
+    this._setMessageBusEvents();
+    this._initFormFieldChangeEvent(MessageBus.EVENTS.CHANGE_CARD_NUMBER, this._formFields.cardNumber);
+    this._initFormFieldChangeEvent(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, this._formFields.expirationDate);
+    this._initFormFieldChangeEvent(MessageBus.EVENTS.CHANGE_SECURITY_CODE, this._formFields.securityCode);
     this._initSetRequestTypesEvent();
     this._initByPassInitEvent();
     this._initThreedinitEvent();
@@ -116,40 +84,13 @@ export class ControlFrame extends Frame {
     this._onLoad();
   }
 
-  /**
-   * Gets allowed parameters including locale from parent class.
-   */
   protected getAllowedParams() {
-    return super.getAllowedParams().concat(['jwt', 'gatewayUrl']);
+    return super.getAllowedParams().concat(ControlFrame.ALLOWED_PARAMS);
   }
 
-  /**
-   * Sets listener for CHANGE_CARD_NUMBER MessageBus event.
-   * @private
-   */
-  private _initChangeCardNumberEvent() {
-    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: IFormFieldState) => {
-      this._onCardNumberStateChange(data);
-    });
-  }
-
-  /**
-   * Sets listener for CHANGE_EXPIRATION_DATE MessageBus event.
-   * @private
-   */
-  private _initChangeExpirationDateEvent() {
-    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, (data: IFormFieldState) => {
-      this._onExpirationDateStateChange(data);
-    });
-  }
-
-  /**
-   * Sets listener for CHANGE_SECURITY_CODE MessageBus event.
-   * @private
-   */
-  private _initChangeSecurityCodeEvent() {
-    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: IFormFieldState) => {
-      this._onSecurityCodeStateChange(data);
+  private _initFormFieldChangeEvent(event: string, field: IFormFieldState) {
+    this.messageBus.subscribe(event, (data: IFormFieldState) => {
+      ControlFrame._onFormFieldStateChange(field, data);
     });
   }
 
@@ -158,7 +99,7 @@ export class ControlFrame extends Frame {
    * @private
    */
   private _initSetRequestTypesEvent() {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES, (data: ISetRequestTypes) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES, (data: ISetRequestTypes) => {
       this._onSetRequestTypesEvent(data);
     });
   }
@@ -168,7 +109,7 @@ export class ControlFrame extends Frame {
    * @private
    */
   private _initByPassInitEvent() {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BY_PASS_INIT, (cachetoken: string) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BY_PASS_INIT, (cachetoken: string) => {
       this._onByPassInitEvent(cachetoken);
     });
   }
@@ -178,31 +119,31 @@ export class ControlFrame extends Frame {
    * @private
    */
   private _initThreedinitEvent() {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
       this._onThreeDInitEvent();
     });
   }
 
   private _initLoadCardinalEvent() {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL, () => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL, () => {
       this._onLoadIntegrationModule();
     });
   }
 
   private _initLoadCybertonicaEvent() {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.LOAD_CYBERTONICA, () => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.LOAD_CYBERTONICA, () => {
       this._onLoadIntegrationModule();
     });
   }
 
   private _initProcessPaymentsEvent() {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS, (data: IResponseData) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS, (data: IResponseData) => {
       this._onProcessPaymentEvent(data);
     });
   }
 
   private _initSubmitFormEvent(): void {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, (data?: ISubmitData) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, (data?: ISubmitData) => {
       this._proceedWith3DSecure(data);
     });
   }
@@ -216,7 +157,7 @@ export class ControlFrame extends Frame {
   }
 
   private _callCybertonica(data: ISubmitData): void {
-    this._messageBus.publish(
+    this.messageBus.publish(
       {
         data: {
           ...data,
@@ -235,7 +176,7 @@ export class ControlFrame extends Frame {
    * @private
    */
   private _initUpdateMerchantFieldsEvent() {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS, (data: any) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS, (data: any) => {
       this._storeMerchantData(data);
     });
   }
@@ -245,44 +186,14 @@ export class ControlFrame extends Frame {
    * @private
    */
   private _initResetJwtEvent() {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.RESET_JWT, () => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.RESET_JWT, () => {
       ControlFrame._onResetJWT();
     });
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
       const { newJwt } = data;
       ControlFrame._onUpdateJWT(newJwt);
       this._onLoad();
     });
-  }
-
-  /**
-   * Handles validity and value of card number field.
-   * @param data
-   * @private
-   */
-  private _onCardNumberStateChange(data: IFormFieldState) {
-    this._formFields.cardNumber.validity = data.validity;
-    this._formFields.cardNumber.value = data.value;
-  }
-
-  /**
-   * Handles validity and value of expiration date field.
-   * @param data
-   * @private
-   */
-  private _onExpirationDateStateChange(data: IFormFieldState) {
-    this._formFields.expirationDate.validity = data.validity;
-    this._formFields.expirationDate.value = data.value;
-  }
-
-  /**
-   * Handles validity and value of security code field.
-   * @param data
-   * @private
-   */
-  private _onSecurityCodeStateChange(data: IFormFieldState) {
-    this._formFields.securityCode.validity = data.validity;
-    this._formFields.securityCode.value = data.value;
   }
 
   /**
@@ -291,7 +202,7 @@ export class ControlFrame extends Frame {
    * @private
    */
   private _onSetRequestTypesEvent(data: any) {
-    const threeDIndex = data.requestTypes.indexOf('THREEDQUERY');
+    const threeDIndex = data.requestTypes.indexOf(ControlFrame.THREEDQUERY_EVENT);
     this._preThreeDRequestTypes = data.requestTypes.slice(0, threeDIndex + 1);
     this._postThreeDRequestTypes = data.requestTypes.slice(threeDIndex + 1, data.requestTypes.length);
   }
@@ -312,7 +223,7 @@ export class ControlFrame extends Frame {
     const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME
     };
-    this._messageBus.publish(messageBusEvent, true);
+    this.messageBus.publish(messageBusEvent, true);
   }
 
   private _onLoadIntegrationModule() {
@@ -387,41 +298,40 @@ export class ControlFrame extends Frame {
     const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.BY_PASS_INIT
     };
-    this._messageBus.publish(messageBusEvent, true);
+    this.messageBus.publish(messageBusEvent, true);
   }
 
-  /**
-   * Sends threeDQueryRequest depends on validity status.
-   * @param data
-   */
   private _requestPayment(data: any) {
+    const isPanPiba: boolean = this._getPan()
+      ? ControlFrame.NON_CVV_CARDS.includes(this._binLookup.binLookup(this._getPan()).type)
+      : false;
     const dataInJwt = data ? data.dataInJwt : false;
     const deferInit = data ? data.deferInit : false;
     const { validity, card } = this._validation.formValidation(
       dataInJwt,
-      this._isPaymentReady,
+      deferInit,
+      data.fieldsToSubmit,
       this._formFields,
-      deferInit
+      isPanPiba,
+      this._isPaymentReady
     );
     if (validity) {
       if (deferInit) {
-        this._messageBus.publish({
-          type: MessageBus.EVENTS_PUBLIC.THREEDINIT
-        });
+        this._requestThreeDInit();
       }
       if (!data || !data.response || data.response.status !== 'ALLOW') {
         this._payment
           .threeDQueryRequest(this._preThreeDRequestTypes, card, this._merchantFormData)
           .then((result: any) => {
             this._threeDQueryResult = result;
-            this._threedqueryEvent.data = result.response;
-            this._messageBus.publish(this._threedqueryEvent, true);
+            this._threeDQueryEvent.data = result.response;
+            this.messageBus.publish(this._threeDQueryEvent, true);
           });
       }
     } else {
-      this._messageBus.publish(this._messageBusEventCardNumber);
-      this._messageBus.publish(this._messageBusEventExpirationDate);
-      this._messageBus.publish(this._messageBusEventSecurityCode);
+      this.messageBus.publish(this._messageBusEventCardNumber);
+      this.messageBus.publish(this._messageBusEventExpirationDate);
+      this.messageBus.publish(this._messageBusEventSecurityCode);
       this._validation.setFormValidity(this._formFieldsValidity);
     }
   }
@@ -436,15 +346,44 @@ export class ControlFrame extends Frame {
         data: result.response,
         type: MessageBus.EVENTS_PUBLIC.THREEDINIT
       };
-      this._messageBus.publish(messageBusEvent, true);
+      this.messageBus.publish(messageBusEvent, true);
     });
   }
 
-  /**
-   * Assigned received merchant data.
-   * @param data
-   * @private
-   */
+  private _setFormFieldsValidities() {
+    this._formFieldsValidity.cardNumber.state = this._formFields.cardNumber.validity;
+    this._formFieldsValidity.expirationDate.state = this._formFields.expirationDate.validity;
+    this._formFieldsValidity.securityCode.state = this._formFields.securityCode.validity;
+  }
+
+  private _setMessageBusEvents() {
+    this._messageBusEventCardNumber = {
+      type: MessageBus.EVENTS.BLUR_CARD_NUMBER
+    };
+    this._messageBusEventExpirationDate = {
+      type: MessageBus.EVENTS.BLUR_EXPIRATION_DATE
+    };
+    this._messageBusEventSecurityCode = {
+      type: MessageBus.EVENTS.BLUR_SECURITY_CODE
+    };
+    this._threeDQueryEvent = {
+      type: MessageBus.EVENTS_PUBLIC.THREEDQUERY
+    };
+  }
+
+  private _getPan(): string {
+    return JwtDecode<IDecodedJwt>(this.params.jwt).payload.pan
+      ? JwtDecode<IDecodedJwt>(this.params.jwt).payload.pan
+      : '';
+  }
+
+  private _setInstances() {
+    this._payment = new Payment(this.params.jwt, this.params.gatewayUrl, this.params.origin);
+    this._validation = new Validation();
+    this._notification = new Notification();
+    this._binLookup = new BinLookup();
+  }
+
   private _storeMerchantData(data: any) {
     this._merchantFormData = data;
   }
