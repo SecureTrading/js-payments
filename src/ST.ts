@@ -139,6 +139,8 @@ class ST {
     submitFields: string[],
     gatewayUrl: string,
     animatedCard: boolean,
+    fieldsToSubmit: string[],
+    cybertonicaApiKey: string,
     submitCallback?: any
   ) {
     return new CommonFrames(
@@ -151,6 +153,8 @@ class ST {
       submitFields,
       gatewayUrl,
       animatedCard,
+      fieldsToSubmit,
+      cybertonicaApiKey,
       submitCallback
     );
   }
@@ -252,6 +256,8 @@ class ST {
       this._submitFields,
       this._gatewayUrl,
       this._animatedCard,
+      this.fieldsToSubmit,
+      config.cybertonica.apikey,
       this._submitCallback
     );
     ST._configureMerchantFields();
