@@ -3,3 +3,4 @@ interface ICard {
   pan: string;
   securitycode: string;
 }
+export { ICard };

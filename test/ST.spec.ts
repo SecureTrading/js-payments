@@ -139,7 +139,7 @@ describe('ST', () => {
 
   // given
   describe('updateJWT()', () => {
-    const lodash = require.requireActual('lodash');
+    const lodash = jest.requireActual('lodash');
 
     // when
     beforeEach(() => {
