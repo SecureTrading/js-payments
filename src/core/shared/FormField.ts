@@ -1,17 +1,11 @@
-import Formatter from './Formatter';
+import { IFormFieldState } from './FormFieldState';
 import Frame from './Frame';
 import Language from './Language';
-import MessageBus from './MessageBus';
+import Selectors from './Selectors';
 import { Translator } from './Translator';
+import Utils from './Utils';
 import Validation from './Validation';
 
-/**
- * Base class describes each form field / component.
- * Children classes:
- *  - CardNumber
- *  - ExpirationDate
- *  - SecurityCode
- */
 export default class FormField extends Frame {
   public validation: Validation;
   protected _inputSelector: string;
@@ -20,10 +14,12 @@ export default class FormField extends Frame {
   protected _inputElement: HTMLInputElement;
   protected _labelElement: HTMLLabelElement;
   protected _messageElement: HTMLDivElement;
+  protected _cardNumberInput: HTMLInputElement;
   private _translator: Translator;
 
   constructor(inputSelector: string, messageSelector: string, labelSelector: string) {
     super();
+    this._cardNumberInput = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     this._inputElement = document.getElementById(inputSelector) as HTMLInputElement;
     this._labelElement = document.getElementById(labelSelector) as HTMLLabelElement;
     this._messageElement = document.getElementById(messageSelector) as HTMLInputElement;
@@ -34,12 +30,9 @@ export default class FormField extends Frame {
     this.onInit();
   }
 
-  /**
-   *
-   */
   public onInit() {
     super.onInit();
-    this._translator = new Translator(this._params.locale);
+    this._translator = new Translator(this.params.locale);
     this.validation = new Validation();
     this._setLabelText();
     this._addTabListener();
@@ -116,27 +109,32 @@ export default class FormField extends Frame {
   }
 
   protected onInput(event: Event) {
-    Validation.setCustomValidationError(this._inputElement, '');
+    this.validation.keepCursorsPosition(this._inputElement);
+    Validation.setCustomValidationError('', this._inputElement);
     this.format(this._inputElement.value);
-  }
-
-  protected onKeydown(event: KeyboardEvent) {
-    return event;
   }
 
   protected onKeyPress(event: KeyboardEvent) {
     if (Validation.isEnter(event)) {
       event.preventDefault();
-      const messageBusEvent: IMessageBusEvent = {
-        type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
-      };
-      this._messageBus.publish(messageBusEvent);
+      if (this._inputElement.id === Selectors.CARD_NUMBER_INPUT) {
+        this.validation.luhnCheck(this._cardNumberInput, this._inputElement, this._messageElement);
+      }
+      this._validateInput();
+      this.validation.callSubmitEvent();
     }
+  }
+
+  protected onKeydown(event: KeyboardEvent) {
+    this.validation.setOnKeyDownProperties(this._inputElement, event);
   }
 
   protected onPaste(event: ClipboardEvent) {
     let { clipboardData } = event;
     event.preventDefault();
+    if (this._inputElement === document.activeElement) {
+      this.validation.keepCursorsPosition(this._inputElement);
+    }
     if (typeof clipboardData === 'undefined') {
       // @ts-ignore
       clipboardData = window.clipboardData.getData('Text');
@@ -146,8 +144,8 @@ export default class FormField extends Frame {
     }
 
     // @ts-ignore
-    this._inputElement.value = Formatter.trimNonNumeric(clipboardData);
-    Validation.setCustomValidationError(this._inputElement, '');
+    this._inputElement.value = Utils.stripChars(clipboardData, undefined);
+    Validation.setCustomValidationError('', this._inputElement);
     this.format(this._inputElement.value);
     this.validation.validate(this._inputElement, this._messageElement);
   }
@@ -160,20 +158,24 @@ export default class FormField extends Frame {
     }
   }
 
-  /**
-   * Takes MessageBus Event and sets .subscribe() handler.
-   * @param event
-   * @param validate
-   */
   protected setEventListener(event: string, validate: boolean = true) {
-    this._messageBus.subscribe(event, () => {
-      // tslint:disable-next-line: no-unused-expression
-      validate && this._validateInput();
+    this.messageBus.subscribe(event, () => {
+      if (validate) {
+        this._validateInput();
+      }
     });
   }
 
   protected setValue(value: string) {
     this._inputElement.value = value;
+  }
+
+  protected setMessageBusEvent(event: string): IMessageBusEvent {
+    const formFieldState: IFormFieldState = this.getState();
+    return {
+      data: formFieldState,
+      type: event
+    };
   }
 
   private _addTabListener() {
@@ -225,15 +227,14 @@ export default class FormField extends Frame {
   }
 
   private _setLabelText() {
-    this._labelElement.innerHTML = this._translator.translate(this.getLabel());
+    this._labelElement.textContent = this._translator.translate(this.getLabel());
   }
 
-  /**
-   * Triggers format and validation methods on given input field.
-   * @private
-   */
   private _validateInput() {
     this.format(this._inputElement.value);
+    if (this._inputElement.id === Selectors.CARD_NUMBER_INPUT) {
+      this.validation.luhnCheck(this._cardNumberInput, this._inputElement, this._messageElement);
+    }
     this.validation.validate(this._inputElement, this._messageElement);
   }
 }

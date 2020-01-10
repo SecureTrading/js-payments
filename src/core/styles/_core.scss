@@ -19,6 +19,11 @@ body {
   background-color: #f8d7da;
   color: #721c24;
   border-color: $border-color-notification-error;
+  outline: 0;
+
+  &:focus {
+    outline: 0;
+  }
 }
 
 .error-label {

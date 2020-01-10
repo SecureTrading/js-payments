@@ -1,5 +1,6 @@
 import ControlFrame from '../../../src/components/control-frame/ControlFrame';
 import { StCodec } from '../../../src/core/classes/StCodec.class';
+import { IFormFieldState } from '../../../src/core/shared/FormFieldState';
 import Language from '../../../src/core/shared/Language';
 import MessageBus from '../../../src/core/shared/MessageBus';
 
@@ -11,8 +12,32 @@ describe('ControlFrame', () => {
 
   beforeEach(() => {
     // @ts-ignore
-    instance._messageBus.subscribe = jest.fn().mockImplementationOnce((event, callback) => {
+    instance.messageBus.subscribe = jest.fn().mockImplementationOnce((event, callback) => {
       callback(data);
+    });
+  });
+
+  // given
+  describe('ControlFrame._onFormFieldStateChange()', () => {
+    const field: IFormFieldState = {
+      validity: false,
+      value: ''
+    };
+    const data: IFormFieldState = {
+      validity: true,
+      value: '411111111'
+    };
+
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      ControlFrame._onFormFieldStateChange(field, data);
+    });
+
+    // then
+    it('should set field properties: validity and value', () => {
+      expect(field.validity).toEqual(true);
+      expect(field.value).toEqual('411111111');
     });
   });
 
@@ -21,12 +46,12 @@ describe('ControlFrame', () => {
     // then
     it('should call _onCardNumberStateChange when CHANGE_CARD_NUMBER event has been called', () => {
       // @ts-ignore
-      instance._onCardNumberStateChange = jest.fn();
+      ControlFrame._onFormFieldStateChange = jest.fn();
       messageBusEvent.type = MessageBus.EVENTS.CHANGE_CARD_NUMBER;
       // @ts-ignore
-      instance._initChangeCardNumberEvent();
+      instance._initFormFieldChangeEvent(messageBusEvent.type, instance._formFields.cardNumber);
       // @ts-ignore
-      expect(instance._onCardNumberStateChange).toHaveBeenCalled();
+      expect(ControlFrame._onFormFieldStateChange).toHaveBeenCalled();
     });
   });
 
@@ -35,12 +60,12 @@ describe('ControlFrame', () => {
     // then
     it('should call _onExpirationDateStateChange when CHANGE_EXPIRATION_DATE event has been called', () => {
       // @ts-ignore
-      instance._onExpirationDateStateChange = jest.fn();
+      ControlFrame._onFormFieldStateChange = jest.fn();
       messageBusEvent.type = MessageBus.EVENTS.CHANGE_EXPIRATION_DATE;
       // @ts-ignore
-      instance._initChangeExpirationDateEvent();
+      instance._initFormFieldChangeEvent(messageBusEvent.type, instance._formFields.expirationDate);
       // @ts-ignore
-      expect(instance._onExpirationDateStateChange).toHaveBeenCalled();
+      expect(ControlFrame._onFormFieldStateChange).toHaveBeenCalled();
     });
   });
 
@@ -49,12 +74,12 @@ describe('ControlFrame', () => {
     // then
     it('should call _onSecurityCodeStateChange when CHANGE_SECURITY_CODE event has been called', () => {
       // @ts-ignore
-      instance._onSecurityCodeStateChange = jest.fn();
+      ControlFrame._onFormFieldStateChange = jest.fn();
       messageBusEvent.type = MessageBus.EVENTS.CHANGE_SECURITY_CODE;
       // @ts-ignore
-      instance._initChangeSecurityCodeEvent();
+      instance._initFormFieldChangeEvent(messageBusEvent.type, instance._formFields.securityCode);
       // @ts-ignore
-      expect(instance._onSecurityCodeStateChange).toHaveBeenCalled();
+      expect(ControlFrame._onFormFieldStateChange).toHaveBeenCalled();
     });
   });
 
@@ -163,7 +188,7 @@ describe('ControlFrame', () => {
     // then
     it('should call _initResetJwtEvent when RESET_JWT event has been called', () => {
       // @ts-ignore
-      instance._messageBus.subscribe = jest
+      instance.messageBus.subscribe = jest
         .fn()
         .mockImplementationOnce((even, callback) => {
           callback();
@@ -178,75 +203,6 @@ describe('ControlFrame', () => {
       instance._initResetJwtEvent();
       // @ts-ignore
       expect(instance._onLoad).toHaveBeenCalled();
-    });
-  });
-
-  // given
-  describe('_onCardNumberStateChange', () => {
-    const { instance } = controlFrameFixture();
-    const formFieldState = {
-      validity: true,
-      value: '4111'
-    };
-
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._onCardNumberStateChange(formFieldState);
-    });
-
-    // then
-    it('should set validity and value params of this._formFields.cardNumber', () => {
-      // @ts-ignore
-      expect(instance._formFields.cardNumber.validity).toEqual(formFieldState.validity);
-      // @ts-ignore
-      expect(instance._formFields.cardNumber.value).toEqual(formFieldState.value);
-    });
-  });
-
-  // given
-  describe('_onExpirationDateStateChange', () => {
-    const { instance } = controlFrameFixture();
-    const formFieldState = {
-      validity: true,
-      value: '01/2'
-    };
-
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._onExpirationDateStateChange(formFieldState);
-    });
-
-    // then
-    it('should set validity and value params of this._formFields.expirationDate', () => {
-      // @ts-ignore
-      expect(instance._formFields.expirationDate.validity).toEqual(formFieldState.validity);
-      // @ts-ignore
-      expect(instance._formFields.expirationDate.value).toEqual(formFieldState.value);
-    });
-  });
-
-  // given
-  describe('_onSecurityCodeStateChange', () => {
-    const { instance } = controlFrameFixture();
-    const formFieldState = {
-      validity: true,
-      value: '12'
-    };
-
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._onSecurityCodeStateChange(formFieldState);
-    });
-
-    // then
-    it('should set validity and value params of this._formFields.securityCode', () => {
-      // @ts-ignore
-      expect(instance._formFields.securityCode.validity).toEqual(formFieldState.validity);
-      // @ts-ignore
-      expect(instance._formFields.securityCode.value).toEqual(formFieldState.value);
     });
   });
 
@@ -482,50 +438,6 @@ describe('ControlFrame', () => {
   });
 
   // given
-  describe('_requestPayment', () => {
-    const { instance } = controlFrameFixture();
-    const data = {};
-
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._payment.threeDQueryRequest = jest.fn();
-      // @ts-ignore
-      instance._validation.setFormValidity = jest.fn();
-      // @ts-ignore
-      instance._messageBus.publish = jest.fn();
-    });
-
-    // then
-    it('should call instance._validation.setFormValidity when validity is false', () => {
-      // @ts-ignore
-      instance._payment.threeDQueryRequest = jest.fn().mockResolvedValueOnce({ result: { response: {} } });
-      // @ts-ignore
-      instance._validation.formValidation = jest.fn().mockReturnValueOnce({
-        validity: true,
-        card: 'some value'
-      });
-      // @ts-ignore
-      instance._requestPayment(data);
-      // @ts-ignore
-      expect(instance._payment.threeDQueryRequest).toHaveBeenCalled();
-    });
-
-    // then
-    it('should call instance._validation.setFormValidity when validity is false', () => {
-      // @ts-ignore
-      instance._validation.formValidation = jest.fn().mockReturnValueOnce({
-        validity: false,
-        card: 'some value'
-      });
-      // @ts-ignore
-      instance._requestPayment(data);
-      // @ts-ignore
-      expect(instance._validation.setFormValidity).toHaveBeenCalled();
-    });
-  });
-
-  // given
   describe('_requestThreeDInit', () => {
     const { instance } = controlFrameFixture();
     const result = {
@@ -555,7 +467,7 @@ describe('ControlFrame', () => {
       // @ts-ignore
       instance._storeMerchantData(data);
       // @ts-ignore
-      instance._messageBus.publish = jest.fn();
+      instance.messageBus.publish = jest.fn();
     });
 
     // then
@@ -595,6 +507,84 @@ describe('ControlFrame', () => {
     it('should update jwt and originalJwt', () => {
       expect(StCodec.jwt).toEqual('997');
       expect(StCodec.originalJwt).toEqual('997');
+    });
+  });
+
+  // given
+  describe('_getPan()', () => {
+    // @ts-ignore
+    instance.params = {
+      jwt:
+        'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NjQ5MjA1NS44NjY1OSwicGF5bG9hZCI6eyJiYXNlYW1vdW50IjoiMTAwMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiIsInBhbiI6IjMwODk1MDAwMDAwMDAwMDAwMjEiLCJleHBpcnlkYXRlIjoiMDEvMjIifX0.lbNSlaDkbzG6dkm1uc83cc3XvUImysNj_7fkdo___fw'
+    };
+
+    // then
+    it('should return pan from jwt', () => {
+      // @ts-ignore
+      expect(instance._getPan()).toEqual('3089500000000000021');
+    });
+
+    // then
+    it('should return pan from jwt', () => {
+      // @ts-ignore
+      instance.params = {
+        jwt:
+          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NjU5MTYxMS43ODM3MzY1LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiNDExMTExMTExMTExMTExMSIsImV4cGlyeWRhdGUiOiIwMS8yMiIsInNlY3VyaXR5Y29kZSI6IjEyMyJ9fQ.Rkhsx1PCXnd_Kf-U9OvQRbp9lnNpFx5ClPpm4zx-hDM'
+      };
+      // @ts-ignore
+      expect(instance._getPan()).toEqual('4111111111111111');
+    });
+  });
+
+  // given
+  describe('_requestPayment()', () => {
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._threeDQueryEvent = { data: {} };
+      // @ts-ignore
+      instance._requestThreeDInit = jest.fn();
+      // @ts-ignore
+      instance.messageBus.publish = jest.fn();
+      // @ts-ignore
+      instance._validation.setFormValidity = jest.fn();
+      // @ts-ignore
+      instance._payment.threeDQueryRequest = jest.fn().mockResolvedValueOnce({
+        response: {}
+      });
+    });
+    // then
+    it('should call requestThreeDInit if validity is true and deferInit is true', () => {
+      // @ts-ignore
+      instance._validation.formValidation = jest.fn().mockReturnValueOnce({
+        validity: true,
+        data: { expirydate: '12/20', pan: '4111111111111', securitycode: '123' }
+      });
+      // @ts-ignore
+      instance._requestPayment({
+        deferInit: true,
+        dataInJwt: false,
+        fieldsToSubmit: ['pan', 'expirydate', 'securitycode']
+      });
+      // @ts-ignore
+      expect(instance._requestThreeDInit).toHaveBeenCalled();
+    });
+
+    // then
+    it('should call setFormValidity if validity is falsee', () => {
+      // @ts-ignore
+      instance._validation.formValidation = jest.fn().mockReturnValueOnce({
+        validity: false,
+        data: { expirydate: '', pan: '213214', securitycode: '' }
+      });
+      // @ts-ignore
+      instance._requestPayment({
+        deferInit: false,
+        dataInJwt: false,
+        fieldsToSubmit: ['pan', 'expirydate', 'securitycode']
+      });
+      // @ts-ignore
+      expect(instance._validation.setFormValidity).toHaveBeenCalled();
     });
   });
 });

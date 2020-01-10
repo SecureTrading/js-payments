@@ -9,6 +9,7 @@ import {
   PAYMENT_EVENTS
 } from '../models/CardinalCommerce';
 import DomMethods from '../shared/DomMethods';
+import { IFormFieldState } from '../shared/FormFieldState';
 import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
 import Notification from '../shared/Notification';
@@ -107,6 +108,7 @@ export class CardinalCommerce {
       this._onCardinalSetupComplete();
       GoogleAnalytics.sendGaData('event', 'Cardinal', 'init', 'Cardinal Setup Completed');
     });
+
     Cardinal.on(PAYMENT_EVENTS.VALIDATED, (data: IOnCardinalValidated, jwt: string) => {
       this._onCardinalValidated(data, jwt);
       GoogleAnalytics.sendGaData('event', 'Cardinal', 'validate', 'Cardinal payment validated');
@@ -277,7 +279,12 @@ export class CardinalCommerce {
    * @private
    */
   private _onThreeDInitEvent(data: IThreeDInitResponse) {
-    const { cachetoken, threedinit } = data;
+    let cachetoken: string;
+    let threedinit: string;
+    if (data) {
+      cachetoken = data.cachetoken;
+      threedinit = data.threedinit;
+    }
     this._cardinalCommerceJWT = threedinit;
     this._cardinalCommerceCacheToken = cachetoken;
     this._threeDSetup();
