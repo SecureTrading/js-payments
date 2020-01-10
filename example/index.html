@@ -91,63 +91,64 @@
       </div>
       <div id="st-card"></div>
     </form>
-    <script type="text/javascript" src="st.js"></script>
-    <script>
-      (function() {
-        var ST = SecureTrading;
-        window
-          .fetch('https://merchant.example.com:8443/config.json')
-          .then(function(response) {
-            if (response.status !== 200) {
-              return Promise.reject('Configuration has not been set !');
-            }
-            return response.json();
-          })
-          .then(function(data) {
-            if (data) {
-              configurationInit(ST, data);
-            } else {
-              fetchDefaultConfig();
-            }
-          })
-          .catch(function() {
-            fetchDefaultConfig();
-          });
+    <!--    <script type="text/javascript" src="st.js"></script>-->
+    <script type="text/javascript" src="init.js"></script>
+    <!--    <script>-->
+    <!--      (function() {-->
+    <!--        var ST = SecureTrading;-->
+    <!--        window-->
+    <!--          .fetch('https://merchant.example.com:8443/config.json')-->
+    <!--          .then(function(response) {-->
+    <!--            if (response.status !== 200) {-->
+    <!--              return Promise.reject('Configuration has not been set !');-->
+    <!--            }-->
+    <!--            return response.json();-->
+    <!--          })-->
+    <!--          .then(function(data) {-->
+    <!--            if (data) {-->
+    <!--              configurationInit(ST, data);-->
+    <!--            } else {-->
+    <!--              fetchDefaultConfig();-->
+    <!--            }-->
+    <!--          })-->
+    <!--          .catch(function() {-->
+    <!--            fetchDefaultConfig();-->
+    <!--          });-->
 
-        function fetchDefaultConfig() {
-          fetch('./../json/config.json')
-            .then(function(response) {
-              if (response.status !== 200) {
-                return Promise.reject('Default configuration has not been set !');
-              }
-              return response.json();
-            })
-            .then(function(data) {
-              if (data) {
-                configurationInit(ST, data);
-              }
-            });
-        }
-        function configurationInit(ST, data) {
-          var stConfig = data;
-          var parsedUrl = new URL(window.location.href);
-          stConfig.jwt = parsedUrl.searchParams.get('jwt') || stConfig.jwt;
-          var st = ST(stConfig);
+    <!--        function fetchDefaultConfig() {-->
+    <!--          fetch('./../json/config.json')-->
+    <!--            .then(function(response) {-->
+    <!--              if (response.status !== 200) {-->
+    <!--                return Promise.reject('Default configuration has not been set !');-->
+    <!--              }-->
+    <!--              return response.json();-->
+    <!--            })-->
+    <!--            .then(function(data) {-->
+    <!--              if (data) {-->
+    <!--                configurationInit(ST, data);-->
+    <!--              }-->
+    <!--            });-->
+    <!--        }-->
+    <!--        function configurationInit(ST, data) {-->
+    <!--          var stConfig = data;-->
+    <!--          var parsedUrl = new URL(window.location.href);-->
+    <!--          stConfig.jwt = parsedUrl.searchParams.get('jwt') || stConfig.jwt;-->
+    <!--          var st = ST(stConfig);-->
 
-          st.submitCallback = function someFancyfunction(data) {
-            var stringified = JSON.stringify(data);
-            var testVariable = 'This is what we have got after submit' + stringified;
-          };
-          st.Components(stConfig.components);
-          st.ApplePay(stConfig.applePay);
-          st.VisaCheckout(stConfig.visaCheckout);
-          document.getElementById('example-form-amount').addEventListener('input', function() {
-            st.updateJWT(
-              'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NjI0MDkwMy44NDgxOTIyLCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIxMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.dZf3tVclkUTXMR1uXo39jUIXHyjApGXYlAJ-5ujen00'
-            );
-          });
-        }
-      })();
-    </script>
+    <!--          st.submitCallback = function someFancyfunction(data) {-->
+    <!--            var stringified = JSON.stringify(data);-->
+    <!--            var testVariable = 'This is what we have got after submit' + stringified;-->
+    <!--          };-->
+    <!--          st.Components(stConfig.components);-->
+    <!--          st.ApplePay(stConfig.applePay);-->
+    <!--          st.VisaCheckout(stConfig.visaCheckout);-->
+    <!--          document.getElementById('example-form-amount').addEventListener('input', function() {-->
+    <!--            st.updateJWT(-->
+    <!--              'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NjI0MDkwMy44NDgxOTIyLCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIxMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.dZf3tVclkUTXMR1uXo39jUIXHyjApGXYlAJ-5ujen00'-->
+    <!--            );-->
+    <!--          });-->
+    <!--        }-->
+    <!--      })();-->
+    <!--    </script>-->
   </body>
 </html>

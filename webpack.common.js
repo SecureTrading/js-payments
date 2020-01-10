@@ -13,7 +13,8 @@ module.exports = {
     'control-frame': './src/components/control-frame/control-frame.ts',
     st: './src/ST.ts',
     example: './example/index.ts',
-    receipt: './example/receipt.ts'
+    receipt: './example/receipt.ts',
+    init: './example/init.ts'
   },
   output: {
     filename: '[name].js',

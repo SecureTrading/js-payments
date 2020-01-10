@@ -255,7 +255,7 @@ class ST {
     ST._configureMerchantFields();
   }
 
-  public Components(cybertonicaApiKey: string, config?: IComponentsConfig) {
+  public Components(config?: IComponentsConfig) {
     const { targetConfig } = ST._setConfigObject(config);
     ST._validateConfig(targetConfig, IComponentsConfigSchema);
     ST._configureCardFrames(
