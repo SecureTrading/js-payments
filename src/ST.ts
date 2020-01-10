@@ -196,6 +196,12 @@ class ST {
     return cardFrames;
   }
 
+  private static _initGoogleAnalytics(init: boolean): GoogleAnalytics {
+    if (init) {
+      return new GoogleAnalytics();
+    }
+  }
+
   private readonly _animatedCard: boolean;
   private _cachetoken: string;
   private _componentIds: {};
@@ -239,7 +245,7 @@ class ST {
     this._animatedCard = animatedCard;
     this._buttonId = buttonId;
     this._submitCallback = submitCallback;
-    this._initGoogleAnalytics(analytics);
+    ST._initGoogleAnalytics(analytics);
     this._config = ST._addDefaults(config);
     this._deferInit = deferInit;
     Utils.setLocalStorageItem(ST.TRANSLATION_STORAGE_NAME, translations);
@@ -316,14 +322,6 @@ class ST {
       this._cachetoken,
       this._threedinit
     );
-  }
-
-  private _initGoogleAnalytics(init: boolean) {
-    if (init) {
-      const ga = new GoogleAnalytics();
-    } else {
-      return false;
-    }
   }
 
   private _setClassProperties(config: IConfig) {

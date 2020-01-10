@@ -1,4 +1,5 @@
 {
+  "analytics": true,
   "animatedCard": true,
   "deferInit": false,
   "fieldsToSubmit": ["pan", "expirydate", "securitycode"],
