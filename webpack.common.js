@@ -20,7 +20,7 @@ module.exports = {
     path: path.join(__dirname, 'dist'),
     library: 'SecureTrading',
     libraryExport: 'default',
-    libraryTarget: 'var',
+    libraryTarget: 'umd',
     publicPath: ''
   },
   plugins: [
