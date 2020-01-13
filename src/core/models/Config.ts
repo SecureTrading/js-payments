@@ -1,9 +1,22 @@
 import Joi from 'joi';
 import { IStyles } from '../shared/Styler';
 
+enum ByPassCards {
+  AMEX = 'AMEX',
+  ASTROPAYCARD = 'ASTROPAYCARD',
+  DINERS = 'DINERS',
+  DISCOVER = 'DISCOVER',
+  JCB = 'JCB',
+  MASTERCARD = 'MASTERCARD',
+  MAESTRO = 'MAESTRO',
+  PIBA = 'PIBA',
+  VISA = 'VISA'
+}
+
 interface IConfig {
   analytics?: boolean;
   animatedCard?: boolean;
+  byPassCards?: ByPassCards[];
   buttonId?: string;
   componentIds?: any;
   datacenterurl?: string;
@@ -60,6 +73,17 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
     placement: Joi.string()
   },
   buttonId: Joi.string(),
+  byPassCards: Joi.array().allow(
+    'AMEX',
+    'ASTROPAYCARD',
+    'DINERS',
+    'DISCOVER',
+    'JCB',
+    'MASTERCARD',
+    'MAESTRO',
+    'PIBA',
+    'VISA'
+  ),
   cachetoken: Joi.string(),
   componentIds: Joi.object().keys({
     animatedCard: Joi.string(),
@@ -109,4 +133,4 @@ const IComponentsConfigSchema = Joi.object().keys({
   startOnLoad: Joi.boolean()
 });
 
-export { IByPassInit, IConfig, IConfigSchema, IComponentsConfig, IComponentsConfigSchema, IWalletConfig };
+export { IByPassInit, IConfig, IConfigSchema, IComponentsConfig, IComponentsConfigSchema, IWalletConfig, ByPassCards };
