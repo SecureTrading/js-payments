@@ -13,12 +13,22 @@ enum ByPassCards {
   VISA = 'VISA'
 }
 
+interface IComponentsIds {
+  animatedCard?: string;
+  cardNumber: string;
+  expirationDate: string;
+  notificationFrame: string;
+  securityCode: string;
+}
+
 interface IConfig {
   analytics?: boolean;
   animatedCard?: boolean;
+  applePay?: IWalletConfig;
   byPassCards?: ByPassCards[];
   buttonId?: string;
-  componentIds?: any;
+  components?: IComponentsConfig;
+  componentIds?: IComponentsIds;
   datacenterurl?: string;
   deferInit?: boolean;
   fieldsToSubmit?: string[];
@@ -33,6 +43,7 @@ interface IConfig {
   submitOnSuccess?: boolean;
   submitOnError?: boolean;
   translations?: {};
+  visaCheckout?: IWalletConfig;
 }
 
 interface IComponentsConfig {
@@ -44,7 +55,6 @@ interface IComponentsConfig {
 
 interface IWalletConfig {
   [key: string]: any;
-
   requestTypes?: string[];
 }
 
@@ -133,4 +143,4 @@ const IComponentsConfigSchema = Joi.object().keys({
   startOnLoad: Joi.boolean()
 });
 
-export { IByPassInit, IConfig, IConfigSchema, IComponentsConfig, IComponentsConfigSchema, IWalletConfig, ByPassCards };
+export { IByPassInit, IConfig, IComponentsConfig, IComponentsConfigSchema, IWalletConfig, ByPassCards, IComponentsIds };

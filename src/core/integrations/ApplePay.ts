@@ -128,6 +128,7 @@ export class ApplePay {
   constructor(config: IWalletConfig, jwt: string, gatewayUrl: string) {
     this._notification = new Notification();
     this._messageBus = new MessageBus();
+    config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
     localStorage.setItem('completePayment', '');
     this.jwt = jwt;
     this._completion = {

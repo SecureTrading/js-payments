@@ -1,5 +1,6 @@
 import JwtDecode from 'jwt-decode';
 import Element from '../Element';
+import { IConfig } from '../models/Config';
 import { IValidationMessageBus } from '../models/Validation';
 import DomMethods from '../shared/DomMethods';
 import Language from '../shared/Language';
@@ -74,11 +75,10 @@ export class CardFrames extends RegisterFrames {
     this._setInitValues(buttonId, defaultPaymentType, deferInit, paymentTypes, startOnLoad, animatedCard);
     this.configureFormFieldsAmount(jwt);
     this.elementsTargets = this.setElementsFields();
-    this.onInit();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
   }
 
-  protected onInit(): void {
+  public init() {
     this._deferJsinitOnLoad();
     CardFrames._preventFormSubmit();
     this._createSubmitButton();
