@@ -320,7 +320,7 @@ describe('CardNumber', () => {
     it('should call validation.luhnCheck and sendState if key is equal to Enter keycode', () => {
       // @ts-ignore
       instance._sendState = jest.fn();
-      Validation.isKeyEnter = jest.fn().mockReturnValueOnce(true);
+      Validation.isEnter = jest.fn().mockReturnValueOnce(true);
       // @ts-ignore
       instance.onKeydown(event);
       expect(instance.validation.luhnCheck).toHaveBeenCalledWith(
