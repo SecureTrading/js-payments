@@ -33,12 +33,12 @@ describe('Validation', () => {
     const { keyCodeForOther, keyCodeForEnter, eventWithOther, eventWithEnter } = validationFixture();
     // then
     it(`should return true if indicated keyCode is equal ${keyCodeForEnter}`, () => {
-      expect(Validation.isKeyEnter(eventWithEnter)).toEqual(true);
+      expect(Validation.isEnter(eventWithEnter)).toEqual(true);
     });
 
     // then
     it(`should return false if indicated keyCode ${keyCodeForOther} is not equal ${keyCodeForEnter}`, () => {
-      expect(Validation.isKeyEnter(eventWithOther)).toEqual(false);
+      expect(Validation.isEnter(eventWithOther)).toEqual(false);
     });
   });
 
