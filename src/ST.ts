@@ -22,65 +22,38 @@ import { IStJwtObj } from './core/shared/StJwt';
 import { environment } from './environments/environment';
 
 class ST {
-  private _messageBus: MessageBus;
-  private _merchantFields: MerchantFields;
-  private _configuration: Config;
-  private _config: IConfig;
-  private _googleAnalytics: GoogleAnalytics;
-  private _commonFrames: CommonFrames;
   private _cardFrames: CardFrames;
+  private _commonFrames: CommonFrames;
+  private _config: IConfig;
+  private _configuration: Config;
+  private _googleAnalytics: GoogleAnalytics;
+  private _merchantFields: MerchantFields;
+  private _messageBus: MessageBus;
   private _storage: Storage;
 
   constructor(config: IConfig) {
-    this._messageBus = new MessageBus();
-    this._googleAnalytics = new GoogleAnalytics();
     this._configuration = new Config();
+    this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
-    this._googleAnalytics.init();
-    this._config = this._configuration.init(config);
-    this._commonFrames = new CommonFrames(
-      this._config.jwt,
-      this._config.origin,
-      this._config.componentIds,
-      this._config.styles,
-      this._config.submitOnSuccess,
-      this._config.submitOnError,
-      this._config.submitFields,
-      this._config.datacenterurl,
-      this._config.animatedCard,
-      this._config.submitCallback
-    );
-    this._cardFrames = new CardFrames(
-      this._config.jwt,
-      this._config.origin,
-      this._config.componentIds,
-      this._config.styles,
-      this._config.components.paymentTypes,
-      this._config.components.defaultPaymentType,
-      this._config.animatedCard,
-      this._config.deferInit,
-      this._config.buttonId,
-      this._config.components.startOnLoad,
-      this._config.fieldsToSubmit
-    );
-    this._storage.setLocalStorageItem('merchantTranslations', this._config.translations);
-    this._storage.setLocalStorageItem('locale', JwtDecode<IStJwtObj>(this._config.jwt).payload.locale);
+    this._messageBus = new MessageBus();
+    this._storage = new Storage();
+    this.Init(config);
   }
 
   public Components() {
-    this._commonFrames.init();
-    this._merchantFields.init();
+    this.CardFrames(this._config);
     this._cardFrames.init();
-    this._cardinalCommerce();
+    this._merchantFields.init();
+    this.CardinalCommerce();
   }
 
   public ApplePay() {
-    const applepay = environment.testEnvironment ? ApplePayMock : ApplePay;
+    const { applepay } = this.Environment();
     return new applepay(this._config.applePay, this._config.jwt, this._config.datacenterurl);
   }
 
   public VisaCheckout() {
-    const visa = environment.testEnvironment ? VisaCheckoutMock : VisaCheckout;
+    const { visa } = this.Environment();
     return new visa(this._config.visaCheckout, this._config.jwt, this._config.datacenterurl, this._config.livestatus);
   }
 
@@ -96,8 +69,53 @@ class ST {
     }
   }
 
-  private _cardinalCommerce() {
-    const cardinal = environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce;
+  private Init(config: IConfig) {
+    this._config = this._configuration.init(config);
+    console.error(this._config);
+    this._googleAnalytics.init();
+    this.CommonFrames(this._config);
+    this.Storage(this._config);
+    this._commonFrames.init();
+  }
+
+  private Storage(config: IConfig) {
+    this._storage.setLocalStorageItem('merchantTranslations', config.translations);
+    this._storage.setLocalStorageItem('locale', JwtDecode<IStJwtObj>(config.jwt).payload.locale);
+  }
+
+  private CardFrames(config: IConfig) {
+    this._cardFrames = new CardFrames(
+      config.jwt,
+      config.origin,
+      config.componentIds,
+      config.styles,
+      config.components.paymentTypes,
+      config.components.defaultPaymentType,
+      config.animatedCard,
+      config.deferInit,
+      config.buttonId,
+      config.components.startOnLoad,
+      config.fieldsToSubmit
+    );
+  }
+
+  private CommonFrames(config: IConfig) {
+    this._commonFrames = new CommonFrames(
+      config.jwt,
+      config.origin,
+      config.componentIds,
+      config.styles,
+      config.submitOnSuccess,
+      config.submitOnError,
+      config.submitFields,
+      config.datacenterurl,
+      config.animatedCard,
+      config.submitCallback
+    );
+  }
+
+  private CardinalCommerce() {
+    const { cardinal } = this.Environment();
     return new cardinal(
       this._config.components.startOnLoad,
       this._config.jwt,
@@ -107,7 +125,14 @@ class ST {
       this._config.init.threedinit
     );
   }
+
+  private Environment() {
+    return {
+      applepay: environment.testEnvironment ? ApplePayMock : ApplePay,
+      cardinal: environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce,
+      visa: environment.testEnvironment ? VisaCheckoutMock : VisaCheckout
+    };
+  }
 }
 
-export { ST };
 export default (config: IConfig) => new ST(config);

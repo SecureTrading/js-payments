@@ -1,4 +1,6 @@
 import i18next from 'i18next';
+import { Config } from '../services/Config';
+import { Storage } from '../services/Storage';
 // TypeScript has been set to import json it just warns about it in here
 // @ts-ignore
 import cy_GB from '../translations/cy_GB.json';
@@ -24,6 +26,7 @@ import Utils from './Utils';
 
 // TODO docstring - class to act as adapter in case we ever change out the translator mechanism
 export class Translator {
+  private _storage: Storage;
   constructor(locale: string) {
     i18next.init({
       debug: false,
@@ -41,6 +44,7 @@ export class Translator {
         sv_SE: { translation: sv_SE }
       }
     });
+    this._storage = new Storage();
   }
 
   /**
@@ -48,7 +52,7 @@ export class Translator {
    * @param text
    */
   public translate = (text: string) => {
-    const translation = Utils.getLocalStorageItem(text, localStorage.merchantTranslations);
+    const translation = this._storage.getLocalStorageItem(text, localStorage.merchantTranslations);
     return translation ? translation : i18next.t(text, { content: text });
   };
 }

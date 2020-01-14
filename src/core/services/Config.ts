@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { IComponentsConfig, IComponentsConfigSchema, IComponentsIds, IConfig } from '../models/Config';
+import { IComponentsConfig, IComponentsConfigSchema, IComponentsIds, IConfig, IWalletConfig } from '../models/Config';
 import Selectors from '../shared/Selectors';
 
 export class Config {
@@ -43,9 +43,11 @@ export class Config {
     return {
       analytics: config.analytics !== undefined ? config.analytics : false,
       animatedCard: config.animatedCard !== undefined ? config.animatedCard : true,
+      applePay: this._setApmConfig(config.applePay),
       buttonId: config.buttonId !== undefined ? config.buttonId : '',
       byPassCards: config.byPassCards !== undefined ? config.byPassCards : [],
       componentIds: this._componentIds(config.componentIds),
+      components: this._setComponentsProperties(config),
       datacenterurl: config.datacenterurl !== undefined ? config.datacenterurl : '',
       deferInit: config.deferInit !== undefined ? config.deferInit : false,
       formId: config.formId !== undefined ? config.formId : '',
@@ -59,7 +61,7 @@ export class Config {
       submitOnError: config.submitOnError !== undefined ? config.submitOnError : false,
       submitOnSuccess: config.submitOnSuccess !== undefined ? config.submitOnSuccess : false,
       translations: config.translations ? config.translations : {},
-      ...this._setComponents(config),
+      visaCheckout: this._setApmConfig(config.visaCheckout),
       ...this._setFieldsToSubmit(config),
       ...this._setPropertiesToSubmit(config)
     };
@@ -67,7 +69,7 @@ export class Config {
 
   private _componentIds(config: IComponentsIds): IComponentsIds | {} {
     if (!config) {
-      return {};
+      return { ...Config.DEFAULT_COMPONENTS_IDS };
     }
     this.validate(config, IComponentsConfigSchema);
     const optionalIds = config.animatedCard !== undefined ? { animatedCard: config.animatedCard } : {};
@@ -100,12 +102,26 @@ export class Config {
     };
   }
 
-  private _setComponents(config: IConfig): IComponentsConfig {
+  private _setComponentsProperties(config: IConfig): IComponentsConfig {
+    if (!config.components) {
+      return {
+        defaultPaymentType: '',
+        paymentTypes: [''],
+        requestTypes: ['THREEDQUERY', 'AUTH'],
+        startOnLoad: false
+      };
+    }
     return {
-      ...config.components,
+      defaultPaymentType:
+        config.components.defaultPaymentType !== undefined ? config.components.defaultPaymentType : '',
+      paymentTypes: config.components.paymentTypes !== undefined ? config.components.paymentTypes : [''],
       requestTypes:
         config.components.requestTypes !== undefined ? config.components.requestTypes : ['THREEDQUERY', 'AUTH'],
       startOnLoad: config.components.startOnLoad !== undefined ? config.components.startOnLoad : false
     };
+  }
+
+  private _setApmConfig(apm: IWalletConfig): IWalletConfig {
+    return apm ? apm : {};
   }
 }
