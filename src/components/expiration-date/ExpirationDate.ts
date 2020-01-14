@@ -4,7 +4,7 @@ import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Selectors from '../../core/shared/Selectors';
 
-class ExpirationDate extends FormField {
+export class ExpirationDate extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.EXPIRATION_DATE_INPUT) as HTMLInputElement;
   private static DISABLED_ATTRIBUTE: string = 'disabled';
@@ -109,5 +109,3 @@ class ExpirationDate extends FormField {
     this._inputElement.classList.remove(ExpirationDate.DISABLED_CLASS);
   }
 }
-
-export default ExpirationDate;

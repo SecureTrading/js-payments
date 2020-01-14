@@ -2,7 +2,7 @@ import { IStTransportParams } from '../models/StTransport';
 import Utils from '../shared/Utils';
 import { IStRequest, StCodec } from './StCodec.class';
 
-class StTransport {
+export class StTransport {
   public get codec() {
     return this._codec;
   }
@@ -54,5 +54,3 @@ class StTransport {
     );
   }
 }
-
-export default StTransport;

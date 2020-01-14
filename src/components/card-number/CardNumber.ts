@@ -4,11 +4,11 @@ import FormField from '../../core/shared/FormField';
 import { IFormFieldState } from '../../core/models/FormFieldState';
 import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
-import Selectors from '../../core/shared/Selectors';
-import Utils from '../../core/shared/Utils';
+import { Selectors } from '../../core/shared/Selectors';
+import { Utils } from '../../core/shared/Utils';
 import Validation from '../../core/shared/Validation';
 
-class CardNumber extends FormField {
+export class CardNumber extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
 
@@ -196,5 +196,3 @@ class CardNumber extends FormField {
     this.messageBus.publish(messageBusEvent);
   }
 }
-
-export default CardNumber;

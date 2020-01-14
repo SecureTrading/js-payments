@@ -1,4 +1,4 @@
-export default class Utils {
+export class Utils {
   public static inArray<T>(array: ArrayLike<T>, item: T) {
     return Array.from(array).indexOf(item) >= 0;
   }

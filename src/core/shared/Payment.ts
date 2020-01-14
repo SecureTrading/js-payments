@@ -5,7 +5,7 @@ import Notification from './Notification';
 import { StJwt } from './StJwt';
 import Validation from './Validation';
 
-export default class Payment {
+export class Payment {
   private _cardinalCommerceCacheToken: string;
   private _notification: Notification;
   private _processPaymentRequestBody: IStRequest;

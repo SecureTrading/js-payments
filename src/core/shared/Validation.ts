@@ -16,7 +16,7 @@ const {
   VALIDATION_ERROR
 } = Language.translations;
 
-export default class Validation extends Frame {
+export class Validation extends Frame {
   public static ERROR_FIELD_CLASS: string = 'error-field';
 
   public static clearNonDigitsChars(value: string): string {

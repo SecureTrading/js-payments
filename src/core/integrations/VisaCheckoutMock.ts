@@ -2,7 +2,7 @@ import { environment } from '../../environments/environment';
 import DomMethods from '../shared/DomMethods';
 import VisaCheckout from './VisaCheckout';
 
-class VisaCheckoutMock extends VisaCheckout {
+export class VisaCheckoutMock extends VisaCheckout {
   protected initPaymentConfiguration() {
     // Do nothing on mock because we don't want to use V.
   }
@@ -31,5 +31,3 @@ class VisaCheckoutMock extends VisaCheckout {
     }
   }
 }
-
-export default VisaCheckoutMock;

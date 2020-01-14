@@ -4,7 +4,7 @@ import ApplePaySessionMock from './ApplePaySessionMock';
 
 const applePay: string = '../../../images/apple-pay.png';
 
-class ApplePayMock extends ApplePay {
+export class ApplePayMock extends ApplePay {
   public paymentDetails: string;
 
   public ifApplePayIsAvailable() {
@@ -41,5 +41,3 @@ class ApplePayMock extends ApplePay {
     return DomMethods.createHtmlElement.apply(this, [{ src: applePay, id: 'st-apple-pay' }, 'img']);
   }
 }
-
-export default ApplePayMock;

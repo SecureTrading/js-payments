@@ -6,7 +6,7 @@ import { Translator } from './Translator';
 import Utils from './Utils';
 import Validation from './Validation';
 
-export default class FormField extends Frame {
+export class FormField extends Frame {
   public validation: Validation;
   protected _inputSelector: string;
   protected _labelSelector: string;

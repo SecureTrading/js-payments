@@ -2,7 +2,7 @@ import MessageBus from '../../core/shared/MessageBus';
 import { IParams } from '../models/Frame';
 import { IAllowedStyles, IStyle, Styler } from './Styler';
 
-export default class Frame {
+export class Frame {
   protected messageBus: MessageBus;
   protected params: IParams;
 

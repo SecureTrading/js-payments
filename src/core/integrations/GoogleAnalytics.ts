@@ -1,7 +1,7 @@
 import { environment } from '../../environments/environment';
 import DomMethods from '../shared/DomMethods';
 
-class GoogleAnalytics {
+export class GoogleAnalytics {
   public static sendGaData(hitType: string, eventCategory: string, eventAction: string, eventLabel: string) {
     // @ts-ignore
     if (window.ga) {
@@ -87,5 +87,3 @@ class GoogleAnalytics {
     });
   }
 }
-
-export default GoogleAnalytics;

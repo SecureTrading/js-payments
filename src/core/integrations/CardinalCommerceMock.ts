@@ -2,7 +2,7 @@ import { environment } from '../../environments/environment';
 import { IFormFieldState } from '../models/FormFieldState';
 import { CardinalCommerce } from './CardinalCommerce';
 
-export default class CardinalCommerceMock extends CardinalCommerce {
+export class CardinalCommerceMock extends CardinalCommerce {
   protected _performBinDetection(data: IFormFieldState) {
     return true;
   }

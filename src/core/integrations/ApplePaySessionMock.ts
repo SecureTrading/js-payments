@@ -1,6 +1,6 @@
 import { environment } from '../../environments/environment';
 
-export default class ApplePaySessionMock {
+export class ApplePaySessionMock {
   public static STATUS_SUCCESS: any;
   public static STATUS_FAILURE: any = 'FAILURE';
   public static onvalidatemerchant: any;

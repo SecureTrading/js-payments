@@ -442,5 +442,3 @@ export class ApplePay {
     }
   }
 }
-
-export default ApplePay;

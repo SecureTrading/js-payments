@@ -1,4 +1,4 @@
-class Language {
+export class Language {
   private static _translations = {
     APPLE_PAY_AMOUNT_AND_CURRENCY: 'Amount and currency are not set',
     APPLE_PAY_NOT_LOGGED: 'You are not logged to Apple account',
@@ -49,5 +49,3 @@ class Language {
     return this._translations;
   }
 }
-
-export default Language;

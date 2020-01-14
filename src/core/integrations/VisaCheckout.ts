@@ -7,7 +7,7 @@ import { StJwt } from '../shared/StJwt';
 import DomMethods from './../shared/DomMethods';
 import Language from './../shared/Language';
 import Payment from './../shared/Payment';
-import GoogleAnalytics from './GoogleAnalytics';
+import { GoogleAnalytics } from './GoogleAnalytics';
 
 declare const V: any;
 
@@ -237,5 +237,3 @@ export class VisaCheckout {
     }
   }
 }
-
-export default VisaCheckout;

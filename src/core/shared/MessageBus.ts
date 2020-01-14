@@ -1,7 +1,7 @@
 import { environment } from '../../environments/environment';
 import Utils from './Utils';
 
-export default class MessageBus {
+export class MessageBus {
   public static SUBSCRIBERS: string = 'ST_SUBSCRIBERS';
   public static EVENTS = {
     BLOCK_CARD_NUMBER: 'BLOCK_CARD_NUMBER',

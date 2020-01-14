@@ -5,7 +5,7 @@ import Selectors from '../../core/shared/Selectors';
 import { Translator } from '../../core/shared/Translator';
 import { environment } from '../../environments/environment';
 
-class NotificationFrame extends Frame {
+export class NotificationFrame extends Frame {
   get notificationFrameElement(): HTMLElement {
     return this._notificationFrameElement;
   }
@@ -190,5 +190,3 @@ class NotificationFrame extends Frame {
     this._setAttributeClass();
   };
 }
-
-export default NotificationFrame;

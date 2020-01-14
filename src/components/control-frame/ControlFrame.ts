@@ -19,7 +19,7 @@ import Notification from '../../core/shared/Notification';
 import Payment from '../../core/shared/Payment';
 import Validation from '../../core/shared/Validation';
 
-class ControlFrame extends Frame {
+export class ControlFrame extends Frame {
   private static ALLOWED_PARAMS: string[] = ['jwt', 'gatewayUrl'];
   private static NON_CVV_CARDS: string[] = ['PIBA'];
   private static THREEDQUERY_EVENT: string = 'THREEDQUERY';
@@ -294,5 +294,3 @@ class ControlFrame extends Frame {
     this._merchantFormData = data;
   }
 }
-
-export default ControlFrame;
