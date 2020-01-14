@@ -17,7 +17,6 @@ import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Notification from '../../core/shared/Notification';
 import Payment from '../../core/shared/Payment';
-import { IStJwtObj } from '../../core/shared/StJwt';
 import Validation from '../../core/shared/Validation';
 
 /**
@@ -91,6 +90,9 @@ class ControlFrame extends Frame {
 
   private _initFormFieldChangeEvent(event: string, field: IFormFieldState) {
     this.messageBus.subscribe(event, (data: IFormFieldState) => {
+      if (event === MessageBus.EVENTS.CHANGE_CARD_NUMBER) {
+        this._cardNumber = data.value;
+      }
       ControlFrame._onFormFieldStateChange(field, data);
     });
   }
@@ -125,13 +127,9 @@ class ControlFrame extends Frame {
     });
   }
 
-  /**
-   * Sets listener for LOAD_CARDINAL MessageBus event.
-   * @private
-   */
   private _initLoadCardinalEvent() {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL, () => {
-      this._onLoadCardinal();
+      this._onLoadIntegrationModule();
     });
   }
 
@@ -145,14 +143,25 @@ class ControlFrame extends Frame {
     });
   }
 
-  /**
-   * Sets listener for SUBMIT_FORM MessageBus event.
-   * @private
-   */
-  private _initSubmitFormEvent() {
+  private _initSubmitFormEvent(): void {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, (data?: ISubmitData) => {
-      this._onSubmit(data);
+      this._proceedWith3DSecure(data);
     });
+  }
+
+  private _proceedWith3DSecure(data: ISubmitData): void {
+    // @ts-ignore
+    if (data.byPassCards.includes(this._binLookup.binLookup(this._cardNumber).type)) {
+      this.messageBus.publish(
+        {
+          data: true,
+          type: MessageBus.EVENTS_PUBLIC.BY_PASS_CARDINAL
+        },
+        true
+      );
+    } else {
+      this._onSubmit(data);
+    }
   }
 
   /**
@@ -203,10 +212,6 @@ class ControlFrame extends Frame {
     this._requestPayment(data);
   }
 
-  /**
-   * Triggers LOAD_CONTROL_FRAME event on init.
-   * @private
-   */
   private _onLoad() {
     const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME
@@ -214,18 +219,10 @@ class ControlFrame extends Frame {
     this.messageBus.publish(messageBusEvent, true);
   }
 
-  /**
-   * Sets payment as ready after Cardinal Commerce has been loaded.
-   * @private
-   */
-  private _onLoadCardinal() {
+  private _onLoadIntegrationModule() {
     this._isPaymentReady = true;
   }
 
-  /**
-   * Handles _onThreeDInitEvent.
-   * @private
-   */
   private _onThreeDInitEvent() {
     this._requestThreeDInit();
   }
