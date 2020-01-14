@@ -231,6 +231,7 @@ export class CardinalCommerce {
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDQUERY, (data: any) => {
       this._onThreeDQueryEvent(data);
     });
+    this._submitEventListener();
   }
 
   /**
@@ -340,5 +341,27 @@ export class CardinalCommerce {
     } else {
       this._authorizePayment();
     }
+  }
+
+  private _submitEventListener(): void {
+    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.BY_PASS_CARDINAL, (data: any) => {
+      console.error(data);
+      const { pan, expirydate, securitycode } = data;
+      const postData: any = {
+        expirydate,
+        pan,
+        securitycode
+      };
+
+      this._byPassAuthorizePayment(postData);
+    });
+  }
+
+  private _byPassAuthorizePayment(data: any): void {
+    const messageBusEvent: IMessageBusEvent = {
+      data,
+      type: MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS
+    };
+    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 }

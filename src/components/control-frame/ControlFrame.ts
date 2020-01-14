@@ -44,6 +44,8 @@ class ControlFrame extends Frame {
   private _binLookup: BinLookup;
   private _card: ICard;
   private _cardNumber: string;
+  private _securityCode: string;
+  private _expirationDate: string;
   private _decodedJwt: IDecodedJwt;
   private _isPaymentReady: boolean = false;
   private _formFields: IFormFieldsDetails = FormFieldsDetails;
@@ -93,6 +95,12 @@ class ControlFrame extends Frame {
       if (event === MessageBus.EVENTS.CHANGE_CARD_NUMBER) {
         this._cardNumber = data.value;
       }
+      if (event === MessageBus.EVENTS.CHANGE_EXPIRATION_DATE) {
+        this._expirationDate = data.value;
+      }
+      if (event === MessageBus.EVENTS.CHANGE_SECURITY_CODE) {
+        this._securityCode = data.value;
+      }
       ControlFrame._onFormFieldStateChange(field, data);
     });
   }
@@ -139,6 +147,7 @@ class ControlFrame extends Frame {
    */
   private _initProcessPaymentsEvent() {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS, (data: IResponseData) => {
+      console.error(data);
       this._onProcessPaymentEvent(data);
     });
   }
@@ -154,7 +163,11 @@ class ControlFrame extends Frame {
     if (data.byPassCards.includes(this._binLookup.binLookup(this._cardNumber).type)) {
       this.messageBus.publish(
         {
-          data: true,
+          data: {
+            pan: this._cardNumber,
+            expirydate: this._expirationDate,
+            securitycode: this._securityCode
+          },
           type: MessageBus.EVENTS_PUBLIC.BY_PASS_CARDINAL
         },
         true
