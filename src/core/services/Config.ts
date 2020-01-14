@@ -43,7 +43,7 @@ export class Config {
     return {
       analytics: config.analytics !== undefined ? config.analytics : false,
       animatedCard: config.animatedCard !== undefined ? config.animatedCard : true,
-      applePay: this._setApmConfig(config.applePay),
+      applePay: this._setApmConfig(config.applePay, config.components),
       buttonId: config.buttonId !== undefined ? config.buttonId : '',
       byPassCards: config.byPassCards !== undefined ? config.byPassCards : [],
       componentIds: this._componentIds(config.componentIds),
@@ -61,7 +61,7 @@ export class Config {
       submitOnError: config.submitOnError !== undefined ? config.submitOnError : false,
       submitOnSuccess: config.submitOnSuccess !== undefined ? config.submitOnSuccess : false,
       translations: config.translations ? config.translations : {},
-      visaCheckout: this._setApmConfig(config.visaCheckout),
+      visaCheckout: this._setApmConfig(config.visaCheckout, config.components),
       ...this._setFieldsToSubmit(config),
       ...this._setPropertiesToSubmit(config)
     };
@@ -121,7 +121,14 @@ export class Config {
     };
   }
 
-  private _setApmConfig(apm: IWalletConfig): IWalletConfig {
-    return apm ? apm : {};
+  private _setApmConfig(apm: IWalletConfig, components: IComponentsConfig): IWalletConfig {
+    if (apm) {
+      return {
+        ...apm,
+        requestTypes: components && components.requestTypes !== undefined ? components.requestTypes : ['AUTH']
+      };
+    } else {
+      return {};
+    }
   }
 }
