@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import { environment } from '../../environments/environment';
 import { IComponentsConfig, IComponentsConfigSchema, IComponentsIds, IConfig, IWalletConfig } from '../models/Config';
 import Selectors from '../shared/Selectors';
 
@@ -48,9 +49,9 @@ export class Config {
       byPassCards: config.byPassCards !== undefined ? config.byPassCards : [],
       componentIds: this._componentIds(config.componentIds),
       components: this._setComponentsProperties(config),
-      datacenterurl: config.datacenterurl !== undefined ? config.datacenterurl : '',
+      datacenterurl: config.datacenterurl !== undefined ? config.datacenterurl : environment.GATEWAY_URL,
       deferInit: config.deferInit !== undefined ? config.deferInit : false,
-      formId: config.formId !== undefined ? config.formId : '',
+      formId: config.formId !== undefined ? config.formId : Selectors.MERCHANT_FORM_SELECTOR,
       init: config.init !== undefined ? config.init : { cachetoken: '', threedinit: '' },
       jwt: config.jwt !== undefined ? config.jwt : '',
       livestatus: config.livestatus !== undefined ? config.livestatus : 0,

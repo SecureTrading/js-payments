@@ -1,6 +1,5 @@
 import JwtDecode from 'jwt-decode';
 import Element from '../Element';
-import { IConfig } from '../models/Config';
 import { IValidationMessageBus } from '../models/Validation';
 import DomMethods from '../shared/DomMethods';
 import Language from '../shared/Language';
@@ -74,8 +73,6 @@ export class CardFrames extends RegisterFrames {
     super(jwt, origin, componentIds, styles, animatedCard, fieldsToSubmit);
     this._setInitValues(buttonId, defaultPaymentType, deferInit, paymentTypes, startOnLoad, animatedCard);
     this.configureFormFieldsAmount(jwt);
-    this.elementsTargets = this.setElementsFields();
-    this.registerElements(this.elementsToRegister, this.elementsTargets);
   }
 
   public init() {
@@ -84,6 +81,8 @@ export class CardFrames extends RegisterFrames {
     this._createSubmitButton();
     this._initSubscribes();
     this._initCardFrames();
+    this.elementsTargets = this.setElementsFields();
+    this.registerElements(this.elementsToRegister, this.elementsTargets);
     this._broadcastSecurityCodeProperties(this.jwt);
   }
 
@@ -247,7 +246,6 @@ export class CardFrames extends RegisterFrames {
     cardNumber = Object.assign({}, defaultStyles, cardNumber);
     securityCode = Object.assign({}, defaultStyles, securityCode);
     expirationDate = Object.assign({}, defaultStyles, expirationDate);
-
     if (this._onlyCvvConfiguration) {
       this._initSecurityCodeFrame(securityCode);
     } else if (this._configurationForStandardCard) {

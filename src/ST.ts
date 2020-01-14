@@ -71,7 +71,6 @@ class ST {
 
   private Init(config: IConfig) {
     this._config = this._configuration.init(config);
-    console.error(this._config);
     this._googleAnalytics.init();
     this.CommonFrames(this._config);
     this.Storage(this._config);
@@ -110,7 +109,8 @@ class ST {
       config.submitFields,
       config.datacenterurl,
       config.animatedCard,
-      config.submitCallback
+      config.submitCallback,
+      config.components.requestTypes
     );
   }
 

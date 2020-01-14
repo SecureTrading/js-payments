@@ -28,6 +28,7 @@ class CommonFrames extends RegisterFrames {
   private readonly _gatewayUrl: string;
   private readonly _merchantForm: HTMLFormElement;
   private _validation: Validation;
+  private _requestTypes: string[];
   private readonly _submitCallback: any;
   private readonly _submitFields: string[];
   private readonly _submitOnError: boolean;
@@ -43,7 +44,8 @@ class CommonFrames extends RegisterFrames {
     submitFields: string[],
     gatewayUrl: string,
     animatedCard: boolean,
-    submitCallback: any
+    submitCallback: any,
+    requestTypes: string[]
   ) {
     super(jwt, origin, componentIds, styles, animatedCard, submitCallback);
     this._gatewayUrl = gatewayUrl;
@@ -54,6 +56,7 @@ class CommonFrames extends RegisterFrames {
     this._submitFields = submitFields;
     this._submitOnError = submitOnError;
     this._submitOnSuccess = submitOnSuccess;
+    this._requestTypes = requestTypes;
   }
 
   public init() {
