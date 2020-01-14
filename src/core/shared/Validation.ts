@@ -54,6 +54,7 @@ export default class Validation extends Frame {
   public static setCustomValidationError(errorContent: string, inputElement: HTMLInputElement) {
     inputElement.setCustomValidity(errorContent);
   }
+
   public static addErrorContainer(inputElement: HTMLInputElement, inputTarget: InsertPosition, errorContent: string) {
     inputElement.insertAdjacentHTML(inputTarget, errorContent);
   }

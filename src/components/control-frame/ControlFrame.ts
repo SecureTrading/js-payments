@@ -17,12 +17,8 @@ import Language from '../../core/shared/Language';
 import MessageBus from '../../core/shared/MessageBus';
 import Notification from '../../core/shared/Notification';
 import Payment from '../../core/shared/Payment';
-import { IStJwtObj } from '../../core/shared/StJwt';
 import Validation from '../../core/shared/Validation';
 
-/**
- * Defines frame which is essentially a hub which collects events and processes from whole library.
- */
 class ControlFrame extends Frame {
   private static ALLOWED_PARAMS: string[] = ['jwt', 'gatewayUrl'];
   private static NON_CVV_CARDS: string[] = ['PIBA'];
@@ -44,8 +40,6 @@ class ControlFrame extends Frame {
 
   private _binLookup: BinLookup;
   private _card: ICard;
-  private _cardNumber: string;
-  private _decodedJwt: IDecodedJwt;
   private _isPaymentReady: boolean = false;
   private _formFields: IFormFieldsDetails = FormFieldsDetails;
   private _formFieldsValidity: IFormFieldsValidity = FormFieldsValidity;
@@ -95,80 +89,48 @@ class ControlFrame extends Frame {
     });
   }
 
-  /**
-   * Sets listener for SET_REQUEST_TYPES MessageBus event.
-   * @private
-   */
   private _initSetRequestTypesEvent() {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES, (data: ISetRequestTypes) => {
       this._onSetRequestTypesEvent(data);
     });
   }
 
-  /**
-   * Sets listener for BY_PASS_INIT MessageBus event.
-   * @private
-   */
   private _initByPassInitEvent() {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BY_PASS_INIT, (cachetoken: string) => {
       this._onByPassInitEvent(cachetoken);
     });
   }
 
-  /**
-   * Sets listener for THREEDINIT MessageBus event.
-   * @private
-   */
   private _initThreedinitEvent() {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
       this._onThreeDInitEvent();
     });
   }
 
-  /**
-   * Sets listener for LOAD_CARDINAL MessageBus event.
-   * @private
-   */
   private _initLoadCardinalEvent() {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL, () => {
       this._onLoadCardinal();
     });
   }
 
-  /**
-   * Sets listener for PROCESS_PAYMENTS MessageBus event.
-   * @private
-   */
   private _initProcessPaymentsEvent() {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS, (data: IResponseData) => {
       this._onProcessPaymentEvent(data);
     });
   }
 
-  /**
-   * Sets listener for SUBMIT_FORM MessageBus event.
-   * @private
-   */
   private _initSubmitFormEvent() {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, (data?: ISubmitData) => {
       this._onSubmit(data);
     });
   }
 
-  /**
-   * Sets listener for UPDATE_MERCHANT_FIELDS MessageBus event.
-   * @private
-   */
   private _initUpdateMerchantFieldsEvent() {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS, (data: any) => {
       this._storeMerchantData(data);
     });
   }
 
-  /**
-   * Sets listener for RESET_JWT MessageBus event.
-   * @private
-   */
   private _initResetJwtEvent() {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.RESET_JWT, () => {
       ControlFrame._onResetJWT();
@@ -180,22 +142,12 @@ class ControlFrame extends Frame {
     });
   }
 
-  /**
-   * Splits post and pre threedrequests types.
-   * @param data
-   * @private
-   */
   private _onSetRequestTypesEvent(data: any) {
     const threeDIndex = data.requestTypes.indexOf(ControlFrame.THREEDQUERY_EVENT);
     this._preThreeDRequestTypes = data.requestTypes.slice(0, threeDIndex + 1);
     this._postThreeDRequestTypes = data.requestTypes.slice(threeDIndex + 1, data.requestTypes.length);
   }
 
-  /**
-   * Handles submit action.
-   * @param data
-   * @private
-   */
   private _onSubmit(data: any) {
     if (data !== undefined && data.requestTypes !== undefined) {
       this._onSetRequestTypesEvent(data);
@@ -203,10 +155,6 @@ class ControlFrame extends Frame {
     this._requestPayment(data);
   }
 
-  /**
-   * Triggers LOAD_CONTROL_FRAME event on init.
-   * @private
-   */
   private _onLoad() {
     const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME
@@ -214,36 +162,18 @@ class ControlFrame extends Frame {
     this.messageBus.publish(messageBusEvent, true);
   }
 
-  /**
-   * Sets payment as ready after Cardinal Commerce has been loaded.
-   * @private
-   */
   private _onLoadCardinal() {
     this._isPaymentReady = true;
   }
 
-  /**
-   * Handles _onThreeDInitEvent.
-   * @private
-   */
   private _onThreeDInitEvent() {
     this._requestThreeDInit();
   }
 
-  /**
-   * Handles _onByPassInitEvent with cachetoken.
-   * @param cachetoken
-   * @private
-   */
   private _onByPassInitEvent(cachetoken: string) {
     this._requestByPassInit(cachetoken);
   }
 
-  /**
-   * Sets _processThreeDResponse or _processPayment depends on threedrequest types,
-   * @param data
-   * @private
-   */
   private _onProcessPaymentEvent(data: IResponseData) {
     if (this._postThreeDRequestTypes.length === 0) {
       this._processThreeDResponse(data);
@@ -252,11 +182,6 @@ class ControlFrame extends Frame {
     }
   }
 
-  /**
-   * Processes 3DResponse.
-   * @param data
-   * @private
-   */
   private _processThreeDResponse(data: IResponseData) {
     const { threedresponse } = data;
     if (threedresponse !== undefined) {
@@ -265,11 +190,6 @@ class ControlFrame extends Frame {
     this._notification.success(Language.translations.PAYMENT_SUCCESS);
   }
 
-  /**
-   * Processes payment flow.
-   * @param data
-   * @private
-   */
   private _processPayment(data: IResponseData) {
     this._payment
       .processPayment(this._postThreeDRequestTypes, this._card, this._merchantFormData, data)
@@ -284,11 +204,6 @@ class ControlFrame extends Frame {
       });
   }
 
-  /**
-   * Triggers byPassInitRequest and publish this event with data.
-   * @param cachetoken
-   * @private
-   */
   private _requestByPassInit(cachetoken: string) {
     this._payment.byPassInitRequest(cachetoken);
     const messageBusEvent: IMessageBusEvent = {
@@ -331,10 +246,6 @@ class ControlFrame extends Frame {
     }
   }
 
-  /**
-   * Triggers threeDInitRequest with MessageBus THREEDINIT event and publish this event with data.
-   * @private
-   */
   private _requestThreeDInit() {
     this._payment.threeDInitRequest().then((result: any) => {
       const messageBusEvent: IMessageBusEvent = {
