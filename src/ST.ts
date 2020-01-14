@@ -19,9 +19,14 @@ import { Config } from './core/services/Config';
 import { Storage } from './core/services/Storage';
 import MessageBus from './core/shared/MessageBus';
 import { IStJwtObj } from './core/shared/StJwt';
+import { Translator } from './core/shared/Translator';
 import { environment } from './environments/environment';
 
 class ST {
+  private static DEBOUNCE_JWT_VALUE: number = 900;
+  private static JWT_NOT_SPECIFIED_MESSAGE: string = 'Jwt has not been specified';
+  private static LOCALE_STORAGE: string = 'locale';
+  private static MERCHANT_TRANSLATIONS_STORAGE: string = 'merchantTranslations';
   private _cardFrames: CardFrames;
   private _commonFrames: CommonFrames;
   private _config: IConfig;
@@ -30,6 +35,7 @@ class ST {
   private _merchantFields: MerchantFields;
   private _messageBus: MessageBus;
   private _storage: Storage;
+  private _translation: Translator;
 
   constructor(config: IConfig) {
     this._configuration = new Config();
@@ -40,49 +46,59 @@ class ST {
     this.Init(config);
   }
 
-  public Components() {
+  public Components(): void {
     this.CardFrames(this._config);
     this._cardFrames.init();
     this._merchantFields.init();
-    this.CardinalCommerce();
   }
 
-  public ApplePay() {
+  public ApplePay(): ApplePay {
     const { applepay } = this.Environment();
     return new applepay(this._config.applePay, this._config.jwt, this._config.datacenterurl);
   }
 
-  public VisaCheckout() {
+  public VisaCheckout(): VisaCheckout {
     const { visa } = this.Environment();
     return new visa(this._config.visaCheckout, this._config.jwt, this._config.datacenterurl, this._config.livestatus);
   }
 
-  public updateJWT(newJWT: string) {
-    if (newJWT) {
-      this._config.jwt = newJWT;
+  public UpdateJwt(jwt: string): void {
+    if (jwt) {
+      this._config.jwt = jwt;
       (() => {
-        const a = StCodec.updateJWTValue(newJWT);
-        debounce(() => a, 900);
+        const a = StCodec.updateJWTValue(jwt);
+        debounce(() => a, ST.DEBOUNCE_JWT_VALUE);
       })();
     } else {
-      throw Error('Jwt has not been specified');
+      throw Error(this._translation.translate(ST.JWT_NOT_SPECIFIED_MESSAGE));
     }
   }
 
-  private Init(config: IConfig) {
+  private Init(config: IConfig): void {
     this._config = this._configuration.init(config);
+    this.Storage(this._config);
+    this._translation = new Translator(
+      this._storage.getLocalStorageItem(ST.LOCALE_STORAGE, localStorage.merchantTranslations)
+    );
     this._googleAnalytics.init();
     this.CommonFrames(this._config);
-    this.Storage(this._config);
     this._commonFrames.init();
+    this.CardinalCommerce();
   }
 
-  private Storage(config: IConfig) {
-    this._storage.setLocalStorageItem('merchantTranslations', config.translations);
-    this._storage.setLocalStorageItem('locale', JwtDecode<IStJwtObj>(config.jwt).payload.locale);
+  private CardinalCommerce(): CardinalCommerce {
+    const { cardinal } = this.Environment();
+    return new cardinal(
+      this._config.components.startOnLoad,
+      this._config.jwt,
+      this._config.components.requestTypes,
+      this._config.livestatus,
+      this._config.init.cachetoken,
+      this._config.init.threedinit
+    );
   }
 
-  private CardFrames(config: IConfig) {
+  private CardFrames(config: IConfig): void {
     this._cardFrames = new CardFrames(
       config.jwt,
       config.origin,
@@ -98,7 +114,7 @@ class ST {
     );
   }
 
-  private CommonFrames(config: IConfig) {
+  private CommonFrames(config: IConfig): void {
     this._commonFrames = new CommonFrames(
       config.jwt,
       config.origin,
@@ -114,24 +130,17 @@ class ST {
     );
   }
 
-  private CardinalCommerce() {
-    const { cardinal } = this.Environment();
-    return new cardinal(
-      this._config.components.startOnLoad,
-      this._config.jwt,
-      this._config.components.requestTypes,
-      this._config.livestatus,
-      this._config.init.cachetoken,
-      this._config.init.threedinit
-    );
-  }
-
-  private Environment() {
+  private Environment(): { applepay: any; cardinal: any; visa: any } {
     return {
       applepay: environment.testEnvironment ? ApplePayMock : ApplePay,
       cardinal: environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce,
       visa: environment.testEnvironment ? VisaCheckoutMock : VisaCheckout
     };
+  }
+
+  private Storage(config: IConfig): void {
+    this._storage.setLocalStorageItem(ST.MERCHANT_TRANSLATIONS_STORAGE, config.translations);
+    this._storage.setLocalStorageItem(ST.LOCALE_STORAGE, JwtDecode<IStJwtObj>(config.jwt).payload.locale);
   }
 }
 
