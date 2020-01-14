@@ -2,18 +2,6 @@ import { IStTransportParams } from '../models/StTransport';
 import Utils from '../shared/Utils';
 import { IStRequest, StCodec } from './StCodec.class';
 
-/**
- * Establishes connection with ST, defines client.
- * example usage:
- *   st.sendRequest({
- *     accounttypedescription: 'ECOM',
- *     expirydate: '01/20',
- *     pan: '4111111111111111',
- *     requesttypedescription: 'AUTH',
- *     securitycode: '123',
- *     sitereference: 'test_james38641'
- *   }).then();
- */
 class StTransport {
   public get codec() {
     return this._codec;
@@ -31,7 +19,6 @@ class StTransport {
   private static RETRY_LIMIT = 5;
   private static RETRY_TIMEOUT = 10000;
   private static TIMEOUT = 10000;
-
   private readonly _codec: StCodec;
   private _gatewayUrl: string;
 
@@ -40,11 +27,6 @@ class StTransport {
     this._codec = new StCodec(params.jwt, parentOrigin);
   }
 
-  /**
-   * Perform a JSON API request with ST
-   * @param requestObject A request object to send to ST
-   * @return A Promise object that resolves the gateway response
-   */
   public async sendRequest(requestObject: IStRequest) {
     return this._fetchRetry(this._gatewayUrl, {
       ...StTransport.DEFAULT_FETCH_OPTIONS,
@@ -56,18 +38,6 @@ class StTransport {
       });
   }
 
-  /**
-   * Fetch with timeout and retry
-   * We probably want to update this to use an AbortControllor once this is standardised in the future
-   * @param url The URL to be passed to the fetch request
-   * @param options The options object to be passed to the fetch request
-   * @param connectTimeout The time (ms) after which to time out
-   * @param delay The delay for the retry
-   * @param retries The number of retries
-   * @param retryTimeout The longest amount of time to spend retrying
-   * @return A Promise that resolves to a fetch response or rejects with an error
-   * @private
-   */
   private _fetchRetry(
     url: string,
     options: object,

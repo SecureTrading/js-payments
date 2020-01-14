@@ -28,7 +28,6 @@ class CommonFrames extends RegisterFrames {
   private readonly _gatewayUrl: string;
   private readonly _merchantForm: HTMLFormElement;
   private _validation: Validation;
-  private _requestTypes: string[];
   private readonly _submitCallback: any;
   private readonly _submitFields: string[];
   private readonly _submitOnError: boolean;
@@ -80,7 +79,7 @@ class CommonFrames extends RegisterFrames {
     if (this._shouldLoadNotificationFrame()) {
       elements.push(this.componentIds.notificationFrame);
     }
-    elements.push(Selectors.MERCHANT_FORM_SELECTOR); // Control frame is always needed so just append to form
+    elements.push(Selectors.MERCHANT_FORM_SELECTOR);
     return elements;
   }
 
