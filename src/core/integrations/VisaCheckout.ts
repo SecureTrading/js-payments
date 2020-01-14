@@ -11,9 +11,6 @@ import GoogleAnalytics from './GoogleAnalytics';
 
 declare const V: any;
 
-/**
- *  Visa Checkout configuration class; sets up Visa e-wallet.
- */
 export class VisaCheckout {
   get payment(): Payment {
     return this._payment;
@@ -81,11 +78,6 @@ export class VisaCheckout {
   private _livestatus: number = 0;
   private _placement: string = 'body';
 
-  /**
-   * Init configuration (temporary with some test data).
-   * merchantId and encryptionKey will authenticate merchant.
-   * Eventually in config, there'll be merchant credentials provided, now there are some test credentials.
-   */
   private _initConfiguration = {
     apikey: '' as string,
     paymentRequest: {
@@ -109,23 +101,12 @@ export class VisaCheckout {
     });
   }
 
-  /**
-   * Adds bunch of initConfiguration parameters.
-   * @param paymentRequest
-   * @param settings
-   * @param stJwt
-   * @param merchantId
-   */
   public setInitConfiguration(paymentRequest: any, settings: any, stJwt: StJwt, merchantId: string) {
     this._initConfiguration.apikey = merchantId;
     this._initConfiguration.paymentRequest = this.getInitPaymentRequest(paymentRequest, stJwt) as any;
     this._initConfiguration.settings = this._setConfiguration({ locale: stJwt.locale }, settings);
   }
 
-  /**
-   * Adds query string to src visa button image to customize it
-   * @param properties
-   */
   public customizeVisaButton(properties: any) {
     const { color, size } = properties;
     const url = new URL(this.visaCheckoutButtonProps.src);
@@ -139,11 +120,6 @@ export class VisaCheckout {
     return this.visaCheckoutButtonProps.src;
   }
 
-  /**
-   * Set configuration of init request.
-   * @param paymentRequest
-   * @param stJwt
-   */
   public getInitPaymentRequest(paymentRequest: any, stJwt: StJwt) {
     const config = this._initConfiguration.paymentRequest;
     config.currencyCode = stJwt.currencyiso3a;
@@ -152,20 +128,10 @@ export class VisaCheckout {
     return this._setConfiguration(config, paymentRequest);
   }
 
-  /**
-   * Creates html image element which will be transformed into interactive button by SDK.
-   */
   public createVisaButton = () => DomMethods.createHtmlElement.apply(this, [this.visaCheckoutButtonProps, 'img']);
 
-  /**
-   * Attaches Visa Button to specified element, if element is undefined Visa Checkout button is appended to body
-   */
   protected attachVisaButton = () => DomMethods.appendChildIntoDOM(this._placement, this.createVisaButton());
 
-  /**
-   * Handles Visa Checkout error event.*
-   * @param payment
-   */
   protected onSuccess(payment: object) {
     this.paymentDetails = JSON.stringify(payment);
     this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
@@ -191,9 +157,6 @@ export class VisaCheckout {
       });
   }
 
-  /**
-   * Handles Visa Checkout error event.
-   */
   protected onError() {
     this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
     this._getResponseMessage(this.paymentStatus);
@@ -201,9 +164,6 @@ export class VisaCheckout {
     GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment error');
   }
 
-  /**
-   * Handles Visa Checkout cancel event.
-   */
   protected onCancel() {
     this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.WARNING;
     this._getResponseMessage(this.paymentStatus);
@@ -211,20 +171,10 @@ export class VisaCheckout {
     GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment canceled');
   }
 
-  /**
-   * Init configuration and payment data
-   */
   protected initPaymentConfiguration() {
     V.init(this._initConfiguration);
   }
 
-  /**
-   * Handles all of 3 types of responses from Visa Checkout:
-   * - SUCCESS
-   * - ERROR
-   * - CANCEL
-   * Then sets payment status and details (if payment succeeded), gets response message and sets notification.
-   */
   protected paymentStatusHandler() {
     V.on(VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.SUCCESS, (payment: object) => {
       this.onSuccess(payment);
@@ -237,14 +187,6 @@ export class VisaCheckout {
     });
   }
 
-  /**
-   * Gathers all of the init methods, sets payment info, attach VISA button and add handlers.
-   * Used in constructor on library init and when updateJWT method has been called.
-   * @param jwt
-   * @param config
-   * @param gatewayUrl
-   * @private
-   */
   private _configurePaymentProcess(jwt: string, config: IWalletConfig, gatewayUrl: string) {
     const { merchantId, livestatus, placement, settings, paymentRequest, buttonSettings, requestTypes } = config;
     this._stJwt = new StJwt(jwt);
@@ -260,24 +202,9 @@ export class VisaCheckout {
     this._initVisaFlow();
   }
 
-  /**
-   * Adds custom user configuration.
-   * @param config
-   * @param settings
-   * @private
-   */
   private _setConfiguration = (config: IVisaConfig, settings: IVisaSettings) =>
     settings || config ? { ...config, ...settings } : {};
 
-  /**
-   * Initialize Visa Checkout flow:
-   * 1. Adds Visa Checkout SDK.
-   * 2. Attaches Visa Checkout button.
-   * 3. Initialize payment configuration.
-   * 4. Sets handlers on payment events.
-   * 5. Get response from Visa Checkout and sets notification
-   * @private
-   */
   private _initVisaFlow() {
     return DomMethods.insertScript('body', this._sdkAddress).addEventListener('load', () => {
       this.attachVisaButton();
@@ -286,10 +213,6 @@ export class VisaCheckout {
     });
   }
 
-  /**
-   * Checks if we are processing live transactions or not
-   * @private
-   */
   private _setLiveStatus() {
     if (this._livestatus) {
       this.visaCheckoutButtonProps.src = environment.VISA_CHECKOUT_URLS.LIVE_BUTTON_URL;
@@ -297,11 +220,6 @@ export class VisaCheckout {
     }
   }
 
-  /**
-   * Gets translated response message based on response communicate
-   * @param type
-   * @private
-   */
   private _getResponseMessage(type: string) {
     switch (type) {
       case VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS: {

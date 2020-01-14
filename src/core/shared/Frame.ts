@@ -1,16 +1,6 @@
 import MessageBus from '../../core/shared/MessageBus';
+import { IParams } from '../models/Frame';
 import { IAllowedStyles, IStyle, Styler } from './Styler';
-
-interface IParams {
-  [name: string]: object | string;
-  styles?: IStyle;
-  locale?: string;
-  origin?: string;
-  jwt?: string;
-  gatewayUrl?: string;
-  paymentTypes?: string;
-  defaultPaymentType?: string;
-}
 
 export default class Frame {
   protected messageBus: MessageBus;

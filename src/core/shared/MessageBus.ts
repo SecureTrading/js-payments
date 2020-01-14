@@ -53,11 +53,6 @@ export default class MessageBus {
     this._registerMessageListener();
   }
 
-  /**
-   * publish()
-   * @param event
-   * @param publishToParent
-   */
   public publish(event: IMessageBusEvent, publishToParent?: boolean) {
     let subscribersStore;
 
@@ -76,30 +71,16 @@ export default class MessageBus {
     }
   }
 
-  /**
-   * publishFromParent()
-   * @param event
-   * @param frameName
-   */
   public publishFromParent(event: IMessageBusEvent, frameName: string) {
     // @ts-ignore
     window.frames[frameName].postMessage(event, this._frameOrigin);
   }
 
-  /**
-   * publishToSelf()
-   * @param event
-   */
   public publishToSelf(event: IMessageBusEvent) {
     // @ts-ignore
     window.postMessage(event, window.location.origin);
   }
 
-  /**
-   * subscribe()
-   * @param eventType
-   * @param callback
-   */
   public subscribe(eventType: string, callback: any) {
     let subscribers;
     const subscriber = window.name;
@@ -120,20 +101,10 @@ export default class MessageBus {
     this._subscriptions[eventType] = callback;
   }
 
-  /**
-   * subscribeOnParent()
-   * @param eventType
-   * @param callback
-   */
   public subscribeOnParent(eventType: string, callback: any) {
     this._subscriptions[eventType] = callback;
   }
 
-  /**
-   * _handleMessageEvent()
-   * @param event
-   * @private
-   */
   private _handleMessageEvent = (event: MessageEvent) => {
     const messageBusEvent: IMessageBusEvent = event.data;
     const isPublicEvent = Utils.inArray(Object.keys(MessageBus.EVENTS_PUBLIC), messageBusEvent.type);
@@ -146,10 +117,6 @@ export default class MessageBus {
     }
   };
 
-  /**
-   * _registerMessageListener()
-   * @private
-   */
   private _registerMessageListener() {
     window.addEventListener('message', this._handleMessageEvent);
   }

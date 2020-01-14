@@ -4,9 +4,6 @@ import ApplePaySessionMock from './ApplePaySessionMock';
 
 const applePay: string = '../../../images/apple-pay.png';
 
-/**
- * Mocked version of Apple Pay setting test environment for Apple Pay automated tests.
- */
 class ApplePayMock extends ApplePay {
   public paymentDetails: string;
 
@@ -40,10 +37,6 @@ class ApplePayMock extends ApplePay {
     return ApplePaySessionMock.STATUS_FAILURE;
   }
 
-  /**
-   * Creates Apple Pay button element created from base64 image
-   * @public
-   */
   public createApplePayButton() {
     return DomMethods.createHtmlElement.apply(this, [{ src: applePay, id: 'st-apple-pay' }, 'img']);
   }

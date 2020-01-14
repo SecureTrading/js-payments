@@ -1,5 +1,5 @@
 import JwtDecode from 'jwt-decode';
-import Element from '../Element';
+import Element from '../services/Element';
 import { IValidationMessageBus } from '../models/Validation';
 import DomMethods from '../shared/DomMethods';
 import Language from '../shared/Language';

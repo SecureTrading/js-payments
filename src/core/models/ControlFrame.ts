@@ -1,4 +1,4 @@
-import { IFormFieldState } from '../shared/FormFieldState';
+import { IFormFieldState } from './FormFieldState';
 
 interface ISetRequestTypes {
   requestTypes: string[];

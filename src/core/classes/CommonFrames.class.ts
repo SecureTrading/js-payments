@@ -1,9 +1,9 @@
-import Element from '../Element';
+import { IStyles } from '../models/Styler';
+import Element from '../services/Element';
 import { CardinalCommerce } from '../integrations/CardinalCommerce';
 import DomMethods from '../shared/DomMethods';
 import MessageBus from '../shared/MessageBus';
 import Selectors from '../shared/Selectors';
-import { IStyles } from '../shared/Styler';
 import Validation from '../shared/Validation';
 import RegisterFrames from './RegisterFrames.class';
 

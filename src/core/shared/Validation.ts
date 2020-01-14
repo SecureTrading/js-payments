@@ -2,7 +2,7 @@ import { StCodec } from '../classes/StCodec.class';
 import { BrandDetailsType } from '../imports/cardtype';
 import { IErrorData, IMessageBusValidateField, IValidation } from '../models/Validation';
 import BinLookup from './BinLookup';
-import { IFormFieldState } from './FormFieldState';
+import { IFormFieldState } from '../models/FormFieldState';
 import Frame from './Frame';
 import Language from './Language';
 import MessageBus from './MessageBus';
@@ -97,16 +97,6 @@ export default class Validation extends Frame {
     securityCode: Validation.SECURITY_CODE_FIELD_NAME
   };
 
-  /**
-   * Luhn Algorithm
-   * From the right:
-   *    Step 1: take the value of this digit
-   *    Step 2: if the offset from the end is even
-   *    Step 3: double the value, then sum the digits
-   *    Step 4: if sum of those above is divisible by ten, YOU PASS THE LUHN !
-   * @param cardNumber
-   * @private
-   */
   private static _luhnAlgorithm(cardNumber: string): boolean {
     const cardNumberWithoutSpaces = cardNumber.replace(/\s/g, Validation.CLEAR_VALUE);
     let bit = 1;

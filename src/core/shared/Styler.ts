@@ -1,37 +1,6 @@
+import { IAllowedStyles, IGroupedStyles, IStyle, ISubStyles } from '../models/Styler';
 import DomMethods from './DomMethods';
 
-export interface ISubStyles {
-  [key: string]: string;
-}
-
-export interface IGroupedStyles {
-  [key: string]: ISubStyles;
-}
-
-export interface IStyle {
-  [identifier: string]: string;
-}
-
-export interface IStyles {
-  defaultStyles?: IStyle;
-  cardNumber?: IStyle;
-  expirationDate?: IStyle;
-  securityCode?: IStyle;
-  notificationFrame?: IStyle;
-  controlFrame?: IStyle;
-}
-
-export interface IAllowedStyles {
-  [identifier: string]: {
-    selector: string;
-    property: string;
-  };
-}
-
-/***
- * Decodes a ST Jwt passed in by a merchant
- * Does not verify it as this will be done by the server
- */
 export class Styler {
   private static _getTagStyles(styles: ISubStyles) {
     const results = [];
@@ -52,9 +21,6 @@ export class Styler {
     DomMethods.insertStyle(this._getStyleString(styles));
   }
 
-  /**
-   * Validates that the provided styles will only allow the expected values to be overridden
-   */
   private _filter(styles: IStyle) {
     const filtered: IStyle = {};
     // tslint:disable-next-line:forin
@@ -66,11 +32,6 @@ export class Styler {
     return filtered;
   }
 
-  /**
-   *
-   * @param styles
-   * @private
-   */
   private _group(styles: IStyle) {
     const grouped: IGroupedStyles = {};
     // tslint:disable-next-line:forin
@@ -84,11 +45,6 @@ export class Styler {
     return grouped;
   }
 
-  /**
-   *
-   * @param styles
-   * @private
-   */
   private _getStyleString(styles: IStyle) {
     styles = this._filter(styles);
     const groupedStyles = this._group(styles);

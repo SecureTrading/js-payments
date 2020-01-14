@@ -5,9 +5,6 @@ import Notification from './Notification';
 import { StJwt } from './StJwt';
 import Validation from './Validation';
 
-/**
- * Gathers all payment processes and flows from library (immediate payment, wallet verify, APM's processes).
- */
 export default class Payment {
   private _cardinalCommerceCacheToken: string;
   private _notification: Notification;

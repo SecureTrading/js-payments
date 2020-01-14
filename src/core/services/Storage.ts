@@ -1,10 +1,4 @@
 export class Storage {
-  /**
-   * Sets data to localStorage, previously converts
-   * them to string depends on type given.getPaymentSuccessStatus
-   * @param name
-   * @param data
-   */
   public setLocalStorageItem(name: string, data: any) {
     if (data) {
       const type = typeof data;
@@ -16,12 +10,6 @@ export class Storage {
     }
   }
 
-  /**
-   * Sets data to localStorage, previously converts
-   * them to string depends on type given.
-   * @param name
-   * @param storage
-   */
   public getLocalStorageItem(name: string, storage: string) {
     if (storage) {
       const json = JSON.parse(storage);
