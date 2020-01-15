@@ -1,3 +1,4 @@
+import { IMessageBusEvent } from '../models/MessageBusEvent';
 import { INotificationEvent, NotificationType } from '../models/NotificationEvent';
 import { MessageBus } from './MessageBus';
 import { Selectors } from './Selectors';

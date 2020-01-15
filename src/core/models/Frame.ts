@@ -1,6 +1,6 @@
-import { IStyle } from '../shared/Styler';
+import { IStyle } from './Styler';
 
-interface IParams {
+export interface IParams {
   [name: string]: object | string;
   styles?: IStyle;
   locale?: string;
@@ -10,5 +10,3 @@ interface IParams {
   paymentTypes?: string;
   defaultPaymentType?: string;
 }
-
-export { IParams };

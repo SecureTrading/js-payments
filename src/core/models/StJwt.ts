@@ -1,7 +1,9 @@
-export interface IStJwtPayload {
+interface IStJwtPayload {
   [key: string]: string;
 }
 
-export interface IStJwtObj {
+interface IStJwtObj {
   payload: IStJwtPayload;
 }
+
+export { IStJwtObj, IStJwtPayload };

@@ -1,3 +1,4 @@
+import { IMessageBusEvent } from '../../core/models/MessageBusEvent';
 import { Formatter } from '../../core/shared/Formatter';
 import { FormField } from '../../core/shared/FormField';
 import { Language } from '../../core/shared/Language';

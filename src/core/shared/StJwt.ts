@@ -1,13 +1,6 @@
 import JwtDecode from 'jwt-decode';
 import { Currencies, Money } from 'ts-money';
-
-export interface IStJwtPayload {
-  [key: string]: string;
-}
-
-export interface IStJwtObj {
-  payload: IStJwtPayload;
-}
+import { IStJwtObj, IStJwtPayload } from '../models/StJwt';
 
 export class StJwt {
   public payload: IStJwtPayload;

@@ -1,6 +1,8 @@
 import { StCodec } from '../classes/StCodec.class';
 import { BrandDetailsType } from '../imports/cardtype';
+import { ICard } from '../models/Card';
 import { IFormFieldState } from '../models/FormFieldState';
+import { IMessageBusEvent } from '../models/MessageBusEvent';
 import { IErrorData, IMessageBusValidateField, IValidation } from '../models/Validation';
 import { BinLookup } from './BinLookup';
 import { Frame } from './Frame';

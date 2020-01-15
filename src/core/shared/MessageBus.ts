@@ -1,4 +1,5 @@
 import { environment } from '../../environments/environment';
+import { IMessageBusEvent } from '../models/MessageBusEvent';
 import { Utils } from './Utils';
 
 export class MessageBus {
