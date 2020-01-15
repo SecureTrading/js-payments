@@ -1,12 +1,12 @@
 import { environment } from '../../environments/environment';
 import { IWalletConfig } from '../models/Config';
 import { IVisaConfig, IVisaSettings } from '../models/VisaCheckout';
-import { MessageBus } from '../shared/MessageBus';
-import { Notification } from '../shared/Notification';
-import { StJwt } from '../shared/StJwt';
 import { DomMethods } from '../shared/DomMethods';
 import { Language } from '../shared/Language';
+import { MessageBus } from '../shared/MessageBus';
+import { Notification } from '../shared/Notification';
 import { Payment } from '../shared/Payment';
+import { StJwt } from '../shared/StJwt';
 import { GoogleAnalytics } from './GoogleAnalytics';
 
 declare const V: any;

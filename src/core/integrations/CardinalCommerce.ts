@@ -8,8 +8,8 @@ import {
   PAYMENT_BRAND,
   PAYMENT_EVENTS
 } from '../models/CardinalCommerce';
-import { DomMethods } from '../shared/DomMethods';
 import { IFormFieldState } from '../models/FormFieldState';
+import { DomMethods } from '../shared/DomMethods';
 import { Language } from '../shared/Language';
 import { MessageBus } from '../shared/MessageBus';
 import { Notification } from '../shared/Notification';

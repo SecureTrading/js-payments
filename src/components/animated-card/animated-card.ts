@@ -1,6 +1,7 @@
 import '@securetrading/js-payments-card/dist/stcardstyle.css';
 // @ts-ignore
 import Card from '@securetrading/js-payments-card/stcard.js';
+import { IFormFieldState } from '../../core/models/FormFieldState';
 import { MessageBus } from '../../core/shared/MessageBus';
 
 // @ts-ignore

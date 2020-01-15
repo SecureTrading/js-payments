@@ -9,9 +9,9 @@ import {
   ISetRequestTypes,
   ISubmitData
 } from '../../core/models/ControlFrame';
+import { IFormFieldState } from '../../core/models/FormFieldState';
 import { IMerchantData } from '../../core/models/MerchantData';
 import { BinLookup } from '../../core/shared/BinLookup';
-import { IFormFieldState } from '../../core/models/FormFieldState';
 import { Frame } from '../../core/shared/Frame';
 import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';

@@ -1,11 +1,11 @@
 import JwtDecode from 'jwt-decode';
-import { Element } from '../services/Element';
+import { IStyles } from '../models/Styler';
 import { IValidationMessageBus } from '../models/Validation';
+import { Element } from '../services/Element';
 import { DomMethods } from '../shared/DomMethods';
 import { Language } from '../shared/Language';
 import { MessageBus } from '../shared/MessageBus';
 import { Selectors } from '../shared/Selectors';
-import { IStyles } from '../models/Styler';
 import { Translator } from '../shared/Translator';
 import { Validation } from '../shared/Validation';
 import { RegisterFrames } from './RegisterFrames.class';
