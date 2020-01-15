@@ -1,11 +1,11 @@
 import { IStyles } from '../models/Styler';
-import Element from '../services/Element';
+import { Element } from '../services/Element';
 import { CardinalCommerce } from '../integrations/CardinalCommerce';
-import DomMethods from '../shared/DomMethods';
-import MessageBus from '../shared/MessageBus';
-import Selectors from '../shared/Selectors';
-import Validation from '../shared/Validation';
-import RegisterFrames from './RegisterFrames.class';
+import { DomMethods } from '../shared/DomMethods';
+import { MessageBus } from '../shared/MessageBus';
+import { Selectors } from '../shared/Selectors';
+import { Validation } from '../shared/Validation';
+import { RegisterFrames } from './RegisterFrames.class';
 
 export class CommonFrames extends RegisterFrames {
   get requestTypes(): string[] {

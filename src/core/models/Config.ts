@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { IStyles } from '../shared/Styler';
+import { IStyles } from './Styler';
 
 enum ByPassCards {
   AMEX = 'AMEX',
@@ -28,7 +28,7 @@ interface IConfig {
   byPassCards?: ByPassCards[];
   buttonId?: string;
   components?: IComponentsConfig;
-  componentIds?: IComponentsIds;
+  componentIds?: IComponentsIds | {};
   datacenterurl?: string;
   deferInit?: boolean;
   fieldsToSubmit?: string[];

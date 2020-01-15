@@ -1,13 +1,13 @@
-import StTransport from '../classes/StTransport.class';
+import { StTransport } from '../classes/StTransport.class';
 import { IWalletConfig } from '../models/Config';
-import DomMethods from '../shared/DomMethods';
-import Language from '../shared/Language';
-import MessageBus from '../shared/MessageBus';
-import Notification from '../shared/Notification';
-import Payment from '../shared/Payment';
+import { DomMethods } from '../shared/DomMethods';
+import { Language } from '../shared/Language';
+import { MessageBus } from '../shared/MessageBus';
+import { Notification } from '../shared/Notification';
+import { Payment } from '../shared/Payment';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
-import GoogleAnalytics from './GoogleAnalytics';
+import { GoogleAnalytics } from './GoogleAnalytics';
 
 const ApplePaySession = (window as any).ApplePaySession;
 const ApplePayError = (window as any).ApplePayError;

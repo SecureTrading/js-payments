@@ -1,10 +1,10 @@
 import { IFormFieldState } from '../models/FormFieldState';
-import Frame from './Frame';
-import Language from './Language';
-import Selectors from './Selectors';
+import { Frame } from './Frame';
+import { Language } from './Language';
+import { Selectors } from './Selectors';
 import { Translator } from './Translator';
-import Utils from './Utils';
-import Validation from './Validation';
+import { Utils } from './Utils';
+import { Validation } from './Validation';
 
 export class FormField extends Frame {
   public validation: Validation;

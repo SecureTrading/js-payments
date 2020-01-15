@@ -1,5 +1,5 @@
 import { environment } from '../../environments/environment';
-import Utils from './Utils';
+import { Utils } from './Utils';
 
 export class MessageBus {
   public static SUBSCRIBERS: string = 'ST_SUBSCRIBERS';

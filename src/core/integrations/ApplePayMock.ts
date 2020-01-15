@@ -1,6 +1,6 @@
-import DomMethods from '../shared/DomMethods';
-import ApplePay from './ApplePay';
-import ApplePaySessionMock from './ApplePaySessionMock';
+import { DomMethods } from '../shared/DomMethods';
+import { ApplePay } from './ApplePay';
+import { ApplePaySessionMock } from './ApplePaySessionMock';
 
 const applePay: string = '../../../images/apple-pay.png';
 

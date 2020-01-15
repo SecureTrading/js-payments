@@ -8,15 +8,15 @@ import {
   PAYMENT_BRAND,
   PAYMENT_EVENTS
 } from '../models/CardinalCommerce';
-import DomMethods from '../shared/DomMethods';
+import { DomMethods } from '../shared/DomMethods';
 import { IFormFieldState } from '../models/FormFieldState';
-import Language from '../shared/Language';
-import MessageBus from '../shared/MessageBus';
-import Notification from '../shared/Notification';
-import Selectors from '../shared/Selectors';
+import { Language } from '../shared/Language';
+import { MessageBus } from '../shared/MessageBus';
+import { Notification } from '../shared/Notification';
+import { Selectors } from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
-import GoogleAnalytics from './GoogleAnalytics';
+import { GoogleAnalytics } from './GoogleAnalytics';
 
 declare const Cardinal: any;
 

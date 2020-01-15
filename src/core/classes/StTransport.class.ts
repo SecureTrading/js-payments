@@ -1,5 +1,5 @@
 import { IStTransportParams } from '../models/StTransport';
-import Utils from '../shared/Utils';
+import { Utils } from '../shared/Utils';
 import { IStRequest, StCodec } from './StCodec.class';
 
 export class StTransport {

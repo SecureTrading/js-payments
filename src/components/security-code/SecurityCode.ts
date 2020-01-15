@@ -1,10 +1,10 @@
-import BinLookup from '../../core/shared/BinLookup';
-import Formatter from '../../core/shared/Formatter';
-import FormField from '../../core/shared/FormField';
-import Language from '../../core/shared/Language';
-import MessageBus from '../../core/shared/MessageBus';
-import Selectors from '../../core/shared/Selectors';
-import Validation from '../../core/shared/Validation';
+import { BinLookup } from '../../core/shared/BinLookup';
+import { Formatter } from '../../core/shared/Formatter';
+import { FormField } from '../../core/shared/FormField';
+import { Language } from '../../core/shared/Language';
+import { MessageBus } from '../../core/shared/MessageBus';
+import { Selectors } from '../../core/shared/Selectors';
+import { Validation } from '../../core/shared/Validation';
 
 export class SecurityCode extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>

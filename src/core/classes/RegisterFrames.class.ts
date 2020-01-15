@@ -1,6 +1,6 @@
 import { IStyles } from '../models/Styler';
-import BinLookup from '../shared/BinLookup';
-import MessageBus from '../shared/MessageBus';
+import { BinLookup } from '../shared/BinLookup';
+import { MessageBus } from '../shared/MessageBus';
 import { StJwt } from '../shared/StJwt';
 
 export class RegisterFrames {

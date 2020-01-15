@@ -1,6 +1,6 @@
 import { environment } from '../../environments/environment';
-import DomMethods from '../shared/DomMethods';
-import VisaCheckout from './VisaCheckout';
+import { DomMethods } from '../shared/DomMethods';
+import { VisaCheckout } from './VisaCheckout';
 
 export class VisaCheckoutMock extends VisaCheckout {
   protected initPaymentConfiguration() {

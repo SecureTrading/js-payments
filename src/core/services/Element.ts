@@ -1,5 +1,5 @@
 import { IStyle } from '../models/Styler';
-import Selectors from '../shared/Selectors';
+import { Selectors } from '../shared/Selectors';
 
 export class Element {
   public static getComponentAddress(name: string): string {

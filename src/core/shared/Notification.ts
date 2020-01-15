@@ -1,5 +1,5 @@
 import { INotificationEvent, NotificationType } from '../models/NotificationEvent';
-import MessageBus from './MessageBus';
+import { MessageBus } from './MessageBus';
 import { Selectors } from './Selectors';
 
 export class Notification {

@@ -1,12 +1,12 @@
-import BinLookup from '../../core/shared/BinLookup';
-import Formatter from '../../core/shared/Formatter';
-import FormField from '../../core/shared/FormField';
+import { BinLookup } from '../../core/shared/BinLookup';
+import { Formatter } from '../../core/shared/Formatter';
+import { FormField } from '../../core/shared/FormField';
 import { IFormFieldState } from '../../core/models/FormFieldState';
-import Language from '../../core/shared/Language';
-import MessageBus from '../../core/shared/MessageBus';
+import { Language } from '../../core/shared/Language';
+import { MessageBus } from '../../core/shared/MessageBus';
 import { Selectors } from '../../core/shared/Selectors';
 import { Utils } from '../../core/shared/Utils';
-import Validation from '../../core/shared/Validation';
+import { Validation } from '../../core/shared/Validation';
 
 export class CardNumber extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>

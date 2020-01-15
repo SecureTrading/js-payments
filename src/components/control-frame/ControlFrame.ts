@@ -10,14 +10,14 @@ import {
   ISubmitData
 } from '../../core/models/ControlFrame';
 import { IMerchantData } from '../../core/models/MerchantData';
-import BinLookup from '../../core/shared/BinLookup';
+import { BinLookup } from '../../core/shared/BinLookup';
 import { IFormFieldState } from '../../core/models/FormFieldState';
-import Frame from '../../core/shared/Frame';
-import Language from '../../core/shared/Language';
-import MessageBus from '../../core/shared/MessageBus';
-import Notification from '../../core/shared/Notification';
-import Payment from '../../core/shared/Payment';
-import Validation from '../../core/shared/Validation';
+import { Frame } from '../../core/shared/Frame';
+import { Language } from '../../core/shared/Language';
+import { MessageBus } from '../../core/shared/MessageBus';
+import { Notification } from '../../core/shared/Notification';
+import { Payment } from '../../core/shared/Payment';
+import { Validation } from '../../core/shared/Validation';
 
 export class ControlFrame extends Frame {
   private static ALLOWED_PARAMS: string[] = ['jwt', 'gatewayUrl'];

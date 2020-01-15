@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import { environment } from '../../environments/environment';
 import { IComponentsConfig, IComponentsConfigSchema, IComponentsIds, IConfig, IWalletConfig } from '../models/Config';
-import Selectors from '../shared/Selectors';
+import { Selectors } from '../shared/Selectors';
 
 export class Config {
   private static DEFAULT_COMPONENTS_IDS: IComponentsIds = {

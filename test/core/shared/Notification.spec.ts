@@ -1,5 +1,5 @@
-import Notification from '../../../src/core/shared/Notification';
-import MessageBus from '../../../src/core/shared/MessageBus';
+import { Notification } from '../../../src/core/shared/Notification';
+import { MessageBus } from '../../../src/core/shared/MessageBus';
 
 // given
 describe('Notification', () => {

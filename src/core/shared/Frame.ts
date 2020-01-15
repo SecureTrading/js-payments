@@ -1,6 +1,7 @@
-import MessageBus from '../../core/shared/MessageBus';
+import { MessageBus } from './MessageBus';
 import { IParams } from '../models/Frame';
-import { IAllowedStyles, IStyle, Styler } from './Styler';
+import { Styler } from './Styler';
+import { IAllowedStyles, IStyle } from '../models/Styler';
 
 export class Frame {
   protected messageBus: MessageBus;

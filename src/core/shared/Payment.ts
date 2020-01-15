@@ -1,9 +1,9 @@
 import { IStRequest } from '../classes/StCodec.class';
-import StTransport from '../classes/StTransport.class';
+import { StTransport } from '../classes/StTransport.class';
 import { IMerchantData } from '../models/MerchantData';
-import Notification from './Notification';
+import { Notification } from './Notification';
 import { StJwt } from './StJwt';
-import Validation from './Validation';
+import { Validation } from './Validation';
 
 export class Payment {
   private _cardinalCommerceCacheToken: string;

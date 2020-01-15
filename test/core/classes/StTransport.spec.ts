@@ -1,8 +1,8 @@
 import each from 'jest-each';
 import { GlobalWithFetchMock } from 'jest-fetch-mock';
-import Language from '../../../src/core/shared/Language';
-import StTransport from '../../../src/core/classes/StTransport.class';
-import Utils from '../../../src/core/shared/Utils';
+import { Language } from '../../../src/core/shared/Language';
+import { StTransport } from '../../../src/core/classes/StTransport.class';
+import { Utils } from '../../../src/core/shared/Utils';
 
 const customGlobal: GlobalWithFetchMock = global as GlobalWithFetchMock;
 customGlobal.fetch = require('jest-fetch-mock');

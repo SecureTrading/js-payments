@@ -20,7 +20,6 @@ import nl_NL from '../translations/nl_NL.json';
 import no_NO from '../translations/no_NO.json';
 // @ts-ignore
 import sv_SE from '../translations/sv_SE.json';
-import Utils from './Utils';
 
 export class Translator {
   private _storage: Storage;
