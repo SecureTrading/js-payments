@@ -146,8 +146,8 @@ export class ControlFrame extends Frame {
       this.messageBus.publish(
         {
           data: {
-            pan: this._cardNumber,
             expirydate: this._expirationDate,
+            pan: this._cardNumber,
             securitycode: this._securityCode
           },
           type: MessageBus.EVENTS_PUBLIC.BY_PASS_CARDINAL

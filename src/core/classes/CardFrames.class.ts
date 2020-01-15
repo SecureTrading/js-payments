@@ -1,8 +1,8 @@
 import JwtDecode from 'jwt-decode';
+import { ByPassCards } from '../models/constants/ByPassCards';
 import { IMessageBusEvent } from '../models/IMessageBusEvent';
 import { IStyles } from '../models/IStyles';
 import { IValidationMessageBus } from '../models/IValidationMessageBus';
-import { ByPassCards } from '../models/constants/ByPassCards';
 import { Element } from '../services/Element';
 import { DomMethods } from '../shared/DomMethods';
 import { Language } from '../shared/Language';
@@ -291,10 +291,10 @@ export class CardFrames extends RegisterFrames {
   private _publishSubmitEvent(deferInit: boolean): void {
     const messageBusEvent: IMessageBusEvent = {
       data: {
-        deferInit,
-        fieldsToSubmit: this.fieldsToSubmit,
         byPassCards: this._byPassCards,
-        cardType: this._getCardType(this.jwt)
+        cardType: this._getCardType(this.jwt),
+        deferInit,
+        fieldsToSubmit: this.fieldsToSubmit
       },
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
