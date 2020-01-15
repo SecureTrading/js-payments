@@ -1,20 +1,14 @@
 import JwtDecode from 'jwt-decode';
-import Language from '../shared/Language';
-import MessageBus from '../shared/MessageBus';
-import Notification from '../shared/Notification';
-import Selectors from '../shared/Selectors';
+import { IMessageBusEvent } from '../models/IMessageBusEvent';
+import { IResponseData } from '../models/IResponseData';
+import { IStRequest } from '../models/IStRequest';
+import { Language } from '../shared/Language';
+import { MessageBus } from '../shared/MessageBus';
+import { Notification } from '../shared/Notification';
+import { Selectors } from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
-import Validation from '../shared/Validation';
-
-interface IStRequest {
-  requesttypedescription?: string;
-  requesttypedescriptions?: string[];
-  expirydate?: string;
-  pan?: string;
-  securitycode?: string;
-  termurl?: string; // TODO shouldn't be needed for CC request but this needs to wait for 153 release
-}
+import { Validation } from '../shared/Validation';
 
 class StCodec {
   public static CONTENT_TYPE = 'application/json';
@@ -173,7 +167,6 @@ class StCodec {
         validation.blockForm(false);
         StCodec.publishResponse(responseContent, jwtResponse);
         StCodec._notification.error(responseContent.errormessage);
-        console.error(responseContent);
         throw new Error(responseContent.errormessage);
       }
     }

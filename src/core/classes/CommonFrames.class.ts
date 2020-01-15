@@ -1,13 +1,13 @@
-import { IStyles } from '../models/Styler';
-import Element from '../services/Element';
 import { CardinalCommerce } from '../integrations/CardinalCommerce';
-import DomMethods from '../shared/DomMethods';
-import MessageBus from '../shared/MessageBus';
-import Selectors from '../shared/Selectors';
-import Validation from '../shared/Validation';
-import RegisterFrames from './RegisterFrames.class';
+import { IStyles } from '../models/IStyles';
+import { Element } from '../services/Element';
+import { DomMethods } from '../shared/DomMethods';
+import { MessageBus } from '../shared/MessageBus';
+import { Selectors } from '../shared/Selectors';
+import { Validation } from '../shared/Validation';
+import { RegisterFrames } from './RegisterFrames.class';
 
-class CommonFrames extends RegisterFrames {
+export class CommonFrames extends RegisterFrames {
   get requestTypes(): string[] {
     return this._requestTypes;
   }
@@ -190,5 +190,3 @@ class CommonFrames extends RegisterFrames {
     );
   }
 }
-
-export default CommonFrames;

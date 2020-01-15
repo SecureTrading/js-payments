@@ -1,5 +1,8 @@
-import { IAllowedStyles, IGroupedStyles, IStyle, ISubStyles } from '../models/Styler';
-import DomMethods from './DomMethods';
+import { IAllowedStyles } from '../models/IAllowedStyles';
+import { IGroupedStyles } from '../models/IGroupedStyles';
+import { IStyle } from '../models/IStyle';
+import { ISubStyles } from '../models/ISubStyles';
+import { DomMethods } from './DomMethods';
 
 export class Styler {
   private static _getTagStyles(styles: ISubStyles) {

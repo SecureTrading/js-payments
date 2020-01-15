@@ -1,12 +1,13 @@
-import { IFormFieldState } from '../models/FormFieldState';
-import Frame from './Frame';
-import Language from './Language';
-import Selectors from './Selectors';
+import { IFormFieldState } from '../models/IFormFieldState';
+import { IMessageBusEvent } from '../models/IMessageBusEvent';
+import { Frame } from './Frame';
+import { Language } from './Language';
+import { Selectors } from './Selectors';
 import { Translator } from './Translator';
-import Utils from './Utils';
-import Validation from './Validation';
+import { Utils } from './Utils';
+import { Validation } from './Validation';
 
-export default class FormField extends Frame {
+export class FormField extends Frame {
   public validation: Validation;
   protected _inputSelector: string;
   protected _labelSelector: string;

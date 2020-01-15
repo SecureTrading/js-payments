@@ -1,6 +1,6 @@
-import Selectors from './Selectors';
+import { Selectors } from './Selectors';
 
-class DomMethods {
+export class DomMethods {
   public static insertScript(target: string, src: string) {
     const targetElement = document.getElementsByTagName(target)[0];
     const script = document.createElement('script');
@@ -104,5 +104,3 @@ class DomMethods {
     return element;
   }
 }
-
-export default DomMethods;

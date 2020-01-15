@@ -1,5 +1,5 @@
-import Formatter from '../../../src/core/shared/Formatter';
-import Selectors from '../../../src/core/shared/Selectors';
+import { Formatter } from '../../../src/core/shared/Formatter';
+import { Selectors } from '../../../src/core/shared/Selectors';
 
 // given
 describe('Formatter', () => {

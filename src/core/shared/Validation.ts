@@ -1,14 +1,18 @@
 import { StCodec } from '../classes/StCodec.class';
 import { BrandDetailsType } from '../imports/cardtype';
-import { IErrorData, IMessageBusValidateField, IValidation } from '../models/Validation';
-import BinLookup from './BinLookup';
-import { IFormFieldState } from '../models/FormFieldState';
-import Frame from './Frame';
-import Language from './Language';
-import MessageBus from './MessageBus';
-import Selectors from './Selectors';
+import { ICard } from '../models/ICard';
+import { IErrorData } from '../models/IErrorData';
+import { IFormFieldState } from '../models/IFormFieldState';
+import { IMessageBusEvent } from '../models/IMessageBusEvent';
+import { IMessageBusValidateField } from '../models/IMessageBusValidateField';
+import { IValidation } from '../models/IValidation';
+import { BinLookup } from './BinLookup';
+import { Frame } from './Frame';
+import { Language } from './Language';
+import { MessageBus } from './MessageBus';
+import { Selectors } from './Selectors';
 import { Translator } from './Translator';
-import Utils from './Utils';
+import { Utils } from './Utils';
 
 const {
   VALIDATION_ERROR_FIELD_IS_REQUIRED,
@@ -16,7 +20,7 @@ const {
   VALIDATION_ERROR
 } = Language.translations;
 
-export default class Validation extends Frame {
+export class Validation extends Frame {
   public static ERROR_FIELD_CLASS: string = 'error-field';
 
   public static clearNonDigitsChars(value: string): string {

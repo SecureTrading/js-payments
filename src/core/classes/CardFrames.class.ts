@@ -1,16 +1,17 @@
 import JwtDecode from 'jwt-decode';
-import Element from '../services/Element';
-import { IValidationMessageBus } from '../models/Validation';
+import { IMessageBusEvent } from '../models/IMessageBusEvent';
+import { IStyles } from '../models/IStyles';
+import { IValidationMessageBus } from '../models/IValidationMessageBus';
 import { ByPassCards } from '../models/Config';
-import DomMethods from '../shared/DomMethods';
+import { Element } from '../services/Element';
 import { IFormFieldState } from '../shared/FormFieldState';
-import Language from '../shared/Language';
-import MessageBus from '../shared/MessageBus';
-import Selectors from '../shared/Selectors';
-import { IStyles } from '../shared/Styler';
+import { DomMethods } from '../shared/DomMethods';
+import { Language } from '../shared/Language';
+import { MessageBus } from '../shared/MessageBus';
+import { Selectors } from '../shared/Selectors';
 import { Translator } from '../shared/Translator';
-import Validation from '../shared/Validation';
-import RegisterFrames from './RegisterFrames.class';
+import { Validation } from '../shared/Validation';
+import { RegisterFrames } from './RegisterFrames.class';
 
 export class CardFrames extends RegisterFrames {
   private static CARD_NUMBER_FIELD_NAME: string = 'pan';

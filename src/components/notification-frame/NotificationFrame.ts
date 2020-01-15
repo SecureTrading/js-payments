@@ -1,11 +1,12 @@
-import { INotificationEvent, NotificationType } from '../../core/models/NotificationEvent';
-import Frame from '../../core/shared/Frame';
-import MessageBus from '../../core/shared/MessageBus';
-import Selectors from '../../core/shared/Selectors';
+import { NotificationType } from '../../core/models/constants/NotificationType';
+import { INotificationEvent } from '../../core/models/INotificationEvent';
+import { Frame } from '../../core/shared/Frame';
+import { MessageBus } from '../../core/shared/MessageBus';
+import { Selectors } from '../../core/shared/Selectors';
 import { Translator } from '../../core/shared/Translator';
 import { environment } from '../../environments/environment';
 
-class NotificationFrame extends Frame {
+export class NotificationFrame extends Frame {
   get notificationFrameElement(): HTMLElement {
     return this._notificationFrameElement;
   }
@@ -190,5 +191,3 @@ class NotificationFrame extends Frame {
     this._setAttributeClass();
   };
 }
-
-export default NotificationFrame;

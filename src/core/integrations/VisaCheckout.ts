@@ -1,13 +1,14 @@
 import { environment } from '../../environments/environment';
-import { IWalletConfig } from '../models/Config';
-import { IVisaConfig, IVisaSettings } from '../models/VisaCheckout';
-import MessageBus from '../shared/MessageBus';
-import Notification from '../shared/Notification';
+import { IVisaConfig } from '../models/IVisaConfig';
+import { IVisaSettings } from '../models/IVisaSettings';
+import { IWalletConfig } from '../models/IWalletConfig';
+import { DomMethods } from '../shared/DomMethods';
+import { Language } from '../shared/Language';
+import { MessageBus } from '../shared/MessageBus';
+import { Notification } from '../shared/Notification';
+import { Payment } from '../shared/Payment';
 import { StJwt } from '../shared/StJwt';
-import DomMethods from './../shared/DomMethods';
-import Language from './../shared/Language';
-import Payment from './../shared/Payment';
-import GoogleAnalytics from './GoogleAnalytics';
+import { GoogleAnalytics } from './GoogleAnalytics';
 
 declare const V: any;
 
@@ -237,5 +238,3 @@ export class VisaCheckout {
     }
   }
 }
-
-export default VisaCheckout;

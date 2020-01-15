@@ -1,9 +1,9 @@
-import BinLookup from '../shared/BinLookup';
-import MessageBus from '../shared/MessageBus';
+import { IStyles } from '../models/IStyles';
+import { BinLookup } from '../shared/BinLookup';
+import { MessageBus } from '../shared/MessageBus';
 import { StJwt } from '../shared/StJwt';
-import { IStyles } from '../shared/Styler';
 
-export default class RegisterFrames {
+export class RegisterFrames {
   private static COMPLETE_FORM_FIELDS: string[] = ['pan', 'expirydate', 'securitycode'];
 
   protected styles: IStyles;

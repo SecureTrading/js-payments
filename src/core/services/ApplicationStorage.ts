@@ -1,4 +1,4 @@
-export class Storage {
+export class ApplicationStorage {
   public setLocalStorageItem(name: string, data: any) {
     if (data) {
       const type = typeof data;

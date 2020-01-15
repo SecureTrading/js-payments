@@ -1,8 +1,8 @@
 import { CardFrames } from '../../../src/core/classes/CardFrames.class';
-import DomMethods from '../../../src/core/shared/DomMethods';
-import Language from '../../../src/core/shared/Language';
-import MessageBus from '../../../src/core/shared/MessageBus';
-import Selectors from '../../../src/core/shared/Selectors';
+import { DomMethods } from '../../../src/core/shared/DomMethods';
+import { Language } from '../../../src/core/shared/Language';
+import { MessageBus } from '../../../src/core/shared/MessageBus';
+import { Selectors } from '../../../src/core/shared/Selectors';
 
 // given
 describe('CardFrames', () => {
@@ -364,5 +364,6 @@ function cardFramesFixture() {
     false,
     ['pan', 'expirydate', 'securitycode']
   );
+  instance.init();
   return { instance };
 }

@@ -1,25 +1,26 @@
 import JwtDecode from 'jwt-decode';
 import { StCodec } from '../../core/classes/StCodec.class';
-import {
-  FormFieldsDetails,
-  FormFieldsValidity,
-  IDecodedJwt,
-  IFormFieldsDetails,
-  IFormFieldsValidity,
-  ISetRequestTypes,
-  ISubmitData
-} from '../../core/models/ControlFrame';
-import { IMerchantData } from '../../core/models/MerchantData';
-import BinLookup from '../../core/shared/BinLookup';
-import { IFormFieldState } from '../../core/models/FormFieldState';
-import Frame from '../../core/shared/Frame';
-import Language from '../../core/shared/Language';
-import MessageBus from '../../core/shared/MessageBus';
-import Notification from '../../core/shared/Notification';
-import Payment from '../../core/shared/Payment';
-import Validation from '../../core/shared/Validation';
+import { FormFieldsDetails } from '../../core/models/constants/FormFieldsDetails';
+import { FormFieldsValidity } from '../../core/models/constants/FormFieldsValidity';
+import { ICard } from '../../core/models/ICard';
+import { IDecodedJwt } from '../../core/models/IDecodedJwt';
+import { IFormFieldsDetails } from '../../core/models/IFormFieldsDetails';
+import { IFormFieldState } from '../../core/models/IFormFieldState';
+import { IFormFieldsValidity } from '../../core/models/IFormFieldsValidity';
+import { IMerchantData } from '../../core/models/IMerchantData';
+import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
+import { IResponseData } from '../../core/models/IResponseData';
+import { ISetRequestTypes } from '../../core/models/ISetRequestTypes';
+import { ISubmitData } from '../../core/models/ISubmitData';
+import { BinLookup } from '../../core/shared/BinLookup';
+import { Frame } from '../../core/shared/Frame';
+import { Language } from '../../core/shared/Language';
+import { MessageBus } from '../../core/shared/MessageBus';
+import { Notification } from '../../core/shared/Notification';
+import { Payment } from '../../core/shared/Payment';
+import { Validation } from '../../core/shared/Validation';
 
-class ControlFrame extends Frame {
+export class ControlFrame extends Frame {
   private static ALLOWED_PARAMS: string[] = ['jwt', 'gatewayUrl'];
   private static NON_CVV_CARDS: string[] = ['PIBA'];
   private static THREEDQUERY_EVENT: string = 'THREEDQUERY';
@@ -327,5 +328,3 @@ class ControlFrame extends Frame {
     this._merchantFormData = data;
   }
 }
-
-export default ControlFrame;

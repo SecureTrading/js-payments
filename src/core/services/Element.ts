@@ -1,7 +1,7 @@
-import { IStyle } from '../models/Styler';
-import Selectors from '../shared/Selectors';
+import { IStyle } from '../models/IStyle';
+import { Selectors } from '../shared/Selectors';
 
-export default class Element {
+export class Element {
   public static getComponentAddress(name: string): string {
     if (name === Selectors.CARD_NUMBER_COMPONENT_NAME) {
       return Selectors.CARD_NUMBER_COMPONENT;

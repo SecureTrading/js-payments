@@ -1,0 +1,11 @@
+export enum ByPassCards {
+  AMEX = 'AMEX',
+  ASTROPAYCARD = 'ASTROPAYCARD',
+  DINERS = 'DINERS',
+  DISCOVER = 'DISCOVER',
+  JCB = 'JCB',
+  MASTERCARD = 'MASTERCARD',
+  MAESTRO = 'MAESTRO',
+  PIBA = 'PIBA',
+  VISA = 'VISA'
+}

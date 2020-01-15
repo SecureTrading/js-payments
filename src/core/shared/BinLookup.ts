@@ -1,14 +1,8 @@
 import { Brand, BrandDetailsType, brandMapping, cardTree, CardTreeNode } from '../imports/cardtype';
-import Utils from './Utils';
+import { IBinLookupConfigType } from '../models/IBinLookupConfigType';
+import { Utils } from './Utils';
 
-export interface IBinLookupConfigType {
-  defaultCardType?: string;
-  minMatch?: number;
-  maxMatch?: number;
-  supported?: string[];
-}
-
-class BinLookup {
+export class BinLookup {
   public static DEFAULT_MIN_MATCH = 0;
   public static DEFAULT_MAX_MATCH = 6;
   private minMatch: number;
@@ -112,5 +106,3 @@ class BinLookup {
     );
   }
 }
-
-export default BinLookup;

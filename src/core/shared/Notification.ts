@@ -1,8 +1,10 @@
-import { INotificationEvent, NotificationType } from '../models/NotificationEvent';
-import MessageBus from './MessageBus';
-import Selectors from './Selectors';
+import { NotificationType } from '../models/constants/NotificationType';
+import { IMessageBusEvent } from '../models/IMessageBusEvent';
+import { INotificationEvent } from '../models/INotificationEvent';
+import { MessageBus } from './MessageBus';
+import { Selectors } from './Selectors';
 
-export default class Notification {
+export class Notification {
   private _messageBus: MessageBus;
   private _messageBusEvent: IMessageBusEvent;
   private _notificationEvent: INotificationEvent;

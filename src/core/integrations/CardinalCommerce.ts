@@ -1,22 +1,22 @@
 import { environment } from '../../environments/environment';
-import {
-  IAuthorizePaymentResponse,
-  IOnCardinalValidated,
-  IThreeDInitResponse,
-  IThreeDQueryResponse,
-  ON_CARDINAL_VALIDATED_STATUS,
-  PAYMENT_BRAND,
-  PAYMENT_EVENTS
-} from '../models/CardinalCommerce';
-import DomMethods from '../shared/DomMethods';
-import { IFormFieldState } from '../models/FormFieldState';
-import Language from '../shared/Language';
-import MessageBus from '../shared/MessageBus';
-import Notification from '../shared/Notification';
-import Selectors from '../shared/Selectors';
+import { CardinalCommerceValidationStatus } from '../models/constants/CardinalCommerceValidationStatus';
+import { PaymentBrand } from '../models/constants/PaymentBrand';
+import { PaymentEvents } from '../models/constants/PaymentEvents';
+import { IAuthorizePaymentResponse } from '../models/IAuthorizePaymentResponse';
+import { IFormFieldState } from '../models/IFormFieldState';
+import { IMessageBusEvent } from '../models/IMessageBusEvent';
+import { IOnCardinalValidated } from '../models/IOnCardinalValidated';
+import { IResponseData } from '../models/IResponseData';
+import { IThreeDInitResponse } from '../models/IThreeDInitResponse';
+import { IThreeDQueryResponse } from '../models/IThreeDQueryResponse';
+import { DomMethods } from '../shared/DomMethods';
+import { Language } from '../shared/Language';
+import { MessageBus } from '../shared/MessageBus';
+import { Notification } from '../shared/Notification';
+import { Selectors } from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
-import GoogleAnalytics from './GoogleAnalytics';
+import { GoogleAnalytics } from './GoogleAnalytics';
 
 declare const Cardinal: any;
 
@@ -65,7 +65,7 @@ export class CardinalCommerce {
 
   protected _authenticateCard(responseObject: IThreeDQueryResponse) {
     Cardinal.continue(
-      PAYMENT_BRAND,
+      PaymentBrand,
       {
         AcsUrl: responseObject.acsurl,
         Payload: responseObject.threedpayload
@@ -79,19 +79,19 @@ export class CardinalCommerce {
   }
 
   protected _cardinalSetup() {
-    Cardinal.setup(PAYMENT_EVENTS.INIT, {
+    Cardinal.setup(PaymentEvents.INIT, {
       jwt: this._cardinalCommerceJWT
     });
   }
 
   protected _onCardinalLoad() {
     Cardinal.configure(environment.CARDINAL_COMMERCE.CONFIG);
-    Cardinal.on(PAYMENT_EVENTS.SETUP_COMPLETE, () => {
+    Cardinal.on(PaymentEvents.SETUP_COMPLETE, () => {
       this._onCardinalSetupComplete();
       GoogleAnalytics.sendGaData('event', 'Cardinal', 'init', 'Cardinal Setup Completed');
     });
 
-    Cardinal.on(PAYMENT_EVENTS.VALIDATED, (data: IOnCardinalValidated, jwt: string) => {
+    Cardinal.on(PaymentEvents.VALIDATED, (data: IOnCardinalValidated, jwt: string) => {
       this._onCardinalValidated(data, jwt);
       GoogleAnalytics.sendGaData('event', 'Cardinal', 'validate', 'Cardinal payment validated');
     });
@@ -135,7 +135,7 @@ export class CardinalCommerce {
       type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE
     };
 
-    if (ON_CARDINAL_VALIDATED_STATUS.includes(ActionCode)) {
+    if (CardinalCommerceValidationStatus.includes(ActionCode)) {
       this._authorizePayment({ threedresponse: jwt });
     } else {
       const resetNotificationEvent: IMessageBusEvent = {
@@ -148,7 +148,7 @@ export class CardinalCommerce {
   }
 
   protected _performBinDetection(bin: IFormFieldState) {
-    return Cardinal.trigger(PAYMENT_EVENTS.BIN_PROCESS, bin);
+    return Cardinal.trigger(PaymentEvents.BIN_PROCESS, bin);
   }
 
   protected _threeDSetup() {

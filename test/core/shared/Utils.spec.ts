@@ -1,10 +1,12 @@
 import each from 'jest-each';
-import Utils from '../../../src/core/shared/Utils';
+import { Utils } from '../../../src/core/shared/Utils';
+import { ApplicationStorage } from '../../../src/core/services/ApplicationStorage';
 
 localStorage.setItem = jest.fn();
 
 // given
 describe('Utils', () => {
+  const storage: ApplicationStorage = new ApplicationStorage();
   // given
   describe('inArray', () => {
     // then
@@ -121,9 +123,10 @@ describe('Utils', () => {
     const storageName = 'incyWincySpider';
     const data = { spider: 'incyWincy' };
     const dataNoObject = 123456789;
+    const appStorage: ApplicationStorage = new ApplicationStorage();
 
     function setLocalStorageItemFixture(name: string, storage: any) {
-      return Utils.setLocalStorageItem(name, storage);
+      return appStorage.setLocalStorageItem(name, storage);
     }
 
     // then
@@ -152,17 +155,17 @@ describe('Utils', () => {
 
     // then
     it('should get storage item name if it exists', () => {
-      expect(Utils.getLocalStorageItem(storageName, data)).toEqual('incyWincy');
+      expect(storage.getLocalStorageItem(storageName, data)).toEqual('incyWincy');
     });
 
     // then
     it('should return empty string when storage with given name is not specified', () => {
-      expect(Utils.getLocalStorageItem(fakeStorageName, data)).toEqual('');
+      expect(storage.getLocalStorageItem(fakeStorageName, data)).toEqual('');
     });
 
     // then
     it('should return false when data parameter is not specified', () => {
-      expect(Utils.getLocalStorageItem(fakeStorageName, '')).toEqual(false);
+      expect(storage.getLocalStorageItem(fakeStorageName, '')).toEqual(false);
     });
   });
 

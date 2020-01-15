@@ -1,14 +1,14 @@
 import { IStRequest } from '../classes/StCodec.class';
-import StTransport from '../classes/StTransport.class';
-import GoogleAnalytics from '../integrations/GoogleAnalytics';
-import { IMerchantData } from '../models/MerchantData';
-import MessageBus from './MessageBus';
-import Notification from './Notification';
-import Selectors from './Selectors';
+import { StTransport } from '../classes/StTransport.class';
+import { ICard } from '../models/ICard';
+import { IMerchantData } from '../models/IMerchantData';
+import { IWallet } from '../models/IWallet';
+import { IWalletVerify } from '../models/IWalletVerify';
+import { Notification } from './Notification';
 import { StJwt } from './StJwt';
-import Validation from './Validation';
+import { Validation } from './Validation';
 
-export default class Payment {
+export class Payment {
   private _cardinalCommerceCacheToken: string;
   private _notification: Notification;
   private _processPaymentRequestBody: IStRequest;
