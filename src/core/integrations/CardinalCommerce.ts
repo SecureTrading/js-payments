@@ -1,5 +1,7 @@
 import { environment } from '../../environments/environment';
-import { ON_CARDINAL_VALIDATED_STATUS, PAYMENT_BRAND, PAYMENT_EVENTS } from '../models/constants/CardinalCommerce';
+import { CardinalCommerceValidationStatus } from '../models/constants/CardinalCommerceValidationStatus';
+import { PaymentBrand } from '../models/constants/PaymentBrand';
+import { PaymentEvents } from '../models/constants/PaymentEvents';
 import { IAuthorizePaymentResponse } from '../models/IAuthorizePaymentResponse';
 import { IFormFieldState } from '../models/IFormFieldState';
 import { IMessageBusEvent } from '../models/IMessageBusEvent';
@@ -63,7 +65,7 @@ export class CardinalCommerce {
 
   protected _authenticateCard(responseObject: IThreeDQueryResponse) {
     Cardinal.continue(
-      PAYMENT_BRAND,
+      PaymentBrand,
       {
         AcsUrl: responseObject.acsurl,
         Payload: responseObject.threedpayload
@@ -77,19 +79,19 @@ export class CardinalCommerce {
   }
 
   protected _cardinalSetup() {
-    Cardinal.setup(PAYMENT_EVENTS.INIT, {
+    Cardinal.setup(PaymentEvents.INIT, {
       jwt: this._cardinalCommerceJWT
     });
   }
 
   protected _onCardinalLoad() {
     Cardinal.configure(environment.CARDINAL_COMMERCE.CONFIG);
-    Cardinal.on(PAYMENT_EVENTS.SETUP_COMPLETE, () => {
+    Cardinal.on(PaymentEvents.SETUP_COMPLETE, () => {
       this._onCardinalSetupComplete();
       GoogleAnalytics.sendGaData('event', 'Cardinal', 'init', 'Cardinal Setup Completed');
     });
 
-    Cardinal.on(PAYMENT_EVENTS.VALIDATED, (data: IOnCardinalValidated, jwt: string) => {
+    Cardinal.on(PaymentEvents.VALIDATED, (data: IOnCardinalValidated, jwt: string) => {
       this._onCardinalValidated(data, jwt);
       GoogleAnalytics.sendGaData('event', 'Cardinal', 'validate', 'Cardinal payment validated');
     });
@@ -133,7 +135,7 @@ export class CardinalCommerce {
       type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE
     };
 
-    if (ON_CARDINAL_VALIDATED_STATUS.includes(ActionCode)) {
+    if (CardinalCommerceValidationStatus.includes(ActionCode)) {
       this._authorizePayment({ threedresponse: jwt });
     } else {
       const resetNotificationEvent: IMessageBusEvent = {
@@ -146,7 +148,7 @@ export class CardinalCommerce {
   }
 
   protected _performBinDetection(bin: IFormFieldState) {
-    return Cardinal.trigger(PAYMENT_EVENTS.BIN_PROCESS, bin);
+    return Cardinal.trigger(PaymentEvents.BIN_PROCESS, bin);
   }
 
   protected _threeDSetup() {
