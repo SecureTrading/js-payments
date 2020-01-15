@@ -228,7 +228,7 @@ describe('CardinalCommerce', () => {
     it('should set up subscribers to control frame setup, threedquery and threedinit events', () => {
       instance.messageBus.subscribeOnParent = jest.fn();
       instance._initSubscriptions();
-      expect(instance.messageBus.subscribeOnParent.mock.calls.length).toBe(4);
+      expect(instance.messageBus.subscribeOnParent.mock.calls.length).toBe(5);
       expect(instance.messageBus.subscribeOnParent.mock.calls[0][0]).toBe('LOAD_CONTROL_FRAME');
       // Annonymous function so can't test using toHaveBeenCalledWith
       expect(instance.messageBus.subscribeOnParent.mock.calls[0][1]).toBeInstanceOf(Function);

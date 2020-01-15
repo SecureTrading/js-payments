@@ -130,12 +130,12 @@ describe('ControlFrame', () => {
     // then
     it('should call _onLoadCardinal when LOAD_CARDINAL event has been called', () => {
       // @ts-ignore
-      instance._onLoadCardinal = jest.fn();
+      instance._onLoadIntegrationModule = jest.fn();
       messageBusEvent.type = MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL;
       // @ts-ignore
       instance._initLoadCardinalEvent();
       // @ts-ignore
-      expect(instance._onLoadCardinal).toHaveBeenCalled();
+      expect(instance._onLoadIntegrationModule).toHaveBeenCalled();
     });
   });
 
@@ -158,12 +158,12 @@ describe('ControlFrame', () => {
     // then
     it('should call _onSubmit when SUBMIT_FORM event has been called', () => {
       // @ts-ignore
-      instance._onSubmit = jest.fn();
+      instance._proceedWith3DSecure = jest.fn();
       messageBusEvent.type = MessageBus.EVENTS_PUBLIC.SUBMIT_FORM;
       // @ts-ignore
       instance._initSubmitFormEvent();
       // @ts-ignore
-      expect(instance._onSubmit).toHaveBeenCalled();
+      expect(instance._proceedWith3DSecure).toHaveBeenCalled();
     });
   });
 
@@ -261,7 +261,7 @@ describe('ControlFrame', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
-      instance._onLoadCardinal();
+      instance._onLoadIntegrationModule();
     });
 
     // then
