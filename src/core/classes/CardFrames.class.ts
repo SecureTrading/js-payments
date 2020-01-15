@@ -2,7 +2,9 @@ import JwtDecode from 'jwt-decode';
 import { IMessageBusEvent } from '../models/IMessageBusEvent';
 import { IStyles } from '../models/IStyles';
 import { IValidationMessageBus } from '../models/IValidationMessageBus';
+import { ByPassCards } from '../models/Config';
 import { Element } from '../services/Element';
+import { IFormFieldState } from '../shared/FormFieldState';
 import { DomMethods } from '../shared/DomMethods';
 import { Language } from '../shared/Language';
 import { MessageBus } from '../shared/MessageBus';
@@ -57,6 +59,7 @@ export class CardFrames extends RegisterFrames {
   private _onlyCvvConfiguration: boolean;
   private _configurationForStandardCard: boolean;
   private _loadAnimatedCard: boolean;
+  private _byPassCards: ByPassCards[];
 
   constructor(
     jwt: string,
@@ -69,10 +72,20 @@ export class CardFrames extends RegisterFrames {
     deferInit: boolean,
     buttonId: string,
     startOnLoad: boolean,
-    fieldsToSubmit: string[]
+    fieldsToSubmit: string[],
+    byPassCards: ByPassCards[]
   ) {
     super(jwt, origin, componentIds, styles, animatedCard, fieldsToSubmit);
-    this._setInitValues(buttonId, defaultPaymentType, deferInit, paymentTypes, startOnLoad, animatedCard);
+    this._setInitValues(
+      buttonId,
+      defaultPaymentType,
+      deferInit,
+      paymentTypes,
+      startOnLoad,
+      animatedCard,
+      byPassCards,
+      jwt
+    );
     this.configureFormFieldsAmount(jwt);
   }
 
@@ -278,7 +291,12 @@ export class CardFrames extends RegisterFrames {
 
   private _publishSubmitEvent(deferInit: boolean): void {
     const messageBusEvent: IMessageBusEvent = {
-      data: { deferInit, fieldsToSubmit: this.fieldsToSubmit },
+      data: {
+        deferInit,
+        fieldsToSubmit: this.fieldsToSubmit,
+        byPassCards: this._byPassCards,
+        cardType: this._getCardType(this.jwt)
+      },
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
@@ -303,7 +321,9 @@ export class CardFrames extends RegisterFrames {
     deferInit: boolean,
     paymentTypes: any,
     startOnLoad: boolean,
-    loadAnimatedCard: boolean
+    loadAnimatedCard: boolean,
+    byPassCards: ByPassCards[],
+    jwt: string
   ): void {
     this._validation = new Validation();
     this._translator = new Translator(this.params.locale);
@@ -312,6 +332,8 @@ export class CardFrames extends RegisterFrames {
     this._startOnLoad = startOnLoad;
     this._defaultPaymentType = defaultPaymentType;
     this._paymentTypes = paymentTypes;
+    this._byPassCards = byPassCards;
+    this.jwt = jwt;
     this._payMessage = this._translator.translate(Language.translations.PAY);
     this._processingMessage = `${this._translator.translate(Language.translations.PROCESSING)} ...`;
     this._loadAnimatedCard = loadAnimatedCard !== undefined ? loadAnimatedCard : true;
@@ -349,6 +371,7 @@ export class CardFrames extends RegisterFrames {
 
   private _validateFieldsAfterSubmit(): void {
     this.messageBus.subscribe(MessageBus.EVENTS.VALIDATE_FORM, (data: IValidationMessageBus) => {
+      console.error(data);
       const { cardNumber, expirationDate, securityCode } = data;
       if (!cardNumber.state) {
         this._publishValidatedFieldState(cardNumber, MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD);

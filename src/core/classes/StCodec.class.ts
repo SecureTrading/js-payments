@@ -28,6 +28,13 @@ class StCodec {
   public static jwt: string;
   public static originalJwt: string;
 
+  /**
+   * Generate a unique ID for a request
+   * (this is informational. it doesn't need to be cryptographically random since one of those is allocated server-side)
+   * @param length The total length of the Request ID
+   *   (since we prepend 'J-' the random section will be 2 char shorter)
+   * @return A newly generated random request ID
+   */
   public static _createRequestId(length = 10) {
     return (
       'J-' +
@@ -55,6 +62,12 @@ class StCodec {
     return responseContent;
   }
 
+  /** Publishes translated response as a TRANSACTION_COMPLETE event
+   * to allow the page to submit to the merchant server
+   * @param responseData The decoded response from the gateway
+   * @param jwtResponse The raw JWT response from the gateway
+   * @param threedresponse the response from Cardinal commerce after call to ACS
+   */
   public static publishResponse(responseData: IResponseData, jwtResponse?: string, threedresponse?: string) {
     const translator = new Translator(StCodec._locale);
     responseData.errormessage = translator.translate(responseData.errormessage);

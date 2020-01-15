@@ -22,6 +22,31 @@ const ApplePayContactMap: any = {
   town: 'locality'
 };
 
+/**
+ * Apple Pay flow:
+ * 1. Check if ApplePaySession class exists
+ *    (it must be iOS 10 and later and macOS 10.12 and later).
+ * 2. Call setApplePayVersion() to set latest available ApplePay version.
+ * 3. Call setSupportedNetworks() to set available networks which are supported
+ *    in this particular version of Apple Pay.
+ * 4. Call setAmountAndCurrency() to set amount and currency hidden in provided JWT.
+ * 5. Call createApplePayButton(), _setApplePayButtonProps() and addApplePayButton)
+ *    to provide styled button for launching Apple Pay Process.
+ * 6. Call applePayProcess() which checks by canMakePayments() and canMakePaymentsWithActiveCard(merchantID)
+ *    the capability of device for making Apple Pay payments and if there is at least one card in  users Wallet.
+ * 7. User taps / clicks ApplePayButton on page and this event triggers applePayButtonClickHandler() -
+ *    this is obligatory process -it has to be triggered by users action.
+ * 8. Clicking button triggers paymentProcess() which sets ApplePaySession object.
+ * 9. Then this.session.begin() is called which begins validating merchant process and display payment sheet.
+ * 10. this.onValidateMerchantRequest() - triggers onvalidatemerchant which literally validates merchant.
+ * 11. this.subscribeStatusHandlers() - if merchant has been successfully validated, three handlers are set -
+ *     onpaymentmethodselected,  onshippingmethodselected, onshippingcontactselected
+ *     to handle customer's selections in the payment sheet to complete transaction cost.
+ *     We've got 30 seconds to handle each event before the payment sheet times out: completePaymentMethodSelection,
+ *     completeShippingMethodSelection, and completeShippingContactSelection
+ * 12. Then onPaymentAuthorized() or onPaymentCanceled() has been called which completes payment with
+ *     this.session.completePayment function or canceled it with this.session.oncancel handler.
+ */
 export class ApplePay {
   get applePayButtonProps(): any {
     return this._applePayButtonProps;

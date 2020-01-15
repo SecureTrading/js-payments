@@ -41,6 +41,10 @@ export class ControlFrame extends Frame {
 
   private _binLookup: BinLookup;
   private _card: ICard;
+  private _cardNumber: string;
+  private _securityCode: string;
+  private _expirationDate: string;
+  private _decodedJwt: IDecodedJwt;
   private _isPaymentReady: boolean = false;
   private _formFields: IFormFieldsDetails = FormFieldsDetails;
   private _formFieldsValidity: IFormFieldsValidity = FormFieldsValidity;
@@ -86,6 +90,15 @@ export class ControlFrame extends Frame {
 
   private _initFormFieldChangeEvent(event: string, field: IFormFieldState) {
     this.messageBus.subscribe(event, (data: IFormFieldState) => {
+      if (event === MessageBus.EVENTS.CHANGE_CARD_NUMBER) {
+        this._cardNumber = data.value;
+      }
+      if (event === MessageBus.EVENTS.CHANGE_EXPIRATION_DATE) {
+        this._expirationDate = data.value;
+      }
+      if (event === MessageBus.EVENTS.CHANGE_SECURITY_CODE) {
+        this._securityCode = data.value;
+      }
       ControlFrame._onFormFieldStateChange(field, data);
     });
   }
@@ -110,20 +123,40 @@ export class ControlFrame extends Frame {
 
   private _initLoadCardinalEvent() {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL, () => {
-      this._onLoadCardinal();
+      this._onLoadIntegrationModule();
     });
   }
 
   private _initProcessPaymentsEvent() {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS, (data: IResponseData) => {
+      console.error(data);
       this._onProcessPaymentEvent(data);
     });
   }
 
-  private _initSubmitFormEvent() {
+  private _initSubmitFormEvent(): void {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, (data?: ISubmitData) => {
-      this._onSubmit(data);
+      this._proceedWith3DSecure(data);
     });
+  }
+
+  private _proceedWith3DSecure(data: ISubmitData): void {
+    // @ts-ignore
+    if (data.byPassCards.includes(this._binLookup.binLookup(this._cardNumber).type)) {
+      this.messageBus.publish(
+        {
+          data: {
+            pan: this._cardNumber,
+            expirydate: this._expirationDate,
+            securitycode: this._securityCode
+          },
+          type: MessageBus.EVENTS_PUBLIC.BY_PASS_CARDINAL
+        },
+        true
+      );
+    } else {
+      this._onSubmit(data);
+    }
   }
 
   private _initUpdateMerchantFieldsEvent() {
@@ -163,7 +196,7 @@ export class ControlFrame extends Frame {
     this.messageBus.publish(messageBusEvent, true);
   }
 
-  private _onLoadCardinal() {
+  private _onLoadIntegrationModule() {
     this._isPaymentReady = true;
   }
 
