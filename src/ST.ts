@@ -110,7 +110,8 @@ class ST {
       config.deferInit,
       config.buttonId,
       config.components.startOnLoad,
-      config.fieldsToSubmit
+      config.fieldsToSubmit,
+      config.byPassCards
     );
   }
 
