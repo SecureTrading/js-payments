@@ -16,14 +16,13 @@ install:
   - npm install
   - npm run prepare
   - npm run prod
+  - docker build . --tag "securetrading1/js-payments:$DOCKER_BRANCH"
+  - git clone --depth=1 --single-branch --branch feature/STJS-464-wiremock https://github.com/SecureTrading/py-payments-testing.git py-payments-testing
 jobs:
   include:
     - stage: 'Docker build'
       script:
-        - docker build . --tag "securetrading1/js-payments:$DOCKER_BRANCH"
-        - git clone -depth=1 --branch feature/STJS-464-wiremock https://github.com/SecureTrading/py-payments-testing.git py-payments-testing
-        - cd py-payments-testing
-        - APP_REPO=js-payments APP_BRANCH=$DOCKER_BRANCH docker-compose up -d
+        - APP_REPO=js-payments APP_BRANCH=$DOCKER_BRANCH docker-compose -f py-payments-testing/docker-compose.yml up -d
 #    - stage: 'Test'
 #      name: 'Unit tests'
 #      script:
