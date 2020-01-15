@@ -1,6 +1,7 @@
 import JwtDecode from 'jwt-decode';
 import { Currencies, Money } from 'ts-money';
-import { IStJwtObj, IStJwtPayload } from '../models/StJwt';
+import { IStJwtObj } from '../models/IStJwtObj';
+import { IStJwtPayload } from '../models/IStJwtPayload';
 
 export class StJwt {
   public payload: IStJwtPayload;

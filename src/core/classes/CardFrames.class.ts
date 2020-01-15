@@ -1,7 +1,7 @@
 import JwtDecode from 'jwt-decode';
-import { IMessageBusEvent } from '../models/MessageBusEvent';
-import { IStyles } from '../models/Styler';
-import { IValidationMessageBus } from '../models/Validation';
+import { IMessageBusEvent } from '../models/IMessageBusEvent';
+import { IStyles } from '../models/IStyles';
+import { IValidationMessageBus } from '../models/IValidationMessageBus';
 import { Element } from '../services/Element';
 import { DomMethods } from '../shared/DomMethods';
 import { Language } from '../shared/Language';

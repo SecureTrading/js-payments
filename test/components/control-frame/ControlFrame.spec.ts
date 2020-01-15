@@ -1,6 +1,6 @@
 import { ControlFrame } from '../../../src/components/control-frame/ControlFrame';
 import { StCodec } from '../../../src/core/classes/StCodec.class';
-import { IFormFieldState } from '../../../src/core/models/FormFieldState';
+import { IFormFieldState } from '../../../src/core/models/IFormFieldState';
 import { Language } from '../../../src/core/shared/Language';
 import { MessageBus } from '../../../src/core/shared/MessageBus';
 

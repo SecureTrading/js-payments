@@ -1,5 +1,6 @@
-import { IMessageBusEvent } from '../models/MessageBusEvent';
-import { INotificationEvent, NotificationType } from '../models/NotificationEvent';
+import { NotificationType } from '../models/constants/NotificationType';
+import { IMessageBusEvent } from '../models/IMessageBusEvent';
+import { INotificationEvent } from '../models/INotificationEvent';
 import { MessageBus } from './MessageBus';
 import { Selectors } from './Selectors';
 

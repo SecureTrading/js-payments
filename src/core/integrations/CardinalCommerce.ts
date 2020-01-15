@@ -1,16 +1,12 @@
 import { environment } from '../../environments/environment';
-import {
-  IAuthorizePaymentResponse,
-  IOnCardinalValidated,
-  IThreeDInitResponse,
-  IThreeDQueryResponse,
-  ON_CARDINAL_VALIDATED_STATUS,
-  PAYMENT_BRAND,
-  PAYMENT_EVENTS
-} from '../models/CardinalCommerce';
-import { IFormFieldState } from '../models/FormFieldState';
-import { IMessageBusEvent } from '../models/MessageBusEvent';
-import { IResponseData } from '../models/ResponseData';
+import { ON_CARDINAL_VALIDATED_STATUS, PAYMENT_BRAND, PAYMENT_EVENTS } from '../models/constants/CardinalCommerce';
+import { IAuthorizePaymentResponse } from '../models/IAuthorizePaymentResponse';
+import { IFormFieldState } from '../models/IFormFieldState';
+import { IMessageBusEvent } from '../models/IMessageBusEvent';
+import { IOnCardinalValidated } from '../models/IOnCardinalValidated';
+import { IResponseData } from '../models/IResponseData';
+import { IThreeDInitResponse } from '../models/IThreeDInitResponse';
+import { IThreeDQueryResponse } from '../models/IThreeDQueryResponse';
 import { DomMethods } from '../shared/DomMethods';
 import { Language } from '../shared/Language';
 import { MessageBus } from '../shared/MessageBus';

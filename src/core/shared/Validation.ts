@@ -1,9 +1,11 @@
 import { StCodec } from '../classes/StCodec.class';
 import { BrandDetailsType } from '../imports/cardtype';
-import { ICard } from '../models/Card';
-import { IFormFieldState } from '../models/FormFieldState';
-import { IMessageBusEvent } from '../models/MessageBusEvent';
-import { IErrorData, IMessageBusValidateField, IValidation } from '../models/Validation';
+import { ICard } from '../models/ICard';
+import { IErrorData } from '../models/IErrorData';
+import { IFormFieldState } from '../models/IFormFieldState';
+import { IMessageBusEvent } from '../models/IMessageBusEvent';
+import { IMessageBusValidateField } from '../models/IMessageBusValidateField';
+import { IValidation } from '../models/IValidation';
 import { BinLookup } from './BinLookup';
 import { Frame } from './Frame';
 import { Language } from './Language';

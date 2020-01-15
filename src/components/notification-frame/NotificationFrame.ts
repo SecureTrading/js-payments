@@ -1,4 +1,5 @@
-import { INotificationEvent, NotificationType } from '../../core/models/NotificationEvent';
+import { NotificationType } from '../../core/models/constants/NotificationType';
+import { INotificationEvent } from '../../core/models/INotificationEvent';
 import { Frame } from '../../core/shared/Frame';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { Selectors } from '../../core/shared/Selectors';

@@ -1,5 +1,5 @@
 import { Brand, BrandDetailsType, brandMapping, cardTree, CardTreeNode } from '../imports/cardtype';
-import { IBinLookupConfigType } from '../models/BinLookup';
+import { IBinLookupConfigType } from '../models/IBinLookupConfigType';
 import { Utils } from './Utils';
 
 export class BinLookup {

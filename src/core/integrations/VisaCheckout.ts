@@ -1,6 +1,7 @@
 import { environment } from '../../environments/environment';
-import { IWalletConfig } from '../models/Config';
-import { IVisaConfig, IVisaSettings } from '../models/VisaCheckout';
+import { IVisaConfig } from '../models/IVisaConfig';
+import { IVisaSettings } from '../models/IVisaSettings';
+import { IWalletConfig } from '../models/IWalletConfig';
 import { DomMethods } from '../shared/DomMethods';
 import { Language } from '../shared/Language';
 import { MessageBus } from '../shared/MessageBus';

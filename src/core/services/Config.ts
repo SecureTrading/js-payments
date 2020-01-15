@@ -1,6 +1,10 @@
 import Joi from 'joi';
 import { environment } from '../../environments/environment';
-import { IComponentsConfig, IComponentsConfigSchema, IComponentsIds, IConfig, IWalletConfig } from '../models/Config';
+import { ComponentsConfigSchema } from '../models/constants/ComponentsConfigSchema';
+import { IComponentsConfig } from '../models/IComponentsConfig';
+import { IComponentsIds } from '../models/IComponentsIds';
+import { IConfig } from '../models/IConfig';
+import { IWalletConfig } from '../models/IWalletConfig';
 import { Selectors } from '../shared/Selectors';
 
 export class Config {
@@ -72,7 +76,7 @@ export class Config {
     if (!config) {
       return { ...Config.DEFAULT_COMPONENTS_IDS };
     }
-    this.validate(config, IComponentsConfigSchema);
+    this.validate(config, ComponentsConfigSchema);
     const optionalIds = config.animatedCard !== undefined ? { animatedCard: config.animatedCard } : {};
     const requiredIds = {
       cardNumber: config.cardNumber !== undefined ? config.cardNumber : Config.DEFAULT_COMPONENTS_IDS.cardNumber,

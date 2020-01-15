@@ -1,7 +1,7 @@
 import each from 'jest-each';
 import SpyInstance = jest.SpyInstance;
 import { CardinalCommerce } from '../../../src/core/integrations/CardinalCommerce';
-import { IThreeDQueryResponse } from '../../../src/core/models/CardinalCommerce';
+import { IThreeDQueryResponse } from '../../../src/core/models/IThreeDQueryResponse';
 import { MessageBus } from '../../../src/core/shared/MessageBus';
 import { DomMethods } from '../../../src/core/shared/DomMethods';
 import { Selectors } from '../../../src/core/shared/Selectors';

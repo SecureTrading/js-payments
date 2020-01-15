@@ -1,4 +1,4 @@
-import { IStyle } from './Styler';
+import { IStyle } from './IStyle';
 
 export interface IParams {
   [name: string]: object | string;

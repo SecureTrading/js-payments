@@ -1,5 +1,5 @@
 import { environment } from '../../environments/environment';
-import { IFormFieldState } from '../models/FormFieldState';
+import { IFormFieldState } from '../models/IFormFieldState';
 import { CardinalCommerce } from './CardinalCommerce';
 
 export class CardinalCommerceMock extends CardinalCommerce {

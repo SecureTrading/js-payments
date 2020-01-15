@@ -14,11 +14,11 @@ import { CardinalCommerceMock } from './core/integrations/CardinalCommerceMock';
 import { GoogleAnalytics } from './core/integrations/GoogleAnalytics';
 import { VisaCheckout } from './core/integrations/VisaCheckout';
 import { VisaCheckoutMock } from './core/integrations/VisaCheckoutMock';
-import { IConfig } from './core/models/Config';
+import { IConfig } from './core/models/IConfig';
+import { IStJwtObj } from './core/models/IStJwtObj';
 import { ApplicationStorage } from './core/services/ApplicationStorage';
 import { Config } from './core/services/Config';
 import { MessageBus } from './core/shared/MessageBus';
-import { IStJwtObj } from './core/shared/StJwt';
 import { Translator } from './core/shared/Translator';
 import { environment } from './environments/environment';
 

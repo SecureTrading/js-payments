@@ -1,5 +1,5 @@
 import { StTransport } from '../classes/StTransport.class';
-import { IWalletConfig } from '../models/Config';
+import { IWalletConfig } from '../models/IWalletConfig';
 import { DomMethods } from '../shared/DomMethods';
 import { Language } from '../shared/Language';
 import { MessageBus } from '../shared/MessageBus';

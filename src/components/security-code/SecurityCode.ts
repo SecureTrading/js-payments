@@ -1,4 +1,4 @@
-import { IMessageBusEvent } from '../../core/models/MessageBusEvent';
+import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
 import { BinLookup } from '../../core/shared/BinLookup';
 import { Formatter } from '../../core/shared/Formatter';
 import { FormField } from '../../core/shared/FormField';

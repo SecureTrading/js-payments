@@ -1,5 +1,6 @@
-import { IParams } from '../models/Frame';
-import { IAllowedStyles, IStyle } from '../models/Styler';
+import { IAllowedStyles } from '../models/IAllowedStyles';
+import { IParams } from '../models/IParams';
+import { IStyle } from '../models/IStyle';
 import { MessageBus } from './MessageBus';
 import { Styler } from './Styler';
 

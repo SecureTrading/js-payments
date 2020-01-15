@@ -1,4 +1,4 @@
-import { IStyles } from '../models/Styler';
+import { IStyles } from '../models/IStyles';
 import { BinLookup } from '../shared/BinLookup';
 import { MessageBus } from '../shared/MessageBus';
 import { StJwt } from '../shared/StJwt';

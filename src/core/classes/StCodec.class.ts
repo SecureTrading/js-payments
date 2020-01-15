@@ -1,6 +1,7 @@
 import JwtDecode from 'jwt-decode';
-import { IMessageBusEvent } from '../models/MessageBusEvent';
-import { IResponseData } from '../models/ResponseData';
+import { IMessageBusEvent } from '../models/IMessageBusEvent';
+import { IResponseData } from '../models/IResponseData';
+import { IStRequest } from '../models/IStRequest';
 import { Language } from '../shared/Language';
 import { MessageBus } from '../shared/MessageBus';
 import { Notification } from '../shared/Notification';
@@ -8,15 +9,6 @@ import { Selectors } from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
 import { Validation } from '../shared/Validation';
-
-interface IStRequest {
-  requesttypedescription?: string;
-  requesttypedescriptions?: string[];
-  expirydate?: string;
-  pan?: string;
-  securitycode?: string;
-  termurl?: string;
-}
 
 class StCodec {
   public static CONTENT_TYPE = 'application/json';
