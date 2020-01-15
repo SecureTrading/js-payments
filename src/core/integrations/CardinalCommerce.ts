@@ -270,7 +270,6 @@ export class CardinalCommerce {
 
   private _submitEventListener(): void {
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.BY_PASS_CARDINAL, (data: any) => {
-      console.error(data);
       const { pan, expirydate, securitycode } = data;
       const postData: any = {
         expirydate,

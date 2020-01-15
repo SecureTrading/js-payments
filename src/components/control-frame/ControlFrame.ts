@@ -129,7 +129,6 @@ export class ControlFrame extends Frame {
 
   private _initProcessPaymentsEvent() {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS, (data: IResponseData) => {
-      console.error(data);
       this._onProcessPaymentEvent(data);
     });
   }
