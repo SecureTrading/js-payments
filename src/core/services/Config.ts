@@ -68,7 +68,7 @@ export class Config {
     };
   }
 
-  private _componentIds(config: IComponentsIds): IComponentsIds | {} {
+  private _componentIds(config: IComponentsIds): IComponentsIds {
     if (!config) {
       return { ...Config.DEFAULT_COMPONENTS_IDS };
     }

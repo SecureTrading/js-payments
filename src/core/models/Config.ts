@@ -28,7 +28,7 @@ interface IConfig {
   byPassCards?: ByPassCards[];
   buttonId?: string;
   components?: IComponentsConfig;
-  componentIds?: IComponentsIds | {};
+  componentIds?: IComponentsIds;
   datacenterurl?: string;
   deferInit?: boolean;
   fieldsToSubmit?: string[];

@@ -364,5 +364,6 @@ function cardFramesFixture() {
     false,
     ['pan', 'expirydate', 'securitycode']
   );
+  instance.init();
   return { instance };
 }

@@ -1,11 +1,12 @@
 import each from 'jest-each';
 import { Utils } from '../../../src/core/shared/Utils';
+import { ApplicationStorage } from '../../../src/core/services/ApplicationStorage';
 
 localStorage.setItem = jest.fn();
 
 // given
 describe('Utils', () => {
-  const storage: Storage = new Storage();
+  const storage: ApplicationStorage = new ApplicationStorage();
   // given
   describe('inArray', () => {
     // then
@@ -122,9 +123,10 @@ describe('Utils', () => {
     const storageName = 'incyWincySpider';
     const data = { spider: 'incyWincy' };
     const dataNoObject = 123456789;
+    const appStorage: ApplicationStorage = new ApplicationStorage();
 
     function setLocalStorageItemFixture(name: string, storage: any) {
-      return storage.setLocalStorageItem(name, storage);
+      return appStorage.setLocalStorageItem(name, storage);
     }
 
     // then

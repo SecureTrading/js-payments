@@ -16,7 +16,7 @@ import { VisaCheckout } from './core/integrations/VisaCheckout';
 import { VisaCheckoutMock } from './core/integrations/VisaCheckoutMock';
 import { IConfig } from './core/models/Config';
 import { Config } from './core/services/Config';
-import { Storage } from './core/services/Storage';
+import { ApplicationStorage } from './core/services/ApplicationStorage';
 import { MessageBus } from './core/shared/MessageBus';
 import { IStJwtObj } from './core/shared/StJwt';
 import { Translator } from './core/shared/Translator';
@@ -34,7 +34,7 @@ class ST {
   private _googleAnalytics: GoogleAnalytics;
   private _merchantFields: MerchantFields;
   private _messageBus: MessageBus;
-  private _storage: Storage;
+  private _storage: ApplicationStorage;
   private _translation: Translator;
 
   constructor(config: IConfig) {
@@ -42,7 +42,7 @@ class ST {
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
     this._messageBus = new MessageBus();
-    this._storage = new Storage();
+    this._storage = new ApplicationStorage();
     this.Init(config);
   }
 

@@ -1,4 +1,4 @@
-import { Storage } from '../../../src/core/services/Storage';
+import { ApplicationStorage } from '../../../src/core/services/ApplicationStorage';
 import { Translator } from '../../../src/core/shared/Translator';
 import { Language } from '../../../src/core/shared/Language';
 import { Utils } from '../../../src/core/shared/Utils';
@@ -62,7 +62,7 @@ describe('translate()', () => {
   // then
   it('should return translation from local storage if its specified there', () => {
     const translation: string = 'some random translation';
-    const storage: Storage = new Storage();
+    const storage: ApplicationStorage = new ApplicationStorage();
     storage.getLocalStorageItem = jest.fn().mockReturnValueOnce(translation);
     let instance: Translator = new Translator('en_GB');
     expect(instance.translate(translation)).toEqual(translation);

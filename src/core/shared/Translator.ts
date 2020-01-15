@@ -1,5 +1,5 @@
 import i18next from 'i18next';
-import { Storage } from '../services/Storage';
+import { ApplicationStorage } from '../services/ApplicationStorage';
 // @ts-ignore
 import cy_GB from '../translations/cy_GB.json';
 // @ts-ignore
@@ -22,7 +22,7 @@ import no_NO from '../translations/no_NO.json';
 import sv_SE from '../translations/sv_SE.json';
 
 export class Translator {
-  private _storage: Storage;
+  private _storage: ApplicationStorage;
   constructor(locale: string) {
     i18next.init({
       debug: false,
@@ -40,7 +40,7 @@ export class Translator {
         sv_SE: { translation: sv_SE }
       }
     });
-    this._storage = new Storage();
+    this._storage = new ApplicationStorage();
   }
 
   public translate = (text: string) => {
