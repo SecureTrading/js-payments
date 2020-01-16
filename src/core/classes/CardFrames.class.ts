@@ -1,16 +1,16 @@
 import JwtDecode from 'jwt-decode';
-import Element from '../Element';
-import { ByPassCards } from '../models/Config';
-import { IValidationMessageBus } from '../models/Validation';
-import DomMethods from '../shared/DomMethods';
-import { IFormFieldState } from '../shared/FormFieldState';
-import Language from '../shared/Language';
-import MessageBus from '../shared/MessageBus';
-import Selectors from '../shared/Selectors';
-import { IStyles } from '../shared/Styler';
+import { ByPassCards } from '../models/constants/ByPassCards';
+import { IMessageBusEvent } from '../models/IMessageBusEvent';
+import { IStyles } from '../models/IStyles';
+import { IValidationMessageBus } from '../models/IValidationMessageBus';
+import { Element } from '../services/Element';
+import { DomMethods } from '../shared/DomMethods';
+import { Language } from '../shared/Language';
+import { MessageBus } from '../shared/MessageBus';
+import { Selectors } from '../shared/Selectors';
 import { Translator } from '../shared/Translator';
-import Validation from '../shared/Validation';
-import RegisterFrames from './RegisterFrames.class';
+import { Validation } from '../shared/Validation';
+import { RegisterFrames } from './RegisterFrames.class';
 
 export class CardFrames extends RegisterFrames {
   private static CARD_NUMBER_FIELD_NAME: string = 'pan';
@@ -291,10 +291,10 @@ export class CardFrames extends RegisterFrames {
   private _publishSubmitEvent(deferInit: boolean): void {
     const messageBusEvent: IMessageBusEvent = {
       data: {
-        deferInit,
-        fieldsToSubmit: this.fieldsToSubmit,
         byPassCards: this._byPassCards,
-        cardType: this._getCardType(this.jwt)
+        cardType: this._getCardType(this.jwt),
+        deferInit,
+        fieldsToSubmit: this.fieldsToSubmit
       },
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };

@@ -1,6 +1,6 @@
 import { environment } from '../../environments/environment';
 
-export default class Selectors {
+export class Selectors {
   public static readonly CARD_NUMBER_COMPONENT_NAME: string = 'cardNumber';
   public static readonly CARD_NUMBER_IFRAME: string = 'st-card-number-iframe';
   public static readonly CARD_NUMBER_INPUT: string = 'st-card-number-input';

@@ -1,20 +1,19 @@
-import BinLookup from '../../core/shared/BinLookup';
-import Formatter from '../../core/shared/Formatter';
-import FormField from '../../core/shared/FormField';
-import Language from '../../core/shared/Language';
-import MessageBus from '../../core/shared/MessageBus';
-import Selectors from '../../core/shared/Selectors';
-import Validation from '../../core/shared/Validation';
+import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
+import { BinLookup } from '../../core/shared/BinLookup';
+import { Formatter } from '../../core/shared/Formatter';
+import { FormField } from '../../core/shared/FormField';
+import { Language } from '../../core/shared/Language';
+import { MessageBus } from '../../core/shared/MessageBus';
+import { Selectors } from '../../core/shared/Selectors';
+import { Validation } from '../../core/shared/Validation';
 
-class SecurityCode extends FormField {
+export class SecurityCode extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.SECURITY_CODE_INPUT) as HTMLInputElement;
   private static CLEAR_VALUE: string = '';
   private static DISABLED_ATTRIBUTE: string = 'disabled';
   private static DISABLED_CLASS: string = 'st-input--disabled';
   private static DISABLED_PARAM: string = 'disabled';
-  private static GREY_OUT: string = '0.5';
-  private static GREY_OUT_OFF: string = '1';
   private static MATCH_EXACTLY_FOUR_DIGITS: string = '^[0-9]{4}$';
   private static MATCH_EXACTLY_THREE_DIGITS: string = '^[0-9]{3}$';
   private static SPECIAL_INPUT_LENGTH: number = 4;
@@ -170,5 +169,3 @@ class SecurityCode extends FormField {
     }
   }
 }
-
-export default SecurityCode;

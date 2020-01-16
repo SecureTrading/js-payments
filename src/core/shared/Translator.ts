@@ -1,7 +1,5 @@
 import i18next from 'i18next';
-import { Config } from '../services/Config';
-import { Storage } from '../services/Storage';
-// TypeScript has been set to import json it just warns about it in here
+import { ApplicationStorage } from '../services/ApplicationStorage';
 // @ts-ignore
 import cy_GB from '../translations/cy_GB.json';
 // @ts-ignore
@@ -22,11 +20,9 @@ import nl_NL from '../translations/nl_NL.json';
 import no_NO from '../translations/no_NO.json';
 // @ts-ignore
 import sv_SE from '../translations/sv_SE.json';
-import Utils from './Utils';
 
-// TODO docstring - class to act as adapter in case we ever change out the translator mechanism
 export class Translator {
-  private _storage: Storage;
+  private _storage: ApplicationStorage;
   constructor(locale: string) {
     i18next.init({
       debug: false,
@@ -44,13 +40,9 @@ export class Translator {
         sv_SE: { translation: sv_SE }
       }
     });
-    this._storage = new Storage();
+    this._storage = new ApplicationStorage();
   }
 
-  /**
-   * Translates given text or gets it when it's defined by merchant in config.
-   * @param text
-   */
   public translate = (text: string) => {
     const translation = this._storage.getLocalStorageItem(text, localStorage.merchantTranslations);
     return translation ? translation : i18next.t(text, { content: text });

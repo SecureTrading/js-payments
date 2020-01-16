@@ -1,7 +1,7 @@
-import SecurityCode from '../../../src/components/security-code/SecurityCode';
-import Selectors from '../../../src/core/shared/Selectors';
-import FormField from '../../../src/core/shared/FormField';
-import Utils from '../../../src/core/shared/Utils';
+import { SecurityCode } from '../../../src/components/security-code/SecurityCode';
+import { Selectors } from '../../../src/core/shared/Selectors';
+import { FormField } from '../../../src/core/shared/FormField';
+import { Utils } from '../../../src/core/shared/Utils';
 
 jest.mock('../../../src/core/shared/MessageBus');
 

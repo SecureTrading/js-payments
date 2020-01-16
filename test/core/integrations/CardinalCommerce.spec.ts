@@ -1,10 +1,10 @@
 import each from 'jest-each';
 import SpyInstance = jest.SpyInstance;
 import { CardinalCommerce } from '../../../src/core/integrations/CardinalCommerce';
-import { IThreeDQueryResponse } from '../../../src/core/models/CardinalCommerce';
-import MessageBus from '../../../src/core/shared/MessageBus';
-import DomMethods from '../../../src/core/shared/DomMethods';
-import Selectors from '../../../src/core/shared/Selectors';
+import { IThreeDQueryResponse } from '../../../src/core/models/IThreeDQueryResponse';
+import { MessageBus } from '../../../src/core/shared/MessageBus';
+import { DomMethods } from '../../../src/core/shared/DomMethods';
+import { Selectors } from '../../../src/core/shared/Selectors';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 jest.mock('./../../../src/core/integrations/GoogleAnalytics');
@@ -228,7 +228,7 @@ describe('CardinalCommerce', () => {
     it('should set up subscribers to control frame setup, threedquery and threedinit events', () => {
       instance.messageBus.subscribeOnParent = jest.fn();
       instance._initSubscriptions();
-      expect(instance.messageBus.subscribeOnParent.mock.calls.length).toBe(4);
+      expect(instance.messageBus.subscribeOnParent.mock.calls.length).toBe(5);
       expect(instance.messageBus.subscribeOnParent.mock.calls[0][0]).toBe('LOAD_CONTROL_FRAME');
       // Annonymous function so can't test using toHaveBeenCalledWith
       expect(instance.messageBus.subscribeOnParent.mock.calls[0][1]).toBeInstanceOf(Function);

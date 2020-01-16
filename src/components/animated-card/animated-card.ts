@@ -1,7 +1,8 @@
 import '@securetrading/js-payments-card/dist/stcardstyle.css';
 // @ts-ignore
 import Card from '@securetrading/js-payments-card/stcard.js';
-import MessageBus from '../../core/shared/MessageBus';
+import { IFormFieldState } from '../../core/models/IFormFieldState';
+import { MessageBus } from '../../core/shared/MessageBus';
 
 // @ts-ignore
 if (Card && document.URL.includes('animated')) {

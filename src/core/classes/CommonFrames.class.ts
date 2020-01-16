@@ -1,13 +1,13 @@
-import Element from '../Element';
 import { CardinalCommerce } from '../integrations/CardinalCommerce';
-import DomMethods from '../shared/DomMethods';
-import MessageBus from '../shared/MessageBus';
-import Selectors from '../shared/Selectors';
-import { IStyles } from '../shared/Styler';
-import Validation from '../shared/Validation';
-import RegisterFrames from './RegisterFrames.class';
+import { IStyles } from '../models/IStyles';
+import { Element } from '../services/Element';
+import { DomMethods } from '../shared/DomMethods';
+import { MessageBus } from '../shared/MessageBus';
+import { Selectors } from '../shared/Selectors';
+import { Validation } from '../shared/Validation';
+import { RegisterFrames } from './RegisterFrames.class';
 
-class CommonFrames extends RegisterFrames {
+export class CommonFrames extends RegisterFrames {
   get requestTypes(): string[] {
     return this._requestTypes;
   }
@@ -28,7 +28,6 @@ class CommonFrames extends RegisterFrames {
   private readonly _gatewayUrl: string;
   private readonly _merchantForm: HTMLFormElement;
   private _validation: Validation;
-  private _requestTypes: string[];
   private readonly _submitCallback: any;
   private readonly _submitFields: string[];
   private readonly _submitOnError: boolean;
@@ -80,7 +79,7 @@ class CommonFrames extends RegisterFrames {
     if (this._shouldLoadNotificationFrame()) {
       elements.push(this.componentIds.notificationFrame);
     }
-    elements.push(Selectors.MERCHANT_FORM_SELECTOR); // Control frame is always needed so just append to form
+    elements.push(Selectors.MERCHANT_FORM_SELECTOR);
     return elements;
   }
 
@@ -191,5 +190,3 @@ class CommonFrames extends RegisterFrames {
     );
   }
 }
-
-export default CommonFrames;
