@@ -18,17 +18,20 @@ install:
   - npm run prepare
 jobs:
   include:
-    - stage: 'Test'
-      name: 'Unit tests'
-      script:
-        - npm run coverage
-        - npm run snyk
-    - stage: 'Docker build and setup'
-      script:
-        - docker build . --tag "securetrading1/js-payments:$DOCKER_BRANCH"
-        - git clone --depth=1 --single-branch --branch feature/STJS-464-wiremock https://github.com/SecureTrading/py-payments-testing.git py-payments-testing
-        - APP_REPO=js-payments APP_BRANCH=$DOCKER_BRANCH docker-compose -f py-payments-testing/docker-compose.yml up -d
-    - name: 'Behavioral test'
+    - stage: Unit tests
+      name: Coverage
+      script: npm run coverage
+    - name: Snyk
+      script: npm run snyk
+    - stage: Docker build and setup
+      name: Build app image
+      script: docker build . --tag "securetrading1/js-payments:$DOCKER_BRANCH"
+    - name: Clone testing repository
+      script: git clone --depth=1 --single-branch --branch feature/STJS-464-wiremock https://github.com/SecureTrading/py-payments-testing.git py-payments-testing
+    - name: Setup containers
+      script: APP_REPO=js-payments APP_BRANCH=$DOCKER_BRANCH docker-compose -f py-payments-testing/docker-compose.yml up -d
+    - state: Behavioral test
+      name: Sample tests
       if: env(TESTS_TYPE)=fullTest OR env(TESTS_TYPE)=smokeTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
         - docker-compose -f py-payments-testing/docker-compose.yml run tests poetry run behave features
