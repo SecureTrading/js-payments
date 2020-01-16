@@ -49,7 +49,7 @@ export class Utils {
     });
   }
 
-  public static stripChars(string: string, regex: any) {
+  public static stripChars(string: string, regex: RegExp) {
     if (typeof regex === 'undefined' || !Boolean(regex)) {
       regex = /[\D+]/g;
       return string.replace(regex, '');
@@ -60,13 +60,14 @@ export class Utils {
 
   public static getLastElementOfArray = (array: number[]) => array && array.slice(-1).pop();
 
-  public static setElementAttributes(attributes: any, element: HTMLInputElement) {
+  public static setElementAttributes(attributes: string[], element: HTMLInputElement) {
     // tslint:disable-next-line: forin
     for (const attribute in attributes) {
       const value = attributes[attribute];
       if (Utils.inArray(['value'], attribute)) {
         // @ts-ignore
         element[attribute] = value;
+        // @ts-ignore
       } else if (value === false) {
         element.removeAttribute(attribute);
       } else {
