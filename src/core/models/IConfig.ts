@@ -1,5 +1,5 @@
-import { ByPassCards } from './constants/ByPassCards';
-import { IByPassInit } from './IByPassInit';
+import { BypassCards } from './constants/BypassCards';
+import { IBypassInit } from './IBypassInit';
 import { IComponentsConfig } from './IComponentsConfig';
 import { IComponentsIds } from './IComponentsIds';
 import { IStyles } from './IStyles';
@@ -9,7 +9,7 @@ export interface IConfig {
   analytics?: boolean;
   animatedCard?: boolean;
   applePay?: IWalletConfig;
-  byPassCards?: ByPassCards[];
+  byPassCards?: BypassCards[];
   buttonId?: string;
   components?: IComponentsConfig;
   componentIds?: IComponentsIds;
@@ -18,7 +18,7 @@ export interface IConfig {
   fieldsToSubmit?: string[];
   formId?: string;
   jwt: string;
-  init?: IByPassInit;
+  init?: IBypassInit;
   livestatus?: number;
   origin?: string;
   styles?: IStyles;

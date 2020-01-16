@@ -1,5 +1,5 @@
 import { CardFrames } from '../../../src/core/classes/CardFrames.class';
-import { ByPassCards } from '../../../src/core/models/constants/ByPassCards';
+import { ByPassCards } from '../../../src/core/models/constants/BypassCards';
 import { DomMethods } from '../../../src/core/shared/DomMethods';
 import { Language } from '../../../src/core/shared/Language';
 import { MessageBus } from '../../../src/core/shared/MessageBus';
@@ -163,8 +163,8 @@ describe('CardFrames', () => {
         // @ts-ignore
         deferInit: undefined,
         fieldsToSubmit: ['pan', 'expirydate', 'securitycode'],
-        byPassCards: ['PIBA'],
-        cardType: ByPassCards.PIBA
+        bypassCards: ['PIBA'],
+        cardType: BypassCards.PIBA
       },
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
@@ -366,7 +366,7 @@ function cardFramesFixture() {
     'merchant-submit-button',
     false,
     ['pan', 'expirydate', 'securitycode'],
-    [ByPassCards.PIBA]
+    [BypassCards.PIBA]
   );
   instance.init();
   return { instance };

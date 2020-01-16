@@ -141,7 +141,7 @@ export class ControlFrame extends Frame {
 
   private _proceedWith3DSecure(data: ISubmitData): void {
     // @ts-ignore
-    if (data.byPassCards.includes(this._binLookup.binLookup(this._cardNumber).type)) {
+    if (data.bypassCards.includes(this._binLookup.binLookup(this._cardNumber).type)) {
       this.messageBus.publish(
         {
           data: {

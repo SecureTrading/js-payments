@@ -1,5 +1,5 @@
 import JwtDecode from 'jwt-decode';
-import { ByPassCards } from '../models/constants/ByPassCards';
+import { BypassCards } from '../models/constants/BypassCards';
 import { IMessageBusEvent } from '../models/IMessageBusEvent';
 import { IStyles } from '../models/IStyles';
 import { IValidationMessageBus } from '../models/IValidationMessageBus';
@@ -58,7 +58,7 @@ export class CardFrames extends RegisterFrames {
   private _onlyCvvConfiguration: boolean;
   private _configurationForStandardCard: boolean;
   private _loadAnimatedCard: boolean;
-  private _byPassCards: ByPassCards[];
+  private _bypassCards: BypassCards[];
 
   constructor(
     jwt: string,
@@ -72,7 +72,7 @@ export class CardFrames extends RegisterFrames {
     buttonId: string,
     startOnLoad: boolean,
     fieldsToSubmit: string[],
-    byPassCards: ByPassCards[]
+    bypassCards: BypassCards[]
   ) {
     super(jwt, origin, componentIds, styles, animatedCard, fieldsToSubmit);
     this._setInitValues(
@@ -82,7 +82,7 @@ export class CardFrames extends RegisterFrames {
       paymentTypes,
       startOnLoad,
       animatedCard,
-      byPassCards,
+      bypassCards,
       jwt
     );
     this.configureFormFieldsAmount(jwt);
@@ -291,7 +291,7 @@ export class CardFrames extends RegisterFrames {
   private _publishSubmitEvent(deferInit: boolean): void {
     const messageBusEvent: IMessageBusEvent = {
       data: {
-        byPassCards: this._byPassCards,
+        bypassCards: this._bypassCards,
         cardType: this._getCardType(this.jwt),
         deferInit,
         fieldsToSubmit: this.fieldsToSubmit
@@ -321,7 +321,7 @@ export class CardFrames extends RegisterFrames {
     paymentTypes: any,
     startOnLoad: boolean,
     loadAnimatedCard: boolean,
-    byPassCards: ByPassCards[],
+    bypassCards: BypassCards[],
     jwt: string
   ): void {
     this._validation = new Validation();
@@ -331,7 +331,7 @@ export class CardFrames extends RegisterFrames {
     this._startOnLoad = startOnLoad;
     this._defaultPaymentType = defaultPaymentType;
     this._paymentTypes = paymentTypes;
-    this._byPassCards = byPassCards;
+    this._bypassCards = bypassCards;
     this.jwt = jwt;
     this._payMessage = this._translator.translate(Language.translations.PAY);
     this._processingMessage = `${this._translator.translate(Language.translations.PROCESSING)} ...`;

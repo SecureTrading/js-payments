@@ -111,7 +111,7 @@ class ST {
       config.buttonId,
       config.components.startOnLoad,
       config.fieldsToSubmit,
-      config.byPassCards
+      config.bypassCards
     );
   }
 

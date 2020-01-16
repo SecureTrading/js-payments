@@ -1,4 +1,4 @@
-export enum ByPassCards {
+export enum BypassCards {
   AMEX = 'AMEX',
   ASTROPAYCARD = 'ASTROPAYCARD',
   DINERS = 'DINERS',

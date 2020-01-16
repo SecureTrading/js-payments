@@ -50,7 +50,7 @@ export class Config {
       animatedCard: config.animatedCard !== undefined ? config.animatedCard : true,
       applePay: this._setApmConfig(config.applePay, config.components),
       buttonId: config.buttonId !== undefined ? config.buttonId : '',
-      byPassCards: config.byPassCards !== undefined ? config.byPassCards : [],
+      bypassCards: config.bypassCards !== undefined ? config.bypassCards : [],
       componentIds: this._componentIds(config.componentIds),
       components: this._setComponentsProperties(config),
       datacenterurl: config.datacenterurl !== undefined ? config.datacenterurl : environment.GATEWAY_URL,
