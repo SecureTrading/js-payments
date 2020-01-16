@@ -90,14 +90,16 @@ export class ControlFrame extends Frame {
 
   private _initFormFieldChangeEvent(event: string, field: IFormFieldState) {
     this.messageBus.subscribe(event, (data: IFormFieldState) => {
-      if (event === MessageBus.EVENTS.CHANGE_CARD_NUMBER) {
-        this._cardNumber = data.value;
-      }
-      if (event === MessageBus.EVENTS.CHANGE_EXPIRATION_DATE) {
-        this._expirationDate = data.value;
-      }
-      if (event === MessageBus.EVENTS.CHANGE_SECURITY_CODE) {
-        this._securityCode = data.value;
+      switch (event) {
+        case MessageBus.EVENTS.CHANGE_CARD_NUMBER:
+          this._cardNumber = data.value;
+          break;
+        case MessageBus.EVENTS.CHANGE_EXPIRATION_DATE:
+          this._expirationDate = data.value;
+          break;
+        case MessageBus.EVENTS.CHANGE_SECURITY_CODE:
+          this._securityCode = data.value;
+          break;
       }
       ControlFrame._onFormFieldStateChange(field, data);
     });
