@@ -190,7 +190,7 @@ export class CardinalCommerce {
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDQUERY, (data: any) => {
       this._onThreeDQueryEvent(data);
     });
-    this._submitEventListener();
+    this._initSubmitEventListener();
   }
 
   private _publishRequestTypesEvent(requestTypes: string[]) {
@@ -268,7 +268,7 @@ export class CardinalCommerce {
     }
   }
 
-  private _submitEventListener(): void {
+  private _initSubmitEventListener(): void {
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.BY_PASS_CARDINAL, (data: any) => {
       const { pan, expirydate, securitycode } = data;
       const postData: any = {
