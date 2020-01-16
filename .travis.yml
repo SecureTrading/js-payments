@@ -32,7 +32,7 @@ jobs:
     - name: 'Behavioral test'
       if: env(TESTS_TYPE)=fullTest OR env(TESTS_TYPE)=smokeTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
-        - docker-compose run tests poetry run behave features
+        - docker-compose -f py-payments-testing/docker-compose.yml run tests poetry run behave features
 #    - name: "Behavioural test: chrome 76, Windows 10"
 #      if: env(TESTS_TYPE)=fullTest OR env(TESTS_TYPE)=smokeTest OR branch = env(BRANCH_WITH_FULL_TESTS)
 #      script:
