@@ -5,13 +5,15 @@ env:
     - TESTS_TYPE=${TESTS_TYPE}
     - TEST_TAG=${TEST_TAG}
 #    - BRANCH_WITH_FULL_TESTS=master
+    - APP_REPO=js-payments
+    - APP_BRANCH=$DOCKER_BRANCH
 language: node_js
 node_js:
   - 10
 services:
   - docker
 install:
-  - APP_REPO=js-payments APP_BRANCH=$DOCKER_BRANCH docker-compose -f py-payments-testing/docker-compose.yml up -d
+  - docker-compose -f py-payments-testing/docker-compose.yml up -d
 jobs:
   include:
 #    - stage: Quality checks
