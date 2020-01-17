@@ -43,7 +43,7 @@ class ST {
     this._merchantFields = new MerchantFields();
     this._messageBus = new MessageBus();
     this._storage = new ApplicationStorage();
-    this.Init(config);
+    this.init(config);
   }
 
   public Components(): void {
@@ -54,11 +54,13 @@ class ST {
 
   public ApplePay(): ApplePay {
     const { applepay } = this.Environment();
+
     return new applepay(this._config.applePay, this._config.jwt, this._config.datacenterurl);
   }
 
   public VisaCheckout(): VisaCheckout {
     const { visa } = this.Environment();
+
     return new visa(this._config.visaCheckout, this._config.jwt, this._config.datacenterurl, this._config.livestatus);
   }
 
@@ -74,7 +76,7 @@ class ST {
     }
   }
 
-  private Init(config: IConfig): void {
+  private init(config: IConfig): void {
     this._config = this._configuration.init(config);
     this.Storage(this._config);
     this._translation = new Translator(
@@ -88,6 +90,7 @@ class ST {
 
   private CardinalCommerce(): CardinalCommerce {
     const { cardinal } = this.Environment();
+
     return new cardinal(
       this._config.components.startOnLoad,
       this._config.jwt,

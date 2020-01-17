@@ -185,7 +185,7 @@ export class CardinalCommerce {
       this._onThreeDInitEvent(data);
     });
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.BY_PASS_INIT, () => {
-      this._onByPassJsInitEvent();
+      this._onBypassJsInitEvent();
     });
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDQUERY, (data: any) => {
       this._onThreeDQueryEvent(data);
@@ -216,7 +216,7 @@ export class CardinalCommerce {
     }
   }
 
-  private _onByPassJsInitEvent() {
+  private _onBypassJsInitEvent() {
     this._cardinalCommerceJWT = this._threedinit;
     this._cardinalCommerceCacheToken = this._cachetoken;
     this._threeDSetup();

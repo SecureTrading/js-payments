@@ -16,6 +16,9 @@ export class Config {
     securityCode: Selectors.SECURITY_CODE_INPUT_SELECTOR
   };
 
+  private static DEFAULT_APMS_REQUEST_TYPES: string[] = ['AUTH'];
+  private static DEFAULT_COMPONENTS_REQUEST_TYPES: string[] = ['THREEDQUERY', 'AUTH'];
+  private static DEFAULT_FIELDS_TO_SUBMIT: string[] = ['pan', 'expirydate', 'securitycode'];
   private static DEFAULT_SUBMIT_PROPERTIES: string[] = [
     'baseamount',
     'currencyiso3a',
@@ -30,7 +33,7 @@ export class Config {
     'transactionreference'
   ];
 
-  public init(config: IConfig) {
+  public init(config: IConfig): IConfig {
     return {
       ...this._returnConfig(config)
     };
@@ -97,7 +100,7 @@ export class Config {
 
   private _setFieldsToSubmit(config: IConfig): { fieldsToSubmit: string[] } {
     return {
-      fieldsToSubmit: config.fieldsToSubmit ? config.fieldsToSubmit : ['pan', 'expirydate', 'securitycode']
+      fieldsToSubmit: config.fieldsToSubmit ? config.fieldsToSubmit : [...Config.DEFAULT_FIELDS_TO_SUBMIT]
     };
   }
 
@@ -112,7 +115,7 @@ export class Config {
       return {
         defaultPaymentType: '',
         paymentTypes: [''],
-        requestTypes: ['THREEDQUERY', 'AUTH'],
+        requestTypes: [...Config.DEFAULT_COMPONENTS_REQUEST_TYPES],
         startOnLoad: false
       };
     }
@@ -121,19 +124,23 @@ export class Config {
         config.components.defaultPaymentType !== undefined ? config.components.defaultPaymentType : '',
       paymentTypes: config.components.paymentTypes !== undefined ? config.components.paymentTypes : [''],
       requestTypes:
-        config.components.requestTypes !== undefined ? config.components.requestTypes : ['THREEDQUERY', 'AUTH'],
+        config.components.requestTypes !== undefined
+          ? config.components.requestTypes
+          : [...Config.DEFAULT_COMPONENTS_REQUEST_TYPES],
       startOnLoad: config.components.startOnLoad !== undefined ? config.components.startOnLoad : false
     };
   }
 
-  private _setApmConfig(apm: IWalletConfig, components: IComponentsConfig): IWalletConfig {
-    if (apm) {
-      return {
-        ...apm,
-        requestTypes: components && components.requestTypes !== undefined ? components.requestTypes : ['AUTH']
-      };
-    } else {
-      return {};
+  private _setApmConfig(apm: IWalletConfig | {}, components: IComponentsConfig): IWalletConfig {
+    if (!apm) {
+      return apm;
     }
+    return {
+      ...apm,
+      requestTypes:
+        components && components.requestTypes !== undefined
+          ? components.requestTypes
+          : [...Config.DEFAULT_APMS_REQUEST_TYPES]
+    };
   }
 }

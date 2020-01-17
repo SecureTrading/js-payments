@@ -74,7 +74,7 @@ export class ControlFrame extends Frame {
     this._initFormFieldChangeEvent(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, this._formFields.expirationDate);
     this._initFormFieldChangeEvent(MessageBus.EVENTS.CHANGE_SECURITY_CODE, this._formFields.securityCode);
     this._initSetRequestTypesEvent();
-    this._initByPassInitEvent();
+    this._initBypassInitEvent();
     this._initThreedinitEvent();
     this._initLoadCardinalEvent();
     this._initProcessPaymentsEvent();
@@ -111,9 +111,9 @@ export class ControlFrame extends Frame {
     });
   }
 
-  private _initByPassInitEvent(): void {
+  private _initBypassInitEvent(): void {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BY_PASS_INIT, (cachetoken: string) => {
-      this._onByPassInitEvent(cachetoken);
+      this._onBypassInitEvent(cachetoken);
     });
   }
 
@@ -204,8 +204,8 @@ export class ControlFrame extends Frame {
     this._requestThreeDInit();
   }
 
-  private _onByPassInitEvent(cachetoken: string): void {
-    this._requestByPassInit(cachetoken);
+  private _onBypassInitEvent(cachetoken: string): void {
+    this._requestBypassInit(cachetoken);
   }
 
   private _onProcessPaymentEvent(data: IResponseData): void {
@@ -238,7 +238,7 @@ export class ControlFrame extends Frame {
       });
   }
 
-  private _requestByPassInit(cachetoken: string): void {
+  private _requestBypassInit(cachetoken: string): void {
     this._payment.byPassInitRequest(cachetoken);
     const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.BY_PASS_INIT
