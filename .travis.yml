@@ -21,7 +21,7 @@ jobs:
       script:
         - docker-compose -f py-payments-testing/docker-compose.yml build tests
         - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
-        - docker push "securetrading1/py-payments-testing:feature/STJS-464-wiremock"
+        - docker push "securetrading1/py-payments-testing:feature-STJS-464-wiremock"
 #    - stage: Quality checks
 #      name: Coverage
 #      script: npm run coverage
