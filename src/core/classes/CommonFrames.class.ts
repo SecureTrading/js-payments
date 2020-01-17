@@ -16,8 +16,8 @@ export class CommonFrames extends RegisterFrames {
     this._requestTypes = requestTypes;
   }
 
-  private static readonly COMPLETED_REQUEST_TYPES = ['AUTH', 'CACHETOKENISE', 'ACCOUNTCHECK'];
-  public elementsTargets: any;
+  private static readonly COMPLETED_REQUEST_TYPES: string[] = ['AUTH', 'CACHETOKENISE', 'ACCOUNTCHECK'];
+  public elementsTargets: string[];
   public elementsToRegister: HTMLElement[];
   private _controlFrame: Element;
   private _controlFrameMounted: HTMLElement;

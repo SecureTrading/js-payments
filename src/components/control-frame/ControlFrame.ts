@@ -12,6 +12,8 @@ import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
 import { IResponseData } from '../../core/models/IResponseData';
 import { ISetRequestTypes } from '../../core/models/ISetRequestTypes';
 import { ISubmitData } from '../../core/models/ISubmitData';
+import { IThreeDInitResponse } from '../../core/models/IThreeDInitResponse';
+import { IThreeDQueryResult } from '../../core/models/IThreeDQueryResult';
 import { BinLookup } from '../../core/shared/BinLookup';
 import { Frame } from '../../core/shared/Frame';
 import { Language } from '../../core/shared/Language';
@@ -44,7 +46,6 @@ export class ControlFrame extends Frame {
   private _cardNumber: string;
   private _securityCode: string;
   private _expirationDate: string;
-  private _decodedJwt: IDecodedJwt;
   private _isPaymentReady: boolean = false;
   private _formFields: IFormFieldsDetails = FormFieldsDetails;
   private _formFieldsValidity: IFormFieldsValidity = FormFieldsValidity;
@@ -58,14 +59,14 @@ export class ControlFrame extends Frame {
   private _preThreeDRequestTypes: string[];
   private _validation: Validation;
   private _threeDQueryEvent: IMessageBusEvent;
-  private _threeDQueryResult: any;
+  private _threeDQueryResult: IThreeDQueryResult;
 
   constructor() {
     super();
     this.onInit();
   }
 
-  protected onInit() {
+  protected onInit(): void {
     super.onInit();
     this._setInstances();
     this._setFormFieldsValidities();
@@ -160,7 +161,7 @@ export class ControlFrame extends Frame {
   }
 
   private _initUpdateMerchantFieldsEvent(): void {
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS, (data: any) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS, (data: IMerchantData) => {
       this._storeMerchantData(data);
     });
   }
@@ -176,13 +177,13 @@ export class ControlFrame extends Frame {
     });
   }
 
-  private _onSetRequestTypesEvent(data: any): void {
+  private _onSetRequestTypesEvent(data: ISetRequestTypes): void {
     const threeDIndex = data.requestTypes.indexOf(ControlFrame.THREEDQUERY_EVENT);
     this._preThreeDRequestTypes = data.requestTypes.slice(0, threeDIndex + 1);
     this._postThreeDRequestTypes = data.requestTypes.slice(threeDIndex + 1, data.requestTypes.length);
   }
 
-  private _onSubmit(data: any): void {
+  private _onSubmit(data: ISubmitData): void {
     if (data !== undefined && data.requestTypes !== undefined) {
       this._onSetRequestTypesEvent(data);
     }
@@ -230,7 +231,7 @@ export class ControlFrame extends Frame {
       .then(() => {
         this._notification.success(Language.translations.PAYMENT_SUCCESS);
       })
-      .catch((error: any) => {
+      .catch(() => {
         this._notification.error(Language.translations.PAYMENT_ERROR);
       })
       .finally(() => {
@@ -246,7 +247,7 @@ export class ControlFrame extends Frame {
     this.messageBus.publish(messageBusEvent, true);
   }
 
-  private _requestPayment(data: any): void {
+  private _requestPayment(data: ISubmitData): void {
     const isPanPiba: boolean = this._getPan()
       ? ControlFrame.NON_CVV_CARDS.includes(this._binLookup.binLookup(this._getPan()).type)
       : false;
@@ -267,7 +268,7 @@ export class ControlFrame extends Frame {
 
       this._payment
         .threeDQueryRequest(this._preThreeDRequestTypes, card, this._merchantFormData)
-        .then((result: any) => {
+        .then((result: IThreeDQueryResult) => {
           this._threeDQueryResult = result;
           this._threeDQueryEvent.data = result.response;
           this.messageBus.publish(this._threeDQueryEvent, true);
@@ -281,7 +282,7 @@ export class ControlFrame extends Frame {
   }
 
   private _requestThreeDInit(): void {
-    this._payment.threeDInitRequest().then((result: any) => {
+    this._payment.threeDInitRequest().then((result: IThreeDInitResponse) => {
       const messageBusEvent: IMessageBusEvent = {
         data: result.response,
         type: MessageBus.EVENTS_PUBLIC.THREEDINIT
@@ -324,7 +325,7 @@ export class ControlFrame extends Frame {
     this._binLookup = new BinLookup();
   }
 
-  private _storeMerchantData(data: any): void {
+  private _storeMerchantData(data: IMerchantData): void {
     this._merchantFormData = data;
   }
 }

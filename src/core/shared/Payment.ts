@@ -2,6 +2,7 @@ import { IStRequest } from '../classes/StCodec.class';
 import { StTransport } from '../classes/StTransport.class';
 import { ICard } from '../models/ICard';
 import { IMerchantData } from '../models/IMerchantData';
+import { IThreeDInitResponse, IThreeDInitResponseData } from '../models/IThreeDInitResponse';
 import { IWallet } from '../models/IWallet';
 import { IWalletVerify } from '../models/IWalletVerify';
 import { Notification } from './Notification';
@@ -49,12 +50,12 @@ export class Payment {
     return await this._stTransport.sendRequest(this._processPaymentRequestBody).then(({ response }: any) => response);
   }
 
-  public threeDInitRequest() {
-    return this._stTransport.sendRequest(this._threeDInitRequestBody).then((result: { jwt: string; response: any }) => {
+  public threeDInitRequest(): Promise<IThreeDInitResponse> {
+    return this._stTransport.sendRequest(this._threeDInitRequestBody).then((result: IThreeDInitResponse) => {
       const {
         payload: { jwt, response }
       } = new StJwt(result.jwt);
-      const threeDInitResult = { jwt, response: response[0] };
+      const threeDInitResult: IThreeDInitResponse = { jwt, response: response[0] };
       // @ts-ignore
       this._cardinalCommerceCacheToken = result.response.cachetoken;
       return threeDInitResult;

@@ -2,6 +2,7 @@ import JwtDecode from 'jwt-decode';
 import { IMessageBusEvent } from '../models/IMessageBusEvent';
 import { IResponseData } from '../models/IResponseData';
 import { IStRequest } from '../models/IStRequest';
+import { IThreeDQueryResponse } from '../models/IThreeDQueryResponse';
 import { Language } from '../shared/Language';
 import { MessageBus } from '../shared/MessageBus';
 import { Notification } from '../shared/Notification';
@@ -68,7 +69,11 @@ class StCodec {
    * @param jwtResponse The raw JWT response from the gateway
    * @param threedresponse the response from Cardinal commerce after call to ACS
    */
-  public static publishResponse(responseData: IResponseData, jwtResponse?: string, threedresponse?: string) {
+  public static publishResponse(
+    responseData: IResponseData | IThreeDQueryResponse,
+    jwtResponse?: string,
+    threedresponse?: string
+  ) {
     const translator = new Translator(StCodec._locale);
     responseData.errormessage = translator.translate(responseData.errormessage);
     const eventData = { ...responseData };
