@@ -44,7 +44,6 @@ export class ControlFrame extends Frame {
   private _cardNumber: string;
   private _securityCode: string;
   private _expirationDate: string;
-  private _decodedJwt: IDecodedJwt;
   private _isPaymentReady: boolean = false;
   private _formFields: IFormFieldsDetails = FormFieldsDetails;
   private _formFieldsValidity: IFormFieldsValidity = FormFieldsValidity;
@@ -65,7 +64,7 @@ export class ControlFrame extends Frame {
     this.onInit();
   }
 
-  protected onInit() {
+  protected onInit(): void {
     super.onInit();
     this._setInstances();
     this._setFormFieldsValidities();
@@ -142,21 +141,7 @@ export class ControlFrame extends Frame {
   }
 
   private _proceedWith3DSecure(data: ISubmitData): void {
-    if (!data.bypassCards.includes(this._binLookup.binLookup(this._cardNumber).type)) {
-      this._onSubmit(data);
-      return;
-    }
-    this.messageBus.publish(
-      {
-        data: {
-          expirydate: this._expirationDate,
-          pan: this._cardNumber,
-          securitycode: this._securityCode
-        },
-        type: MessageBus.EVENTS_PUBLIC.BY_PASS_CARDINAL
-      },
-      true
-    );
+    this._onSubmit(data);
   }
 
   private _initUpdateMerchantFieldsEvent(): void {
@@ -176,17 +161,18 @@ export class ControlFrame extends Frame {
     });
   }
 
-  private _onSetRequestTypesEvent(data: any): void {
+  private _onSetRequestTypesEvent(data: ISetRequestTypes): void {
     const threeDIndex = data.requestTypes.indexOf(ControlFrame.THREEDQUERY_EVENT);
     this._preThreeDRequestTypes = data.requestTypes.slice(0, threeDIndex + 1);
     this._postThreeDRequestTypes = data.requestTypes.slice(threeDIndex + 1, data.requestTypes.length);
   }
 
-  private _onSubmit(data: any): void {
+  private _onSubmit(data: ISubmitData): void {
+    const isCardBypassed: boolean = data.bypassCards.includes(this._binLookup.binLookup(this._cardNumber).type);
     if (data !== undefined && data.requestTypes !== undefined) {
       this._onSetRequestTypesEvent(data);
     }
-    this._requestPayment(data);
+    this._requestPayment(data, isCardBypassed);
   }
 
   private _onLoad(): void {
@@ -246,7 +232,7 @@ export class ControlFrame extends Frame {
     this.messageBus.publish(messageBusEvent, true);
   }
 
-  private _requestPayment(data: any): void {
+  private _requestPayment(data: ISubmitData, isCardBypassed: boolean): void {
     const isPanPiba: boolean = this._getPan()
       ? ControlFrame.NON_CVV_CARDS.includes(this._binLookup.binLookup(this._getPan()).type)
       : false;
@@ -263,6 +249,21 @@ export class ControlFrame extends Frame {
     if (validity) {
       if (deferInit) {
         this._requestThreeDInit();
+      }
+
+      if (isCardBypassed) {
+        this.messageBus.publish(
+          {
+            data: {
+              expirydate: this._expirationDate,
+              pan: this._cardNumber,
+              securitycode: this._securityCode
+            },
+            type: MessageBus.EVENTS_PUBLIC.BY_PASS_CARDINAL
+          },
+          true
+        );
+        return;
       }
 
       this._payment
