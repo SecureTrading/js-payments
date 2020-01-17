@@ -167,12 +167,17 @@ export class ControlFrame extends Frame {
     this._postThreeDRequestTypes = data.requestTypes.slice(threeDIndex + 1, data.requestTypes.length);
   }
 
+  private _isCardBypassed(data: ISubmitData): boolean {
+    return !this._cardNumber
+      ? data.bypassCards.includes(this._binLookup.binLookup(this._getPan()).type)
+      : data.bypassCards.includes(this._binLookup.binLookup(this._cardNumber).type);
+  }
+
   private _onSubmit(data: ISubmitData): void {
-    const isCardBypassed: boolean = data.bypassCards.includes(this._binLookup.binLookup(this._cardNumber).type);
     if (data !== undefined && data.requestTypes !== undefined) {
       this._onSetRequestTypesEvent(data);
     }
-    this._requestPayment(data, isCardBypassed);
+    this._requestPayment(data, this._isCardBypassed(data));
   }
 
   private _onLoad(): void {

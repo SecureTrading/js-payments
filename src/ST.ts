@@ -97,7 +97,8 @@ class ST {
       this._config.components.requestTypes,
       this._config.livestatus,
       this._config.init.cachetoken,
-      this._config.init.threedinit
+      this._config.init.threedinit,
+      this._config.bypassCards
     );
   }
 

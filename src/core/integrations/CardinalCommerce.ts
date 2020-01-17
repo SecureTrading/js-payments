@@ -37,6 +37,7 @@ export class CardinalCommerce {
   private _notification: Notification;
   private _sdkAddress: string = environment.CARDINAL_COMMERCE.SONGBIRD_TEST_URL;
   private _called: boolean = false;
+  private _bypassCards: string[];
 
   constructor(
     startOnLoad: boolean,
@@ -44,7 +45,8 @@ export class CardinalCommerce {
     requestTypes: string[],
     livestatus?: number,
     cachetoken?: string,
-    threedinit?: string
+    threedinit?: string,
+    bypassCards?: string[]
   ) {
     this._startOnLoad = startOnLoad;
     this._jwt = jwt;
@@ -52,6 +54,7 @@ export class CardinalCommerce {
     this._livestatus = livestatus;
     this._cachetoken = cachetoken ? cachetoken : '';
     this._requestTypes = requestTypes;
+    this._bypassCards = bypassCards;
     this.messageBus = new MessageBus();
     this._notification = new Notification();
     this._setLiveStatus();
@@ -103,7 +106,7 @@ export class CardinalCommerce {
       const pan = new StJwt(this._jwt).payload.pan as string;
       this._performBinDetection({ validity: true, value: pan });
       const submitFormEvent: IMessageBusEvent = {
-        data: { dataInJwt: true, requestTypes: this._requestTypes },
+        data: { dataInJwt: true, requestTypes: this._requestTypes, bypassCards: this._bypassCards },
         type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
       };
       this.messageBus.publishFromParent(submitFormEvent, Selectors.CONTROL_FRAME_IFRAME);
