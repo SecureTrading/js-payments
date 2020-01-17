@@ -1,7 +1,11 @@
 import Joi from 'joi';
 import { environment } from '../../environments/environment';
-import { IComponentsConfig, IComponentsConfigSchema, IComponentsIds, IConfig, IWalletConfig } from '../models/Config';
-import Selectors from '../shared/Selectors';
+import { ComponentsConfigSchema } from '../models/constants/ComponentsConfigSchema';
+import { IComponentsConfig } from '../models/IComponentsConfig';
+import { IComponentsIds } from '../models/IComponentsIds';
+import { IConfig } from '../models/IConfig';
+import { IWalletConfig } from '../models/IWalletConfig';
+import { Selectors } from '../shared/Selectors';
 
 export class Config {
   private static DEFAULT_COMPONENTS_IDS: IComponentsIds = {
@@ -46,7 +50,7 @@ export class Config {
       animatedCard: config.animatedCard !== undefined ? config.animatedCard : true,
       applePay: this._setApmConfig(config.applePay, config.components),
       buttonId: config.buttonId !== undefined ? config.buttonId : '',
-      byPassCards: config.byPassCards !== undefined ? config.byPassCards : [],
+      bypassCards: config.bypassCards !== undefined ? config.bypassCards : [],
       componentIds: this._componentIds(config.componentIds),
       components: this._setComponentsProperties(config),
       datacenterurl: config.datacenterurl !== undefined ? config.datacenterurl : environment.GATEWAY_URL,
@@ -68,11 +72,11 @@ export class Config {
     };
   }
 
-  private _componentIds(config: IComponentsIds): IComponentsIds | {} {
+  private _componentIds(config: IComponentsIds): IComponentsIds {
     if (!config) {
       return { ...Config.DEFAULT_COMPONENTS_IDS };
     }
-    this.validate(config, IComponentsConfigSchema);
+    this.validate(config, ComponentsConfigSchema);
     const optionalIds = config.animatedCard !== undefined ? { animatedCard: config.animatedCard } : {};
     const requiredIds = {
       cardNumber: config.cardNumber !== undefined ? config.cardNumber : Config.DEFAULT_COMPONENTS_IDS.cardNumber,

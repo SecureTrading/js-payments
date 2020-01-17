@@ -4,21 +4,21 @@ import { debounce } from 'lodash';
 import 'url-polyfill';
 import 'whatwg-fetch';
 import { CardFrames } from './core/classes/CardFrames.class';
-import CommonFrames from './core/classes/CommonFrames.class';
+import { CommonFrames } from './core/classes/CommonFrames.class';
 import { MerchantFields } from './core/classes/MerchantFields';
 import { StCodec } from './core/classes/StCodec.class';
-import ApplePay from './core/integrations/ApplePay';
-import ApplePayMock from './core/integrations/ApplePayMock';
+import { ApplePay } from './core/integrations/ApplePay';
+import { ApplePayMock } from './core/integrations/ApplePayMock';
 import { CardinalCommerce } from './core/integrations/CardinalCommerce';
-import CardinalCommerceMock from './core/integrations/CardinalCommerceMock';
-import GoogleAnalytics from './core/integrations/GoogleAnalytics';
-import VisaCheckout from './core/integrations/VisaCheckout';
-import VisaCheckoutMock from './core/integrations/VisaCheckoutMock';
-import { IConfig } from './core/models/Config';
+import { CardinalCommerceMock } from './core/integrations/CardinalCommerceMock';
+import { GoogleAnalytics } from './core/integrations/GoogleAnalytics';
+import { VisaCheckout } from './core/integrations/VisaCheckout';
+import { VisaCheckoutMock } from './core/integrations/VisaCheckoutMock';
+import { IConfig } from './core/models/IConfig';
+import { IStJwtObj } from './core/models/IStJwtObj';
+import { ApplicationStorage } from './core/services/ApplicationStorage';
 import { Config } from './core/services/Config';
-import { Storage } from './core/services/Storage';
-import MessageBus from './core/shared/MessageBus';
-import { IStJwtObj } from './core/shared/StJwt';
+import { MessageBus } from './core/shared/MessageBus';
 import { Translator } from './core/shared/Translator';
 import { environment } from './environments/environment';
 
@@ -34,7 +34,7 @@ class ST {
   private _googleAnalytics: GoogleAnalytics;
   private _merchantFields: MerchantFields;
   private _messageBus: MessageBus;
-  private _storage: Storage;
+  private _storage: ApplicationStorage;
   private _translation: Translator;
 
   constructor(config: IConfig) {
@@ -42,7 +42,7 @@ class ST {
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
     this._messageBus = new MessageBus();
-    this._storage = new Storage();
+    this._storage = new ApplicationStorage();
     this.Init(config);
   }
 
@@ -110,7 +110,8 @@ class ST {
       config.deferInit,
       config.buttonId,
       config.components.startOnLoad,
-      config.fieldsToSubmit
+      config.fieldsToSubmit,
+      config.bypassCards
     );
   }
 

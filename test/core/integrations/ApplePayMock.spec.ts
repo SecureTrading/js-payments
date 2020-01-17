@@ -1,5 +1,5 @@
-import ApplePayMock from '../../../src/core/integrations/ApplePayMock';
-import ApplePaySessionMock from '../../../src/core/integrations/ApplePaySessionMock';
+import { ApplePayMock } from '../../../src/core/integrations/ApplePayMock';
+import { ApplePaySessionMock } from '../../../src/core/integrations/ApplePaySessionMock';
 
 // given
 describe('Class ApplePayMock', () => {

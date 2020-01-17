@@ -1,14 +1,14 @@
 import { IStRequest } from '../classes/StCodec.class';
-import StTransport from '../classes/StTransport.class';
-import { IMerchantData } from '../models/MerchantData';
-import Notification from './Notification';
+import { StTransport } from '../classes/StTransport.class';
+import { ICard } from '../models/ICard';
+import { IMerchantData } from '../models/IMerchantData';
+import { IWallet } from '../models/IWallet';
+import { IWalletVerify } from '../models/IWalletVerify';
+import { Notification } from './Notification';
 import { StJwt } from './StJwt';
-import Validation from './Validation';
+import { Validation } from './Validation';
 
-/**
- * Gathers all payment processes and flows from library (immediate payment, wallet verify, APM's processes).
- */
-export default class Payment {
+export class Payment {
   private _cardinalCommerceCacheToken: string;
   private _notification: Notification;
   private _processPaymentRequestBody: IStRequest;

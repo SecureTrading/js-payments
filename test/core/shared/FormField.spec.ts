@@ -1,8 +1,7 @@
-import FormField from '../../../src/core/shared/FormField';
-import Language from '../../../src/core/shared/Language';
-import MessageBus from '../../../src/core/shared/MessageBus';
-import Utils from '../../../src/core/shared/Utils';
-import Validation from '../../../src/core/shared/Validation';
+import { FormField } from '../../../src/core/shared/FormField';
+import { Language } from '../../../src/core/shared/Language';
+import { Utils } from '../../../src/core/shared/Utils';
+import { Validation } from '../../../src/core/shared/Validation';
 
 jest.mock('./../../../src/core/shared/Validation');
 

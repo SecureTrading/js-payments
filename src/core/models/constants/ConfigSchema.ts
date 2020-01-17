@@ -1,69 +1,6 @@
 import Joi from 'joi';
-import { IStyles } from '../shared/Styler';
 
-enum ByPassCards {
-  AMEX = 'AMEX',
-  ASTROPAYCARD = 'ASTROPAYCARD',
-  DINERS = 'DINERS',
-  DISCOVER = 'DISCOVER',
-  JCB = 'JCB',
-  MASTERCARD = 'MASTERCARD',
-  MAESTRO = 'MAESTRO',
-  PIBA = 'PIBA',
-  VISA = 'VISA'
-}
-
-interface IComponentsIds {
-  animatedCard?: string;
-  cardNumber: string;
-  expirationDate: string;
-  notificationFrame: string;
-  securityCode: string;
-}
-
-interface IConfig {
-  analytics?: boolean;
-  animatedCard?: boolean;
-  applePay?: IWalletConfig;
-  byPassCards?: ByPassCards[];
-  buttonId?: string;
-  components?: IComponentsConfig;
-  componentIds?: IComponentsIds;
-  datacenterurl?: string;
-  deferInit?: boolean;
-  fieldsToSubmit?: string[];
-  formId?: string;
-  jwt: string;
-  init?: IByPassInit;
-  livestatus?: number;
-  origin?: string;
-  styles?: IStyles;
-  submitCallback?: any;
-  submitFields?: string[];
-  submitOnSuccess?: boolean;
-  submitOnError?: boolean;
-  translations?: {};
-  visaCheckout?: IWalletConfig;
-}
-
-interface IComponentsConfig {
-  defaultPaymentType: string;
-  paymentTypes?: string[];
-  startOnLoad?: boolean;
-  requestTypes?: string[];
-}
-
-interface IWalletConfig {
-  [key: string]: any;
-  requestTypes?: string[];
-}
-
-interface IByPassInit {
-  threedinit: string;
-  cachetoken: string;
-}
-
-const IConfigSchema: Joi.JoiObject = Joi.object().keys({
+export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
   analytics: Joi.boolean(),
   animatedCard: Joi.boolean(),
   applePay: {
@@ -83,7 +20,7 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
     placement: Joi.string()
   },
   buttonId: Joi.string(),
-  byPassCards: Joi.array().allow(
+  bypassCards: Joi.array().allow(
     'AMEX',
     'ASTROPAYCARD',
     'DINERS',
@@ -135,12 +72,3 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
     }
   }
 });
-
-const IComponentsConfigSchema = Joi.object().keys({
-  defaultPaymentType: Joi.string(),
-  paymentTypes: Joi.array().allow([Joi.string()]),
-  requestTypes: Joi.array().allow([Joi.string()]),
-  startOnLoad: Joi.boolean()
-});
-
-export { IByPassInit, IConfig, IComponentsConfig, IComponentsConfigSchema, IWalletConfig, ByPassCards, IComponentsIds };

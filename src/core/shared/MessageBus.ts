@@ -1,7 +1,8 @@
 import { environment } from '../../environments/environment';
-import Utils from './Utils';
+import { IMessageBusEvent } from '../models/IMessageBusEvent';
+import { Utils } from './Utils';
 
-export default class MessageBus {
+export class MessageBus {
   public static SUBSCRIBERS: string = 'ST_SUBSCRIBERS';
   public static EVENTS = {
     BLOCK_CARD_NUMBER: 'BLOCK_CARD_NUMBER',
@@ -29,6 +30,7 @@ export default class MessageBus {
   public static EVENTS_PUBLIC = {
     BIN_PROCESS: 'BIN_PROCESS',
     BLUR_FIELDS: 'BLUR_FIELDS',
+    BY_PASS_CARDINAL: 'BY_PASS_CARDINAL',
     BY_PASS_INIT: 'BY_PASS_INIT',
     LOAD_CARDINAL: 'LOAD_CARDINAL',
     LOAD_CONTROL_FRAME: 'LOAD_CONTROL_FRAME',
@@ -53,11 +55,6 @@ export default class MessageBus {
     this._registerMessageListener();
   }
 
-  /**
-   * publish()
-   * @param event
-   * @param publishToParent
-   */
   public publish(event: IMessageBusEvent, publishToParent?: boolean) {
     let subscribersStore;
 
@@ -76,30 +73,16 @@ export default class MessageBus {
     }
   }
 
-  /**
-   * publishFromParent()
-   * @param event
-   * @param frameName
-   */
   public publishFromParent(event: IMessageBusEvent, frameName: string) {
     // @ts-ignore
     window.frames[frameName].postMessage(event, this._frameOrigin);
   }
 
-  /**
-   * publishToSelf()
-   * @param event
-   */
   public publishToSelf(event: IMessageBusEvent) {
     // @ts-ignore
     window.postMessage(event, window.location.origin);
   }
 
-  /**
-   * subscribe()
-   * @param eventType
-   * @param callback
-   */
   public subscribe(eventType: string, callback: any) {
     let subscribers;
     const subscriber = window.name;
@@ -120,20 +103,10 @@ export default class MessageBus {
     this._subscriptions[eventType] = callback;
   }
 
-  /**
-   * subscribeOnParent()
-   * @param eventType
-   * @param callback
-   */
   public subscribeOnParent(eventType: string, callback: any) {
     this._subscriptions[eventType] = callback;
   }
 
-  /**
-   * _handleMessageEvent()
-   * @param event
-   * @private
-   */
   private _handleMessageEvent = (event: MessageEvent) => {
     const messageBusEvent: IMessageBusEvent = event.data;
     const isPublicEvent = Utils.inArray(Object.keys(MessageBus.EVENTS_PUBLIC), messageBusEvent.type);
@@ -146,10 +119,6 @@ export default class MessageBus {
     }
   };
 
-  /**
-   * _registerMessageListener()
-   * @private
-   */
   private _registerMessageListener() {
     window.addEventListener('message', this._handleMessageEvent);
   }

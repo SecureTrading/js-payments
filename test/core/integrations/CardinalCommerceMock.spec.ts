@@ -1,4 +1,4 @@
-import CardinalCommerceMock from '../../../src/core/integrations/CardinalCommerceMock';
+import { CardinalCommerceMock } from '../../../src/core/integrations/CardinalCommerceMock';
 
 // given
 describe('CardinalCommerce class', () => {

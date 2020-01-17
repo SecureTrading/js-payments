@@ -1,4 +1,4 @@
-import VisaCheckout from '../../../src/core/integrations/VisaCheckout';
+import { VisaCheckout } from '../../../src/core/integrations/VisaCheckout';
 
 jest.mock('../../../src/core/integrations/GoogleAnalytics');
 

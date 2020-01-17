@@ -1,6 +1,6 @@
 import { environment } from '../../src/environments/environment';
-import Element from '../../src/core/Element';
-import Selectors from '../../src/core/shared/Selectors';
+import { Element } from '../../src/core/services/Element';
+import { Selectors } from '../../src/core/shared/Selectors';
 
 // given
 describe('Element', () => {
