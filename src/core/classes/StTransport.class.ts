@@ -15,7 +15,7 @@ import { IStRequest, StCodec } from './StCodec.class';
  *   }).then();
  */
 export class StTransport {
-  public get codec() {
+  public get codec(): StCodec {
     return this._codec;
   }
 
@@ -44,7 +44,7 @@ export class StTransport {
    * @param requestObject A request object to send to ST
    * @return A Promise object that resolves the gateway response
    */
-  public async sendRequest(requestObject: IStRequest) {
+  public async sendRequest(requestObject: IStRequest): Promise<{}> {
     return this._fetchRetry(this._gatewayUrl, {
       ...StTransport.DEFAULT_FETCH_OPTIONS,
       body: this._codec.encode(requestObject)

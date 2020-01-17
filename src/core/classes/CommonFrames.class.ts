@@ -1,4 +1,5 @@
 import { CardinalCommerce } from '../integrations/CardinalCommerce';
+import { IResponseData } from '../models/IResponseData';
 import { IStyles } from '../models/IStyles';
 import { Element } from '../services/Element';
 import { DomMethods } from '../shared/DomMethods';
@@ -25,9 +26,9 @@ export class CommonFrames extends RegisterFrames {
   private _notificationFrame: Element;
   private _notificationFrameMounted: HTMLElement;
   private _requestTypes: string[];
+  private _validation: Validation;
   private readonly _gatewayUrl: string;
   private readonly _merchantForm: HTMLFormElement;
-  private _validation: Validation;
   private readonly _submitCallback: any;
   private readonly _submitFields: string[];
   private readonly _submitOnError: boolean;
@@ -43,10 +44,11 @@ export class CommonFrames extends RegisterFrames {
     submitFields: string[],
     gatewayUrl: string,
     animatedCard: boolean,
-    submitCallback: any,
+    submitCallback: void,
+    fieldsToSubmit: string[],
     requestTypes: string[]
   ) {
-    super(jwt, origin, componentIds, styles, animatedCard, submitCallback);
+    super(jwt, origin, componentIds, styles, animatedCard, fieldsToSubmit, submitCallback);
     this._gatewayUrl = gatewayUrl;
     this._messageBus = new MessageBus(origin);
     this._merchantForm = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR) as HTMLFormElement;
@@ -58,14 +60,14 @@ export class CommonFrames extends RegisterFrames {
     this._requestTypes = requestTypes;
   }
 
-  public init() {
+  public init(): void {
     this._initFormFields();
     this._setMerchantInputListeners();
     this._setTransactionCompleteListener();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
   }
 
-  protected registerElements(fields: HTMLElement[], targets: string[]) {
+  protected registerElements(fields: HTMLElement[], targets: string[]): void {
     targets.map((item, index) => {
       const itemToChange = document.getElementById(item);
       if (fields[index]) {
@@ -74,8 +76,8 @@ export class CommonFrames extends RegisterFrames {
     });
   }
 
-  protected setElementsFields() {
-    const elements = [];
+  protected setElementsFields(): string[] {
+    const elements: string[] = [];
     if (this._shouldLoadNotificationFrame()) {
       elements.push(this.componentIds.notificationFrame);
     }
@@ -83,7 +85,7 @@ export class CommonFrames extends RegisterFrames {
     return elements;
   }
 
-  private _getSubmitFields(data: any) {
+  private _getSubmitFields(data: IResponseData): string[] {
     const fields = this._submitFields;
     if (data.hasOwnProperty('jwt') && fields.indexOf('jwt') === -1) {
       fields.push('jwt');
@@ -94,7 +96,7 @@ export class CommonFrames extends RegisterFrames {
     return fields;
   }
 
-  private _initFormFields() {
+  private _initFormFields(): void {
     const { defaultStyles } = this.styles;
     let { notificationFrame, controlFrame } = this.styles;
 
@@ -117,27 +119,24 @@ export class CommonFrames extends RegisterFrames {
     this.elementsToRegister.push(this._controlFrameMounted);
   }
 
-  private _isThreedComplete(data: any): boolean {
+  private _isThreedComplete(data: IResponseData): boolean {
     if (this.requestTypes[this.requestTypes.length - 1] === 'THREEDQUERY') {
+      // @ts-ignore
       return (
-        // @ts-ignore
-        (!CardinalCommerce._isCardEnrolledAndNotFrictionless(data) && data.requesttypedescription === 'THREEDQUERY') ||
+        (!CardinalCommerce.isCardEnrolledAndNotFrictionless(data) && data.requesttypedescription === 'THREEDQUERY') ||
         data.threedresponse !== undefined
       );
     }
     return false;
   }
 
-  private _isTransactionFinished(data: any): boolean {
-    if (CommonFrames.COMPLETED_REQUEST_TYPES.includes(data.requesttypedescription)) {
-      return true;
-    } else if (this._isThreedComplete(data)) {
-      return true;
-    }
-    return false;
+  private _isTransactionFinished(data: IResponseData): boolean {
+    return CommonFrames.COMPLETED_REQUEST_TYPES.includes(data.requesttypedescription) || this._isThreedComplete(data)
+      ? true
+      : false;
   }
 
-  private _onInput(event: Event) {
+  private _onInput(): void {
     const messageBusEvent = {
       data: DomMethods.parseMerchantForm(),
       type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
@@ -145,8 +144,8 @@ export class CommonFrames extends RegisterFrames {
     this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
-  private _onTransactionComplete(data: any) {
-    if ((this._isTransactionFinished(data) || data.errorcode !== '0') && this._submitCallback) {
+  private _onTransactionComplete(data: IResponseData): void {
+    if ((this._isTransactionFinished(data) || data.errorcode !== '0') && typeof this._submitCallback === 'function') {
       this._validation.blockForm(false);
       this._submitCallback(data);
     }
@@ -157,25 +156,25 @@ export class CommonFrames extends RegisterFrames {
     }
   }
 
-  private _setMerchantInputListeners() {
+  private _setMerchantInputListeners(): void {
     const els = DomMethods.getAllFormElements(this._merchantForm);
     for (const el of els) {
       el.addEventListener('input', this._onInput.bind(this));
     }
   }
 
-  private _setTransactionCompleteListener() {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE, (data: any) => {
-      if (data.walletsource === 'APPLEPAY') {
-        const localStore = localStorage.getItem('completePayment');
-        setTimeout(() => {
-          if (localStore === 'true') {
-            this._onTransactionComplete(data);
-          }
-        }, 3000);
-      } else {
+  private _setTransactionCompleteListener(): void {
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE, (data: IResponseData) => {
+      if (this._isPaymentNotApplePay(data.walletsource)) {
         this._onTransactionComplete(data);
+        return;
       }
+      const localStore = localStorage.getItem('completePayment');
+      setTimeout(() => {
+        if (localStore === 'true') {
+          this._onTransactionComplete(data);
+        }
+      }, 3000);
     });
   }
 
@@ -183,7 +182,11 @@ export class CommonFrames extends RegisterFrames {
     return !(this._submitOnError && this._submitOnSuccess);
   }
 
-  private _shouldSubmitForm(data: any): boolean {
+  private _isPaymentNotApplePay(walletsource: string): boolean {
+    return walletsource !== 'APPLEPAY';
+  }
+
+  private _shouldSubmitForm(data: IResponseData): boolean {
     return (
       (this._submitOnSuccess && data.errorcode === '0' && this._isTransactionFinished(data)) ||
       (this._submitOnError && data.errorcode !== '0')

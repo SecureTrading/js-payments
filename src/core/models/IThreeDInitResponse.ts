@@ -8,6 +8,7 @@ interface IThreeDInitResponseData {
   customeroutput?: string;
   errorcode: string;
   errormessage: string;
+  initReload?: string;
   requesttypedescription: string;
   threedinit: string;
   transactionstartedtimestamp: string;

@@ -21,7 +21,7 @@ import { GoogleAnalytics } from './GoogleAnalytics';
 declare const Cardinal: any;
 
 export class CardinalCommerce {
-  private static _isCardEnrolledAndNotFrictionless(response: IThreeDQueryResponse) {
+  public static isCardEnrolledAndNotFrictionless(response: IThreeDQueryResponse): boolean {
     return response.enrolled === 'Y' && response.acsurl !== undefined;
   }
 
@@ -260,7 +260,7 @@ export class CardinalCommerce {
   }
 
   private _threeDQueryRequest(responseObject: IThreeDQueryResponse) {
-    if (CardinalCommerce._isCardEnrolledAndNotFrictionless(responseObject)) {
+    if (CardinalCommerce.isCardEnrolledAndNotFrictionless(responseObject)) {
       this._authenticateCard(responseObject);
       GoogleAnalytics.sendGaData('event', 'Cardinal', 'auth', 'Cardinal card authenticated');
     } else {

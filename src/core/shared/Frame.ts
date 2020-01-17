@@ -8,7 +8,7 @@ export class Frame {
   protected messageBus: MessageBus;
   protected params: IParams;
 
-  public parseUrl() {
+  public parseUrl(): IParams {
     const parsedUrl = new URL(window.location.href);
     const styles: IStyle = {};
     const params: IParams = {};
@@ -24,22 +24,22 @@ export class Frame {
     return params;
   }
 
-  public applyStyles() {
+  public applyStyles(): void {
     new Styler(this.getAllowedStyles()).inject(this.params.styles);
   }
 
-  protected onInit() {
+  protected onInit(): void {
     this.params = this.parseUrl();
     this.messageBus = new MessageBus(this.params.origin);
     this.applyStyles();
   }
 
-  protected getAllowedParams() {
+  protected getAllowedParams(): string[] {
     return ['locale', 'origin'];
   }
 
-  protected getAllowedStyles() {
-    const allowed: IAllowedStyles = {
+  protected getAllowedStyles(): IAllowedStyles {
+    return {
       'background-color-body': { property: 'background-color', selector: 'body' },
       'color-body': { property: 'color', selector: 'body' },
       'font-size-body': { property: 'font-size', selector: 'body' },
@@ -47,6 +47,5 @@ export class Frame {
       'space-inset-body': { property: 'padding', selector: 'body' },
       'space-outset-body': { property: 'margin', selector: 'body' }
     };
-    return allowed;
   }
 }

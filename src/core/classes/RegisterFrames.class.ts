@@ -27,7 +27,7 @@ export class RegisterFrames {
     styles: IStyles,
     animatedCard: boolean,
     fieldsToSubmit: string[],
-    submitCallback?: any
+    submitCallback?: void
   ) {
     this.binLookup = new BinLookup();
     this.messageBus = new MessageBus();

@@ -3,6 +3,7 @@ import { BrandDetailsType } from '../imports/cardtype';
 import { ICard } from '../models/ICard';
 import { IErrorData } from '../models/IErrorData';
 import { IFormFieldState } from '../models/IFormFieldState';
+import { IFormFieldsValidity } from '../models/IFormFieldsValidity';
 import { IMessageBusEvent } from '../models/IMessageBusEvent';
 import { IMessageBusValidateField } from '../models/IMessageBusValidateField';
 import { IValidation } from '../models/IValidation';
@@ -29,14 +30,16 @@ export class Validation extends Frame {
 
   public static getValidationMessage(state: ValidityState): string {
     const { patternMismatch, valid, valueMissing } = state;
-    if (!valid) {
-      if (valueMissing) {
-        return VALIDATION_ERROR_FIELD_IS_REQUIRED;
-      } else if (patternMismatch) {
-        return VALIDATION_ERROR_PATTERN_MISMATCH;
-      } else {
-        return VALIDATION_ERROR;
-      }
+
+    if (valid) {
+      return;
+    }
+    if (valueMissing) {
+      return VALIDATION_ERROR_FIELD_IS_REQUIRED;
+    } else if (patternMismatch) {
+      return VALIDATION_ERROR_PATTERN_MISMATCH;
+    } else {
+      return VALIDATION_ERROR;
     }
   }
 
@@ -47,19 +50,22 @@ export class Validation extends Frame {
   }
 
   public static isEnter(event: KeyboardEvent): boolean {
-    if (event) {
-      const keyCode: number = event.keyCode;
-      return keyCode === Validation.ENTER_KEY_CODE;
-    } else {
+    if (!event) {
       return false;
     }
+    const keyCode: number = event.keyCode;
+    return keyCode === Validation.ENTER_KEY_CODE;
   }
 
-  public static setCustomValidationError(errorContent: string, inputElement: HTMLInputElement) {
+  public static setCustomValidationError(errorContent: string, inputElement: HTMLInputElement): void {
     inputElement.setCustomValidity(errorContent);
   }
 
-  public static addErrorContainer(inputElement: HTMLInputElement, inputTarget: InsertPosition, errorContent: string) {
+  public static addErrorContainer(
+    inputElement: HTMLInputElement,
+    inputTarget: InsertPosition,
+    errorContent: string
+  ): void {
     inputElement.insertAdjacentHTML(inputTarget, errorContent);
   }
 
@@ -69,7 +75,9 @@ export class Validation extends Frame {
     input.nextSibling.textContent = Validation.CLEAR_VALUE;
   }
 
-  public static returnInputAndErrorContainerPair(item: HTMLInputElement) {
+  public static returnInputAndErrorContainerPair(
+    item: HTMLInputElement
+  ): { inputElement: HTMLInputElement; messageElement: HTMLElement } {
     return {
       inputElement: document.getElementById(item.id) as HTMLInputElement,
       messageElement: document.getElementById(item.id).nextSibling as HTMLElement
@@ -154,15 +162,15 @@ export class Validation extends Frame {
     return isPanValid && isExpiryDateValid && isSecurityCodeValid;
   }
 
-  private static _toggleErrorClass(inputElement: HTMLInputElement) {
-    if (inputElement.validity.valid) {
-      inputElement.classList.remove(Validation.ERROR_FIELD_CLASS);
-    } else {
+  private static _toggleErrorClass(inputElement: HTMLInputElement): void {
+    if (!inputElement.validity.valid) {
       inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
+      return;
     }
+    inputElement.classList.remove(Validation.ERROR_FIELD_CLASS);
   }
 
-  public cardDetails: any;
+  public cardDetails: BrandDetailsType;
   public cardNumberValue: string;
   public expirationDateValue: string;
   public securityCodeValue: string;
@@ -184,13 +192,13 @@ export class Validation extends Frame {
     this.onInit();
   }
 
-  public backendValidation(inputElement: HTMLInputElement, messageElement: HTMLElement, event: string) {
+  public backendValidation(inputElement: HTMLInputElement, messageElement: HTMLElement, event: string): void {
     this.messageBus.subscribe(event, (data: IMessageBusValidateField) => {
       this.setError(inputElement, messageElement, data);
     });
   }
 
-  public blockForm(state: boolean) {
+  public blockForm(state: boolean): void {
     const messageBusEvent: IMessageBusEvent = {
       data: state,
       type: MessageBus.EVENTS.BLOCK_FORM
@@ -198,7 +206,7 @@ export class Validation extends Frame {
     this.messageBus.publish(messageBusEvent, true);
   }
 
-  public callSubmitEvent() {
+  public callSubmitEvent(): void {
     const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS.CALL_SUBMIT_EVENT
     };
@@ -228,7 +236,7 @@ export class Validation extends Frame {
     };
   }
 
-  public getErrorData(errorData: IErrorData) {
+  public getErrorData(errorData: IErrorData): { field: string; errormessage: string } {
     const { errordata, errormessage } = StCodec.getErrorData(errorData);
     const validationEvent: IMessageBusEvent = {
       data: { field: errordata[0], message: errormessage },
@@ -308,7 +316,7 @@ export class Validation extends Frame {
     this._selectionRangeEnd = element.selectionEnd;
   }
 
-  public setFormValidity(state: any) {
+  public setFormValidity(state: IFormFieldsValidity) {
     const validationEvent: IMessageBusEvent = {
       data: { ...state },
       type: MessageBus.EVENTS.VALIDATE_FORM

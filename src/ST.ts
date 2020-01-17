@@ -127,6 +127,7 @@ class ST {
       config.datacenterurl,
       config.animatedCard,
       config.submitCallback,
+      config.fieldsToSubmit,
       config.components.requestTypes
     );
   }

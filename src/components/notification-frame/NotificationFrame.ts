@@ -1,4 +1,5 @@
 import { NotificationType } from '../../core/models/constants/NotificationType';
+import { IAllowedStyles } from '../../core/models/IAllowedStyles';
 import { INotificationEvent } from '../../core/models/INotificationEvent';
 import { Frame } from '../../core/shared/Frame';
 import { MessageBus } from '../../core/shared/MessageBus';
@@ -29,22 +30,23 @@ export class NotificationFrame extends Frame {
     warning: Selectors.NOTIFICATION_FRAME_WARNING_CLASS
   };
 
-  public static getElement = (elementId: string) => document.getElementById(elementId);
+  public static getElement = (elementId: string): HTMLElement => document.getElementById(elementId);
 
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(NotificationFrame.ELEMENT_ID) as HTMLInputElement;
 
-  public static _getMessageClass(messageType: string) {
-    if (messageType === NotificationType.Error) {
-      return NotificationFrame.ELEMENT_CLASSES.error;
-    } else if (messageType === NotificationType.Success) {
-      return NotificationFrame.ELEMENT_CLASSES.success;
-    } else if (messageType === NotificationType.Warning) {
-      return NotificationFrame.ELEMENT_CLASSES.warning;
-    } else if (messageType === NotificationType.Info) {
-      return NotificationFrame.ELEMENT_CLASSES.info;
-    } else {
-      return '';
+  public static _getMessageClass(messageType: string): string {
+    switch (messageType) {
+      case NotificationType.Error:
+        return NotificationFrame.ELEMENT_CLASSES.error;
+      case NotificationType.Success:
+        return NotificationFrame.ELEMENT_CLASSES.success;
+      case NotificationType.Warning:
+        return NotificationFrame.ELEMENT_CLASSES.warning;
+      case NotificationType.Info:
+        return NotificationFrame.ELEMENT_CLASSES.info;
+      default:
+        return '';
     }
   }
 
@@ -60,7 +62,7 @@ export class NotificationFrame extends Frame {
     this.onInit();
   }
 
-  protected getAllowedStyles() {
+  protected getAllowedStyles(): IAllowedStyles {
     let allowed = super.getAllowedStyles();
     const notification = `#${NotificationFrame.ELEMENT_ID}`;
     const error = `.${NotificationFrame.ELEMENT_CLASSES.error}${notification}`;
@@ -137,39 +139,45 @@ export class NotificationFrame extends Frame {
     return allowed;
   }
 
-  protected onInit() {
+  protected onInit(): void {
     super.onInit();
     this._translator = new Translator(this.params.locale);
     this._onMessage();
   }
 
-  private _onMessage() {
+  private _onMessage(): void {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, this._notificationEvent);
   }
 
-  private _insertContent() {
+  private _insertContent(): void {
     if (this.notificationFrameElement) {
       this.notificationFrameElement.textContent = this._translator.translate(this._message.content);
     }
   }
 
-  private _setDataNotificationColorAttribute(messageType: string) {
-    if (this.notificationFrameElement) {
-      if (messageType === NotificationFrame.MESSAGE_TYPES.error) {
+  private _setDataNotificationColorAttribute(messageType: string): void {
+    if (!this.notificationFrameElement) {
+      return;
+    }
+    switch (messageType) {
+      case NotificationFrame.MESSAGE_TYPES.error:
         this.notificationFrameElement.setAttribute('data-notification-color', 'red');
-      } else if (messageType === NotificationFrame.MESSAGE_TYPES.info) {
+        break;
+      case NotificationFrame.MESSAGE_TYPES.info:
         this.notificationFrameElement.setAttribute('data-notification-color', 'grey');
-      } else if (messageType === NotificationFrame.MESSAGE_TYPES.success) {
+        break;
+      case NotificationFrame.MESSAGE_TYPES.success:
         this.notificationFrameElement.setAttribute('data-notification-color', 'green');
-      } else if (messageType === NotificationFrame.MESSAGE_TYPES.warning) {
+        break;
+      case NotificationFrame.MESSAGE_TYPES.warning:
         this.notificationFrameElement.setAttribute('data-notification-color', 'yellow');
-      } else {
+        break;
+      default:
         this.notificationFrameElement.setAttribute('data-notification-color', 'undefined');
-      }
     }
   }
 
-  private _setAttributeClass() {
+  private _setAttributeClass(): void {
     const notificationElementClass = NotificationFrame._getMessageClass(this._message.type);
     if (this.notificationFrameElement && notificationElementClass) {
       this.notificationFrameElement.classList.add(notificationElementClass);
@@ -178,14 +186,14 @@ export class NotificationFrame extends Frame {
     }
   }
 
-  private _autoHide(notificationElementClass: string) {
+  private _autoHide(notificationElementClass: string): void {
     const timeoutId = window.setTimeout(() => {
       this.notificationFrameElement.classList.remove(notificationElementClass);
       window.clearTimeout(timeoutId);
     }, NotificationFrame.NOTIFICATION_TTL);
   }
 
-  private _notificationEvent = (data: INotificationEvent) => {
+  private _notificationEvent = (data: INotificationEvent): void => {
     this._message = data;
     this._insertContent();
     this._setAttributeClass();

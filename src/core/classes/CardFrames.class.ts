@@ -2,6 +2,7 @@ import JwtDecode from 'jwt-decode';
 import { BypassCards } from '../models/constants/BypassCards';
 import { IMessageBusEvent } from '../models/IMessageBusEvent';
 import { IStyles } from '../models/IStyles';
+import { IThreeDInitResponseData } from '../models/IThreeDInitResponse';
 import { IValidationMessageBus } from '../models/IValidationMessageBus';
 import { Element } from '../services/Element';
 import { DomMethods } from '../shared/DomMethods';
@@ -27,7 +28,7 @@ export class CardFrames extends RegisterFrames {
   private static SUBMIT_BUTTON_AS_INPUT_MARKUP: string = 'input[type="submit"]';
   private static SUBMIT_BUTTON_DISABLED_CLASS: string = 'st-button-submit__disabled';
 
-  private static _preventFormSubmit() {
+  private static _preventFormSubmit(): void {
     return document
       .getElementById(Selectors.MERCHANT_FORM_SELECTOR)
       .setAttribute(CardFrames.ON_SUBMIT_ACTION, CardFrames.PREVENT_DEFAULT_EVENT);
@@ -88,7 +89,7 @@ export class CardFrames extends RegisterFrames {
     this.configureFormFieldsAmount(jwt);
   }
 
-  public init() {
+  public init(): void {
     this._deferJsinitOnLoad();
     CardFrames._preventFormSubmit();
     this._createSubmitButton();
@@ -158,7 +159,7 @@ export class CardFrames extends RegisterFrames {
       data: this._getSecurityCodeLength(jwt),
       type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
     };
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, (data: any) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, (data: IThreeDInitResponseData) => {
       if (!data.initReload) {
         this.messageBus.publish(messageBusEvent);
       }
@@ -338,15 +339,17 @@ export class CardFrames extends RegisterFrames {
     this._loadAnimatedCard = loadAnimatedCard !== undefined ? loadAnimatedCard : true;
   }
 
-  private _setSubmitButtonProperties(element: any, disabledState: boolean): HTMLElement {
-    if (disabledState) {
-      element.textContent = this._processingMessage;
-      element.classList.add(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
-    } else {
+  private _setSubmitButtonProperties(
+    element: HTMLInputElement | HTMLButtonElement,
+    disabledState: boolean
+  ): HTMLInputElement | HTMLButtonElement {
+    if (!disabledState) {
       element.textContent = this._payMessage;
       element.classList.remove(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
+      return element;
     }
-    element.disabled = disabledState;
+    element.textContent = this._processingMessage;
+    element.classList.add(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
     return element;
   }
 

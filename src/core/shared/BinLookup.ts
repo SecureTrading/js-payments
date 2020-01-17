@@ -1,14 +1,18 @@
-import { Brand, BrandDetailsType, brandMapping, cardTree, CardTreeNode } from '../imports/cardtype';
+import { Brand } from '../models/constants/Brand';
+import { BrandDetailsType } from '../models/constants/BrandDetailsType';
+import { brandMapping } from '../models/constants/BrandMapping';
+import { cardTree } from '../models/constants/CardTree';
+import { CardTreeNode } from '../models/constants/CardTreeNode';
 import { IBinLookupConfigType } from '../models/IBinLookupConfigType';
 import { Utils } from './Utils';
 
 export class BinLookup {
   public static DEFAULT_MIN_MATCH = 0;
   public static DEFAULT_MAX_MATCH = 6;
-  private minMatch: number;
-  private maxMatch: number;
-  private supported: string[];
-  private default: BrandDetailsType;
+  private readonly minMatch: number;
+  private readonly maxMatch: number;
+  private readonly supported: string[];
+  private readonly default: BrandDetailsType;
 
   constructor(config?: IBinLookupConfigType) {
     config = config || {};

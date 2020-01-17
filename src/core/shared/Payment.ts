@@ -2,7 +2,8 @@ import { IStRequest } from '../classes/StCodec.class';
 import { StTransport } from '../classes/StTransport.class';
 import { ICard } from '../models/ICard';
 import { IMerchantData } from '../models/IMerchantData';
-import { IThreeDInitResponse, IThreeDInitResponseData } from '../models/IThreeDInitResponse';
+import { IResponseData } from '../models/IResponseData';
+import { IThreeDInitResponse } from '../models/IThreeDInitResponse';
 import { IWallet } from '../models/IWallet';
 import { IWalletVerify } from '../models/IWalletVerify';
 import { Notification } from './Notification';
@@ -31,7 +32,7 @@ export class Payment {
     };
   }
 
-  public byPassInitRequest(cachetoken: string) {
+  public byPassInitRequest(cachetoken: string): void {
     this._cardinalCommerceCacheToken = cachetoken;
   }
 
@@ -39,7 +40,7 @@ export class Payment {
     requestTypes: string[],
     payment: ICard | IWallet,
     merchantData: IMerchantData,
-    additionalData?: any
+    additionalData?: IResponseData
   ): Promise<object> {
     this._processPaymentRequestBody = Object.assign(
       { requesttypedescriptions: requestTypes },
@@ -75,7 +76,7 @@ export class Payment {
     return this._stTransport.sendRequest(this._threeDQueryRequestBody);
   }
 
-  public walletVerify(walletVerify: IWalletVerify) {
+  public walletVerify(walletVerify: IWalletVerify): Promise<object> {
     Object.assign(this._walletVerifyRequest, walletVerify);
     return this._stTransport.sendRequest(this._walletVerifyRequest);
   }

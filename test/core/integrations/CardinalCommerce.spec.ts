@@ -398,17 +398,17 @@ describe('CardinalCommerce', () => {
   // given
   describe('_threeDQueryRequest()', () => {
     // @ts-ignore
-    const original = CardinalCommerce._isCardEnrolledAndNotFrictionless;
+    const original = CardinalCommerce.isCardEnrolledAndNotFrictionless;
 
     afterEach(() => {
       // @ts-ignore
-      CardinalCommerce._isCardEnrolledAndNotFrictionless = original;
+      CardinalCommerce.isCardEnrolledAndNotFrictionless = original;
     });
 
     // then
     it('should authenticate card if enrolled or frictionless', () => {
       // @ts-ignore
-      CardinalCommerce._isCardEnrolledAndNotFrictionless = jest.fn().mockReturnValueOnce(true);
+      CardinalCommerce.isCardEnrolledAndNotFrictionless = jest.fn().mockReturnValueOnce(true);
       instance._authenticateCard = jest.fn();
       instance._authorizePayment = jest.fn();
       instance._threeDQueryRequest({ transactionreference: '1-2-3' });
@@ -419,7 +419,7 @@ describe('CardinalCommerce', () => {
     // then
     it('should authorise payment if NOT (enrolled or frictionless)', () => {
       // @ts-ignore
-      CardinalCommerce._isCardEnrolledAndNotFrictionless = jest.fn().mockReturnValueOnce(false);
+      CardinalCommerce.isCardEnrolledAndNotFrictionless = jest.fn().mockReturnValueOnce(false);
       instance._authenticateCard = jest.fn();
       instance._authorizePayment = jest.fn();
       instance._threeDQueryRequest({ transactionreference: '1-2-3' });
@@ -429,7 +429,7 @@ describe('CardinalCommerce', () => {
   });
 
   // given
-  describe('CardinalCommerce._isCardEnrolledAndNotFrictionless()', () => {
+  describe('CardinalCommerce.isCardEnrolledAndNotFrictionless()', () => {
     // then
     each([
       ['Y', undefined, false],
@@ -447,7 +447,7 @@ describe('CardinalCommerce', () => {
           transactionreference: '1-2-3'
         };
         // @ts-ignore
-        expect(CardinalCommerce._isCardEnrolledAndNotFrictionless(response)).toBe(expected);
+        expect(CardinalCommerce.isCardEnrolledAndNotFrictionless(response)).toBe(expected);
       }
     );
   });

@@ -2,7 +2,6 @@ import JwtDecode from 'jwt-decode';
 import { IMessageBusEvent } from '../models/IMessageBusEvent';
 import { IResponseData } from '../models/IResponseData';
 import { IStRequest } from '../models/IStRequest';
-import { IThreeDQueryResponse } from '../models/IThreeDQueryResponse';
 import { Language } from '../shared/Language';
 import { MessageBus } from '../shared/MessageBus';
 import { Notification } from '../shared/Notification';
@@ -36,7 +35,7 @@ class StCodec {
    *   (since we prepend 'J-' the random section will be 2 char shorter)
    * @return A newly generated random request ID
    */
-  public static _createRequestId(length = 10) {
+  public static _createRequestId(length = 10): string {
     return (
       'J-' +
       Math.random()
@@ -45,16 +44,17 @@ class StCodec {
     );
   }
 
-  public static getErrorData(data: any) {
-    const { errordata, errormessage, requesttypedescription } = data;
+  public static getErrorData(data: IResponseData): IResponseData {
+    const { errorcode, errordata, errormessage, requesttypedescription } = data;
     return {
+      errorcode,
       errordata,
       errormessage,
       requesttypedescription
     };
   }
 
-  public static verifyResponseObject(responseData: any, jwtResponse: string): object {
+  public static verifyResponseObject(responseData: string, jwtResponse: string): IResponseData {
     if (StCodec._isInvalidResponse(responseData)) {
       throw StCodec._handleInvalidResponse();
     }
@@ -69,11 +69,7 @@ class StCodec {
    * @param jwtResponse The raw JWT response from the gateway
    * @param threedresponse the response from Cardinal commerce after call to ACS
    */
-  public static publishResponse(
-    responseData: IResponseData | IThreeDQueryResponse,
-    jwtResponse?: string,
-    threedresponse?: string
-  ) {
+  public static publishResponse(responseData: IResponseData, jwtResponse?: string, threedresponse?: string): void {
     const translator = new Translator(StCodec._locale);
     responseData.errormessage = translator.translate(responseData.errormessage);
     const eventData = { ...responseData };
@@ -94,7 +90,7 @@ class StCodec {
     }
   }
 
-  public static updateJWTValue(newJWT: string) {
+  public static updateJWTValue(newJWT: string): void {
     StCodec.jwt = newJWT ? newJWT : StCodec.jwt;
     StCodec.originalJwt = newJWT ? newJWT : StCodec.originalJwt;
     const messageBusEvent: IMessageBusEvent = {
@@ -123,14 +119,14 @@ class StCodec {
   ];
   private static STATUS_CODES = { invalidfield: '30000', ok: '0', declined: '70000' };
 
-  private static _createCommunicationError() {
+  private static _createCommunicationError(): IResponseData {
     return {
       errorcode: '50003',
       errormessage: Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE
-    } as IResponseData;
+    };
   }
 
-  private static _handleInvalidResponse() {
+  private static _handleInvalidResponse(): Error {
     const validation = new Validation();
     StCodec.publishResponse(StCodec._createCommunicationError());
     StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
@@ -160,7 +156,7 @@ class StCodec {
     return responseContent;
   }
 
-  private static _handleValidGatewayResponse(responseContent: IResponseData, jwtResponse: string) {
+  private static _handleValidGatewayResponse(responseContent: IResponseData, jwtResponse: string): void {
     const translator = new Translator(StCodec._locale);
     const validation = new Validation();
     responseContent.errormessage = translator.translate(responseContent.errormessage);
@@ -178,8 +174,8 @@ class StCodec {
     StCodec.publishResponse(responseContent, jwtResponse);
   }
 
-  private static _decodeResponseJwt(jwt: string, reject: (error: Error) => void) {
-    let decoded: any;
+  private static _decodeResponseJwt(jwt: string, reject: (error: Error) => void): string {
+    let decoded: string;
     try {
       decoded = JwtDecode(jwt) as any;
     } catch (e) {
@@ -216,7 +212,7 @@ class StCodec {
     };
   }
 
-  public encode(requestObject: IStRequest) {
+  public encode(requestObject: IStRequest): string {
     if (
       Object.keys(requestObject).length < StCodec.MINIMUM_REQUEST_FIELDS ||
       !requestObject.requesttypedescriptions.every(val => StCodec.SUPPORTED_REQUEST_TYPES.includes(val))
