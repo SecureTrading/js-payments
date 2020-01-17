@@ -9,7 +9,7 @@ export interface IConfig {
   analytics?: boolean;
   animatedCard?: boolean;
   applePay?: IWalletConfig;
-  byPassCards?: BypassCards[];
+  bypassCards?: BypassCards[];
   buttonId?: string;
   components?: IComponentsConfig;
   componentIds?: IComponentsIds;

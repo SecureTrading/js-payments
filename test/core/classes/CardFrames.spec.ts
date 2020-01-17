@@ -1,5 +1,5 @@
 import { CardFrames } from '../../../src/core/classes/CardFrames.class';
-import { ByPassCards } from '../../../src/core/models/constants/BypassCards';
+import { BypassCards } from '../../../src/core/models/constants/BypassCards';
 import { DomMethods } from '../../../src/core/shared/DomMethods';
 import { Language } from '../../../src/core/shared/Language';
 import { MessageBus } from '../../../src/core/shared/MessageBus';
