@@ -16,13 +16,13 @@ install:
   - docker-compose -f py-payments-testing/docker-compose.yml up -d
 jobs:
   include:
-    - stage: Unit tests
-      name: Unit tests
-      install: skip
-      script:
-        - npm install
-        - npm run coverage
-        - npm run snyk
+#    - stage: Unit tests
+#      name: Unit tests
+#      install: skip
+#      script:
+#        - npm install
+#        - npm run coverage
+#        - npm run snyk
     - stage: Build docker
       install: skip
       name: Build app image
@@ -30,9 +30,12 @@ jobs:
         - docker build . --tag "securetrading1/js-payments:$DOCKER_BRANCH"
         - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
         - docker push "securetrading1/js-payments:$DOCKER_BRANCH"
-#    - name: Build tests image
-#      install: skip
-#      script: docker-compose -f py-payments-testing/docker-compose.yml build tests
+    - name: Build tests image
+      install: skip
+      script:
+        - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
+        - docker-compose -f py-payments-testing/docker-compose.yml build tests
+        - docker push "securetrading1/py-payments-testing"
     - stage: Behavioral test
       name: Sample tests
       if: env(TESTS_TYPE)=fullTest OR env(TESTS_TYPE)=smokeTest OR branch = env(BRANCH_WITH_FULL_TESTS)
