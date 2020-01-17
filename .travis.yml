@@ -16,26 +16,23 @@ install:
   - docker-compose -f py-payments-testing/docker-compose.yml up -d
 jobs:
   include:
-    - stage: Docker build tests (temp)
+    - stage: Unit tests
+      name: Unit tests
       install: skip
       script:
-        - docker-compose -f py-payments-testing/docker-compose.yml build tests
-        - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
-        - docker push "securetrading1/py-payments-testing:feature-STJS-464-wiremock"
-#    - stage: Quality checks
-#      name: Coverage
-#      script: npm run coverage
-#    - name: Snyk
-#      script: npm run snyk
-    - stage: Docker build
+        - npm install
+        - npm run coverage
+        - npm run snyk
+    - stage: Build docker
+      install: skip
+      name: Build app image
       script:
         - docker build . --tag "securetrading1/js-payments:$DOCKER_BRANCH"
         - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
         - docker push "securetrading1/js-payments:$DOCKER_BRANCH"
+    - name: Build tests image
       install: skip
-#      script: git clone --depth=1 --single-branch --branch feature/STJS-464-wiremock https://github.com/SecureTrading/py-payments-testing.git py-payments-testing
-#    - stage: Setup containers
-#      script: APP_REPO=js-payments APP_BRANCH=$DOCKER_BRANCH docker-compose -f py-payments-testing/docker-compose.yml up -d
+      script: docker-compose -f py-payments-testing/docker-compose.yml build tests
     - stage: Behavioral test
       name: Sample tests
       if: env(TESTS_TYPE)=fullTest OR env(TESTS_TYPE)=smokeTest OR branch = env(BRANCH_WITH_FULL_TESTS)
@@ -196,65 +193,16 @@ jobs:
 #      if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
 #      script:
 #        - npm run behave -- mvn install -DLOCAL=true -Ddevice="iPad Mini 4" -Dos_version=11 -Dreal_mobile=true -Dcucumber.options="--tags $TEST_TAG"
-#after_success:
-#  - cat ./coverage/lcov.info | coveralls
-#  - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
-#  - docker push "securetrading1/js-payments:$DOCKER_BRANCH"
-#addons:
-#  browserstack:
-#    forcelocal: true
-#    username:
-#      secure: AH4sfHC+edBLzaGZo0UVn70c88/AKjFV7YGqQq6+8g96izDov25nB7rPaPuQHqnnARVoM7FSyc9XoHOA8Xm10oKxIBbtofw7Ydj+8czjNwa6k7nS0Rbpzl2JmhhgGXwFhXmvFXBxXiApXrhMYtE9Lo0rQGt9fXhWU7JkC2x04E3fPVAI+9oQ9V1SxIAZL+WSDyjPc1ZwQT8gwFM+XZaEy2J99LhNuFYQzeI6szmdtM0ZBLiqfeD2tixIXNUY+HAtTvUgZqwE9h+hon8Y/c574zzUf5ZxXzSaZbeU3+HW0rl75YaiP9lABOE4rrsY3rFd56IqXz5W46b63ZYAP8essu79Ph4xM9poJTpmU65domfCebMApdfgbIo7aSV7uOeNfKnrb5udbnqiZPGTuQSNJ+UJOjXJUfvNx/qBVFDsE7DqMChmZByRIUXVANaWDw70ixBij/vS5fpDiHpJ0gneizqosx09Vv10/cb9QDJ4FRDggQKZF3bS1V4q3vX1sodudTIuQVgfg95iR2uiQNnEdTPmvbM37FO6t8h8Vqxx4UqRIyf3jasVqsk79LU7F5/KYhvWW/KLN2lq65J2tKsTa/xBT856ah18cIGSMoie892tEsZxLbDy8KMUDyrbWNE4n11ButzifQISDziK7vQ7OwD3k6lJ24UFKBUoa/Oiim0=
-#    access_key:
-#      secure: TXgjJzYRpKcoBX6exipmXWj8TRToxGBQoQz0agRHczP9THyguyopST1XiPDdhcLIn7SMNDVORyP0D5EvMpchhvJ1unDpIULlNWjp63NsoYBGrryBXv307yn3NoQ+Tzh6U6GUG59bNfsqqLMOYapIqm6xxEqpcx1svA4Zjoz2rvcUK2gBof0UuL6s0rESB/4rQkwk0MQZDzm10O6wb6CWreFw/BMBTSKMvwVNfo5K+il+Ch1MWy2riWqYhyvGdu5Y/CG39WIUowa/y1HjcYNTwLlETr0nqqF9BnOjS05fabGIUnLBmf80mb6AEyrmNeVzQJlcJ4/lvI4f1RhrKvnDE70Ac6RFMoVcxOLLdSJIDoInFSH5xI5E/clGBYfP44LRDhRPXI4++8CPDp+MHG8trAOMIef3ySZGWoaHknNQ/G/Xhrsy7NLoBGnpz2c7CJoNjAPAIt2fm7y3Re+oo/hrhCh5/oya+kEKrrPI8qy9GpidCup5/QD/jKjkJijfusvC3ZEluaw+izAY+7RgLcaOifUqtVAx10JQIpZufWHJkHVqzmfGiLIWbyhNNJcrF+PcWIZSZelPb9uljO325M3bR7ViVmMPDuLojv0Z0cD/KWdqWW/uL7G7uzGSKgdTkuL7LqeaPOOQHZ07+v8Ii9GTZVee4+TRzucUISgNPvBVVJI=
-#  hosts:
-#    - webservices.securetrading.net
-#    - merchant.example.com
-#    - thirdparty.example.com
-#
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#
-#env:
-#  global:
-#    - DOCKER_BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
-#    - DOCKER_BRANCH=${DOCKER_BRANCH//[\@\/]/-}
-#    - TESTS_TYPE=${TESTS_TYPE}
-#    - TEST_TAG=${TEST_TAG}
-#language: node_js
-#node_js:
-#  - 10
-#services:
-#  - docker
-#install:
-#  - APP_REPO=js-payments APP_BRANCH=$DOCKER_BRANCH docker-compose -f py-payments-testing/docker-compose.yml up -d
-#jobs:
-#  include:
-#    - name: Docker build
-#      script:
-#        - docker build . --tag "securetrading1/js-payments:$DOCKER_BRANCH"
-#        - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
-#        - docker push "securetrading1/js-payments:$DOCKER_BRANCH"
-#      install: skip
-#    - stage: Behavioral test
-#      name: Sample tests
-#      script: docker-compose -f py-payments-testing/docker-compose.yml run tests poetry run behave features
+after_success:
+  - cat ./coverage/lcov.info | coveralls
+addons:
+  browserstack:
+    forcelocal: true
+    username:
+      secure: AH4sfHC+edBLzaGZo0UVn70c88/AKjFV7YGqQq6+8g96izDov25nB7rPaPuQHqnnARVoM7FSyc9XoHOA8Xm10oKxIBbtofw7Ydj+8czjNwa6k7nS0Rbpzl2JmhhgGXwFhXmvFXBxXiApXrhMYtE9Lo0rQGt9fXhWU7JkC2x04E3fPVAI+9oQ9V1SxIAZL+WSDyjPc1ZwQT8gwFM+XZaEy2J99LhNuFYQzeI6szmdtM0ZBLiqfeD2tixIXNUY+HAtTvUgZqwE9h+hon8Y/c574zzUf5ZxXzSaZbeU3+HW0rl75YaiP9lABOE4rrsY3rFd56IqXz5W46b63ZYAP8essu79Ph4xM9poJTpmU65domfCebMApdfgbIo7aSV7uOeNfKnrb5udbnqiZPGTuQSNJ+UJOjXJUfvNx/qBVFDsE7DqMChmZByRIUXVANaWDw70ixBij/vS5fpDiHpJ0gneizqosx09Vv10/cb9QDJ4FRDggQKZF3bS1V4q3vX1sodudTIuQVgfg95iR2uiQNnEdTPmvbM37FO6t8h8Vqxx4UqRIyf3jasVqsk79LU7F5/KYhvWW/KLN2lq65J2tKsTa/xBT856ah18cIGSMoie892tEsZxLbDy8KMUDyrbWNE4n11ButzifQISDziK7vQ7OwD3k6lJ24UFKBUoa/Oiim0=
+    access_key:
+      secure: TXgjJzYRpKcoBX6exipmXWj8TRToxGBQoQz0agRHczP9THyguyopST1XiPDdhcLIn7SMNDVORyP0D5EvMpchhvJ1unDpIULlNWjp63NsoYBGrryBXv307yn3NoQ+Tzh6U6GUG59bNfsqqLMOYapIqm6xxEqpcx1svA4Zjoz2rvcUK2gBof0UuL6s0rESB/4rQkwk0MQZDzm10O6wb6CWreFw/BMBTSKMvwVNfo5K+il+Ch1MWy2riWqYhyvGdu5Y/CG39WIUowa/y1HjcYNTwLlETr0nqqF9BnOjS05fabGIUnLBmf80mb6AEyrmNeVzQJlcJ4/lvI4f1RhrKvnDE70Ac6RFMoVcxOLLdSJIDoInFSH5xI5E/clGBYfP44LRDhRPXI4++8CPDp+MHG8trAOMIef3ySZGWoaHknNQ/G/Xhrsy7NLoBGnpz2c7CJoNjAPAIt2fm7y3Re+oo/hrhCh5/oya+kEKrrPI8qy9GpidCup5/QD/jKjkJijfusvC3ZEluaw+izAY+7RgLcaOifUqtVAx10JQIpZufWHJkHVqzmfGiLIWbyhNNJcrF+PcWIZSZelPb9uljO325M3bR7ViVmMPDuLojv0Z0cD/KWdqWW/uL7G7uzGSKgdTkuL7LqeaPOOQHZ07+v8Ii9GTZVee4+TRzucUISgNPvBVVJI=
+  hosts:
+    - webservices.securetrading.net
+    - merchant.example.com
+    - thirdparty.example.com
