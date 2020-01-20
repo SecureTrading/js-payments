@@ -1,3 +1,3 @@
 export interface ISetRequestTypes {
-  requestTypes: string[];
+  requestTypes?: string[];
 }

@@ -98,16 +98,16 @@ describe('ControlFrame', () => {
   });
 
   // given
-  describe('_initByPassInitEvent()', () => {
+  describe('_initBypassInitEvent()', () => {
     // then
-    it('should call _onByPassInitEvent when BY_PASS_INIT event has been called', () => {
+    it('should call _onBypassInitEvent when BY_PASS_INIT event has been called', () => {
       // @ts-ignore
-      instance._onByPassInitEvent = jest.fn();
+      instance._onBypassInitEvent = jest.fn();
       messageBusEvent.type = MessageBus.EVENTS_PUBLIC.BY_PASS_INIT;
       // @ts-ignore
-      instance._initByPassInitEvent();
+      instance._initBypassInitEvent();
       // @ts-ignore
-      expect(instance._onByPassInitEvent).toHaveBeenCalled();
+      expect(instance._onBypassInitEvent).toHaveBeenCalled();
     });
   });
 
@@ -229,7 +229,7 @@ describe('ControlFrame', () => {
   // given
   describe('_onSubmit', () => {
     const { instance } = controlFrameFixture();
-    const data = { requestTypes: ['JSINIT', 'THREEDQUERY', 'CACHETOKENISE', 'AUTH'] };
+    const data = { requestTypes: ['JSINIT', 'THREEDQUERY', 'CACHETOKENISE', 'AUTH'], bypassCards: ['VISA'] };
 
     // when
     beforeEach(() => {
@@ -238,13 +238,15 @@ describe('ControlFrame', () => {
       // @ts-ignore
       instance._onSetRequestTypesEvent = jest.fn();
       // @ts-ignore
+      instance._isCardBypassed = jest.fn().mockReturnValueOnce(true);
+      // @ts-ignore
       instance._onSubmit(data);
     });
 
     //then
     it('should call _requestPayment', () => {
       // @ts-ignore
-      expect(instance._requestPayment).toHaveBeenCalledWith(data);
+      expect(instance._requestPayment).toHaveBeenCalledWith(data, true);
     });
 
     //then
@@ -291,22 +293,22 @@ describe('ControlFrame', () => {
   });
 
   // given
-  describe('_onByPassInitEvent', () => {
+  describe('_onBypassInitEvent', () => {
     const { instance } = controlFrameFixture();
     const cachetoken = '893h12und9n283n923';
 
     // when
     beforeEach(() => {
       // @ts-ignore
-      instance._requestByPassInit = jest.fn();
+      instance._requestBypassInit = jest.fn();
       // @ts-ignore
-      instance._onByPassInitEvent(cachetoken);
+      instance._onBypassInitEvent(cachetoken);
     });
 
     // then
     it('should call _requestThreeDInit', () => {
       // @ts-ignore
-      expect(instance._requestByPassInit).toHaveBeenCalledWith(cachetoken);
+      expect(instance._requestBypassInit).toHaveBeenCalledWith(cachetoken);
     });
   });
 
@@ -421,19 +423,19 @@ describe('ControlFrame', () => {
   });
 
   // given
-  describe('_requestByPassInit', () => {
+  describe('_requestBypassInit', () => {
     const { instance } = controlFrameFixture();
     const cachetoken = 'somecachetoken1234';
     // when
     beforeEach(() => {
       // @ts-ignore
-      instance._requestByPassInit(cachetoken);
+      instance._requestBypassInit(cachetoken);
     });
 
     // then
-    it('should call byPassInitRequest', () => {
+    it('should call bypassInitRequest', () => {
       // @ts-ignore
-      expect(instance._payment.byPassInitRequest).toHaveBeenCalledWith(cachetoken);
+      expect(instance._payment.bypassInitRequest).toHaveBeenCalledWith(cachetoken);
     });
   });
 

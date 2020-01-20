@@ -230,7 +230,7 @@ export class ControlFrame extends Frame {
   }
 
   private _requestBypassInit(cachetoken: string): void {
-    this._payment.byPassInitRequest(cachetoken);
+    this._payment.bypassInitRequest(cachetoken);
     const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.BY_PASS_INIT
     };

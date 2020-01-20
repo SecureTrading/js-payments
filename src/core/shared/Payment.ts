@@ -30,7 +30,7 @@ export class Payment {
     };
   }
 
-  public byPassInitRequest(cachetoken: string) {
+  public bypassInitRequest(cachetoken: string) {
     this._cardinalCommerceCacheToken = cachetoken;
   }
 

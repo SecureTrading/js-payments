@@ -213,7 +213,7 @@ export class CardinalCommerce {
 
   private _onLoadControlFrame() {
     if (this._cachetoken) {
-      this._byPassInitRequest();
+      this._bypassInitRequest();
     } else {
       this._threeDInitRequest();
     }
@@ -241,7 +241,7 @@ export class CardinalCommerce {
     this._threeDQueryRequest(data);
   }
 
-  private _byPassInitRequest() {
+  private _bypassInitRequest() {
     const messageBusEvent: IMessageBusEvent = {
       data: this._cachetoken,
       type: MessageBus.EVENTS_PUBLIC.BY_PASS_INIT

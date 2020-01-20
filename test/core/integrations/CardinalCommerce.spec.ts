@@ -279,10 +279,10 @@ describe('CardinalCommerce', () => {
     });
 
     // then
-    it('should call _onByPassJsInitEvent if eventType is BY_PASS_INIT', () => {
+    it('should call _onBypassJsInitEvent if eventType is BY_PASS_INIT', () => {
       instance._onLoadControlFrame = jest.fn();
       instance._onThreeDInitEvent = jest.fn();
-      instance._onByPassJsInitEvent = jest.fn();
+      instance._onBypassJsInitEvent = jest.fn();
       instance._onThreeDQueryEvent = jest.fn();
       instance.messageBus.subscribeOnParent = jest.fn((eventType, callback) => {
         if (eventType === 'BY_PASS_INIT') {
@@ -290,7 +290,7 @@ describe('CardinalCommerce', () => {
         }
       });
       instance._initSubscriptions();
-      expect(instance._onByPassJsInitEvent).toHaveBeenCalledTimes(1);
+      expect(instance._onBypassJsInitEvent).toHaveBeenCalledTimes(1);
     });
 
     // then
@@ -497,7 +497,7 @@ describe('CardinalCommerce', () => {
   });
 
   // given
-  describe('_byPassInitRequest()', () => {
+  describe('_bypassInitRequest()', () => {
     const messageBusEvent = {
       data: 'HowmuchisttheFish?:)',
       type: MessageBus.EVENTS_PUBLIC.BY_PASS_INIT
@@ -507,7 +507,7 @@ describe('CardinalCommerce', () => {
     beforeEach(() => {
       instance.messageBus.publishFromParent = jest.fn();
       instance._cachetoken = 'HowmuchisttheFish?:)';
-      instance._byPassInitRequest();
+      instance._bypassInitRequest();
     });
 
     // then
@@ -520,13 +520,13 @@ describe('CardinalCommerce', () => {
   });
 
   // given
-  describe('_onByPassJsInitEvent()', () => {
+  describe('_onBypassJsInitEvent()', () => {
     // when
     beforeEach(() => {
       instance._threedinit = 'Hyperhyper';
       instance._cachetoken = 'HowmuchisttheFish?:)';
       instance._threeDSetup = jest.fn();
-      instance._onByPassJsInitEvent();
+      instance._onBypassJsInitEvent();
     });
 
     // then
@@ -545,15 +545,15 @@ describe('CardinalCommerce', () => {
   describe('_onLoadControlFrame()', () => {
     // when
     beforeEach(() => {
-      instance._byPassInitRequest = jest.fn();
+      instance._bypassInitRequest = jest.fn();
       instance._threeDInitRequest = jest.fn();
     });
 
     // then
-    it('should call _byPassInitRequest if _cachetoken is defined', () => {
+    it('should call _bypassInitRequest if _cachetoken is defined', () => {
       instance._cachetoken = 'HowmuchisttheFish?:)';
       instance._onLoadControlFrame();
-      expect(instance._byPassInitRequest).toHaveBeenCalled();
+      expect(instance._bypassInitRequest).toHaveBeenCalled();
     });
 
     // then
