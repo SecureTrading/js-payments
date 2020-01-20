@@ -1,3 +1,4 @@
+import { IResponseData } from '../models/IResponseData';
 import { Selectors } from './Selectors';
 
 export class DomMethods {
@@ -9,23 +10,17 @@ export class DomMethods {
     return script;
   }
 
-  public static setProperty(attr: string, value: string, elementId: string) {
-    const element = document.getElementById(elementId);
-    element.setAttribute(attr, value);
-    return element;
-  }
-
   public static insertStyle(contents: string) {
     const style = document.createElement('style');
     style.innerHTML = contents;
     document.head.appendChild(style);
   }
 
-  public static getIframeContentWindow = (name: string) => (window as any).frames[name];
+  public static getIframeContentWindow = (name: string) => (window as Window).frames[name];
 
-  public static createHtmlElement = (attributes: any, markup: string) => {
+  public static createHtmlElement = (attributes: string[], markup: string) => {
     const element = document.createElement(markup);
-    // @ts-ignore
+
     Object.keys(attributes).map(item => element.setAttribute(item, attributes[item]));
     return element;
   };
@@ -77,7 +72,7 @@ export class DomMethods {
     ...Array.prototype.slice.call(form.querySelectorAll('input'))
   ];
 
-  public static addDataToForm(form: HTMLFormElement, data: any, fields?: string[]) {
+  public static addDataToForm(form: HTMLFormElement, data: IResponseData, fields?: string[]) {
     Object.entries(data).forEach(([field, value]) => {
       if (!fields || fields.includes(field)) {
         form.appendChild(
@@ -96,10 +91,11 @@ export class DomMethods {
 
   public static removeAllChildren(placement: string) {
     const element: HTMLElement = document.getElementById(placement);
-    if (element) {
-      while (element.lastChild) {
-        element.removeChild(element.lastChild);
-      }
+    if (!element) {
+      return;
+    }
+    while (element.lastChild) {
+      element.removeChild(element.lastChild);
     }
     return element;
   }

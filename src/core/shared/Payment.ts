@@ -48,7 +48,9 @@ export class Payment {
       merchantData,
       payment
     );
-    return await this._stTransport.sendRequest(this._processPaymentRequestBody).then(({ response }: any) => response);
+    return await this._stTransport
+      .sendRequest(this._processPaymentRequestBody)
+      .then(({ response }: { response: object }) => response);
   }
 
   public threeDInitRequest(): Promise<IThreeDInitResponse> {
@@ -56,6 +58,7 @@ export class Payment {
       const {
         payload: { jwt, response }
       } = new StJwt(result.jwt);
+      // @ts-ignore
       const threeDInitResult: IThreeDInitResponse = { jwt, response: response[0] };
       // @ts-ignore
       this._cardinalCommerceCacheToken = result.response.cachetoken;
