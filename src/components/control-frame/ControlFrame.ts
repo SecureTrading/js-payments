@@ -237,10 +237,15 @@ export class ControlFrame extends Frame {
     this.messageBus.publish(messageBusEvent, true);
   }
 
+  private _isCardWithoutCVV() {
+    const panFromJwt: string = this._getPan();
+    const pan: string = panFromJwt ? panFromJwt : this._formFields.cardNumber.value;
+    const cardType: string = this._binLookup.binLookup(pan).type;
+    return ControlFrame.NON_CVV_CARDS.includes(cardType);
+  }
+
   private _requestPayment(data: ISubmitData, isCardBypassed: boolean): void {
-    const isPanPiba: boolean = this._getPan()
-      ? ControlFrame.NON_CVV_CARDS.includes(this._binLookup.binLookup(this._getPan()).type)
-      : false;
+    const isPanPiba: boolean = this._isCardWithoutCVV();
     const dataInJwt = data ? data.dataInJwt : false;
     const deferInit = data ? data.deferInit : false;
     const { validity, card } = this._validation.formValidation(

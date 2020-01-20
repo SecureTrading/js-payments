@@ -292,7 +292,6 @@ export class CardFrames extends RegisterFrames {
     const messageBusEvent: IMessageBusEvent = {
       data: {
         bypassCards: this._bypassCards,
-        cardType: this._getCardType(this.jwt),
         deferInit,
         fieldsToSubmit: this.fieldsToSubmit
       },
