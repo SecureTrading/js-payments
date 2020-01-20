@@ -83,7 +83,7 @@ class CardNumber extends FormField {
 
   protected onKeydown(event: KeyboardEvent) {
     super.onKeydown(event);
-    if (Validation.isKeyEnter(event)) {
+    if (Validation.isEnter(event)) {
       this.validation.luhnCheck(this._cardNumberInput, this._inputElement, this._messageElement);
       this._sendState();
     }

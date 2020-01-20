@@ -218,9 +218,10 @@ class ST {
   private readonly _threedinit: string;
   private commonFrames: CommonFrames;
   private _messageBus: MessageBus;
-  private readonly _deferInit: boolean;
-  private readonly _buttonId: string;
-  private readonly fieldsToSubmit: string[];
+  private _merchantFields: MerchantFields;
+  private _deferInit: boolean;
+  private _buttonId: string;
+  private fieldsToSubmit: string[];
 
   constructor(config: IConfig) {
     const {
@@ -241,6 +242,7 @@ class ST {
     }
     this.fieldsToSubmit = fieldsToSubmit ? fieldsToSubmit : ['pan', 'expirydate', 'securitycode'];
     this._messageBus = new MessageBus();
+    this._merchantFields = new MerchantFields();
     this._livestatus = livestatus;
     this._animatedCard = animatedCard;
     this._buttonId = buttonId;
@@ -266,10 +268,10 @@ class ST {
       config.cybertonica.apikey,
       this._submitCallback
     );
-    ST._configureMerchantFields();
+    this._merchantFields.init();
   }
 
-  public Components(cybertonicaApiKey: string, config?: IComponentsConfig) {
+  public Components(config?: IComponentsConfig) {
     const { targetConfig } = ST._setConfigObject(config);
     ST._validateConfig(targetConfig, IComponentsConfigSchema);
     ST._configureCardFrames(

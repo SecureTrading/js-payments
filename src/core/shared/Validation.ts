@@ -17,7 +17,7 @@ const {
   VALIDATION_ERROR
 } = Language.translations;
 
-class Validation extends Frame {
+export default class Validation extends Frame {
   public static ERROR_FIELD_CLASS: string = 'error-field';
 
   public static clearNonDigitsChars(value: string): string {
@@ -43,7 +43,7 @@ class Validation extends Frame {
     return regex.test(key);
   }
 
-  public static isKeyEnter(event: KeyboardEvent): boolean {
+  public static isEnter(event: KeyboardEvent): boolean {
     if (event) {
       const keyCode: number = event.keyCode;
       return keyCode === Validation.ENTER_KEY_CODE;
@@ -54,6 +54,22 @@ class Validation extends Frame {
 
   public static setCustomValidationError(errorContent: string, inputElement: HTMLInputElement) {
     inputElement.setCustomValidity(errorContent);
+  }
+  public static addErrorContainer(inputElement: HTMLInputElement, inputTarget: InsertPosition, errorContent: string) {
+    inputElement.insertAdjacentHTML(inputTarget, errorContent);
+  }
+
+  public static resetValidationProperties(input: HTMLInputElement): void {
+    input.setCustomValidity(Validation.CLEAR_VALUE);
+    input.classList.remove(Validation.ERROR_FIELD_CLASS);
+    input.nextSibling.textContent = Validation.CLEAR_VALUE;
+  }
+
+  public static returnInputAndErrorContainerPair(item: HTMLInputElement) {
+    return {
+      inputElement: document.getElementById(item.id) as HTMLInputElement,
+      messageElement: document.getElementById(item.id).nextSibling as HTMLElement
+    };
   }
 
   protected static STANDARD_FORMAT_PATTERN: string = '(\\d{1,4})(\\d{1,4})?(\\d{1,4})?(\\d+)?';
@@ -416,5 +432,3 @@ class Validation extends Frame {
     }
   }
 }
-
-export default Validation;
