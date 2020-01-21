@@ -1,3 +1,5 @@
+import { IComponentsIds } from '../models/IComponentsIds';
+import { IRegisterFramesParams } from '../models/IRegisterFramesParams';
 import { IStyles } from '../models/IStyles';
 import { BinLookup } from '../shared/BinLookup';
 import { MessageBus } from '../shared/MessageBus';
@@ -7,12 +9,12 @@ export class RegisterFrames {
   private static COMPLETE_FORM_FIELDS: string[] = ['pan', 'expirydate', 'securitycode'];
 
   protected styles: IStyles;
-  protected params: any;
+  protected params: IRegisterFramesParams;
   protected elementsToRegister: HTMLElement[];
   protected elementsTargets: string[];
   protected jwt: string;
   protected origin: string;
-  protected componentIds: any;
+  protected componentIds: IComponentsIds;
   protected hasAnimatedCard: boolean;
   protected submitCallback: any;
   protected fieldsToSubmit: string[];
@@ -23,7 +25,7 @@ export class RegisterFrames {
   constructor(
     jwt: string,
     origin: string,
-    componentIds: {},
+    componentIds: IComponentsIds,
     styles: IStyles,
     animatedCard: boolean,
     fieldsToSubmit: string[],
@@ -53,16 +55,17 @@ export class RegisterFrames {
     });
   }
 
-  protected configureFormFieldsAmount(jwt: string): any {
+  protected configureFormFieldsAmount(jwt: string): string[] {
     return [];
   }
 
-  protected setElementsFields(): any {
+  protected setElementsFields(): string[] {
     return [];
   }
 
-  private _getStyles(styles: any) {
+  private _getStyles(styles: IStyles) {
     for (const key in styles) {
+      // @ts-ignore
       if (styles[key] instanceof Object) {
         return styles;
       }

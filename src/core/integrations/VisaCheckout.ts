@@ -1,6 +1,11 @@
 import { environment } from '../../environments/environment';
-import { IVisaConfig } from '../models/IVisaConfig';
-import { IVisaSettings } from '../models/IVisaSettings';
+import { IVisaCheckoutButtonProps } from '../models/IVisaCheckoutButtonProps';
+import { IVisaCheckoutInitConfiguration } from '../models/IVisaCheckoutInitConfiguration';
+import { IVisaCheckoutPaymentRequest } from '../models/IVisaCheckoutPaymentRequest';
+import { IVisaCheckoutConfig } from '../models/IVisaCheckoutConfig';
+import { IVisaPaymentResponseTypes } from '../models/IVisaPaymentResponseTypes';
+import { IVisaPaymentStatus } from '../models/IVisaPaymentStatus';
+import { IVisaCheckoutSettings } from '../models/IVisaCheckoutSettings';
 import { IWalletConfig } from '../models/IWalletConfig';
 import { DomMethods } from '../shared/DomMethods';
 import { Language } from '../shared/Language';
@@ -21,7 +26,7 @@ export class VisaCheckout {
     this._payment = value;
   }
 
-  set paymentDetails(value: string) {
+  set paymentDetails(value: string): string {
     this._paymentDetails = value;
   }
 
@@ -45,20 +50,20 @@ export class VisaCheckout {
     this._responseMessage = value;
   }
 
-  protected static VISA_PAYMENT_STATUS = {
+  protected static VISA_PAYMENT_STATUS: IVisaPaymentStatus = {
     ERROR: 'ERROR',
     SUCCESS: 'SUCCESS',
     WARNING: 'WARNING'
   };
 
-  private static VISA_PAYMENT_RESPONSE_TYPES = {
+  private static VISA_PAYMENT_RESPONSE_TYPES: IVisaPaymentResponseTypes = {
     CANCEL: 'payment.cancel',
     ERROR: 'payment.error',
     SUCCESS: 'payment.success'
   };
 
   protected requestTypes: string[];
-  protected visaCheckoutButtonProps: any = {
+  protected visaCheckoutButtonProps: IVisaCheckoutButtonProps = {
     alt: 'Visa Checkout',
     class: 'v-button',
     id: 'v-button',
@@ -66,7 +71,7 @@ export class VisaCheckout {
     src: environment.VISA_CHECKOUT_URLS.TEST_BUTTON_URL
   };
 
-  private _buttonSettings: any;
+  private _buttonSettings: IVisaCheckoutConfig | IVisaCheckoutSettings;
   private _messageBus: MessageBus;
   private _payment: Payment;
   private _paymentDetails: string;
@@ -79,12 +84,12 @@ export class VisaCheckout {
   private _livestatus: number = 0;
   private _placement: string = 'body';
 
-  private _initConfiguration = {
-    apikey: '' as string,
+  private _initConfiguration: IVisaCheckoutInitConfiguration = {
+    apikey: '',
     paymentRequest: {
-      currencyCode: '' as string,
-      subtotal: '' as string,
-      total: '' as string
+      currencyCode: '',
+      subtotal: '',
+      total: ''
     },
     settings: {}
   };
@@ -102,13 +107,19 @@ export class VisaCheckout {
     });
   }
 
-  public setInitConfiguration(paymentRequest: any, settings: any, stJwt: StJwt, merchantId: string) {
+  public setInitConfiguration(
+    paymentRequest: IVisaCheckoutPaymentRequest,
+    settings: IVisaCheckoutSettings,
+    stJwt: StJwt,
+    merchantId: string
+  ): void {
     this._initConfiguration.apikey = merchantId;
-    this._initConfiguration.paymentRequest = this.getInitPaymentRequest(paymentRequest, stJwt) as any;
+    this._initConfiguration.paymentRequest = this.getInitPaymentRequest(paymentRequest, stJwt);
+    //@ts-ignore
     this._initConfiguration.settings = this._setConfiguration({ locale: stJwt.locale }, settings);
   }
 
-  public customizeVisaButton(properties: any) {
+  public customizeVisaButton(properties: IVisaCheckoutConfig | IVisaCheckoutSettings): string {
     const { color, size } = properties;
     const url = new URL(this.visaCheckoutButtonProps.src);
     if (color) {
@@ -121,19 +132,22 @@ export class VisaCheckout {
     return this.visaCheckoutButtonProps.src;
   }
 
-  public getInitPaymentRequest(paymentRequest: any, stJwt: StJwt) {
+  public getInitPaymentRequest(paymentRequest: IVisaCheckoutPaymentRequest, stJwt: StJwt): IVisaCheckoutPaymentRequest {
     const config = this._initConfiguration.paymentRequest;
     config.currencyCode = stJwt.currencyiso3a;
     config.subtotal = stJwt.mainamount;
     config.total = stJwt.mainamount;
+    //@ts-ignore
     return this._setConfiguration(config, paymentRequest);
   }
 
-  public createVisaButton = () => DomMethods.createHtmlElement.apply(this, [this.visaCheckoutButtonProps, 'img']);
+  public createVisaButton = (): HTMLElement =>
+    DomMethods.createHtmlElement.apply(this, [this.visaCheckoutButtonProps, 'img']);
 
-  protected attachVisaButton = () => DomMethods.appendChildIntoDOM(this._placement, this.createVisaButton());
+  protected attachVisaButton = (): HTMLElement =>
+    DomMethods.appendChildIntoDOM(this._placement, this.createVisaButton());
 
-  protected onSuccess(payment: object) {
+  protected onSuccess(payment: object): void {
     this.paymentDetails = JSON.stringify(payment);
     this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
     this.payment
@@ -151,32 +165,32 @@ export class VisaCheckout {
         this._notification.success(this.responseMessage, true);
         GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment success');
       })
-      .catch((error: any) => {
+      .catch(() => {
         this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
         this._getResponseMessage(this.paymentStatus);
         this._notification.error(this.responseMessage, true);
       });
   }
 
-  protected onError() {
+  protected onError(): void {
     this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
     this._getResponseMessage(this.paymentStatus);
     this._notification.error(this.responseMessage, true);
     GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment error');
   }
 
-  protected onCancel() {
+  protected onCancel(): void {
     this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.WARNING;
     this._getResponseMessage(this.paymentStatus);
     this._notification.warning(this.responseMessage, true);
     GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment canceled');
   }
 
-  protected initPaymentConfiguration() {
+  protected initPaymentConfiguration(): void {
     V.init(this._initConfiguration);
   }
 
-  protected paymentStatusHandler() {
+  protected paymentStatusHandler(): void {
     V.on(VisaCheckout.VISA_PAYMENT_RESPONSE_TYPES.SUCCESS, (payment: object) => {
       this.onSuccess(payment);
     });
@@ -188,7 +202,7 @@ export class VisaCheckout {
     });
   }
 
-  private _configurePaymentProcess(jwt: string, config: IWalletConfig, gatewayUrl: string) {
+  private _configurePaymentProcess(jwt: string, config: IWalletConfig, gatewayUrl: string): void {
     const { merchantId, livestatus, placement, settings, paymentRequest, buttonSettings, requestTypes } = config;
     this._stJwt = new StJwt(jwt);
     this.payment = new Payment(jwt, gatewayUrl);
@@ -196,6 +210,7 @@ export class VisaCheckout {
     this._placement = placement;
     this.requestTypes = requestTypes;
     this.setInitConfiguration(paymentRequest, settings, this._stJwt, merchantId);
+    //@ts-ignore
     this._buttonSettings = this._setConfiguration({ locale: this._stJwt.locale }, settings);
     this.customizeVisaButton(buttonSettings);
     this._setLiveStatus();
@@ -203,10 +218,13 @@ export class VisaCheckout {
     this._initVisaFlow();
   }
 
-  private _setConfiguration = (config: IVisaConfig, settings: IVisaSettings) =>
+  private _setConfiguration = (
+    config: IVisaCheckoutConfig | IVisaCheckoutPaymentRequest,
+    settings: IVisaCheckoutSettings | IVisaCheckoutPaymentRequest
+  ): IVisaCheckoutConfig | IVisaCheckoutSettings | IVisaCheckoutPaymentRequest =>
     settings || config ? { ...config, ...settings } : {};
 
-  private _initVisaFlow() {
+  private _initVisaFlow(): void {
     return DomMethods.insertScript('body', this._sdkAddress).addEventListener('load', () => {
       this.attachVisaButton();
       this.initPaymentConfiguration();
@@ -214,14 +232,14 @@ export class VisaCheckout {
     });
   }
 
-  private _setLiveStatus() {
+  private _setLiveStatus(): void {
     if (this._livestatus) {
       this.visaCheckoutButtonProps.src = environment.VISA_CHECKOUT_URLS.LIVE_BUTTON_URL;
       this._sdkAddress = environment.VISA_CHECKOUT_URLS.LIVE_SDK;
     }
   }
 
-  private _getResponseMessage(type: string) {
+  private _getResponseMessage(type: string): void {
     switch (type) {
       case VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS: {
         this.responseMessage = Language.translations.PAYMENT_SUCCESS;

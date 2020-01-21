@@ -25,7 +25,7 @@ export class DomMethods {
     return element;
   };
 
-  public static appendChildIntoDOM(target: string, child: HTMLElement) {
+  public static appendChildIntoDOM(target: string, child: HTMLElement): HTMLElement {
     const element = document.getElementById(target)
       ? document.getElementById(target)
       : document.getElementsByTagName('body')[0];

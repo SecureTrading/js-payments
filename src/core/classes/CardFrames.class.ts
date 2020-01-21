@@ -100,7 +100,7 @@ export class CardFrames extends RegisterFrames {
     this._broadcastSecurityCodeProperties(this.jwt);
   }
 
-  protected configureFormFieldsAmount(jwt: string): void {
+  protected configureFormFieldsAmount(jwt: string): string[] {
     this._fieldsToSubmitLength = this.fieldsToSubmit.length;
     this._isCardWithNoCvv = jwt && CardFrames.NO_CVV_CARDS.includes(this._getCardType(jwt));
     this._noFieldConfiguration =
@@ -118,6 +118,7 @@ export class CardFrames extends RegisterFrames {
       this.fieldsToSubmit.includes(CardFrames.CARD_NUMBER_FIELD_NAME) &&
       this.fieldsToSubmit.includes(CardFrames.EXPIRY_DATE_FIELD_NAME) &&
       this.fieldsToSubmit.includes(CardFrames.SECURITY_CODE_FIELD_NAME);
+    return this.fieldsToSubmit;
   }
 
   protected registerElements(fields: HTMLElement[], targets: string[]): void {
@@ -205,14 +206,14 @@ export class CardFrames extends RegisterFrames {
   }
 
   private _getCardType(jwt: string): string {
-    const cardDetails = JwtDecode(jwt) as any;
+    const cardDetails = JwtDecode(jwt) as JwtDecode;
     if (cardDetails.payload.pan) {
       return this.binLookup.binLookup(cardDetails.payload.pan).type;
     }
   }
 
   private _getSecurityCodeLength(jwt: string): number {
-    const cardDetails = JwtDecode(jwt) as any;
+    const cardDetails = JwtDecode(jwt) as JwtDecode;
     if (cardDetails.payload.pan) {
       const { cvcLength } = this.binLookup.binLookup(cardDetails.payload.pan);
       return cvcLength.slice(-1)[0];
@@ -319,7 +320,7 @@ export class CardFrames extends RegisterFrames {
     buttonId: string,
     defaultPaymentType: string,
     deferInit: boolean,
-    paymentTypes: any,
+    paymentTypes: string[],
     startOnLoad: boolean,
     loadAnimatedCard: boolean,
     bypassCards: BypassCards[],
