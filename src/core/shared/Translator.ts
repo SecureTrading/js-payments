@@ -1,5 +1,5 @@
 import i18next from 'i18next';
-import { ApplicationStorage } from '../services/ApplicationStorage';
+import { BrowserLocalStorage } from '../services/BrowserLocalStorage';
 // @ts-ignore
 import cy_GB from '../translations/cy_GB.json';
 // @ts-ignore
@@ -22,7 +22,7 @@ import no_NO from '../translations/no_NO.json';
 import sv_SE from '../translations/sv_SE.json';
 
 export class Translator {
-  private _storage: ApplicationStorage;
+  private _storage: BrowserLocalStorage;
   constructor(locale: string) {
     i18next.init({
       debug: false,
@@ -40,11 +40,13 @@ export class Translator {
         sv_SE: { translation: sv_SE }
       }
     });
-    this._storage = new ApplicationStorage();
+    this._storage = new BrowserLocalStorage();
   }
 
   public translate = (text: string) => {
-    const translation = this._storage.getLocalStorageItem(text, localStorage.merchantTranslations);
+    const translations: string = this._storage.getItem('merchantTranslations');
+    const json: string = JSON.parse(translations);
+    const translation: string = Object.keys(json).includes(name) ? json[name] : '';
     return translation ? translation : i18next.t(text, { content: text });
   };
 }

@@ -159,12 +159,9 @@ describe('CardFrames', () => {
     const submitFormEvent = {
       data: {
         // @ts-ignore
-        updateJWT: undefined,
-        // @ts-ignore
         deferInit: undefined,
         fieldsToSubmit: ['pan', 'expirydate', 'securitycode'],
-        bypassCards: ['PIBA'],
-        cardType: BypassCards.PIBA
+        bypassCards: ['PIBA']
       },
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };

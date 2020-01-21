@@ -16,7 +16,7 @@ import { VisaCheckout } from './core/integrations/VisaCheckout';
 import { VisaCheckoutMock } from './core/integrations/VisaCheckoutMock';
 import { IConfig } from './core/models/IConfig';
 import { IStJwtObj } from './core/models/IStJwtObj';
-import { ApplicationStorage } from './core/services/ApplicationStorage';
+import { BrowserLocalStorage } from './core/services/BrowserLocalStorage';
 import { Config } from './core/services/Config';
 import { MessageBus } from './core/shared/MessageBus';
 import { Translator } from './core/shared/Translator';
@@ -34,7 +34,7 @@ class ST {
   private _googleAnalytics: GoogleAnalytics;
   private _merchantFields: MerchantFields;
   private _messageBus: MessageBus;
-  private _storage: ApplicationStorage;
+  private _storage: BrowserLocalStorage;
   private _translation: Translator;
 
   constructor(config: IConfig) {
@@ -42,7 +42,7 @@ class ST {
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
     this._messageBus = new MessageBus();
-    this._storage = new ApplicationStorage();
+    this._storage = new BrowserLocalStorage();
     this.init(config);
   }
 
@@ -79,9 +79,7 @@ class ST {
   private init(config: IConfig): void {
     this._config = this._configuration.init(config);
     this.Storage(this._config);
-    this._translation = new Translator(
-      this._storage.getLocalStorageItem(ST.LOCALE_STORAGE, localStorage.merchantTranslations)
-    );
+    this._translation = new Translator(this._storage.getItem(ST.LOCALE_STORAGE));
     this._googleAnalytics.init();
     this.CommonFrames(this._config);
     this._commonFrames.init();
@@ -144,8 +142,8 @@ class ST {
   }
 
   private Storage(config: IConfig): void {
-    this._storage.setLocalStorageItem(ST.MERCHANT_TRANSLATIONS_STORAGE, config.translations);
-    this._storage.setLocalStorageItem(ST.LOCALE_STORAGE, JwtDecode<IStJwtObj>(config.jwt).payload.locale);
+    this._storage.setItem(ST.MERCHANT_TRANSLATIONS_STORAGE, JSON.stringify(config.translations));
+    this._storage.setItem(ST.LOCALE_STORAGE, JwtDecode<IStJwtObj>(config.jwt).payload.locale);
   }
 }
 
