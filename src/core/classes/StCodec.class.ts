@@ -10,10 +10,10 @@ import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
 import { Validation } from '../shared/Validation';
 
-class StCodec {
-  public static CONTENT_TYPE = 'application/json';
-  public static VERSION = '1.00';
-  public static SUPPORTED_REQUEST_TYPES = [
+export class StCodec {
+  public static CONTENT_TYPE: string = 'application/json';
+  public static VERSION: string = '1.00';
+  public static SUPPORTED_REQUEST_TYPES: string[] = [
     'WALLETVERIFY',
     'JSINIT',
     'THREEDQUERY',
@@ -24,7 +24,7 @@ class StCodec {
     'SUBSCRIPTION',
     'ACCOUNTCHECK'
   ];
-  public static MINIMUM_REQUEST_FIELDS = 1;
+  public static MINIMUM_REQUEST_FIELDS: number = 1;
   public static jwt: string;
   public static originalJwt: string;
 
@@ -54,7 +54,7 @@ class StCodec {
     };
   }
 
-  public static verifyResponseObject(responseData: string, jwtResponse: string): IResponseData {
+  public static verifyResponseObject(responseData: IResponseData, jwtResponse: string): IResponseData {
     if (StCodec._isInvalidResponse(responseData)) {
       throw StCodec._handleInvalidResponse();
     }
@@ -103,11 +103,11 @@ class StCodec {
     StCodec._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
-  private static _notification = new Notification();
+  private static _notification: Notification = new Notification();
   private static _locale: string;
-  private static _messageBus = new MessageBus();
+  private static _messageBus: MessageBus = new MessageBus();
   private static _parentOrigin: string;
-  private static REQUESTS_WITH_ERROR_MESSAGES = [
+  private static REQUESTS_WITH_ERROR_MESSAGES: string[] = [
     'AUTH',
     'CACHETOKENISE',
     'ERROR',
@@ -134,7 +134,7 @@ class StCodec {
     return new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
   }
 
-  private static _isInvalidResponse(responseData: any) {
+  private static _isInvalidResponse(responseData: IResponseData): boolean {
     return !(
       responseData &&
       responseData.version === StCodec.VERSION &&
@@ -143,14 +143,16 @@ class StCodec {
     );
   }
 
-  private static _determineResponse(responseData: any) {
+  private static _determineResponse(responseData: IResponseData): IResponseData {
     let responseContent: IResponseData;
+    // @ts-ignore
     responseData.response.forEach((r: any) => {
       if (r.customeroutput) {
         responseContent = r;
       }
     });
     if (!responseContent) {
+      // @ts-ignore
       responseContent = responseData.response[responseData.response.length - 1];
     }
     return responseContent;
@@ -174,8 +176,8 @@ class StCodec {
     StCodec.publishResponse(responseContent, jwtResponse);
   }
 
-  private static _decodeResponseJwt(jwt: string, reject: (error: Error) => void): string {
-    let decoded: string;
+  private static _decodeResponseJwt(jwt: string, reject: (error: Error) => void): IResponseData {
+    let decoded: IResponseData;
     try {
       decoded = JwtDecode(jwt) as any;
     } catch (e) {
@@ -248,5 +250,3 @@ class StCodec {
     return promise;
   }
 }
-
-export { StCodec, IStRequest };

@@ -4,6 +4,7 @@ import { IStJwtObj } from '../models/IStJwtObj';
 import { IStJwtPayload } from '../models/IStJwtPayload';
 
 export class StJwt {
+  private static DEFAULT_LOCALE: string = 'en_GB';
   public payload: IStJwtPayload;
   private _decodedJwt: IStJwtObj;
 
@@ -12,23 +13,23 @@ export class StJwt {
     this.payload = this._decodedJwt.payload;
   }
 
-  public get sitereference() {
+  public get sitereference(): string {
     return this.payload.sitereference;
   }
 
-  public get currencyiso3a() {
+  public get currencyiso3a(): string {
     return this.payload.currencyiso3a;
   }
 
-  private get currency() {
-    return (Currencies as any)[this.payload.currencyiso3a];
+  private get currency(): string {
+    return (Currencies as Currencies)[this.payload.currencyiso3a];
   }
 
-  public get locale() {
-    return this.payload.locale || 'en_GB';
+  public get locale(): string {
+    return this.payload.locale || StJwt.DEFAULT_LOCALE;
   }
 
-  public get mainamount() {
+  public get mainamount(): string {
     let mainamount = this.payload.mainamount;
     if (mainamount === undefined) {
       mainamount = Money.fromInteger({

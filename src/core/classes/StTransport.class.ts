@@ -1,6 +1,7 @@
+import { IStRequest } from '../models/IStRequest';
 import { IStTransportParams } from '../models/IStTransportParams';
 import { Utils } from '../shared/Utils';
-import { IStRequest, StCodec } from './StCodec.class';
+import { StCodec } from './StCodec.class';
 
 /**
  * Establishes connection with ST, defines client.
@@ -27,10 +28,10 @@ export class StTransport {
     method: 'post'
   };
 
-  private static DELAY = 1000;
-  private static RETRY_LIMIT = 5;
-  private static RETRY_TIMEOUT = 10000;
-  private static TIMEOUT = 10000;
+  private static DELAY: number = 1000;
+  private static RETRY_LIMIT: number = 5;
+  private static RETRY_TIMEOUT: number = 10000;
+  private static TIMEOUT: number = 10000;
   private readonly _codec: StCodec;
   private _gatewayUrl: string;
 
