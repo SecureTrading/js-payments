@@ -1,153 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
-    />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Secure Trading Example Form</title>
-  </head>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+  <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+  <title>Secure Trading Example Form</title>
+  <link href="example.css" rel="stylesheet">
+</head>
 
-  <body>
-    <form id="st-form" class="example-form" autocomplete="off" novalidate>
-      <h1 class="example-form__title">
-        Secure Trading<span>AMOUNT: <strong>10.00 GBP</strong></span>
-      </h1>
-      <div class="example-form__section example-form__section--horizontal">
-        <div class="example-form__group">
-          <label for="example-form-name" class="example-form__label">AMOUNT</label>
-          <input
-            id="example-form-amount"
-            class="example-form__input"
-            type="number"
-            placeholder=""
-            name="myBillAmount"
-            data-st-name="billingamount"
-          />
-        </div>
+<body>
+  <form id="st-form" class="example-form" autocomplete="off" novalidate>
+    <h1 class="example-form__title">
+      Secure Trading<span>AMOUNT: <strong>10.00 GBP</strong></span>
+    </h1>
+    <div class="example-form__section example-form__section--horizontal">
+      <div class="example-form__group">
+        <label for="example-form-name" class="example-form__label">AMOUNT</label>
+        <input id="example-form-amount"
+               class="example-form__input"
+               type="number"
+               placeholder=""
+               name="myBillAmount"
+               data-st-name="billingamount"/>
       </div>
+    </div>
 
-      <div class="example-form__section example-form__section--horizontal">
-        <div class="example-form__group">
-          <label for="example-form-name" class="example-form__label">NAME</label>
-          <input
-            id="example-form-name"
-            class="example-form__input"
-            type="text"
-            placeholder="John Doe"
-            autocomplete="name"
-            name="myBillName"
-            data-st-name="billingfirstname"
-          />
-        </div>
-        <div class="example-form__group">
-          <label for="example-form-email" class="example-form__label">E-MAIL</label>
-          <input
-            id="example-form-email"
-            class="example-form__input"
-            type="email"
-            placeholder="test@mail.com"
-            autocomplete="email"
-            name="myBillEmail"
-            data-st-name="billingemail"
-          />
-        </div>
-        <div class="example-form__group">
-          <label for="example-form-phone" class="example-form__label">PHONE</label>
-          <input
-            id="example-form-phone"
-            class="example-form__input"
-            type="tel"
-            placeholder="+00 000 000 000"
-            autocomplete="tel"
-            name="myBillTel"
-          />
-          <!-- no data-st-name attribute so this field will not be submitted to ST -->
-        </div>
+    <div class="example-form__section example-form__section--horizontal">
+      <div class="example-form__group">
+        <label for="example-form-name" class="example-form__label">NAME</label>
+        <input id="example-form-name"
+               class="example-form__input"
+               type="text"
+               placeholder="John Doe"
+               autocomplete="name"
+               name="myBillName"
+               data-st-name="billingfirstname"/>
       </div>
+      <div class="example-form__group">
+        <label for="example-form-email" class="example-form__label">E-MAIL</label>
+        <input id="example-form-email"
+               class="example-form__input"
+               type="email"
+               placeholder="test@mail.com"
+               autocomplete="email"
+               name="myBillEmail"
+               data-st-name="billingemail"/>
+      </div>
+      <div class="example-form__group">
+        <label for="example-form-phone" class="example-form__label">PHONE</label>
+        <input id="example-form-phone"
+               class="example-form__input"
+               type="tel"
+               placeholder="+00 000 000 000"
+               autocomplete="tel"
+               name="myBillTel"/>
+        <!-- no data-st-name attribute so this field will not be submitted to ST -->
+      </div>
+    </div>
 
+    <div class="example-form__spacer"></div>
+
+    <div class="example-form__section">
+      <div id="st-notification-frame" class="example-form__group"></div>
+      <div id="st-card-number" class="example-form__group"></div>
+      <div id="st-expiration-date" class="example-form__group"></div>
+      <div id="st-security-code" class="example-form__group"></div>
       <div class="example-form__spacer"></div>
+    </div>
 
-      <div class="example-form__section">
-        <div id="st-notification-frame" class="example-form__group"></div>
-        <div id="st-card-number" class="example-form__group"></div>
-        <div id="st-expiration-date" class="example-form__group"></div>
-        <div id="st-security-code" class="example-form__group"></div>
-        <div class="example-form__spacer"></div>
+    <div class="example-form__section">
+      <div class="example-form__group example-form__group--submit">
+        <button type="submit" class="example-form__button" id="merchant-submit-button">Zapłać</button>
       </div>
+    </div>
 
-      <div class="example-form__section">
-        <div class="example-form__group example-form__group--submit">
-          <button type="submit" class="example-form__button" id="merchant-submit-button">Zapłać</button>
-        </div>
-      </div>
+    <div class="example-form__section">
+      <div id="st-control-frame" class="example-form__group"></div>
+      <div id="st-visa-checkout" class="example-form__group"></div>
+      <div id="st-apple-pay" class="example-form__group"></div>
+    </div>
+    <div id="st-animated-card" class="st-animated-card-wrapper"></div>
+  </form>
 
-      <div class="example-form__section">
-        <div id="st-control-frame" class="example-form__group"></div>
-        <div id="st-visa-checkout" class="example-form__group"></div>
-        <div id="st-apple-pay" class="example-form__group"></div>
-      </div>
-      <div id="st-animated-card" class="st-animated-card-wrapper"></div>
-    </form>
-    <script type="text/javascript" src="st.js"></script>
-    <script>
-      (function() {
-        var ST = SecureTrading;
-        window
-          .fetch('https://merchant.example.com:8443/config.json')
-          .then(function(response) {
-            if (response.status !== 200) {
-              return Promise.reject('Configuration has not been set !');
-            }
-            return response.json();
-          })
-          .then(function(data) {
-            if (data) {
-              configurationInit(ST, data);
-            } else {
-              fetchDefaultConfig();
-            }
-          })
-          .catch(function() {
-            fetchDefaultConfig();
-          });
-
-        function fetchDefaultConfig() {
-          fetch('./../json/config.json')
-            .then(function(response) {
-              if (response.status !== 200) {
-                return Promise.reject('Default configuration has not been set !');
-              }
-              return response.json();
-            })
-            .then(function(data) {
-              if (data) {
-                configurationInit(ST, data);
-              }
-            });
-        }
-        function configurationInit(ST, data) {
-          var stConfig = data;
-          var parsedUrl = new URL(window.location.href);
-          stConfig.jwt = parsedUrl.searchParams.get('jwt') || stConfig.jwt;
-          var st = ST(stConfig);
-
-          st.submitCallback = function someFancyfunction(data) {
-            var stringified = JSON.stringify(data);
-            var testVariable = 'This is what we have got after submit' + stringified;
-          };
-          st.Components(stConfig.components);
-          st.ApplePay(stConfig.applePay);
-          st.VisaCheckout(stConfig.visaCheckout);
-          document.getElementById('example-form-amount').addEventListener('input', function() {
-            st.updateJWT(
-              'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3MzczNjQ5Ni4wMzI3MTMyLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiNDExMTExMTExMTExMTExMSIsImV4cGlyeWRhdGUiOiIwMS8yMiIsInNlY3VyaXR5Y29kZSI6IjEyMyJ9fQ.BnW7b7DMhh0XnJNCDKPHfqMjqVUCukM9SfhjtfyfDm0'
-            );
-          });
-        }
-      })();
-    </script>
-  </body>
+  <script type="text/javascript" src="https://webservices.securetrading.net:8443/st.js"></script>
+  <script type="text/javascript" src="example.js"></script>
+</body>
 </html>

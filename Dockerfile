@@ -1,4 +1,4 @@
-FROM securetrading1/js-payments-image:master as builder
+FROM node:lts-alpine as builder
 
 COPY . /app/js-payments
 WORKDIR /app/js-payments
@@ -9,8 +9,10 @@ RUN npm install -g npm
 RUN npm install
 RUN npm run build:automated
 
-FROM nginx:1.16.1
-COPY --from=builder ./app/js-payments/dist /usr/share/nginx/html
-COPY docker/nginx/prod.conf /etc/nginx/conf.d/default.conf
-COPY docker/nginx/key.pem /etc/ssl/st-cert/key.pem
-COPY docker/nginx/cert.pem /etc/ssl/st-cert/cert.pem
+FROM nginx:stable-alpine
+COPY --from=builder ./app/js-payments/dist /usr/share/nginx/html/app
+COPY --from=builder ./app/js-payments/example /usr/share/nginx/html/example
+COPY docker/nginx/app.conf /etc/nginx/conf.d/app.conf
+COPY docker/nginx/example.conf /etc/nginx/conf.d/example.conf
+COPY docker/nginx/cert/key.pem /etc/ssl/st-cert/key.pem
+COPY docker/nginx/cert/cert.pem /etc/ssl/st-cert/cert.pem

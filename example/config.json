@@ -1,0 +1,75 @@
+{
+  "analytics": true,
+  "animatedCard": true,
+  "deferInit": false,
+  "buttonId": "merchant-submit-button",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3MzgxNjgyMC41OTgyNjcsInBheWxvYWQiOnsibWFpbmFtb3VudCI6IjEwLjAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.EJ6qxpfYEKCoHzK7R9GKoWmoGepgs07eGTJrxFn-LUk",
+  "styles": {
+    "defaultStyles": {
+      "background-color-input": "AliceBlue"
+    },
+    "cardNumber": {
+      "background-color-input-error": "#e5e8ac",
+      "color-input-error": "#721c24",
+      "font-size-input": "9px",
+      "line-height-input": "9px"
+    },
+    "expirationDate": {
+      "background-color-input": "red",
+      "background-color-input-error": "#f8d7da",
+      "color-input-error": "#55FF33",
+      "font-size-input": "12px",
+      "line-height-input": "12px"
+    },
+    "securityCode": {
+      "background-color-input": "#FFF333",
+      "background-color-input-error": "#f8d7da",
+      "color-input-error": "#3358FF",
+      "font-size-input": "20px",
+      "line-height-input": "20px"
+    },
+    "notificationFrame": {
+      "color-error": "#FFF333"
+    },
+    "controlFrame": {
+      "color-error": "#3358FF"
+    }
+  },
+  "submitOnSuccess": false,
+  "submitCallback": "",
+  "translations": {
+    "An error occurred": "Wystąpił błąd"
+  },
+  "components": {},
+  "applePay": {
+    "buttonStyle": "white-outline",
+    "buttonText": "donate",
+    "merchantId": "merchant.net.securetrading.test",
+    "paymentRequest": {
+      "countryCode": "US",
+      "currencyCode": "USD",
+      "merchantCapabilities": ["supports3DS", "supportsCredit", "supportsDebit"],
+      "supportedNetworks": [],
+      "total": {
+        "label": "Secure Trading Merchant",
+        "amount": "10.00"
+      }
+    },
+    "placement": "st-apple-pay"
+  },
+  "visaCheckout": {
+    "buttonSettings": {
+      "size": "154",
+      "color": "neutral"
+    },
+    "livestatus": 0,
+    "merchantId": "SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4",
+    "paymentRequest": {
+      "subtotal": "20.00"
+    },
+    "placement": "st-visa-checkout",
+    "settings": {
+      "displayName": "My Test Site"
+    }
+  }
+}
