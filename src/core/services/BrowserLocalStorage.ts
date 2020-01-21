@@ -8,10 +8,18 @@ export class BrowserLocalStorage implements IStorage {
   }
 
   public getItem(name: string): string {
-    return this._storage.getItem(name);
+    try {
+      return this._storage.getItem(name);
+    } catch (e) {
+      throw new Error(e);
+    }
   }
 
   public setItem(name: string, value: string): void {
-    return this._storage.setItem(name, value);
+    try {
+      return this._storage.setItem(name, value);
+    } catch (e) {
+      throw new Error(e);
+    }
   }
 }
