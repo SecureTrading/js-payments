@@ -91,7 +91,7 @@ describe('ST', () => {
     // when
     beforeEach(() => {
       StCodec.updateJWTValue = jest.fn();
-      instance.UpdateJwt('somenewjwtvalue');
+      instance.updateJWT('somenewjwtvalue');
       lodash.debounce = jest.fn().mockImplementationOnce(() => {
         StCodec.updateJWTValue('somenewjwtvalue');
       });
@@ -110,7 +110,7 @@ describe('ST', () => {
     // then
     it('should throw an error if newJwt is not specified', () => {
       expect(() => {
-        instance.UpdateJwt(null);
+        instance.updateJWT(null);
       }).toThrow();
     });
   });

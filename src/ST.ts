@@ -64,7 +64,7 @@ class ST {
     return new visa(this._config.visaCheckout, this._config.jwt, this._config.datacenterurl, this._config.livestatus);
   }
 
-  public UpdateJwt(jwt: string): void {
+  public updateJWT(jwt: string): void {
     if (jwt) {
       this._config.jwt = jwt;
       (() => {
