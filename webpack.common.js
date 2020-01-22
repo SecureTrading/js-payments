@@ -11,7 +11,9 @@ module.exports = {
   entry: {
     main: './src/components/index.ts',
     'control-frame': './src/components/control-frame/control-frame.ts',
-    st: './src/ST.ts'
+    st: './src/ST.ts',
+    example: './example/index.ts',
+    receipt: './example/receipt.ts'
   },
   output: {
     filename: '[name].js',
@@ -71,6 +73,16 @@ module.exports = {
       },
       chunks: ['control-frame']
     }),
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: './example/index.html',
+      chunks: ['example']
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'receipt.html',
+      template: './example/receipt.html',
+      chunks: ['receipt']
+    }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css'
@@ -93,9 +105,6 @@ module.exports = {
     ]),
     new StyleLintPlugin(),
     new FriendlyErrorsWebpackPlugin(),
-    new webpack.DefinePlugin({
-      HOST: JSON.stringify(process.env.npm_package_config_host)
-    })
   ],
   module: {
     rules: [
@@ -123,6 +132,7 @@ module.exports = {
         include: [
           path.join(__dirname, 'src'),
           path.join(__dirname, 'test'),
+          path.join(__dirname, 'example'),
           path.join(__dirname, 'node_modules/ts-money'),
           path.join(__dirname, 'node_modules/joi-browser')
         ]

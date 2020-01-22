@@ -20,5 +20,12 @@ module.exports = merge(common, {
       ignored: ['node_modules']
     }
   },
-  plugins: [new ManifestPlugin(), new TypedocWebpackPlugin({}), new webpack.HotModuleReplacementPlugin()]
+  plugins: [
+    new ManifestPlugin(),
+    new TypedocWebpackPlugin({}),
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.DefinePlugin({
+      WEBSERVICES_URL: JSON.stringify(`https://${process.env.npm_package_config_host}:8443`),
+    })
+  ]
 });

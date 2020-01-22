@@ -11,7 +11,7 @@ RUN npm run build:automated
 
 FROM nginx:stable-alpine
 COPY --from=builder ./app/js-payments/dist /usr/share/nginx/html/app
-COPY --from=builder ./app/js-payments/example /usr/share/nginx/html/example
+COPY --from=builder ./app/js-payments/dist /usr/share/nginx/html/example
 COPY docker/nginx/app.conf /etc/nginx/conf.d/app.conf
 COPY docker/nginx/example.conf /etc/nginx/conf.d/example.conf
 COPY docker/nginx/cert/key.pem /etc/ssl/st-cert/key.pem
