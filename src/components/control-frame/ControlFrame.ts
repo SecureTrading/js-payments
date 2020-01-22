@@ -239,7 +239,11 @@ export class ControlFrame extends Frame {
 
   private _isCardWithoutCVV() {
     const panFromJwt: string = this._getPan();
-    const pan: string = panFromJwt ? panFromJwt : this._formFields.cardNumber.value;
+    let pan: string = '';
+    if (panFromJwt || this._formFields.cardNumber.value) {
+      pan = panFromJwt ? panFromJwt : this._formFields.cardNumber.value;
+    }
+
     const cardType: string = this._binLookup.binLookup(pan).type;
     return ControlFrame.NON_CVV_CARDS.includes(cardType);
   }
