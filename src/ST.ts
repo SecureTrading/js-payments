@@ -14,8 +14,11 @@ import { CardinalCommerceMock } from './core/integrations/CardinalCommerceMock';
 import { GoogleAnalytics } from './core/integrations/GoogleAnalytics';
 import { VisaCheckout } from './core/integrations/VisaCheckout';
 import { VisaCheckoutMock } from './core/integrations/VisaCheckoutMock';
+import { IApplePayConfig } from './core/models/IApplePayConfig';
+import { IComponentsConfig } from './core/models/IComponentsConfig';
 import { IConfig } from './core/models/IConfig';
 import { IStJwtObj } from './core/models/IStJwtObj';
+import { IVisaConfig } from './core/models/IVisaConfig';
 import { BrowserLocalStorage } from './core/services/BrowserLocalStorage';
 import { Config } from './core/services/Config';
 import { MessageBus } from './core/shared/MessageBus';
@@ -46,22 +49,23 @@ class ST {
     this.init(config);
   }
 
-  public Components(): void {
+  public Components(config: IComponentsConfig): void {
+    this._config.components = config;
     this.CardFrames(this._config);
     this._cardFrames.init();
     this._merchantFields.init();
   }
 
-  public ApplePay(): ApplePay {
+  public ApplePay(config: IApplePayConfig): ApplePay {
     const { applepay } = this.Environment();
 
-    return new applepay(this._config.applePay, this._config.jwt, this._config.datacenterurl);
+    return new applepay(config, this._config.jwt, this._config.datacenterurl);
   }
 
-  public VisaCheckout(): VisaCheckout {
+  public VisaCheckout(config: IVisaConfig): VisaCheckout {
     const { visa } = this.Environment();
 
-    return new visa(this._config.visaCheckout, this._config.jwt, this._config.datacenterurl, this._config.livestatus);
+    return new visa(config, this._config.jwt, this._config.datacenterurl, this._config.livestatus);
   }
 
   public updateJWT(jwt: string): void {
