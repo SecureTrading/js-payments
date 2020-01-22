@@ -8,7 +8,7 @@ env:
     - APP_REPO=js-payments
     - APP_BRANCH=$DOCKER_BRANCH
     - DOCKER_TAG="docker-compose -f py-payments-testing/docker-compose.yml run"
-    - RUN_TEST_TAG="tests poetry run behave"
+    - RUN_TEST_TAG="tests poetry run behave features"
 language: node_js
 node_js:
   - 10
@@ -38,11 +38,11 @@ jobs:
       name: 'Chrome latest, Docker'
       if: env(TESTS_TYPE)=fullTest OR env(TESTS_TYPE)=smokeTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
-        - ${DOCKER_TAG} tests poetry run behave features
+        - ${DOCKER_TAG} ${RUN_TEST_TAG}
     - name: "Behavioural test: chrome 76, Windows 10"
       if: env(TESTS_TYPE)=fullTest OR env(TESTS_TYPE)=smokeTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
-        - ${DOCKER_TAG} -e AUTOMATION_REMOTE=true -e BROWSERSTACK_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BROWSERSTACK_USERNAME=$BROWSERSTACK_USERNAME -e BROWSERSTACK_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e AUTOMATION_REMOTE_OS=Windows -e AUTOMATION_REMOTE_OS_VERSION=10 -e AUTOMATION_REMOTE_BROWSER=chrome -e AUTOMATION_REMOTE_BROWSER_VERSION=76.0 ${RUN_TEST_TAG} features
+        - ${DOCKER_TAG} -e AUTOMATION_REMOTE=true -e BROWSERSTACK_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BROWSERSTACK_USERNAME=$BROWSERSTACK_USERNAME -e BROWSERSTACK_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e AUTOMATION_REMOTE_OS=Windows -e AUTOMATION_REMOTE_OS_VERSION=10 -e AUTOMATION_REMOTE_BROWSER=chrome -e AUTOMATION_REMOTE_BROWSER_VERSION=76.0 ${RUN_TEST_TAG} --tags=$TEST_TAG
 #    - name: "Behavioural test: chrome 75, Windows 8.1"
 #      if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
 #      script:
