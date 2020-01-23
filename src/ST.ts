@@ -159,10 +159,6 @@ class ST {
     );
   }
 
-  private static _configureMerchantFields() {
-    return new MerchantFields();
-  }
-
   private static _configureCardFrames(
     jwt: string,
     origin: string,
@@ -173,7 +169,8 @@ class ST {
     deferInit: boolean,
     buttonId: string,
     fieldsToSubmit: string[],
-    cybertonicaApiKey: string
+    cybertonicaApiKey: string,
+    gatewayUrl: string
   ) {
     const { defaultPaymentType, paymentTypes, startOnLoad } = config;
     let cardFrames: object;
@@ -190,7 +187,8 @@ class ST {
         buttonId,
         startOnLoad,
         fieldsToSubmit,
-        cybertonicaApiKey
+        cybertonicaApiKey,
+        gatewayUrl
       );
     }
     return cardFrames;
@@ -284,7 +282,8 @@ class ST {
       this._deferInit,
       this._buttonId,
       this.fieldsToSubmit,
-      cybertonicaApiKey
+      this._config.cybertonica.apikey,
+      this._gatewayUrl
     );
     this.commonFrames.requestTypes = targetConfig.requestTypes;
     this.CardinalCommerce(targetConfig);

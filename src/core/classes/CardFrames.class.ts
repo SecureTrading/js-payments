@@ -73,7 +73,8 @@ export class CardFrames extends RegisterFrames {
     buttonId: string,
     startOnLoad: boolean,
     fieldsToSubmit: string[],
-    cybertonicaApiKey: string
+    cybertonicaApiKey: string,
+    gatewayUrl: string
   ) {
     super(jwt, origin, componentIds, styles, animatedCard, fieldsToSubmit, cybertonicaApiKey);
     this._setInitValues(
@@ -83,7 +84,9 @@ export class CardFrames extends RegisterFrames {
       paymentTypes,
       startOnLoad,
       animatedCard,
-      cybertonicaApiKey
+      cybertonicaApiKey,
+      gatewayUrl,
+      jwt
     );
     this.configureFormFieldsAmount(jwt);
     this.elementsTargets = this.setElementsFields();
@@ -322,10 +325,12 @@ export class CardFrames extends RegisterFrames {
     paymentTypes: any,
     startOnLoad: boolean,
     loadAnimatedCard: boolean,
-    cybertonicaApiKey: string
+    cybertonicaApiKey: string,
+    gatewayUrl: string,
+    jwt: string
   ): void {
     this._validation = new Validation();
-    this._cybertonica = new Cybertonica();
+    this._cybertonica = new Cybertonica(jwt, gatewayUrl);
     this._translator = new Translator(this.params.locale);
     this._buttonId = buttonId;
     this._deferInit = deferInit;

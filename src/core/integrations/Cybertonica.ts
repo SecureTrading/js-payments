@@ -30,11 +30,11 @@ class Cybertonica {
   private _tid: string;
   private _translator: Translator;
 
-  constructor() {
+  constructor(jwt: string, gatewayUrl: string) {
     this._sdkAddress = environment.CYBERTONICA.CYBERTONICA_LIVE_URL;
     this._messageBus = new MessageBus();
     this._notification = new Notification();
-    this._stTransport = new StTransport();
+    this._stTransport = new StTransport({ jwt, gatewayUrl });
     this._translator = new Translator(localStorage.getItem(Cybertonica.LOCALE));
   }
 
@@ -102,27 +102,26 @@ class Cybertonica {
   }
 
   private _sendRequest() {
-    return this._stTransport.sendRequest({
-      alias: 'live2@merchant.com',
-      version: '1.00',
-      request: [
-        {
-          securitycode: '123',
-          requesttypedescriptions: ['RISKDEC'],
-          accounttypedescription: 'FRAUDCONTROL',
-          expirydate: '12/2099',
-          pan: '4000000000000721',
-          fraudcontroltransactionid: '123456789'
-        }
-      ],
-      jwt:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ3ZWJzZXJ2aWNlc0BtZXJjaGFudC5jb20iLCJpYXQiOjE1Nzk2MjExNDkuOTExNzg4LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiI1MTg4IiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiJ9fQ.mQp88kdtc6GY_9BkndvGcGzXQ1jh0NRR_ATD1jGtjvs'
-    });
+    const data = Object.assign(
+      { requesttypedescriptions: ['RISKDEC'] },
+      {
+        securitycode: '123',
+        accounttypedescription: 'FRAUDCONTROL',
+        expirydate: '12/2099',
+        pan: '4000000000000721',
+        fraudcontroltransactionid: '123456789'
+      },
+      {
+        jwt:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ3ZWJzZXJ2aWNlc0BtZXJjaGFudC5jb20iLCJpYXQiOjE1Nzk2MjExNDkuOTExNzg4LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiI1MTg4IiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiJ9fQ.mQp88kdtc6GY_9BkndvGcGzXQ1jh0NRR_ATD1jGtjvs'
+      }
+    );
+    return this._stTransport.sendRequest(data);
   }
 
   private _postQuery(data: ICybertonicaPostQuery): Promise<{}> {
     // @ts-ignore
-    this._sendRequest.then((response: any) => {
+    this._sendRequest().then((response: any) => {
       console.error(response);
     });
     return new Promise((resolve, reject) => (this._shouldPaymentProceed(data) ? resolve(data) : reject(false)));
