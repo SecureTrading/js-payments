@@ -1,5 +1,4 @@
-import VisaCheckoutMock from '../../../src/core/integrations/VisaCheckoutMock';
-import DomMethods from '../../../src/core/shared/DomMethods';
+import { VisaCheckoutMock } from '../../../src/core/integrations/VisaCheckoutMock';
 
 // given
 describe('Visa Checkout Mock class', () => {

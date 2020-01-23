@@ -1,4 +1,4 @@
-import MessageBus from '../../../src/core/shared/MessageBus';
+import { MessageBus } from '../../../src/core/shared/MessageBus';
 
 // given
 describe('MessageBus', () => {

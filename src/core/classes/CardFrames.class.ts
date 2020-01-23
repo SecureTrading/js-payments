@@ -1,14 +1,16 @@
 import JwtDecode from 'jwt-decode';
-import Element from '../Element';
-import { IValidationMessageBus } from '../models/Validation';
-import DomMethods from '../shared/DomMethods';
-import Language from '../shared/Language';
-import MessageBus from '../shared/MessageBus';
-import Selectors from '../shared/Selectors';
-import { IStyles } from '../shared/Styler';
+import { BypassCards } from '../models/constants/BypassCards';
+import { IMessageBusEvent } from '../models/IMessageBusEvent';
+import { IStyles } from '../models/IStyles';
+import { IValidationMessageBus } from '../models/IValidationMessageBus';
+import { Element } from '../services/Element';
+import { DomMethods } from '../shared/DomMethods';
+import { Language } from '../shared/Language';
+import { MessageBus } from '../shared/MessageBus';
+import { Selectors } from '../shared/Selectors';
 import { Translator } from '../shared/Translator';
-import Validation from '../shared/Validation';
-import RegisterFrames from './RegisterFrames.class';
+import { Validation } from '../shared/Validation';
+import { RegisterFrames } from './RegisterFrames.class';
 
 export class CardFrames extends RegisterFrames {
   private static CARD_NUMBER_FIELD_NAME: string = 'pan';
@@ -56,6 +58,7 @@ export class CardFrames extends RegisterFrames {
   private _onlyCvvConfiguration: boolean;
   private _configurationForStandardCard: boolean;
   private _loadAnimatedCard: boolean;
+  private _bypassCards: BypassCards[];
 
   constructor(
     jwt: string,
@@ -68,22 +71,31 @@ export class CardFrames extends RegisterFrames {
     deferInit: boolean,
     buttonId: string,
     startOnLoad: boolean,
-    fieldsToSubmit: string[]
+    fieldsToSubmit: string[],
+    bypassCards: BypassCards[]
   ) {
     super(jwt, origin, componentIds, styles, animatedCard, fieldsToSubmit);
-    this._setInitValues(buttonId, defaultPaymentType, deferInit, paymentTypes, startOnLoad, animatedCard);
+    this._setInitValues(
+      buttonId,
+      defaultPaymentType,
+      deferInit,
+      paymentTypes,
+      startOnLoad,
+      animatedCard,
+      bypassCards,
+      jwt
+    );
     this.configureFormFieldsAmount(jwt);
-    this.elementsTargets = this.setElementsFields();
-    this.onInit();
-    this.registerElements(this.elementsToRegister, this.elementsTargets);
   }
 
-  protected onInit(): void {
+  public init() {
     this._deferJsinitOnLoad();
     CardFrames._preventFormSubmit();
     this._createSubmitButton();
     this._initSubscribes();
     this._initCardFrames();
+    this.elementsTargets = this.setElementsFields();
+    this.registerElements(this.elementsToRegister, this.elementsTargets);
     this._broadcastSecurityCodeProperties(this.jwt);
   }
 
@@ -247,7 +259,6 @@ export class CardFrames extends RegisterFrames {
     cardNumber = Object.assign({}, defaultStyles, cardNumber);
     securityCode = Object.assign({}, defaultStyles, securityCode);
     expirationDate = Object.assign({}, defaultStyles, expirationDate);
-
     if (this._onlyCvvConfiguration) {
       this._initSecurityCodeFrame(securityCode);
     } else if (this._configurationForStandardCard) {
@@ -279,7 +290,11 @@ export class CardFrames extends RegisterFrames {
 
   private _publishSubmitEvent(deferInit: boolean): void {
     const messageBusEvent: IMessageBusEvent = {
-      data: { deferInit, fieldsToSubmit: this.fieldsToSubmit },
+      data: {
+        bypassCards: this._bypassCards,
+        deferInit,
+        fieldsToSubmit: this.fieldsToSubmit
+      },
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
@@ -304,7 +319,9 @@ export class CardFrames extends RegisterFrames {
     deferInit: boolean,
     paymentTypes: any,
     startOnLoad: boolean,
-    loadAnimatedCard: boolean
+    loadAnimatedCard: boolean,
+    bypassCards: BypassCards[],
+    jwt: string
   ): void {
     this._validation = new Validation();
     this._translator = new Translator(this.params.locale);
@@ -313,6 +330,8 @@ export class CardFrames extends RegisterFrames {
     this._startOnLoad = startOnLoad;
     this._defaultPaymentType = defaultPaymentType;
     this._paymentTypes = paymentTypes;
+    this._bypassCards = bypassCards;
+    this.jwt = jwt;
     this._payMessage = this._translator.translate(Language.translations.PAY);
     this._processingMessage = `${this._translator.translate(Language.translations.PROCESSING)} ...`;
     this._loadAnimatedCard = loadAnimatedCard !== undefined ? loadAnimatedCard : true;
