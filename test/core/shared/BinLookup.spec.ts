@@ -1,6 +1,6 @@
 import each from 'jest-each';
 import { BrandDetailsType, cardTree, brandMapping } from '../../../src/core/imports/cardtype';
-import BinLookup from '../../../src/core/shared/BinLookup';
+import { BinLookup } from '../../../src/core/shared/BinLookup';
 
 const fs = require('fs');
 const readline = require('readline');

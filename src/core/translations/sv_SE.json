@@ -21,5 +21,6 @@
   "Processing": "Bearbetar",
   "Invalid field": "Ogiltigt fält",
   "Card number is invalid": "Ogiltigt kortnummer",
-  "You are not logged to Apple account": "Du är inte inloggad på Apple-konto"
+  "You are not logged to Apple account": "Du är inte inloggad på Apple-konto",
+  "A target element for the input field with id could not be found. Please check your configuration": "Ett målelement för inmatningsfältet med id kunde inte hittas. Kontrollera din konfiguration"
 }

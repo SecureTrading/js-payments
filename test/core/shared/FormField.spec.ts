@@ -1,8 +1,7 @@
-import Formatter from '../../../src/core/shared/Formatter';
-import FormField from '../../../src/core/shared/FormField';
-import Language from '../../../src/core/shared/Language';
-import MessageBus from '../../../src/core/shared/MessageBus';
-import Validation from '../../../src/core/shared/Validation';
+import { FormField } from '../../../src/core/shared/FormField';
+import { Language } from '../../../src/core/shared/Language';
+import { Utils } from '../../../src/core/shared/Utils';
+import { Validation } from '../../../src/core/shared/Validation';
 
 jest.mock('./../../../src/core/shared/Validation');
 
@@ -68,38 +67,6 @@ describe('FormField', () => {
   });
 
   // given
-  describe('onKeyPress()', () => {
-    const { instance } = formFieldFixture();
-    const messageBusEvent = {
-      type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
-    };
-    const event = new KeyboardEvent('Enter');
-
-    // when
-    beforeEach(() => {
-      Validation.isEnter = jest.fn().mockReturnValue(true);
-      // @ts-ignore
-      instance._messageBus.publish = jest.fn();
-      event.preventDefault = jest.fn();
-
-      // @ts-ignore
-      instance.onKeyPress(event);
-    });
-
-    // then
-    it('should trigger instance._messageBus.publish ', () => {
-      // @ts-ignore
-      expect(instance._messageBus.publish).toHaveBeenCalledWith(messageBusEvent);
-    });
-
-    // then
-    it('should call event.preventDefault() ', () => {
-      // @ts-ignore
-      expect(event.preventDefault).toHaveBeenCalled();
-    });
-  });
-
-  // given
   describe('onPaste()', () => {
     const { instance } = formFieldFixture();
     const event = {
@@ -112,14 +79,15 @@ describe('FormField', () => {
     // @ts-ignore
     instance._inputElement = document.createElement('input');
     // @ts-ignore
+    instance._inputElement.value = '44';
+    // @ts-ignore
     instance._messageElement = document.createElement('div');
 
     beforeEach(() => {
-      // instance._inputValue.value = '123';
-      Formatter.trimNonNumeric = jest.fn().mockReturnValueOnce('123');
       Validation.setCustomValidationError = jest.fn();
       // @ts-ignore
       instance.format = jest.fn();
+      Utils.stripChars = jest.fn();
 
       // @ts-ignore
       instance.onPaste(event);
@@ -133,12 +101,6 @@ describe('FormField', () => {
     // then
     it('should Validation.setCustomValidationError method has been called', () => {
       expect(Validation.setCustomValidationError).toHaveBeenCalled();
-    });
-
-    // then
-    it('should instance._inputElement.value has been equal to pasted value', () => {
-      // @ts-ignore
-      expect(instance._inputElement.value).toEqual('123');
     });
 
     // then
