@@ -1,5 +1,5 @@
-import { IStTransportParams } from '../models/StTransport';
-import Utils from '../shared/Utils';
+import { IStTransportParams } from '../models/IStTransportParams';
+import { Utils } from '../shared/Utils';
 import { IStRequest, StCodec } from './StCodec.class';
 
 /**
@@ -14,7 +14,7 @@ import { IStRequest, StCodec } from './StCodec.class';
  *     sitereference: 'test_james38641'
  *   }).then();
  */
-class StTransport {
+export class StTransport {
   public get codec() {
     return this._codec;
   }
@@ -31,7 +31,6 @@ class StTransport {
   private static RETRY_LIMIT = 5;
   private static RETRY_TIMEOUT = 10000;
   private static TIMEOUT = 10000;
-
   private readonly _codec: StCodec;
   private _gatewayUrl: string;
 
@@ -84,5 +83,3 @@ class StTransport {
     );
   }
 }
-
-export default StTransport;

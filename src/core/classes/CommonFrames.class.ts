@@ -1,16 +1,13 @@
-import Element from '../Element';
 import { CardinalCommerce } from '../integrations/CardinalCommerce';
-import DomMethods from '../shared/DomMethods';
-import MessageBus from '../shared/MessageBus';
-import Selectors from '../shared/Selectors';
-import { IStyles } from '../shared/Styler';
-import Validation from '../shared/Validation';
-import RegisterFrames from './RegisterFrames.class';
+import { IStyles } from '../models/IStyles';
+import { Element } from '../services/Element';
+import { DomMethods } from '../shared/DomMethods';
+import { MessageBus } from '../shared/MessageBus';
+import { Selectors } from '../shared/Selectors';
+import { Validation } from '../shared/Validation';
+import { RegisterFrames } from './RegisterFrames.class';
 
-/**
- * Defines all non field elements of form and their placement on merchant site.
- */
-class CommonFrames extends RegisterFrames {
+export class CommonFrames extends RegisterFrames {
   get requestTypes(): string[] {
     return this._requestTypes;
   }
@@ -46,7 +43,8 @@ class CommonFrames extends RegisterFrames {
     submitFields: string[],
     gatewayUrl: string,
     animatedCard: boolean,
-    submitCallback: any
+    submitCallback: any,
+    requestTypes: string[]
   ) {
     super(jwt, origin, componentIds, styles, animatedCard, submitCallback);
     this._gatewayUrl = gatewayUrl;
@@ -57,24 +55,16 @@ class CommonFrames extends RegisterFrames {
     this._submitFields = submitFields;
     this._submitOnError = submitOnError;
     this._submitOnSuccess = submitOnSuccess;
-    this.onInit();
+    this._requestTypes = requestTypes;
   }
 
-  /**
-   * Gathers and launches methods needed on initializing object.
-   */
-  protected onInit() {
+  public init() {
     this._initFormFields();
     this._setMerchantInputListeners();
     this._setTransactionCompleteListener();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
   }
 
-  /**
-   * Register fields in clients form
-   * @param fields
-   * @param targets
-   */
   protected registerElements(fields: HTMLElement[], targets: string[]) {
     targets.map((item, index) => {
       const itemToChange = document.getElementById(item);
@@ -84,23 +74,15 @@ class CommonFrames extends RegisterFrames {
     });
   }
 
-  /**
-   * Defines form elements for notifications and control frame
-   */
   protected setElementsFields() {
     const elements = [];
     if (this._shouldLoadNotificationFrame()) {
       elements.push(this.componentIds.notificationFrame);
     }
-    elements.push(Selectors.MERCHANT_FORM_SELECTOR); // Control frame is always needed so just append to form
+    elements.push(Selectors.MERCHANT_FORM_SELECTOR);
     return elements;
   }
 
-  /**
-   * Gets all fields which are needed to be submitted.
-   * @param data
-   * @private
-   */
   private _getSubmitFields(data: any) {
     const fields = this._submitFields;
     if (data.hasOwnProperty('jwt') && fields.indexOf('jwt') === -1) {
@@ -112,9 +94,6 @@ class CommonFrames extends RegisterFrames {
     return fields;
   }
 
-  /**
-   * Inits necessary fields - notification and control frame
-   */
   private _initFormFields() {
     const { defaultStyles } = this.styles;
     let { notificationFrame, controlFrame } = this.styles;
@@ -138,11 +117,6 @@ class CommonFrames extends RegisterFrames {
     this.elementsToRegister.push(this._controlFrameMounted);
   }
 
-  /**
-   * Checks enrolled ( _isCardEnrolledAndNotFrictionless ) card with request type and returns boolean.
-   * @param data
-   * @private
-   */
   private _isThreedComplete(data: any): boolean {
     if (this.requestTypes[this.requestTypes.length - 1] === 'THREEDQUERY') {
       return (
@@ -154,11 +128,6 @@ class CommonFrames extends RegisterFrames {
     return false;
   }
 
-  /**
-   * Calls _isThreedComplete if transaction is completed with specified request type.
-   * @param data
-   * @private
-   */
   private _isTransactionFinished(data: any): boolean {
     if (CommonFrames.COMPLETED_REQUEST_TYPES.includes(data.requesttypedescription)) {
       return true;
@@ -168,11 +137,6 @@ class CommonFrames extends RegisterFrames {
     return false;
   }
 
-  /**
-   * Publishes merchant input event to MessageBus each time when 'input' event on form field has been called.
-   * See _setMerchantInputListeners.
-   * @param event
-   */
   private _onInput(event: Event) {
     const messageBusEvent = {
       data: DomMethods.parseMerchantForm(),
@@ -181,13 +145,6 @@ class CommonFrames extends RegisterFrames {
     this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
-  /**
-   * Function which is triggered each time transaction has been completed.
-   * It calls submitCallback specified (or not by merchant) and submits or not
-   * (also specified by merchant) form as well.
-   * @param data
-   * @private
-   */
   private _onTransactionComplete(data: any) {
     if ((this._isTransactionFinished(data) || data.errorcode !== '0') && this._submitCallback) {
       this._validation.blockForm(false);
@@ -200,10 +157,6 @@ class CommonFrames extends RegisterFrames {
     }
   }
 
-  /**
-   * Sets listeners to each merchants form inputs (for validation purposes).
-   * @private
-   */
   private _setMerchantInputListeners() {
     const els = DomMethods.getAllFormElements(this._merchantForm);
     for (const el of els) {
@@ -211,10 +164,6 @@ class CommonFrames extends RegisterFrames {
     }
   }
 
-  /**
-   * Sets listener fo TRANSACTION_COMPLETE event.
-   * @private
-   */
   private _setTransactionCompleteListener() {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE, (data: any) => {
       if (data.walletsource === 'APPLEPAY') {
@@ -230,19 +179,10 @@ class CommonFrames extends RegisterFrames {
     });
   }
 
-  /**
-   * Toggling notification frame.
-   * @private
-   */
   private _shouldLoadNotificationFrame(): boolean {
     return !(this._submitOnError && this._submitOnSuccess);
   }
 
-  /**
-   * Checks if form should be submitted - by checking _submitOnSuccess or _submitOnError and responses status.
-   * @param data
-   * @private
-   */
   private _shouldSubmitForm(data: any): boolean {
     return (
       (this._submitOnSuccess && data.errorcode === '0' && this._isTransactionFinished(data)) ||
@@ -250,5 +190,3 @@ class CommonFrames extends RegisterFrames {
     );
   }
 }
-
-export default CommonFrames;

@@ -1,32 +1,26 @@
 {
   "analytics": true,
   "animatedCard": true,
+  "bypassCards": ["PIBA"],
   "deferInit": false,
+  "fieldsToSubmit": ["pan", "expirydate", "securitycode"],
   "buttonId": "merchant-submit-button",
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3MzgxNjgyMC41OTgyNjcsInBheWxvYWQiOnsibWFpbmFtb3VudCI6IjEwLjAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.EJ6qxpfYEKCoHzK7R9GKoWmoGepgs07eGTJrxFn-LUk",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3OTY5MjQyNC43OTg5Mjc1LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.bj6AUEeRZ51QYYeXvr-SI-2b9TCy9EnSTDQdFEZqKOo",
   "styles": {
     "defaultStyles": {
       "background-color-input": "AliceBlue"
     },
     "cardNumber": {
-      "background-color-input-error": "#e5e8ac",
-      "color-input-error": "#721c24",
-      "font-size-input": "9px",
-      "line-height-input": "9px"
+      "font-size-input": "1.5rem",
+      "line-height-input": "1.6rem"
     },
     "expirationDate": {
-      "background-color-input": "red",
-      "background-color-input-error": "#f8d7da",
-      "color-input-error": "#55FF33",
-      "font-size-input": "12px",
-      "line-height-input": "12px"
+      "font-size-input": "1.5rem",
+      "line-height-input": "1.6rem"
     },
     "securityCode": {
-      "background-color-input": "#FFF333",
-      "background-color-input-error": "#f8d7da",
-      "color-input-error": "#3358FF",
-      "font-size-input": "20px",
-      "line-height-input": "20px"
+      "font-size-input": "1.5rem",
+      "line-height-input": "1.6rem"
     },
     "notificationFrame": {
       "color-error": "#FFF333"

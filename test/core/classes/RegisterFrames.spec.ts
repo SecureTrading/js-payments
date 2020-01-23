@@ -1,4 +1,4 @@
-import RegisterFrames from '../../../src/core/classes/RegisterFrames.class';
+import { RegisterFrames } from '../../../src/core/classes/RegisterFrames.class';
 
 // given
 describe('RegisterFrames', () => {
@@ -11,11 +11,6 @@ describe('RegisterFrames', () => {
       instance.registerElements = jest.fn();
       // @ts-ignore
       instance.onInit();
-    });
-    // then
-    it('should call registerElements method with elementsToRegister and elementsTargets', () => {
-      // @ts-ignore
-      expect(instance.registerElements).toHaveBeenCalledWith([], []);
     });
   });
   // given
@@ -119,6 +114,10 @@ function registerFramesFixture() {
       'line-height-input': '12px'
     }
   };
-  const instance = new RegisterFrames(jwt, origin, componentsIds, styles, animatedCard);
+  const instance = new RegisterFrames(jwt, origin, componentsIds, styles, animatedCard, [
+    'pan',
+    'expirydate',
+    'securitycode'
+  ]);
   return { instance, fields, targets, cardNumberField, securityCodeField, expirationDateField };
 }
