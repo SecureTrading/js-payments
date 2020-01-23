@@ -32,7 +32,7 @@
   "submitOnSuccess": false,
   "submitCallback": "",
   "translations": {
-    "Invalid field": "Wystąpił błąd"
+    "An error occurred": "Wystąpił błąd"
   },
   "components": {},
   "applePay": {
