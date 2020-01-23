@@ -91,12 +91,12 @@
       </div>
       <div id="st-animated-card"></div>
     </form>
-    <script type="text/javascript" src="st.js"></script>
+    <script type="text/javascript" src="<%= WEBSERVICES_URL %>/st.js"></script>
     <script>
       (function() {
         var ST = SecureTrading;
         window
-          .fetch('https://merchant.example.com:8443/config.json')
+          .fetch(`${WEBSERVICES_URL}/config.json`)
           .then(function(response) {
             if (response.status !== 200) {
               return Promise.reject('Configuration has not been set !');
