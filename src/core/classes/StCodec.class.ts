@@ -3,7 +3,7 @@ import Language from '../shared/Language';
 import MessageBus from '../shared/MessageBus';
 import Notification from '../shared/Notification';
 import Selectors from '../shared/Selectors';
-import { StJwt } from '../shared/StJwt';
+import { IStJwtObj, StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
 import Validation from '../shared/Validation';
 
@@ -77,7 +77,6 @@ class StCodec {
     if (StCodec._isInvalidResponse(responseData)) {
       throw StCodec._handleInvalidResponse();
     }
-    console.error(responseData);
     const responseContent: IResponseData = StCodec._determineResponse(responseData);
     StCodec._handleValidGatewayResponse(responseContent, jwtResponse);
     return responseContent;
@@ -259,9 +258,16 @@ class StCodec {
    * @return A JS object ready to be encoded
    */
   public buildRequestObject(requestData: object): object {
+    if (
+      JwtDecode<IStJwtObj>(requestData.jwt).payload.accounttypedescription !==
+      JwtDecode<IStJwtObj>(StCodec.jwt).payload.accounttypedescription
+    ) {
+      StCodec.jwt = requestData.jwt;
+    }
+
     return {
       acceptcustomeroutput: '1.00',
-      jwt: StCodec.jwt,
+      jwt: StCodec.jwt, // @TODO here is wrong jwt set !!!! ->>>> Cybertonica -> here is where jwt has still ECOM :/
       request: [
         {
           ...requestData,
@@ -280,6 +286,8 @@ class StCodec {
    * @return A JSON string for the fetch request body
    */
   public encode(requestObject: IStRequest) {
+    console.error(requestObject);
+    console.error(JSON.stringify(this.buildRequestObject(requestObject)));
     if (
       Object.keys(requestObject).length < StCodec.MINIMUM_REQUEST_FIELDS ||
       !requestObject.requesttypedescriptions.every(val => StCodec.SUPPORTED_REQUEST_TYPES.includes(val))
@@ -287,6 +295,7 @@ class StCodec {
       StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST);
       throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST);
     }
+    console.error(JSON.stringify(this.buildRequestObject(requestObject)));
     return JSON.stringify(this.buildRequestObject(requestObject));
   }
 
@@ -298,8 +307,11 @@ class StCodec {
   public async decode(responseObject: Response | {}): Promise<object> {
     let decoded: any;
     const promise = await new Promise((resolve, reject) => {
+      console.error('json' in responseObject);
       if ('json' in responseObject) {
+        console.error('dupa');
         responseObject.json().then(responseData => {
+          console.error(responseData);
           decoded = StCodec._decodeResponseJwt(responseData.jwt, reject);
           if (decoded && decoded.payload.response[0].errorcode === '0') {
             StCodec.jwt = decoded.payload.jwt;

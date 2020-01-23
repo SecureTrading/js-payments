@@ -113,7 +113,7 @@ class Cybertonica {
       },
       {
         jwt:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ3ZWJzZXJ2aWNlc0BtZXJjaGFudC5jb20iLCJpYXQiOjE1Nzk2MjExNDkuOTExNzg4LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiI1MTg4IiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiJ9fQ.mQp88kdtc6GY_9BkndvGcGzXQ1jh0NRR_ATD1jGtjvs'
+          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3OTc4NjUwOC4wODQ0MTYyLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkZSQVVEQ09OVFJPTCIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdF9qYW1lczM4NjQxIiwibG9jYWxlIjoiZW5fR0IifX0.hBHZB2XooJCfEspU0psAMRWd5mEuYaOsPh8tkja2ZJQ'
       }
     );
     return this._stTransport.sendRequest(data);
@@ -121,10 +121,11 @@ class Cybertonica {
 
   private _postQuery(data: ICybertonicaPostQuery): Promise<{}> {
     // @ts-ignore
-    this._sendRequest().then((response: any) => {
-      console.error(response);
-    });
-    return new Promise((resolve, reject) => (this._shouldPaymentProceed(data) ? resolve(data) : reject(false)));
+    return this._sendRequest()
+      .then((response: any) => {
+        console.error(response);
+      })
+      .catch((error: any) => error);
   }
 
   private _publishLoadingStatus(status: boolean): void {
@@ -138,6 +139,7 @@ class Cybertonica {
   }
 
   private _publishPostResponse(status: ICybertonicaPostResponse): ICybertonicaPostResponse {
+    console.error(status);
     this._messageBus.publishFromParent(
       {
         data: status,
