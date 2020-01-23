@@ -1,5 +1,5 @@
-import Payment from '../../../src/core/shared/Payment';
-import StTransport from '../../../src/core/classes/StTransport.class';
+import { Payment } from '../../../src/core/shared/Payment';
+import { StTransport } from '../../../src/core/classes/StTransport.class';
 import { StJwt } from '../../../src/core/shared/StJwt';
 
 // given
@@ -22,14 +22,14 @@ describe('Payment', () => {
   });
 
   // given
-  describe('byPassInitRequest()', () => {
+  describe('bypassInitRequest()', () => {
     const { cachetoken } = paymentFixture();
     // when
     beforeEach(() => {
       // @ts-ignore
       instance._stTransport.sendRequest = jest.fn();
     });
-    instance.byPassInitRequest(cachetoken);
+    instance.bypassInitRequest(cachetoken);
     // @ts-ignore
     expect(instance._cardinalCommerceCacheToken).toEqual(cachetoken);
   });

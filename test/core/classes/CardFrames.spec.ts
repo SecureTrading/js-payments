@@ -1,8 +1,9 @@
 import { CardFrames } from '../../../src/core/classes/CardFrames.class';
-import DomMethods from '../../../src/core/shared/DomMethods';
-import Language from '../../../src/core/shared/Language';
-import MessageBus from '../../../src/core/shared/MessageBus';
-import Selectors from '../../../src/core/shared/Selectors';
+import { BypassCards } from '../../../src/core/models/constants/BypassCards';
+import { DomMethods } from '../../../src/core/shared/DomMethods';
+import { Language } from '../../../src/core/shared/Language';
+import { MessageBus } from '../../../src/core/shared/MessageBus';
+import { Selectors } from '../../../src/core/shared/Selectors';
 
 // given
 describe('CardFrames', () => {
@@ -158,10 +159,9 @@ describe('CardFrames', () => {
     const submitFormEvent = {
       data: {
         // @ts-ignore
-        updateJWT: undefined,
-        // @ts-ignore
         deferInit: undefined,
-        fieldsToSubmit: ['pan', 'expirydate', 'securitycode']
+        fieldsToSubmit: ['pan', 'expirydate', 'securitycode'],
+        bypassCards: ['PIBA']
       },
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
@@ -362,7 +362,9 @@ function cardFramesFixture() {
     false,
     'merchant-submit-button',
     false,
-    ['pan', 'expirydate', 'securitycode']
+    ['pan', 'expirydate', 'securitycode'],
+    [BypassCards.PIBA]
   );
+  instance.init();
   return { instance };
 }

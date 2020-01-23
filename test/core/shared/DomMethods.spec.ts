@@ -1,5 +1,5 @@
 import SpyInstance = jest.SpyInstance;
-import DomMethods from '../../../src/core/shared/DomMethods';
+import { DomMethods } from '../../../src/core/shared/DomMethods';
 
 // given
 describe('DomMethods', () => {

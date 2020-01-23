@@ -1,351 +1,154 @@
-import Joi from 'joi';
 import JwtDecode from 'jwt-decode';
 import 'location-origin';
 import { debounce } from 'lodash';
 import 'url-polyfill';
 import 'whatwg-fetch';
 import { CardFrames } from './core/classes/CardFrames.class';
-import CommonFrames from './core/classes/CommonFrames.class';
+import { CommonFrames } from './core/classes/CommonFrames.class';
 import { MerchantFields } from './core/classes/MerchantFields';
 import { StCodec } from './core/classes/StCodec.class';
-import ApplePay from './core/integrations/ApplePay';
-import ApplePayMock from './core/integrations/ApplePayMock';
+import { ApplePay } from './core/integrations/ApplePay';
+import { ApplePayMock } from './core/integrations/ApplePayMock';
 import { CardinalCommerce } from './core/integrations/CardinalCommerce';
-import CardinalCommerceMock from './core/integrations/CardinalCommerceMock';
-import GoogleAnalytics from './core/integrations/GoogleAnalytics';
-import VisaCheckout from './core/integrations/VisaCheckout';
-import VisaCheckoutMock from './core/integrations/VisaCheckoutMock';
-import {
-  IComponentsConfig,
-  IComponentsConfigSchema,
-  IConfig,
-  IConfigSchema,
-  IWalletConfig
-} from './core/models/Config';
-import MessageBus from './core/shared/MessageBus';
-import Selectors from './core/shared/Selectors';
-import { IStJwtObj } from './core/shared/StJwt';
-import { IStyles } from './core/shared/Styler';
-import Utils from './core/shared/Utils';
+import { CardinalCommerceMock } from './core/integrations/CardinalCommerceMock';
+import { GoogleAnalytics } from './core/integrations/GoogleAnalytics';
+import { VisaCheckout } from './core/integrations/VisaCheckout';
+import { VisaCheckoutMock } from './core/integrations/VisaCheckoutMock';
+import { IApplePayConfig } from './core/models/IApplePayConfig';
+import { IComponentsConfig } from './core/models/IComponentsConfig';
+import { IConfig } from './core/models/IConfig';
+import { IStJwtObj } from './core/models/IStJwtObj';
+import { IVisaConfig } from './core/models/IVisaConfig';
+import { BrowserLocalStorage } from './core/services/BrowserLocalStorage';
+import { Config } from './core/services/Config';
+import { MessageBus } from './core/shared/MessageBus';
+import { Translator } from './core/shared/Translator';
 import { environment } from './environments/environment';
 
 class ST {
-  private static DEFAULT_COMPONENTS = {
-    cardNumber: Selectors.CARD_NUMBER_INPUT_SELECTOR,
-    expirationDate: Selectors.EXPIRATION_DATE_INPUT_SELECTOR,
-    notificationFrame: Selectors.NOTIFICATION_FRAME_ID,
-    securityCode: Selectors.SECURITY_CODE_INPUT_SELECTOR
-  };
-
-  private static EXTENDED_CONFIGURATION = {
-    animatedCard: Selectors.ANIMATED_CARD_INPUT_SELECTOR,
-    ...ST.DEFAULT_COMPONENTS
-  };
-  private static TRANSLATION_STORAGE_NAME = 'merchantTranslations';
-
-  private static _addDefaults(config: IConfig) {
-    const configWithFeatures = ST._addDefaultFeatures(config);
-    const configWithSubmitFields = ST._addDefaultSubmitFields(configWithFeatures);
-    return ST._addDefaultComponentIds(configWithSubmitFields);
-  }
-
-  private static _addDefaultFeatures(config: IConfig) {
-    const defaultFeatures: IConfig = config;
-    defaultFeatures.origin = config.origin ? config.origin : window.location.origin;
-    defaultFeatures.submitOnSuccess = config.submitOnSuccess !== undefined ? config.submitOnSuccess : true;
-    defaultFeatures.submitOnError = config.submitOnError !== undefined ? config.submitOnError : false;
-    defaultFeatures.animatedCard = config.animatedCard !== undefined ? config.animatedCard : true;
-    return defaultFeatures;
-  }
-
-  private static _addDefaultSubmitFields(config: IConfig) {
-    const defaultSubmitFields: IConfig = config;
-    defaultSubmitFields.submitFields = config.submitFields
-      ? config.submitFields
-      : [
-          'baseamount',
-          'currencyiso3a',
-          'eci',
-          'enrolled',
-          'errorcode',
-          'errordata',
-          'errormessage',
-          'orderreference',
-          'settlestatus',
-          'status',
-          'transactionreference'
-        ];
-    return defaultSubmitFields;
-  }
-
-  private static _addDefaultComponentIds(config: IConfig) {
-    const defaultConfig: IConfig = config;
-    const { animatedCard, componentIds, styles } = config;
-
-    defaultConfig.styles = styles ? styles : {};
-    defaultConfig.componentIds = componentIds ? componentIds : {};
-
-    ST._hasConfigurationObjectsSameLength(defaultConfig.componentIds);
-
-    if (animatedCard) {
-      defaultConfig.componentIds = defaultConfig.componentIds
-        ? { ...ST.EXTENDED_CONFIGURATION, ...defaultConfig.componentIds }
-        : ST.EXTENDED_CONFIGURATION;
-    } else {
-      defaultConfig.componentIds = defaultConfig.componentIds
-        ? { ...ST.DEFAULT_COMPONENTS, ...defaultConfig.componentIds }
-        : ST.DEFAULT_COMPONENTS;
-    }
-
-    return defaultConfig;
-  }
-
-  private static _hasConfigurationObjectsSameLength(componentIds: any): boolean {
-    const isConfigurationCorrect: boolean =
-      Object.keys(componentIds).length === Object.keys(ST.EXTENDED_CONFIGURATION).length ||
-      Object.keys(componentIds).length === Object.keys(ST.DEFAULT_COMPONENTS).length ||
-      Object.keys(componentIds).length === 0;
-    if (!isConfigurationCorrect) {
-      alert('Form fields configuration is not correct');
-      throw new Error('Form fields configuration is not correct');
-    }
-    return isConfigurationCorrect;
-  }
-
-  private static _validateConfig(config: IConfig | IComponentsConfig, schema: Joi.JoiObject) {
-    Joi.validate(config, schema, (error, value) => {
-      if (error !== null) {
-        throw error;
-      }
-    });
-  }
-
-  private static _setConfigObject(config: IComponentsConfig) {
-    let targetConfig: IComponentsConfig;
-    targetConfig = config ? config : ({} as IComponentsConfig);
-    targetConfig.startOnLoad = targetConfig.startOnLoad !== undefined ? targetConfig.startOnLoad : false;
-    targetConfig.requestTypes =
-      targetConfig.requestTypes !== undefined ? targetConfig.requestTypes : ['THREEDQUERY', 'AUTH'];
-    return { targetConfig };
-  }
-
-  private static _configureCommonFrames(
-    jwt: string,
-    origin: string,
-    componentIds: {},
-    styles: {},
-    submitOnSuccess: boolean,
-    submitOnError: boolean,
-    submitFields: string[],
-    gatewayUrl: string,
-    animatedCard: boolean,
-    submitCallback?: any
-  ) {
-    return new CommonFrames(
-      jwt,
-      origin,
-      componentIds,
-      styles,
-      submitOnSuccess,
-      submitOnError,
-      submitFields,
-      gatewayUrl,
-      animatedCard,
-      submitCallback
-    );
-  }
-
-  private static _configureMerchantFields() {
-    return new MerchantFields();
-  }
-
-  private static _configureCardFrames(
-    jwt: string,
-    origin: string,
-    componentIds: {},
-    styles: IStyles,
-    config: IComponentsConfig,
-    animatedCard: boolean,
-    deferInit: boolean,
-    buttonId: string,
-    fieldsToSubmit: string[]
-  ) {
-    const { defaultPaymentType, paymentTypes, startOnLoad } = config;
-    let cardFrames: object;
-    if (!startOnLoad) {
-      cardFrames = new CardFrames(
-        jwt,
-        origin,
-        componentIds,
-        styles,
-        paymentTypes,
-        defaultPaymentType,
-        animatedCard,
-        deferInit,
-        buttonId,
-        startOnLoad,
-        fieldsToSubmit
-      );
-    }
-    return cardFrames;
-  }
-
-  private readonly _animatedCard: boolean;
-  private _cachetoken: string;
-  private _componentIds: {};
-  private _gatewayUrl: string;
-  private _jwt: string;
-  private _origin: string;
-  private _styles: IStyles;
-  private _submitFields: string[];
-  private _submitOnError: boolean;
-  private _submitOnSuccess: boolean;
-  private readonly _config: IConfig;
-  private readonly _livestatus: number = 0;
-  private readonly _submitCallback: any;
-  private readonly _threedinit: string;
-  private commonFrames: CommonFrames;
-  private _messageBus: MessageBus;
+  private static DEBOUNCE_JWT_VALUE: number = 900;
+  private static JWT_NOT_SPECIFIED_MESSAGE: string = 'Jwt has not been specified';
+  private static LOCALE_STORAGE: string = 'locale';
+  private static MERCHANT_TRANSLATIONS_STORAGE: string = 'merchantTranslations';
+  private _cardFrames: CardFrames;
+  private _commonFrames: CommonFrames;
+  private _config: IConfig;
+  private _configuration: Config;
+  private _googleAnalytics: GoogleAnalytics;
   private _merchantFields: MerchantFields;
-  private _deferInit: boolean;
-  private _buttonId: string;
-  private fieldsToSubmit: string[];
+  private _messageBus: MessageBus;
+  private _storage: BrowserLocalStorage;
+  private _translation: Translator;
 
   constructor(config: IConfig) {
-    const {
-      analytics,
-      animatedCard,
-      buttonId,
-      deferInit,
-      fieldsToSubmit,
-      init,
-      livestatus,
-      submitCallback,
-      translations
-    } = config;
-    if (init) {
-      const { cachetoken, threedinit } = init;
-      this._cachetoken = cachetoken;
-      this._threedinit = threedinit;
-    }
-    this.fieldsToSubmit = fieldsToSubmit ? fieldsToSubmit : ['pan', 'expirydate', 'securitycode'];
-    this._messageBus = new MessageBus();
+    this._configuration = new Config();
+    this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
-    this._livestatus = livestatus;
-    this._animatedCard = animatedCard;
-    this._buttonId = buttonId;
-    this._submitCallback = submitCallback;
-    this._initGoogleAnalytics(analytics);
-    this._config = ST._addDefaults(config);
-    this._deferInit = deferInit;
-    Utils.setLocalStorageItem(ST.TRANSLATION_STORAGE_NAME, translations);
-    ST._validateConfig(this._config, IConfigSchema);
-    this._setClassProperties(this._config);
-    Utils.setLocalStorageItem('locale', JwtDecode<IStJwtObj>(this._jwt).payload.locale);
-    this.commonFrames = ST._configureCommonFrames(
-      this._jwt,
-      this._origin,
-      this._componentIds,
-      this._styles,
-      this._submitOnSuccess,
-      this._submitOnError,
-      this._submitFields,
-      this._gatewayUrl,
-      this._animatedCard,
-      this._submitCallback
-    );
+    this._messageBus = new MessageBus();
+    this._storage = new BrowserLocalStorage();
+    this.init(config);
+  }
+
+  public Components(config: IComponentsConfig): void {
+    this._config.components = config;
+    this.CardFrames(this._config);
+    this._cardFrames.init();
     this._merchantFields.init();
   }
 
-  public Components(config?: IComponentsConfig) {
-    const { targetConfig } = ST._setConfigObject(config);
-    ST._validateConfig(targetConfig, IComponentsConfigSchema);
-    ST._configureCardFrames(
-      this._jwt,
-      this._origin,
-      this._componentIds,
-      this._styles,
-      targetConfig,
-      this._animatedCard,
-      this._deferInit,
-      this._buttonId,
-      this.fieldsToSubmit
-    );
-    this.commonFrames.requestTypes = targetConfig.requestTypes;
-    this.CardinalCommerce(targetConfig);
+  public ApplePay(config: IApplePayConfig): ApplePay {
+    const { applepay } = this.Environment();
+
+    return new applepay(config, this._config.jwt, this._config.datacenterurl);
   }
 
-  public ApplePay(config: IWalletConfig) {
-    const applepay = environment.testEnvironment ? ApplePayMock : ApplePay;
-    config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
-    return new applepay(config, this._jwt, this._gatewayUrl);
+  public VisaCheckout(config: IVisaConfig): VisaCheckout {
+    const { visa } = this.Environment();
+
+    return new visa(config, this._config.jwt, this._config.datacenterurl, this._config.livestatus);
   }
 
-  public VisaCheckout(config: IWalletConfig) {
-    const visa = environment.testEnvironment ? VisaCheckoutMock : VisaCheckout;
-    config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
-    return new visa(config, this._jwt, this._gatewayUrl, this._livestatus);
-  }
-
-  public updateJWT(newJWT: string) {
-    if (newJWT) {
-      this._jwt = newJWT;
+  public updateJWT(jwt: string): void {
+    if (jwt) {
+      this._config.jwt = jwt;
       (() => {
-        const a = StCodec.updateJWTValue(newJWT);
-        debounce(() => a, 900);
+        const a = StCodec.updateJWTValue(jwt);
+        debounce(() => a, ST.DEBOUNCE_JWT_VALUE);
       })();
     } else {
-      throw Error('Jwt has not been specified');
+      throw Error(this._translation.translate(ST.JWT_NOT_SPECIFIED_MESSAGE));
     }
   }
 
-  private CardinalCommerce(config: IWalletConfig) {
-    const cardinal = environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce;
+  private init(config: IConfig): void {
+    this._config = this._configuration.init(config);
+    this.Storage(this._config);
+    this._translation = new Translator(this._storage.getItem(ST.LOCALE_STORAGE));
+    this._googleAnalytics.init();
+    this.CommonFrames(this._config);
+    this._commonFrames.init();
+    this.CardinalCommerce();
+  }
+
+  private CardinalCommerce(): CardinalCommerce {
+    const { cardinal } = this.Environment();
+
     return new cardinal(
-      config.startOnLoad,
-      this._jwt,
-      config.requestTypes,
-      this._livestatus,
-      this._cachetoken,
-      this._threedinit
+      this._config.components.startOnLoad,
+      this._config.jwt,
+      this._config.components.requestTypes,
+      this._config.livestatus,
+      this._config.init.cachetoken,
+      this._config.init.threedinit,
+      this._config.bypassCards
     );
   }
 
-  private _initGoogleAnalytics(init: boolean) {
-    if (init) {
-      const ga = new GoogleAnalytics();
-    } else {
-      return false;
-    }
+  private CardFrames(config: IConfig): void {
+    this._cardFrames = new CardFrames(
+      config.jwt,
+      config.origin,
+      config.componentIds,
+      config.styles,
+      config.components.paymentTypes,
+      config.components.defaultPaymentType,
+      config.animatedCard,
+      config.deferInit,
+      config.buttonId,
+      config.components.startOnLoad,
+      config.fieldsToSubmit,
+      config.bypassCards
+    );
   }
 
-  private _setClassProperties(config: IConfig) {
-    const {
-      componentIds,
-      jwt,
-      init,
-      origin,
-      styles,
-      submitFields,
-      submitOnError,
-      submitOnSuccess,
-      datacenterurl,
-      formId
-    } = config;
-    this._componentIds = componentIds;
-    this._jwt = jwt;
-    if (init) {
-      this._cachetoken = init.cachetoken;
-    }
-    this._origin = origin;
-    this._styles = styles;
-    this._submitFields = submitFields;
-    this._submitOnError = submitOnError;
-    this._submitOnSuccess = submitOnSuccess;
-    this._gatewayUrl = datacenterurl ? datacenterurl : environment.GATEWAY_URL;
-    Selectors.MERCHANT_FORM_SELECTOR = formId ? formId : Selectors.MERCHANT_FORM_SELECTOR;
+  private CommonFrames(config: IConfig): void {
+    this._commonFrames = new CommonFrames(
+      config.jwt,
+      config.origin,
+      config.componentIds,
+      config.styles,
+      config.submitOnSuccess,
+      config.submitOnError,
+      config.submitFields,
+      config.datacenterurl,
+      config.animatedCard,
+      config.submitCallback,
+      config.components.requestTypes
+    );
+  }
+
+  private Environment(): { applepay: any; cardinal: any; visa: any } {
+    return {
+      applepay: environment.testEnvironment ? ApplePayMock : ApplePay,
+      cardinal: environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce,
+      visa: environment.testEnvironment ? VisaCheckoutMock : VisaCheckout
+    };
+  }
+
+  private Storage(config: IConfig): void {
+    this._storage.setItem(ST.MERCHANT_TRANSLATIONS_STORAGE, JSON.stringify(config.translations));
+    this._storage.setItem(ST.LOCALE_STORAGE, JwtDecode<IStJwtObj>(config.jwt).payload.locale);
   }
 }
 
-export { ST };
 export default (config: IConfig) => new ST(config);
