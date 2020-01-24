@@ -1,6 +1,7 @@
 import { Cybertonica } from '../../../src/core/integrations/Cybertonica';
-import { ICybertonicaInitQuery, ICybertonicaPostQuery } from '../../../src/core/models/Cybertonica';
 import { environment } from '../../../src/environments/environment';
+import { ICybertonicaInitQuery } from '../../../src/core/models/cybertonica/CybertonicaInitQuery';
+import { ICybertonicaPostQuery } from '../../../src/core/models/cybertonica/CybertonicaPostQuery';
 
 // given
 describe('Cybertonica', () => {

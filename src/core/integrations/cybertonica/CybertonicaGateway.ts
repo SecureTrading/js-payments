@@ -1,5 +1,6 @@
-import {ICybertonicaPostQuery, ICybertonicaPostResponse} from '../../models/Cybertonica';
 import {StTransport} from '../../classes/StTransport.class';
+import { ICybertonicaPostQuery } from '../../models/cybertonica/CybertonicaPostQuery';
+import { ICybertonicaPostResponse } from '../../models/cybertonica/CybertonicaPostResponse';
 
 export interface ICybertonicaGateway {
   postQuery(query: ICybertonicaPostQuery): Promise<ICybertonicaPostResponse>;

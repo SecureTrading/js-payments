@@ -1,9 +1,9 @@
 import { ICybertonicaGateway } from './CybertonicaGateway';
+import { ICybertonicaPostQuery } from '../../models/cybertonica/CybertonicaPostQuery';
 import {
-  ICybertonicaPostQuery,
   ICybertonicaPostResponse,
   ICybertonicaPostResponseStatus
-} from '../../models/Cybertonica';
+} from '../../models/cybertonica/CybertonicaPostResponse';
 
 export class MockedCybertonicaGateway implements ICybertonicaGateway {
   /** @todo: remove static after implementing DI and singleton services */

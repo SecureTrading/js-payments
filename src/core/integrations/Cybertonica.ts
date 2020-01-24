@@ -1,10 +1,7 @@
 import { environment } from '../../environments/environment';
 import {
-  IAFCybertonica,
-  ICybertonicaInitQuery,
-  ICybertonicaPostQuery, ICybertonicaPostResponse,
-  ICybertonicaPostResponseStatus
-} from '../models/Cybertonica';
+  IAFCybertonica
+} from '../models/cybertonica/Cybertonica';
 import DomMethods from '../shared/DomMethods';
 import MessageBus from '../shared/MessageBus';
 import Notification from '../shared/Notification';
@@ -13,6 +10,12 @@ import { Translator } from '../shared/Translator';
 import GoogleAnalytics from './GoogleAnalytics';
 import { CybertonicaGateway, ICybertonicaGateway } from './cybertonica/CybertonicaGateway';
 import { MockedCybertonicaGateway } from './cybertonica/MockedCybertonicaGateway';
+import { ICybertonicaInitQuery } from '../models/cybertonica/CybertonicaInitQuery';
+import { ICybertonicaPostQuery } from '../models/cybertonica/CybertonicaPostQuery';
+import {
+  ICybertonicaPostResponse,
+  ICybertonicaPostResponseStatus
+} from '../models/cybertonica/CybertonicaPostResponse';
 
 declare const AFCYBERTONICA: IAFCybertonica;
 
