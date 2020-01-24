@@ -1,5 +1,5 @@
 import { IStRequest } from '../classes/StCodec.class';
-import StTransport from '../classes/StTransport.class';
+import {StTransport} from '../classes/StTransport.class';
 import { ICard } from '../models/Card';
 import { IMerchantData } from '../models/MerchantData';
 import Notification from './Notification';

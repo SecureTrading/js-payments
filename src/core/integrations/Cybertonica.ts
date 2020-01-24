@@ -1,10 +1,9 @@
 import { environment } from '../../environments/environment';
-import StTransport from '../classes/StTransport.class';
 import {
   IAFCybertonica,
   ICybertonicaInitQuery,
-  ICybertonicaPostQuery,
-  ICybertonicaPostResponse
+  ICybertonicaPostQuery, ICybertonicaPostResponse,
+  ICybertonicaPostResponseStatus
 } from '../models/Cybertonica';
 import DomMethods from '../shared/DomMethods';
 import MessageBus from '../shared/MessageBus';
@@ -12,10 +11,12 @@ import Notification from '../shared/Notification';
 import Selectors from '../shared/Selectors';
 import { Translator } from '../shared/Translator';
 import GoogleAnalytics from './GoogleAnalytics';
+import { CybertonicaGateway, ICybertonicaGateway } from './cybertonica/CybertonicaGateway';
+import { MockedCybertonicaGateway } from './cybertonica/MockedCybertonicaGateway';
 
 declare const AFCYBERTONICA: IAFCybertonica;
 
-class Cybertonica {
+export class Cybertonica {
   private static API_USER_NAME: string = 'test';
   private static ERROR_KEY: string = 'An error occurred';
   private static LOAD_SCRIPT_LISTENER: string = 'load';
@@ -23,19 +24,20 @@ class Cybertonica {
   private static SCRIPT_TARGET: string = 'head';
 
   private _messageBus: MessageBus;
-  private _stTransport: StTransport;
   private _notification: Notification;
-  private _scriptLoaded: boolean;
   private _sdkAddress: string;
   private _tid: string;
   private _translator: Translator;
+  private _gateway: ICybertonicaGateway;
 
   constructor(jwt: string, gatewayUrl: string) {
     this._sdkAddress = environment.CYBERTONICA.CYBERTONICA_LIVE_URL;
     this._messageBus = new MessageBus();
     this._notification = new Notification();
-    this._stTransport = new StTransport({ jwt, gatewayUrl });
     this._translator = new Translator(localStorage.getItem(Cybertonica.LOCALE));
+    this._gateway = environment.testEnvironment ?
+      new MockedCybertonicaGateway() :
+      new CybertonicaGateway(jwt, gatewayUrl);
   }
 
   public init(): void {
@@ -64,12 +66,12 @@ class Cybertonica {
       const postData: ICybertonicaPostQuery = {
         expirydate,
         pan,
-        response: { status: 'DENY' },
         securitycode,
         tid: this._tid
       };
-      this._postQuery(postData)
-        .then((response: ICybertonicaPostResponse) => this._publishPostResponse(response))
+
+      this._gateway.postQuery(postData)
+        .then((response: ICybertonicaPostResponse) => this._publishPostResponse(response.fraudcontrolshieldstatuscode))
         .then(response => this._authorizePayment(response))
         .catch(error => {
           this._notification.error(
@@ -81,11 +83,12 @@ class Cybertonica {
     });
   }
 
-  private _authorizePayment(data: ICybertonicaPostResponse): void {
+  private _authorizePayment(data: ICybertonicaPostResponseStatus): void {
     const messageBusEvent: IMessageBusEvent = {
       data,
       type: MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS
     };
+
     this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
     GoogleAnalytics.sendGaData('event', 'Cybertonica', 'auth', 'Cybertonica auth completed');
   }
@@ -101,33 +104,6 @@ class Cybertonica {
     });
   }
 
-  private _sendRequest() {
-    const data = Object.assign(
-      { requesttypedescriptions: ['RISKDEC'] },
-      {
-        securitycode: '123',
-        accounttypedescription: 'FRAUDCONTROL',
-        expirydate: '12/2099',
-        pan: '4000000000000721',
-        fraudcontroltransactionid: '123456789'
-      },
-      {
-        jwt:
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3OTc4NjUwOC4wODQ0MTYyLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkZSQVVEQ09OVFJPTCIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdF9qYW1lczM4NjQxIiwibG9jYWxlIjoiZW5fR0IifX0.hBHZB2XooJCfEspU0psAMRWd5mEuYaOsPh8tkja2ZJQ'
-      }
-    );
-    return this._stTransport.sendRequest(data);
-  }
-
-  private _postQuery(data: ICybertonicaPostQuery): Promise<{}> {
-    // @ts-ignore
-    return this._sendRequest()
-      .then((response: any) => {
-        console.error(response);
-      })
-      .catch((error: any) => error);
-  }
-
   private _publishLoadingStatus(status: boolean): void {
     this._messageBus.publishFromParent(
       {
@@ -138,7 +114,7 @@ class Cybertonica {
     );
   }
 
-  private _publishPostResponse(status: ICybertonicaPostResponse): ICybertonicaPostResponse {
+  private _publishPostResponse(status: ICybertonicaPostResponseStatus): ICybertonicaPostResponseStatus {
     console.error(status);
     this._messageBus.publishFromParent(
       {
@@ -149,9 +125,4 @@ class Cybertonica {
     );
     return status;
   }
-
-  private _shouldPaymentProceed = (data: ICybertonicaPostQuery): boolean =>
-    data.response.status === 'ALLOW' || data.response.status === 'CHALLENGE';
 }
-
-export { Cybertonica };

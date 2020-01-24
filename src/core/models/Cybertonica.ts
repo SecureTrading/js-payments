@@ -1,4 +1,4 @@
-interface IAFCybertonica {
+export interface IAFCybertonica {
   _deviceId: number;
   _refferer: string;
   _sendEvents: void;
@@ -15,23 +15,38 @@ interface IAFCybertonica {
   postInfo: void;
 }
 
-interface ICybertonicaInitQuery {
+export interface ICybertonicaInitQuery {
   deferInit: boolean;
   cybertonicaApiKey: string;
   expirydate: string;
   pan: string;
   securitycode: string;
 }
-interface ICybertonicaPostQuery {
+
+export interface ICybertonicaPostQuery {
   expirydate: string;
   pan: string;
   securitycode: string;
   tid: string;
-  response: ICybertonicaPostResponse;
 }
 
-interface ICybertonicaPostResponse {
+export interface ICybertonicaPostResponse {
+  transactionreference: string;
+  paymenttypedescription: string;
+  rulecategoryflag: string;
+  maskedpan: string;
+  transactionstartedtimestamp: string;
+  errormessage: string;
+  accounttypedescription: string;
+  errorcode: string;
+  fraudcontrolshieldstatuscode: ICybertonicaPostResponseStatus;
+  fraudcontrolreference: string;
+  requesttypedescription: string;
+  acquirerneuralscore: string;
+  operatorname: string;
+  livestatus: string;
+}
+
+export interface ICybertonicaPostResponseStatus {
   status: 'ALLOW' | 'CHALLENGE' | 'DENY';
 }
-
-export { IAFCybertonica, ICybertonicaInitQuery, ICybertonicaPostResponse, ICybertonicaPostQuery };

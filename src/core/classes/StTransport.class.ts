@@ -14,7 +14,7 @@ import { IStRequest, StCodec } from './StCodec.class';
  *     sitereference: 'test_james38641'
  *   }).then();
  */
-class StTransport {
+export class StTransport {
   public get codec() {
     return this._codec;
   }
@@ -46,14 +46,12 @@ class StTransport {
    * @return A Promise object that resolves the gateway response
    */
   public async sendRequest(requestObject: IStRequest) {
-    console.error({ ...StTransport.DEFAULT_FETCH_OPTIONS, body: this._codec.encode(requestObject) });
     return this._fetchRetry(this._gatewayUrl, {
       ...StTransport.DEFAULT_FETCH_OPTIONS,
       body: this._codec.encode(requestObject)
     })
       .then(this._codec.decode)
       .catch(() => {
-        console.error('dupa');
         return this._codec.decode({});
       });
   }
@@ -86,5 +84,3 @@ class StTransport {
     );
   }
 }
-
-export default StTransport;
