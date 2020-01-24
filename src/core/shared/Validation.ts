@@ -13,7 +13,7 @@ import { Translator } from './Translator';
 import { Utils } from './Utils';
 // @ts-ignore
 import { PaymentsUtils } from '@securetrading/js-payments-utils';
-import { BrandDetailsType } from '@securetrading/js-payments-utils/types'
+import { BrandDetailsType } from '@securetrading/js-payments-utils/types';
 
 const {
   VALIDATION_ERROR_FIELD_IS_REQUIRED,
