@@ -1,5 +1,5 @@
-import MessageBus from '../shared/MessageBus';
-import Validation from '../shared/Validation';
+import { MessageBus } from '../shared/MessageBus';
+import { Validation } from '../shared/Validation';
 
 export class MerchantFields {
   private static readonly ADJACENT_HTML_PLACEMENT: InsertPosition = 'afterend';

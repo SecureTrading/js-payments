@@ -1,4 +1,4 @@
-import RegisterFrames from '../../../src/core/classes/RegisterFrames.class';
+import { RegisterFrames } from '../../../src/core/classes/RegisterFrames.class';
 
 // given
 describe('RegisterFrames', () => {

@@ -1,16 +1,7 @@
-import Selectors from './shared/Selectors';
-import { IStyle } from './shared/Styler';
+import { IStyle } from '../models/IStyle';
+import { Selectors } from '../shared/Selectors';
 
-/***
- * Defines input with iframe source
- * Can be styled by predefined JSON.
- */
-export default class Element {
-  /***
-   * Function which defines iframe src attribute
-   * @param name Component name
-   * @returns URL of input iframe
-   */
+export class Element {
   public static getComponentAddress(name: string): string {
     if (name === Selectors.CARD_NUMBER_COMPONENT_NAME) {
       return Selectors.CARD_NUMBER_COMPONENT;
@@ -29,11 +20,6 @@ export default class Element {
     }
   }
 
-  /**
-   * Method for creating DOM elements
-   * @param type Type of element which we are creating
-   * @param id ID of element
-   */
   private static createFormElement = (type: string, id: string) => {
     const element = document.createElement(type);
     element.setAttribute('id', id);
@@ -64,12 +50,6 @@ export default class Element {
     this._name = '';
   }
 
-  /**
-   * Method for creating element in iframe
-   * @param elementName Name of input which we want to create
-   * @param params
-   * @param styles
-   */
   public create(elementName: string, styles?: IStyle, params?: object) {
     const componentAddress = Element.getComponentAddress(elementName);
     // @ts-ignore
@@ -81,10 +61,6 @@ export default class Element {
     this._iframeSrc = `${componentAddress}?${componentStyles}${componentParams ? '&' + componentParams : ''}`;
   }
 
-  /**
-   * Method returns 'iframed input', styled and ready to be registered in clients form
-   * @param fieldId ID of field on which iframe input field will be mounted
-   */
   public mount(fieldId: string, tabindex?: string) {
     const iframe = Element.createFormElement('iframe', fieldId);
     iframe.setAttribute('src', this.iframeSrc);

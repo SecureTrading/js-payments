@@ -1,5 +1,5 @@
 import each from 'jest-each';
-import Frame from '../../../src/core/shared/Frame';
+import { Frame } from '../../../src/core/shared/Frame';
 
 describe('Frame', () => {
   each([

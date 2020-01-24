@@ -1,10 +1,14 @@
 {
   "analytics": true,
   "animatedCard": true,
+  "bypassCards": ["PIBA"],
   "deferInit": false,
   "fieldsToSubmit": ["pan", "expirydate", "securitycode"],
   "buttonId": "merchant-submit-button",
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3OTc5MTgwMC41MzY1NTM2LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.-4DYekgKekM5cohholcgLUfy7bU0lko_v-sb-U6z2vk",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3OTYwNTAwNC4xMzUwODA4LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.efwL4TAnAMKh920YO5h8Akifl5Soaldffoy_M-K1b4I",
+  "cybertonica": {
+    "apikey": ""
+  },
   "styles": {
     "defaultStyles": {
       "background-color-input": "AliceBlue"
@@ -34,9 +38,6 @@
     "An error occurred": "Wystąpił błąd"
   },
   "components": {},
-  "cybertonica": {
-    "apikey": "test"
-  },
   "applePay": {
     "buttonStyle": "white-outline",
     "buttonText": "donate",

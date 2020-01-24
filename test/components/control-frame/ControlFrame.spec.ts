@@ -1,8 +1,8 @@
 import { ControlFrame } from '../../../src/components/control-frame/ControlFrame';
 import { StCodec } from '../../../src/core/classes/StCodec.class';
-import { IFormFieldState } from '../../../src/core/shared/FormFieldState';
-import Language from '../../../src/core/shared/Language';
-import MessageBus from '../../../src/core/shared/MessageBus';
+import { IFormFieldState } from '../../../src/core/models/IFormFieldState';
+import { Language } from '../../../src/core/shared/Language';
+import { MessageBus } from '../../../src/core/shared/MessageBus';
 
 jest.mock('./../../../src/core/shared/Payment');
 
@@ -98,16 +98,16 @@ describe('ControlFrame', () => {
   });
 
   // given
-  describe('_initByPassInitEvent()', () => {
+  describe('_initBypassInitEvent()', () => {
     // then
-    it('should call _onByPassInitEvent when BY_PASS_INIT event has been called', () => {
+    it('should call _onBypassInitEvent when BY_PASS_INIT event has been called', () => {
       // @ts-ignore
-      instance._onByPassInitEvent = jest.fn();
+      instance._onBypassInitEvent = jest.fn();
       messageBusEvent.type = MessageBus.EVENTS_PUBLIC.BY_PASS_INIT;
       // @ts-ignore
-      instance._initByPassInitEvent();
+      instance._initBypassInitEvent();
       // @ts-ignore
-      expect(instance._onByPassInitEvent).toHaveBeenCalled();
+      expect(instance._onBypassInitEvent).toHaveBeenCalled();
     });
   });
 
@@ -158,12 +158,12 @@ describe('ControlFrame', () => {
     // then
     it('should call _onSubmit when SUBMIT_FORM event has been called', () => {
       // @ts-ignore
-      instance._onSubmit = jest.fn();
+      instance._proceedWith3DSecure = jest.fn();
       messageBusEvent.type = MessageBus.EVENTS_PUBLIC.SUBMIT_FORM;
       // @ts-ignore
       instance._initSubmitFormEvent();
       // @ts-ignore
-      expect(instance._onSubmit).toHaveBeenCalled();
+      expect(instance._proceedWith3DSecure).toHaveBeenCalled();
     });
   });
 
@@ -229,7 +229,7 @@ describe('ControlFrame', () => {
   // given
   describe('_onSubmit', () => {
     const { instance } = controlFrameFixture();
-    const data = { requestTypes: ['JSINIT', 'THREEDQUERY', 'CACHETOKENISE', 'AUTH'] };
+    const data = { requestTypes: ['JSINIT', 'THREEDQUERY', 'CACHETOKENISE', 'AUTH'], bypassCards: ['VISA'] };
 
     // when
     beforeEach(() => {
@@ -238,13 +238,15 @@ describe('ControlFrame', () => {
       // @ts-ignore
       instance._onSetRequestTypesEvent = jest.fn();
       // @ts-ignore
+      instance._isCardBypassed = jest.fn().mockReturnValueOnce(true);
+      // @ts-ignore
       instance._onSubmit(data);
     });
 
     //then
     it('should call _requestPayment', () => {
       // @ts-ignore
-      expect(instance._requestPayment).toHaveBeenCalledWith(data);
+      expect(instance._requestPayment).toHaveBeenCalledWith(data, true);
     });
 
     //then
@@ -291,22 +293,22 @@ describe('ControlFrame', () => {
   });
 
   // given
-  describe('_onByPassInitEvent', () => {
+  describe('_onBypassInitEvent', () => {
     const { instance } = controlFrameFixture();
     const cachetoken = '893h12und9n283n923';
 
     // when
     beforeEach(() => {
       // @ts-ignore
-      instance._requestByPassInit = jest.fn();
+      instance._requestBypassInit = jest.fn();
       // @ts-ignore
-      instance._onByPassInitEvent(cachetoken);
+      instance._onBypassInitEvent(cachetoken);
     });
 
     // then
     it('should call _requestThreeDInit', () => {
       // @ts-ignore
-      expect(instance._requestByPassInit).toHaveBeenCalledWith(cachetoken);
+      expect(instance._requestBypassInit).toHaveBeenCalledWith(cachetoken);
     });
   });
 
@@ -421,19 +423,19 @@ describe('ControlFrame', () => {
   });
 
   // given
-  describe('_requestByPassInit', () => {
+  describe('_requestBypassInit', () => {
     const { instance } = controlFrameFixture();
     const cachetoken = 'somecachetoken1234';
     // when
     beforeEach(() => {
       // @ts-ignore
-      instance._requestByPassInit(cachetoken);
+      instance._requestBypassInit(cachetoken);
     });
 
     // then
-    it('should call byPassInitRequest', () => {
+    it('should call bypassInitRequest', () => {
       // @ts-ignore
-      expect(instance._payment.byPassInitRequest).toHaveBeenCalledWith(cachetoken);
+      expect(instance._payment.bypassInitRequest).toHaveBeenCalledWith(cachetoken);
     });
   });
 
@@ -543,8 +545,6 @@ describe('ControlFrame', () => {
       // @ts-ignore
       instance._threeDQueryEvent = { data: {} };
       // @ts-ignore
-      instance._requestThreeDInit = jest.fn();
-      // @ts-ignore
       instance.messageBus.publish = jest.fn();
       // @ts-ignore
       instance._validation.setFormValidity = jest.fn();
@@ -552,22 +552,10 @@ describe('ControlFrame', () => {
       instance._payment.threeDQueryRequest = jest.fn().mockResolvedValueOnce({
         response: {}
       });
-    });
-    // then
-    it('should call requestThreeDInit if validity is true and deferInit is true', () => {
       // @ts-ignore
-      instance._validation.formValidation = jest.fn().mockReturnValueOnce({
-        validity: true,
-        data: { expirydate: '12/20', pan: '4111111111111', securitycode: '123' }
+      instance._payment.threeDInitRequest = jest.fn().mockReturnValueOnce({
+        response: {}
       });
-      // @ts-ignore
-      instance._requestPayment({
-        deferInit: true,
-        dataInJwt: false,
-        fieldsToSubmit: ['pan', 'expirydate', 'securitycode']
-      });
-      // @ts-ignore
-      expect(instance._requestThreeDInit).toHaveBeenCalled();
     });
 
     // then

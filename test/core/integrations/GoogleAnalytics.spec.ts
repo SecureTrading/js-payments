@@ -1,4 +1,4 @@
-import GoogleAnalytics from '../../../src/core/integrations/GoogleAnalytics';
+import { GoogleAnalytics } from '../../../src/core/integrations/GoogleAnalytics';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 

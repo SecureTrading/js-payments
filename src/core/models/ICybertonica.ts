@@ -34,4 +34,9 @@ interface ICybertonicaPostResponse {
   status: 'ALLOW' | 'CHALLENGE' | 'DENY';
 }
 
-export { IAFCybertonica, ICybertonicaInitQuery, ICybertonicaPostResponse, ICybertonicaPostQuery };
+interface ICybertonica {
+  data?: any;
+  apikey?: string;
+}
+
+export { ICybertonica, IAFCybertonica, ICybertonicaInitQuery, ICybertonicaPostResponse, ICybertonicaPostQuery };
