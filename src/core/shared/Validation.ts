@@ -1,15 +1,18 @@
 import { StCodec } from '../classes/StCodec.class';
 import { BrandDetailsType } from '../imports/cardtype';
-import { ICard } from '../models/Card';
-import { IErrorData, IMessageBusValidateField, IValidation } from '../models/Validation';
-import BinLookup from './BinLookup';
-import { IFormFieldState } from './FormFieldState';
-import Frame from './Frame';
-import Language from './Language';
-import MessageBus from './MessageBus';
-import Selectors from './Selectors';
+import { ICard } from '../models/ICard';
+import { IErrorData } from '../models/IErrorData';
+import { IFormFieldState } from '../models/IFormFieldState';
+import { IMessageBusEvent } from '../models/IMessageBusEvent';
+import { IMessageBusValidateField } from '../models/IMessageBusValidateField';
+import { IValidation } from '../models/IValidation';
+import { BinLookup } from './BinLookup';
+import { Frame } from './Frame';
+import { Language } from './Language';
+import { MessageBus } from './MessageBus';
+import { Selectors } from './Selectors';
 import { Translator } from './Translator';
-import Utils from './Utils';
+import { Utils } from './Utils';
 
 const {
   VALIDATION_ERROR_FIELD_IS_REQUIRED,
@@ -17,7 +20,7 @@ const {
   VALIDATION_ERROR
 } = Language.translations;
 
-export default class Validation extends Frame {
+export class Validation extends Frame {
   public static ERROR_FIELD_CLASS: string = 'error-field';
 
   public static clearNonDigitsChars(value: string): string {
@@ -55,6 +58,7 @@ export default class Validation extends Frame {
   public static setCustomValidationError(errorContent: string, inputElement: HTMLInputElement) {
     inputElement.setCustomValidity(errorContent);
   }
+
   public static addErrorContainer(inputElement: HTMLInputElement, inputTarget: InsertPosition, errorContent: string) {
     inputElement.insertAdjacentHTML(inputTarget, errorContent);
   }
@@ -98,16 +102,6 @@ export default class Validation extends Frame {
     securityCode: Validation.SECURITY_CODE_FIELD_NAME
   };
 
-  /**
-   * Luhn Algorithm
-   * From the right:
-   *    Step 1: take the value of this digit
-   *    Step 2: if the offset from the end is even
-   *    Step 3: double the value, then sum the digits
-   *    Step 4: if sum of those above is divisible by ten, YOU PASS THE LUHN !
-   * @param cardNumber
-   * @private
-   */
   private static _luhnAlgorithm(cardNumber: string): boolean {
     const cardNumberWithoutSpaces = cardNumber.replace(/\s/g, Validation.CLEAR_VALUE);
     let bit = 1;

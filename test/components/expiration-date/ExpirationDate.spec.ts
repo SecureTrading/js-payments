@@ -1,9 +1,6 @@
-import each from 'jest-each';
-import SpyInstance = jest.SpyInstance;
-import ExpirationDate from '../../../src/components/expiration-date/ExpirationDate';
-import Language from '../../../src/core/shared/Language';
-import Selectors from '../../../src/core/shared/Selectors';
-import Utils from '../../../src/core/shared/Utils';
+import { ExpirationDate } from '../../../src/components/expiration-date/ExpirationDate';
+import { Language } from '../../../src/core/shared/Language';
+import { Selectors } from '../../../src/core/shared/Selectors';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 

@@ -1,18 +1,10 @@
-import MessageBus from '../../core/shared/MessageBus';
-import { IAllowedStyles, IStyle, Styler } from './Styler';
+import { IAllowedStyles } from '../models/IAllowedStyles';
+import { IParams } from '../models/IParams';
+import { IStyle } from '../models/IStyle';
+import { MessageBus } from './MessageBus';
+import { Styler } from './Styler';
 
-interface IParams {
-  [name: string]: object | string;
-  styles?: IStyle;
-  locale?: string;
-  origin?: string;
-  jwt?: string;
-  gatewayUrl?: string;
-  paymentTypes?: string;
-  defaultPaymentType?: string;
-}
-
-export default class Frame {
+export class Frame {
   protected messageBus: MessageBus;
   protected params: IParams;
 

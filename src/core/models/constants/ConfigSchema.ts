@@ -1,51 +1,6 @@
 import Joi from 'joi';
-import { IStyles } from '../shared/Styler';
 
-interface IConfig {
-  analytics?: boolean;
-  animatedCard?: boolean;
-  buttonId?: string;
-  componentIds?: any;
-  cybertonica?: ICybertonicaConfig;
-  datacenterurl?: string;
-  deferInit?: boolean;
-  fieldsToSubmit?: string[];
-  formId?: string;
-  jwt: string;
-  init?: IByPassInit;
-  livestatus?: number;
-  origin?: string;
-  styles?: IStyles;
-  submitCallback?: any;
-  submitFields?: string[];
-  submitOnSuccess?: boolean;
-  submitOnError?: boolean;
-  translations?: {};
-}
-
-interface IComponentsConfig {
-  defaultPaymentType: string;
-  paymentTypes?: string[];
-  startOnLoad?: boolean;
-  requestTypes?: string[];
-}
-
-interface IWalletConfig {
-  [key: string]: any;
-
-  requestTypes?: string[];
-}
-
-interface IByPassInit {
-  threedinit: string;
-  cachetoken: string;
-}
-
-interface ICybertonicaConfig {
-  apikey?: string;
-}
-
-const IConfigSchema: Joi.JoiObject = Joi.object().keys({
+export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
   analytics: Joi.boolean(),
   animatedCard: Joi.boolean(),
   applePay: {
@@ -65,6 +20,17 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
     placement: Joi.string()
   },
   buttonId: Joi.string(),
+  bypassCards: Joi.array().allow(
+    'AMEX',
+    'ASTROPAYCARD',
+    'DINERS',
+    'DISCOVER',
+    'JCB',
+    'MASTERCARD',
+    'MAESTRO',
+    'PIBA',
+    'VISA'
+  ),
   cachetoken: Joi.string(),
   componentIds: Joi.object().keys({
     animatedCard: Joi.string(),
@@ -107,12 +73,3 @@ const IConfigSchema: Joi.JoiObject = Joi.object().keys({
     }
   }
 });
-
-const IComponentsConfigSchema = Joi.object().keys({
-  defaultPaymentType: Joi.string(),
-  paymentTypes: Joi.array().allow([Joi.string()]),
-  requestTypes: Joi.array().allow([Joi.string()]),
-  startOnLoad: Joi.boolean()
-});
-
-export { IByPassInit, IConfig, IConfigSchema, IComponentsConfig, IComponentsConfigSchema, IWalletConfig };

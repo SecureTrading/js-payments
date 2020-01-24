@@ -1,7 +1,7 @@
 import each from 'jest-each';
-import MessageBus from '../../../src/core/shared/MessageBus';
-import Validation from '../../../src/core/shared/Validation';
-import Language from '../../../src/core/shared/Language';
+import { MessageBus } from '../../../src/core/shared/MessageBus';
+import { Validation } from '../../../src/core/shared/Validation';
+import { Language } from '../../../src/core/shared/Language';
 import { StCodec } from '../../../src/core/classes/StCodec.class';
 
 jest.mock('./../../../src/core/shared/MessageBus');
