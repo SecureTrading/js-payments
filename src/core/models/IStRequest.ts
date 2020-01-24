@@ -5,4 +5,5 @@ export interface IStRequest {
   pan?: string;
   securitycode?: string;
   termurl?: string;
+  jwt?: string;
 }

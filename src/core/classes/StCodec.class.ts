@@ -198,7 +198,8 @@ class StCodec {
     }
   }
 
-  public buildRequestObject(requestData: object): object {
+  public buildRequestObject(requestData: IStRequest): any {
+    // @ts-ignore
     if (
       JwtDecode<IStJwtObj>(requestData.jwt).payload.accounttypedescription !==
       JwtDecode<IStJwtObj>(StCodec.jwt).payload.accounttypedescription

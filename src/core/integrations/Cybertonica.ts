@@ -1,5 +1,5 @@
 import { environment } from '../../environments/environment';
-import StTransport from '../classes/StTransport.class';
+import { StTransport } from '../classes/StTransport.class';
 import {
   IAFCybertonica,
   ICybertonicaInitQuery,
