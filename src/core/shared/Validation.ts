@@ -1,18 +1,19 @@
 import { StCodec } from '../classes/StCodec.class';
-import { BrandDetailsType } from '../imports/cardtype';
 import { ICard } from '../models/ICard';
 import { IErrorData } from '../models/IErrorData';
 import { IFormFieldState } from '../models/IFormFieldState';
 import { IMessageBusEvent } from '../models/IMessageBusEvent';
 import { IMessageBusValidateField } from '../models/IMessageBusValidateField';
 import { IValidation } from '../models/IValidation';
-import { BinLookup } from './BinLookup';
 import { Frame } from './Frame';
 import { Language } from './Language';
 import { MessageBus } from './MessageBus';
 import { Selectors } from './Selectors';
 import { Translator } from './Translator';
 import { Utils } from './Utils';
+// @ts-ignore
+import { PaymentsUtils } from '@securetrading/js-payments-utils';
+import { BrandDetailsType } from '@securetrading/js-payments-utils/types'
 
 const {
   VALIDATION_ERROR_FIELD_IS_REQUIRED,
@@ -167,7 +168,7 @@ export class Validation extends Frame {
   public expirationDateValue: string;
   public securityCodeValue: string;
   public validation: IValidation;
-  protected binLookup: BinLookup;
+  protected lookup: PaymentsUtils.Lookup;
   protected messageBus: MessageBus;
   private _card: ICard;
   private _currentKeyCode: number;
@@ -324,7 +325,7 @@ export class Validation extends Frame {
   protected onInit() {
     super.onInit();
     this.messageBus = new MessageBus();
-    this.binLookup = new BinLookup();
+    this.lookup = new PaymentsUtils.Lookup();
     this._matchDigitsRegexp = new RegExp(Validation.MATCH_DIGITS);
     this._translator = new Translator(this.params.locale);
   }
@@ -336,7 +337,7 @@ export class Validation extends Frame {
   }
 
   protected getCardDetails(cardNumber: string = Validation.CLEAR_VALUE): BrandDetailsType {
-    return this.binLookup.binLookup(cardNumber);
+    return this.lookup.lookup(cardNumber);
   }
 
   protected cardNumber(value: string) {

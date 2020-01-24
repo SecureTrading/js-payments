@@ -1,7 +1,8 @@
 import { IStyles } from '../models/IStyles';
-import { BinLookup } from '../shared/BinLookup';
 import { MessageBus } from '../shared/MessageBus';
 import { StJwt } from '../shared/StJwt';
+// @ts-ignore
+import { PaymentsUtils } from '@securetrading/js-payments-utils';
 
 export class RegisterFrames {
   private static COMPLETE_FORM_FIELDS: string[] = ['pan', 'expirydate', 'securitycode'];
@@ -16,7 +17,7 @@ export class RegisterFrames {
   protected hasAnimatedCard: boolean;
   protected submitCallback: any;
   protected fieldsToSubmit: string[];
-  protected binLookup: BinLookup;
+  protected lookup: PaymentsUtils.Lookup;
   protected messageBus: MessageBus;
   private stJwt: StJwt;
 
@@ -29,7 +30,7 @@ export class RegisterFrames {
     fieldsToSubmit: string[],
     submitCallback?: any
   ) {
-    this.binLookup = new BinLookup();
+    this.lookup = new PaymentsUtils.Lookup();
     this.messageBus = new MessageBus();
     this.fieldsToSubmit = fieldsToSubmit.length ? fieldsToSubmit : RegisterFrames.COMPLETE_FORM_FIELDS;
     this.componentIds = componentIds;

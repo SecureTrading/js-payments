@@ -1,11 +1,12 @@
 import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
-import { BinLookup } from '../../core/shared/BinLookup';
 import { Formatter } from '../../core/shared/Formatter';
 import { FormField } from '../../core/shared/FormField';
 import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { Selectors } from '../../core/shared/Selectors';
 import { Validation } from '../../core/shared/Validation';
+// @ts-ignore
+import { PaymentsUtils } from '@securetrading/js-payments-utils';
 
 export class SecurityCode extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
@@ -19,7 +20,7 @@ export class SecurityCode extends FormField {
   private static SPECIAL_INPUT_LENGTH: number = 4;
   private static STANDARD_INPUT_LENGTH: number = 3;
 
-  private _binLookup: BinLookup;
+  private _lookup: PaymentsUtils.Lookup;
   private _formatter: Formatter;
   private _securityCodeLength: number;
   private _securityCodeWrapper: HTMLElement;
@@ -27,7 +28,7 @@ export class SecurityCode extends FormField {
 
   constructor() {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
-    this._binLookup = new BinLookup();
+    this._lookup = new PaymentsUtils.Lookup();
     this._formatter = new Formatter();
     this._validation = new Validation();
     this._subscribeSecurityCodeChange();

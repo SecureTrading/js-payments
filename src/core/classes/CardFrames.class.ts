@@ -206,14 +206,14 @@ export class CardFrames extends RegisterFrames {
   private _getCardType(jwt: string): string {
     const cardDetails = JwtDecode(jwt) as any;
     if (cardDetails.payload.pan) {
-      return this.binLookup.binLookup(cardDetails.payload.pan).type;
+      return this.lookup.lookup(cardDetails.payload.pan).type;
     }
   }
 
   private _getSecurityCodeLength(jwt: string): number {
     const cardDetails = JwtDecode(jwt) as any;
     if (cardDetails.payload.pan) {
-      const { cvcLength } = this.binLookup.binLookup(cardDetails.payload.pan);
+      const { cvcLength } = this.lookup.lookup(cardDetails.payload.pan);
       return cvcLength.slice(-1)[0];
     }
   }
