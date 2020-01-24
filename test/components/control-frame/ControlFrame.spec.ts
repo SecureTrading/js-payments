@@ -545,8 +545,6 @@ describe('ControlFrame', () => {
       // @ts-ignore
       instance._threeDQueryEvent = { data: {} };
       // @ts-ignore
-      instance._requestThreeDInit = jest.fn();
-      // @ts-ignore
       instance.messageBus.publish = jest.fn();
       // @ts-ignore
       instance._validation.setFormValidity = jest.fn();
@@ -554,22 +552,10 @@ describe('ControlFrame', () => {
       instance._payment.threeDQueryRequest = jest.fn().mockResolvedValueOnce({
         response: {}
       });
-    });
-    // then
-    it('should call requestThreeDInit if validity is true and deferInit is true', () => {
       // @ts-ignore
-      instance._validation.formValidation = jest.fn().mockReturnValueOnce({
-        validity: true,
-        data: { expirydate: '12/20', pan: '4111111111111', securitycode: '123' }
+      instance._payment.threeDInitRequest = jest.fn().mockReturnValueOnce({
+        response: {}
       });
-      // @ts-ignore
-      instance._requestPayment({
-        deferInit: true,
-        dataInJwt: false,
-        fieldsToSubmit: ['pan', 'expirydate', 'securitycode']
-      });
-      // @ts-ignore
-      expect(instance._requestThreeDInit).toHaveBeenCalled();
     });
 
     // then
