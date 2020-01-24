@@ -56,6 +56,7 @@ export class Config {
       bypassCards: config.bypassCards !== undefined ? config.bypassCards : [],
       componentIds: this._componentIds(config.componentIds),
       components: this._setComponentsProperties(config),
+      cybertonica: config.cybertonica !== undefined ? config.cybertonica : { apikey: '' },
       datacenterurl: config.datacenterurl !== undefined ? config.datacenterurl : environment.GATEWAY_URL,
       deferInit: config.deferInit !== undefined ? config.deferInit : false,
       formId: config.formId !== undefined ? config.formId : Selectors.MERCHANT_FORM_SELECTOR,

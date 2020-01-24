@@ -1,5 +1,5 @@
 import { Cybertonica } from '../../../src/core/integrations/Cybertonica';
-import { ICybertonicaInitQuery, ICybertonicaPostQuery } from '../../../src/core/models/Cybertonica';
+import { ICybertonicaInitQuery, ICybertonicaPostQuery } from '../../../src/core/models/ICybertonica';
 import { environment } from '../../../src/environments/environment';
 
 // given

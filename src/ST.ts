@@ -135,6 +135,7 @@ class ST {
       config.animatedCard,
       config.submitCallback,
       config.components.requestTypes,
+      config.fieldsToSubmit,
       config.cybertonica.apikey
     );
   }

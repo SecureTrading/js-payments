@@ -3,12 +3,3 @@ export interface ICard {
   pan: string;
   securitycode: string;
 }
-
-interface ICardFramesPublishEvent {
-  cybertonicaApiKey: string;
-  deferInit: boolean | undefined;
-  updateJWT: boolean | undefined;
-  fieldsToSubmit: string[];
-}
-
-export { ICard, ICardFramesPublishEvent };

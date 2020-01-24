@@ -347,8 +347,9 @@ function commonFramesFixture() {
     [],
     gatewayUrl,
     animatedCard,
+    submitCallback,
+    ['AUTH'],
     ['pan', 'securitycode', 'expirydate'],
-    submitCallback['AUTH'],
     'test'
   );
 

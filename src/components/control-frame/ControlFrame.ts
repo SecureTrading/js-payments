@@ -129,6 +129,12 @@ export class ControlFrame extends Frame {
     });
   }
 
+  private _initLoadCybertonicaEvent() {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.LOAD_CYBERTONICA, () => {
+      this._onLoadIntegrationModule();
+    });
+  }
+
   private _initProcessPaymentsEvent(): void {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS, (data: IResponseData) => {
       this._onProcessPaymentEvent(data);

@@ -2,6 +2,7 @@ import { BypassCards } from './constants/BypassCards';
 import { IBypassInit } from './IBypassInit';
 import { IComponentsConfig } from './IComponentsConfig';
 import { IComponentsIds } from './IComponentsIds';
+import { ICybertonica } from './ICybertonica';
 import { IStyles } from './IStyles';
 import { IWalletConfig } from './IWalletConfig';
 
@@ -13,6 +14,7 @@ export interface IConfig {
   buttonId?: string;
   components?: IComponentsConfig;
   componentIds?: IComponentsIds;
+  cybertonica?: ICybertonica;
   datacenterurl?: string;
   deferInit?: boolean;
   fieldsToSubmit?: string[];

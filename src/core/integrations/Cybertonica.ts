@@ -4,13 +4,14 @@ import {
   ICybertonicaInitQuery,
   ICybertonicaPostQuery,
   ICybertonicaPostResponse
-} from '../models/Cybertonica';
-import DomMethods from '../shared/DomMethods';
-import MessageBus from '../shared/MessageBus';
-import Notification from '../shared/Notification';
-import Selectors from '../shared/Selectors';
+} from '../models/ICybertonica';
+import { IMessageBusEvent } from '../models/IMessageBusEvent';
+import { DomMethods } from '../shared/DomMethods';
+import { MessageBus } from '../shared/MessageBus';
+import { Notification } from '../shared/Notification';
+import { Selectors } from '../shared/Selectors';
 import { Translator } from '../shared/Translator';
-import GoogleAnalytics from './GoogleAnalytics';
+import { GoogleAnalytics } from './GoogleAnalytics';
 
 declare const AFCYBERTONICA: IAFCybertonica;
 
