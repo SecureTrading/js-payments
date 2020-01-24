@@ -9,7 +9,7 @@ import { Selectors } from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
 import { Validation } from '../shared/Validation';
-import {IStJwtObj } from '../models/IStJwtObj';
+import { IStJwtObj } from '../models/IStJwtObj';
 
 class StCodec {
   public static CONTENT_TYPE = 'application/json';

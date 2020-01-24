@@ -91,7 +91,7 @@ export class CardFrames extends RegisterFrames {
       bypassCards,
       jwt,
       cybertonicaApiKey,
-      gatewayUrl,
+      gatewayUrl
     );
     this.configureFormFieldsAmount(jwt);
   }
@@ -333,7 +333,7 @@ export class CardFrames extends RegisterFrames {
     bypassCards: BypassCards[],
     jwt: string,
     cybertonicaApiKey: string,
-    gatewayUrl: string,
+    gatewayUrl: string
   ): void {
     this._validation = new Validation();
     this._cybertonica = new Cybertonica(jwt, gatewayUrl);
