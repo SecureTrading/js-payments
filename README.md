@@ -43,7 +43,6 @@ Not specified yet
 - [Stylelint](https://stylelint.io/)
 - [TSLint](https://palantir.github.io/tslint/)
 - [ESLint](https://eslint.org/)
-- [TypeDoc](https://typedoc.org/)
 
 ##### CI/CD:
 

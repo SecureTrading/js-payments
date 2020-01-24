@@ -1,5 +1,5 @@
 import SpyInstance = jest.SpyInstance;
-import NotificationFrame from '../../../src/components/notification-frame/NotificationFrame';
+import { NotificationFrame } from '../../../src/components/notification-frame/NotificationFrame';
 import { Translator } from '../../../src/core/shared/Translator';
 
 // given
@@ -81,15 +81,15 @@ describe('NotificationFrame', () => {
     // then
     it('should set messageBus listener', () => {
       // @ts-ignore
-      instance._messageBus.subscribe = jest.fn();
+      instance.messageBus.subscribe = jest.fn();
       // @ts-ignore
       instance._onMessage();
       // @ts-ignore
-      expect(instance._messageBus.subscribe.mock.calls[0][0]).toBe('NOTIFICATION');
+      expect(instance.messageBus.subscribe.mock.calls[0][0]).toBe('NOTIFICATION');
       // @ts-ignore
-      expect(instance._messageBus.subscribe.mock.calls[0][1]).toBeInstanceOf(Function);
+      expect(instance.messageBus.subscribe.mock.calls[0][1]).toBeInstanceOf(Function);
       // @ts-ignore
-      expect(instance._messageBus.subscribe).toHaveBeenCalledTimes(1);
+      expect(instance.messageBus.subscribe).toHaveBeenCalledTimes(1);
     });
   });
 

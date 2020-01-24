@@ -1,5 +1,5 @@
-import ApplePayErrorMock from '../../../src/core/integrations/ApplePayErrorMock';
-import ApplePaySessionMock from '../../../src/core/integrations/ApplePaySessionMock';
+import { ApplePayErrorMock } from '../../../src/core/integrations/ApplePayErrorMock';
+import { ApplePaySessionMock } from '../../../src/core/integrations/ApplePaySessionMock';
 
 (window as any).ApplePaySession = ApplePaySessionMock; // has to be defined before we import ApplePay
 (window as any).ApplePayError = ApplePayErrorMock; // has to be defined before we import ApplePay
@@ -8,9 +8,9 @@ import ApplePaySessionMock from '../../../src/core/integrations/ApplePaySessionM
 (window as any).ApplePaySession.canMakePaymentsWithActiveCard = jest.fn();
 (window as any).ApplePaySession.STATUS_SUCCESS = 'SUCCESS';
 const getType = require('jest-get-type');
-import ApplePay from '../../../src/core/integrations/ApplePay';
-import DomMethods from '../../../src/core/shared/DomMethods';
-import Language from '../../../src/core/shared/Language';
+import { ApplePay } from '../../../src/core/integrations/ApplePay';
+import { DomMethods } from '../../../src/core/shared/DomMethods';
+import { Language } from '../../../src/core/shared/Language';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 jest.mock('../../../src/core/integrations/GoogleAnalytics');

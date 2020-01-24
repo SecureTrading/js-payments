@@ -9,6 +9,7 @@ env:
     - APP_BRANCH=$DOCKER_BRANCH
     - DOCKER_TAG="docker-compose -f py-payments-testing/docker-compose.yml run"
     - RUN_TEST_TAG="tests poetry run behave features"
+
 language: node_js
 node_js:
   - 10
@@ -195,6 +196,8 @@ jobs:
 #      if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
 #      script:
 #        - ${DOCKER_TAG} -e AUTOMATION_REMOTE=true -e BROWSERSTACK_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BROWSERSTACK_USERNAME=$BROWSERSTACK_USERNAME -e BROWSERSTACK_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e AUTOMATION_REMOTE_DEVICE="iPad Mini 4" -e AUTOMATION_REMOTE_OS_VERSION=11 -e AUTOMATION_REMOTE_REAL_MOBILE=true ${RUN_TEST_TAG} --tags=$TEST_TAG
+
+
 after_success:
   - cat ./coverage/lcov.info | coveralls
 addons:

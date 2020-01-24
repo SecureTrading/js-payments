@@ -1,5 +1,5 @@
 import each from 'jest-each';
-import Frame from '../../../src/core/shared/Frame';
+import { Frame } from '../../../src/core/shared/Frame';
 
 describe('Frame', () => {
   each([
@@ -42,7 +42,7 @@ describe('Frame', () => {
       expect(frame.parseUrl).toHaveBeenCalledTimes(1);
       expect(frame.applyStyles).toHaveBeenCalledTimes(1);
       // @ts-ignore
-      expect(frame._params).toMatchObject({ origin: 'https://example.com' });
+      expect(frame.params).toMatchObject({ origin: 'https://example.com' });
     });
   });
 });

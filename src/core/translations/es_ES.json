@@ -21,5 +21,6 @@
   "Processing": "Procesando",
   "Invalid field": "Campo no válido",
   "Card number is invalid": "El número de tarjeta no es válido",
-  "You are not logged to Apple account": "No has iniciado sesión en la cuenta de Apple"
+  "You are not logged to Apple account": "No has iniciado sesión en la cuenta de Apple",
+  "A target element for the input field with id could not be found. Please check your configuration": "No se pudo encontrar un elemento de destino para el campo de entrada con id. Por favor verifique su configuración"
 }
