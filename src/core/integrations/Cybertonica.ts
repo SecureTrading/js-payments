@@ -1,3 +1,4 @@
+import { resolveFilesAndProgram } from 'tslint/lib/files/resolution';
 import { environment } from '../../environments/environment';
 import { StTransport } from '../classes/StTransport.class';
 import {
@@ -26,7 +27,6 @@ class Cybertonica {
   private _messageBus: MessageBus;
   private _stTransport: StTransport;
   private _notification: Notification;
-  private _scriptLoaded: boolean;
   private _sdkAddress: string;
   private _tid: string;
   private _translator: Translator;
@@ -124,7 +124,7 @@ class Cybertonica {
     // @ts-ignore
     return this._sendRequest()
       .then((response: any) => {
-        console.error(response);
+        return response;
       })
       .catch((error: any) => error);
   }
@@ -140,7 +140,6 @@ class Cybertonica {
   }
 
   private _publishPostResponse(status: ICybertonicaPostResponse): ICybertonicaPostResponse {
-    console.error(status);
     this._messageBus.publishFromParent(
       {
         data: status,

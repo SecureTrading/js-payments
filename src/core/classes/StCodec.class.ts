@@ -9,7 +9,6 @@ import { Selectors } from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
 import { Validation } from '../shared/Validation';
-import { IStJwtObj } from '../models/IStJwtObj';
 
 class StCodec {
   public static CONTENT_TYPE = 'application/json';
@@ -198,18 +197,10 @@ class StCodec {
     }
   }
 
-  public buildRequestObject(requestData: IStRequest): any {
-    // @ts-ignore
-    if (
-      JwtDecode<IStJwtObj>(requestData.jwt).payload.accounttypedescription !==
-      JwtDecode<IStJwtObj>(StCodec.jwt).payload.accounttypedescription
-    ) {
-      StCodec.jwt = requestData.jwt;
-    }
-
+  public buildRequestObject(requestData: object): object {
     return {
       acceptcustomeroutput: '1.00',
-      jwt: StCodec.jwt, // @TODO here is wrong jwt set !!!! ->>>> Cybertonica -> here is where jwt has still ECOM :/
+      jwt: StCodec.jwt,
       request: [
         {
           ...requestData,
