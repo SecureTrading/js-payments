@@ -153,7 +153,6 @@ export class Validation extends Frame {
   public expirationDateValue: string;
   public securityCodeValue: string;
   public validation: IValidation;
-  protected lookup: PaymentsUtils.Lookup;
   protected messageBus: MessageBus;
   private _card: ICard;
   private _currentKeyCode: number;
@@ -310,7 +309,6 @@ export class Validation extends Frame {
   protected onInit() {
     super.onInit();
     this.messageBus = new MessageBus();
-    this.lookup = new PaymentsUtils.Lookup();
     this._matchDigitsRegexp = new RegExp(Validation.MATCH_DIGITS);
     this._translator = new Translator(this.params.locale);
   }
@@ -322,7 +320,7 @@ export class Validation extends Frame {
   }
 
   protected getCardDetails(cardNumber: string = Validation.CLEAR_VALUE): BrandDetailsType {
-    return this.lookup.lookup(cardNumber);
+    return PaymentsUtils.iinLookup.lookup(cardNumber);
   }
 
   protected cardNumber(value: string) {

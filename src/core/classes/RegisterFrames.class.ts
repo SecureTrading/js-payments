@@ -17,7 +17,6 @@ export class RegisterFrames {
   protected hasAnimatedCard: boolean;
   protected submitCallback: any;
   protected fieldsToSubmit: string[];
-  protected lookup: PaymentsUtils.Lookup;
   protected messageBus: MessageBus;
   private stJwt: StJwt;
 
@@ -30,7 +29,6 @@ export class RegisterFrames {
     fieldsToSubmit: string[],
     submitCallback?: any
   ) {
-    this.lookup = new PaymentsUtils.Lookup();
     this.messageBus = new MessageBus();
     this.fieldsToSubmit = fieldsToSubmit.length ? fieldsToSubmit : RegisterFrames.COMPLETE_FORM_FIELDS;
     this.componentIds = componentIds;

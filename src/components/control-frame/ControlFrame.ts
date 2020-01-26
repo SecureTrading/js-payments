@@ -40,7 +40,6 @@ export class ControlFrame extends Frame {
     StCodec.originalJwt = jwt;
   }
 
-  private _lookup: PaymentsUtils.Lookup;
   private _card: ICard;
   private _cardNumber: string;
   private _securityCode: string;
@@ -170,8 +169,8 @@ export class ControlFrame extends Frame {
 
   private _isCardBypassed(data: ISubmitData): boolean {
     return !this._cardNumber
-      ? data.bypassCards.includes(this._lookup.lookup(this._getPan()).type)
-      : data.bypassCards.includes(this._lookup.lookup(this._cardNumber).type);
+      ? data.bypassCards.includes(PaymentsUtils.iinLookup.lookup(this._getPan()).type)
+      : data.bypassCards.includes(PaymentsUtils.iinLookup.lookup(this._cardNumber).type);
   }
 
   private _onSubmit(data: ISubmitData): void {
@@ -245,7 +244,7 @@ export class ControlFrame extends Frame {
       pan = panFromJwt ? panFromJwt : this._formFields.cardNumber.value;
     }
 
-    const cardType: string = this._lookup.lookup(pan).type;
+    const cardType: string = PaymentsUtils.iinLookup.lookup(pan).type;
     return ControlFrame.NON_CVV_CARDS.includes(cardType);
   }
 
@@ -337,7 +336,6 @@ export class ControlFrame extends Frame {
     this._payment = new Payment(this.params.jwt, this.params.gatewayUrl, this.params.origin);
     this._validation = new Validation();
     this._notification = new Notification();
-    this._lookup = new PaymentsUtils.Lookup();
   }
 
   private _storeMerchantData(data: any): void {
