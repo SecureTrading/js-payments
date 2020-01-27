@@ -1,6 +1,7 @@
 import { Cybertonica } from '../../../src/core/integrations/Cybertonica';
-import { ICybertonicaInitQuery, ICybertonicaPostQuery } from '../../../src/core/models/ICybertonica';
 import { environment } from '../../../src/environments/environment';
+import { ICybertonicaInitQuery } from '../../../src/core/models/cybertonica/CybertonicaInitQuery';
+import { ICybertonicaPostQuery } from '../../../src/core/models/cybertonica/CybertonicaPostQuery';
 
 // given
 describe('Cybertonica', () => {
@@ -29,7 +30,6 @@ describe('Cybertonica', () => {
       expirydate: '11/22',
       pan: '4111111111111111',
       securitycode: '111',
-      response: { status: 'DENY' }
     };
 
     // @ts-ignore
@@ -52,7 +52,7 @@ describe('Cybertonica', () => {
 });
 
 function CybertonicaFixture() {
-  const instance: Cybertonica = new Cybertonica();
+  const instance: Cybertonica = new Cybertonica('', '');
   instance.init();
   return { instance };
 }
