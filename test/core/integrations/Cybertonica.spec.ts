@@ -52,7 +52,7 @@ describe('Cybertonica', () => {
 });
 
 function CybertonicaFixture() {
-  const instance: Cybertonica = new Cybertonica();
+  const instance: Cybertonica = new Cybertonica('', '');
   instance.init();
   return { instance };
 }
