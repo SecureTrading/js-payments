@@ -30,7 +30,6 @@ describe('Cybertonica', () => {
       expirydate: '11/22',
       pan: '4111111111111111',
       securitycode: '111',
-      response: { status: 'DENY' }
     };
 
     // @ts-ignore

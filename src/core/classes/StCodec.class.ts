@@ -1,24 +1,15 @@
 import JwtDecode from 'jwt-decode';
-import Language from '../shared/Language';
-import MessageBus from '../shared/MessageBus';
-import Notification from '../shared/Notification';
-import Selectors from '../shared/Selectors';
-import { IStJwtObj, StJwt } from '../shared/StJwt';
+import { IMessageBusEvent } from '../models/IMessageBusEvent';
+import { IResponseData } from '../models/IResponseData';
+import { IStRequest } from '../models/IStRequest';
+import { Language } from '../shared/Language';
+import { MessageBus } from '../shared/MessageBus';
+import { Notification } from '../shared/Notification';
+import { Selectors } from '../shared/Selectors';
+import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
-import Validation from '../shared/Validation';
+import { Validation } from '../shared/Validation';
 
-interface IStRequest {
-  requesttypedescription?: string;
-  requesttypedescriptions?: string[];
-  expirydate?: string;
-  pan?: string;
-  securitycode?: string;
-  termurl?: string; // TODO shouldn't be needed for CC request but this needs to wait for 153 release
-}
-
-/**
- * Encodes and Decodes a request for the ST gateway
- */
 class StCodec {
   public static CONTENT_TYPE = 'application/json';
   public static VERSION = '1.00';
@@ -53,10 +44,6 @@ class StCodec {
     );
   }
 
-  /**
-   * Returns error data with error message and request type description.
-   * @param data
-   */
   public static getErrorData(data: any) {
     const { errordata, errormessage, requesttypedescription } = data;
     return {
@@ -66,14 +53,7 @@ class StCodec {
     };
   }
 
-  /**
-   * Verify the response from the gateway
-   * @param responseData The response from the gateway
-   * @return The content of the response that can be used in the following processes
-   */
   public static verifyResponseObject(responseData: any, jwtResponse: string): object {
-    // Ought we keep hold of the requestreference (eg. log it to console)
-    // So that we can link these requests up with the gateway?
     if (StCodec._isInvalidResponse(responseData)) {
       throw StCodec._handleInvalidResponse();
     }
@@ -109,10 +89,6 @@ class StCodec {
     }
   }
 
-  /**
-   * Changes JWT on demand.
-   * @param newJWT
-   */
   public static updateJWTValue(newJWT: string) {
     StCodec.jwt = newJWT ? newJWT : StCodec.jwt;
     StCodec.originalJwt = newJWT ? newJWT : StCodec.originalJwt;
@@ -142,10 +118,6 @@ class StCodec {
   ];
   private static STATUS_CODES = { invalidfield: '30000', ok: '0', declined: '70000' };
 
-  /**
-   * Returns 50003 communication error.
-   * @private
-   */
   private static _createCommunicationError() {
     return {
       errorcode: '50003',
@@ -153,10 +125,6 @@ class StCodec {
     } as IResponseData;
   }
 
-  /**
-   * Blocks form, returns an error and set notification after invalid response.
-   * @private
-   */
   private static _handleInvalidResponse() {
     const validation = new Validation();
     StCodec.publishResponse(StCodec._createCommunicationError());
@@ -165,11 +133,6 @@ class StCodec {
     return new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
   }
 
-  /**
-   * Checks if response has invalid status by checking version response length and if they're not undefined.
-   * @param responseData
-   * @private
-   */
   private static _isInvalidResponse(responseData: any) {
     return !(
       responseData &&
@@ -179,11 +142,6 @@ class StCodec {
     );
   }
 
-  /**
-   * Returns response content, if it's not specified after checkin customeroutput assigns first one.
-   * @param responseData
-   * @private
-   */
   private static _determineResponse(responseData: any) {
     let responseContent: IResponseData;
     responseData.response.forEach((r: any) => {
@@ -197,13 +155,6 @@ class StCodec {
     return responseContent;
   }
 
-  /**
-   * Blocks form, returns an error and set notification after valid gateway response.
-   * Publishes response and set proper validation.
-   * @param responseContent
-   * @param jwtResponse
-   * @private
-   */
   private static _handleValidGatewayResponse(responseContent: IResponseData, jwtResponse: string) {
     const translator = new Translator(StCodec._locale);
     const validation = new Validation();
@@ -223,12 +174,6 @@ class StCodec {
     StCodec.publishResponse(responseContent, jwtResponse);
   }
 
-  /**
-   * Decodes JWT using jwt-decode library.
-   * @param jwt
-   * @param reject
-   * @private
-   */
   private static _decodeResponseJwt(jwt: string, reject: (error: Error) => void) {
     let decoded: any;
     try {
@@ -252,22 +197,10 @@ class StCodec {
     }
   }
 
-  /**
-   * Add the wrapper data to the request object
-   * @param requestData The data to be contained in this request
-   * @return A JS object ready to be encoded
-   */
   public buildRequestObject(requestData: object): object {
-    if (
-      JwtDecode<IStJwtObj>(requestData.jwt).payload.accounttypedescription !==
-      JwtDecode<IStJwtObj>(StCodec.jwt).payload.accounttypedescription
-    ) {
-      StCodec.jwt = requestData.jwt;
-    }
-
     return {
       acceptcustomeroutput: '1.00',
-      jwt: StCodec.jwt, // @TODO here is wrong jwt set !!!! ->>>> Cybertonica -> here is where jwt has still ECOM :/
+      jwt: StCodec.jwt,
       request: [
         {
           ...requestData,
@@ -279,15 +212,7 @@ class StCodec {
     };
   }
 
-  /**
-   * Encode the request to send to the gateway
-   * includes simple validation so we don't send utterly invalid requests
-   * @param requestObject The data to be contained in the request
-   * @return A JSON string for the fetch request body
-   */
   public encode(requestObject: IStRequest) {
-    console.error(requestObject);
-    console.error(JSON.stringify(this.buildRequestObject(requestObject)));
     if (
       Object.keys(requestObject).length < StCodec.MINIMUM_REQUEST_FIELDS ||
       !requestObject.requesttypedescriptions.every(val => StCodec.SUPPORTED_REQUEST_TYPES.includes(val))
@@ -295,23 +220,14 @@ class StCodec {
       StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST);
       throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST);
     }
-    console.error(JSON.stringify(this.buildRequestObject(requestObject)));
     return JSON.stringify(this.buildRequestObject(requestObject));
   }
 
-  /**
-   * Decode the Json body from the fetch response
-   * @Param responseObject The response object from the fetch promise
-   * @return A Promise that resolves the body content (or raise an error casing the fetch to be rejected)
-   */
   public async decode(responseObject: Response | {}): Promise<object> {
     let decoded: any;
     const promise = await new Promise((resolve, reject) => {
-      console.error('json' in responseObject);
       if ('json' in responseObject) {
-        console.error('dupa');
         responseObject.json().then(responseData => {
-          console.error(responseData);
           decoded = StCodec._decodeResponseJwt(responseData.jwt, reject);
           if (decoded && decoded.payload.response[0].errorcode === '0') {
             StCodec.jwt = decoded.payload.jwt;

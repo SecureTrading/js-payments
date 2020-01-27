@@ -1,5 +1,5 @@
-import { IStTransportParams } from '../models/StTransport';
-import Utils from '../shared/Utils';
+import { IStTransportParams } from '../models/IStTransportParams';
+import { Utils } from '../shared/Utils';
 import { IStRequest, StCodec } from './StCodec.class';
 
 /**
@@ -31,7 +31,6 @@ export class StTransport {
   private static RETRY_LIMIT = 5;
   private static RETRY_TIMEOUT = 10000;
   private static TIMEOUT = 10000;
-
   private readonly _codec: StCodec;
   private _gatewayUrl: string;
 

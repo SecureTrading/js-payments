@@ -1,9 +1,10 @@
 import { CardFrames } from '../../../src/core/classes/CardFrames.class';
-import { ICardFramesPublishEvent } from '../../../src/core/models/Card';
-import DomMethods from '../../../src/core/shared/DomMethods';
-import Language from '../../../src/core/shared/Language';
-import MessageBus from '../../../src/core/shared/MessageBus';
-import Selectors from '../../../src/core/shared/Selectors';
+import { BypassCards } from '../../../src/core/models/constants/BypassCards';
+import { ICardFramesPublishEvent } from '../../../src/core/models/ICardFramesPublishEvent';
+import { DomMethods } from '../../../src/core/shared/DomMethods';
+import { Language } from '../../../src/core/shared/Language';
+import { MessageBus } from '../../../src/core/shared/MessageBus';
+import { Selectors } from '../../../src/core/shared/Selectors';
 
 // given
 describe('CardFrames', () => {
@@ -155,6 +156,7 @@ describe('CardFrames', () => {
   describe('_publishSubmitEvent', () => {
     const { instance } = cardFramesFixture();
     const data: ICardFramesPublishEvent = {
+      bypassCards: ['PIBA'],
       cybertonicaApiKey: 'test',
       deferInit: undefined,
       updateJWT: undefined,
@@ -364,7 +366,9 @@ function cardFramesFixture() {
     'merchant-submit-button',
     false,
     ['pan', 'expirydate', 'securitycode'],
+    [BypassCards.PIBA],
     'test'
   );
+  instance.init();
   return { instance };
 }

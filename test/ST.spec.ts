@@ -1,11 +1,10 @@
 import { StCodec } from '../src/core/classes/StCodec.class';
-import ApplePay from '../src/core/integrations/ApplePay';
-import ApplePayMock from '../src/core/integrations/ApplePayMock';
-import CardinalCommerceMock from '../src/core/integrations/CardinalCommerceMock';
+import { ApplePay } from '../src/core/integrations/ApplePay';
+import { ApplePayMock } from '../src/core/integrations/ApplePayMock';
+import { CardinalCommerceMock } from '../src/core/integrations/CardinalCommerceMock';
 import { CardinalCommerce } from '../src/core/integrations/CardinalCommerce';
-import VisaCheckout from '../src/core/integrations/VisaCheckout';
-import VisaCheckoutMock from '../src/core/integrations/VisaCheckoutMock';
-import Selectors from '../src/core/shared/Selectors';
+import { VisaCheckout } from '../src/core/integrations/VisaCheckout';
+import { VisaCheckoutMock } from '../src/core/integrations/VisaCheckoutMock';
 import { environment } from '../src/environments/environment';
 import ST from './../src/ST';
 
@@ -32,37 +31,8 @@ describe('ST', () => {
     let stObject: any;
     // when
     beforeEach(() => {
+      instance.Init = jest.fn();
       stObject = ST(cacheConfig);
-    });
-    // then
-    it(`should set threedinit if it's configured in config object`, () => {
-      expect(stObject._threedinit).toEqual(cacheConfig.init.threedinit);
-    });
-    // then
-    it(`should set cachetoken if it's configured in config object`, () => {
-      expect(stObject._cachetoken).toEqual(cacheConfig.init.cachetoken);
-    });
-  });
-
-  // given
-  describe('ST.Components()', () => {
-    const { instance } = stFixture();
-
-    // when
-    beforeEach(() => {
-      instance.CardinalCommerce = jest.fn();
-      instance.Cybertonica = jest.fn();
-      instance.Components();
-    });
-
-    // then
-    it('should call CardinalCommerce method', () => {
-      expect(instance.CardinalCommerce).toHaveBeenCalled();
-    });
-
-    // then
-    it('should call Cybertonica method', () => {
-      expect(instance.CardinalCommerce).toHaveBeenCalled();
     });
   });
 
@@ -117,35 +87,6 @@ describe('ST', () => {
   });
 
   // given
-  describe('ST._setClassProperties()', () => {
-    // then
-    it('should set all settings properly', () => {
-      instance._setClassProperties(config);
-      expect(instance._jwt).toEqual(config.jwt);
-    });
-
-    // then
-    it('should set cachetoken when init is set', () => {
-      instance._setClassProperties(cacheConfig);
-      expect(instance._submitOnSuccess).toEqual(false);
-    });
-
-    // then
-    it(`should set formId and _gatewayUrl if they're specified in config`, () => {
-      instance._setClassProperties(cacheConfig);
-      expect(instance._gatewayUrl).toEqual(cacheConfig.datacenterurl);
-      expect(Selectors.MERCHANT_FORM_SELECTOR).toEqual(cacheConfig.formId);
-    });
-
-    // then
-    it(`should set default formId if they're not specified in config`, () => {
-      instance._setClassProperties(config);
-      expect(instance._gatewayUrl).toEqual(environment.GATEWAY_URL);
-      expect(Selectors.MERCHANT_FORM_SELECTOR).toEqual(Selectors.MERCHANT_FORM_SELECTOR);
-    });
-  });
-
-  // given
   describe('updateJWT()', () => {
     const lodash = jest.requireActual('lodash');
 
@@ -160,7 +101,7 @@ describe('ST', () => {
 
     // then
     it('should assign new jwt value', () => {
-      expect(instance._jwt).toEqual('somenewjwtvalue');
+      expect(instance._config.jwt).toEqual('somenewjwtvalue');
     });
 
     // then
@@ -208,6 +149,7 @@ function stFixture() {
     apikey: 'test'
   };
   const config = {
+    analytics: true,
     animatedCard: true,
     cybertonica: { ...cybertonicaConfig },
     jwt:

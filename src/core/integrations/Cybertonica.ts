@@ -2,12 +2,13 @@ import { environment } from '../../environments/environment';
 import {
   IAFCybertonica
 } from '../models/cybertonica/Cybertonica';
-import DomMethods from '../shared/DomMethods';
-import MessageBus from '../shared/MessageBus';
-import Notification from '../shared/Notification';
-import Selectors from '../shared/Selectors';
+import { IMessageBusEvent } from '../models/IMessageBusEvent';
+import { DomMethods } from '../shared/DomMethods';
+import { MessageBus } from '../shared/MessageBus';
+import { Notification } from '../shared/Notification';
+import { Selectors } from '../shared/Selectors';
 import { Translator } from '../shared/Translator';
-import GoogleAnalytics from './GoogleAnalytics';
+import { GoogleAnalytics } from './GoogleAnalytics';
 import { CybertonicaGateway, ICybertonicaGateway } from './cybertonica/CybertonicaGateway';
 import { ICybertonicaInitQuery } from '../models/cybertonica/CybertonicaInitQuery';
 import { ICybertonicaPostQuery } from '../models/cybertonica/CybertonicaPostQuery';
@@ -115,7 +116,6 @@ export class Cybertonica {
   }
 
   private _publishPostResponse(status: ICybertonicaPostResponseStatus): ICybertonicaPostResponseStatus {
-    console.error(status);
     this._messageBus.publishFromParent(
       {
         data: status,

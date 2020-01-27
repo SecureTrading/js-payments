@@ -1,4 +1,4 @@
-export default class ApplePayErrorMock {
+export class ApplePayErrorMock {
   private _errorCode: string;
   private _contactField: string;
   private _message: string;

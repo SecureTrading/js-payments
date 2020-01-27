@@ -1,7 +1,7 @@
-import Utils from './Utils';
-import Validation from './Validation';
+import { Utils } from './Utils';
+import { Validation } from './Validation';
 
-class Formatter extends Validation {
+export class Formatter extends Validation {
   private _blocks: number[] = [2, 2];
   private _cardNumberFormatted: string;
   private _dateBlocks = {
@@ -107,5 +107,3 @@ class Formatter extends Validation {
     return this._dateISO(this._date, date);
   }
 }
-
-export default Formatter;

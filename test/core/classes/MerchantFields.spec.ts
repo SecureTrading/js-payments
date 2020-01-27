@@ -1,5 +1,4 @@
 import { MerchantFields } from '../../../src/core/classes/MerchantFields';
-import MessageBus from '../../../src/core/shared/MessageBus';
 
 // given
 describe('MerchantField', () => {

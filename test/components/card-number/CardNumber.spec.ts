@@ -1,11 +1,11 @@
 import each from 'jest-each';
 import SpyInstance = jest.SpyInstance;
-import CardNumber from '../../../src/components/card-number/CardNumber';
-import Selectors from '../../../src/core/shared/Selectors';
-import FormField from '../../../src/core/shared/FormField';
-import Utils from '../../../src/core/shared/Utils';
-import Validation from '../../../src/core/shared/Validation';
-import MessageBus from './../../../src/core/shared/MessageBus';
+import { CardNumber } from '../../../src/components/card-number/CardNumber';
+import { Selectors } from '../../../src/core/shared/Selectors';
+import { FormField } from '../../../src/core/shared/FormField';
+import { Utils } from '../../../src/core/shared/Utils';
+import { Validation } from '../../../src/core/shared/Validation';
+import { MessageBus } from './../../../src/core/shared/MessageBus';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 jest.mock('./../../../src/core/shared/Validation');
