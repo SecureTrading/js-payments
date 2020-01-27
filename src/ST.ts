@@ -3,6 +3,7 @@ import 'location-origin';
 import { debounce } from 'lodash';
 import 'url-polyfill';
 import 'whatwg-fetch';
+import 'reflect-metadata';
 import { CardFrames } from './core/classes/CardFrames.class';
 import { CommonFrames } from './core/classes/CommonFrames.class';
 import { MerchantFields } from './core/classes/MerchantFields';
@@ -24,7 +25,10 @@ import { Config } from './core/services/Config';
 import { MessageBus } from './core/shared/MessageBus';
 import { Translator } from './core/shared/Translator';
 import { environment } from './environments/environment';
+import { Service, Inject, Container } from 'typedi';
+import { CONFIG } from './core/dependency-injection/injection-tokens';
 
+@Service()
 class ST {
   private static DEBOUNCE_JWT_VALUE: number = 900;
   private static JWT_NOT_SPECIFIED_MESSAGE: string = 'Jwt has not been specified';
@@ -40,7 +44,7 @@ class ST {
   private _storage: BrowserLocalStorage;
   private _translation: Translator;
 
-  constructor(config: IConfig) {
+  constructor(@Inject(CONFIG) config: IConfig) {
     this._configuration = new Config();
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
@@ -151,4 +155,8 @@ class ST {
   }
 }
 
-export default (config: IConfig) => new ST(config);
+export default (config: IConfig) => {
+  Container.set(CONFIG, config);
+
+  return Container.get(ST);
+};

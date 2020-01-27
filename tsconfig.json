@@ -8,7 +8,9 @@
     "module": "commonjs",
     "target": "es5",
     "resolveJsonModule": true,
-    "jsx": "react"
+    "jsx": "react",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
   },
   "include": ["./src/**/*"],
   "exclude": [
