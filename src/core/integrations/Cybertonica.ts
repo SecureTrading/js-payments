@@ -9,7 +9,6 @@ import Selectors from '../shared/Selectors';
 import { Translator } from '../shared/Translator';
 import GoogleAnalytics from './GoogleAnalytics';
 import { CybertonicaGateway, ICybertonicaGateway } from './cybertonica/CybertonicaGateway';
-import { MockedCybertonicaGateway } from './cybertonica/MockedCybertonicaGateway';
 import { ICybertonicaInitQuery } from '../models/cybertonica/CybertonicaInitQuery';
 import { ICybertonicaPostQuery } from '../models/cybertonica/CybertonicaPostQuery';
 import {
@@ -38,9 +37,7 @@ export class Cybertonica {
     this._messageBus = new MessageBus();
     this._notification = new Notification();
     this._translator = new Translator(localStorage.getItem(Cybertonica.LOCALE));
-    this._gateway = environment.testEnvironment ?
-      new MockedCybertonicaGateway() :
-      new CybertonicaGateway(jwt, gatewayUrl);
+    this._gateway = new CybertonicaGateway(jwt, gatewayUrl);
   }
 
   public init(): void {
