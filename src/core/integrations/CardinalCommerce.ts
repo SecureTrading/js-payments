@@ -155,10 +155,14 @@ export class CardinalCommerce {
   }
 
   protected _threeDSetup() {
-    if (this._called) {
+    const script = DomMethods.insertScript('head', { src: this._sdkAddress });
+    console.error(script);
+    if (this._called || !script) {
       return;
     }
-    DomMethods.insertScript('head', { src: this._sdkAddress }).addEventListener('load', () => {
+
+    script.addEventListener('load', () => {
+      console.error('test');
       this._onCardinalLoad();
       this._called = true;
     });

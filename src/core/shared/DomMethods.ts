@@ -51,12 +51,10 @@ export class DomMethods {
     ...Array.prototype.slice.call(form.querySelectorAll(DomMethods.INPUT_MARKUP))
   ];
 
-  public static insertScript(target: string, params: IScriptParams): HTMLScriptElement {
-    if (DomMethods.isScriptLoaded(params.src)) {
-      return;
-    }
-    const script: HTMLScriptElement = document.createElement(DomMethods.SCRIPT_MARKUP) as HTMLScriptElement;
-    const targetElement: Element = DomMethods.setMarkupAttributes(target, params);
+  public static insertScript(target: string, params: IScriptParams): Element {
+    const isScriptLoaded: Element = DomMethods.isScriptLoaded(params.src);
+    const targetElement: Element = document.getElementsByTagName(target)[0];
+    const script: Element = DomMethods.setMarkupAttributes(DomMethods.SCRIPT_MARKUP, params);
     targetElement.appendChild(script);
     return script;
   }
@@ -91,21 +89,20 @@ export class DomMethods {
   }
 
   private static setMarkupAttributes(target: string, params: IScriptParams): Element {
-    const targetElement: Element = document.getElementsByTagName(target)[0];
+    const element: Element = document.createElement(target) as Element;
     Object.keys(params).forEach((param: string) => {
       // @ts-ignore
-      targetElement.setAttribute(param, params[param]);
+      element.setAttribute(param, params[param]);
     });
-    return targetElement;
+    return element;
   }
 
-  private static isScriptLoaded(name: string): boolean {
+  private static isScriptLoaded(name: string): Element {
     const scripts: HTMLCollection = document.getElementsByTagName(DomMethods.SCRIPT_MARKUP);
     for (const script of Array.from(scripts)) {
       if (script.getAttribute(DomMethods.SRC_ATTRIBUTE) === name) {
-        return true;
+        return script;
       }
     }
-    return false;
   }
 }

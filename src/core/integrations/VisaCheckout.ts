@@ -67,6 +67,7 @@ export class VisaCheckout {
   };
 
   private _buttonSettings: any;
+  private _called: boolean = false;
   private _messageBus: MessageBus;
   private _payment: Payment;
   private _paymentDetails: string;
@@ -207,10 +208,15 @@ export class VisaCheckout {
     settings || config ? { ...config, ...settings } : {};
 
   private _initVisaFlow() {
-    return DomMethods.insertScript('body', { src: this._sdkAddress }).addEventListener('load', () => {
+    const script = DomMethods.insertScript('body', { src: this._sdkAddress });
+    if (this._called || !script) {
+      return;
+    }
+    script.addEventListener('load', () => {
       this.attachVisaButton();
       this.initPaymentConfiguration();
       this.paymentStatusHandler();
+      this._called = true;
     });
   }
 
