@@ -29,7 +29,7 @@
       "color-error": "#3358FF"
     }
   },
-  "submitOnSuccess": true,
+  "submitOnSuccess": false,
   "submitCallback": "",
   "translations": {
     "An error occurred": "Wystąpił błąd"
