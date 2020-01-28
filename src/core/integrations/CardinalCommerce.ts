@@ -155,7 +155,7 @@ export class CardinalCommerce {
   }
 
   protected _threeDSetup() {
-    if (!this._called) {
+    if (!this._called && !DomMethods.isScriptLoaded(this._sdkAddress)) {
       DomMethods.insertScript('head', this._sdkAddress).addEventListener('load', () => {
         this._onCardinalLoad();
       });
