@@ -155,14 +155,13 @@ export class CardinalCommerce {
   }
 
   protected _threeDSetup() {
-    if (!this._called && !DomMethods.isScriptLoaded(this._sdkAddress)) {
-      DomMethods.insertScript('head', this._sdkAddress).addEventListener('load', () => {
-        this._onCardinalLoad();
-      });
-    } else {
-      this._cardinalSetup();
+    if (this._called) {
+      return;
     }
-    this._called = true;
+    DomMethods.insertScript('head', { src: this._sdkAddress }).addEventListener('load', () => {
+      this._onCardinalLoad();
+      this._called = true;
+    });
   }
 
   private _authorizePayment(data?: IAuthorizePaymentResponse | object) {

@@ -282,7 +282,7 @@ export class CardFrames extends RegisterFrames {
 
   private _onInput(): void {
     const messageBusEvent: IMessageBusEvent = {
-      data: DomMethods.parseMerchantForm(),
+      data: DomMethods.parseForm(),
       type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
     };
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);

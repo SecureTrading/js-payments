@@ -143,7 +143,7 @@ export class VisaCheckout {
           walletsource: this._walletSource,
           wallettoken: this.paymentDetails
         },
-        DomMethods.parseMerchantForm()
+        DomMethods.parseForm()
       )
       .then(() => {
         this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
@@ -207,7 +207,7 @@ export class VisaCheckout {
     settings || config ? { ...config, ...settings } : {};
 
   private _initVisaFlow() {
-    return DomMethods.insertScript('body', this._sdkAddress).addEventListener('load', () => {
+    return DomMethods.insertScript('body', { src: this._sdkAddress }).addEventListener('load', () => {
       this.attachVisaButton();
       this.initPaymentConfiguration();
       this.paymentStatusHandler();

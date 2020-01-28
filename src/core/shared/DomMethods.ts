@@ -1,3 +1,4 @@
+import { IScriptParams } from '../models/IScriptParams';
 import { Selectors } from './Selectors';
 
 export class DomMethods {
@@ -50,11 +51,13 @@ export class DomMethods {
     ...Array.prototype.slice.call(form.querySelectorAll(DomMethods.INPUT_MARKUP))
   ];
 
-  public static insertScript(target: string, src: string): HTMLScriptElement {
-    const targetElement: Element = document.getElementsByTagName(target)[0];
+  public static insertScript(target: string, params: IScriptParams): HTMLScriptElement {
+    if (DomMethods.isScriptLoaded(params.src)) {
+      return;
+    }
     const script: HTMLScriptElement = document.createElement(DomMethods.SCRIPT_MARKUP) as HTMLScriptElement;
+    const targetElement: Element = DomMethods.setMarkupAttributes(target, params);
     targetElement.appendChild(script);
-    script.src = src;
     return script;
   }
 
@@ -64,18 +67,8 @@ export class DomMethods {
     document.head.appendChild(style);
   }
 
-  public static isScriptLoaded(name: string): boolean {
-    const scripts: HTMLCollection = document.getElementsByTagName(DomMethods.SCRIPT_MARKUP);
-    // @ts-ignore
-    for (const script of scripts) {
-      if (script.getAttribute(DomMethods.SRC_ATTRIBUTE) === name) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  public static parseForm(form: HTMLElement): {} {
+  public static parseForm(): {} {
+    const form: HTMLElement = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR);
     const els = this.getAllFormElements(form);
     const result: any = {};
     for (const el of els) {
@@ -84,10 +77,6 @@ export class DomMethods {
       }
     }
     return result;
-  }
-
-  public static parseMerchantForm(): {} {
-    return this.parseForm(document.getElementById(Selectors.MERCHANT_FORM_SELECTOR));
   }
 
   public static removeAllChildren(placement: string): HTMLElement {
@@ -99,5 +88,24 @@ export class DomMethods {
       element.removeChild(element.lastChild);
     }
     return element;
+  }
+
+  private static setMarkupAttributes(target: string, params: IScriptParams): Element {
+    const targetElement: Element = document.getElementsByTagName(target)[0];
+    Object.keys(params).forEach((param: string) => {
+      // @ts-ignore
+      targetElement.setAttribute(param, params[param]);
+    });
+    return targetElement;
+  }
+
+  private static isScriptLoaded(name: string): boolean {
+    const scripts: HTMLCollection = document.getElementsByTagName(DomMethods.SCRIPT_MARKUP);
+    for (const script of Array.from(scripts)) {
+      if (script.getAttribute(DomMethods.SRC_ATTRIBUTE) === name) {
+        return true;
+      }
+    }
+    return false;
   }
 }
