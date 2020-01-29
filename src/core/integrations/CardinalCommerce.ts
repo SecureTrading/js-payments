@@ -63,6 +63,7 @@ export class CardinalCommerce {
       const { newJwt } = data;
       this._jwt = newJwt;
       this._onInit();
+      this._onCardinalLoad();
     });
   }
 

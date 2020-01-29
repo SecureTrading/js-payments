@@ -52,9 +52,10 @@ export class DomMethods {
   ];
 
   public static insertScript(target: string, params: IScriptParams): Element {
-    const isScriptLoaded: Element = DomMethods.isScriptLoaded(params.src);
-    if (isScriptLoaded) {
-      return isScriptLoaded;
+    const loaded: Element = DomMethods.isScriptLoaded(params.src);
+    console.error(loaded);
+    if (loaded) {
+      return loaded;
     }
     const targetElement: Element = document.getElementsByTagName(target)[0];
     const script: Element = DomMethods.setMarkupAttributes(DomMethods.SCRIPT_MARKUP, params);
@@ -108,7 +109,6 @@ export class DomMethods {
 
   private static isScriptLoaded(name: string): Element {
     const scripts: HTMLCollection = document.getElementsByTagName(DomMethods.SCRIPT_MARKUP);
-    console.error(scripts);
     for (const script of Array.from(scripts)) {
       if (script.getAttribute(DomMethods.SRC_ATTRIBUTE) === name) {
         return script;
