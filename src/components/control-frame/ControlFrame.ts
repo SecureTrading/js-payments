@@ -18,7 +18,7 @@ import { MessageBus } from '../../core/shared/MessageBus';
 import { Notification } from '../../core/shared/Notification';
 import { Payment } from '../../core/shared/Payment';
 import { Validation } from '../../core/shared/Validation';
-import { iinLookup } from "@securetrading/ts-iin-lookup";
+import { iinLookup } from '@securetrading/ts-iin-lookup';
 
 export class ControlFrame extends Frame {
   private static ALLOWED_PARAMS: string[] = ['jwt', 'gatewayUrl'];
