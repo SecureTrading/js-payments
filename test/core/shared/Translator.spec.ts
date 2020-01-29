@@ -1,4 +1,4 @@
-import { BrowserLocalStorage } from '../../../src/core/services/BrowserLocalStorage';
+import { BrowserLocalStorage } from '../../../src/core/services/storage/BrowserLocalStorage';
 import { Translator } from '../../../src/core/shared/Translator';
 import { Language } from '../../../src/core/shared/Language';
 // @ts-ignore
