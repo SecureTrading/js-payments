@@ -3,7 +3,7 @@ env:
     - DOCKER_BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
     - DOCKER_BRANCH=${DOCKER_BRANCH//[\@\/]/-}
     - TESTS_TYPE=${TESTS_TYPE}
-    - TEST_TAG=sample_test
+    - TEST_TAG=${$TEST_TAG}
     - BRANCH_WITH_FULL_TESTS=master
     - APP_REPO=js-payments
     - APP_BRANCH=$DOCKER_BRANCH
