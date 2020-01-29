@@ -321,7 +321,7 @@ export class Validation extends Frame {
     this._setMessage(inputElement, messageElement, customErrorMessage);
   }
 
-  protected onInit() {
+  protected async onInit() {
     super.onInit();
     this.messageBus = new MessageBus();
     this.binLookup = new BinLookup();

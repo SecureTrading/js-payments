@@ -137,7 +137,7 @@ export class NotificationFrame extends Frame {
     return allowed;
   }
 
-  protected onInit() {
+  protected async onInit() {
     super.onInit();
     this._translator = new Translator(this.params.locale);
     this._onMessage();
