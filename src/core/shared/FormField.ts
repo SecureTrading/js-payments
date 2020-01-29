@@ -31,10 +31,13 @@ export class FormField extends Frame {
     this.onInit();
   }
 
-  public onInit() {
+  public async onInit() {
     super.onInit();
     this._translator = new Translator(this.params.locale);
     this.validation = new Validation();
+
+    await this._translator.ready;
+
     this._setLabelText();
     this._addTabListener();
   }
