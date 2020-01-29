@@ -18,8 +18,7 @@ import { MessageBus } from '../../core/shared/MessageBus';
 import { Notification } from '../../core/shared/Notification';
 import { Payment } from '../../core/shared/Payment';
 import { Validation } from '../../core/shared/Validation';
-// @ts-ignore
-import { PaymentsUtils } from '@securetrading/js-payments-utils';
+import { iinLookup } from "@securetrading/ts-iin-lookup";
 
 export class ControlFrame extends Frame {
   private static ALLOWED_PARAMS: string[] = ['jwt', 'gatewayUrl'];
@@ -169,8 +168,8 @@ export class ControlFrame extends Frame {
 
   private _isCardBypassed(data: ISubmitData): boolean {
     return !this._cardNumber
-      ? data.bypassCards.includes(PaymentsUtils.iinLookup.lookup(this._getPan()).type)
-      : data.bypassCards.includes(PaymentsUtils.iinLookup.lookup(this._cardNumber).type);
+      ? data.bypassCards.includes(iinLookup.lookup(this._getPan()).type)
+      : data.bypassCards.includes(iinLookup.lookup(this._cardNumber).type);
   }
 
   private _onSubmit(data: ISubmitData): void {
@@ -244,7 +243,7 @@ export class ControlFrame extends Frame {
       pan = panFromJwt ? panFromJwt : this._formFields.cardNumber.value;
     }
 
-    const cardType: string = PaymentsUtils.iinLookup.lookup(pan).type;
+    const cardType: string = iinLookup.lookup(pan).type;
     return ControlFrame.NON_CVV_CARDS.includes(cardType);
   }
 

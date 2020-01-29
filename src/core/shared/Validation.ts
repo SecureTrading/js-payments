@@ -11,10 +11,9 @@ import { MessageBus } from './MessageBus';
 import { Selectors } from './Selectors';
 import { Translator } from './Translator';
 import { Utils } from './Utils';
-// @ts-ignore
-import { PaymentsUtils } from '@securetrading/js-payments-utils';
-// @ts-ignore
-import { BrandDetailsType } from '@securetrading/js-payments-utils/types';
+import { iinLookup } from '@securetrading/ts-iin-lookup';
+import { BrandDetailsType } from '@securetrading/ts-iin-lookup/dist/types';
+import { luhnCheck } from '@securetrading/ts-luhn-check';
 
 const {
   VALIDATION_ERROR_FIELD_IS_REQUIRED,
@@ -254,8 +253,7 @@ export class Validation extends Frame {
 
   public luhnCheck(field: HTMLInputElement, input: HTMLInputElement, message: HTMLDivElement) {
     const { value } = input;
-    const isLuhnOk: boolean = PaymentsUtils.validation.luhnCheck(value);
-    if (!isLuhnOk) {
+    if (!luhnCheck(value)) {
       Validation.setCustomValidationError(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH, field);
       this.validate(input, message, Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
     } else {
@@ -320,7 +318,7 @@ export class Validation extends Frame {
   }
 
   protected getCardDetails(cardNumber: string = Validation.CLEAR_VALUE): BrandDetailsType {
-    return PaymentsUtils.iinLookup.lookup(cardNumber);
+    return iinLookup.lookup(cardNumber);
   }
 
   protected cardNumber(value: string) {

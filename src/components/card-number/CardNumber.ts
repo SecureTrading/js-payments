@@ -7,8 +7,7 @@ import { MessageBus } from '../../core/shared/MessageBus';
 import { Selectors } from '../../core/shared/Selectors';
 import { Utils } from '../../core/shared/Utils';
 import { Validation } from '../../core/shared/Validation';
-// @ts-ignore
-import { PaymentsUtils } from '@securetrading/js-payments-utils';
+import { iinLookup } from '@securetrading/ts-iin-lookup';
 
 export class CardNumber extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
@@ -111,7 +110,7 @@ export class CardNumber extends FormField {
   }
 
   private _getBinLookupDetails = (cardNumber: string) =>
-    PaymentsUtils.iinLookup.lookup(cardNumber).type ? PaymentsUtils.iinLookup.lookup(cardNumber) : undefined;
+    iinLookup.lookup(cardNumber).type ? iinLookup.lookup(cardNumber) : undefined;
 
   private _getCardFormat = (cardNumber: string) =>
     this._getBinLookupDetails(cardNumber) ? this._getBinLookupDetails(cardNumber).format : undefined;
@@ -172,7 +171,7 @@ export class CardNumber extends FormField {
 
   private _disableSecurityCodeField(cardNumber: string) {
     const number: string = Validation.clearNonDigitsChars(cardNumber);
-    const isCardPiba: boolean = CardNumber.NO_CVV_CARDS.includes(PaymentsUtils.iinLookup.lookup(number).type);
+    const isCardPiba: boolean = CardNumber.NO_CVV_CARDS.includes(iinLookup.lookup(number).type);
     const messageBusEventPiba: IMessageBusEvent = {
       data: isCardPiba,
       type: MessageBus.EVENTS.IS_CARD_WITHOUT_CVV
