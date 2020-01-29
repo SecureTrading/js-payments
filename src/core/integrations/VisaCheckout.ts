@@ -208,11 +208,11 @@ export class VisaCheckout {
     settings || config ? { ...config, ...settings } : {};
 
   private _initVisaFlow() {
-    const script = DomMethods.insertScript('body', { src: this._sdkAddress });
-    if (this._called || !script) {
-      return;
-    }
-    script.addEventListener('load', () => {
+    DomMethods.insertScript('body', { src: this._sdkAddress }).addEventListener('load', () => {
+      if (this._called) {
+        return;
+      }
+
       this.attachVisaButton();
       this.initPaymentConfiguration();
       this.paymentStatusHandler();

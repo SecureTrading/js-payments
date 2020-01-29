@@ -53,6 +53,9 @@ export class DomMethods {
 
   public static insertScript(target: string, params: IScriptParams): Element {
     const isScriptLoaded: Element = DomMethods.isScriptLoaded(params.src);
+    if (isScriptLoaded) {
+      return isScriptLoaded;
+    }
     const targetElement: Element = document.getElementsByTagName(target)[0];
     const script: Element = DomMethods.setMarkupAttributes(DomMethods.SCRIPT_MARKUP, params);
     targetElement.appendChild(script);
@@ -60,7 +63,13 @@ export class DomMethods {
   }
 
   public static insertStyle(contents: string): void {
+    const head = document.getElementById('insertedStyles');
+    if (head) {
+      return;
+    }
     const style = document.createElement(DomMethods.STYLE_MARKUP);
+    style.setAttribute('id', 'insertedStyles');
+    style.setAttribute('type', 'text/css');
     style.innerHTML = contents;
     document.head.appendChild(style);
   }
@@ -99,6 +108,7 @@ export class DomMethods {
 
   private static isScriptLoaded(name: string): Element {
     const scripts: HTMLCollection = document.getElementsByTagName(DomMethods.SCRIPT_MARKUP);
+    console.error(scripts);
     for (const script of Array.from(scripts)) {
       if (script.getAttribute(DomMethods.SRC_ATTRIBUTE) === name) {
         return script;
