@@ -4,4 +4,5 @@ export interface IScriptParams {
   charset?: string;
   defer?: 'defer';
   type?: string;
+  id?: string;
 }

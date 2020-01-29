@@ -156,7 +156,7 @@ export class CardinalCommerce {
   }
 
   protected _threeDSetup() {
-    DomMethods.insertScript('head', { src: this._sdkAddress }).addEventListener('load', () => {
+    DomMethods.insertScript('head', { src: this._sdkAddress, id: 'cardinalCommerce' }).addEventListener('load', () => {
       this._onCardinalLoad();
     });
   }

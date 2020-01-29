@@ -52,8 +52,7 @@ export class DomMethods {
   ];
 
   public static insertScript(target: string, params: IScriptParams): Element {
-    const loaded: Element = DomMethods.isScriptLoaded(params.src);
-    console.error(loaded);
+    const loaded: Element = DomMethods.isScriptLoaded(params);
     if (loaded) {
       return loaded;
     }
@@ -107,10 +106,15 @@ export class DomMethods {
     return element;
   }
 
-  private static isScriptLoaded(name: string): Element {
+  private static isScriptLoaded(params: IScriptParams): Element {
+    const { src, id } = params;
     const scripts: HTMLCollection = document.getElementsByTagName(DomMethods.SCRIPT_MARKUP);
+    const scriptById: HTMLElement = document.getElementById(id);
+    if (scriptById) {
+      return scriptById;
+    }
     for (const script of Array.from(scripts)) {
-      if (script.getAttribute(DomMethods.SRC_ATTRIBUTE) === name) {
+      if (script.getAttribute(DomMethods.SRC_ATTRIBUTE) === src) {
         return script;
       }
     }
