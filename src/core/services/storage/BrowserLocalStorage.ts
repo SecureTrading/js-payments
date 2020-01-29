@@ -1,6 +1,7 @@
 import { ComponentLocalStorage } from './ComponentLocalStorage';
 import { ParentLocalStorage } from './ParentLocalStorage';
 import { IStorage } from '../../models/IStorage';
+import { MessageBus } from '../../shared/MessageBus';
 
 export class BrowserLocalStorage implements IStorage {
   readonly ready: Promise<void>;
@@ -10,8 +11,8 @@ export class BrowserLocalStorage implements IStorage {
     const _isInsideComponent: boolean = (window.top !== window.self);
 
     this._storage = _isInsideComponent ?
-      new ComponentLocalStorage() :
-      new ParentLocalStorage();
+      new ComponentLocalStorage(localStorage, new MessageBus()) :
+      new ParentLocalStorage(localStorage, new MessageBus());
 
     this.ready = this._storage.ready;
   }
