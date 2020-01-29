@@ -10,7 +10,7 @@ export class ParentLocalStorage implements IStorage {
     private readonly _storage: Storage,
     private readonly _messageBus: MessageBus
   ) {
-    this._messageBus.subscribeOnParent(MessageBus.EVENTS.STORAGE_COMPONENT_READY, frameName => {
+    this._messageBus.subscribeOnParent(MessageBus.EVENTS.STORAGE_COMPONENT_READY, (frameName: string) => {
       this._frames.push(frameName);
       this.synchronizeStorage(frameName);
     });
@@ -32,7 +32,7 @@ export class ParentLocalStorage implements IStorage {
   private synchronizeStorage(frameName?: string): void {
     const componentFrames = frameName ? [frameName] : this._frames;
 
-    componentFrames.forEach(frame => {
+    componentFrames.forEach((frame: string) => {
       this._messageBus.publishFromParent({
         type: MessageBus.EVENTS.STORAGE_SYNCHRONIZE,
         data: {...this._storage},
