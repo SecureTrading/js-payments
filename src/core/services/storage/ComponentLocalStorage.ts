@@ -4,13 +4,11 @@ import { MessageBus } from '../../shared/MessageBus';
 export class ComponentLocalStorage implements IStorage {
   readonly ready: Promise<void>;
   private static _initialized = false;
-  private readonly _storage: Storage;
-  private readonly _messageBus: MessageBus;
 
-  constructor() {
-    this._storage = localStorage;
-    this._messageBus = new MessageBus();
-
+  constructor(
+    private readonly _storage: Storage,
+    private readonly _messageBus: MessageBus
+  ) {
     if (ComponentLocalStorage._initialized) {
       this.ready = Promise.resolve();
       return;

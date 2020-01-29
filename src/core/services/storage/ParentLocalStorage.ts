@@ -4,15 +4,12 @@ import { StorageItemEvent } from './StorageItemEvent';
 
 export class ParentLocalStorage implements IStorage {
   readonly ready: Promise<void> = Promise.resolve();
-
-  private readonly _storage: Storage;
-  private readonly _messageBus: MessageBus;
   private _frames: string[] = [];
 
-  constructor() {
-    this._storage = localStorage;
-    this._messageBus = new MessageBus();
-
+  constructor(
+    private readonly _storage: Storage,
+    private readonly _messageBus: MessageBus
+  ) {
     this._messageBus.subscribeOnParent(MessageBus.EVENTS.STORAGE_COMPONENT_READY, frameName => {
       this._frames.push(frameName);
       this.synchronizeStorage(frameName);
