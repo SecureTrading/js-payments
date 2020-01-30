@@ -382,10 +382,10 @@ describe('CardinalCommerce', () => {
 
       instance._threeDSetup();
       expect(DomMethods.insertScript).toHaveBeenCalledTimes(1);
-      expect(DomMethods.insertScript).toHaveBeenCalledWith(
-        'head',
-        'https://songbirdstag.cardinalcommerce.com/edge/v1/songbird.js'
-      );
+      expect(DomMethods.insertScript).toHaveBeenCalledWith('head', {
+        id: 'cardinalCommerce',
+        src: 'https://songbirdstag.cardinalcommerce.com/edge/v1/songbird.js'
+      });
       expect(script.addEventListener).toHaveBeenCalledTimes(1);
       // @ts-ignore
       expect(script.addEventListener.mock.calls[0][0]).toBe('load');
