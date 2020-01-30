@@ -53,6 +53,7 @@ export class DomMethods {
 
   public static insertScript(target: string, params: IScriptParams): Element {
     const loaded: Element = DomMethods.isScriptLoaded(params);
+
     if (loaded) {
       return loaded;
     }

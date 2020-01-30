@@ -65,6 +65,7 @@ export class GoogleAnalytics {
     return new Promise((resolve, reject) => {
       this._gaScript = document.createElement('script');
       this._gaScript.type = 'text/javascript';
+      this._gaScript.id = 'googleAnalytics';
       this._gaScriptContent = document.createTextNode(GoogleAnalytics._returnScriptWithFeatures());
       this._gaScript.appendChild(this._gaScriptContent);
       resolve((this._communicate = GoogleAnalytics.TRANSLATION_SCRIPT_SUCCEEDED));
@@ -78,9 +79,12 @@ export class GoogleAnalytics {
 
   private _insertGAScript(): Promise<any> {
     return new Promise((resolve, reject) => {
-      document.head.appendChild(this._gaScript);
-      resolve((this._communicate = GoogleAnalytics.TRANSLATION_SCRIPT_APPENDED));
-      reject((this._communicate = GoogleAnalytics.TRANSLATION_SCRIPT_APPENDED_FAILURE));
+      if (document.getElementById('googleAnalytics')) {
+        document.head.appendChild(this._gaScript);
+        resolve((this._communicate = GoogleAnalytics.TRANSLATION_SCRIPT_APPENDED));
+      } else {
+        reject((this._communicate = GoogleAnalytics.TRANSLATION_SCRIPT_APPENDED_FAILURE));
+      }
     });
   }
 }
