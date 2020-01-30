@@ -19,7 +19,7 @@ import { IComponentsConfig } from './core/models/IComponentsConfig';
 import { IConfig } from './core/models/IConfig';
 import { IStJwtObj } from './core/models/IStJwtObj';
 import { IVisaConfig } from './core/models/IVisaConfig';
-import { BrowserLocalStorage } from './core/services/BrowserLocalStorage';
+import { BrowserLocalStorage } from './core/services/storage/BrowserLocalStorage';
 import { Config } from './core/services/Config';
 import { MessageBus } from './core/shared/MessageBus';
 import { Translator } from './core/shared/Translator';

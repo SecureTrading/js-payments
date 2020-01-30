@@ -1,5 +1,4 @@
 import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
-import { BinLookup } from '../../core/shared/BinLookup';
 import { Formatter } from '../../core/shared/Formatter';
 import { FormField } from '../../core/shared/FormField';
 import { Language } from '../../core/shared/Language';
@@ -19,7 +18,6 @@ export class SecurityCode extends FormField {
   private static SPECIAL_INPUT_LENGTH: number = 4;
   private static STANDARD_INPUT_LENGTH: number = 3;
 
-  private _binLookup: BinLookup;
   private _formatter: Formatter;
   private _securityCodeLength: number;
   private _securityCodeWrapper: HTMLElement;
@@ -27,7 +25,6 @@ export class SecurityCode extends FormField {
 
   constructor() {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
-    this._binLookup = new BinLookup();
     this._formatter = new Formatter();
     this._validation = new Validation();
     this._subscribeSecurityCodeChange();
