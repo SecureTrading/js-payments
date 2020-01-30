@@ -82,7 +82,6 @@ export class GoogleAnalytics {
       if (!document.getElementById('googleAnalytics')) {
         document.head.appendChild(this._gaScript);
         resolve((this._communicate = GoogleAnalytics.TRANSLATION_SCRIPT_APPENDED));
-      } else {
         reject((this._communicate = GoogleAnalytics.TRANSLATION_SCRIPT_APPENDED_FAILURE));
       }
     });
