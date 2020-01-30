@@ -1,5 +1,5 @@
 import i18next from 'i18next';
-import { BrowserLocalStorage } from '../services/BrowserLocalStorage';
+import { BrowserLocalStorage } from '../services/storage/BrowserLocalStorage';
 // @ts-ignore
 import cy_GB from '../translations/cy_GB.json';
 // @ts-ignore
@@ -22,7 +22,9 @@ import no_NO from '../translations/no_NO.json';
 import sv_SE from '../translations/sv_SE.json';
 
 export class Translator {
+  readonly ready: Promise<void>;
   private _storage: BrowserLocalStorage;
+
   constructor(locale: string) {
     i18next.init({
       debug: false,
@@ -41,6 +43,7 @@ export class Translator {
       }
     });
     this._storage = new BrowserLocalStorage();
+    this.ready = this._storage.ready;
   }
 
   public translate = (text: string) => {

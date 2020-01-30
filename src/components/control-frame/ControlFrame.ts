@@ -64,7 +64,7 @@ export class ControlFrame extends Frame {
     this.onInit();
   }
 
-  protected onInit(): void {
+  protected async onInit(): Promise<void> {
     super.onInit();
     this._setInstances();
     this._setFormFieldsValidities();
