@@ -64,9 +64,9 @@ export class NotificationFrame extends Frame {
     let allowed = super.getAllowedStyles();
     const notification = `#${NotificationFrame.ELEMENT_ID}`;
     const error = `.${NotificationFrame.ELEMENT_CLASSES.error}${notification}`;
-    const success = `${NotificationFrame.ELEMENT_CLASSES.success}${notification}`;
-    const warning = `${NotificationFrame.ELEMENT_CLASSES.warning}${notification}`;
-    const info = `${NotificationFrame.ELEMENT_CLASSES.info}${notification}`;
+    const success = `.${NotificationFrame.ELEMENT_CLASSES.success}${notification}`;
+    const warning = `.${NotificationFrame.ELEMENT_CLASSES.warning}${notification}`;
+    const info = `.${NotificationFrame.ELEMENT_CLASSES.info}${notification}`;
     allowed = {
       ...allowed,
       'background-color-notification': {
