@@ -6,9 +6,11 @@
     "sourceMap": true,
     "noImplicitAny": true,
     "module": "commonjs",
+    "moduleResolution": "node",
     "target": "es5",
     "resolveJsonModule": true,
-    "jsx": "react"
+    "jsx": "react",
+    "lib": ["DOM", "ES2015", "ES2015.Promise"]
   },
   "include": ["./src/**/*"],
   "exclude": [
