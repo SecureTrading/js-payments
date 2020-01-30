@@ -185,44 +185,6 @@ describe('CardinalCommerce', () => {
   });
 
   // given
-  describe('_threeDSetup()', () => {
-    // @ts-ignore
-    const onLoad = CardinalCommerce.prototype._onCardinalLoad;
-    let spy: SpyInstance;
-    let spyCardinalSetup: SpyInstance;
-
-    beforeEach(() => {
-      // @ts-ignore
-      spy = jest.spyOn(CardinalCommerce.prototype, '_onCardinalLoad').mockImplementation(() => {});
-      spyCardinalSetup = jest.spyOn(instance, '_cardinalSetup').mockImplementation(() => {});
-      instance._threeDSetup();
-      instance._threeDSetup();
-      instance._threeDSetup();
-      instance._threeDSetup();
-      instance._threeDSetup();
-      instance._threeDSetup();
-      instance._threeDSetup();
-      instance._threeDSetup();
-    });
-
-    // then
-    it(`shouldn't call onCardinalLoad more than one time and call _cardinalSetup 7 times instead`, () => {
-      const sdkCollection: HTMLCollection = document.head.getElementsByTagName('script');
-      const sdkNames: string[] = Object.keys(sdkCollection).map(item => {
-        // @ts-ignore
-        return (sdkCollection[item].src = 'https://songbirdstag.cardinalcommerce.com/edge/v1/songbird.js');
-      });
-      expect(spyCardinalSetup).toHaveBeenCalledTimes(7);
-      expect(sdkNames.length).toEqual(1);
-    });
-
-    afterEach(() => {
-      // @ts-ignore
-      CardinalCommerce.prototype._onCardinalLoad = onLoad;
-    });
-  });
-
-  // given
   describe('_initSubscriptions()', () => {
     // then
     it('should set up subscribers to control frame setup, threedquery and threedinit events', () => {

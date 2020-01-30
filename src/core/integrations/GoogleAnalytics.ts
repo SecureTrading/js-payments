@@ -79,7 +79,7 @@ export class GoogleAnalytics {
 
   private _insertGAScript(): Promise<any> {
     return new Promise((resolve, reject) => {
-      if (document.getElementById('googleAnalytics')) {
+      if (!document.getElementById('googleAnalytics')) {
         document.head.appendChild(this._gaScript);
         resolve((this._communicate = GoogleAnalytics.TRANSLATION_SCRIPT_APPENDED));
       } else {
