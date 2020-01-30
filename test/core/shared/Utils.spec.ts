@@ -1,6 +1,6 @@
 import each from 'jest-each';
 import { Utils } from '../../../src/core/shared/Utils';
-import { BrowserLocalStorage } from '../../../src/core/services/BrowserLocalStorage';
+import { BrowserLocalStorage } from '../../../src/core/services/storage/BrowserLocalStorage';
 
 localStorage.setItem = jest.fn();
 
