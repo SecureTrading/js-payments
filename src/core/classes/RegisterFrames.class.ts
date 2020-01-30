@@ -1,8 +1,6 @@
 import { IStyles } from '../models/IStyles';
 import { MessageBus } from '../shared/MessageBus';
 import { StJwt } from '../shared/StJwt';
-// @ts-ignore
-import { PaymentsUtils } from '@securetrading/js-payments-utils';
 
 export class RegisterFrames {
   private static COMPLETE_FORM_FIELDS: string[] = ['pan', 'expirydate', 'securitycode'];
