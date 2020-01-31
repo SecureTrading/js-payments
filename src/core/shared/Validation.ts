@@ -1,18 +1,19 @@
 import { StCodec } from '../classes/StCodec.class';
-import { BrandDetailsType } from '../imports/cardtype';
 import { ICard } from '../models/ICard';
 import { IErrorData } from '../models/IErrorData';
 import { IFormFieldState } from '../models/IFormFieldState';
 import { IMessageBusEvent } from '../models/IMessageBusEvent';
 import { IMessageBusValidateField } from '../models/IMessageBusValidateField';
 import { IValidation } from '../models/IValidation';
-import { BinLookup } from './BinLookup';
 import { Frame } from './Frame';
 import { Language } from './Language';
 import { MessageBus } from './MessageBus';
 import { Selectors } from './Selectors';
 import { Translator } from './Translator';
 import { Utils } from './Utils';
+import { iinLookup } from '@securetrading/ts-iin-lookup';
+import { BrandDetailsType } from '@securetrading/ts-iin-lookup/dist/types';
+import { luhnCheck } from '@securetrading/ts-luhn-check';
 
 const {
   VALIDATION_ERROR_FIELD_IS_REQUIRED,
@@ -93,7 +94,6 @@ export class Validation extends Frame {
   private static MATCH_CHARS = /[^\d]/g;
   private static MATCH_DIGITS = /^[0-9]*$/;
   private static MERCHANT_EXTRA_FIELDS_PREFIX = 'billing';
-  private static LUHN_CHECK_ARRAY: number[] = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
   private static SECURITY_CODE_FIELD_NAME: string = 'securitycode';
   private static SPACE_IN_PAN: string = ' ';
   private static BACKEND_ERROR_FIELDS_NAMES = {
@@ -101,21 +101,6 @@ export class Validation extends Frame {
     expirationDate: Validation.EXPIRY_DATE_FIELD_NAME,
     securityCode: Validation.SECURITY_CODE_FIELD_NAME
   };
-
-  private static _luhnAlgorithm(cardNumber: string): boolean {
-    const cardNumberWithoutSpaces = cardNumber.replace(/\s/g, Validation.CLEAR_VALUE);
-    let bit = 1;
-    let cardNumberLength = cardNumberWithoutSpaces.length;
-    let sum = 0;
-
-    while (cardNumberLength) {
-      const val = parseInt(cardNumberWithoutSpaces.charAt(--cardNumberLength), 10);
-      bit = bit ^ 1;
-      const algorithmValue = bit ? Validation.LUHN_CHECK_ARRAY[val] : val;
-      sum += algorithmValue;
-    }
-    return sum && sum % 10 === 0;
-  }
 
   private static _setValidateEvent(errordata: string, event: IMessageBusEvent): IMessageBusEvent {
     switch (errordata) {
@@ -167,7 +152,6 @@ export class Validation extends Frame {
   public expirationDateValue: string;
   public securityCodeValue: string;
   public validation: IValidation;
-  protected binLookup: BinLookup;
   protected messageBus: MessageBus;
   private _card: ICard;
   private _currentKeyCode: number;
@@ -269,8 +253,7 @@ export class Validation extends Frame {
 
   public luhnCheck(field: HTMLInputElement, input: HTMLInputElement, message: HTMLDivElement) {
     const { value } = input;
-    const isLuhnOk: boolean = Validation._luhnAlgorithm(value);
-    if (!isLuhnOk) {
+    if (!luhnCheck(value)) {
       Validation.setCustomValidationError(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH, field);
       this.validate(input, message, Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
     } else {
@@ -324,7 +307,6 @@ export class Validation extends Frame {
   protected async onInit() {
     super.onInit();
     this.messageBus = new MessageBus();
-    this.binLookup = new BinLookup();
     this._matchDigitsRegexp = new RegExp(Validation.MATCH_DIGITS);
     this._translator = new Translator(this.params.locale);
   }
@@ -336,7 +318,7 @@ export class Validation extends Frame {
   }
 
   protected getCardDetails(cardNumber: string = Validation.CLEAR_VALUE): BrandDetailsType {
-    return this.binLookup.binLookup(cardNumber);
+    return iinLookup.lookup(cardNumber);
   }
 
   protected cardNumber(value: string) {

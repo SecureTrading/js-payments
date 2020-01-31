@@ -11,6 +11,7 @@ import { Selectors } from '../shared/Selectors';
 import { Translator } from '../shared/Translator';
 import { Validation } from '../shared/Validation';
 import { RegisterFrames } from './RegisterFrames.class';
+import { iinLookup } from '@securetrading/ts-iin-lookup';
 
 export class CardFrames extends RegisterFrames {
   private static CARD_NUMBER_FIELD_NAME: string = 'pan';
@@ -206,14 +207,14 @@ export class CardFrames extends RegisterFrames {
   private _getCardType(jwt: string): string {
     const cardDetails = JwtDecode(jwt) as any;
     if (cardDetails.payload.pan) {
-      return this.binLookup.binLookup(cardDetails.payload.pan).type;
+      return iinLookup.lookup(cardDetails.payload.pan).type;
     }
   }
 
   private _getSecurityCodeLength(jwt: string): number {
     const cardDetails = JwtDecode(jwt) as any;
     if (cardDetails.payload.pan) {
-      const { cvcLength } = this.binLookup.binLookup(cardDetails.payload.pan);
+      const { cvcLength } = iinLookup.lookup(cardDetails.payload.pan);
       return cvcLength.slice(-1)[0];
     }
   }
