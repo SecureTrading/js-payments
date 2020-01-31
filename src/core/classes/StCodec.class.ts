@@ -9,6 +9,7 @@ import { Selectors } from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
 import { Validation } from '../shared/Validation';
+import { AccountTypeDescription } from './enum/AccountTypeDescription';
 
 class StCodec {
   public static CONTENT_TYPE = 'application/json';

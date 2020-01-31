@@ -8,6 +8,7 @@ import { Payment } from '../shared/Payment';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
 import { GoogleAnalytics } from './GoogleAnalytics';
+import { AccountTypeDescription } from '../classes/enum/AccountTypeDescription';
 
 const ApplePaySession = (window as any).ApplePaySession;
 const ApplePayError = (window as any).ApplePayError;
@@ -121,7 +122,7 @@ export class ApplePay {
   private _placement: string;
   private readonly _completion: { errors: []; status: string };
 
-  constructor(config: IWalletConfig, jwt: string, gatewayUrl: string) {
+  constructor(config: IWalletConfig, jwt: string, gatewayUrl: string, accountType: AccountTypeDescription) {
     this._notification = new Notification();
     this._messageBus = new MessageBus();
     config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
@@ -131,10 +132,10 @@ export class ApplePay {
       errors: [],
       status: ApplePaySession ? this.getPaymentSuccessStatus() : ''
     };
-    this._configurePaymentProcess(jwt, config, gatewayUrl);
+    this._configurePaymentProcess(jwt, config, gatewayUrl, accountType);
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
       const { newJwt } = data;
-      this._configurePaymentProcess(newJwt, config, gatewayUrl);
+      this._configurePaymentProcess(newJwt, config, gatewayUrl, accountType);
     });
   }
 
@@ -178,11 +179,16 @@ export class ApplePay {
     return ApplePaySession.STATUS_FAILURE;
   }
 
-  private _configurePaymentProcess(jwt: string, config: IWalletConfig, gatewayUrl: string) {
+  private _configurePaymentProcess(
+    jwt: string,
+    config: IWalletConfig,
+    gatewayUrl: string,
+    accountType: AccountTypeDescription
+  ) {
     const { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId, requestTypes } = config;
     this._merchantId = merchantId;
     this._placement = placement;
-    this.payment = new Payment(jwt, gatewayUrl);
+    this.payment = new Payment(jwt, gatewayUrl, accountType);
     this._paymentRequest = paymentRequest;
     this._sitesecurity = sitesecurity;
     this._requestTypes = requestTypes;
@@ -190,7 +196,8 @@ export class ApplePay {
     this._stJwtInstance = new StJwt(jwt);
     this._stTransportInstance = new StTransport({
       gatewayUrl,
-      jwt
+      jwt,
+      accountType,
     });
     this._translator = new Translator(this._stJwtInstance.locale);
     this._onInit(buttonText, buttonStyle);

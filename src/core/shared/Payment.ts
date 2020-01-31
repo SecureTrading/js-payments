@@ -7,6 +7,7 @@ import { IWalletVerify } from '../models/IWalletVerify';
 import { Notification } from './Notification';
 import { StJwt } from './StJwt';
 import { Validation } from './Validation';
+import { AccountTypeDescription } from '../classes/enum/AccountTypeDescription';
 
 export class Payment {
   private _cardinalCommerceCacheToken: string;
@@ -18,9 +19,9 @@ export class Payment {
   private _validation: Validation;
   private readonly _walletVerifyRequest: IStRequest;
 
-  constructor(jwt: string, gatewayUrl: string, parentOrigin?: string) {
+  constructor(jwt: string, gatewayUrl: string, accountType: AccountTypeDescription, parentOrigin?: string) {
     this._notification = new Notification();
-    this._stTransport = new StTransport({ jwt, gatewayUrl }, parentOrigin);
+    this._stTransport = new StTransport({ jwt, gatewayUrl, accountType }, parentOrigin);
     this._validation = new Validation();
     this._walletVerifyRequest = {
       requesttypedescriptions: ['WALLETVERIFY']

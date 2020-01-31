@@ -1,5 +1,9 @@
 import { ApplePayErrorMock } from '../../../src/core/integrations/ApplePayErrorMock';
 import { ApplePaySessionMock } from '../../../src/core/integrations/ApplePaySessionMock';
+import { ApplePay } from '../../../src/core/integrations/ApplePay';
+import { DomMethods } from '../../../src/core/shared/DomMethods';
+import { Language } from '../../../src/core/shared/Language';
+import { AccountTypeDescription } from '../../../src/core/classes/enum/AccountTypeDescription';
 
 (window as any).ApplePaySession = ApplePaySessionMock; // has to be defined before we import ApplePay
 (window as any).ApplePayError = ApplePayErrorMock; // has to be defined before we import ApplePay
@@ -8,9 +12,6 @@ import { ApplePaySessionMock } from '../../../src/core/integrations/ApplePaySess
 (window as any).ApplePaySession.canMakePaymentsWithActiveCard = jest.fn();
 (window as any).ApplePaySession.STATUS_SUCCESS = 'SUCCESS';
 const getType = require('jest-get-type');
-import { ApplePay } from '../../../src/core/integrations/ApplePay';
-import { DomMethods } from '../../../src/core/shared/DomMethods';
-import { Language } from '../../../src/core/shared/Language';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 jest.mock('../../../src/core/integrations/GoogleAnalytics');
@@ -1079,7 +1080,7 @@ function ApplePayFixture() {
   };
   const jwt =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
-  const instance = new ApplePay(config, jwt, 'https://example.com');
+  const instance = new ApplePay(config, jwt, 'https://example.com', AccountTypeDescription.ECOM);
 
   return {
     config,

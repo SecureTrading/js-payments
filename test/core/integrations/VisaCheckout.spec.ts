@@ -1,4 +1,5 @@
 import { VisaCheckout } from '../../../src/core/integrations/VisaCheckout';
+import { AccountTypeDescription } from '../../../src/core/classes/enum/AccountTypeDescription';
 
 jest.mock('../../../src/core/integrations/GoogleAnalytics');
 
@@ -11,7 +12,7 @@ describe('Visa Checkout', () => {
     const { config, livestatus, url } = VisaCheckoutFixture();
     const jwt =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
-    instance = new VisaCheckout(config, jwt, url, livestatus);
+    instance = new VisaCheckout(config, jwt, url, AccountTypeDescription.ECOM, livestatus);
     body = document.body;
   });
 

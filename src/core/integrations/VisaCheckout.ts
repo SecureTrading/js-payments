@@ -9,6 +9,7 @@ import { Notification } from '../shared/Notification';
 import { Payment } from '../shared/Payment';
 import { StJwt } from '../shared/StJwt';
 import { GoogleAnalytics } from './GoogleAnalytics';
+import { AccountTypeDescription } from '../classes/enum/AccountTypeDescription';
 
 declare const V: any;
 
@@ -89,16 +90,22 @@ export class VisaCheckout {
     settings: {}
   };
 
-  constructor(config: IWalletConfig, jwt: string, gatewayUrl: string, livestatus?: number) {
+  constructor(
+    config: IWalletConfig,
+    jwt: string,
+    gatewayUrl: string,
+    accountType: AccountTypeDescription,
+    livestatus?: number,
+  ) {
     this._messageBus = new MessageBus();
     this._notification = new Notification();
     config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
     this._stJwt = new StJwt(jwt);
     this._livestatus = livestatus;
-    this._configurePaymentProcess(jwt, config, gatewayUrl);
+    this._configurePaymentProcess(jwt, config, gatewayUrl, accountType);
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
       const { newJwt } = data;
-      this._configurePaymentProcess(newJwt, config, gatewayUrl);
+      this._configurePaymentProcess(newJwt, config, gatewayUrl, accountType);
     });
   }
 
@@ -188,10 +195,15 @@ export class VisaCheckout {
     });
   }
 
-  private _configurePaymentProcess(jwt: string, config: IWalletConfig, gatewayUrl: string) {
+  private _configurePaymentProcess(
+    jwt: string,
+    config: IWalletConfig,
+    gatewayUrl: string,
+    accountType: AccountTypeDescription,
+  ) {
     const { merchantId, livestatus, placement, settings, paymentRequest, buttonSettings, requestTypes } = config;
     this._stJwt = new StJwt(jwt);
-    this.payment = new Payment(jwt, gatewayUrl);
+    this.payment = new Payment(jwt, gatewayUrl, accountType);
     this._livestatus = livestatus;
     this._placement = placement;
     this.requestTypes = requestTypes;

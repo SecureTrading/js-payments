@@ -6,6 +6,7 @@ import { IComponentsIds } from '../models/IComponentsIds';
 import { IConfig } from '../models/IConfig';
 import { IWalletConfig } from '../models/IWalletConfig';
 import { Selectors } from '../shared/Selectors';
+import { AccountTypeDescription } from '../classes/enum/AccountTypeDescription';
 
 export class Config {
   private static DEFAULT_COMPONENTS_IDS: IComponentsIds = {
@@ -70,6 +71,7 @@ export class Config {
       submitOnSuccess: config.submitOnSuccess !== undefined ? config.submitOnSuccess : false,
       translations: config.translations ? config.translations : {},
       visaCheckout: this._setApmConfig(config.visaCheckout, config.components),
+      accountType: config.accountType || AccountTypeDescription.ECOM,
       ...this._setFieldsToSubmit(config),
       ...this._setPropertiesToSubmit(config)
     };

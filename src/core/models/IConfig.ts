@@ -4,6 +4,7 @@ import { IComponentsConfig } from './IComponentsConfig';
 import { IComponentsIds } from './IComponentsIds';
 import { IStyles } from './IStyles';
 import { IWalletConfig } from './IWalletConfig';
+import { AccountTypeDescription } from '../classes/enum/AccountTypeDescription';
 
 export interface IConfig {
   analytics?: boolean;
@@ -28,4 +29,5 @@ export interface IConfig {
   submitOnError?: boolean;
   translations?: {};
   visaCheckout?: IWalletConfig;
+  accountType?: AccountTypeDescription;
 }

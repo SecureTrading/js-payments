@@ -1,4 +1,5 @@
 import { IStyle } from './IStyle';
+import { AccountTypeDescription } from '../classes/enum/AccountTypeDescription';
 
 export interface IParams {
   [name: string]: object | string;
@@ -9,4 +10,5 @@ export interface IParams {
   gatewayUrl?: string;
   paymentTypes?: string;
   defaultPaymentType?: string;
+  accountType?: AccountTypeDescription;
 }

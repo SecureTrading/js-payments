@@ -21,7 +21,7 @@ import { Validation } from '../../core/shared/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 
 export class ControlFrame extends Frame {
-  private static ALLOWED_PARAMS: string[] = ['jwt', 'gatewayUrl'];
+  private static ALLOWED_PARAMS: string[] = ['jwt', 'gatewayUrl', 'accountType'];
   private static NON_CVV_CARDS: string[] = ['PIBA'];
   private static THREEDQUERY_EVENT: string = 'THREEDQUERY';
 
@@ -332,7 +332,7 @@ export class ControlFrame extends Frame {
   }
 
   private _setInstances(): void {
-    this._payment = new Payment(this.params.jwt, this.params.gatewayUrl, this.params.origin);
+    this._payment = new Payment(this.params.jwt, this.params.gatewayUrl, this.params.accountType, this.params.origin);
     this._validation = new Validation();
     this._notification = new Notification();
   }

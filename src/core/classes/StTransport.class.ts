@@ -1,6 +1,7 @@
 import { IStTransportParams } from '../models/IStTransportParams';
 import { Utils } from '../shared/Utils';
 import { IStRequest, StCodec } from './StCodec.class';
+import { AccountTypeDescription } from './enum/AccountTypeDescription';
 
 /**
  * Establishes connection with ST, defines client.
@@ -33,10 +34,12 @@ export class StTransport {
   private static TIMEOUT = 10000;
   private readonly _codec: StCodec;
   private _gatewayUrl: string;
+  private _accountType: AccountTypeDescription;
 
   constructor(params: IStTransportParams, parentOrigin?: string) {
     this._gatewayUrl = params.gatewayUrl;
     this._codec = new StCodec(params.jwt, parentOrigin);
+    this._accountType = params.accountType;
   }
 
   /**
@@ -45,6 +48,8 @@ export class StTransport {
    * @return A Promise object that resolves the gateway response
    */
   public async sendRequest(requestObject: IStRequest) {
+    requestObject.accounttypedescription = requestObject.accounttypedescription || this._accountType;
+
     return this._fetchRetry(this._gatewayUrl, {
       ...StTransport.DEFAULT_FETCH_OPTIONS,
       body: this._codec.encode(requestObject)

@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import { AccountTypeDescription } from '../../classes/enum/AccountTypeDescription';
 
 export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
   analytics: Joi.boolean(),
@@ -70,5 +71,8 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
     settings: {
       displayName: Joi.string()
     }
-  }
+  },
+  accountType: Joi.string()
+    .allow([AccountTypeDescription.ECOM, AccountTypeDescription.MOTO])
+    .default(AccountTypeDescription.ECOM),
 });

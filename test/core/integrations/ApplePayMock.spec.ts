@@ -1,5 +1,6 @@
 import { ApplePayMock } from '../../../src/core/integrations/ApplePayMock';
 import { ApplePaySessionMock } from '../../../src/core/integrations/ApplePaySessionMock';
+import { AccountTypeDescription } from '../../../src/core/classes/enum/AccountTypeDescription';
 
 // given
 describe('Class ApplePayMock', () => {
@@ -131,6 +132,6 @@ function applePayMockFixture() {
   };
   const jwt =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
-  const instance = new ApplePayMock(config, jwt, 'https://example.com');
+  const instance = new ApplePayMock(config, jwt, 'https://example.com', AccountTypeDescription.ECOM);
   return { instance, config, jwt };
 }

@@ -6,6 +6,7 @@ import { MessageBus } from '../shared/MessageBus';
 import { Selectors } from '../shared/Selectors';
 import { Validation } from '../shared/Validation';
 import { RegisterFrames } from './RegisterFrames.class';
+import { AccountTypeDescription } from './enum/AccountTypeDescription';
 
 export class CommonFrames extends RegisterFrames {
   get requestTypes(): string[] {
@@ -44,7 +45,8 @@ export class CommonFrames extends RegisterFrames {
     gatewayUrl: string,
     animatedCard: boolean,
     submitCallback: any,
-    requestTypes: string[]
+    requestTypes: string[],
+    private readonly accountType: AccountTypeDescription,
   ) {
     super(jwt, origin, componentIds, styles, animatedCard, submitCallback);
     this._gatewayUrl = gatewayUrl;
@@ -111,7 +113,8 @@ export class CommonFrames extends RegisterFrames {
     this._controlFrame.create(Selectors.CONTROL_FRAME_COMPONENT_NAME, controlFrame, {
       gatewayUrl: this._gatewayUrl,
       jwt: this.jwt,
-      origin: this.origin
+      origin: this.origin,
+      accountType: this.accountType,
     });
     this._controlFrameMounted = this._controlFrame.mount(Selectors.CONTROL_FRAME_IFRAME, '-1');
     this.elementsToRegister.push(this._controlFrameMounted);

@@ -1,6 +1,7 @@
 import { Payment } from '../../../src/core/shared/Payment';
 import { StTransport } from '../../../src/core/classes/StTransport.class';
 import { StJwt } from '../../../src/core/shared/StJwt';
+import { AccountTypeDescription } from '../../../src/core/classes/enum/AccountTypeDescription';
 
 // given
 describe('Payment', () => {
@@ -269,7 +270,7 @@ function paymentFixture() {
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0ZXN0X2p3dF9pc3N1ZXIiLCJwYXlsb2FkIjp7InNpdGVyZWZlcmVuY2UiOiJleGFtcGxlMTIzNDUiLCJiYXNlYW1vdW50IjoiMTAwMCIsImN1cnJlbmN5aXNvM2EiOiJHQlAifSwiaWF0IjoxNTE2MjM5MDIyfQ.jPuLMHxK3fznVddzkRoYC94hgheBXI1Y7zHAr7qNCig';
   let instance: Payment;
   const cachetoken = 'somecachetoken';
-  instance = new Payment(jwt, 'https://example.com');
+  instance = new Payment(jwt, 'https://example.com', AccountTypeDescription.ECOM);
   const card = {
     expirydate: '10/22',
     pan: '4111111111111111',

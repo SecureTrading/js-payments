@@ -2,6 +2,7 @@ import { CommonFrames } from '../../../src/core/classes/CommonFrames.class';
 import { DomMethods } from '../../../src/core/shared/DomMethods';
 import { MessageBus } from '../../../src/core/shared/MessageBus';
 import { Selectors } from '../../../src/core/shared/Selectors';
+import { AccountTypeDescription } from '../../../src/core/classes/enum/AccountTypeDescription';
 
 // given
 describe('CommonFrames', () => {
@@ -348,7 +349,8 @@ function commonFramesFixture() {
     gatewayUrl,
     animatedCard,
     submitCallback,
-    ['AUTH']
+    ['AUTH'],
+    AccountTypeDescription.ECOM,
   );
 
   return { instance };
