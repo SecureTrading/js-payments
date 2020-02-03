@@ -3,6 +3,7 @@ import { IParams } from '../models/IParams';
 import { IStyle } from '../models/IStyle';
 import { MessageBus } from './MessageBus';
 import { Styler } from './Styler';
+import './OverrideDomain';
 
 export class Frame {
   protected messageBus: MessageBus;

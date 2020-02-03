@@ -209,5 +209,5 @@ addons:
       secure: TXgjJzYRpKcoBX6exipmXWj8TRToxGBQoQz0agRHczP9THyguyopST1XiPDdhcLIn7SMNDVORyP0D5EvMpchhvJ1unDpIULlNWjp63NsoYBGrryBXv307yn3NoQ+Tzh6U6GUG59bNfsqqLMOYapIqm6xxEqpcx1svA4Zjoz2rvcUK2gBof0UuL6s0rESB/4rQkwk0MQZDzm10O6wb6CWreFw/BMBTSKMvwVNfo5K+il+Ch1MWy2riWqYhyvGdu5Y/CG39WIUowa/y1HjcYNTwLlETr0nqqF9BnOjS05fabGIUnLBmf80mb6AEyrmNeVzQJlcJ4/lvI4f1RhrKvnDE70Ac6RFMoVcxOLLdSJIDoInFSH5xI5E/clGBYfP44LRDhRPXI4++8CPDp+MHG8trAOMIef3ySZGWoaHknNQ/G/Xhrsy7NLoBGnpz2c7CJoNjAPAIt2fm7y3Re+oo/hrhCh5/oya+kEKrrPI8qy9GpidCup5/QD/jKjkJijfusvC3ZEluaw+izAY+7RgLcaOifUqtVAx10JQIpZufWHJkHVqzmfGiLIWbyhNNJcrF+PcWIZSZelPb9uljO325M3bR7ViVmMPDuLojv0Z0cD/KWdqWW/uL7G7uzGSKgdTkuL7LqeaPOOQHZ07+v8Ii9GTZVee4+TRzucUISgNPvBVVJI=
   hosts:
     - webservices.securetrading.net
-    - merchant.example.com
+    - merchant.securetrading.net
     - thirdparty.example.com

@@ -24,5 +24,6 @@ export const environment = {
     TEST_SDK: 'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js'
   },
   production: true,
-  testEnvironment: false
+  testEnvironment: false,
+  overrideDomain: false,
 };
