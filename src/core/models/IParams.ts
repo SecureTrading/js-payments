@@ -3,12 +3,12 @@ import { AccountTypeDescription } from '../classes/enum/AccountTypeDescription';
 
 export interface IParams {
   [name: string]: object | string;
-  styles?: IStyle;
+  accountType?: AccountTypeDescription;
+  defaultPaymentType?: string;
+  gatewayUrl?: string;
+  jwt?: string;
   locale?: string;
   origin?: string;
-  jwt?: string;
-  gatewayUrl?: string;
   paymentTypes?: string;
-  defaultPaymentType?: string;
-  accountType?: AccountTypeDescription;
+  styles?: IStyle;
 }

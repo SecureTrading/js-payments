@@ -58,20 +58,16 @@ class ST {
 
   public ApplePay(config: IApplePayConfig): ApplePay {
     const { applepay } = this.Environment();
+    const { accountType, datacenterurl, jwt } = this._config;
 
-    return new applepay(config, this._config.jwt, this._config.datacenterurl, this._config.accountType);
+    return new applepay(config, jwt, datacenterurl, accountType);
   }
 
   public VisaCheckout(config: IVisaConfig): VisaCheckout {
     const { visa } = this.Environment();
+    const { accountType, datacenterurl, jwt, livestatus } = this._config;
 
-    return new visa(
-      config,
-      this._config.jwt,
-      this._config.datacenterurl,
-      this._config.accountType,
-      this._config.livestatus
-    );
+    return new visa(config, jwt, datacenterurl, accountType, livestatus);
   }
 
   public updateJWT(jwt: string): void {
