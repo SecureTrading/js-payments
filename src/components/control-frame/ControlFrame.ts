@@ -2,7 +2,7 @@ import JwtDecode from 'jwt-decode';
 import { StCodec } from '../../core/classes/StCodec.class';
 import { FormFieldsDetails } from '../../core/models/constants/FormFieldsDetails';
 import { FormFieldsValidity } from '../../core/models/constants/FormFieldsValidity';
-import { FormState } from "../../core/models/constants/FormState";
+import { FormState } from '../../core/models/constants/FormState';
 import { ICard } from '../../core/models/ICard';
 import { IDecodedJwt } from '../../core/models/IDecodedJwt';
 import { IFormFieldsDetails } from '../../core/models/IFormFieldsDetails';

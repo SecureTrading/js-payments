@@ -1,6 +1,6 @@
 import JwtDecode from 'jwt-decode';
 import { BypassCards } from '../models/constants/BypassCards';
-import { FormState } from "../models/constants/FormState";
+import { FormState } from '../models/constants/FormState';
 import { IMessageBusEvent } from '../models/IMessageBusEvent';
 import { IStyles } from '../models/IStyles';
 import { IValidationMessageBus } from '../models/IValidationMessageBus';

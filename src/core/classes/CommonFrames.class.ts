@@ -1,5 +1,5 @@
 import { CardinalCommerce } from '../integrations/CardinalCommerce';
-import { FormState } from "../models/constants/FormState";
+import { FormState } from '../models/constants/FormState';
 import { IStyles } from '../models/IStyles';
 import { Element } from '../services/Element';
 import { DomMethods } from '../shared/DomMethods';

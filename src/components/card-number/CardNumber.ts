@@ -1,4 +1,4 @@
-import { FormState } from "../../core/models/constants/FormState";
+import { FormState } from '../../core/models/constants/FormState';
 import { IFormFieldState } from '../../core/models/IFormFieldState';
 import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
 import { Formatter } from '../../core/shared/Formatter';
