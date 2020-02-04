@@ -37,11 +37,11 @@ export class ControlFrame extends Frame {
     field.value = data.value;
   }
 
-  private static _resetJWT(): void {
+  private static _resetJwt(): void {
     StCodec.jwt = StCodec.originalJwt;
   }
 
-  private static _updateJWT(jwt: string): void {
+  private static _updateJwt(jwt: string): void {
     StCodec.jwt = jwt;
     StCodec.originalJwt = jwt;
   }
@@ -83,7 +83,7 @@ export class ControlFrame extends Frame {
     this._threeDInitEvent();
     this._loadCardinalEvent();
     this._processPaymentsEvent();
-    this._updateSubmitFormEvent();
+    this._submitFormEvent();
     this._updateMerchantFieldsEvent();
     this._resetJwtEvent();
     this._updateJwtEvent();
@@ -129,7 +129,7 @@ export class ControlFrame extends Frame {
 
   private _resetJwtEvent(): void {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.RESET_JWT, () => {
-      ControlFrame._resetJWT();
+      ControlFrame._resetJwt();
     });
   }
 
@@ -148,7 +148,7 @@ export class ControlFrame extends Frame {
 
   private _updateJwtEvent(): void {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: any) => {
-      ControlFrame._updateJWT(data.newJwt);
+      ControlFrame._updateJwt(data.newJwt);
       this._loadControlFrame();
     });
   }
@@ -159,7 +159,7 @@ export class ControlFrame extends Frame {
     });
   }
 
-  private _updateSubmitFormEvent(): void {
+  private _submitFormEvent(): void {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, (data?: ISubmitData) => {
       this._onSubmit(data);
     });
