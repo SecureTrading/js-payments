@@ -158,7 +158,7 @@ export class CardNumber extends FormField {
 
   private _setDisableListener() {
     this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_CARD_NUMBER, (state: FormState) => {
-      if (state!==FormState.AVAILABLE) {
+      if (state !== FormState.AVAILABLE) {
         this._inputElement.setAttribute(CardNumber.DISABLED_ATTRIBUTE, 'true');
         this._inputElement.classList.add(CardNumber.DISABLED_CLASS);
       } else {

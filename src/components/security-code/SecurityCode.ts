@@ -131,7 +131,7 @@ export class SecurityCode extends FormField {
     });
 
     this.messageBus.subscribe(MessageBus.EVENTS.IS_CARD_WITHOUT_CVV, (state: FormState) => {
-      if (state!==FormState.AVAILABLE) {
+      if (state !== FormState.AVAILABLE) {
         this._clearInputValue();
       }
       this._toggleSecurityCode(state);
