@@ -39,10 +39,11 @@ export class ControlFrame extends Frame {
     StCodec.originalJwt = jwt;
   }
 
-  private _card: ICard;
-  private _cardNumber: string;
-  private _securityCode: string;
-  private _expirationDate: string;
+  private _card: ICard = {
+    pan: '',
+    expirydate: '',
+    securitycode: ''
+  };
   private _isPaymentReady: boolean = false;
   private _formFields: IFormFieldsDetails = FormFieldsDetails;
   private _formFieldsValidity: IFormFieldsValidity = FormFieldsValidity;
@@ -65,11 +66,6 @@ export class ControlFrame extends Frame {
 
   protected async onInit(): Promise<void> {
     super.onInit();
-    this._card = {
-      pan: '',
-      expirydate: '',
-      securitycode: ''
-    };
     this._setInstances();
     this._setFormFieldsValidities();
     this._setMessageBusEvents();
@@ -93,22 +89,32 @@ export class ControlFrame extends Frame {
 
   private _initFormFieldChangeEvent(event: string, field: IFormFieldState): void {
     this.messageBus.subscribe(event, (data: IFormFieldState) => {
+      const { value } = data;
       switch (event) {
         case MessageBus.EVENTS.CHANGE_CARD_NUMBER:
-          this._cardNumber = data.value;
-          this._card.pan = data.value;
+          this._setCardPan(value);
           break;
         case MessageBus.EVENTS.CHANGE_EXPIRATION_DATE:
-          this._expirationDate = data.value;
-          this._card.expirydate = data.value;
+          this._setCardExpiryDate(value);
           break;
         case MessageBus.EVENTS.CHANGE_SECURITY_CODE:
-          this._securityCode = data.value;
-          this._card.securitycode = data.value;
+          this._setCardSecurityCode(value);
           break;
       }
       ControlFrame._onFormFieldStateChange(field, data);
     });
+  }
+
+  private _setCardPan(value: string): void {
+    this._card.pan = value;
+  }
+
+  private _setCardExpiryDate(value: string): void {
+    this._card.expirydate = value;
+  }
+
+  private _setCardSecurityCode(value: string): void {
+    this._card.securitycode = value;
   }
 
   private _initSetRequestTypesEvent(): void {
@@ -119,14 +125,14 @@ export class ControlFrame extends Frame {
 
   private _initBypassInitEvent(): void {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BY_PASS_INIT, (cachetoken: string) => {
-      this._onBypassInitEvent(cachetoken);
+      this._requestBypassInit(cachetoken);
     });
   }
 
   private _initThreedinitEvent(): void {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, (data: any) => {
       const securityCodeFromJwtLength: number = this._getSecurityCode() ? this._getSecurityCode().length : 0;
-      const securityCodeLength: number = this._securityCode ? this._securityCode.length : 0;
+      const securityCodeLength: number = this._card.securitycode ? this._card.securitycode.length : 0;
       const messageBusEvent: IMessageBusEvent = {
         data: securityCodeLength ? securityCodeLength : securityCodeFromJwtLength,
         type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
@@ -134,19 +140,19 @@ export class ControlFrame extends Frame {
       if (!data.initReload && messageBusEvent.data) {
         this.messageBus.publish(messageBusEvent);
       }
-      this._onThreeDInitEvent();
+      this._requestThreeDInit();
     });
   }
 
   private _initLoadCardinalEvent(): void {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL, () => {
-      this._onLoadIntegrationModule();
+      this._onLoadCardinal();
     });
   }
 
   private _initProcessPaymentsEvent(): void {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS, (data: IResponseData) => {
-      this._onProcessPaymentEvent(data);
+      this._onProcessPayments(data);
     });
   }
 
@@ -184,9 +190,9 @@ export class ControlFrame extends Frame {
   }
 
   private _isCardBypassed(data: ISubmitData): boolean {
-    return !this._cardNumber
+    return !this._card.pan
       ? data.bypassCards.includes(iinLookup.lookup(this._getPan()).type)
-      : data.bypassCards.includes(iinLookup.lookup(this._cardNumber).type);
+      : data.bypassCards.includes(iinLookup.lookup(this._card.pan).type);
   }
 
   private _onSubmit(data: ISubmitData): void {
@@ -203,24 +209,20 @@ export class ControlFrame extends Frame {
     this.messageBus.publish(messageBusEvent, true);
   }
 
-  private _onLoadIntegrationModule(): void {
+  private _onLoadCardinal(): void {
     this._isPaymentReady = true;
   }
 
-  private _onThreeDInitEvent(): void {
-    this._requestThreeDInit();
+  private _isThreeDRequestCalled() {
+    return this._postThreeDRequestTypes.length !== 0;
   }
 
-  private _onBypassInitEvent(cachetoken: string): void {
-    this._requestBypassInit(cachetoken);
-  }
-
-  private _onProcessPaymentEvent(data: IResponseData): void {
-    if (this._postThreeDRequestTypes.length === 0) {
-      this._processThreeDResponse(data);
-    } else {
+  private _onProcessPayments(data: IResponseData): void {
+    if (this._isThreeDRequestCalled()) {
       this._processPayment(data);
+      return;
     }
+    this._processThreeDResponse(data);
   }
 
   private _processThreeDResponse(data: IResponseData): void {
@@ -232,9 +234,6 @@ export class ControlFrame extends Frame {
   }
 
   private _processPayment(data: IResponseData): void {
-    this._card.pan = this._cardNumber;
-    this._card.expirydate = this._expirationDate;
-    this._card.securitycode = this._securityCode; // @TODO here is auth process with data
     this._payment
       .processPayment(this._postThreeDRequestTypes, this._card, this._merchantFormData, data)
       .then(() => {
@@ -256,7 +255,7 @@ export class ControlFrame extends Frame {
     this.messageBus.publish(messageBusEvent, true);
   }
 
-  private _isCardWithoutCVV() {
+  private _isCardWithoutCVV(): boolean {
     const panFromJwt: string = this._getPan();
     let pan: string = '';
     if (panFromJwt || this._formFields.cardNumber.value) {
@@ -265,6 +264,20 @@ export class ControlFrame extends Frame {
 
     const cardType: string = iinLookup.lookup(pan).type;
     return ControlFrame.NON_CVV_CARDS.includes(cardType);
+  }
+
+  private _bypassCard() {
+    this.messageBus.publish({ data: this._card, type: MessageBus.EVENTS_PUBLIC.BY_PASS_CARDINAL }, true);
+  }
+
+  private _callThreeDQueryRequest() {
+    this._payment
+      .threeDQueryRequest(this._preThreeDRequestTypes, this._card, this._merchantFormData)
+      .then((result: any) => {
+        this._threeDQueryResult = result;
+        this._threeDQueryEvent.data = result.response;
+        this.messageBus.publish(this._threeDQueryEvent, true);
+      });
   }
 
   private _requestPayment(data: ISubmitData, isCardBypassed: boolean): void {
@@ -279,39 +292,29 @@ export class ControlFrame extends Frame {
       isPanPiba,
       this._isPaymentReady
     );
-    if (validity) {
-      if (deferInit) {
-        this._requestThreeDInit();
-      }
-
-      if (isCardBypassed) {
-        this.messageBus.publish(
-          {
-            data: {
-              expirydate: this._expirationDate,
-              pan: this._cardNumber,
-              securitycode: this._securityCode
-            },
-            type: MessageBus.EVENTS_PUBLIC.BY_PASS_CARDINAL
-          },
-          true
-        );
-        return;
-      }
-
-      this._payment
-        .threeDQueryRequest(this._preThreeDRequestTypes, card, this._merchantFormData)
-        .then((result: any) => {
-          this._threeDQueryResult = result;
-          this._threeDQueryEvent.data = result.response;
-          this.messageBus.publish(this._threeDQueryEvent, true);
-        });
-    } else {
-      this.messageBus.publish(this._messageBusEventCardNumber);
-      this.messageBus.publish(this._messageBusEventExpirationDate);
-      this.messageBus.publish(this._messageBusEventSecurityCode);
-      this._validation.setFormValidity(this._formFieldsValidity);
+    console.error(card);
+    if (!validity) {
+      this._validateFormFields();
+      return;
     }
+
+    if (deferInit) {
+      this._requestThreeDInit();
+    }
+
+    if (isCardBypassed) {
+      this._bypassCard();
+      return;
+    }
+
+    this._callThreeDQueryRequest();
+  }
+
+  private _validateFormFields() {
+    this.messageBus.publish(this._messageBusEventCardNumber);
+    this.messageBus.publish(this._messageBusEventExpirationDate);
+    this.messageBus.publish(this._messageBusEventSecurityCode);
+    this._validation.setFormValidity(this._formFieldsValidity);
   }
 
   private _requestThreeDInit(): void {
