@@ -25,5 +25,5 @@ export const environment = {
   },
   production: true,
   testEnvironment: false,
-  overrideDomain: false,
+  overrideDomain: '',
 };
