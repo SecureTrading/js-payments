@@ -205,7 +205,7 @@ export class Validation extends Frame {
     this._setValidationResult(dataInJwt, fieldsToSubmit, formFields, isPanPiba, paymentReady);
     const isFormReadyToSubmit: boolean = this._isFormReadyToSubmit(deferInit);
     if (isFormReadyToSubmit) {
-      this.blockForm(FormState.PROCESSING);
+      this.blockForm(FormState.BLOCKED);
     }
     return {
       card: this._card,

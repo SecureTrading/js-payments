@@ -172,7 +172,7 @@ export class CardNumber extends FormField {
   private _disableSecurityCodeField(cardNumber: string) {
     const number: string = Validation.clearNonDigitsChars(cardNumber);
     const isCardPiba: boolean = CardNumber.NO_CVV_CARDS.includes(iinLookup.lookup(number).type);
-    const formState = isCardPiba ? FormState.PROCESSING : FormState.AVAILABLE;
+    const formState = isCardPiba ? FormState.BLOCKED : FormState.AVAILABLE;
     const messageBusEventPiba: IMessageBusEvent = {
       data: formState,
       type: MessageBus.EVENTS.IS_CARD_WITHOUT_CVV

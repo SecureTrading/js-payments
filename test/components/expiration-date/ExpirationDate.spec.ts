@@ -1,4 +1,5 @@
 import { ExpirationDate } from '../../../src/components/expiration-date/ExpirationDate';
+import { FormState } from "../../../src/core/models/constants/FormState";
 import { Language } from '../../../src/core/shared/Language';
 import { Selectors } from '../../../src/core/shared/Selectors';
 
@@ -36,7 +37,7 @@ describe('ExpirationDate', () => {
     it('should have attribute disabled set', () => {
       // @ts-ignore
       instance.messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
-        callback(true);
+        callback(FormState.BLOCKED);
       });
       instance.setDisableListener();
       // @ts-ignore
@@ -47,7 +48,7 @@ describe('ExpirationDate', () => {
     it('should have no attribute disabled and class disabled', () => {
       // @ts-ignore
       instance.messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
-        callback(false);
+        callback(FormState.AVAILABLE);
       });
       instance.setDisableListener();
       // @ts-ignore

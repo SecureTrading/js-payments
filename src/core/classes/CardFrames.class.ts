@@ -328,7 +328,7 @@ export class CardFrames extends RegisterFrames {
 
   private _setSubmitButtonProperties(element: any, state: FormState): HTMLElement {
     let disabledState;
-    if (state === FormState.PROCESSING) {
+    if (state === FormState.BLOCKED) {
       element.textContent = this._processingMessage;
       element.classList.add(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
       disabledState = true;
