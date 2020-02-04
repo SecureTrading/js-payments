@@ -1,3 +1,4 @@
+import { FormState } from "../../core/models/constants/FormState";
 import { IFormFieldState } from '../../core/models/IFormFieldState';
 import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
 import { Formatter } from '../../core/shared/Formatter';
@@ -156,10 +157,9 @@ export class CardNumber extends FormField {
   }
 
   private _setDisableListener() {
-    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_CARD_NUMBER, (state: boolean) => {
-      if (state) {
-        // @ts-ignore
-        this._inputElement.setAttribute(CardNumber.DISABLED_ATTRIBUTE, state);
+    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_CARD_NUMBER, (state: FormState) => {
+      if (state!==FormState.AVAILABLE) {
+        this._inputElement.setAttribute(CardNumber.DISABLED_ATTRIBUTE, 'true');
         this._inputElement.classList.add(CardNumber.DISABLED_CLASS);
       } else {
         // @ts-ignore
@@ -172,8 +172,9 @@ export class CardNumber extends FormField {
   private _disableSecurityCodeField(cardNumber: string) {
     const number: string = Validation.clearNonDigitsChars(cardNumber);
     const isCardPiba: boolean = CardNumber.NO_CVV_CARDS.includes(iinLookup.lookup(number).type);
+    const formState = isCardPiba ? FormState.PROCESSING : FormState.AVAILABLE;
     const messageBusEventPiba: IMessageBusEvent = {
-      data: isCardPiba,
+      data: formState,
       type: MessageBus.EVENTS.IS_CARD_WITHOUT_CVV
     };
     this.messageBus.publish(messageBusEventPiba);

@@ -1,10 +1,11 @@
-import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
-import { Formatter } from '../../core/shared/Formatter';
-import { FormField } from '../../core/shared/FormField';
-import { Language } from '../../core/shared/Language';
-import { MessageBus } from '../../core/shared/MessageBus';
-import { Selectors } from '../../core/shared/Selectors';
-import { Validation } from '../../core/shared/Validation';
+import { FormState } from "../../core/models/constants/FormState";
+import { IMessageBusEvent } from "../../core/models/IMessageBusEvent";
+import { Formatter } from "../../core/shared/Formatter";
+import { FormField } from "../../core/shared/FormField";
+import { Language } from "../../core/shared/Language";
+import { MessageBus } from "../../core/shared/MessageBus";
+import { Selectors } from "../../core/shared/Selectors";
+import { Validation } from "../../core/shared/Validation";
 
 export class SecurityCode extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
@@ -102,7 +103,7 @@ export class SecurityCode extends FormField {
   }
 
   private _setDisableListener() {
-    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_SECURITY_CODE, (state: boolean) => {
+    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_SECURITY_CODE, (state: FormState) => {
       this._toggleSecurityCode(state);
     });
   }
@@ -129,8 +130,8 @@ export class SecurityCode extends FormField {
       this._sendState();
     });
 
-    this.messageBus.subscribe(MessageBus.EVENTS.IS_CARD_WITHOUT_CVV, (state: boolean) => {
-      if (state) {
+    this.messageBus.subscribe(MessageBus.EVENTS.IS_CARD_WITHOUT_CVV, (state: FormState) => {
+      if (state!==FormState.AVAILABLE) {
         this._clearInputValue();
       }
       this._toggleSecurityCode(state);
@@ -160,8 +161,8 @@ export class SecurityCode extends FormField {
     this.setAttributes({ pattern: securityCodePattern });
   }
 
-  private _toggleSecurityCode(disabled: boolean) {
-    if (disabled) {
+  private _toggleSecurityCode(state: FormState) {
+    if (state !== FormState.AVAILABLE) {
       this._disableSecurityCode();
       this._toggleSecurityCodeValidation();
     } else {
