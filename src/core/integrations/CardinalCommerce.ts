@@ -60,7 +60,6 @@ export class CardinalCommerce {
     this._setLiveStatus();
     this._onInit();
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
-      console.error(data);
       const { newJwt } = data;
       this._jwt = newJwt;
       this._onInit();
@@ -172,7 +171,6 @@ export class CardinalCommerce {
       data,
       type: MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS
     };
-    console.error('messageBusEvent:', messageBusEvent);
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
     GoogleAnalytics.sendGaData('event', 'Cardinal', 'auth', 'Cardinal auth completed');
   }
@@ -188,7 +186,6 @@ export class CardinalCommerce {
       this._onBypassJsInitEvent();
     });
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDQUERY, (data: any) => {
-      console.error(data);
       this._onThreeDQueryEvent(data);
     });
     this._initSubmitEventListener();

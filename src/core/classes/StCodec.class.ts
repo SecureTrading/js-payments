@@ -167,7 +167,6 @@ class StCodec {
         validation.blockForm(false);
         StCodec.publishResponse(responseContent, jwtResponse);
         StCodec._notification.error(responseContent.errormessage);
-        console.error(responseContent);
         throw new Error(responseContent.errormessage);
       }
     }

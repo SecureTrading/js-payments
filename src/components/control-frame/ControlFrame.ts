@@ -271,7 +271,6 @@ export class ControlFrame extends Frame {
       isPanPiba,
       this._isPaymentReady
     );
-    console.error(card);
     if (!validity) {
       this._validateFormFields();
       return;
