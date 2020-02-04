@@ -232,9 +232,10 @@ export class ControlFrame extends Frame {
       })
       .catch((error: any) => {
         this._notification.error(Language.translations.PAYMENT_ERROR);
+        this._validation.blockForm(false);
       })
       .finally(() => {
-        this._validation.blockForm(false);
+        ControlFrame._resetJwt();
       });
   }
 
