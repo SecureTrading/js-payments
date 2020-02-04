@@ -65,6 +65,11 @@ export class ControlFrame extends Frame {
 
   protected async onInit(): Promise<void> {
     super.onInit();
+    this._card = {
+      pan: '',
+      expirydate: '',
+      securitycode: ''
+    };
     this._setInstances();
     this._setFormFieldsValidities();
     this._setMessageBusEvents();
@@ -91,12 +96,15 @@ export class ControlFrame extends Frame {
       switch (event) {
         case MessageBus.EVENTS.CHANGE_CARD_NUMBER:
           this._cardNumber = data.value;
+          this._card.pan = data.value;
           break;
         case MessageBus.EVENTS.CHANGE_EXPIRATION_DATE:
           this._expirationDate = data.value;
+          this._card.expirydate = data.value;
           break;
         case MessageBus.EVENTS.CHANGE_SECURITY_CODE:
           this._securityCode = data.value;
+          this._card.securitycode = data.value;
           break;
       }
       ControlFrame._onFormFieldStateChange(field, data);
@@ -116,7 +124,16 @@ export class ControlFrame extends Frame {
   }
 
   private _initThreedinitEvent(): void {
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, (data: any) => {
+      const securityCodeFromJwtLength: number = this._getSecurityCode() ? this._getSecurityCode().length : 0;
+      const securityCodeLength: number = this._securityCode ? this._securityCode.length : 0;
+      const messageBusEvent: IMessageBusEvent = {
+        data: securityCodeLength ? securityCodeLength : securityCodeFromJwtLength,
+        type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
+      };
+      if (!data.initReload && messageBusEvent.data) {
+        this.messageBus.publish(messageBusEvent);
+      }
       this._onThreeDInitEvent();
     });
   }
@@ -215,6 +232,9 @@ export class ControlFrame extends Frame {
   }
 
   private _processPayment(data: IResponseData): void {
+    this._card.pan = this._cardNumber;
+    this._card.expirydate = this._expirationDate;
+    this._card.securitycode = this._securityCode; // @TODO here is auth process with data
     this._payment
       .processPayment(this._postThreeDRequestTypes, this._card, this._merchantFormData, data)
       .then(() => {
@@ -328,6 +348,12 @@ export class ControlFrame extends Frame {
   private _getPan(): string {
     return JwtDecode<IDecodedJwt>(this.params.jwt).payload.pan
       ? JwtDecode<IDecodedJwt>(this.params.jwt).payload.pan
+      : '';
+  }
+
+  private _getSecurityCode(): string {
+    return JwtDecode<IDecodedJwt>(this.params.jwt).payload.securitycode
+      ? JwtDecode<IDecodedJwt>(this.params.jwt).payload.securitycode
       : '';
   }
 

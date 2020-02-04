@@ -114,9 +114,13 @@ export class SecurityCode extends FormField {
   }
 
   private _checkSecurityCodeLength(length: number) {
-    return length === SecurityCode.SPECIAL_INPUT_LENGTH
-      ? this._setSecurityCodeProperties(length, SecurityCode.MATCH_EXACTLY_FOUR_DIGITS)
-      : this._setSecurityCodeProperties(length, SecurityCode.MATCH_EXACTLY_THREE_DIGITS);
+    if (length === SecurityCode.SPECIAL_INPUT_LENGTH) {
+      this._setSecurityCodeProperties(length, SecurityCode.MATCH_EXACTLY_FOUR_DIGITS);
+    } else if (length === SecurityCode.STANDARD_INPUT_LENGTH) {
+      this._setSecurityCodeProperties(length, SecurityCode.MATCH_EXACTLY_THREE_DIGITS);
+    } else {
+      return;
+    }
   }
 
   private _subscribeSecurityCodeChange() {

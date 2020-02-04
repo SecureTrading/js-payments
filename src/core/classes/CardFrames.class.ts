@@ -97,7 +97,6 @@ export class CardFrames extends RegisterFrames {
     this._initCardFrames();
     this.elementsTargets = this.setElementsFields();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
-    this._broadcastSecurityCodeProperties(this.jwt);
   }
 
   protected configureFormFieldsAmount(jwt: string): void {
@@ -152,18 +151,6 @@ export class CardFrames extends RegisterFrames {
         this.componentIds.securityCode
       ];
     }
-  }
-
-  private _broadcastSecurityCodeProperties(jwt: string): void {
-    const messageBusEvent: IMessageBusEvent = {
-      data: this._getSecurityCodeLength(jwt),
-      type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
-    };
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, (data: any) => {
-      if (!data.initReload) {
-        this.messageBus.publish(messageBusEvent);
-      }
-    });
   }
 
   private _createSubmitButton = (): HTMLInputElement | HTMLButtonElement => {
