@@ -1,4 +1,8 @@
+import { iinLookup } from '@securetrading/ts-iin-lookup';
+import { BrandDetailsType } from '@securetrading/ts-iin-lookup/dist/types';
+import { luhnCheck } from '@securetrading/ts-luhn-check';
 import { StCodec } from '../classes/StCodec.class';
+import { FormState } from '../models/constants/FormState';
 import { ICard } from '../models/ICard';
 import { IErrorData } from '../models/IErrorData';
 import { IFormFieldState } from '../models/IFormFieldState';
@@ -11,9 +15,6 @@ import { MessageBus } from './MessageBus';
 import { Selectors } from './Selectors';
 import { Translator } from './Translator';
 import { Utils } from './Utils';
-import { iinLookup } from '@securetrading/ts-iin-lookup';
-import { BrandDetailsType } from '@securetrading/ts-iin-lookup/dist/types';
-import { luhnCheck } from '@securetrading/ts-luhn-check';
 
 const {
   VALIDATION_ERROR_FIELD_IS_REQUIRED,
@@ -174,7 +175,7 @@ export class Validation extends Frame {
     });
   }
 
-  public blockForm(state: boolean) {
+  public blockForm(state: FormState) {
     const messageBusEvent: IMessageBusEvent = {
       data: state,
       type: MessageBus.EVENTS.BLOCK_FORM
@@ -204,7 +205,7 @@ export class Validation extends Frame {
     this._setValidationResult(dataInJwt, fieldsToSubmit, formFields, isPanPiba, paymentReady);
     const isFormReadyToSubmit: boolean = this._isFormReadyToSubmit(deferInit);
     if (isFormReadyToSubmit) {
-      this.blockForm(true);
+      this.blockForm(FormState.BLOCKED);
     }
     return {
       card: this._card,

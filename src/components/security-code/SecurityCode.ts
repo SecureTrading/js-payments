@@ -1,3 +1,4 @@
+import { FormState } from '../../core/models/constants/FormState';
 import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
 import { Formatter } from '../../core/shared/Formatter';
 import { FormField } from '../../core/shared/FormField';
@@ -102,7 +103,7 @@ export class SecurityCode extends FormField {
   }
 
   private _setDisableListener() {
-    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_SECURITY_CODE, (state: boolean) => {
+    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_SECURITY_CODE, (state: FormState) => {
       this._toggleSecurityCode(state);
     });
   }
@@ -127,8 +128,8 @@ export class SecurityCode extends FormField {
       this._sendState();
     });
 
-    this.messageBus.subscribe(MessageBus.EVENTS.IS_CARD_WITHOUT_CVV, (state: boolean) => {
-      if (state) {
+    this.messageBus.subscribe(MessageBus.EVENTS.IS_CARD_WITHOUT_CVV, (state: FormState) => {
+      if (state !== FormState.AVAILABLE) {
         this._clearInputValue();
       }
       this._toggleSecurityCode(state);
@@ -158,8 +159,8 @@ export class SecurityCode extends FormField {
     this.setAttributes({ pattern: securityCodePattern });
   }
 
-  private _toggleSecurityCode(disabled: boolean) {
-    if (disabled) {
+  private _toggleSecurityCode(state: FormState) {
+    if (state !== FormState.AVAILABLE) {
       this._disableSecurityCode();
       this._toggleSecurityCodeValidation();
     } else {

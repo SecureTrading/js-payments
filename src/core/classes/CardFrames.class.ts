@@ -1,5 +1,6 @@
 import JwtDecode from 'jwt-decode';
 import { BypassCards } from '../models/constants/BypassCards';
+import { FormState } from '../models/constants/FormState';
 import { IMessageBusEvent } from '../models/IMessageBusEvent';
 import { IStyles } from '../models/IStyles';
 import { IValidationMessageBus } from '../models/IValidationMessageBus';
@@ -174,7 +175,7 @@ export class CardFrames extends RegisterFrames {
     }
   }
 
-  private _disableFormField(state: boolean, eventName: string): void {
+  private _disableFormField(state: FormState, eventName: string): void {
     const messageBusEvent: IMessageBusEvent = {
       data: state,
       type: eventName
@@ -182,7 +183,7 @@ export class CardFrames extends RegisterFrames {
     this.messageBus.publish(messageBusEvent);
   }
 
-  private _disableSubmitButton(state: boolean): void {
+  private _disableSubmitButton(state: FormState): void {
     const button: HTMLButtonElement | HTMLInputElement = document.getElementById(this._buttonId) as
       | HTMLButtonElement
       | HTMLInputElement;
@@ -325,13 +326,22 @@ export class CardFrames extends RegisterFrames {
     this._loadAnimatedCard = loadAnimatedCard !== undefined ? loadAnimatedCard : true;
   }
 
-  private _setSubmitButtonProperties(element: any, disabledState: boolean): HTMLElement {
-    if (disabledState) {
+  private _setSubmitButtonProperties(element: any, state: FormState): HTMLElement {
+    let disabledState;
+    if (state === FormState.BLOCKED) {
       element.textContent = this._processingMessage;
       element.classList.add(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
-    } else {
+      disabledState = true;
+    }
+    else if (state === FormState.COMPLETE) {
+      element.textContent = this._payMessage;
+      element.classList.add(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS); // Keep it locked but return it to original text
+      disabledState = true;
+    }
+    else {
       element.textContent = this._payMessage;
       element.classList.remove(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
+      disabledState = false;
     }
     element.disabled = disabledState;
     return element;
@@ -347,7 +357,7 @@ export class CardFrames extends RegisterFrames {
   }
 
   private _subscribeBlockSubmit(): void {
-    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (state: boolean) => {
+    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (state: FormState) => {
       this._disableSubmitButton(state);
       this._disableFormField(state, MessageBus.EVENTS.BLOCK_CARD_NUMBER);
       this._disableFormField(state, MessageBus.EVENTS.BLOCK_EXPIRATION_DATE);

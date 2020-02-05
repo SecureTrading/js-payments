@@ -2,6 +2,7 @@ import JwtDecode from 'jwt-decode';
 import { StCodec } from '../../core/classes/StCodec.class';
 import { FormFieldsDetails } from '../../core/models/constants/FormFieldsDetails';
 import { FormFieldsValidity } from '../../core/models/constants/FormFieldsValidity';
+import { FormState } from '../../core/models/constants/FormState';
 import { ICard } from '../../core/models/ICard';
 import { IDecodedJwt } from '../../core/models/IDecodedJwt';
 import { IFormFieldsDetails } from '../../core/models/IFormFieldsDetails';
@@ -229,12 +230,14 @@ export class ControlFrame extends Frame {
       .processPayment(this._postThreeDRequestTypes, this._card, this._merchantFormData, data)
       .then(() => {
         this._notification.success(Language.translations.PAYMENT_SUCCESS);
+        this._validation.blockForm(FormState.COMPLETE);
       })
       .catch((error: any) => {
         this._notification.error(Language.translations.PAYMENT_ERROR);
+        this._validation.blockForm(FormState.AVAILABLE);
       })
       .finally(() => {
-        this._validation.blockForm(false);
+        ControlFrame._resetJwt();
       });
   }
 
