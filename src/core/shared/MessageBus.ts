@@ -29,6 +29,7 @@ export class MessageBus {
     STORAGE_SET_ITEM: 'SET_STORAGE_ITEM',
     STORAGE_SYNCHRONIZE: 'SYNCHRONIZE_STORAGE',
     STORAGE_COMPONENT_READY: 'COMPONENT_STORAGE_READY',
+    DESTROY: 'DESTROY',
   };
   public static EVENTS_PUBLIC = {
     BIN_PROCESS: 'BIN_PROCESS',
@@ -48,6 +49,7 @@ export class MessageBus {
     UPDATE_JWT: 'UPDATE_JWT',
     UPDATE_MERCHANT_FIELDS: 'UPDATE_MERCHANT_FIELDS'
   };
+  private static readonly DOM_EVENT_NAME = 'message';
   private readonly _parentOrigin: string;
   private readonly _frameOrigin: string;
   private _subscriptions: any = {};
@@ -56,6 +58,7 @@ export class MessageBus {
     this._parentOrigin = parentOrigin ? parentOrigin : '*';
     this._frameOrigin = new URL(environment.FRAME_URL).origin;
     this._registerMessageListener();
+    this._subscribeToDestroy();
   }
 
   public publish(event: IMessageBusEvent, publishToParent?: boolean) {
@@ -115,14 +118,25 @@ export class MessageBus {
     const isPublicEvent = Utils.inArray(Object.keys(MessageBus.EVENTS_PUBLIC), messageBusEvent.type);
     const isCallbackAllowed =
       event.origin === this._frameOrigin || (event.origin === this._parentOrigin && isPublicEvent);
-    const subscribersStore = window.sessionStorage.getItem(MessageBus.SUBSCRIBERS);
-    JSON.parse(subscribersStore);
+
+    if (messageBusEvent.type === MessageBus.EVENTS.DESTROY) {
+      window.removeEventListener(MessageBus.DOM_EVENT_NAME, this._handleMessageEvent);
+
+      return;
+    }
+
     if (isCallbackAllowed && this._subscriptions[messageBusEvent.type]) {
       this._subscriptions[messageBusEvent.type](messageBusEvent.data);
     }
   };
 
   private _registerMessageListener() {
-    window.addEventListener('message', this._handleMessageEvent);
+    window.addEventListener(MessageBus.DOM_EVENT_NAME, this._handleMessageEvent);
+  }
+
+  private _subscribeToDestroy(): void {
+    if (window.name) {
+      this.subscribe(MessageBus.EVENTS.DESTROY, () => void 0);
+    }
   }
 }

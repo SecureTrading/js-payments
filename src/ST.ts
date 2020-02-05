@@ -80,6 +80,12 @@ class ST {
     }
   }
 
+  public destroy(): void {
+    this._messageBus.publish({
+      type: MessageBus.EVENTS.DESTROY,
+    });
+  }
+
   private init(config: IConfig): void {
     this._config = this._configuration.init(config);
     this.Storage(this._config);
