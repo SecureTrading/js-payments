@@ -118,8 +118,6 @@ export class SecurityCode extends FormField {
       this._setSecurityCodeProperties(length, SecurityCode.MATCH_EXACTLY_FOUR_DIGITS);
     } else if (length === SecurityCode.STANDARD_INPUT_LENGTH) {
       this._setSecurityCodeProperties(length, SecurityCode.MATCH_EXACTLY_THREE_DIGITS);
-    } else {
-      return;
     }
   }
 
