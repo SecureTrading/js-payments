@@ -47,12 +47,12 @@ export class DomMethods {
   };
 
   public static getAllFormElements = (form: HTMLElement): any[] => [
-    ...Array.prototype.slice.call(form.querySelectorAll(DomMethods.SELECT_MARKUP)),
-    ...Array.prototype.slice.call(form.querySelectorAll(DomMethods.INPUT_MARKUP))
+    ...Array.from(form.querySelectorAll(DomMethods.SELECT_MARKUP)),
+    ...Array.from(form.querySelectorAll(DomMethods.INPUT_MARKUP))
   ];
 
   public static insertScript(target: string, params: IScriptParams): Element {
-    const loaded: Element = DomMethods.isScriptLoaded(params);
+    const loaded: Element = DomMethods._getLoadedScript(params);
 
     if (loaded) {
       return loaded;
@@ -107,7 +107,7 @@ export class DomMethods {
     return element;
   }
 
-  private static isScriptLoaded(params: IScriptParams): Element {
+  private static _getLoadedScript(params: IScriptParams): Element {
     const { src, id } = params;
     const scripts: HTMLCollection = document.getElementsByTagName(DomMethods.SCRIPT_MARKUP);
     const scriptById: HTMLElement = document.getElementById(id);
