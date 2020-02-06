@@ -81,9 +81,12 @@ class ST {
   }
 
   public destroy(): void {
-    this._messageBus.publish({
-      type: MessageBus.EVENTS.DESTROY,
-    }, true);
+    this._messageBus.publish(
+      {
+        type: MessageBus.EVENTS.DESTROY
+      },
+      true
+    );
   }
 
   private init(config: IConfig): void {
