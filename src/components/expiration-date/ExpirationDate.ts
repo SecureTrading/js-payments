@@ -30,7 +30,7 @@ export class ExpirationDate extends FormField {
   }
 
   public setDisableListener() {
-    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_EXPIRATION_DATE, (state: FormState) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BLOCK_EXPIRATION_DATE, (state: FormState) => {
       state !== FormState.AVAILABLE ? this._disableInputField() : this._enableInputField();
     });
   }

@@ -175,20 +175,17 @@ export class CardFrames extends RegisterFrames {
     }
   }
 
-  private _disableFormField(state: FormState, eventName: string): void {
+  private _disableFormField(state: FormState, eventName: string, target: string): void {
     const messageBusEvent: IMessageBusEvent = {
       data: state,
       type: eventName
     };
-    this.messageBus.publish(messageBusEvent);
+    this.messageBus.publishFromParent(messageBusEvent, target);
   }
 
   private _disableSubmitButton(state: FormState): void {
-    const button: HTMLButtonElement | HTMLInputElement = document.getElementById(this._buttonId) as
-      | HTMLButtonElement
-      | HTMLInputElement;
-    if (button) {
-      this._setSubmitButtonProperties(button, state);
+    if (this._submitButton) {
+      this._setSubmitButtonProperties(this._submitButton, state);
     }
   }
 
@@ -357,9 +354,9 @@ export class CardFrames extends RegisterFrames {
   private _subscribeBlockSubmit(): void {
     this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (state: FormState) => {
       this._disableSubmitButton(state);
-      this._disableFormField(state, MessageBus.EVENTS.BLOCK_CARD_NUMBER);
-      this._disableFormField(state, MessageBus.EVENTS.BLOCK_EXPIRATION_DATE);
-      this._disableFormField(state, MessageBus.EVENTS.BLOCK_SECURITY_CODE);
+      this._disableFormField(state, MessageBus.EVENTS_PUBLIC.BLOCK_CARD_NUMBER, Selectors.CARD_NUMBER_IFRAME);
+      this._disableFormField(state, MessageBus.EVENTS_PUBLIC.BLOCK_EXPIRATION_DATE, Selectors.EXPIRATION_DATE_IFRAME);
+      this._disableFormField(state, MessageBus.EVENTS_PUBLIC.BLOCK_SECURITY_CODE, Selectors.SECURITY_CODE_IFRAME);
     });
   }
 
