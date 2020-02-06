@@ -24,6 +24,7 @@ import { Config } from './core/services/Config';
 import { MessageBus } from './core/shared/MessageBus';
 import { Translator } from './core/shared/Translator';
 import { environment } from './environments/environment';
+import { PaymentEvents } from './core/models/constants/PaymentEvents';
 
 class ST {
   private static DEBOUNCE_JWT_VALUE: number = 900;
@@ -87,6 +88,13 @@ class ST {
       },
       true
     );
+
+    const cardinal = (window as any).Cardinal;
+
+    if (cardinal) {
+      cardinal.off(PaymentEvents.SETUP_COMPLETE);
+      cardinal.off(PaymentEvents.VALIDATED);
+    }
   }
 
   private init(config: IConfig): void {
