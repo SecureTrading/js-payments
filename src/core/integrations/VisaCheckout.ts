@@ -96,6 +96,7 @@ export class VisaCheckout {
     this._stJwt = new StJwt(jwt);
     this._livestatus = livestatus;
     this._configurePaymentProcess(jwt, config, gatewayUrl);
+    this._initVisaFlow();
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
       const { newJwt } = data;
       this._configurePaymentProcess(newJwt, config, gatewayUrl);
