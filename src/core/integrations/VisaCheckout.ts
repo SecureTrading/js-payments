@@ -207,7 +207,7 @@ export class VisaCheckout {
     settings || config ? { ...config, ...settings } : {};
 
   private _initVisaFlow() {
-    return DomMethods.insertScript('body', this._sdkAddress).addEventListener('load', () => {
+    DomMethods.insertScript('body', { src: this._sdkAddress, id: 'visaCheckout' }).then(() => {
       this.attachVisaButton();
       this.initPaymentConfiguration();
       this.paymentStatusHandler();
