@@ -1,4 +1,4 @@
-import GoogleAnalytics from '../../../src/core/integrations/GoogleAnalytics';
+import { GoogleAnalytics } from '../../../src/core/integrations/GoogleAnalytics';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 
@@ -19,7 +19,7 @@ describe('GoogleAnalytics', () => {
     // then
     it('should call _insertGALibrary and GoogleAnalytics._disableUserIDTracking', () => {
       // @ts-ignore
-      instance._onInit();
+      instance.init();
       // @ts-ignore
       expect(instance._insertGALibrary).toHaveBeenCalled();
     });
@@ -49,7 +49,7 @@ describe('GoogleAnalytics', () => {
       // @ts-ignore
       instance._createGAScript = jest.fn().mockResolvedValueOnce(GoogleAnalytics.TRANSLATION_SCRIPT_SUCCEEDED);
       // @ts-ignore
-      instance._onInit();
+      instance.init();
     });
 
     // then
@@ -66,6 +66,7 @@ describe('GoogleAnalytics', () => {
     beforeEach(() => {
       // @ts-ignore
       document.head.appendChild = jest.fn();
+      document.head;
     });
 
     // then
@@ -82,21 +83,6 @@ describe('GoogleAnalytics', () => {
       await instance._insertGAScript();
       // @ts-ignore
       expect(document.head.appendChild).toHaveBeenCalled();
-    });
-  });
-
-  // given
-  describe('_insertGAScript', () => {
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._insertGAScript();
-    });
-
-    // then
-    it('should append GA script', () => {
-      // @ts-ignore
-      // expect(document.head).toContain(instance._gaScript);
     });
   });
 });

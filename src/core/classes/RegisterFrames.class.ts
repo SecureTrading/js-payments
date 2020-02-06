@@ -1,10 +1,10 @@
+import { IStyles } from '../models/IStyles';
+import { MessageBus } from '../shared/MessageBus';
 import { StJwt } from '../shared/StJwt';
-import { IStyles } from '../shared/Styler';
 
-/**
- * Defines all non field elements of form and their placement on merchant site.
- */
-export default class RegisterFrames {
+export class RegisterFrames {
+  private static COMPLETE_FORM_FIELDS: string[] = ['pan', 'expirydate', 'securitycode'];
+
   protected styles: IStyles;
   protected params: any;
   protected elementsToRegister: HTMLElement[];
@@ -14,6 +14,8 @@ export default class RegisterFrames {
   protected componentIds: any;
   protected hasAnimatedCard: boolean;
   protected submitCallback: any;
+  protected fieldsToSubmit: string[];
+  protected messageBus: MessageBus;
   private stJwt: StJwt;
 
   constructor(
@@ -22,32 +24,25 @@ export default class RegisterFrames {
     componentIds: {},
     styles: IStyles,
     animatedCard: boolean,
+    fieldsToSubmit: string[],
     submitCallback?: any
   ) {
-    this.styles = this._getStyles(styles);
+    this.messageBus = new MessageBus();
+    this.fieldsToSubmit = fieldsToSubmit.length ? fieldsToSubmit : RegisterFrames.COMPLETE_FORM_FIELDS;
     this.componentIds = componentIds;
     this.submitCallback = submitCallback;
     this.hasAnimatedCard = animatedCard;
-    this.elementsTargets = this.setElementsFields();
     this.elementsToRegister = [];
     this.jwt = jwt;
-    this.stJwt = new StJwt(jwt);
     this.origin = origin;
+    this.styles = this._getStyles(styles);
+    this.configureFormFieldsAmount(jwt);
+    this.elementsTargets = this.setElementsFields();
+    this.registerElements(this.elementsToRegister, this.elementsTargets);
+    this.stJwt = new StJwt(jwt);
     this.params = { locale: this.stJwt.locale, origin: this.origin };
   }
 
-  /**
-   * Gathers and launches methods needed on initializing object.
-   */
-  protected onInit() {
-    this.registerElements(this.elementsToRegister, this.elementsTargets);
-  }
-
-  /**
-   * Register fields in clients form
-   * @param fields
-   * @param targets
-   */
   protected registerElements(fields: HTMLElement[], targets: string[]) {
     targets.map((item, index) => {
       const itemToChange = document.getElementById(item);
@@ -55,19 +50,15 @@ export default class RegisterFrames {
     });
   }
 
-  /**
-   * Defines iframe elements to add
-   */
+  protected configureFormFieldsAmount(jwt: string): any {
+    return [];
+  }
+
   protected setElementsFields(): any {
     return [];
   }
 
-  /**
-   * Set defaultStyles if styles are defined as a flat structure
-   * @param styles
-   */
   private _getStyles(styles: any) {
-    // If we have an object as a value then we assume we are in the new format otherwise we are a flat array
     for (const key in styles) {
       if (styles[key] instanceof Object) {
         return styles;

@@ -1,7 +1,8 @@
 import { environment } from '../../environments/environment';
-import Utils from './Utils';
+import { IMessageBusEvent } from '../models/IMessageBusEvent';
+import { Utils } from './Utils';
 
-export default class MessageBus {
+export class MessageBus {
   public static SUBSCRIBERS: string = 'ST_SUBSCRIBERS';
   public static EVENTS = {
     BLOCK_CARD_NUMBER: 'BLOCK_CARD_NUMBER',
@@ -11,22 +12,29 @@ export default class MessageBus {
     BLUR_CARD_NUMBER: 'BLUR_CARD_NUMBER',
     BLUR_EXPIRATION_DATE: 'BLUR_EXPIRATION_DATE',
     BLUR_SECURITY_CODE: 'BLUR_SECURITY_CODE',
+    CALL_SUBMIT_EVENT: 'CALL_SUBMIT_EVENT',
     CHANGE_CARD_NUMBER: 'CHANGE_CARD_NUMBER',
     CHANGE_EXPIRATION_DATE: 'CHANGE_EXPIRATION_DATE',
     CHANGE_SECURITY_CODE: 'CHANGE_SECURITY_CODE',
     CHANGE_SECURITY_CODE_LENGTH: 'CHANGE_SECURITY_CODE_LENGTH',
+    DESTROY: 'DESTROY',
     FOCUS_CARD_NUMBER: 'FOCUS_CARD_NUMBER',
     FOCUS_EXPIRATION_DATE: 'FOCUS_EXPIRATION_DATE',
     FOCUS_SECURITY_CODE: 'FOCUS_SECURITY_CODE',
+    IS_CARD_WITHOUT_CVV: 'IS_CARD_WITHOUT_CVV',
     VALIDATE_CARD_NUMBER_FIELD: 'VALIDATE_CARD_NUMBER_FIELD',
     VALIDATE_EXPIRATION_DATE_FIELD: 'VALIDATE_EXPIRATION_DATE_FIELD',
     VALIDATE_FORM: 'VALIDATE_FORM',
     VALIDATE_MERCHANT_FIELD: 'VALIDATE_MERCHANT_FIELD',
-    VALIDATE_SECURITY_CODE_FIELD: 'VALIDATE_SECURITY_CODE_FIELD'
+    VALIDATE_SECURITY_CODE_FIELD: 'VALIDATE_SECURITY_CODE_FIELD',
+    STORAGE_SET_ITEM: 'SET_STORAGE_ITEM',
+    STORAGE_SYNCHRONIZE: 'SYNCHRONIZE_STORAGE',
+    STORAGE_COMPONENT_READY: 'COMPONENT_STORAGE_READY'
   };
   public static EVENTS_PUBLIC = {
     BIN_PROCESS: 'BIN_PROCESS',
     BLUR_FIELDS: 'BLUR_FIELDS',
+    BY_PASS_CARDINAL: 'BY_PASS_CARDINAL',
     BY_PASS_INIT: 'BY_PASS_INIT',
     LOAD_CARDINAL: 'LOAD_CARDINAL',
     LOAD_CONTROL_FRAME: 'LOAD_CONTROL_FRAME',
@@ -41,6 +49,7 @@ export default class MessageBus {
     UPDATE_JWT: 'UPDATE_JWT',
     UPDATE_MERCHANT_FIELDS: 'UPDATE_MERCHANT_FIELDS'
   };
+  private static readonly DOM_EVENT_NAME = 'message';
   private readonly _parentOrigin: string;
   private readonly _frameOrigin: string;
   private _subscriptions: any = {};
@@ -51,11 +60,6 @@ export default class MessageBus {
     this._registerMessageListener();
   }
 
-  /**
-   * publish()
-   * @param event
-   * @param publishToParent
-   */
   public publish(event: IMessageBusEvent, publishToParent?: boolean) {
     let subscribersStore;
 
@@ -74,30 +78,16 @@ export default class MessageBus {
     }
   }
 
-  /**
-   * publishFromParent()
-   * @param event
-   * @param frameName
-   */
   public publishFromParent(event: IMessageBusEvent, frameName: string) {
     // @ts-ignore
     window.frames[frameName].postMessage(event, this._frameOrigin);
   }
 
-  /**
-   * publishToSelf()
-   * @param event
-   */
   public publishToSelf(event: IMessageBusEvent) {
     // @ts-ignore
     window.postMessage(event, window.location.origin);
   }
 
-  /**
-   * subscribe()
-   * @param eventType
-   * @param callback
-   */
   public subscribe(eventType: string, callback: any) {
     let subscribers;
     const subscriber = window.name;
@@ -118,37 +108,28 @@ export default class MessageBus {
     this._subscriptions[eventType] = callback;
   }
 
-  /**
-   * subscribeOnParent()
-   * @param eventType
-   * @param callback
-   */
   public subscribeOnParent(eventType: string, callback: any) {
     this._subscriptions[eventType] = callback;
   }
 
-  /**
-   * _handleMessageEvent()
-   * @param event
-   * @private
-   */
   private _handleMessageEvent = (event: MessageEvent) => {
     const messageBusEvent: IMessageBusEvent = event.data;
     const isPublicEvent = Utils.inArray(Object.keys(MessageBus.EVENTS_PUBLIC), messageBusEvent.type);
     const isCallbackAllowed =
       event.origin === this._frameOrigin || (event.origin === this._parentOrigin && isPublicEvent);
-    const subscribersStore = window.sessionStorage.getItem(MessageBus.SUBSCRIBERS);
-    JSON.parse(subscribersStore);
+
+    if (messageBusEvent.type === MessageBus.EVENTS.DESTROY) {
+      window.removeEventListener(MessageBus.DOM_EVENT_NAME, this._handleMessageEvent);
+
+      return;
+    }
+
     if (isCallbackAllowed && this._subscriptions[messageBusEvent.type]) {
       this._subscriptions[messageBusEvent.type](messageBusEvent.data);
     }
   };
 
-  /**
-   * _registerMessageListener()
-   * @private
-   */
   private _registerMessageListener() {
-    window.addEventListener('message', this._handleMessageEvent);
+    window.addEventListener(MessageBus.DOM_EVENT_NAME, this._handleMessageEvent);
   }
 }

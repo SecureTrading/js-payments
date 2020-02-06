@@ -89,9 +89,10 @@
         <div id="st-visa-checkout" class="example-form__group"></div>
         <div id="st-apple-pay" class="example-form__group"></div>
       </div>
-      <div id="st-animated-card" class="st-animated-card-wrapper"></div>
+      <div id="st-animated-card"></div>
     </form>
     <script type="text/javascript" src="st.js"></script>
+    <!--    <script type="text/javascript" src="init.js"></script>-->
     <script>
       (function() {
         var ST = SecureTrading;
@@ -143,7 +144,7 @@
           st.VisaCheckout(stConfig.visaCheckout);
           document.getElementById('example-form-amount').addEventListener('input', function() {
             st.updateJWT(
-              'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3MzczNjQ5Ni4wMzI3MTMyLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiNDExMTExMTExMTExMTExMSIsImV4cGlyeWRhdGUiOiIwMS8yMiIsInNlY3VyaXR5Y29kZSI6IjEyMyJ9fQ.BnW7b7DMhh0XnJNCDKPHfqMjqVUCukM9SfhjtfyfDm0'
+              'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4MDk5MDc0My4wNTE5NTU1LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.kDVZseXk1D_WrMljshqBENM7lFPdHfuqVEgSYFAtgHc'
             );
           });
         }

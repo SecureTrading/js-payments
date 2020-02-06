@@ -1,13 +1,7 @@
 import { environment } from '../../environments/environment';
-import DomMethods from '../shared/DomMethods';
+import { DomMethods } from '../shared/DomMethods';
 
-/**
- * Creates HTML markups <script> and add Google Analytics source to it.
- */
-class GoogleAnalytics {
-  /**
-   * Make GA send function available from class.
-   */
+export class GoogleAnalytics {
   public static sendGaData(hitType: string, eventCategory: string, eventAction: string, eventLabel: string) {
     // @ts-ignore
     if (window.ga) {
@@ -33,20 +27,12 @@ class GoogleAnalytics {
   private static TRANSLATION_SCRIPT_APPENDED: string = 'Google Analytics: script has been appended';
   private static TRANSLATION_SCRIPT_APPENDED_FAILURE: string = 'Google Analytics: an error occurred appending script';
 
-  /**
-   * Disables User ID tracking (User Opt-out).
-   * @private
-   */
-  private static _disableUserIDTracking() {
+  private static _disableUserIDTracking(): boolean {
     // @ts-ignore
     return (window[`ga-disable-UA-${GoogleAnalytics.GA_MEASUREMENT_ID}-Y`] = true);
   }
 
-  /**
-   * Adds all required features by interpolating static strings.
-   * @private
-   */
-  private static _returnScriptWithFeatures() {
+  private static _returnScriptWithFeatures(): string {
     return `${GoogleAnalytics.GA_INIT_SCRIPT_CONTENT}
     ${GoogleAnalytics.GA_DISABLE_COOKIES}
     ${GoogleAnalytics.GA_IP_ANONYMIZATION}
@@ -55,20 +41,10 @@ class GoogleAnalytics {
   }
 
   private _communicate: string;
-  private _gaLibrary: HTMLScriptElement;
   private _gaScript: HTMLScriptElement;
   private _gaScriptContent: Text;
 
-  constructor() {
-    this._onInit();
-  }
-
-  /**
-   * Initializes Google Analytics scripts on merchants page.
-   * Gathers all methods needed to establish GGoogle Analytics functionality.
-   * @private
-   */
-  private _onInit() {
+  public init(): void {
     this._insertGALibrary();
     this._createGAScript()
       .then(() => {
@@ -85,15 +61,11 @@ class GoogleAnalytics {
       });
   }
 
-  /**
-   * Creates GA script, which is executed inside <script> markup.
-   * Appends it in <script> tag.
-   * @private
-   */
-  private _createGAScript() {
+  private _createGAScript(): Promise<any> {
     return new Promise((resolve, reject) => {
       this._gaScript = document.createElement('script');
       this._gaScript.type = 'text/javascript';
+      this._gaScript.id = 'googleAnalytics';
       this._gaScriptContent = document.createTextNode(GoogleAnalytics._returnScriptWithFeatures());
       this._gaScript.appendChild(this._gaScriptContent);
       resolve((this._communicate = GoogleAnalytics.TRANSLATION_SCRIPT_SUCCEEDED));
@@ -101,27 +73,17 @@ class GoogleAnalytics {
     });
   }
 
-  /**
-   * Inserts GA library after the GA script created by _createGAScript().
-   * @private
-   */
-  private _insertGALibrary() {
-    this._gaLibrary = DomMethods.insertScript('head', GoogleAnalytics.GA_SCRIPT_SRC);
-    this._gaLibrary.async = true;
-    document.head.appendChild(this._gaLibrary);
+  private _insertGALibrary(): void {
+    DomMethods.insertScript('head', { async: 'async', src: GoogleAnalytics.GA_SCRIPT_SRC, id: 'googleAnalytics' });
   }
 
-  /**
-   * Appends GA script if it has been successfully created by __createGAScript().
-   * @private
-   */
-  private _insertGAScript() {
+  private _insertGAScript(): Promise<any> {
     return new Promise((resolve, reject) => {
-      document.head.appendChild(this._gaScript);
-      resolve((this._communicate = GoogleAnalytics.TRANSLATION_SCRIPT_APPENDED));
-      reject((this._communicate = GoogleAnalytics.TRANSLATION_SCRIPT_APPENDED_FAILURE));
+      if (!document.getElementById('googleAnalytics')) {
+        document.head.appendChild(this._gaScript);
+        resolve((this._communicate = GoogleAnalytics.TRANSLATION_SCRIPT_APPENDED));
+        reject((this._communicate = GoogleAnalytics.TRANSLATION_SCRIPT_APPENDED_FAILURE));
+      }
     });
   }
 }
-
-export default GoogleAnalytics;

@@ -1,5 +1,5 @@
 import SpyInstance = jest.SpyInstance;
-import DomMethods from '../../../src/core/shared/DomMethods';
+import { DomMethods } from '../../../src/core/shared/DomMethods';
 
 // given
 describe('DomMethods', () => {
@@ -24,19 +24,8 @@ describe('DomMethods', () => {
     // then
     it('should inject style to head', () => {
       DomMethods.insertStyle('some style content');
-      expect(document.head.innerHTML).toBe('<style>some style content</style>');
+      expect(document.head.innerHTML).toBe('<style id="insertedStyles" type="text/css">some style content</style>');
       expect(document.body.innerHTML).toBe('');
-    });
-  });
-
-  // given
-  describe('DomMethods.parseForm', () => {
-    // then
-    it('should parse st-name from form', () => {
-      const { form, parseFormObject } = createFormFixture();
-      const merchantData = DomMethods.parseForm(form);
-      expect(merchantData).toMatchObject(parseFormObject);
-      expect(merchantData.myfield3).toBe(undefined);
     });
   });
 
@@ -79,46 +68,8 @@ describe('DomMethods', () => {
 
     // then
     it('should call parseForm()', () => {
-      DomMethods.parseMerchantForm();
+      DomMethods.parseForm();
       expect(spy).toHaveBeenCalled();
-    });
-  });
-
-  // given
-  describe('DomMethods.getIframeContentWindow', () => {
-    // then
-    it('should call parseForm()', () => {
-      expect(DomMethods.getIframeContentWindow('SOME_NAME')).toEqual((window as any).frames['SOME_NAME']);
-    });
-  });
-
-  // given
-  describe('DomMethods.removeChildFromDOM', () => {
-    // when
-    const { htmlForParentAndChild } = createFormFixture();
-    beforeEach(() => {
-      document.body.innerHTML = htmlForParentAndChild;
-    });
-
-    // then
-    it('should remove child element from DOM', () => {
-      DomMethods.removeChildFromDOM('st-form', 'some-title');
-      expect(document.getElementById('st-form').childElementCount).toEqual(0);
-    });
-
-    // then
-    it('should return unchanged parent element if child is not specified', () => {
-      expect(DomMethods.removeChildFromDOM('st-form', '')).toEqual(document.getElementById('st-form'));
-    });
-
-    // then
-    it('should return null parent element if parent is not specified', () => {
-      expect(DomMethods.removeChildFromDOM('', 'some-title')).toEqual(null);
-    });
-
-    // then
-    it('should return null parent element if parent and child are not specified', () => {
-      expect(DomMethods.removeChildFromDOM('', '')).toEqual(null);
     });
   });
 
@@ -141,27 +92,6 @@ describe('DomMethods', () => {
     // then
     it('should remove all children of specified element', () => {
       expect(DomMethods.removeAllChildren('some-id').childNodes.length).toEqual(0);
-    });
-  });
-
-  // given
-  describe('DomMethods.addClass', () => {
-    const element: HTMLDivElement = document.createElement('div');
-    // then
-    it('should add class with given name to classList of element', () => {
-      DomMethods.addClass(element, 'some-class');
-      expect(element.classList.contains('some-class')).toEqual(true);
-    });
-  });
-
-  // given
-  describe('DomMethods.removeClass', () => {
-    const element: HTMLDivElement = document.createElement('div');
-    element.classList.add('blah');
-    // then
-    it('should remove class with given name to classList of element', () => {
-      DomMethods.removeClass(element, 'blah');
-      expect(element.classList.contains('blah')).toEqual(false);
     });
   });
 });
@@ -196,7 +126,7 @@ function createFormFixture() {
   const opt1 = document.createElement('option');
   const opt2 = document.createElement('option');
 
-  const scriptUrl = 'http://example.com/test.js';
+  const scriptUrl = { src: 'http://example.com/test.js' };
   const parseFormObject = {
     stFieldName: '',
     stFieldName2: 'some value',

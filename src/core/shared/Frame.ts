@@ -1,20 +1,12 @@
-import MessageBus from '../../core/shared/MessageBus';
-import { IAllowedStyles, IStyle, Styler } from './Styler';
+import { IAllowedStyles } from '../models/IAllowedStyles';
+import { IParams } from '../models/IParams';
+import { IStyle } from '../models/IStyle';
+import { MessageBus } from './MessageBus';
+import { Styler } from './Styler';
 
-interface IParams {
-  [name: string]: object | string;
-  styles?: IStyle;
-  locale?: string;
-  origin?: string;
-  jwt?: string;
-  gatewayUrl?: string;
-  paymentTypes?: string;
-  defaultPaymentType?: string;
-}
-
-export default class Frame {
-  protected _messageBus: MessageBus;
-  protected _params: IParams;
+export class Frame {
+  protected messageBus: MessageBus;
+  protected params: IParams;
 
   public parseUrl() {
     const parsedUrl = new URL(window.location.href);
@@ -33,12 +25,12 @@ export default class Frame {
   }
 
   public applyStyles() {
-    new Styler(this.getAllowedStyles()).inject(this._params.styles);
+    new Styler(this.getAllowedStyles()).inject(this.params.styles);
   }
 
-  protected onInit() {
-    this._params = this.parseUrl();
-    this._messageBus = new MessageBus(this._params.origin);
+  protected async onInit() {
+    this.params = this.parseUrl();
+    this.messageBus = new MessageBus(this.params.origin);
     this.applyStyles();
   }
 

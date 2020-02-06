@@ -1,6 +1,6 @@
+import { BrowserLocalStorage } from '../../../src/core/services/storage/BrowserLocalStorage';
 import { Translator } from '../../../src/core/shared/Translator';
-import Language from '../../../src/core/shared/Language';
-import Utils from '../../../src/core/shared/Utils';
+import { Language } from '../../../src/core/shared/Language';
 // @ts-ignore
 import cy_GB from '../../../src/core/translations/cy_GB.json';
 // @ts-ignore
@@ -61,7 +61,8 @@ describe('translate()', () => {
   // then
   it('should return translation from local storage if its specified there', () => {
     const translation: string = 'some random translation';
-    Utils.getLocalStorageItem = jest.fn().mockReturnValueOnce(translation);
+    const storage: BrowserLocalStorage = new BrowserLocalStorage();
+    storage.getItem = jest.fn().mockReturnValueOnce(translation);
     let instance: Translator = new Translator('en_GB');
     expect(instance.translate(translation)).toEqual(translation);
   });

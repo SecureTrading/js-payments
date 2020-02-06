@@ -1,5 +1,5 @@
 import i18next from 'i18next';
-// TypeScript has been set to import json it just warns about it in here
+import { BrowserLocalStorage } from '../services/storage/BrowserLocalStorage';
 // @ts-ignore
 import cy_GB from '../translations/cy_GB.json';
 // @ts-ignore
@@ -20,10 +20,11 @@ import nl_NL from '../translations/nl_NL.json';
 import no_NO from '../translations/no_NO.json';
 // @ts-ignore
 import sv_SE from '../translations/sv_SE.json';
-import Utils from './Utils';
 
-// TODO docstring - class to act as adapter in case we ever change out the translator mechanism
 export class Translator {
+  readonly ready: Promise<void>;
+  private _storage: BrowserLocalStorage;
+
   constructor(locale: string) {
     i18next.init({
       debug: false,
@@ -41,14 +42,15 @@ export class Translator {
         sv_SE: { translation: sv_SE }
       }
     });
+    this._storage = new BrowserLocalStorage();
+    this.ready = this._storage.ready;
   }
 
-  /**
-   * Translates given text or gets it when it's defined by merchant in config.
-   * @param text
-   */
   public translate = (text: string) => {
-    const translation = Utils.getLocalStorageItem(text, localStorage.merchantTranslations);
+    const translations: string = this._storage.getItem('merchantTranslations');
+    const json: string = JSON.parse(translations);
+    // @ts-ignore
+    const translation: string = Object.keys(json).includes(text) ? json[text] : '';
     return translation ? translation : i18next.t(text, { content: text });
   };
 }

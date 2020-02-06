@@ -1,34 +1,26 @@
 import { environment } from '../../environments/environment';
-import {
-  IAuthorizePaymentResponse,
-  IOnCardinalValidated,
-  IThreeDInitResponse,
-  IThreeDQueryResponse,
-  ON_CARDINAL_VALIDATED_STATUS,
-  PAYMENT_BRAND,
-  PAYMENT_EVENTS
-} from '../models/CardinalCommerce';
-import DomMethods from '../shared/DomMethods';
-import Language from '../shared/Language';
-import MessageBus from '../shared/MessageBus';
-import Notification from '../shared/Notification';
-import Selectors from '../shared/Selectors';
+import { CardinalCommerceValidationStatus } from '../models/constants/CardinalCommerceValidationStatus';
+import { PaymentBrand } from '../models/constants/PaymentBrand';
+import { PaymentEvents } from '../models/constants/PaymentEvents';
+import { IAuthorizePaymentResponse } from '../models/IAuthorizePaymentResponse';
+import { IFormFieldState } from '../models/IFormFieldState';
+import { IMessageBusEvent } from '../models/IMessageBusEvent';
+import { IOnCardinalValidated } from '../models/IOnCardinalValidated';
+import { IResponseData } from '../models/IResponseData';
+import { IThreeDInitResponse } from '../models/IThreeDInitResponse';
+import { IThreeDQueryResponse } from '../models/IThreeDQueryResponse';
+import { DomMethods } from '../shared/DomMethods';
+import { Language } from '../shared/Language';
+import { MessageBus } from '../shared/MessageBus';
+import { Notification } from '../shared/Notification';
+import { Selectors } from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
-import GoogleAnalytics from './GoogleAnalytics';
+import { GoogleAnalytics } from './GoogleAnalytics';
 
 declare const Cardinal: any;
 
-/**
- * Cardinal Commerce class:
- * Defines integration with Cardinal Commerce and flow of transaction with this supplier.
- */
 export class CardinalCommerce {
-  /**
-   * Check if card is enrolled and non frictionless
-   * @param response
-   * @private
-   */
   private static _isCardEnrolledAndNotFrictionless(response: IThreeDQueryResponse) {
     return response.enrolled === 'Y' && response.acsurl !== undefined;
   }
@@ -44,7 +36,7 @@ export class CardinalCommerce {
   private readonly _threedinit: string;
   private _notification: Notification;
   private _sdkAddress: string = environment.CARDINAL_COMMERCE.SONGBIRD_TEST_URL;
-  private _called: boolean = false;
+  private _bypassCards: string[];
 
   constructor(
     startOnLoad: boolean,
@@ -52,7 +44,8 @@ export class CardinalCommerce {
     requestTypes: string[],
     livestatus?: number,
     cachetoken?: string,
-    threedinit?: string
+    threedinit?: string,
+    bypassCards?: string[]
   ) {
     this._startOnLoad = startOnLoad;
     this._jwt = jwt;
@@ -60,6 +53,7 @@ export class CardinalCommerce {
     this._livestatus = livestatus;
     this._cachetoken = cachetoken ? cachetoken : '';
     this._requestTypes = requestTypes;
+    this._bypassCards = bypassCards;
     this.messageBus = new MessageBus();
     this._notification = new Notification();
     this._setLiveStatus();
@@ -71,14 +65,9 @@ export class CardinalCommerce {
     });
   }
 
-  /**
-   * Handles continue action from Cardinal Commerce, retrieve overlay with iframe which target is on AcsUrl
-   * and handles the rest of process.
-   * Cardinal.continue(PAYMENT_BRAND, CONTINUE_DATA, ORDER_OBJECT, NEW_JWT)
-   */
   protected _authenticateCard(responseObject: IThreeDQueryResponse) {
     Cardinal.continue(
-      PAYMENT_BRAND,
+      PaymentBrand,
       {
         AcsUrl: responseObject.acsurl,
         Payload: responseObject.threedpayload
@@ -92,39 +81,34 @@ export class CardinalCommerce {
   }
 
   protected _cardinalSetup() {
-    Cardinal.setup(PAYMENT_EVENTS.INIT, {
+    Cardinal.setup(PaymentEvents.INIT, {
       jwt: this._cardinalCommerceJWT
     });
   }
 
-  /**
-   * Initiate configuration of Cardinal Commerce
-   * Initialize Cardinal Commerce mechanism with given JWT (by merchant).
-   */
   protected _onCardinalLoad() {
     Cardinal.configure(environment.CARDINAL_COMMERCE.CONFIG);
-    Cardinal.on(PAYMENT_EVENTS.SETUP_COMPLETE, () => {
+    Cardinal.off(PaymentEvents.SETUP_COMPLETE);
+    Cardinal.off(PaymentEvents.VALIDATED);
+
+    Cardinal.on(PaymentEvents.SETUP_COMPLETE, () => {
       this._onCardinalSetupComplete();
       GoogleAnalytics.sendGaData('event', 'Cardinal', 'init', 'Cardinal Setup Completed');
     });
-    Cardinal.on(PAYMENT_EVENTS.VALIDATED, (data: IOnCardinalValidated, jwt: string) => {
+
+    Cardinal.on(PaymentEvents.VALIDATED, (data: IOnCardinalValidated, jwt: string) => {
       this._onCardinalValidated(data, jwt);
       GoogleAnalytics.sendGaData('event', 'Cardinal', 'validate', 'Cardinal payment validated');
     });
     this._cardinalSetup();
   }
 
-  /**
-   * Method on successful initialization after calling Cardinal.setup() - Songbird.js has been successfully initialized.
-   * CAUTION ! this will not be triggered if an error occurred during Cardinal.setup() call.
-   * This includes a failed JWT authentication.
-   */
   protected _onCardinalSetupComplete() {
     if (this._startOnLoad) {
       const pan = new StJwt(this._jwt).payload.pan as string;
       this._performBinDetection({ validity: true, value: pan });
       const submitFormEvent: IMessageBusEvent = {
-        data: { dataInJwt: true, requestTypes: this._requestTypes },
+        data: { dataInJwt: true, requestTypes: this._requestTypes, bypassCards: this._bypassCards },
         type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
       };
       this.messageBus.publishFromParent(submitFormEvent, Selectors.CONTROL_FRAME_IFRAME);
@@ -137,9 +121,6 @@ export class CardinalCommerce {
     }
   }
 
-  /**
-   * Triggered when the transaction has been finished.
-   */
   protected _onCardinalValidated(data: IOnCardinalValidated, jwt: string) {
     const { ActionCode, ErrorNumber, ErrorDescription } = data;
     const translator = new Translator(new StJwt(this._jwt).locale);
@@ -159,7 +140,7 @@ export class CardinalCommerce {
       type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE
     };
 
-    if (ON_CARDINAL_VALIDATED_STATUS.includes(ActionCode)) {
+    if (CardinalCommerceValidationStatus.includes(ActionCode)) {
       this._authorizePayment({ threedresponse: jwt });
     } else {
       const resetNotificationEvent: IMessageBusEvent = {
@@ -171,32 +152,17 @@ export class CardinalCommerce {
     }
   }
 
-  /**
-   * Triggered when the card number bin value changes
-   */
   protected _performBinDetection(bin: IFormFieldState) {
-    return Cardinal.trigger(PAYMENT_EVENTS.BIN_PROCESS, bin);
+    return Cardinal.trigger(PaymentEvents.BIN_PROCESS, bin);
   }
 
-  /**
-   * Inserts songbird.js and load script.
-   */
   protected _threeDSetup() {
-    if (!this._called) {
-      DomMethods.insertScript('head', this._sdkAddress).addEventListener('load', () => {
-        this._onCardinalLoad();
-      });
-    } else {
-      this._cardinalSetup();
-    }
-    this._called = true;
+    DomMethods.insertScript('head', {
+      src: this._sdkAddress,
+      id: 'cardinalCommerce'
+    }).then(() => this._onCardinalLoad());
   }
 
-  /**
-   * Authorize payment.
-   * @param data
-   * @private
-   */
   private _authorizePayment(data?: IAuthorizePaymentResponse | object) {
     data = data || {};
     if (data) {
@@ -212,10 +178,6 @@ export class CardinalCommerce {
     GoogleAnalytics.sendGaData('event', 'Cardinal', 'auth', 'Cardinal auth completed');
   }
 
-  /**
-   * Init all subscription methods.
-   * @private
-   */
   private _initSubscriptions() {
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME, () => {
       this._onLoadControlFrame();
@@ -224,16 +186,14 @@ export class CardinalCommerce {
       this._onThreeDInitEvent(data);
     });
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.BY_PASS_INIT, () => {
-      this._onByPassJsInitEvent();
+      this._onBypassJsInitEvent();
     });
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDQUERY, (data: any) => {
       this._onThreeDQueryEvent(data);
     });
+    this._initSubmitEventListener();
   }
 
-  /**
-   * Publishes message bus set request types event
-   */
   private _publishRequestTypesEvent(requestTypes: string[]) {
     const messageBusEvent: IMessageBusEvent = {
       data: { requestTypes },
@@ -244,55 +204,42 @@ export class CardinalCommerce {
     });
   }
 
-  /**
-   * Call all subscription methods.
-   * @private
-   */
   private _onInit() {
     this._initSubscriptions();
     this._publishRequestTypesEvent(this._requestTypes);
   }
 
-  /**
-   * Call _threeDInitRequest().
-   * @private
-   */
   private _onLoadControlFrame() {
     if (this._cachetoken) {
-      this._byPassInitRequest();
+      this._bypassInitRequest();
     } else {
       this._threeDInitRequest();
     }
   }
 
-  private _onByPassJsInitEvent() {
+  private _onBypassJsInitEvent() {
     this._cardinalCommerceJWT = this._threedinit;
     this._cardinalCommerceCacheToken = this._cachetoken;
     this._threeDSetup();
   }
 
-  /**
-   * Overwrite threedinit and cachetoken fields; call _threeDSetup().
-   * @param data
-   * @private
-   */
   private _onThreeDInitEvent(data: IThreeDInitResponse) {
-    const { cachetoken, threedinit } = data;
+    let cachetoken: string;
+    let threedinit: string;
+    if (data) {
+      cachetoken = data.cachetoken;
+      threedinit = data.threedinit;
+    }
     this._cardinalCommerceJWT = threedinit;
     this._cardinalCommerceCacheToken = cachetoken;
     this._threeDSetup();
   }
 
-  /**
-   * Call _threeDQueryRequest().
-   * @param data
-   * @private
-   */
   private _onThreeDQueryEvent(data: IThreeDQueryResponse) {
     this._threeDQueryRequest(data);
   }
 
-  private _byPassInitRequest() {
+  private _bypassInitRequest() {
     const messageBusEvent: IMessageBusEvent = {
       data: this._cachetoken,
       type: MessageBus.EVENTS_PUBLIC.BY_PASS_INIT
@@ -300,20 +247,12 @@ export class CardinalCommerce {
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
-  /**
-   * Checks if we are processing live transactions or not
-   * @private
-   */
   private _setLiveStatus() {
     if (this._livestatus) {
       this._sdkAddress = environment.CARDINAL_COMMERCE.SONGBIRD_LIVE_URL;
     }
   }
 
-  /**
-   * Perform a THREEDINIT with ST in order to generate the Cardinal songbird JWT.
-   * @private
-   */
   private _threeDInitRequest() {
     const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.THREEDINIT
@@ -321,11 +260,6 @@ export class CardinalCommerce {
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
-  /**
-   * Authenticates card or authorize payment.
-   * @param responseObject
-   * @private
-   */
   private _threeDQueryRequest(responseObject: IThreeDQueryResponse) {
     if (CardinalCommerce._isCardEnrolledAndNotFrictionless(responseObject)) {
       this._authenticateCard(responseObject);
@@ -333,5 +267,26 @@ export class CardinalCommerce {
     } else {
       this._authorizePayment();
     }
+  }
+
+  private _initSubmitEventListener(): void {
+    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.BY_PASS_CARDINAL, (data: any) => {
+      const { pan, expirydate, securitycode } = data;
+      const postData: any = {
+        expirydate,
+        pan,
+        securitycode
+      };
+
+      this._byPassAuthorizePayment(postData);
+    });
+  }
+
+  private _byPassAuthorizePayment(data: any): void {
+    const messageBusEvent: IMessageBusEvent = {
+      data,
+      type: MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS
+    };
+    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 }
