@@ -88,6 +88,9 @@ export class CardinalCommerce {
 
   protected _onCardinalLoad() {
     Cardinal.configure(environment.CARDINAL_COMMERCE.CONFIG);
+    Cardinal.off(PaymentEvents.SETUP_COMPLETE);
+    Cardinal.off(PaymentEvents.VALIDATED);
+
     Cardinal.on(PaymentEvents.SETUP_COMPLETE, () => {
       this._onCardinalSetupComplete();
       GoogleAnalytics.sendGaData('event', 'Cardinal', 'init', 'Cardinal Setup Completed');
