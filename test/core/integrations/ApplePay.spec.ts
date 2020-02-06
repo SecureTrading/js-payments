@@ -546,7 +546,7 @@ describe('ApplePay', () => {
       instance._displayNotification = jest.fn();
       // @ts-ignore
       instance._handleApplePayError = jest.fn();
-      DomMethods.parseMerchantForm = jest.fn().mockReturnValueOnce({ billingfirstname: 'BOB' });
+      DomMethods.parseForm = jest.fn().mockReturnValueOnce({ billingfirstname: 'BOB' });
       // @ts-ignore
       instance.getPaymentSuccessStatus = jest.fn().mockReturnValueOnce('SUCCESS');
       // @ts-ignore
@@ -583,7 +583,7 @@ describe('ApplePay', () => {
       instance._displayNotification = jest.fn();
       // @ts-ignore
       instance._handleApplePayError = jest.fn();
-      DomMethods.parseMerchantForm = jest.fn().mockReturnValueOnce({ billingfirstname: 'BOB' });
+      DomMethods.parseForm = jest.fn().mockReturnValueOnce({ billingfirstname: 'BOB' });
       // @ts-ignore
       instance.getPaymentSuccessStatus = jest.fn().mockReturnValueOnce('SUCCESS');
       // @ts-ignore
@@ -623,7 +623,7 @@ describe('ApplePay', () => {
       instance._notification.error = jest.fn();
       // @ts-ignore
       instance._handleApplePayError = jest.fn();
-      DomMethods.parseMerchantForm = jest.fn().mockReturnValueOnce({ billingfirstname: 'BOB' });
+      DomMethods.parseForm = jest.fn().mockReturnValueOnce({ billingfirstname: 'BOB' });
       // @ts-ignore
       instance.getPaymentFailureStatus = jest.fn().mockReturnValueOnce('FAILURE');
       // @ts-ignore

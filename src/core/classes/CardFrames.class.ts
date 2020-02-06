@@ -1,5 +1,6 @@
 import JwtDecode from 'jwt-decode';
 import { BypassCards } from '../models/constants/BypassCards';
+import { FormState } from '../models/constants/FormState';
 import { IMessageBusEvent } from '../models/IMessageBusEvent';
 import { IStyles } from '../models/IStyles';
 import { IValidationMessageBus } from '../models/IValidationMessageBus';
@@ -97,7 +98,6 @@ export class CardFrames extends RegisterFrames {
     this._initCardFrames();
     this.elementsTargets = this.setElementsFields();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
-    this._broadcastSecurityCodeProperties(this.jwt);
   }
 
   protected configureFormFieldsAmount(jwt: string): void {
@@ -154,18 +154,6 @@ export class CardFrames extends RegisterFrames {
     }
   }
 
-  private _broadcastSecurityCodeProperties(jwt: string): void {
-    const messageBusEvent: IMessageBusEvent = {
-      data: this._getSecurityCodeLength(jwt),
-      type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
-    };
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, (data: any) => {
-      if (!data.initReload) {
-        this.messageBus.publish(messageBusEvent);
-      }
-    });
-  }
-
   private _createSubmitButton = (): HTMLInputElement | HTMLButtonElement => {
     const form = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR);
     let button: HTMLInputElement | HTMLButtonElement = this._buttonId
@@ -187,7 +175,7 @@ export class CardFrames extends RegisterFrames {
     }
   }
 
-  private _disableFormField(state: boolean, eventName: string): void {
+  private _disableFormField(state: FormState, eventName: string): void {
     const messageBusEvent: IMessageBusEvent = {
       data: state,
       type: eventName
@@ -195,7 +183,7 @@ export class CardFrames extends RegisterFrames {
     this.messageBus.publish(messageBusEvent);
   }
 
-  private _disableSubmitButton(state: boolean): void {
+  private _disableSubmitButton(state: FormState): void {
     const button: HTMLButtonElement | HTMLInputElement = document.getElementById(this._buttonId) as
       | HTMLButtonElement
       | HTMLInputElement;
@@ -283,7 +271,7 @@ export class CardFrames extends RegisterFrames {
 
   private _onInput(): void {
     const messageBusEvent: IMessageBusEvent = {
-      data: DomMethods.parseMerchantForm(),
+      data: DomMethods.parseForm(),
       type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
     };
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
@@ -338,13 +326,20 @@ export class CardFrames extends RegisterFrames {
     this._loadAnimatedCard = loadAnimatedCard !== undefined ? loadAnimatedCard : true;
   }
 
-  private _setSubmitButtonProperties(element: any, disabledState: boolean): HTMLElement {
-    if (disabledState) {
+  private _setSubmitButtonProperties(element: any, state: FormState): HTMLElement {
+    let disabledState;
+    if (state === FormState.BLOCKED) {
       element.textContent = this._processingMessage;
       element.classList.add(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
+      disabledState = true;
+    } else if (state === FormState.COMPLETE) {
+      element.textContent = this._payMessage;
+      element.classList.add(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS); // Keep it locked but return it to original text
+      disabledState = true;
     } else {
       element.textContent = this._payMessage;
       element.classList.remove(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
+      disabledState = false;
     }
     element.disabled = disabledState;
     return element;
@@ -360,7 +355,7 @@ export class CardFrames extends RegisterFrames {
   }
 
   private _subscribeBlockSubmit(): void {
-    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (state: boolean) => {
+    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (state: FormState) => {
       this._disableSubmitButton(state);
       this._disableFormField(state, MessageBus.EVENTS.BLOCK_CARD_NUMBER);
       this._disableFormField(state, MessageBus.EVENTS.BLOCK_EXPIRATION_DATE);

@@ -24,6 +24,8 @@ import { Config } from './core/services/Config';
 import { MessageBus } from './core/shared/MessageBus';
 import { Translator } from './core/shared/Translator';
 import { environment } from './environments/environment';
+import { PaymentEvents } from './core/models/constants/PaymentEvents';
+import { Selectors } from './core/shared/Selectors';
 
 class ST {
   private static DEBOUNCE_JWT_VALUE: number = 900;
@@ -80,6 +82,22 @@ class ST {
     }
   }
 
+  public destroy(): void {
+    this._messageBus.publish(
+      {
+        type: MessageBus.EVENTS.DESTROY
+      },
+      true
+    );
+
+    const cardinal = (window as any).Cardinal;
+
+    if (cardinal) {
+      cardinal.off(PaymentEvents.SETUP_COMPLETE);
+      cardinal.off(PaymentEvents.VALIDATED);
+    }
+  }
+
   private init(config: IConfig): void {
     this._config = this._configuration.init(config);
     this.Storage(this._config);
@@ -88,6 +106,7 @@ class ST {
     this.CommonFrames(this._config);
     this._commonFrames.init();
     this.CardinalCommerce();
+    this.watchForFrameUnload();
   }
 
   private CardinalCommerce(): CardinalCommerce {
@@ -148,6 +167,29 @@ class ST {
   private Storage(config: IConfig): void {
     this._storage.setItem(ST.MERCHANT_TRANSLATIONS_STORAGE, JSON.stringify(config.translations));
     this._storage.setItem(ST.LOCALE_STORAGE, JwtDecode<IStJwtObj>(config.jwt).payload.locale);
+  }
+
+  private watchForFrameUnload(): void {
+    const controlFrameStatus = [false, false];
+
+    const observer = new MutationObserver(() => {
+      const controlFrame = document.getElementById(Selectors.CONTROL_FRAME_IFRAME);
+
+      controlFrameStatus.push(Boolean(controlFrame));
+      controlFrameStatus.shift();
+
+      const [previousStatus, currentStatus] = controlFrameStatus;
+
+      if (previousStatus && !currentStatus) {
+        this.destroy();
+        observer.disconnect();
+      }
+    });
+
+    observer.observe(document, {
+      subtree: true,
+      childList: true
+    });
   }
 }
 

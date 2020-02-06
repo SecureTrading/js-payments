@@ -174,7 +174,9 @@ export class NotificationFrame extends Frame {
     if (this.notificationFrameElement && notificationElementClass) {
       this.notificationFrameElement.classList.add(notificationElementClass);
       this._setDataNotificationColorAttribute(this._message.type);
-      this._autoHide(notificationElementClass);
+      if (this._message.type !== NotificationFrame.MESSAGE_TYPES.success) {
+        this._autoHide(notificationElementClass);
+      }
     }
   }
 
