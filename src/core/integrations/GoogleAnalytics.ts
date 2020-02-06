@@ -32,7 +32,7 @@ export class GoogleAnalytics {
     return (window[`ga-disable-UA-${GoogleAnalytics.GA_MEASUREMENT_ID}-Y`] = true);
   }
 
-  private static _returnScriptWithFeatures() {
+  private static _returnScriptWithFeatures(): string {
     return `${GoogleAnalytics.GA_INIT_SCRIPT_CONTENT}
     ${GoogleAnalytics.GA_DISABLE_COOKIES}
     ${GoogleAnalytics.GA_IP_ANONYMIZATION}
@@ -41,11 +41,10 @@ export class GoogleAnalytics {
   }
 
   private _communicate: string;
-  private _gaLibrary: HTMLScriptElement;
   private _gaScript: HTMLScriptElement;
   private _gaScriptContent: Text;
 
-  public init() {
+  public init(): void {
     this._insertGALibrary();
     this._createGAScript()
       .then(() => {
@@ -62,10 +61,11 @@ export class GoogleAnalytics {
       });
   }
 
-  private _createGAScript() {
+  private _createGAScript(): Promise<any> {
     return new Promise((resolve, reject) => {
       this._gaScript = document.createElement('script');
       this._gaScript.type = 'text/javascript';
+      this._gaScript.id = 'googleAnalytics';
       this._gaScriptContent = document.createTextNode(GoogleAnalytics._returnScriptWithFeatures());
       this._gaScript.appendChild(this._gaScriptContent);
       resolve((this._communicate = GoogleAnalytics.TRANSLATION_SCRIPT_SUCCEEDED));
@@ -73,17 +73,21 @@ export class GoogleAnalytics {
     });
   }
 
-  private _insertGALibrary() {
-    this._gaLibrary = DomMethods.insertScript('head', GoogleAnalytics.GA_SCRIPT_SRC);
-    this._gaLibrary.async = true;
-    document.head.appendChild(this._gaLibrary);
+  private _insertGALibrary(): void {
+    DomMethods.insertScript('head', { async: 'async', src: GoogleAnalytics.GA_SCRIPT_SRC, id: 'googleAnalytics' }).then(
+      () => {
+        return true;
+      }
+    );
   }
 
-  private _insertGAScript() {
+  private _insertGAScript(): Promise<any> {
     return new Promise((resolve, reject) => {
-      document.head.appendChild(this._gaScript);
-      resolve((this._communicate = GoogleAnalytics.TRANSLATION_SCRIPT_APPENDED));
-      reject((this._communicate = GoogleAnalytics.TRANSLATION_SCRIPT_APPENDED_FAILURE));
+      if (!document.getElementById('googleAnalytics')) {
+        document.head.appendChild(this._gaScript);
+        resolve((this._communicate = GoogleAnalytics.TRANSLATION_SCRIPT_APPENDED));
+        reject((this._communicate = GoogleAnalytics.TRANSLATION_SCRIPT_APPENDED_FAILURE));
+      }
     });
   }
 }

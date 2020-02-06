@@ -82,9 +82,12 @@ class ST {
   }
 
   public destroy(): void {
-    this._messageBus.publish({
-      type: MessageBus.EVENTS.DESTROY,
-    }, true);
+    this._messageBus.publish(
+      {
+        type: MessageBus.EVENTS.DESTROY
+      },
+      true
+    );
 
     const cardinal = (window as any).Cardinal;
 
