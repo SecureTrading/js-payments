@@ -560,6 +560,7 @@ function CardinalCommerceFixture() {
     static continue = jest.fn();
     static configure = jest.fn();
     static on = jest.fn();
+    static off = jest.fn();
     static setup = jest.fn();
     static trigger = jest.fn();
   }
