@@ -66,6 +66,7 @@ describe('GoogleAnalytics', () => {
     beforeEach(() => {
       // @ts-ignore
       document.head.appendChild = jest.fn();
+      document.head;
     });
 
     // then
@@ -82,21 +83,6 @@ describe('GoogleAnalytics', () => {
       await instance._insertGAScript();
       // @ts-ignore
       expect(document.head.appendChild).toHaveBeenCalled();
-    });
-  });
-
-  // given
-  describe('_insertGAScript', () => {
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._insertGAScript();
-    });
-
-    // then
-    it('should append GA script', () => {
-      // @ts-ignore
-      // expect(document.head).toContain(instance._gaScript);
     });
   });
 });

@@ -1,4 +1,5 @@
 import JwtDecode from 'jwt-decode';
+import { FormState } from '../models/constants/FormState';
 import { IMessageBusEvent } from '../models/IMessageBusEvent';
 import { IResponseData } from '../models/IResponseData';
 import { IStRequest } from '../models/IStRequest';
@@ -129,7 +130,7 @@ class StCodec {
     const validation = new Validation();
     StCodec.publishResponse(StCodec._createCommunicationError());
     StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
-    validation.blockForm(false);
+    validation.blockForm(FormState.AVAILABLE);
     return new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
   }
 
@@ -164,7 +165,7 @@ class StCodec {
         if (responseContent.errorcode === StCodec.STATUS_CODES.invalidfield) {
           validation.getErrorData(StCodec.getErrorData(responseContent));
         }
-        validation.blockForm(false);
+        validation.blockForm(FormState.AVAILABLE);
         StCodec.publishResponse(responseContent, jwtResponse);
         StCodec._notification.error(responseContent.errormessage);
         throw new Error(responseContent.errormessage);

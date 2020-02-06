@@ -183,7 +183,6 @@ describe('Visa Checkout', () => {
       const spy = jest.spyOn(VisaCheckout.prototype, 'initPaymentConfiguration').mockImplementation(() => {});
       // @ts-ignore
       const spy2 = jest.spyOn(VisaCheckout.prototype, 'paymentStatusHandler').mockImplementation(() => {});
-      instance._initVisaFlow();
       const ev = document.createEvent('Event');
       ev.initEvent('load', false, false);
       const script = document.getElementsByTagName('script')[0];

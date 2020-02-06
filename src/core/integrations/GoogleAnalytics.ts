@@ -27,7 +27,7 @@ export class GoogleAnalytics {
   private static TRANSLATION_SCRIPT_APPENDED: string = 'Google Analytics: script has been appended';
   private static TRANSLATION_SCRIPT_APPENDED_FAILURE: string = 'Google Analytics: an error occurred appending script';
 
-  private static _disableUserIDTracking() {
+  private static _disableUserIDTracking(): boolean {
     // @ts-ignore
     return (window[`ga-disable-UA-${GoogleAnalytics.GA_MEASUREMENT_ID}-Y`] = true);
   }

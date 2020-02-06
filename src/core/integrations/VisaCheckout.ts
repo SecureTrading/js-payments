@@ -143,7 +143,7 @@ export class VisaCheckout {
           walletsource: this._walletSource,
           wallettoken: this.paymentDetails
         },
-        DomMethods.parseMerchantForm()
+        DomMethods.parseForm()
       )
       .then(() => {
         this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
@@ -200,7 +200,6 @@ export class VisaCheckout {
     this.customizeVisaButton(buttonSettings);
     this._setLiveStatus();
     DomMethods.removeAllChildren(this._placement);
-    this._initVisaFlow();
   }
 
   private _setConfiguration = (config: IVisaConfig, settings: IVisaSettings) =>
