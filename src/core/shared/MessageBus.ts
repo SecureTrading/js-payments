@@ -58,7 +58,6 @@ export class MessageBus {
     this._parentOrigin = parentOrigin ? parentOrigin : '*';
     this._frameOrigin = new URL(environment.FRAME_URL).origin;
     this._registerMessageListener();
-    this._subscribeToDestroy();
   }
 
   public publish(event: IMessageBusEvent, publishToParent?: boolean) {
@@ -132,11 +131,5 @@ export class MessageBus {
 
   private _registerMessageListener() {
     window.addEventListener(MessageBus.DOM_EVENT_NAME, this._handleMessageEvent);
-  }
-
-  private _subscribeToDestroy(): void {
-    if (window.name) {
-      this.subscribe(MessageBus.EVENTS.DESTROY, () => void 0);
-    }
   }
 }
