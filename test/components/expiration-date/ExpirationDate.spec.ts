@@ -1,5 +1,5 @@
 import { ExpirationDate } from '../../../src/components/expiration-date/ExpirationDate';
-import { FormState } from "../../../src/core/models/constants/FormState";
+import { FormState } from '../../../src/core/models/constants/FormState';
 import { Language } from '../../../src/core/shared/Language';
 import { Selectors } from '../../../src/core/shared/Selectors';
 

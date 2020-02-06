@@ -51,7 +51,7 @@ export class DomMethods {
     ...Array.from(form.querySelectorAll(DomMethods.INPUT_MARKUP))
   ];
 
-  private static isScriptLoaded(params: any): Element {
+  private static isScriptLoaded(params: IScriptParams): Element {
     const { src, id } = params;
     const scripts: HTMLCollection = document.getElementsByTagName(DomMethods.SCRIPT_MARKUP);
     const scriptById: HTMLElement = document.getElementById(id);
@@ -65,7 +65,7 @@ export class DomMethods {
     }
   }
 
-  public static insertScript(target: string, params: any): Promise<Element> {
+  public static insertScript(target: string, params: IScriptParams): Promise<Element> {
     return new Promise((resolve, reject) => {
       const loaded: Element = DomMethods.isScriptLoaded(params);
       if (loaded) {
@@ -81,7 +81,6 @@ export class DomMethods {
     });
   }
 
-
   public static insertStyle(contents: string): void {
     const head = document.getElementById('insertedStyles');
     if (head) {
@@ -92,32 +91,6 @@ export class DomMethods {
     style.setAttribute('type', 'text/css');
     style.innerHTML = contents;
     document.head.appendChild(style);
-  }
-  public static getIframeContentWindow = (name: string) => (window as any).frames[name];
-
-  private static _getLoadedScript(params: IScriptParams): Element {
-    const { src, id } = params;
-    const scripts: HTMLCollection = document.getElementsByTagName(DomMethods.SCRIPT_MARKUP);
-    const scriptById: HTMLElement = document.getElementById(id);
-    if (scriptById) {
-      return scriptById;
-    }
-    for (const script of Array.from(scripts)) {
-      if (script.getAttribute(DomMethods.SRC_ATTRIBUTE) === src) {
-        return script;
-      }
-    }
-  }
-
-  public static removeChildFromDOM(parentId: string, childId: string) {
-    const parent = document.getElementById(parentId);
-    const child = document.getElementById(childId);
-    if (parent && child) {
-      parent.removeChild(child);
-      return parent;
-    } else {
-      return parent;
-    }
   }
 
   public static parseForm(): {} {
@@ -131,6 +104,7 @@ export class DomMethods {
     }
     return result;
   }
+
   public static removeAllChildren(placement: string): HTMLElement {
     const element: HTMLElement = document.getElementById(placement);
     if (!element) {

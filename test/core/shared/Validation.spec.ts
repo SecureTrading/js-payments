@@ -1,9 +1,9 @@
-import each from "jest-each";
-import { StCodec } from "../../../src/core/classes/StCodec.class";
-import { FormState } from "../../../src/core/models/constants/FormState";
-import { Language } from "../../../src/core/shared/Language";
-import { MessageBus } from "../../../src/core/shared/MessageBus";
-import { Validation } from "../../../src/core/shared/Validation";
+import each from 'jest-each';
+import { StCodec } from '../../../src/core/classes/StCodec.class';
+import { FormState } from '../../../src/core/models/constants/FormState';
+import { Language } from '../../../src/core/shared/Language';
+import { MessageBus } from '../../../src/core/shared/MessageBus';
+import { Validation } from '../../../src/core/shared/Validation';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 
@@ -44,7 +44,8 @@ describe('Validation', () => {
   });
 
   // given
-  describe('blockForm()', () => { // TODO FormState.COMPLETE
+  describe('blockForm()', () => {
+    // TODO FormState.COMPLETE
     const { instance } = validationFixture();
     // then
     it('should return state of blocking action equals blocked if MessageBus event data is true', () => {

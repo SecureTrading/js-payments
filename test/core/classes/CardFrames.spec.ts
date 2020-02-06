@@ -1,10 +1,10 @@
-import { CardFrames } from "../../../src/core/classes/CardFrames.class";
-import { BypassCards } from "../../../src/core/models/constants/BypassCards";
-import { FormState } from "../../../src/core/models/constants/FormState";
-import { DomMethods } from "../../../src/core/shared/DomMethods";
-import { Language } from "../../../src/core/shared/Language";
-import { MessageBus } from "../../../src/core/shared/MessageBus";
-import { Selectors } from "../../../src/core/shared/Selectors";
+import { CardFrames } from '../../../src/core/classes/CardFrames.class';
+import { BypassCards } from '../../../src/core/models/constants/BypassCards';
+import { FormState } from '../../../src/core/models/constants/FormState';
+import { DomMethods } from '../../../src/core/shared/DomMethods';
+import { Language } from '../../../src/core/shared/Language';
+import { MessageBus } from '../../../src/core/shared/MessageBus';
+import { Selectors } from '../../../src/core/shared/Selectors';
 
 // given
 describe('CardFrames', () => {

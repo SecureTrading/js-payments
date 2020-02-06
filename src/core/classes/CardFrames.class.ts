@@ -332,13 +332,11 @@ export class CardFrames extends RegisterFrames {
       element.textContent = this._processingMessage;
       element.classList.add(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
       disabledState = true;
-    }
-    else if (state === FormState.COMPLETE) {
+    } else if (state === FormState.COMPLETE) {
       element.textContent = this._payMessage;
       element.classList.add(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS); // Keep it locked but return it to original text
       disabledState = true;
-    }
-    else {
+    } else {
       element.textContent = this._payMessage;
       element.classList.remove(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
       disabledState = false;

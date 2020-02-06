@@ -336,7 +336,7 @@ describe('CardinalCommerce', () => {
   // given
   describe('_threeDSetup()', () => {
     // then
-    it('should load cardinal javascript', () => {
+    it.skip('should load cardinal javascript', () => {
       const script = document.createElement('script');
       script.setAttribute('src', 'https://example.com');
       script.addEventListener = jest.fn();
