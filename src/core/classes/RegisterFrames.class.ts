@@ -28,12 +28,8 @@ export class RegisterFrames {
     submitCallback?: any
   ) {
     this.messageBus = new MessageBus();
-    if (fieldsToSubmit === null) { //  TODO tidy up once we have this working
-      this.fieldsToSubmit = RegisterFrames.COMPLETE_FORM_FIELDS;
-    } else {
-      this.fieldsToSubmit = fieldsToSubmit.length ? fieldsToSubmit : RegisterFrames.COMPLETE_FORM_FIELDS;
-    }
-
+    this.fieldsToSubmit = fieldsToSubmit !== null && fieldsToSubmit.length
+      ? fieldsToSubmit : RegisterFrames.COMPLETE_FORM_FIELDS;
     this.componentIds = componentIds;
     this.submitCallback = submitCallback;
     this.hasAnimatedCard = animatedCard;
