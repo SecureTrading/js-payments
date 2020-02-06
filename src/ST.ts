@@ -52,7 +52,7 @@ class ST {
   }
 
   public Components(config: IComponentsConfig): void {
-    this._config.components = config;
+    this._config.components = config !== undefined ? config :  {} as IComponentsConfig;
     this.CardFrames(this._config);
     this._cardFrames.init();
     this._merchantFields.init();
