@@ -74,11 +74,7 @@ export class GoogleAnalytics {
   }
 
   private _insertGALibrary(): void {
-    DomMethods.insertScript('head', { async: 'async', src: GoogleAnalytics.GA_SCRIPT_SRC, id: 'googleAnalytics' }).then(
-      () => {
-        return true;
-      }
-    );
+    DomMethods.insertScript('head', { async: 'async', src: GoogleAnalytics.GA_SCRIPT_SRC, id: 'googleAnalytics' });
   }
 
   private _insertGAScript(): Promise<any> {
