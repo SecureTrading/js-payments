@@ -52,9 +52,8 @@ class ST {
   }
 
   public Components(config: IComponentsConfig): void {
-    this._config.components = config !== undefined ? config : this._config.components;
-    this._config.components.requestTypes = config !== undefined && config.requestTypes !== undefined ?
-      config.requestTypes : this._config.components.requestTypes;
+    config = config !== undefined ? config : {} as IComponentsConfig;
+    this._config.components = { ...this._config.components, ...config };
     this._commonFrames.requestTypes = this._config.components.requestTypes;
     this.CardinalCommerce();
     this.CardFrames(this._config);
