@@ -52,7 +52,11 @@ class ST {
   }
 
   public Components(config: IComponentsConfig): void {
-    this._config.components = config !== undefined ? config : ({} as IComponentsConfig);
+    this._config.components = config !== undefined ? config : this._config.components;
+    this._config.components.requestTypes = config !== undefined && config.requestTypes !== undefined ?
+      config.requestTypes : this._config.components.requestTypes;
+    this._commonFrames.requestTypes = this._config.components.requestTypes;
+    this.CardinalCommerce();
     this.CardFrames(this._config);
     this._cardFrames.init();
     this._merchantFields.init();
@@ -107,13 +111,11 @@ class ST {
     this._googleAnalytics.init();
     this.CommonFrames(this._config);
     this._commonFrames.init();
-    this.CardinalCommerce();
     this.watchForFrameUnload();
   }
 
   private CardinalCommerce(): CardinalCommerce {
     const { cardinal } = this.Environment();
-
     return new cardinal(
       this._config.components.startOnLoad,
       this._config.jwt,
