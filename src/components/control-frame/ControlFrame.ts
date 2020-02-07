@@ -12,13 +12,13 @@ import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
 import { IResponseData } from '../../core/models/IResponseData';
 import { ISetRequestTypes } from '../../core/models/ISetRequestTypes';
 import { ISubmitData } from '../../core/models/ISubmitData';
-import { BinLookup } from '../../core/shared/BinLookup';
 import { Frame } from '../../core/shared/Frame';
 import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { Notification } from '../../core/shared/Notification';
 import { Payment } from '../../core/shared/Payment';
 import { Validation } from '../../core/shared/Validation';
+import { iinLookup } from '@securetrading/ts-iin-lookup';
 
 export class ControlFrame extends Frame {
   private static ALLOWED_PARAMS: string[] = ['jwt', 'gatewayUrl'];
@@ -39,7 +39,6 @@ export class ControlFrame extends Frame {
     StCodec.originalJwt = jwt;
   }
 
-  private _binLookup: BinLookup;
   private _card: ICard;
   private _cardNumber: string;
   private _securityCode: string;
@@ -64,7 +63,7 @@ export class ControlFrame extends Frame {
     this.onInit();
   }
 
-  protected onInit(): void {
+  protected async onInit(): Promise<void> {
     super.onInit();
     this._setInstances();
     this._setFormFieldsValidities();
@@ -169,8 +168,8 @@ export class ControlFrame extends Frame {
 
   private _isCardBypassed(data: ISubmitData): boolean {
     return !this._cardNumber
-      ? data.bypassCards.includes(this._binLookup.binLookup(this._getPan()).type)
-      : data.bypassCards.includes(this._binLookup.binLookup(this._cardNumber).type);
+      ? data.bypassCards.includes(iinLookup.lookup(this._getPan()).type)
+      : data.bypassCards.includes(iinLookup.lookup(this._cardNumber).type);
   }
 
   private _onSubmit(data: ISubmitData): void {
@@ -244,7 +243,7 @@ export class ControlFrame extends Frame {
       pan = panFromJwt ? panFromJwt : this._formFields.cardNumber.value;
     }
 
-    const cardType: string = this._binLookup.binLookup(pan).type;
+    const cardType: string = iinLookup.lookup(pan).type;
     return ControlFrame.NON_CVV_CARDS.includes(cardType);
   }
 
@@ -336,7 +335,6 @@ export class ControlFrame extends Frame {
     this._payment = new Payment(this.params.jwt, this.params.gatewayUrl, this.params.origin);
     this._validation = new Validation();
     this._notification = new Notification();
-    this._binLookup = new BinLookup();
   }
 
   private _storeMerchantData(data: any): void {

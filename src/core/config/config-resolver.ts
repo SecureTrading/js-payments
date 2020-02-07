@@ -1,14 +1,14 @@
-import Joi from 'joi';
-import { environment } from '../../environments/environment';
-import { ComponentsConfigSchema } from '../config/schema/components-config-schema';
-import { IComponentsConfig } from '../config/model/IComponentsConfig';
-import { IComponentsIds } from '../config/model/IComponentsIds';
-import { IConfig } from '../config/model/IConfig';
-import { IWalletConfig } from '../config/model/IWalletConfig';
+import { IConfig } from './model/IConfig';
+import { Service } from 'typedi';
+import { IComponentsIds } from './model/IComponentsIds';
 import { Selectors } from '../shared/Selectors';
+import { IComponentsConfig } from './model/IComponentsConfig';
+import { environment } from '../../environments/environment';
+import { IWalletConfig } from './model/IWalletConfig';
 
-export class Config {
-  private static DEFAULT_COMPONENTS_IDS: IComponentsIds = {
+@Service()
+export class ConfigResolver {
+  private readonly DEFAULT_COMPONENTS_IDS: IComponentsIds = {
     animatedCard: Selectors.ANIMATED_CARD_INPUT_SELECTOR,
     cardNumber: Selectors.CARD_NUMBER_INPUT_SELECTOR,
     expirationDate: Selectors.EXPIRATION_DATE_INPUT_SELECTOR,
@@ -16,10 +16,10 @@ export class Config {
     securityCode: Selectors.SECURITY_CODE_INPUT_SELECTOR
   };
 
-  private static DEFAULT_APMS_REQUEST_TYPES: string[] = ['AUTH'];
-  private static DEFAULT_COMPONENTS_REQUEST_TYPES: string[] = ['THREEDQUERY', 'AUTH'];
-  private static DEFAULT_FIELDS_TO_SUBMIT: string[] = ['pan', 'expirydate', 'securitycode'];
-  private static DEFAULT_SUBMIT_PROPERTIES: string[] = [
+  private readonly DEFAULT_APMS_REQUEST_TYPES: string[] = ['AUTH'];
+  private readonly DEFAULT_COMPONENTS_REQUEST_TYPES: string[] = ['THREEDQUERY', 'AUTH'];
+  private readonly DEFAULT_FIELDS_TO_SUBMIT: string[] = ['pan', 'expirydate', 'securitycode'];
+  private readonly DEFAULT_SUBMIT_PROPERTIES: string[] = [
     'baseamount',
     'currencyiso3a',
     'eci',
@@ -33,21 +33,7 @@ export class Config {
     'transactionreference'
   ];
 
-  public init(config: IConfig): IConfig {
-    return {
-      ...this._returnConfig(config)
-    };
-  }
-
-  public validate(config: IConfig | IComponentsConfig | IComponentsIds, schema: Joi.JoiObject) {
-    Joi.validate(config, schema, (error, value) => {
-      if (error !== null) {
-        throw error;
-      }
-    });
-  }
-
-  private _returnConfig(config: IConfig): IConfig {
+  public resolve(config: IConfig): IConfig {
     return {
       analytics: config.analytics !== undefined ? config.analytics : false,
       animatedCard: config.animatedCard !== undefined ? config.animatedCard : true,
@@ -77,19 +63,19 @@ export class Config {
 
   private _componentIds(config: IComponentsIds): IComponentsIds {
     if (!config) {
-      return { ...Config.DEFAULT_COMPONENTS_IDS };
+      return { ...this.DEFAULT_COMPONENTS_IDS };
     }
-    this.validate(config, ComponentsConfigSchema);
+
     const optionalIds = config.animatedCard !== undefined ? { animatedCard: config.animatedCard } : {};
     const requiredIds = {
-      cardNumber: config.cardNumber !== undefined ? config.cardNumber : Config.DEFAULT_COMPONENTS_IDS.cardNumber,
+      cardNumber: config.cardNumber !== undefined ? config.cardNumber : this.DEFAULT_COMPONENTS_IDS.cardNumber,
       expirationDate:
-        config.expirationDate !== undefined ? config.expirationDate : Config.DEFAULT_COMPONENTS_IDS.expirationDate,
+        config.expirationDate !== undefined ? config.expirationDate : this.DEFAULT_COMPONENTS_IDS.expirationDate,
       notificationFrame:
         config.notificationFrame !== undefined
           ? config.notificationFrame
-          : Config.DEFAULT_COMPONENTS_IDS.notificationFrame,
-      securityCode: config.securityCode !== undefined ? config.securityCode : Config.DEFAULT_COMPONENTS_IDS.securityCode
+          : this.DEFAULT_COMPONENTS_IDS.notificationFrame,
+      securityCode: config.securityCode !== undefined ? config.securityCode : this.DEFAULT_COMPONENTS_IDS.securityCode
     };
 
     return {
@@ -100,13 +86,13 @@ export class Config {
 
   private _setFieldsToSubmit(config: IConfig): { fieldsToSubmit: string[] } {
     return {
-      fieldsToSubmit: config.fieldsToSubmit ? config.fieldsToSubmit : [...Config.DEFAULT_FIELDS_TO_SUBMIT]
+      fieldsToSubmit: config.fieldsToSubmit ? config.fieldsToSubmit : [...this.DEFAULT_FIELDS_TO_SUBMIT]
     };
   }
 
   private _setPropertiesToSubmit(config: IConfig): { submitFields: string[] } {
     return {
-      submitFields: config.submitFields !== undefined ? config.submitFields : Config.DEFAULT_SUBMIT_PROPERTIES
+      submitFields: config.submitFields !== undefined ? config.submitFields : this.DEFAULT_SUBMIT_PROPERTIES
     };
   }
 
@@ -115,10 +101,11 @@ export class Config {
       return {
         defaultPaymentType: '',
         paymentTypes: [''],
-        requestTypes: [...Config.DEFAULT_COMPONENTS_REQUEST_TYPES],
+        requestTypes: [...this.DEFAULT_COMPONENTS_REQUEST_TYPES],
         startOnLoad: false
       };
     }
+
     return {
       defaultPaymentType:
         config.components.defaultPaymentType !== undefined ? config.components.defaultPaymentType : '',
@@ -126,7 +113,7 @@ export class Config {
       requestTypes:
         config.components.requestTypes !== undefined
           ? config.components.requestTypes
-          : [...Config.DEFAULT_COMPONENTS_REQUEST_TYPES],
+          : [...this.DEFAULT_COMPONENTS_REQUEST_TYPES],
       startOnLoad: config.components.startOnLoad !== undefined ? config.components.startOnLoad : false
     };
   }
@@ -140,7 +127,7 @@ export class Config {
       requestTypes:
         components && components.requestTypes !== undefined
           ? components.requestTypes
-          : [...Config.DEFAULT_APMS_REQUEST_TYPES]
+          : [...this.DEFAULT_APMS_REQUEST_TYPES]
     };
   }
 }

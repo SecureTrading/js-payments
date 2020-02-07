@@ -1,5 +1,4 @@
-import { IStyles } from '../models/IStyles';
-import { BinLookup } from '../shared/BinLookup';
+import { IStyles } from '../config/model/IStyles';
 import { MessageBus } from '../shared/MessageBus';
 import { StJwt } from '../shared/StJwt';
 
@@ -16,7 +15,6 @@ export class RegisterFrames {
   protected hasAnimatedCard: boolean;
   protected submitCallback: any;
   protected fieldsToSubmit: string[];
-  protected binLookup: BinLookup;
   protected messageBus: MessageBus;
   private stJwt: StJwt;
 
@@ -29,7 +27,6 @@ export class RegisterFrames {
     fieldsToSubmit: string[],
     submitCallback?: any
   ) {
-    this.binLookup = new BinLookup();
     this.messageBus = new MessageBus();
     this.fieldsToSubmit = fieldsToSubmit.length ? fieldsToSubmit : RegisterFrames.COMPLETE_FORM_FIELDS;
     this.componentIds = componentIds;
