@@ -52,7 +52,10 @@ class ST {
   }
 
   public Components(config: IComponentsConfig): void {
-    this._config.components = config !== undefined ? config : ({} as IComponentsConfig);
+    config = config !== undefined ? config : {} as IComponentsConfig;
+    this._config.components = { ...this._config.components, ...config };
+    this._commonFrames.requestTypes = this._config.components.requestTypes;
+    this.CardinalCommerce();
     this.CardFrames(this._config);
     this._cardFrames.init();
     this._merchantFields.init();
@@ -100,18 +103,18 @@ class ST {
 
   private init(config: IConfig): void {
     this._config = this._configuration.init(config);
+    // TODO theres probably a better way rather than having to remember to update Selectors
+    Selectors.MERCHANT_FORM_SELECTOR = this._config.formId;
     this.Storage(this._config);
     this._translation = new Translator(this._storage.getItem(ST.LOCALE_STORAGE));
     this._googleAnalytics.init();
     this.CommonFrames(this._config);
     this._commonFrames.init();
-    this.CardinalCommerce();
     this.watchForFrameUnload();
   }
 
   private CardinalCommerce(): CardinalCommerce {
     const { cardinal } = this.Environment();
-
     return new cardinal(
       this._config.components.startOnLoad,
       this._config.jwt,
