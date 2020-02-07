@@ -343,7 +343,7 @@ export class CardFrames extends RegisterFrames {
   }
 
   private _submitFormListener(): void {
-    if (this._submitButton){
+    if (this._submitButton) {
       this._submitButton.addEventListener(CardFrames.CLICK_EVENT, () => {
         this._publishSubmitEvent(this._deferInit);
       });

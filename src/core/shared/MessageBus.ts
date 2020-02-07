@@ -47,7 +47,8 @@ export class MessageBus {
     THREEDQUERY: 'THREEDQUERY',
     TRANSACTION_COMPLETE: 'TRANSACTION_COMPLETE',
     UPDATE_JWT: 'UPDATE_JWT',
-    UPDATE_MERCHANT_FIELDS: 'UPDATE_MERCHANT_FIELDS'
+    UPDATE_MERCHANT_FIELDS: 'UPDATE_MERCHANT_FIELDS',
+    SUBSCRIBE: 'SUBSCRIBE'
   };
   private static readonly DOM_EVENT_NAME = 'message';
   private readonly _parentOrigin: string;
@@ -88,9 +89,10 @@ export class MessageBus {
     window.postMessage(event, window.location.origin);
   }
 
-  public subscribe(eventType: string, callback: any) {
+  public subscribe(eventType: string, callback: any, subscriber?: string) {
+    subscriber = subscriber || window.name;
+
     let subscribers;
-    const subscriber = window.name;
     let subscribersStore = window.sessionStorage.getItem(MessageBus.SUBSCRIBERS);
 
     subscribersStore = JSON.parse(subscribersStore);
@@ -106,6 +108,25 @@ export class MessageBus {
     subscribersStore = JSON.stringify(subscribers);
     window.sessionStorage.setItem(MessageBus.SUBSCRIBERS, subscribersStore);
     this._subscriptions[eventType] = callback;
+
+    const cardFieldsBlockingEvents = [
+      MessageBus.EVENTS_PUBLIC.BLOCK_CARD_NUMBER,
+      MessageBus.EVENTS_PUBLIC.BLOCK_EXPIRATION_DATE,
+      MessageBus.EVENTS_PUBLIC.BLOCK_SECURITY_CODE
+    ];
+
+    if (window.name && cardFieldsBlockingEvents.includes(eventType)) {
+      this.publish(
+        {
+          type: MessageBus.EVENTS_PUBLIC.SUBSCRIBE,
+          data: {
+            eventType,
+            target: subscriber
+          }
+        },
+        true
+      );
+    }
   }
 
   public subscribeOnParent(eventType: string, callback: any) {
@@ -122,6 +143,12 @@ export class MessageBus {
       window.removeEventListener(MessageBus.DOM_EVENT_NAME, this._handleMessageEvent);
 
       return;
+    }
+
+    if (messageBusEvent.type === MessageBus.EVENTS_PUBLIC.SUBSCRIBE) {
+      const { eventType, target } = messageBusEvent.data;
+      // @ts-ignore
+      this.subscribe(eventType, () => void 0, target);
     }
 
     if (isCallbackAllowed && this._subscriptions[messageBusEvent.type]) {
