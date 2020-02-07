@@ -1,6 +1,8 @@
 // TODO should be webservices.securetrading.net but messageBus is blocking something
-const FRAME_URL: string = 'https://merchant.example.com:8443';
-const MOCK_GATEWAY_URL: string = 'https://webservices.securetrading.net:8443';
+const FRAME_URL: string = 'https://localhost:8443';
+// const FRAME_URL: string = 'https://merchant.example.com:8443';
+// const MOCK_GATEWAY_URL: string = 'https://webservices.securetrading.net:8443';
+const MOCK_GATEWAY_URL: string = 'https://webservices.securetrading.net';
 const GATEWAY_URL: string = `${MOCK_GATEWAY_URL}/jwt/`;
 const MOCK_THIRD_PARTY_URL: string = 'https://thirdparty.example.com:8443';
 

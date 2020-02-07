@@ -5,10 +5,7 @@ import { Utils } from './Utils';
 export class MessageBus {
   public static SUBSCRIBERS: string = 'ST_SUBSCRIBERS';
   public static EVENTS = {
-    BLOCK_CARD_NUMBER: 'BLOCK_CARD_NUMBER',
-    BLOCK_EXPIRATION_DATE: 'BLOCK_EXPIRATION_DATE',
     BLOCK_FORM: 'BLOCK_FORM',
-    BLOCK_SECURITY_CODE: 'BLOCK_SECURITY_CODE',
     BLUR_CARD_NUMBER: 'BLUR_CARD_NUMBER',
     BLUR_EXPIRATION_DATE: 'BLUR_EXPIRATION_DATE',
     BLUR_SECURITY_CODE: 'BLUR_SECURITY_CODE',
@@ -29,7 +26,7 @@ export class MessageBus {
     VALIDATE_SECURITY_CODE_FIELD: 'VALIDATE_SECURITY_CODE_FIELD',
     STORAGE_SET_ITEM: 'SET_STORAGE_ITEM',
     STORAGE_SYNCHRONIZE: 'SYNCHRONIZE_STORAGE',
-    STORAGE_COMPONENT_READY: 'COMPONENT_STORAGE_READY'
+    STORAGE_COMPONENT_READY: 'COMPONENT_STORAGE_READY',
   };
   public static EVENTS_PUBLIC = {
     BIN_PROCESS: 'BIN_PROCESS',
@@ -47,7 +44,11 @@ export class MessageBus {
     THREEDQUERY: 'THREEDQUERY',
     TRANSACTION_COMPLETE: 'TRANSACTION_COMPLETE',
     UPDATE_JWT: 'UPDATE_JWT',
-    UPDATE_MERCHANT_FIELDS: 'UPDATE_MERCHANT_FIELDS'
+    UPDATE_MERCHANT_FIELDS: 'UPDATE_MERCHANT_FIELDS',
+    SUBSCRIBE: 'SUBSCRIBE',
+    BLOCK_CARD_NUMBER: 'BLOCK_CARD_NUMBER',
+    BLOCK_EXPIRATION_DATE: 'BLOCK_EXPIRATION_DATE',
+    BLOCK_SECURITY_CODE: 'BLOCK_SECURITY_CODE',
   };
   private static readonly DOM_EVENT_NAME = 'message';
   private readonly _parentOrigin: string;
@@ -88,9 +89,10 @@ export class MessageBus {
     window.postMessage(event, window.location.origin);
   }
 
-  public subscribe(eventType: string, callback: any) {
+  public subscribe(eventType: string, callback: any, subscriber?: string) {
+    subscriber = subscriber || window.name;
+
     let subscribers;
-    const subscriber = window.name;
     let subscribersStore = window.sessionStorage.getItem(MessageBus.SUBSCRIBERS);
 
     subscribersStore = JSON.parse(subscribersStore);
@@ -106,6 +108,25 @@ export class MessageBus {
     subscribersStore = JSON.stringify(subscribers);
     window.sessionStorage.setItem(MessageBus.SUBSCRIBERS, subscribersStore);
     this._subscriptions[eventType] = callback;
+
+    const cardFieldsBlockingEvents = [
+      MessageBus.EVENTS_PUBLIC.BLOCK_CARD_NUMBER,
+      MessageBus.EVENTS_PUBLIC.BLOCK_EXPIRATION_DATE,
+      MessageBus.EVENTS_PUBLIC.BLOCK_SECURITY_CODE
+    ];
+
+    if (window.name && cardFieldsBlockingEvents.includes(eventType)) {
+      this.publish(
+        {
+          type: MessageBus.EVENTS_PUBLIC.SUBSCRIBE,
+          data: {
+            eventType,
+            target: subscriber,
+          }
+        },
+        true
+      );
+    }
   }
 
   public subscribeOnParent(eventType: string, callback: any) {
@@ -122,6 +143,11 @@ export class MessageBus {
       window.removeEventListener(MessageBus.DOM_EVENT_NAME, this._handleMessageEvent);
 
       return;
+    }
+
+    if (messageBusEvent.type === MessageBus.EVENTS_PUBLIC.SUBSCRIBE) {
+      const { eventType, target } = messageBusEvent.data;
+      this.subscribe(eventType, () => void 0, target);
     }
 
     if (isCallbackAllowed && this._subscriptions[messageBusEvent.type]) {
