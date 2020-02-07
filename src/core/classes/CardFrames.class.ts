@@ -124,10 +124,8 @@ export class CardFrames extends RegisterFrames {
     if (fields.length === targets.length) {
       targets.forEach((item, index) => {
         const element: HTMLElement = document.getElementById(item);
-        try {
+        if (element !== null) {
           element.appendChild(fields[index]);
-        } catch {
-          throw new Error(this._translator.translate(Language.translations.TARGET_ELEMENT_IS_NOT_SPECIFIED));
         }
       });
     }
@@ -164,8 +162,10 @@ export class CardFrames extends RegisterFrames {
         form.querySelector(CardFrames.SUBMIT_BUTTON_AS_BUTTON_MARKUP) ||
         form.querySelector(CardFrames.SUBMIT_BUTTON_AS_INPUT_MARKUP);
     }
-    button.textContent = this._payMessage;
-    this._submitButton = button;
+    if (button) {
+      button.textContent = this._payMessage;
+      this._submitButton = button;
+    }
     return button;
   };
 
@@ -175,20 +175,17 @@ export class CardFrames extends RegisterFrames {
     }
   }
 
-  private _disableFormField(state: FormState, eventName: string): void {
+  private _disableFormField(state: FormState, eventName: string, target: string): void {
     const messageBusEvent: IMessageBusEvent = {
       data: state,
       type: eventName
     };
-    this.messageBus.publish(messageBusEvent);
+    this.messageBus.publishFromParent(messageBusEvent, target);
   }
 
   private _disableSubmitButton(state: FormState): void {
-    const button: HTMLButtonElement | HTMLInputElement = document.getElementById(this._buttonId) as
-      | HTMLButtonElement
-      | HTMLInputElement;
-    if (button) {
-      this._setSubmitButtonProperties(button, state);
+    if (this._submitButton) {
+      this._setSubmitButtonProperties(this._submitButton, state);
     }
   }
 
@@ -346,9 +343,11 @@ export class CardFrames extends RegisterFrames {
   }
 
   private _submitFormListener(): void {
-    this._submitButton.addEventListener(CardFrames.CLICK_EVENT, () => {
-      this._publishSubmitEvent(this._deferInit);
-    });
+    if (this._submitButton) {
+      this._submitButton.addEventListener(CardFrames.CLICK_EVENT, () => {
+        this._publishSubmitEvent(this._deferInit);
+      });
+    }
     this.messageBus.subscribeOnParent(MessageBus.EVENTS.CALL_SUBMIT_EVENT, () => {
       this._publishSubmitEvent(this._deferInit);
     });
@@ -357,9 +356,9 @@ export class CardFrames extends RegisterFrames {
   private _subscribeBlockSubmit(): void {
     this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (state: FormState) => {
       this._disableSubmitButton(state);
-      this._disableFormField(state, MessageBus.EVENTS_PUBLIC.BLOCK_CARD_NUMBER);
-      this._disableFormField(state, MessageBus.EVENTS_PUBLIC.BLOCK_EXPIRATION_DATE);
-      this._disableFormField(state, MessageBus.EVENTS_PUBLIC.BLOCK_SECURITY_CODE);
+      this._disableFormField(state, MessageBus.EVENTS_PUBLIC.BLOCK_CARD_NUMBER, Selectors.CARD_NUMBER_IFRAME);
+      this._disableFormField(state, MessageBus.EVENTS_PUBLIC.BLOCK_EXPIRATION_DATE, Selectors.EXPIRATION_DATE_IFRAME);
+      this._disableFormField(state, MessageBus.EVENTS_PUBLIC.BLOCK_SECURITY_CODE, Selectors.SECURITY_CODE_IFRAME);
     });
   }
 

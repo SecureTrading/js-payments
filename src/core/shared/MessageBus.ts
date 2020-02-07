@@ -26,10 +26,13 @@ export class MessageBus {
     VALIDATE_SECURITY_CODE_FIELD: 'VALIDATE_SECURITY_CODE_FIELD',
     STORAGE_SET_ITEM: 'SET_STORAGE_ITEM',
     STORAGE_SYNCHRONIZE: 'SYNCHRONIZE_STORAGE',
-    STORAGE_COMPONENT_READY: 'COMPONENT_STORAGE_READY',
+    STORAGE_COMPONENT_READY: 'COMPONENT_STORAGE_READY'
   };
   public static EVENTS_PUBLIC = {
     BIN_PROCESS: 'BIN_PROCESS',
+    BLOCK_CARD_NUMBER: 'BLOCK_CARD_NUMBER',
+    BLOCK_EXPIRATION_DATE: 'BLOCK_EXPIRATION_DATE',
+    BLOCK_SECURITY_CODE: 'BLOCK_SECURITY_CODE',
     BLUR_FIELDS: 'BLUR_FIELDS',
     BY_PASS_CARDINAL: 'BY_PASS_CARDINAL',
     BY_PASS_INIT: 'BY_PASS_INIT',
@@ -48,7 +51,7 @@ export class MessageBus {
     SUBSCRIBE: 'SUBSCRIBE',
     BLOCK_CARD_NUMBER: 'BLOCK_CARD_NUMBER',
     BLOCK_EXPIRATION_DATE: 'BLOCK_EXPIRATION_DATE',
-    BLOCK_SECURITY_CODE: 'BLOCK_SECURITY_CODE',
+    BLOCK_SECURITY_CODE: 'BLOCK_SECURITY_CODE'
   };
   private static readonly DOM_EVENT_NAME = 'message';
   private readonly _parentOrigin: string;
@@ -121,7 +124,7 @@ export class MessageBus {
           type: MessageBus.EVENTS_PUBLIC.SUBSCRIBE,
           data: {
             eventType,
-            target: subscriber,
+            target: subscriber
           }
         },
         true

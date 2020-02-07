@@ -4,7 +4,7 @@ env:
     - DOCKER_BRANCH=${DOCKER_BRANCH//[\@\/]/-}
     - TESTS_TYPE=${TESTS_TYPE}
     - TEST_TAG=${TEST_TAG}
-#    - BRANCH_WITH_FULL_TESTS=master
+    - BRANCH_WITH_FULL_TESTS=master
 language: node_js
 node_js:
   - '10'
