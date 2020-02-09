@@ -96,6 +96,7 @@ export class VisaCheckout {
     this._stJwt = new StJwt(jwt);
     this._livestatus = livestatus;
     this._configurePaymentProcess(jwt, config, gatewayUrl);
+    this._initVisaFlow();
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
       const { newJwt } = data;
       this._configurePaymentProcess(newJwt, config, gatewayUrl);
@@ -143,7 +144,7 @@ export class VisaCheckout {
           walletsource: this._walletSource,
           wallettoken: this.paymentDetails
         },
-        DomMethods.parseMerchantForm()
+        DomMethods.parseForm()
       )
       .then(() => {
         this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
@@ -200,14 +201,13 @@ export class VisaCheckout {
     this.customizeVisaButton(buttonSettings);
     this._setLiveStatus();
     DomMethods.removeAllChildren(this._placement);
-    this._initVisaFlow();
   }
 
   private _setConfiguration = (config: IVisaConfig, settings: IVisaSettings) =>
     settings || config ? { ...config, ...settings } : {};
 
   private _initVisaFlow() {
-    return DomMethods.insertScript('body', this._sdkAddress).addEventListener('load', () => {
+    DomMethods.insertScript('body', { src: this._sdkAddress, id: 'visaCheckout' }).then(() => {
       this.attachVisaButton();
       this.initPaymentConfiguration();
       this.paymentStatusHandler();
