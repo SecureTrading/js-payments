@@ -7,24 +7,23 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Option to allow returning customers to only submit security code e.g. if referencing a previous auth
-- Allow non-3DS card types e.g. PIBA to be processed through the library 
+- Allow non-3DS card types e.g. PIBA to be processed through the library
 
-### Fixed 
+### Fixed
 
 - Potential to duplicate transactions if used with Component based framework i.e. React/Vue
-    - This included creating a react example page in a separate repository to verify the library works in React - this can be viewed at https://github.com/SecureTrading/reactjs-payments
+  - This included creating a react example page in a separate repository to verify the library works in React - this can be viewed at https://github.com/SecureTrading/reactjs-payments
 
 ### Changed
 
 - Refactored payment card out to separate js-payments-card repo and ts-modules for code re-use
 - Dependencies updated:
-    - @babel/runtime - 7.8.4
-    - @securetrading/js-payments-card - 1.0.7
-    - @securetrading/ts-iin-lookup - NEW - 0.0.4
-    - @securetrading/ts-luhn-check - NEW - 0.0.4
-    - i18next - 19.1.0
-    - url-polyfill - 1.1.8
- 
+  - @babel/runtime - 7.8.4
+  - @securetrading/js-payments-card - 1.0.7
+  - @securetrading/ts-iin-lookup - NEW - 0.0.4
+  - @securetrading/ts-luhn-check - NEW - 0.0.4
+  - i18next - 19.1.0
+  - url-polyfill - 1.1.8
 
 ## 2.0.3
 

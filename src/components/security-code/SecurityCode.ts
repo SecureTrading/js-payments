@@ -103,7 +103,7 @@ export class SecurityCode extends FormField {
   }
 
   private _setDisableListener() {
-    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_SECURITY_CODE, (state: FormState) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BLOCK_SECURITY_CODE, (state: FormState) => {
       this._toggleSecurityCode(state);
     });
   }
