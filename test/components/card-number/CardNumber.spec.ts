@@ -1,6 +1,7 @@
 import each from 'jest-each';
 import SpyInstance = jest.SpyInstance;
 import { CardNumber } from '../../../src/components/card-number/CardNumber';
+import { FormState } from '../../../src/core/models/constants/FormState';
 import { Selectors } from '../../../src/core/shared/Selectors';
 import { FormField } from '../../../src/core/shared/FormField';
 import { Utils } from '../../../src/core/shared/Utils';
@@ -181,7 +182,7 @@ describe('CardNumber', () => {
   describe('_setDisableListener()', () => {
     const { instance } = cardNumberFixture();
 
-    function subscribeMock(state: boolean) {
+    function subscribeMock(state: FormState) {
       // @ts-ignore
       instance.messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
         callback(state);
@@ -192,28 +193,28 @@ describe('CardNumber', () => {
 
     // then
     it('should set attribute disabled', () => {
-      subscribeMock(true);
+      subscribeMock(FormState.BLOCKED);
       // @ts-ignore
       expect(instance._inputElement.hasAttribute('disabled')).toEqual(true);
     });
 
     // then
     it('should add class st-input--disabled', () => {
-      subscribeMock(true);
+      subscribeMock(FormState.BLOCKED);
       // @ts-ignore
       expect(instance._inputElement.classList.contains('st-input--disabled')).toEqual(true);
     });
 
     // then
     it('should remove attribute disabled', () => {
-      subscribeMock(false);
+      subscribeMock(FormState.AVAILABLE);
       // @ts-ignore
       expect(instance._inputElement.hasAttribute('disabled')).toEqual(false);
     });
 
     // then
     it('should remove class st-input--disabled', () => {
-      subscribeMock(false);
+      subscribeMock(FormState.AVAILABLE);
       // @ts-ignore
       expect(instance._inputElement.classList.contains('st-input--disabled')).toEqual(false);
     });
@@ -473,7 +474,7 @@ describe('CardNumber', () => {
     const { instance } = cardNumberFixture();
     const pan: string = '3089 5000 0000 0000021';
     const messageBusEvent = {
-      data: true,
+      data: FormState.BLOCKED,
       type: MessageBus.EVENTS.IS_CARD_WITHOUT_CVV
     };
     Validation.clearNonDigitsChars = jest.fn().mockReturnValueOnce('3089500000000000021');
