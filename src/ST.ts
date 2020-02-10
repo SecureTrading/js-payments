@@ -106,6 +106,7 @@ class ST {
     this.CommonFrames(this._config);
     this._commonFrames.init();
     this.CardinalCommerce();
+    this.displayLiveStatus(Boolean(this._config.livestatus));
     this.watchForFrameUnload();
   }
 
@@ -167,6 +168,20 @@ class ST {
   private Storage(config: IConfig): void {
     this._storage.setItem(ST.MERCHANT_TRANSLATIONS_STORAGE, JSON.stringify(config.translations));
     this._storage.setItem(ST.LOCALE_STORAGE, JwtDecode<IStJwtObj>(config.jwt).payload.locale);
+  }
+
+  private displayLiveStatus(liveStatus: boolean): void {
+    if (!liveStatus) {
+      /* tslint:disable:no-console */
+      console.log(
+        '%cThe %csecure%c//%ctrading %cLibrary is currently working in test mode. Please check your configuration.',
+        'margin: 100px 0; font-size: 2em; color: #e71b5a',
+        'font-size: 2em; font-weight: bold',
+        'font-size: 2em; font-weight: 1000; color: #e71b5a',
+        'font-size: 2em; font-weight: bold',
+        'font-size: 2em; font-weight: regular; color: #e71b5a',
+      );
+    }
   }
 
   private watchForFrameUnload(): void {
