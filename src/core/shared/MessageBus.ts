@@ -81,7 +81,8 @@ export class MessageBus {
   public publishFromParent(event: IMessageBusEvent, frameName: string) {
     // @ts-ignore
     if (window.frames[frameName]) {
-      window.frames[frameName].postMessage(event, this._frameOrigin);
+      // @ts-ignore
+      (window.frames[frameName] as Window).postMessage(event, this._frameOrigin);
     }
   }
 
