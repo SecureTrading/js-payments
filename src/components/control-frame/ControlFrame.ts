@@ -349,7 +349,8 @@ export class ControlFrame extends Frame {
   }
 
   private _getSecurityCodeLength(): number {
-    const cardDetails = JwtDecode(StCodec.jwt) as any;
+    const cardDetails: IDecodedJwt = JwtDecode(StCodec.jwt);
+    console.error(cardDetails);
     const securityCodeLength: number = this._card.securitycode ? this._card.securitycode.length : 0;
     const securityCodeFromJwtLength: number = this._getSecurityCode() ? this._getSecurityCode().length : 0;
     if (cardDetails.payload.pan && !securityCodeLength && !securityCodeFromJwtLength) {
