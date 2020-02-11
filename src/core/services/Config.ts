@@ -50,7 +50,7 @@ export class Config {
   private _returnConfig(config: IConfig): IConfig {
     return {
       analytics: config.analytics !== undefined ? config.analytics : false,
-      animatedCard: config.animatedCard !== undefined ? config.animatedCard : true,
+      animatedCard: config.animatedCard !== undefined ? config.animatedCard : false,
       applePay: this._setApmConfig(config.applePay, config.components),
       buttonId: config.buttonId !== undefined ? config.buttonId : '',
       bypassCards: config.bypassCards !== undefined ? config.bypassCards : [],
@@ -67,7 +67,7 @@ export class Config {
       submitCallback: config.submitCallback !== undefined ? config.submitCallback : null,
       submitFields: config.submitFields !== undefined ? config.submitFields : [],
       submitOnError: config.submitOnError !== undefined ? config.submitOnError : false,
-      submitOnSuccess: config.submitOnSuccess !== undefined ? config.submitOnSuccess : false,
+      submitOnSuccess: config.submitOnSuccess !== undefined ? config.submitOnSuccess : true,
       translations: config.translations ? config.translations : {},
       visaCheckout: this._setApmConfig(config.visaCheckout, config.components),
       ...this._setFieldsToSubmit(config),
