@@ -101,6 +101,22 @@ class ST {
     }
   }
 
+  public errorEvent(callback: any) {
+    console.error('This is function tests errorEvent');
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.ST_PAYMENT_ERROR, () => {
+      console.error('Error Event');
+      callback();
+    });
+  }
+
+  public successEvent(callback: any) {
+    console.error('This is function tests successEvent');
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.ST_PAYMENT_ERROR, () => {
+      console.error('Success Event');
+      callback();
+    });
+  }
+
   private init(config: IConfig): void {
     this._config = this._configuration.init(config);
     // TODO theres probably a better way rather than having to remember to update Selectors
