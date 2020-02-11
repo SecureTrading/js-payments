@@ -57,7 +57,7 @@ Not specified yet
 ##### Automated tests:
 
 - [Jest](https://jestjs.io/) for unit testing
-- [Selenium (Java)](https://www.seleniumhq.org/) + [BrowserSync](https://www.browsersync.io/) for UI testing
+- [Selenium (Java)](https://www.seleniumhq.org/) + [BrowserStack](https://www.browserstack.com/) for UI testing
 
 ## Browser compatibility:
 
