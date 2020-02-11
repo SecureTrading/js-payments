@@ -2,7 +2,9 @@ import { ComponentLocalStorage } from './ComponentLocalStorage';
 import { ParentLocalStorage } from './ParentLocalStorage';
 import { IStorage } from '../../models/IStorage';
 import { MessageBus } from '../../shared/MessageBus';
+import { Service } from 'typedi';
 
+@Service()
 export class BrowserLocalStorage implements IStorage {
   readonly ready: Promise<void>;
   private readonly _storage: IStorage;

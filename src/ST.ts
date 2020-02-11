@@ -3,7 +3,6 @@ import 'location-origin';
 import { debounce } from 'lodash';
 import 'url-polyfill';
 import 'whatwg-fetch';
-import 'reflect-metadata';
 import { CardFrames } from './core/classes/CardFrames.class';
 import { CommonFrames } from './core/classes/CommonFrames.class';
 import { MerchantFields } from './core/classes/MerchantFields';
@@ -21,12 +20,12 @@ import { IConfig } from './core/config/model/IConfig';
 import { IStJwtObj } from './core/models/IStJwtObj';
 import { IVisaConfig } from './core/models/IVisaConfig';
 import { BrowserLocalStorage } from './core/services/storage/BrowserLocalStorage';
-import { Config } from './core/services/Config';
 import { MessageBus } from './core/shared/MessageBus';
 import { Translator } from './core/shared/Translator';
 import { environment } from './environments/environment';
 import { Service, Inject, Container } from 'typedi';
-import { CONFIG } from './core/dependency-injection/injection-tokens';
+import { CONFIG } from './core/dependency-injection/InjectionTokens';
+import { ConfigService } from './core/config/ConfigService';
 
 @Service()
 class ST {
@@ -36,25 +35,23 @@ class ST {
   private static MERCHANT_TRANSLATIONS_STORAGE: string = 'merchantTranslations';
   private _cardFrames: CardFrames;
   private _commonFrames: CommonFrames;
-  private _config: IConfig;
-  private _configuration: Config;
   private _googleAnalytics: GoogleAnalytics;
   private _merchantFields: MerchantFields;
   private _messageBus: MessageBus;
   private _storage: BrowserLocalStorage;
   private _translation: Translator;
 
-  constructor(@Inject(CONFIG) config: IConfig) {
-    this._configuration = new Config();
+  constructor(@Inject(CONFIG) private _config: IConfig, private configProvider: ConfigService) {
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
     this._messageBus = new MessageBus();
     this._storage = new BrowserLocalStorage();
-    this.init(config);
+    this.init();
   }
 
   public Components(config: IComponentsConfig): void {
-    this._config.components = config;
+    this._config = {...this._config, components: config};
+    this.configProvider.update(this._config);
     this.CardFrames(this._config);
     this._cardFrames.init();
     this._merchantFields.init();
@@ -74,7 +71,8 @@ class ST {
 
   public updateJWT(jwt: string): void {
     if (jwt) {
-      this._config.jwt = jwt;
+      this._config = {...this._config, jwt};
+      this.configProvider.update(this._config);
       (() => {
         const a = StCodec.updateJWTValue(jwt);
         debounce(() => a, ST.DEBOUNCE_JWT_VALUE);
@@ -84,8 +82,7 @@ class ST {
     }
   }
 
-  private init(config: IConfig): void {
-    this._config = this._configuration.init(config);
+  private init(): void {
     this.Storage(this._config);
     this._translation = new Translator(this._storage.getItem(ST.LOCALE_STORAGE));
     this._googleAnalytics.init();
@@ -156,7 +153,7 @@ class ST {
 }
 
 export default (config: IConfig) => {
-  Container.set(CONFIG, config);
+  Container.get(ConfigService).initialize(config);
 
   return Container.get(ST);
 };

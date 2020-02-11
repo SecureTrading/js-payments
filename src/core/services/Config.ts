@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import { environment } from '../../environments/environment';
-import { ComponentsConfigSchema } from '../config/schema/components-config-schema';
+import { ComponentsConfigSchema } from '../config/schema/ComponentsConfigSchema';
 import { IComponentsConfig } from '../config/model/IComponentsConfig';
 import { IComponentsIds } from '../config/model/IComponentsIds';
 import { IConfig } from '../config/model/IConfig';

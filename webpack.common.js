@@ -9,9 +9,9 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: {
-    main: './src/components/index.ts',
-    'control-frame': './src/components/control-frame/control-frame.ts',
-    st: './src/ST.ts',
+    main: ['reflect-metadata', './src/components/index.ts'],
+    'control-frame': ['reflect-metadata', './src/components/control-frame/control-frame.ts'],
+    st: ['reflect-metadata', './src/ST.ts'],
     example: './example/index.ts',
     receipt: './example/receipt.ts',
     init: './example/init.ts'
