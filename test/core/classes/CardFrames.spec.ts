@@ -12,7 +12,7 @@ describe('CardFrames', () => {
   describe('_disableFormField', () => {
     const { instance } = cardFramesFixture();
     const data = true;
-    const type = MessageBus.EVENTS.BLOCK_CARD_NUMBER;
+    const type = MessageBus.EVENTS_PUBLIC.BLOCK_CARD_NUMBER;
     const messageBusEvent = {
       data,
       type
@@ -22,15 +22,15 @@ describe('CardFrames', () => {
       // @ts-ignore
       instance._broadcastSecurityCodeProperties = jest.fn();
       // @ts-ignore
-      instance.messageBus.publish = jest.fn();
+      instance.messageBus.publishFromParent = jest.fn();
       // @ts-ignore
-      instance._disableFormField(data, type);
+      instance._disableFormField(data, type, Selectors.CARD_NUMBER_IFRAME);
     });
 
     // then
-    it('should call publish method', () => {
+    it('should call publishFromParent method', () => {
       // @ts-ignore
-      expect(instance.messageBus.publish).toHaveBeenCalledWith(messageBusEvent);
+      expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(messageBusEvent, Selectors.CARD_NUMBER_IFRAME);
     });
   });
 

@@ -53,7 +53,10 @@ class ST {
   }
 
   public Components(config: IComponentsConfig): void {
-    this._config.components = config;
+    config = config !== undefined ? config : ({} as IComponentsConfig);
+    this._config.components = { ...this._config.components, ...config };
+    this._commonFrames.requestTypes = this._config.components.requestTypes;
+    this.CardinalCommerce();
     this.CardFrames(this._config);
     this._cardFrames.init();
     this._merchantFields.init();
@@ -101,18 +104,19 @@ class ST {
 
   private init(config: IConfig): void {
     this._config = this._configuration.init(config);
+    // TODO theres probably a better way rather than having to remember to update Selectors
+    Selectors.MERCHANT_FORM_SELECTOR = this._config.formId;
     this.Storage(this._config);
     this._translation = new Translator(this._storage.getItem(ST.LOCALE_STORAGE));
     this._googleAnalytics.init();
     this.CommonFrames(this._config);
     this._commonFrames.init();
-    this.CardinalCommerce();
+    this.displayLiveStatus(Boolean(this._config.livestatus));
     this.watchForFrameUnload();
   }
 
   private CardinalCommerce(): CardinalCommerce {
     const { cardinal } = this.Environment();
-
     return new cardinal(
       this._config.components.startOnLoad,
       this._config.jwt,
@@ -168,6 +172,20 @@ class ST {
   private Storage(config: IConfig): void {
     this._storage.setItem(ST.MERCHANT_TRANSLATIONS_STORAGE, JSON.stringify(config.translations));
     this._storage.setItem(ST.LOCALE_STORAGE, JwtDecode<IStJwtObj>(config.jwt).payload.locale);
+  }
+
+  private displayLiveStatus(liveStatus: boolean): void {
+    if (!liveStatus) {
+      /* tslint:disable:no-console */
+      console.log(
+        '%cThe %csecure%c//%ctrading %cLibrary is currently working in test mode. Please check your configuration.',
+        'margin: 100px 0; font-size: 2em; color: #e71b5a',
+        'font-size: 2em; font-weight: bold',
+        'font-size: 2em; font-weight: 1000; color: #e71b5a',
+        'font-size: 2em; font-weight: bold',
+        'font-size: 2em; font-weight: regular; color: #e71b5a',
+      );
+    }
   }
 
   private watchForFrameUnload(): void {

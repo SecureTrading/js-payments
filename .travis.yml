@@ -9,7 +9,6 @@ env:
     - APP_BRANCH=$DOCKER_BRANCH
     - DOCKER_TAG="docker-compose -f py-payments-testing/docker-compose.yml run"
     - RUN_TESTS="-e REMOTE=true tests poetry run behave features"
-
 language: node_js
 node_js:
   - 10
