@@ -7,7 +7,7 @@ import { BrowserLocalStorage } from '../services/storage/BrowserLocalStorage';
 
 @Service()
 export class ConfigService {
-  private readonly STORAGE_KEY = 'app.config';
+  private static readonly STORAGE_KEY = 'app.config';
 
   constructor(
     private storage: BrowserLocalStorage,
@@ -17,7 +17,7 @@ export class ConfigService {
   }
 
   initialize(config: IConfig): IConfig {
-    this.storage.setItem(this.STORAGE_KEY, null);
+    this.storage.setItem(ConfigService.STORAGE_KEY, null);
 
     const fullConfig = this.resolver.resolve(config);
 
@@ -33,7 +33,7 @@ export class ConfigService {
       throw validationError;
     }
 
-    this.storage.setItem(this.STORAGE_KEY, JSON.stringify(config));
+    this.storage.setItem(ConfigService.STORAGE_KEY, JSON.stringify(config));
 
     Container.set(CONFIG, config);
   }
