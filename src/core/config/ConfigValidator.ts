@@ -7,6 +7,6 @@ import { ConfigSchema } from './schema/ConfigSchema';
 @Service()
 export class ConfigValidator {
   validate(config: IConfig): ValidationError | null {
-    return Joi.validate(config, ConfigSchema).error;
+    return Joi.validate(config, ConfigSchema).error || null;
   }
 }
