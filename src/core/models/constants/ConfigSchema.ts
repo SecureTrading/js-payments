@@ -48,7 +48,7 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
   jwt: Joi.string().required(),
   livestatus: Joi.number(),
   origin: Joi.string(),
-  requestTypes: Joi.array().allow([Joi.string()]),
+  requestTypes: Joi.array().allow('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY'),
   styles: Joi.object(),
   submitCallback: Joi.any(),
   submitFields: Joi.array().allow([Joi.string()]),
