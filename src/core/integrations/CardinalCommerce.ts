@@ -36,7 +36,6 @@ export class CardinalCommerce {
   private readonly _threedinit: string;
   private _notification: Notification;
   private _sdkAddress: string = environment.CARDINAL_COMMERCE.SONGBIRD_TEST_URL;
-  private _called: boolean = false;
   private _bypassCards: string[];
 
   constructor(
@@ -89,6 +88,9 @@ export class CardinalCommerce {
 
   protected _onCardinalLoad() {
     Cardinal.configure(environment.CARDINAL_COMMERCE.CONFIG);
+    Cardinal.off(PaymentEvents.SETUP_COMPLETE);
+    Cardinal.off(PaymentEvents.VALIDATED);
+
     Cardinal.on(PaymentEvents.SETUP_COMPLETE, () => {
       this._onCardinalSetupComplete();
       GoogleAnalytics.sendGaData('event', 'Cardinal', 'init', 'Cardinal Setup Completed');
@@ -155,14 +157,10 @@ export class CardinalCommerce {
   }
 
   protected _threeDSetup() {
-    if (!this._called) {
-      DomMethods.insertScript('head', this._sdkAddress).addEventListener('load', () => {
-        this._onCardinalLoad();
-      });
-    } else {
-      this._cardinalSetup();
-    }
-    this._called = true;
+    DomMethods.insertScript('head', {
+      src: this._sdkAddress,
+      id: 'cardinalCommerce'
+    }).then(() => this._onCardinalLoad());
   }
 
   private _authorizePayment(data?: IAuthorizePaymentResponse | object) {

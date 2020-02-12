@@ -1,5 +1,6 @@
 import { CardFrames } from '../../../src/core/classes/CardFrames.class';
 import { BypassCards } from '../../../src/core/models/constants/BypassCards';
+import { FormState } from '../../../src/core/models/constants/FormState';
 import { DomMethods } from '../../../src/core/shared/DomMethods';
 import { Language } from '../../../src/core/shared/Language';
 import { MessageBus } from '../../../src/core/shared/MessageBus';
@@ -11,7 +12,7 @@ describe('CardFrames', () => {
   describe('_disableFormField', () => {
     const { instance } = cardFramesFixture();
     const data = true;
-    const type = MessageBus.EVENTS.BLOCK_CARD_NUMBER;
+    const type = MessageBus.EVENTS_PUBLIC.BLOCK_CARD_NUMBER;
     const messageBusEvent = {
       data,
       type
@@ -21,15 +22,15 @@ describe('CardFrames', () => {
       // @ts-ignore
       instance._broadcastSecurityCodeProperties = jest.fn();
       // @ts-ignore
-      instance.messageBus.publish = jest.fn();
+      instance.messageBus.publishFromParent = jest.fn();
       // @ts-ignore
-      instance._disableFormField(data, type);
+      instance._disableFormField(data, type, Selectors.CARD_NUMBER_IFRAME);
     });
 
     // then
-    it('should call publish method', () => {
+    it('should call publishFromParent method', () => {
       // @ts-ignore
-      expect(instance.messageBus.publish).toHaveBeenCalledWith(messageBusEvent);
+      expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(messageBusEvent, Selectors.CARD_NUMBER_IFRAME);
     });
   });
 
@@ -290,9 +291,9 @@ describe('CardFrames', () => {
     const button = document.createElement('button');
     button.setAttribute('type', 'submit');
     // then
-    it('should mark button as disabled when disabledState is true', () => {
+    it('should mark button as disabled when form state is blocked', () => {
       // @ts-ignore
-      instance._setSubmitButtonProperties(button, true);
+      instance._setSubmitButtonProperties(button, FormState.BLOCKED);
       expect(button.textContent).toEqual(`${Language.translations.PROCESSING} ...`);
       // @ts-ignore
       expect(button.classList.contains(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS)).toEqual(true);
@@ -300,9 +301,19 @@ describe('CardFrames', () => {
     });
 
     // then
-    it('should remove disabled attributes from button when disabledState is false', () => {
+    it('should mark button as disabled when form state is complete but text should be pay', () => {
       // @ts-ignore
-      instance._setSubmitButtonProperties(button, false);
+      instance._setSubmitButtonProperties(button, FormState.COMPLETE);
+      expect(button.textContent).toEqual(Language.translations.PAY);
+      // @ts-ignore
+      expect(button.classList.contains(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS)).toEqual(true);
+      expect(button.disabled).toEqual(true);
+    });
+
+    // then
+    it('should remove disabled attributes from button when form state is available', () => {
+      // @ts-ignore
+      instance._setSubmitButtonProperties(button, FormState.AVAILABLE);
       expect(button.textContent).toEqual(Language.translations.PAY);
       // @ts-ignore
       expect(button.classList.contains(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS)).toEqual(false);

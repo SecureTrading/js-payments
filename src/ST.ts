@@ -23,6 +23,8 @@ import { BrowserLocalStorage } from './core/services/storage/BrowserLocalStorage
 import { MessageBus } from './core/shared/MessageBus';
 import { Translator } from './core/shared/Translator';
 import { environment } from './environments/environment';
+import { PaymentEvents } from './core/models/constants/PaymentEvents';
+import { Selectors } from './core/shared/Selectors';
 import { Service, Inject, Container } from 'typedi';
 import { CONFIG } from './core/dependency-injection/InjectionTokens';
 import { ConfigService } from './core/config/ConfigService';
@@ -50,8 +52,11 @@ class ST {
   }
 
   public Components(config: IComponentsConfig): void {
-    this._config = {...this._config, components: config};
+    config = config !== undefined ? config : ({} as IComponentsConfig);
+    this._config = {...this._config, components: {...this._config.components, ...config}};
     this.configProvider.update(this._config);
+    this._commonFrames.requestTypes = this._config.components.requestTypes;
+    this.CardinalCommerce();
     this.CardFrames(this._config);
     this._cardFrames.init();
     this._merchantFields.init();
@@ -82,18 +87,37 @@ class ST {
     }
   }
 
+  public destroy(): void {
+    this._messageBus.publish(
+      {
+        type: MessageBus.EVENTS.DESTROY
+      },
+      true
+    );
+
+    const cardinal = (window as any).Cardinal;
+
+    if (cardinal) {
+      cardinal.off(PaymentEvents.SETUP_COMPLETE);
+      cardinal.off(PaymentEvents.VALIDATED);
+    }
+  }
+
   private init(): void {
+    // TODO theres probably a better way rather than having to remember to update Selectors
+    Selectors.MERCHANT_FORM_SELECTOR = this._config.formId;
+
     this.Storage(this._config);
     this._translation = new Translator(this._storage.getItem(ST.LOCALE_STORAGE));
     this._googleAnalytics.init();
     this.CommonFrames(this._config);
     this._commonFrames.init();
-    this.CardinalCommerce();
+    this.displayLiveStatus(Boolean(this._config.livestatus));
+    this.watchForFrameUnload();
   }
 
   private CardinalCommerce(): CardinalCommerce {
     const { cardinal } = this.Environment();
-
     return new cardinal(
       this._config.components.startOnLoad,
       this._config.jwt,
@@ -149,6 +173,43 @@ class ST {
   private Storage(config: IConfig): void {
     this._storage.setItem(ST.MERCHANT_TRANSLATIONS_STORAGE, JSON.stringify(config.translations));
     this._storage.setItem(ST.LOCALE_STORAGE, JwtDecode<IStJwtObj>(config.jwt).payload.locale);
+  }
+
+  private displayLiveStatus(liveStatus: boolean): void {
+    if (!liveStatus) {
+      /* tslint:disable:no-console */
+      console.log(
+        '%cThe %csecure%c//%ctrading %cLibrary is currently working in test mode. Please check your configuration.',
+        'margin: 100px 0; font-size: 2em; color: #e71b5a',
+        'font-size: 2em; font-weight: bold',
+        'font-size: 2em; font-weight: 1000; color: #e71b5a',
+        'font-size: 2em; font-weight: bold',
+        'font-size: 2em; font-weight: regular; color: #e71b5a',
+      );
+    }
+  }
+
+  private watchForFrameUnload(): void {
+    const controlFrameStatus = [false, false];
+
+    const observer = new MutationObserver(() => {
+      const controlFrame = document.getElementById(Selectors.CONTROL_FRAME_IFRAME);
+
+      controlFrameStatus.push(Boolean(controlFrame));
+      controlFrameStatus.shift();
+
+      const [previousStatus, currentStatus] = controlFrameStatus;
+
+      if (previousStatus && !currentStatus) {
+        this.destroy();
+        observer.disconnect();
+      }
+    });
+
+    observer.observe(document, {
+      subtree: true,
+      childList: true
+    });
   }
 }
 

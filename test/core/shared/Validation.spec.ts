@@ -1,8 +1,9 @@
 import each from 'jest-each';
+import { StCodec } from '../../../src/core/classes/StCodec.class';
+import { FormState } from '../../../src/core/models/constants/FormState';
+import { Language } from '../../../src/core/shared/Language';
 import { MessageBus } from '../../../src/core/shared/MessageBus';
 import { Validation } from '../../../src/core/shared/Validation';
-import { Language } from '../../../src/core/shared/Language';
-import { StCodec } from '../../../src/core/classes/StCodec.class';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 
@@ -44,15 +45,21 @@ describe('Validation', () => {
 
   // given
   describe('blockForm()', () => {
+    // TODO FormState.COMPLETE
     const { instance } = validationFixture();
     // then
-    it('should return state of blocking action equals true if MessageBus event data is true', () => {
-      expect(instance.blockForm(true)).toBe(undefined);
+    it('should return state of blocking action equals blocked if MessageBus event data is true', () => {
+      expect(instance.blockForm(FormState.BLOCKED)).toBe(undefined);
     });
 
     // then
-    it('should return state of blocking action equals false if MessageBus event data is false', () => {
-      expect(instance.blockForm(false)).toBe(undefined);
+    it('should return state of blocking action equals complete if MessageBus event data is true', () => {
+      expect(instance.blockForm(FormState.COMPLETE)).toBe(undefined);
+    });
+
+    // then
+    it('should return state of blocking action equals available if MessageBus event data is false', () => {
+      expect(instance.blockForm(FormState.AVAILABLE)).toBe(undefined);
     });
   });
 

@@ -33,10 +33,13 @@ export class ParentLocalStorage implements IStorage {
     const componentFrames = frameName ? [frameName] : this._frames;
 
     componentFrames.forEach((frame: string) => {
-      this._messageBus.publishFromParent({
-        type: MessageBus.EVENTS.STORAGE_SYNCHRONIZE,
-        data: {...this._storage},
-      }, frame);
+      this._messageBus.publishFromParent(
+        {
+          type: MessageBus.EVENTS.STORAGE_SYNCHRONIZE,
+          data: { ...this._storage }
+        },
+        frame
+      );
     });
   }
 }

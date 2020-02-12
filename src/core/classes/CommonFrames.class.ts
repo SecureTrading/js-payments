@@ -1,4 +1,5 @@
 import { CardinalCommerce } from '../integrations/CardinalCommerce';
+import { FormState } from '../models/constants/FormState';
 import { IStyles } from '../config/model/IStyles';
 import { Element } from '../services/Element';
 import { DomMethods } from '../shared/DomMethods';
@@ -139,7 +140,7 @@ export class CommonFrames extends RegisterFrames {
 
   private _onInput(event: Event) {
     const messageBusEvent = {
-      data: DomMethods.parseMerchantForm(),
+      data: DomMethods.parseForm(),
       type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
     };
     this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
@@ -147,7 +148,7 @@ export class CommonFrames extends RegisterFrames {
 
   private _onTransactionComplete(data: any) {
     if ((this._isTransactionFinished(data) || data.errorcode !== '0') && this._submitCallback) {
-      this._validation.blockForm(false);
+      this._validation.blockForm(FormState.AVAILABLE);
       this._submitCallback(data);
     }
     if (this._shouldSubmitForm(data)) {

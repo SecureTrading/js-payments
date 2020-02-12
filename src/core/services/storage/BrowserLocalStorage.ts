@@ -10,11 +10,11 @@ export class BrowserLocalStorage implements IStorage {
   private readonly _storage: IStorage;
 
   constructor() {
-    const _isInsideComponent: boolean = (window.top !== window.self);
+    const _isInsideComponent: boolean = window.top !== window.self;
 
-    this._storage = _isInsideComponent ?
-      new ComponentLocalStorage(localStorage, new MessageBus()) :
-      new ParentLocalStorage(localStorage, new MessageBus());
+    this._storage = _isInsideComponent
+      ? new ComponentLocalStorage(localStorage, new MessageBus())
+      : new ParentLocalStorage(localStorage, new MessageBus());
 
     this.ready = this._storage.ready;
   }

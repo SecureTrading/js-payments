@@ -304,7 +304,7 @@ export class ApplePay {
             walletsource: this._validateMerchantRequestData.walletsource,
             wallettoken: this.paymentDetails
           },
-          DomMethods.parseMerchantForm()
+          DomMethods.parseForm()
         )
         .then((response: any) => {
           const { errorcode } = response;

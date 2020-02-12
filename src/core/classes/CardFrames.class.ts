@@ -1,5 +1,6 @@
 import JwtDecode from 'jwt-decode';
 import { BypassCards } from '../models/constants/BypassCards';
+import { FormState } from '../models/constants/FormState';
 import { IMessageBusEvent } from '../models/IMessageBusEvent';
 import { IStyles } from '../config/model/IStyles';
 import { IValidationMessageBus } from '../models/IValidationMessageBus';
@@ -97,7 +98,6 @@ export class CardFrames extends RegisterFrames {
     this._initCardFrames();
     this.elementsTargets = this.setElementsFields();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
-    this._broadcastSecurityCodeProperties(this.jwt);
   }
 
   protected configureFormFieldsAmount(jwt: string): void {
@@ -124,10 +124,8 @@ export class CardFrames extends RegisterFrames {
     if (fields.length === targets.length) {
       targets.forEach((item, index) => {
         const element: HTMLElement = document.getElementById(item);
-        try {
+        if (element !== null) {
           element.appendChild(fields[index]);
-        } catch {
-          throw new Error(this._translator.translate(Language.translations.TARGET_ELEMENT_IS_NOT_SPECIFIED));
         }
       });
     }
@@ -154,18 +152,6 @@ export class CardFrames extends RegisterFrames {
     }
   }
 
-  private _broadcastSecurityCodeProperties(jwt: string): void {
-    const messageBusEvent: IMessageBusEvent = {
-      data: this._getSecurityCodeLength(jwt),
-      type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
-    };
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, (data: any) => {
-      if (!data.initReload) {
-        this.messageBus.publish(messageBusEvent);
-      }
-    });
-  }
-
   private _createSubmitButton = (): HTMLInputElement | HTMLButtonElement => {
     const form = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR);
     let button: HTMLInputElement | HTMLButtonElement = this._buttonId
@@ -176,8 +162,10 @@ export class CardFrames extends RegisterFrames {
         form.querySelector(CardFrames.SUBMIT_BUTTON_AS_BUTTON_MARKUP) ||
         form.querySelector(CardFrames.SUBMIT_BUTTON_AS_INPUT_MARKUP);
     }
-    button.textContent = this._payMessage;
-    this._submitButton = button;
+    if (button) {
+      button.textContent = this._payMessage;
+      this._submitButton = button;
+    }
     return button;
   };
 
@@ -187,20 +175,17 @@ export class CardFrames extends RegisterFrames {
     }
   }
 
-  private _disableFormField(state: boolean, eventName: string): void {
+  private _disableFormField(state: FormState, eventName: string, target: string): void {
     const messageBusEvent: IMessageBusEvent = {
       data: state,
       type: eventName
     };
-    this.messageBus.publish(messageBusEvent);
+    this.messageBus.publishFromParent(messageBusEvent, target);
   }
 
-  private _disableSubmitButton(state: boolean): void {
-    const button: HTMLButtonElement | HTMLInputElement = document.getElementById(this._buttonId) as
-      | HTMLButtonElement
-      | HTMLInputElement;
-    if (button) {
-      this._setSubmitButtonProperties(button, state);
+  private _disableSubmitButton(state: FormState): void {
+    if (this._submitButton) {
+      this._setSubmitButtonProperties(this._submitButton, state);
     }
   }
 
@@ -283,7 +268,7 @@ export class CardFrames extends RegisterFrames {
 
   private _onInput(): void {
     const messageBusEvent: IMessageBusEvent = {
-      data: DomMethods.parseMerchantForm(),
+      data: DomMethods.parseForm(),
       type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
     };
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
@@ -338,33 +323,42 @@ export class CardFrames extends RegisterFrames {
     this._loadAnimatedCard = loadAnimatedCard !== undefined ? loadAnimatedCard : true;
   }
 
-  private _setSubmitButtonProperties(element: any, disabledState: boolean): HTMLElement {
-    if (disabledState) {
+  private _setSubmitButtonProperties(element: any, state: FormState): HTMLElement {
+    let disabledState;
+    if (state === FormState.BLOCKED) {
       element.textContent = this._processingMessage;
       element.classList.add(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
+      disabledState = true;
+    } else if (state === FormState.COMPLETE) {
+      element.textContent = this._payMessage;
+      element.classList.add(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS); // Keep it locked but return it to original text
+      disabledState = true;
     } else {
       element.textContent = this._payMessage;
       element.classList.remove(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
+      disabledState = false;
     }
     element.disabled = disabledState;
     return element;
   }
 
   private _submitFormListener(): void {
-    this._submitButton.addEventListener(CardFrames.CLICK_EVENT, () => {
-      this._publishSubmitEvent(this._deferInit);
-    });
+    if (this._submitButton) {
+      this._submitButton.addEventListener(CardFrames.CLICK_EVENT, () => {
+        this._publishSubmitEvent(this._deferInit);
+      });
+    }
     this.messageBus.subscribeOnParent(MessageBus.EVENTS.CALL_SUBMIT_EVENT, () => {
       this._publishSubmitEvent(this._deferInit);
     });
   }
 
   private _subscribeBlockSubmit(): void {
-    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (state: boolean) => {
+    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (state: FormState) => {
       this._disableSubmitButton(state);
-      this._disableFormField(state, MessageBus.EVENTS.BLOCK_CARD_NUMBER);
-      this._disableFormField(state, MessageBus.EVENTS.BLOCK_EXPIRATION_DATE);
-      this._disableFormField(state, MessageBus.EVENTS.BLOCK_SECURITY_CODE);
+      this._disableFormField(state, MessageBus.EVENTS_PUBLIC.BLOCK_CARD_NUMBER, Selectors.CARD_NUMBER_IFRAME);
+      this._disableFormField(state, MessageBus.EVENTS_PUBLIC.BLOCK_EXPIRATION_DATE, Selectors.EXPIRATION_DATE_IFRAME);
+      this._disableFormField(state, MessageBus.EVENTS_PUBLIC.BLOCK_SECURITY_CODE, Selectors.SECURITY_CODE_IFRAME);
     });
   }
 
