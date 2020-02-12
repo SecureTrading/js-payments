@@ -229,10 +229,14 @@ export class ControlFrame extends Frame {
     this._payment
       .processPayment(this._postThreeDRequestTypes, this._card, this._merchantFormData, data)
       .then(() => {
+        console.error('test success');
+        this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANTS_SUCCESS_CALLBACK }, true);
         this._notification.success(Language.translations.PAYMENT_SUCCESS);
         this._validation.blockForm(FormState.COMPLETE);
       })
       .catch((error: any) => {
+        console.error('test error');
+        this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANTS_ERROR_CALLBACK }, true);
         this._notification.error(Language.translations.PAYMENT_ERROR);
         this._validation.blockForm(FormState.AVAILABLE);
       })

@@ -49,6 +49,9 @@ class ST {
     this._messageBus = new MessageBus();
     this._storage = new BrowserLocalStorage();
     this.init(config);
+    if (config.errorCallback && config.successCallback) {
+      this.setMerchantsCallback(config.errorCallback, config.successCallback);
+    }
   }
 
   public Components(config: IComponentsConfig): void {
@@ -182,7 +185,7 @@ class ST {
         'font-size: 2em; font-weight: bold',
         'font-size: 2em; font-weight: 1000; color: #e71b5a',
         'font-size: 2em; font-weight: bold',
-        'font-size: 2em; font-weight: regular; color: #e71b5a',
+        'font-size: 2em; font-weight: regular; color: #e71b5a'
       );
     }
   }
@@ -207,6 +210,18 @@ class ST {
     observer.observe(document, {
       subtree: true,
       childList: true
+    });
+  }
+
+  private setMerchantsCallback(errorCallback: any, successCallback: any) {
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.CALL_MERCHANTS_ERROR_CALLBACK, () => {
+      console.error('ERROR !!!');
+      errorCallback();
+    });
+
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.CALL_MERCHANTS_SUCCESS_CALLBACK, () => {
+      console.error('SUCCESS');
+      successCallback();
     });
   }
 }

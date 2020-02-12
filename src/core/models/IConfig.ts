@@ -15,6 +15,7 @@ export interface IConfig {
   componentIds?: IComponentsIds;
   datacenterurl?: string;
   deferInit?: boolean;
+  errorCallback: any;
   fieldsToSubmit?: string[];
   formId?: string;
   jwt: string;
@@ -26,6 +27,7 @@ export interface IConfig {
   submitFields?: string[];
   submitOnSuccess?: boolean;
   submitOnError?: boolean;
+  successCallback: any;
   translations?: {};
   visaCheckout?: IWalletConfig;
 }

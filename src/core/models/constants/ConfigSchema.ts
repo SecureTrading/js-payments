@@ -42,6 +42,7 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
   components: Joi.object(),
   datacenterurl: Joi.string(),
   deferInit: Joi.boolean(),
+  errorCallback: Joi.any(),
   fieldsToSubmit: Joi.array().allow('pan', 'expirydate', 'securitycode'),
   formId: Joi.string(),
   init: Joi.object(),
@@ -54,6 +55,7 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
   submitFields: Joi.array().allow([Joi.string()]),
   submitOnError: Joi.boolean(),
   submitOnSuccess: Joi.boolean(),
+  successCallback: Joi.any(),
   threedinit: Joi.string(),
   translations: Joi.object(),
   visaCheckout: {
