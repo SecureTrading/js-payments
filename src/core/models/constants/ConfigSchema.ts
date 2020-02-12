@@ -4,14 +4,30 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
   analytics: Joi.boolean(),
   animatedCard: Joi.boolean(),
   applePay: {
-    buttonStyle: Joi.string(),
-    buttonText: Joi.string(),
+    buttonStyle: Joi.string().allow('black', 'white', 'white-outline'),
+    buttonText: Joi.string().allow('plain', 'buy', 'book', 'donate', 'check-out', 'subscribe'),
     merchantId: Joi.string(),
     paymentRequest: {
       countryCode: Joi.string(),
       currencyCode: Joi.string(),
-      merchantCapabilities: Joi.array(),
-      supportedNetworks: Joi.array(),
+      merchantCapabilities: Joi.array().allow('supports3DS', 'supportsCredit', 'supportsDebit', 'supportsEMV'),
+      supportedNetworks: Joi.array().allow(
+        'amex',
+        'chinaUnionPay',
+        'discover',
+        'interac',
+        'jcb',
+        'masterCard',
+        'privateLabel',
+        'visa',
+        'cartesBancaires',
+        'eftpos',
+        'electron',
+        'maestro',
+        'vPay',
+        'elo',
+        'mada'
+      ),
       total: {
         amount: Joi.string(),
         label: Joi.string()
@@ -44,14 +60,29 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
   deferInit: Joi.boolean(),
   fieldsToSubmit: Joi.array().allow('pan', 'expirydate', 'securitycode'),
   formId: Joi.string(),
-  init: Joi.object(),
+  init: {
+    cachetoken: Joi.string(),
+    threedinit: Joi.string()
+  },
   jwt: Joi.string().required(),
-  livestatus: Joi.number(),
+  livestatus: Joi.number().allow(0, 1),
   origin: Joi.string(),
   requestTypes: Joi.array().allow('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY'),
   styles: Joi.object(),
   submitCallback: Joi.any(),
-  submitFields: Joi.array().allow([Joi.string()]),
+  submitFields: Joi.array().allow(
+    'baseamount',
+    'currencyiso3a',
+    'eci',
+    'enrolled',
+    'errorcode',
+    'errordata',
+    'errormessage',
+    'orderreference',
+    'settlestatus',
+    'status',
+    'transactionreference'
+  ),
   submitOnError: Joi.boolean(),
   submitOnSuccess: Joi.boolean(),
   threedinit: Joi.string(),
@@ -61,7 +92,7 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
       color: Joi.string(),
       size: Joi.string()
     },
-    livestatus: Joi.number(),
+    livestatus: Joi.number().allow(0, 1),
     merchantId: Joi.string(),
     paymentRequest: {
       subtotal: Joi.string()
