@@ -55,7 +55,12 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
     notificationFrame: Joi.string().required(),
     securityCode: Joi.string().required()
   }),
-  components: Joi.object(),
+  components: {
+    defaultPaymentType: Joi.string(),
+    requestTypes: Joi.array().allow('THREEDQUERY', 'AUTH'),
+    paymentTypes: Joi.array().allow(Joi.string()),
+    startOnLoad: Joi.boolean()
+  },
   datacenterurl: Joi.string(),
   deferInit: Joi.boolean(),
   fieldsToSubmit: Joi.array().allow('pan', 'expirydate', 'securitycode'),
