@@ -182,7 +182,7 @@ class ST {
         'font-size: 2em; font-weight: bold',
         'font-size: 2em; font-weight: 1000; color: #e71b5a',
         'font-size: 2em; font-weight: bold',
-        'font-size: 2em; font-weight: regular; color: #e71b5a',
+        'font-size: 2em; font-weight: regular; color: #e71b5a'
       );
     }
   }
