@@ -41,6 +41,8 @@ class ST {
   private _messageBus: MessageBus;
   private _storage: BrowserLocalStorage;
   private _translation: Translator;
+  public errorCallback: any;
+  public successCallback: any;
 
   constructor(config: IConfig) {
     this._configuration = new Config();
@@ -49,9 +51,7 @@ class ST {
     this._messageBus = new MessageBus();
     this._storage = new BrowserLocalStorage();
     this.init(config);
-    if (config.errorCallback && config.successCallback) {
-      this.setMerchantsCallback(config.errorCallback, config.successCallback);
-    }
+    this.setMerchantsCallback();
   }
 
   public Components(config: IComponentsConfig): void {
@@ -213,15 +213,15 @@ class ST {
     });
   }
 
-  private setMerchantsCallback(errorCallback: any, successCallback: any) {
+  private setMerchantsCallback() {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.CALL_MERCHANTS_ERROR_CALLBACK, () => {
       console.error('ERROR !!!');
-      errorCallback();
+      this.errorCallback();
     });
 
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.CALL_MERCHANTS_SUCCESS_CALLBACK, () => {
       console.error('SUCCESS');
-      successCallback();
+      this.successCallback();
     });
   }
 }
