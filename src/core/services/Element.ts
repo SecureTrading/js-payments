@@ -68,6 +68,12 @@ export class Element {
     iframe.setAttribute('allowtransparency', 'true');
     iframe.setAttribute('scrolling', 'no');
     iframe.setAttribute('frameborder', '0');
+    if (fieldId === 'st-animated-card-iframe') {
+      iframe.setAttribute(
+        'style',
+        'overflow: hidden; width: 100%; height: 100%; min-height: 300px; min-width: 450px; border: none;'
+      );
+    }
     if (tabindex !== undefined) {
       iframe.setAttribute('tabindex', tabindex);
     }
