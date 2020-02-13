@@ -68,14 +68,15 @@ export class Element {
     iframe.setAttribute('allowtransparency', 'true');
     iframe.setAttribute('scrolling', 'no');
     iframe.setAttribute('frameborder', '0');
-    if (fieldId === 'st-animated-card-iframe') {
-      iframe.setAttribute(
-        'style',
-        'overflow: hidden; width: 100%; height: 100%; min-height: 300px; min-width: 450px; border: none;'
-      );
-    }
     if (tabindex !== undefined) {
       iframe.setAttribute('tabindex', tabindex);
+    }
+    if (fieldId === 'st-animated-card-iframe') {
+      iframe.setAttribute('style', 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;');
+      const iframeWrapper = Element.createFormElement('div', 'st-iframe-wrapper');
+      iframeWrapper.setAttribute('style', 'position: relative; overflow: hidden; padding: 56.25% 0;');
+      iframeWrapper.appendChild(iframe);
+      return iframeWrapper;
     }
     return iframe;
   }
