@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { StCodec } from '../src/core/classes/StCodec.class';
 import { ApplePay } from '../src/core/integrations/ApplePay';
 import { ApplePayMock } from '../src/core/integrations/ApplePayMock';
@@ -175,7 +176,8 @@ function stFixture() {
     },
     submitOnError: false,
     submitOnSuccess: false,
-    translations: { ...translations }
+    translations: { ...translations },
+    buttonId: 'merchant-submit-button',
   };
 
   const cacheConfig = {

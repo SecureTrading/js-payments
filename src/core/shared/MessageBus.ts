@@ -26,7 +26,7 @@ export class MessageBus {
     VALIDATE_SECURITY_CODE_FIELD: 'VALIDATE_SECURITY_CODE_FIELD',
     STORAGE_SET_ITEM: 'SET_STORAGE_ITEM',
     STORAGE_SYNCHRONIZE: 'SYNCHRONIZE_STORAGE',
-    STORAGE_COMPONENT_READY: 'COMPONENT_STORAGE_READY'
+    STORAGE_COMPONENT_READY: 'COMPONENT_STORAGE_READY',
   };
   public static EVENTS_PUBLIC = {
     BIN_PROCESS: 'BIN_PROCESS',
@@ -81,7 +81,10 @@ export class MessageBus {
 
   public publishFromParent(event: IMessageBusEvent, frameName: string) {
     // @ts-ignore
-    window.frames[frameName].postMessage(event, this._frameOrigin);
+    if (window.frames[frameName]) {
+      // @ts-ignore
+      (window.frames[frameName] as Window).postMessage(event, this._frameOrigin);
+    }
   }
 
   public publishToSelf(event: IMessageBusEvent) {

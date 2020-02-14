@@ -10,6 +10,8 @@
     "target": "es5",
     "resolveJsonModule": true,
     "jsx": "react",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "lib": ["DOM", "ES2015", "ES2015.Promise"]
   },
   "include": ["./src/**/*"],

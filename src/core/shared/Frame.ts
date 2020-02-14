@@ -1,6 +1,6 @@
 import { IAllowedStyles } from '../models/IAllowedStyles';
 import { IParams } from '../models/IParams';
-import { IStyle } from '../models/IStyle';
+import { IStyle } from '../config/model/IStyle';
 import { MessageBus } from './MessageBus';
 import { Styler } from './Styler';
 import './OverrideDomain';
