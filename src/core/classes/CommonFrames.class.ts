@@ -1,6 +1,6 @@
 import { CardinalCommerce } from '../integrations/CardinalCommerce';
 import { FormState } from '../models/constants/FormState';
-import { IStyles } from '../models/IStyles';
+import { IStyles } from '../config/model/IStyles';
 import { Element } from '../services/Element';
 import { DomMethods } from '../shared/DomMethods';
 import { MessageBus } from '../shared/MessageBus';

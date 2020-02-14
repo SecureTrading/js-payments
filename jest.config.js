@@ -143,7 +143,7 @@ module.exports = {
   testPathIgnorePatterns: ['node_modules', 'js-payments-testing'],
 
   // The regexp pattern or array of patterns that Jest uses to detect test files
-  testRegex: '/test',
+  testRegex: ['/test', '/src/.*.spec.ts$'],
 
   // This option allows the use of a custom results processor
   // testResultsProcessor: null,

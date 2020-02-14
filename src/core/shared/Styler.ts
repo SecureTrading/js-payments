@@ -1,6 +1,6 @@
 import { IAllowedStyles } from '../models/IAllowedStyles';
 import { IGroupedStyles } from '../models/IGroupedStyles';
-import { IStyle } from '../models/IStyle';
+import { IStyle } from '../config/model/IStyle';
 import { ISubStyles } from '../models/ISubStyles';
 import { DomMethods } from './DomMethods';
 
