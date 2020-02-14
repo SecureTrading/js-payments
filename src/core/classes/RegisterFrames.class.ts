@@ -1,4 +1,4 @@
-import { IStyles } from '../models/IStyles';
+import { IStyles } from '../config/model/IStyles';
 import { MessageBus } from '../shared/MessageBus';
 import { StJwt } from '../shared/StJwt';
 

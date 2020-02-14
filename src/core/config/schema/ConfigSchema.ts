@@ -7,6 +7,7 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
     buttonStyle: Joi.string().allow('black', 'white', 'white-outline'),
     buttonText: Joi.string().allow('plain', 'buy', 'book', 'donate', 'check-out', 'subscribe'),
     merchantId: Joi.string(),
+    requestTypes: Joi.array().allow([Joi.string()]),
     paymentRequest: {
       countryCode: Joi.string(),
       currencyCode: Joi.string(),
@@ -105,6 +106,7 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
     placement: Joi.string(),
     settings: {
       displayName: Joi.string()
-    }
+    },
+    requestTypes: Joi.array().allow([Joi.string()]),
   }
 });
