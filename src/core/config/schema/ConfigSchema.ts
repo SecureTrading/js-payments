@@ -107,6 +107,6 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
     settings: {
       displayName: Joi.string()
     },
-    requestTypes: Joi.array().allow([Joi.string()]),
+    requestTypes: Joi.array().allow([Joi.string()])
   }
 });

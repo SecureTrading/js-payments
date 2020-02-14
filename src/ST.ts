@@ -53,7 +53,7 @@ class ST {
 
   public Components(config: IComponentsConfig): void {
     config = config !== undefined ? config : ({} as IComponentsConfig);
-    this._config = {...this._config, components: {...this._config.components, ...config}};
+    this._config = { ...this._config, components: { ...this._config.components, ...config } };
     this.configProvider.update(this._config);
     this._commonFrames.requestTypes = this._config.components.requestTypes;
     this.CardinalCommerce();
@@ -76,7 +76,7 @@ class ST {
 
   public updateJWT(jwt: string): void {
     if (jwt) {
-      this._config = {...this._config, jwt};
+      this._config = { ...this._config, jwt };
       this.configProvider.update(this._config);
       (() => {
         const a = StCodec.updateJWTValue(jwt);

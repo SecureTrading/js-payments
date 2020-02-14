@@ -12,9 +12,8 @@ export class ConfigService {
   constructor(
     private storage: BrowserLocalStorage,
     private resolver: ConfigResolver,
-    private validator: ConfigValidator,
-  ) {
-  }
+    private validator: ConfigValidator
+  ) {}
 
   initialize(config: IConfig): IConfig {
     this.storage.setItem(ConfigService.STORAGE_KEY, null);
