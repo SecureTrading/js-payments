@@ -33,6 +33,7 @@
       }
     ],
     "unit-whitelist": [
+      "px",
       "rem",
       "em",
       "%",
