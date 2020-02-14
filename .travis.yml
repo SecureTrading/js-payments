@@ -35,10 +35,10 @@ jobs:
         - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
         - docker push "securetrading1/js-payments:$DOCKER_BRANCH"
     - stage: Behavioral test
-      name: 'Chrome latest, Docker'
-      if: env(TESTS_TYPE)=fullTest OR env(TESTS_TYPE)=smokeTest OR branch = env(BRANCH_WITH_FULL_TESTS)
-      script:
-        - ${DOCKER_TAG} tests poetry run behave features --tags=$TEST_TAG
+#      name: 'Chrome latest, Docker'
+#      if: env(TESTS_TYPE)=fullTest OR env(TESTS_TYPE)=smokeTest OR branch = env(BRANCH_WITH_FULL_TESTS)
+#      script:
+#        - ${DOCKER_TAG} tests poetry run behave features --tags=$TEST_TAG
     - name: "Behavioural test: chrome 80, Windows 10"
       if: env(TESTS_TYPE)=fullTest OR env(TESTS_TYPE)=smokeTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
