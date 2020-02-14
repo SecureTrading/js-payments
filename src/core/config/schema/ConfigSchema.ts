@@ -7,6 +7,7 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
     buttonStyle: Joi.string(),
     buttonText: Joi.string(),
     merchantId: Joi.string(),
+    requestTypes: Joi.array().allow([Joi.string()]),
     paymentRequest: {
       countryCode: Joi.string(),
       currencyCode: Joi.string(),
@@ -69,6 +70,7 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
     placement: Joi.string(),
     settings: {
       displayName: Joi.string()
-    }
+    },
+    requestTypes: Joi.array().allow([Joi.string()]),
   }
 });

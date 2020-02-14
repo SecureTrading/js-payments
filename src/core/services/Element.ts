@@ -1,4 +1,4 @@
-import { IStyle } from '../models/IStyle';
+import { IStyle } from '../config/model/IStyle';
 import { Selectors } from '../shared/Selectors';
 
 export class Element {

@@ -5,7 +5,10 @@ export class ComponentLocalStorage implements IStorage {
   readonly ready: Promise<void>;
   private static _initialized = false;
 
-  constructor(private readonly _storage: Storage, private readonly _messageBus: MessageBus) {
+  constructor(
+    private readonly _storage: Storage,
+    private readonly _messageBus: MessageBus
+  ) {
     if (ComponentLocalStorage._initialized) {
       this.ready = Promise.resolve();
       return;
