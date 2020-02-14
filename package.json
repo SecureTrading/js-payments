@@ -107,18 +107,19 @@
     "@types/joi": "^14.3.4",
     "@types/jwt-decode": "^2.2.1",
     "@types/lodash": "^4.14.149",
+    "core-js": "^2.6.11",
     "i18next": "^19.1.0",
     "joi": "^14.3.1",
     "joi-browser": "^13.4.0",
     "jwt-decode": "^2.2.0",
     "location-origin": "^1.1.4",
     "promise-polyfill": "8.1.3",
+    "reflect-metadata": "0.1.13",
     "ts-money": "^0.4.6",
     "typedi": "^0.8.0",
     "url-polyfill": "^1.1.8",
     "validate": "^5.1.0",
-    "whatwg-fetch": "^3.0.0",
-    "reflect-metadata": "0.1.13"
+    "whatwg-fetch": "^3.0.0"
   },
   "snyk": true
 }
