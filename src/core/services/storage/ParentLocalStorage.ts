@@ -6,10 +6,7 @@ export class ParentLocalStorage implements IStorage {
   readonly ready: Promise<void> = Promise.resolve();
   private _frames: string[] = [];
 
-  constructor(
-    private readonly _storage: Storage,
-    private readonly _messageBus: MessageBus
-  ) {
+  constructor(private readonly _storage: Storage, private readonly _messageBus: MessageBus) {
     this._messageBus.subscribeOnParent(MessageBus.EVENTS.STORAGE_COMPONENT_READY, (frameName: string) => {
       this._frames.push(frameName);
       this.synchronizeStorage(frameName);

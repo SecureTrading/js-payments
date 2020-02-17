@@ -4,7 +4,7 @@ import Joi, { ValidationError } from 'joi';
 
 describe('ConfigValidator', () => {
   let validator: ConfigValidator;
-  const config: IConfig = {} as unknown as IConfig;
+  const config: IConfig = ({} as unknown) as IConfig;
   const joiMock: jest.Mocked<typeof Joi> = Joi as any;
 
   beforeEach(() => {
@@ -13,11 +13,11 @@ describe('ConfigValidator', () => {
   });
 
   it('returns validation error if validation fails', () => {
-    const error: ValidationError = {foo: 'bar'} as unknown as ValidationError;
+    const error: ValidationError = ({ foo: 'bar' } as unknown) as ValidationError;
 
     joiMock.validate.mockReturnValue({
       error,
-      value: config,
+      value: config
     });
 
     expect(validator.validate(config)).toBe(error);
@@ -26,7 +26,7 @@ describe('ConfigValidator', () => {
   it('returns null when validation suceeds', () => {
     joiMock.validate.mockReturnValue({
       error: undefined,
-      value: config,
+      value: config
     });
 
     expect(validator.validate(config)).toBeNull();
