@@ -2,12 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.51
+
+### Fixed
+
+- Styling issues on Safari browser
+- Allowed requests list validation
+
 ## 2.0.5
 
 ### Fixed
 
 - Animate card frame styling issues
-- Allowed requests list validation
 
 ## 2.0.4
 
