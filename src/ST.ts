@@ -111,7 +111,7 @@ class ST {
 
   public successEvent(callback: any) {
     console.error('This is function tests successEvent');
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.ST_PAYMENT_ERROR, () => {
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.ST_PAYMENT_SUBMIT, () => {
       console.error('Success Event');
       callback();
     });

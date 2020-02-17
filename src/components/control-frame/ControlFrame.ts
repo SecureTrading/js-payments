@@ -316,7 +316,7 @@ export class ControlFrame extends Frame {
   }
 
   private _publishMerchantEvent(event: IMessageBusEvent) {
-    console.error('TETSTSTTTSTTSTSTTTST');
+    console.error('TETSTSTTTSTTSTSTTTST', event);
     this.messageBus.publish(event, true);
   }
 

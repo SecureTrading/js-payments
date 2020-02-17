@@ -129,6 +129,26 @@
             });
         }
 
+        function displayPopup(id, text, tp) {
+          var div = document.createElement('div');
+          div.innerText = text;
+          div.setAttribute('id', id);
+          div.setAttribute(
+            'style',
+            'display: flex; justify-content: center; position: fixed; height: 70px;right:0;color: white;padding: 0 50px;align-items: center;border-radius: 10px;font-family: Verdana;font-size: 20px;'
+          );
+          div.style.backgroundColor = tp;
+          if (tp === 'green') {
+            div.style.top = 0;
+          } else {
+            div.style.bottom = 0;
+          }
+          document.getElementsByTagName('body')[0].prepend(div);
+          setTimeout(function() {
+            document.getElementById(id).setAttribute('style', 'display: none');
+          }, 3000);
+        }
+
         function configurationInit(ST, data) {
           var stConfig = data;
           var parsedUrl = new URL(window.location.href);
@@ -140,13 +160,13 @@
             var testVariable = 'This is what we have got after submit' + stringified;
           };
           st.successEvent(function() {
-            var testVariable = 'SUCCESS SUCCESS SUCCESS';
-            console.error(testVariable);
+            displayPopup('success-popup', 'This is success message', 'green');
+            console.error('SUCCESS!');
           });
 
           st.errorEvent(function() {
-            var testVariable = 'ERROR ERROR ERROR !';
-            console.error(testVariable);
+            displayPopup('error-popup', 'This is error message', 'red');
+            console.error('ERROR MESSAGE');
           });
           st.Components(stConfig.components);
           st.ApplePay(stConfig.applePay);
