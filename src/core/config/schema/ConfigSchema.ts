@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import { ComponentsConfigSchema } from './ComponentsConfigSchema';
 
 export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
   analytics: Joi.boolean(),
@@ -56,19 +57,14 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
     notificationFrame: Joi.string().required(),
     securityCode: Joi.string().required()
   }),
-  components: {
-    defaultPaymentType: Joi.string(),
-    requestTypes: Joi.array().allow('THREEDQUERY', 'AUTH'),
-    paymentTypes: Joi.array().allow(Joi.string()),
-    startOnLoad: Joi.boolean()
-  },
+  components: ComponentsConfigSchema,
   datacenterurl: Joi.string(),
   deferInit: Joi.boolean(),
   fieldsToSubmit: Joi.array().allow('pan', 'expirydate', 'securitycode'),
   formId: Joi.string(),
   init: {
-    cachetoken: Joi.string(),
-    threedinit: Joi.string()
+    cachetoken: Joi.string().allow(''),
+    threedinit: Joi.string().allow('')
   },
   jwt: Joi.string().required(),
   livestatus: Joi.number().allow(0, 1),

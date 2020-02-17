@@ -5,7 +5,7 @@
   "deferInit": false,
   "fieldsToSubmit": ["pan", "expirydate", "securitycode"],
   "buttonId": "merchant-submit-button",
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4MTUxMDI4NS44MTMyMTgsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdF9qYW1lczM4NjQxIiwibG9jYWxlIjoiZW5fR0IiLCJwYW4iOiIzNDAwMDAwMDAwMDA2MTEiLCJleHBpcnlkYXRlIjoiMDEvMjIifX0.na6fAd3o7PRx_0-KP4yb90lmqbZDCqWzJbXUW_M5kAQ",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4MTkzMjkxMy4xMzk3NTE0LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.CmR5NK69kM9I4zUh7t-r-CqBDMKZ3X5TwEdn-rz10bM",
   "styles": {
     "defaultStyles": {
       "background-color-input": "AliceBlue"
@@ -34,7 +34,7 @@
   "translations": {
     "An error occurred": "Wystąpił błąd"
   },
-  "components": { "defaultPaymentType": "" },
+  "components": {},
   "applePay": {
     "buttonStyle": "white-outline",
     "buttonText": "donate",
