@@ -107,7 +107,7 @@
     "@types/joi": "^14.3.4",
     "@types/jwt-decode": "^2.2.1",
     "@types/lodash": "^4.14.149",
-    "core-js": "^2.6.11",
+    "core-js": "^3.6.4",
     "i18next": "^19.1.0",
     "joi": "^14.3.1",
     "joi-browser": "^13.4.0",
