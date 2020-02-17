@@ -97,7 +97,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.7.0",
     "@babel/runtime": "^7.8.4",
-    "@securetrading/js-payments-card": "^1.0.8",
+    "@securetrading/js-payments-card": "^1.0.9",
     "@securetrading/ts-iin-lookup": "^0.0.4",
     "@securetrading/ts-luhn-check": "^0.0.4",
     "@types/joi": "^14.3.4",
