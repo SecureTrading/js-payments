@@ -34,7 +34,7 @@
   "translations": {
     "An error occurred": "Wystąpił błąd"
   },
-  "components": {},
+  "components": { "defaultPaymentType": "" },
   "applePay": {
     "buttonStyle": "white-outline",
     "buttonText": "donate",
