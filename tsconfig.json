@@ -6,13 +6,9 @@
     "sourceMap": true,
     "noImplicitAny": true,
     "module": "commonjs",
-    "moduleResolution": "node",
     "target": "es5",
     "resolveJsonModule": true,
-    "jsx": "react",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "lib": ["DOM", "ES2015", "ES2015.Promise"]
+    "jsx": "react"
   },
   "include": ["./src/**/*"],
   "exclude": [

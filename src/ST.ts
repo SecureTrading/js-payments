@@ -15,21 +15,16 @@ import { GoogleAnalytics } from './core/integrations/GoogleAnalytics';
 import { VisaCheckout } from './core/integrations/VisaCheckout';
 import { VisaCheckoutMock } from './core/integrations/VisaCheckoutMock';
 import { IApplePayConfig } from './core/models/IApplePayConfig';
-import { IComponentsConfig } from './core/config/model/IComponentsConfig';
-import { IConfig } from './core/config/model/IConfig';
+import { IComponentsConfig } from './core/models/IComponentsConfig';
+import { IConfig } from './core/models/IConfig';
 import { IStJwtObj } from './core/models/IStJwtObj';
 import { IVisaConfig } from './core/models/IVisaConfig';
-import { BrowserLocalStorage } from './core/services/storage/BrowserLocalStorage';
+import { BrowserLocalStorage } from './core/services/BrowserLocalStorage';
+import { Config } from './core/services/Config';
 import { MessageBus } from './core/shared/MessageBus';
 import { Translator } from './core/shared/Translator';
 import { environment } from './environments/environment';
-import { PaymentEvents } from './core/models/constants/PaymentEvents';
-import { Selectors } from './core/shared/Selectors';
-import { Service, Inject, Container } from 'typedi';
-import { CONFIG } from './core/dependency-injection/InjectionTokens';
-import { ConfigService } from './core/config/ConfigService';
 
-@Service()
 class ST {
   private static DEBOUNCE_JWT_VALUE: number = 900;
   private static JWT_NOT_SPECIFIED_MESSAGE: string = 'Jwt has not been specified';
@@ -37,26 +32,25 @@ class ST {
   private static MERCHANT_TRANSLATIONS_STORAGE: string = 'merchantTranslations';
   private _cardFrames: CardFrames;
   private _commonFrames: CommonFrames;
+  private _config: IConfig;
+  private _configuration: Config;
   private _googleAnalytics: GoogleAnalytics;
   private _merchantFields: MerchantFields;
   private _messageBus: MessageBus;
   private _storage: BrowserLocalStorage;
   private _translation: Translator;
 
-  constructor(@Inject(CONFIG) private _config: IConfig, private configProvider: ConfigService) {
+  constructor(config: IConfig) {
+    this._configuration = new Config();
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
     this._messageBus = new MessageBus();
     this._storage = new BrowserLocalStorage();
-    this.init();
+    this.init(config);
   }
 
   public Components(config: IComponentsConfig): void {
-    config = config !== undefined ? config : ({} as IComponentsConfig);
-    this._config = { ...this._config, components: { ...this._config.components, ...config } };
-    this.configProvider.update(this._config);
-    this._commonFrames.requestTypes = this._config.components.requestTypes;
-    this.CardinalCommerce();
+    this._config.components = config;
     this.CardFrames(this._config);
     this._cardFrames.init();
     this._merchantFields.init();
@@ -76,8 +70,7 @@ class ST {
 
   public updateJWT(jwt: string): void {
     if (jwt) {
-      this._config = { ...this._config, jwt };
-      this.configProvider.update(this._config);
+      this._config.jwt = jwt;
       (() => {
         const a = StCodec.updateJWTValue(jwt);
         debounce(() => a, ST.DEBOUNCE_JWT_VALUE);
@@ -87,37 +80,19 @@ class ST {
     }
   }
 
-  public destroy(): void {
-    this._messageBus.publish(
-      {
-        type: MessageBus.EVENTS.DESTROY
-      },
-      true
-    );
-
-    const cardinal = (window as any).Cardinal;
-
-    if (cardinal) {
-      cardinal.off(PaymentEvents.SETUP_COMPLETE);
-      cardinal.off(PaymentEvents.VALIDATED);
-    }
-  }
-
-  private init(): void {
-    // TODO theres probably a better way rather than having to remember to update Selectors
-    Selectors.MERCHANT_FORM_SELECTOR = this._config.formId;
-
+  private init(config: IConfig): void {
+    this._config = this._configuration.init(config);
     this.Storage(this._config);
     this._translation = new Translator(this._storage.getItem(ST.LOCALE_STORAGE));
     this._googleAnalytics.init();
     this.CommonFrames(this._config);
     this._commonFrames.init();
-    this.displayLiveStatus(Boolean(this._config.livestatus));
-    this.watchForFrameUnload();
+    this.CardinalCommerce();
   }
 
   private CardinalCommerce(): CardinalCommerce {
     const { cardinal } = this.Environment();
+
     return new cardinal(
       this._config.components.startOnLoad,
       this._config.jwt,
@@ -174,47 +149,6 @@ class ST {
     this._storage.setItem(ST.MERCHANT_TRANSLATIONS_STORAGE, JSON.stringify(config.translations));
     this._storage.setItem(ST.LOCALE_STORAGE, JwtDecode<IStJwtObj>(config.jwt).payload.locale);
   }
-
-  private displayLiveStatus(liveStatus: boolean): void {
-    if (!liveStatus) {
-      /* tslint:disable:no-console */
-      console.log(
-        '%cThe %csecure%c//%ctrading %cLibrary is currently working in test mode. Please check your configuration.',
-        'margin: 100px 0; font-size: 2em; color: #e71b5a',
-        'font-size: 2em; font-weight: bold',
-        'font-size: 2em; font-weight: 1000; color: #e71b5a',
-        'font-size: 2em; font-weight: bold',
-        'font-size: 2em; font-weight: regular; color: #e71b5a'
-      );
-    }
-  }
-
-  private watchForFrameUnload(): void {
-    const controlFrameStatus = [false, false];
-
-    const observer = new MutationObserver(() => {
-      const controlFrame = document.getElementById(Selectors.CONTROL_FRAME_IFRAME);
-
-      controlFrameStatus.push(Boolean(controlFrame));
-      controlFrameStatus.shift();
-
-      const [previousStatus, currentStatus] = controlFrameStatus;
-
-      if (previousStatus && !currentStatus) {
-        this.destroy();
-        observer.disconnect();
-      }
-    });
-
-    observer.observe(document, {
-      subtree: true,
-      childList: true
-    });
-  }
 }
 
-export default (config: IConfig) => {
-  Container.get(ConfigService).initialize(config);
-
-  return Container.get(ST);
-};
+export default (config: IConfig) => new ST(config);
