@@ -3,6 +3,8 @@ import { IParams } from '../models/IParams';
 import { IStyle } from '../config/model/IStyle';
 import { MessageBus } from './MessageBus';
 import { Styler } from './Styler';
+import { Container } from 'typedi';
+import { FramesHub } from '../services/message-bus/FramesHub';
 
 export class Frame {
   protected messageBus: MessageBus;
@@ -32,6 +34,8 @@ export class Frame {
     this.params = this.parseUrl();
     this.messageBus = new MessageBus(this.params.origin);
     this.applyStyles();
+
+    Container.get(FramesHub).notifyReadyState();
   }
 
   protected getAllowedParams() {

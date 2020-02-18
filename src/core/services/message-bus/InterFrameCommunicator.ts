@@ -10,7 +10,8 @@ import { ResponseMessage } from './messages/ResponseMessage';
 export class InterFrameCommunicator {
   private static readonly MESSAGE_EVENT = 'message';
   public readonly incomingEvent$: Observable<IMessageBusEvent>;
-  private destroy$ = new Subject<void>();
+  public readonly communicationClosed$: Observable<void>;
+  private close$ = new Subject<void>();
 
   constructor() {
     this.incomingEvent$ = fromEventPattern(
@@ -21,6 +22,8 @@ export class InterFrameCommunicator {
       map(event => event.data),
       share(),
     );
+
+    this.communicationClosed$ = this.close$.asObservable();
   }
 
   public send(message: IMessageBusEvent, target?: Window | string): void {
@@ -60,7 +63,7 @@ export class InterFrameCommunicator {
               queryEvent.sourceFrame,
             )),
           )),
-          takeUntil(this.destroy$),
+          takeUntil(this.close$),
         ).subscribe((response: ResponseMessage<T>) => {
           this.send(response, response.queryFrame);
         });
@@ -68,9 +71,9 @@ export class InterFrameCommunicator {
     };
   }
 
-  public destroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+  public close(): void {
+    this.close$.next();
+    this.close$.complete();
   }
 
   private resolveTargetFrame(target?: Window | string): Window {

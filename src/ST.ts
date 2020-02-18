@@ -28,6 +28,8 @@ import { Selectors } from './core/shared/Selectors';
 import { Service, Inject, Container } from 'typedi';
 import { CONFIG } from './core/dependency-injection/InjectionTokens';
 import { ConfigService } from './core/config/ConfigService';
+import { InterFrameCommunicator } from './core/services/message-bus/InterFrameCommunicator';
+import { FramesHub } from './core/services/message-bus/FramesHub';
 
 @Service()
 class ST {
@@ -43,11 +45,16 @@ class ST {
   private _storage: BrowserLocalStorage;
   private _translation: Translator;
 
-  constructor(@Inject(CONFIG) private _config: IConfig, private configProvider: ConfigService) {
+  constructor(
+    @Inject(CONFIG) private _config: IConfig,
+    private configProvider: ConfigService,
+    private _storage: BrowserLocalStorage,
+    private _communicator: InterFrameCommunicator,
+    private _framesHub: FramesHub,
+  ) {
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
     this._messageBus = new MessageBus();
-    this._storage = new BrowserLocalStorage();
     this.init();
   }
 
@@ -101,12 +108,15 @@ class ST {
       cardinal.off(PaymentEvents.SETUP_COMPLETE);
       cardinal.off(PaymentEvents.VALIDATED);
     }
+
+    this._communicator.close();
   }
 
   private init(): void {
     // TODO theres probably a better way rather than having to remember to update Selectors
     Selectors.MERCHANT_FORM_SELECTOR = this._config.formId;
 
+    this._framesHub.init();
     this.Storage(this._config);
     this._translation = new Translator(this._storage.getItem(ST.LOCALE_STORAGE));
     this._googleAnalytics.init();
