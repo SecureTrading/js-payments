@@ -56,20 +56,20 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
     notificationFrame: Joi.string().required(),
     securityCode: Joi.string().required()
   }),
-  components: {
-    defaultPaymentType: Joi.string(),
+  components: Joi.object().keys({
+    defaultPaymentType: Joi.string().allow(''),
     requestTypes: Joi.array().allow('THREEDQUERY', 'AUTH'),
     paymentTypes: Joi.array().allow(Joi.string()),
     startOnLoad: Joi.boolean()
-  },
+  }),
   datacenterurl: Joi.string(),
   deferInit: Joi.boolean(),
   fieldsToSubmit: Joi.array().allow('pan', 'expirydate', 'securitycode'),
   formId: Joi.string(),
-  init: {
-    cachetoken: Joi.string(),
-    threedinit: Joi.string()
-  },
+  init: Joi.object().keys({
+    cachetoken: Joi.string().allow(''),
+    threedinit: Joi.string().allow('')
+  }),
   jwt: Joi.string().required(),
   livestatus: Joi.number().allow(0, 1),
   origin: Joi.string(),
@@ -107,6 +107,6 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
     settings: {
       displayName: Joi.string()
     },
-    requestTypes: Joi.array().allow([Joi.string()]),
+    requestTypes: Joi.array().allow([Joi.string()])
   }
 });
