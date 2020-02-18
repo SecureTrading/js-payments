@@ -18,10 +18,10 @@ import { IMessageBusEvent } from '../../models/IMessageBusEvent';
 
 @Service()
 export class FramesHub {
-  public readonly activeFrames: Observable<string[]>;
+  public readonly activeFrame$: Observable<string[]>;
 
   constructor(private communicator: InterFrameCommunicator) {
-    this.activeFrames = this.communicator.incomingEvent$.pipe(
+    this.activeFrame$ = this.communicator.incomingEvent$.pipe(
       ofType(MessageBus.EVENTS_PUBLIC.FRAME_READY),
       filter((event: IMessageBusEvent) => Boolean(event.data)),
       scan(this.onFrameReady.bind(this), []),
@@ -32,17 +32,17 @@ export class FramesHub {
 
     this.communicator
       .whenReceive(MessageBus.EVENTS_PUBLIC.GET_ACTIVE_FRAMES)
-      .thenRespond(() => this.activeFrames);
+      .thenRespond(() => this.activeFrame$);
   }
 
   public init(): void {
-    this.activeFrames
+    this.activeFrame$
       .pipe(takeUntil(this.communicator.communicationClosed$))
       .subscribe();
   }
 
   public isFrameActive(name: string): Observable<boolean> {
-    return this.activeFrames.pipe(
+    return this.activeFrame$.pipe(
       map(frames => frames.indexOf(name) !== -1),
       distinctUntilChanged(),
     );
