@@ -34,8 +34,7 @@
   "translations": {
     "An error occurred": "Wystąpił błąd"
   },
-  "components": { "requestTypes": ["AUTH"] },
-  "requestTypes": ["RISKDEC"],
+  "components": {},
   "applePay": {
     "buttonStyle": "white-outline",
     "buttonText": "donate",
