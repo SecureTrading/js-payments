@@ -48,13 +48,13 @@ class ST {
   constructor(
     @Inject(CONFIG) private _config: IConfig,
     private configProvider: ConfigService,
-    private _storage: BrowserLocalStorage,
     private _communicator: InterFrameCommunicator,
     private _framesHub: FramesHub,
   ) {
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
     this._messageBus = new MessageBus();
+    this._storage = new BrowserLocalStorage();
     this.init();
   }
 
