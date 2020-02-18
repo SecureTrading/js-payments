@@ -232,14 +232,17 @@ export class ControlFrame extends Frame {
     this._payment
       .processPayment(this._postThreeDRequestTypes, this._card, this._merchantFormData, data)
       .then(() => {
-        this._publishMerchantEvent({
-          type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK
-        });
+        this.messageBus.publish(
+          {
+            type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK
+          },
+          true
+        );
         this._notification.success(Language.translations.PAYMENT_SUCCESS);
         this._validation.blockForm(FormState.COMPLETE);
       })
       .catch((error: any) => {
-        this._publishMerchantEvent({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK });
+        this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
         this._notification.error(Language.translations.PAYMENT_ERROR);
         this._validation.blockForm(FormState.AVAILABLE);
       })
@@ -313,10 +316,6 @@ export class ControlFrame extends Frame {
 
   private _publishBlurEvent(event: IMessageBusEvent): void {
     this.messageBus.publish(event);
-  }
-
-  private _publishMerchantEvent(event: IMessageBusEvent) {
-    this.messageBus.publish(event, true);
   }
 
   private _threeDInit(): void {
