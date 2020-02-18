@@ -4,30 +4,34 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
   analytics: Joi.boolean(),
   animatedCard: Joi.boolean(),
   applePay: {
-    buttonStyle: Joi.string().allow('black', 'white', 'white-outline'),
-    buttonText: Joi.string().allow('plain', 'buy', 'book', 'donate', 'check-out', 'subscribe'),
+    buttonStyle: Joi.string().valid('black', 'white', 'white-outline'),
+    buttonText: Joi.string().valid('plain', 'buy', 'book', 'donate', 'check-out', 'subscribe'),
     merchantId: Joi.string(),
-    requestTypes: Joi.array().allow([Joi.string()]),
+    requestTypes: Joi.array().valid([Joi.string()]),
     paymentRequest: {
       countryCode: Joi.string(),
       currencyCode: Joi.string(),
-      merchantCapabilities: Joi.array().allow('supports3DS', 'supportsCredit', 'supportsDebit', 'supportsEMV'),
-      supportedNetworks: Joi.array().allow(
-        'amex',
-        'chinaUnionPay',
-        'discover',
-        'interac',
-        'jcb',
-        'masterCard',
-        'privateLabel',
-        'visa',
-        'cartesBancaires',
-        'eftpos',
-        'electron',
-        'maestro',
-        'vPay',
-        'elo',
-        'mada'
+      merchantCapabilities: Joi.array().items(
+        Joi.string().valid('supports3DS', 'supportsCredit', 'supportsDebit', 'supportsEMV')
+      ),
+      supportedNetworks: Joi.array().items(
+        Joi.string().valid(
+          'amex',
+          'chinaUnionPay',
+          'discover',
+          'interac',
+          'jcb',
+          'masterCard',
+          'privateLabel',
+          'visa',
+          'cartesBancaires',
+          'eftpos',
+          'electron',
+          'maestro',
+          'vPay',
+          'elo',
+          'mada'
+        )
       ),
       total: {
         amount: Joi.string(),
@@ -51,7 +55,7 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
   components: {
     defaultPaymentType: Joi.string(),
     requestTypes: Joi.array().items(Joi.string().valid('THREEDQUERY', 'AUTH')),
-    paymentTypes: Joi.array().allow(Joi.string()),
+    paymentTypes: Joi.array().valid(Joi.string()),
     startOnLoad: Joi.boolean()
   },
   datacenterurl: Joi.string(),
@@ -63,7 +67,7 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
     threedinit: Joi.string()
   },
   jwt: Joi.string().required(),
-  livestatus: Joi.number().allow(0, 1),
+  livestatus: Joi.number().valid(0, 1),
   origin: Joi.string(),
   requestTypes: Joi.array().items(
     Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
@@ -94,7 +98,7 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
       color: Joi.string(),
       size: Joi.string()
     },
-    livestatus: Joi.number().allow(0, 1),
+    livestatus: Joi.number().valid(0, 1),
     merchantId: Joi.string(),
     paymentRequest: {
       subtotal: Joi.string()
