@@ -161,12 +161,10 @@
           };
           st.successEvent(function() {
             displayPopup('success-popup', 'This is success message', 'green');
-            console.error('SUCCESS!');
           });
 
           st.errorEvent(function() {
             displayPopup('error-popup', 'This is error message', 'red');
-            console.error('ERROR MESSAGE');
           });
           st.Components(stConfig.components);
           st.ApplePay(stConfig.applePay);
