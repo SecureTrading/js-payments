@@ -5,6 +5,7 @@ import { filter, map, share, switchMap, take, takeUntil } from 'rxjs/operators';
 import { ofType } from './operators/ofType';
 import { QueryMessage } from './messages/QueryMessage';
 import { ResponseMessage } from './messages/ResponseMessage';
+import { environment } from '../../../environments/environment';
 
 @Service()
 export class InterFrameCommunicator {
@@ -25,8 +26,9 @@ export class InterFrameCommunicator {
 
   public send(message: IMessageBusEvent, target?: Window | string): void {
     const targetFrame = this.resolveTargetFrame(target);
+    const frameOrigin = targetFrame !== window.top ? new URL(environment.FRAME_URL).origin : '*';
 
-    targetFrame.postMessage(message, targetFrame.origin);
+    targetFrame.postMessage(message, frameOrigin);
   }
 
   public query<T>(message: IMessageBusEvent, target?: Window | string): Promise<T> {
