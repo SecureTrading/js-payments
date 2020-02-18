@@ -131,7 +131,7 @@ class StCodec {
     StCodec.publishResponse(StCodec._createCommunicationError());
     StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
     validation.blockForm(FormState.AVAILABLE);
-    this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.ST_PAYMENT_ERROR }, true);
+    this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
     return new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
   }
 

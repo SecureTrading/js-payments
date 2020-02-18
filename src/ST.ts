@@ -102,17 +102,13 @@ class ST {
   }
 
   public errorEvent(callback: any) {
-    console.error('This is function tests errorEvent');
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.ST_PAYMENT_ERROR, () => {
-      console.error('Error Event');
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK, () => {
       callback();
     });
   }
 
   public successEvent(callback: any) {
-    console.error('This is function tests successEvent');
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.ST_PAYMENT_SUBMIT, () => {
-      console.error('Success Event');
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK, () => {
       callback();
     });
   }

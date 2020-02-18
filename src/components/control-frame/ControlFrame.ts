@@ -233,13 +233,13 @@ export class ControlFrame extends Frame {
       .processPayment(this._postThreeDRequestTypes, this._card, this._merchantFormData, data)
       .then(() => {
         this._publishMerchantEvent({
-          type: MessageBus.EVENTS_PUBLIC.ST_PAYMENT_SUBMIT
+          type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK
         });
         this._notification.success(Language.translations.PAYMENT_SUCCESS);
         this._validation.blockForm(FormState.COMPLETE);
       })
       .catch((error: any) => {
-        this._publishMerchantEvent({ type: MessageBus.EVENTS_PUBLIC.ST_PAYMENT_ERROR });
+        this._publishMerchantEvent({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK });
         this._notification.error(Language.translations.PAYMENT_ERROR);
         this._validation.blockForm(FormState.AVAILABLE);
       })
@@ -316,7 +316,6 @@ export class ControlFrame extends Frame {
   }
 
   private _publishMerchantEvent(event: IMessageBusEvent) {
-    console.error('TETSTSTTTSTTSTSTTTST', event);
     this.messageBus.publish(event, true);
   }
 
