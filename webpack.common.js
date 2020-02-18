@@ -24,6 +24,11 @@ module.exports = {
     libraryTarget: 'umd',
     publicPath: ''
   },
+  node: {
+    net: 'empty',
+    tls: 'empty',
+    dns: 'empty'
+  },
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
