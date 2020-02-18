@@ -1,6 +1,7 @@
 import Joi from 'joi';
 import { environment } from '../../environments/environment';
 import { ComponentsConfigSchema } from '../models/constants/ComponentsConfigSchema';
+import { ConfigSchema } from '../models/constants/ConfigSchema';
 import { IComponentsConfig } from '../models/IComponentsConfig';
 import { IComponentsIds } from '../models/IComponentsIds';
 import { IConfig } from '../models/IConfig';
@@ -48,6 +49,7 @@ export class Config {
   }
 
   private _returnConfig(config: IConfig): IConfig {
+    this.validate(config, ConfigSchema);
     return {
       analytics: config.analytics !== undefined ? config.analytics : false,
       animatedCard: config.animatedCard !== undefined ? config.animatedCard : false,

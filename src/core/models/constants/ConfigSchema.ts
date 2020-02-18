@@ -37,16 +37,8 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
     placement: Joi.string()
   },
   buttonId: Joi.string(),
-  bypassCards: Joi.array().allow(
-    'AMEX',
-    'ASTROPAYCARD',
-    'DINERS',
-    'DISCOVER',
-    'JCB',
-    'MASTERCARD',
-    'MAESTRO',
-    'PIBA',
-    'VISA'
+  bypassCards: Joi.array().items(
+    Joi.string().valid('AMEX', 'ASTROPAYCARD', 'DINERS', 'DISCOVER', 'JCB', 'MASTERCARD', 'MAESTRO', 'PIBA', 'VISA')
   ),
   cachetoken: Joi.string(),
   componentIds: Joi.object().keys({
@@ -58,13 +50,13 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
   }),
   components: {
     defaultPaymentType: Joi.string(),
-    requestTypes: Joi.array().allow('THREEDQUERY', 'AUTH'),
+    requestTypes: Joi.array().items(Joi.string().valid('THREEDQUERY', 'AUTH')),
     paymentTypes: Joi.array().allow(Joi.string()),
     startOnLoad: Joi.boolean()
   },
   datacenterurl: Joi.string(),
   deferInit: Joi.boolean(),
-  fieldsToSubmit: Joi.array().allow('pan', 'expirydate', 'securitycode'),
+  fieldsToSubmit: Joi.array().items(Joi.string().valid('pan', 'expirydate', 'securitycode')),
   formId: Joi.string(),
   init: {
     cachetoken: Joi.string(),
@@ -73,21 +65,25 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
   jwt: Joi.string().required(),
   livestatus: Joi.number().allow(0, 1),
   origin: Joi.string(),
-  requestTypes: Joi.array().allow('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY'),
+  requestTypes: Joi.array().items(
+    Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
+  ),
   styles: Joi.object(),
   submitCallback: Joi.any(),
-  submitFields: Joi.array().allow(
-    'baseamount',
-    'currencyiso3a',
-    'eci',
-    'enrolled',
-    'errorcode',
-    'errordata',
-    'errormessage',
-    'orderreference',
-    'settlestatus',
-    'status',
-    'transactionreference'
+  submitFields: Joi.array().items(
+    Joi.string().valid(
+      'baseamount',
+      'currencyiso3a',
+      'eci',
+      'enrolled',
+      'errorcode',
+      'errordata',
+      'errormessage',
+      'orderreference',
+      'settlestatus',
+      'status',
+      'transactionreference'
+    )
   ),
   submitOnError: Joi.boolean(),
   submitOnSuccess: Joi.boolean(),
