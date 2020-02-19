@@ -1,21 +1,18 @@
 import { Service } from 'typedi';
 import { InterFrameCommunicator } from './InterFrameCommunicator';
-import { iif, Observable, of, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ofType } from './operators/ofType';
 import { MessageBus } from '../../shared/MessageBus';
 import {
   distinctUntilChanged,
   filter,
-  first,
   map,
   scan,
   shareReplay,
   startWith,
-  switchMap,
   takeUntil
 } from 'rxjs/operators';
 import { IMessageBusEvent } from '../../models/IMessageBusEvent';
-import { FrameCollection } from './interfaces/FrameCollection';
 
 @Service()
 export class FramesHub {
@@ -46,21 +43,6 @@ export class FramesHub {
     return this.activeFrame$.pipe(
       map(frames => frames.indexOf(name) !== -1),
       distinctUntilChanged(),
-    );
-  }
-
-  public getFrame(name: string): Observable<Window> {
-    const frames: FrameCollection = window.top.frames as FrameCollection;
-
-    return this.isFrameActive(name).pipe(
-      filter(Boolean),
-      switchMap(() => iif(
-        () => Boolean(frames[name]),
-        // @ts-ignore
-        of(frames[name]),
-        throwError(`Frame ${name} not found.`),
-      )),
-      first(),
     );
   }
 
