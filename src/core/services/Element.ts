@@ -1,4 +1,4 @@
-import { IStyle } from '../models/IStyle';
+import { IStyle } from '../config/model/IStyle';
 import { Selectors } from '../shared/Selectors';
 
 export class Element {
@@ -70,6 +70,13 @@ export class Element {
     iframe.setAttribute('frameborder', '0');
     if (tabindex !== undefined) {
       iframe.setAttribute('tabindex', tabindex);
+    }
+    if (fieldId === 'st-animated-card-iframe') {
+      iframe.setAttribute('style', 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;');
+      const iframeWrapper = Element.createFormElement('div', 'st-iframe-wrapper');
+      iframeWrapper.setAttribute('style', 'position: relative; overflow: hidden; padding: 56.25% 0;');
+      iframeWrapper.appendChild(iframe);
+      return iframeWrapper;
     }
     return iframe;
   }

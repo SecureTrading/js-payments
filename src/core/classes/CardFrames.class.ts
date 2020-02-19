@@ -2,7 +2,7 @@ import JwtDecode from 'jwt-decode';
 import { BypassCards } from '../models/constants/BypassCards';
 import { FormState } from '../models/constants/FormState';
 import { IMessageBusEvent } from '../models/IMessageBusEvent';
-import { IStyles } from '../models/IStyles';
+import { IStyles } from '../config/model/IStyles';
 import { IValidationMessageBus } from '../models/IValidationMessageBus';
 import { Element } from '../services/Element';
 import { DomMethods } from '../shared/DomMethods';
