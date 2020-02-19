@@ -6,6 +6,7 @@ import { ofType } from './operators/ofType';
 import { QueryMessage } from './messages/QueryMessage';
 import { ResponseMessage } from './messages/ResponseMessage';
 import { environment } from '../../../environments/environment';
+import { FrameCollection } from './interfaces/FrameCollection';
 
 @Service()
 export class InterFrameCommunicator {
@@ -15,7 +16,7 @@ export class InterFrameCommunicator {
   private close$ = new Subject<void>();
 
   constructor() {
-    this.incomingEvent$ = fromEventPattern(
+    this.incomingEvent$ = fromEventPattern<MessageEvent>(
       handler => window.addEventListener(InterFrameCommunicator.MESSAGE_EVENT, handler, true),
       handler => window.removeEventListener(InterFrameCommunicator.MESSAGE_EVENT, handler)
     ).pipe(
@@ -84,11 +85,13 @@ export class InterFrameCommunicator {
     }
 
     if (typeof(target) === 'string' && target !== '') {
-      if (!window.top.frames[target]) {
+      const frames: FrameCollection = window.top.frames as FrameCollection;
+
+      if (!frames[target]) {
         throw new Error(`Target frame ${target} not found.`);
       }
 
-      return window.top.frames[target];
+      return frames[target];
     }
 
     return window.top;

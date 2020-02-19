@@ -15,6 +15,7 @@ import {
   takeUntil
 } from 'rxjs/operators';
 import { IMessageBusEvent } from '../../models/IMessageBusEvent';
+import { FrameCollection } from './interfaces/FrameCollection';
 
 @Service()
 export class FramesHub {
@@ -49,13 +50,14 @@ export class FramesHub {
   }
 
   public getFrame(name: string): Observable<Window> {
+    const frames: FrameCollection = window.top.frames as FrameCollection;
+
     return this.isFrameActive(name).pipe(
       filter(Boolean),
       switchMap(() => iif(
+        () => Boolean(frames[name]),
         // @ts-ignore
-        () => Boolean(window.top.frames[name]),
-        // @ts-ignore
-        of(window.top.frames[name]),
+        of(frames[name]),
         throwError(`Frame ${name} not found.`),
       )),
       first(),
