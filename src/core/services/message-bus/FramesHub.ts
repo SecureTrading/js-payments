@@ -52,7 +52,9 @@ export class FramesHub {
     return this.isFrameActive(name).pipe(
       filter(Boolean),
       switchMap(() => iif(
+        // @ts-ignore
         () => Boolean(window.top.frames[name]),
+        // @ts-ignore
         of(window.top.frames[name]),
         throwError(`Frame ${name} not found.`),
       )),
