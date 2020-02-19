@@ -285,6 +285,7 @@ export class ControlFrame extends Frame {
       this._isPaymentReady
     );
     if (!validity) {
+      this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
       this._validateFormFields();
       return;
     }
