@@ -7,6 +7,7 @@ import {
   distinctUntilChanged,
   filter,
   map,
+  mapTo,
   scan,
   shareReplay,
   startWith,
@@ -43,6 +44,13 @@ export class FramesHub {
     return this.activeFrame$.pipe(
       map(frames => frames.indexOf(name) !== -1),
       distinctUntilChanged(),
+    );
+  }
+
+  public waitForFrame(name: string): Observable<string> {
+    return this.isFrameActive(name).pipe(
+      filter(Boolean),
+      mapTo(name),
     );
   }
 

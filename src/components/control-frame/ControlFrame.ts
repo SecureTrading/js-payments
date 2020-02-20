@@ -20,6 +20,8 @@ import { Notification } from '../../core/shared/Notification';
 import { Payment } from '../../core/shared/Payment';
 import { Validation } from '../../core/shared/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
+import { RemoteStorageEventHandler } from '../../core/services/storage/RemoteStorageResponder';
+import { Container } from 'typedi';
 
 export class ControlFrame extends Frame {
   private static ALLOWED_PARAMS: string[] = ['jwt', 'gatewayUrl'];
@@ -66,6 +68,7 @@ export class ControlFrame extends Frame {
   };
   private _threeDQueryResult: any;
   private _validation: Validation;
+  private _remoteStorageEventHandler: RemoteStorageEventHandler = Container.get(RemoteStorageEventHandler);
 
   constructor() {
     super();
@@ -74,6 +77,7 @@ export class ControlFrame extends Frame {
 
   protected async onInit(): Promise<void> {
     super.onInit();
+    this._remoteStorageEventHandler.init();
     this._setInstances();
     this._setFormFieldsValidities();
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_CARD_NUMBER, this._formFields.cardNumber);
