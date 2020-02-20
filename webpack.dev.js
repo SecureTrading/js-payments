@@ -26,7 +26,7 @@ module.exports = merge(common, {
     new ManifestPlugin(),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.DefinePlugin({
-      WEBSERVICES_URL: JSON.stringify(`https://${process.env.npm_package_config_host}:8443`),
+      WEBSERVICES_URL: JSON.stringify(`https://${process.env.npm_package_config_host}:8443`)
     })
   ]
 });

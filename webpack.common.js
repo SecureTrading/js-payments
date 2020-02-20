@@ -105,7 +105,7 @@ module.exports = {
       }
     ]),
     new StyleLintPlugin(),
-    new FriendlyErrorsWebpackPlugin(),
+    new FriendlyErrorsWebpackPlugin()
   ],
   module: {
     rules: [

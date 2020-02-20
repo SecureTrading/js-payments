@@ -177,7 +177,7 @@ function stFixture() {
     submitOnError: false,
     submitOnSuccess: false,
     translations: { ...translations },
-    buttonId: 'merchant-submit-button',
+    buttonId: 'merchant-submit-button'
   };
 
   const cacheConfig = {

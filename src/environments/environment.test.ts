@@ -31,5 +31,5 @@ export const environment = {
   },
   production: false,
   testEnvironment: true,
-  overrideDomain: 'securetrading.net',
+  overrideDomain: 'securetrading.net'
 };
