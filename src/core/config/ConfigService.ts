@@ -14,6 +14,7 @@ export class ConfigService {
     private resolver: ConfigResolver,
     private validator: ConfigValidator
   ) {}
+  w;
 
   initialize(config: IConfig): IConfig {
     this.storage.setItem(ConfigService.STORAGE_KEY, null);
