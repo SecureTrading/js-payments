@@ -110,10 +110,7 @@ module.exports = {
       }
     ]),
     new StyleLintPlugin(),
-    new FriendlyErrorsWebpackPlugin(),
-    new webpack.DefinePlugin({
-      HOST: JSON.stringify(process.env.npm_package_config_host)
-    })
+    new FriendlyErrorsWebpackPlugin()
   ],
   module: {
     rules: [

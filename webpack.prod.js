@@ -9,6 +9,9 @@ module.exports = merge(common, {
       /^\.\.\/\.\.\/environments\/environment/,
       '../../environments/environment.prod'
     ),
-    new webpack.NormalModuleReplacementPlugin(/^\.\/environments\/environment/, './environments/environment.prod')
+    new webpack.NormalModuleReplacementPlugin(/^\.\/environments\/environment/, './environments/environment.prod'),
+    new webpack.DefinePlugin({
+      WEBSERVICES_URL: JSON.stringify('https://webservices.securetrading.net/js/v2')
+    })
   ]
 });
