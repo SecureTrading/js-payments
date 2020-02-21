@@ -148,7 +148,7 @@
         const popup = document.getElementById('st-popup');
         popup.appendChild(div);
         setTimeout(function() {
-          document.getElementById(id).remove();
+          popup.removeChild(div);
         }, 3000);
       }
     }
