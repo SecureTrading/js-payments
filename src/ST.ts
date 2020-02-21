@@ -43,12 +43,40 @@ class ST {
   private _storage: BrowserLocalStorage;
   private _translation: Translator;
 
+  set submitCallback(callback: any) {
+    this.on('submit', callback);
+  }
+
+  set successEvent(callback: any) {
+    this.on('success', callback);
+  }
+
+  set errorEvent(callback: any) {
+    this.on('error', callback);
+  }
+
   constructor(@Inject(CONFIG) private _config: IConfig, private configProvider: ConfigService) {
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
     this._messageBus = new MessageBus();
     this._storage = new BrowserLocalStorage();
     this.init();
+  }
+
+  public on(event: string, callback: any) {
+    const events = {
+      success: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK,
+      error: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK,
+      submit: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUBMIT_CALLBACK
+    };
+    // @ts-ignore
+    this._messageBus.subscribe(events[event], () => {
+      callback();
+    });
+  }
+
+  public off(event: string) {
+    console.error('test');
   }
 
   public Components(config: IComponentsConfig): void {
@@ -101,18 +129,6 @@ class ST {
       cardinal.off(PaymentEvents.SETUP_COMPLETE);
       cardinal.off(PaymentEvents.VALIDATED);
     }
-  }
-
-  public errorEvent(callback: any) {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK, () => {
-      callback();
-    });
-  }
-
-  public successEvent(callback: any) {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK, () => {
-      callback();
-    });
   }
 
   private init(): void {
@@ -169,7 +185,6 @@ class ST {
       config.submitFields,
       config.datacenterurl,
       config.animatedCard,
-      config.submitCallback,
       config.components.requestTypes
     );
   }

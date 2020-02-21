@@ -162,14 +162,15 @@
       st.submitCallback = function someFancyfunction(data) {
         var stringified = JSON.stringify(data);
         var testVariable = 'This is what we have got after submit' + stringified;
+        console.error(testVariable)
       };
-      st.successEvent(function() {
+      st.successEvent = function() {
         displayPopup('success-popup', 'This is success message', 'green');
-      });
+      };
 
-      st.errorEvent(function() {
+      st.errorEvent = function() {
         displayPopup('error-popup', 'This is error message', 'red');
-      });
+      };
       st.Components(stConfig.components);
       st.ApplePay(stConfig.applePay);
       st.VisaCheckout(stConfig.visaCheckout);

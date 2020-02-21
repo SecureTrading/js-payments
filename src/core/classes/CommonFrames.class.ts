@@ -147,9 +147,9 @@ export class CommonFrames extends RegisterFrames {
   }
 
   private _onTransactionComplete(data: any) {
-    if ((this._isTransactionFinished(data) || data.errorcode !== '0') && this._submitCallback) {
+    if ((this._isTransactionFinished(data) || data.errorcode !== '0')) {
       this._validation.blockForm(FormState.AVAILABLE);
-      this._submitCallback(data);
+      this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUBMIT_CALLBACK }, true);
     }
     if (this._shouldSubmitForm(data)) {
       const form = this._merchantForm;
