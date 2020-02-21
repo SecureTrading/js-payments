@@ -283,7 +283,6 @@ export class ApplePay {
         .catch(error => {
           const { errorcode, errormessage } = error;
           this._onValidateMerchantResponseFailure(error);
-          this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
           this._notification.error(`${errorcode}: ${errormessage}`, true);
           GoogleAnalytics.sendGaData(
             'event',
