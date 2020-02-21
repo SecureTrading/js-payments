@@ -24,6 +24,11 @@ module.exports = {
     libraryTarget: 'umd',
     publicPath: ''
   },
+  node: {
+    net: 'empty',
+    tls: 'empty',
+    dns: 'empty'
+  },
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
@@ -138,7 +143,11 @@ module.exports = {
           path.join(__dirname, 'test'),
           path.join(__dirname, 'example'),
           path.join(__dirname, 'node_modules/ts-money'),
-          path.join(__dirname, 'node_modules/joi-browser')
+          path.join(__dirname, 'node_modules/hoek'),
+          path.join(__dirname, 'node_modules/@hapi'),
+          path.join(__dirname, 'node_modules/isemail'),
+          path.join(__dirname, 'node_modules/joi'),
+          path.join(__dirname, 'node_modules/topo'),
         ]
       },
       {
@@ -161,7 +170,6 @@ module.exports = {
     ]
   },
   resolve: {
-    alias: { joi: 'joi-browser' },
     extensions: ['.ts', '.js']
   }
 };

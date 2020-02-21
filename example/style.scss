@@ -99,6 +99,14 @@ body {
   @extend %button;
 }
 
+.example-form {
+  &__st-animated-card {
+    position: relative;
+    overflow: hidden;
+    height: 300px;
+  }
+}
+
 .st-notification-frame {
   height: 6.2rem;
 }
