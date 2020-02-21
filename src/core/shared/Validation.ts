@@ -237,6 +237,7 @@ export class Validation extends Frame {
     const start: number = this._selectionRangeStart;
     const end: number = this._selectionRangeEnd;
 
+
     if (this._isPressedKeyDelete()) {
       element.setSelectionRange(start, end);
     } else if (this._isPressedKeyBackspace()) {
@@ -247,8 +248,10 @@ export class Validation extends Frame {
     } else if (element.value.charAt(end) === Validation.SPACE_IN_PAN) {
       ++this._cursorSkip;
       element.setSelectionRange(start + Validation.CURSOR_DOUBLE_SKIP, end + Validation.CURSOR_DOUBLE_SKIP);
-    } else {
+    } else if(start - end === 0) {
       element.setSelectionRange(start + Validation.CURSOR_SINGLE_SKIP, end + Validation.CURSOR_SINGLE_SKIP);
+    } else {
+      element.setSelectionRange(start, start);
     }
   }
 
