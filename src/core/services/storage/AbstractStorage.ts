@@ -30,7 +30,7 @@ export abstract class AbstractStorage implements IStorage, Subscribable<any> {
     this.subscribe = this.observable$.subscribe.bind(this.observable$);
 
     this.communicator.incomingEvent$.pipe(
-      ofType(this.SET_ITEM_EVENT),
+      ofType(this.getSychronizationEventName()),
       takeUntil(this.communicator.communicationClosed$),
     ).subscribe(event => {
       const {key, value} = event.data;
@@ -55,17 +55,24 @@ export abstract class AbstractStorage implements IStorage, Subscribable<any> {
     );
   }
 
-  protected abstract get SET_ITEM_EVENT(): string;
+  protected abstract getSychronizationEventName(): string;
 
   private emitStorageEvent(): void {
-    const event = document.createEvent('StorageEvent');
+    let event: Event;
+
+    try {
+      event = document.createEvent('StorageEvent');
+    } catch (e) {
+      event = document.createEvent('customevent');
+    }
+
     event.initEvent(AbstractStorage.STORAGE_EVENT, true, true);
     window.dispatchEvent(event);
   }
 
   private synchronizeStorage(key: string, value: string): void {
     const event: IMessageBusEvent = {
-      type: this.SET_ITEM_EVENT,
+      type: this.getSychronizationEventName(),
       data: {key, value},
     };
 

@@ -9,7 +9,7 @@ export class BrowserLocalStorage extends AbstractStorage {
     super(window.localStorage, communicator, framesHub);
   }
 
-  protected get SET_ITEM_EVENT(): string {
+  protected getSychronizationEventName(): string {
     return 'ST_SET_LOCAL_STORAGE_ITEM';
   }
 }

@@ -9,7 +9,7 @@ export class BrowserSessionStorage extends AbstractStorage {
     super(window.sessionStorage, communicator, framesHub);
   }
 
-  protected get SET_ITEM_EVENT(): string {
+  protected getSychronizationEventName(): string {
     return 'ST_SET_SESSION_STORAGE_ITEM';
   }
 }
