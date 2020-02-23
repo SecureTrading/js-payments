@@ -30,7 +30,7 @@ export class Frame {
     new Styler(this.getAllowedStyles()).inject(this.params.styles);
   }
 
-  protected async onInit() {
+  protected onInit() {
     this.params = this.parseUrl();
     this.messageBus = new MessageBus(this.params.origin);
     this.applyStyles();

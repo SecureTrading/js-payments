@@ -3,9 +3,12 @@ import '@securetrading/js-payments-card/dist/stcardstyle.css';
 import Card from '@securetrading/js-payments-card/stcard.js';
 import { IFormFieldState } from '../../core/models/IFormFieldState';
 import { MessageBus } from '../../core/shared/MessageBus';
+import { BrowserLocalStorage } from '../../core/services/storage/BrowserLocalStorage';
+import { Container } from 'typedi';
 
 // @ts-ignore
 if (Card && document.URL.includes('animated')) {
+  const localStorage = Container.get(BrowserLocalStorage);
   // @ts-ignore
   const card: Card = new Card({
     animatedCardContainer: 'st-animated-card',

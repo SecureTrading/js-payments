@@ -1,6 +1,8 @@
 import { environment } from '../../environments/environment';
 import { IMessageBusEvent } from '../models/IMessageBusEvent';
 import { Utils } from './Utils';
+import { BrowserSessionStorage } from '../services/storage/BrowserSessionStorage';
+import { Container } from 'typedi';
 
 export class MessageBus {
   public static SUBSCRIBERS: string = 'ST_SUBSCRIBERS';
@@ -56,6 +58,7 @@ export class MessageBus {
   private readonly _parentOrigin: string;
   private readonly _frameOrigin: string;
   private _subscriptions: any = {};
+  private _sessionStorage: BrowserSessionStorage = Container.get(BrowserSessionStorage);
 
   constructor(parentOrigin?: string) {
     this._parentOrigin = parentOrigin ? parentOrigin : '*';
@@ -69,7 +72,7 @@ export class MessageBus {
     if (publishToParent) {
       window.parent.postMessage(event, this._parentOrigin);
     } else {
-      subscribersStore = window.sessionStorage.getItem(MessageBus.SUBSCRIBERS);
+      subscribersStore = this._sessionStorage.getItem(MessageBus.SUBSCRIBERS);
       subscribersStore = JSON.parse(subscribersStore);
 
       if (subscribersStore[event.type]) {
@@ -98,7 +101,7 @@ export class MessageBus {
     subscriber = subscriber || window.name;
 
     let subscribers;
-    let subscribersStore = window.sessionStorage.getItem(MessageBus.SUBSCRIBERS);
+    let subscribersStore = this._sessionStorage.getItem(MessageBus.SUBSCRIBERS);
 
     subscribersStore = JSON.parse(subscribersStore);
     subscribers = subscribersStore || {};
@@ -111,7 +114,7 @@ export class MessageBus {
       subscribers[eventType].push(subscriber);
     }
     subscribersStore = JSON.stringify(subscribers);
-    window.sessionStorage.setItem(MessageBus.SUBSCRIBERS, subscribersStore);
+    this._sessionStorage.setItem(MessageBus.SUBSCRIBERS, subscribersStore);
     this._subscriptions[eventType] = callback;
 
     const cardFieldsBlockingEvents = [

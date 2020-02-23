@@ -8,6 +8,8 @@ import { Payment } from '../shared/Payment';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
 import { GoogleAnalytics } from './GoogleAnalytics';
+import { BrowserLocalStorage } from '../services/storage/BrowserLocalStorage';
+import { Container } from 'typedi';
 
 const ApplePaySession = (window as any).ApplePaySession;
 const ApplePayError = (window as any).ApplePayError;
@@ -120,12 +122,13 @@ export class ApplePay {
   private _paymentRequest: any;
   private _placement: string;
   private readonly _completion: { errors: []; status: string };
+  private _localStorage: BrowserLocalStorage = Container.get(BrowserLocalStorage);
 
   constructor(config: IWalletConfig, jwt: string, gatewayUrl: string) {
     this._notification = new Notification();
     this._messageBus = new MessageBus();
     config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
-    localStorage.setItem('completePayment', '');
+    this._localStorage.setItem('completePayment', '');
     this.jwt = jwt;
     this._completion = {
       errors: [],
@@ -312,12 +315,12 @@ export class ApplePay {
           this._session.completePayment(this._completion);
           this._displayNotification(errorcode);
           GoogleAnalytics.sendGaData('event', 'Apple Pay', 'payment', 'Apple Pay payment completed');
-          localStorage.setItem('completePayment', 'true');
+          this._localStorage.setItem('completePayment', 'true');
         })
         .catch(() => {
           this._notification.error(Language.translations.PAYMENT_ERROR, true);
           this._session.completePayment({ status: this.getPaymentFailureStatus(), errors: [] });
-          localStorage.setItem('completePayment', 'true');
+          this._localStorage.setItem('completePayment', 'true');
         });
     };
   }
@@ -376,7 +379,7 @@ export class ApplePay {
   }
 
   private _paymentProcess() {
-    localStorage.setItem('completePayment', 'false');
+    this._localStorage.setItem('completePayment', 'false');
     this._session = this.getApplePaySessionObject();
     this._onValidateMerchantRequest();
     this._subscribeStatusHandlers();

@@ -19,7 +19,6 @@ import { IComponentsConfig } from './core/config/model/IComponentsConfig';
 import { IConfig } from './core/config/model/IConfig';
 import { IStJwtObj } from './core/models/IStJwtObj';
 import { IVisaConfig } from './core/models/IVisaConfig';
-import { BrowserLocalStorage } from './core/services/storage/BrowserLocalStorage';
 import { MessageBus } from './core/shared/MessageBus';
 import { Translator } from './core/shared/Translator';
 import { environment } from './environments/environment';
@@ -30,6 +29,8 @@ import { CONFIG } from './core/dependency-injection/InjectionTokens';
 import { ConfigService } from './core/config/ConfigService';
 import { InterFrameCommunicator } from './core/services/message-bus/InterFrameCommunicator';
 import { FramesHub } from './core/services/message-bus/FramesHub';
+import { BrowserLocalStorage } from './core/services/storage/BrowserLocalStorage';
+import { BrowserSessionStorage } from './core/services/storage/BrowserSessionStorage';
 
 @Service()
 class ST {
@@ -42,7 +43,6 @@ class ST {
   private _googleAnalytics: GoogleAnalytics;
   private _merchantFields: MerchantFields;
   private _messageBus: MessageBus;
-  private _storage: BrowserLocalStorage;
   private _translation: Translator;
 
   constructor(
@@ -50,11 +50,12 @@ class ST {
     private configProvider: ConfigService,
     private _communicator: InterFrameCommunicator,
     private _framesHub: FramesHub,
+    private _storage: BrowserLocalStorage,
+    private _sessionStorage: BrowserSessionStorage,
   ) {
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
     this._messageBus = new MessageBus();
-    this._storage = new BrowserLocalStorage();
     this.init();
   }
 
