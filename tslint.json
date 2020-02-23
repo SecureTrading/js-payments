@@ -12,7 +12,7 @@
     "no-conditional-assignment": true,
     "no-consecutive-blank-lines": false,
     "no-console": {
-      "severity": "off",
+      "severity": "warning",
       "options": ["debug", "info", "log", "time", "timeEnd", "trace"]
     },
     "one-variable-per-declaration": true,
