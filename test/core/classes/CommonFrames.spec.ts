@@ -286,9 +286,6 @@ function commonFramesFixture() {
   };
   const animatedCard = true;
   const gatewayUrl: string = 'https://webservices.securetrading.net/jwt/';
-  const submitCallback = function() {
-    return { prop: 'testobject' };
-  };
   const instance = new CommonFrames(
     jwt,
     origin,
@@ -299,7 +296,6 @@ function commonFramesFixture() {
     [],
     gatewayUrl,
     animatedCard,
-    submitCallback,
     ['AUTH']
   );
 
