@@ -1,4 +1,0 @@
-[submodule "js-payments-testing"]
-	path = js-payments-testing
-	url = https://github.com/SecureTrading/js-payments-testing
-	branch = master

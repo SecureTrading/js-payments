@@ -3,6 +3,7 @@ import 'location-origin';
 import { debounce } from 'lodash';
 import 'url-polyfill';
 import 'whatwg-fetch';
+import './core/shared/OverrideDomain';
 import { CardFrames } from './core/classes/CardFrames.class';
 import { CommonFrames } from './core/classes/CommonFrames.class';
 import { MerchantFields } from './core/classes/MerchantFields';

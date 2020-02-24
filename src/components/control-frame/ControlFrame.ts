@@ -122,6 +122,7 @@ export class ControlFrame extends Frame {
   private _loadCardinalEvent(): void {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL, () => {
       this._onLoadCardinal();
+      this._changeSecurityCodeLength();
     });
   }
 
@@ -145,8 +146,8 @@ export class ControlFrame extends Frame {
 
   private _threeDInitEvent(): void {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
-      this._changeSecurityCodeLength();
       this._threeDInit();
+      this._changeSecurityCodeLength();
     });
   }
 

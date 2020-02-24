@@ -89,31 +89,31 @@
         <div id="st-control-frame" class="example-form__group"></div>
         <div id="st-visa-checkout" class="example-form__group"></div>
         <div id="st-apple-pay" class="example-form__group"></div>
-    </div>
-    <div id="st-animated-card"></div>
-</form>
-<script type="text/javascript" src="st.js"></script>
-<script>
-  (function() {
-    var ST = SecureTrading;
-    window
-      .fetch('https://merchant.example.com:8443/config.json')
-      .then(function(response) {
-        if (response.status !== 200) {
-          return Promise.reject('Configuration has not been set !');
-        }
-        return response.json();
-      })
-      .then(function(data) {
-        if (data) {
-          configurationInit(ST, data);
-        } else {
-          fetchDefaultConfig();
-        }
-      })
-      .catch(function() {
-        fetchDefaultConfig();
-      });
+      </div>
+      <div id="st-animated-card" class="example-form__st-animated-card"></div>
+    </form>
+    <script type="text/javascript" src="<%= WEBSERVICES_URL %>/st.js"></script>
+    <script>
+      (function() {
+        var ST = SecureTrading;
+        window
+          .fetch('<%= WEBSERVICES_URL %>/config.json')
+          .then(function(response) {
+            if (response.status !== 200) {
+              return Promise.reject('Configuration has not been set !');
+            }
+            return response.json();
+          })
+          .then(function(data) {
+            if (data) {
+              configurationInit(ST, data);
+            } else {
+              fetchDefaultConfig();
+            }
+          })
+          .catch(function() {
+            fetchDefaultConfig();
+          });
 
     function fetchDefaultConfig() {
       fetch('./../json/config.json')

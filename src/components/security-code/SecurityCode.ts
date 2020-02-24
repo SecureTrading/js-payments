@@ -1,5 +1,11 @@
+import { iinLookup } from '@securetrading/ts-iin-lookup';
+import { number } from 'joi';
+import JwtDecode from 'jwt-decode';
+import { StCodec } from '../../core/classes/StCodec.class';
 import { FormState } from '../../core/models/constants/FormState';
+import { IDecodedJwt } from '../../core/models/IDecodedJwt';
 import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
+import { IStJwtObj } from '../../core/models/IStJwtObj';
 import { Formatter } from '../../core/shared/Formatter';
 import { FormField } from '../../core/shared/FormField';
 import { Language } from '../../core/shared/Language';
@@ -29,7 +35,6 @@ export class SecurityCode extends FormField {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
     this._formatter = new Formatter();
     this._validation = new Validation();
-    this._subscribeSecurityCodeChange();
     this._securityCodeWrapper = document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR) as HTMLElement;
     this._securityCodeLength = SecurityCode.STANDARD_INPUT_LENGTH;
     this._init();
@@ -81,7 +86,6 @@ export class SecurityCode extends FormField {
     super.setEventListener(MessageBus.EVENTS.FOCUS_SECURITY_CODE, false);
     super.setEventListener(MessageBus.EVENTS.BLUR_SECURITY_CODE);
     this._subscribeSecurityCodeChange();
-    this._setSecurityCodePattern(SecurityCode.MATCH_EXACTLY_THREE_DIGITS);
     this._setDisableListener();
     this.validation.backendValidation(
       this._inputElement,
