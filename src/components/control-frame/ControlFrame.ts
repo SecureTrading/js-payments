@@ -102,10 +102,12 @@ export class ControlFrame extends Frame {
   }
 
   private _changeSecurityCodeLength(): void {
-    this.messageBus.publish({
-      data: this._getSecurityCodeLength(),
-      type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
-    });
+    if (!this._isCardWithoutCVV()) {
+      this.messageBus.publish({
+        data: this._getSecurityCodeLength(),
+        type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
+      });
+    }
   }
 
   private _formFieldChangeEvent(event: string, field: IFormFieldState): void {
@@ -119,6 +121,7 @@ export class ControlFrame extends Frame {
   private _loadCardinalEvent(): void {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL, () => {
       this._onLoadCardinal();
+      this._changeSecurityCodeLength();
     });
   }
 
@@ -142,8 +145,8 @@ export class ControlFrame extends Frame {
 
   private _threeDInitEvent(): void {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
-      this._changeSecurityCodeLength();
       this._threeDInit();
+      this._changeSecurityCodeLength();
     });
   }
 
@@ -347,8 +350,13 @@ export class ControlFrame extends Frame {
   }
 
   private _getSecurityCodeLength(): number {
+    const cardDetails: IDecodedJwt = JwtDecode(StCodec.jwt);
     const securityCodeLength: number = this._card.securitycode ? this._card.securitycode.length : 0;
     const securityCodeFromJwtLength: number = this._getSecurityCode() ? this._getSecurityCode().length : 0;
+    if (cardDetails.payload.pan && !securityCodeLength && !securityCodeFromJwtLength) {
+      const { cvcLength } = iinLookup.lookup(cardDetails.payload.pan);
+      return cvcLength.slice(-1)[0];
+    }
     return securityCodeLength ? securityCodeLength : securityCodeFromJwtLength;
   }
 
