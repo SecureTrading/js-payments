@@ -13,8 +13,7 @@ module.exports = {
     'control-frame': ['./polyfills', './src/components/control-frame/control-frame.ts'],
     st: ['./polyfills', './src/ST.ts'],
     example: './example/index.ts',
-    receipt: './example/receipt.ts',
-    init: './example/init.ts'
+    receipt: './example/receipt.ts'
   },
   output: {
     filename: '[name].js',

@@ -44,15 +44,13 @@ export class CommonFrames extends RegisterFrames {
     submitFields: string[],
     gatewayUrl: string,
     animatedCard: boolean,
-    submitCallback: any,
     requestTypes: string[]
   ) {
-    super(jwt, origin, componentIds, styles, animatedCard, submitCallback);
+    super(jwt, origin, componentIds, styles, animatedCard);
     this._gatewayUrl = gatewayUrl;
     this._messageBus = new MessageBus(origin);
     this._merchantForm = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR) as HTMLFormElement;
     this._validation = new Validation();
-    this._submitCallback = submitCallback;
     this._submitFields = submitFields;
     this._submitOnError = submitOnError;
     this._submitOnSuccess = submitOnSuccess;
