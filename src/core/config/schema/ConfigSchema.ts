@@ -54,18 +54,18 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
     securityCode: Joi.string().required()
   }).default({}),
   components:  Joi.object().keys({
-    defaultPaymentType: Joi.string().allow('').optional(),
+    defaultPaymentType: Joi.string().allow(''),
     requestTypes: Joi.array().items(Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')),
-    paymentTypes: Joi.array().items(Joi.string().allow('').optional()),
-    startOnLoad: Joi.boolean().allow(null).optional()
+    paymentTypes: Joi.array().items(Joi.string().allow('')),
+    startOnLoad: Joi.boolean().allow('')
   }).default({}),
   datacenterurl: Joi.string(),
   deferInit: Joi.boolean(),
   fieldsToSubmit: Joi.array().items(Joi.string().valid('pan', 'expirydate', 'securitycode')),
   formId: Joi.string(),
   init: {
-    cachetoken: Joi.string().allow('').optional(),
-    threedinit: Joi.string().allow('').optional()
+    cachetoken: Joi.string().allow(''),
+    threedinit: Joi.string().allow('')
   },
   jwt: Joi.string().required(),
   livestatus: Joi.number().valid(0, 1),
