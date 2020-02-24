@@ -8,7 +8,7 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
     buttonStyle: Joi.string().valid('black', 'white', 'white-outline'),
     buttonText: Joi.string().valid('plain', 'buy', 'book', 'donate', 'check-out', 'subscribe'),
     merchantId: Joi.string(),
-    requestTypes: Joi.array().valid([Joi.string()]),
+    requestTypes: Joi.array().items([Joi.string()]),
     paymentRequest: {
       countryCode: Joi.string(),
       currencyCode: Joi.string(),
@@ -52,15 +52,20 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
     expirationDate: Joi.string().required(),
     notificationFrame: Joi.string().required(),
     securityCode: Joi.string().required()
-  }),
-  components: ComponentsConfigSchema,
+  }).default({}),
+  components:  Joi.object().keys({
+    defaultPaymentType: Joi.string().allow(''),
+    requestTypes: Joi.array().items(Joi.string().valid('THREEDQUERY', 'AUTH')),
+    paymentTypes: Joi.array().items(Joi.string().allow('')),
+    startOnLoad: Joi.boolean().allow('').allow('')
+  }).default({}),
   datacenterurl: Joi.string(),
   deferInit: Joi.boolean(),
   fieldsToSubmit: Joi.array().items(Joi.string().valid('pan', 'expirydate', 'securitycode')),
   formId: Joi.string(),
   init: {
-    cachetoken: Joi.string(),
-    threedinit: Joi.string()
+    cachetoken: Joi.string().allow(''),
+    threedinit: Joi.string().allow('')
   },
   jwt: Joi.string().required(),
   livestatus: Joi.number().valid(0, 1),
@@ -100,6 +105,7 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
       subtotal: Joi.string()
     },
     placement: Joi.string(),
+    requestTypes: Joi.array().items([Joi.string()]),
     settings: {
       displayName: Joi.string()
     }
