@@ -81,6 +81,7 @@ export class CardinalCommerce {
   }
 
   protected _cardinalSetup() {
+    console.error(this._cardinalCommerceJWT);
     Cardinal.setup(PaymentEvents.INIT, {
       jwt: this._cardinalCommerceJWT
     });
@@ -97,6 +98,7 @@ export class CardinalCommerce {
     });
 
     Cardinal.on(PaymentEvents.VALIDATED, (data: IOnCardinalValidated, jwt: string) => {
+      console.error(data, jwt);
       this._onCardinalValidated(data, jwt);
       GoogleAnalytics.sendGaData('event', 'Cardinal', 'validate', 'Cardinal payment validated');
     });
@@ -104,6 +106,7 @@ export class CardinalCommerce {
   }
 
   protected _onCardinalSetupComplete() {
+    console.error(`_onCardinalSetupComplete`);
     if (this._startOnLoad) {
       const pan = new StJwt(this._jwt).payload.pan as string;
       this._performBinDetection({ validity: true, value: pan });
@@ -116,7 +119,12 @@ export class CardinalCommerce {
       const messageBusEvent: IMessageBusEvent = {
         type: MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL
       };
-      this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BIN_PROCESS, this._performBinDetection);
+      this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BIN_PROCESS, (data: IFormFieldState) => {
+        const { validity, value } = data;
+        this._performBinDetection({ validity, value });
+        console.error(data);
+      });
+      console.error(this._performBinDetection);
       this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
     }
   }
@@ -153,6 +161,7 @@ export class CardinalCommerce {
   }
 
   protected _performBinDetection(bin: IFormFieldState) {
+    console.error(bin);
     return Cardinal.trigger(PaymentEvents.BIN_PROCESS, bin);
   }
 
@@ -180,15 +189,19 @@ export class CardinalCommerce {
 
   private _initSubscriptions() {
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME, () => {
+      console.error('COntrol frame');
       this._onLoadControlFrame();
     });
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDINIT, (data: IThreeDInitResponse) => {
+      console.error(data);
       this._onThreeDInitEvent(data);
     });
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.BY_PASS_INIT, () => {
+      console.error('BYPASSINIT');
       this._onBypassJsInitEvent();
     });
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDQUERY, (data: any) => {
+      console.error(data);
       this._onThreeDQueryEvent(data);
     });
     this._initSubmitEventListener();
@@ -261,6 +274,7 @@ export class CardinalCommerce {
   }
 
   private _threeDQueryRequest(responseObject: IThreeDQueryResponse) {
+    console.error(responseObject);
     if (CardinalCommerce._isCardEnrolledAndNotFrictionless(responseObject)) {
       this._authenticateCard(responseObject);
       GoogleAnalytics.sendGaData('event', 'Cardinal', 'auth', 'Cardinal card authenticated');

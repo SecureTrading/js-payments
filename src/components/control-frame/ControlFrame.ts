@@ -256,6 +256,7 @@ export class ControlFrame extends Frame {
   }
 
   private _callThreeDQueryRequest() {
+    console.error(this._preThreeDRequestTypes, this._card, this._merchantFormData)
     this._payment
       .threeDQueryRequest(this._preThreeDRequestTypes, this._card, this._merchantFormData)
       .then((result: any) => {
