@@ -1,6 +1,6 @@
 export class ArrayUtils {
   public static unique<T>(array: T[]): T[] {
-    return [...new Set(array)];
+    return Array.from(new Set(array).values());
   }
 
   public static equals(a: any[], b: any[]): boolean {
