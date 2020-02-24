@@ -8,7 +8,7 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
     buttonStyle: Joi.string().valid('black', 'white', 'white-outline'),
     buttonText: Joi.string().valid('plain', 'buy', 'book', 'donate', 'check-out', 'subscribe'),
     merchantId: Joi.string(),
-    requestTypes: Joi.array().items([Joi.string()]),
+    requestTypes: Joi.array().items(Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')),
     paymentRequest: {
       countryCode: Joi.string(),
       currencyCode: Joi.string(),
@@ -55,7 +55,7 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
   }).default({}),
   components:  Joi.object().keys({
     defaultPaymentType: Joi.string().allow(''),
-    requestTypes: Joi.array().items(Joi.string().valid('THREEDQUERY', 'AUTH')),
+    requestTypes: Joi.array().items(Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')),
     paymentTypes: Joi.array().items(Joi.string().allow('')),
     startOnLoad: Joi.boolean().allow('').allow('')
   }).default({}),
@@ -105,7 +105,9 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
       subtotal: Joi.string()
     },
     placement: Joi.string(),
-    requestTypes: Joi.array().items([Joi.string()]),
+    requestTypes: Joi.array().items(
+      Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
+    ),
     settings: {
       displayName: Joi.string()
     }
