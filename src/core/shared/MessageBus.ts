@@ -49,8 +49,6 @@ export class MessageBus {
     UPDATE_JWT: 'UPDATE_JWT',
     UPDATE_MERCHANT_FIELDS: 'UPDATE_MERCHANT_FIELDS',
     SUBSCRIBE: 'SUBSCRIBE',
-    FRAME_READY: 'ST_FRAME_READY',
-    GET_ACTIVE_FRAMES: 'ST_GET_ACTIVE_FRAMES',
   };
   private static readonly DOM_EVENT_NAME = 'message';
   private readonly _parentOrigin: string;

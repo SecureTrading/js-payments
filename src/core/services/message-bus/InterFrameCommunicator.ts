@@ -60,6 +60,7 @@ export class InterFrameCommunicator {
           ofType(QueryMessage.MESSAGE_TYPE),
           filter((queryEvent: QueryMessage) => queryEvent.data.type === eventType),
           switchMap((queryEvent: QueryMessage) => responder(queryEvent.data).pipe(
+            take(1),
             map((response: T) => new ResponseMessage(
               response,
               queryEvent.queryId,
