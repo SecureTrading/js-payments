@@ -104,7 +104,7 @@
     "@hapi/joi": "^17.1.0",
     "@securetrading/js-payments-card": "^1.0.10",
     "@securetrading/ts-iin-lookup": "^0.0.4",
-    "@securetrading/ts-luhn-check": "^0.0.4",
+    "@securetrading/ts-luhn-check": "^0.0.5",
     "@types/jwt-decode": "^2.2.1",
     "@types/lodash": "^4.14.149",
     "core-js": "^2.6.11",
