@@ -39,6 +39,7 @@ jobs:
       if: branch NOT IN (master, develop)
       script:
         - ${DOCKER_TAG} tests poetry run behave features --tags=$TEST_TAG
+    - stage: Behavioral test
     - name: 'Chrome latest, Docker - Full list of tests'
       if: env(TESTS_TYPE)=fullTest OR branch IN (env(BRANCH_WITH_FULL_TESTS), develop)
       script:
