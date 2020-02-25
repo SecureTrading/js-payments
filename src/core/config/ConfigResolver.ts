@@ -1,3 +1,4 @@
+import Joi from 'joi';
 import { IConfig } from './model/IConfig';
 import { Service } from 'typedi';
 import { IComponentsIds } from './model/IComponentsIds';
@@ -5,6 +6,8 @@ import { Selectors } from '../shared/Selectors';
 import { IComponentsConfig } from './model/IComponentsConfig';
 import { environment } from '../../environments/environment';
 import { IWalletConfig } from './model/IWalletConfig';
+import { ConfigSchema } from './schema/ConfigSchema';
+
 
 @Service()
 export class ConfigResolver {
@@ -33,7 +36,22 @@ export class ConfigResolver {
     'transactionreference'
   ];
 
+  public init(config: IConfig): IConfig {
+    return {
+      ...this.resolve(config)
+    };
+  }
+
+  public validate(config: IConfig | IComponentsConfig | IComponentsIds, schema: Joi.JoiObject) {
+    Joi.validate(config, schema, (error, value) => {
+      if (error !== null) {
+        throw error;
+      }
+    });
+  }
+
   public resolve(config: IConfig): IConfig {
+    this.validate(config, ConfigSchema);
     return {
       analytics: config.analytics !== undefined ? config.analytics : false,
       animatedCard: config.animatedCard !== undefined ? config.animatedCard : false,
