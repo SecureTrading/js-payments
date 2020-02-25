@@ -6,6 +6,7 @@ import { ofType } from './operators/ofType';
 import { QueryMessage } from './messages/QueryMessage';
 import { ResponseMessage } from './messages/ResponseMessage';
 import { environment } from '../../../environments/environment';
+import { Selectors } from '../../shared/Selectors';
 
 @Service()
 export class InterFrameCommunicator {
@@ -24,14 +25,14 @@ export class InterFrameCommunicator {
     );
   }
 
-  public send(message: IMessageBusEvent, target?: Window | string): void {
+  public send(message: IMessageBusEvent, target: Window | string): void {
     const targetFrame = this.resolveTargetFrame(target);
     const frameOrigin = targetFrame !== window.top ? new URL(environment.FRAME_URL).origin : '*';
 
     targetFrame.postMessage(message, frameOrigin);
   }
 
-  public query<T>(message: IMessageBusEvent, target?: Window | string): Promise<T> {
+  public query<T>(message: IMessageBusEvent, target: Window | string): Promise<T> {
     return new Promise((resolve, reject) => {
       const query = new QueryMessage(message);
 
@@ -75,19 +76,19 @@ export class InterFrameCommunicator {
     this.destroy$.complete();
   }
 
-  private resolveTargetFrame(target?: Window | string): Window {
+  private resolveTargetFrame(target: Window | string): Window {
     if (target instanceof Window) {
       return target;
     }
 
-    if (typeof(target) === 'string' && target !== '') {
-      if (!window.top.frames[target]) {
-        throw new Error(`Target frame ${target} not found.`);
-      }
-
-      return window.top.frames[target];
+    if (target === Selectors.MERCHANT_PARENT_FRAME) {
+      return window.top;
     }
 
-    return window.top;
+    if (target === '' || !window.top.frames[target]) {
+      throw new Error(`Target frame "${target}" not found.`);
+    }
+
+    return window.top.frames[target];
   }
 }
