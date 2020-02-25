@@ -56,7 +56,8 @@ module.exports = {
 
   // A set of global variables that need to be available in all test environments
   globals: {
-    HOST: 'localhost'
+    HOST: 'localhost',
+    WEBSERVICES_URL: 'https://localhost:8443'
   },
 
   // An array of directory names to be searched recursively up from the requiring module's location
@@ -143,7 +144,7 @@ module.exports = {
   testPathIgnorePatterns: ['node_modules', 'js-payments-testing'],
 
   // The regexp pattern or array of patterns that Jest uses to detect test files
-  testRegex: ['/test', '/src/.*\.spec\.ts$'],
+  testRegex: ['/test', '/src/.*.spec.ts$'],
 
   // This option allows the use of a custom results processor
   // testResultsProcessor: null,
