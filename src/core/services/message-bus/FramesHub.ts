@@ -72,7 +72,7 @@ export class FramesHub {
       return;
     }
 
-    this.communicator.send({type: FramesHub.FRAME_READY_EVENT, data: window.name});
+    this.communicator.send({type: FramesHub.FRAME_READY_EVENT, data: window.name}, Selectors.MERCHANT_PARENT_FRAME);
   }
 
   private getInitialFrames(): Observable<string> {
