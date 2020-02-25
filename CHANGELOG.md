@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.6
+
+### Fixed
+
+- Notification frame styling issues.
+
 ## 2.0.5
 
 ### Fixed
