@@ -14,6 +14,7 @@ import {
 } from 'rxjs/operators';
 import { IMessageBusEvent } from '../../models/IMessageBusEvent';
 import { ArrayUtils } from '../../shared/utils/ArrayUtils';
+import { Selectors } from '../../shared/Selectors';
 
 @Service()
 export class FramesHub {
@@ -63,7 +64,7 @@ export class FramesHub {
       return;
     }
 
-    this.communicator.send({type: FramesHub.FRAME_READY_EVENT, data: window.name});
+    this.communicator.send({type: FramesHub.FRAME_READY_EVENT, data: window.name}, Selectors.MERCHANT_PARENT_FRAME);
   }
 
   private getInitialFrames(): Observable<string> {
@@ -71,7 +72,7 @@ export class FramesHub {
       return from([]);
     }
 
-    return from(this.communicator.query({type: FramesHub.GET_FRAMES_EVENT})).pipe(
+    return from(this.communicator.query({type: FramesHub.GET_FRAMES_EVENT}, Selectors.MERCHANT_PARENT_FRAME)).pipe(
       switchMap((frames: string[]) => from(frames)),
     );
   }
