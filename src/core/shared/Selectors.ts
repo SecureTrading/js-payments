@@ -34,6 +34,7 @@ export class Selectors {
   public static readonly CONTROL_FRAME_IFRAME: string = 'st-control-frame-iframe';
 
   public static MERCHANT_FORM_SELECTOR: string = 'st-form';
+  public static MERCHANT_PARENT_FRAME: string = 'st-merchant-parent-frame';
 
   public static CARD_NUMBER_COMPONENT: string = `${environment.FRAME_URL}/card-number.html`;
   public static EXPIRATION_DATE_COMPONENT: string = `${environment.FRAME_URL}/expiration-date.html`;
