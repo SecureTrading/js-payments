@@ -27,11 +27,7 @@ export class RegisterFrames {
     fieldsToSubmit?: string[]
   ) {
     this.messageBus = new MessageBus();
-    if (fieldsToSubmit === null) {
-      this.fieldsToSubmit = RegisterFrames.COMPLETE_FORM_FIELDS;
-    } else {
-      this.fieldsToSubmit = fieldsToSubmit;
-    }
+    this.fieldsToSubmit = fieldsToSubmit || RegisterFrames.COMPLETE_FORM_FIELDS;
     this.componentIds = componentIds;
     this.hasAnimatedCard = animatedCard;
     this.elementsToRegister = [];

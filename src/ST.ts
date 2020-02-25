@@ -44,16 +44,28 @@ class ST {
   private _storage: BrowserLocalStorage;
   private _translation: Translator;
 
-  set submitCallback(callback: any) {
-    this.on('submit', callback);
+  set submitCallback(callback: (...args: any[]) => void) {
+    if (callback) {
+      this.on('submit', callback);
+    } else {
+      this.off('submit');
+    }
   }
 
-  set successEvent(callback: any) {
-    this.on('success', callback);
+  set successCallback(callback: (...args: any[]) => void) {
+    if (callback) {
+      this.on('success', callback);
+    } else {
+      this.off('success');
+    }
   }
 
-  set errorEvent(callback: any) {
-    this.on('error', callback);
+  set errorCallback(callback: (...args: any[]) => void) {
+    if (callback) {
+      this.on('error', callback);
+    } else {
+      this.off('error');
+    }
   }
 
   constructor(@Inject(CONFIG) private _config: IConfig, private configProvider: ConfigService) {
@@ -77,7 +89,7 @@ class ST {
   }
 
   public off(event: string) {
-    console.error('test');
+    console.log(`Event: ${event} is off`);
   }
 
   public Components(config: IComponentsConfig): void {
