@@ -77,7 +77,7 @@ export abstract class AbstractStorage implements IStorage, Subscribable<any> {
     };
 
     if (window.name) {
-      return this.communicator.send(event);
+      return this.communicator.send(event, Selectors.MERCHANT_PARENT_FRAME);
     }
 
     this.framesHub
