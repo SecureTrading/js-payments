@@ -89,7 +89,7 @@ class ST {
   }
 
   public off(event: string) {
-    console.log(`Event: ${event} is off`);
+    return `Event: ${event} is off`;
   }
 
   public Components(config: IComponentsConfig): void {

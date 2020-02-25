@@ -286,18 +286,9 @@ function commonFramesFixture() {
   };
   const animatedCard = true;
   const gatewayUrl: string = 'https://webservices.securetrading.net/jwt/';
-  const instance = new CommonFrames(
-    jwt,
-    origin,
-    componentsIds,
-    {},
-    false,
-    false,
-    [],
-    gatewayUrl,
-    animatedCard,
-    ['AUTH']
-  );
+  const instance = new CommonFrames(jwt, origin, componentsIds, {}, false, false, [], gatewayUrl, animatedCard, [
+    'AUTH'
+  ]);
 
   return { instance };
 }
