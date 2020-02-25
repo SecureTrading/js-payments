@@ -5,6 +5,7 @@ import { MessageBus } from './MessageBus';
 import { Styler } from './Styler';
 import { Container } from 'typedi';
 import { FramesHub } from '../services/message-bus/FramesHub';
+import './OverrideDomain';
 
 export class Frame {
   protected messageBus: MessageBus;

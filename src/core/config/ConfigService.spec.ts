@@ -12,18 +12,14 @@ describe('ConfigService', () => {
   let validatorMock: ConfigValidator;
   let configService: ConfigService;
 
-  const config: IConfig = {foo: 'bar'} as unknown as IConfig;
-  const fullConfig: IConfig = {bar: 'baz'} as unknown as IConfig;
+  const config: IConfig = ({ foo: 'bar' } as unknown) as IConfig;
+  const fullConfig: IConfig = ({ bar: 'baz' } as unknown) as IConfig;
 
   beforeEach(() => {
     storageMock = mock(BrowserLocalStorage);
     resolverMock = mock(ConfigResolver);
     validatorMock = mock(ConfigValidator);
-    configService = new ConfigService(
-      instance(storageMock),
-      instance(resolverMock),
-      instance(validatorMock),
-    );
+    configService = new ConfigService(instance(storageMock), instance(resolverMock), instance(validatorMock));
 
     when(resolverMock.resolve(config)).thenReturn(fullConfig);
   });
