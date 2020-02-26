@@ -18,6 +18,7 @@ import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { Notification } from '../../core/shared/Notification';
 import { Payment } from '../../core/shared/Payment';
+import { Selectors } from '../../core/shared/Selectors';
 import { Validation } from '../../core/shared/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 
@@ -232,10 +233,17 @@ export class ControlFrame extends Frame {
     this._payment
       .processPayment(this._postThreeDRequestTypes, this._card, this._merchantFormData, data)
       .then(() => {
+        this.messageBus.publish(
+          {
+            type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK
+          },
+          true
+        );
         this._notification.success(Language.translations.PAYMENT_SUCCESS);
         this._validation.blockForm(FormState.COMPLETE);
       })
       .catch((error: any) => {
+        this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
         this._notification.error(Language.translations.PAYMENT_ERROR);
         this._validation.blockForm(FormState.AVAILABLE);
       })
@@ -278,6 +286,7 @@ export class ControlFrame extends Frame {
       this._isPaymentReady
     );
     if (!validity) {
+      this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
       this._validateFormFields();
       return;
     }

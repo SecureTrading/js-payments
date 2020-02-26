@@ -13,8 +13,7 @@ module.exports = {
     'control-frame': ['./polyfills', './src/components/control-frame/control-frame.ts'],
     st: ['./polyfills', './src/ST.ts'],
     example: './example/index.ts',
-    receipt: './example/receipt.ts',
-    init: './example/init.ts'
+    receipt: './example/receipt.ts'
   },
   output: {
     filename: '[name].js',
@@ -144,7 +143,7 @@ module.exports = {
           path.join(__dirname, 'node_modules/@hapi'),
           path.join(__dirname, 'node_modules/isemail'),
           path.join(__dirname, 'node_modules/joi'),
-          path.join(__dirname, 'node_modules/topo'),
+          path.join(__dirname, 'node_modules/topo')
         ]
       },
       {
