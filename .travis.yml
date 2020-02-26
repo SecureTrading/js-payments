@@ -35,8 +35,8 @@ jobs:
         - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
         - docker push "securetrading1/js-payments:$DOCKER_BRANCH"
     - stage: Behavioral test
-      name: 'Chrome latest, Docker'
       if: branch NOT IN (master, develop)
+      name: 'Chrome latest, Docker'
       script:
         - ${DOCKER_TAG} tests poetry run behave features --tags=$TEST_TAG
     - stage: Behavioral test
