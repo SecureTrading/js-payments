@@ -90,9 +90,9 @@ class ST {
       callback();
     });
   }
-
-  // @ts-ignore
-  public off(event: string) {}
+  public off(event: string) {
+    // @ts-ignore
+  }
 
   public Components(config: IComponentsConfig): void {
     config = config !== undefined ? config : ({} as IComponentsConfig);
