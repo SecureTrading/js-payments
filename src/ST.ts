@@ -29,6 +29,9 @@ import { Selectors } from './core/shared/Selectors';
 import { Service, Inject, Container } from 'typedi';
 import { CONFIG } from './core/dependency-injection/InjectionTokens';
 import { ConfigService } from './core/config/ConfigService';
+import { ISubmitEvent } from './core/models/ISubmitEvent';
+import { ISuccessEvent } from './core/models/ISuccessEvent';
+import { IErrorEvent } from './core/models/IErrorEvent';
 
 @Service()
 class ST {
@@ -44,7 +47,7 @@ class ST {
   private _storage: BrowserLocalStorage;
   private _translation: Translator;
 
-  set submitCallback(callback: (...args: any[]) => void) {
+  set submitCallback(callback: (event: ISubmitEvent) => void) {
     if (callback) {
       this.on('submit', callback);
     } else {
@@ -52,7 +55,7 @@ class ST {
     }
   }
 
-  set successCallback(callback: (...args: any[]) => void) {
+  set successCallback(callback: (event: ISuccessEvent) => void) {
     if (callback) {
       this.on('success', callback);
     } else {
@@ -60,7 +63,7 @@ class ST {
     }
   }
 
-  set errorCallback(callback: (...args: any[]) => void) {
+  set errorCallback(callback: (event: IErrorEvent) => void) {
     if (callback) {
       this.on('error', callback);
     } else {
@@ -88,9 +91,8 @@ class ST {
     });
   }
 
-  public off(event: string) {
-    return `Event: ${event} is off`;
-  }
+  // @ts-ignore
+  public off(event: string) {}
 
   public Components(config: IComponentsConfig): void {
     config = config !== undefined ? config : ({} as IComponentsConfig);
