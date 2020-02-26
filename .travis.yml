@@ -42,7 +42,7 @@ jobs:
     - stages:
       name: Behavioral test
       if: env(TESTS_TYPE)=fullTest OR branch IN (master, develop)
-        name: 'Chrome latest, Docker - Full list of tests'
+      - name: 'Chrome latest, Docker - Full list of tests'
         script:
           - ${DOCKER_TAG} tests poetry run behave features --tags=full_test
       - name: "Behavioural test: ie 11, Windows 10"
