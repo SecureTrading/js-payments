@@ -264,10 +264,11 @@ export class ControlFrame extends Frame {
   }
 
   private _callThreeDQueryRequest() {
-    console.error(this._preThreeDRequestTypes, this._card, this._merchantFormData)
+    console.error(this._preThreeDRequestTypes, this._card);
     this._payment
       .threeDQueryRequest(this._preThreeDRequestTypes, this._card, this._merchantFormData)
       .then((result: any) => {
+        console.error(result);
         this._threeDQueryResult = result;
         this._threeDQueryEvent.data = result.response;
         this.messageBus.publish(this._threeDQueryEvent, true);

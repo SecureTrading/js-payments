@@ -68,9 +68,10 @@ export class Payment {
         requesttypedescriptions: requestTypes,
         termurl: 'https://termurl.com' // TODO this shouldn't be needed but currently the backend needs this
       },
-      merchantData,
+      // merchantData,
       card
     );
+    console.error(this._threeDQueryRequestBody);
     return this._stTransport.sendRequest(this._threeDQueryRequestBody);
   }
 
