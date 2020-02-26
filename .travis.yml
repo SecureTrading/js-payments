@@ -41,7 +41,6 @@ jobs:
         - ${DOCKER_TAG} tests poetry run behave features --tags=$TEST_TAG
     - stage: "Behavioral test2"
       if: env(TESTS_TYPE)=fullTest OR branch IN (master, develop)
-      include:
       - name: 'Chrome latest, Docker - Full list of tests'
         script:
           - ${DOCKER_TAG} tests poetry run behave features --tags=full_test
