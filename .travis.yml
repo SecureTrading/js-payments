@@ -36,9 +36,9 @@ jobs:
         - docker push "securetrading1/js-payments:$DOCKER_BRANCH"
     - stage: Behavioral test
       if: branch NOT IN (master, develop)
-        name: 'Chrome latest, Docker'
-        script:
-          - ${DOCKER_TAG} tests poetry run behave features --tags=$TEST_TAG
+      name: 'Chrome latest, Docker'
+      script:
+        - ${DOCKER_TAG} tests poetry run behave features --tags=$TEST_TAG
 #    - stage: Behavioral test2
 #      if: env(TESTS_TYPE)=fullTest OR branch IN (master, develop)
 #        name: 'Chrome latest, Docker - Full list of tests'
