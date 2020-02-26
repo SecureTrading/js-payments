@@ -37,6 +37,7 @@ export class CardinalCommerce {
   private _notification: Notification;
   private _sdkAddress: string = environment.CARDINAL_COMMERCE.SONGBIRD_TEST_URL;
   private _bypassCards: string[];
+  private _jwtUpdated: boolean;
 
   constructor(
     startOnLoad: boolean,
@@ -47,6 +48,7 @@ export class CardinalCommerce {
     threedinit?: string,
     bypassCards?: string[]
   ) {
+    this._jwtUpdated = false;
     this._startOnLoad = startOnLoad;
     this._jwt = jwt;
     this._threedinit = threedinit;
@@ -60,6 +62,7 @@ export class CardinalCommerce {
     this._onInit();
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
       const { newJwt } = data;
+      this._jwtUpdated = true;
       this._jwt = newJwt;
       this._onInit();
     });
@@ -86,6 +89,11 @@ export class CardinalCommerce {
     });
   }
 
+  protected _cardinalTrigger() {
+    console.error('trigger', this._cardinalCommerceJWT);
+    return Cardinal.trigger(PaymentEvents.JWT_UPDATE, this._cardinalCommerceJWT);
+  }
+
   protected _onCardinalLoad() {
     Cardinal.configure(environment.CARDINAL_COMMERCE.CONFIG);
     Cardinal.off(PaymentEvents.SETUP_COMPLETE);
@@ -100,7 +108,11 @@ export class CardinalCommerce {
       this._onCardinalValidated(data, jwt);
       GoogleAnalytics.sendGaData('event', 'Cardinal', 'validate', 'Cardinal payment validated');
     });
-    this._cardinalSetup();
+    if (this._jwtUpdated) {
+      this._cardinalTrigger();
+    } else {
+      this._cardinalSetup();
+    }
   }
 
   protected _onCardinalSetupComplete() {
@@ -157,7 +169,6 @@ export class CardinalCommerce {
   }
 
   protected _performBinDetection(bin: string) {
-    console.error(bin);
     return Cardinal.trigger(PaymentEvents.BIN_PROCESS, bin);
   }
 
@@ -185,7 +196,6 @@ export class CardinalCommerce {
 
   private _initSubscriptions() {
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME, () => {
-      console.error(`LOAD_CONTROL_FRAME`);
       this._onLoadControlFrame();
     });
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDINIT, (data: IThreeDInitResponse) => {
@@ -240,6 +250,7 @@ export class CardinalCommerce {
     }
     this._cardinalCommerceJWT = threedinit;
     this._cardinalCommerceCacheToken = cachetoken;
+    console.error('_onThreeDInitEvent', this._cardinalCommerceJWT);
     this._threeDSetup();
   }
 
