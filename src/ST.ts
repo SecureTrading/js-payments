@@ -29,6 +29,9 @@ import { Selectors } from './core/shared/Selectors';
 import { Service, Inject, Container } from 'typedi';
 import { CONFIG } from './core/dependency-injection/InjectionTokens';
 import { ConfigService } from './core/config/ConfigService';
+import { ISubmitEvent } from './core/models/ISubmitEvent';
+import { ISuccessEvent } from './core/models/ISuccessEvent';
+import { IErrorEvent } from './core/models/IErrorEvent';
 import { InterFrameCommunicator } from './core/services/message-bus/InterFrameCommunicator';
 import { FramesHub } from './core/services/message-bus/FramesHub';
 
@@ -46,6 +49,30 @@ class ST {
   private _storage: BrowserLocalStorage;
   private _translation: Translator;
 
+  set submitCallback(callback: (event: ISubmitEvent) => void) {
+    if (callback) {
+      this.on('submit', callback);
+    } else {
+      this.off('submit');
+    }
+  }
+
+  set successCallback(callback: (event: ISuccessEvent) => void) {
+    if (callback) {
+      this.on('success', callback);
+    } else {
+      this.off('success');
+    }
+  }
+
+  set errorCallback(callback: (event: IErrorEvent) => void) {
+    if (callback) {
+      this.on('error', callback);
+    } else {
+      this.off('error');
+    }
+  }
+
   constructor(
     @Inject(CONFIG) private _config: IConfig,
     private configProvider: ConfigService,
@@ -57,6 +84,21 @@ class ST {
     this._messageBus = new MessageBus();
     this._storage = new BrowserLocalStorage();
     this.init();
+  }
+
+  public on(event: string, callback: any) {
+    const events = {
+      success: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK,
+      error: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK,
+      submit: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUBMIT_CALLBACK
+    };
+    // @ts-ignore
+    this._messageBus.subscribe(events[event], () => {
+      callback();
+    });
+  }
+  public off(event: string) {
+    // @ts-ignore
   }
 
   public Components(config: IComponentsConfig): void {
@@ -167,7 +209,6 @@ class ST {
       config.submitFields,
       config.datacenterurl,
       config.animatedCard,
-      config.submitCallback,
       config.components.requestTypes
     );
   }

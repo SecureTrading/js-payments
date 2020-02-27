@@ -24,14 +24,11 @@ export class RegisterFrames {
     componentIds: {},
     styles: IStyles,
     animatedCard: boolean,
-    fieldsToSubmit: string[],
-    submitCallback?: any
+    fieldsToSubmit?: string[]
   ) {
     this.messageBus = new MessageBus();
-    this.fieldsToSubmit =
-      fieldsToSubmit !== null && fieldsToSubmit.length ? fieldsToSubmit : RegisterFrames.COMPLETE_FORM_FIELDS;
+    this.fieldsToSubmit = fieldsToSubmit || RegisterFrames.COMPLETE_FORM_FIELDS;
     this.componentIds = componentIds;
-    this.submitCallback = submitCallback;
     this.hasAnimatedCard = animatedCard;
     this.elementsToRegister = [];
     this.jwt = jwt;
