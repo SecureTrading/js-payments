@@ -10,6 +10,7 @@ import { Selectors } from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
 import { Validation } from '../shared/Validation';
+import { Container } from 'typedi';
 
 class StCodec {
   public static CONTENT_TYPE = 'application/json';
@@ -105,7 +106,7 @@ class StCodec {
 
   private static _notification = new Notification();
   private static _locale: string;
-  private static _messageBus = new MessageBus();
+  private static _messageBus = Container.get(MessageBus);
   private static _parentOrigin: string;
   private static REQUESTS_WITH_ERROR_MESSAGES = [
     'AUTH',
@@ -192,9 +193,6 @@ class StCodec {
     StCodec.originalJwt = jwt;
     StCodec._locale = new StJwt(StCodec.jwt).locale;
     StCodec._parentOrigin = parentOrigin;
-    if (parentOrigin) {
-      StCodec._messageBus = new MessageBus(parentOrigin);
-    }
   }
 
   public buildRequestObject(requestData: object): object {

@@ -1,11 +1,18 @@
-import { environment } from '../../environments/environment';
 import { IMessageBusEvent } from '../models/IMessageBusEvent';
-import { Utils } from './Utils';
-import { BrowserSessionStorage } from '../services/storage/BrowserSessionStorage';
-import { Container } from 'typedi';
+import { Service } from 'typedi';
+import { Observable, Subscribable } from 'rxjs';
+import { InterFrameCommunicator } from '../services/message-bus/InterFrameCommunicator';
+import { FramesHub } from '../services/message-bus/FramesHub';
+import { first, map } from 'rxjs/operators';
+import { Selectors } from './Selectors';
+import { PartialObserver, Unsubscribable } from 'rxjs/src/internal/types';
+import { ofType } from '../services/message-bus/operators/ofType';
+import { FrameCollection } from '../services/message-bus/interfaces/FrameCollection';
 
-export class MessageBus {
-  public static SUBSCRIBERS: string = 'ST_SUBSCRIBERS';
+type ControlFrameWindow = Window & {messageBus: MessageBus};
+
+@Service()
+export class MessageBus implements Subscribable<IMessageBusEvent> {
   public static EVENTS = {
     BLOCK_FORM: 'BLOCK_FORM',
     BLUR_CARD_NUMBER: 'BLUR_CARD_NUMBER',
@@ -26,9 +33,6 @@ export class MessageBus {
     VALIDATE_FORM: 'VALIDATE_FORM',
     VALIDATE_MERCHANT_FIELD: 'VALIDATE_MERCHANT_FIELD',
     VALIDATE_SECURITY_CODE_FIELD: 'VALIDATE_SECURITY_CODE_FIELD',
-    STORAGE_SET_ITEM: 'SET_STORAGE_ITEM',
-    STORAGE_SYNCHRONIZE: 'SYNCHRONIZE_STORAGE',
-    STORAGE_COMPONENT_READY: 'COMPONENT_STORAGE_READY'
   };
   public static EVENTS_PUBLIC = {
     BIN_PROCESS: 'BIN_PROCESS',
@@ -45,124 +49,94 @@ export class MessageBus {
     RESET_JWT: 'RESET_JWT',
     SET_REQUEST_TYPES: 'SET_REQUEST_TYPES',
     SUBMIT_FORM: 'SUBMIT_FORM',
-    THREEDINIT: 'THREEDINIT',
+    THREEDINIT_REQUEST: 'THREEDINIT_REQUEST',
+    THREEDINIT_RESPONSE: 'THREEDINIT_RESPONSE',
     THREEDQUERY: 'THREEDQUERY',
     TRANSACTION_COMPLETE: 'TRANSACTION_COMPLETE',
     UPDATE_JWT: 'UPDATE_JWT',
     UPDATE_MERCHANT_FIELDS: 'UPDATE_MERCHANT_FIELDS',
     SUBSCRIBE: 'SUBSCRIBE',
   };
-  private static readonly DOM_EVENT_NAME = 'message';
-  private readonly _parentOrigin: string;
-  private readonly _frameOrigin: string;
-  private _subscriptions: any = {};
-  private _sessionStorage: BrowserSessionStorage = Container.get(BrowserSessionStorage);
+  private isControlFrame = window.name === Selectors.CONTROL_FRAME_IFRAME;
 
-  constructor(parentOrigin?: string) {
-    this._parentOrigin = parentOrigin ? parentOrigin : '*';
-    this._frameOrigin = new URL(environment.FRAME_URL).origin;
-    this._registerMessageListener();
+  constructor(private communicator: InterFrameCommunicator, private framesHub: FramesHub) {
+    if (this.isControlFrame) {
+      (window as any).messageBus = this;
+    }
   }
 
-  public publish(event: IMessageBusEvent, publishToParent?: boolean) {
-    let subscribersStore;
+  public publish<T>(event: IMessageBusEvent<T>, publishToParent?: boolean): void {
+    this.framesHub
+      .waitForFrame(Selectors.CONTROL_FRAME_IFRAME)
+      .subscribe(controlFrame => this.communicator.send(event, controlFrame));
 
     if (publishToParent) {
-      window.parent.postMessage(event, this._parentOrigin);
-    } else {
-      subscribersStore = this._sessionStorage.getItem(MessageBus.SUBSCRIBERS);
-      subscribersStore = JSON.parse(subscribersStore);
-
-      if (subscribersStore[event.type]) {
-        subscribersStore[event.type].forEach((frame: string) => {
-          // @ts-ignore
-          window.parent.frames[frame].postMessage(event, this._frameOrigin);
-        });
-      }
+      this.publishToParent(event);
     }
   }
 
-  public publishFromParent(event: IMessageBusEvent, frameName: string) {
-    // @ts-ignore
-    if (window.frames[frameName]) {
-      // @ts-ignore
-      (window.frames[frameName] as Window).postMessage(event, this._frameOrigin);
+  public subscribe<T>(observer?: PartialObserver<IMessageBusEvent<T>>): Unsubscribable;
+
+  public subscribe<T>(
+    next?: (value: IMessageBusEvent<T>) => void,
+    error?: (error: any) => void,
+    complete?: () => void
+  ): Unsubscribable;
+
+  /** @deprecated use RxJS implementation instead */
+  public subscribe<T>(eventType: string, callback: (data: T) => void): Unsubscribable;
+
+  public subscribe<T>(...args: any[]): Unsubscribable {
+    if (!this.isControlFrame) {
+      return this.getControlFrameMessageBus().subscribe(messageBus => {
+        messageBus.subscribe.apply(messageBus, args);
+      });
     }
+
+    if (typeof(args[0]) === 'string' && typeof(args[1]) === 'function') {
+      const [eventType, callback] = args;
+
+      return this.communicator.incomingEvent$.pipe(
+        ofType(eventType),
+        map((event: IMessageBusEvent<T>) => event.data),
+      ).subscribe(callback);
+    }
+
+    return this.communicator.incomingEvent$.subscribe.apply(this.communicator.incomingEvent$, args);
   }
 
-  public publishToSelf(event: IMessageBusEvent) {
-    // @ts-ignore
-    window.postMessage(event, window.location.origin);
+  /** @deprecated use publish() instead */
+  public publishFromParent<T>(event: IMessageBusEvent<T>, frameName: string): void {
+    this.publish(event);
   }
 
-  public subscribe(eventType: string, callback: any, subscriber?: string) {
-    subscriber = subscriber || window.name;
-
-    let subscribers;
-    let subscribersStore = this._sessionStorage.getItem(MessageBus.SUBSCRIBERS);
-
-    subscribersStore = JSON.parse(subscribersStore);
-    subscribers = subscribersStore || {};
-    // @ts-ignore
-    subscribers[eventType] = subscribers[eventType] || [];
-
-    // @ts-ignore
-    if (!subscribers[eventType].includes(subscriber)) {
-      // @ts-ignore
-      subscribers[eventType].push(subscriber);
-    }
-    subscribersStore = JSON.stringify(subscribers);
-    this._sessionStorage.setItem(MessageBus.SUBSCRIBERS, subscribersStore);
-    this._subscriptions[eventType] = callback;
-
-    const cardFieldsBlockingEvents = [
-      MessageBus.EVENTS_PUBLIC.BLOCK_CARD_NUMBER,
-      MessageBus.EVENTS_PUBLIC.BLOCK_EXPIRATION_DATE,
-      MessageBus.EVENTS_PUBLIC.BLOCK_SECURITY_CODE
-    ];
-
-    if (window.name && cardFieldsBlockingEvents.includes(eventType)) {
-      this.publish(
-        {
-          type: MessageBus.EVENTS_PUBLIC.SUBSCRIBE,
-          data: {
-            eventType,
-            target: subscriber
-          }
-        },
-        true
-      );
-    }
+  /** @deprecated use publish() instead */
+  public publishToSelf<T>(event: IMessageBusEvent<T>): void {
+    this.publish(event);
   }
 
-  public subscribeOnParent(eventType: string, callback: any) {
-    this._subscriptions[eventType] = callback;
+  /** @deprecated use subscribe() instead */
+  public subscribeOnParent<T>(eventType: string, callback: (data: T) => void): Unsubscribable {
+    return this.subscribe(eventType, callback);
   }
 
-  private _handleMessageEvent = (event: MessageEvent) => {
-    const messageBusEvent: IMessageBusEvent = event.data;
-    const isPublicEvent = Utils.inArray(Object.keys(MessageBus.EVENTS_PUBLIC), messageBusEvent.type);
-    const isCallbackAllowed =
-      event.origin === this._frameOrigin || (event.origin === this._parentOrigin && isPublicEvent);
-
-    if (messageBusEvent.type === MessageBus.EVENTS.DESTROY) {
-      window.removeEventListener(MessageBus.DOM_EVENT_NAME, this._handleMessageEvent);
-
-      return;
+  private publishToParent<T>(event: IMessageBusEvent<T>): void {
+    if (!Object.values(MessageBus.EVENTS_PUBLIC).includes(event.type)) {
+      throw new Error(`Cannot publish private event "${event.type}" to parent frame.`);
     }
 
-    if (messageBusEvent.type === MessageBus.EVENTS_PUBLIC.SUBSCRIBE) {
-      const { eventType, target } = messageBusEvent.data;
-      // @ts-ignore
-      this.subscribe(eventType, () => void 0, target);
-    }
+    this.communicator.send(event, Selectors.MERCHANT_PARENT_FRAME);
+  }
 
-    if (isCallbackAllowed && this._subscriptions[messageBusEvent.type]) {
-      this._subscriptions[messageBusEvent.type](messageBusEvent.data);
-    }
-  };
+  private getControlFrameMessageBus(): Observable<MessageBus> {
+    return this.framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).pipe(
+      map(frameName => {
+        const frames: FrameCollection = window.top.frames as FrameCollection;
+        const controlFrame: ControlFrameWindow = frames[frameName] as ControlFrameWindow;
 
-  private _registerMessageListener() {
-    window.addEventListener(MessageBus.DOM_EVENT_NAME, this._handleMessageEvent);
+        return controlFrame.messageBus;
+      }),
+      first(),
+    );
   }
 }

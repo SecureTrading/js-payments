@@ -150,7 +150,7 @@ export class ControlFrame extends Frame {
   }
 
   private _threeDInitEvent(): void {
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT_REQUEST, () => {
       this._threeDInit();
       this._changeSecurityCodeLength();
     });
@@ -322,7 +322,7 @@ export class ControlFrame extends Frame {
       this.messageBus.publish(
         {
           data: result.response,
-          type: MessageBus.EVENTS_PUBLIC.THREEDINIT
+          type: MessageBus.EVENTS_PUBLIC.THREEDINIT_RESPONSE
         },
         true
       );

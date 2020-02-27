@@ -43,7 +43,6 @@ class ST {
   private _commonFrames: CommonFrames;
   private _googleAnalytics: GoogleAnalytics;
   private _merchantFields: MerchantFields;
-  private _messageBus: MessageBus;
   private _translation: Translator;
 
   constructor(
@@ -53,10 +52,10 @@ class ST {
     private _framesHub: FramesHub,
     private _storage: BrowserLocalStorage,
     private _sessionStorage: BrowserSessionStorage,
+    private _messageBus: MessageBus,
   ) {
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
-    this._messageBus = new MessageBus();
     this.init();
   }
 

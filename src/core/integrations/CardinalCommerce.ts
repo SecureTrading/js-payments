@@ -17,6 +17,7 @@ import { Selectors } from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
 import { GoogleAnalytics } from './GoogleAnalytics';
+import { Container } from 'typedi';
 
 declare const Cardinal: any;
 
@@ -54,7 +55,7 @@ export class CardinalCommerce {
     this._cachetoken = cachetoken ? cachetoken : '';
     this._requestTypes = requestTypes;
     this._bypassCards = bypassCards;
-    this.messageBus = new MessageBus();
+    this.messageBus = Container.get(MessageBus);
     this._notification = new Notification();
     this._setLiveStatus();
     this._onInit();
@@ -182,7 +183,7 @@ export class CardinalCommerce {
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME, () => {
       this._onLoadControlFrame();
     });
-    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDINIT, (data: IThreeDInitResponse) => {
+    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDINIT_RESPONSE, (data: IThreeDInitResponse) => {
       this._onThreeDInitEvent(data);
     });
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.BY_PASS_INIT, () => {
@@ -255,7 +256,7 @@ export class CardinalCommerce {
 
   private _threeDInitRequest() {
     const messageBusEvent: IMessageBusEvent = {
-      type: MessageBus.EVENTS_PUBLIC.THREEDINIT
+      type: MessageBus.EVENTS_PUBLIC.THREEDINIT_REQUEST
     };
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }

@@ -52,7 +52,7 @@ export class CommonFrames extends RegisterFrames {
   ) {
     super(jwt, origin, componentIds, styles, animatedCard, submitCallback);
     this._gatewayUrl = gatewayUrl;
-    this._messageBus = new MessageBus(origin);
+    this._messageBus = Container.get(MessageBus);
     this._merchantForm = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR) as HTMLFormElement;
     this._validation = new Validation();
     this._submitCallback = submitCallback;
