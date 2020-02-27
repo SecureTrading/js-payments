@@ -4,8 +4,13 @@
   "bypassCards": ["PIBA"],
   "deferInit": false,
   "fieldsToSubmit": ["pan", "expirydate", "securitycode"],
+  "placeholders": {
+    "pan": "Card number",
+    "securitycode": "CVC",
+    "expirydate": "MM/YY"
+  },
   "buttonId": "merchant-submit-button",
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4MjEzNDE1My4xNjIyODM0LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.gMrmW77Z4TFibCa1Xkori2sKNwvWj1lOzwzLdiZbI4o",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4Mjc5MDU5OS40NjY5MzgsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdF9qYW1lczM4NjQxIiwibG9jYWxlIjoiZW5fR0IifX0.u-qGHuNqqauwzaEqV6D9f7ig_8x35PFB4-DT2xr0edM",
   "styles": {
     "defaultStyles": {
       "background-color-input": "AliceBlue"

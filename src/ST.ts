@@ -52,7 +52,7 @@ class ST {
     private _communicator: InterFrameCommunicator,
     private _framesHub: FramesHub,
     private _storage: BrowserLocalStorage,
-    private _sessionStorage: BrowserSessionStorage,
+    private _sessionStorage: BrowserSessionStorage
   ) {
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();

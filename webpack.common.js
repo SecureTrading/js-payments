@@ -144,7 +144,7 @@ module.exports = {
           path.join(__dirname, 'node_modules/@hapi'),
           path.join(__dirname, 'node_modules/isemail'),
           path.join(__dirname, 'node_modules/joi'),
-          path.join(__dirname, 'node_modules/topo'),
+          path.join(__dirname, 'node_modules/topo')
         ]
       },
       {

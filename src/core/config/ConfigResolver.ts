@@ -8,7 +8,6 @@ import { environment } from '../../environments/environment';
 import { IWalletConfig } from './model/IWalletConfig';
 import { ConfigSchema } from './schema/ConfigSchema';
 
-
 @Service()
 export class ConfigResolver {
   private readonly DEFAULT_COMPONENTS_IDS: IComponentsIds = {
@@ -67,6 +66,7 @@ export class ConfigResolver {
       jwt: config.jwt !== undefined ? config.jwt : '',
       livestatus: config.livestatus !== undefined ? config.livestatus : 0,
       origin: config.origin !== undefined ? config.origin : window.location.origin,
+      placeholders: config.placeholders !== undefined ? config.placeholders : null,
       styles: config.styles ? config.styles : {},
       submitCallback: config.submitCallback !== undefined ? config.submitCallback : null,
       submitFields: config.submitFields !== undefined ? config.submitFields : [],
