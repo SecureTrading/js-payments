@@ -132,6 +132,7 @@ class StCodec {
     StCodec.publishResponse(StCodec._createCommunicationError());
     StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
     validation.blockForm(FormState.AVAILABLE);
+    StCodec._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
     return new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
   }
 
@@ -169,6 +170,7 @@ class StCodec {
         validation.blockForm(FormState.AVAILABLE);
         StCodec.publishResponse(responseContent, jwtResponse);
         StCodec._notification.error(responseContent.errormessage);
+        StCodec._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
         throw new Error(responseContent.errormessage);
       }
     }
@@ -215,6 +217,7 @@ class StCodec {
       Object.keys(requestObject).length < StCodec.MINIMUM_REQUEST_FIELDS ||
       !requestObject.requesttypedescriptions.every(val => StCodec.SUPPORTED_REQUEST_TYPES.includes(val))
     ) {
+      StCodec._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
       StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST);
       throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST);
     }

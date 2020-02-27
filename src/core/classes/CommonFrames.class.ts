@@ -47,15 +47,13 @@ export class CommonFrames extends RegisterFrames {
     submitFields: string[],
     gatewayUrl: string,
     animatedCard: boolean,
-    submitCallback: any,
     requestTypes: string[]
   ) {
-    super(jwt, origin, componentIds, styles, animatedCard, submitCallback);
+    super(jwt, origin, componentIds, styles, animatedCard);
     this._gatewayUrl = gatewayUrl;
     this._messageBus = Container.get(MessageBus);
     this._merchantForm = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR) as HTMLFormElement;
     this._validation = new Validation();
-    this._submitCallback = submitCallback;
     this._submitFields = submitFields;
     this._submitOnError = submitOnError;
     this._submitOnSuccess = submitOnSuccess;
@@ -150,9 +148,8 @@ export class CommonFrames extends RegisterFrames {
   }
 
   private _onTransactionComplete(data: any) {
-    if ((this._isTransactionFinished(data) || data.errorcode !== '0') && this._submitCallback) {
-      this._validation.blockForm(FormState.AVAILABLE);
-      this._submitCallback(data);
+    if (this._isTransactionFinished(data) || data.errorcode !== '0') {
+      this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUBMIT_CALLBACK }, true);
     }
     if (this._shouldSubmitForm(data)) {
       const form = this._merchantForm;

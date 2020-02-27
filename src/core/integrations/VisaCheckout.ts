@@ -150,12 +150,14 @@ export class VisaCheckout {
       .then(() => {
         this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
         this._getResponseMessage(this.paymentStatus);
+        this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK }, true);
         this._notification.success(this.responseMessage, true);
         GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment success');
       })
       .catch((error: any) => {
         this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
         this._getResponseMessage(this.paymentStatus);
+        this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
         this._notification.error(this.responseMessage, true);
       });
   }
@@ -164,6 +166,7 @@ export class VisaCheckout {
     this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
     this._getResponseMessage(this.paymentStatus);
     this._notification.error(this.responseMessage, true);
+    this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
     GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment error');
   }
 

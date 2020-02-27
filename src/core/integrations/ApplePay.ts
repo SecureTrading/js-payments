@@ -286,6 +286,7 @@ export class ApplePay {
         .catch(error => {
           const { errorcode, errormessage } = error;
           this._onValidateMerchantResponseFailure(error);
+          this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
           this._notification.error(`${errorcode}: ${errormessage}`, true);
           GoogleAnalytics.sendGaData(
             'event',
@@ -318,6 +319,7 @@ export class ApplePay {
           this._localStorage.setItem('completePayment', 'true');
         })
         .catch(() => {
+          this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
           this._notification.error(Language.translations.PAYMENT_ERROR, true);
           this._session.completePayment({ status: this.getPaymentFailureStatus(), errors: [] });
           this._localStorage.setItem('completePayment', 'true');
@@ -444,9 +446,13 @@ export class ApplePay {
   }
 
   private _displayNotification(errorcode: string) {
-    errorcode === '0'
-      ? this._notification.success(Language.translations.PAYMENT_SUCCESS, true)
-      : this._notification.error(Language.translations.PAYMENT_ERROR, true);
+    if (errorcode === '0') {
+      this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
+      this._notification.success(Language.translations.PAYMENT_SUCCESS, true);
+    } else {
+      this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
+      this._notification.error(Language.translations.PAYMENT_ERROR, true);
+    }
   }
 
   private _addButtonHandler(id: string, event: string, notification: string, message: string) {
@@ -457,8 +463,10 @@ export class ApplePay {
       element.addEventListener(eventType, () => {
         if (notificationType === 'success') {
           this._notification.success(message, true);
+          this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK }, true);
         } else if (notificationType === 'error') {
           this._notification.error(message, true);
+          this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
         } else if (notificationType === 'warning') {
           this._notification.warning(message, true);
         } else {
