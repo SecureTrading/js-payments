@@ -32,6 +32,8 @@ import { ConfigService } from './core/config/ConfigService';
 import { ISubmitEvent } from './core/models/ISubmitEvent';
 import { ISuccessEvent } from './core/models/ISuccessEvent';
 import { IErrorEvent } from './core/models/IErrorEvent';
+import { InterFrameCommunicator } from './core/services/message-bus/InterFrameCommunicator';
+import { FramesHub } from './core/services/message-bus/FramesHub';
 
 @Service()
 class ST {
@@ -71,7 +73,12 @@ class ST {
     }
   }
 
-  constructor(@Inject(CONFIG) private _config: IConfig, private configProvider: ConfigService) {
+  constructor(
+    @Inject(CONFIG) private _config: IConfig,
+    private configProvider: ConfigService,
+    private _communicator: InterFrameCommunicator,
+    private _framesHub: FramesHub,
+  ) {
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
     this._messageBus = new MessageBus();
@@ -144,6 +151,8 @@ class ST {
       cardinal.off(PaymentEvents.SETUP_COMPLETE);
       cardinal.off(PaymentEvents.VALIDATED);
     }
+
+    this._communicator.close();
   }
 
   private init(): void {

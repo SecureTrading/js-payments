@@ -6,16 +6,18 @@ import { ofType } from './operators/ofType';
 import { QueryMessage } from './messages/QueryMessage';
 import { ResponseMessage } from './messages/ResponseMessage';
 import { environment } from '../../../environments/environment';
+import { FrameCollection } from './interfaces/FrameCollection';
 import { Selectors } from '../../shared/Selectors';
 
 @Service()
 export class InterFrameCommunicator {
   private static readonly MESSAGE_EVENT = 'message';
   public readonly incomingEvent$: Observable<IMessageBusEvent>;
-  private destroy$ = new Subject<void>();
+  public readonly communicationClosed$: Observable<void>;
+  private close$ = new Subject<void>();
 
   constructor() {
-    this.incomingEvent$ = fromEventPattern(
+    this.incomingEvent$ = fromEventPattern<MessageEvent>(
       handler => window.addEventListener(InterFrameCommunicator.MESSAGE_EVENT, handler, true),
       handler => window.removeEventListener(InterFrameCommunicator.MESSAGE_EVENT, handler)
     ).pipe(
@@ -23,6 +25,8 @@ export class InterFrameCommunicator {
       map(event => event.data),
       share(),
     );
+
+    this.communicationClosed$ = this.close$.asObservable();
   }
 
   public send(message: IMessageBusEvent, target: Window | string): void {
@@ -57,13 +61,14 @@ export class InterFrameCommunicator {
           ofType(QueryMessage.MESSAGE_TYPE),
           filter((queryEvent: QueryMessage) => queryEvent.data.type === eventType),
           switchMap((queryEvent: QueryMessage) => responder(queryEvent.data).pipe(
+            take(1),
             map((response: T) => new ResponseMessage(
               response,
               queryEvent.queryId,
               queryEvent.sourceFrame,
             )),
           )),
-          takeUntil(this.destroy$),
+          takeUntil(this.close$),
         ).subscribe((response: ResponseMessage<T>) => {
           this.send(response, response.queryFrame);
         });
@@ -71,9 +76,9 @@ export class InterFrameCommunicator {
     };
   }
 
-  public destroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+  public close(): void {
+    this.close$.next();
+    this.close$.complete();
   }
 
   private resolveTargetFrame(target: Window | string): Window {
@@ -85,10 +90,12 @@ export class InterFrameCommunicator {
       return window.top;
     }
 
-    if (target === '' || !window.top.frames[target]) {
+    const frames: FrameCollection = window.top.frames as FrameCollection;
+
+    if (target === '' || !frames[target]) {
       throw new Error(`Target frame "${target}" not found.`);
     }
 
-    return window.top.frames[target];
+    return frames[target];
   }
 }
