@@ -22,6 +22,7 @@ export interface IConfig {
   init?: IBypassInit;
   livestatus?: number;
   origin?: string;
+  panIcon?: boolean;
   placeholders?: IPlaceholdersConfig;
   styles?: IStyles;
   submitCallback?: any;

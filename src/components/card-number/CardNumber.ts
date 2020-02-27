@@ -11,6 +11,7 @@ import { Validation } from '../../core/shared/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { Service } from 'typedi';
 import { ConfigService } from '../../core/config/ConfigService';
+import * as amex from './../../images/amex.png';
 
 @Service()
 export class CardNumber extends FormField {
@@ -115,6 +116,35 @@ export class CardNumber extends FormField {
     this.messageBus.publish(messageBusEvent);
   }
 
+  private setImageIconPlaceholder(type: string): void {
+    const element = document.createElement('img');
+    let image: string;
+    console.error(type);
+    if (type === 'AMEX') {
+      image = './images/amex.png';
+    } else if (type === 'VISA') {
+      image = './images/visa.png';
+    } else if (type === 'MASTERCARD') {
+      image = './images/mastercard.png';
+    } else {
+      image = '';
+    }
+    if (!image) {
+      document.getElementById('card-icon').remove();
+      return;
+    }
+    element.setAttribute('src', image);
+    element.setAttribute('id', 'card-icon');
+    element.style.width = '30px';
+    element.style.height = '20px';
+    element.style.position = 'absolute';
+    element.style.top = '30px';
+    element.style.right = '10px';
+    if (!document.getElementById('card-icon')) {
+      document.getElementById(Selectors.CARD_NUMBER_INPUT_SELECTOR).prepend(element);
+    }
+  }
+
   private _getBinLookupDetails = (cardNumber: string) =>
     iinLookup.lookup(cardNumber).type ? iinLookup.lookup(cardNumber) : undefined;
 
@@ -159,6 +189,13 @@ export class CardNumber extends FormField {
     this._inputElement.value = formatted;
     this._cardNumberValue = nonformatted;
     this.validation.keepCursorsPosition(this._inputElement);
+    console.error(this._inputElement.value);
+    const type = this._getBinLookupDetails(this._inputElement.value)
+      ? this._getBinLookupDetails(this._inputElement.value).type
+      : null;
+    if (this.configService.getConfig().panIcon && type) {
+      this.setImageIconPlaceholder(type);
+    }
   }
 
   private _setDisableListener() {
