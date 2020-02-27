@@ -1,5 +1,4 @@
 import Joi from 'joi';
-import { ComponentsConfigSchema } from './ComponentsConfigSchema';
 
 export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
   analytics: Joi.boolean(),
