@@ -2,6 +2,9 @@ import { ExpirationDate } from '../../../src/components/expiration-date/Expirati
 import { FormState } from '../../../src/core/models/constants/FormState';
 import { Language } from '../../../src/core/shared/Language';
 import { Selectors } from '../../../src/core/shared/Selectors';
+import { ConfigService } from '../../../src/core/config/ConfigService';
+import { mock } from 'ts-mockito';
+import { BrowserLocalStorage } from '../../../src/core/services/storage/BrowserLocalStorage';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 
@@ -213,7 +216,9 @@ function expirationDateFixture() {
   const correctValue = '55';
   const incorrectValue = 'a';
   const correctDataValue = '12/19';
-  const instance = new ExpirationDate();
+  let configService: ConfigService;
+  configService = mock(ConfigService);
+  const instance = new ExpirationDate(configService);
 
   const labelElement = document.createElement('label');
   const inputElement = document.createElement('input');

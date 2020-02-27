@@ -7,6 +7,9 @@ import { FormField } from '../../../src/core/shared/FormField';
 import { Utils } from '../../../src/core/shared/Utils';
 import { Validation } from '../../../src/core/shared/Validation';
 import { MessageBus } from './../../../src/core/shared/MessageBus';
+import { ConfigService } from '../../../src/core/config/ConfigService';
+import { mock } from 'ts-mockito';
+import { SecurityCode } from '../../../src/components/security-code/SecurityCode';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 jest.mock('./../../../src/core/shared/Validation');
@@ -494,16 +497,18 @@ function cardNumberFixture() {
   const html =
     '<form id="st-card-number" class="card-number" novalidate=""><label id="st-card-number-label" for="st-card-number-input" class="card-number__label card-number__label--required">Card number</label><input id="st-card-number-input" class="card-number__input" type="text" autocomplete="off" required="" data-luhn-check="true" maxlength="NaN" minlength="19"><p id="st-card-number-message" class="card-number__message"></p></form>';
   document.body.innerHTML = html;
-  let cardNumberInstance = new CardNumber();
+  let configService: ConfigService;
+  configService = mock(ConfigService);
+  const cardNumberInstance = new CardNumber(configService);
 
   function createElement(markup: string) {
     return document.createElement(markup);
   }
 
-  let inputElement = createElement('input');
-  let labelElement = document.createElement('label');
-  let messageElement = createElement('p');
-  const instance = new CardNumber();
+  const inputElement = createElement('input');
+  const labelElement = document.createElement('label');
+  const messageElement = createElement('p');
+  const instance = new CardNumber(configService);
   const cardNumberCorrect = '3000 000000 000111';
   const unrecognizedCardNumber = '8989 8989 6899 9999';
   const receivedObject = {

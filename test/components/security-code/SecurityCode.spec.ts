@@ -2,6 +2,8 @@ import { SecurityCode } from '../../../src/components/security-code/SecurityCode
 import { Selectors } from '../../../src/core/shared/Selectors';
 import { FormField } from '../../../src/core/shared/FormField';
 import { Utils } from '../../../src/core/shared/Utils';
+import { ConfigService } from '../../../src/core/config/ConfigService';
+import { mock } from 'ts-mockito';
 
 jest.mock('../../../src/core/shared/MessageBus');
 
@@ -10,9 +12,9 @@ describe('SecurityCode', () => {
   let securityCode: SecurityCode;
 
   beforeAll(() => {
-    let labelElement = document.createElement('label');
-    let inputElement = document.createElement('input');
-    let messageElement = document.createElement('p');
+    const labelElement = document.createElement('label');
+    const inputElement = document.createElement('input');
+    const messageElement = document.createElement('p');
 
     labelElement.id = Selectors.SECURITY_CODE_LABEL;
     inputElement.id = Selectors.SECURITY_CODE_INPUT;
@@ -21,8 +23,9 @@ describe('SecurityCode', () => {
     document.body.appendChild(labelElement);
     document.body.appendChild(inputElement);
     document.body.appendChild(messageElement);
-
-    securityCode = new SecurityCode();
+    let configService: ConfigService;
+    configService = mock(ConfigService);
+    securityCode = new SecurityCode(configService);
   });
 
   // given
@@ -268,6 +271,15 @@ function securityCodeFixture() {
   const html =
     '<form id="st-security-code" class="security-code" novalidate=""><label id="st-security-code-label" for="st-security-code-input" class="security-code__label security-code__label--required">Security code</label><input id="st-security-code-input" class="security-code__input error-field" type="text" autocomplete="off" autocorrect="off" spellcheck="false" inputmode="numeric" required="" data-dirty="true" data-pristine="false" data-validity="false" data-clicked="false" pattern="^[0-9]{3}$"><div id="st-security-code-message" class="security-code__message">Field is required</div></form>';
   document.body.innerHTML = html;
-  const instance = new SecurityCode();
+  let configService: ConfigService;
+  configService = mock(ConfigService);
+  configService.getConfig = jest.fn().mockReturnValueOnce({
+    placeholders: {
+      pan: 'pan placeholder',
+      securitycode: 'securitycode placeholder',
+      expirydate: 'expirydate placeholder'
+    }
+  });
+  const instance = new SecurityCode(configService);
   return { instance };
 }
