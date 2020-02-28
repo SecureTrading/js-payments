@@ -48,7 +48,7 @@ export class Translator {
     const translations: string = this._storage.getItem('merchantTranslations');
     const json: string = JSON.parse(translations) || {};
     // @ts-ignore
-    const translation: string = Object.keys(json).includes(text) ? json[text] : '';
+    const translation: string = Object.keys(json).includes(text) ? json[text] : 'buongiorno';
     return translation ? translation : i18next.t(text, { content: text });
   };
 }
