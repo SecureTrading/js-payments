@@ -8,7 +8,6 @@ import { environment } from '../../environments/environment';
 import { IWalletConfig } from './model/IWalletConfig';
 import { ConfigSchema } from './schema/ConfigSchema';
 
-
 @Service()
 export class ConfigResolver {
   private readonly DEFAULT_COMPONENTS_IDS: IComponentsIds = {

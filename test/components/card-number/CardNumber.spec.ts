@@ -449,7 +449,10 @@ describe('CardNumber', () => {
         // @ts-ignore
         expect(instance.messageBus.publish.mock.calls[0][0]).toEqual({
           type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS,
-          data: '308950'
+          data: {
+            value: '308950',
+            validity: true
+          }
         });
         // @ts-ignore
         expect(instance.messageBus.publish.mock.calls[1][0]).toEqual({
