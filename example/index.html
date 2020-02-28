@@ -12,6 +12,7 @@
 
   <body>
     <form id="st-form" class="example-form" autocomplete="off" novalidate>
+      <div id="st-popup"></div>
       <h1 class="example-form__title">
         Secure Trading<span>AMOUNT: <strong>10.00 GBP</strong></span>
       </h1>
@@ -128,6 +129,30 @@
               }
             });
         }
+
+        function displayPopup(id, text, tp) {
+          if (!document.getElementById(id)) {
+            var div = document.createElement('div');
+            div.innerText = text;
+            div.setAttribute('id', id);
+            div.setAttribute(
+              'style',
+              'display: flex; justify-content: center; position: fixed; height: 70px;right:0;color: white;padding: 0 50px;align-items: center;border-radius: 10px;font-family: Verdana;font-size: 20px;z-index:2'
+            );
+            div.style.backgroundColor = tp;
+            if (tp === 'green') {
+              div.style.top = 0;
+            } else {
+              div.style.bottom = 0;
+            }
+            const popup = document.getElementById('st-popup');
+            popup.appendChild(div);
+            setTimeout(function() {
+              popup.removeChild(div);
+            }, 3000);
+          }
+        }
+
         function configurationInit(ST, data) {
           var stConfig = data;
           var parsedUrl = new URL(window.location.href);
@@ -137,6 +162,14 @@
           st.submitCallback = function someFancyfunction(data) {
             var stringified = JSON.stringify(data);
             var testVariable = 'This is what we have got after submit' + stringified;
+            console.error(testVariable);
+          };
+          st.successCallback = function() {
+            displayPopup('success-popup', 'This is success message', 'green');
+          };
+
+          st.errorCallback = function() {
+            displayPopup('error-popup', 'This is error message', 'red');
           };
           st.Components(stConfig.components);
           st.ApplePay(stConfig.applePay);
