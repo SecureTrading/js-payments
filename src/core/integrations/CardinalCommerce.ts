@@ -90,7 +90,6 @@ export class CardinalCommerce {
   }
 
   protected _cardinalTrigger() {
-    console.error('trigger', this._cardinalCommerceJWT);
     return Cardinal.trigger(PaymentEvents.JWT_UPDATE, this._cardinalCommerceJWT);
   }
 
@@ -130,7 +129,6 @@ export class CardinalCommerce {
       };
       this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BIN_PROCESS, (data: IFormFieldState) => {
         const { value } = data;
-        console.error(value);
         this._performBinDetection(value);
       });
       this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
@@ -199,14 +197,12 @@ export class CardinalCommerce {
       this._onLoadControlFrame();
     });
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDINIT, (data: IThreeDInitResponse) => {
-      console.error(`THREEDINIT:`, data);
       this._onThreeDInitEvent(data);
     });
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.BY_PASS_INIT, () => {
       this._onBypassJsInitEvent();
     });
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDQUERY, (data: any) => {
-      console.error(`THREEDQUERY:`, data);
       this._onThreeDQueryEvent(data);
     });
     this._initSubmitEventListener();
@@ -250,7 +246,6 @@ export class CardinalCommerce {
     }
     this._cardinalCommerceJWT = threedinit;
     this._cardinalCommerceCacheToken = cachetoken;
-    console.error('_onThreeDInitEvent', this._cardinalCommerceJWT);
     this._threeDSetup();
   }
 
@@ -280,7 +275,6 @@ export class CardinalCommerce {
   }
 
   private _threeDQueryRequest(responseObject: IThreeDQueryResponse) {
-    console.error(`_threeDQueryRequest:`, responseObject);
     if (CardinalCommerce._isCardEnrolledAndNotFrictionless(responseObject)) {
       this._authenticateCard(responseObject);
       GoogleAnalytics.sendGaData('event', 'Cardinal', 'auth', 'Cardinal card authenticated');
