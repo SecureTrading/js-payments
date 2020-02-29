@@ -22,13 +22,13 @@ before_script:
 jobs:
   include:
     - stage: Unit tests & Docker build
-      name: Unit tests
-      before_script: skip
-      script:
-        - npm install
-        - npm run coverage
-        - npm run snyk
-    - name: Build docker
+#      name: Unit tests
+#      before_script: skip
+#      script:
+#        - npm install
+#        - npm run coverage
+#        - npm run snyk
+      name: Build docker
       before_script: skip
       script:
         - docker build . --tag "securetrading1/js-payments:$DOCKER_BRANCH"
