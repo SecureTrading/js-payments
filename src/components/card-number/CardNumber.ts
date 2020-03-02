@@ -11,7 +11,6 @@ import { Validation } from '../../core/shared/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { Service } from 'typedi';
 import { ConfigService } from '../../core/config/ConfigService';
-import * as amex from './../../images/amex.png';
 
 @Service()
 export class CardNumber extends FormField {
