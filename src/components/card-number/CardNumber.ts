@@ -22,6 +22,17 @@ export class CardNumber extends FormField {
   private static NO_CVV_CARDS: string[] = ['PIBA'];
   private static STANDARD_CARD_LENGTH: number = 19;
   private static WHITESPACES_DECREASE_NUMBER: number = 2;
+  private static CARDS_IMAGES_FILES_NAMES = {
+    AMEX: 'AMEX',
+    VISA: 'VISA',
+    MASTERCARD: 'MASTERCARD',
+    PIBA: 'PIBA',
+    ASTROPAYCARD: 'ASTROPAYCARD',
+    DINERS: 'DINERS',
+    DISCOVER: 'DISCOVER',
+    JCB: 'JCB',
+    MAESTRO: 'MAESTRO'
+  };
 
   private static _getCardNumberForBinProcess = (cardNumber: string) => cardNumber.slice(0, 6);
 
@@ -115,46 +126,70 @@ export class CardNumber extends FormField {
     this.messageBus.publish(messageBusEvent);
   }
 
-  private setImageIconPlaceholder(type: string): void {
-    const element = document.createElement('img');
-    let image: string;
-    console.error(type);
-    if (type === 'AMEX') {
-      image = './images/amex.png';
-    } else if (type === 'VISA') {
-      image = './images/visa.png';
-    } else if (type === 'MASTERCARD') {
-      image = './images/mastercard.png';
-    } else if (type === 'PIBA') {
-      image = './images/piba.png';
-    } else if (type === 'ASTROPAY') {
-      image = './images/astropay.png';
-    } else if (type === 'DINERS') {
-      image = './images/diners.png';
-    } else if (type === 'DISCOVER') {
-      image = './images/discover.png';
-    } else if (type === 'JCB') {
-      image = './images/jcb.png';
-    } else if (type === 'MAESTRO') {
-      image = './images/maestro.png';
-    } else {
-      image = '';
+  private _getImagePath(type: string): string {
+    switch (type) {
+      case CardNumber.CARDS_IMAGES_FILES_NAMES.AMEX:
+        return `./images/${CardNumber.CARDS_IMAGES_FILES_NAMES.AMEX.toLowerCase()}.png`;
+      case CardNumber.CARDS_IMAGES_FILES_NAMES.ASTROPAYCARD:
+        return `./images/${CardNumber.CARDS_IMAGES_FILES_NAMES.ASTROPAYCARD.toLowerCase()}.png`;
+      case CardNumber.CARDS_IMAGES_FILES_NAMES.DINERS:
+        return `./images/${CardNumber.CARDS_IMAGES_FILES_NAMES.DINERS.toLowerCase()}.png`;
+      case CardNumber.CARDS_IMAGES_FILES_NAMES.DISCOVER:
+        return `./images/${CardNumber.CARDS_IMAGES_FILES_NAMES.DISCOVER.toLowerCase()}.png`;
+      case CardNumber.CARDS_IMAGES_FILES_NAMES.JCB:
+        return `./images/${CardNumber.CARDS_IMAGES_FILES_NAMES.JCB.toLowerCase()}.png`;
+      case CardNumber.CARDS_IMAGES_FILES_NAMES.MAESTRO:
+        return `./images/${CardNumber.CARDS_IMAGES_FILES_NAMES.MAESTRO.toLowerCase()}.png`;
+      case CardNumber.CARDS_IMAGES_FILES_NAMES.MASTERCARD:
+        return `./images/${CardNumber.CARDS_IMAGES_FILES_NAMES.MASTERCARD.toLowerCase()}.png`;
+      case CardNumber.CARDS_IMAGES_FILES_NAMES.PIBA:
+        return `./images/${CardNumber.CARDS_IMAGES_FILES_NAMES.PIBA.toLowerCase()}.png`;
+      case CardNumber.CARDS_IMAGES_FILES_NAMES.VISA:
+        return `./images/${CardNumber.CARDS_IMAGES_FILES_NAMES.VISA.toLowerCase()}.png`;
+      default:
+        return '';
     }
-    console.error(image);
-    if (!image) {
-      document.getElementById('card-icon').remove();
-      return;
-    }
-    element.setAttribute('src', image);
-    element.setAttribute('id', 'card-icon');
+  }
+
+  private _setIconAttributes(imageURI: string, iconId: string): HTMLElement {
+    let element: HTMLElement = document.createElement('img');
+    element = this._setIconStyles(element);
+    element.setAttribute('src', imageURI);
+    element.setAttribute('id', iconId);
+    return element;
+  }
+
+  private _setIconStyles(element: HTMLElement): HTMLElement {
     element.style.width = '30px';
     element.style.height = '20px';
     element.style.position = 'absolute';
     element.style.top = '30px';
     element.style.right = '10px';
-    if (!document.getElementById('card-icon')) {
-      document.getElementById(Selectors.CARD_NUMBER_INPUT_SELECTOR).prepend(element);
+    return element;
+  }
+
+  private _setImageIconPlaceholder(type: string, iconId: string): void {
+    const icon: HTMLElement = document.getElementById(iconId);
+    const imageURI: string = this._getImagePath(type);
+
+    if (!icon && !imageURI) {
+      return;
     }
+
+    if (icon && !imageURI) {
+      icon.remove();
+      return;
+    }
+
+    if (icon && imageURI) {
+      icon.remove();
+    }
+
+    this._setIconInDom(this._setIconAttributes(imageURI, iconId));
+  }
+
+  private _setIconInDom(element: HTMLElement): void {
+    document.getElementById(Selectors.CARD_NUMBER_INPUT_SELECTOR).prepend(element);
   }
 
   private _getBinLookupDetails = (cardNumber: string) =>
@@ -201,11 +236,10 @@ export class CardNumber extends FormField {
     this._inputElement.value = formatted;
     this._cardNumberValue = nonformatted;
     this.validation.keepCursorsPosition(this._inputElement);
-    console.error(this._inputElement.value);
     const type = this._getBinLookupDetails(this._inputElement.value)
       ? this._getBinLookupDetails(this._inputElement.value).type
       : null;
-    this.setImageIconPlaceholder(type);
+    this._setImageIconPlaceholder(type, 'card-icon');
   }
 
   private _setDisableListener() {
