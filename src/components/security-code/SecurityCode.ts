@@ -84,10 +84,8 @@ export class SecurityCode extends FormField {
     super.setEventListener(MessageBus.EVENTS.BLUR_SECURITY_CODE);
     this._subscribeSecurityCodeChange();
     this._setDisableListener();
-    this._inputElement.setAttribute(
-      SecurityCode.PLACEHOLDER_ATTRIBUTE,
-      this._configService.getConfig().placeholders.securitycode
-    );
+    this.placeholder = this._configService.getConfig().placeholders.securitycode || '';
+    this._inputElement.setAttribute(SecurityCode.PLACEHOLDER_ATTRIBUTE, this.placeholder);
     this.validation.backendValidation(
       this._inputElement,
       this._messageElement,

@@ -26,7 +26,6 @@ export class CardNumber extends FormField {
   private static _getCardNumberForBinProcess = (cardNumber: string) => cardNumber.slice(0, 6);
 
   public validation: Validation;
-  protected placeholder: string;
   private _formatter: Formatter;
   private _cardNumberFormatted: string;
   private _cardNumberLength: number;
@@ -42,6 +41,7 @@ export class CardNumber extends FormField {
     this._formatter = new Formatter();
     this._isCardNumberValid = true;
     this._cardNumberLength = CardNumber.STANDARD_CARD_LENGTH;
+    this.placeholder = this.configService.getConfig().placeholders.pan || '';
     this.setFocusListener();
     this.setBlurListener();
     this.setSubmitListener();
@@ -52,7 +52,7 @@ export class CardNumber extends FormField {
       MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD
     );
     this._sendState();
-    this._inputElement.setAttribute(CardNumber.PLACEHOLDER_ATTRIBUTE, this.configService.getConfig().placeholders.pan);
+    this._inputElement.setAttribute(CardNumber.PLACEHOLDER_ATTRIBUTE, this.placeholder);
   }
 
   protected getLabel(): string {

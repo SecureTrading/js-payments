@@ -1,4 +1,3 @@
-import each from 'jest-each';
 import SpyInstance = jest.SpyInstance;
 import { CardNumber } from '../../../src/components/card-number/CardNumber';
 import { FormState } from '../../../src/core/models/constants/FormState';
@@ -9,14 +8,13 @@ import { Validation } from '../../../src/core/shared/Validation';
 import { MessageBus } from './../../../src/core/shared/MessageBus';
 import { ConfigService } from '../../../src/core/config/ConfigService';
 import { mock } from 'ts-mockito';
-import { SecurityCode } from '../../../src/components/security-code/SecurityCode';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 jest.mock('./../../../src/core/shared/Validation');
 
 // given
 describe('CardNumber', () => {
-  let { inputElement, messageElement, cardNumberInstance, labelElement } = cardNumberFixture();
+  const { inputElement, messageElement, cardNumberInstance, labelElement } = cardNumberFixture();
   // when
   beforeAll(() => {
     document.body.appendChild(inputElement);
@@ -499,6 +497,13 @@ function cardNumberFixture() {
   document.body.innerHTML = html;
   let configService: ConfigService;
   configService = mock(ConfigService);
+  configService.getConfig = jest.fn().mockReturnValueOnce({
+    placeholders: {
+      pan: 'Card number',
+      expirydate: 'MM/YY',
+      securitycode: '***'
+    }
+  });
   const cardNumberInstance = new CardNumber(configService);
 
   function createElement(markup: string) {
