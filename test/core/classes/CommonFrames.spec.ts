@@ -203,54 +203,6 @@ describe('CommonFrames', () => {
   });
 
   // given
-  describe('_onTransactionComplete()', () => {
-    const { instance } = commonFramesFixture();
-    // @ts-ignore
-    instance._requestTypes = ['THREEDQUERY'];
-    const data = {
-      errorcode: '0',
-      errormessage: 'Ok'
-    };
-
-    const dataWithError = {
-      errorcode: '30000',
-      errormessage: 'Invalid field'
-    };
-
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._shouldSubmitForm = jest.fn().mockReturnValueOnce(true);
-      // @ts-ignore
-      instance._isTransactionFinished = jest.fn().mockReturnValueOnce(true);
-      // @ts-ignore
-      DomMethods.addDataToForm = jest.fn();
-    });
-
-    // then
-    it(`should call addDataToForm() and _submitCallback() method with ${data}`, () => {
-      // @ts-ignore
-      instance._submitCallback = jest.fn().mockImplementationOnce(data => data);
-      // @ts-ignore
-      instance._onTransactionComplete(data);
-      // @ts-ignore
-      expect(DomMethods.addDataToForm).toHaveBeenCalled();
-      // @ts-ignore
-      expect(instance._submitCallback).toHaveBeenCalledWith(data);
-    });
-
-    // then
-    it(`should call _submitCallback() method with ${dataWithError}`, () => {
-      // @ts-ignore
-      instance._submitCallback = jest.fn().mockImplementationOnce(dataWithError => dataWithError);
-      // @ts-ignore
-      instance._onTransactionComplete(dataWithError);
-      // @ts-ignore
-      expect(instance._submitCallback).toHaveBeenCalledWith(dataWithError);
-    });
-  });
-
-  // given
   describe('_setTransactionCompleteListener()', () => {
     const { instance } = commonFramesFixture();
     const data = {
@@ -334,22 +286,9 @@ function commonFramesFixture() {
   };
   const animatedCard = true;
   const gatewayUrl: string = 'https://webservices.securetrading.net/jwt/';
-  const submitCallback = function() {
-    return { prop: 'testobject' };
-  };
-  const instance = new CommonFrames(
-    jwt,
-    origin,
-    componentsIds,
-    {},
-    false,
-    false,
-    [],
-    gatewayUrl,
-    animatedCard,
-    submitCallback,
-    ['AUTH']
-  );
+  const instance = new CommonFrames(jwt, origin, componentsIds, {}, false, false, [], gatewayUrl, animatedCard, [
+    'AUTH'
+  ]);
 
   return { instance };
 }

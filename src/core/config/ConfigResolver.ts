@@ -67,8 +67,7 @@ export class ConfigResolver {
       livestatus: config.livestatus !== undefined ? config.livestatus : 0,
       origin: config.origin !== undefined ? config.origin : window.location.origin,
       panIcon: config.panIcon !== undefined ? config.panIcon : false,
-      placeholders:
-        config.placeholders !== undefined ? config.placeholders : { pan: '', expirydate: '', securitycode: '' },
+      placeholders: config.placeholders || { pan: '', expirydate: '', securitycode: '' },
       styles: config.styles ? config.styles : {},
       submitCallback: config.submitCallback !== undefined ? config.submitCallback : null,
       submitFields: config.submitFields !== undefined ? config.submitFields : [],

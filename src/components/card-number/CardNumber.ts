@@ -27,7 +27,6 @@ export class CardNumber extends FormField {
   private static _getCardNumberForBinProcess = (cardNumber: string) => cardNumber.slice(0, 6);
 
   public validation: Validation;
-  protected placeholder: string;
   private _formatter: Formatter;
   private _cardNumberFormatted: string;
   private _cardNumberLength: number;
@@ -43,6 +42,7 @@ export class CardNumber extends FormField {
     this._formatter = new Formatter();
     this._isCardNumberValid = true;
     this._cardNumberLength = CardNumber.STANDARD_CARD_LENGTH;
+    this.placeholder = this.configService.getConfig().placeholders.pan || '';
     this.setFocusListener();
     this.setBlurListener();
     this.setSubmitListener();
@@ -53,7 +53,7 @@ export class CardNumber extends FormField {
       MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD
     );
     this._sendState();
-    this._inputElement.setAttribute(CardNumber.PLACEHOLDER_ATTRIBUTE, this.configService.getConfig().placeholders.pan);
+    this._inputElement.setAttribute(CardNumber.PLACEHOLDER_ATTRIBUTE, this.placeholder);
   }
 
   protected getLabel(): string {
@@ -126,9 +126,22 @@ export class CardNumber extends FormField {
       image = './images/visa.png';
     } else if (type === 'MASTERCARD') {
       image = './images/mastercard.png';
+    } else if (type === 'PIBA') {
+      image = './images/piba.png';
+    } else if (type === 'ASTROPAY') {
+      image = './images/astropay.png';
+    } else if (type === 'DINERS') {
+      image = './images/diners.png';
+    } else if (type === 'DISCOVER') {
+      image = './images/discover.png';
+    } else if (type === 'JCB') {
+      image = './images/jcb.png';
+    } else if (type === 'MAESTRO') {
+      image = './images/maestro.png';
     } else {
       image = '';
     }
+    console.error(image);
     if (!image) {
       document.getElementById('card-icon').remove();
       return;
@@ -193,9 +206,7 @@ export class CardNumber extends FormField {
     const type = this._getBinLookupDetails(this._inputElement.value)
       ? this._getBinLookupDetails(this._inputElement.value).type
       : null;
-    if (this.configService.getConfig().panIcon && type) {
-      this.setImageIconPlaceholder(type);
-    }
+    this.setImageIconPlaceholder(type);
   }
 
   private _setDisableListener() {

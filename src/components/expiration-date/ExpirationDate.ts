@@ -91,10 +91,8 @@ export class ExpirationDate extends FormField {
     super.setEventListener(MessageBus.EVENTS.BLUR_EXPIRATION_DATE);
     super.setEventListener(MessageBus.EVENTS.FOCUS_EXPIRATION_DATE);
     this.setAttributes({ pattern: ExpirationDate.INPUT_PATTERN });
-    this._inputElement.setAttribute(
-      ExpirationDate.PLACEHOLDER_ATTRIBUTE,
-      this._configService.getConfig().placeholders.expirydate
-    );
+    this.placeholder = this._configService.getConfig().placeholders.expirydate || '';
+    this._inputElement.setAttribute(ExpirationDate.PLACEHOLDER_ATTRIBUTE, this.placeholder);
     this.setDisableListener();
     this.validation.backendValidation(
       this._inputElement,
