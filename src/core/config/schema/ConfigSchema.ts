@@ -87,21 +87,7 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
   }),
   styles: Joi.object(),
   submitCallback: Joi.any(),
-  submitFields: Joi.array().items(
-    Joi.string().valid(
-      'baseamount',
-      'currencyiso3a',
-      'eci',
-      'enrolled',
-      'errorcode',
-      'errordata',
-      'errormessage',
-      'orderreference',
-      'settlestatus',
-      'status',
-      'transactionreference'
-    )
-  ),
+  submitFields: Joi.array(),
   submitOnError: Joi.boolean(),
   submitOnSuccess: Joi.boolean(),
   threedinit: Joi.string(),

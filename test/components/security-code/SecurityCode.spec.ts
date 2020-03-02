@@ -3,7 +3,7 @@ import { Selectors } from '../../../src/core/shared/Selectors';
 import { FormField } from '../../../src/core/shared/FormField';
 import { Utils } from '../../../src/core/shared/Utils';
 import { ConfigService } from '../../../src/core/config/ConfigService';
-import { mock } from 'ts-mockito';
+import { instance, mock, when } from 'ts-mockito';
 
 jest.mock('../../../src/core/shared/MessageBus');
 
@@ -23,9 +23,14 @@ describe('SecurityCode', () => {
     document.body.appendChild(labelElement);
     document.body.appendChild(inputElement);
     document.body.appendChild(messageElement);
+
     let configService: ConfigService;
     configService = mock(ConfigService);
-    securityCode = new SecurityCode(configService);
+    when(configService.getConfig()).thenReturn({
+      jwt: '',
+      placeholders: { pan: '4154654', expirydate: '12/22', securitycode: '123' }
+    });
+    securityCode = new SecurityCode(instance(configService));
   });
 
   // given
