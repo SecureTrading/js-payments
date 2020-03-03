@@ -8,7 +8,9 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
     buttonStyle: Joi.string().valid('black', 'white', 'white-outline'),
     buttonText: Joi.string().valid('plain', 'buy', 'book', 'donate', 'check-out', 'subscribe'),
     merchantId: Joi.string(),
-    requestTypes: Joi.array().items(Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')),
+    requestTypes: Joi.array().items(
+      Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
+    ),
     paymentRequest: {
       countryCode: Joi.string(),
       currencyCode: Joi.string(),
@@ -46,19 +48,25 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
     Joi.string().valid('AMEX', 'ASTROPAYCARD', 'DINERS', 'DISCOVER', 'JCB', 'MASTERCARD', 'MAESTRO', 'PIBA', 'VISA')
   ),
   cachetoken: Joi.string(),
-  componentIds: Joi.object().keys({
-    animatedCard: Joi.string(),
-    cardNumber: Joi.string().required(),
-    expirationDate: Joi.string().required(),
-    notificationFrame: Joi.string().required(),
-    securityCode: Joi.string().required()
-  }).default({}),
-  components:  Joi.object().keys({
-    defaultPaymentType: Joi.string().allow(''),
-    requestTypes: Joi.array().items(Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')),
-    paymentTypes: Joi.array().items(Joi.string().allow('')),
-    startOnLoad: Joi.boolean().allow('')
-  }).default({}),
+  componentIds: Joi.object()
+    .keys({
+      animatedCard: Joi.string(),
+      cardNumber: Joi.string().required(),
+      expirationDate: Joi.string().required(),
+      notificationFrame: Joi.string().required(),
+      securityCode: Joi.string().required()
+    })
+    .default({}),
+  components: Joi.object()
+    .keys({
+      defaultPaymentType: Joi.string().allow(''),
+      requestTypes: Joi.array().items(
+        Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
+      ),
+      paymentTypes: Joi.array().items(Joi.string().allow('')),
+      startOnLoad: Joi.boolean().allow('')
+    })
+    .default({}),
   datacenterurl: Joi.string(),
   deferInit: Joi.boolean(),
   fieldsToSubmit: Joi.array().items(Joi.string().valid('pan', 'expirydate', 'securitycode')),
