@@ -1,12 +1,13 @@
 import each from 'jest-each';
 import { Utils } from '../../../src/core/shared/Utils';
 import { BrowserLocalStorage } from '../../../src/core/services/storage/BrowserLocalStorage';
+import { Container } from 'typedi';
 
 localStorage.setItem = jest.fn();
 
 // given
 describe('Utils', () => {
-  const storage: BrowserLocalStorage = new BrowserLocalStorage();
+  const storage: BrowserLocalStorage = Container.get(BrowserLocalStorage);
   // given
   describe('inArray', () => {
     // then
