@@ -1,6 +1,6 @@
 {
   "analytics": true,
-  "animatedCard": false,
+  "animatedCard": true,
   "applePay": {
     "buttonStyle": "white-outline",
     "buttonText": "donate",
@@ -41,7 +41,7 @@
     "cachetoken": "",
     "threedinit": ""
   },
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4MzIyMzkzNC4yNzgwMzc4LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.7iCs9fd2BqrQ4HGBnwFHDdt8x0CXU70AbJ9FYOpmppQ",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4MzIyODA0MC43NjM1MjA3LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.z_7PkNsbaEegSxeOU5db6YvyDvdQUbdiZ86gsHu1jaM",
   "livestatus": 0,
   "origin": "",
   "requestTypes": [],

@@ -7,6 +7,7 @@ import { IComponentsConfig } from './model/IComponentsConfig';
 import { environment } from '../../environments/environment';
 import { IWalletConfig } from './model/IWalletConfig';
 import { ConfigSchema } from './schema/ConfigSchema';
+import { type } from 'os';
 
 @Service()
 export class ConfigResolver {
@@ -56,7 +57,7 @@ export class ConfigResolver {
       animatedCard: this._isTruthy(config.animatedCard) ? config.animatedCard : false,
       applePay: this._setApmConfig(config.applePay, config.components),
       buttonId: this._isTruthy(config.buttonId) ? config.buttonId : '',
-      bypassCards: this._isTruthy(config.bypassCards) !== undefined ? config.bypassCards : [],
+      bypassCards: this._isTruthy(config.bypassCards) ? config.bypassCards : [],
       componentIds: this._componentIds(config.componentIds),
       components: this._setComponentsProperties(config),
       datacenterurl: this._isTruthy(config.datacenterurl) ? config.datacenterurl : environment.GATEWAY_URL,
@@ -70,7 +71,7 @@ export class ConfigResolver {
       submitCallback: this._isTruthy(config.submitCallback) ? config.submitCallback : null,
       submitFields: this._isTruthy(config.submitFields) ? config.submitFields : [],
       submitOnError: this._isTruthy(config.submitOnError) ? config.submitOnError : false,
-      submitOnSuccess: this._isTruthy(config.submitOnSuccess) ? config.submitOnSuccess : true,
+      submitOnSuccess: this._isTruthy(config.submitOnSuccess) ? config.submitOnSuccess : false,
       translations: this._isTruthy(config.translations) ? config.translations : {},
       visaCheckout: this._setApmConfig(config.visaCheckout, config.components),
       ...this._setFieldsToSubmit(config),
@@ -78,7 +79,13 @@ export class ConfigResolver {
     };
   }
 
-  private _isTruthy = (value: any) => typeof value !== 'undefined' && value;
+  private _isTruthy = (value: any) => {
+    const valueType = typeof value;
+    if (valueType === 'object') {
+      return typeof value !== 'undefined' && value.length > 0;
+    }
+    return typeof value !== 'undefined' && value;
+  };
 
   private _componentIds(config: IComponentsIds): IComponentsIds {
     if (!this._isTruthy(config)) {
@@ -105,13 +112,13 @@ export class ConfigResolver {
 
   private _setFieldsToSubmit(config: IConfig): { fieldsToSubmit: string[] } {
     return {
-      fieldsToSubmit: config.fieldsToSubmit ? config.fieldsToSubmit : [...this.DEFAULT_FIELDS_TO_SUBMIT]
+      fieldsToSubmit: this._isTruthy(config.fieldsToSubmit) ? config.fieldsToSubmit : [...this.DEFAULT_FIELDS_TO_SUBMIT]
     };
   }
 
   private _setPropertiesToSubmit(config: IConfig): { submitFields: string[] } {
     return {
-      submitFields: config.submitFields !== undefined ? config.submitFields : this.DEFAULT_SUBMIT_PROPERTIES
+      submitFields: this._isTruthy(config.submitFields) ? config.submitFields : this.DEFAULT_SUBMIT_PROPERTIES
     };
   }
 
@@ -126,14 +133,14 @@ export class ConfigResolver {
     }
 
     return {
-      defaultPaymentType:
-        config.components.defaultPaymentType !== undefined ? config.components.defaultPaymentType : '',
-      paymentTypes: config.components.paymentTypes !== undefined ? config.components.paymentTypes : [''],
-      requestTypes:
-        config.components.requestTypes !== undefined
-          ? config.components.requestTypes
-          : [...this.DEFAULT_COMPONENTS_REQUEST_TYPES],
-      startOnLoad: config.components.startOnLoad !== undefined ? config.components.startOnLoad : false
+      defaultPaymentType: this._isTruthy(config.components.defaultPaymentType)
+        ? config.components.defaultPaymentType
+        : '',
+      paymentTypes: this._isTruthy(config.components.paymentTypes) ? config.components.paymentTypes : [''],
+      requestTypes: this._isTruthy(config.components.requestTypes)
+        ? config.components.requestTypes
+        : [...this.DEFAULT_COMPONENTS_REQUEST_TYPES],
+      startOnLoad: this._isTruthy(config.components.startOnLoad) ? config.components.startOnLoad : false
     };
   }
 
@@ -144,7 +151,7 @@ export class ConfigResolver {
     return {
       ...apm,
       requestTypes:
-        components && components.requestTypes !== undefined
+        components && this._isTruthy(components.requestTypes)
           ? components.requestTypes
           : [...this.DEFAULT_APMS_REQUEST_TYPES]
     };

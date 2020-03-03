@@ -18,7 +18,6 @@ import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { Notification } from '../../core/shared/Notification';
 import { Payment } from '../../core/shared/Payment';
-import { Selectors } from '../../core/shared/Selectors';
 import { Validation } from '../../core/shared/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 

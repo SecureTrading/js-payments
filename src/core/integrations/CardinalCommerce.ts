@@ -206,6 +206,7 @@ export class CardinalCommerce {
 
   private _onInit() {
     this._initSubscriptions();
+    console.error(this._requestTypes);
     this._publishRequestTypesEvent(this._requestTypes);
   }
 

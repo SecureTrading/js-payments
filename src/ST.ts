@@ -105,8 +105,7 @@ class ST {
     config = config !== undefined ? config : ({} as IComponentsConfig);
     this._config = { ...this._config, components: { ...this._config.components, ...config } };
     this.configProvider.update(this._config);
-    this._commonFrames.requestTypes = this._config.components.requestTypes;
-    this.CardinalCommerce();
+    this.CardinalCommerce(this._commonFrames.requestTypes);
     this.CardFrames(this._config);
     this._cardFrames.init();
     this._merchantFields.init();
@@ -168,12 +167,12 @@ class ST {
     this.watchForFrameUnload();
   }
 
-  private CardinalCommerce(): CardinalCommerce {
+  private CardinalCommerce(requestTypes: string[]): CardinalCommerce {
     const { cardinal } = this.Environment();
     return new cardinal(
       this._config.components.startOnLoad,
       this._config.jwt,
-      this._config.components.requestTypes,
+      requestTypes,
       this._config.livestatus,
       this._config.init.cachetoken,
       this._config.init.threedinit,
