@@ -90,7 +90,7 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
   public subscribe<T>(eventType: string, callback: (data: T) => void): Unsubscribable;
 
   public subscribe<T>(...args: any[]): Unsubscribable {
-    if (!this.isControlFrame) {
+    if (!this.framesHub.isParentFrame && !this.isControlFrame) {
       return this.getControlFrameMessageBus().subscribe(messageBus => {
         messageBus.subscribe.apply(messageBus, args);
       });
