@@ -148,7 +148,7 @@ describe('CardFrames', () => {
       // @ts-ignore
       instance._subscribeBlockSubmit();
       // @ts-ignore
-      instance.messageBus.publish({ data: true, type: MessageBus.EVENTS.BLOCK_FORM });
+      instance.messageBus.publish({ data: true, type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM });
       // @ts-ignore
       expect(instance._disableSubmitButton).toHaveBeenCalled();
     });

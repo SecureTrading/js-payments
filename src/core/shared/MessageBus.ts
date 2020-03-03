@@ -14,7 +14,6 @@ type ControlFrameWindow = Window & {messageBus: MessageBus};
 @Service()
 export class MessageBus implements Subscribable<IMessageBusEvent> {
   public static EVENTS = {
-    BLOCK_FORM: 'BLOCK_FORM',
     BLUR_CARD_NUMBER: 'BLUR_CARD_NUMBER',
     BLUR_EXPIRATION_DATE: 'BLUR_EXPIRATION_DATE',
     BLUR_SECURITY_CODE: 'BLUR_SECURITY_CODE',
@@ -36,6 +35,7 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
   };
   public static EVENTS_PUBLIC = {
     BIN_PROCESS: 'BIN_PROCESS',
+    BLOCK_FORM: 'BLOCK_FORM',
     BLOCK_CARD_NUMBER: 'BLOCK_CARD_NUMBER',
     BLOCK_EXPIRATION_DATE: 'BLOCK_EXPIRATION_DATE',
     BLOCK_SECURITY_CODE: 'BLOCK_SECURITY_CODE',
