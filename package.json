@@ -29,7 +29,6 @@
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect",
     "prettier": "./node_modules/.bin/prettier --single-quote --write './src/**/*.{ts,js,css,json}",
-    "precommit": "lint-staged"
   },
   "repository": {
     "type": "git",
@@ -41,11 +40,13 @@
     "url": "https://github.com/SecureTrading/js-payments/issues"
   },
   "homepage": "https://github.com/SecureTrading/js-payments#readme",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
   "lint-staged": {
-    "*.{ts,js,css,json}": [
-      "./node_modules/.bin/prettier --single-quote --write",
-      "git add"
-    ]
+    "*.ts": ["npm run precommit", "git add"]
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",
