@@ -1,5 +1,4 @@
 import { CardinalCommerce } from '../integrations/CardinalCommerce';
-import { FormState } from '../models/constants/FormState';
 import { IStyles } from '../config/model/IStyles';
 import { Element } from '../services/Element';
 import { DomMethods } from '../shared/DomMethods';
@@ -29,7 +28,6 @@ export class CommonFrames extends RegisterFrames {
   private readonly _gatewayUrl: string;
   private readonly _merchantForm: HTMLFormElement;
   private _validation: Validation;
-  private readonly _submitCallback: any;
   private readonly _submitFields: string[];
   private readonly _submitOnError: boolean;
   private readonly _submitOnSuccess: boolean;

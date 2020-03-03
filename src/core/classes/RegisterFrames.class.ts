@@ -13,7 +13,6 @@ export class RegisterFrames {
   protected origin: string;
   protected componentIds: any;
   protected hasAnimatedCard: boolean;
-  protected submitCallback: any;
   protected fieldsToSubmit: string[];
   protected messageBus: MessageBus;
   private stJwt: StJwt;

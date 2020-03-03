@@ -49,7 +49,7 @@ export class CardinalCommerce {
   ) {
     this._startOnLoad = startOnLoad;
     this._jwt = jwt;
-    this._threedinit = threedinit;
+    this._threedinit = threedinit ? threedinit : '';
     this._livestatus = livestatus;
     this._cachetoken = cachetoken ? cachetoken : '';
     this._requestTypes = requestTypes;

@@ -51,7 +51,7 @@ export class MessageBus {
     TRANSACTION_COMPLETE: 'TRANSACTION_COMPLETE',
     UPDATE_JWT: 'UPDATE_JWT',
     UPDATE_MERCHANT_FIELDS: 'UPDATE_MERCHANT_FIELDS',
-    SUBSCRIBE: 'SUBSCRIBE',
+    SUBSCRIBE: 'SUBSCRIBE'
   };
   private static readonly DOM_EVENT_NAME = 'message';
   private readonly _parentOrigin: string;

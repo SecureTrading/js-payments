@@ -23,7 +23,7 @@ export class InterFrameCommunicator {
     ).pipe(
       filter(event => event.data.type),
       map(event => event.data),
-      share(),
+      share()
     );
 
     this.communicationClosed$ = this.close$.asObservable();
@@ -40,15 +40,21 @@ export class InterFrameCommunicator {
     return new Promise((resolve, reject) => {
       const query = new QueryMessage(message);
 
-      this.incomingEvent$.pipe(
-        ofType(ResponseMessage.MESSAGE_TYPE),
-        filter((event: ResponseMessage<T>) => event.queryId === query.queryId),
-        map((event: ResponseMessage<T>) => event.data),
-        take(1),
-      ).subscribe({
-        next(result) { resolve(result); },
-        error(error) { reject(error); },
-      });
+      this.incomingEvent$
+        .pipe(
+          ofType(ResponseMessage.MESSAGE_TYPE),
+          filter((event: ResponseMessage<T>) => event.queryId === query.queryId),
+          map((event: ResponseMessage<T>) => event.data),
+          take(1)
+        )
+        .subscribe({
+          next(result) {
+            resolve(result);
+          },
+          error(error) {
+            reject(error);
+          }
+        });
 
       this.send(query, target);
     });
@@ -57,21 +63,21 @@ export class InterFrameCommunicator {
   public whenReceive(eventType: string) {
     return {
       thenRespond: <T>(responder: (queryEvent: IMessageBusEvent) => Observable<T>) => {
-        this.incomingEvent$.pipe(
-          ofType(QueryMessage.MESSAGE_TYPE),
-          filter((queryEvent: QueryMessage) => queryEvent.data.type === eventType),
-          switchMap((queryEvent: QueryMessage) => responder(queryEvent.data).pipe(
-            take(1),
-            map((response: T) => new ResponseMessage(
-              response,
-              queryEvent.queryId,
-              queryEvent.sourceFrame,
-            )),
-          )),
-          takeUntil(this.close$),
-        ).subscribe((response: ResponseMessage<T>) => {
-          this.send(response, response.queryFrame);
-        });
+        this.incomingEvent$
+          .pipe(
+            ofType(QueryMessage.MESSAGE_TYPE),
+            filter((queryEvent: QueryMessage) => queryEvent.data.type === eventType),
+            switchMap((queryEvent: QueryMessage) =>
+              responder(queryEvent.data).pipe(
+                take(1),
+                map((response: T) => new ResponseMessage(response, queryEvent.queryId, queryEvent.sourceFrame))
+              )
+            ),
+            takeUntil(this.close$)
+          )
+          .subscribe((response: ResponseMessage<T>) => {
+            this.send(response, response.queryFrame);
+          });
       }
     };
   }
