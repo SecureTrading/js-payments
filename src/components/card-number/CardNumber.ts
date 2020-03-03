@@ -163,8 +163,13 @@ export class CardNumber extends FormField {
     element.style.width = '30px';
     element.style.height = '20px';
     element.style.position = 'absolute';
-    element.style.top = '30px';
-    element.style.right = '10px';
+    element.style.top = '27px';
+    element.style.right = '8px';
+    element.style.padding = '3px';
+    element.style.right = '8px';
+    element.style.backgroundColor = '#fff';
+    element.style.border = '1px solid #6d6d6d';
+    element.style.borderRadius = '4px';
     return element;
   }
 
@@ -192,8 +197,10 @@ export class CardNumber extends FormField {
     document.getElementById(Selectors.CARD_NUMBER_INPUT_SELECTOR).prepend(element);
   }
 
-  private _getBinLookupDetails = (cardNumber: string) =>
-    iinLookup.lookup(cardNumber).type ? iinLookup.lookup(cardNumber) : undefined;
+  private _getBinLookupDetails = (cardNumber: string) => {
+   return iinLookup.lookup(cardNumber).type ? iinLookup.lookup(cardNumber) : undefined;
+  };
+
 
   private _getCardFormat = (cardNumber: string) =>
     this._getBinLookupDetails(cardNumber) ? this._getBinLookupDetails(cardNumber).format : undefined;
@@ -206,7 +213,8 @@ export class CardNumber extends FormField {
 
   private _getMaxLengthOfCardNumber() {
     const cardLengthFromBin = this._getPossibleCardLength(this._inputElement.value);
-    const cardFormat = this._getCardFormat(this._inputElement.value);
+    this._cardNumberValue = this._inputElement.value.replace(/\s/g, '');
+    const cardFormat = this._getCardFormat(this._cardNumberValue);
     let numberOfWhitespaces;
     if (cardFormat) {
       numberOfWhitespaces = cardFormat.split('d').length - CardNumber.WHITESPACES_DECREASE_NUMBER;
@@ -236,8 +244,8 @@ export class CardNumber extends FormField {
     this._inputElement.value = formatted;
     this._cardNumberValue = nonformatted;
     this.validation.keepCursorsPosition(this._inputElement);
-    const type = this._getBinLookupDetails(this._inputElement.value)
-      ? this._getBinLookupDetails(this._inputElement.value).type
+    const type = this._getBinLookupDetails(this._cardNumberValue)
+      ? this._getBinLookupDetails(this._cardNumberValue).type
       : null;
     this._setImageIconPlaceholder(type, 'card-icon');
   }
