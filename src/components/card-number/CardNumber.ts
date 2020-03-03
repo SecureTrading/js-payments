@@ -154,7 +154,6 @@ export class CardNumber extends FormField {
     this._inputElement.value = formatted;
     this._cardNumberValue = nonformatted;
     this.validation.keepCursorsPosition(this._inputElement);
-    const dupa: string = '321';
   }
 
   private _setDisableListener() {
