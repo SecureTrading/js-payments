@@ -1,8 +1,6 @@
 import { environment } from '../../environments/environment';
 import { IMessageBusEvent } from '../models/IMessageBusEvent';
 import { Utils } from './Utils';
-import { BrowserSessionStorage } from '../services/storage/BrowserSessionStorage';
-import { Container } from 'typedi';
 
 export class MessageBus {
   public static SUBSCRIBERS: string = 'ST_SUBSCRIBERS';
@@ -59,11 +57,12 @@ export class MessageBus {
   private readonly _parentOrigin: string;
   private readonly _frameOrigin: string;
   private _subscriptions: any = {};
-  private _sessionStorage: BrowserSessionStorage = Container.get(BrowserSessionStorage);
+  private _sessionStorage: Storage;
 
   constructor(parentOrigin?: string) {
     this._parentOrigin = parentOrigin ? parentOrigin : '*';
     this._frameOrigin = new URL(environment.FRAME_URL).origin;
+    this._sessionStorage = window.sessionStorage;
     this._registerMessageListener();
   }
 

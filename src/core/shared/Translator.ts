@@ -45,14 +45,10 @@ export class Translator {
   }
 
   public translate = (text: string) => {
-    try {
-      const translations: string = this._storage.getItem('merchantTranslations');
-      const json: string = JSON.parse(translations);
-      // @ts-ignore
-      const translation: string = Object.keys(json).includes(text) ? json[text] : '';
-      return translation ? translation : i18next.t(text, { content: text });
-    } catch (e) {
-      return e.toString();
-    }
+    const translations: string = this._storage.getItem('merchantTranslations');
+    const json: string = JSON.parse(translations);
+    // @ts-ignore
+    const translation: string = Object.keys(json).includes(text) ? json[text] : '';
+    return translation ? translation : i18next.t(text, { content: text });
   };
 }
