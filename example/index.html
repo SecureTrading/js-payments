@@ -105,10 +105,10 @@
             return response.json();
           })
           .then(function(data) {
-            if (data) {
+            try {
               configurationInit(ST, data);
-            } else {
-              fetchDefaultConfig();
+            } catch (e) {
+              console.error(e);
             }
           })
           .catch(function() {
