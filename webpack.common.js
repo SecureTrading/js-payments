@@ -13,7 +13,8 @@ module.exports = {
     'control-frame': ['./polyfills', './src/components/control-frame/control-frame.ts'],
     st: ['./polyfills', './src/ST.ts'],
     example: './example/index.ts',
-    receipt: './example/receipt.ts'
+    receipt: './example/receipt.ts',
+    iframe: './example/iframe.ts',
   },
   output: {
     filename: '[name].js',
@@ -87,6 +88,11 @@ module.exports = {
       filename: 'receipt.html',
       template: './example/receipt.html',
       chunks: ['receipt']
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'iframe.html',
+      template: './example/iframe.html',
+      chunks: ['iframe']
     }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
