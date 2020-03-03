@@ -76,7 +76,6 @@ export class ConfigResolver {
       ...this._setFieldsToSubmit(config),
       ...this._setPropertiesToSubmit(config)
     };
-    console.error(this._isTruthy(config.animatedCard) ? config.animatedCard : false);
   }
 
   private _isTruthy = (value: any) => typeof value !== 'undefined' && value;
@@ -85,9 +84,9 @@ export class ConfigResolver {
     if (!this._isTruthy(config)) {
       return { ...this.DEFAULT_COMPONENTS_IDS };
     }
-
-    const optionalIds = this._isTruthy(config.animatedCard) ? { animatedCard: config.animatedCard } : {};
-    console.error(optionalIds);
+    const optionalIds = {
+      animatedCard: this._isTruthy(config.animatedCard) ? config.animatedCard : this.DEFAULT_COMPONENTS_IDS.animatedCard
+    };
     const requiredIds = {
       cardNumber: this._isTruthy(config.cardNumber) ? config.cardNumber : this.DEFAULT_COMPONENTS_IDS.cardNumber,
       expirationDate: this._isTruthy(config.expirationDate)
@@ -98,7 +97,6 @@ export class ConfigResolver {
         : this.DEFAULT_COMPONENTS_IDS.notificationFrame,
       securityCode: this._isTruthy(config.securityCode) ? config.securityCode : this.DEFAULT_COMPONENTS_IDS.securityCode
     };
-    console.error({ ...optionalIds, ...requiredIds });
     return {
       ...optionalIds,
       ...requiredIds

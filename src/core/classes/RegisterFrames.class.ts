@@ -12,7 +12,6 @@ export class RegisterFrames {
   protected jwt: string;
   protected origin: string;
   protected componentIds: any;
-  protected hasAnimatedCard: boolean;
   protected fieldsToSubmit: string[];
   protected messageBus: MessageBus;
   private stJwt: StJwt;
@@ -28,7 +27,6 @@ export class RegisterFrames {
     this.messageBus = new MessageBus();
     this.fieldsToSubmit = fieldsToSubmit || RegisterFrames.COMPLETE_FORM_FIELDS;
     this.componentIds = componentIds;
-    this.hasAnimatedCard = animatedCard;
     this.elementsToRegister = [];
     this.jwt = jwt;
     this.origin = origin;

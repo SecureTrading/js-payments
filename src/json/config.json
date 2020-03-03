@@ -1,6 +1,6 @@
 {
   "analytics": true,
-  "animatedCard": true,
+  "animatedCard": false,
   "applePay": {
     "buttonStyle": "white-outline",
     "buttonText": "donate",
