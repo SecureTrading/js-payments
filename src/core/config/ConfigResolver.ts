@@ -7,7 +7,6 @@ import { IComponentsConfig } from './model/IComponentsConfig';
 import { environment } from '../../environments/environment';
 import { IWalletConfig } from './model/IWalletConfig';
 import { ConfigSchema } from './schema/ConfigSchema';
-import { type } from 'os';
 
 @Service()
 export class ConfigResolver {
