@@ -4,12 +4,12 @@ import { InterFrameCommunicator } from '../message-bus/InterFrameCommunicator';
 import { FramesHub } from '../message-bus/FramesHub';
 
 @Service()
-export class BrowserLocalStorage extends AbstractStorage {
+export class BrowserSessionStorage extends AbstractStorage {
   constructor(communicator: InterFrameCommunicator, framesHub: FramesHub) {
-    super(window.localStorage, communicator, framesHub);
+    super(window.sessionStorage, communicator, framesHub);
   }
 
   protected getSychronizationEventName(): string {
-    return 'ST_SET_LOCAL_STORAGE_ITEM';
+    return 'ST_SET_SESSION_STORAGE_ITEM';
   }
 }
