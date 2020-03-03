@@ -27,7 +27,9 @@
     "export:translations": "cross-env-shell i18next-conv -l '$npm_package_config_locale' -s ./src/core/translations/$npm_package_config_locale.json -t ./translations/$npm_package_config_locale.po",
     "import:translations": "cross-env-shell i18next-conv -l '$npm_package_config_locale' -s ./translations/$npm_package_config_locale.po -t ./src/core/translations/$npm_package_config_locale.json",
     "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect"
+    "prepare": "npm run snyk-protect",
+    "prettier": "./node_modules/.bin/prettier --single-quote --write './src/**/*.{ts,js,css,json}",
+    "precommit": "lint-staged"
   },
   "repository": {
     "type": "git",
@@ -39,6 +41,12 @@
     "url": "https://github.com/SecureTrading/js-payments/issues"
   },
   "homepage": "https://github.com/SecureTrading/js-payments#readme",
+  "lint-staged": {
+    "*.{ts,js,css,json}": [
+      "./node_modules/.bin/prettier --single-quote --write",
+      "git add"
+    ]
+  },
   "devDependencies": {
     "@babel/core": "^7.8.4",
     "@babel/plugin-proposal-class-properties": "^7.8.3",
@@ -54,6 +62,7 @@
     "@types/node": "13.7.4",
     "babel-jest": "^25.1.0",
     "babel-loader": "^8.0.6",
+    "babel-plugin-transform-typescript-metadata": "^0.2.2",
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^5.1.1",
     "coveralls": "^3.0.9",
@@ -64,11 +73,13 @@
     "friendly-errors-webpack-plugin": "^1.7.0",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
+    "husky": "^4.2.3",
     "i18next-conv": "^9.1.0",
     "jest": "^25.1.0",
     "jest-each": "^25.1.0",
     "jest-fetch-mock": "^3.0.1",
     "jest-get-type": "^25.1.0",
+    "lint-staged": "^10.0.8",
     "live-server": "^1.2.1",
     "local-web-server": "^4.0.0",
     "mini-css-extract-plugin": "^0.9.0",
@@ -95,8 +106,7 @@
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.2",
     "webpack-manifest-plugin": "^2.2.0",
-    "webpack-merge": "^4.2.2",
-    "babel-plugin-transform-typescript-metadata": "^0.2.2"
+    "webpack-merge": "^4.2.2"
   },
   "dependencies": {
     "@babel/polyfill": "^7.7.0",

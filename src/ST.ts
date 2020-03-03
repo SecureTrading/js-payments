@@ -77,7 +77,7 @@ class ST {
     @Inject(CONFIG) private _config: IConfig,
     private configProvider: ConfigService,
     private _communicator: InterFrameCommunicator,
-    private _framesHub: FramesHub,
+    private _framesHub: FramesHub
   ) {
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();

@@ -29,30 +29,30 @@ export class FramesHub {
       ofType(FramesHub.FRAME_READY_EVENT),
       filter((event: IMessageBusEvent) => Boolean(event.data)),
       map((event: IMessageBusEvent) => event.data),
-      shareReplay(),
+      shareReplay()
     );
 
     this.activeFrame$ = concat(initialFrames$, fromEventFrame$).pipe(
       scan((activeFrames, newFrame) => [...activeFrames, newFrame], []),
       map(frames => ArrayUtils.unique(frames)),
       distinctUntilChanged((prev, curr) => ArrayUtils.equals(prev, curr)),
-      shareReplay(1),
+      shareReplay(1)
     );
 
-    this.communicator
-      .whenReceive(FramesHub.GET_FRAMES_EVENT)
-      .thenRespond(() => this.activeFrame$);
+    this.communicator.whenReceive(FramesHub.GET_FRAMES_EVENT).thenRespond(() => this.activeFrame$);
 
-    fromEventFrame$.pipe(
-      withLatestFrom(this.activeFrame$),
-      takeUntil(this.communicator.communicationClosed$)
-    ).subscribe(([newFrame, activeFrames]) => this.onFrameReady(newFrame, activeFrames));
+    fromEventFrame$
+      .pipe(
+        withLatestFrom(this.activeFrame$),
+        takeUntil(this.communicator.communicationClosed$)
+      )
+      .subscribe(([newFrame, activeFrames]) => this.onFrameReady(newFrame, activeFrames));
   }
 
   public isFrameActive(name: string): Observable<boolean> {
     return this.activeFrame$.pipe(
       map(frames => frames.indexOf(name) !== -1),
-      distinctUntilChanged(),
+      distinctUntilChanged()
     );
   }
 
@@ -64,7 +64,7 @@ export class FramesHub {
       return;
     }
 
-    this.communicator.send({type: FramesHub.FRAME_READY_EVENT, data: window.name}, Selectors.MERCHANT_PARENT_FRAME);
+    this.communicator.send({ type: FramesHub.FRAME_READY_EVENT, data: window.name }, Selectors.MERCHANT_PARENT_FRAME);
   }
 
   private getInitialFrames(): Observable<string> {
@@ -72,8 +72,8 @@ export class FramesHub {
       return from([]);
     }
 
-    return from(this.communicator.query({type: FramesHub.GET_FRAMES_EVENT}, Selectors.MERCHANT_PARENT_FRAME)).pipe(
-      switchMap((frames: string[]) => from(frames)),
+    return from(this.communicator.query({ type: FramesHub.GET_FRAMES_EVENT }, Selectors.MERCHANT_PARENT_FRAME)).pipe(
+      switchMap((frames: string[]) => from(frames))
     );
   }
 
@@ -84,7 +84,7 @@ export class FramesHub {
 
     const event: IMessageBusEvent = {
       type: FramesHub.FRAME_READY_EVENT,
-      data: newFrame,
+      data: newFrame
     };
 
     activeFrames.forEach(frame => this.communicator.send(event, frame));

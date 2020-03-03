@@ -110,6 +110,8 @@ export class CardinalCommerce {
       const submitFormEvent: IMessageBusEvent = {
         data: { dataInJwt: true, requestTypes: this._requestTypes, bypassCards: this._bypassCards },
         type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
+
+
       };
       this.messageBus.publishFromParent(submitFormEvent, Selectors.CONTROL_FRAME_IFRAME);
     } else {
