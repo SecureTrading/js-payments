@@ -38,6 +38,7 @@ export class CardinalCommerce {
   private _notification: Notification;
   private _sdkAddress: string = environment.CARDINAL_COMMERCE.SONGBIRD_TEST_URL;
   private _bypassCards: string[];
+  private _jwtUpdated: boolean;
 
   constructor(
     startOnLoad: boolean,
@@ -48,6 +49,7 @@ export class CardinalCommerce {
     threedinit?: string,
     bypassCards?: string[]
   ) {
+    this._jwtUpdated = false;
     this._startOnLoad = startOnLoad;
     this._jwt = jwt;
     this._threedinit = threedinit;
@@ -61,6 +63,7 @@ export class CardinalCommerce {
     this._onInit();
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
       const { newJwt } = data;
+      this._jwtUpdated = true;
       this._jwt = newJwt;
       this._onInit();
     });
@@ -87,6 +90,10 @@ export class CardinalCommerce {
     });
   }
 
+  protected _cardinalTrigger() {
+    return Cardinal.trigger(PaymentEvents.JWT_UPDATE, this._cardinalCommerceJWT);
+  }
+
   protected _onCardinalLoad() {
     Cardinal.configure(environment.CARDINAL_COMMERCE.CONFIG);
     Cardinal.off(PaymentEvents.SETUP_COMPLETE);
@@ -101,13 +108,17 @@ export class CardinalCommerce {
       this._onCardinalValidated(data, jwt);
       GoogleAnalytics.sendGaData('event', 'Cardinal', 'validate', 'Cardinal payment validated');
     });
-    this._cardinalSetup();
+    if (this._jwtUpdated) {
+      this._cardinalTrigger();
+    } else {
+      this._cardinalSetup();
+    }
   }
 
   protected _onCardinalSetupComplete() {
     if (this._startOnLoad) {
       const pan = new StJwt(this._jwt).payload.pan as string;
-      this._performBinDetection({ validity: true, value: pan });
+      this._performBinDetection(pan);
       const submitFormEvent: IMessageBusEvent = {
         data: { dataInJwt: true, requestTypes: this._requestTypes, bypassCards: this._bypassCards },
         type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
@@ -117,7 +128,10 @@ export class CardinalCommerce {
       const messageBusEvent: IMessageBusEvent = {
         type: MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL
       };
-      this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BIN_PROCESS, this._performBinDetection);
+      this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BIN_PROCESS, (data: IFormFieldState) => {
+        const { value } = data;
+        this._performBinDetection(value);
+      });
       this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
     }
   }
@@ -153,7 +167,7 @@ export class CardinalCommerce {
     }
   }
 
-  protected _performBinDetection(bin: IFormFieldState) {
+  protected _performBinDetection(bin: string) {
     return Cardinal.trigger(PaymentEvents.BIN_PROCESS, bin);
   }
 
@@ -237,6 +251,7 @@ export class CardinalCommerce {
   }
 
   private _onThreeDQueryEvent(data: IThreeDQueryResponse) {
+    console.error(data);
     this._threeDQueryRequest(data);
   }
 
