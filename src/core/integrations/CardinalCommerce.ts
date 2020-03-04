@@ -220,7 +220,6 @@ export class CardinalCommerce {
 
   private _onInit() {
     this._initSubscriptions();
-    console.error(this._requestTypes);
     this._publishRequestTypesEvent(this._requestTypes);
   }
 
@@ -251,7 +250,6 @@ export class CardinalCommerce {
   }
 
   private _onThreeDQueryEvent(data: IThreeDQueryResponse) {
-    console.error(data);
     this._threeDQueryRequest(data);
   }
 
