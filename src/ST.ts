@@ -93,7 +93,9 @@ class ST {
       submit: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUBMIT_CALLBACK
     };
     // @ts-ignore
-    this._messageBus.subscribe(events[event], () => {
+    this._messageBus.subscribe(events[event], e => {
+      console.log(e.data);
+      console.error(e.data);
       callback();
     });
   }

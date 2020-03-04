@@ -3,6 +3,7 @@ const path = require('path');
 const common = require('./webpack.common.js');
 const webpack = require('webpack');
 const ManifestPlugin = require('webpack-manifest-plugin');
+const fs = require('fs');
 
 module.exports = merge(common, {
   mode: 'development',
@@ -12,7 +13,11 @@ module.exports = merge(common, {
     contentBase: path.join(__dirname, './dist'),
     publicPath: '',
     port: 8443,
-    https: true,
+    https: {
+      key: fs.readFileSync('./docker/nginx/cert/merchant.securetrading.net/key.pem'),
+      cert: fs.readFileSync('./docker/nginx/cert/merchant.securetrading.net/cert.pem'),
+      ca: fs.readFileSync('./docker/nginx/cert/minica.pem'),
+    },
     hot: true,
     host: '0.0.0.0',
     writeToDisk: true,

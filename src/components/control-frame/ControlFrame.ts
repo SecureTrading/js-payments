@@ -249,7 +249,7 @@ export class ControlFrame extends Frame {
         this._validation.blockForm(FormState.COMPLETE);
       })
       .catch((error: any) => {
-        this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
+        this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK, data: error }, true);
         this._notification.error(Language.translations.PAYMENT_ERROR);
         this._validation.blockForm(FormState.AVAILABLE);
       })
@@ -292,7 +292,16 @@ export class ControlFrame extends Frame {
       this._isPaymentReady
     );
     if (!validity) {
-      this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
+      this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK, data: {
+        validity,
+        card,
+        jwt: dataInJwt,
+        defer: deferInit,
+        fieldsToSubmit: data.fieldsToSubmit,
+        formFields: this._formFields,
+        isPanPiba,
+        paymentReady: this._isPaymentReady
+      } }, true);
       this._validateFormFields();
       return;
     }
