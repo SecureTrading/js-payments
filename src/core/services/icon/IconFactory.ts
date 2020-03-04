@@ -1,6 +1,7 @@
-import { Container } from 'typedi';
+import { Container, Service } from 'typedi';
 import { IconMap } from './IconMap';
 
+@Service()
 export class IconFactory {
   private _attributes = { alt: '', title: '', ariaLabel: '', id: 'card-icon' };
   private readonly _icon: HTMLImageElement;

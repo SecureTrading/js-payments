@@ -46,7 +46,7 @@ export class CardNumber extends FormField {
   private _fieldInstance: HTMLInputElement = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
   private readonly _cardNumberField: HTMLInputElement;
 
-  constructor(private configService: ConfigService) {
+  constructor(private configService: ConfigService, private _iconFactory: IconFactory) {
     super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE, Selectors.CARD_NUMBER_LABEL);
     this._cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     this.validation = new Validation();
@@ -131,9 +131,7 @@ export class CardNumber extends FormField {
     if (!type) {
       return;
     }
-    const lowercased: string = type.toLowerCase();
-    const icon: IconFactory = new IconFactory();
-    return icon.getIcon(lowercased);
+    return this._iconFactory.getIcon(type.toLowerCase());
   }
 
   private _setIconImage(type: string, iconId: string): void {
