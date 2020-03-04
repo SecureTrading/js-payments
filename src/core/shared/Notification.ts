@@ -11,14 +11,14 @@ export class Notification {
   private _messageBus: MessageBus;
   private _messageBusEvent: IMessageBusEvent;
   private _notificationEvent: INotificationEvent;
-  private _display: boolean;
-  private _displayOnError: boolean;
-  private _displayOnSuccess: boolean;
+  private readonly _display: boolean;
+  private readonly _displayOnError: boolean;
+  private readonly _displayOnSuccess: boolean;
 
   constructor(private configService: ConfigService) {
     this._display = this.configService.getConfig().notifications;
-    this._displayOnError = this._display && this.configService.getConfig().submitOnError;
-    this._displayOnSuccess = this._display && this.configService.getConfig().submitOnSuccess;
+    this._displayOnError = this._display && !this.configService.getConfig().submitOnError;
+    this._displayOnSuccess = this._display && !this.configService.getConfig().submitOnSuccess;
     this._messageBus = new MessageBus();
   }
 
@@ -31,6 +31,7 @@ export class Notification {
   }
 
   public success(message: string, publishFromParent?: boolean) {
+    console.error(this._displayOnSuccess);
     this._setNotification(NotificationType.Success, message, this._displayOnSuccess, publishFromParent);
   }
 
@@ -39,6 +40,7 @@ export class Notification {
   }
 
   private _setNotification(type: string, content: string, display: boolean = true, publishFromParent?: boolean) {
+    console.error(display);
     if (!display) {
       return;
     }

@@ -65,6 +65,7 @@ export class ConfigResolver {
       init: config.init !== undefined ? config.init : { cachetoken: '', threedinit: '' },
       jwt: config.jwt !== undefined ? config.jwt : '',
       livestatus: config.livestatus !== undefined ? config.livestatus : 0,
+      notifications: config.notifications !== undefined ? config.notifications : true,
       origin: config.origin !== undefined ? config.origin : window.location.origin,
       placeholders: config.placeholders || { pan: '', expirydate: '', securitycode: '' },
       styles: config.styles ? config.styles : {},
