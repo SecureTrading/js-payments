@@ -168,8 +168,8 @@
             displayPopup('success-popup', 'This is success message', 'green');
           };
 
-          st.errorCallback = function() {
-            displayPopup('error-popup', 'This is error message', 'red');
+          st.errorCallback = function(err) {
+            displayPopup('error-popup', 'This is error message ' + JSON.stringify(err), 'red');
           };
           st.Components(stConfig.components);
           st.ApplePay(stConfig.applePay);

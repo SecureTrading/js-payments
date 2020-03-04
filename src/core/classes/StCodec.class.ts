@@ -136,6 +136,7 @@ class StCodec {
       type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK,
       data: 'invalid response'
     }, true);
+
     return new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
   }
 

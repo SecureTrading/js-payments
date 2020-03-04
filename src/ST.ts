@@ -96,7 +96,7 @@ class ST {
     this._messageBus.subscribe(events[event], e => {
       console.log(e.data);
       console.error(e.data);
-      callback();
+      callback(e);
     });
   }
   public off(event: string) {
