@@ -73,7 +73,7 @@ export class ControlFrame extends Frame {
 
   constructor(
     private _localStorage: BrowserLocalStorage = Container.get(BrowserLocalStorage),
-    private _sessionStorage: BrowserSessionStorage = Container.get(BrowserSessionStorage),
+    private _sessionStorage: BrowserSessionStorage = Container.get(BrowserSessionStorage)
   ) {
     super();
     this.onInit();
