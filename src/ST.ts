@@ -104,14 +104,16 @@ class ST {
   }
 
   public Components(config: IComponentsConfig): void {
-    config = config !== undefined ? config : ({} as IComponentsConfig);
-    this._config = { ...this._config, components: { ...this._config.components, ...config } };
-    this.configProvider.update(this._config);
-    this._commonFrames.requestTypes = this._config.components.requestTypes;
-    this.CardinalCommerce();
-    this.CardFrames(this._config);
-    this._cardFrames.init();
-    this._merchantFields.init();
+    this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(() => {
+      config = config !== undefined ? config : ({} as IComponentsConfig);
+      this._config = { ...this._config, components: { ...this._config.components, ...config } };
+      this.configProvider.update(this._config);
+      this._commonFrames.requestTypes = this._config.components.requestTypes;
+      this.CardinalCommerce();
+      this.CardFrames(this._config);
+      this._cardFrames.init();
+      this._merchantFields.init();
+    });
   }
 
   public ApplePay(config: IApplePayConfig): ApplePay {

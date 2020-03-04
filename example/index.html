@@ -137,7 +137,7 @@
             div.setAttribute('id', id);
             div.setAttribute(
               'style',
-              'display: flex; justify-content: center; position: fixed; height: 70px;right:0;color: white;padding: 0 50px;align-items: center;border-radius: 10px;font-family: Verdana;font-size: 20px;z-index:2'
+              'display: flex; justify-content: center; position: fixed; height: 70px;right:0;color: white;padding: 0 50px;align-items: center;border-radius: 10px;font-family: Verdana;font-size: 8px;z-index:2'
             );
             div.style.backgroundColor = tp;
             if (tp === 'green') {
@@ -159,21 +159,25 @@
           stConfig.jwt = parsedUrl.searchParams.get('jwt') || stConfig.jwt;
           var st = ST(stConfig);
 
-          st.submitCallback = function someFancyfunction(data) {
-            var stringified = JSON.stringify(data);
-            var testVariable = 'This is what we have got after submit' + stringified;
-            console.error(testVariable);
-          };
-          st.successCallback = function() {
-            displayPopup('success-popup', 'This is success message', 'green');
-          };
+          // setTimeout(function() {
+            st.submitCallback = function someFancyfunction(data) {
+              var stringified = JSON.stringify(data);
+              var testVariable = 'This is what we have got after submit' + stringified;
+              console.error(testVariable);
+            };
+            st.successCallback = function() {
+              displayPopup('success-popup', 'This is success message', 'green');
+            };
 
-          st.errorCallback = function(err) {
-            displayPopup('error-popup', 'This is error message ' + JSON.stringify(err), 'red');
-          };
-          st.Components(stConfig.components);
-          st.ApplePay(stConfig.applePay);
-          st.VisaCheckout(stConfig.visaCheckout);
+            st.errorCallback = function(err) {
+              displayPopup('error-popup', 'This is error message ' + JSON.stringify(err), 'red');
+            };
+
+            st.Components(stConfig.components);
+            st.ApplePay(stConfig.applePay);
+            st.VisaCheckout(stConfig.visaCheckout);
+          // }, 1000);
+
           document.getElementById('example-form-amount').addEventListener('input', function() {
             st.updateJWT(
               'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4Mjg4MzU5NC44NTA2NjA4LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.zaQeUXZuFhCCUHi6KSBLAIgKrOFUziKUEXxDRyJHHi8'

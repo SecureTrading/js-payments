@@ -36,7 +36,7 @@ export class InterFrameCommunicator {
 
   public send(message: IMessageBusEvent, target: Window | string): void {
     const targetFrame = this.resolveTargetFrame(target);
-    const frameOrigin = targetFrame === window.top ? this.getParentOrigin() : this.frameOrigin;
+    const frameOrigin = '*'; // targetFrame === window.top ? this.getParentOrigin() : this.frameOrigin;
 
     targetFrame.postMessage(message, frameOrigin);
   }
