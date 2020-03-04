@@ -3,7 +3,7 @@ import { IFormFieldState } from '../models/IFormFieldState';
 import { CardinalCommerce } from './CardinalCommerce';
 
 export class CardinalCommerceMock extends CardinalCommerce {
-  protected _performBinDetection(data: IFormFieldState) {
+  protected _performBinDetection(data: string) {
     return true;
   }
 

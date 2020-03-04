@@ -193,7 +193,7 @@ export class CardNumber extends FormField {
     };
     if (validity) {
       const binProcessEvent: IMessageBusEvent = {
-        data: CardNumber._getCardNumberForBinProcess(value),
+        data: { value: CardNumber._getCardNumberForBinProcess(value), validity },
         type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS
       };
       this.messageBus.publish(binProcessEvent, true);
