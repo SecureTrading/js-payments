@@ -21,6 +21,9 @@ import { Payment } from '../../core/shared/Payment';
 import { Selectors } from '../../core/shared/Selectors';
 import { Validation } from '../../core/shared/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
+import { BrowserLocalStorage } from '../../core/services/storage/BrowserLocalStorage';
+import { BrowserSessionStorage } from '../../core/services/storage/BrowserSessionStorage';
+import { Container } from 'typedi';
 
 export class ControlFrame extends Frame {
   private static ALLOWED_PARAMS: string[] = ['jwt', 'gatewayUrl'];
@@ -68,7 +71,10 @@ export class ControlFrame extends Frame {
   private _threeDQueryResult: any;
   private _validation: Validation;
 
-  constructor() {
+  constructor(
+    private _localStorage: BrowserLocalStorage = Container.get(BrowserLocalStorage),
+    private _sessionStorage: BrowserSessionStorage = Container.get(BrowserSessionStorage),
+  ) {
     super();
     this.onInit();
   }
