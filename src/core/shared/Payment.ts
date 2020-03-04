@@ -7,6 +7,7 @@ import { IWalletVerify } from '../models/IWalletVerify';
 import { Notification } from './Notification';
 import { StJwt } from './StJwt';
 import { Validation } from './Validation';
+import { Container } from 'typedi';
 
 export class Payment {
   private _cardinalCommerceCacheToken: string;
@@ -19,7 +20,7 @@ export class Payment {
   private readonly _walletVerifyRequest: IStRequest;
 
   constructor(jwt: string, gatewayUrl: string, parentOrigin?: string) {
-    this._notification = new Notification();
+    this._notification = Container.get(Notification);
     this._stTransport = new StTransport({ jwt, gatewayUrl }, parentOrigin);
     this._validation = new Validation();
     this._walletVerifyRequest = {

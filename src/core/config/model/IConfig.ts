@@ -21,6 +21,7 @@ export interface IConfig {
   jwt: string;
   init?: IBypassInit;
   livestatus?: number;
+  notifications: boolean;
   origin?: string;
   placeholders?: IPlaceholdersConfig;
   styles?: IStyles;

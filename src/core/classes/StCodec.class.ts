@@ -10,6 +10,7 @@ import { Selectors } from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
 import { Validation } from '../shared/Validation';
+import { Container } from 'typedi';
 
 class StCodec {
   public static CONTENT_TYPE = 'application/json';
@@ -103,7 +104,7 @@ class StCodec {
     StCodec._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
-  private static _notification = new Notification();
+  private static _notification = Container.get(Notification);
   private static _locale: string;
   private static _messageBus = new MessageBus();
   private static _parentOrigin: string;

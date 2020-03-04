@@ -17,6 +17,7 @@ import { Selectors } from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
 import { GoogleAnalytics } from './GoogleAnalytics';
+import { Container } from 'typedi';
 
 declare const Cardinal: any;
 
@@ -55,7 +56,7 @@ export class CardinalCommerce {
     this._requestTypes = requestTypes;
     this._bypassCards = bypassCards;
     this.messageBus = new MessageBus();
-    this._notification = new Notification();
+    this._notification = Container.get(Notification);
     this._setLiveStatus();
     this._onInit();
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {

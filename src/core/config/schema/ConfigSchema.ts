@@ -76,6 +76,7 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
   },
   jwt: Joi.string().required(),
   livestatus: Joi.number().valid(0, 1),
+  notifications: Joi.boolean().default(true),
   origin: Joi.string(),
   requestTypes: Joi.array().items(
     Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')

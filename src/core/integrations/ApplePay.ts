@@ -125,7 +125,7 @@ export class ApplePay {
   private _localStorage: BrowserLocalStorage = Container.get(BrowserLocalStorage);
 
   constructor(config: IWalletConfig, jwt: string, gatewayUrl: string) {
-    this._notification = new Notification();
+    this._notification = Container.get(Notification);
     this._messageBus = new MessageBus();
     config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
     this._localStorage.setItem('completePayment', '');
