@@ -11,6 +11,7 @@ import { Validation } from '../../core/shared/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { Service } from 'typedi';
 import { ConfigService } from '../../core/config/ConfigService';
+import { IconFactory } from '../../core/services/icon/IconFactory';
 
 @Service()
 export class CardNumber extends FormField {
@@ -126,71 +127,33 @@ export class CardNumber extends FormField {
     this.messageBus.publish(messageBusEvent);
   }
 
-  private _getImagePath(type: string): string {
-    switch (type) {
-      case CardNumber.CARDS_IMAGES_FILES_NAMES.AMEX:
-        return `./images/${CardNumber.CARDS_IMAGES_FILES_NAMES.AMEX.toLowerCase()}.png`;
-      case CardNumber.CARDS_IMAGES_FILES_NAMES.ASTROPAYCARD:
-        return `./images/${CardNumber.CARDS_IMAGES_FILES_NAMES.ASTROPAYCARD.toLowerCase()}.png`;
-      case CardNumber.CARDS_IMAGES_FILES_NAMES.DINERS:
-        return `./images/${CardNumber.CARDS_IMAGES_FILES_NAMES.DINERS.toLowerCase()}.png`;
-      case CardNumber.CARDS_IMAGES_FILES_NAMES.DISCOVER:
-        return `./images/${CardNumber.CARDS_IMAGES_FILES_NAMES.DISCOVER.toLowerCase()}.png`;
-      case CardNumber.CARDS_IMAGES_FILES_NAMES.JCB:
-        return `./images/${CardNumber.CARDS_IMAGES_FILES_NAMES.JCB.toLowerCase()}.png`;
-      case CardNumber.CARDS_IMAGES_FILES_NAMES.MAESTRO:
-        return `./images/${CardNumber.CARDS_IMAGES_FILES_NAMES.MAESTRO.toLowerCase()}.png`;
-      case CardNumber.CARDS_IMAGES_FILES_NAMES.MASTERCARD:
-        return `./images/${CardNumber.CARDS_IMAGES_FILES_NAMES.MASTERCARD.toLowerCase()}.png`;
-      case CardNumber.CARDS_IMAGES_FILES_NAMES.PIBA:
-        return `./images/${CardNumber.CARDS_IMAGES_FILES_NAMES.PIBA.toLowerCase()}.png`;
-      case CardNumber.CARDS_IMAGES_FILES_NAMES.VISA:
-        return `./images/${CardNumber.CARDS_IMAGES_FILES_NAMES.VISA.toLowerCase()}.png`;
-      default:
-        return '';
+  private _getIcon(type: string): HTMLImageElement {
+    if (!type) {
+      return;
     }
+    const lowercased: string = type.toLowerCase();
+    const icon: IconFactory = new IconFactory();
+    return icon.getIcon(lowercased);
   }
 
-  private _setIconAttributes(imageURI: string, iconId: string): HTMLElement {
-    let element: HTMLElement = document.createElement('img');
-    element = this._setIconStyles(element);
-    element.setAttribute('src', imageURI);
-    element.setAttribute('id', iconId);
-    return element;
-  }
+  private _setIconImage(type: string, iconId: string): void {
+    const icon: HTMLImageElement = this._getIcon(type);
+    const iconInDom: HTMLElement = document.getElementById(iconId);
 
-  private _setIconStyles(element: HTMLElement): HTMLElement {
-    element.style.width = '30px';
-    element.style.height = '20px';
-    element.style.position = 'absolute';
-    element.style.top = '27px';
-    element.style.right = '8px';
-    element.style.padding = '3px';
-    element.style.right = '8px';
-    element.style.backgroundColor = '#fff';
-    element.style.border = '1px solid #6d6d6d';
-    element.style.borderRadius = '4px';
-    return element;
-  }
-
-  private _setImageIconPlaceholder(type: string, iconId: string): void {
-    const icon: HTMLElement = document.getElementById(iconId);
-    const imageURI: string = this._getImagePath(type);
-
-    if (!icon && !imageURI) {
+    if (iconInDom && !icon) {
+      iconInDom.remove();
       return;
     }
 
-    if (icon && !imageURI) {
-      icon.remove();
+    if ((!iconInDom && !icon) || (iconInDom && iconInDom.getAttribute('alt') === icon.getAttribute('alt'))) {
       return;
     }
 
-    if (icon && imageURI) {
-      icon.remove();
+    if (iconInDom && iconInDom.getAttribute('alt') !== icon.getAttribute('alt')) {
+      iconInDom.remove();
     }
 
-    this._setIconInDom(this._setIconAttributes(imageURI, iconId));
+    this._setIconInDom(icon);
   }
 
   private _setIconInDom(element: HTMLElement): void {
@@ -198,9 +161,8 @@ export class CardNumber extends FormField {
   }
 
   private _getBinLookupDetails = (cardNumber: string) => {
-   return iinLookup.lookup(cardNumber).type ? iinLookup.lookup(cardNumber) : undefined;
+    return iinLookup.lookup(cardNumber).type ? iinLookup.lookup(cardNumber) : undefined;
   };
-
 
   private _getCardFormat = (cardNumber: string) =>
     this._getBinLookupDetails(cardNumber) ? this._getBinLookupDetails(cardNumber).format : undefined;
@@ -247,7 +209,7 @@ export class CardNumber extends FormField {
     const type = this._getBinLookupDetails(this._cardNumberValue)
       ? this._getBinLookupDetails(this._cardNumberValue).type
       : null;
-    this._setImageIconPlaceholder(type, 'card-icon');
+    this._setIconImage(type, 'card-icon');
   }
 
   private _setDisableListener() {

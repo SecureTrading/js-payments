@@ -13,7 +13,9 @@ const mapIcon = {
 };
 
 @Service()
-export const IconMap = (name: string) => {
-  // @ts-ignore
-  return mapIcon[name];
-};
+export class IconMap {
+  getUrl(name: string) {
+    // @ts-ignore
+    return mapIcon[name] ? mapIcon[name] : '';
+  }
+}
