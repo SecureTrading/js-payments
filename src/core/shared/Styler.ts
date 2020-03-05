@@ -18,7 +18,6 @@ export class Styler {
 
   constructor(allowed: IAllowedStyles) {
     this._allowed = allowed;
-    console.error(allowed);
   }
 
   public inject(styles: IStyle[]): void {
@@ -46,9 +45,10 @@ export class Styler {
       '"': '&quot;',
       '\'': '&#x2F;',
       '{': '&#123;',
-      '}': '&#124;'
+      '}': '&#124;',
+      ';': ''
     };
-    const reg = /[&<>"'{}/]/gi;
+    const reg = /[&<>"'{};/]/gi;
     // tslint:disable-next-line:forin
     for (const style in styles) {
       // @ts-ignore
@@ -71,7 +71,6 @@ export class Styler {
   }
 
   private _getStyleString(styles: IStyle[]): string[] {
-    console.error(styles);
     let groupedStyles: IGroupedStyles;
     let styled: IStyle;
     let tag: string;

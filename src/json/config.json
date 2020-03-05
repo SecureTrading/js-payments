@@ -23,7 +23,8 @@
       "line-height-input": "1.6rem"
     },
     "notificationFrame": {
-      "color-error": "#FFF333"
+      "color-error": "#FFF333",
+      "border-size-notification": "2px"
     },
     "controlFrame": {
       "color-error": "#3358FF"
