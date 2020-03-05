@@ -1,5 +1,6 @@
 import { MessageBus } from '../shared/MessageBus';
 import { Validation } from '../shared/Validation';
+import { Container } from 'typedi';
 
 export class MerchantFields {
   private static readonly ADJACENT_HTML_PLACEMENT: InsertPosition = 'afterend';
@@ -14,7 +15,7 @@ export class MerchantFields {
 
   constructor() {
     this._inputs = document.getElementsByTagName(MerchantFields.INPUT_MARKUP);
-    this._messageBus = new MessageBus();
+    this._messageBus = Container.get(MessageBus);
     this._validation = new Validation();
   }
 

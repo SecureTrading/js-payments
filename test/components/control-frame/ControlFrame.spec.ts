@@ -119,7 +119,7 @@ describe('ControlFrame', () => {
     it('should call _onThreeDInitEvent when THREEDINIT event has been called', () => {
       // @ts-ignore
       instance._threeDInit = jest.fn();
-      messageBusEvent.type = MessageBus.EVENTS_PUBLIC.THREEDINIT;
+      messageBusEvent.type = MessageBus.EVENTS_PUBLIC.THREEDINIT_REQUEST;
       // @ts-ignore
       instance._threeDInitEvent();
       // @ts-ignore

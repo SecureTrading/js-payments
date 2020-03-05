@@ -9,6 +9,7 @@ import { Notification } from '../shared/Notification';
 import { Payment } from '../shared/Payment';
 import { StJwt } from '../shared/StJwt';
 import { GoogleAnalytics } from './GoogleAnalytics';
+import { Container } from 'typedi';
 
 declare const V: any;
 
@@ -90,7 +91,7 @@ export class VisaCheckout {
   };
 
   constructor(config: IWalletConfig, jwt: string, gatewayUrl: string, livestatus?: number) {
-    this._messageBus = new MessageBus();
+    this._messageBus = Container.get(MessageBus);
     this._notification = new Notification();
     config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
     this._stJwt = new StJwt(jwt);

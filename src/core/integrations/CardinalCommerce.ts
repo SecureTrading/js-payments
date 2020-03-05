@@ -17,6 +17,8 @@ import { Selectors } from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
 import { GoogleAnalytics } from './GoogleAnalytics';
+import { Container } from 'typedi';
+import { FramesHub } from '../services/message-bus/FramesHub';
 
 declare const Cardinal: any;
 
@@ -38,6 +40,7 @@ export class CardinalCommerce {
   private _sdkAddress: string = environment.CARDINAL_COMMERCE.SONGBIRD_TEST_URL;
   private _bypassCards: string[];
   private _jwtUpdated: boolean;
+  private _framesHub: FramesHub;
 
   constructor(
     startOnLoad: boolean,
@@ -56,8 +59,9 @@ export class CardinalCommerce {
     this._cachetoken = cachetoken ? cachetoken : '';
     this._requestTypes = requestTypes;
     this._bypassCards = bypassCards;
-    this.messageBus = new MessageBus();
+    this.messageBus = Container.get(MessageBus);
     this._notification = new Notification();
+    this._framesHub = Container.get(FramesHub);
     this._setLiveStatus();
     this._onInit();
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
@@ -196,7 +200,7 @@ export class CardinalCommerce {
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME, () => {
       this._onLoadControlFrame();
     });
-    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDINIT, (data: IThreeDInitResponse) => {
+    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDINIT_RESPONSE, (data: IThreeDInitResponse) => {
       this._onThreeDInitEvent(data);
     });
     this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.BY_PASS_INIT, () => {
@@ -209,12 +213,11 @@ export class CardinalCommerce {
   }
 
   private _publishRequestTypesEvent(requestTypes: string[]) {
-    const messageBusEvent: IMessageBusEvent = {
-      data: { requestTypes },
-      type: MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES
-    };
-    document.getElementById(Selectors.CONTROL_FRAME_IFRAME).addEventListener('load', () => {
-      this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(() => {
+      this.messageBus.publish({
+        data: { requestTypes },
+        type: MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES
+      });
     });
   }
 
@@ -250,7 +253,6 @@ export class CardinalCommerce {
   }
 
   private _onThreeDQueryEvent(data: IThreeDQueryResponse) {
-    console.error(data);
     this._threeDQueryRequest(data);
   }
 
@@ -270,7 +272,7 @@ export class CardinalCommerce {
 
   private _threeDInitRequest() {
     const messageBusEvent: IMessageBusEvent = {
-      type: MessageBus.EVENTS_PUBLIC.THREEDINIT
+      type: MessageBus.EVENTS_PUBLIC.THREEDINIT_REQUEST
     };
     this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
