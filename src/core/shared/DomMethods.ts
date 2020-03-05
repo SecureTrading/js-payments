@@ -89,9 +89,8 @@ export class DomMethods {
     }
     style.setAttribute('id', 'insertedStyles');
     style.setAttribute('type', 'text/css');
-    const index = document.styleSheets.length - 1;
     contents.forEach((item: string) => {
-      (document.styleSheets[index] as CSSStyleSheet).insertRule(item, 0);
+      (document.styleSheets[0] as CSSStyleSheet).insertRule(item, 0);
     });
   }
 
