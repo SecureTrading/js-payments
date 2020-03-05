@@ -53,6 +53,9 @@ export class Styler {
     for (const style in styles) {
       // @ts-ignore
       sanitized[style] = styles[style].replace(reg, match => map[match]);
+      if (/^[A-Za-z0-9 _@#]*[A-Za-z0-9][A-Za-z0-9 _@#]*$/i.test(styles[style])) {
+        sanitized[style] = styles[style];
+      }
     }
     return sanitized;
   }
