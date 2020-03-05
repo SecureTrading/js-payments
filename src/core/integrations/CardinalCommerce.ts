@@ -197,16 +197,16 @@ export class CardinalCommerce {
   }
 
   private _initSubscriptions() {
-    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME, () => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME, () => {
       this._onLoadControlFrame();
     });
-    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDINIT_RESPONSE, (data: IThreeDInitResponse) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT_RESPONSE, (data: IThreeDInitResponse) => {
       this._onThreeDInitEvent(data);
     });
-    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.BY_PASS_INIT, () => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BY_PASS_INIT, () => {
       this._onBypassJsInitEvent();
     });
-    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDQUERY, (data: any) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDQUERY, (data: any) => {
       this._onThreeDQueryEvent(data);
     });
     this._initSubmitEventListener();
@@ -287,7 +287,7 @@ export class CardinalCommerce {
   }
 
   private _initSubmitEventListener(): void {
-    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.BY_PASS_CARDINAL, (data: any) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BY_PASS_CARDINAL, (data: any) => {
       const { pan, expirydate, securitycode } = data;
       const postData: any = {
         expirydate,

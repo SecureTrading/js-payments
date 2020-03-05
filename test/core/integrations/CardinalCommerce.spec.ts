@@ -195,22 +195,22 @@ describe('CardinalCommerce', () => {
   describe('_initSubscriptions()', () => {
     // then
     it('should set up subscribers to control frame setup, threedquery and threedinit events', () => {
-      instance.messageBus.subscribeOnParent = jest.fn();
+      instance.messageBus.subscribe = jest.fn();
       instance._initSubscriptions();
-      expect(instance.messageBus.subscribeOnParent.mock.calls.length).toBe(5);
-      expect(instance.messageBus.subscribeOnParent.mock.calls[0][0]).toBe('LOAD_CONTROL_FRAME');
+      expect(instance.messageBus.subscribe.mock.calls.length).toBe(5);
+      expect(instance.messageBus.subscribe.mock.calls[0][0]).toBe('LOAD_CONTROL_FRAME');
       // Annonymous function so can't test using toHaveBeenCalledWith
-      expect(instance.messageBus.subscribeOnParent.mock.calls[0][1]).toBeInstanceOf(Function);
-      expect(instance.messageBus.subscribeOnParent.mock.calls[0].length).toBe(2);
-      expect(instance.messageBus.subscribeOnParent.mock.calls[1][0]).toBe('THREEDINIT_RESPONSE');
+      expect(instance.messageBus.subscribe.mock.calls[0][1]).toBeInstanceOf(Function);
+      expect(instance.messageBus.subscribe.mock.calls[0].length).toBe(2);
+      expect(instance.messageBus.subscribe.mock.calls[1][0]).toBe('THREEDINIT_RESPONSE');
       // Annonymous function so can't test using toHaveBeenCalledWith
-      expect(instance.messageBus.subscribeOnParent.mock.calls[1][1]).toBeInstanceOf(Function);
-      expect(instance.messageBus.subscribeOnParent.mock.calls[1].length).toBe(2);
-      expect(instance.messageBus.subscribeOnParent.mock.calls[2][0]).toBe('BY_PASS_INIT');
+      expect(instance.messageBus.subscribe.mock.calls[1][1]).toBeInstanceOf(Function);
+      expect(instance.messageBus.subscribe.mock.calls[1].length).toBe(2);
+      expect(instance.messageBus.subscribe.mock.calls[2][0]).toBe('BY_PASS_INIT');
       // Annonymous function so can't test using toHaveBeenCalledWith
-      expect(instance.messageBus.subscribeOnParent.mock.calls[2][1]).toBeInstanceOf(Function);
-      expect(instance.messageBus.subscribeOnParent.mock.calls[2].length).toBe(2);
-      expect(instance.messageBus.subscribeOnParent.mock.calls[3][0]).toBe('THREEDQUERY');
+      expect(instance.messageBus.subscribe.mock.calls[2][1]).toBeInstanceOf(Function);
+      expect(instance.messageBus.subscribe.mock.calls[2].length).toBe(2);
+      expect(instance.messageBus.subscribe.mock.calls[3][0]).toBe('THREEDQUERY');
     });
 
     // then
@@ -218,7 +218,7 @@ describe('CardinalCommerce', () => {
       instance._onLoadControlFrame = jest.fn();
       instance._onThreeDInitEvent = jest.fn();
       instance._onThreeDQueryEvent = jest.fn();
-      instance.messageBus.subscribeOnParent = jest.fn((eventType, callback) => {
+      instance.messageBus.subscribe = jest.fn((eventType, callback) => {
         if (eventType === 'LOAD_CONTROL_FRAME') {
           callback();
         }
@@ -235,7 +235,7 @@ describe('CardinalCommerce', () => {
       instance._onLoadControlFrame = jest.fn();
       instance._onThreeDInitEvent = jest.fn();
       instance._onThreeDQueryEvent = jest.fn();
-      instance.messageBus.subscribeOnParent = jest.fn((eventType, callback) => {
+      instance.messageBus.subscribe = jest.fn((eventType, callback) => {
         if (eventType === 'THREEDINIT_RESPONSE') {
           callback({ myData: 'SOMETHING' });
         }
@@ -253,7 +253,7 @@ describe('CardinalCommerce', () => {
       instance._onThreeDInitEvent = jest.fn();
       instance._onBypassJsInitEvent = jest.fn();
       instance._onThreeDQueryEvent = jest.fn();
-      instance.messageBus.subscribeOnParent = jest.fn((eventType, callback) => {
+      instance.messageBus.subscribe = jest.fn((eventType, callback) => {
         if (eventType === 'BY_PASS_INIT') {
           callback();
         }
@@ -267,7 +267,7 @@ describe('CardinalCommerce', () => {
       instance._onLoadControlFrame = jest.fn();
       instance._onThreeDInitEvent = jest.fn();
       instance._onThreeDQueryEvent = jest.fn();
-      instance.messageBus.subscribeOnParent = jest.fn((eventType, callback) => {
+      instance.messageBus.subscribe = jest.fn((eventType, callback) => {
         if (eventType === 'THREEDQUERY') {
           callback({ myData: 'SOMETHING' });
         }

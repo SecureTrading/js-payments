@@ -108,11 +108,6 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
     return this.communicator.incomingEvent$.subscribe.apply(this.communicator.incomingEvent$, args);
   }
 
-  /** @deprecated use subscribe() instead */
-  public subscribeOnParent<T>(eventType: string, callback: (data: T) => void): Unsubscribable {
-    return this.subscribe(eventType, callback);
-  }
-
   private publishToParent<T>(event: IMessageBusEvent<T>): void {
     if (!Object.values(MessageBus.EVENTS_PUBLIC).includes(event.type)) {
       throw new Error(`Cannot publish private event "${event.type}" to parent frame.`);
