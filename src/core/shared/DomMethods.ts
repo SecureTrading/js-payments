@@ -81,16 +81,18 @@ export class DomMethods {
     });
   }
 
-  public static insertStyle(contents: string): void {
+  public static insertStyle(contents: string[]): void {
     const head = document.getElementById('insertedStyles');
+    const style = document.createElement(DomMethods.STYLE_MARKUP);
     if (head) {
       return;
     }
-    const style = document.createElement(DomMethods.STYLE_MARKUP);
     style.setAttribute('id', 'insertedStyles');
     style.setAttribute('type', 'text/css');
-    style.innerHTML = contents;
-    document.head.appendChild(style);
+    const index = document.styleSheets.length - 1;
+    contents.forEach((item: string) => {
+      (document.styleSheets[index] as CSSStyleSheet).insertRule(item, 0);
+    });
   }
 
   public static parseForm(): {} {
