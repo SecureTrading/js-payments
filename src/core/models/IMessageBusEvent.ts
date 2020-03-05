@@ -1,4 +1,4 @@
-export interface IMessageBusEvent {
-  data?: any;
+export interface IMessageBusEvent<T = any> {
+  data?: T;
   type: string;
 }

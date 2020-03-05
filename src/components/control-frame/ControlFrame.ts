@@ -29,7 +29,7 @@ export class ControlFrame extends Frame {
   private static NON_CVV_CARDS: string[] = ['PIBA'];
   private static THREEDQUERY_EVENT: string = 'THREEDQUERY';
 
-  private static _isRequestTypePropertyEmpty(data: ISubmitData): boolean {
+  private static _isRequestTypePropertyNotEmpty(data: ISubmitData): boolean {
     return data !== undefined && data.requestTypes !== undefined;
   }
 
@@ -150,7 +150,7 @@ export class ControlFrame extends Frame {
   }
 
   private _threeDInitEvent(): void {
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT_REQUEST, () => {
       this._threeDInit();
       this._changeSecurityCodeLength();
     });
@@ -213,7 +213,7 @@ export class ControlFrame extends Frame {
   }
 
   private _onSubmit(data: ISubmitData): void {
-    if (ControlFrame._isRequestTypePropertyEmpty(data)) {
+    if (ControlFrame._isRequestTypePropertyNotEmpty(data)) {
       this._setRequestTypes(data);
     }
     this._requestPayment(data, this._isCardBypassed(data));
@@ -330,7 +330,7 @@ export class ControlFrame extends Frame {
       this.messageBus.publish(
         {
           data: result.response,
-          type: MessageBus.EVENTS_PUBLIC.THREEDINIT
+          type: MessageBus.EVENTS_PUBLIC.THREEDINIT_RESPONSE
         },
         true
       );

@@ -180,7 +180,7 @@ export class CardFrames extends RegisterFrames {
       data: state,
       type: eventName
     };
-    this.messageBus.publishFromParent(messageBusEvent, target);
+    this.messageBus.publish(messageBusEvent);
   }
 
   private _disableSubmitButton(state: FormState): void {
@@ -263,7 +263,7 @@ export class CardFrames extends RegisterFrames {
       data: DomMethods.parseForm(),
       type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
     };
-    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.publish(messageBusEvent);
   }
 
   private _publishSubmitEvent(deferInit: boolean): void {
@@ -275,7 +275,7 @@ export class CardFrames extends RegisterFrames {
       },
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
-    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.publish(messageBusEvent);
   }
 
   private _publishValidatedFieldState(field: { message: string; state: boolean }, eventType: string): void {
@@ -340,13 +340,13 @@ export class CardFrames extends RegisterFrames {
         this._publishSubmitEvent(this._deferInit);
       });
     }
-    this.messageBus.subscribeOnParent(MessageBus.EVENTS.CALL_SUBMIT_EVENT, () => {
+    this.messageBus.subscribe(MessageBus.EVENTS.CALL_SUBMIT_EVENT, () => {
       this._publishSubmitEvent(this._deferInit);
     });
   }
 
   private _subscribeBlockSubmit(): void {
-    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (state: FormState) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BLOCK_FORM, (state: FormState) => {
       this._disableSubmitButton(state);
       this._disableFormField(state, MessageBus.EVENTS_PUBLIC.BLOCK_CARD_NUMBER, Selectors.CARD_NUMBER_IFRAME);
       this._disableFormField(state, MessageBus.EVENTS_PUBLIC.BLOCK_EXPIRATION_DATE, Selectors.EXPIRATION_DATE_IFRAME);

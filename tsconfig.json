@@ -12,7 +12,13 @@
     "jsx": "react",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "lib": ["DOM", "ES2015", "ES2015.Promise"]
+    "lib": [
+      "DOM",
+      "ES2015",
+      "ES2015.Promise",
+      "ES2017.Object",
+      "ES2016.Array.Include"
+    ]
   },
   "include": ["./src/**/*"],
   "exclude": [
