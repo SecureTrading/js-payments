@@ -37,7 +37,7 @@ describe('CardinalCommerce', () => {
       it('should subscribe method be called once', () => {
         const messageBus = Container.get(MessageBus);
         const spySubscribe: SpyInstance = jest.spyOn(messageBus, 'subscribe');
-        const spyPublish: SpyInstance = jest.spyOn(messageBus, 'publishFromParent');
+        const spyPublish: SpyInstance = jest.spyOn(messageBus, 'publish');
         instance.messageBus = messageBus;
         instance._onCardinalSetupComplete();
         expect(spySubscribe).toHaveBeenCalled();
@@ -55,13 +55,12 @@ describe('CardinalCommerce', () => {
         instance._jwt =
           'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU4NTUxMjA3LjEzNTU5NTMsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdDEiLCJsb2NhbGUiOiJlbl9HQiIsInBhbiI6IjQwMDAwMDAwMDAwMDEwMDAiLCJleHBpcnlkYXRlIjoiMDEvMjIiLCJzZWN1cml0eWNvZGUiOiIxMjMifX0.V_-f5m35ADC4Y9t17mZjaHgNt_0GXMqPhxJWohAYwSA';
         instance._performBinDetection = jest.fn();
-        const spyPublish: SpyInstance = jest.spyOn(messageBus, 'publishFromParent');
+        const spyPublish: SpyInstance = jest.spyOn(messageBus, 'publish');
         instance.messageBus = messageBus;
         instance._onCardinalSetupComplete();
         expect(instance._performBinDetection).toHaveBeenCalledWith('4000000000001000');
         expect(spyPublish).toHaveBeenCalledWith(
-          { data: { dataInJwt: true, requestTypes: ['THREEDQUERY', 'AUTH'] }, type: 'SUBMIT_FORM' },
-          'st-control-frame-iframe'
+          { data: { dataInJwt: true, requestTypes: ['THREEDQUERY', 'AUTH'] }, type: 'SUBMIT_FORM' }
         );
       });
     });
@@ -331,13 +330,10 @@ describe('CardinalCommerce', () => {
   describe('_threeDInitRequest()', () => {
     // then
     it('should publish control iframe event', () => {
-      instance.messageBus.publishFromParent = jest.fn();
+      instance.messageBus.publish = jest.fn();
       instance._threeDInitRequest();
-      expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
-      expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
-        { type: 'THREEDINIT_REQUEST' },
-        'st-control-frame-iframe'
-      );
+      expect(instance.messageBus.publish).toHaveBeenCalledTimes(1);
+      expect(instance.messageBus.publish).toHaveBeenCalledWith({ type: 'THREEDINIT_REQUEST' });
     });
   });
 
@@ -426,42 +422,39 @@ describe('CardinalCommerce', () => {
   describe('_authorizePayment()', () => {
     // then
     it('should publish control iframe event with AUTH', () => {
-      instance.messageBus.publishFromParent = jest.fn();
+      instance.messageBus.publish = jest.fn();
       instance._cardinalCommerceCacheToken = 'tokenValue';
       instance._authorizePayment({ some: 'value', cachetoken: 'OVERRIDDEN' });
-      expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
-      expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
+      expect(instance.messageBus.publish).toHaveBeenCalledTimes(1);
+      expect(instance.messageBus.publish).toHaveBeenCalledWith(
         {
           type: 'PROCESS_PAYMENTS',
           data: { some: 'value', cachetoken: 'tokenValue' }
-        },
-        'st-control-frame-iframe'
+        }
       );
     });
     // then
     it('should publish control iframe event with AUTH with no data', () => {
-      instance.messageBus.publishFromParent = jest.fn();
+      instance.messageBus.publish = jest.fn();
       instance._cardinalCommerceCacheToken = 'tokenValue';
       instance._authorizePayment();
-      expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
-      expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
-        { type: 'PROCESS_PAYMENTS', data: { cachetoken: 'tokenValue' } },
-        'st-control-frame-iframe'
+      expect(instance.messageBus.publish).toHaveBeenCalledTimes(1);
+      expect(instance.messageBus.publish).toHaveBeenCalledWith(
+        { type: 'PROCESS_PAYMENTS', data: { cachetoken: 'tokenValue' } }
       );
     });
     // then
     it('should publish control iframe event with CACHETOKENISE', () => {
-      instance.messageBus.publishFromParent = jest.fn();
+      instance.messageBus.publish = jest.fn();
       instance._tokenise = true;
       instance._cardinalCommerceCacheToken = 'tokenValue';
       instance._authorizePayment({ some: 'value', cachetoken: 'OVERRIDDEN' });
-      expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
-      expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
+      expect(instance.messageBus.publish).toHaveBeenCalledTimes(1);
+      expect(instance.messageBus.publish).toHaveBeenCalledWith(
         {
           type: 'PROCESS_PAYMENTS',
           data: { some: 'value', cachetoken: 'tokenValue' }
-        },
-        'st-control-frame-iframe'
+        }
       );
     });
   });
@@ -475,17 +468,14 @@ describe('CardinalCommerce', () => {
 
     // when
     beforeEach(() => {
-      instance.messageBus.publishFromParent = jest.fn();
+      instance.messageBus.publish = jest.fn();
       instance._cachetoken = 'HowmuchisttheFish?:)';
       instance._bypassInitRequest();
     });
 
     // then
-    it('should call publishFromParent', () => {
-      expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
-        messageBusEvent,
-        Selectors.CONTROL_FRAME_IFRAME
-      );
+    it('should call publish', () => {
+      expect(instance.messageBus.publish).toHaveBeenCalledWith(messageBusEvent);
     });
   });
 
@@ -500,7 +490,7 @@ describe('CardinalCommerce', () => {
     });
 
     // then
-    it('should call publishFromParent', () => {
+    it('should call publish', () => {
       expect(instance._threeDSetup).toHaveBeenCalled();
     });
 
@@ -556,7 +546,7 @@ describe('CardinalCommerce', () => {
     });
 
     // then
-    it('should call messageBus.publishFromParent', () => {
+    it('should call messageBus.publish', () => {
       instance._publishRequestTypesEvent(requestTypes);
       expect(spyPublish).toHaveBeenCalledWith(messageBusEvent);
     });

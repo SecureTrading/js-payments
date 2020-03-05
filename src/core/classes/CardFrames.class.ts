@@ -180,7 +180,7 @@ export class CardFrames extends RegisterFrames {
       data: state,
       type: eventName
     };
-    this.messageBus.publishFromParent(messageBusEvent, target);
+    this.messageBus.publish(messageBusEvent);
   }
 
   private _disableSubmitButton(state: FormState): void {
@@ -271,7 +271,7 @@ export class CardFrames extends RegisterFrames {
       data: DomMethods.parseForm(),
       type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
     };
-    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.publish(messageBusEvent);
   }
 
   private _publishSubmitEvent(deferInit: boolean): void {
@@ -283,7 +283,7 @@ export class CardFrames extends RegisterFrames {
       },
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
-    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.publish(messageBusEvent);
   }
 
   private _publishValidatedFieldState(field: { message: string; state: boolean }, eventType: string): void {

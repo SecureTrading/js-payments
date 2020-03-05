@@ -538,8 +538,6 @@ describe('StCodec class', () => {
     beforeEach(() => {
       // @ts-ignore
       StCodec._messageBus.publish = jest.fn();
-      // @ts-ignore
-      StCodec._messageBus.publishFromParent = jest.fn();
       StCodec.updateJWTValue('somenewjwt');
     });
 
@@ -550,12 +548,9 @@ describe('StCodec class', () => {
     });
 
     // then
-    it('should call publishFromParent method with UPDATE_JWT event', () => {
+    it('should call publish method with UPDATE_JWT event', () => {
       // @ts-ignore
-      expect(StCodec._messageBus.publishFromParent).toHaveBeenCalledWith(
-        messageBusEvent,
-        Selectors.CONTROL_FRAME_IFRAME
-      );
+      expect(StCodec._messageBus.publish).toHaveBeenCalledWith(messageBusEvent, true);
     });
   });
 });

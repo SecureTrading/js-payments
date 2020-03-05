@@ -126,7 +126,7 @@ export class CardinalCommerce {
         data: { dataInJwt: true, requestTypes: this._requestTypes, bypassCards: this._bypassCards },
         type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
       };
-      this.messageBus.publishFromParent(submitFormEvent, Selectors.CONTROL_FRAME_IFRAME);
+      this.messageBus.publish(submitFormEvent);
     } else {
       const messageBusEvent: IMessageBusEvent = {
         type: MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL
@@ -135,7 +135,7 @@ export class CardinalCommerce {
         const { value } = data;
         this._performBinDetection(value);
       });
-      this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+      this.messageBus.publish(messageBusEvent);
     }
   }
 
@@ -164,9 +164,9 @@ export class CardinalCommerce {
       const resetNotificationEvent: IMessageBusEvent = {
         type: MessageBus.EVENTS_PUBLIC.RESET_JWT
       };
-      this.messageBus.publishFromParent(resetNotificationEvent, Selectors.CONTROL_FRAME_IFRAME);
+      this.messageBus.publish(resetNotificationEvent);
       this.messageBus.publishToSelf(notificationEvent);
-      this._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE, true);
+      this._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
     }
   }
 
@@ -192,7 +192,7 @@ export class CardinalCommerce {
       data,
       type: MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS
     };
-    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.publish(messageBusEvent);
     GoogleAnalytics.sendGaData('event', 'Cardinal', 'auth', 'Cardinal auth completed');
   }
 
@@ -261,7 +261,7 @@ export class CardinalCommerce {
       data: this._cachetoken,
       type: MessageBus.EVENTS_PUBLIC.BY_PASS_INIT
     };
-    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.publish(messageBusEvent);
   }
 
   private _setLiveStatus() {
@@ -274,7 +274,7 @@ export class CardinalCommerce {
     const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.THREEDINIT_REQUEST
     };
-    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.publish(messageBusEvent);
   }
 
   private _threeDQueryRequest(responseObject: IThreeDQueryResponse) {
@@ -304,6 +304,6 @@ export class CardinalCommerce {
       data,
       type: MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS
     };
-    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.publish(messageBusEvent);
   }
 }

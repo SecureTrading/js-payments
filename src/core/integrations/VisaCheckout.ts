@@ -151,21 +151,21 @@ export class VisaCheckout {
         this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
         this._getResponseMessage(this.paymentStatus);
         this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK }, true);
-        this._notification.success(this.responseMessage, true);
+        this._notification.success(this.responseMessage);
         GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment success');
       })
       .catch((error: any) => {
         this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
         this._getResponseMessage(this.paymentStatus);
         this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
-        this._notification.error(this.responseMessage, true);
+        this._notification.error(this.responseMessage);
       });
   }
 
   protected onError() {
     this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.ERROR;
     this._getResponseMessage(this.paymentStatus);
-    this._notification.error(this.responseMessage, true);
+    this._notification.error(this.responseMessage);
     this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
     GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment error');
   }
@@ -173,7 +173,7 @@ export class VisaCheckout {
   protected onCancel() {
     this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.WARNING;
     this._getResponseMessage(this.paymentStatus);
-    this._notification.warning(this.responseMessage, true);
+    this._notification.warning(this.responseMessage);
     GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment canceled');
   }
 

@@ -109,11 +109,6 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
   }
 
   /** @deprecated use publish() instead */
-  public publishFromParent<T>(event: IMessageBusEvent<T>, frameName: string): void {
-    this.publish(event);
-  }
-
-  /** @deprecated use publish() instead */
   public publishToSelf<T>(event: IMessageBusEvent<T>): void {
     this.publish(event);
   }
