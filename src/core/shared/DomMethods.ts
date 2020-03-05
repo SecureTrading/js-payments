@@ -83,14 +83,15 @@ export class DomMethods {
 
   public static insertStyle(contents: string[]): void {
     const head = document.getElementById('insertedStyles');
-    const style = document.createElement(DomMethods.STYLE_MARKUP);
+    const style = document.createElement(DomMethods.STYLE_MARKUP) as HTMLStyleElement;
     if (head) {
       return;
     }
     style.setAttribute('id', 'insertedStyles');
     style.setAttribute('type', 'text/css');
+    document.head.appendChild(style);
     contents.forEach((item: string) => {
-      (document.styleSheets[0] as CSSStyleSheet).insertRule(item, 0);
+      (style.sheet as CSSStyleSheet).insertRule(item, 0);
     });
   }
 
