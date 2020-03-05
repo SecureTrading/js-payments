@@ -38,21 +38,8 @@ export class Styler {
 
   private _sanitize(styles: IStyle): IStyle {
     const sanitized: IStyle = {};
-    const map = {
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      '\'': '&#x2F;',
-      '{': '&#123;',
-      '}': '&#124;',
-      ';': ''
-    };
-    const reg = /[&<>"'{};/]/gi;
     // tslint:disable-next-line:forin
     for (const style in styles) {
-      // @ts-ignore
-      sanitized[style] = styles[style].replace(reg, match => map[match]);
       if (/^[A-Za-z0-9 _%#]*[A-Za-z0-9][A-Za-z0-9 _%#]*$/i.test(styles[style])) {
         sanitized[style] = styles[style];
       }
