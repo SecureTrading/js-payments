@@ -1,4 +1,4 @@
-import { IStRequest } from '../classes/StCodec.class';
+import { IStRequest } from '../models/IStRequest';
 import { StTransport } from '../classes/StTransport.class';
 import { ICard } from '../models/ICard';
 import { IMerchantData } from '../models/IMerchantData';

@@ -1,6 +1,7 @@
 import { IStyles } from '../config/model/IStyles';
 import { MessageBus } from '../shared/MessageBus';
 import { StJwt } from '../shared/StJwt';
+import { Container } from 'typedi';
 
 export class RegisterFrames {
   private static COMPLETE_FORM_FIELDS: string[] = ['pan', 'expirydate', 'securitycode'];
@@ -26,7 +27,7 @@ export class RegisterFrames {
     animatedCard: boolean,
     fieldsToSubmit?: string[]
   ) {
-    this.messageBus = new MessageBus();
+    this.messageBus = Container.get(MessageBus);
     this.fieldsToSubmit = fieldsToSubmit || RegisterFrames.COMPLETE_FORM_FIELDS;
     this.componentIds = componentIds;
     this.hasAnimatedCard = animatedCard;

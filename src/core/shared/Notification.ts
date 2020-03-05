@@ -3,6 +3,7 @@ import { IMessageBusEvent } from '../models/IMessageBusEvent';
 import { INotificationEvent } from '../models/INotificationEvent';
 import { MessageBus } from './MessageBus';
 import { Selectors } from './Selectors';
+import { Container } from 'typedi';
 
 export class Notification {
   private _messageBus: MessageBus;
@@ -10,7 +11,7 @@ export class Notification {
   private _notificationEvent: INotificationEvent;
 
   constructor() {
-    this._messageBus = new MessageBus();
+    this._messageBus = Container.get(MessageBus);
   }
 
   public error(message: string, publishFromParent?: boolean) {

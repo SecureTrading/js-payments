@@ -16,7 +16,7 @@ if (Card && document.URL.includes('animated')) {
   });
 
   (() => {
-    const messageBus: MessageBus = new MessageBus();
+    const messageBus: MessageBus = Container.get(MessageBus);
     messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: IFormFieldState) => {
       const { value } = data;
       card.onCardNumberChange(value, true);

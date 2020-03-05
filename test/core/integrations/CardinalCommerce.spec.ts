@@ -5,6 +5,10 @@ import { IThreeDQueryResponse } from '../../../src/core/models/IThreeDQueryRespo
 import { MessageBus } from '../../../src/core/shared/MessageBus';
 import { DomMethods } from '../../../src/core/shared/DomMethods';
 import { Selectors } from '../../../src/core/shared/Selectors';
+import { Container } from 'typedi';
+import { of } from 'rxjs';
+import { FramesHub } from '../../../src/core/services/message-bus/FramesHub';
+import { mock, instance as mockInstance, when, anyString } from 'ts-mockito';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 jest.mock('./../../../src/core/integrations/GoogleAnalytics');
@@ -13,12 +17,16 @@ jest.mock('./../../../src/core/integrations/GoogleAnalytics');
 describe('CardinalCommerce', () => {
   let instance: any;
   let { jwt } = CardinalCommerceFixture();
+  let framesHub: FramesHub = mock(FramesHub);
 
   // when
   beforeEach(() => {
+    when(framesHub.waitForFrame(anyString())).thenCall(name => of(name));
+
     document.body.innerHTML = `<iframe id='st-control-frame-iframe'>
     </iframe><input id='JWTContainer' value="${jwt}" />`;
     instance = new CardinalCommerce(false, jwt, ['THREEDQUERY', 'AUTH'], 0);
+    instance._framesHub = mockInstance(framesHub);
   });
 
   // given
@@ -27,7 +35,7 @@ describe('CardinalCommerce', () => {
     describe('_startOnLoad False', () => {
       // then
       it('should subscribe method be called once', () => {
-        const messageBus = new MessageBus();
+        const messageBus = Container.get(MessageBus);
         const spySubscribe: SpyInstance = jest.spyOn(messageBus, 'subscribe');
         const spyPublish: SpyInstance = jest.spyOn(messageBus, 'publishFromParent');
         instance.messageBus = messageBus;
@@ -42,7 +50,7 @@ describe('CardinalCommerce', () => {
       // then
       it('should subscribe method be called once', () => {
         instance._startOnLoad = true;
-        const messageBus = new MessageBus();
+        const messageBus = Container.get(MessageBus);
         // this JWT contains a 'pan'
         instance._jwt =
           'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU4NTUxMjA3LjEzNTU5NTMsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdDEiLCJsb2NhbGUiOiJlbl9HQiIsInBhbiI6IjQwMDAwMDAwMDAwMDEwMDAiLCJleHBpcnlkYXRlIjoiMDEvMjIiLCJzZWN1cml0eWNvZGUiOiIxMjMifX0.V_-f5m35ADC4Y9t17mZjaHgNt_0GXMqPhxJWohAYwSA';
@@ -195,7 +203,7 @@ describe('CardinalCommerce', () => {
       // Annonymous function so can't test using toHaveBeenCalledWith
       expect(instance.messageBus.subscribeOnParent.mock.calls[0][1]).toBeInstanceOf(Function);
       expect(instance.messageBus.subscribeOnParent.mock.calls[0].length).toBe(2);
-      expect(instance.messageBus.subscribeOnParent.mock.calls[1][0]).toBe('THREEDINIT');
+      expect(instance.messageBus.subscribeOnParent.mock.calls[1][0]).toBe('THREEDINIT_RESPONSE');
       // Annonymous function so can't test using toHaveBeenCalledWith
       expect(instance.messageBus.subscribeOnParent.mock.calls[1][1]).toBeInstanceOf(Function);
       expect(instance.messageBus.subscribeOnParent.mock.calls[1].length).toBe(2);
@@ -224,12 +232,12 @@ describe('CardinalCommerce', () => {
     });
 
     // then
-    it('should call _onThreeDInitEvent if eventType is THREEDINIT', () => {
+    it('should call _onThreeDInitEvent if eventType is THREEDINIT_RESPONSE', () => {
       instance._onLoadControlFrame = jest.fn();
       instance._onThreeDInitEvent = jest.fn();
       instance._onThreeDQueryEvent = jest.fn();
       instance.messageBus.subscribeOnParent = jest.fn((eventType, callback) => {
-        if (eventType === 'THREEDINIT') {
+        if (eventType === 'THREEDINIT_RESPONSE') {
           callback({ myData: 'SOMETHING' });
         }
       });
@@ -327,7 +335,7 @@ describe('CardinalCommerce', () => {
       instance._threeDInitRequest();
       expect(instance.messageBus.publishFromParent).toHaveBeenCalledTimes(1);
       expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
-        { type: 'THREEDINIT' },
+        { type: 'THREEDINIT_REQUEST' },
         'st-control-frame-iframe'
       );
     });
@@ -544,13 +552,13 @@ describe('CardinalCommerce', () => {
         .mockImplementationOnce((event, callback) => {
           callback();
         });
-      spyPublish = jest.spyOn(instance.messageBus, 'publishFromParent');
+      spyPublish = jest.spyOn(instance.messageBus, 'publish');
     });
 
     // then
     it('should call messageBus.publishFromParent', () => {
       instance._publishRequestTypesEvent(requestTypes);
-      expect(spyPublish).toHaveBeenCalledWith(messageBusEvent, 'st-control-frame-iframe');
+      expect(spyPublish).toHaveBeenCalledWith(messageBusEvent);
     });
   });
 });
