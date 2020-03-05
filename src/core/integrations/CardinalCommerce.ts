@@ -214,11 +214,10 @@ export class CardinalCommerce {
 
   private _publishRequestTypesEvent(requestTypes: string[]) {
     this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(() => {
-      const messageBusEvent: IMessageBusEvent = {
+      this.messageBus.publish({
         data: { requestTypes },
         type: MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES
-      };
-      this.messageBus.publish(messageBusEvent);
+      });
     });
   }
 

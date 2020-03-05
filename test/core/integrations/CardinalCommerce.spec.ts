@@ -6,6 +6,9 @@ import { MessageBus } from '../../../src/core/shared/MessageBus';
 import { DomMethods } from '../../../src/core/shared/DomMethods';
 import { Selectors } from '../../../src/core/shared/Selectors';
 import { Container } from 'typedi';
+import { of } from 'rxjs';
+import { FramesHub } from '../../../src/core/services/message-bus/FramesHub';
+import { mock, instance as mockInstance, when, anyString } from 'ts-mockito';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 jest.mock('./../../../src/core/integrations/GoogleAnalytics');
@@ -14,12 +17,16 @@ jest.mock('./../../../src/core/integrations/GoogleAnalytics');
 describe('CardinalCommerce', () => {
   let instance: any;
   let { jwt } = CardinalCommerceFixture();
+  let framesHub: FramesHub = mock(FramesHub);
 
   // when
   beforeEach(() => {
+    when(framesHub.waitForFrame(anyString())).thenCall(name => of(name));
+
     document.body.innerHTML = `<iframe id='st-control-frame-iframe'>
     </iframe><input id='JWTContainer' value="${jwt}" />`;
     instance = new CardinalCommerce(false, jwt, ['THREEDQUERY', 'AUTH'], 0);
+    instance._framesHub = mockInstance(framesHub);
   });
 
   // given
@@ -545,13 +552,13 @@ describe('CardinalCommerce', () => {
         .mockImplementationOnce((event, callback) => {
           callback();
         });
-      spyPublish = jest.spyOn(instance.messageBus, 'publishFromParent');
+      spyPublish = jest.spyOn(instance.messageBus, 'publish');
     });
 
     // then
     it('should call messageBus.publishFromParent', () => {
       instance._publishRequestTypesEvent(requestTypes);
-      expect(spyPublish).toHaveBeenCalledWith(messageBusEvent, 'st-control-frame-iframe');
+      expect(spyPublish).toHaveBeenCalledWith(messageBusEvent);
     });
   });
 });
