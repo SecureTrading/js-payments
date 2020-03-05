@@ -18,17 +18,19 @@ export class Styler {
 
   constructor(allowed: IAllowedStyles) {
     this._allowed = allowed;
+    console.error(allowed);
   }
 
-  public inject(styles: string[]): void {
+  public inject(styles: IStyle[]): void {
     DomMethods.insertStyle(this._getStyleString(styles));
   }
 
-  private _filter(styles: string[]): IStyle {
+  private _filter(styles: IStyle[]): IStyle {
     const filtered: IStyle = {};
     // tslint:disable-next-line:forin
     for (const style in styles) {
       if (this._allowed.hasOwnProperty(style)) {
+        // @ts-ignore
         filtered[style] = styles[style];
       }
     }
@@ -49,6 +51,7 @@ export class Styler {
     const reg = /[&<>"'{}/]/gi;
     // tslint:disable-next-line:forin
     for (const style in styles) {
+      // @ts-ignore
       sanitized[style] = styles[style].replace(reg, match => map[match]);
     }
     return sanitized;
@@ -67,7 +70,8 @@ export class Styler {
     return grouped;
   }
 
-  private _getStyleString(styles: string[]): string[] {
+  private _getStyleString(styles: IStyle[]): string[] {
+    console.error(styles);
     let groupedStyles: IGroupedStyles;
     let styled: IStyle;
     let tag: string;
@@ -80,6 +84,7 @@ export class Styler {
       const tagStyle = Styler._getTagStyles(groupedStyles[tag]);
       templates.push(`${tag} { ${tagStyle} }`);
     }
+
     return templates;
   }
 }
