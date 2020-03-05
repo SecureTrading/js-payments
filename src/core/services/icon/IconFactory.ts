@@ -1,31 +1,37 @@
 import { Container, Service } from 'typedi';
 import { IconMap } from './IconMap';
+import { IIconAttributes } from '../../models/IIconAttributes';
 
 @Service()
 export class IconFactory {
-  private _attributes = { alt: '', title: '', ariaLabel: '', id: 'card-icon' };
-  private readonly _icon: HTMLImageElement;
+  private _attributes: IIconAttributes = {
+    alt: '',
+    ariaLabel: '',
+    class: 'st-card-icon',
+    id: 'card-icon',
+    src: '',
+    title: ''
+  };
 
   constructor(private _url: IconMap = Container.get(IconMap)) {
-    this._icon = document.createElement('img');
-    this._icon.setAttribute('class', 'st-card-icon');
   }
 
-  private _setAttributes(name: string) {
+  private _setAttributes(icon: HTMLImageElement, name: string): void {
+    icon.setAttribute('src', this._url.getUrl(name));
     Object.keys(this._attributes).map((key: string) => {
-      // @ts-ignore
       if (this._attributes[key]) {
-        // @ts-ignore
-        this._icon.setAttribute(key, this._attributes[key]);
-      } else {
-        this._icon.setAttribute(key, name);
+        icon.setAttribute(key, this._attributes[key]);
       }
     });
   }
 
+  private _createIcon(name: string): HTMLImageElement {
+    const icon = document.createElement('img');
+    this._setAttributes(icon, name);
+    return icon;
+  }
+
   getIcon(name: string): HTMLImageElement {
-    this._setAttributes(name);
-    this._icon.setAttribute('src', this._url.getUrl(name));
-    return this._icon;
+    return this._createIcon(name);
   }
 }

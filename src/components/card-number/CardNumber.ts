@@ -143,11 +143,11 @@ export class CardNumber extends FormField {
       return;
     }
 
-    if ((!iconInDom && !icon) || (iconInDom && iconInDom.getAttribute('alt') === icon.getAttribute('alt'))) {
+    if ((!iconInDom && !icon) || (iconInDom && iconInDom.getAttribute('src') === icon.getAttribute('src'))) {
       return;
     }
 
-    if (iconInDom && iconInDom.getAttribute('alt') !== icon.getAttribute('alt')) {
+    if (iconInDom && iconInDom.getAttribute('src') !== icon.getAttribute('src')) {
       iconInDom.remove();
     }
 

@@ -1,6 +1,7 @@
 import { Service } from 'typedi';
+import { IIconMap } from '../../models/IIconMap';
 
-const mapIcon = {
+const mapIcon: IIconMap = {
   amex: './images/amex.png',
   astropaycard: './images/astropaycard.png',
   diners: './images/diners.png',
@@ -15,7 +16,6 @@ const mapIcon = {
 @Service()
 export class IconMap {
   getUrl(name: string): string {
-    // @ts-ignore
     return mapIcon[name] ? mapIcon[name] : '';
   }
 }
