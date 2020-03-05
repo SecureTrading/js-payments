@@ -126,7 +126,7 @@ export class CardinalCommerce {
         data: { dataInJwt: true, requestTypes: this._requestTypes, bypassCards: this._bypassCards },
         type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
       };
-      this.messageBus.publishFromParent(submitFormEvent, Selectors.CONTROL_FRAME_IFRAME);
+      this.messageBus.publish(submitFormEvent);
     } else {
       const messageBusEvent: IMessageBusEvent = {
         type: MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL
@@ -135,7 +135,7 @@ export class CardinalCommerce {
         const { value } = data;
         this._performBinDetection(value);
       });
-      this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+      this.messageBus.publish(messageBusEvent);
     }
   }
 
@@ -164,9 +164,9 @@ export class CardinalCommerce {
       const resetNotificationEvent: IMessageBusEvent = {
         type: MessageBus.EVENTS_PUBLIC.RESET_JWT
       };
-      this.messageBus.publishFromParent(resetNotificationEvent, Selectors.CONTROL_FRAME_IFRAME);
-      this.messageBus.publishToSelf(notificationEvent);
-      this._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE, true);
+      this.messageBus.publish(resetNotificationEvent);
+      this.messageBus.publish(notificationEvent);
+      this._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
     }
   }
 
@@ -192,21 +192,21 @@ export class CardinalCommerce {
       data,
       type: MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS
     };
-    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.publish(messageBusEvent);
     GoogleAnalytics.sendGaData('event', 'Cardinal', 'auth', 'Cardinal auth completed');
   }
 
   private _initSubscriptions() {
-    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME, () => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME, () => {
       this._onLoadControlFrame();
     });
-    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDINIT_RESPONSE, (data: IThreeDInitResponse) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT_RESPONSE, (data: IThreeDInitResponse) => {
       this._onThreeDInitEvent(data);
     });
-    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.BY_PASS_INIT, () => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BY_PASS_INIT, () => {
       this._onBypassJsInitEvent();
     });
-    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDQUERY, (data: any) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDQUERY, (data: any) => {
       this._onThreeDQueryEvent(data);
     });
     this._initSubmitEventListener();
@@ -261,7 +261,7 @@ export class CardinalCommerce {
       data: this._cachetoken,
       type: MessageBus.EVENTS_PUBLIC.BY_PASS_INIT
     };
-    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.publish(messageBusEvent);
   }
 
   private _setLiveStatus() {
@@ -274,7 +274,7 @@ export class CardinalCommerce {
     const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.THREEDINIT_REQUEST
     };
-    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.publish(messageBusEvent);
   }
 
   private _threeDQueryRequest(responseObject: IThreeDQueryResponse) {
@@ -287,7 +287,7 @@ export class CardinalCommerce {
   }
 
   private _initSubmitEventListener(): void {
-    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.BY_PASS_CARDINAL, (data: any) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BY_PASS_CARDINAL, (data: any) => {
       const { pan, expirydate, securitycode } = data;
       const postData: any = {
         expirydate,
@@ -304,6 +304,6 @@ export class CardinalCommerce {
       data,
       type: MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS
     };
-    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.publish(messageBusEvent);
   }
 }

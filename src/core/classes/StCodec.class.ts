@@ -87,7 +87,7 @@ class StCodec {
     if (StCodec._parentOrigin !== undefined) {
       StCodec._messageBus.publish(notificationEvent, true);
     } else {
-      StCodec._messageBus.publishToSelf(notificationEvent);
+      StCodec._messageBus.publish(notificationEvent);
     }
   }
 
@@ -101,7 +101,6 @@ class StCodec {
       type: MessageBus.EVENTS_PUBLIC.UPDATE_JWT
     };
     StCodec._messageBus.publish(messageBusEvent, true);
-    StCodec._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
   private static _notification = new Notification();

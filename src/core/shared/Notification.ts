@@ -14,30 +14,28 @@ export class Notification {
     this._messageBus = Container.get(MessageBus);
   }
 
-  public error(message: string, publishFromParent?: boolean) {
-    this._setNotification(NotificationType.Error, message, publishFromParent);
+  public error(message: string) {
+    this._setNotification(NotificationType.Error, message);
   }
 
-  public info(message: string, publishFromParent?: boolean) {
-    this._setNotification(NotificationType.Info, message, publishFromParent);
+  public info(message: string) {
+    this._setNotification(NotificationType.Info, message);
   }
 
-  public success(message: string, publishFromParent?: boolean) {
-    this._setNotification(NotificationType.Success, message, publishFromParent);
+  public success(message: string) {
+    this._setNotification(NotificationType.Success, message);
   }
 
-  public warning(message: string, publishFromParent?: boolean) {
-    this._setNotification(NotificationType.Warning, message, publishFromParent);
+  public warning(message: string) {
+    this._setNotification(NotificationType.Warning, message);
   }
 
-  private _setNotification(type: string, content: string, publishFromParent?: boolean) {
+  private _setNotification(type: string, content: string) {
     this._notificationEvent = { content, type };
     this._messageBusEvent = {
       data: this._notificationEvent,
       type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
     };
-    publishFromParent
-      ? this._messageBus.publishFromParent(this._messageBusEvent, Selectors.NOTIFICATION_FRAME_IFRAME)
-      : this._messageBus.publish(this._messageBusEvent);
+    this._messageBus.publish(this._messageBusEvent);
   }
 }
