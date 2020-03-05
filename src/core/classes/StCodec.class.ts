@@ -220,6 +220,7 @@ class StCodec {
   }
 
   public encode(requestObject: IStRequest) {
+    console.log(requestObject);
     if (
       Object.keys(requestObject).length < StCodec.MINIMUM_REQUEST_FIELDS ||
       !requestObject.requesttypedescriptions.every(val => StCodec.SUPPORTED_REQUEST_TYPES.includes(val))

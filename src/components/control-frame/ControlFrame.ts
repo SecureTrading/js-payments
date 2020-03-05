@@ -214,7 +214,9 @@ export class ControlFrame extends Frame {
   }
 
   private _onSubmit(data: ISubmitData): void {
+    console.log('xxxxx', {data});
     if (ControlFrame._isRequestTypePropertyEmpty(data)) {
+      console.log('yes empty');
       this._setRequestTypes(data);
     }
     this._requestPayment(data, this._isCardBypassed(data));
@@ -270,6 +272,7 @@ export class ControlFrame extends Frame {
   }
 
   private _callThreeDQueryRequest() {
+    console.log('D', this._preThreeDRequestTypes);
     this._payment
       .threeDQueryRequest(this._preThreeDRequestTypes, this._card, this._merchantFormData)
       .then((result: any) => {
@@ -409,9 +412,10 @@ export class ControlFrame extends Frame {
   }
 
   private _setRequestTypes(data: ISetRequestTypes): void {
+    console.log('E', {data});
     const threeDIndex = data.requestTypes.indexOf(ControlFrame.THREEDQUERY_EVENT);
-    this._preThreeDRequestTypes = data.requestTypes.slice(0, threeDIndex + 1);
-    this._postThreeDRequestTypes = data.requestTypes.slice(threeDIndex + 1, data.requestTypes.length);
+    this._preThreeDRequestTypes = data.requestTypes.slice(0, threeDIndex + 1) || [];
+    this._postThreeDRequestTypes = data.requestTypes.slice(threeDIndex + 1, data.requestTypes.length) || [];
   }
 
   private _updateMerchantFields(data: IMerchantData): void {

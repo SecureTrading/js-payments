@@ -46,10 +46,12 @@ export class Payment {
       merchantData,
       payment
     );
+    console.log('A');
     return await this._stTransport.sendRequest(this._processPaymentRequestBody).then(({ response }: any) => response);
   }
 
   public threeDInitRequest() {
+    console.log('B');
     return this._stTransport.sendRequest(this._threeDInitRequestBody).then((result: { jwt: string; response: any }) => {
       const {
         payload: { jwt, response }
@@ -75,6 +77,7 @@ export class Payment {
       merchantData,
       card
     );
+    console.log('C', this._threeDQueryRequestBody);
     return this._stTransport.sendRequest(this._threeDQueryRequestBody);
   }
 
