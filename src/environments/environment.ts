@@ -25,7 +25,7 @@ export const environment = {
     logging: { level: 'on' }
   },
   // @ts-ignore
-  FRAME_URL: 'https://merchant.example.com:8443',
+  FRAME_URL: WEBSERVICES_URL,
   GATEWAY_URL,
   GA_MEASUREMENT_ID: '42057093-5',
   GA_SCRIPT_SRC: 'https://www.google-analytics.com/analytics_debug.js',

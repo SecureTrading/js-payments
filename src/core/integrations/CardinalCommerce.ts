@@ -253,7 +253,6 @@ export class CardinalCommerce {
   }
 
   private _onThreeDQueryEvent(data: IThreeDQueryResponse) {
-    console.error(data);
     this._threeDQueryRequest(data);
   }
 

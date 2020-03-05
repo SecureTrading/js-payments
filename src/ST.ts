@@ -93,14 +93,8 @@ class ST {
       submit: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUBMIT_CALLBACK
     };
     // @ts-ignore
-    this._messageBus.subscribe(events[event], e => {
-      if (e) {
-        console.log(e);
-        console.log(e.data);
-        console.error(e.data);
-      }
-
-      callback(e);
+    this._messageBus.subscribe(events[event], () => {
+      callback();
     });
   }
   public off(event: string) {

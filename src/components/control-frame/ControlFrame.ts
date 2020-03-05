@@ -30,7 +30,7 @@ export class ControlFrame extends Frame {
   private static NON_CVV_CARDS: string[] = ['PIBA'];
   private static THREEDQUERY_EVENT: string = 'THREEDQUERY';
 
-  private static _isRequestTypePropertyEmpty(data: ISubmitData): boolean {
+  private static _isRequestTypePropertyNotEmpty(data: ISubmitData): boolean {
     return data !== undefined && data.requestTypes !== undefined;
   }
 
@@ -214,9 +214,7 @@ export class ControlFrame extends Frame {
   }
 
   private _onSubmit(data: ISubmitData): void {
-    console.log('xxxxx', {data});
-    if (ControlFrame._isRequestTypePropertyEmpty(data)) {
-      console.log('yes empty');
+    if (ControlFrame._isRequestTypePropertyNotEmpty(data)) {
       this._setRequestTypes(data);
     }
     this._requestPayment(data, this._isCardBypassed(data));
@@ -251,7 +249,7 @@ export class ControlFrame extends Frame {
         this._validation.blockForm(FormState.COMPLETE);
       })
       .catch((error: any) => {
-        this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK, data: error }, true);
+        this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
         this._notification.error(Language.translations.PAYMENT_ERROR);
         this._validation.blockForm(FormState.AVAILABLE);
       })
@@ -272,7 +270,6 @@ export class ControlFrame extends Frame {
   }
 
   private _callThreeDQueryRequest() {
-    console.log('D', this._preThreeDRequestTypes);
     this._payment
       .threeDQueryRequest(this._preThreeDRequestTypes, this._card, this._merchantFormData)
       .then((result: any) => {
@@ -295,16 +292,7 @@ export class ControlFrame extends Frame {
       this._isPaymentReady
     );
     if (!validity) {
-      this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK, data: {
-        validity,
-        card,
-        jwt: dataInJwt,
-        defer: deferInit,
-        fieldsToSubmit: data.fieldsToSubmit,
-        formFields: this._formFields,
-        isPanPiba,
-        paymentReady: this._isPaymentReady
-      } }, true);
+      this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
       this._validateFormFields();
       return;
     }
@@ -412,10 +400,9 @@ export class ControlFrame extends Frame {
   }
 
   private _setRequestTypes(data: ISetRequestTypes): void {
-    console.log('E', {data});
     const threeDIndex = data.requestTypes.indexOf(ControlFrame.THREEDQUERY_EVENT);
-    this._preThreeDRequestTypes = data.requestTypes.slice(0, threeDIndex + 1) || [];
-    this._postThreeDRequestTypes = data.requestTypes.slice(threeDIndex + 1, data.requestTypes.length) || [];
+    this._preThreeDRequestTypes = data.requestTypes.slice(0, threeDIndex + 1);
+    this._postThreeDRequestTypes = data.requestTypes.slice(threeDIndex + 1, data.requestTypes.length);
   }
 
   private _updateMerchantFields(data: IMerchantData): void {
