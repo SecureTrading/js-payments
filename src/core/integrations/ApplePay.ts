@@ -126,7 +126,7 @@ export class ApplePay {
 
   constructor(config: IWalletConfig, jwt: string, gatewayUrl: string) {
     this._notification = new Notification();
-    this._messageBus = new MessageBus();
+    this._messageBus = Container.get(MessageBus);
     config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
     this._localStorage.setItem('completePayment', '');
     this.jwt = jwt;
@@ -257,7 +257,7 @@ export class ApplePay {
       this._paymentRequest.total.amount = this._stJwtInstance.mainamount;
       this._paymentRequest.currencyCode = this._stJwtInstance.currencyiso3a;
     } else {
-      this._notification.error(Language.translations.APPLE_PAY_AMOUNT_AND_CURRENCY, true);
+      this._notification.error(Language.translations.APPLE_PAY_AMOUNT_AND_CURRENCY);
     }
     return this._paymentRequest;
   }
@@ -287,7 +287,7 @@ export class ApplePay {
           const { errorcode, errormessage } = error;
           this._onValidateMerchantResponseFailure(error);
           this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
-          this._notification.error(`${errorcode}: ${errormessage}`, true);
+          this._notification.error(`${errorcode}: ${errormessage}`);
           GoogleAnalytics.sendGaData(
             'event',
             'Apple Pay',
@@ -320,7 +320,7 @@ export class ApplePay {
         })
         .catch(() => {
           this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
-          this._notification.error(Language.translations.PAYMENT_ERROR, true);
+          this._notification.error(Language.translations.PAYMENT_ERROR);
           this._session.completePayment({ status: this.getPaymentFailureStatus(), errors: [] });
           this._localStorage.setItem('completePayment', 'true');
         });
@@ -333,7 +333,7 @@ export class ApplePay {
 
   private _onPaymentCanceled() {
     this._session.oncancel = (event: any) => {
-      this._notification.warning(Language.translations.PAYMENT_CANCELLED, true);
+      this._notification.warning(Language.translations.PAYMENT_CANCELLED);
       GoogleAnalytics.sendGaData('event', 'Apple Pay', 'payment status', 'Apple Pay payment cancelled');
     };
   }
@@ -350,7 +350,7 @@ export class ApplePay {
 
   private _onValidateMerchantResponseFailure(error: any) {
     this._session.abort();
-    this._notification.error(Language.translations.MERCHANT_VALIDATION_FAILURE, true);
+    this._notification.error(Language.translations.MERCHANT_VALIDATION_FAILURE);
   }
 
   private _subscribeStatusHandlers() {
@@ -448,10 +448,10 @@ export class ApplePay {
   private _displayNotification(errorcode: string) {
     if (errorcode === '0') {
       this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
-      this._notification.success(Language.translations.PAYMENT_SUCCESS, true);
+      this._notification.success(Language.translations.PAYMENT_SUCCESS);
     } else {
       this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
-      this._notification.error(Language.translations.PAYMENT_ERROR, true);
+      this._notification.error(Language.translations.PAYMENT_ERROR);
     }
   }
 
@@ -462,15 +462,15 @@ export class ApplePay {
     if (element) {
       element.addEventListener(eventType, () => {
         if (notificationType === 'success') {
-          this._notification.success(message, true);
+          this._notification.success(message);
           this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK }, true);
         } else if (notificationType === 'error') {
-          this._notification.error(message, true);
+          this._notification.error(message);
           this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
         } else if (notificationType === 'warning') {
-          this._notification.warning(message, true);
+          this._notification.warning(message);
         } else {
-          this._notification.info(message, true);
+          this._notification.info(message);
         }
       });
     } else {
