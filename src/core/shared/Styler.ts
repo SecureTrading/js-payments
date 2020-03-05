@@ -5,7 +5,7 @@ import { ISubStyles } from '../models/ISubStyles';
 import { DomMethods } from './DomMethods';
 
 export class Styler {
-  private static _getTagStyles(styles: ISubStyles) {
+  private static _getTagStyles(styles: ISubStyles): string {
     const results = [];
     // tslint:disable-next-line:forin
     for (const style in styles) {
@@ -20,11 +20,11 @@ export class Styler {
     this._allowed = allowed;
   }
 
-  public inject(styles: string[]) {
+  public inject(styles: string[]): void {
     DomMethods.insertStyle(this._getStyleString(styles));
   }
 
-  private _filter(styles: string[]) {
+  private _filter(styles: string[]): IStyle {
     const filtered: IStyle = {};
     // tslint:disable-next-line:forin
     for (const style in styles) {

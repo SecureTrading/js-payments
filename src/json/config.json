@@ -22,7 +22,7 @@
       "font-size-input": "1.5rem",
       "line-height-input": "1.6rem"
     },
-    "notificationFrame": {co
+    "notificationFrame": {
       "color-error": "#FFF333"
     },
     "controlFrame": {
