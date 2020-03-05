@@ -35,6 +35,29 @@ export class Styler {
     return filtered;
   }
 
+  private _sanitize(styles: IStyle) {
+    const sanitized: IStyle = {};
+    const map = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      // @ts-ignore
+      '\'': '&#x2F;',
+      '{': '&#123;',
+      '}': '&#124;'
+    };
+    const reg = /[&<>"'{}/]/gi;
+    // tslint:disable-next-line:forin
+    for (const style in styles) {
+      console.error(styles[style]);
+      console.error(styles[style]);
+      sanitized[style] = styles[style].replace(reg, match => map[match]);
+    }
+    console.error('Sanitized: ', sanitized);
+    return sanitized;
+  }
+
   private _group(styles: IStyle) {
     const grouped: IGroupedStyles = {};
     // tslint:disable-next-line:forin
@@ -50,6 +73,7 @@ export class Styler {
 
   private _getStyleString(styles: IStyle) {
     styles = this._filter(styles);
+    styles = this._sanitize(styles);
     const groupedStyles = this._group(styles);
     let tag;
     const templates = [`body { display: block; }`];
