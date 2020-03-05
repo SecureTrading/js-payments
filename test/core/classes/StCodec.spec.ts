@@ -103,8 +103,6 @@ describe('StCodec class', () => {
       translator.translate = jest.fn().mockReturnValue('Ok');
       // @ts-ignore
       StCodec._messageBus.publish = jest.fn();
-      // @ts-ignore
-      StCodec._messageBus.publishToSelf = jest.fn();
     });
 
     // then
@@ -129,8 +127,6 @@ describe('StCodec class', () => {
         },
         true
       );
-      // @ts-ignore
-      expect(StCodec._messageBus.publishToSelf).toHaveBeenCalledTimes(0);
     });
 
     // then
@@ -145,9 +141,7 @@ describe('StCodec class', () => {
       // @ts-ignore
       expect(translator.translate()).toEqual('Ok');
       // @ts-ignore
-      expect(StCodec._messageBus.publish).toHaveBeenCalledTimes(0);
-      //@ts-ignore
-      expect(StCodec._messageBus.publishToSelf).toHaveBeenCalledWith({
+      expect(StCodec._messageBus.publish).toHaveBeenCalledWith({
         data: {
           errorcode: '0',
           errormessage: 'Ok'
@@ -166,7 +160,7 @@ describe('StCodec class', () => {
         'someJwtResponse'
       );
       // @ts-ignore
-      expect(StCodec._messageBus.publishToSelf).toHaveBeenCalledTimes(1);
+      expect(StCodec._messageBus.publish).toHaveBeenCalledTimes(1);
     });
 
     // then
@@ -180,7 +174,7 @@ describe('StCodec class', () => {
         'someThreedresponse'
       );
       // @ts-ignore
-      expect(StCodec._messageBus.publishToSelf).toHaveBeenCalledTimes(1);
+      expect(StCodec._messageBus.publish).toHaveBeenCalledTimes(1);
     });
   });
 

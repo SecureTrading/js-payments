@@ -165,7 +165,7 @@ export class CardinalCommerce {
         type: MessageBus.EVENTS_PUBLIC.RESET_JWT
       };
       this.messageBus.publish(resetNotificationEvent);
-      this.messageBus.publishToSelf(notificationEvent);
+      this.messageBus.publish(notificationEvent);
       this._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
     }
   }
