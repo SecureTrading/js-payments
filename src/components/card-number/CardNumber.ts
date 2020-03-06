@@ -28,6 +28,7 @@ export class CardNumber extends FormField {
 
   public validation: Validation;
   private _formatter: Formatter;
+  private _panIcon: boolean;
   private _cardNumberFormatted: string;
   private _cardNumberLength: number;
   private _cardNumberValue: string;
@@ -43,6 +44,7 @@ export class CardNumber extends FormField {
     this._isCardNumberValid = true;
     this._cardNumberLength = CardNumber.STANDARD_CARD_LENGTH;
     this.placeholder = this.configService.getConfig().placeholders.pan || '';
+    this._panIcon = this.configService.getConfig().panIcon;
     this.setFocusListener();
     this.setBlurListener();
     this.setSubmitListener();
@@ -187,7 +189,9 @@ export class CardNumber extends FormField {
     const type = this._getBinLookupDetails(this._cardNumberValue)
       ? this._getBinLookupDetails(this._cardNumberValue).type
       : null;
-    this._setIconImage(type, 'card-icon');
+    if (this._panIcon) {
+      this._setIconImage(type, 'card-icon');
+    }
   }
 
   private _setDisableListener() {
