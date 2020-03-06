@@ -23,17 +23,6 @@ export class CardNumber extends FormField {
   private static NO_CVV_CARDS: string[] = ['PIBA'];
   private static STANDARD_CARD_LENGTH: number = 19;
   private static WHITESPACES_DECREASE_NUMBER: number = 2;
-  private static CARDS_IMAGES_FILES_NAMES = {
-    AMEX: 'AMEX',
-    VISA: 'VISA',
-    MASTERCARD: 'MASTERCARD',
-    PIBA: 'PIBA',
-    ASTROPAYCARD: 'ASTROPAYCARD',
-    DINERS: 'DINERS',
-    DISCOVER: 'DISCOVER',
-    JCB: 'JCB',
-    MAESTRO: 'MAESTRO'
-  };
 
   private static _getCardNumberForBinProcess = (cardNumber: string) => cardNumber.slice(0, 6);
 

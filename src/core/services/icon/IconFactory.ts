@@ -1,4 +1,4 @@
-import { Container, Service } from 'typedi';
+import { Service } from 'typedi';
 import { IconMap } from './IconMap';
 import { IIconAttributes } from '../../models/IIconAttributes';
 
@@ -6,32 +6,24 @@ import { IIconAttributes } from '../../models/IIconAttributes';
 export class IconFactory {
   private _attributes: IIconAttributes = {
     alt: '',
-    ariaLabel: '',
+    ariaLabel: 'Credit card icon',
     class: 'st-card-icon',
     id: 'card-icon',
-    src: '',
-    title: ''
+    src: ''
   };
 
-  constructor(private _url: IconMap = Container.get(IconMap)) {
+  constructor(private _url: IconMap) {
   }
 
-  private _setAttributes(icon: HTMLImageElement, name: string): void {
-    icon.setAttribute('src', this._url.getUrl(name));
+  getIcon(name: string): HTMLImageElement {
+    const icon = document.createElement('img');
     Object.keys(this._attributes).map((key: string) => {
       if (this._attributes[key]) {
         icon.setAttribute(key, this._attributes[key]);
       }
     });
-  }
-
-  private _createIcon(name: string): HTMLImageElement {
-    const icon = document.createElement('img');
-    this._setAttributes(icon, name);
+    icon.setAttribute('src', this._url.getUrl(name));
+    icon.setAttribute('alt', this._url.getUrl(name));
     return icon;
-  }
-
-  getIcon(name: string): HTMLImageElement {
-    return this._createIcon(name);
   }
 }
