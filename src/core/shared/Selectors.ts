@@ -44,6 +44,6 @@ export class Selectors {
   public static readonly ANIMATED_CARD_COMPONENT: string = `${environment.FRAME_URL}/animated-card.html`;
 
   public static readonly ANIMATED_CARD_INPUT_SELECTOR: string = 'st-animated-card';
-  public static readonly ANIMATED_CARD_COMPONENT_FRAME: string = 'st-animated-card-iframe';
+  public static readonly ANIMATED_CARD_COMPONENT_IFRAME: string = 'st-animated-card-iframe';
   public static readonly ANIMATED_CARD_COMPONENT_NAME: string = 'animatedCard';
 }
