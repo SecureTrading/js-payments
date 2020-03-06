@@ -1,18 +1,15 @@
-import { iinLookup } from '@securetrading/ts-iin-lookup';
-import { number } from 'joi';
-import JwtDecode from 'jwt-decode';
-import { StCodec } from '../../core/classes/StCodec.class';
 import { FormState } from '../../core/models/constants/FormState';
-import { IDecodedJwt } from '../../core/models/IDecodedJwt';
 import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
-import { IStJwtObj } from '../../core/models/IStJwtObj';
 import { Formatter } from '../../core/shared/Formatter';
 import { FormField } from '../../core/shared/FormField';
 import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { Selectors } from '../../core/shared/Selectors';
 import { Validation } from '../../core/shared/Validation';
+import { Service } from 'typedi';
+import { ConfigService } from '../../core/config/ConfigService';
 
+@Service()
 export class SecurityCode extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.SECURITY_CODE_INPUT) as HTMLInputElement;
@@ -31,7 +28,7 @@ export class SecurityCode extends FormField {
   private _validation: Validation;
   private _isSecurityCodeBlocked: boolean = false;
 
-  constructor() {
+  constructor(private _configService: ConfigService) {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
     this._formatter = new Formatter();
     this._validation = new Validation();
@@ -87,6 +84,8 @@ export class SecurityCode extends FormField {
     super.setEventListener(MessageBus.EVENTS.BLUR_SECURITY_CODE);
     this._subscribeSecurityCodeChange();
     this._setDisableListener();
+    this.placeholder = this._configService.getConfig().placeholders.securitycode || '';
+    this._inputElement.setAttribute(SecurityCode.PLACEHOLDER_ATTRIBUTE, this.placeholder);
     this.validation.backendValidation(
       this._inputElement,
       this._messageElement,

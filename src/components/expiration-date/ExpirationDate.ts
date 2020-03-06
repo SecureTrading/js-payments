@@ -5,7 +5,10 @@ import { FormField } from '../../core/shared/FormField';
 import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { Selectors } from '../../core/shared/Selectors';
+import { Service } from 'typedi';
+import { ConfigService } from '../../core/config/ConfigService';
 
+@Service()
 export class ExpirationDate extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.EXPIRATION_DATE_INPUT) as HTMLInputElement;
@@ -19,7 +22,7 @@ export class ExpirationDate extends FormField {
   private _inputSelectionEnd: number;
   private _inputSelectionStart: number;
 
-  constructor() {
+  constructor(private _configService: ConfigService) {
     super(Selectors.EXPIRATION_DATE_INPUT, Selectors.EXPIRATION_DATE_MESSAGE, Selectors.EXPIRATION_DATE_LABEL);
     this._formatter = new Formatter();
     this._init();
@@ -88,6 +91,8 @@ export class ExpirationDate extends FormField {
     super.setEventListener(MessageBus.EVENTS.BLUR_EXPIRATION_DATE);
     super.setEventListener(MessageBus.EVENTS.FOCUS_EXPIRATION_DATE);
     this.setAttributes({ pattern: ExpirationDate.INPUT_PATTERN });
+    this.placeholder = this._configService.getConfig().placeholders.expirydate || '';
+    this._inputElement.setAttribute(ExpirationDate.PLACEHOLDER_ATTRIBUTE, this.placeholder);
     this.setDisableListener();
     this.validation.backendValidation(
       this._inputElement,

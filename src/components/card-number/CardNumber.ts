@@ -9,7 +9,10 @@ import { Selectors } from '../../core/shared/Selectors';
 import { Utils } from '../../core/shared/Utils';
 import { Validation } from '../../core/shared/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
+import { Service } from 'typedi';
+import { ConfigService } from '../../core/config/ConfigService';
 
+@Service()
 export class CardNumber extends FormField {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
@@ -31,13 +34,14 @@ export class CardNumber extends FormField {
   private _fieldInstance: HTMLInputElement = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
   private readonly _cardNumberField: HTMLInputElement;
 
-  constructor() {
+  constructor(private configService: ConfigService) {
     super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE, Selectors.CARD_NUMBER_LABEL);
     this._cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     this.validation = new Validation();
     this._formatter = new Formatter();
     this._isCardNumberValid = true;
     this._cardNumberLength = CardNumber.STANDARD_CARD_LENGTH;
+    this.placeholder = this.configService.getConfig().placeholders.pan || '';
     this.setFocusListener();
     this.setBlurListener();
     this.setSubmitListener();
@@ -48,6 +52,7 @@ export class CardNumber extends FormField {
       MessageBus.EVENTS.VALIDATE_CARD_NUMBER_FIELD
     );
     this._sendState();
+    this._inputElement.setAttribute(CardNumber.PLACEHOLDER_ATTRIBUTE, this.placeholder);
   }
 
   protected getLabel(): string {
