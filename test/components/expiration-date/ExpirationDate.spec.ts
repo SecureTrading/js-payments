@@ -6,6 +6,7 @@ import { ConfigService } from '../../../src/core/config/ConfigService';
 import { mock, instance, when } from 'ts-mockito';
 
 jest.mock('./../../../src/core/shared/MessageBus');
+jest.mock('./../../../src/core/shared/Notification');
 
 // given
 describe('ExpirationDate', () => {
@@ -219,6 +220,7 @@ function expirationDateFixture() {
   configService = mock(ConfigService);
   when(configService.getConfig()).thenReturn({
     jwt: '',
+    notifications: true,
     placeholders: { pan: '4154654', expirydate: '12/22', securitycode: '123' }
   });
   const expirationDateInstance: ExpirationDate = new ExpirationDate(instance(configService));

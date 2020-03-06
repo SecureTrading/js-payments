@@ -6,6 +6,7 @@ import { ConfigService } from '../../../src/core/config/ConfigService';
 import { instance, mock, when } from 'ts-mockito';
 
 jest.mock('../../../src/core/shared/MessageBus');
+jest.mock('./../../../src/core/shared/Notification');
 
 // given
 describe('SecurityCode', () => {
@@ -28,6 +29,7 @@ describe('SecurityCode', () => {
     configService = mock(ConfigService);
     when(configService.getConfig()).thenReturn({
       jwt: '',
+      notifications: true,
       placeholders: { pan: '4154654', expirydate: '12/22', securitycode: '123' }
     });
     securityCode = new SecurityCode(instance(configService));

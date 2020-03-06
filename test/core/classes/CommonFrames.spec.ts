@@ -1,7 +1,8 @@
 import { CommonFrames } from '../../../src/core/classes/CommonFrames.class';
-import { DomMethods } from '../../../src/core/shared/DomMethods';
 import { MessageBus } from '../../../src/core/shared/MessageBus';
 import { Selectors } from '../../../src/core/shared/Selectors';
+
+jest.mock('./../../../src/core/shared/Notification');
 
 // given
 describe('CommonFrames', () => {

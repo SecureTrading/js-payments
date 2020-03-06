@@ -3,9 +3,9 @@ import JwtDecode from 'jwt-decode';
 import { Language } from '../../../src/core/shared/Language';
 import { StCodec } from '../../../src/core/classes/StCodec.class';
 import { MessageBus } from '../../../src/core/shared/MessageBus';
-import { Selectors } from '../../../src/core/shared/Selectors';
 import { Translator } from '../../../src/core/shared/Translator';
 jest.mock('./../../../src/core/shared/MessageBus');
+jest.mock('./../../../src/core/shared/Notification');
 
 // given
 describe('StCodec class', () => {

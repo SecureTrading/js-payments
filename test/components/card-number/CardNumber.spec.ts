@@ -11,6 +11,7 @@ import { instance, mock, when } from 'ts-mockito';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 jest.mock('./../../../src/core/shared/Validation');
+jest.mock('./../../../src/core/shared/Notification');
 
 // given
 describe('CardNumber', () => {
@@ -383,6 +384,7 @@ function cardNumberFixture() {
   configService = mock(ConfigService);
   when(configService.getConfig()).thenReturn({
     jwt: '',
+    notifications: true,
     placeholders: { pan: 'Card number', expirydate: 'MM/YY', securitycode: '***' }
   });
   const cardNumberInstance: CardNumber = new CardNumber(instance(configService));

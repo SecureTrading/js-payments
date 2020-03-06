@@ -5,6 +5,7 @@ import { Language } from '../../../src/core/shared/Language';
 import { MessageBus } from '../../../src/core/shared/MessageBus';
 
 jest.mock('./../../../src/core/shared/Payment');
+jest.mock('./../../../src/core/shared/Notification');
 
 // given
 describe('ControlFrame', () => {
