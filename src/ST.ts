@@ -107,7 +107,7 @@ class ST {
       this._config = { ...this._config, components: { ...this._config.components, ...config } };
       this.configProvider.update(this._config);
       this._commonFrames.requestTypes = this._config.components.requestTypes;
-      this.CardinalCommerce();
+      this.CardinalCommerce(this._config.components.requestTypes);
       this.CardFrames(this._config);
       this._cardFrames.init();
       this._merchantFields.init();

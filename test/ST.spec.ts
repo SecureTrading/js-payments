@@ -75,13 +75,13 @@ describe('ST', () => {
     // then
     it('should return CardinalCommerceMock when environment.testEnvironment equals true', () => {
       environment.testEnvironment = true;
-      expect(instance.CardinalCommerce(false, jwt, ['AUTH', 'JSINIT'])).toBeInstanceOf(CardinalCommerceMock);
+      expect(instance.CardinalCommerce( ['AUTH', 'JSINIT'])).toBeInstanceOf(CardinalCommerceMock);
     });
 
     // then
     it('should return CardinalCommerce when environment.testEnvironment equals false', () => {
       environment.testEnvironment = false;
-      expect(instance.CardinalCommerce(false, jwt, ['AUTH', 'JSINIT'])).toBeInstanceOf(CardinalCommerce);
+      expect(instance.CardinalCommerce( ['AUTH', 'JSINIT'])).toBeInstanceOf(CardinalCommerce);
     });
   });
 
