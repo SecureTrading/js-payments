@@ -126,21 +126,12 @@ export class CardNumber extends FormField {
   private _setIconImage(type: string, iconId: string): void {
     const icon: HTMLImageElement = this._getIcon(type);
     const iconInDom: HTMLElement = document.getElementById(iconId);
-
-    if (iconInDom && !icon) {
-      iconInDom.remove();
-      return;
-    }
-
-    if ((!iconInDom && !icon) || (iconInDom && iconInDom.getAttribute('src') === icon.getAttribute('src'))) {
-      return;
-    }
-
-    if (iconInDom && iconInDom.getAttribute('src') !== icon.getAttribute('src')) {
+    if (iconInDom) {
       iconInDom.remove();
     }
-
-    this._setIconInDom(icon);
+    if (icon) {
+      this._setIconInDom(icon);
+    }
   }
 
   private _setIconInDom(element: HTMLElement): void {
