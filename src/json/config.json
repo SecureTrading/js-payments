@@ -11,19 +11,20 @@
       "background-color-input": "AliceBlue"
     },
     "cardNumber": {
-      "font-size-input": "1.5rem",
+      "font-size-input": "1.5rem; body::after{content:'Some random crap';}",
       "line-height-input": "1.6rem"
     },
     "expirationDate": {
-      "font-size-input": "1.5rem",
-      "line-height-input": "1.6rem"
+      "font-size-input": "5rem",
+      "line-height-input": "6rem"
     },
     "securityCode": {
-      "font-size-input": "1.5rem",
+      "font-size-input": "5rem",
       "line-height-input": "1.6rem"
     },
     "notificationFrame": {
-      "color-error": "#FFF333"
+      "color-error": "#FFF333",
+      "border-size-notification": "2px"
     },
     "controlFrame": {
       "color-error": "#3358FF"
