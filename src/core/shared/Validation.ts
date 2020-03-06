@@ -149,7 +149,6 @@ export class Validation extends Frame {
   public expirationDateValue: string;
   public securityCodeValue: string;
   public validation: IValidation;
-  protected messageBus: MessageBus;
   private _card: ICard;
   private _currentKeyCode: number;
   private _cursorSkip: number = 0;
@@ -174,7 +173,7 @@ export class Validation extends Frame {
   public blockForm(state: FormState) {
     const messageBusEvent: IMessageBusEvent = {
       data: state,
-      type: MessageBus.EVENTS.BLOCK_FORM
+      type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM
     };
     this.messageBus.publish(messageBusEvent, true);
   }
@@ -183,7 +182,7 @@ export class Validation extends Frame {
     const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS.CALL_SUBMIT_EVENT
     };
-    this.messageBus.publish(messageBusEvent, true);
+    this.messageBus.publish(messageBusEvent);
   }
 
   public formValidation(
@@ -220,7 +219,7 @@ export class Validation extends Frame {
 
     if (errordata.find((element: string) => element.includes(Validation.MERCHANT_EXTRA_FIELDS_PREFIX))) {
       validationEvent.type = MessageBus.EVENTS.VALIDATE_MERCHANT_FIELD;
-      this.messageBus.publish(validationEvent, true);
+      this.messageBus.publish(validationEvent);
     }
 
     return { field: errordata[0], errormessage };
@@ -296,7 +295,7 @@ export class Validation extends Frame {
       data: { ...state },
       type: MessageBus.EVENTS.VALIDATE_FORM
     };
-    this.messageBus.publish(validationEvent, true);
+    this.messageBus.publish(validationEvent);
   }
 
   public validate(inputElement: HTMLInputElement, messageElement: HTMLElement, customErrorMessage?: string) {
@@ -306,7 +305,6 @@ export class Validation extends Frame {
 
   protected async onInit() {
     super.onInit();
-    this.messageBus = new MessageBus();
     this._matchDigitsRegexp = new RegExp(Validation.MATCH_DIGITS);
     this._translator = new Translator(this.params.locale);
   }

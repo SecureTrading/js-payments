@@ -1,4 +1,4 @@
-import { IStRequest } from '../classes/StCodec.class';
+import { IStRequest } from '../models/IStRequest';
 import { StTransport } from '../classes/StTransport.class';
 import { ICard } from '../models/ICard';
 import { IMerchantData } from '../models/IMerchantData';
@@ -55,8 +55,12 @@ export class Payment {
         payload: { jwt, response }
       } = new StJwt(result.jwt);
       const threeDInitResult = { jwt, response: response[0] };
-      // @ts-ignore
-      this._cardinalCommerceCacheToken = result.response.cachetoken;
+      // We should always use the id from the original cachetoken to link up with the THREEDQUERY
+      // We've already passed this into Cardinal and they have used it for the fingerprint by this point
+      if (this._cardinalCommerceCacheToken === undefined) {
+        // @ts-ignore
+        this._cardinalCommerceCacheToken = result.response.cachetoken;
+      }
       return threeDInitResult;
     });
   }

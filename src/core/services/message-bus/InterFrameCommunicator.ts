@@ -1,4 +1,4 @@
-import { Service } from 'typedi';
+import { Container, Service } from 'typedi';
 import { fromEventPattern, Observable, Subject } from 'rxjs';
 import { IMessageBusEvent } from '../../models/IMessageBusEvent';
 import { filter, map, share, switchMap, take, takeUntil } from 'rxjs/operators';
@@ -8,13 +8,17 @@ import { ResponseMessage } from './messages/ResponseMessage';
 import { environment } from '../../../environments/environment';
 import { FrameCollection } from './interfaces/FrameCollection';
 import { Selectors } from '../../shared/Selectors';
+import { CONFIG } from '../../dependency-injection/InjectionTokens';
 
 @Service()
 export class InterFrameCommunicator {
   private static readonly MESSAGE_EVENT = 'message';
+  private static readonly DEFAULT_ORIGIN = '*';
   public readonly incomingEvent$: Observable<IMessageBusEvent>;
   public readonly communicationClosed$: Observable<void>;
-  private close$ = new Subject<void>();
+  private readonly close$ = new Subject<void>();
+  private readonly frameOrigin: string;
+  private parentOrigin: string;
 
   constructor() {
     this.incomingEvent$ = fromEventPattern<MessageEvent>(
@@ -27,11 +31,12 @@ export class InterFrameCommunicator {
     );
 
     this.communicationClosed$ = this.close$.asObservable();
+    this.frameOrigin = new URL(environment.FRAME_URL).origin;
   }
 
   public send(message: IMessageBusEvent, target: Window | string): void {
     const targetFrame = this.resolveTargetFrame(target);
-    const frameOrigin = targetFrame !== window.top ? new URL(environment.FRAME_URL).origin : '*';
+    const frameOrigin = targetFrame === window.top ? this.getParentOrigin() : this.frameOrigin;
 
     targetFrame.postMessage(message, frameOrigin);
   }
@@ -97,5 +102,19 @@ export class InterFrameCommunicator {
     }
 
     return frames[target];
+  }
+
+  private getParentOrigin(): string {
+    if (this.parentOrigin) {
+      return this.parentOrigin;
+    }
+
+    if (Container.has(CONFIG)) {
+      this.parentOrigin = Container.get(CONFIG).origin || InterFrameCommunicator.DEFAULT_ORIGIN;
+
+      return this.parentOrigin;
+    }
+
+    return InterFrameCommunicator.DEFAULT_ORIGIN;
   }
 }

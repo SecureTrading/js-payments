@@ -261,7 +261,7 @@ describe('Validation', () => {
     // then
     it('should call publish event', () => {
       // @ts-ignore
-      expect(instance.messageBus.publish).toHaveBeenCalledWith(validationEvent, true);
+      expect(instance.messageBus.publish).toHaveBeenCalledWith(validationEvent);
     });
   });
 });

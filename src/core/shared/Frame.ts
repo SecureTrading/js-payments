@@ -8,7 +8,7 @@ import { FramesHub } from '../services/message-bus/FramesHub';
 import './OverrideDomain';
 
 export class Frame {
-  protected messageBus: MessageBus;
+  protected messageBus: MessageBus = Container.get(MessageBus);
   protected params: IParams;
 
   public parseUrl() {
@@ -31,9 +31,8 @@ export class Frame {
     new Styler(this.getAllowedStyles()).inject(this.params.styles);
   }
 
-  protected async onInit() {
+  protected onInit() {
     this.params = this.parseUrl();
-    this.messageBus = new MessageBus(this.params.origin);
     this.applyStyles();
 
     Container.get(FramesHub).notifyReadyState();

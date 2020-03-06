@@ -21,6 +21,7 @@ import nl_NL from '../../../src/core/translations/nl_NL.json';
 import no_NO from '../../../src/core/translations/no_NO.json';
 // @ts-ignore
 import sv_SE from '../../../src/core/translations/sv_SE.json';
+import { Container } from 'typedi';
 
 // given
 describe('translate()', () => {
@@ -60,10 +61,11 @@ describe('translate()', () => {
 
   // then
   it('should return translation from local storage if its specified there', () => {
+    const toTranslate = 'to translate';
     const translation: string = 'some random translation';
-    const storage: BrowserLocalStorage = new BrowserLocalStorage();
-    storage.getItem = jest.fn().mockReturnValueOnce(translation);
+    const storage: BrowserLocalStorage = Container.get(BrowserLocalStorage);
+    storage.getItem = jest.fn().mockReturnValueOnce(`{"${toTranslate}": "${translation}"}`);
     let instance: Translator = new Translator('en_GB');
-    expect(instance.translate(translation)).toEqual(translation);
+    expect(instance.translate(toTranslate)).toEqual(translation);
   });
 });

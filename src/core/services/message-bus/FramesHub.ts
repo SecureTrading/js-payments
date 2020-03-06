@@ -6,6 +6,7 @@ import {
   distinctUntilChanged,
   filter,
   map,
+  mapTo,
   scan,
   shareReplay,
   switchMap,
@@ -56,6 +57,13 @@ export class FramesHub {
     );
   }
 
+  public waitForFrame(name: string): Observable<string> {
+    return this.isFrameActive(name).pipe(
+      filter(Boolean),
+      mapTo(name),
+    );
+  }
+
   public notifyReadyState(): void {
     if (!window.name) {
       // @todo: Validation class should not extend Frame class. Once fixed this line should throw an error */
@@ -72,7 +80,9 @@ export class FramesHub {
       return from([]);
     }
 
-    return from(this.communicator.query({type: FramesHub.GET_FRAMES_EVENT}, Selectors.MERCHANT_PARENT_FRAME)).pipe(
+    return from(
+      this.communicator.query({type: FramesHub.GET_FRAMES_EVENT}, Selectors.MERCHANT_PARENT_FRAME)
+    ).pipe(
       switchMap((frames: string[]) => from(frames)),
     );
   }

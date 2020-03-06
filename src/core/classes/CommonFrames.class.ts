@@ -7,6 +7,8 @@ import { MessageBus } from '../shared/MessageBus';
 import { Selectors } from '../shared/Selectors';
 import { Validation } from '../shared/Validation';
 import { RegisterFrames } from './RegisterFrames.class';
+import { BrowserLocalStorage } from '../services/storage/BrowserLocalStorage';
+import { Container } from 'typedi';
 
 export class CommonFrames extends RegisterFrames {
   get requestTypes(): string[] {
@@ -33,6 +35,7 @@ export class CommonFrames extends RegisterFrames {
   private readonly _submitFields: string[];
   private readonly _submitOnError: boolean;
   private readonly _submitOnSuccess: boolean;
+  private _localStorage: BrowserLocalStorage = Container.get(BrowserLocalStorage);
 
   constructor(
     jwt: string,
@@ -48,7 +51,7 @@ export class CommonFrames extends RegisterFrames {
   ) {
     super(jwt, origin, componentIds, styles, animatedCard);
     this._gatewayUrl = gatewayUrl;
-    this._messageBus = new MessageBus(origin);
+    this._messageBus = Container.get(MessageBus);
     this._merchantForm = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR) as HTMLFormElement;
     this._validation = new Validation();
     this._submitFields = submitFields;
@@ -141,7 +144,7 @@ export class CommonFrames extends RegisterFrames {
       data: DomMethods.parseForm(),
       type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
     };
-    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this._messageBus.publish(messageBusEvent);
   }
 
   private _onTransactionComplete(data: any) {
@@ -165,7 +168,7 @@ export class CommonFrames extends RegisterFrames {
   private _setTransactionCompleteListener() {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE, (data: any) => {
       if (data.walletsource === 'APPLEPAY') {
-        const localStore = localStorage.getItem('completePayment');
+        const localStore = this._localStorage.getItem('completePayment');
         setTimeout(() => {
           if (localStore === 'true') {
             this._onTransactionComplete(data);

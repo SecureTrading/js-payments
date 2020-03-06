@@ -187,18 +187,15 @@ describe('CommonFrames', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
-      instance._messageBus.publishFromParent = jest.fn();
+      instance._messageBus.publish = jest.fn();
       // @ts-ignore
       instance._onInput(event);
     });
 
     // then
-    it('should publishFromParent has been called', () => {
+    it('should publish has been called', () => {
       // @ts-ignore
-      expect(instance._messageBus.publishFromParent).toHaveBeenCalledWith(
-        messageBusEvent,
-        Selectors.CONTROL_FRAME_IFRAME
-      );
+      expect(instance._messageBus.publish).toHaveBeenCalledWith(messageBusEvent);
     });
   });
 

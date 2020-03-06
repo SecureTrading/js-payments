@@ -349,7 +349,7 @@ describe('Visa Checkout', () => {
       expect(instance._getResponseMessage).toHaveBeenCalledTimes(1);
       expect(instance._getResponseMessage).toHaveBeenCalledWith('ERROR');
       expect(instance._notification.error).toHaveBeenCalledTimes(1);
-      expect(instance._notification.error).toHaveBeenCalledWith('MY MESSAGE', true);
+      expect(instance._notification.error).toHaveBeenCalledWith('MY MESSAGE');
     });
   });
 
@@ -365,7 +365,7 @@ describe('Visa Checkout', () => {
       expect(instance._getResponseMessage).toHaveBeenCalledTimes(1);
       expect(instance._getResponseMessage).toHaveBeenCalledWith('WARNING');
       expect(instance._notification.warning).toHaveBeenCalledTimes(1);
-      expect(instance._notification.warning).toHaveBeenCalledWith('MY MESSAGE', true);
+      expect(instance._notification.warning).toHaveBeenCalledWith('MY MESSAGE');
     });
   });
 
