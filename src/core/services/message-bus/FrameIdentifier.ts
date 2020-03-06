@@ -1,5 +1,6 @@
-import { Service } from 'typedi';
+import { Inject, Service } from 'typedi';
 import { Selectors } from '../../shared/Selectors';
+import { WINDOW } from '../../dependency-injection/InjectionTokens';
 
 @Service()
 export class FrameIdentifier {
@@ -12,7 +13,7 @@ export class FrameIdentifier {
     Selectors.ANIMATED_CARD_COMPONENT_IFRAME,
   ];
 
-  constructor(private window: Window = window) {
+  constructor(@Inject(WINDOW) private window: Window) {
   }
 
   getFrameName(): string {

@@ -1,10 +1,11 @@
-import { Service } from 'typedi';
+import { Inject, Service } from 'typedi';
 import { FrameIdentifier } from './FrameIdentifier';
 import { FrameCollection } from './interfaces/FrameCollection';
+import { WINDOW } from '../../dependency-injection/InjectionTokens';
 
 @Service()
 export class FrameAccessor {
-  constructor(private identifier: FrameIdentifier, private window: Window = window) {
+  constructor(private identifier: FrameIdentifier, @Inject(WINDOW) private window: Window) {
   }
 
   getParentFrame(): Window {

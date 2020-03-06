@@ -1,6 +1,5 @@
 import { MessageBus } from '../../../src/core/shared/MessageBus';
 import { Container } from 'typedi';
-import { Selectors } from '../../../src/core/shared/Selectors';
 import { InterFrameCommunicator } from '../../../src/core/services/message-bus/InterFrameCommunicator';
 import { FramesHub } from '../../../src/core/services/message-bus/FramesHub';
 import { instance, mock, when } from 'ts-mockito';
@@ -19,9 +18,12 @@ describe('MessageBus', () => {
     framesHubMock = mock(FramesHub);
     frameIdentifierMock = mock(FrameIdentifier);
     frameAccessorMock = mock(FrameAccessor);
-    Container.set(InterFrameCommunicator, instance(communicatorMock));
-    Container.set(FramesHub, instance(framesHubMock));
-    messageBus = Container.get(MessageBus);
+    messageBus = new MessageBus(
+      instance(communicatorMock),
+      instance(framesHubMock),
+      instance(frameIdentifierMock),
+      instance(frameAccessorMock),
+    );
   });
 
   afterEach(() => {
