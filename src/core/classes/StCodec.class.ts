@@ -87,7 +87,7 @@ class StCodec {
     if (StCodec._parentOrigin !== undefined) {
       StCodec._messageBus.publish(notificationEvent, true);
     } else {
-      StCodec._messageBus.publishToSelf(notificationEvent);
+      StCodec._messageBus.publish(notificationEvent);
     }
   }
 
@@ -101,12 +101,11 @@ class StCodec {
       type: MessageBus.EVENTS_PUBLIC.UPDATE_JWT
     };
     StCodec._messageBus.publish(messageBusEvent, true);
-    StCodec._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
   }
 
   private static _notification = Container.get(Notification);
   private static _locale: string;
-  private static _messageBus = new MessageBus();
+  private static _messageBus = Container.get(MessageBus);
   private static _parentOrigin: string;
   private static REQUESTS_WITH_ERROR_MESSAGES = [
     'AUTH',
@@ -133,6 +132,7 @@ class StCodec {
     StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
     validation.blockForm(FormState.AVAILABLE);
     StCodec._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
+
     return new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
   }
 
@@ -195,9 +195,6 @@ class StCodec {
     StCodec.originalJwt = jwt;
     StCodec._locale = new StJwt(StCodec.jwt).locale;
     StCodec._parentOrigin = parentOrigin;
-    if (parentOrigin) {
-      StCodec._messageBus = new MessageBus(parentOrigin);
-    }
   }
 
   public buildRequestObject(requestData: object): object {
