@@ -9,6 +9,8 @@ All notable changes to this project will be documented in this file.
 - Notification frame styling issues.
 - Potential XSS vulnerability if a merchant site is vulnerable to XSS and passes un-sanitized values into the styling option. 
   - Additional sanitization used and insertRule used to prevent rules not whitelisted.
+  
+### Added
 - Added version info to request to gateway to allow ST to monitor what version the merchant is using
 
 ## 2.0.5
