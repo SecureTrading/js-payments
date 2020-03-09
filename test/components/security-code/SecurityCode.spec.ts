@@ -4,6 +4,7 @@ import { FormField } from '../../../src/core/shared/FormField';
 import { Utils } from '../../../src/core/shared/Utils';
 import { ConfigService } from '../../../src/core/config/ConfigService';
 import { instance, mock, when } from 'ts-mockito';
+import { ConfigProvider } from '../../../src/core/config/ConfigProvider';
 
 jest.mock('../../../src/core/shared/MessageBus');
 
@@ -24,13 +25,13 @@ describe('SecurityCode', () => {
     document.body.appendChild(inputElement);
     document.body.appendChild(messageElement);
 
-    let configService: ConfigService;
-    configService = mock(ConfigService);
-    when(configService.getConfig()).thenReturn({
+    let configProvider: ConfigProvider;
+    configProvider = mock(ConfigProvider);
+    when(configProvider.getConfig()).thenReturn({
       jwt: '',
       placeholders: { pan: '4154654', expirydate: '12/22', securitycode: '123' }
     });
-    securityCode = new SecurityCode(instance(configService));
+    securityCode = new SecurityCode(instance(configProvider));
   });
 
   // given
@@ -271,15 +272,15 @@ function securityCodeFixture() {
   const html =
     '<form id="st-security-code" class="security-code" novalidate=""><label id="st-security-code-label" for="st-security-code-input" class="security-code__label security-code__label--required">Security code</label><input id="st-security-code-input" class="security-code__input error-field" type="text" autocomplete="off" autocorrect="off" spellcheck="false" inputmode="numeric" required="" data-dirty="true" data-pristine="false" data-validity="false" data-clicked="false" pattern="^[0-9]{3}$"><div id="st-security-code-message" class="security-code__message">Field is required</div></form>';
   document.body.innerHTML = html;
-  let configService: ConfigService;
-  configService = mock(ConfigService);
-  configService.getConfig = jest.fn().mockReturnValueOnce({
+  let configProvider: ConfigProvider;
+  configProvider = mock(ConfigProvider);
+  configProvider.getConfig = jest.fn().mockReturnValueOnce({
     placeholders: {
       pan: 'pan placeholder',
       securitycode: 'securitycode placeholder',
       expirydate: 'expirydate placeholder'
     }
   });
-  const securityCodeInstance = new SecurityCode(configService);
+  const securityCodeInstance = new SecurityCode(configProvider);
   return { securityCodeInstance };
 }

@@ -15,10 +15,6 @@ export class ConfigService {
     private validator: ConfigValidator
   ) {}
 
-  getConfig(): IConfig {
-    return JSON.parse(this.storage.getItem(ConfigService.STORAGE_KEY));
-  }
-
   initialize(config: IConfig): IConfig {
     this.storage.setItem(ConfigService.STORAGE_KEY, null);
 
