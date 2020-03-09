@@ -7,7 +7,9 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
     buttonStyle: Joi.string().valid('black', 'white', 'white-outline'),
     buttonText: Joi.string().valid('plain', 'buy', 'book', 'donate', 'check-out', 'subscribe'),
     merchantId: Joi.string(),
-    requestTypes: Joi.array().valid([Joi.string()]),
+    requestTypes: Joi.array().items(
+      Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
+    ),
     paymentRequest: {
       countryCode: Joi.string(),
       currencyCode: Joi.string(),
@@ -54,7 +56,9 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
   }),
   components: {
     defaultPaymentType: Joi.string(),
-    requestTypes: Joi.array().items(Joi.string().valid('THREEDQUERY', 'AUTH')),
+    requestTypes: Joi.array().items(
+      Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
+    ),
     paymentTypes: Joi.array().valid(Joi.string()),
     startOnLoad: Joi.boolean()
   },
@@ -74,21 +78,7 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
   ),
   styles: Joi.object(),
   submitCallback: Joi.any(),
-  submitFields: Joi.array().items(
-    Joi.string().valid(
-      'baseamount',
-      'currencyiso3a',
-      'eci',
-      'enrolled',
-      'errorcode',
-      'errordata',
-      'errormessage',
-      'orderreference',
-      'settlestatus',
-      'status',
-      'transactionreference'
-    )
-  ),
+  submitFields: Joi.array(),
   submitOnError: Joi.boolean(),
   submitOnSuccess: Joi.boolean(),
   threedinit: Joi.string(),
@@ -103,6 +93,9 @@ export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
     paymentRequest: {
       subtotal: Joi.string()
     },
+    requestTypes: Joi.array().items(
+      Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
+    ),
     placement: Joi.string(),
     settings: {
       displayName: Joi.string()

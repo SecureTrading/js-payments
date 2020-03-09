@@ -10,10 +10,12 @@ import { Selectors } from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
 import { Validation } from '../shared/Validation';
+import { version } from '../../../package.json';
 
 class StCodec {
   public static CONTENT_TYPE = 'application/json';
   public static VERSION = '1.00';
+  public static VERSION_INFO = `STJS::N/A::${ version }::N/A`;
   public static SUPPORTED_REQUEST_TYPES = [
     'WALLETVERIFY',
     'JSINIT',
@@ -208,7 +210,8 @@ class StCodec {
           sitereference: new StJwt(StCodec.jwt).sitereference
         }
       ],
-      version: StCodec.VERSION
+      version: StCodec.VERSION,
+      versioninfo: StCodec.VERSION_INFO
     };
   }
 

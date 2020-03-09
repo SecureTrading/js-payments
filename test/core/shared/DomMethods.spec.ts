@@ -23,9 +23,8 @@ describe('DomMethods', () => {
   describe('DomMethods.insertStyle', () => {
     // then
     it('should inject style to head', () => {
-      DomMethods.insertStyle('some style content');
-      expect(document.head.innerHTML).toBe('<style id="insertedStyles" type="text/css">some style content</style>');
-      expect(document.body.innerHTML).toBe('');
+      DomMethods.insertStyle(['.st-element: {color: #fff}']);
+      expect(document.head.innerHTML).toBe('<style id="insertedStyles" type="text/css"></style>');
     });
   });
 
