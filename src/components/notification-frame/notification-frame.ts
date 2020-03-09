@@ -1,6 +1,7 @@
 import './notification-frame.scss';
 import { NotificationFrame } from './NotificationFrame';
+import { Container } from 'typedi';
 
 (() => {
-  return NotificationFrame.ifFieldExists() && new NotificationFrame();
+  return NotificationFrame.ifFieldExists() && Container.get(NotificationFrame);
 })();

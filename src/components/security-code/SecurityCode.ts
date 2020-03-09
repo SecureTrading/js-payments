@@ -7,7 +7,7 @@ import { MessageBus } from '../../core/shared/MessageBus';
 import { Selectors } from '../../core/shared/Selectors';
 import { Validation } from '../../core/shared/Validation';
 import { Service } from 'typedi';
-import { ConfigService } from '../../core/config/ConfigService';
+import { ConfigProvider } from '../../core/config/ConfigProvider';
 
 @Service()
 export class SecurityCode extends FormField {
@@ -28,7 +28,7 @@ export class SecurityCode extends FormField {
   private _validation: Validation;
   private _isSecurityCodeBlocked: boolean = false;
 
-  constructor(private _configService: ConfigService) {
+  constructor(private _configProvider: ConfigProvider) {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
     this._formatter = new Formatter();
     this._validation = new Validation();
@@ -84,7 +84,7 @@ export class SecurityCode extends FormField {
     super.setEventListener(MessageBus.EVENTS.BLUR_SECURITY_CODE);
     this._subscribeSecurityCodeChange();
     this._setDisableListener();
-    this.placeholder = this._configService.getConfig().placeholders.securitycode || '';
+    this.placeholder = this._configProvider.getConfig().placeholders.securitycode || '';
     this._inputElement.setAttribute(SecurityCode.PLACEHOLDER_ATTRIBUTE, this.placeholder);
     this.validation.backendValidation(
       this._inputElement,
