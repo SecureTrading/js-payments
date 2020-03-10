@@ -1,7 +1,6 @@
-import Joi from 'joi';
-import { ComponentsConfigSchema } from './ComponentsConfigSchema';
+import Joi from '@hapi/joi';
 
-export const ConfigSchema: Joi.JoiObject = Joi.object().keys({
+export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   analytics: Joi.boolean(),
   animatedCard: Joi.boolean(),
   applePay: {
