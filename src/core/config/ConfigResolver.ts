@@ -52,51 +52,59 @@ export class ConfigResolver {
   public resolve(config: IConfig): IConfig {
     this.validate(config, ConfigSchema);
     return {
-      analytics: config.analytics !== undefined ? config.analytics : false,
-      animatedCard: config.animatedCard !== undefined ? config.animatedCard : false,
+      analytics: this._isTruthy(config.analytics) ? config.analytics : false,
+      animatedCard: this._isTruthy(config.animatedCard) ? config.animatedCard : false,
       applePay: this._setApmConfig(config.applePay, config.components),
-      buttonId: config.buttonId !== undefined ? config.buttonId : '',
-      bypassCards: config.bypassCards !== undefined ? config.bypassCards : [],
+      buttonId: this._isTruthy(config.buttonId) ? config.buttonId : '',
+      bypassCards: this._isTruthy(config.bypassCards) ? config.bypassCards : [],
       componentIds: this._componentIds(config.componentIds),
       components: this._setComponentsProperties(config),
-      datacenterurl: config.datacenterurl !== undefined ? config.datacenterurl : environment.GATEWAY_URL,
-      deferInit: config.deferInit !== undefined ? config.deferInit : false,
-      formId: config.formId !== undefined ? config.formId : Selectors.MERCHANT_FORM_SELECTOR,
-      init: config.init !== undefined ? config.init : { cachetoken: '', threedinit: '' },
-      jwt: config.jwt !== undefined ? config.jwt : '',
-      livestatus: config.livestatus !== undefined ? config.livestatus : 0,
-      notifications: config.notifications !== undefined ? config.notifications : true,
-      origin: config.origin !== undefined ? config.origin : window.location.origin,
-      placeholders: config.placeholders || { pan: '', expirydate: '', securitycode: '' },
-      styles: config.styles ? config.styles : {},
-      submitCallback: config.submitCallback !== undefined ? config.submitCallback : null,
-      submitFields: config.submitFields !== undefined ? config.submitFields : [],
-      submitOnError: config.submitOnError !== undefined ? config.submitOnError : false,
-      submitOnSuccess: config.submitOnSuccess !== undefined ? config.submitOnSuccess : true,
-      translations: config.translations ? config.translations : {},
+      datacenterurl: this._isTruthy(config.datacenterurl) ? config.datacenterurl : environment.GATEWAY_URL,
+      deferInit: this._isTruthy(config.deferInit) ? config.deferInit : false,
+      formId: this._isTruthy(config.formId) ? config.formId : Selectors.MERCHANT_FORM_SELECTOR,
+      init: this._isTruthy(config.init) ? config.init : { cachetoken: '', threedinit: '' },
+      jwt: this._isTruthy(config.jwt) ? config.jwt : '',
+      livestatus: this._isTruthy(config.livestatus) ? config.livestatus : 0,
+      notifications: this._isTruthy(config.notifications) ? config.notifications : true,
+      origin: this._isTruthy(config.origin) ? config.origin : window.location.origin,
+      placeholders: this._isTruthy(config.placeholders) || { pan: '', expirydate: '', securitycode: '' },
+      styles: this._isTruthy(config.styles) ? config.styles : {},
+      submitCallback: this._isTruthy(config.submitCallback) ? config.submitCallback : null,
+      submitFields: this._isTruthy(config.submitFields) ? config.submitFields : [],
+      submitOnError: this._isTruthy(config.submitOnError) ? config.submitOnError : false,
+      submitOnSuccess: this._isTruthy(config.submitOnSuccess) ? config.submitOnSuccess : false,
+      translations: this._isTruthy(config.translations) ? config.translations : {},
       visaCheckout: this._setApmConfig(config.visaCheckout, config.components),
       ...this._setFieldsToSubmit(config),
       ...this._setPropertiesToSubmit(config)
     };
   }
 
+  private _isTruthy = (value: any) => {
+    const valueType = typeof value;
+    if (valueType === 'object') {
+      return typeof value !== 'undefined' && value.length > 0;
+    }
+    return typeof value !== 'undefined' && value;
+  };
+
   private _componentIds(config: IComponentsIds): IComponentsIds {
-    if (!config) {
+    if (!this._isTruthy(config)) {
       return { ...this.DEFAULT_COMPONENTS_IDS };
     }
-
-    const optionalIds = config.animatedCard !== undefined ? { animatedCard: config.animatedCard } : {};
-    const requiredIds = {
-      cardNumber: config.cardNumber !== undefined ? config.cardNumber : this.DEFAULT_COMPONENTS_IDS.cardNumber,
-      expirationDate:
-        config.expirationDate !== undefined ? config.expirationDate : this.DEFAULT_COMPONENTS_IDS.expirationDate,
-      notificationFrame:
-        config.notificationFrame !== undefined
-          ? config.notificationFrame
-          : this.DEFAULT_COMPONENTS_IDS.notificationFrame,
-      securityCode: config.securityCode !== undefined ? config.securityCode : this.DEFAULT_COMPONENTS_IDS.securityCode
+    const optionalIds = {
+      animatedCard: this._isTruthy(config.animatedCard) ? config.animatedCard : this.DEFAULT_COMPONENTS_IDS.animatedCard
     };
-
+    const requiredIds = {
+      cardNumber: this._isTruthy(config.cardNumber) ? config.cardNumber : this.DEFAULT_COMPONENTS_IDS.cardNumber,
+      expirationDate: this._isTruthy(config.expirationDate)
+        ? config.expirationDate
+        : this.DEFAULT_COMPONENTS_IDS.expirationDate,
+      notificationFrame: this._isTruthy(config.notificationFrame)
+        ? config.notificationFrame
+        : this.DEFAULT_COMPONENTS_IDS.notificationFrame,
+      securityCode: this._isTruthy(config.securityCode) ? config.securityCode : this.DEFAULT_COMPONENTS_IDS.securityCode
+    };
     return {
       ...optionalIds,
       ...requiredIds
@@ -105,13 +113,13 @@ export class ConfigResolver {
 
   private _setFieldsToSubmit(config: IConfig): { fieldsToSubmit: string[] } {
     return {
-      fieldsToSubmit: config.fieldsToSubmit ? config.fieldsToSubmit : [...this.DEFAULT_FIELDS_TO_SUBMIT]
+      fieldsToSubmit: this._isTruthy(config.fieldsToSubmit) ? config.fieldsToSubmit : [...this.DEFAULT_FIELDS_TO_SUBMIT]
     };
   }
 
   private _setPropertiesToSubmit(config: IConfig): { submitFields: string[] } {
     return {
-      submitFields: config.submitFields !== undefined ? config.submitFields : this.DEFAULT_SUBMIT_PROPERTIES
+      submitFields: this._isTruthy(config.submitFields) ? config.submitFields : this.DEFAULT_SUBMIT_PROPERTIES
     };
   }
 
@@ -126,14 +134,14 @@ export class ConfigResolver {
     }
 
     return {
-      defaultPaymentType:
-        config.components.defaultPaymentType !== undefined ? config.components.defaultPaymentType : '',
-      paymentTypes: config.components.paymentTypes !== undefined ? config.components.paymentTypes : [''],
-      requestTypes:
-        config.components.requestTypes !== undefined
-          ? config.components.requestTypes
-          : [...this.DEFAULT_COMPONENTS_REQUEST_TYPES],
-      startOnLoad: config.components.startOnLoad !== undefined ? config.components.startOnLoad : false
+      defaultPaymentType: this._isTruthy(config.components.defaultPaymentType)
+        ? config.components.defaultPaymentType
+        : '',
+      paymentTypes: this._isTruthy(config.components.paymentTypes) ? config.components.paymentTypes : [''],
+      requestTypes: this._isTruthy(config.components.requestTypes)
+        ? config.components.requestTypes
+        : [...this.DEFAULT_COMPONENTS_REQUEST_TYPES],
+      startOnLoad: this._isTruthy(config.components.startOnLoad) ? config.components.startOnLoad : false
     };
   }
 
@@ -144,7 +152,7 @@ export class ConfigResolver {
     return {
       ...apm,
       requestTypes:
-        components && components.requestTypes !== undefined
+        components && this._isTruthy(components.requestTypes)
           ? components.requestTypes
           : [...this.DEFAULT_APMS_REQUEST_TYPES]
     };
