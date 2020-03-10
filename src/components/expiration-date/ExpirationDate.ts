@@ -6,7 +6,7 @@ import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { Selectors } from '../../core/shared/Selectors';
 import { Service } from 'typedi';
-import { ConfigService } from '../../core/config/ConfigService';
+import { ConfigProvider } from '../../core/config/ConfigProvider';
 
 @Service()
 export class ExpirationDate extends FormField {
@@ -22,7 +22,7 @@ export class ExpirationDate extends FormField {
   private _inputSelectionEnd: number;
   private _inputSelectionStart: number;
 
-  constructor(private _configService: ConfigService) {
+  constructor(private _configProvider: ConfigProvider) {
     super(Selectors.EXPIRATION_DATE_INPUT, Selectors.EXPIRATION_DATE_MESSAGE, Selectors.EXPIRATION_DATE_LABEL);
     this._formatter = new Formatter();
     this._init();
@@ -91,7 +91,7 @@ export class ExpirationDate extends FormField {
     super.setEventListener(MessageBus.EVENTS.BLUR_EXPIRATION_DATE);
     super.setEventListener(MessageBus.EVENTS.FOCUS_EXPIRATION_DATE);
     this.setAttributes({ pattern: ExpirationDate.INPUT_PATTERN });
-    this.placeholder = this._configService.getConfig().placeholders.expirydate || '';
+    this.placeholder = this._configProvider.getConfig().placeholders.expirydate || '';
     this._inputElement.setAttribute(ExpirationDate.PLACEHOLDER_ATTRIBUTE, this.placeholder);
     this.setDisableListener();
     this.validation.backendValidation(

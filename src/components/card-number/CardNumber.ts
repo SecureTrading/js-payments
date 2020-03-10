@@ -10,7 +10,7 @@ import { Utils } from '../../core/shared/Utils';
 import { Validation } from '../../core/shared/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { Service } from 'typedi';
-import { ConfigService } from '../../core/config/ConfigService';
+import { ConfigProvider } from '../../core/config/ConfigProvider';
 
 @Service()
 export class CardNumber extends FormField {
@@ -34,14 +34,14 @@ export class CardNumber extends FormField {
   private _fieldInstance: HTMLInputElement = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
   private readonly _cardNumberField: HTMLInputElement;
 
-  constructor(private configService: ConfigService) {
+  constructor(private configProvider: ConfigProvider) {
     super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE, Selectors.CARD_NUMBER_LABEL);
     this._cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     this.validation = new Validation();
     this._formatter = new Formatter();
     this._isCardNumberValid = true;
     this._cardNumberLength = CardNumber.STANDARD_CARD_LENGTH;
-    this.placeholder = this.configService.getConfig().placeholders.pan || '';
+    this.placeholder = this.configProvider.getConfig().placeholders.pan || '';
     this.setFocusListener();
     this.setBlurListener();
     this.setSubmitListener();
