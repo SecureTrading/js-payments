@@ -67,6 +67,10 @@ export class FramesHub {
   public notifyReadyState(): void {
     const frameName = this.identifier.getFrameName();
 
+    if (frameName === Selectors.MERCHANT_PARENT_FRAME) {
+      return;
+    }
+
     if (!frameName) {
       // @todo: Validation class should not extend Frame class. Once fixed this line should throw an error */
       console.warn('Cannot set ready state for frame without name.');
