@@ -4,7 +4,7 @@ import { IComponentsConfig } from './IComponentsConfig';
 import { IComponentsIds } from './IComponentsIds';
 import { IStyles } from './IStyles';
 import { IWalletConfig } from './IWalletConfig';
-import { IPlaceholdersConfig } from '../../models/IPlaceholdersConfig';
+import { IPlaceholdersConfig } from './IPlaceholdersConfig';
 
 export interface IConfig {
   analytics?: boolean;

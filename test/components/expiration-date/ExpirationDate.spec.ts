@@ -2,7 +2,7 @@ import { ExpirationDate } from '../../../src/components/expiration-date/Expirati
 import { FormState } from '../../../src/core/models/constants/FormState';
 import { Language } from '../../../src/core/shared/Language';
 import { Selectors } from '../../../src/core/shared/Selectors';
-import { ConfigService } from '../../../src/core/config/ConfigService';
+import { ConfigProvider } from '../../../src/core/config/ConfigProvider';
 import { mock, instance, when } from 'ts-mockito';
 
 jest.mock('./../../../src/core/shared/MessageBus');
@@ -215,13 +215,13 @@ function expirationDateFixture() {
   const correctValue = '55';
   const incorrectValue = 'a';
   const correctDataValue = '12/19';
-  let configService: ConfigService;
-  configService = mock(ConfigService);
-  when(configService.getConfig()).thenReturn({
+  let configProvider: ConfigProvider;
+  configProvider = mock(ConfigProvider);
+  when(configProvider.getConfig()).thenReturn({
     jwt: '',
     placeholders: { pan: '4154654', expirydate: '12/22', securitycode: '123' }
   });
-  const expirationDateInstance: ExpirationDate = new ExpirationDate(instance(configService));
+  const expirationDateInstance: ExpirationDate = new ExpirationDate(instance(configProvider));
 
   const labelElement = document.createElement('label');
   const inputElement = document.createElement('input');
@@ -243,5 +243,5 @@ function expirationDateFixture() {
   document.body.appendChild(inputElement);
   document.body.appendChild(messageElement);
 
-  return { element, elementWithError, elementWithExceededValue, expirationDateInstance, configService };
+  return { element, elementWithError, elementWithExceededValue, expirationDateInstance, configProvider };
 }
