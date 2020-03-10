@@ -16,7 +16,7 @@ services:
   - docker
 install: skip
 before_script:
-  - git clone --branch=master --single-branch --depth=1 https://github.com/SecureTrading/py-payments-testing.git
+  - git clone --branch=wait-for-iframe --single-branch --depth=1 https://github.com/SecureTrading/py-payments-testing.git
   - docker-compose -f py-payments-testing/docker-compose.yml pull
   - docker-compose -f py-payments-testing/docker-compose.yml up -d
 jobs:
