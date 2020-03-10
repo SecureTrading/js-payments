@@ -3,7 +3,7 @@ import { IMessageBusEvent } from '../models/IMessageBusEvent';
 import { INotificationEvent } from '../models/INotificationEvent';
 import { MessageBus } from './MessageBus';
 import { Service } from 'typedi';
-import { ConfigService } from '../config/ConfigService';
+import { ConfigProvider } from '../config/ConfigProvider';
 import { Container } from 'typedi';
 
 @Service()
@@ -15,11 +15,11 @@ export class Notification {
   private readonly _displayOnError: boolean;
   private readonly _displayOnSuccess: boolean;
 
-  constructor(private configService: ConfigService = Container.get(ConfigService)) {
+  constructor(private configProvider: ConfigProvider = Container.get(ConfigProvider)) {
     this._messageBus = Container.get(MessageBus);
-    this._display = this.configService.getConfig().notifications;
-    this._displayOnError = this._display && !this.configService.getConfig().submitOnError;
-    this._displayOnSuccess = this._display && !this.configService.getConfig().submitOnSuccess;
+    this._display = this.configProvider.getConfig().notifications;
+    this._displayOnError = this._display && !this.configProvider.getConfig().submitOnError;
+    this._displayOnSuccess = this._display && !this.configProvider.getConfig().submitOnSuccess;
   }
 
   public error(message: string) {

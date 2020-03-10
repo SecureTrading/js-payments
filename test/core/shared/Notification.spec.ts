@@ -2,6 +2,7 @@ import { Notification } from '../../../src/core/shared/Notification';
 import { MessageBus } from '../../../src/core/shared/MessageBus';
 import { ConfigService } from '../../../src/core/config/ConfigService';
 import { instance, mock, when } from 'ts-mockito';
+import { ConfigProvider } from '../../../src/core/config/ConfigProvider';
 
 // given
 describe('Notification', () => {
@@ -78,12 +79,12 @@ describe('Notification', () => {
 });
 
 function notificationFixture() {
-  let configService: ConfigService;
-  configService = mock(ConfigService);
-  when(configService.getConfig()).thenReturn({
+  let configProvider: ConfigProvider;
+  configProvider = mock(ConfigProvider);
+  when(configProvider.getConfig()).thenReturn({
     jwt: '',
     notifications: true
   });
-  const notificationInstance: Notification = new Notification(instance(configService));
+  const notificationInstance: Notification = new Notification(instance(configProvider));
   return { notificationInstance };
 }
