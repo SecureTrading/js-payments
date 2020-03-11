@@ -4,6 +4,7 @@ import { IComponentsConfig } from './IComponentsConfig';
 import { IComponentsIds } from './IComponentsIds';
 import { IStyles } from './IStyles';
 import { IWalletConfig } from './IWalletConfig';
+import { IPlaceholdersConfig } from './IPlaceholdersConfig';
 
 export interface IConfig {
   analytics?: boolean;
@@ -21,6 +22,7 @@ export interface IConfig {
   init?: IBypassInit;
   livestatus?: number;
   origin?: string;
+  placeholders?: IPlaceholdersConfig;
   styles?: IStyles;
   submitCallback?: any;
   submitFields?: string[];
