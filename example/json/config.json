@@ -1,0 +1,75 @@
+{
+  "analytics": true,
+  "animatedCard": true,
+  "bypassCards": ["PIBA"],
+  "deferInit": false,
+  "fieldsToSubmit": ["pan", "expirydate", "securitycode"],
+  "buttonId": "merchant-submit-button",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4Mzk0MDAyOC4yMzI5MywicGF5bG9hZCI6eyJtYWluYW1vdW50IjoiMTAuMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdF9qYW1lczM4NjQxIiwibG9jYWxlIjoiZW5fR0IifX0.GIcXZ4QGd61OYlJ9XW1kQTWwVcOgaMCfEcOa0Q_8xv0",
+  "placeholders": {
+    "pan": "Card number",
+    "expirydate": "MM/YY",
+    "securitycode": "***"
+  },
+  "panIcon": true,
+  "styles": {
+    "defaultStyles": {
+      "background-color-input": "AliceBlue"
+    },
+    "cardNumber": {
+      "font-size-input": "1.5rem",
+      "line-height-input": "1.6rem"
+    },
+    "expirationDate": {
+      "font-size-input": "1.5rem",
+      "line-height-input": "1.6rem"
+    },
+    "securityCode": {
+      "font-size-input": "1.5rem",
+      "line-height-input": "1.6rem"
+    },
+    "notificationFrame": {
+      "color-error": "#FFF333"
+    },
+    "controlFrame": {
+      "color-error": "#3358FF"
+    }
+  },
+  "submitOnSuccess": false,
+  "submitCallback": "",
+  "translations": {
+    "An error occurred": "Wystąpił błąd"
+  },
+  "components": {},
+  "applePay": {
+    "buttonStyle": "white-outline",
+    "buttonText": "donate",
+    "merchantId": "merchant.net.securetrading.test",
+    "paymentRequest": {
+      "countryCode": "US",
+      "currencyCode": "USD",
+      "merchantCapabilities": ["supports3DS", "supportsCredit", "supportsDebit"],
+      "supportedNetworks": [],
+      "total": {
+        "label": "Secure Trading Merchant",
+        "amount": "10.00"
+      }
+    },
+    "placement": "st-apple-pay"
+  },
+  "visaCheckout": {
+    "buttonSettings": {
+      "size": "154",
+      "color": "neutral"
+    },
+    "livestatus": 0,
+    "merchantId": "SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4",
+    "paymentRequest": {
+      "subtotal": "20.00"
+    },
+    "placement": "st-visa-checkout",
+    "settings": {
+      "displayName": "My Test Site"
+    }
+  }
+}
