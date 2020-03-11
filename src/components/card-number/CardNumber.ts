@@ -137,7 +137,8 @@ export class CardNumber extends FormField {
   }
 
   private _setIconInDom(element: HTMLElement): void {
-    document.getElementById(Selectors.CARD_NUMBER_INPUT_SELECTOR).prepend(element);
+    const input: HTMLElement =  document.getElementById(Selectors.CARD_NUMBER_INPUT_SELECTOR);
+    document.getElementById(Selectors.CARD_NUMBER_INPUT_SELECTOR).insertBefore (element, input.childNodes[0]);
   }
 
   private _getBinLookupDetails = (cardNumber: string) => {
