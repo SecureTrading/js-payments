@@ -1,5 +1,5 @@
 import SpyInstance = jest.SpyInstance;
-import { NotificationFrame } from '../../../src/components/notification-frame/NotificationFrame';
+import { NotificationFrame } from '../../../src/core/shared/NotificationFrame';
 import { Translator } from '../../../src/core/shared/Translator';
 
 // given

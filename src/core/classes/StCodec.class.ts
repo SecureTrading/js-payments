@@ -103,7 +103,7 @@ class StCodec {
     StCodec._messageBus.publish(messageBusEvent, true);
   }
 
-  private static _notification = new Notification();
+  private static _notification =  Container.get(Notification);
   private static _locale: string;
   private static _messageBus = Container.get(MessageBus);
   private static _parentOrigin: string;

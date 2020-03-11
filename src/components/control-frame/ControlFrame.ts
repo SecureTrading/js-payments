@@ -396,7 +396,7 @@ export class ControlFrame extends Frame {
   private _setInstances(): void {
     this._payment = new Payment(this.params.jwt, this.params.gatewayUrl, this.params.origin);
     this._validation = new Validation();
-    this._notification = new Notification();
+    this._notification = Container.get(Notification);
   }
 
   private _setRequestTypes(data: ISetRequestTypes): void {
