@@ -348,7 +348,7 @@ export class CardFrames extends RegisterFrames {
         this._publishSubmitEvent(this._deferInit);
       });
     }
-    this.messageBus.subscribe(MessageBus.EVENTS.CALL_SUBMIT_EVENT, () => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.CALL_SUBMIT_EVENT, () => {
       this._publishSubmitEvent(this._deferInit);
     });
   }

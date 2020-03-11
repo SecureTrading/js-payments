@@ -80,23 +80,14 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   requestTypes: Joi.array().items(
     Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
   ),
+  placeholders: Joi.object().keys({
+    pan: Joi.string().allow(''),
+    securitycode: Joi.string().allow(''),
+    expirydate: Joi.string().allow('')
+  }),
   styles: Joi.object(),
   submitCallback: Joi.any(),
-  submitFields: Joi.array().items(
-    Joi.string().valid(
-      'baseamount',
-      'currencyiso3a',
-      'eci',
-      'enrolled',
-      'errorcode',
-      'errordata',
-      'errormessage',
-      'orderreference',
-      'settlestatus',
-      'status',
-      'transactionreference'
-    )
-  ),
+  submitFields: Joi.array(),
   submitOnError: Joi.boolean(),
   submitOnSuccess: Joi.boolean(),
   threedinit: Joi.string(),
