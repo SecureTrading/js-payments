@@ -41,7 +41,6 @@ Not specified yet
 - [PostCSS](https://postcss.org/)
 - [Prettier](https://prettier.io/)
 - [Stylelint](https://stylelint.io/)
-- [TSLint](https://palantir.github.io/tslint/)
 - [ESLint](https://eslint.org/)
 
 ##### CI/CD:

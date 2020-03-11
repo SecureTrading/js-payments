@@ -6,6 +6,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
+
 module.exports = {
   entry: {
     main: ['./polyfills', './src/components/index.ts'],
@@ -137,37 +138,23 @@ module.exports = {
         use: ['file-loader']
       },
       {
-        test: /\.tsx?|js$/,
-        use: 'babel-loader',
-        include: [
-          path.join(__dirname, 'src'),
-          path.join(__dirname, 'test'),
-          path.join(__dirname, 'example'),
-          path.join(__dirname, 'node_modules/ts-money'),
-          path.join(__dirname, 'node_modules/hoek'),
-          path.join(__dirname, 'node_modules/@hapi'),
-          path.join(__dirname, 'node_modules/isemail'),
-          path.join(__dirname, 'node_modules/joi'),
-          path.join(__dirname, 'node_modules/topo')
-        ]
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader']
       },
       {
-        test: /\.ts$/,
+        test: /\.(ts|tsx)$/,
         enforce: 'pre',
         use: [
           {
-            loader: 'tslint-loader',
             options: {
-              emitErrors: true
-            }
-          }
+              eslintPath: require.resolve('eslint'),
+
+            },
+            loader: require.resolve('eslint-loader'),
+          },
         ],
-        exclude: /node_modules/
+        exclude: /node_modules/,
       },
-      {
-        test: /\.css$/i,
-        use: ['style-loader', 'css-loader']
-      }
     ]
   },
   resolve: {
