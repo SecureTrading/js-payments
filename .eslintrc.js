@@ -11,7 +11,7 @@ module.exports = {
     'Atomics': 'readonly',
     'SharedArrayBuffer': 'readonly'
   },
-  'parser': '@typescript-eslint/parser',
+  'parser': ['@typescript-eslint/parser'],
   'parserOptions': {
     'project': path.resolve(__dirname, './tsconfig.json'),
     'tsconfigRootDir': __dirname,
