@@ -109,6 +109,7 @@
     "@types/jwt-decode": "^2.2.1",
     "@types/lodash": "^4.14.149",
     "core-js": "^2.6.11",
+    "fastestsmallesttextencoderdecoder": "^1.0.14",
     "i18next": "^19.3.2",
     "jwt-decode": "^2.2.0",
     "location-origin": "^1.1.4",
