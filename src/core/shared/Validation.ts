@@ -180,9 +180,9 @@ export class Validation extends Frame {
 
   public callSubmitEvent() {
     const messageBusEvent: IMessageBusEvent = {
-      type: MessageBus.EVENTS.CALL_SUBMIT_EVENT
+      type: MessageBus.EVENTS_PUBLIC.CALL_SUBMIT_EVENT
     };
-    this.messageBus.publish(messageBusEvent);
+    this.messageBus.publish(messageBusEvent, true);
   }
 
   public formValidation(

@@ -66,6 +66,8 @@ export class ConfigResolver {
       jwt: this._isTruthy(config.jwt) ? config.jwt : '',
       livestatus: this._isTruthy(config.livestatus) ? config.livestatus : 0,
       origin: this._isTruthy(config.origin) ? config.origin : window.location.origin,
+      panIcon: config.panIcon !== undefined ? config.panIcon : false,
+      placeholders: config.placeholders || { pan: '', expirydate: '', securitycode: '' },
       styles: this._isTruthy(config.styles) ? config.styles : {},
       submitCallback: this._isTruthy(config.submitCallback) ? config.submitCallback : null,
       submitFields: this._isTruthy(config.submitFields) ? config.submitFields : [],
