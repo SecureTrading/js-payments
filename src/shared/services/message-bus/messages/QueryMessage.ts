@@ -1,5 +1,5 @@
-import { IMessageBusEvent } from '../../../../backend/core/models/IMessageBusEvent';
-import { Uuid } from '../../../../backend/core/shared/utils/Uuid';
+import { IMessageBusEvent } from '../../../../application/core/models/IMessageBusEvent';
+import { Uuid } from '../../../../application/core/shared/utils/Uuid';
 
 export class QueryMessage implements IMessageBusEvent {
   static readonly MESSAGE_TYPE = 'ST_QUERY';

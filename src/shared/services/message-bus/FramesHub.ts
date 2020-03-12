@@ -13,9 +13,9 @@ import {
   takeUntil,
   withLatestFrom
 } from 'rxjs/operators';
-import { IMessageBusEvent } from '../../../backend/core/models/IMessageBusEvent';
-import { ArrayUtils } from '../../../backend/core/shared/utils/ArrayUtils';
-import { Selectors } from '../../../backend/core/shared/Selectors';
+import { IMessageBusEvent } from '../../../application/core/models/IMessageBusEvent';
+import { ArrayUtils } from '../../../application/core/shared/utils/ArrayUtils';
+import { Selectors } from '../../../application/core/shared/Selectors';
 
 @Service()
 export class FramesHub {

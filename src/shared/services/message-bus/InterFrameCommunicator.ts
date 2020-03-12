@@ -1,14 +1,14 @@
 import { Container, Service } from 'typedi';
 import { fromEventPattern, Observable, Subject } from 'rxjs';
-import { IMessageBusEvent } from '../../../backend/core/models/IMessageBusEvent';
+import { IMessageBusEvent } from '../../../application/core/models/IMessageBusEvent';
 import { filter, map, share, switchMap, take, takeUntil } from 'rxjs/operators';
 import { ofType } from './operators/ofType';
 import { QueryMessage } from './messages/QueryMessage';
 import { ResponseMessage } from './messages/ResponseMessage';
 import { environment } from '../../../environments/environment';
 import { FrameCollection } from './interfaces/FrameCollection';
-import { Selectors } from '../../../backend/core/shared/Selectors';
-import { CONFIG } from '../../../backend/core/dependency-injection/InjectionTokens';
+import { Selectors } from '../../../application/core/shared/Selectors';
+import { CONFIG } from '../../../application/core/dependency-injection/InjectionTokens';
 
 @Service()
 export class InterFrameCommunicator {

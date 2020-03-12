@@ -1,4 +1,4 @@
-import { IMessageBusEvent } from '../../../../backend/core/models/IMessageBusEvent';
+import { IMessageBusEvent } from '../../../../application/core/models/IMessageBusEvent';
 
 export class ResponseMessage<T> implements IMessageBusEvent {
   static readonly MESSAGE_TYPE = 'ST_RESPONSE';

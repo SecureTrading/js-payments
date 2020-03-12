@@ -1,4 +1,4 @@
-import { BypassCards } from '../../../backend/core/models/constants/BypassCards';
+import { BypassCards } from '../../../application/core/models/constants/BypassCards';
 import { IBypassInit } from './IBypassInit';
 import { IComponentsConfig } from './IComponentsConfig';
 import { IComponentsIds } from './IComponentsIds';

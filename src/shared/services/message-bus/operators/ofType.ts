@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { IMessageBusEvent } from '../../../../backend/core/models/IMessageBusEvent';
+import { IMessageBusEvent } from '../../../../application/core/models/IMessageBusEvent';
 import { filter } from 'rxjs/operators';
 
 export function ofType<T extends IMessageBusEvent>(type: string) {
