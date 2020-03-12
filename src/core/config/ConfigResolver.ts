@@ -68,7 +68,7 @@ export class ConfigResolver {
       notifications: this._isTruthy(config.notifications) ? config.notifications : true,
       origin: this._isTruthy(config.origin) ? config.origin : window.location.origin,
       panIcon: this._isTruthy(config.panIcon) ? config.panIcon : false,
-      placeholders: this._isTruthy(config.placeholders) || { pan: '', expirydate: '', securitycode: '' },
+      placeholders: this._isTruthy(config.placeholders) ? config.placeholders : { pan: '', expirydate: '', securitycode: '' },
       styles: this._isTruthy(config.styles) ? config.styles : {},
       submitCallback: this._isTruthy(config.submitCallback) ? config.submitCallback : null,
       submitFields: this._isTruthy(config.submitFields) ? config.submitFields : [],
@@ -84,7 +84,7 @@ export class ConfigResolver {
   private _isTruthy = (value: any) => {
     const valueType = typeof value;
     if (valueType === 'object') {
-      return typeof value !== 'undefined' && value.length > 0;
+      return typeof value !== 'undefined' && Object.keys(value).length;
     }
     return typeof value !== 'undefined' && value;
   };
