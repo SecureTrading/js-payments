@@ -60,7 +60,7 @@ export class CardinalCommerce {
     this._requestTypes = requestTypes;
     this._bypassCards = bypassCards;
     this.messageBus = Container.get(MessageBus);
-    this._notification = new Notification();
+    this._notification = Container.get(Notification);
     this._framesHub = Container.get(FramesHub);
     this._setLiveStatus();
     this._onInit();
