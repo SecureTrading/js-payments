@@ -6,7 +6,6 @@ import { IStRequest } from '../models/IStRequest';
 import { Language } from '../shared/Language';
 import { MessageBus } from '../shared/MessageBus';
 import { Notification } from '../shared/Notification';
-import { Selectors } from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
 import { Validation } from '../shared/Validation';
@@ -103,7 +102,7 @@ class StCodec {
     StCodec._messageBus.publish(messageBusEvent, true);
   }
 
-  private static _notification = Container.get(Notification);
+  private static _notification: Notification;
   private static _locale: string;
   private static _messageBus = Container.get(MessageBus);
   private static _parentOrigin: string;
@@ -191,6 +190,7 @@ class StCodec {
 
   constructor(jwt: string, parentOrigin?: string) {
     this._requestId = StCodec._createRequestId();
+    StCodec._notification = Container.get(Notification);
     StCodec.jwt = jwt;
     StCodec.originalJwt = jwt;
     StCodec._locale = new StJwt(StCodec.jwt).locale;

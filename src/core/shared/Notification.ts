@@ -9,21 +9,23 @@ import { Container } from 'typedi';
 @Service()
 export class Notification {
   private _messageBus: MessageBus;
+  private _configProvider: ConfigProvider;
   private _messageBusEvent: IMessageBusEvent;
   private _notificationEvent: INotificationEvent;
   private readonly _display: boolean;
   private readonly _displayOnError: boolean;
   private readonly _displayOnSuccess: boolean;
 
-  constructor(private configProvider: ConfigProvider = Container.get(ConfigProvider)) {
+  constructor() {
     this._messageBus = Container.get(MessageBus);
-    this._display = this.configProvider.getConfig().notifications;
-    this._displayOnError = this._display && !this.configProvider.getConfig().submitOnError;
-    this._displayOnSuccess = this._display && !this.configProvider.getConfig().submitOnSuccess;
+    this._configProvider = Container.get(ConfigProvider);
+    this._display = this._configProvider.getConfig().notifications;
+    this._displayOnError = this._display && !this._configProvider.getConfig().submitOnError;
+    this._displayOnSuccess = this._display && !this._configProvider.getConfig().submitOnSuccess;
   }
 
   public error(message: string) {
-    this._setNotification(NotificationType.Error, message, this._displayOnError,);
+    this._setNotification(NotificationType.Error, message, this._displayOnError);
   }
 
   public info(message: string) {
