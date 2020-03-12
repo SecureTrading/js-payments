@@ -12,6 +12,7 @@
     "expirydate": "MM/YY",
     "securitycode": "***"
   },
+  "panIcon": true,
   "styles": {
     "defaultStyles": {
       "background-color-input": "AliceBlue"

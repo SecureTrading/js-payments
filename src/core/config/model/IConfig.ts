@@ -23,6 +23,7 @@ export interface IConfig {
   livestatus?: number;
   notifications: boolean;
   origin?: string;
+  panIcon?: boolean;
   placeholders?: IPlaceholdersConfig;
   styles?: IStyles;
   submitCallback?: any;

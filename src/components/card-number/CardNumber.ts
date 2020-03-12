@@ -11,6 +11,7 @@ import { Validation } from '../../core/shared/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { Service } from 'typedi';
 import { ConfigProvider } from '../../core/config/ConfigProvider';
+import { IconFactory } from '../../core/services/icon/IconFactory';
 
 @Service()
 export class CardNumber extends FormField {
@@ -27,6 +28,7 @@ export class CardNumber extends FormField {
 
   public validation: Validation;
   private _formatter: Formatter;
+  private _panIcon: boolean;
   private _cardNumberFormatted: string;
   private _cardNumberLength: number;
   private _cardNumberValue: string;
@@ -34,7 +36,7 @@ export class CardNumber extends FormField {
   private _fieldInstance: HTMLInputElement = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
   private readonly _cardNumberField: HTMLInputElement;
 
-  constructor(private configProvider: ConfigProvider) {
+  constructor(private configProvider: ConfigProvider, private _iconFactory: IconFactory) {
     super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE, Selectors.CARD_NUMBER_LABEL);
     this._cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     this.validation = new Validation();
@@ -42,6 +44,7 @@ export class CardNumber extends FormField {
     this._isCardNumberValid = true;
     this._cardNumberLength = CardNumber.STANDARD_CARD_LENGTH;
     this.placeholder = this.configProvider.getConfig().placeholders.pan || '';
+    this._panIcon = this.configProvider.getConfig().panIcon;
     this.setFocusListener();
     this.setBlurListener();
     this.setSubmitListener();
@@ -115,8 +118,32 @@ export class CardNumber extends FormField {
     this.messageBus.publish(messageBusEvent);
   }
 
-  private _getBinLookupDetails = (cardNumber: string) =>
-    iinLookup.lookup(cardNumber).type ? iinLookup.lookup(cardNumber) : undefined;
+  private _getIcon(type: string): HTMLImageElement {
+    if (!type) {
+      return;
+    }
+    return this._iconFactory.getIcon(type.toLowerCase());
+  }
+
+  private _setIconImage(type: string, iconId: string): void {
+    const icon: HTMLImageElement = this._getIcon(type);
+    const iconInDom: HTMLElement = document.getElementById(iconId);
+    if (iconInDom) {
+      iconInDom.remove();
+    }
+    if (icon) {
+      this._setIconInDom(icon);
+    }
+  }
+
+  private _setIconInDom(element: HTMLElement): void {
+    const input: HTMLElement =  document.getElementById(Selectors.CARD_NUMBER_INPUT_SELECTOR);
+    document.getElementById(Selectors.CARD_NUMBER_INPUT_SELECTOR).insertBefore (element, input.childNodes[0]);
+  }
+
+  private _getBinLookupDetails = (cardNumber: string) => {
+    return iinLookup.lookup(cardNumber).type ? iinLookup.lookup(cardNumber) : undefined;
+  };
 
   private _getCardFormat = (cardNumber: string) =>
     this._getBinLookupDetails(cardNumber) ? this._getBinLookupDetails(cardNumber).format : undefined;
@@ -129,7 +156,8 @@ export class CardNumber extends FormField {
 
   private _getMaxLengthOfCardNumber() {
     const cardLengthFromBin = this._getPossibleCardLength(this._inputElement.value);
-    const cardFormat = this._getCardFormat(this._inputElement.value);
+    this._cardNumberValue = this._inputElement.value.replace(/\s/g, '');
+    const cardFormat = this._getCardFormat(this._cardNumberValue);
     let numberOfWhitespaces;
     if (cardFormat) {
       numberOfWhitespaces = cardFormat.split('d').length - CardNumber.WHITESPACES_DECREASE_NUMBER;
@@ -159,6 +187,12 @@ export class CardNumber extends FormField {
     this._inputElement.value = formatted;
     this._cardNumberValue = nonformatted;
     this.validation.keepCursorsPosition(this._inputElement);
+    const type = this._getBinLookupDetails(this._cardNumberValue)
+      ? this._getBinLookupDetails(this._cardNumberValue).type
+      : null;
+    if (this._panIcon) {
+      this._setIconImage(type, 'card-icon');
+    }
   }
 
   private _setDisableListener() {

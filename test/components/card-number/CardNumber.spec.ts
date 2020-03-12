@@ -8,6 +8,7 @@ import { Validation } from '../../../src/core/shared/Validation';
 import { MessageBus } from './../../../src/core/shared/MessageBus';
 import { ConfigProvider } from '../../../src/core/config/ConfigProvider';
 import { instance, mock, when } from 'ts-mockito';
+import { IconFactory } from '../../../src/core/services/icon/IconFactory';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 jest.mock('./../../../src/core/shared/Validation');
@@ -381,13 +382,15 @@ function cardNumberFixture() {
     '<form id="st-card-number" class="card-number" novalidate=""><label id="st-card-number-label" for="st-card-number-input" class="card-number__label card-number__label--required">Card number</label><input id="st-card-number-input" class="card-number__input" type="text" autocomplete="off" required="" data-luhn-check="true" maxlength="NaN" minlength="19"><p id="st-card-number-message" class="card-number__message"></p></form>';
   document.body.innerHTML = html;
   let configProvider: ConfigProvider;
+  let iconFactory: IconFactory;
+  iconFactory = mock(IconFactory);
   configProvider = mock(ConfigProvider);
   when(configProvider.getConfig()).thenReturn({
     jwt: '',
     notifications: true,
     placeholders: { pan: 'Card number', expirydate: 'MM/YY', securitycode: '***' }
   });
-  const cardNumberInstance: CardNumber = new CardNumber(instance(configProvider));
+  const cardNumberInstance: CardNumber = new CardNumber(instance(configProvider), instance(iconFactory));
 
   function createElement(markup: string) {
     return document.createElement(markup);
