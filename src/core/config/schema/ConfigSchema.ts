@@ -80,6 +80,7 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   requestTypes: Joi.array().items(
     Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
   ),
+  panIcon: Joi.boolean(),
   placeholders: Joi.object().keys({
     pan: Joi.string().allow(''),
     securitycode: Joi.string().allow(''),
