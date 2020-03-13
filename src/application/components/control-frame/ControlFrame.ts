@@ -18,13 +18,17 @@ import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { Notification } from '../../core/shared/Notification';
 import { Payment } from '../../core/shared/Payment';
-import { Selectors } from '../../core/shared/Selectors';
 import { Validation } from '../../core/shared/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 import { BrowserSessionStorage } from '../../../shared/services/storage/BrowserSessionStorage';
-import { Container } from 'typedi';
+import { Service } from 'typedi';
+import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
+import { ConfigProvider } from '../../core/services/ConfigProvider';
+import { interval } from 'rxjs';
+import { filter, mapTo } from 'rxjs/operators';
 
+@Service()
 export class ControlFrame extends Frame {
   private static ALLOWED_PARAMS: string[] = ['jwt', 'gatewayUrl'];
   private static NON_CVV_CARDS: string[] = ['PIBA'];
@@ -72,11 +76,17 @@ export class ControlFrame extends Frame {
   private _validation: Validation;
 
   constructor(
-    private _localStorage: BrowserLocalStorage = Container.get(BrowserLocalStorage),
-    private _sessionStorage: BrowserSessionStorage = Container.get(BrowserSessionStorage)
+    private _localStorage: BrowserLocalStorage,
+    private _sessionStorage: BrowserSessionStorage,
+    private _communicator: InterFrameCommunicator,
+    private _configProvider: ConfigProvider,
   ) {
     super();
     this.onInit();
+    this._communicator.whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK).thenRespond(() => interval().pipe(
+      mapTo(this._configProvider.getConfig()),
+      filter(Boolean),
+    ));
   }
 
   protected async onInit(): Promise<void> {

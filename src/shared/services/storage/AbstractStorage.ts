@@ -6,6 +6,7 @@ import { ofType } from '../message-bus/operators/ofType';
 import { FramesHub } from '../message-bus/FramesHub';
 import { Selectors } from '../../../application/core/shared/Selectors';
 import { IMessageBusEvent } from '../../../application/core/models/IMessageBusEvent';
+import { FrameIdentifier } from '../message-bus/FrameIdentifier';
 
 export abstract class AbstractStorage implements IStorage, Subscribable<any> {
   private static readonly STORAGE_EVENT = 'storage';
@@ -16,7 +17,8 @@ export abstract class AbstractStorage implements IStorage, Subscribable<any> {
   protected constructor(
     private nativeStorage: Storage,
     private communicator: InterFrameCommunicator,
-    private framesHub: FramesHub
+    private framesHub: FramesHub,
+    private identifier: FrameIdentifier
   ) {
     this.observable$ = fromEventPattern(
       handler => window.addEventListener(AbstractStorage.STORAGE_EVENT, handler, true),
@@ -76,7 +78,7 @@ export abstract class AbstractStorage implements IStorage, Subscribable<any> {
       data: { key, value }
     };
 
-    if (window.name) {
+    if (!this.identifier.isParentFrame()) {
       return this.communicator.send(event, Selectors.MERCHANT_PARENT_FRAME);
     }
 

@@ -3,6 +3,11 @@ import { StCodec } from '../../core/services/StCodec.class';
 import { IFormFieldState } from '../../core/models/IFormFieldState';
 import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
+import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
+import { BrowserSessionStorage } from '../../../shared/services/storage/BrowserSessionStorage';
+import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
+import { ConfigProvider } from '../../core/services/ConfigProvider';
+import { mock, instance as mockInstance, when, anyString } from 'ts-mockito';
 
 jest.mock('../../../../src/application/core/shared/Payment');
 
@@ -594,7 +599,21 @@ describe('ControlFrame', () => {
 });
 
 function controlFrameFixture() {
-  const instance = new ControlFrame();
+  const localStorage: BrowserLocalStorage = mock(BrowserLocalStorage);
+  const sessionStorage: BrowserSessionStorage = mock(BrowserSessionStorage);
+  const communicator: InterFrameCommunicator = mock(InterFrameCommunicator);
+  const configProvider: ConfigProvider = mock(ConfigProvider);
+
+  when(communicator.whenReceive(anyString())).thenReturn({
+    thenRespond: (() => undefined),
+  });
+
+  const instance = new ControlFrame(
+    mockInstance(localStorage),
+    mockInstance(sessionStorage),
+    mockInstance(communicator),
+    mockInstance(configProvider),
+  );
   const messageBusEvent = {
     type: ''
   };

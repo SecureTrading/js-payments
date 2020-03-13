@@ -2,7 +2,6 @@ import { NotificationType } from '../models/constants/NotificationType';
 import { IMessageBusEvent } from '../models/IMessageBusEvent';
 import { INotificationEvent } from '../models/INotificationEvent';
 import { MessageBus } from './MessageBus';
-import { Selectors } from './Selectors';
 import { Container } from 'typedi';
 
 export class Notification {

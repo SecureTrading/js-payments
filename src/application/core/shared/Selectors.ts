@@ -34,7 +34,7 @@ export class Selectors {
   public static readonly CONTROL_FRAME_IFRAME: string = 'st-control-frame-iframe';
 
   public static MERCHANT_FORM_SELECTOR: string = 'st-form';
-  public static MERCHANT_PARENT_FRAME: string = 'st-merchant-parent-frame';
+  public static MERCHANT_PARENT_FRAME: string = 'st-parent-frame';
 
   public static CARD_NUMBER_COMPONENT: string = `${environment.FRAME_URL}/card-number.html`;
   public static EXPIRATION_DATE_COMPONENT: string = `${environment.FRAME_URL}/expiration-date.html`;
@@ -44,6 +44,6 @@ export class Selectors {
   public static readonly ANIMATED_CARD_COMPONENT: string = `${environment.FRAME_URL}/animated-card.html`;
 
   public static readonly ANIMATED_CARD_INPUT_SELECTOR: string = 'st-animated-card';
-  public static readonly ANIMATED_CARD_COMPONENT_FRAME: string = 'st-animated-card-iframe';
+  public static readonly ANIMATED_CARD_COMPONENT_IFRAME: string = 'st-animated-card-iframe';
   public static readonly ANIMATED_CARD_COMPONENT_NAME: string = 'animatedCard';
 }

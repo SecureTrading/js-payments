@@ -1,21 +1,29 @@
 import { MessageBus } from './MessageBus';
 import { Container } from 'typedi';
-import { Selectors } from './Selectors';
+import { instance, mock, when } from 'ts-mockito';
+import { FrameIdentifier } from '../../../shared/services/message-bus/FrameIdentifier';
+import { FrameAccessor } from '../../../shared/services/message-bus/FrameAccessor';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
-import { instance, mock } from 'ts-mockito';
 
 describe('MessageBus', () => {
   let communicatorMock: InterFrameCommunicator;
   let framesHubMock: FramesHub;
+  let frameIdentifierMock: FrameIdentifier;
+  let frameAccessorMock: FrameAccessor;
   let messageBus: MessageBus;
 
   beforeEach(() => {
     communicatorMock = mock(InterFrameCommunicator);
     framesHubMock = mock(FramesHub);
-    Container.set(InterFrameCommunicator, instance(communicatorMock));
-    Container.set(FramesHub, instance(framesHubMock));
-    messageBus = Container.get(MessageBus);
+    frameIdentifierMock = mock(FrameIdentifier);
+    frameAccessorMock = mock(FrameAccessor);
+    messageBus = new MessageBus(
+      instance(communicatorMock),
+      instance(framesHubMock),
+      instance(frameIdentifierMock),
+      instance(frameAccessorMock),
+    );
   });
 
   afterEach(() => {
@@ -28,17 +36,27 @@ describe('MessageBus', () => {
     });
 
     it('should put messageBus instance in window object inside the control frame', () => {
-      window.name = Selectors.CONTROL_FRAME_IFRAME;
+      when(frameIdentifierMock.isControlFrame()).thenReturn(true);
 
-      const messageBus = new MessageBus(instance(communicatorMock), instance(framesHubMock));
+      const messageBus = new MessageBus(
+        instance(communicatorMock),
+        instance(framesHubMock),
+        instance(frameIdentifierMock),
+        instance(frameAccessorMock),
+      );
 
       expect((window as any).messageBus).toBe(messageBus);
     });
 
     it('should not put messageBus instance in window object inside other frames', () => {
-      window.name = Selectors.CARD_NUMBER_IFRAME;
+      when(frameIdentifierMock.isControlFrame()).thenReturn(false);
 
-      new MessageBus(instance(communicatorMock), instance(framesHubMock));
+      new MessageBus(
+        instance(communicatorMock),
+        instance(framesHubMock),
+        instance(frameIdentifierMock),
+        instance(frameAccessorMock),
+      );
 
       expect((window as any).messageBus).toBeUndefined();
     });
