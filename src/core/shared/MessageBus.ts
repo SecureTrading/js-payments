@@ -58,7 +58,8 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
     TRANSACTION_COMPLETE: 'TRANSACTION_COMPLETE',
     UPDATE_JWT: 'UPDATE_JWT',
     UPDATE_MERCHANT_FIELDS: 'UPDATE_MERCHANT_FIELDS',
-    SUBSCRIBE: 'SUBSCRIBE'
+    SUBSCRIBE: 'SUBSCRIBE',
+    CONFIG_CHECK: 'ST_CONFIG_CHECK',
   };
   private isControlFrame = window.name === Selectors.CONTROL_FRAME_IFRAME;
 
