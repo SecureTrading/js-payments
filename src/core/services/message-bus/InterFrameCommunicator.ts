@@ -46,7 +46,8 @@ export class InterFrameCommunicator {
 
   public query<T>(message: IMessageBusEvent, target: Window | string): Promise<T> {
     return new Promise((resolve, reject) => {
-      const query = new QueryMessage(message, this.identifier.getFrameName());
+      const sourceFrame = this.identifier.getFrameName() || Selectors.MERCHANT_PARENT_FRAME;
+      const query = new QueryMessage(message, sourceFrame);
 
       this.incomingEvent$
         .pipe(
