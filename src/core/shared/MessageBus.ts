@@ -8,6 +8,8 @@ import { Selectors } from './Selectors';
 import { PartialObserver, Unsubscribable } from 'rxjs/src/internal/types';
 import { ofType } from '../services/message-bus/operators/ofType';
 import { FrameCollection } from '../services/message-bus/interfaces/FrameCollection';
+import { FrameIdentifier } from '../services/message-bus/FrameIdentifier';
+import { FrameAccessor } from '../services/message-bus/FrameAccessor';
 
 type ControlFrameWindow = Window & {messageBus: MessageBus};
 
@@ -61,10 +63,14 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
     SUBSCRIBE: 'SUBSCRIBE',
     CONFIG_CHECK: 'ST_CONFIG_CHECK',
   };
-  private isControlFrame = window.name === Selectors.CONTROL_FRAME_IFRAME;
 
-  constructor(private communicator: InterFrameCommunicator, private framesHub: FramesHub) {
-    if (this.isControlFrame) {
+  constructor(
+    private communicator: InterFrameCommunicator,
+    private framesHub: FramesHub,
+    private identifier: FrameIdentifier,
+    private frameAccessor: FrameAccessor
+  ) {
+    if (this.identifier.isControlFrame()) {
       (window as any).messageBus = this;
     }
   }
@@ -91,7 +97,7 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
   public subscribe<T>(eventType: string, callback: (data: T) => void): Unsubscribable;
 
   public subscribe<T>(...args: any[]): Unsubscribable {
-    if (!this.framesHub.isParentFrame && !this.isControlFrame) {
+    if (!this.identifier.isParentFrame() && !this.identifier.isControlFrame()) {
       return this.getControlFrameMessageBus().subscribe(messageBus => {
         messageBus.subscribe.apply(messageBus, args);
       });
@@ -120,7 +126,7 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
   private getControlFrameMessageBus(): Observable<MessageBus> {
     return this.framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).pipe(
       map(frameName => {
-        const frames: FrameCollection = window.top.frames as FrameCollection;
+        const frames: FrameCollection = this.frameAccessor.getFrameCollection();
         const controlFrame: ControlFrameWindow = frames[frameName] as ControlFrameWindow;
 
         return controlFrame.messageBus;
