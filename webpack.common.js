@@ -8,9 +8,9 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: {
-    st: ['./polyfills', './src/frontend/ST.ts'],
-    main: ['./polyfills', './src/backend/components/index.ts'],
-    controlFrame: ['./polyfills', './src/backend/components/control-frame/control-frame.ts'],
+    st: ['./polyfills', './src/client/ST.ts'],
+    main: ['./polyfills', './src/application/components/index.ts'],
+    controlFrame: ['./polyfills', './src/application/components/control-frame/control-frame.ts'],
     example: './example/index.ts',
     receipt: './example/receipt.ts',
     iframe: './example/iframe.ts',
@@ -32,7 +32,7 @@ module.exports = {
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       filename: 'card-number.html',
-      template: './src/backend/components/index.html',
+      template: './src/application/components/index.html',
       templateParameters: {
         partial: 'creditCardNumber'
       },
@@ -40,7 +40,7 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       filename: 'expiration-date.html',
-      template: './src/backend/components/index.html',
+      template: './src/application/components/index.html',
       templateParameters: {
         partial: 'expirationDate'
       },
@@ -48,7 +48,7 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       filename: 'security-code.html',
-      template: './src/backend/components/index.html',
+      template: './src/application/components/index.html',
       templateParameters: {
         partial: 'securityCode'
       },
@@ -56,7 +56,7 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       filename: 'animated-card.html',
-      template: './src/backend/components/index.html',
+      template: './src/application/components/index.html',
       templateParameters: {
         partial: 'animatedCard'
       },
@@ -64,7 +64,7 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       filename: 'notification-frame.html',
-      template: './src/backend/components/index.html',
+      template: './src/application/components/index.html',
       templateParameters: {
         partial: 'notificationFrame'
       },
@@ -72,7 +72,7 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       filename: 'control-frame.html',
-      template: './src/backend/components/index.html',
+      template: './src/application/components/index.html',
       templateParameters: {
         partial: 'controlFrame'
       },
