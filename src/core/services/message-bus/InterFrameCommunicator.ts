@@ -1,4 +1,4 @@
-import { Container, Service } from 'typedi';
+import { Container, Inject, Service } from 'typedi';
 import { fromEventPattern, Observable, Subject } from 'rxjs';
 import { IMessageBusEvent } from '../../models/IMessageBusEvent';
 import { filter, map, share, switchMap, take, takeUntil } from 'rxjs/operators';
@@ -9,6 +9,8 @@ import { environment } from '../../../environments/environment';
 import { FrameCollection } from './interfaces/FrameCollection';
 import { Selectors } from '../../shared/Selectors';
 import { CONFIG } from '../../dependency-injection/InjectionTokens';
+import { FrameIdentifier } from './FrameIdentifier';
+import { FrameAccessor } from './FrameAccessor';
 
 @Service()
 export class InterFrameCommunicator {
@@ -20,7 +22,7 @@ export class InterFrameCommunicator {
   private readonly frameOrigin: string;
   private parentOrigin: string;
 
-  constructor() {
+  constructor(private identifier: FrameIdentifier, private frameAccessor: FrameAccessor) {
     this.incomingEvent$ = fromEventPattern<MessageEvent>(
       handler => window.addEventListener(InterFrameCommunicator.MESSAGE_EVENT, handler, true),
       handler => window.removeEventListener(InterFrameCommunicator.MESSAGE_EVENT, handler)
@@ -35,15 +37,17 @@ export class InterFrameCommunicator {
   }
 
   public send(message: IMessageBusEvent, target: Window | string): void {
+    const parentFrame = this.frameAccessor.getParentFrame();
     const targetFrame = this.resolveTargetFrame(target);
-    const frameOrigin = targetFrame === window.top ? this.getParentOrigin() : this.frameOrigin;
+    const frameOrigin = targetFrame === parentFrame ? this.getParentOrigin() : this.frameOrigin;
 
     targetFrame.postMessage(message, frameOrigin);
   }
 
   public query<T>(message: IMessageBusEvent, target: Window | string): Promise<T> {
     return new Promise((resolve, reject) => {
-      const query = new QueryMessage(message);
+      const sourceFrame = this.identifier.getFrameName() || Selectors.MERCHANT_PARENT_FRAME;
+      const query = new QueryMessage(message, sourceFrame);
 
       this.incomingEvent$
         .pipe(
@@ -98,10 +102,10 @@ export class InterFrameCommunicator {
     }
 
     if (target === Selectors.MERCHANT_PARENT_FRAME) {
-      return window.top;
+      return this.frameAccessor.getParentFrame();
     }
 
-    const frames: FrameCollection = window.top.frames as FrameCollection;
+    const frames: FrameCollection = this.frameAccessor.getFrameCollection();
 
     if (target === '' || !frames[target]) {
       throw new Error(`Target frame "${target}" not found.`);
