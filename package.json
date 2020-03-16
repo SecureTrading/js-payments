@@ -28,7 +28,7 @@
     "import:translations": "cross-env-shell i18next-conv -l '$npm_package_config_locale' -s ./translations/$npm_package_config_locale.po -t ./src/core/translations/$npm_package_config_locale.json",
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect",
-    "precommit": "./node_modules/.bin/prettier --single-quote --write './src/**/*.{ts,js,css,json}'"
+    "prettier": "./node_modules/.bin/prettier --single-quote --write './src/**/*.{ts,js,css,json}'"
   },
   "repository": {
     "type": "git",
@@ -47,7 +47,7 @@
   },
   "lint-staged": {
     "*.ts": [
-      "npm run precommit"
+      "npm run prettier"
     ]
   },
   "devDependencies": {
