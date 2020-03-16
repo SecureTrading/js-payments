@@ -5,6 +5,8 @@ import { MessageBus } from '../../core/shared/MessageBus';
 import { Selectors } from '../../core/shared/Selectors';
 import { Translator } from '../../core/shared/Translator';
 import { environment } from '../../environments/environment';
+import { Container } from 'typedi';
+import { FramesHub } from '../../core/services/message-bus/FramesHub';
 
 export class NotificationFrame extends Frame {
   get notificationFrameElement(): HTMLElement {
@@ -139,8 +141,12 @@ export class NotificationFrame extends Frame {
 
   protected async onInit() {
     super.onInit();
-    this._translator = new Translator(this.params.locale);
-    this._onMessage();
+    Container.get(FramesHub)
+      .waitForFrame(Selectors.CONTROL_FRAME_IFRAME)
+      .subscribe(() => {
+        this._translator = new Translator(this.params.locale);
+        this._onMessage();
+      });
   }
 
   private _onMessage() {

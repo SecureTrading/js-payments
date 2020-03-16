@@ -18,19 +18,23 @@ import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { Notification } from '../../core/shared/Notification';
 import { Payment } from '../../core/shared/Payment';
-import { Selectors } from '../../core/shared/Selectors';
 import { Validation } from '../../core/shared/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { BrowserLocalStorage } from '../../core/services/storage/BrowserLocalStorage';
 import { BrowserSessionStorage } from '../../core/services/storage/BrowserSessionStorage';
-import { Container } from 'typedi';
+import { Service } from 'typedi';
+import { InterFrameCommunicator } from '../../core/services/message-bus/InterFrameCommunicator';
+import { ConfigProvider } from '../../core/config/ConfigProvider';
+import { interval } from 'rxjs';
+import { filter, mapTo } from 'rxjs/operators';
 
+@Service()
 export class ControlFrame extends Frame {
   private static ALLOWED_PARAMS: string[] = ['jwt', 'gatewayUrl'];
   private static NON_CVV_CARDS: string[] = ['PIBA'];
   private static THREEDQUERY_EVENT: string = 'THREEDQUERY';
 
-  private static _isRequestTypePropertyEmpty(data: ISubmitData): boolean {
+  private static _isRequestTypePropertyNotEmpty(data: ISubmitData): boolean {
     return data !== undefined && data.requestTypes !== undefined;
   }
 
@@ -72,11 +76,16 @@ export class ControlFrame extends Frame {
   private _validation: Validation;
 
   constructor(
-    private _localStorage: BrowserLocalStorage = Container.get(BrowserLocalStorage),
-    private _sessionStorage: BrowserSessionStorage = Container.get(BrowserSessionStorage),
+    private _localStorage: BrowserLocalStorage,
+    private _sessionStorage: BrowserSessionStorage,
+    private _communicator: InterFrameCommunicator,
+    private _configProvider: ConfigProvider
   ) {
     super();
     this.onInit();
+    this._communicator
+      .whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK)
+      .thenRespond(() => interval().pipe(mapTo(this._configProvider.getConfig()), filter(Boolean)));
   }
 
   protected async onInit(): Promise<void> {
@@ -151,7 +160,7 @@ export class ControlFrame extends Frame {
   }
 
   private _threeDInitEvent(): void {
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT_REQUEST, () => {
       this._threeDInit();
       this._changeSecurityCodeLength();
     });
@@ -214,7 +223,7 @@ export class ControlFrame extends Frame {
   }
 
   private _onSubmit(data: ISubmitData): void {
-    if (ControlFrame._isRequestTypePropertyEmpty(data)) {
+    if (ControlFrame._isRequestTypePropertyNotEmpty(data)) {
       this._setRequestTypes(data);
     }
     this._requestPayment(data, this._isCardBypassed(data));
@@ -331,7 +340,7 @@ export class ControlFrame extends Frame {
       this.messageBus.publish(
         {
           data: result.response,
-          type: MessageBus.EVENTS_PUBLIC.THREEDINIT
+          type: MessageBus.EVENTS_PUBLIC.THREEDINIT_RESPONSE
         },
         true
       );

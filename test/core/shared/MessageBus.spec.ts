@@ -1,13 +1,71 @@
 import { MessageBus } from '../../../src/core/shared/MessageBus';
+import { Container } from 'typedi';
+import { InterFrameCommunicator } from '../../../src/core/services/message-bus/InterFrameCommunicator';
+import { FramesHub } from '../../../src/core/services/message-bus/FramesHub';
+import { instance, mock, when } from 'ts-mockito';
+import { FrameIdentifier } from '../../../src/core/services/message-bus/FrameIdentifier';
+import { FrameAccessor } from '../../../src/core/services/message-bus/FrameAccessor';
 
-// given
 describe('MessageBus', () => {
-  // given
+  let communicatorMock: InterFrameCommunicator;
+  let framesHubMock: FramesHub;
+  let frameIdentifierMock: FrameIdentifier;
+  let frameAccessorMock: FrameAccessor;
+  let messageBus: MessageBus;
+
+  beforeEach(() => {
+    communicatorMock = mock(InterFrameCommunicator);
+    framesHubMock = mock(FramesHub);
+    frameIdentifierMock = mock(FrameIdentifier);
+    frameAccessorMock = mock(FrameAccessor);
+    messageBus = new MessageBus(
+      instance(communicatorMock),
+      instance(framesHubMock),
+      instance(frameIdentifierMock),
+      instance(frameAccessorMock)
+    );
+  });
+
+  afterEach(() => {
+    Container.reset();
+  });
+
   describe('constructor()', () => {
+    beforeEach(() => {
+      (window as any).messageBus = undefined;
+    });
+
+    it('should put messageBus instance in window object inside the control frame', () => {
+      when(frameIdentifierMock.isControlFrame()).thenReturn(true);
+
+      const messageBus = new MessageBus(
+        instance(communicatorMock),
+        instance(framesHubMock),
+        instance(frameIdentifierMock),
+        instance(frameAccessorMock)
+      );
+
+      expect((window as any).messageBus).toBe(messageBus);
+    });
+
+    it('should not put messageBus instance in window object inside other frames', () => {
+      when(frameIdentifierMock.isControlFrame()).thenReturn(false);
+
+      new MessageBus(
+        instance(communicatorMock),
+        instance(framesHubMock),
+        instance(frameIdentifierMock),
+        instance(frameAccessorMock)
+      );
+
+      expect((window as any).messageBus).toBeUndefined();
+    });
+  });
+  /*
     // then
     it('should set origins and event listener', () => {
       window.addEventListener = jest.fn();
-      let instance = new MessageBus();
+      let instance = Container.get(MessageBus);
       // @ts-ignore
       expect(instance._parentOrigin).toEqual('*');
       // @ts-ignore
@@ -216,4 +274,5 @@ describe('MessageBus', () => {
       expect(subFunc).toHaveBeenCalledTimes(0);
     });
   });
+ */
 });

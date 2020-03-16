@@ -22,15 +22,15 @@ describe('CardFrames', () => {
       // @ts-ignore
       instance._broadcastSecurityCodeProperties = jest.fn();
       // @ts-ignore
-      instance.messageBus.publishFromParent = jest.fn();
+      instance.messageBus.publish = jest.fn();
       // @ts-ignore
       instance._disableFormField(data, type, Selectors.CARD_NUMBER_IFRAME);
     });
 
     // then
-    it('should call publishFromParent method', () => {
+    it('should call publish method', () => {
       // @ts-ignore
-      expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(messageBusEvent, Selectors.CARD_NUMBER_IFRAME);
+      expect(instance.messageBus.publish).toHaveBeenCalledWith(messageBusEvent);
     });
   });
 
@@ -69,18 +69,15 @@ describe('CardFrames', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
-      instance.messageBus.publishFromParent = jest.fn();
+      instance.messageBus.publish = jest.fn();
       // @ts-ignore
       instance._onInput();
     });
 
     // then
-    it('should call publishFromParent method', () => {
+    it('should call publish method', () => {
       // @ts-ignore
-      expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(
-        messageBusEvent,
-        Selectors.CONTROL_FRAME_IFRAME
-      );
+      expect(instance.messageBus.publish).toHaveBeenCalledWith(messageBusEvent);
     });
   });
 
@@ -148,7 +145,7 @@ describe('CardFrames', () => {
       // @ts-ignore
       instance._subscribeBlockSubmit();
       // @ts-ignore
-      instance.messageBus.publish({ data: true, type: MessageBus.EVENTS.BLOCK_FORM }, true);
+      instance.messageBus.publish({ data: true, type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM });
       // @ts-ignore
       expect(instance._disableSubmitButton).toHaveBeenCalled();
     });
@@ -169,15 +166,15 @@ describe('CardFrames', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
-      instance.messageBus.publishFromParent = jest.fn();
+      instance.messageBus.publish = jest.fn();
       // @ts-ignore
       instance._publishSubmitEvent();
     });
 
     // then
-    it('should call publishFromParent method', () => {
+    it('should call publish method', () => {
       // @ts-ignore
-      expect(instance.messageBus.publishFromParent).toHaveBeenCalledWith(submitFormEvent, 'st-control-frame-iframe');
+      expect(instance.messageBus.publish).toHaveBeenCalledWith(submitFormEvent);
     });
   });
 

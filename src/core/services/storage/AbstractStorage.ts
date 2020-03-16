@@ -6,6 +6,7 @@ import { ofType } from '../message-bus/operators/ofType';
 import { FramesHub } from '../message-bus/FramesHub';
 import { Selectors } from '../../shared/Selectors';
 import { IMessageBusEvent } from '../../models/IMessageBusEvent';
+import { FrameIdentifier } from '../message-bus/FrameIdentifier';
 
 export abstract class AbstractStorage implements IStorage, Subscribable<any> {
   private static readonly STORAGE_EVENT = 'storage';
@@ -17,26 +18,26 @@ export abstract class AbstractStorage implements IStorage, Subscribable<any> {
     private nativeStorage: Storage,
     private communicator: InterFrameCommunicator,
     private framesHub: FramesHub,
+    private identifier: FrameIdentifier
   ) {
     this.observable$ = fromEventPattern(
       handler => window.addEventListener(AbstractStorage.STORAGE_EVENT, handler, true),
       handler => window.removeEventListener(AbstractStorage.STORAGE_EVENT, handler)
     ).pipe(
-      startWith({...this.nativeStorage}),
-      map(() => ({...this.nativeStorage})),
-      shareReplay(1),
+      startWith({ ...this.nativeStorage }),
+      map(() => ({ ...this.nativeStorage })),
+      shareReplay(1)
     );
     this.pipe = this.observable$.pipe.bind(this.observable$);
     this.subscribe = this.observable$.subscribe.bind(this.observable$);
 
-    this.communicator.incomingEvent$.pipe(
-      ofType(this.getSychronizationEventName()),
-      takeUntil(this.communicator.communicationClosed$),
-    ).subscribe(event => {
-      const {key, value} = event.data;
-      this.nativeStorage.setItem(key, value);
-      this.emitStorageEvent();
-    });
+    this.communicator.incomingEvent$
+      .pipe(ofType(this.getSychronizationEventName()), takeUntil(this.communicator.communicationClosed$))
+      .subscribe(event => {
+        const { key, value } = event.data;
+        this.nativeStorage.setItem(key, value);
+        this.emitStorageEvent();
+      });
   }
 
   public getItem(name: string): string {
@@ -49,10 +50,8 @@ export abstract class AbstractStorage implements IStorage, Subscribable<any> {
     this.synchronizeStorage(name, value);
   }
 
-  public select<T>(selector: ((storage: {[key: string]: any}) => T)): Observable<T> {
-    return this.observable$.pipe(
-      map(storage => selector(storage)),
-    );
+  public select<T>(selector: (storage: { [key: string]: any }) => T): Observable<T> {
+    return this.observable$.pipe(map(storage => selector(storage)));
   }
 
   protected abstract getSychronizationEventName(): string;
@@ -73,10 +72,10 @@ export abstract class AbstractStorage implements IStorage, Subscribable<any> {
   private synchronizeStorage(key: string, value: string): void {
     const event: IMessageBusEvent = {
       type: this.getSychronizationEventName(),
-      data: {key, value},
+      data: { key, value }
     };
 
-    if (window.name) {
+    if (!this.identifier.isParentFrame()) {
       return this.communicator.send(event, Selectors.MERCHANT_PARENT_FRAME);
     }
 

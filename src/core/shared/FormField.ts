@@ -8,6 +8,7 @@ import { Utils } from './Utils';
 import { Validation } from './Validation';
 
 export class FormField extends Frame {
+  protected static PLACEHOLDER_ATTRIBUTE: string = 'placeholder';
   public validation: Validation;
   protected _inputSelector: string;
   protected _labelSelector: string;
@@ -16,6 +17,7 @@ export class FormField extends Frame {
   protected _labelElement: HTMLLabelElement;
   protected _messageElement: HTMLDivElement;
   protected _cardNumberInput: HTMLInputElement;
+  protected placeholder: string;
   private _translator: Translator;
 
   constructor(inputSelector: string, messageSelector: string, labelSelector: string) {

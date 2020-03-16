@@ -1,4 +1,4 @@
-import { Service } from 'typedi';
+import { Container, Inject, Service } from 'typedi';
 import { fromEventPattern, Observable, Subject } from 'rxjs';
 import { IMessageBusEvent } from '../../models/IMessageBusEvent';
 import { filter, map, share, switchMap, take, takeUntil } from 'rxjs/operators';
@@ -8,15 +8,21 @@ import { ResponseMessage } from './messages/ResponseMessage';
 import { environment } from '../../../environments/environment';
 import { FrameCollection } from './interfaces/FrameCollection';
 import { Selectors } from '../../shared/Selectors';
+import { CONFIG } from '../../dependency-injection/InjectionTokens';
+import { FrameIdentifier } from './FrameIdentifier';
+import { FrameAccessor } from './FrameAccessor';
 
 @Service()
 export class InterFrameCommunicator {
   private static readonly MESSAGE_EVENT = 'message';
+  private static readonly DEFAULT_ORIGIN = '*';
   public readonly incomingEvent$: Observable<IMessageBusEvent>;
   public readonly communicationClosed$: Observable<void>;
-  private close$ = new Subject<void>();
+  private readonly close$ = new Subject<void>();
+  private readonly frameOrigin: string;
+  private parentOrigin: string;
 
-  constructor() {
+  constructor(private identifier: FrameIdentifier, private frameAccessor: FrameAccessor) {
     this.incomingEvent$ = fromEventPattern<MessageEvent>(
       handler => window.addEventListener(InterFrameCommunicator.MESSAGE_EVENT, handler, true),
       handler => window.removeEventListener(InterFrameCommunicator.MESSAGE_EVENT, handler)
@@ -27,18 +33,21 @@ export class InterFrameCommunicator {
     );
 
     this.communicationClosed$ = this.close$.asObservable();
+    this.frameOrigin = new URL(environment.FRAME_URL).origin;
   }
 
   public send(message: IMessageBusEvent, target: Window | string): void {
+    const parentFrame = this.frameAccessor.getParentFrame();
     const targetFrame = this.resolveTargetFrame(target);
-    const frameOrigin = targetFrame !== window.top ? new URL(environment.FRAME_URL).origin : '*';
+    const frameOrigin = targetFrame === parentFrame ? this.getParentOrigin() : this.frameOrigin;
 
     targetFrame.postMessage(message, frameOrigin);
   }
 
   public query<T>(message: IMessageBusEvent, target: Window | string): Promise<T> {
     return new Promise((resolve, reject) => {
-      const query = new QueryMessage(message);
+      const sourceFrame = this.identifier.getFrameName() || Selectors.MERCHANT_PARENT_FRAME;
+      const query = new QueryMessage(message, sourceFrame);
 
       this.incomingEvent$
         .pipe(
@@ -93,15 +102,29 @@ export class InterFrameCommunicator {
     }
 
     if (target === Selectors.MERCHANT_PARENT_FRAME) {
-      return window.top;
+      return this.frameAccessor.getParentFrame();
     }
 
-    const frames: FrameCollection = window.top.frames as FrameCollection;
+    const frames: FrameCollection = this.frameAccessor.getFrameCollection();
 
     if (target === '' || !frames[target]) {
       throw new Error(`Target frame "${target}" not found.`);
     }
 
     return frames[target];
+  }
+
+  private getParentOrigin(): string {
+    if (this.parentOrigin) {
+      return this.parentOrigin;
+    }
+
+    if (Container.has(CONFIG)) {
+      this.parentOrigin = Container.get(CONFIG).origin || InterFrameCommunicator.DEFAULT_ORIGIN;
+
+      return this.parentOrigin;
+    }
+
+    return InterFrameCommunicator.DEFAULT_ORIGIN;
   }
 }

@@ -349,7 +349,7 @@ describe('Visa Checkout', () => {
       expect(instance._getResponseMessage).toHaveBeenCalledTimes(1);
       expect(instance._getResponseMessage).toHaveBeenCalledWith('ERROR');
       expect(instance._notification.error).toHaveBeenCalledTimes(1);
-      expect(instance._notification.error).toHaveBeenCalledWith('MY MESSAGE', true);
+      expect(instance._notification.error).toHaveBeenCalledWith('MY MESSAGE');
     });
   });
 
@@ -365,7 +365,7 @@ describe('Visa Checkout', () => {
       expect(instance._getResponseMessage).toHaveBeenCalledTimes(1);
       expect(instance._getResponseMessage).toHaveBeenCalledWith('WARNING');
       expect(instance._notification.warning).toHaveBeenCalledTimes(1);
-      expect(instance._notification.warning).toHaveBeenCalledWith('MY MESSAGE', true);
+      expect(instance._notification.warning).toHaveBeenCalledWith('MY MESSAGE');
     });
   });
 
@@ -457,9 +457,7 @@ function VisaCheckoutFixture() {
   };
   const sandboxAssets = {
     sdk: 'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js',
-    buttonImg: `https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png?color=${
-      config.buttonSettings.color
-    }&size=${config.buttonSettings.size}`
+    buttonImg: `https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png?color=${config.buttonSettings.color}&size=${config.buttonSettings.size}`
   };
   const livestatus: number = 0;
   const fakeVisaButton = document.createElement('img');

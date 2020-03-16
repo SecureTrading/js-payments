@@ -46,7 +46,6 @@ class ST {
   private _commonFrames: CommonFrames;
   private _googleAnalytics: GoogleAnalytics;
   private _merchantFields: MerchantFields;
-  private _messageBus: MessageBus;
   private _translation: Translator;
 
   set submitCallback(callback: (event: ISubmitEvent) => void) {
@@ -80,10 +79,10 @@ class ST {
     private _framesHub: FramesHub,
     private _storage: BrowserLocalStorage,
     private _sessionStorage: BrowserSessionStorage,
+    private _messageBus: MessageBus
   ) {
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
-    this._messageBus = new MessageBus();
     this.init();
   }
 
@@ -103,14 +102,17 @@ class ST {
   }
 
   public Components(config: IComponentsConfig): void {
-    config = config !== undefined ? config : ({} as IComponentsConfig);
-    this._config = { ...this._config, components: { ...this._config.components, ...config } };
-    this.configProvider.update(this._config);
-    this._commonFrames.requestTypes = this._config.components.requestTypes;
-    this.CardinalCommerce();
-    this.CardFrames(this._config);
-    this._cardFrames.init();
-    this._merchantFields.init();
+    this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(async controlFrame => {
+      config = config !== undefined ? config : ({} as IComponentsConfig);
+      this._config = { ...this._config, components: { ...this._config.components, ...config } };
+      this.configProvider.update(this._config);
+      this._commonFrames.requestTypes = this._config.components.requestTypes;
+      this.CardinalCommerce();
+      await this._communicator.query({ type: MessageBus.EVENTS_PUBLIC.CONFIG_CHECK }, controlFrame);
+      this.CardFrames(this._config);
+      this._cardFrames.init();
+      this._merchantFields.init();
+    });
   }
 
   public ApplePay(config: IApplePayConfig): ApplePay {

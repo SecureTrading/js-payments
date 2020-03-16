@@ -1,6 +1,7 @@
 import './expiration-date.scss';
 import { ExpirationDate } from './ExpirationDate';
+import { Container } from 'typedi';
 
 (() => {
-  return ExpirationDate.ifFieldExists() && new ExpirationDate();
+  return ExpirationDate.ifFieldExists() && Container.get(ExpirationDate);
 })();

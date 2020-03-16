@@ -1,5 +1,4 @@
 const path = require('path');
-const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
@@ -9,11 +8,12 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: {
-    main: ['./polyfills', './src/components/index.ts'],
-    'control-frame': ['./polyfills', './src/components/control-frame/control-frame.ts'],
-    st: ['./polyfills', './src/ST.ts'],
+    main: ['./polyfills', './src/bootstrap.ts', './src/components/index.ts'],
+    'control-frame': ['./polyfills', './src/bootstrap.ts', './src/components/control-frame/control-frame.ts'],
+    st: ['./polyfills', './src/bootstrap.ts', './src/ST.ts'],
     example: './example/index.ts',
-    receipt: './example/receipt.ts'
+    receipt: './example/receipt.ts',
+    iframe: './example/iframe.ts',
   },
   output: {
     filename: '[name].js',
@@ -87,6 +87,11 @@ module.exports = {
       filename: 'receipt.html',
       template: './example/receipt.html',
       chunks: ['receipt']
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'iframe.html',
+      template: './example/iframe.html',
+      chunks: ['iframe']
     }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
