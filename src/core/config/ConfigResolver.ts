@@ -1,4 +1,4 @@
-import Joi from 'joi';
+import Joi from '@hapi/joi';
 import { IConfig } from './model/IConfig';
 import { Service } from 'typedi';
 import { IComponentsIds } from './model/IComponentsIds';
@@ -41,12 +41,12 @@ export class ConfigResolver {
     };
   }
 
-  public validate(config: IConfig | IComponentsConfig | IComponentsIds, schema: Joi.JoiObject) {
-    Joi.validate(config, schema, (error, value) => {
-      if (error !== null) {
-        throw error;
-      }
-    });
+  public validate(config: IConfig | IComponentsConfig | IComponentsIds, schema: Joi.ObjectSchema) {
+    const result = schema.validate(config);
+
+    if (result.error) {
+      throw result.error;
+    }
   }
 
   public resolve(config: IConfig): IConfig {
