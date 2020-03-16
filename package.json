@@ -104,7 +104,7 @@
     "@babel/polyfill": "^7.7.0",
     "@babel/runtime": "^7.8.4",
     "@hapi/joi": "^17.1.0",
-    "@securetrading/js-payments-card": "^1.0.12",
+    "@securetrading/js-payments-card": "^1.0.13",
     "@securetrading/ts-iin-lookup": "^0.0.5",
     "@securetrading/ts-luhn-check": "^0.0.5",
     "@types/jwt-decode": "^2.2.1",
