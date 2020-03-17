@@ -22,7 +22,7 @@ import { Validation } from '../../core/shared/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { BrowserLocalStorage } from '../../core/services/storage/BrowserLocalStorage';
 import { BrowserSessionStorage } from '../../core/services/storage/BrowserSessionStorage';
-import { Service } from 'typedi';
+import { Container, Service } from 'typedi';
 import { InterFrameCommunicator } from '../../core/services/message-bus/InterFrameCommunicator';
 import { ConfigProvider } from '../../core/config/ConfigProvider';
 import { interval } from 'rxjs';
