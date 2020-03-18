@@ -19,6 +19,7 @@ import { Translator } from '../shared/Translator';
 import { GoogleAnalytics } from './GoogleAnalytics';
 import { Container } from 'typedi';
 import { FramesHub } from '../services/message-bus/FramesHub';
+import { ConfigProvider } from '../config/ConfigProvider';
 
 declare const Cardinal: any;
 
@@ -41,11 +42,11 @@ export class CardinalCommerce {
   private _bypassCards: string[];
   private _jwtUpdated: boolean;
   private _framesHub: FramesHub;
+  private _configProvider: ConfigProvider;
 
   constructor(
     startOnLoad: boolean,
     jwt: string,
-    requestTypes: string[],
     livestatus?: number,
     cachetoken?: string,
     threedinit?: string,
@@ -57,7 +58,7 @@ export class CardinalCommerce {
     this._threedinit = threedinit ? threedinit : '';
     this._livestatus = livestatus;
     this._cachetoken = cachetoken ? cachetoken : '';
-    this._requestTypes = requestTypes;
+    this._requestTypes = this._configProvider.getConfig().requestTypes;
     this._bypassCards = bypassCards;
     this.messageBus = Container.get(MessageBus);
     this._notification = new Notification();
@@ -122,7 +123,6 @@ export class CardinalCommerce {
     if (this._startOnLoad) {
       const pan = new StJwt(this._jwt).payload.pan as string;
       this._performBinDetection(pan);
-      console.error(this._requestTypes);
       const submitFormEvent: IMessageBusEvent = {
         data: { dataInJwt: true, requestTypes: this._requestTypes, bypassCards: this._bypassCards },
         type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM

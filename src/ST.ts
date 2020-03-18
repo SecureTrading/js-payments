@@ -176,12 +176,9 @@ class ST {
 
   private CardinalCommerce(): CardinalCommerce {
     const { cardinal } = this.Environment();
-    const requestTypes = this._getConfig.getConfig().requestTypes;
-    console.error(requestTypes);
     return new cardinal(
       this._config.components.startOnLoad,
       this._config.jwt,
-      requestTypes,
       this._config.livestatus,
       this._config.init.cachetoken,
       this._config.init.threedinit,

@@ -188,13 +188,11 @@ class StCodec {
 
   private static _decodeResponseJwt(jwt: string, reject: (error: Error) => void) {
     let decoded: any;
-    console.error(jwt);
     try {
       decoded = JwtDecode(jwt) as any;
     } catch (e) {
       reject(StCodec._handleInvalidResponse());
     }
-    console.error(decoded);
     return decoded;
   }
 
@@ -242,7 +240,6 @@ class StCodec {
       if ('json' in responseObject) {
         responseObject.json().then(responseData => {// @ts-ignore
           decoded = StCodec._decodeResponseJwt(responseData.jwt, reject);
-          console.error(decoded);
           if (decoded && decoded.payload.response[0].errorcode === '0') {
             StCodec.jwt = decoded.payload.jwt;
           } else {
