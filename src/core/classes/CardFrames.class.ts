@@ -220,10 +220,10 @@ export class CardFrames extends RegisterFrames {
   private _initAnimatedCardFrame(): void {
     this._animatedCard = new Element();
     const animatedCardConfig = { ...this.params };
-    if (typeof this._paymentTypes !== 'undefined' && this._paymentTypes) {
+    if (this._paymentTypes) {
       animatedCardConfig.paymentTypes = this._paymentTypes;
     }
-    if (typeof this._defaultPaymentType !== 'undefined' && this._defaultPaymentType) {
+    if (this._defaultPaymentType) {
       animatedCardConfig.defaultPaymentType = this._defaultPaymentType;
     }
     this._animatedCard.create(Selectors.ANIMATED_CARD_COMPONENT_NAME, {}, animatedCardConfig);

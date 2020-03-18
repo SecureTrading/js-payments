@@ -87,10 +87,15 @@ export class ConfigResolver {
 
   private _isTruthy = (value: any) => {
     const valueType = typeof value;
-    if (valueType === 'object') {
+    if (valueType === 'object' && value.length) {
+      return value.length;
+    }
+
+    if (valueType === 'object' && value.length === undefined) {
       return Object.keys(value).length;
     }
-    return valueType !== 'undefined' && value;
+
+    return Boolean(value);
   };
 
   private _componentIds(config: IComponentsIds): IComponentsIds {
