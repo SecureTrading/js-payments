@@ -35,6 +35,8 @@ import { InterFrameCommunicator } from './core/services/message-bus/InterFrameCo
 import { FramesHub } from './core/services/message-bus/FramesHub';
 import { BrowserLocalStorage } from './core/services/storage/BrowserLocalStorage';
 import { BrowserSessionStorage } from './core/services/storage/BrowserSessionStorage';
+import { ConfigResolver } from './core/config/ConfigResolver';
+import { ConfigProvider } from './core/config/ConfigProvider';
 
 @Service()
 class ST {
@@ -75,6 +77,7 @@ class ST {
   constructor(
     @Inject(CONFIG) private _config: IConfig,
     private configProvider: ConfigService,
+    private _getConfig: ConfigProvider,
     private _communicator: InterFrameCommunicator,
     private _framesHub: FramesHub,
     private _storage: BrowserLocalStorage,
@@ -106,8 +109,8 @@ class ST {
       config = config !== undefined ? config : ({} as IComponentsConfig);
       this._config = { ...this._config, components: { ...this._config.components, ...config } };
       this.configProvider.update(this._config);
-      this._commonFrames.requestTypes = this._config.components.requestTypes;
-      this.CardinalCommerce(this._config.components.requestTypes);
+      this._commonFrames.requestTypes = this._getConfig.getConfig().requestTypes;
+      this.CardinalCommerce();
       await this._communicator.query({ type: MessageBus.EVENTS_PUBLIC.CONFIG_CHECK }, controlFrame);
       this.CardFrames(this._config);
       this._cardFrames.init();
@@ -171,8 +174,10 @@ class ST {
     this.watchForFrameUnload();
   }
 
-  private CardinalCommerce(requestTypes: string[]): CardinalCommerce {
+  private CardinalCommerce(): CardinalCommerce {
     const { cardinal } = this.Environment();
+    const requestTypes = this._getConfig.getConfig().requestTypes;
+    console.error(requestTypes);
     return new cardinal(
       this._config.components.startOnLoad,
       this._config.jwt,
@@ -202,6 +207,7 @@ class ST {
   }
 
   private CommonFrames(config: IConfig): void {
+    const requestTypes = this._getConfig.getConfig().requestTypes;
     this._commonFrames = new CommonFrames(
       config.jwt,
       config.origin,
@@ -212,7 +218,7 @@ class ST {
       config.submitFields,
       config.datacenterurl,
       config.animatedCard,
-      config.components.requestTypes
+      requestTypes
     );
   }
 
@@ -269,6 +275,5 @@ class ST {
 
 export default (config: IConfig) => {
   Container.get(ConfigService).initialize(config);
-
   return Container.get(ST);
 };

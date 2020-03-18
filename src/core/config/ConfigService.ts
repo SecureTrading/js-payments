@@ -17,8 +17,8 @@ export class ConfigService {
   }
 
   initialize(config: IConfig): IConfig {
-    this.storage.setItem(ConfigService.STORAGE_KEY, null);
     const fullConfig = this.resolver.resolve(config);
+    this.storage.setItem(ConfigService.STORAGE_KEY, null);
 
     this.update(fullConfig);
 
