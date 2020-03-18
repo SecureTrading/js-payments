@@ -65,7 +65,7 @@ export class ConfigResolver {
       init: this._isTruthy(config.init) ? config.init : { cachetoken: '', threedinit: '' },
       jwt: this._isTruthy(config.jwt) ? config.jwt : '',
       livestatus: this._isTruthy(config.livestatus) ? config.livestatus : 0,
-      notifications: this._isTruthy(config.notifications) ? config.notifications : true,
+      notifications: this._isTruthy(config.notifications) ? config.notifications : false,
       origin: this._isTruthy(config.origin) ? config.origin : window.location.origin,
       panIcon: this._isTruthy(config.panIcon) ? config.panIcon : false,
       placeholders: this._isTruthy(config.placeholders) ? config.placeholders : { pan: '', expirydate: '', securitycode: '' },
@@ -84,9 +84,9 @@ export class ConfigResolver {
   private _isTruthy = (value: any) => {
     const valueType = typeof value;
     if (valueType === 'object') {
-      return typeof value !== 'undefined' && Object.keys(value).length;
+      return Object.keys(value).length;
     }
-    return typeof value !== 'undefined' && value;
+    return valueType !== 'undefined' && value;
   };
 
   private _componentIds(config: IComponentsIds): IComponentsIds {
