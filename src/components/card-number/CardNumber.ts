@@ -44,6 +44,7 @@ export class CardNumber extends FormField {
     this._isCardNumberValid = true;
     this._cardNumberLength = CardNumber.STANDARD_CARD_LENGTH;
     this.placeholder = this.configProvider.getConfig().placeholders.pan || '';
+    console.error(this.configProvider.getConfig());
     this._panIcon = this.configProvider.getConfig().panIcon;
     this.setFocusListener();
     this.setBlurListener();

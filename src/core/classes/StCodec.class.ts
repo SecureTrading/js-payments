@@ -238,7 +238,8 @@ class StCodec {
     let decoded: any;
     const promise = await new Promise((resolve, reject) => {
       if ('json' in responseObject) {
-        responseObject.json().then(responseData => {
+        responseObject.json().then(responseData => {// @ts-ignore
+          console.error(responseData);
           decoded = StCodec._decodeResponseJwt(responseData.jwt, reject);
           if (decoded && decoded.payload.response[0].errorcode === '0') {
             StCodec.jwt = decoded.payload.jwt;

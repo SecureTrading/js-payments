@@ -90,15 +90,15 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   jwt: Joi.string().required(),
   livestatus: Joi.number().valid(0, 1),
   origin: Joi.string().allow(''),
-  requestTypes: Joi.array().items(
-    Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
-  ),
   panIcon: Joi.boolean(),
   placeholders: Joi.object().keys({
     pan: Joi.string().allow(''),
     securitycode: Joi.string().allow(''),
     expirydate: Joi.string().allow('')
   }),
+  requestTypes: Joi.array().items(
+    Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
+  ),
   styles: Joi.object(),
   submitCallback: Joi.any(),
   submitFields: Joi.array(),
