@@ -122,11 +122,12 @@ export class ApplePay {
   private _paymentRequest: any;
   private _placement: string;
   private readonly _completion: { errors: []; status: string };
-  private _localStorage: BrowserLocalStorage = Container.get(BrowserLocalStorage);
+  private _localStorage: BrowserLocalStorage;
 
   constructor(config: IWalletConfig, jwt: string, gatewayUrl: string) {
     this._notification = Container.get(Notification);
     this._messageBus = Container.get(MessageBus);
+    this._localStorage = Container.get(BrowserLocalStorage);
     config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
     this._localStorage.setItem('completePayment', '');
     this.jwt = jwt;
