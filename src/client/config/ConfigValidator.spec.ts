@@ -1,21 +1,23 @@
 import { ConfigValidator } from './ConfigValidator';
 import { IConfig } from '../../shared/model/config/IConfig';
-import Joi, { ValidationError } from 'joi';
+import { ValidationError } from '@hapi/joi';
+import { ConfigSchema } from './schema/ConfigSchema';
+
+jest.mock('./schema/ConfigSchema');
 
 describe('ConfigValidator', () => {
   let validator: ConfigValidator;
   const config: IConfig = ({} as unknown) as IConfig;
-  const joiMock: jest.Mocked<typeof Joi> = Joi as any;
 
   beforeEach(() => {
     validator = new ConfigValidator();
-    joiMock.validate = jest.fn();
+    ConfigSchema.validate = jest.fn();
   });
 
   it('returns validation error if validation fails', () => {
     const error: ValidationError = ({ foo: 'bar' } as unknown) as ValidationError;
 
-    joiMock.validate.mockReturnValue({
+    (ConfigSchema.validate as jest.Mock).mockReturnValue({
       error,
       value: config
     });
@@ -24,7 +26,7 @@ describe('ConfigValidator', () => {
   });
 
   it('returns null when validation suceeds', () => {
-    joiMock.validate.mockReturnValue({
+    (ConfigSchema.validate as jest.Mock).mockReturnValue({
       error: undefined,
       value: config
     });

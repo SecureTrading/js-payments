@@ -4,7 +4,7 @@ import { ConfigValidator } from './ConfigValidator';
 import { instance, mock, verify, when } from 'ts-mockito';
 import { ConfigService } from './ConfigService';
 import { IConfig } from '../../shared/model/config/IConfig';
-import { ValidationError } from 'joi';
+import { ValidationError } from '@hapi/joi';
 
 describe('ConfigService', () => {
   let storageMock: BrowserLocalStorage;
