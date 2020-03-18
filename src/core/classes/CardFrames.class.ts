@@ -227,7 +227,7 @@ export class CardFrames extends RegisterFrames {
       animatedCardConfig.defaultPaymentType = this._defaultPaymentType;
     }
     this._animatedCard.create(Selectors.ANIMATED_CARD_COMPONENT_NAME, {}, animatedCardConfig);
-    this._animatedCardMounted = this._animatedCard.mount(Selectors.ANIMATED_CARD_COMPONENT_FRAME, '-1');
+    this._animatedCardMounted = this._animatedCard.mount(Selectors.ANIMATED_CARD_COMPONENT_IFRAME, '-1');
     this.elementsToRegister.push(this._animatedCardMounted);
   }
 
