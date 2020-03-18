@@ -5,13 +5,14 @@ const webpack = require('webpack');
 module.exports = merge(common, {
   mode: 'production',
   plugins: [
-    new webpack.NormalModuleReplacementPlugin(
-      /^\.\.\/\.\.\/environments\/environment/,
-      '../../environments/environment.prod'
-    ),
-    new webpack.NormalModuleReplacementPlugin(/^\.\/environments\/environment/, './environments/environment.prod'),
     new webpack.DefinePlugin({
       WEBSERVICES_URL: JSON.stringify('https://webservices.securetrading.net/js/v2')
     })
-  ]
+  ],
+  resolve: {
+    alias: {
+      [path.resolve(__dirname, "src/environments/environment")]:
+        path.resolve(__dirname, "src/environments/environment.prod.ts")
+    }
+  }
 });

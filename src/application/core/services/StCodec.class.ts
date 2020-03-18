@@ -9,7 +9,7 @@ import { Notification } from '../shared/Notification';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
 import { Validation } from '../shared/Validation';
-import { version } from '../../../package.json';
+import { version } from '../../../../package.json';
 import { Container } from 'typedi';
 
 class StCodec {
