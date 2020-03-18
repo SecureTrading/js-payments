@@ -43,7 +43,6 @@ export class ConfigResolver {
 
   public validate(config: IConfig | IComponentsConfig | IComponentsIds, schema: Joi.ObjectSchema) {
     const result = schema.validate(config);
-
     if (result.error) {
       throw result.error;
     }
@@ -70,8 +69,8 @@ export class ConfigResolver {
       origin: this._isTruthy(config.origin) ? config.origin : window.location.origin,
       panIcon: config.panIcon !== undefined ? config.panIcon : false,
       placeholders: config.placeholders || { pan: '', expirydate: '', securitycode: '' },
-      requestTypes: this._isTruthy(config.components.requestTypes) ?
-        config.components.requestTypes : [...this.DEFAULT_COMPONENTS_REQUEST_TYPES],
+      requestTypes: this._isTruthy(config.requestTypes) ?
+        config.requestTypes : [...this.DEFAULT_COMPONENTS_REQUEST_TYPES],
       styles: this._isTruthy(config.styles) ? config.styles : {},
       submitCallback: this._isTruthy(config.submitCallback) ? config.submitCallback : null,
       submitFields: this._isTruthy(config.submitFields) ? config.submitFields : [],

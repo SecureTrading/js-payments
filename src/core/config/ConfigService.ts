@@ -13,11 +13,11 @@ export class ConfigService {
     private storage: BrowserLocalStorage,
     private resolver: ConfigResolver,
     private validator: ConfigValidator
-  ) {}
+  ) {
+  }
 
   initialize(config: IConfig): IConfig {
     this.storage.setItem(ConfigService.STORAGE_KEY, null);
-
     const fullConfig = this.resolver.resolve(config);
 
     this.update(fullConfig);
