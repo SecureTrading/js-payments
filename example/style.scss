@@ -101,6 +101,8 @@ body {
 
 .example-form {
   &__st-animated-card {
+    display: flex;
+    justify-content: center;
     position: relative;
     overflow: hidden;
     height: 300px;
@@ -109,10 +111,4 @@ body {
 
 .st-notification-frame {
   height: 6.2rem;
-}
-
-@media screen {
-  .st-animated-card-iframe {
-    min-width: 100%;
-  }
 }

@@ -2,7 +2,7 @@ import { IStyle } from '../../../shared/model/config/IStyle';
 
 export interface IParams {
   [name: string]: object | string;
-  styles?: IStyle;
+  styles?: IStyle[];
   locale?: string;
   origin?: string;
   jwt?: string;
