@@ -73,7 +73,8 @@ export class ConfigResolver {
       submitCallback: this._isTruthy(config.submitCallback) ? config.submitCallback : null,
       submitFields: this._isTruthy(config.submitFields) ? config.submitFields : [],
       submitOnError: this._isTruthy(config.submitOnError) ? config.submitOnError : false,
-      submitOnSuccess: this._isTruthy(config.submitOnSuccess) ? config.submitOnSuccess : false,
+      // Can't use isTruthy for submitOnSuccess because we default to true so undefined wants to act as if it's truthy
+      submitOnSuccess: config.submitOnSuccess !== undefined ? config.submitOnSuccess : true,
       translations: this._isTruthy(config.translations) ? config.translations : {},
       visaCheckout: this._setApmConfig(config.visaCheckout, config.components),
       ...this._setFieldsToSubmit(config),
