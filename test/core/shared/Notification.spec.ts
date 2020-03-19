@@ -80,11 +80,13 @@ describe('Notification', () => {
 
 function notificationFixture() {
   let configProvider: ConfigProvider;
+  let messageBus: MessageBus;
   configProvider = mock(ConfigProvider);
+  messageBus = mock(MessageBus);
   when(configProvider.getConfig()).thenReturn({
     jwt: '',
     notifications: true
   });
-  const notificationInstance: Notification = new Notification(instance(configProvider));
+  const notificationInstance: Notification = new Notification(instance(configProvider), instance(messageBus));
   return { notificationInstance };
 }
