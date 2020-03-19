@@ -12,7 +12,6 @@ import { IconFactory } from '../../../src/core/services/icon/IconFactory';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 jest.mock('./../../../src/core/shared/Validation');
-jest.mock('./../../../src/core/shared/Notification');
 
 // given
 describe('CardNumber', () => {
