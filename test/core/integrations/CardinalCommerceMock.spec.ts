@@ -1,15 +1,24 @@
 import { CardinalCommerceMock } from '../../../src/core/integrations/CardinalCommerceMock';
+import { ConfigProvider } from '../../../src/core/config/ConfigProvider';
+import { anyString, mock, when } from 'ts-mockito';
+import { of } from 'rxjs';
 
 // given
 describe('CardinalCommerce class', () => {
   let instance: any;
   const { jwt } = CardinalCommerceMockFixture();
+  let configProvider: ConfigProvider;
+  configProvider = mock(ConfigProvider);
+  // @ts-ignore
+  when(configProvider.getConfig()).thenReturn({
+    requestTypes: ['THREEDQUERY', 'AUTH']
+  });
 
   // when
   beforeEach(() => {
     document.body.innerHTML = `<iframe id='st-control-frame-iframe'>
     </iframe><input id='JWTContainer' value="${jwt}" />`;
-    instance = new CardinalCommerceMock(false, jwt, ['THREEDQUERY', 'AUTH'], 0);
+    instance = new CardinalCommerceMock(configProvider, false, jwt, 0);
   });
 
   // given
@@ -69,6 +78,7 @@ function CardinalCommerceMockFixture() {
     static setup = jest.fn();
     static trigger = jest.fn();
   }
+
   const jwt =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU3NDIzNDgyLjk0MzE1MywicGF5bG9hZCI6eyJjdXN0b21lcnRvd24iOiJCYW5nb3IiLCJiaWxsaW5ncG9zdGNvZGUiOiJURTEyIDNTVCIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJjdXN0b21lcnByZW1pc2UiOiIxMiIsImJpbGxpbmdsYXN0bmFtZSI6Ik5hbWUiLCJsb2NhbGUiOiJlbl9HQiIsImJhc2VhbW91bnQiOiIxMDAwIiwiYmlsbGluZ2VtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImJpbGxpbmdwcmVtaXNlIjoiMTIiLCJzaXRlcmVmZXJlbmNlIjoidGVzdDEiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImJpbGxpbmdzdHJlZXQiOiJUZXN0IHN0cmVldCIsImN1c3RvbWVyc3RyZWV0IjoiVGVzdCBzdHJlZXQiLCJjdXN0b21lcnBvc3Rjb2RlIjoiVEUxMiAzU1QiLCJjdXN0b21lcmxhc3RuYW1lIjoiTmFtZSIsImJpbGxpbmd0ZWxlcGhvbmUiOiIwMTIzNCAxMTEyMjIiLCJiaWxsaW5nZmlyc3RuYW1lIjoiVGVzdCIsImJpbGxpbmd0b3duIjoiQmFuZ29yIiwiYmlsbGluZ3RlbGVwaG9uZXR5cGUiOiJNIn19.08q3gem0kW0eODs5iGQieKbpqu7pVcvQF2xaJIgtrnc';
 

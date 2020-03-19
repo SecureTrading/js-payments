@@ -51,72 +51,65 @@ export class ConfigResolver {
   public resolve(config: IConfig): IConfig {
     this.validate(config, ConfigSchema);
     return {
-      analytics: this._isTruthy(config.analytics) ? config.analytics : false,
-      animatedCard: this._isTruthy(config.animatedCard) ? config.animatedCard : false,
+      analytics: this._getValueOrDefault(config.analytics, false),
+      animatedCard: this._getValueOrDefault(config.animatedCard, false),
       applePay: this._setApmConfig(config.applePay, config.components),
-      buttonId: this._isTruthy(config.buttonId) ? config.buttonId : '',
-      bypassCards: this._isTruthy(config.bypassCards) ? config.bypassCards : [],
-      cachetoken: this._isTruthy(config.cachetoken) ? config.cachetoken : '',
+      buttonId: this._getValueOrDefault(config.buttonId, ''),
+      bypassCards: this._getValueOrDefault(config.bypassCards, []),
+      cachetoken: this._getValueOrDefault(config.cachetoken, ''),
       componentIds: this._componentIds(config.componentIds),
       components: this._setComponentsProperties(config),
-      datacenterurl: this._isTruthy(config.datacenterurl) ? config.datacenterurl : environment.GATEWAY_URL,
-      deferInit: this._isTruthy(config.deferInit) ? config.deferInit : false,
-      formId: this._isTruthy(config.formId) ? config.formId : Selectors.MERCHANT_FORM_SELECTOR,
-      fieldsToSubmit: this._isTruthy(config.fieldsToSubmit) ? config.fieldsToSubmit : ['pan', 'expirydate', 'securitycode'],
-      init: this._isTruthy(config.init) ? config.init : { cachetoken: '', threedinit: '' },
-      jwt: this._isTruthy(config.jwt) ? config.jwt : '',
-      livestatus: this._isTruthy(config.livestatus) ? config.livestatus : 0,
-      origin: this._isTruthy(config.origin) ? config.origin : window.location.origin,
-      panIcon: this._isTruthy(config.panIcon) ? config.panIcon : false,
-      placeholders: this._isTruthy(config.placeholders) ? config.placeholders : {
+      datacenterurl: this._getValueOrDefault(config.datacenterurl, environment.GATEWAY_URL),
+      deferInit: this._getValueOrDefault(config.deferInit, false),
+      formId: this._getValueOrDefault(config.formId, Selectors.MERCHANT_FORM_SELECTOR),
+      fieldsToSubmit: this._getValueOrDefault(config.fieldsToSubmit, [...this.DEFAULT_FIELDS_TO_SUBMIT]),
+      init: this._getValueOrDefault(config.init, { cachetoken: '', threedinit: '' }),
+      jwt: this._getValueOrDefault(config.jwt, ''),
+      livestatus: this._getValueOrDefault(config.livestatus, 0),
+      origin: this._getValueOrDefault(config.origin, window.location.origin),
+      panIcon: this._getValueOrDefault(config.panIcon, false),
+      placeholders: this._getValueOrDefault(config.placeholders, {
         pan: '',
         expirydate: '',
         securitycode: ''
-      },
-      requestTypes: this._isTruthy(config.requestTypes) ?
-        config.requestTypes : [],
-      styles: this._isTruthy(config.styles) ? config.styles : {},
-      submitCallback: this._isTruthy(config.submitCallback) ? config.submitCallback : null,
-      submitFields: this._isTruthy(config.submitFields) ? config.submitFields : [],
-      submitOnError: this._isTruthy(config.submitOnError) ? config.submitOnError : false,
-      submitOnSuccess: this._isTruthy(config.submitOnSuccess) ? config.submitOnSuccess : false,
-      threedinit: this._isTruthy(config.threedinit) ? config.threedinit : '',
-      translations: this._isTruthy(config.translations) ? config.translations : {},
-      visaCheckout: this._setApmConfig(config.visaCheckout, config.components),
-      ...this._setFieldsToSubmit(config),
-      ...this._setPropertiesToSubmit(config)
+      }),
+      requestTypes: this._getValueOrDefault(config.requestTypes, []),
+      styles: this._getValueOrDefault(config.styles, {}),
+      submitCallback: this._getValueOrDefault(config.submitCallback, null),
+      submitFields: this._getValueOrDefault(config.submitFields, this.DEFAULT_SUBMIT_PROPERTIES),
+      submitOnError: this._getValueOrDefault(config.submitOnError, false),
+      submitOnSuccess: this._getValueOrDefault(config.submitOnSuccess, true),
+      threedinit: this._getValueOrDefault(config.threedinit, ''),
+      translations: this._getValueOrDefault(config.translations, {}),
+      visaCheckout: this._setApmConfig(config.visaCheckout, config.components)
     };
   }
 
-  private _isTruthy(value: any) {
+  private _getValueOrDefault(value: any, defaultValue: any) {
     const valueType = typeof value;
-    if (valueType === 'object') {
-      if (value.length) {
-        return true;
-      } else {
-        return Object.keys(value).length;
-      }
+    if (valueType === 'object' && (Boolean(value.length) || Boolean(Object.keys(value).length))) {
+      return value;
+    } else if (valueType === 'undefined') {
+      return defaultValue;
+    } else {
+      return value;
     }
-
-    return Boolean(value);
   }
 
+
   private _componentIds(config: IComponentsIds): IComponentsIds {
-    if (!this._isTruthy(config)) {
+    if (!config) {
       return { ...this.DEFAULT_COMPONENTS_IDS };
     }
     const optionalIds = {
-      animatedCard: this._isTruthy(config.animatedCard) ? config.animatedCard : this.DEFAULT_COMPONENTS_IDS.animatedCard
+      animatedCard: this._getValueOrDefault(config.animatedCard, this.DEFAULT_COMPONENTS_IDS.animatedCard)
     };
     const requiredIds = {
-      cardNumber: this._isTruthy(config.cardNumber) ? config.cardNumber : this.DEFAULT_COMPONENTS_IDS.cardNumber,
-      expirationDate: this._isTruthy(config.expirationDate)
-        ? config.expirationDate
-        : this.DEFAULT_COMPONENTS_IDS.expirationDate,
-      notificationFrame: this._isTruthy(config.notificationFrame)
-        ? config.notificationFrame
-        : this.DEFAULT_COMPONENTS_IDS.notificationFrame,
-      securityCode: this._isTruthy(config.securityCode) ? config.securityCode : this.DEFAULT_COMPONENTS_IDS.securityCode
+      cardNumber: this._getValueOrDefault(config.cardNumber, this.DEFAULT_COMPONENTS_IDS.cardNumber),
+      expirationDate: this._getValueOrDefault(config.expirationDate, this.DEFAULT_COMPONENTS_IDS.expirationDate),
+      notificationFrame: this._getValueOrDefault(config.notificationFrame,
+        this.DEFAULT_COMPONENTS_IDS.notificationFrame),
+      securityCode: this._getValueOrDefault(config.securityCode, this.DEFAULT_COMPONENTS_IDS.securityCode)
     };
     return {
       ...optionalIds,
@@ -124,20 +117,9 @@ export class ConfigResolver {
     };
   }
 
-  private _setFieldsToSubmit(config: IConfig): { fieldsToSubmit: string[] } {
-    return {
-      fieldsToSubmit: this._isTruthy(config.fieldsToSubmit) ? config.fieldsToSubmit : [...this.DEFAULT_FIELDS_TO_SUBMIT]
-    };
-  }
-
-  private _setPropertiesToSubmit(config: IConfig): { submitFields: string[] } {
-    return {
-      submitFields: this._isTruthy(config.submitFields) ? config.submitFields : this.DEFAULT_SUBMIT_PROPERTIES
-    };
-  }
-
   private _setComponentsProperties(config: IConfig): IComponentsConfig {
-    if (!config.components) {
+    const { components } = config;
+    if (!components) {
       return {
         defaultPaymentType: '',
         paymentTypes: [''],
@@ -147,14 +129,10 @@ export class ConfigResolver {
     }
 
     return {
-      defaultPaymentType: this._isTruthy(config.components.defaultPaymentType)
-        ? config.components.defaultPaymentType
-        : '',
-      paymentTypes: this._isTruthy(config.components.paymentTypes) ? config.components.paymentTypes : [''],
-      requestTypes: this._isTruthy(config.components.requestTypes)
-        ? config.components.requestTypes
-        : [...this.DEFAULT_COMPONENTS_REQUEST_TYPES],
-      startOnLoad: this._isTruthy(config.components.startOnLoad) ? config.components.startOnLoad : false
+      defaultPaymentType: this._getValueOrDefault(components.defaultPaymentType, ''),
+      paymentTypes: this._getValueOrDefault(components.paymentTypes, ['']),
+      requestTypes: this._getValueOrDefault(components.requestTypes, [...this.DEFAULT_COMPONENTS_REQUEST_TYPES]),
+      startOnLoad: this._getValueOrDefault(components.startOnLoad, false)
     };
   }
 
@@ -165,9 +143,7 @@ export class ConfigResolver {
     return {
       ...apm,
       requestTypes:
-        components && this._isTruthy(components.requestTypes)
-          ? components.requestTypes
-          : [...this.DEFAULT_APMS_REQUEST_TYPES]
+        components && this._getValueOrDefault(components.requestTypes, [...this.DEFAULT_APMS_REQUEST_TYPES])
     };
   }
 }

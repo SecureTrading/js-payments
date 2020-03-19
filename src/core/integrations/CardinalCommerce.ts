@@ -42,15 +42,15 @@ export class CardinalCommerce {
   private _bypassCards: string[];
   private _jwtUpdated: boolean;
   private _framesHub: FramesHub;
-  private _configProvider: ConfigProvider;
 
   constructor(
+    private _configProvider: ConfigProvider,
     startOnLoad: boolean,
     jwt: string,
     livestatus?: number,
     cachetoken?: string,
     threedinit?: string,
-    bypassCards?: string[]
+    bypassCards?: string[],
   ) {
     this._jwtUpdated = false;
     this._startOnLoad = startOnLoad;

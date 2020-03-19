@@ -9,6 +9,7 @@ import { Container } from 'typedi';
 import { of } from 'rxjs';
 import { FramesHub } from '../../../src/core/services/message-bus/FramesHub';
 import { mock, instance as mockInstance, when, anyString } from 'ts-mockito';
+import { ConfigProvider } from '../../../src/core/config/ConfigProvider';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 jest.mock('./../../../src/core/integrations/GoogleAnalytics');
@@ -21,11 +22,17 @@ describe('CardinalCommerce', () => {
 
   // when
   beforeEach(() => {
+    let configProvider: ConfigProvider;
+    configProvider = mock(ConfigProvider);
     when(framesHub.waitForFrame(anyString())).thenCall(name => of(name));
+    // @ts-ignore
+    when(configProvider.getConfig()).thenReturn({
+      requestTypes: ['THREEDQUERY', 'AUTH']
+    });
 
     document.body.innerHTML = `<iframe id='st-control-frame-iframe'>
     </iframe><input id='JWTContainer' value="${jwt}" />`;
-    instance = new CardinalCommerce(false, jwt, ['THREEDQUERY', 'AUTH'], 0);
+    instance = new CardinalCommerce(mockInstance(configProvider), false, jwt, 0);
     instance._framesHub = mockInstance(framesHub);
   });
 
