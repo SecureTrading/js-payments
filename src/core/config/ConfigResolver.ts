@@ -69,7 +69,11 @@ export class ConfigResolver {
       notifications: config.notifications !== undefined ? config.notifications : true,
       origin: this._isTruthy(config.origin) ? config.origin : window.location.origin,
       panIcon: this._isTruthy(config.panIcon) ? config.panIcon : false,
-      placeholders: this._isTruthy(config.placeholders) ? config.placeholders : { pan: '', expirydate: '', securitycode: '' },
+      placeholders: this._isTruthy(config.placeholders) ? config.placeholders : {
+        pan: '',
+        expirydate: '',
+        securitycode: ''
+      },
       styles: this._isTruthy(config.styles) ? config.styles : {},
       submitCallback: this._isTruthy(config.submitCallback) ? config.submitCallback : null,
       submitFields: this._isTruthy(config.submitFields) ? config.submitFields : [],
@@ -83,13 +87,18 @@ export class ConfigResolver {
     };
   }
 
-  private _isTruthy = (value: any) => {
+  private _isTruthy(value: any) {
     const valueType = typeof value;
     if (valueType === 'object') {
-      return Object.keys(value).length;
+      if (value.length) {
+        return true;
+      } else {
+        return Boolean(Object.keys(value).length);
+      }
     }
-    return valueType !== 'undefined' && value;
-  };
+
+    return Boolean(value);
+  }
 
   private _componentIds(config: IComponentsIds): IComponentsIds {
     if (!this._isTruthy(config)) {
