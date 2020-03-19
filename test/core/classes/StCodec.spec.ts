@@ -374,6 +374,7 @@ describe('StCodec class', () => {
     // when
     beforeEach(() => {
       str = new StCodec(jwt);
+      StCodec.VERSION_INFO = 'STJS::N/A::2.0.0::N/A';
       // @ts-ignore
       StCodec.publishResponse = jest.fn();
     });
@@ -396,7 +397,8 @@ describe('StCodec class', () => {
         acceptcustomeroutput: '1.00',
         jwt,
         request: [{ requestid, ...expected }],
-        version: StCodec.VERSION
+        version: StCodec.VERSION,
+        versioninfo: 'STJS::N/A::2.0.0::N/A'
       });
     });
   });
@@ -406,6 +408,7 @@ describe('StCodec class', () => {
     // when
     beforeEach(() => {
       str = new StCodec(jwt);
+      StCodec.VERSION_INFO = 'STJS::N/A::2.0.0::N/A';
       // @ts-ignore
       StCodec.publishResponse = jest.fn();
     });
@@ -420,7 +423,7 @@ describe('StCodec class', () => {
               jwt +
               '","request":\\[{"pan":"4111111111111111","requesttypedescriptions":\\["AUTH"\\],"requestid":"' +
               ridRegex +
-              '","sitereference":"live2"}\\],"version":"1.00"}$'
+              '","sitereference":"live2"}\\],"version":"1.00","versioninfo":"STJS::N/A::2.0.0::N/A"}$'
           )
         )
       ],
@@ -433,7 +436,7 @@ describe('StCodec class', () => {
               '","request":\\[{"pan":"4111111111111111",' +
               '"requesttypedescriptions":\\["AUTH","SUBSCRIPTION"\\],"requestid":"' +
               ridRegex +
-              '","sitereference":"live2"}\\],"version":"1.00"}$'
+              '","sitereference":"live2"}\\],"version":"1.00","versioninfo":"STJS::N/A::2.0.0::N/A"}$'
           )
         )
       ]

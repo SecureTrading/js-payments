@@ -23,6 +23,7 @@ export class Frame {
         styles[param] = value;
       }
     });
+    // @ts-ignore
     params.styles = styles;
     return params;
   }
