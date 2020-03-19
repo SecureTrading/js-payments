@@ -1,6 +1,6 @@
-@import './../../core/styles/variables';
-@import '../../core/styles/placeholders';
-@import './../../core/styles/core';
+@import 'variables';
+@import 'placeholders';
+@import 'core';
 
 body {
   @extend %frame-body;
