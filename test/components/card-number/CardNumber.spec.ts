@@ -384,6 +384,7 @@ function cardNumberFixture() {
   let iconFactory: IconFactory;
   iconFactory = mock(IconFactory);
   configProvider = mock(ConfigProvider);
+  // @ts-ignore
   when(configProvider.getConfig()).thenReturn({
     jwt: '',
     placeholders: { pan: 'Card number', expirydate: 'MM/YY', securitycode: '***' }

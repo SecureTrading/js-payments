@@ -35,22 +35,22 @@ export class CardinalCommerce {
   private readonly _livestatus: number = 0;
   private readonly _startOnLoad: boolean;
   private _jwt: string;
-  private readonly _requestTypes: string[];
+  private _requestTypes: string[];
   private readonly _threedinit: string;
   private _notification: Notification;
   private _sdkAddress: string = environment.CARDINAL_COMMERCE.SONGBIRD_TEST_URL;
   private _bypassCards: string[];
   private _jwtUpdated: boolean;
   private _framesHub: FramesHub;
+  private _configProvider: ConfigProvider;
 
   constructor(
-    private _configProvider: ConfigProvider,
     startOnLoad: boolean,
     jwt: string,
     livestatus?: number,
     cachetoken?: string,
     threedinit?: string,
-    bypassCards?: string[],
+    bypassCards?: string[]
   ) {
     this._jwtUpdated = false;
     this._startOnLoad = startOnLoad;
@@ -58,7 +58,6 @@ export class CardinalCommerce {
     this._threedinit = threedinit ? threedinit : '';
     this._livestatus = livestatus;
     this._cachetoken = cachetoken ? cachetoken : '';
-    this._requestTypes = this._configProvider.getConfig().requestTypes;
     this._bypassCards = bypassCards;
     this.messageBus = Container.get(MessageBus);
     this._notification = new Notification();
@@ -123,6 +122,8 @@ export class CardinalCommerce {
     if (this._startOnLoad) {
       const pan = new StJwt(this._jwt).payload.pan as string;
       this._performBinDetection(pan);
+      this._configProvider = Container.get(ConfigProvider);
+      this._requestTypes = this._configProvider.getConfig().requestTypes;
       const submitFormEvent: IMessageBusEvent = {
         data: { dataInJwt: true, requestTypes: this._requestTypes, bypassCards: this._bypassCards },
         type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
@@ -224,6 +225,8 @@ export class CardinalCommerce {
 
   private _onInit() {
     this._initSubscriptions();
+    this._configProvider = Container.get(ConfigProvider);
+    this._requestTypes = this._configProvider.getConfig().requestTypes;
     this._publishRequestTypesEvent(this._requestTypes);
   }
 

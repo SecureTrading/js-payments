@@ -31,13 +31,14 @@ describe('ST', () => {
     // when
     beforeEach(() => {
       instance.Init = jest.fn();
+      // @ts-ignore
       stObject = ST(cacheConfig);
     });
   });
 
   // given
   describe('ST.ApplePay()', () => {
-    const { instance, applePayConfig } = stFixture();
+    const { applePayConfig } = stFixture();
 
     // then
     it('should return VisaCheckoutMock object when environment.testEnvironment equals true', () => {
@@ -68,20 +69,20 @@ describe('ST', () => {
 
   // given
   describe('ST.CardinalCommerce()', () => {
-    //when
+    // when
     const {
       config: { jwt }
     } = stFixture();
     // then
     it('should return CardinalCommerceMock when environment.testEnvironment equals true', () => {
       environment.testEnvironment = true;
-      expect(instance.CardinalCommerce( ['AUTH', 'JSINIT'])).toBeInstanceOf(CardinalCommerceMock);
+      expect(instance.CardinalCommerce()).toBeInstanceOf(CardinalCommerceMock);
     });
 
     // then
     it('should return CardinalCommerce when environment.testEnvironment equals false', () => {
       environment.testEnvironment = false;
-      expect(instance.CardinalCommerce( ['AUTH', 'JSINIT'])).toBeInstanceOf(CardinalCommerce);
+      expect(instance.CardinalCommerce()).toBeInstanceOf(CardinalCommerce);
     });
   });
 
@@ -233,6 +234,7 @@ function stFixture() {
       displayName: 'My Test Site'
     }
   };
+  // @ts-ignore
   const instance: any = ST(config);
   return { cacheConfig, config, instance, applePayConfig, visaCheckoutConfig };
 }

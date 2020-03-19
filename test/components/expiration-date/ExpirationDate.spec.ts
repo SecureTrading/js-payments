@@ -217,6 +217,7 @@ function expirationDateFixture() {
   const correctDataValue = '12/19';
   let configProvider: ConfigProvider;
   configProvider = mock(ConfigProvider);
+  // @ts-ignore
   when(configProvider.getConfig()).thenReturn({
     jwt: '',
     placeholders: { pan: '4154654', expirydate: '12/22', securitycode: '123' }

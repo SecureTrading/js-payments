@@ -89,7 +89,7 @@ export class ConfigResolver {
     const valueType = typeof value;
     if (valueType === 'object' && (Boolean(value.length) || Boolean(Object.keys(value).length))) {
       return value;
-    } else if (valueType === 'undefined') {
+    } else if (valueType === 'undefined' || !Boolean(value)) {
       return defaultValue;
     } else {
       return value;

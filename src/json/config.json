@@ -36,12 +36,12 @@
   "datacenterurl": "",
   "deferInit": false,
   "fieldsToSubmit": ["pan", "expirydate", "securitycode"],
-  "formId": "",
+  "formId": "merchant-submit-button",
   "init": {
     "cachetoken": "",
     "threedinit": ""
   },
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4NDYzNzY4OS4wNjM5MTQsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdF9qYW1lczM4NjQxIiwibG9jYWxlIjoiZW5fR0IifX0.c2MFTn8cIRi4fyzN1G3g5Kk37LP9EtPphlIqMFs9LGY",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4NDY0OTkzNC41OTcyNzU1LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.M00ppjmmFPMwkbsZaTA6KJtP7lTjyDw59F3DBAuTzDE",
   "livestatus": 0,
   "origin": "",
   "placeholders": {
