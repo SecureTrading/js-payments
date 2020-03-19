@@ -66,8 +66,7 @@ export class ConfigResolver {
       init: this._getValueOrDefault(config.init, { cachetoken: '', threedinit: '' }),
       jwt: this._getValueOrDefault(config.jwt, ''),
       livestatus: this._getValueOrDefault(config.livestatus, 0),
-      // Can't use isTruthy for notifications because we default to true so undefined wants to act as if it's truthy
-      notifications: config.notifications !== undefined ? config.notifications : true,
+      notifications: this._getValueOrDefault(config.notifications, true),
       origin: this._getValueOrDefault(config.origin, window.location.origin),
       panIcon: this._getValueOrDefault(config.panIcon, false),
       placeholders: this._getValueOrDefault(config.placeholders, {
@@ -79,8 +78,7 @@ export class ConfigResolver {
       submitCallback: this._getValueOrDefault(config.submitCallback, null),
       submitFields: this._getValueOrDefault(config.submitFields, this.DEFAULT_SUBMIT_PROPERTIES),
       submitOnError: this._getValueOrDefault(config.submitOnError, false),
-      // Can't use isTruthy for submitOnSuccess because we default to true so undefined wants to act as if it's truthy
-      submitOnSuccess: config.submitOnSuccess !== undefined ? config.submitOnSuccess : true,
+      submitOnSuccess: this._getValueOrDefault(config.submitOnSuccess, true),
       translations: this._getValueOrDefault(config.translations, {}),
       visaCheckout: this._setApmConfig(config.visaCheckout, config.components)
     };
@@ -90,10 +88,10 @@ export class ConfigResolver {
     const valueType = typeof value;
     if (valueType === 'object' && (Boolean(value.length) || Boolean(Object.keys(value).length))) {
       return value;
-    } else if (Boolean(value)) {
-      return value;
-    } else {
+    } else if (valueType === 'undefined') {
       return defaultValue;
+    } else {
+      return value;
     }
   }
 
