@@ -22,7 +22,7 @@ import { Validation } from '../../core/shared/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { BrowserLocalStorage } from '../../core/services/storage/BrowserLocalStorage';
 import { BrowserSessionStorage } from '../../core/services/storage/BrowserSessionStorage';
-import { Container, Service } from 'typedi';
+import { Service } from 'typedi';
 import { InterFrameCommunicator } from '../../core/services/message-bus/InterFrameCommunicator';
 import { ConfigProvider } from '../../core/config/ConfigProvider';
 import { interval } from 'rxjs';
@@ -64,7 +64,6 @@ export class ControlFrame extends Frame {
   private _formFields: IFormFieldsDetails = FormFieldsDetails;
   private _formFieldsValidity: IFormFieldsValidity = FormFieldsValidity;
   private _merchantFormData: IMerchantData;
-  private _notification: Notification;
   private _payment: Payment;
   private _postThreeDRequestTypes: string[];
   private _preThreeDRequestTypes: string[];
@@ -80,6 +79,7 @@ export class ControlFrame extends Frame {
     private _sessionStorage: BrowserSessionStorage,
     private _communicator: InterFrameCommunicator,
     private _configProvider: ConfigProvider,
+    private _notification: Notification
   ) {
     super();
     this.onInit();
@@ -406,7 +406,6 @@ export class ControlFrame extends Frame {
   private _setInstances(): void {
     this._payment = new Payment(this.params.jwt, this.params.gatewayUrl, this.params.origin);
     this._validation = new Validation();
-    this._notification = Container.get(Notification);
   }
 
   private _setRequestTypes(data: ISetRequestTypes): void {

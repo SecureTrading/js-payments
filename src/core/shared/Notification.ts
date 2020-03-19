@@ -4,19 +4,16 @@ import { INotificationEvent } from '../models/INotificationEvent';
 import { MessageBus } from './MessageBus';
 import { Service } from 'typedi';
 import { ConfigProvider } from '../config/ConfigProvider';
-import { Container } from 'typedi';
 
 @Service()
 export class Notification {
-  private _messageBus: MessageBus;
   private _messageBusEvent: IMessageBusEvent;
   private _notificationEvent: INotificationEvent;
   private readonly _display: boolean;
   private readonly _displayOnError: boolean;
   private readonly _displayOnSuccess: boolean;
 
-  constructor(private _configProvider: ConfigProvider) {
-    this._messageBus = Container.get(MessageBus);
+  constructor(private _configProvider: ConfigProvider, private _messageBus: MessageBus) {
     this._display = this._configProvider.getConfig().notifications;
     this._displayOnError = this._display && !this._configProvider.getConfig().submitOnError;
     this._displayOnSuccess = this._display && !this._configProvider.getConfig().submitOnSuccess;
