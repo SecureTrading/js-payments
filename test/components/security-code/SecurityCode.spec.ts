@@ -30,7 +30,7 @@ describe('SecurityCode', () => {
     configProvider = mock(ConfigProvider);
     when(configProvider.getConfig()).thenReturn({
       jwt: '',
-      notifications: true,
+      disableNotification: false,
       placeholders: { pan: '4154654', expirydate: '12/22', securitycode: '123' }
     });
     securityCode = new SecurityCode(instance(configProvider));

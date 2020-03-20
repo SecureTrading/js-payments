@@ -16,12 +16,12 @@ export interface IConfig {
   componentIds?: IComponentsIds;
   datacenterurl?: string;
   deferInit?: boolean;
+  disableNotification: boolean;
   fieldsToSubmit?: string[];
   formId?: string;
   jwt: string;
   init?: IBypassInit;
   livestatus?: number;
-  notifications: boolean;
   origin?: string;
   panIcon?: boolean;
   placeholders?: IPlaceholdersConfig;

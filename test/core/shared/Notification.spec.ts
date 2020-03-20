@@ -1,6 +1,5 @@
 import { Notification } from '../../../src/core/shared/Notification';
 import { MessageBus } from '../../../src/core/shared/MessageBus';
-import { ConfigService } from '../../../src/core/config/ConfigService';
 import { instance, mock, when } from 'ts-mockito';
 import { ConfigProvider } from '../../../src/core/config/ConfigProvider';
 
@@ -85,7 +84,9 @@ function notificationFixture() {
   messageBus = mock(MessageBus);
   when(configProvider.getConfig()).thenReturn({
     jwt: '',
-    notifications: true
+    disableNotification: false,
+    submitOnSuccess: false,
+    submitOnError: false
   });
   const notificationInstance: Notification = new Notification(instance(configProvider), instance(messageBus));
   return { notificationInstance };
