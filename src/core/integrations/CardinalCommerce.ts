@@ -42,10 +42,10 @@ export class CardinalCommerce {
   private _bypassCards: string[];
   private _jwtUpdated: boolean;
   private _framesHub: FramesHub;
+  private _configProvider: ConfigProvider,
 
 
   constructor(
-    private _configProvider: ConfigProvider,
     startOnLoad: boolean,
     jwt: string,
     livestatus?: number,
@@ -61,6 +61,7 @@ export class CardinalCommerce {
     this._cachetoken = cachetoken ? cachetoken : '';
     this._bypassCards = bypassCards;
     this.messageBus = Container.get(MessageBus);
+    this._configProvider = Container.get(ConfigProvider);
     this._notification = new Notification();
     this._framesHub = Container.get(FramesHub);
     this._setLiveStatus();

@@ -2,7 +2,6 @@ import { SecurityCode } from '../../../src/components/security-code/SecurityCode
 import { Selectors } from '../../../src/core/shared/Selectors';
 import { FormField } from '../../../src/core/shared/FormField';
 import { Utils } from '../../../src/core/shared/Utils';
-import { ConfigService } from '../../../src/core/config/ConfigService';
 import { instance, mock, when } from 'ts-mockito';
 import { ConfigProvider } from '../../../src/core/config/ConfigProvider';
 

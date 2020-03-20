@@ -35,7 +35,6 @@ import { InterFrameCommunicator } from './core/services/message-bus/InterFrameCo
 import { FramesHub } from './core/services/message-bus/FramesHub';
 import { BrowserLocalStorage } from './core/services/storage/BrowserLocalStorage';
 import { BrowserSessionStorage } from './core/services/storage/BrowserSessionStorage';
-import { ConfigResolver } from './core/config/ConfigResolver';
 import { ConfigProvider } from './core/config/ConfigProvider';
 
 @Service()

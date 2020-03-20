@@ -8,7 +8,6 @@ import { BrowserSessionStorage } from '../../../src/core/services/storage/Browse
 import { InterFrameCommunicator } from '../../../src/core/services/message-bus/InterFrameCommunicator';
 import { ConfigProvider } from '../../../src/core/config/ConfigProvider';
 import { mock, instance as mockInstance, when, anyString } from 'ts-mockito';
-import { EMPTY } from 'rxjs';
 
 jest.mock('./../../../src/core/shared/Payment');
 
