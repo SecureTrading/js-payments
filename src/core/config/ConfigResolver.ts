@@ -61,7 +61,7 @@ export class ConfigResolver {
       components: this._setComponentsProperties(config),
       datacenterurl: this._getValueOrDefault(config.datacenterurl, environment.GATEWAY_URL),
       deferInit: this._getValueOrDefault(config.deferInit, false),
-      disableNotification : this._getValueOrDefault(config.disableNotification, false),
+      disableNotification: this._getValueOrDefault(config.disableNotification, false),
       fieldsToSubmit: this._getValueOrDefault(config.fieldsToSubmit, [...this.DEFAULT_FIELDS_TO_SUBMIT]),
       formId: this._getValueOrDefault(config.formId, Selectors.MERCHANT_FORM_SELECTOR),
       init: this._getValueOrDefault(config.init, { cachetoken: '', threedinit: '' }),
@@ -84,15 +84,11 @@ export class ConfigResolver {
     };
   }
 
-  private _getValueOrDefault(value: any, defaultValue: any) {
-    const valueType = typeof value;
-    if (valueType === 'object' && (Array.isArray(value) || Boolean(Object.keys(value).length))) {
+  private _getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
+    if (typeof (value) !== 'undefined') {
       return value;
     }
-    if (valueType === 'undefined') {
-      return defaultValue;
-    }
-    return value;
+    return defaultValue;
   }
 
 
