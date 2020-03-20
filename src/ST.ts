@@ -35,6 +35,7 @@ import { InterFrameCommunicator } from './core/services/message-bus/InterFrameCo
 import { FramesHub } from './core/services/message-bus/FramesHub';
 import { BrowserLocalStorage } from './core/services/storage/BrowserLocalStorage';
 import { BrowserSessionStorage } from './core/services/storage/BrowserSessionStorage';
+import { Notification } from './core/shared/Notification';
 
 @Service()
 class ST {
@@ -80,6 +81,7 @@ class ST {
     private _storage: BrowserLocalStorage,
     private _sessionStorage: BrowserSessionStorage,
     private _messageBus: MessageBus,
+    private _notification: Notification,
   ) {
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();

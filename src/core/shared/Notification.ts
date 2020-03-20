@@ -1,17 +1,22 @@
 import { NotificationType } from '../models/constants/NotificationType';
-import { IMessageBusEvent } from '../models/IMessageBusEvent';
 import { INotificationEvent } from '../models/INotificationEvent';
-import { MessageBus } from './MessageBus';
 import { Container, Service } from 'typedi';
-import { ConfigProvider } from '../config/ConfigProvider';
 import { Selectors } from './Selectors';
 import { environment } from '../../environments/environment';
 import { Translator } from './Translator';
 import { FramesHub } from '../services/message-bus/FramesHub';
 import { Frame } from './Frame';
+import { MessageBus } from './MessageBus';
 
 @Service()
 export class Notification extends Frame {
+  public static NOTIFICATION_CLASSES = {
+    error: Selectors.NOTIFICATION_FRAME_ERROR_CLASS,
+    info: Selectors.NOTIFICATION_FRAME_INFO_CLASS,
+    success: Selectors.NOTIFICATION_FRAME_SUCCESS_CLASS,
+    warning: Selectors.NOTIFICATION_FRAME_WARNING_CLASS
+  };
+
   public static MESSAGE_TYPES = {
     error: 'ERROR',
     info: 'INFO',
@@ -19,29 +24,20 @@ export class Notification extends Frame {
     warning: 'WARNING'
   };
 
-  public static ELEMENT_CLASSES = {
-    error: Selectors.NOTIFICATION_FRAME_ERROR_CLASS,
-    info: Selectors.NOTIFICATION_FRAME_INFO_CLASS,
-    success: Selectors.NOTIFICATION_FRAME_SUCCESS_CLASS,
-    warning: Selectors.NOTIFICATION_FRAME_WARNING_CLASS
-  };
   private static readonly NOTIFICATION_TTL = environment.NOTIFICATION_TTL;
-  private static ELEMENT_ID: string = Selectors.NOTIFICATION_FRAME_ID;
 
-  public static getElement = (elementId: string) => document.getElementById(elementId);
-
-  public static ifFieldExists = (): HTMLInputElement =>
-    document.getElementById(Notification.ELEMENT_ID) as HTMLInputElement;
+  public static getNotificationContainer = () =>
+    document.getElementById(Selectors.NOTIFICATION_FRAME_ID) as HTMLElement;
 
   public static _getMessageClass(messageType: string) {
     if (messageType === NotificationType.Error) {
-      return Notification.ELEMENT_CLASSES.error;
+      return Notification.NOTIFICATION_CLASSES.error;
     } else if (messageType === NotificationType.Success) {
-      return Notification.ELEMENT_CLASSES.success;
+      return Notification.NOTIFICATION_CLASSES.success;
     } else if (messageType === NotificationType.Warning) {
-      return Notification.ELEMENT_CLASSES.warning;
+      return Notification.NOTIFICATION_CLASSES.warning;
     } else if (messageType === NotificationType.Info) {
-      return Notification.ELEMENT_CLASSES.info;
+      return Notification.NOTIFICATION_CLASSES.info;
     } else {
       return '';
     }
@@ -56,88 +52,34 @@ export class Notification extends Frame {
     this._notificationFrameElement = value;
   }
 
-  get display(): boolean {
-    return this._display;
-  }
-
-  set display(value: boolean) {
-    this._display = value;
-  }
-
-  get displayOnError(): boolean {
-    return this._displayOnError;
-  }
-
-  set displayOnError(value: boolean) {
-    this._displayOnError = value;
-  }
-
-  get displayOnSuccess(): boolean {
-    return this._displayOnSuccess;
-  }
-
-  set displayOnSuccess(value: boolean) {
-    this._displayOnSuccess = value;
-  }
 
   public _message: INotificationEvent;
   public _translator: Translator;
   private _notificationFrameElement: HTMLElement;
-  private _messageBusEvent: IMessageBusEvent;
-  private _notificationEvent: INotificationEvent;
-  private _display: boolean;
-  private _displayOnError: boolean;
-  private _displayOnSuccess: boolean;
 
-  constructor(private _configProvider: ConfigProvider) {
+  constructor(private _messageBus: MessageBus) {
     super();
-    this.notificationFrameElement = Notification.getElement(Notification.ELEMENT_ID);
+    this.onInit();
+    this.notificationFrameElement = Notification.getNotificationContainer();
+    console.error(this.notificationFrameElement);
+    console.error('test');
     Container.get(FramesHub).waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(() => {
       this._translator = new Translator(this.params.locale);
-      this._onMessage();
+    });
+
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, (event: INotificationEvent) => {
+      console.error(event);
+      this._notificationEventCall(event);
     });
   }
 
-  public error(message: string) {
-    this.display = this._configProvider.getConfig().notifications;
-    this.displayOnError = this.display && !this._configProvider.getConfig().submitOnError;
-    this._setNotification(NotificationType.Error, message, this.displayOnError);
-  }
-
-  public info(message: string) {
-    this._setNotification(NotificationType.Info, message);
-  }
-
-  public success(message: string) {
-    this.display = this._configProvider.getConfig().notifications;
-    this.displayOnSuccess = this.display && !this._configProvider.getConfig().submitOnSuccess;
-    this._setNotification(NotificationType.Success, message, this.displayOnSuccess);
-  }
-
-  public warning(message: string) {
-    this._setNotification(NotificationType.Warning, message);
-  }
-
-  private _setNotification(type: string, content: string, display: boolean = true) {
-    if (!display) {
-      return;
-    }
-    this._notificationEvent = { content, type };
-    this._messageBusEvent = {
-      data: this._notificationEvent,
-      type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
-    };
-    this.messageBus.publish(this._messageBusEvent);
-  }
-
-
   protected getAllowedStyles() {
     let allowed = super.getAllowedStyles();
-    const notification = `#${Notification.ELEMENT_ID}`;
-    const error = `.${Notification.ELEMENT_CLASSES.error}${notification}`;
-    const success = `.${Notification.ELEMENT_CLASSES.success}${notification}`;
-    const warning = `.${Notification.ELEMENT_CLASSES.warning}${notification}`;
-    const info = `.${Notification.ELEMENT_CLASSES.info}${notification}`;
+    const notification = `#${Selectors.NOTIFICATION_FRAME_ID}`;
+    const error = `.${Notification.NOTIFICATION_CLASSES.error}${notification}`;
+    const success = `.${Notification.NOTIFICATION_CLASSES.success}${notification}`;
+    const warning = `.${Notification.NOTIFICATION_CLASSES.warning}${notification}`;
+    const info = `.${Notification.NOTIFICATION_CLASSES.info}${notification}`;
     allowed = {
       ...allowed,
       'background-color-notification': {
@@ -208,18 +150,13 @@ export class Notification extends Frame {
     return allowed;
   }
 
-
-  private _onMessage() {
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, this._notificationEventCall);
-  }
-
-  private _insertContent() {
+  private _insertContent(): void {
     if (this.notificationFrameElement) {
       this.notificationFrameElement.textContent = this._translator.translate(this._message.content);
     }
   }
 
-  private _setDataNotificationColorAttribute(messageType: string) {
+  private _setDataNotificationColorAttribute(messageType: string): void {
     if (this.notificationFrameElement) {
       if (messageType === Notification.MESSAGE_TYPES.error) {
         this.notificationFrameElement.setAttribute('data-notification-color', 'red');
@@ -235,7 +172,7 @@ export class Notification extends Frame {
     }
   }
 
-  private _setAttributeClass() {
+  private _setAttributeClass(): void {
     const notificationElementClass = Notification._getMessageClass(this._message.type);
     if (this.notificationFrameElement && notificationElementClass) {
       this.notificationFrameElement.classList.add(notificationElementClass);
@@ -246,16 +183,17 @@ export class Notification extends Frame {
     }
   }
 
-  private _autoHide(notificationElementClass: string) {
+  private _autoHide(notificationElementClass: string): void {
     const timeoutId = window.setTimeout(() => {
       this.notificationFrameElement.classList.remove(notificationElementClass);
       window.clearTimeout(timeoutId);
     }, Notification.NOTIFICATION_TTL);
   }
 
-  private _notificationEventCall(data: INotificationEvent) {
+  private _notificationEventCall(data: INotificationEvent): void {
+    console.error(data);
     this._message = data;
     this._insertContent();
     this._setAttributeClass();
-  };
+  }
 }

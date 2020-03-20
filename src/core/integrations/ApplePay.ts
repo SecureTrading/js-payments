@@ -3,13 +3,13 @@ import { IWalletConfig } from '../config/model/IWalletConfig';
 import { DomMethods } from '../shared/DomMethods';
 import { Language } from '../shared/Language';
 import { MessageBus } from '../shared/MessageBus';
-import { Notification } from '../shared/Notification';
 import { Payment } from '../shared/Payment';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
 import { GoogleAnalytics } from './GoogleAnalytics';
 import { BrowserLocalStorage } from '../services/storage/BrowserLocalStorage';
 import { Container } from 'typedi';
+import { NotificationService } from '../services/notification/NotificationService';
 
 const ApplePaySession = (window as any).ApplePaySession;
 const ApplePayError = (window as any).ApplePayError;
@@ -115,7 +115,7 @@ export class ApplePay {
   private _jwt: string;
   private _applePayButtonProps: any = {};
   private _payment: Payment;
-  private _notification: Notification;
+  private _notification: NotificationService;
   private _requestTypes: string[];
   private _translator: Translator;
   private _merchantId: string;
@@ -125,7 +125,7 @@ export class ApplePay {
   private _localStorage: BrowserLocalStorage;
 
   constructor(config: IWalletConfig, jwt: string, gatewayUrl: string) {
-    this._notification = Container.get(Notification);
+    this._notification = Container.get(NotificationService);
     this._messageBus = Container.get(MessageBus);
     this._localStorage = Container.get(BrowserLocalStorage);
     config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];

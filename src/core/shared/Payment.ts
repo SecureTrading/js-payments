@@ -4,14 +4,14 @@ import { ICard } from '../models/ICard';
 import { IMerchantData } from '../models/IMerchantData';
 import { IWallet } from '../models/IWallet';
 import { IWalletVerify } from '../models/IWalletVerify';
-import { Notification } from './Notification';
 import { StJwt } from './StJwt';
 import { Validation } from './Validation';
 import { Container } from 'typedi';
+import { NotificationService } from '../services/notification/NotificationService';
 
 export class Payment {
   private _cardinalCommerceCacheToken: string;
-  private _notification: Notification;
+  private _notification: NotificationService;
   private _processPaymentRequestBody: IStRequest;
   private _stTransport: StTransport;
   private _threeDInitRequestBody: IStRequest;
@@ -20,7 +20,7 @@ export class Payment {
   private readonly _walletVerifyRequest: IStRequest;
 
   constructor(jwt: string, gatewayUrl: string, parentOrigin?: string) {
-    this._notification = Container.get(Notification);
+    this._notification = Container.get(NotificationService);
     this._stTransport = new StTransport({ jwt, gatewayUrl }, parentOrigin);
     this._validation = new Validation();
     this._walletVerifyRequest = {
