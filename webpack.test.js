@@ -2,6 +2,7 @@ const merge = require('webpack-merge');
 const common = require('./webpack.common.js');
 const webpack = require('webpack');
 const ManifestPlugin = require('webpack-manifest-plugin');
+const path = require('path');
 
 module.exports = merge(common, {
   mode: 'production',
@@ -20,13 +21,14 @@ module.exports = merge(common, {
   },
   plugins: [
     new ManifestPlugin(),
-    new webpack.NormalModuleReplacementPlugin(
-      /^\.\.\/\.\.\/environments\/environment/,
-      '../../environments/environment.test'
-    ),
-    new webpack.NormalModuleReplacementPlugin(/^\.\/environments\/environment/, './environments/environment.test'),
     new webpack.DefinePlugin({
       WEBSERVICES_URL: JSON.stringify('https://webservices.securetrading.net:8443')
     })
-  ]
+  ],
+  resolve: {
+    alias: {
+      [path.resolve(__dirname, "src/environments/environment")]:
+        path.resolve(__dirname, "src/environments/environment.test.ts")
+    }
+  }
 });
