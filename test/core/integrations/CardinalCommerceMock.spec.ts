@@ -1,7 +1,6 @@
 import { CardinalCommerceMock } from '../../../src/core/integrations/CardinalCommerceMock';
 import { ConfigProvider } from '../../../src/core/config/ConfigProvider';
-import { anyString, mock, when } from 'ts-mockito';
-import { of } from 'rxjs';
+import { instance as mockInstance, mock, when } from 'ts-mockito';
 
 // given
 describe('CardinalCommerce class', () => {
@@ -18,14 +17,14 @@ describe('CardinalCommerce class', () => {
   beforeEach(() => {
     document.body.innerHTML = `<iframe id='st-control-frame-iframe'>
     </iframe><input id='JWTContainer' value="${jwt}" />`;
-    instance = new CardinalCommerceMock(configProvider, false, jwt, 0);
+    instance = new CardinalCommerceMock(mockInstance(configProvider), false, jwt, 0);
   });
 
   // given
   describe('_performBinDetection()', () => {
     // then
     it('should not call cardinal bin process', () => {
-      let { CardinalMock } = CardinalCommerceMockFixture();
+      const { CardinalMock } = CardinalCommerceMockFixture();
       // @ts-ignore
       global.Cardinal = CardinalMock;
       expect(instance._performBinDetection({ value: '411111' })).toBe(true);

@@ -42,9 +42,10 @@ export class CardinalCommerce {
   private _bypassCards: string[];
   private _jwtUpdated: boolean;
   private _framesHub: FramesHub;
-  private _configProvider: ConfigProvider;
+
 
   constructor(
+    private _configProvider: ConfigProvider,
     startOnLoad: boolean,
     jwt: string,
     livestatus?: number,
@@ -122,7 +123,6 @@ export class CardinalCommerce {
     if (this._startOnLoad) {
       const pan = new StJwt(this._jwt).payload.pan as string;
       this._performBinDetection(pan);
-      this._configProvider = Container.get(ConfigProvider);
       this._requestTypes = this._configProvider.getConfig().requestTypes;
       const submitFormEvent: IMessageBusEvent = {
         data: { dataInJwt: true, requestTypes: this._requestTypes, bypassCards: this._bypassCards },
@@ -225,7 +225,6 @@ export class CardinalCommerce {
 
   private _onInit() {
     this._initSubscriptions();
-    this._configProvider = Container.get(ConfigProvider);
     this._requestTypes = this._configProvider.getConfig().requestTypes;
     this._publishRequestTypesEvent(this._requestTypes);
   }
