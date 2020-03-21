@@ -81,7 +81,7 @@
     "postcss-scss": "^2.0.0",
     "prettier": "1.19.1",
     "sass-loader": "^8.0.2",
-    "snyk": "^1.297.4",
+    "snyk": "^1.301.0",
     "source-map-loader": "^0.2.4",
     "style-loader": "^1.1.3",
     "stylelint": "^13.2.0",
