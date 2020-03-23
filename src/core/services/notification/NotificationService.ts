@@ -2,14 +2,10 @@ import { MessageBus } from '../../shared/MessageBus';
 import { Service } from 'typedi';
 import { NotificationType } from '../../models/constants/NotificationType';
 import { ConfigProvider } from '../../config/ConfigProvider';
-import { INotificationEvent } from '../../models/INotificationEvent';
 import { IMessageBusEvent } from '../../models/IMessageBusEvent';
 
 @Service()
 export class NotificationService {
-
-  private _messageBusEvent: IMessageBusEvent;
-  private _notificationEvent: INotificationEvent;
 
   constructor(private _messageBus: MessageBus, private _configProvider: ConfigProvider) {
   }
@@ -47,11 +43,10 @@ export class NotificationService {
   }
 
   private _setNotification(type: string, content: string): void {
-    this._notificationEvent = { content, type };
-    this._messageBusEvent = {
-      data: this._notificationEvent,
+    const messageBusEvent: IMessageBusEvent = {
+      data: { content, type },
       type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
     };
-    this._messageBus.publish(this._messageBusEvent, true);
+    this._messageBus.publish(messageBusEvent, true);
   }
 }
