@@ -12,13 +12,13 @@ import { mock, instance as mockInstance, when, anyString } from 'ts-mockito';
 
 jest.mock('./../../../src/core/shared/MessageBus');
 jest.mock('./../../../src/core/integrations/GoogleAnalytics');
-jest.mock('./../../../src/core/shared/Notification');
+jest.mock('./../../../src/core/services/notification/NotificationService');
 
 // given
 describe('CardinalCommerce', () => {
   let instance: any;
-  let { jwt } = CardinalCommerceFixture();
-  let framesHub: FramesHub = mock(FramesHub);
+  const { jwt } = CardinalCommerceFixture();
+  const framesHub: FramesHub = mock(FramesHub);
 
   // when
   beforeEach(() => {
@@ -71,7 +71,7 @@ describe('CardinalCommerce', () => {
   describe('_performBinDetection()', () => {
     // then
     it('should call cardinal bin process', () => {
-      let { CardinalMock } = CardinalCommerceFixture();
+      const { CardinalMock } = CardinalCommerceFixture();
       // @ts-ignore
       global.Cardinal = CardinalMock;
       instance._performBinDetection({ value: '411111' });
@@ -84,7 +84,7 @@ describe('CardinalCommerce', () => {
   describe('_onCardinalValidated()', () => {
     // then
     it('should authorise if successful', () => {
-      let spyAuthorize: SpyInstance = jest.spyOn(instance, '_authorizePayment');
+      const spyAuthorize: SpyInstance = jest.spyOn(instance, '_authorizePayment');
       instance._onCardinalValidated({ ActionCode: 'SUCCESS', ErrorNumber: '0' }, 'JWT_VALUE');
       expect(spyAuthorize).toHaveBeenCalled();
       expect(spyAuthorize).toHaveBeenCalledWith({ threedresponse: 'JWT_VALUE' });
@@ -92,7 +92,7 @@ describe('CardinalCommerce', () => {
 
     // then
     it('should not authorise if not successful', () => {
-      let spyAuthorize: SpyInstance = jest.spyOn(instance, '_authorizePayment');
+      const spyAuthorize: SpyInstance = jest.spyOn(instance, '_authorizePayment');
       instance._onCardinalValidated({ ActionCode: 'ERROR', ErrorNumber: '30000' }, 'JWT_VALUE');
       expect(spyAuthorize).toHaveBeenCalledTimes(0);
     });
@@ -102,7 +102,7 @@ describe('CardinalCommerce', () => {
   describe('_authenticateCard()', () => {
     // then
     it('should call cardinal continue', () => {
-      let { CardinalMock, jwt } = CardinalCommerceFixture();
+      const { CardinalMock } = CardinalCommerceFixture();
       // @ts-ignore
       global.Cardinal = CardinalMock;
       instance._cardinalCommerceJWT = jwt;
@@ -127,7 +127,7 @@ describe('CardinalCommerce', () => {
   describe('_onCardinalLoad()', () => {
     // then
     it('should call cardinal methods to setup callbacks and setup process', () => {
-      let { CardinalMock, jwt } = CardinalCommerceFixture();
+      const { CardinalMock } = CardinalCommerceFixture();
       // @ts-ignore
       global.Cardinal = CardinalMock;
       instance._cardinalCommerceJWT = jwt;
@@ -157,7 +157,7 @@ describe('CardinalCommerce', () => {
 
     // then
     it('should call _onCardinalSetupComplete in SETUP_COMPLETE event', () => {
-      let { CardinalMock } = CardinalCommerceFixture();
+      const { CardinalMock } = CardinalCommerceFixture();
       instance._onCardinalSetupComplete = jest.fn();
       instance._onCardinalValidated = jest.fn();
       CardinalMock.on = jest.fn((evType, callback) => {
@@ -406,10 +406,10 @@ describe('CardinalCommerce', () => {
     ]).it(
       'should detect if card is enrolled and we did not get a frictionless 3DS 2.0 response',
       async (enrolled, acsurl, expected) => {
-        let response: IThreeDQueryResponse = {
+        const response: IThreeDQueryResponse = {
           acquirertransactionreference: 'tx-ref',
-          acsurl: acsurl,
-          enrolled: enrolled,
+          acsurl,
+          enrolled,
           threedpayload: 'payload',
           transactionreference: '1-2-3'
         };

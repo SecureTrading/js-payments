@@ -226,47 +226,6 @@ describe('CommonFrames', () => {
       expect(instance._onTransactionComplete).toHaveBeenCalled();
     });
   });
-
-  // given
-  describe('_shouldLoadNotificationFrame()', () => {
-    // when
-    const { instance } = commonFramesFixture();
-
-    function shouldLoadNotificationFrameFixture(submitOnError: boolean, submitOnSuccess: boolean) {
-      // @ts-ignore
-      instance._submitOnError = submitOnError;
-      // @ts-ignore
-      instance._submitOnSuccess = submitOnSuccess;
-      // @ts-ignore
-      return !(instance._submitOnError && instance._submitOnSuccess);
-    }
-
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._shouldLoadNotificationFrame();
-    });
-
-    // then
-    it('should return false if both _submitOnError and _submitOnSuccess are true', () => {
-      expect(shouldLoadNotificationFrameFixture(true, true)).toEqual(false);
-    });
-
-    // then
-    it('should return true if both _submitOnError and _submitOnSuccess are false', () => {
-      expect(shouldLoadNotificationFrameFixture(false, false)).toEqual(true);
-    });
-
-    // then
-    it('should return true if _submitOnError is false and _submitOnSuccess is true', () => {
-      expect(shouldLoadNotificationFrameFixture(false, true)).toEqual(true);
-    });
-
-    // then
-    it('should return true if _submitOnError is true and _submitOnSuccess is false', () => {
-      expect(shouldLoadNotificationFrameFixture(true, false)).toEqual(true);
-    });
-  });
 });
 
 function commonFramesFixture() {
