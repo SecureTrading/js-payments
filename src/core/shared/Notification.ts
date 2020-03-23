@@ -1,4 +1,3 @@
-import { NotificationType } from '../models/constants/NotificationType';
 import { INotificationEvent } from '../models/INotificationEvent';
 import { Container, Service } from 'typedi';
 import { Selectors } from './Selectors';
@@ -10,13 +9,21 @@ import { MessageBus } from './MessageBus';
 
 @Service()
 export class Notification extends Frame {
+
+  private set messageMap(value: Map<string, string>) {
+    this._messageMap = value;
+  }
+
+  private get messageMap(): Map<string, string> {
+    return this._messageMap;
+  }
+
   public static NOTIFICATION_CLASSES = {
     error: Selectors.NOTIFICATION_FRAME_ERROR_CLASS,
     info: Selectors.NOTIFICATION_FRAME_INFO_CLASS,
     success: Selectors.NOTIFICATION_FRAME_SUCCESS_CLASS,
     warning: Selectors.NOTIFICATION_FRAME_WARNING_CLASS
   };
-
   public static MESSAGE_TYPES = {
     error: 'ERROR',
     info: 'INFO',
@@ -26,21 +33,14 @@ export class Notification extends Frame {
 
   private static readonly NOTIFICATION_TTL = environment.NOTIFICATION_TTL;
 
-  public static getNotificationContainer = () =>
+  public static getNotificationContainer = (): HTMLElement =>
     document.getElementById(Selectors.NOTIFICATION_FRAME_ID) as HTMLElement;
 
-  public static _getMessageClass(messageType: string) {
-    if (messageType === NotificationType.Error) {
-      return Notification.NOTIFICATION_CLASSES.error;
-    } else if (messageType === NotificationType.Success) {
-      return Notification.NOTIFICATION_CLASSES.success;
-    } else if (messageType === NotificationType.Warning) {
-      return Notification.NOTIFICATION_CLASSES.warning;
-    } else if (messageType === NotificationType.Info) {
-      return Notification.NOTIFICATION_CLASSES.info;
-    } else {
-      return '';
-    }
+  public _getMessageClass(messageType: string): string {
+    console.error(messageType);
+    console.error(typeof messageType);
+    console.error(this.messageMap);
+    return this.messageMap.get(messageType.toLowerCase());
   }
 
 
@@ -53,16 +53,17 @@ export class Notification extends Frame {
   }
 
 
-  public _message: INotificationEvent;
-  public _translator: Translator;
   private _notificationFrameElement: HTMLElement;
+  private _message: INotificationEvent;
+  private _translator: Translator;
+  private _messageMap: Map<string, string>;
 
   constructor(private _messageBus: MessageBus) {
     super();
+    this.messageMap = new Map(Object.entries(Notification.NOTIFICATION_CLASSES));
+    console.error(this.messageMap);
     this.onInit();
     this.notificationFrameElement = Notification.getNotificationContainer();
-    console.error(this.notificationFrameElement);
-    console.error('test');
     Container.get(FramesHub).waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(() => {
       this._translator = new Translator(this.params.locale);
     });
@@ -73,7 +74,7 @@ export class Notification extends Frame {
     });
   }
 
-  protected getAllowedStyles() {
+  protected getAllowedStyles(): {} {
     let allowed = super.getAllowedStyles();
     const notification = `#${Selectors.NOTIFICATION_FRAME_ID}`;
     const error = `.${Notification.NOTIFICATION_CLASSES.error}${notification}`;
@@ -173,7 +174,8 @@ export class Notification extends Frame {
   }
 
   private _setAttributeClass(): void {
-    const notificationElementClass = Notification._getMessageClass(this._message.type);
+    const notificationElementClass = this._getMessageClass(this._message.type);
+    console.error(notificationElementClass);
     if (this.notificationFrameElement && notificationElementClass) {
       this.notificationFrameElement.classList.add(notificationElementClass);
       this._setDataNotificationColorAttribute(this._message.type);
@@ -191,7 +193,6 @@ export class Notification extends Frame {
   }
 
   private _notificationEventCall(data: INotificationEvent): void {
-    console.error(data);
     this._message = data;
     this._insertContent();
     this._setAttributeClass();

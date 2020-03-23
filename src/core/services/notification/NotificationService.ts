@@ -2,44 +2,34 @@ import { MessageBus } from '../../shared/MessageBus';
 import { Service } from 'typedi';
 import { NotificationType } from '../../models/constants/NotificationType';
 import { ConfigProvider } from '../../config/ConfigProvider';
+import { INotificationEvent } from '../../models/INotificationEvent';
+import { IMessageBusEvent } from '../../models/IMessageBusEvent';
 
 @Service()
 export class NotificationService {
-  private _display: boolean;
-  private _displayOnError: boolean;
-  private _displayOnSuccess: boolean;
+
+  private _messageBusEvent: IMessageBusEvent;
+  private _notificationEvent: INotificationEvent;
 
   constructor(private _messageBus: MessageBus, private _configProvider: ConfigProvider) {
   }
 
-  get display(): boolean {
-    return this._display;
+  private get disableNotification(): boolean {
+    return this._configProvider.getConfig().disableNotification;
   }
 
-  set display(value: boolean) {
-    this._display = value;
+  private get submitOnError(): boolean {
+    return this._configProvider.getConfig().submitOnError;
   }
 
-  get displayOnError(): boolean {
-    return this._displayOnError;
-  }
-
-  set displayOnError(value: boolean) {
-    this._displayOnError = value;
-  }
-
-  get displayOnSuccess(): boolean {
-    return this._displayOnSuccess;
-  }
-
-  set displayOnSuccess(value: boolean) {
-    this._displayOnSuccess = value;
+  private get submitOnSuccess(): boolean {
+    return this._configProvider.getConfig().submitOnSuccess;
   }
 
   public error(message: string): void {
-    this.display = this._configProvider.getConfig().notifications;
-    this.displayOnError = this.display && !this._configProvider.getConfig().submitOnError;
-    this._setNotification(NotificationType.Error, message, this.displayOnError);
+    if (!this.disableNotification && !this.submitOnError) {
+      this._setNotification(NotificationType.Error, message);
+    }
   }
 
   public info(message: string): void {
@@ -47,22 +37,21 @@ export class NotificationService {
   }
 
   public success(message: string): void {
-    console.error(message);
-    this.display = this._configProvider.getConfig().notifications;
-    this.displayOnSuccess = this.display && !this._configProvider.getConfig().submitOnSuccess;
-    this._setNotification(NotificationType.Success, message, this.displayOnSuccess);
+    if (!this.disableNotification && !this.submitOnSuccess) {
+      this._setNotification(NotificationType.Success, message);
+    }
   }
 
   public warning(message: string): void {
     this._setNotification(NotificationType.Warning, message);
   }
 
-  private _setNotification(type: string, content: string, display: boolean = true): void {
-    if (!display) {
-      return;
-    }
-    console.error('test');
-    console.error(this._messageBus);
-    this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.NOTIFICATION, data: { type, content }});
+  private _setNotification(type: string, content: string): void {
+    this._notificationEvent = { content, type };
+    this._messageBusEvent = {
+      data: this._notificationEvent,
+      type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
+    };
+    this._messageBus.publish(this._messageBusEvent, true);
   }
 }

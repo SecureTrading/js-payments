@@ -61,12 +61,12 @@ export class ConfigResolver {
       components: this._setComponentsProperties(config),
       datacenterurl: this._getValueOrDefault(config.datacenterurl, environment.GATEWAY_URL),
       deferInit: this._getValueOrDefault(config.deferInit, false),
+      disableNotification: this._getValueOrDefault(config.disableNotification, false),
       fieldsToSubmit: this._getValueOrDefault(config.fieldsToSubmit, [...this.DEFAULT_FIELDS_TO_SUBMIT]),
       formId: this._getValueOrDefault(config.formId, Selectors.MERCHANT_FORM_SELECTOR),
       init: this._getValueOrDefault(config.init, { cachetoken: '', threedinit: '' }),
       jwt: this._getValueOrDefault(config.jwt, ''),
       livestatus: this._getValueOrDefault(config.livestatus, 0),
-      notifications: this._getValueOrDefault(config.notifications, true),
       origin: this._getValueOrDefault(config.origin, window.location.origin),
       panIcon: this._getValueOrDefault(config.panIcon, false),
       placeholders: this._getValueOrDefault(config.placeholders, {
@@ -84,15 +84,11 @@ export class ConfigResolver {
     };
   }
 
-  private _getValueOrDefault(value: any, defaultValue: any) {
-    const valueType = typeof value;
-    if (valueType === 'object' && (Boolean(value.length) || Boolean(Object.keys(value).length))) {
-      return value;
-    } else if (valueType === 'undefined') {
-      return defaultValue;
-    } else {
+  private _getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
+    if (typeof (value) !== 'undefined') {
       return value;
     }
+    return defaultValue;
   }
 
 
