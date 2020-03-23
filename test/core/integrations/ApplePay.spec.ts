@@ -13,7 +13,8 @@ import { DomMethods } from '../../../src/core/shared/DomMethods';
 import { Language } from '../../../src/core/shared/Language';
 
 jest.mock('./../../../src/core/shared/MessageBus');
-jest.mock('../../../src/core/integrations/GoogleAnalytics');
+jest.mock('./../../../src/core/integrations/GoogleAnalytics');
+jest.mock('./../../../src/core/shared/Notification');
 
 // given
 describe('ApplePay', () => {

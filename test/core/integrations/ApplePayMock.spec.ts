@@ -1,6 +1,8 @@
 import { ApplePayMock } from '../../../src/core/integrations/ApplePayMock';
 import { ApplePaySessionMock } from '../../../src/core/integrations/ApplePaySessionMock';
 
+jest.mock('./../../../src/core/shared/Notification');
+
 // given
 describe('Class ApplePayMock', () => {
   // given
