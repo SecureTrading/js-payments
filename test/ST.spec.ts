@@ -21,6 +21,7 @@ jest.mock('./../src/core/integrations/VisaCheckoutMock');
 jest.mock('./../src/core/integrations/ApplePay');
 jest.mock('./../src/core/integrations/ApplePayMock');
 jest.mock('./../src/core/integrations/GoogleAnalytics');
+jest.mock('./../src/core/shared/Notification');
 
 // given
 describe('ST', () => {
@@ -155,6 +156,7 @@ function stFixture() {
     jwt:
       'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU2MDk0NjM4Ny4yNDIzMzQ0LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiNDExMTExMTExMTExMTExMSIsImV4cGlyeWRhdGUiOiIwMS8yMCIsInNlY3VyaXR5Y29kZSI6IjEyMyJ9fQ.UssdRcocpaeAqd-jDXpxWeWiKIX-W7zlpy0UWrDE5vg', // Can't use property shorthand because it isn't supported by IE
     livestatus: 0,
+    disableNotification: false,
     origin: 'https://someorigin.com',
     styles: {
       cardNumber: {
@@ -194,6 +196,7 @@ function stFixture() {
       cachetoken:
         'eyJkYXRhY2VudGVydXJsIjogbnVsbCwgImNhY2hldG9rZW4iOiAiNDItZjNhOGM0OTRhY2RjNjYwNzI5NzhjNjQ4ODhlZjkyOThkMThhYTVkNGQzNTA2MGZlNDM2YWY3YzVjMjU0NWEzZCJ9'
     },
+    disableNotification: false,
     livestatus: 0,
     origin: 'https://someorigin.com',
     styles: config.styles,

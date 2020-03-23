@@ -1,5 +1,7 @@
 import { CardinalCommerceMock } from '../../../src/core/integrations/CardinalCommerceMock';
 
+jest.mock('./../../../src/core/shared/Notification');
+
 // given
 describe('CardinalCommerce class', () => {
   let instance: any;

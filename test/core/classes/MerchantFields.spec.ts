@@ -1,5 +1,7 @@
 import { MerchantFields } from '../../../src/core/classes/MerchantFields';
 
+jest.mock('./../../../src/core/shared/Notification');
+
 // given
 describe('MerchantField', () => {
   // given

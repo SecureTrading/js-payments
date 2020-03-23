@@ -386,6 +386,7 @@ function cardNumberFixture() {
   configProvider = mock(ConfigProvider);
   when(configProvider.getConfig()).thenReturn({
     jwt: '',
+    disableNotification: false,
     placeholders: { pan: 'Card number', expirydate: 'MM/YY', securitycode: '***' }
   });
   const cardNumberInstance: CardNumber = new CardNumber(instance(configProvider), instance(iconFactory));

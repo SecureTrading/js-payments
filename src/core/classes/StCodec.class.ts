@@ -200,6 +200,7 @@ class StCodec {
 
   constructor(jwt: string, parentOrigin?: string) {
     this._requestId = StCodec._createRequestId();
+    StCodec._notification = Container.get(Notification);
     StCodec.jwt = jwt;
     StCodec.originalJwt = jwt;
     StCodec._locale = new StJwt(StCodec.jwt).locale;

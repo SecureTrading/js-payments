@@ -8,6 +8,8 @@ const customGlobal: GlobalWithFetchMock = global as GlobalWithFetchMock;
 customGlobal.fetch = require('jest-fetch-mock');
 customGlobal.fetchMock = customGlobal.fetch;
 
+jest.mock('./../../../src/core/shared/Notification');
+
 // given
 describe('StTransport class', () => {
   const DEFAULT_PARAMS = {

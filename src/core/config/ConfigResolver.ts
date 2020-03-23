@@ -52,71 +52,69 @@ export class ConfigResolver {
   public resolve(config: IConfig): IConfig {
     this.validate(config, ConfigSchema);
     return {
-      analytics: config.analytics !== undefined ? config.analytics : false,
-      animatedCard: config.animatedCard !== undefined ? config.animatedCard : false,
+      analytics: this._getValueOrDefault(config.analytics, false),
+      animatedCard: this._getValueOrDefault(config.animatedCard, false),
       applePay: this._setApmConfig(config.applePay, config.components),
-      buttonId: config.buttonId !== undefined ? config.buttonId : '',
-      bypassCards: config.bypassCards !== undefined ? config.bypassCards : [],
+      buttonId: this._getValueOrDefault(config.buttonId, ''),
+      bypassCards: this._getValueOrDefault(config.bypassCards, []),
       componentIds: this._componentIds(config.componentIds),
       components: this._setComponentsProperties(config),
-      datacenterurl: config.datacenterurl !== undefined ? config.datacenterurl : environment.GATEWAY_URL,
-      deferInit: config.deferInit !== undefined ? config.deferInit : false,
-      formId: config.formId !== undefined ? config.formId : Selectors.MERCHANT_FORM_SELECTOR,
-      init: config.init !== undefined ? config.init : { cachetoken: '', threedinit: '' },
-      jwt: config.jwt !== undefined ? config.jwt : '',
-      livestatus: config.livestatus !== undefined ? config.livestatus : 0,
-      origin: config.origin !== undefined ? config.origin : window.location.origin,
-      panIcon: config.panIcon !== undefined ? config.panIcon : false,
-      placeholders: config.placeholders || { pan: '', expirydate: '', securitycode: '' },
-      styles: config.styles ? config.styles : {},
-      submitCallback: config.submitCallback !== undefined ? config.submitCallback : null,
-      submitFields: config.submitFields !== undefined ? config.submitFields : [],
-      submitOnError: config.submitOnError !== undefined ? config.submitOnError : false,
-      submitOnSuccess: config.submitOnSuccess !== undefined ? config.submitOnSuccess : true,
-      translations: config.translations ? config.translations : {},
-      visaCheckout: this._setApmConfig(config.visaCheckout, config.components),
-      ...this._setFieldsToSubmit(config),
-      ...this._setPropertiesToSubmit(config)
+      datacenterurl: this._getValueOrDefault(config.datacenterurl, environment.GATEWAY_URL),
+      deferInit: this._getValueOrDefault(config.deferInit, false),
+      disableNotification: this._getValueOrDefault(config.disableNotification, false),
+      fieldsToSubmit: this._getValueOrDefault(config.fieldsToSubmit, [...this.DEFAULT_FIELDS_TO_SUBMIT]),
+      formId: this._getValueOrDefault(config.formId, Selectors.MERCHANT_FORM_SELECTOR),
+      init: this._getValueOrDefault(config.init, { cachetoken: '', threedinit: '' }),
+      jwt: this._getValueOrDefault(config.jwt, ''),
+      livestatus: this._getValueOrDefault(config.livestatus, 0),
+      origin: this._getValueOrDefault(config.origin, window.location.origin),
+      panIcon: this._getValueOrDefault(config.panIcon, false),
+      placeholders: this._getValueOrDefault(config.placeholders, {
+        pan: '',
+        expirydate: '',
+        securitycode: ''
+      }),
+      styles: this._getValueOrDefault(config.styles, {}),
+      submitCallback: this._getValueOrDefault(config.submitCallback, null),
+      submitFields: this._getValueOrDefault(config.submitFields, this.DEFAULT_SUBMIT_PROPERTIES),
+      submitOnError: this._getValueOrDefault(config.submitOnError, false),
+      submitOnSuccess: this._getValueOrDefault(config.submitOnSuccess, true),
+      translations: this._getValueOrDefault(config.translations, {}),
+      visaCheckout: this._setApmConfig(config.visaCheckout, config.components)
     };
   }
+
+  private _getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
+    if (typeof (value) !== 'undefined') {
+      return value;
+    }
+    return defaultValue;
+  }
+
 
   private _componentIds(config: IComponentsIds): IComponentsIds {
     if (!config) {
       return { ...this.DEFAULT_COMPONENTS_IDS };
     }
-
-    const optionalIds = config.animatedCard !== undefined ? { animatedCard: config.animatedCard } : {};
-    const requiredIds = {
-      cardNumber: config.cardNumber !== undefined ? config.cardNumber : this.DEFAULT_COMPONENTS_IDS.cardNumber,
-      expirationDate:
-        config.expirationDate !== undefined ? config.expirationDate : this.DEFAULT_COMPONENTS_IDS.expirationDate,
-      notificationFrame:
-        config.notificationFrame !== undefined
-          ? config.notificationFrame
-          : this.DEFAULT_COMPONENTS_IDS.notificationFrame,
-      securityCode: config.securityCode !== undefined ? config.securityCode : this.DEFAULT_COMPONENTS_IDS.securityCode
+    const optionalIds = {
+      animatedCard: this._getValueOrDefault(config.animatedCard, this.DEFAULT_COMPONENTS_IDS.animatedCard)
     };
-
+    const requiredIds = {
+      cardNumber: this._getValueOrDefault(config.cardNumber, this.DEFAULT_COMPONENTS_IDS.cardNumber),
+      expirationDate: this._getValueOrDefault(config.expirationDate, this.DEFAULT_COMPONENTS_IDS.expirationDate),
+      notificationFrame: this._getValueOrDefault(config.notificationFrame,
+        this.DEFAULT_COMPONENTS_IDS.notificationFrame),
+      securityCode: this._getValueOrDefault(config.securityCode, this.DEFAULT_COMPONENTS_IDS.securityCode)
+    };
     return {
       ...optionalIds,
       ...requiredIds
     };
   }
 
-  private _setFieldsToSubmit(config: IConfig): { fieldsToSubmit: string[] } {
-    return {
-      fieldsToSubmit: config.fieldsToSubmit ? config.fieldsToSubmit : [...this.DEFAULT_FIELDS_TO_SUBMIT]
-    };
-  }
-
-  private _setPropertiesToSubmit(config: IConfig): { submitFields: string[] } {
-    return {
-      submitFields: config.submitFields !== undefined ? config.submitFields : this.DEFAULT_SUBMIT_PROPERTIES
-    };
-  }
-
   private _setComponentsProperties(config: IConfig): IComponentsConfig {
-    if (!config.components) {
+    const { components } = config;
+    if (!components) {
       return {
         defaultPaymentType: '',
         paymentTypes: [''],
@@ -126,14 +124,10 @@ export class ConfigResolver {
     }
 
     return {
-      defaultPaymentType:
-        config.components.defaultPaymentType !== undefined ? config.components.defaultPaymentType : '',
-      paymentTypes: config.components.paymentTypes !== undefined ? config.components.paymentTypes : [''],
-      requestTypes:
-        config.components.requestTypes !== undefined
-          ? config.components.requestTypes
-          : [...this.DEFAULT_COMPONENTS_REQUEST_TYPES],
-      startOnLoad: config.components.startOnLoad !== undefined ? config.components.startOnLoad : false
+      defaultPaymentType: this._getValueOrDefault(components.defaultPaymentType, ''),
+      paymentTypes: this._getValueOrDefault(components.paymentTypes, ['']),
+      requestTypes: this._getValueOrDefault(components.requestTypes, [...this.DEFAULT_COMPONENTS_REQUEST_TYPES]),
+      startOnLoad: this._getValueOrDefault(components.startOnLoad, false)
     };
   }
 
@@ -144,9 +138,7 @@ export class ConfigResolver {
     return {
       ...apm,
       requestTypes:
-        components && components.requestTypes !== undefined
-          ? components.requestTypes
-          : [...this.DEFAULT_APMS_REQUEST_TYPES]
+        components && this._getValueOrDefault(components.requestTypes, [...this.DEFAULT_APMS_REQUEST_TYPES])
     };
   }
 }

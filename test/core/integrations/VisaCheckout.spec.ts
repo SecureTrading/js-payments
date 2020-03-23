@@ -1,6 +1,7 @@
 import { VisaCheckout } from '../../../src/core/integrations/VisaCheckout';
 
 jest.mock('../../../src/core/integrations/GoogleAnalytics');
+jest.mock('../../../src/core/shared/Notification');
 
 // given
 describe('Visa Checkout', () => {
