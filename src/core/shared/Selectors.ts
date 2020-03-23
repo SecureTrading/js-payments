@@ -24,6 +24,7 @@ export class Selectors {
 
   public static readonly NOTIFICATION_FRAME_IFRAME: string = 'st-notification-frame-iframe';
   public static readonly NOTIFICATION_FRAME_ID: string = 'st-notification-frame';
+  public static readonly NOTIFICATION_FRAME_CORE_CLASS: string = 'notification-frame';
   public static readonly NOTIFICATION_FRAME_ERROR_CLASS: string = 'notification-frame--error';
   public static readonly NOTIFICATION_FRAME_INFO_CLASS: string = 'notification-frame--info';
   public static readonly NOTIFICATION_FRAME_SUCCESS_CLASS: string = 'notification-frame--success';

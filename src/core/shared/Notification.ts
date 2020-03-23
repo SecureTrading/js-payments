@@ -37,9 +37,6 @@ export class Notification extends Frame {
     document.getElementById(Selectors.NOTIFICATION_FRAME_ID) as HTMLElement;
 
   public _getMessageClass(messageType: string): string {
-    console.error(messageType);
-    console.error(typeof messageType);
-    console.error(this.messageMap);
     return this.messageMap.get(messageType.toLowerCase());
   }
 
@@ -61,7 +58,6 @@ export class Notification extends Frame {
   constructor(private _messageBus: MessageBus) {
     super();
     this.messageMap = new Map(Object.entries(Notification.NOTIFICATION_CLASSES));
-    console.error(this.messageMap);
     this.onInit();
     this.notificationFrameElement = Notification.getNotificationContainer();
     Container.get(FramesHub).waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(() => {
@@ -69,7 +65,6 @@ export class Notification extends Frame {
     });
 
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, (event: INotificationEvent) => {
-      console.error(event);
       this._notificationEventCall(event);
     });
   }
@@ -175,7 +170,7 @@ export class Notification extends Frame {
 
   private _setAttributeClass(): void {
     const notificationElementClass = this._getMessageClass(this._message.type);
-    console.error(notificationElementClass);
+    this.notificationFrameElement.classList.add(Selectors.NOTIFICATION_FRAME_CORE_CLASS);
     if (this.notificationFrameElement && notificationElementClass) {
       this.notificationFrameElement.classList.add(notificationElementClass);
       this._setDataNotificationColorAttribute(this._message.type);
