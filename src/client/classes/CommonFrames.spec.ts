@@ -2,6 +2,8 @@ import { CommonFrames } from './CommonFrames.class';
 import { MessageBus } from '../../application/core/shared/MessageBus';
 import { Selectors } from '../../application/core/shared/Selectors';
 
+jest.mock('./../../../src/application/core/shared/Notification');
+
 // given
 describe('CommonFrames', () => {
   // given

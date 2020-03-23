@@ -68,6 +68,7 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
     .default({}),
   datacenterurl: Joi.string(),
   deferInit: Joi.boolean(),
+  disableNotification: Joi.boolean().default(false),
   fieldsToSubmit: Joi.array().items(Joi.string().valid('pan', 'expirydate', 'securitycode')),
   formId: Joi.string(),
   init: {

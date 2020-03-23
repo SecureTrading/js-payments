@@ -12,6 +12,7 @@ import { mock, instance as mockInstance, when, anyString } from 'ts-mockito';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
 jest.mock('../../../../src/application/core/integrations/GoogleAnalytics');
+jest.mock('../../../../src/application/core/shared/Notification');
 
 // given
 describe('CardinalCommerce', () => {

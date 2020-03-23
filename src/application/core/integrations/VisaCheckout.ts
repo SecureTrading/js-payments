@@ -92,7 +92,7 @@ export class VisaCheckout {
 
   constructor(config: IWalletConfig, jwt: string, gatewayUrl: string, livestatus?: number) {
     this._messageBus = Container.get(MessageBus);
-    this._notification = new Notification();
+    this._notification = Container.get(Notification);
     config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
     this._stJwt = new StJwt(jwt);
     this._livestatus = livestatus;

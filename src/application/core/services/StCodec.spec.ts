@@ -4,7 +4,9 @@ import { Language } from '../shared/Language';
 import { StCodec } from './StCodec.class';
 import { MessageBus } from '../shared/MessageBus';
 import { Translator } from '../shared/Translator';
+
 jest.mock('../../../../src/application/core/shared/MessageBus');
+jest.mock('../../../../src/application/core/shared/Notification');
 
 // given
 describe('StCodec class', () => {
@@ -12,6 +14,7 @@ describe('StCodec class', () => {
   const ridRegex = 'J-[\\da-z]{8}';
   const requestid = expect.stringMatching(new RegExp('^' + ridRegex + '$'));
   let str: StCodec;
+
   // @ts-ignore
   StCodec.getNotification().error = jest.fn();
   const fullResponse = {
@@ -111,7 +114,7 @@ describe('StCodec class', () => {
       // @ts-ignore
       StCodec.publishResponse({
         errorcode: '0',
-        errormessage: 'Ok'
+        errormessage: 'Payment has been successfully processed'
       });
       // @ts-ignore
       expect(translator.translate()).toEqual('Ok');
@@ -120,7 +123,7 @@ describe('StCodec class', () => {
         {
           data: {
             errorcode: '0',
-            errormessage: 'Ok'
+            errormessage: 'Payment has been successfully processed'
           },
           type: 'TRANSACTION_COMPLETE'
         },
@@ -143,7 +146,7 @@ describe('StCodec class', () => {
       expect(StCodec.getMessageBus().publish).toHaveBeenCalledWith({
         data: {
           errorcode: '0',
-          errormessage: 'Ok'
+          errormessage: 'Payment has been successfully processed'
         },
         type: 'TRANSACTION_COMPLETE'
       });
@@ -555,5 +558,6 @@ function stCodecFixture() {
   const jwt =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
   const instance = StCodec;
-  return { instance, jwt };
+  const obj: StCodec = new StCodec(jwt);
+  return { instance, jwt, obj };
 }
