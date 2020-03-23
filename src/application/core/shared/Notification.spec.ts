@@ -1,22 +1,24 @@
 import { Notification } from './Notification';
 import { MessageBus } from './MessageBus';
+import { instance, mock, when } from 'ts-mockito';
+import { ConfigProvider } from '../../../../src/application/core/services/ConfigProvider';
 
 // given
 describe('Notification', () => {
-  const { instance } = notificationFixture();
+  const { notificationInstance } = notificationFixture();
   // when
   beforeEach(() => {
     // @ts-ignore
-    instance._messageBus.publish = jest.fn();
+    notificationInstance._messageBus.publish = jest.fn();
   });
 
   // given
   describe('error()', () => {
     // then
     it('should send error notification', () => {
-      instance.error('abc');
+      notificationInstance.error('abc');
       // @ts-ignore
-      expect(instance._messageBus.publish).toHaveBeenCalledWith({
+      expect(notificationInstance._messageBus.publish).toHaveBeenCalledWith({
         data: {
           content: 'abc',
           type: 'ERROR'
@@ -30,9 +32,9 @@ describe('Notification', () => {
   describe('info()', () => {
     // then
     it('should send info notification', () => {
-      instance.info('abc');
+      notificationInstance.info('abc');
       // @ts-ignore
-      expect(instance._messageBus.publish).toHaveBeenCalledWith({
+      expect(notificationInstance._messageBus.publish).toHaveBeenCalledWith({
         data: {
           content: 'abc',
           type: 'INFO'
@@ -46,9 +48,9 @@ describe('Notification', () => {
   describe('success()', () => {
     // then
     it('should send info success', () => {
-      instance.success('abc');
+      notificationInstance.success('abc');
       // @ts-ignore
-      expect(instance._messageBus.publish).toHaveBeenCalledWith({
+      expect(notificationInstance._messageBus.publish).toHaveBeenCalledWith({
         data: {
           content: 'abc',
           type: 'SUCCESS'
@@ -62,9 +64,9 @@ describe('Notification', () => {
   describe('warning()', () => {
     // then
     it('should send info warning', () => {
-      instance.warning('abc');
+      notificationInstance.warning('abc');
       // @ts-ignore
-      expect(instance._messageBus.publish).toHaveBeenCalledWith({
+      expect(notificationInstance._messageBus.publish).toHaveBeenCalledWith({
         data: {
           content: 'abc',
           type: 'WARNING'
@@ -76,6 +78,16 @@ describe('Notification', () => {
 });
 
 function notificationFixture() {
-  const instance: Notification = new Notification();
-  return { instance };
+  let configProvider: ConfigProvider;
+  let messageBus: MessageBus;
+  configProvider = mock(ConfigProvider);
+  messageBus = mock(MessageBus);
+  when(configProvider.getConfig()).thenReturn({
+    jwt: '',
+    disableNotification: false,
+    submitOnSuccess: false,
+    submitOnError: false
+  });
+  const notificationInstance: Notification = new Notification(instance(configProvider), instance(messageBus));
+  return { notificationInstance };
 }

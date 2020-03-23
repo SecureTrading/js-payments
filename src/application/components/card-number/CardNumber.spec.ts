@@ -6,9 +6,9 @@ import { FormField } from '../../core/shared/FormField';
 import { Utils } from '../../core/shared/Utils';
 import { Validation } from '../../core/shared/Validation';
 import { MessageBus } from '../../core/shared/MessageBus';
-import { ConfigProvider } from '../../core/services/ConfigProvider';
 import { instance, mock, when } from 'ts-mockito';
 import { IconFactory } from '../../core/services/icon/IconFactory';
+import { ConfigProvider } from '../../core/services/ConfigProvider';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
 jest.mock('../../../../src/application/core/shared/Validation');
@@ -386,6 +386,7 @@ function cardNumberFixture() {
   configProvider = mock(ConfigProvider);
   when(configProvider.getConfig()).thenReturn({
     jwt: '',
+    disableNotification: false,
     placeholders: { pan: 'Card number', expirydate: 'MM/YY', securitycode: '***' }
   });
   const cardNumberInstance: CardNumber = new CardNumber(instance(configProvider), instance(iconFactory));

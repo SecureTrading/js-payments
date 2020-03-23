@@ -1,5 +1,7 @@
 import { VisaCheckoutMock } from './VisaCheckoutMock';
 
+jest.mock('../../../../src/application/core/shared/Notification');
+
 // given
 describe('Visa Checkout Mock class', () => {
   let body: object;

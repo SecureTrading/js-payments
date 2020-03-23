@@ -2,6 +2,9 @@ import { Payment } from './Payment';
 import { StTransport } from '../services/StTransport.class';
 import { StJwt } from './StJwt';
 
+
+jest.mock('../../../../src/application/core/shared/Notification');
+
 // given
 describe('Payment', () => {
   let { card, wallet, walletverify, instance } = paymentFixture();

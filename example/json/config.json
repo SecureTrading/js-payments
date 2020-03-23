@@ -11,6 +11,7 @@
     "expirydate": "MM/YY",
     "securitycode": "***"
   },
+  "disableNotification": false,
   "panIcon": true,
   "styles": {
     "defaultStyles": {
@@ -36,6 +37,7 @@
     }
   },
   "submitOnSuccess": false,
+  "submitOnError": false,
   "submitCallback": "",
   "translations": {
     "An error occurred": "Wystąpił błąd"

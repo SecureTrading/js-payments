@@ -6,6 +6,8 @@ import { Language } from '../../application/core/shared/Language';
 import { MessageBus } from '../../application/core/shared/MessageBus';
 import { Selectors } from '../../application/core/shared/Selectors';
 
+jest.mock('./../../../src/application/core/shared/Notification');
+
 // given
 describe('CardFrames', () => {
   // given

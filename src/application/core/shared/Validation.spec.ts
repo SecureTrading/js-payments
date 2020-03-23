@@ -6,6 +6,7 @@ import { MessageBus } from './MessageBus';
 import { Validation } from './Validation';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
+jest.mock('../../../../src/application/core/shared/Notification');
 
 describe('Validation', () => {
   // given
