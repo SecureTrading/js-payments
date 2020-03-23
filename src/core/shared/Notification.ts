@@ -1,9 +1,11 @@
 import { INotificationEvent } from '../models/INotificationEvent';
-import { Service } from 'typedi';
+import { Container, Service } from 'typedi';
 import { Selectors } from './Selectors';
 import { environment } from '../../environments/environment';
 import { Translator } from './Translator';
 import { MessageBus } from './MessageBus';
+import { FramesHub } from '../services/message-bus/FramesHub';
+import { BrowserLocalStorage } from '../services/storage/BrowserLocalStorage';
 
 @Service()
 export class Notification {
@@ -42,12 +44,16 @@ export class Notification {
   private _messageMap: Map<string, string>;
   private readonly _notificationFrameElement: HTMLElement;
 
-  constructor(private _messageBus: MessageBus) {
+  constructor(private _messageBus: MessageBus, private _browserLocalStorage: BrowserLocalStorage) {
     this.messageMap = new Map(Object.entries(Notification.NOTIFICATION_CLASSES));
     this._notificationFrameElement = Notification.getNotificationContainer();
 
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, (event: INotificationEvent) => {
       this._displayNotification(event);
+    });
+
+    Container.get(FramesHub).waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(() => {
+      this._translator = new Translator(this._browserLocalStorage.getItem('locale'));
     });
   }
 
@@ -90,7 +96,7 @@ export class Notification {
   }
 
   private _displayNotification(data: INotificationEvent): void {
-    if (this._notificationFrameElement) {
+    if (!this._notificationFrameElement) {
       return;
     }
     this._insertContent(data);
