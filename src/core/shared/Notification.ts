@@ -13,14 +13,6 @@ import { ConfigProvider } from '../config/ConfigProvider';
 @Service()
 export class Notification {
 
-  private set messageMap(value: Map<string, string>) {
-    this._messageMap = value;
-  }
-
-  private get messageMap(): Map<string, string> {
-    return this._messageMap;
-  }
-
   public static NOTIFICATION_CLASSES = {
     error: Selectors.NOTIFICATION_FRAME_ERROR_CLASS,
     info: Selectors.NOTIFICATION_FRAME_INFO_CLASS,
@@ -40,7 +32,7 @@ export class Notification {
     document.getElementById(Selectors.NOTIFICATION_FRAME_ID) as HTMLElement;
 
   public _getMessageClass(messageType: string): string {
-    return this.messageMap.get(messageType.toLowerCase());
+    return this._messageMap.get(messageType.toLowerCase());
   }
 
   private _translator: Translator;
@@ -50,7 +42,7 @@ export class Notification {
   constructor(private _messageBus: MessageBus,
               private _browserLocalStorage: BrowserLocalStorage,
               private _configProvider: ConfigProvider) {
-    this.messageMap = new Map(Object.entries(Notification.NOTIFICATION_CLASSES));
+    this._messageMap = new Map(Object.entries(Notification.NOTIFICATION_CLASSES));
     this._notificationFrameElement = Notification.getNotificationContainer();
 
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, (event: INotificationEvent) => {
@@ -63,7 +55,7 @@ export class Notification {
     this.applyStyles();
   }
 
-  private applyStyles() {
+  private applyStyles(): void {
     // @ts-ignore
     new Styler(this.getAllowedStyles()).inject(this._configProvider.getConfig().styles.notificationFrame);
   }
@@ -157,16 +149,21 @@ export class Notification {
   }
 
   private _setDataNotificationColorAttribute(messageType: string): void {
-    if (messageType === Notification.MESSAGE_TYPES.error) {
-      this._notificationFrameElement.setAttribute('data-notification-color', 'red');
-    } else if (messageType === Notification.MESSAGE_TYPES.info) {
-      this._notificationFrameElement.setAttribute('data-notification-color', 'grey');
-    } else if (messageType === Notification.MESSAGE_TYPES.success) {
-      this._notificationFrameElement.setAttribute('data-notification-color', 'green');
-    } else if (messageType === Notification.MESSAGE_TYPES.warning) {
-      this._notificationFrameElement.setAttribute('data-notification-color', 'yellow');
-    } else {
-      this._notificationFrameElement.setAttribute('data-notification-color', 'undefined');
+    switch (messageType) {
+      case Notification.MESSAGE_TYPES.error:
+        this._notificationFrameElement.setAttribute('data-notification-color', 'red');
+        break;
+      case Notification.MESSAGE_TYPES.info:
+        this._notificationFrameElement.setAttribute('data-notification-color', 'grey');
+        break;
+      case Notification.MESSAGE_TYPES.success:
+        this._notificationFrameElement.setAttribute('data-notification-color', 'green');
+        break;
+      case Notification.MESSAGE_TYPES.warning:
+        this._notificationFrameElement.setAttribute('data-notification-color', 'yellow');
+        break;
+      default:
+        this._notificationFrameElement.setAttribute('data-notification-color', 'undefined');
     }
   }
 

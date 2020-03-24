@@ -57,7 +57,6 @@ export class Styler {
       }
       grouped[allowed.selector][allowed.property] = styles[style];
     }
-    console.error(grouped);
     return grouped;
   }
 
