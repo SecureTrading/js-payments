@@ -5,12 +5,12 @@ import { IResponseData } from '../models/IResponseData';
 import { IStRequest } from '../models/IStRequest';
 import { Language } from '../shared/Language';
 import { MessageBus } from '../shared/MessageBus';
-import { Notification } from '../shared/Notification';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
 import { Validation } from '../shared/Validation';
 import { version } from '../../../package.json';
 import { Container } from 'typedi';
+import { NotificationService } from '../services/notification/NotificationService';
 
 class StCodec {
   public static CONTENT_TYPE = 'application/json';
@@ -104,7 +104,7 @@ class StCodec {
     StCodec.getMessageBus().publish(messageBusEvent, true);
   }
 
-  private static _notification: Notification;
+  private static _notification: NotificationService;
   private static _messageBus: MessageBus;
   private static _locale: string;
   private static _parentOrigin: string;
@@ -124,8 +124,8 @@ class StCodec {
     return StCodec._messageBus || (StCodec._messageBus = Container.get(MessageBus));
   }
 
-  private static getNotification(): Notification {
-    return StCodec._notification || (StCodec._notification = Container.get(Notification));
+  private static getNotification(): NotificationService {
+    return StCodec._notification || (StCodec._notification = Container.get(NotificationService));
   }
 
   private static _createCommunicationError() {
@@ -200,7 +200,7 @@ class StCodec {
 
   constructor(jwt: string, parentOrigin?: string) {
     this._requestId = StCodec._createRequestId();
-    StCodec._notification = Container.get(Notification);
+    StCodec._notification = Container.get(NotificationService);
     StCodec.jwt = jwt;
     StCodec.originalJwt = jwt;
     StCodec._locale = new StJwt(StCodec.jwt).locale;

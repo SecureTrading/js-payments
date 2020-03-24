@@ -16,7 +16,6 @@ import { ISubmitData } from '../../core/models/ISubmitData';
 import { Frame } from '../../core/shared/Frame';
 import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
-import { Notification } from '../../core/shared/Notification';
 import { Payment } from '../../core/shared/Payment';
 import { Validation } from '../../core/shared/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
@@ -27,6 +26,7 @@ import { InterFrameCommunicator } from '../../core/services/message-bus/InterFra
 import { ConfigProvider } from '../../core/config/ConfigProvider';
 import { interval } from 'rxjs';
 import { filter, mapTo } from 'rxjs/operators';
+import { NotificationService } from '../../core/services/notification/NotificationService';
 
 @Service()
 export class ControlFrame extends Frame {
@@ -79,7 +79,7 @@ export class ControlFrame extends Frame {
     private _sessionStorage: BrowserSessionStorage,
     private _communicator: InterFrameCommunicator,
     private _configProvider: ConfigProvider,
-    private _notification: Notification
+    private _notification: NotificationService
   ) {
     super();
     this.onInit();

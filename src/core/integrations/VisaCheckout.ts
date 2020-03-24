@@ -5,11 +5,11 @@ import { IWalletConfig } from '../config/model/IWalletConfig';
 import { DomMethods } from '../shared/DomMethods';
 import { Language } from '../shared/Language';
 import { MessageBus } from '../shared/MessageBus';
-import { Notification } from '../shared/Notification';
 import { Payment } from '../shared/Payment';
 import { StJwt } from '../shared/StJwt';
 import { GoogleAnalytics } from './GoogleAnalytics';
 import { Container } from 'typedi';
+import { NotificationService } from '../services/notification/NotificationService';
 
 declare const V: any;
 
@@ -75,7 +75,7 @@ export class VisaCheckout {
   private _responseMessage: string;
   private _sdkAddress: string = environment.VISA_CHECKOUT_URLS.TEST_SDK;
   private _walletSource: string = 'VISACHECKOUT';
-  private _notification: Notification;
+  private _notification: NotificationService;
   private _stJwt: StJwt;
   private _livestatus: number = 0;
   private _placement: string = 'body';
@@ -92,7 +92,7 @@ export class VisaCheckout {
 
   constructor(config: IWalletConfig, jwt: string, gatewayUrl: string, livestatus?: number) {
     this._messageBus = Container.get(MessageBus);
-    this._notification = Container.get(Notification);
+    this._notification = Container.get(NotificationService);
     config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
     this._stJwt = new StJwt(jwt);
     this._livestatus = livestatus;

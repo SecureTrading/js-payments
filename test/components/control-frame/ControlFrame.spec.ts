@@ -8,10 +8,9 @@ import { BrowserSessionStorage } from '../../../src/core/services/storage/Browse
 import { InterFrameCommunicator } from '../../../src/core/services/message-bus/InterFrameCommunicator';
 import { ConfigProvider } from '../../../src/core/config/ConfigProvider';
 import { mock, instance as mockInstance, when, anyString } from 'ts-mockito';
-import { Notification } from '../../../src/core/shared/Notification';
+import { NotificationService } from '../../../src/core/services/notification/NotificationService';
 
 jest.mock('./../../../src/core/shared/Payment');
-jest.mock('./../../../src/core/shared/Notification');
 
 // given
 describe('ControlFrame', () => {
@@ -605,7 +604,7 @@ function controlFrameFixture() {
   const sessionStorage: BrowserSessionStorage = mock(BrowserSessionStorage);
   const communicator: InterFrameCommunicator = mock(InterFrameCommunicator);
   const configProvider: ConfigProvider = mock(ConfigProvider);
-  const notification: Notification = mock(Notification);
+  const notification: NotificationService = mock(NotificationService);
 
   when(communicator.whenReceive(anyString())).thenReturn({
     thenRespond: (() => undefined),
