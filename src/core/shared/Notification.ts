@@ -57,8 +57,8 @@ export class Notification {
     });
   }
 
-  private _insertContent(data: INotificationEvent): void {
-    this._notificationFrameElement.textContent = this._translator.translate(data.content);
+  private _insertContent(content: string): void {
+    this._notificationFrameElement.textContent = this._translator.translate(content);
   }
 
   private _setDataNotificationColorAttribute(messageType: string): void {
@@ -75,8 +75,7 @@ export class Notification {
     }
   }
 
-  private _setAttributeClass(data: INotificationEvent): void {
-    const { type } = data;
+  private _setAttributeClass(type: string): void {
     const notificationElementClass = this._getMessageClass(type);
     this._notificationFrameElement.classList.add(Selectors.NOTIFICATION_FRAME_CORE_CLASS);
     if (notificationElementClass) {
@@ -91,15 +90,18 @@ export class Notification {
   private _autoHide(notificationElementClass: string): void {
     const timeoutId = window.setTimeout(() => {
       this._notificationFrameElement.classList.remove(notificationElementClass);
+      this._notificationFrameElement.classList.remove(Selectors.NOTIFICATION_FRAME_CORE_CLASS);
+      this._insertContent('');
       window.clearTimeout(timeoutId);
     }, Notification.NOTIFICATION_TTL);
   }
 
   private _displayNotification(data: INotificationEvent): void {
+    const { content, type } = data;
     if (!this._notificationFrameElement) {
       return;
     }
-    this._insertContent(data);
-    this._setAttributeClass(data);
+    this._insertContent(content);
+    this._setAttributeClass(type);
   }
 }
