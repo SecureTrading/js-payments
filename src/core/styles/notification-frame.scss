@@ -1,10 +1,6 @@
 @import 'variables';
 @import 'placeholders';
 
-body {
-  @extend %frame-body;
-}
-
 @mixin messageType($bgColor, $borderColor, $color) {
   background-color: $bgColor;
   border-color: $borderColor;
