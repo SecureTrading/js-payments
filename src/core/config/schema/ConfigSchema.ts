@@ -42,7 +42,7 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
     },
     placement: Joi.string()
   },
-  buttonId: Joi.string(),
+  buttonId: Joi.string().allow(''),
   bypassCards: Joi.array().items(
     Joi.string().valid('AMEX', 'ASTROPAYCARD', 'DINERS', 'DISCOVER', 'JCB', 'MASTERCARD', 'MAESTRO', 'PIBA', 'VISA')
   ),
