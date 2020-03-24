@@ -30,7 +30,7 @@
       "line-height-input": "1.6rem"
     },
     "notificationFrame": {
-      "color-error": "#FFF333"
+      "color-error": "AliceBlue"
     },
     "controlFrame": {
       "color-error": "#3358FF"
