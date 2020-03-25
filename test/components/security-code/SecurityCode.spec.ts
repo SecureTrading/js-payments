@@ -28,6 +28,7 @@ describe('SecurityCode', () => {
 
     let configProvider: ConfigProvider;
     configProvider = mock(ConfigProvider);
+    // @ts-ignore
     when(configProvider.getConfig()).thenReturn({
       jwt: '',
       disableNotification: false,

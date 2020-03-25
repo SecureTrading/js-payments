@@ -1,18 +1,67 @@
 {
   "analytics": true,
   "animatedCard": true,
-  "bypassCards": ["PIBA"],
-  "deferInit": false,
-  "fieldsToSubmit": ["pan", "expirydate", "securitycode"],
+  "applePay": {
+    "buttonStyle": "white-outline",
+    "buttonText": "donate",
+    "merchantId": "merchant.net.securetrading.test",
+    "paymentRequest": {
+      "countryCode": "US",
+      "currencyCode": "USD",
+      "merchantCapabilities": [
+        "supports3DS",
+        "supportsCredit",
+        "supportsDebit"
+      ],
+      "supportedNetworks": [],
+      "total": {
+        "label": "Secure Trading Merchant",
+        "amount": "10.00"
+      }
+    },
+    "placement": "st-apple-pay"
+  },
   "buttonId": "merchant-submit-button",
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4NTAwMDA1NS43ODI5MTA4LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.BQnwo5N39K_p6X0znJ7gemnICT-7VHhCECdbMlVWYhw",
+  "bypassCards": [
+    "PIBA"
+  ],
+  "cachetoken": "",
+  "componentIds": {
+    "animatedCard": "",
+    "cardNumber": "",
+    "expirationDate": "",
+    "notificationFrame": "",
+    "securityCode": ""
+  },
+  "components": {
+    "defaultPaymentType": "",
+    "requestTypes": [],
+    "paymentTypes": [],
+    "startOnLoad": false
+  },
+  "datacenterurl": "",
+  "deferInit": false,
+  "disableNotification": false,
+  "fieldsToSubmit": [
+    "pan",
+    "expirydate",
+    "securitycode"
+  ],
+  "formId": "merchant-submit-button",
+  "init": {
+    "cachetoken": "",
+    "threedinit": ""
+  },
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4NDcwNTExOC43NjM4NywicGF5bG9hZCI6eyJiYXNlYW1vdW50IjoiMTAwMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.qrSK3arBnXHKW5D63sfM3R_mmESN3w5Twy94-gSLZEc",
+  "livestatus": 0,
+  "origin": "",
   "placeholders": {
     "pan": "Card number",
     "expirydate": "MM/YY",
     "securitycode": "***"
   },
-  "disableNotification": false,
   "panIcon": true,
+  "requestTypes": [],
   "styles": {
     "defaultStyles": {
       "background-color-input": "AliceBlue"
@@ -30,34 +79,19 @@
       "line-height-input": "1.6rem"
     },
     "notificationFrame": {
-      "color-error": "AliceBlue"
+      "color-error": "#FFF333"
     },
     "controlFrame": {
       "color-error": "#3358FF"
     }
   },
+  "submitFields": [],
   "submitOnSuccess": false,
   "submitOnError": false,
   "submitCallback": "",
+  "threedinit": "",
   "translations": {
     "An error occurred": "Wystąpił błąd"
-  },
-  "components": {},
-  "applePay": {
-    "buttonStyle": "white-outline",
-    "buttonText": "donate",
-    "merchantId": "merchant.net.securetrading.test",
-    "paymentRequest": {
-      "countryCode": "US",
-      "currencyCode": "USD",
-      "merchantCapabilities": ["supports3DS", "supportsCredit", "supportsDebit"],
-      "supportedNetworks": [],
-      "total": {
-        "label": "Secure Trading Merchant",
-        "amount": "10.00"
-      }
-    },
-    "placement": "st-apple-pay"
   },
   "visaCheckout": {
     "buttonSettings": {
@@ -70,6 +104,7 @@
       "subtotal": "20.00"
     },
     "placement": "st-visa-checkout",
+    "requestTypes": [],
     "settings": {
       "displayName": "My Test Site"
     }
