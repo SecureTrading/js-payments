@@ -8,6 +8,7 @@ import { Validation } from '../shared/Validation';
 import { RegisterFrames } from './RegisterFrames.class';
 import { BrowserLocalStorage } from '../services/storage/BrowserLocalStorage';
 import { Container } from 'typedi';
+import { IComponentsIds } from '../config/model/IComponentsIds';
 
 export class CommonFrames extends RegisterFrames {
   get requestTypes(): string[] {
@@ -37,7 +38,7 @@ export class CommonFrames extends RegisterFrames {
   constructor(
     jwt: string,
     origin: string,
-    componentIds: {},
+    componentIds: IComponentsIds,
     styles: IStyles,
     submitOnSuccess: boolean,
     submitOnError: boolean,

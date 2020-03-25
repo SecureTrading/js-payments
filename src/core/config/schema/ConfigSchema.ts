@@ -50,9 +50,10 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   componentIds: Joi.object()
     .keys({
       animatedCard: Joi.string(),
-      cardNumber: Joi.string().required(),
-      expirationDate: Joi.string().required(),
-      securityCode: Joi.string().required()
+      cardNumber: Joi.string(),
+      expirationDate: Joi.string(),
+      securityCode: Joi.string(),
+      notificationFrame: Joi.string()
     })
     .default({}),
   components: Joi.object()

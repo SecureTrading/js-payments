@@ -14,6 +14,7 @@ export class ConfigResolver {
     animatedCard: Selectors.ANIMATED_CARD_INPUT_SELECTOR,
     cardNumber: Selectors.CARD_NUMBER_INPUT_SELECTOR,
     expirationDate: Selectors.EXPIRATION_DATE_INPUT_SELECTOR,
+    notificationFrame: Selectors.NOTIFICATION_FRAME_ID,
     securityCode: Selectors.SECURITY_CODE_INPUT_SELECTOR
   };
 
@@ -104,6 +105,8 @@ export class ConfigResolver {
     const requiredIds = {
       cardNumber: this._getValueOrDefault(config.cardNumber, this.DEFAULT_COMPONENTS_IDS.cardNumber),
       expirationDate: this._getValueOrDefault(config.expirationDate, this.DEFAULT_COMPONENTS_IDS.expirationDate),
+      notificationFrame: this._getValueOrDefault(config.notificationFrame,
+        this.DEFAULT_COMPONENTS_IDS.notificationFrame),
       securityCode: this._getValueOrDefault(config.securityCode, this.DEFAULT_COMPONENTS_IDS.securityCode)
     };
     return {
