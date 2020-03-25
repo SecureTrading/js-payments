@@ -14,7 +14,6 @@ export class ConfigResolver {
     animatedCard: Selectors.ANIMATED_CARD_INPUT_SELECTOR,
     cardNumber: Selectors.CARD_NUMBER_INPUT_SELECTOR,
     expirationDate: Selectors.EXPIRATION_DATE_INPUT_SELECTOR,
-    notificationFrame: Selectors.NOTIFICATION_FRAME_ID,
     securityCode: Selectors.SECURITY_CODE_INPUT_SELECTOR
   };
 
@@ -57,6 +56,7 @@ export class ConfigResolver {
       applePay: this._setApmConfig(config.applePay, config.components),
       buttonId: this._getValueOrDefault(config.buttonId, ''),
       bypassCards: this._getValueOrDefault(config.bypassCards, []),
+      cachetoken: this._getValueOrDefault(config.cachetoken, ''),
       componentIds: this._componentIds(config.componentIds),
       components: this._setComponentsProperties(config),
       datacenterurl: this._getValueOrDefault(config.datacenterurl, environment.GATEWAY_URL),
@@ -65,7 +65,7 @@ export class ConfigResolver {
       fieldsToSubmit: this._getValueOrDefault(config.fieldsToSubmit, [...this.DEFAULT_FIELDS_TO_SUBMIT]),
       formId: this._getValueOrDefault(config.formId, Selectors.MERCHANT_FORM_SELECTOR),
       init: this._getValueOrDefault(config.init, { cachetoken: '', threedinit: '' }),
-      jwt: this._getValueOrDefault(config.jwt, ''),
+      jwt: this._getValueOrDefault(config.jwt, {}),
       livestatus: this._getValueOrDefault(config.livestatus, 0),
       origin: this._getValueOrDefault(config.origin, window.location.origin),
       panIcon: this._getValueOrDefault(config.panIcon, false),
@@ -74,11 +74,13 @@ export class ConfigResolver {
         expirydate: '',
         securitycode: ''
       }),
-      styles: this._getValueOrDefault(config.styles, {}),
+      requestTypes: this._getValueOrDefault(config.requestTypes, []),
+      styles: this._getValueOrDefault(config.styles,{}),
       submitCallback: this._getValueOrDefault(config.submitCallback, null),
       submitFields: this._getValueOrDefault(config.submitFields, this.DEFAULT_SUBMIT_PROPERTIES),
       submitOnError: this._getValueOrDefault(config.submitOnError, false),
       submitOnSuccess: this._getValueOrDefault(config.submitOnSuccess, true),
+      threedinit: this._getValueOrDefault(config.threedinit, ''),
       translations: this._getValueOrDefault(config.translations, {}),
       visaCheckout: this._setApmConfig(config.visaCheckout, config.components)
     };

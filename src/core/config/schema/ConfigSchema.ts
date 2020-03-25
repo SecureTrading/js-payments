@@ -46,13 +46,12 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   bypassCards: Joi.array().items(
     Joi.string().valid('AMEX', 'ASTROPAYCARD', 'DINERS', 'DISCOVER', 'JCB', 'MASTERCARD', 'MAESTRO', 'PIBA', 'VISA')
   ),
-  cachetoken: Joi.string(),
+  cachetoken: Joi.string().allow(''),
   componentIds: Joi.object()
     .keys({
       animatedCard: Joi.string(),
       cardNumber: Joi.string().required(),
       expirationDate: Joi.string().required(),
-      notificationFrame: Joi.string().required(),
       securityCode: Joi.string().required()
     })
     .default({}),
@@ -92,7 +91,7 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   submitFields: Joi.array(),
   submitOnError: Joi.boolean(),
   submitOnSuccess: Joi.boolean(),
-  threedinit: Joi.string(),
+  threedinit: Joi.string().allow(''),
   translations: Joi.object(),
   visaCheckout: {
     buttonSettings: {

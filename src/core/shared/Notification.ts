@@ -9,6 +9,7 @@ import { BrowserLocalStorage } from '../services/storage/BrowserLocalStorage';
 import { Styler } from './Styler';
 import { IAllowedStyles } from '../models/IAllowedStyles';
 import { ConfigProvider } from '../config/ConfigProvider';
+import { DomMethods } from './DomMethods';
 
 @Service()
 export class Notification {

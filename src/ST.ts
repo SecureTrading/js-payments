@@ -36,6 +36,7 @@ import { FramesHub } from './core/services/message-bus/FramesHub';
 import { BrowserLocalStorage } from './core/services/storage/BrowserLocalStorage';
 import { BrowserSessionStorage } from './core/services/storage/BrowserSessionStorage';
 import { Notification } from './core/shared/Notification';
+import './core/styles/notification.css';
 
 @Service()
 class ST {

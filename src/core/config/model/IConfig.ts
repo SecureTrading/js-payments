@@ -10,8 +10,9 @@ export interface IConfig {
   analytics?: boolean;
   animatedCard?: boolean;
   applePay?: IWalletConfig;
-  bypassCards?: BypassCards[];
   buttonId?: string;
+  bypassCards?: BypassCards[];
+  cachetoken?: string;
   components?: IComponentsConfig;
   componentIds?: IComponentsIds;
   datacenterurl?: string;
@@ -25,11 +26,13 @@ export interface IConfig {
   origin?: string;
   panIcon?: boolean;
   placeholders?: IPlaceholdersConfig;
+  requestTypes: string[];
   styles?: IStyles;
   submitCallback?: any;
   submitFields?: string[];
   submitOnSuccess?: boolean;
   submitOnError?: boolean;
+  threedinit: string;
   translations?: {};
   visaCheckout?: IWalletConfig;
 }

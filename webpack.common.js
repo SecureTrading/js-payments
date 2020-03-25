@@ -63,14 +63,6 @@ module.exports = {
       chunks: ['main']
     }),
     new HtmlWebpackPlugin({
-      filename: 'notification-frame.html',
-      template: './src/components/index.html',
-      templateParameters: {
-        partial: 'notificationFrame'
-      },
-      chunks: ['main']
-    }),
-    new HtmlWebpackPlugin({
       filename: 'control-frame.html',
       template: './src/components/index.html',
       templateParameters: {
@@ -129,7 +121,7 @@ module.exports = {
             }
           },
           'postcss-loader',
-          'sass-loader'
+          'sass-loader',
         ]
       },
       {
