@@ -32,6 +32,7 @@ describe('ST', () => {
     // when
     beforeEach(() => {
       instance.Init = jest.fn();
+      // @ts-ignore
       stObject = ST(cacheConfig);
     });
   });
@@ -236,6 +237,7 @@ function stFixture() {
       displayName: 'My Test Site'
     }
   };
+  // @ts-ignore
   const instance: any = ST(config);
   return { cacheConfig, config, instance, applePayConfig, visaCheckoutConfig };
 }

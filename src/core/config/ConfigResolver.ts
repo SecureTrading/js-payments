@@ -65,7 +65,7 @@ export class ConfigResolver {
       fieldsToSubmit: this._getValueOrDefault(config.fieldsToSubmit, [...this.DEFAULT_FIELDS_TO_SUBMIT]),
       formId: this._getValueOrDefault(config.formId, Selectors.MERCHANT_FORM_SELECTOR),
       init: this._getValueOrDefault(config.init, { cachetoken: '', threedinit: '' }),
-      jwt: this._getValueOrDefault(config.jwt, {}),
+      jwt: this._getValueOrDefault(config.jwt, ''),
       livestatus: this._getValueOrDefault(config.livestatus, 0),
       origin: this._getValueOrDefault(config.origin, window.location.origin),
       panIcon: this._getValueOrDefault(config.panIcon, false),
@@ -104,8 +104,6 @@ export class ConfigResolver {
     const requiredIds = {
       cardNumber: this._getValueOrDefault(config.cardNumber, this.DEFAULT_COMPONENTS_IDS.cardNumber),
       expirationDate: this._getValueOrDefault(config.expirationDate, this.DEFAULT_COMPONENTS_IDS.expirationDate),
-      notificationFrame: this._getValueOrDefault(config.notificationFrame,
-        this.DEFAULT_COMPONENTS_IDS.notificationFrame),
       securityCode: this._getValueOrDefault(config.securityCode, this.DEFAULT_COMPONENTS_IDS.securityCode)
     };
     return {
