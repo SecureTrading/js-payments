@@ -8,7 +8,7 @@ import { BrowserSessionStorage } from '../../../shared/services/storage/BrowserS
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
 import { mock, instance as mockInstance, when, anyString } from 'ts-mockito';
-import { Notification } from '../../core/shared/Notification';
+import { NotificationService } from '../../../client/classes/notification/NotificationService';
 
 jest.mock('../../../../src/application/core/shared/Payment');
 
@@ -604,7 +604,7 @@ function controlFrameFixture() {
   const sessionStorage: BrowserSessionStorage = mock(BrowserSessionStorage);
   const communicator: InterFrameCommunicator = mock(InterFrameCommunicator);
   const configProvider: ConfigProvider = mock(ConfigProvider);
-  const notification: Notification = mock(Notification);
+  const notification: NotificationService = mock(NotificationService);
 
   when(communicator.whenReceive(anyString())).thenReturn({
     thenRespond: (() => undefined),

@@ -14,7 +14,7 @@ import { Language } from '../shared/Language';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
 jest.mock('../../../../src/application/core/integrations/GoogleAnalytics');
-jest.mock('../../../../src/application/core/shared/Notification');
+jest.mock('../../../../src/client/classes/notification/NotificationService');
 
 // given
 describe('ApplePay', () => {

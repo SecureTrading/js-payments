@@ -4,7 +4,7 @@ import { Selectors } from '../../application/core/shared/Selectors';
 
 // given
 describe('Element', () => {
-  //when
+  // when
   let instance: Element,
     mockObject: object,
     createNewElement: object,
@@ -45,7 +45,6 @@ describe('Element', () => {
       expect(Element.getComponentAddress('cardNumber')).toEqual(Selectors.CARD_NUMBER_COMPONENT);
       expect(Element.getComponentAddress('securityCode')).toEqual(Selectors.SECURITY_CODE_COMPONENT);
       expect(Element.getComponentAddress('expirationDate')).toEqual(Selectors.EXPIRATION_DATE_COMPONENT);
-      expect(Element.getComponentAddress('notificationFrame')).toEqual(Selectors.NOTIFICATION_FRAME_COMPONENT);
       expect(Element.getComponentAddress('controlFrame')).toEqual(Selectors.CONTROL_FRAME_COMPONENT);
       expect(Element.getComponentAddress('animatedCard')).toEqual(Selectors.ANIMATED_CARD_COMPONENT);
       expect(Element.getComponentAddress('someOtherComponentWhichIsNotThere')).toEqual('');

@@ -25,12 +25,10 @@ export class CommonFrames extends RegisterFrames {
   private _controlFrameMounted: HTMLElement;
   private _messageBus: MessageBus;
   private _notificationFrame: Element;
-  private _notificationFrameMounted: HTMLElement;
   private _requestTypes: string[];
   private readonly _gatewayUrl: string;
   private readonly _merchantForm: HTMLFormElement;
   private _validation: Validation;
-  private readonly _submitCallback: any;
   private readonly _submitFields: string[];
   private readonly _submitOnError: boolean;
   private readonly _submitOnSuccess: boolean;
@@ -77,9 +75,6 @@ export class CommonFrames extends RegisterFrames {
 
   protected setElementsFields() {
     const elements = [];
-    if (this._shouldLoadNotificationFrame()) {
-      elements.push(this.componentIds.notificationFrame);
-    }
     elements.push(Selectors.MERCHANT_FORM_SELECTOR);
     return elements;
   }
@@ -97,18 +92,12 @@ export class CommonFrames extends RegisterFrames {
 
   private _initFormFields() {
     const { defaultStyles } = this.styles;
-    let { notificationFrame, controlFrame } = this.styles;
+    let { controlFrame } = this.styles;
 
-    notificationFrame = Object.assign({}, defaultStyles, notificationFrame);
     controlFrame = Object.assign({}, defaultStyles, controlFrame);
 
     this._notificationFrame = new Element();
     this._controlFrame = new Element();
-    if (this._shouldLoadNotificationFrame()) {
-      this._notificationFrame.create(Selectors.NOTIFICATION_FRAME_COMPONENT_NAME, notificationFrame, this.params);
-      this._notificationFrameMounted = this._notificationFrame.mount(Selectors.NOTIFICATION_FRAME_IFRAME, '-1');
-      this.elementsToRegister.push(this._notificationFrameMounted);
-    }
     this._controlFrame.create(Selectors.CONTROL_FRAME_COMPONENT_NAME, controlFrame, {
       gatewayUrl: this._gatewayUrl,
       jwt: this.jwt,
@@ -177,10 +166,6 @@ export class CommonFrames extends RegisterFrames {
         this._onTransactionComplete(data);
       }
     });
-  }
-
-  private _shouldLoadNotificationFrame(): boolean {
-    return !(this._submitOnError && this._submitOnSuccess);
   }
 
   private _shouldSubmitForm(data: any): boolean {

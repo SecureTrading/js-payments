@@ -16,7 +16,6 @@ import { ISubmitData } from '../../core/models/ISubmitData';
 import { Frame } from '../../core/shared/Frame';
 import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
-import { Notification } from '../../core/shared/Notification';
 import { Payment } from '../../core/shared/Payment';
 import { Validation } from '../../core/shared/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
@@ -27,6 +26,7 @@ import { InterFrameCommunicator } from '../../../shared/services/message-bus/Int
 import { ConfigProvider } from '../../core/services/ConfigProvider';
 import { interval } from 'rxjs';
 import { filter, mapTo } from 'rxjs/operators';
+import { NotificationService } from '../../../client/classes/notification/NotificationService';
 
 @Service()
 export class ControlFrame extends Frame {
@@ -79,13 +79,13 @@ export class ControlFrame extends Frame {
     private _sessionStorage: BrowserSessionStorage,
     private _communicator: InterFrameCommunicator,
     private _configProvider: ConfigProvider,
-    private _notification: Notification
+    private _notification: NotificationService
   ) {
     super();
     this.onInit();
     this._communicator.whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK).thenRespond(() => interval().pipe(
       mapTo(this._configProvider.getConfig()),
-      filter(Boolean),
+      filter(Boolean)
     ));
   }
 

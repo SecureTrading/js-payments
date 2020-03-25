@@ -12,13 +12,13 @@ import { IThreeDQueryResponse } from '../models/IThreeDQueryResponse';
 import { DomMethods } from '../shared/DomMethods';
 import { Language } from '../shared/Language';
 import { MessageBus } from '../shared/MessageBus';
-import { Notification } from '../shared/Notification';
 import { Selectors } from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
 import { GoogleAnalytics } from './GoogleAnalytics';
 import { Container } from 'typedi';
 import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
+import { NotificationService } from '../../../client/classes/notification/NotificationService';
 
 declare const Cardinal: any;
 
@@ -36,7 +36,7 @@ export class CardinalCommerce {
   private _jwt: string;
   private readonly _requestTypes: string[];
   private readonly _threedinit: string;
-  private _notification: Notification;
+  private _notification: NotificationService;
   private _sdkAddress: string = environment.CARDINAL_COMMERCE.SONGBIRD_TEST_URL;
   private _bypassCards: string[];
   private _jwtUpdated: boolean;
@@ -60,7 +60,7 @@ export class CardinalCommerce {
     this._requestTypes = requestTypes;
     this._bypassCards = bypassCards;
     this.messageBus = Container.get(MessageBus);
-    this._notification = Container.get(Notification);
+    this._notification = Container.get(NotificationService);
     this._framesHub = Container.get(FramesHub);
     this._setLiveStatus();
     this._onInit();

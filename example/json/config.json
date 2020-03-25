@@ -5,7 +5,7 @@
   "deferInit": false,
   "fieldsToSubmit": ["pan", "expirydate", "securitycode"],
   "buttonId": "merchant-submit-button",
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4Mzk0MDAyOC4yMzI5MywicGF5bG9hZCI6eyJtYWluYW1vdW50IjoiMTAuMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdF9qYW1lczM4NjQxIiwibG9jYWxlIjoiZW5fR0IifX0.GIcXZ4QGd61OYlJ9XW1kQTWwVcOgaMCfEcOa0Q_8xv0",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4NTAwMDA1NS43ODI5MTA4LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.BQnwo5N39K_p6X0znJ7gemnICT-7VHhCECdbMlVWYhw",
   "placeholders": {
     "pan": "Card number",
     "expirydate": "MM/YY",
@@ -30,7 +30,7 @@
       "line-height-input": "1.6rem"
     },
     "notificationFrame": {
-      "color-error": "#FFF333"
+      "color-error": "AliceBlue"
     },
     "controlFrame": {
       "color-error": "#3358FF"

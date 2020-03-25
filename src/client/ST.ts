@@ -35,6 +35,7 @@ import { InterFrameCommunicator } from '../shared/services/message-bus/InterFram
 import { FramesHub } from '../shared/services/message-bus/FramesHub';
 import { BrowserLocalStorage } from '../shared/services/storage/BrowserLocalStorage';
 import { BrowserSessionStorage } from '../shared/services/storage/BrowserSessionStorage';
+import { Notification } from '../application/core/shared/Notification';
 
 @Service()
 class ST {
@@ -80,6 +81,7 @@ class ST {
     private _storage: BrowserLocalStorage,
     private _sessionStorage: BrowserSessionStorage,
     private _messageBus: MessageBus,
+    private _notification: Notification
   ) {
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
@@ -97,6 +99,7 @@ class ST {
       callback();
     });
   }
+
   public off(event: string) {
     // @ts-ignore
   }
