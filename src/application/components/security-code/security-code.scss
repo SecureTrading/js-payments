@@ -1,0 +1,27 @@
+@import '../../../styles/variables';
+@import '../../../styles/placeholders';
+@import '../../../styles/core';
+
+body {
+  @extend %frame-body;
+}
+
+.security-code {
+  @extend %block;
+}
+
+.security-code__label {
+  @extend %label;
+}
+
+.security-code__label--required {
+  @extend %label--required;
+}
+
+.security-code__input {
+  @extend %input;
+}
+
+.security-code__message {
+  @extend %message;
+}
