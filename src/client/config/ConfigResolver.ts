@@ -57,6 +57,7 @@ export class ConfigResolver {
       applePay: this._setApmConfig(config.applePay, config.components),
       buttonId: this._getValueOrDefault(config.buttonId, ''),
       bypassCards: this._getValueOrDefault(config.bypassCards, []),
+      cachetoken: this._getValueOrDefault(config.cachetoken, ''),
       componentIds: this._componentIds(config.componentIds),
       components: this._setComponentsProperties(config),
       datacenterurl: this._getValueOrDefault(config.datacenterurl, environment.GATEWAY_URL),
@@ -74,11 +75,13 @@ export class ConfigResolver {
         expirydate: '',
         securitycode: ''
       }),
+      requestTypes: this._getValueOrDefault(config.requestTypes, []),
       styles: this._getValueOrDefault(config.styles, {}),
       submitCallback: this._getValueOrDefault(config.submitCallback, null),
       submitFields: this._getValueOrDefault(config.submitFields, this.DEFAULT_SUBMIT_PROPERTIES),
       submitOnError: this._getValueOrDefault(config.submitOnError, false),
       submitOnSuccess: this._getValueOrDefault(config.submitOnSuccess, true),
+      threedinit: this._getValueOrDefault(config.threedinit, ''),
       translations: this._getValueOrDefault(config.translations, {}),
       visaCheckout: this._setApmConfig(config.visaCheckout, config.components)
     };
