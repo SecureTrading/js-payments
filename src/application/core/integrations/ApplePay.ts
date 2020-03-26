@@ -136,9 +136,11 @@ export class ApplePay {
       status: ApplePaySession ? this.getPaymentSuccessStatus() : ''
     };
     this._configurePaymentProcess(jwt, config, gatewayUrl);
+    this._onInit(config.buttonText, config.buttonStyle);
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
       const { newJwt } = data;
       this._configurePaymentProcess(newJwt, config, gatewayUrl);
+      this._setAmountAndCurrency();
     });
   }
 
@@ -183,7 +185,7 @@ export class ApplePay {
   }
 
   private _configurePaymentProcess(jwt: string, config: IWalletConfig, gatewayUrl: string) {
-    const { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId, requestTypes } = config;
+    const { sitesecurity, placement, paymentRequest, merchantId, requestTypes } = config;
     this._merchantId = merchantId;
     this._placement = placement;
     this.payment = new Payment(jwt, gatewayUrl);
@@ -197,7 +199,6 @@ export class ApplePay {
       jwt
     });
     this._translator = new Translator(this._stJwtInstance.locale);
-    this._onInit(buttonText, buttonStyle);
   }
 
   private _setSupportedNetworks() {
