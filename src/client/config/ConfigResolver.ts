@@ -75,7 +75,7 @@ export class ConfigResolver {
         expirydate: '',
         securitycode: ''
       }),
-      requestTypes: this._getValueOrDefault(config.requestTypes, this.DEFAULT_COMPONENTS_REQUEST_TYPES),
+      requestTypes: this._getValueOrDefault(config.requestTypes, []),
       styles: this._getValueOrDefault(config.styles, {}),
       submitCallback: this._getValueOrDefault(config.submitCallback, null),
       submitFields: this._getValueOrDefault(config.submitFields, this.DEFAULT_SUBMIT_PROPERTIES),
