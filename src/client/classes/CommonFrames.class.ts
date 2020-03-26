@@ -8,7 +8,7 @@ import { Validation } from '../../application/core/shared/Validation';
 import { RegisterFrames } from './RegisterFrames.class';
 import { Container } from 'typedi';
 import { BrowserLocalStorage } from '../../shared/services/storage/BrowserLocalStorage';
-import { IComponentsIds } from '../config/model/IComponentsIds';
+import { IComponentsIds } from '../../shared/model/config/IComponentsIds';
 
 export class CommonFrames extends RegisterFrames {
   get requestTypes(): string[] {
