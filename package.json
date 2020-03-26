@@ -28,7 +28,8 @@
     "import:translations": "cross-env-shell i18next-conv -l '$npm_package_config_locale' -s src/translations/$npm_package_config_locale.po -t src/application/core/translations/$npm_package_config_locale.json",
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect",
-    "preinstall": "npx npm-force-resolutions"
+    "preinstall": "npx npm-force-resolutions",
+    "prettier": "./node_modules/.bin/prettier --single-quote --write './src/**/*.{ts,js,css,json}'"
   },
   "repository": {
     "type": "git",
@@ -42,6 +43,16 @@
   "homepage": "https://github.com/SecureTrading/js-payments#readme",
   "resolutions": {
     "minimist": "^1.2.5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.ts": [
+      "npm run prettier"
+    ]
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
@@ -69,11 +80,13 @@
     "friendly-errors-webpack-plugin": "^1.7.0",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
+    "husky": "^4.2.3",
     "i18next-conv": "^9.1.0",
     "jest": "^25.1.0",
     "jest-each": "^25.1.0",
     "jest-fetch-mock": "^3.0.1",
     "jest-get-type": "^25.1.0",
+    "lint-staged": "^10.0.8",
     "live-server": "^1.2.1",
     "local-web-server": "^4.0.0",
     "mini-css-extract-plugin": "^0.9.0",

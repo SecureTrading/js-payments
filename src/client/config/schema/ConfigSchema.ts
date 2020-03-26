@@ -49,12 +49,23 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   cachetoken: Joi.string().allow(''),
   componentIds: Joi.object()
     .keys({
-      animatedCard: Joi.string(),
-      cardNumber: Joi.string(),
-      expirationDate: Joi.string(),
-      securityCode: Joi.string(),
+      animatedCard: Joi.string()
+        .allow('')
+        .default('st-animated-card'),
+      cardNumber: Joi.string()
+        .allow('')
+        .default('st-card-number'),
+      expirationDate: Joi.string()
+        .allow('')
+        .default('st-expiration-date'),
       notificationFrame: Joi.string()
+        .allow('')
+        .default('st-notification-frame'),
+      securityCode: Joi.string()
+        .allow('')
+        .default('st-security-code')
     })
+    .allow({})
     .default({}),
   components: Joi.object()
     .keys({
@@ -70,14 +81,16 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   deferInit: Joi.boolean(),
   disableNotification: Joi.boolean().default(false),
   fieldsToSubmit: Joi.array().items(Joi.string().valid('pan', 'expirydate', 'securitycode')),
-  formId: Joi.string(),
+  formId: Joi.string()
+    .allow('')
+    .default('st-form'),
   init: {
     cachetoken: Joi.string().allow(''),
     threedinit: Joi.string().allow('')
   },
   jwt: Joi.string().required(),
   livestatus: Joi.number().valid(0, 1),
-  origin: Joi.string(),
+  origin: Joi.string().allow(''),
   requestTypes: Joi.array().items(
     Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
   ),

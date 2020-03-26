@@ -39,7 +39,7 @@ describe('ST', () => {
 
   // given
   describe('ST.ApplePay()', () => {
-    const { instance, applePayConfig } = stFixture();
+    const { applePayConfig } = stFixture();
 
     // then
     it('should return VisaCheckoutMock object when environment.testEnvironment equals true', () => {
@@ -70,7 +70,7 @@ describe('ST', () => {
 
   // given
   describe('ST.CardinalCommerce()', () => {
-    //when
+    // when
     const {
       config: { jwt }
     } = stFixture();

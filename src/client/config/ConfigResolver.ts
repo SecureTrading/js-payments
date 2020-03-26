@@ -76,7 +76,7 @@ export class ConfigResolver {
         securitycode: ''
       }),
       requestTypes: this._getValueOrDefault(config.requestTypes, []),
-      styles: this._getValueOrDefault(config.styles,{}),
+      styles: this._getValueOrDefault(config.styles, {}),
       submitCallback: this._getValueOrDefault(config.submitCallback, null),
       submitFields: this._getValueOrDefault(config.submitFields, this.DEFAULT_SUBMIT_PROPERTIES),
       submitOnError: this._getValueOrDefault(config.submitOnError, false),
@@ -88,12 +88,11 @@ export class ConfigResolver {
   }
 
   private _getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
-    if (typeof (value) !== 'undefined') {
+    if (typeof value !== 'undefined') {
       return value;
     }
     return defaultValue;
   }
-
 
   private _componentIds(config: IComponentsIds): IComponentsIds {
     if (!config) {
@@ -105,8 +104,10 @@ export class ConfigResolver {
     const requiredIds = {
       cardNumber: this._getValueOrDefault(config.cardNumber, this.DEFAULT_COMPONENTS_IDS.cardNumber),
       expirationDate: this._getValueOrDefault(config.expirationDate, this.DEFAULT_COMPONENTS_IDS.expirationDate),
-      notificationFrame: this._getValueOrDefault(config.notificationFrame,
-        this.DEFAULT_COMPONENTS_IDS.notificationFrame),
+      notificationFrame: this._getValueOrDefault(
+        config.notificationFrame,
+        this.DEFAULT_COMPONENTS_IDS.notificationFrame
+      ),
       securityCode: this._getValueOrDefault(config.securityCode, this.DEFAULT_COMPONENTS_IDS.securityCode)
     };
     return {
@@ -140,8 +141,7 @@ export class ConfigResolver {
     }
     return {
       ...apm,
-      requestTypes:
-        components && this._getValueOrDefault(components.requestTypes, [...this.DEFAULT_APMS_REQUEST_TYPES])
+      requestTypes: components && this._getValueOrDefault(components.requestTypes, [...this.DEFAULT_APMS_REQUEST_TYPES])
     };
   }
 }
