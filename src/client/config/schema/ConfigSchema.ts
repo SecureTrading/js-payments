@@ -46,15 +46,26 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   bypassCards: Joi.array().items(
     Joi.string().valid('AMEX', 'ASTROPAYCARD', 'DINERS', 'DISCOVER', 'JCB', 'MASTERCARD', 'MAESTRO', 'PIBA', 'VISA')
   ),
-  cachetoken: Joi.string(),
+  cachetoken: Joi.string().allow(''),
   componentIds: Joi.object()
     .keys({
-      animatedCard: Joi.string(),
-      cardNumber: Joi.string().required(),
-      expirationDate: Joi.string().required(),
-      notificationFrame: Joi.string().required(),
-      securityCode: Joi.string().required()
+      animatedCard: Joi.string()
+        .allow('')
+        .default('st-animated-card'),
+      cardNumber: Joi.string()
+        .allow('')
+        .default('st-card-number'),
+      expirationDate: Joi.string()
+        .allow('')
+        .default('st-expiration-date'),
+      notificationFrame: Joi.string()
+        .allow('')
+        .default('st-notification-frame'),
+      securityCode: Joi.string()
+        .allow('')
+        .default('st-security-code')
     })
+    .allow({})
     .default({}),
   components: Joi.object()
     .keys({
@@ -63,10 +74,12 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
         Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
       ),
       paymentTypes: Joi.array().items(Joi.string().allow('')),
-      startOnLoad: Joi.boolean().allow('')
+      startOnLoad: Joi.boolean()
     })
     .default({}),
-  datacenterurl: Joi.string(),
+  datacenterurl: Joi.string()
+    .allow('')
+    .default('st-form'),
   deferInit: Joi.boolean(),
   disableNotification: Joi.boolean().default(false),
   fieldsToSubmit: Joi.array().items(Joi.string().valid('pan', 'expirydate', 'securitycode')),
@@ -77,7 +90,7 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   },
   jwt: Joi.string().required(),
   livestatus: Joi.number().valid(0, 1),
-  origin: Joi.string(),
+  origin: Joi.string().allow(''),
   requestTypes: Joi.array().items(
     Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
   ),
@@ -92,7 +105,7 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   submitFields: Joi.array(),
   submitOnError: Joi.boolean(),
   submitOnSuccess: Joi.boolean(),
-  threedinit: Joi.string(),
+  threedinit: Joi.string().allow(''),
   translations: Joi.object(),
   visaCheckout: {
     buttonSettings: {
