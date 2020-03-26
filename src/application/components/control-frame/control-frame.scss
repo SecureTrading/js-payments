@@ -1,0 +1,7 @@
+@import '../../../styles/variables';
+@import '../../../styles/placeholders';
+@import '../../../styles/core';
+
+body {
+  @extend %frame-body;
+}
