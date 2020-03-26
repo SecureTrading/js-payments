@@ -1,27 +1,16 @@
-import { ComponentLocalStorage } from './ComponentLocalStorage';
-import { ParentLocalStorage } from './ParentLocalStorage';
-import { IStorage } from '../../models/IStorage';
-import { MessageBus } from '../../shared/MessageBus';
+import { Service } from 'typedi';
+import { AbstractStorage } from './AbstractStorage';
+import { InterFrameCommunicator } from '../message-bus/InterFrameCommunicator';
+import { FramesHub } from '../message-bus/FramesHub';
+import { FrameIdentifier } from '../message-bus/FrameIdentifier';
 
-export class BrowserLocalStorage implements IStorage {
-  readonly ready: Promise<void>;
-  private readonly _storage: IStorage;
-
-  constructor() {
-    const _isInsideComponent: boolean = window.top !== window.self;
-
-    this._storage = _isInsideComponent
-      ? new ComponentLocalStorage(localStorage, new MessageBus())
-      : new ParentLocalStorage(localStorage, new MessageBus());
-
-    this.ready = this._storage.ready;
+@Service()
+export class BrowserLocalStorage extends AbstractStorage {
+  constructor(communicator: InterFrameCommunicator, framesHub: FramesHub, identifier: FrameIdentifier) {
+    super(window.localStorage, communicator, framesHub, identifier);
   }
 
-  public getItem(name: string): string {
-    return this._storage.getItem(name);
-  }
-
-  public setItem(name: string, value: string): void {
-    this._storage.setItem(name, value);
+  protected getSychronizationEventName(): string {
+    return 'ST_SET_LOCAL_STORAGE_ITEM';
   }
 }

@@ -1,9 +1,10 @@
 import { Formatter } from '../../../src/core/shared/Formatter';
 import { Selectors } from '../../../src/core/shared/Selectors';
 
+jest.mock('./../../../src/core/shared/Notification');
+
 // given
 describe('Formatter', () => {
-  describe('number', () => {});
 
   describe('date', () => {
     const { instance } = formatterFixture();

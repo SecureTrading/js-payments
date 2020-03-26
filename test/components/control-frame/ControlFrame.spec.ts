@@ -3,6 +3,12 @@ import { StCodec } from '../../../src/core/classes/StCodec.class';
 import { IFormFieldState } from '../../../src/core/models/IFormFieldState';
 import { Language } from '../../../src/core/shared/Language';
 import { MessageBus } from '../../../src/core/shared/MessageBus';
+import { BrowserLocalStorage } from '../../../src/core/services/storage/BrowserLocalStorage';
+import { BrowserSessionStorage } from '../../../src/core/services/storage/BrowserSessionStorage';
+import { InterFrameCommunicator } from '../../../src/core/services/message-bus/InterFrameCommunicator';
+import { ConfigProvider } from '../../../src/core/config/ConfigProvider';
+import { mock, instance as mockInstance, when, anyString } from 'ts-mockito';
+import { NotificationService } from '../../../src/core/services/notification/NotificationService';
 
 jest.mock('./../../../src/core/shared/Payment');
 
@@ -119,7 +125,7 @@ describe('ControlFrame', () => {
     it('should call _onThreeDInitEvent when THREEDINIT event has been called', () => {
       // @ts-ignore
       instance._threeDInit = jest.fn();
-      messageBusEvent.type = MessageBus.EVENTS_PUBLIC.THREEDINIT;
+      messageBusEvent.type = MessageBus.EVENTS_PUBLIC.THREEDINIT_REQUEST;
       // @ts-ignore
       instance._threeDInitEvent();
       // @ts-ignore
@@ -594,7 +600,23 @@ describe('ControlFrame', () => {
 });
 
 function controlFrameFixture() {
-  const instance = new ControlFrame();
+  const localStorage: BrowserLocalStorage = mock(BrowserLocalStorage);
+  const sessionStorage: BrowserSessionStorage = mock(BrowserSessionStorage);
+  const communicator: InterFrameCommunicator = mock(InterFrameCommunicator);
+  const configProvider: ConfigProvider = mock(ConfigProvider);
+  const notification: NotificationService = mock(NotificationService);
+
+  when(communicator.whenReceive(anyString())).thenReturn({
+    thenRespond: (() => undefined),
+  });
+
+  const instance = new ControlFrame(
+    mockInstance(localStorage),
+    mockInstance(sessionStorage),
+    mockInstance(communicator),
+    mockInstance(configProvider),
+    mockInstance(notification),
+  );
   const messageBusEvent = {
     type: ''
   };

@@ -3,9 +3,9 @@ import JwtDecode from 'jwt-decode';
 import { Language } from '../../../src/core/shared/Language';
 import { StCodec } from '../../../src/core/classes/StCodec.class';
 import { MessageBus } from '../../../src/core/shared/MessageBus';
-import { Selectors } from '../../../src/core/shared/Selectors';
 import { Translator } from '../../../src/core/shared/Translator';
 jest.mock('./../../../src/core/shared/MessageBus');
+jest.mock('./../../../src/core/shared/Notification');
 
 // given
 describe('StCodec class', () => {
@@ -13,8 +13,9 @@ describe('StCodec class', () => {
   const ridRegex = 'J-[\\da-z]{8}';
   const requestid = expect.stringMatching(new RegExp('^' + ridRegex + '$'));
   let str: StCodec;
+
   // @ts-ignore
-  StCodec._notification.error = jest.fn();
+  StCodec.getNotification().error = jest.fn();
   const fullResponse = {
     jwt:
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NjExMTUyMDksInBheWxvYWQiOnsicmVxdWVzdHJlZmVyZW5jZSI6IlczMy0wcm0wZ2N5eCIsInJlc3BvbnNlIjpbeyJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImFjcXVpcmVycmVzcG9uc2Vjb2RlIjoiMDAiLCJhdXRoY29kZSI6IlRFU1Q1NiIsImJhc2VhbW91bnQiOiIxMDAiLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwiZGNjZW5hYmxlZCI6IjAiLCJlcnJvcmNvZGUiOiIwIiwiZXJyb3JtZXNzYWdlIjoiT2siLCJpc3N1ZXIiOiJTZWN1cmVUcmFkaW5nIFRlc3QgSXNzdWVyMSIsImlzc3VlcmNvdW50cnlpc28yYSI6IlVTIiwibGl2ZXN0YXR1cyI6IjAiLCJtYXNrZWRwYW4iOiI0MTExMTEjIyMjIyMwMjExIiwibWVyY2hhbnRjb3VudHJ5aXNvMmEiOiJHQiIsIm1lcmNoYW50bmFtZSI6IndlYnNlcnZpY2UgVU5JQ09ERSBtZXJjaGFudG5hbWUiLCJtZXJjaGFudG51bWJlciI6IjAwMDAwMDAwIiwib3BlcmF0b3JuYW1lIjoid2Vic2VydmljZXNAc2VjdXJldHJhZGluZy5jb20iLCJvcmRlcnJlZmVyZW5jZSI6IkFVVEhfVklTQV9QT1NULVBBU1MtSlNPTi1KU09OIiwicGF5bWVudHR5cGVkZXNjcmlwdGlvbiI6IlZJU0EiLCJyZXF1ZXN0dHlwZWRlc2NyaXB0aW9uIjoiQVVUSCIsInNlY3VyaXR5cmVzcG9uc2VhZGRyZXNzIjoiMiIsInNlY3VyaXR5cmVzcG9uc2Vwb3N0Y29kZSI6IjIiLCJzZWN1cml0eXJlc3BvbnNlc2VjdXJpdHljb2RlIjoiMiIsInNldHRsZWR1ZWRhdGUiOiIyMDE5LTAyLTIxIiwic2V0dGxlc3RhdHVzIjoiMCIsInNwbGl0ZmluYWxudW1iZXIiOiIxIiwidGlkIjoiMjc4ODI3ODgiLCJ0cmFuc2FjdGlvbnJlZmVyZW5jZSI6IjMzLTktODAxNjgiLCJ0cmFuc2FjdGlvbnN0YXJ0ZWR0aW1lc3RhbXAiOiIyMDE5LTAyLTIxIDEwOjA2OjM1In1dLCJzZWNyYW5kIjoiWktBVk1za1dRIiwidmVyc2lvbiI6IjEuMDAifX0.lLHIs5UsXht0IyFCGEF_x7AM4u_lOWX47J5cCuakqtc'
@@ -102,9 +103,7 @@ describe('StCodec class', () => {
       translator = new Translator('en_GB');
       translator.translate = jest.fn().mockReturnValue('Ok');
       // @ts-ignore
-      StCodec._messageBus.publish = jest.fn();
-      // @ts-ignore
-      StCodec._messageBus.publishToSelf = jest.fn();
+      StCodec.getMessageBus().publish = jest.fn();
     });
 
     // then
@@ -114,23 +113,21 @@ describe('StCodec class', () => {
       // @ts-ignore
       StCodec.publishResponse({
         errorcode: '0',
-        errormessage: 'Ok'
+        errormessage: 'Payment has been successfully processed'
       });
       // @ts-ignore
       expect(translator.translate()).toEqual('Ok');
       // @ts-ignore
-      expect(StCodec._messageBus.publish).toHaveBeenCalledWith(
+      expect(StCodec.getMessageBus().publish).toHaveBeenCalledWith(
         {
           data: {
             errorcode: '0',
-            errormessage: 'Ok'
+            errormessage: 'Payment has been successfully processed'
           },
           type: 'TRANSACTION_COMPLETE'
         },
         true
       );
-      // @ts-ignore
-      expect(StCodec._messageBus.publishToSelf).toHaveBeenCalledTimes(0);
     });
 
     // then
@@ -145,12 +142,10 @@ describe('StCodec class', () => {
       // @ts-ignore
       expect(translator.translate()).toEqual('Ok');
       // @ts-ignore
-      expect(StCodec._messageBus.publish).toHaveBeenCalledTimes(0);
-      //@ts-ignore
-      expect(StCodec._messageBus.publishToSelf).toHaveBeenCalledWith({
+      expect(StCodec.getMessageBus().publish).toHaveBeenCalledWith({
         data: {
           errorcode: '0',
-          errormessage: 'Ok'
+          errormessage: 'Payment has been successfully processed'
         },
         type: 'TRANSACTION_COMPLETE'
       });
@@ -166,7 +161,7 @@ describe('StCodec class', () => {
         'someJwtResponse'
       );
       // @ts-ignore
-      expect(StCodec._messageBus.publishToSelf).toHaveBeenCalledTimes(1);
+      expect(StCodec.getMessageBus().publish).toHaveBeenCalledTimes(1);
     });
 
     // then
@@ -180,7 +175,7 @@ describe('StCodec class', () => {
         'someThreedresponse'
       );
       // @ts-ignore
-      expect(StCodec._messageBus.publishToSelf).toHaveBeenCalledTimes(1);
+      expect(StCodec.getMessageBus().publish).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -202,7 +197,7 @@ describe('StCodec class', () => {
     it('should call publishResponse and error notification and return the error object', () => {
       let spy1 = jest.spyOn(StCodec, 'publishResponse');
       // @ts-ignore
-      let spy2 = jest.spyOn(StCodec._notification, 'error');
+      let spy2 = jest.spyOn(StCodec.getNotification(), 'error');
       // @ts-ignore
       expect(StCodec._handleInvalidResponse()).toMatchObject(
         new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE)
@@ -269,7 +264,7 @@ describe('StCodec class', () => {
       StCodec.publishResponse = jest.fn();
       StCodec.getErrorData = jest.fn((data: any) => originalGetErrorData(data));
       // @ts-ignore
-      spy = jest.spyOn(StCodec._notification, 'error');
+      spy = jest.spyOn(StCodec.getNotification(), 'error');
     });
 
     afterEach(() => {
@@ -540,25 +535,20 @@ describe('StCodec class', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
-      StCodec._messageBus.publish = jest.fn();
-      // @ts-ignore
-      StCodec._messageBus.publishFromParent = jest.fn();
+      StCodec.getMessageBus().publish = jest.fn();
       StCodec.updateJWTValue('somenewjwt');
     });
 
     // then
     it('should call publish method with UPDATE_JWT event', () => {
       // @ts-ignore
-      expect(StCodec._messageBus.publish).toHaveBeenCalledWith(messageBusEvent, true);
+      expect(StCodec.getMessageBus().publish).toHaveBeenCalledWith(messageBusEvent, true);
     });
 
     // then
-    it('should call publishFromParent method with UPDATE_JWT event', () => {
+    it('should call publish method with UPDATE_JWT event', () => {
       // @ts-ignore
-      expect(StCodec._messageBus.publishFromParent).toHaveBeenCalledWith(
-        messageBusEvent,
-        Selectors.CONTROL_FRAME_IFRAME
-      );
+      expect(StCodec.getMessageBus().publish).toHaveBeenCalledWith(messageBusEvent, true);
     });
   });
 });
@@ -567,5 +557,6 @@ function stCodecFixture() {
   const jwt =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
   const instance = StCodec;
-  return { instance, jwt };
+  const obj: StCodec = new StCodec(jwt);
+  return { instance, jwt, obj };
 }

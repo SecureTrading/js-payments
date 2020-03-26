@@ -1,3 +1,5 @@
+require('reflect-metadata');
+
 const V = window.V;
 global.V = V;
 

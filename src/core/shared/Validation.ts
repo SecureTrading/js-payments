@@ -83,20 +83,16 @@ export class Validation extends Frame {
   private static CARD_NUMBER_DEFAULT_LENGTH: number = 16;
   private static CARD_NUMBER_FIELD_NAME: string = 'pan';
   private static CLEAR_VALUE: string = '';
-  private static CURSOR_SINGLE_SKIP: number = 1;
-  private static CURSOR_DOUBLE_SKIP: number = 2;
   private static DELETE_KEY_CODE: number = 46;
   private static ENTER_KEY_CODE = 13;
   private static ERROR_CLASS: string = 'error';
   private static ESCAPE_DIGITS_REGEXP = /[^\d]/g;
-  private static EXPIRATION_DATE_SLASH: string = '/';
   private static EXPIRY_DATE_FIELD_NAME: string = 'expirydate';
   private static ID_PARAM_NAME: string = 'id';
   private static MATCH_CHARS = /[^\d]/g;
   private static MATCH_DIGITS = /^[0-9]*$/;
   private static MERCHANT_EXTRA_FIELDS_PREFIX = 'billing';
   private static SECURITY_CODE_FIELD_NAME: string = 'securitycode';
-  private static SPACE_IN_PAN: string = ' ';
   private static BACKEND_ERROR_FIELDS_NAMES = {
     cardNumber: Validation.CARD_NUMBER_FIELD_NAME,
     expirationDate: Validation.EXPIRY_DATE_FIELD_NAME,
@@ -153,7 +149,6 @@ export class Validation extends Frame {
   public expirationDateValue: string;
   public securityCodeValue: string;
   public validation: IValidation;
-  protected messageBus: MessageBus;
   private _card: ICard;
   private _currentKeyCode: number;
   private _cursorSkip: number = 0;
@@ -178,14 +173,14 @@ export class Validation extends Frame {
   public blockForm(state: FormState) {
     const messageBusEvent: IMessageBusEvent = {
       data: state,
-      type: MessageBus.EVENTS.BLOCK_FORM
+      type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM
     };
     this.messageBus.publish(messageBusEvent, true);
   }
 
   public callSubmitEvent() {
     const messageBusEvent: IMessageBusEvent = {
-      type: MessageBus.EVENTS.CALL_SUBMIT_EVENT
+      type: MessageBus.EVENTS_PUBLIC.CALL_SUBMIT_EVENT
     };
     this.messageBus.publish(messageBusEvent, true);
   }
@@ -224,31 +219,34 @@ export class Validation extends Frame {
 
     if (errordata.find((element: string) => element.includes(Validation.MERCHANT_EXTRA_FIELDS_PREFIX))) {
       validationEvent.type = MessageBus.EVENTS.VALIDATE_MERCHANT_FIELD;
-      this.messageBus.publish(validationEvent, true);
+      this.messageBus.publish(validationEvent);
     }
 
     return { field: errordata[0], errormessage };
   }
 
   public keepCursorsPosition(element: HTMLInputElement) {
-    const lengthFormatted: number = element.value.length;
-    const isLastCharSlash: boolean =
-      element.value.charAt(lengthFormatted - Validation.CURSOR_DOUBLE_SKIP) === Validation.EXPIRATION_DATE_SLASH;
-    const start: number = this._selectionRangeStart;
+    const cursorSingleSkip: number = 1;
+    const cursorDoubleSkip: number = 2;
+    const dateSlash: string = '/';
     const end: number = this._selectionRangeEnd;
+    const start: number = this._selectionRangeStart;
+    const noSelection: number = 0;
+    const selectionLength: number = start - end;
+    const spaceInPan: string = ' ';
+    const lengthFormatted: number = element.value.length;
+    const isLastCharSlash: boolean = element.value.charAt(lengthFormatted - cursorDoubleSkip) === dateSlash;
 
     if (this._isPressedKeyDelete()) {
       element.setSelectionRange(start, end);
     } else if (this._isPressedKeyBackspace()) {
-      element.setSelectionRange(start - Validation.CURSOR_SINGLE_SKIP, end - Validation.CURSOR_SINGLE_SKIP);
-    } else if (isLastCharSlash) {
-      ++this._cursorSkip;
-      element.setSelectionRange(start + Validation.CURSOR_DOUBLE_SKIP, end + Validation.CURSOR_DOUBLE_SKIP);
-    } else if (element.value.charAt(end) === Validation.SPACE_IN_PAN) {
-      ++this._cursorSkip;
-      element.setSelectionRange(start + Validation.CURSOR_DOUBLE_SKIP, end + Validation.CURSOR_DOUBLE_SKIP);
+      element.setSelectionRange(start - cursorSingleSkip, end - cursorSingleSkip);
+    } else if (isLastCharSlash || (element.value.charAt(end) === spaceInPan && selectionLength === noSelection)) {
+      element.setSelectionRange(start + cursorDoubleSkip, end + cursorDoubleSkip);
+    } else if (selectionLength === noSelection) {
+      element.setSelectionRange(start + cursorSingleSkip, end + cursorSingleSkip);
     } else {
-      element.setSelectionRange(start + Validation.CURSOR_SINGLE_SKIP, end + Validation.CURSOR_SINGLE_SKIP);
+      element.setSelectionRange(start + cursorSingleSkip, start + cursorSingleSkip);
     }
   }
 
@@ -297,7 +295,7 @@ export class Validation extends Frame {
       data: { ...state },
       type: MessageBus.EVENTS.VALIDATE_FORM
     };
-    this.messageBus.publish(validationEvent, true);
+    this.messageBus.publish(validationEvent);
   }
 
   public validate(inputElement: HTMLInputElement, messageElement: HTMLElement, customErrorMessage?: string) {
@@ -307,7 +305,6 @@ export class Validation extends Frame {
 
   protected async onInit() {
     super.onInit();
-    this.messageBus = new MessageBus();
     this._matchDigitsRegexp = new RegExp(Validation.MATCH_DIGITS);
     this._translator = new Translator(this.params.locale);
   }

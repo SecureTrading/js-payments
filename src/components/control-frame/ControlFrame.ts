@@ -16,17 +16,25 @@ import { ISubmitData } from '../../core/models/ISubmitData';
 import { Frame } from '../../core/shared/Frame';
 import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
-import { Notification } from '../../core/shared/Notification';
 import { Payment } from '../../core/shared/Payment';
 import { Validation } from '../../core/shared/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
+import { BrowserLocalStorage } from '../../core/services/storage/BrowserLocalStorage';
+import { BrowserSessionStorage } from '../../core/services/storage/BrowserSessionStorage';
+import { Service } from 'typedi';
+import { InterFrameCommunicator } from '../../core/services/message-bus/InterFrameCommunicator';
+import { ConfigProvider } from '../../core/config/ConfigProvider';
+import { interval } from 'rxjs';
+import { filter, mapTo } from 'rxjs/operators';
+import { NotificationService } from '../../core/services/notification/NotificationService';
 
+@Service()
 export class ControlFrame extends Frame {
   private static ALLOWED_PARAMS: string[] = ['jwt', 'gatewayUrl'];
   private static NON_CVV_CARDS: string[] = ['PIBA'];
   private static THREEDQUERY_EVENT: string = 'THREEDQUERY';
 
-  private static _isRequestTypePropertyEmpty(data: ISubmitData): boolean {
+  private static _isRequestTypePropertyNotEmpty(data: ISubmitData): boolean {
     return data !== undefined && data.requestTypes !== undefined;
   }
 
@@ -56,7 +64,6 @@ export class ControlFrame extends Frame {
   private _formFields: IFormFieldsDetails = FormFieldsDetails;
   private _formFieldsValidity: IFormFieldsValidity = FormFieldsValidity;
   private _merchantFormData: IMerchantData;
-  private _notification: Notification;
   private _payment: Payment;
   private _postThreeDRequestTypes: string[];
   private _preThreeDRequestTypes: string[];
@@ -67,9 +74,19 @@ export class ControlFrame extends Frame {
   private _threeDQueryResult: any;
   private _validation: Validation;
 
-  constructor() {
+  constructor(
+    private _localStorage: BrowserLocalStorage,
+    private _sessionStorage: BrowserSessionStorage,
+    private _communicator: InterFrameCommunicator,
+    private _configProvider: ConfigProvider,
+    private _notification: NotificationService
+  ) {
     super();
     this.onInit();
+    this._communicator.whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK).thenRespond(() => interval().pipe(
+      mapTo(this._configProvider.getConfig()),
+      filter(Boolean),
+    ));
   }
 
   protected async onInit(): Promise<void> {
@@ -144,7 +161,7 @@ export class ControlFrame extends Frame {
   }
 
   private _threeDInitEvent(): void {
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT, () => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT_REQUEST, () => {
       this._threeDInit();
       this._changeSecurityCodeLength();
     });
@@ -207,7 +224,7 @@ export class ControlFrame extends Frame {
   }
 
   private _onSubmit(data: ISubmitData): void {
-    if (ControlFrame._isRequestTypePropertyEmpty(data)) {
+    if (ControlFrame._isRequestTypePropertyNotEmpty(data)) {
       this._setRequestTypes(data);
     }
     this._requestPayment(data, this._isCardBypassed(data));
@@ -232,10 +249,17 @@ export class ControlFrame extends Frame {
     this._payment
       .processPayment(this._postThreeDRequestTypes, this._card, this._merchantFormData, data)
       .then(() => {
+        this.messageBus.publish(
+          {
+            type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK
+          },
+          true
+        );
         this._notification.success(Language.translations.PAYMENT_SUCCESS);
         this._validation.blockForm(FormState.COMPLETE);
       })
       .catch((error: any) => {
+        this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
         this._notification.error(Language.translations.PAYMENT_ERROR);
         this._validation.blockForm(FormState.AVAILABLE);
       })
@@ -278,6 +302,7 @@ export class ControlFrame extends Frame {
       this._isPaymentReady
     );
     if (!validity) {
+      this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
       this._validateFormFields();
       return;
     }
@@ -316,7 +341,7 @@ export class ControlFrame extends Frame {
       this.messageBus.publish(
         {
           data: result.response,
-          type: MessageBus.EVENTS_PUBLIC.THREEDINIT
+          type: MessageBus.EVENTS_PUBLIC.THREEDINIT_RESPONSE
         },
         true
       );
@@ -381,7 +406,6 @@ export class ControlFrame extends Frame {
   private _setInstances(): void {
     this._payment = new Payment(this.params.jwt, this.params.gatewayUrl, this.params.origin);
     this._validation = new Validation();
-    this._notification = new Notification();
   }
 
   private _setRequestTypes(data: ISetRequestTypes): void {

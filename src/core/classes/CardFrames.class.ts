@@ -2,7 +2,7 @@ import JwtDecode from 'jwt-decode';
 import { BypassCards } from '../models/constants/BypassCards';
 import { FormState } from '../models/constants/FormState';
 import { IMessageBusEvent } from '../models/IMessageBusEvent';
-import { IStyles } from '../models/IStyles';
+import { IStyles } from '../config/model/IStyles';
 import { IValidationMessageBus } from '../models/IValidationMessageBus';
 import { Element } from '../services/Element';
 import { DomMethods } from '../shared/DomMethods';
@@ -180,7 +180,7 @@ export class CardFrames extends RegisterFrames {
       data: state,
       type: eventName
     };
-    this.messageBus.publishFromParent(messageBusEvent, target);
+    this.messageBus.publish(messageBusEvent);
   }
 
   private _disableSubmitButton(state: FormState): void {
@@ -235,7 +235,7 @@ export class CardFrames extends RegisterFrames {
       animatedCardConfig.defaultPaymentType = this._defaultPaymentType;
     }
     this._animatedCard.create(Selectors.ANIMATED_CARD_COMPONENT_NAME, {}, animatedCardConfig);
-    this._animatedCardMounted = this._animatedCard.mount(Selectors.ANIMATED_CARD_COMPONENT_FRAME, '-1');
+    this._animatedCardMounted = this._animatedCard.mount(Selectors.ANIMATED_CARD_COMPONENT_IFRAME, '-1');
     this.elementsToRegister.push(this._animatedCardMounted);
   }
 
@@ -271,7 +271,7 @@ export class CardFrames extends RegisterFrames {
       data: DomMethods.parseForm(),
       type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
     };
-    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.publish(messageBusEvent);
   }
 
   private _publishSubmitEvent(deferInit: boolean): void {
@@ -283,7 +283,7 @@ export class CardFrames extends RegisterFrames {
       },
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
-    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.publish(messageBusEvent);
   }
 
   private _publishValidatedFieldState(field: { message: string; state: boolean }, eventType: string): void {
@@ -348,13 +348,13 @@ export class CardFrames extends RegisterFrames {
         this._publishSubmitEvent(this._deferInit);
       });
     }
-    this.messageBus.subscribeOnParent(MessageBus.EVENTS.CALL_SUBMIT_EVENT, () => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.CALL_SUBMIT_EVENT, () => {
       this._publishSubmitEvent(this._deferInit);
     });
   }
 
   private _subscribeBlockSubmit(): void {
-    this.messageBus.subscribe(MessageBus.EVENTS.BLOCK_FORM, (state: FormState) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BLOCK_FORM, (state: FormState) => {
       this._disableSubmitButton(state);
       this._disableFormField(state, MessageBus.EVENTS_PUBLIC.BLOCK_CARD_NUMBER, Selectors.CARD_NUMBER_IFRAME);
       this._disableFormField(state, MessageBus.EVENTS_PUBLIC.BLOCK_EXPIRATION_DATE, Selectors.EXPIRATION_DATE_IFRAME);

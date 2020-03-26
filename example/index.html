@@ -12,6 +12,7 @@
 
   <body>
     <form id="st-form" class="example-form" autocomplete="off" novalidate>
+      <div id="st-popup"></div>
       <h1 class="example-form__title">
         Secure Trading<span>AMOUNT: <strong>10.00 GBP</strong></span>
       </h1>
@@ -91,12 +92,12 @@
       </div>
       <div id="st-animated-card" class="example-form__st-animated-card"></div>
     </form>
-    <script type="text/javascript" src="st.js"></script>
+    <script type="text/javascript" src="<%= WEBSERVICES_URL %>/st.js"></script>
     <script>
       (function() {
         var ST = SecureTrading;
         window
-          .fetch('https://merchant.example.com:8443/config.json')
+          .fetch('<%= WEBSERVICES_URL %>/config.json')
           .then(function(response) {
             if (response.status !== 200) {
               return Promise.reject('Configuration has not been set !');
@@ -104,10 +105,10 @@
             return response.json();
           })
           .then(function(data) {
-            if (data) {
+            try {
               configurationInit(ST, data);
-            } else {
-              fetchDefaultConfig();
+            } catch (e) {
+              console.error(e);
             }
           })
           .catch(function() {
@@ -128,6 +129,30 @@
               }
             });
         }
+
+        function displayPopup(id, text, tp) {
+          if (!document.getElementById(id)) {
+            var div = document.createElement('div');
+            div.innerText = text;
+            div.setAttribute('id', id);
+            div.setAttribute(
+              'style',
+              'display: flex; justify-content: center; position: fixed; height: 70px;right:0;color: white;padding: 0 50px;align-items: center;border-radius: 10px;font-family: Verdana;font-size: 20px;z-index:2'
+            );
+            div.style.backgroundColor = tp;
+            if (tp === 'green') {
+              div.style.top = 0;
+            } else {
+              div.style.bottom = 0;
+            }
+            const popup = document.getElementById('st-popup');
+            popup.appendChild(div);
+            setTimeout(function() {
+              popup.removeChild(div);
+            }, 3000);
+          }
+        }
+
         function configurationInit(ST, data) {
           var stConfig = data;
           var parsedUrl = new URL(window.location.href);
@@ -137,13 +162,21 @@
           st.submitCallback = function someFancyfunction(data) {
             var stringified = JSON.stringify(data);
             var testVariable = 'This is what we have got after submit' + stringified;
+            console.error(testVariable);
+          };
+          st.successCallback = function() {
+            displayPopup('success-popup', 'This is success message', 'green');
+          };
+          st.errorCallback = function() {
+            displayPopup('error-popup', 'This is error message', 'red');
           };
           st.Components(stConfig.components);
           st.ApplePay(stConfig.applePay);
           st.VisaCheckout(stConfig.visaCheckout);
+
           document.getElementById('example-form-amount').addEventListener('input', function() {
             st.updateJWT(
-              'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4MjkxMDkxMi4zMzA4NzU5LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.l_ZQSctt_dGP_ppw1NmuwMRoIPl78K-GHxy4KLcyV3o'
+              'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4NDY0Mjc2MC42ODI2MzQ0LCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIxMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.Z1jtyunC5PRY3hYCaMpT841FF0-Mpdl2T3SS-VUxETc'
             );
           });
         }

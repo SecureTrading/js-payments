@@ -5,12 +5,12 @@ import { IResponseData } from '../models/IResponseData';
 import { IStRequest } from '../models/IStRequest';
 import { Language } from '../shared/Language';
 import { MessageBus } from '../shared/MessageBus';
-import { Notification } from '../shared/Notification';
-import { Selectors } from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
 import { Validation } from '../shared/Validation';
 import { version } from '../../../package.json';
+import { Container } from 'typedi';
+import { NotificationService } from '../services/notification/NotificationService';
 
 class StCodec {
   public static CONTENT_TYPE = 'application/json';
@@ -86,9 +86,9 @@ class StCodec {
       type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE
     };
     if (StCodec._parentOrigin !== undefined) {
-      StCodec._messageBus.publish(notificationEvent, true);
+      StCodec.getMessageBus().publish(notificationEvent, true);
     } else {
-      StCodec._messageBus.publishToSelf(notificationEvent);
+      StCodec.getMessageBus().publish(notificationEvent);
     }
   }
 
@@ -101,13 +101,12 @@ class StCodec {
       },
       type: MessageBus.EVENTS_PUBLIC.UPDATE_JWT
     };
-    StCodec._messageBus.publish(messageBusEvent, true);
-    StCodec._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    StCodec.getMessageBus().publish(messageBusEvent, true);
   }
 
-  private static _notification = new Notification();
+  private static _notification: NotificationService;
+  private static _messageBus: MessageBus;
   private static _locale: string;
-  private static _messageBus = new MessageBus();
   private static _parentOrigin: string;
   private static REQUESTS_WITH_ERROR_MESSAGES = [
     'AUTH',
@@ -121,6 +120,14 @@ class StCodec {
   ];
   private static STATUS_CODES = { invalidfield: '30000', ok: '0', declined: '70000' };
 
+  private static getMessageBus(): MessageBus {
+    return StCodec._messageBus || (StCodec._messageBus = Container.get(MessageBus));
+  }
+
+  private static getNotification(): NotificationService {
+    return StCodec._notification || (StCodec._notification = Container.get(NotificationService));
+  }
+
   private static _createCommunicationError() {
     return {
       errorcode: '50003',
@@ -131,8 +138,10 @@ class StCodec {
   private static _handleInvalidResponse() {
     const validation = new Validation();
     StCodec.publishResponse(StCodec._createCommunicationError());
-    StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
+    StCodec.getNotification().error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
     validation.blockForm(FormState.AVAILABLE);
+    StCodec.getMessageBus().publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
+
     return new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
   }
 
@@ -169,7 +178,8 @@ class StCodec {
         }
         validation.blockForm(FormState.AVAILABLE);
         StCodec.publishResponse(responseContent, jwtResponse);
-        StCodec._notification.error(responseContent.errormessage);
+        StCodec.getNotification().error(responseContent.errormessage);
+        StCodec.getMessageBus().publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
         throw new Error(responseContent.errormessage);
       }
     }
@@ -190,13 +200,11 @@ class StCodec {
 
   constructor(jwt: string, parentOrigin?: string) {
     this._requestId = StCodec._createRequestId();
+    StCodec._notification = Container.get(NotificationService);
     StCodec.jwt = jwt;
     StCodec.originalJwt = jwt;
     StCodec._locale = new StJwt(StCodec.jwt).locale;
     StCodec._parentOrigin = parentOrigin;
-    if (parentOrigin) {
-      StCodec._messageBus = new MessageBus(parentOrigin);
-    }
   }
 
   public buildRequestObject(requestData: object): object {
@@ -220,7 +228,8 @@ class StCodec {
       Object.keys(requestObject).length < StCodec.MINIMUM_REQUEST_FIELDS ||
       !requestObject.requesttypedescriptions.every(val => StCodec.SUPPORTED_REQUEST_TYPES.includes(val))
     ) {
-      StCodec._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST);
+      StCodec.getMessageBus().publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
+      StCodec.getNotification().error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST);
       throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST);
     }
     return JSON.stringify(this.buildRequestObject(requestObject));

@@ -1,12 +1,14 @@
 import { CardinalCommerce } from '../integrations/CardinalCommerce';
-import { FormState } from '../models/constants/FormState';
-import { IStyles } from '../models/IStyles';
+import { IStyles } from '../config/model/IStyles';
 import { Element } from '../services/Element';
 import { DomMethods } from '../shared/DomMethods';
 import { MessageBus } from '../shared/MessageBus';
 import { Selectors } from '../shared/Selectors';
 import { Validation } from '../shared/Validation';
 import { RegisterFrames } from './RegisterFrames.class';
+import { BrowserLocalStorage } from '../services/storage/BrowserLocalStorage';
+import { Container } from 'typedi';
+import { IComponentsIds } from '../config/model/IComponentsIds';
 
 export class CommonFrames extends RegisterFrames {
   get requestTypes(): string[] {
@@ -24,35 +26,32 @@ export class CommonFrames extends RegisterFrames {
   private _controlFrameMounted: HTMLElement;
   private _messageBus: MessageBus;
   private _notificationFrame: Element;
-  private _notificationFrameMounted: HTMLElement;
   private _requestTypes: string[];
   private readonly _gatewayUrl: string;
   private readonly _merchantForm: HTMLFormElement;
   private _validation: Validation;
-  private readonly _submitCallback: any;
   private readonly _submitFields: string[];
   private readonly _submitOnError: boolean;
   private readonly _submitOnSuccess: boolean;
+  private _localStorage: BrowserLocalStorage = Container.get(BrowserLocalStorage);
 
   constructor(
     jwt: string,
     origin: string,
-    componentIds: {},
+    componentIds: IComponentsIds,
     styles: IStyles,
     submitOnSuccess: boolean,
     submitOnError: boolean,
     submitFields: string[],
     gatewayUrl: string,
     animatedCard: boolean,
-    submitCallback: any,
     requestTypes: string[]
   ) {
-    super(jwt, origin, componentIds, styles, animatedCard, submitCallback);
+    super(jwt, origin, componentIds, styles, animatedCard);
     this._gatewayUrl = gatewayUrl;
-    this._messageBus = new MessageBus(origin);
+    this._messageBus = Container.get(MessageBus);
     this._merchantForm = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR) as HTMLFormElement;
     this._validation = new Validation();
-    this._submitCallback = submitCallback;
     this._submitFields = submitFields;
     this._submitOnError = submitOnError;
     this._submitOnSuccess = submitOnSuccess;
@@ -77,9 +76,6 @@ export class CommonFrames extends RegisterFrames {
 
   protected setElementsFields() {
     const elements = [];
-    if (this._shouldLoadNotificationFrame()) {
-      elements.push(this.componentIds.notificationFrame);
-    }
     elements.push(Selectors.MERCHANT_FORM_SELECTOR);
     return elements;
   }
@@ -97,18 +93,12 @@ export class CommonFrames extends RegisterFrames {
 
   private _initFormFields() {
     const { defaultStyles } = this.styles;
-    let { notificationFrame, controlFrame } = this.styles;
+    let { controlFrame } = this.styles;
 
-    notificationFrame = Object.assign({}, defaultStyles, notificationFrame);
     controlFrame = Object.assign({}, defaultStyles, controlFrame);
 
     this._notificationFrame = new Element();
     this._controlFrame = new Element();
-    if (this._shouldLoadNotificationFrame()) {
-      this._notificationFrame.create(Selectors.NOTIFICATION_FRAME_COMPONENT_NAME, notificationFrame, this.params);
-      this._notificationFrameMounted = this._notificationFrame.mount(Selectors.NOTIFICATION_FRAME_IFRAME, '-1');
-      this.elementsToRegister.push(this._notificationFrameMounted);
-    }
     this._controlFrame.create(Selectors.CONTROL_FRAME_COMPONENT_NAME, controlFrame, {
       gatewayUrl: this._gatewayUrl,
       jwt: this.jwt,
@@ -143,13 +133,12 @@ export class CommonFrames extends RegisterFrames {
       data: DomMethods.parseForm(),
       type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
     };
-    this._messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this._messageBus.publish(messageBusEvent);
   }
 
   private _onTransactionComplete(data: any) {
-    if ((this._isTransactionFinished(data) || data.errorcode !== '0') && this._submitCallback) {
-      this._validation.blockForm(FormState.AVAILABLE);
-      this._submitCallback(data);
+    if (this._isTransactionFinished(data) || data.errorcode !== '0') {
+      this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUBMIT_CALLBACK }, true);
     }
     if (this._shouldSubmitForm(data)) {
       const form = this._merchantForm;
@@ -168,7 +157,7 @@ export class CommonFrames extends RegisterFrames {
   private _setTransactionCompleteListener() {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE, (data: any) => {
       if (data.walletsource === 'APPLEPAY') {
-        const localStore = localStorage.getItem('completePayment');
+        const localStore = this._localStorage.getItem('completePayment');
         setTimeout(() => {
           if (localStore === 'true') {
             this._onTransactionComplete(data);
@@ -178,10 +167,6 @@ export class CommonFrames extends RegisterFrames {
         this._onTransactionComplete(data);
       }
     });
-  }
-
-  private _shouldLoadNotificationFrame(): boolean {
-    return !(this._submitOnError && this._submitOnSuccess);
   }
 
   private _shouldSubmitForm(data: any): boolean {

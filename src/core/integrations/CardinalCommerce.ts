@@ -12,11 +12,13 @@ import { IThreeDQueryResponse } from '../models/IThreeDQueryResponse';
 import { DomMethods } from '../shared/DomMethods';
 import { Language } from '../shared/Language';
 import { MessageBus } from '../shared/MessageBus';
-import { Notification } from '../shared/Notification';
 import { Selectors } from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
 import { GoogleAnalytics } from './GoogleAnalytics';
+import { Container } from 'typedi';
+import { FramesHub } from '../services/message-bus/FramesHub';
+import { NotificationService } from '../services/notification/NotificationService';
 
 declare const Cardinal: any;
 
@@ -34,9 +36,11 @@ export class CardinalCommerce {
   private _jwt: string;
   private readonly _requestTypes: string[];
   private readonly _threedinit: string;
-  private _notification: Notification;
+  private _notification: NotificationService;
   private _sdkAddress: string = environment.CARDINAL_COMMERCE.SONGBIRD_TEST_URL;
   private _bypassCards: string[];
+  private _jwtUpdated: boolean;
+  private _framesHub: FramesHub;
 
   constructor(
     startOnLoad: boolean,
@@ -47,6 +51,7 @@ export class CardinalCommerce {
     threedinit?: string,
     bypassCards?: string[]
   ) {
+    this._jwtUpdated = false;
     this._startOnLoad = startOnLoad;
     this._jwt = jwt;
     this._threedinit = threedinit;
@@ -54,12 +59,14 @@ export class CardinalCommerce {
     this._cachetoken = cachetoken ? cachetoken : '';
     this._requestTypes = requestTypes;
     this._bypassCards = bypassCards;
-    this.messageBus = new MessageBus();
-    this._notification = new Notification();
+    this.messageBus = Container.get(MessageBus);
+    this._notification = Container.get(NotificationService);
+    this._framesHub = Container.get(FramesHub);
     this._setLiveStatus();
     this._onInit();
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
       const { newJwt } = data;
+      this._jwtUpdated = true;
       this._jwt = newJwt;
       this._onInit();
     });
@@ -86,6 +93,10 @@ export class CardinalCommerce {
     });
   }
 
+  protected _cardinalTrigger() {
+    return Cardinal.trigger(PaymentEvents.JWT_UPDATE, this._cardinalCommerceJWT);
+  }
+
   protected _onCardinalLoad() {
     Cardinal.configure(environment.CARDINAL_COMMERCE.CONFIG);
     Cardinal.off(PaymentEvents.SETUP_COMPLETE);
@@ -100,24 +111,31 @@ export class CardinalCommerce {
       this._onCardinalValidated(data, jwt);
       GoogleAnalytics.sendGaData('event', 'Cardinal', 'validate', 'Cardinal payment validated');
     });
-    this._cardinalSetup();
+    if (this._jwtUpdated) {
+      this._cardinalTrigger();
+    } else {
+      this._cardinalSetup();
+    }
   }
 
   protected _onCardinalSetupComplete() {
     if (this._startOnLoad) {
       const pan = new StJwt(this._jwt).payload.pan as string;
-      this._performBinDetection({ validity: true, value: pan });
+      this._performBinDetection(pan);
       const submitFormEvent: IMessageBusEvent = {
         data: { dataInJwt: true, requestTypes: this._requestTypes, bypassCards: this._bypassCards },
         type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
       };
-      this.messageBus.publishFromParent(submitFormEvent, Selectors.CONTROL_FRAME_IFRAME);
+      this.messageBus.publish(submitFormEvent);
     } else {
       const messageBusEvent: IMessageBusEvent = {
         type: MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL
       };
-      this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BIN_PROCESS, this._performBinDetection);
-      this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+      this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BIN_PROCESS, (data: IFormFieldState) => {
+        const { value } = data;
+        this._performBinDetection(value);
+      });
+      this.messageBus.publish(messageBusEvent);
     }
   }
 
@@ -146,13 +164,13 @@ export class CardinalCommerce {
       const resetNotificationEvent: IMessageBusEvent = {
         type: MessageBus.EVENTS_PUBLIC.RESET_JWT
       };
-      this.messageBus.publishFromParent(resetNotificationEvent, Selectors.CONTROL_FRAME_IFRAME);
-      this.messageBus.publishToSelf(notificationEvent);
-      this._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE, true);
+      this.messageBus.publish(resetNotificationEvent);
+      this.messageBus.publish(notificationEvent);
+      this._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
     }
   }
 
-  protected _performBinDetection(bin: IFormFieldState) {
+  protected _performBinDetection(bin: string) {
     return Cardinal.trigger(PaymentEvents.BIN_PROCESS, bin);
   }
 
@@ -174,33 +192,32 @@ export class CardinalCommerce {
       data,
       type: MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS
     };
-    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.publish(messageBusEvent);
     GoogleAnalytics.sendGaData('event', 'Cardinal', 'auth', 'Cardinal auth completed');
   }
 
   private _initSubscriptions() {
-    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME, () => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME, () => {
       this._onLoadControlFrame();
     });
-    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDINIT, (data: IThreeDInitResponse) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT_RESPONSE, (data: IThreeDInitResponse) => {
       this._onThreeDInitEvent(data);
     });
-    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.BY_PASS_INIT, () => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BY_PASS_INIT, () => {
       this._onBypassJsInitEvent();
     });
-    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.THREEDQUERY, (data: any) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDQUERY, (data: any) => {
       this._onThreeDQueryEvent(data);
     });
     this._initSubmitEventListener();
   }
 
   private _publishRequestTypesEvent(requestTypes: string[]) {
-    const messageBusEvent: IMessageBusEvent = {
-      data: { requestTypes },
-      type: MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES
-    };
-    document.getElementById(Selectors.CONTROL_FRAME_IFRAME).addEventListener('load', () => {
-      this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(() => {
+      this.messageBus.publish({
+        data: { requestTypes },
+        type: MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES
+      });
     });
   }
 
@@ -244,7 +261,7 @@ export class CardinalCommerce {
       data: this._cachetoken,
       type: MessageBus.EVENTS_PUBLIC.BY_PASS_INIT
     };
-    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.publish(messageBusEvent);
   }
 
   private _setLiveStatus() {
@@ -255,9 +272,9 @@ export class CardinalCommerce {
 
   private _threeDInitRequest() {
     const messageBusEvent: IMessageBusEvent = {
-      type: MessageBus.EVENTS_PUBLIC.THREEDINIT
+      type: MessageBus.EVENTS_PUBLIC.THREEDINIT_REQUEST
     };
-    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.publish(messageBusEvent);
   }
 
   private _threeDQueryRequest(responseObject: IThreeDQueryResponse) {
@@ -270,7 +287,7 @@ export class CardinalCommerce {
   }
 
   private _initSubmitEventListener(): void {
-    this.messageBus.subscribeOnParent(MessageBus.EVENTS_PUBLIC.BY_PASS_CARDINAL, (data: any) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BY_PASS_CARDINAL, (data: any) => {
       const { pan, expirydate, securitycode } = data;
       const postData: any = {
         expirydate,
@@ -287,6 +304,6 @@ export class CardinalCommerce {
       data,
       type: MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS
     };
-    this.messageBus.publishFromParent(messageBusEvent, Selectors.CONTROL_FRAME_IFRAME);
+    this.messageBus.publish(messageBusEvent);
   }
 }

@@ -5,7 +5,14 @@
   "deferInit": false,
   "fieldsToSubmit": ["pan", "expirydate", "securitycode"],
   "buttonId": "merchant-submit-button",
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4MzIxOTY3OC4xNzEyMDk4LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.9q1NE42xJR6yF2UIpjcYNz1dcZ0il8mBVkLwi0Q5HbQ",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4NTE1MDgxNS4xMTYwMDA0LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.Vj-nes3TL5i6UHLvuQMrhLw1N8__mftKO6AzxFIK9Cc",
+  "placeholders": {
+    "pan": "Card number",
+    "expirydate": "MM/YY",
+    "securitycode": "***"
+  },
+  "disableNotification": false,
+  "panIcon": true,
   "styles": {
     "defaultStyles": {
       "background-color-input": "AliceBlue"
@@ -22,15 +29,12 @@
       "font-size-input": "1.5rem",
       "line-height-input": "1.6rem"
     },
-    "notificationFrame": {
-      "color-error": "#FFF333",
-      "border-size-notification": "2px"
-    },
     "controlFrame": {
       "color-error": "#3358FF"
     }
   },
   "submitOnSuccess": false,
+  "submitOnError": false,
   "submitCallback": "",
   "translations": {
     "An error occurred": "Wystąpił błąd"

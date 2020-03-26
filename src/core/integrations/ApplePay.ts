@@ -1,13 +1,15 @@
 import { StTransport } from '../classes/StTransport.class';
-import { IWalletConfig } from '../models/IWalletConfig';
+import { IWalletConfig } from '../config/model/IWalletConfig';
 import { DomMethods } from '../shared/DomMethods';
 import { Language } from '../shared/Language';
 import { MessageBus } from '../shared/MessageBus';
-import { Notification } from '../shared/Notification';
 import { Payment } from '../shared/Payment';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
 import { GoogleAnalytics } from './GoogleAnalytics';
+import { BrowserLocalStorage } from '../services/storage/BrowserLocalStorage';
+import { Container } from 'typedi';
+import { NotificationService } from '../services/notification/NotificationService';
 
 const ApplePaySession = (window as any).ApplePaySession;
 const ApplePayError = (window as any).ApplePayError;
@@ -113,19 +115,21 @@ export class ApplePay {
   private _jwt: string;
   private _applePayButtonProps: any = {};
   private _payment: Payment;
-  private _notification: Notification;
+  private _notification: NotificationService;
   private _requestTypes: string[];
   private _translator: Translator;
   private _merchantId: string;
   private _paymentRequest: any;
   private _placement: string;
   private readonly _completion: { errors: []; status: string };
+  private _localStorage: BrowserLocalStorage;
 
   constructor(config: IWalletConfig, jwt: string, gatewayUrl: string) {
-    this._notification = new Notification();
-    this._messageBus = new MessageBus();
+    this._notification = Container.get(NotificationService);
+    this._messageBus = Container.get(MessageBus);
+    this._localStorage = Container.get(BrowserLocalStorage);
     config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
-    localStorage.setItem('completePayment', '');
+    this._localStorage.setItem('completePayment', '');
     this.jwt = jwt;
     this._completion = {
       errors: [],
@@ -254,7 +258,7 @@ export class ApplePay {
       this._paymentRequest.total.amount = this._stJwtInstance.mainamount;
       this._paymentRequest.currencyCode = this._stJwtInstance.currencyiso3a;
     } else {
-      this._notification.error(Language.translations.APPLE_PAY_AMOUNT_AND_CURRENCY, true);
+      this._notification.error(Language.translations.APPLE_PAY_AMOUNT_AND_CURRENCY);
     }
     return this._paymentRequest;
   }
@@ -283,7 +287,8 @@ export class ApplePay {
         .catch(error => {
           const { errorcode, errormessage } = error;
           this._onValidateMerchantResponseFailure(error);
-          this._notification.error(`${errorcode}: ${errormessage}`, true);
+          this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
+          this._notification.error(`${errorcode}: ${errormessage}`);
           GoogleAnalytics.sendGaData(
             'event',
             'Apple Pay',
@@ -312,12 +317,13 @@ export class ApplePay {
           this._session.completePayment(this._completion);
           this._displayNotification(errorcode);
           GoogleAnalytics.sendGaData('event', 'Apple Pay', 'payment', 'Apple Pay payment completed');
-          localStorage.setItem('completePayment', 'true');
+          this._localStorage.setItem('completePayment', 'true');
         })
         .catch(() => {
-          this._notification.error(Language.translations.PAYMENT_ERROR, true);
+          this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
+          this._notification.error(Language.translations.PAYMENT_ERROR);
           this._session.completePayment({ status: this.getPaymentFailureStatus(), errors: [] });
-          localStorage.setItem('completePayment', 'true');
+          this._localStorage.setItem('completePayment', 'true');
         });
     };
   }
@@ -328,7 +334,7 @@ export class ApplePay {
 
   private _onPaymentCanceled() {
     this._session.oncancel = (event: any) => {
-      this._notification.warning(Language.translations.PAYMENT_CANCELLED, true);
+      this._notification.warning(Language.translations.PAYMENT_CANCELLED);
       GoogleAnalytics.sendGaData('event', 'Apple Pay', 'payment status', 'Apple Pay payment cancelled');
     };
   }
@@ -345,7 +351,7 @@ export class ApplePay {
 
   private _onValidateMerchantResponseFailure(error: any) {
     this._session.abort();
-    this._notification.error(Language.translations.MERCHANT_VALIDATION_FAILURE, true);
+    this._notification.error(Language.translations.MERCHANT_VALIDATION_FAILURE);
   }
 
   private _subscribeStatusHandlers() {
@@ -376,7 +382,7 @@ export class ApplePay {
   }
 
   private _paymentProcess() {
-    localStorage.setItem('completePayment', 'false');
+    this._localStorage.setItem('completePayment', 'false');
     this._session = this.getApplePaySessionObject();
     this._onValidateMerchantRequest();
     this._subscribeStatusHandlers();
@@ -441,9 +447,13 @@ export class ApplePay {
   }
 
   private _displayNotification(errorcode: string) {
-    errorcode === '0'
-      ? this._notification.success(Language.translations.PAYMENT_SUCCESS, true)
-      : this._notification.error(Language.translations.PAYMENT_ERROR, true);
+    if (errorcode === '0') {
+      this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
+      this._notification.success(Language.translations.PAYMENT_SUCCESS);
+    } else {
+      this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
+      this._notification.error(Language.translations.PAYMENT_ERROR);
+    }
   }
 
   private _addButtonHandler(id: string, event: string, notification: string, message: string) {
@@ -453,13 +463,15 @@ export class ApplePay {
     if (element) {
       element.addEventListener(eventType, () => {
         if (notificationType === 'success') {
-          this._notification.success(message, true);
+          this._notification.success(message);
+          this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK }, true);
         } else if (notificationType === 'error') {
-          this._notification.error(message, true);
+          this._notification.error(message);
+          this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
         } else if (notificationType === 'warning') {
-          this._notification.warning(message, true);
+          this._notification.warning(message);
         } else {
-          this._notification.info(message, true);
+          this._notification.info(message);
         }
       });
     } else {

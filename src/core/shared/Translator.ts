@@ -20,10 +20,10 @@ import nl_NL from '../translations/nl_NL.json';
 import no_NO from '../translations/no_NO.json';
 // @ts-ignore
 import sv_SE from '../translations/sv_SE.json';
+import { Container } from 'typedi';
 
 export class Translator {
-  readonly ready: Promise<void>;
-  private _storage: BrowserLocalStorage;
+  private _storage: BrowserLocalStorage = Container.get(BrowserLocalStorage);
 
   constructor(locale: string) {
     i18next.init({
@@ -42,18 +42,20 @@ export class Translator {
         sv_SE: { translation: sv_SE }
       }
     });
-    this._storage = new BrowserLocalStorage();
-    this.ready = this._storage.ready;
   }
 
   public translate = (text: string) => {
-    const translations: string = this._storage.getItem('merchantTranslations');
-    if (translations !== null) {
-      const json: string = JSON.parse(translations);
-      // @ts-ignore
-      const translation: string = Object.keys(json).includes(text) ? json[text] : '';
-      return translation ? translation : i18next.t(text, { content: text });
+    let json: object;
+
+    try {
+      const translations: string = this._storage.getItem('merchantTranslations');
+      json = translations ? JSON.parse(translations) : {};
+    } catch (e) {
+      json = {};
     }
-    return i18next.t(text, { content: text });
+
+    // @ts-ignore
+    const translation: string = Object.keys(json).includes(text) ? json[text] : '';
+    return translation ? translation : i18next.t(text, { content: text });
   };
 }

@@ -13,7 +13,8 @@ import { DomMethods } from '../../../src/core/shared/DomMethods';
 import { Language } from '../../../src/core/shared/Language';
 
 jest.mock('./../../../src/core/shared/MessageBus');
-jest.mock('../../../src/core/integrations/GoogleAnalytics');
+jest.mock('./../../../src/core/integrations/GoogleAnalytics');
+jest.mock('./../../../src/core/services/notification/NotificationService');
 
 // given
 describe('ApplePay', () => {
@@ -337,7 +338,7 @@ describe('ApplePay', () => {
       // @ts-ignore
       expect(instance._notification.error).toHaveBeenCalledTimes(1);
       // @ts-ignore
-      expect(instance._notification.error).toHaveBeenCalledWith('Amount and currency are not set', true);
+      expect(instance._notification.error).toHaveBeenCalledWith('Amount and currency are not set');
     });
     // then
     it('should handle error notification if it cannot set the value because currency is not set', () => {
@@ -353,7 +354,7 @@ describe('ApplePay', () => {
       // @ts-ignore
       expect(instance._notification.error).toHaveBeenCalledTimes(1);
       // @ts-ignore
-      expect(instance._notification.error).toHaveBeenCalledWith('Amount and currency are not set', true);
+      expect(instance._notification.error).toHaveBeenCalledWith('Amount and currency are not set');
     });
   });
 
@@ -519,7 +520,7 @@ describe('ApplePay', () => {
       // @ts-ignore
       expect(instance._notification.error).toHaveBeenCalledTimes(1);
       // @ts-ignore
-      expect(instance._notification.error).toHaveBeenCalledWith('30000: Invalid field', true);
+      expect(instance._notification.error).toHaveBeenCalledWith('30000: Invalid field');
     });
   });
 
@@ -690,7 +691,7 @@ describe('ApplePay', () => {
       // @ts-ignore
       expect(instance._notification.warning).toHaveBeenCalledTimes(1);
       // @ts-ignore
-      expect(instance._notification.warning).toHaveBeenCalledWith('Payment has been cancelled', true);
+      expect(instance._notification.warning).toHaveBeenCalledWith('Payment has been cancelled');
     });
   });
   // given
@@ -930,7 +931,7 @@ describe('ApplePay', () => {
       // @ts-ignore
       instance._displayNotification('0');
       // @ts-ignore
-      expect(instance._notification.success).toHaveBeenCalledWith(Language.translations.PAYMENT_SUCCESS, true);
+      expect(instance._notification.success).toHaveBeenCalledWith(Language.translations.PAYMENT_SUCCESS);
     });
 
     // then
@@ -938,7 +939,7 @@ describe('ApplePay', () => {
       // @ts-ignore
       instance._displayNotification('30000');
       // @ts-ignore
-      expect(instance._notification.error).toHaveBeenCalledWith(Language.translations.PAYMENT_ERROR, true);
+      expect(instance._notification.error).toHaveBeenCalledWith(Language.translations.PAYMENT_ERROR);
     });
   });
 
@@ -1009,7 +1010,7 @@ describe('ApplePay', () => {
       // @ts-ignore
       instance._addButtonHandler(id, event, 'success', message);
       // @ts-ignore
-      expect(instance._notification.success).toHaveBeenCalledWith(message, true);
+      expect(instance._notification.success).toHaveBeenCalledWith(message);
     });
 
     // then
@@ -1022,7 +1023,7 @@ describe('ApplePay', () => {
       // @ts-ignore
       instance._addButtonHandler(id, event, 'error', message);
       // @ts-ignore
-      expect(instance._notification.error).toHaveBeenCalledWith(message, true);
+      expect(instance._notification.error).toHaveBeenCalledWith(message);
     });
 
     // then
@@ -1035,7 +1036,7 @@ describe('ApplePay', () => {
       // @ts-ignore
       instance._addButtonHandler(id, event, 'warning', message);
       // @ts-ignore
-      expect(instance._notification.warning).toHaveBeenCalledWith(message, true);
+      expect(instance._notification.warning).toHaveBeenCalledWith(message);
     });
 
     // then
@@ -1048,7 +1049,7 @@ describe('ApplePay', () => {
       // @ts-ignore
       instance._addButtonHandler(id, event, 'info', message);
       // @ts-ignore
-      expect(instance._notification.info).toHaveBeenCalledWith(message, true);
+      expect(instance._notification.info).toHaveBeenCalledWith(message);
     });
 
     // then

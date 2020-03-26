@@ -1,4 +1,4 @@
-import { IStyle } from '../models/IStyle';
+import { IStyle } from '../config/model/IStyle';
 import { Selectors } from '../shared/Selectors';
 
 export class Element {
@@ -16,8 +16,6 @@ export class Element {
       return Selectors.SECURITY_CODE_COMPONENT;
     } else if (name === Selectors.EXPIRATION_DATE_COMPONENT_NAME) {
       return Selectors.EXPIRATION_DATE_COMPONENT;
-    } else if (name === Selectors.NOTIFICATION_FRAME_COMPONENT_NAME) {
-      return Selectors.NOTIFICATION_FRAME_COMPONENT;
     } else if (name === Selectors.ANIMATED_CARD_COMPONENT_NAME) {
       return Selectors.ANIMATED_CARD_COMPONENT;
     } else if (name === Selectors.CONTROL_FRAME_COMPONENT_NAME) {

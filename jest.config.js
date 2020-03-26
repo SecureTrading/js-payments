@@ -56,7 +56,8 @@ module.exports = {
 
   // A set of global variables that need to be available in all test environments
   globals: {
-    HOST: 'localhost'
+    HOST: 'localhost',
+    WEBSERVICES_URL: 'https://localhost:8443'
   },
 
   // An array of directory names to be searched recursively up from the requiring module's location
@@ -116,7 +117,7 @@ module.exports = {
   // runner: "jest-runner",
 
   // The paths to modules that run some code to configure or set up the testing environment before each test
-  setupFiles: ['<rootDir>/__mocks__/libMock.js'],
+  setupFiles: ['<rootDir>/__mocks__/libMock.js', '<rootDir>/src/bootstrap.ts'],
 
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
   // setupFilesAfterEnv: [],
@@ -143,7 +144,7 @@ module.exports = {
   testPathIgnorePatterns: ['node_modules', 'js-payments-testing'],
 
   // The regexp pattern or array of patterns that Jest uses to detect test files
-  testRegex: '/test',
+  testRegex: ['/test', '/src/.*.spec.ts$'],
 
   // This option allows the use of a custom results processor
   // testResultsProcessor: null,

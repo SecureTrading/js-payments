@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { StCodec } from '../src/core/classes/StCodec.class';
 import { ApplePay } from '../src/core/integrations/ApplePay';
 import { ApplePayMock } from '../src/core/integrations/ApplePayMock';
@@ -20,6 +21,7 @@ jest.mock('./../src/core/integrations/VisaCheckoutMock');
 jest.mock('./../src/core/integrations/ApplePay');
 jest.mock('./../src/core/integrations/ApplePayMock');
 jest.mock('./../src/core/integrations/GoogleAnalytics');
+jest.mock('./../src/core/shared/Notification');
 
 // given
 describe('ST', () => {
@@ -30,6 +32,7 @@ describe('ST', () => {
     // when
     beforeEach(() => {
       instance.Init = jest.fn();
+      // @ts-ignore
       stObject = ST(cacheConfig);
     });
   });
@@ -146,7 +149,7 @@ function stFixture() {
   const config = {
     analytics: true,
     animatedCard: true,
-    components: { defaultPaymentType: 'test' },
+    components: { defaultPaymentType: 'test', paymentTypes: ['test'], requestTypes: ['AUTH'] },
     init: {
       threedinit: 'test',
       cachetoken: 'test'
@@ -154,6 +157,7 @@ function stFixture() {
     jwt:
       'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU2MDk0NjM4Ny4yNDIzMzQ0LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiNDExMTExMTExMTExMTExMSIsImV4cGlyeWRhdGUiOiIwMS8yMCIsInNlY3VyaXR5Y29kZSI6IjEyMyJ9fQ.UssdRcocpaeAqd-jDXpxWeWiKIX-W7zlpy0UWrDE5vg', // Can't use property shorthand because it isn't supported by IE
     livestatus: 0,
+    disableNotification: false,
     origin: 'https://someorigin.com',
     styles: {
       cardNumber: {
@@ -187,13 +191,13 @@ function stFixture() {
   const cacheConfig = {
     animatedCard: true,
     jwt: config.jwt,
-    components: { defaultPaymentType: 'test' },
     init: {
       threedinit:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJSZWZlcmVuY2VJZCI6IjQyLWYzYThjNDk0YWNkYzY2MDcyOTc4YzY0ODg4ZWY5Mjk4ZDE4YWE1ZDRkMzUwNjBmZTQzNmFmN2M1YzI1NDVhM2QiLCJpc3MiOiI1YzEyODg0NWMxMWI5MjIwZGMwNDZlOGUiLCJqdGkiOiI0Mi1mM2E4YzQ5NGFjZGM2NjA3Mjk3OGM2NDg4OGVmOTI5OGQxOGFhNWQ0ZDM1MDYwZmU0MzZhZjdjNWMyNTQ1YTNkIiwiaWF0IjoxNTYxNzI2ODA5LCJQYXlsb2FkIjp7Ik9yZGVyRGV0YWlscyI6eyJBbW91bnQiOjEwMDAsIkN1cnJlbmN5Q29kZSI6IjgyNiJ9fSwiT3JnVW5pdElkIjoiNWMxMTNlOGU2ZmUzZDEyNDYwMTQxODY4In0.GIpwP_MWbocwOkexF_AE1Bo0LuIYsXWFcKWog4EaygA',
       cachetoken:
         'eyJkYXRhY2VudGVydXJsIjogbnVsbCwgImNhY2hldG9rZW4iOiAiNDItZjNhOGM0OTRhY2RjNjYwNzI5NzhjNjQ4ODhlZjkyOThkMThhYTVkNGQzNTA2MGZlNDM2YWY3YzVjMjU0NWEzZCJ9'
     },
+    disableNotification: false,
     livestatus: 0,
     origin: 'https://someorigin.com',
     styles: config.styles,
@@ -233,6 +237,7 @@ function stFixture() {
       displayName: 'My Test Site'
     }
   };
+  // @ts-ignore
   const instance: any = ST(config);
   return { cacheConfig, config, instance, applePayConfig, visaCheckoutConfig };
 }

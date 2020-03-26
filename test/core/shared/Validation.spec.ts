@@ -6,6 +6,7 @@ import { MessageBus } from '../../../src/core/shared/MessageBus';
 import { Validation } from '../../../src/core/shared/Validation';
 
 jest.mock('./../../../src/core/shared/MessageBus');
+jest.mock('./../../../src/core/shared/Notification');
 
 describe('Validation', () => {
   // given
@@ -261,7 +262,7 @@ describe('Validation', () => {
     // then
     it('should call publish event', () => {
       // @ts-ignore
-      expect(instance.messageBus.publish).toHaveBeenCalledWith(validationEvent, true);
+      expect(instance.messageBus.publish).toHaveBeenCalledWith(validationEvent);
     });
   });
 });

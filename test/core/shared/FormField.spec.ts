@@ -4,6 +4,7 @@ import { Utils } from '../../../src/core/shared/Utils';
 import { Validation } from '../../../src/core/shared/Validation';
 
 jest.mock('./../../../src/core/shared/Validation');
+jest.mock('./../../../src/core/shared/Notification');
 
 // given
 describe('FormField', () => {

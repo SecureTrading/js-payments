@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.7
+
+### Added
+
+- Callbacks which can be called when validation fails or payment succeeds. Could be managed by user.
+- Added placeholders option to allow payment fields to have custom placeholder text.
+- Added additional callback functions successCallback and errorCallback to allow merchant to perform custom actions in the case of success/error.
+- Added disableNotifications option to allow merchant to choose not to display notifications.
+- Added option panIcon to add a payment brand icon to pan (credit card) input field once the user's pan is identified.
+
+### Changed
+
+- submitCallback feature has been improved (backward compatibility).
+- Internal architecture improvements for DI and messageBus communication.
+
 ## 2.0.6
 
 ### Fixed

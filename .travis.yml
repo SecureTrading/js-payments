@@ -3,192 +3,183 @@ env:
     - DOCKER_BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
     - DOCKER_BRANCH=${DOCKER_BRANCH//[\@\/]/-}
     - TESTS_TYPE=${TESTS_TYPE}
-    - TEST_TAG=${TEST_TAG}
+    - TEST_TAG=smoke_test
     - BRANCH_WITH_FULL_TESTS=master
+    - APP_REPO=js-payments
+    - APP_BRANCH=$DOCKER_BRANCH
+    - DOCKER_TAG="docker-compose -f py-payments-testing/docker-compose.yml run"
+    - RUN_TESTS="-e REMOTE=true tests poetry run behave features"
+    - BUILD_NAME=${DOCKER_BRANCH}/$TRAVIS_BUILD_NUMBER
 language: node_js
 node_js:
-  - '10'
+  - 10
 services:
   - docker
-before_install:
-  - npm install -g npm@latest
-install:
-  - npm install
-  - npm run prepare
-  - npm run prod
+install: skip
+before_script:
+  - git clone --branch=master --single-branch --depth=1 https://github.com/SecureTrading/py-payments-testing.git
+  - docker-compose -f py-payments-testing/docker-compose.yml pull
+  - docker-compose -f py-payments-testing/docker-compose.yml up -d
 jobs:
   include:
-    - stage: 'Docker build'
+    - stage: Unit tests & Docker build
+      name: Unit tests
+      before_script: skip
       script:
-        - docker pull "securetrading1/js-payments"
-        - docker build . --tag "securetrading1/js-payments:$DOCKER_BRANCH"
-        - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
-        - docker push "securetrading1/js-payments"
-        - cd js-payments-testing
-        - git pull --ff-only origin master
-        - docker build . --build-arg "CODE_VERSION=$DOCKER_BRANCH" --tag "securetrading1/js-payments-testing:$DOCKER_BRANCH"
-        - docker push "securetrading1/js-payments-testing"
-    - stage: 'Test'
-      name: 'Unit tests'
-      script:
+        - npm install
         - npm run coverage
         - npm run snyk
-    - name: "Behavioural test: chrome 76, Windows 10"
-      if: env(TESTS_TYPE)=fullTest OR env(TESTS_TYPE)=smokeTest OR branch = env(BRANCH_WITH_FULL_TESTS)
+    - name: Build docker
+      before_script: skip
       script:
-        - npm run behave -- mvn install -DLOCAL=true -Dos=Windows -Dos_version=10 -Dbrowser=chrome -Dbrowser_version=76.0 -Dresolution=1920x1080 -Dcucumber.options="--tags $TEST_TAG"
-    - name: "Behavioural test: chrome 75, Windows 8.1"
+        - docker build . --tag "securetrading1/js-payments:$DOCKER_BRANCH"
+        - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
+        - docker push "securetrading1/js-payments:$DOCKER_BRANCH"
+    - stage: Behavioral test
+      name: 'Chrome latest, Docker'
+      if: branch NOT IN (master, develop)
+      script:
+        - ${DOCKER_TAG} tests poetry run behave features --tags=$TEST_TAG
+    - stage: Behavioral test
+      name: 'Chrome latest, Docker - Full list of tests'
+      if: env(TESTS_TYPE)=fullTest OR branch IN (env(BRANCH_WITH_FULL_TESTS), develop)
+      script:
+        - ${DOCKER_TAG} tests poetry run behave features --tags=full_test
+    - name: "Behavioural test: chrome 79, Windows 8.1"
       if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
-        - npm run behave -- mvn install -DLOCAL=true -Dos=Windows -Dos_version=8.1 -Dbrowser=chrome -Dbrowser_version=75.0 -Dresolution=1920x1080 -Dcucumber.options="--tags $TEST_TAG"
-    - name: "Behavioural test: chrome 76, Windows 8"
+        - ${DOCKER_TAG} -e OS=Windows -e OS_VERSION=8.1 -e BROWSER=chrome -e BROWSER_VERSION=79.0 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$TEST_TAG
+    - name: "Behavioural test: chrome 80, OS X Mojave"
       if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
-        - npm run behave -- mvn install -DLOCAL=true -Dos=Windows -Dos_version=8 -Dbrowser=chrome -Dbrowser_version=76.0 -Dresolution=1920x1080 -Dcucumber.options="--tags $TEST_TAG"
-    - name: "Behavioural test: chrome 76, OS X Mojave"
+        - ${DOCKER_TAG} -e OS="OS X" -e OS_VERSION=Mojave -e BROWSER=chrome -e BROWSER_VERSION=80.0 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$TEST_TAG
+    - name: "Behavioural test: chrome 80, OS X Catalina"
       if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
-        - npm run behave -- mvn install -DLOCAL=true -Dos="OS X" -Dos_version=Mojave -Dbrowser=chrome -Dbrowser_version=76.0 -Dresolution=1920x1080 -Dcucumber.options="--tags $TEST_TAG"
-    - name: "Behavioural test: chrome 75, OS X High Sierra"
+        - ${DOCKER_TAG} -e OS="OS X" -e OS_VERSION="Catalina" -e BROWSER=chrome -e BROWSER_VERSION=80.0 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$TEST_TAG
+    - name: "Behavioural test: firefox 72, Windows 10"
+      if: env(TESTS_TYPE)=fullTest OR branch=develop
+      script:
+        - ${DOCKER_TAG} -e OS=Windows -e OS_VERSION=10 -e BROWSER=Firefox -e BROWSER_VERSION=72.0 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$TEST_TAG
+    - name: "Behavioural test: firefox 71, Windows 8.1"
       if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
-        - npm run behave -- mvn install -DLOCAL=true -Dos="OS X" -Dos_version="High Sierra" -Dbrowser=chrome -Dbrowser_version=75.0 -Dresolution=1920x1080 -Dcucumber.options="--tags $TEST_TAG"
-    - name: "Behavioural test: chrome 76, OS X Sierra"
+        - ${DOCKER_TAG} -e OS=Windows -e OS_VERSION=8.1 -e BROWSER=Firefox -e BROWSER_VERSION=71.0 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$TEST_TAG
+    - name: "Behavioural test: firefox 72, OS X Mojave"
       if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
-        - npm run behave -- mvn install -DLOCAL=true -Dos="OS X" -Dos_version=Sierra -Dbrowser=chrome -Dbrowser_version=76.0 -Dresolution=1920x1080 -Dcucumber.options="--tags $TEST_TAG"
-    - name: "Behavioural test: firefox 68, Windows 10"
+        - ${DOCKER_TAG} -e OS="OS X" -e OS_VERSION=Mojave -e BROWSER=Firefox -e BROWSER_VERSION=72.0 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$TEST_TAG
+    - name: "Behavioural test: firefox 71, OS X Catalina"
       if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
-        - npm run behave -- mvn install -DLOCAL=true -Dos=Windows -Dos_version=10 -Dbrowser=Firefox -Dbrowser_version=68.0 -Dresolution=1920x1080 -Dcucumber.options="--tags $TEST_TAG"
-    - name: "Behavioural test: firefox 67, Windows 8.1"
-      if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
-      script:
-        - npm run behave -- mvn install -DLOCAL=true -Dos=Windows -Dos_version=8.1 -Dbrowser=Firefox -Dbrowser_version=67.0 -Dresolution=1920x1080 -Dcucumber.options="--tags $TEST_TAG"
-    - name: "Behavioural test: firefox 68, Windows 7"
-      if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
-      script:
-        - npm run behave -- mvn install -DLOCAL=true -Dos=Windows -Dos_version=7 -Dbrowser=Firefox -Dbrowser_version=68.0 -Dresolution=1920x1080 -Dcucumber.options="--tags $TEST_TAG"
-    - name: "Behavioural test: firefox 68, OS X Mojave"
-      if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
-      script:
-        - npm run behave -- mvn install -DLOCAL=true -Dos="OS X" -Dos_version=Mojave -Dbrowser=Firefox -Dbrowser_version=68.0 -Dresolution=1920x1080 -Dcucumber.options="--tags $TEST_TAG"
-    - name: "Behavioural test: firefox 67, OS X High Sierra"
-      if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
-      script:
-        - npm run behave -- mvn install -DLOCAL=true -Dos="OS X" -Dos_version="High Sierra" -Dbrowser=Firefox -Dbrowser_version=67.0 -Dresolution=1920x1080 -Dcucumber.options="--tags $TEST_TAG"
-    - name: "Behavioural test: firefox 68, OS X Sierra"
-      if: branch = env(BRANCH_WITH_FULL_TESTS)
-      script:
-        - npm run behave - mvn install -DLOCAL=true -Dos="OS X" -Dos_version=Sierra -Dbrowser=Firefox -Dbrowser_version=68.0 -Dresolution=1920x1080 -Dcucumber.options="--tags $TEST_TAG"
+        - ${DOCKER_TAG} -e OS="OS X" -e OS_VERSION="Catalina" -e BROWSER=Firefox -e BROWSER_VERSION=71.0 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$TEST_TAG
     - name: "Behavioural test: ie 11, Windows 10"
-      if: env(TESTS_TYPE)=fullTest OR env(TESTS_TYPE)=smokeTest OR branch = env(BRANCH_WITH_FULL_TESTS)
+      if: env(TESTS_TYPE)=fullTest OR branch=develop
       script:
-        - npm run behave -- mvn install -DLOCAL=true -Dos=Windows -Dos_version=10 -Dbrowser=IE -Dbrowser_version=11.0 -Dresolution=1920x1080 -Dcucumber.options="--tags $TEST_TAG"
-    - name: "Behavioural test: ie 10, Windows 8"
-      if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
-      script:
-        - npm run behave -- mvn install -DLOCAL=true -Dos=Windows -Dos_version=8 -Dbrowser=IE -Dbrowser_version=10.0 -Dresolution=1920x1080 -Dcucumber.options="--tags $TEST_TAG"
+        - ${DOCKER_TAG} -e OS=Windows -e OS_VERSION=10 -e BROWSER=IE -e BROWSER_VERSION=11.0 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$TEST_TAG
     - name: "Behavioural test: edge 18, Windows 10"
       if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
-        - npm run behave -- mvn install -DLOCAL=true -Dos=Windows -Dos_version=10 -Dbrowser=Edge -Dbrowser_version=18.0 -Dresolution=1920x1080 -Dcucumber.options="--tags $TEST_TAG"
-    - name: "Behavioural test: edge 17, Windows 10"
-      if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
-      script:
-        - npm run behave -- mvn install -DLOCAL=true -Dos=Windows -Dos_version=10 -Dbrowser=Edge -Dbrowser_version=17.0 -Dresolution=1920x1080 -Dcucumber.options="--tags $TEST_TAG"
+        - ${DOCKER_TAG} -e OS=Windows -e OS_VERSION=10 -e BROWSER=Edge -e BROWSER_VERSION=18.0 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$TEST_TAG
     - name: "Behavioural test: safari 12.1, OS X Mojave"
       if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
-        - npm run behave -- mvn install -DLOCAL=true -Dos="OS X" -Dos_version=Mojave -Dbrowser=Safari -Dbrowser_version=12.1 -Dresolution=1920x1080 -Dcucumber.options="--tags $TEST_TAG"
+        - ${DOCKER_TAG} -e OS="OS X" -e OS_VERSION=Mojave -e BROWSER=Safari -e BROWSER_VERSION=12.1 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$TEST_TAG
     - name: "Behavioural test: safari 11.1, OS X High Sierra"
       if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
-        - npm run behave -- mvn install -DLOCAL=true -Dos="OS X" -Dos_version="High Sierra" -Dbrowser=Safari -Dbrowser_version=11.1 -Dresolution=1920x1080 -Dcucumber.options="--tags $TEST_TAG"
-    - name: "Behavioural test: safari 10.1, OS X Sierra"
-      if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
-      script:
-        - npm run behave -- mvn install -DLOCAL=true -Dos="OS X" -Dos_version=Sierra -Dbrowser=Safari -Dbrowser_version=10.1 -Dresolution=1920x1080 -Dcucumber.options="--tags $TEST_TAG"
-    - name: "Behavioural test: Samsung Galaxy Note 9, Android 8.1"
-      if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
-      script:
-        - npm run behave -- mvn install -DLOCAL=true -Ddevice="Samsung Galaxy Note 9" -Dos_version=8.1 -Dreal_mobile=true -Dcucumber.options="--tags $TEST_TAG"
+        - ${DOCKER_TAG} -e OS="OS X" -e OS_VERSION="High Sierra" -e BROWSER=Safari -e BROWSER_VERSION=11.1 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$TEST_TAG
     - name: "Behavioural test: Samsung Galaxy S9, Android 8.0"
-      if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
+      if: env(TESTS_TYPE)=fullTest
       script:
-        - npm run behave -- mvn install -DLOCAL=true -Ddevice="Samsung Galaxy S9" -Dos_version=8.0 -Dreal_mobile=true -Dcucumber.options="--tags $TEST_TAG"
+        - ${DOCKER_TAG} -e DEVICE="Samsung Galaxy S9" -e OS_VERSION=8.0 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$TEST_TAG
     - name: "Behavioural test: Samsung Galaxy S9 Plus, Android 9.0"
       if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
-        - npm run behave -- mvn install -DLOCAL=true -Ddevice="Samsung Galaxy S9 Plus" -Dos_version=9.0 -Dreal_mobile=true -Dcucumber.options="--tags $TEST_TAG"
+        - ${DOCKER_TAG} -e DEVICE="Samsung Galaxy S9 Plus" -e OS_VERSION=9.0 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$TEST_TAG
     - name: "Behavioural test: Samsung Galaxy S8, Android 7.0"
       if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
-        - npm run behave -- mvn install -DLOCAL=true -Ddevice="Samsung Galaxy S8" -Dos_version=7.0 -Dreal_mobile=true -Dcucumber.options="--tags $TEST_TAG"
-    - name: "Behavioural test: Samsung Galaxy S7, Android 6.0"
-      if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
-      script:
-        - npm run behave -- mvn install -DLOCAL=true -Ddevice="Samsung Galaxy S7" -Dos_version=6.0 -Dreal_mobile=true -Dcucumber.options="--tags $TEST_TAG"
-    - name: "Behavioural test: Samsung Galaxy Tab S3, Android 7.0"
-      if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
-      script:
-        - npm run behave -- mvn install -DLOCAL=true -Ddevice="Samsung Galaxy Tab S3" -Dos_version=7.0 -Dreal_mobile=true -Dcucumber.options="--tags $TEST_TAG"
+        - ${DOCKER_TAG} -e DEVICE="Samsung Galaxy S8" -e OS_VERSION=7.0 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$TEST_TAG
     - name: "Behavioural test: Google Pixel 3, Android 9.0"
       if: env(TESTS_TYPE)=fullTestv
       script:
-        - npm run behave -- mvn install -DLOCAL=true -Ddevice="Google Pixel 3" -Dos_version=9.0 -Dreal_mobile=true -Dcucumber.options="--tags $TEST_TAG"
-    - name: "Behavioural test: Google Pixel, Android 8.0"
+        - ${DOCKER_TAG} -e DEVICE="Google Pixel 3" -e OS_VERSION=9.0 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$TEST_TAG
+    - name: "Behavioural test: Google Pixel 4, Android 10.0"
       if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
-        - npm run behave -- mvn install -DLOCAL=true -Ddevice="Google Pixel" -Dos_version=8.0 -Dreal_mobile=true -Dcucumber.options="--tags $TEST_TAG"
-    - name: "Behavioural test: Google Pixel, Android 7.1"
-      if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
-      script:
-        - npm run behave -- mvn install -DLOCAL=true -Ddevice="Google Pixel" -Dos_version=7.1 -Dreal_mobile=true -Dcucumber.options="--tags $TEST_TAG"
+        - ${DOCKER_TAG} -e DEVICE="Google Pixel 4" -e OS_VERSION=10.0 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$TEST_TAG
     - name: "Behavioural test: Google Nexus 6, Android 6.0"
       if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
-        - npm run behave -- mvn install -DLOCAL=true -Ddevice="Google Nexus 6" -Dos_version=6.0 -Dreal_mobile=true -Dcucumber.options="--tags $TEST_TAG"
-    - name: "Behavioural test: Google Nexus 9, Android 5.1"
+        - ${DOCKER_TAG} -e DEVICE="Google Nexus 6" -e OS_VERSION=6.0 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$TEST_TAG
+    - name: "Behavioural test: iPhone XS, iOS 13.0"
       if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
-        - npm run behave -- mvn install -DLOCAL=true -Ddevice="Google Nexus 9" -Dos_version=5.1 -Dreal_mobile=true -Dcucumber.options="--tags $TEST_TAG"
-    - name: "Behavioural test: Google Nexus 5, Android 4.4"
-      if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
-      script:
-        - npm run behave -- mvn install -DLOCAL=true -Ddevice="Google Nexus 5" -Dos_version=4.4 -Dreal_mobile=true -Dcucumber.options="--tags $TEST_TAG"
-    - name: "Behavioural test: iPhone XS, iOS 12.0"
-      if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
-      script:
-        - npm run behave -- mvn install -DLOCAL=true -Ddevice="iPhone XS" -Dos_version=12 -Dreal_mobile=true -Dcucumber.options="--tags $TEST_TAG"
+        - ${DOCKER_TAG} -e DEVICE="iPhone XS" -e OS_VERSION=13 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$TEST_TAG
     - name: "Behavioural test: iPhone XS Max, iOS 12.0"
       if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
-        - npm run behave -- mvn install -DLOCAL=true -Ddevice="iPhone XS Max" -Dos_version=12 -Dreal_mobile=true -Dcucumber.options="--tags $TEST_TAG"
-    - name: "Behavioural test: iPhone XR, iOS 12.0"
-      if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
-      script:
-        - npm run behave -- mvn install -DLOCAL=true -Ddevice="iPhone XR" -Dos_version=12 -Dreal_mobile=true -Dcucumber.options="--tags $TEST_TAG"
+        - ${DOCKER_TAG} -e DEVICE="iPhone XS Max" -e OS_VERSION=12 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$TEST_TAG
     - name: "Behavioural test: iPhone X, iOS 11.0"
-      if: env(TESTS_TYPE)=fullTest OR env(TESTS_TYPE)=smokeTest OR branch = env(BRANCH_WITH_FULL_TESTS)
+      if: env(TESTS_TYPE)=fullTest OR branch=develop
       script:
-        - npm run behave -- mvn install -DLOCAL=true -Ddevice="iPhone X" -Dos_version=11 -Dreal_mobile=true -Dcucumber.options="--tags $TEST_TAG"
+        - ${DOCKER_TAG} -e DEVICE="iPhone X" -e OS_VERSION=11 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$TEST_TAG
     - name: "Behavioural test: iPhone 8, iOS 11.0"
       if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
-        - npm run behave -- mvn install -DLOCAL=true -Ddevice="iPhone 8" -Dos_version=11 -Dreal_mobile=true -Dcucumber.options="--tags $TEST_TAG"
+        - ${DOCKER_TAG} -e DEVICE="iPhone 8" -e OS_VERSION=11 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$TEST_TAG
     - name: "Behavioural test: iPhone SE, iOS 11.0"
       if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
-        - npm run behave -- mvn install -DLOCAL=true -Ddevice="iPhone SE" -Dos_version=11 -Dreal_mobile=true -Dcucumber.options="--tags $TEST_TAG"
-    - name: "Behavioural test: iPad Pro 12.9 2018, iOS 12.0"
+        - ${DOCKER_TAG} -e DEVICE="iPhone SE" -e OS_VERSION=11 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$TEST_TAG
+    - name: "Behavioural test: iPad 7th, iOS 13.0"
       if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
-        - npm run behave -- mvn install -DLOCAL=true -Ddevice="iPad Pro 12.9 2018" -Dos_version=12 -Dreal_mobile=true -Dcucumber.options="--tags $TEST_TAG"
+        - ${DOCKER_TAG} -e DEVICE="iPad 7th" -e OS_VERSION=13 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$TEST_TAG
     - name: "Behavioural test: iPad Mini 4, iOS 11.0"
       if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
-        - npm run behave -- mvn install -DLOCAL=true -Ddevice="iPad Mini 4" -Dos_version=11 -Dreal_mobile=true -Dcucumber.options="--tags $TEST_TAG"
+        - ${DOCKER_TAG} -e DEVICE="iPad Mini 4" -e OS_VERSION=11 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$TEST_TAG
+# jobs with full list of scenarios
+    - name: "Behavioural test: chrome 80, Windows 10, Full list of tests"
+      if: branch=master
+      script:
+        - ${DOCKER_TAG} -e OS=Windows -e OS_VERSION=10 -e BROWSER=chrome -e BROWSER_VERSION=80.0 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=full_test
+    - name: "Behavioural test: firefox 72, Windows 10, Full list of tests"
+      if: branch=master
+      script:
+        - ${DOCKER_TAG} -e OS=Windows -e OS_VERSION=10 -e BROWSER=Firefox -e BROWSER_VERSION=72.0 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=full_test
+    - name: "Behavioural test: iPhone X, iOS 11.0, Full list of tests"
+      if: branch=master
+      script:
+        - ${DOCKER_TAG} -e DEVICE="iPhone X" -e OS_VERSION=11 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=full_test
+    - name: "Behavioural test: iPhone 11, iOS 13.0"
+      if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
+      script:
+        - ${DOCKER_TAG} -e DEVICE="iPhone 11" -e OS_VERSION=13 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$TEST_TAG
+    - name: "Behavioural test: Samsung Galaxy S9, Android 8.0, Full list of tests"
+      if: branch=master
+      script:
+        - ${DOCKER_TAG} -e DEVICE="Samsung Galaxy S9" -e OS_VERSION=8.0 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=full_test
+    - name: "Behavioural test: Samsung Galaxy S10 Plus, Android 9.0, Full list of tests"
+      if: branch=master
+      script:
+        - ${DOCKER_TAG} -e DEVICE="Samsung Galaxy S10 Plus" -e OS_VERSION=9.0 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=full_test
+    - name: "Behavioural test: IE 11, Windows 10, Full list of tests"
+      if: branch=master
+      script:
+        - ${DOCKER_TAG} -e OS=Windows -e OS_VERSION=10 -e BROWSER=IE -e BROWSER_VERSION=11.0 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=full_test
+    - name: "Behavioural test: IE 10, Windows 10, Full list of tests"
+      if: branch=master
+      script:
+        - ${DOCKER_TAG} -e OS=Windows -e OS_VERSION=10 -e BROWSER=IE -e BROWSER_VERSION=10.0 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=full_test
+    - name: "Behavioural test: safari 13, Catalina, Full list of tests"
+      if: branch=master
+      script:
+        - ${DOCKER_TAG} -e OS="OS X" -e OS_VERSION=Catalina -e BROWSER=Safari -e BROWSER_VERSION=13 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=full_test
+
+
 after_success:
   - cat ./coverage/lcov.info | coveralls
 addons:
@@ -200,5 +191,5 @@ addons:
       secure: TXgjJzYRpKcoBX6exipmXWj8TRToxGBQoQz0agRHczP9THyguyopST1XiPDdhcLIn7SMNDVORyP0D5EvMpchhvJ1unDpIULlNWjp63NsoYBGrryBXv307yn3NoQ+Tzh6U6GUG59bNfsqqLMOYapIqm6xxEqpcx1svA4Zjoz2rvcUK2gBof0UuL6s0rESB/4rQkwk0MQZDzm10O6wb6CWreFw/BMBTSKMvwVNfo5K+il+Ch1MWy2riWqYhyvGdu5Y/CG39WIUowa/y1HjcYNTwLlETr0nqqF9BnOjS05fabGIUnLBmf80mb6AEyrmNeVzQJlcJ4/lvI4f1RhrKvnDE70Ac6RFMoVcxOLLdSJIDoInFSH5xI5E/clGBYfP44LRDhRPXI4++8CPDp+MHG8trAOMIef3ySZGWoaHknNQ/G/Xhrsy7NLoBGnpz2c7CJoNjAPAIt2fm7y3Re+oo/hrhCh5/oya+kEKrrPI8qy9GpidCup5/QD/jKjkJijfusvC3ZEluaw+izAY+7RgLcaOifUqtVAx10JQIpZufWHJkHVqzmfGiLIWbyhNNJcrF+PcWIZSZelPb9uljO325M3bR7ViVmMPDuLojv0Z0cD/KWdqWW/uL7G7uzGSKgdTkuL7LqeaPOOQHZ07+v8Ii9GTZVee4+TRzucUISgNPvBVVJI=
   hosts:
     - webservices.securetrading.net
-    - merchant.example.com
+    - merchant.securetrading.net
     - thirdparty.example.com

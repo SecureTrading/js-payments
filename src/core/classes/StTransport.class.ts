@@ -27,12 +27,14 @@ export class StTransport {
     method: 'post'
   };
 
+  public static readonly THROTTLE_TIME = 250;
   private static DELAY = 1000;
   private static RETRY_LIMIT = 5;
   private static RETRY_TIMEOUT = 10000;
   private static TIMEOUT = 10000;
   private readonly _codec: StCodec;
   private _gatewayUrl: string;
+  private _throttlingRequests = new Map<string, Promise<object>>();
 
   constructor(params: IStTransportParams, parentOrigin?: string) {
     this._gatewayUrl = params.gatewayUrl;
@@ -44,10 +46,21 @@ export class StTransport {
    * @param requestObject A request object to send to ST
    * @return A Promise object that resolves the gateway response
    */
-  public async sendRequest(requestObject: IStRequest) {
+  public async sendRequest(requestObject: IStRequest): Promise<object> {
+    const requestBody = this._codec.encode(requestObject);
+
+    if (!this._throttlingRequests.has(requestBody)) {
+      this._throttlingRequests.set(requestBody, this.sendRequestInternal(requestBody));
+      setTimeout(() => this._throttlingRequests.delete(requestBody), StTransport.THROTTLE_TIME);
+    }
+
+    return this._throttlingRequests.get(requestBody);
+  }
+
+  private sendRequestInternal(requestBody: string): Promise<object> {
     return this._fetchRetry(this._gatewayUrl, {
       ...StTransport.DEFAULT_FETCH_OPTIONS,
-      body: this._codec.encode(requestObject)
+      body: requestBody,
     })
       .then(this._codec.decode)
       .catch(() => {

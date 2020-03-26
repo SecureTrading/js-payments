@@ -1,7 +1,8 @@
 import { CommonFrames } from '../../../src/core/classes/CommonFrames.class';
-import { DomMethods } from '../../../src/core/shared/DomMethods';
 import { MessageBus } from '../../../src/core/shared/MessageBus';
 import { Selectors } from '../../../src/core/shared/Selectors';
+
+jest.mock('./../../../src/core/shared/Notification');
 
 // given
 describe('CommonFrames', () => {
@@ -187,66 +188,15 @@ describe('CommonFrames', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
-      instance._messageBus.publishFromParent = jest.fn();
+      instance._messageBus.publish = jest.fn();
       // @ts-ignore
       instance._onInput(event);
     });
 
     // then
-    it('should publishFromParent has been called', () => {
+    it('should publish has been called', () => {
       // @ts-ignore
-      expect(instance._messageBus.publishFromParent).toHaveBeenCalledWith(
-        messageBusEvent,
-        Selectors.CONTROL_FRAME_IFRAME
-      );
-    });
-  });
-
-  // given
-  describe('_onTransactionComplete()', () => {
-    const { instance } = commonFramesFixture();
-    // @ts-ignore
-    instance._requestTypes = ['THREEDQUERY'];
-    const data = {
-      errorcode: '0',
-      errormessage: 'Ok'
-    };
-
-    const dataWithError = {
-      errorcode: '30000',
-      errormessage: 'Invalid field'
-    };
-
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._shouldSubmitForm = jest.fn().mockReturnValueOnce(true);
-      // @ts-ignore
-      instance._isTransactionFinished = jest.fn().mockReturnValueOnce(true);
-      // @ts-ignore
-      DomMethods.addDataToForm = jest.fn();
-    });
-
-    // then
-    it(`should call addDataToForm() and _submitCallback() method with ${data}`, () => {
-      // @ts-ignore
-      instance._submitCallback = jest.fn().mockImplementationOnce(data => data);
-      // @ts-ignore
-      instance._onTransactionComplete(data);
-      // @ts-ignore
-      expect(DomMethods.addDataToForm).toHaveBeenCalled();
-      // @ts-ignore
-      expect(instance._submitCallback).toHaveBeenCalledWith(data);
-    });
-
-    // then
-    it(`should call _submitCallback() method with ${dataWithError}`, () => {
-      // @ts-ignore
-      instance._submitCallback = jest.fn().mockImplementationOnce(dataWithError => dataWithError);
-      // @ts-ignore
-      instance._onTransactionComplete(dataWithError);
-      // @ts-ignore
-      expect(instance._submitCallback).toHaveBeenCalledWith(dataWithError);
+      expect(instance._messageBus.publish).toHaveBeenCalledWith(messageBusEvent);
     });
   });
 
@@ -276,47 +226,6 @@ describe('CommonFrames', () => {
       expect(instance._onTransactionComplete).toHaveBeenCalled();
     });
   });
-
-  // given
-  describe('_shouldLoadNotificationFrame()', () => {
-    // when
-    const { instance } = commonFramesFixture();
-
-    function shouldLoadNotificationFrameFixture(submitOnError: boolean, submitOnSuccess: boolean) {
-      // @ts-ignore
-      instance._submitOnError = submitOnError;
-      // @ts-ignore
-      instance._submitOnSuccess = submitOnSuccess;
-      // @ts-ignore
-      return !(instance._submitOnError && instance._submitOnSuccess);
-    }
-
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._shouldLoadNotificationFrame();
-    });
-
-    // then
-    it('should return false if both _submitOnError and _submitOnSuccess are true', () => {
-      expect(shouldLoadNotificationFrameFixture(true, true)).toEqual(false);
-    });
-
-    // then
-    it('should return true if both _submitOnError and _submitOnSuccess are false', () => {
-      expect(shouldLoadNotificationFrameFixture(false, false)).toEqual(true);
-    });
-
-    // then
-    it('should return true if _submitOnError is false and _submitOnSuccess is true', () => {
-      expect(shouldLoadNotificationFrameFixture(false, true)).toEqual(true);
-    });
-
-    // then
-    it('should return true if _submitOnError is true and _submitOnSuccess is false', () => {
-      expect(shouldLoadNotificationFrameFixture(true, false)).toEqual(true);
-    });
-  });
 });
 
 function commonFramesFixture() {
@@ -329,27 +238,13 @@ function commonFramesFixture() {
     animatedCard: Selectors.ANIMATED_CARD_INPUT_SELECTOR,
     cardNumber: Selectors.CARD_NUMBER_INPUT_SELECTOR,
     expirationDate: Selectors.EXPIRATION_DATE_INPUT_SELECTOR,
-    notificationFrame: Selectors.NOTIFICATION_FRAME_ID,
     securityCode: Selectors.SECURITY_CODE_INPUT_SELECTOR
   };
   const animatedCard = true;
   const gatewayUrl: string = 'https://webservices.securetrading.net/jwt/';
-  const submitCallback = function() {
-    return { prop: 'testobject' };
-  };
-  const instance = new CommonFrames(
-    jwt,
-    origin,
-    componentsIds,
-    {},
-    false,
-    false,
-    [],
-    gatewayUrl,
-    animatedCard,
-    submitCallback,
-    ['AUTH']
-  );
+  const instance = new CommonFrames(jwt, origin, componentsIds, {}, false, false, [], gatewayUrl, animatedCard, [
+    'AUTH'
+  ]);
 
   return { instance };
 }

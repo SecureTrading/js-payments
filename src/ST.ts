@@ -3,6 +3,7 @@ import 'location-origin';
 import { debounce } from 'lodash';
 import 'url-polyfill';
 import 'whatwg-fetch';
+import './core/shared/OverrideDomain';
 import { CardFrames } from './core/classes/CardFrames.class';
 import { CommonFrames } from './core/classes/CommonFrames.class';
 import { MerchantFields } from './core/classes/MerchantFields';
@@ -15,18 +16,29 @@ import { GoogleAnalytics } from './core/integrations/GoogleAnalytics';
 import { VisaCheckout } from './core/integrations/VisaCheckout';
 import { VisaCheckoutMock } from './core/integrations/VisaCheckoutMock';
 import { IApplePayConfig } from './core/models/IApplePayConfig';
-import { IComponentsConfig } from './core/models/IComponentsConfig';
-import { IConfig } from './core/models/IConfig';
+import { IComponentsConfig } from './core/config/model/IComponentsConfig';
+import { IConfig } from './core/config/model/IConfig';
 import { IStJwtObj } from './core/models/IStJwtObj';
 import { IVisaConfig } from './core/models/IVisaConfig';
-import { BrowserLocalStorage } from './core/services/storage/BrowserLocalStorage';
-import { Config } from './core/services/Config';
 import { MessageBus } from './core/shared/MessageBus';
 import { Translator } from './core/shared/Translator';
 import { environment } from './environments/environment';
 import { PaymentEvents } from './core/models/constants/PaymentEvents';
 import { Selectors } from './core/shared/Selectors';
+import { Service, Inject, Container } from 'typedi';
+import { CONFIG } from './core/dependency-injection/InjectionTokens';
+import { ConfigService } from './core/config/ConfigService';
+import { ISubmitEvent } from './core/models/ISubmitEvent';
+import { ISuccessEvent } from './core/models/ISuccessEvent';
+import { IErrorEvent } from './core/models/IErrorEvent';
+import { InterFrameCommunicator } from './core/services/message-bus/InterFrameCommunicator';
+import { FramesHub } from './core/services/message-bus/FramesHub';
+import { BrowserLocalStorage } from './core/services/storage/BrowserLocalStorage';
+import { BrowserSessionStorage } from './core/services/storage/BrowserSessionStorage';
+import { Notification } from './core/shared/Notification';
+import './core/styles/notification.css';
 
+@Service()
 class ST {
   private static DEBOUNCE_JWT_VALUE: number = 900;
   private static JWT_NOT_SPECIFIED_MESSAGE: string = 'Jwt has not been specified';
@@ -34,31 +46,76 @@ class ST {
   private static MERCHANT_TRANSLATIONS_STORAGE: string = 'merchantTranslations';
   private _cardFrames: CardFrames;
   private _commonFrames: CommonFrames;
-  private _config: IConfig;
-  private _configuration: Config;
   private _googleAnalytics: GoogleAnalytics;
   private _merchantFields: MerchantFields;
-  private _messageBus: MessageBus;
-  private _storage: BrowserLocalStorage;
   private _translation: Translator;
 
-  constructor(config: IConfig) {
-    this._configuration = new Config();
+  set submitCallback(callback: (event: ISubmitEvent) => void) {
+    if (callback) {
+      this.on('submit', callback);
+    } else {
+      this.off('submit');
+    }
+  }
+
+  set successCallback(callback: (event: ISuccessEvent) => void) {
+    if (callback) {
+      this.on('success', callback);
+    } else {
+      this.off('success');
+    }
+  }
+
+  set errorCallback(callback: (event: IErrorEvent) => void) {
+    if (callback) {
+      this.on('error', callback);
+    } else {
+      this.off('error');
+    }
+  }
+
+  constructor(
+    @Inject(CONFIG) private _config: IConfig,
+    private configProvider: ConfigService,
+    private _communicator: InterFrameCommunicator,
+    private _framesHub: FramesHub,
+    private _storage: BrowserLocalStorage,
+    private _sessionStorage: BrowserSessionStorage,
+    private _messageBus: MessageBus,
+    private _notification: Notification,
+  ) {
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
-    this._messageBus = new MessageBus();
-    this._storage = new BrowserLocalStorage();
-    this.init(config);
+    this.init();
+  }
+
+  public on(event: string, callback: any) {
+    const events = {
+      success: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK,
+      error: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK,
+      submit: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUBMIT_CALLBACK
+    };
+    // @ts-ignore
+    this._messageBus.subscribe(events[event], () => {
+      callback();
+    });
+  }
+  public off(event: string) {
+    // @ts-ignore
   }
 
   public Components(config: IComponentsConfig): void {
-    config = config !== undefined ? config : ({} as IComponentsConfig);
-    this._config.components = { ...this._config.components, ...config };
-    this._commonFrames.requestTypes = this._config.components.requestTypes;
-    this.CardinalCommerce();
-    this.CardFrames(this._config);
-    this._cardFrames.init();
-    this._merchantFields.init();
+    this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(async controlFrame => {
+      config = config !== undefined ? config : ({} as IComponentsConfig);
+      this._config = { ...this._config, components: { ...this._config.components, ...config } };
+      this.configProvider.update(this._config);
+      this._commonFrames.requestTypes = this._config.components.requestTypes;
+      this.CardinalCommerce();
+      await this._communicator.query({ type: MessageBus.EVENTS_PUBLIC.CONFIG_CHECK }, controlFrame);
+      this.CardFrames(this._config);
+      this._cardFrames.init();
+      this._merchantFields.init();
+    });
   }
 
   public ApplePay(config: IApplePayConfig): ApplePay {
@@ -75,7 +132,8 @@ class ST {
 
   public updateJWT(jwt: string): void {
     if (jwt) {
-      this._config.jwt = jwt;
+      this._config = { ...this._config, jwt };
+      this.configProvider.update(this._config);
       (() => {
         const a = StCodec.updateJWTValue(jwt);
         debounce(() => a, ST.DEBOUNCE_JWT_VALUE);
@@ -99,17 +157,20 @@ class ST {
       cardinal.off(PaymentEvents.SETUP_COMPLETE);
       cardinal.off(PaymentEvents.VALIDATED);
     }
+
+    this._communicator.close();
   }
 
-  private init(config: IConfig): void {
-    this._config = this._configuration.init(config);
+  private init(): void {
     // TODO theres probably a better way rather than having to remember to update Selectors
     Selectors.MERCHANT_FORM_SELECTOR = this._config.formId;
+
     this.Storage(this._config);
     this._translation = new Translator(this._storage.getItem(ST.LOCALE_STORAGE));
     this._googleAnalytics.init();
     this.CommonFrames(this._config);
     this._commonFrames.init();
+    this.displayLiveStatus(Boolean(this._config.livestatus));
     this.watchForFrameUnload();
   }
 
@@ -154,7 +215,6 @@ class ST {
       config.submitFields,
       config.datacenterurl,
       config.animatedCard,
-      config.submitCallback,
       config.components.requestTypes
     );
   }
@@ -170,6 +230,20 @@ class ST {
   private Storage(config: IConfig): void {
     this._storage.setItem(ST.MERCHANT_TRANSLATIONS_STORAGE, JSON.stringify(config.translations));
     this._storage.setItem(ST.LOCALE_STORAGE, JwtDecode<IStJwtObj>(config.jwt).payload.locale);
+  }
+
+  private displayLiveStatus(liveStatus: boolean): void {
+    if (!liveStatus) {
+      /* tslint:disable:no-console */
+      console.log(
+        '%cThe %csecure%c//%ctrading %cLibrary is currently working in test mode. Please check your configuration.',
+        'margin: 100px 0; font-size: 2em; color: #e71b5a',
+        'font-size: 2em; font-weight: bold',
+        'font-size: 2em; font-weight: 1000; color: #e71b5a',
+        'font-size: 2em; font-weight: bold',
+        'font-size: 2em; font-weight: regular; color: #e71b5a'
+      );
+    }
   }
 
   private watchForFrameUnload(): void {
@@ -196,4 +270,8 @@ class ST {
   }
 }
 
-export default (config: IConfig) => new ST(config);
+export default (config: IConfig) => {
+  Container.get(ConfigService).initialize(config);
+
+  return Container.get(ST);
+};
