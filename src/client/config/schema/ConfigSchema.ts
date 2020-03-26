@@ -77,13 +77,13 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
       startOnLoad: Joi.boolean().allow('')
     })
     .default({}),
-  datacenterurl: Joi.string(),
+  datacenterurl: Joi.string()
+    .allow('')
+    .default('st-form'),
   deferInit: Joi.boolean(),
   disableNotification: Joi.boolean().default(false),
   fieldsToSubmit: Joi.array().items(Joi.string().valid('pan', 'expirydate', 'securitycode')),
-  formId: Joi.string()
-    .allow('')
-    .default('st-form'),
+  formId: Joi.string(),
   init: {
     cachetoken: Joi.string().allow(''),
     threedinit: Joi.string().allow('')
