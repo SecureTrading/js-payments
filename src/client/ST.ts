@@ -147,7 +147,7 @@ class ST {
   public destroy(): void {
     this._messageBus.publish(
       {
-        type: MessageBus.EVENTS.DESTROY
+        type: MessageBus.EVENTS_PUBLIC.DESTROY
       },
       true
     );

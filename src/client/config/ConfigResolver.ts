@@ -75,7 +75,7 @@ export class ConfigResolver {
         expirydate: '',
         securitycode: ''
       }),
-      requestTypes: this._getValueOrDefault(config.requestTypes, []),
+      requestTypes: this._getValueOrDefault(config.requestTypes, this.DEFAULT_COMPONENTS_REQUEST_TYPES),
       styles: this._getValueOrDefault(config.styles, {}),
       submitCallback: this._getValueOrDefault(config.submitCallback, null),
       submitFields: this._getValueOrDefault(config.submitFields, this.DEFAULT_SUBMIT_PROPERTIES),
@@ -99,16 +99,23 @@ export class ConfigResolver {
       return { ...this.DEFAULT_COMPONENTS_IDS };
     }
     const optionalIds = {
-      animatedCard: this._getValueOrDefault(config.animatedCard, this.DEFAULT_COMPONENTS_IDS.animatedCard)
+      animatedCard:
+        this._getValueOrDefault(config.animatedCard, this.DEFAULT_COMPONENTS_IDS.animatedCard) ||
+        this.DEFAULT_COMPONENTS_IDS.animatedCard
     };
     const requiredIds = {
-      cardNumber: this._getValueOrDefault(config.cardNumber, this.DEFAULT_COMPONENTS_IDS.cardNumber),
-      expirationDate: this._getValueOrDefault(config.expirationDate, this.DEFAULT_COMPONENTS_IDS.expirationDate),
-      notificationFrame: this._getValueOrDefault(
-        config.notificationFrame,
-        this.DEFAULT_COMPONENTS_IDS.notificationFrame
-      ),
-      securityCode: this._getValueOrDefault(config.securityCode, this.DEFAULT_COMPONENTS_IDS.securityCode)
+      cardNumber:
+        this._getValueOrDefault(config.cardNumber, this.DEFAULT_COMPONENTS_IDS.cardNumber) ||
+        this.DEFAULT_COMPONENTS_IDS.cardNumber,
+      expirationDate:
+        this._getValueOrDefault(config.expirationDate, this.DEFAULT_COMPONENTS_IDS.expirationDate) ||
+        this.DEFAULT_COMPONENTS_IDS.expirationDate,
+      notificationFrame:
+        this._getValueOrDefault(config.notificationFrame, this.DEFAULT_COMPONENTS_IDS.notificationFrame) ||
+        this.DEFAULT_COMPONENTS_IDS.notificationFrame,
+      securityCode:
+        this._getValueOrDefault(config.securityCode, this.DEFAULT_COMPONENTS_IDS.securityCode) ||
+        this.DEFAULT_COMPONENTS_IDS.securityCode
     };
     return {
       ...optionalIds,
