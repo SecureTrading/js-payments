@@ -102,6 +102,8 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   }),
   styles: Joi.object(),
   submitCallback: Joi.any(),
+  successCallback: Joi.any(),
+  errorCallback: Joi.any(),
   submitFields: Joi.array(),
   submitOnError: Joi.boolean(),
   submitOnSuccess: Joi.boolean(),

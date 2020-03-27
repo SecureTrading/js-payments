@@ -9,6 +9,7 @@ import { Container } from 'typedi';
 import { of } from 'rxjs';
 import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
 import { mock, instance as mockInstance, when, anyString } from 'ts-mockito';
+import { ConfigProvider } from '../services/ConfigProvider';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
 jest.mock('../../../../src/application/core/integrations/GoogleAnalytics');
@@ -16,9 +17,16 @@ jest.mock('../../../../src/client/classes/notification/NotificationService');
 
 // given
 describe('CardinalCommerce', () => {
-  let instance: any;
+  let ccInstance: any;
   const { jwt } = CardinalCommerceFixture();
   const framesHub: FramesHub = mock(FramesHub);
+  let configProvider: ConfigProvider;
+  configProvider = mock(ConfigProvider);
+  // @ts-ignore
+  when(configProvider.getConfig()).thenReturn({
+    jwt: '',
+    requestTypes: ['AUTH', 'THREEDQUERY']
+  });
 
   // when
   beforeEach(() => {
@@ -26,8 +34,10 @@ describe('CardinalCommerce', () => {
 
     document.body.innerHTML = `<iframe id='st-control-frame-iframe'>
     </iframe><input id='JWTContainer' value="${jwt}" />`;
-    instance = new CardinalCommerce(false, jwt, ['THREEDQUERY', 'AUTH'], 0);
-    instance._framesHub = mockInstance(framesHub);
+    // @ts-ignore
+    ccInstance = new CardinalCommerce(false, jwt, 0);
+    ccInstance._framesHub = mockInstance(framesHub);
+    ccInstance._configProvider = mockInstance(configProvider);
   });
 
   // given
@@ -39,8 +49,8 @@ describe('CardinalCommerce', () => {
         const messageBus = Container.get(MessageBus);
         const spySubscribe: SpyInstance = jest.spyOn(messageBus, 'subscribe');
         const spyPublish: SpyInstance = jest.spyOn(messageBus, 'publish');
-        instance.messageBus = messageBus;
-        instance._onCardinalSetupComplete();
+        ccInstance.messageBus = messageBus;
+        ccInstance._onCardinalSetupComplete();
         expect(spySubscribe).toHaveBeenCalled();
         expect(spyPublish).toHaveBeenCalled();
       });
@@ -50,19 +60,20 @@ describe('CardinalCommerce', () => {
     describe('_startOnLoad True', () => {
       // then
       it('should subscribe method be called once', () => {
-        instance._startOnLoad = true;
+        ccInstance._startOnLoad = true;
         const messageBus = Container.get(MessageBus);
         // this JWT contains a 'pan'
-        instance._jwt =
+        ccInstance._jwt =
           'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU4NTUxMjA3LjEzNTU5NTMsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdDEiLCJsb2NhbGUiOiJlbl9HQiIsInBhbiI6IjQwMDAwMDAwMDAwMDEwMDAiLCJleHBpcnlkYXRlIjoiMDEvMjIiLCJzZWN1cml0eWNvZGUiOiIxMjMifX0.V_-f5m35ADC4Y9t17mZjaHgNt_0GXMqPhxJWohAYwSA';
-        instance._performBinDetection = jest.fn();
+        ccInstance._performBinDetection = jest.fn();
         const spyPublish: SpyInstance = jest.spyOn(messageBus, 'publish');
-        instance.messageBus = messageBus;
-        instance._onCardinalSetupComplete();
-        expect(instance._performBinDetection).toHaveBeenCalledWith('4000000000001000');
-        expect(spyPublish).toHaveBeenCalledWith(
-          { data: { dataInJwt: true, requestTypes: ['THREEDQUERY', 'AUTH'] }, type: 'SUBMIT_FORM' }
-        );
+        ccInstance.messageBus = messageBus;
+        ccInstance._onCardinalSetupComplete();
+        expect(ccInstance._performBinDetection).toHaveBeenCalledWith('4000000000001000');
+        expect(spyPublish).toHaveBeenCalledWith({
+          data: { dataInJwt: true, requestTypes: ['THREEDQUERY', 'AUTH'] },
+          type: 'SUBMIT_FORM'
+        });
       });
     });
   });
@@ -74,7 +85,7 @@ describe('CardinalCommerce', () => {
       const { CardinalMock } = CardinalCommerceFixture();
       // @ts-ignore
       global.Cardinal = CardinalMock;
-      instance._performBinDetection({ value: '411111' });
+      ccInstance._performBinDetection({ value: '411111' });
       expect(CardinalMock.trigger).toHaveBeenCalledTimes(1);
       expect(CardinalMock.trigger).toHaveBeenCalledWith('bin.process', { value: '411111' });
     });
@@ -84,16 +95,16 @@ describe('CardinalCommerce', () => {
   describe('_onCardinalValidated()', () => {
     // then
     it('should authorise if successful', () => {
-      const spyAuthorize: SpyInstance = jest.spyOn(instance, '_authorizePayment');
-      instance._onCardinalValidated({ ActionCode: 'SUCCESS', ErrorNumber: '0' }, 'JWT_VALUE');
+      const spyAuthorize: SpyInstance = jest.spyOn(ccInstance, '_authorizePayment');
+      ccInstance._onCardinalValidated({ ActionCode: 'SUCCESS', ErrorNumber: '0' }, 'JWT_VALUE');
       expect(spyAuthorize).toHaveBeenCalled();
       expect(spyAuthorize).toHaveBeenCalledWith({ threedresponse: 'JWT_VALUE' });
     });
 
     // then
     it('should not authorise if not successful', () => {
-      const spyAuthorize: SpyInstance = jest.spyOn(instance, '_authorizePayment');
-      instance._onCardinalValidated({ ActionCode: 'ERROR', ErrorNumber: '30000' }, 'JWT_VALUE');
+      const spyAuthorize: SpyInstance = jest.spyOn(ccInstance, '_authorizePayment');
+      ccInstance._onCardinalValidated({ ActionCode: 'ERROR', ErrorNumber: '30000' }, 'JWT_VALUE');
       expect(spyAuthorize).toHaveBeenCalledTimes(0);
     });
   });
@@ -105,8 +116,8 @@ describe('CardinalCommerce', () => {
       const { CardinalMock } = CardinalCommerceFixture();
       // @ts-ignore
       global.Cardinal = CardinalMock;
-      instance._cardinalCommerceJWT = jwt;
-      instance._authenticateCard({
+      ccInstance._cardinalCommerceJWT = jwt;
+      ccInstance._authenticateCard({
         acquirertransactionreference: 'cardinal-tx-id',
         acsurl: 'https://example.com',
         enrolled: 'Y',
@@ -130,8 +141,8 @@ describe('CardinalCommerce', () => {
       const { CardinalMock } = CardinalCommerceFixture();
       // @ts-ignore
       global.Cardinal = CardinalMock;
-      instance._cardinalCommerceJWT = jwt;
-      instance._onCardinalLoad();
+      ccInstance._cardinalCommerceJWT = jwt;
+      ccInstance._onCardinalLoad();
       expect(CardinalMock.configure).toHaveBeenCalledTimes(1);
       expect(CardinalMock.configure).toHaveBeenCalledWith({
         logging: {
@@ -158,8 +169,8 @@ describe('CardinalCommerce', () => {
     // then
     it('should call _onCardinalSetupComplete in SETUP_COMPLETE event', () => {
       const { CardinalMock } = CardinalCommerceFixture();
-      instance._onCardinalSetupComplete = jest.fn();
-      instance._onCardinalValidated = jest.fn();
+      ccInstance._onCardinalSetupComplete = jest.fn();
+      ccInstance._onCardinalValidated = jest.fn();
       CardinalMock.on = jest.fn((evType, callback) => {
         if (evType === 'payments.setupComplete') {
           callback();
@@ -167,17 +178,17 @@ describe('CardinalCommerce', () => {
       });
       // @ts-ignore
       global.Cardinal = CardinalMock;
-      instance._onCardinalLoad();
-      expect(instance._onCardinalSetupComplete).toHaveBeenCalledTimes(1);
-      expect(instance._onCardinalSetupComplete).toHaveBeenCalledWith();
-      expect(instance._onCardinalValidated).toHaveBeenCalledTimes(0);
+      ccInstance._onCardinalLoad();
+      expect(ccInstance._onCardinalSetupComplete).toHaveBeenCalledTimes(1);
+      expect(ccInstance._onCardinalSetupComplete).toHaveBeenCalledWith();
+      expect(ccInstance._onCardinalValidated).toHaveBeenCalledTimes(0);
     });
 
     // then
     it('should call _onCardinalValidated in SETUP_COMPLETE event', () => {
       let { CardinalMock } = CardinalCommerceFixture();
-      instance._onCardinalSetupComplete = jest.fn();
-      instance._onCardinalValidated = jest.fn();
+      ccInstance._onCardinalSetupComplete = jest.fn();
+      ccInstance._onCardinalValidated = jest.fn();
       CardinalMock.on = jest.fn((evType, callback) => {
         if (evType === 'payments.validated') {
           callback('someData', 'someJWT');
@@ -185,10 +196,10 @@ describe('CardinalCommerce', () => {
       });
       // @ts-ignore
       global.Cardinal = CardinalMock;
-      instance._onCardinalLoad();
-      expect(instance._onCardinalSetupComplete).toHaveBeenCalledTimes(0);
-      expect(instance._onCardinalValidated).toHaveBeenCalledTimes(1);
-      expect(instance._onCardinalValidated).toHaveBeenCalledWith('someData', 'someJWT');
+      ccInstance._onCardinalLoad();
+      expect(ccInstance._onCardinalSetupComplete).toHaveBeenCalledTimes(0);
+      expect(ccInstance._onCardinalValidated).toHaveBeenCalledTimes(1);
+      expect(ccInstance._onCardinalValidated).toHaveBeenCalledWith('someData', 'someJWT');
     });
   });
 
@@ -196,88 +207,88 @@ describe('CardinalCommerce', () => {
   describe('_initSubscriptions()', () => {
     // then
     it('should set up subscribers to control frame setup, threedquery and threedinit events', () => {
-      instance.messageBus.subscribe = jest.fn();
-      instance._initSubscriptions();
-      expect(instance.messageBus.subscribe.mock.calls.length).toBe(5);
-      expect(instance.messageBus.subscribe.mock.calls[0][0]).toBe('LOAD_CONTROL_FRAME');
+      ccInstance.messageBus.subscribe = jest.fn();
+      ccInstance._initSubscriptions();
+      expect(ccInstance.messageBus.subscribe.mock.calls.length).toBe(5);
+      expect(ccInstance.messageBus.subscribe.mock.calls[0][0]).toBe('LOAD_CONTROL_FRAME');
       // Annonymous function so can't test using toHaveBeenCalledWith
-      expect(instance.messageBus.subscribe.mock.calls[0][1]).toBeInstanceOf(Function);
-      expect(instance.messageBus.subscribe.mock.calls[0].length).toBe(2);
-      expect(instance.messageBus.subscribe.mock.calls[1][0]).toBe('THREEDINIT_RESPONSE');
+      expect(ccInstance.messageBus.subscribe.mock.calls[0][1]).toBeInstanceOf(Function);
+      expect(ccInstance.messageBus.subscribe.mock.calls[0].length).toBe(2);
+      expect(ccInstance.messageBus.subscribe.mock.calls[1][0]).toBe('THREEDINIT_RESPONSE');
       // Annonymous function so can't test using toHaveBeenCalledWith
-      expect(instance.messageBus.subscribe.mock.calls[1][1]).toBeInstanceOf(Function);
-      expect(instance.messageBus.subscribe.mock.calls[1].length).toBe(2);
-      expect(instance.messageBus.subscribe.mock.calls[2][0]).toBe('BY_PASS_INIT');
+      expect(ccInstance.messageBus.subscribe.mock.calls[1][1]).toBeInstanceOf(Function);
+      expect(ccInstance.messageBus.subscribe.mock.calls[1].length).toBe(2);
+      expect(ccInstance.messageBus.subscribe.mock.calls[2][0]).toBe('BY_PASS_INIT');
       // Annonymous function so can't test using toHaveBeenCalledWith
-      expect(instance.messageBus.subscribe.mock.calls[2][1]).toBeInstanceOf(Function);
-      expect(instance.messageBus.subscribe.mock.calls[2].length).toBe(2);
-      expect(instance.messageBus.subscribe.mock.calls[3][0]).toBe('THREEDQUERY');
+      expect(ccInstance.messageBus.subscribe.mock.calls[2][1]).toBeInstanceOf(Function);
+      expect(ccInstance.messageBus.subscribe.mock.calls[2].length).toBe(2);
+      expect(ccInstance.messageBus.subscribe.mock.calls[3][0]).toBe('THREEDQUERY');
     });
 
     // then
     it('should call _onLoadControlFrame if eventType is LOAD_CONTROL_FRAME', () => {
-      instance._onLoadControlFrame = jest.fn();
-      instance._onThreeDInitEvent = jest.fn();
-      instance._onThreeDQueryEvent = jest.fn();
-      instance.messageBus.subscribe = jest.fn((eventType, callback) => {
+      ccInstance._onLoadControlFrame = jest.fn();
+      ccInstance._onThreeDInitEvent = jest.fn();
+      ccInstance._onThreeDQueryEvent = jest.fn();
+      ccInstance.messageBus.subscribe = jest.fn((eventType, callback) => {
         if (eventType === 'LOAD_CONTROL_FRAME') {
           callback();
         }
       });
-      instance._initSubscriptions();
-      expect(instance._onLoadControlFrame).toHaveBeenCalledTimes(1);
-      expect(instance._onLoadControlFrame).toHaveBeenCalledWith();
-      expect(instance._onThreeDInitEvent).toHaveBeenCalledTimes(0);
-      expect(instance._onThreeDQueryEvent).toHaveBeenCalledTimes(0);
+      ccInstance._initSubscriptions();
+      expect(ccInstance._onLoadControlFrame).toHaveBeenCalledTimes(1);
+      expect(ccInstance._onLoadControlFrame).toHaveBeenCalledWith();
+      expect(ccInstance._onThreeDInitEvent).toHaveBeenCalledTimes(0);
+      expect(ccInstance._onThreeDQueryEvent).toHaveBeenCalledTimes(0);
     });
 
     // then
     it('should call _onThreeDInitEvent if eventType is THREEDINIT_RESPONSE', () => {
-      instance._onLoadControlFrame = jest.fn();
-      instance._onThreeDInitEvent = jest.fn();
-      instance._onThreeDQueryEvent = jest.fn();
-      instance.messageBus.subscribe = jest.fn((eventType, callback) => {
+      ccInstance._onLoadControlFrame = jest.fn();
+      ccInstance._onThreeDInitEvent = jest.fn();
+      ccInstance._onThreeDQueryEvent = jest.fn();
+      ccInstance.messageBus.subscribe = jest.fn((eventType, callback) => {
         if (eventType === 'THREEDINIT_RESPONSE') {
           callback({ myData: 'SOMETHING' });
         }
       });
-      instance._initSubscriptions();
-      expect(instance._onLoadControlFrame).toHaveBeenCalledTimes(0);
-      expect(instance._onThreeDInitEvent).toHaveBeenCalledTimes(1);
-      expect(instance._onThreeDInitEvent).toHaveBeenCalledWith({ myData: 'SOMETHING' });
-      expect(instance._onThreeDQueryEvent).toHaveBeenCalledTimes(0);
+      ccInstance._initSubscriptions();
+      expect(ccInstance._onLoadControlFrame).toHaveBeenCalledTimes(0);
+      expect(ccInstance._onThreeDInitEvent).toHaveBeenCalledTimes(1);
+      expect(ccInstance._onThreeDInitEvent).toHaveBeenCalledWith({ myData: 'SOMETHING' });
+      expect(ccInstance._onThreeDQueryEvent).toHaveBeenCalledTimes(0);
     });
 
     // then
     it('should call _onBypassJsInitEvent if eventType is BY_PASS_INIT', () => {
-      instance._onLoadControlFrame = jest.fn();
-      instance._onThreeDInitEvent = jest.fn();
-      instance._onBypassJsInitEvent = jest.fn();
-      instance._onThreeDQueryEvent = jest.fn();
-      instance.messageBus.subscribe = jest.fn((eventType, callback) => {
+      ccInstance._onLoadControlFrame = jest.fn();
+      ccInstance._onThreeDInitEvent = jest.fn();
+      ccInstance._onBypassJsInitEvent = jest.fn();
+      ccInstance._onThreeDQueryEvent = jest.fn();
+      ccInstance.messageBus.subscribe = jest.fn((eventType, callback) => {
         if (eventType === 'BY_PASS_INIT') {
           callback();
         }
       });
-      instance._initSubscriptions();
-      expect(instance._onBypassJsInitEvent).toHaveBeenCalledTimes(1);
+      ccInstance._initSubscriptions();
+      expect(ccInstance._onBypassJsInitEvent).toHaveBeenCalledTimes(1);
     });
 
     // then
     it('should call _onThreeDQueryEvent if eventType is THREEDQUERY', () => {
-      instance._onLoadControlFrame = jest.fn();
-      instance._onThreeDInitEvent = jest.fn();
-      instance._onThreeDQueryEvent = jest.fn();
-      instance.messageBus.subscribe = jest.fn((eventType, callback) => {
+      ccInstance._onLoadControlFrame = jest.fn();
+      ccInstance._onThreeDInitEvent = jest.fn();
+      ccInstance._onThreeDQueryEvent = jest.fn();
+      ccInstance.messageBus.subscribe = jest.fn((eventType, callback) => {
         if (eventType === 'THREEDQUERY') {
           callback({ myData: 'SOMETHING' });
         }
       });
-      instance._initSubscriptions();
-      expect(instance._onLoadControlFrame).toHaveBeenCalledTimes(0);
-      expect(instance._onThreeDInitEvent).toHaveBeenCalledTimes(0);
-      expect(instance._onThreeDQueryEvent).toHaveBeenCalledTimes(1);
-      expect(instance._onThreeDQueryEvent).toHaveBeenCalledWith({ myData: 'SOMETHING' });
+      ccInstance._initSubscriptions();
+      expect(ccInstance._onLoadControlFrame).toHaveBeenCalledTimes(0);
+      expect(ccInstance._onThreeDInitEvent).toHaveBeenCalledTimes(0);
+      expect(ccInstance._onThreeDQueryEvent).toHaveBeenCalledTimes(1);
+      expect(ccInstance._onThreeDQueryEvent).toHaveBeenCalledWith({ myData: 'SOMETHING' });
     });
   });
 
@@ -285,10 +296,10 @@ describe('CardinalCommerce', () => {
   describe('_onInit()', () => {
     // then
     it('should set up subscribers', () => {
-      instance._initSubscriptions = jest.fn();
-      instance._onInit();
-      expect(instance._initSubscriptions).toHaveBeenCalledTimes(1);
-      expect(instance._initSubscriptions).toHaveBeenCalledWith();
+      ccInstance._initSubscriptions = jest.fn();
+      ccInstance._onInit();
+      expect(ccInstance._initSubscriptions).toHaveBeenCalledTimes(1);
+      expect(ccInstance._initSubscriptions).toHaveBeenCalledWith();
     });
   });
 
@@ -296,23 +307,23 @@ describe('CardinalCommerce', () => {
   describe('_onLoadControlFrame()', () => {
     // then
     it('should set up subscribers', () => {
-      instance._threeDInitRequest = jest.fn();
-      instance._onLoadControlFrame();
-      expect(instance._threeDInitRequest).toHaveBeenCalledTimes(1);
-      expect(instance._threeDInitRequest).toHaveBeenCalledWith();
+      ccInstance._threeDInitRequest = jest.fn();
+      ccInstance._onLoadControlFrame();
+      expect(ccInstance._threeDInitRequest).toHaveBeenCalledTimes(1);
+      expect(ccInstance._threeDInitRequest).toHaveBeenCalledWith();
     });
   });
 
   // given
   describe('_onThreeDInitEvent()', () => {
     // then
-    it('should set instance variables and call setup', () => {
-      instance._threeDSetup = jest.fn();
-      instance._onThreeDInitEvent({ threedinit: 'initValue', cachetoken: 'tokenValue' });
-      expect(instance._threeDSetup).toHaveBeenCalledTimes(1);
-      expect(instance._threeDSetup).toHaveBeenCalledWith();
-      expect(instance._cardinalCommerceJWT).toBe('initValue');
-      expect(instance._cardinalCommerceCacheToken).toBe('tokenValue');
+    it('should set ccInstance variables and call setup', () => {
+      ccInstance._threeDSetup = jest.fn();
+      ccInstance._onThreeDInitEvent({ threedinit: 'initValue', cachetoken: 'tokenValue' });
+      expect(ccInstance._threeDSetup).toHaveBeenCalledTimes(1);
+      expect(ccInstance._threeDSetup).toHaveBeenCalledWith();
+      expect(ccInstance._cardinalCommerceJWT).toBe('initValue');
+      expect(ccInstance._cardinalCommerceCacheToken).toBe('tokenValue');
     });
   });
 
@@ -320,10 +331,10 @@ describe('CardinalCommerce', () => {
   describe('_onThreeDQueryEvent()', () => {
     // then
     it('should send THREEDQUERY request', () => {
-      instance._threeDQueryRequest = jest.fn();
-      instance._onThreeDQueryEvent({ 'some data': 'with value' });
-      expect(instance._threeDQueryRequest).toHaveBeenCalledTimes(1);
-      expect(instance._threeDQueryRequest).toHaveBeenCalledWith({ 'some data': 'with value' });
+      ccInstance._threeDQueryRequest = jest.fn();
+      ccInstance._onThreeDQueryEvent({ 'some data': 'with value' });
+      expect(ccInstance._threeDQueryRequest).toHaveBeenCalledTimes(1);
+      expect(ccInstance._threeDQueryRequest).toHaveBeenCalledWith({ 'some data': 'with value' });
     });
   });
 
@@ -331,10 +342,10 @@ describe('CardinalCommerce', () => {
   describe('_threeDInitRequest()', () => {
     // then
     it('should publish control iframe event', () => {
-      instance.messageBus.publish = jest.fn();
-      instance._threeDInitRequest();
-      expect(instance.messageBus.publish).toHaveBeenCalledTimes(1);
-      expect(instance.messageBus.publish).toHaveBeenCalledWith({ type: 'THREEDINIT_REQUEST' });
+      ccInstance.messageBus.publish = jest.fn();
+      ccInstance._threeDInitRequest();
+      expect(ccInstance.messageBus.publish).toHaveBeenCalledTimes(1);
+      expect(ccInstance.messageBus.publish).toHaveBeenCalledWith({ type: 'THREEDINIT_REQUEST' });
     });
   });
 
@@ -347,7 +358,7 @@ describe('CardinalCommerce', () => {
       script.addEventListener = jest.fn();
       DomMethods.insertScript = jest.fn().mockReturnValueOnce(script);
 
-      instance._threeDSetup();
+      ccInstance._threeDSetup();
       expect(DomMethods.insertScript).toHaveBeenCalledTimes(1);
       expect(DomMethods.insertScript).toHaveBeenCalledWith('head', {
         id: 'cardinalCommerce',
@@ -376,22 +387,22 @@ describe('CardinalCommerce', () => {
     it('should authenticate card if enrolled or frictionless', () => {
       // @ts-ignore
       CardinalCommerce._isCardEnrolledAndNotFrictionless = jest.fn().mockReturnValueOnce(true);
-      instance._authenticateCard = jest.fn();
-      instance._authorizePayment = jest.fn();
-      instance._threeDQueryRequest({ transactionreference: '1-2-3' });
-      expect(instance._authenticateCard).toHaveBeenCalledTimes(1);
-      expect(instance._authorizePayment).toHaveBeenCalledTimes(0);
+      ccInstance._authenticateCard = jest.fn();
+      ccInstance._authorizePayment = jest.fn();
+      ccInstance._threeDQueryRequest({ transactionreference: '1-2-3' });
+      expect(ccInstance._authenticateCard).toHaveBeenCalledTimes(1);
+      expect(ccInstance._authorizePayment).toHaveBeenCalledTimes(0);
     });
 
     // then
     it('should authorise payment if NOT (enrolled or frictionless)', () => {
       // @ts-ignore
       CardinalCommerce._isCardEnrolledAndNotFrictionless = jest.fn().mockReturnValueOnce(false);
-      instance._authenticateCard = jest.fn();
-      instance._authorizePayment = jest.fn();
-      instance._threeDQueryRequest({ transactionreference: '1-2-3' });
-      expect(instance._authenticateCard).toHaveBeenCalledTimes(0);
-      expect(instance._authorizePayment).toHaveBeenCalledTimes(1);
+      ccInstance._authenticateCard = jest.fn();
+      ccInstance._authorizePayment = jest.fn();
+      ccInstance._threeDQueryRequest({ transactionreference: '1-2-3' });
+      expect(ccInstance._authenticateCard).toHaveBeenCalledTimes(0);
+      expect(ccInstance._authorizePayment).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -423,40 +434,37 @@ describe('CardinalCommerce', () => {
   describe('_authorizePayment()', () => {
     // then
     it('should publish control iframe event with AUTH', () => {
-      instance.messageBus.publish = jest.fn();
-      instance._cardinalCommerceCacheToken = 'tokenValue';
-      instance._authorizePayment({ some: 'value', cachetoken: 'OVERRIDDEN' });
-      expect(instance.messageBus.publish).toHaveBeenCalledTimes(1);
-      expect(instance.messageBus.publish).toHaveBeenCalledWith(
-        {
-          type: 'PROCESS_PAYMENTS',
-          data: { some: 'value', cachetoken: 'tokenValue' }
-        }
-      );
+      ccInstance.messageBus.publish = jest.fn();
+      ccInstance._cardinalCommerceCacheToken = 'tokenValue';
+      ccInstance._authorizePayment({ some: 'value', cachetoken: 'OVERRIDDEN' });
+      expect(ccInstance.messageBus.publish).toHaveBeenCalledTimes(1);
+      expect(ccInstance.messageBus.publish).toHaveBeenCalledWith({
+        type: 'PROCESS_PAYMENTS',
+        data: { some: 'value', cachetoken: 'tokenValue' }
+      });
     });
     // then
     it('should publish control iframe event with AUTH with no data', () => {
-      instance.messageBus.publish = jest.fn();
-      instance._cardinalCommerceCacheToken = 'tokenValue';
-      instance._authorizePayment();
-      expect(instance.messageBus.publish).toHaveBeenCalledTimes(1);
-      expect(instance.messageBus.publish).toHaveBeenCalledWith(
-        { type: 'PROCESS_PAYMENTS', data: { cachetoken: 'tokenValue' } }
-      );
+      ccInstance.messageBus.publish = jest.fn();
+      ccInstance._cardinalCommerceCacheToken = 'tokenValue';
+      ccInstance._authorizePayment();
+      expect(ccInstance.messageBus.publish).toHaveBeenCalledTimes(1);
+      expect(ccInstance.messageBus.publish).toHaveBeenCalledWith({
+        type: 'PROCESS_PAYMENTS',
+        data: { cachetoken: 'tokenValue' }
+      });
     });
     // then
     it('should publish control iframe event with CACHETOKENISE', () => {
-      instance.messageBus.publish = jest.fn();
-      instance._tokenise = true;
-      instance._cardinalCommerceCacheToken = 'tokenValue';
-      instance._authorizePayment({ some: 'value', cachetoken: 'OVERRIDDEN' });
-      expect(instance.messageBus.publish).toHaveBeenCalledTimes(1);
-      expect(instance.messageBus.publish).toHaveBeenCalledWith(
-        {
-          type: 'PROCESS_PAYMENTS',
-          data: { some: 'value', cachetoken: 'tokenValue' }
-        }
-      );
+      ccInstance.messageBus.publish = jest.fn();
+      ccInstance._tokenise = true;
+      ccInstance._cardinalCommerceCacheToken = 'tokenValue';
+      ccInstance._authorizePayment({ some: 'value', cachetoken: 'OVERRIDDEN' });
+      expect(ccInstance.messageBus.publish).toHaveBeenCalledTimes(1);
+      expect(ccInstance.messageBus.publish).toHaveBeenCalledWith({
+        type: 'PROCESS_PAYMENTS',
+        data: { some: 'value', cachetoken: 'tokenValue' }
+      });
     });
   });
 
@@ -469,14 +477,14 @@ describe('CardinalCommerce', () => {
 
     // when
     beforeEach(() => {
-      instance.messageBus.publish = jest.fn();
-      instance._cachetoken = 'HowmuchisttheFish?:)';
-      instance._bypassInitRequest();
+      ccInstance.messageBus.publish = jest.fn();
+      ccInstance._cachetoken = 'HowmuchisttheFish?:)';
+      ccInstance._bypassInitRequest();
     });
 
     // then
     it('should call publish', () => {
-      expect(instance.messageBus.publish).toHaveBeenCalledWith(messageBusEvent);
+      expect(ccInstance.messageBus.publish).toHaveBeenCalledWith(messageBusEvent);
     });
   });
 
@@ -484,21 +492,21 @@ describe('CardinalCommerce', () => {
   describe('_onBypassJsInitEvent()', () => {
     // when
     beforeEach(() => {
-      instance._threedinit = 'Hyperhyper';
-      instance._cachetoken = 'HowmuchisttheFish?:)';
-      instance._threeDSetup = jest.fn();
-      instance._onBypassJsInitEvent();
+      ccInstance._threedinit = 'Hyperhyper';
+      ccInstance._cachetoken = 'HowmuchisttheFish?:)';
+      ccInstance._threeDSetup = jest.fn();
+      ccInstance._onBypassJsInitEvent();
     });
 
     // then
     it('should call publish', () => {
-      expect(instance._threeDSetup).toHaveBeenCalled();
+      expect(ccInstance._threeDSetup).toHaveBeenCalled();
     });
 
     // then
     it('should set both _cardinalCommerceJWT  and _cardinalCommerceCacheToken ', () => {
-      expect(instance._cardinalCommerceJWT).toEqual('Hyperhyper');
-      expect(instance._cardinalCommerceCacheToken).toEqual('HowmuchisttheFish?:)');
+      expect(ccInstance._cardinalCommerceJWT).toEqual('Hyperhyper');
+      expect(ccInstance._cardinalCommerceCacheToken).toEqual('HowmuchisttheFish?:)');
     });
   });
 
@@ -506,22 +514,22 @@ describe('CardinalCommerce', () => {
   describe('_onLoadControlFrame()', () => {
     // when
     beforeEach(() => {
-      instance._bypassInitRequest = jest.fn();
-      instance._threeDInitRequest = jest.fn();
+      ccInstance._bypassInitRequest = jest.fn();
+      ccInstance._threeDInitRequest = jest.fn();
     });
 
     // then
     it('should call _bypassInitRequest if _cachetoken is defined', () => {
-      instance._cachetoken = 'HowmuchisttheFish?:)';
-      instance._onLoadControlFrame();
-      expect(instance._bypassInitRequest).toHaveBeenCalled();
+      ccInstance._cachetoken = 'HowmuchisttheFish?:)';
+      ccInstance._onLoadControlFrame();
+      expect(ccInstance._bypassInitRequest).toHaveBeenCalled();
     });
 
     // then
     it('should call _threeDInitRequest if _cachetoken is not defined', () => {
-      instance._cachetoken = undefined;
-      instance._onLoadControlFrame();
-      expect(instance._threeDInitRequest).toHaveBeenCalled();
+      ccInstance._cachetoken = undefined;
+      ccInstance._onLoadControlFrame();
+      expect(ccInstance._threeDInitRequest).toHaveBeenCalled();
     });
   });
 
@@ -543,12 +551,12 @@ describe('CardinalCommerce', () => {
         .mockImplementationOnce((event, callback) => {
           callback();
         });
-      spyPublish = jest.spyOn(instance.messageBus, 'publish');
+      spyPublish = jest.spyOn(ccInstance.messageBus, 'publish');
     });
 
     // then
     it('should call messageBus.publish', () => {
-      instance._publishRequestTypesEvent(requestTypes);
+      ccInstance._publishRequestTypesEvent(requestTypes);
       expect(spyPublish).toHaveBeenCalledWith(messageBusEvent);
     });
   });
