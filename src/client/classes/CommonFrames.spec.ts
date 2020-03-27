@@ -3,6 +3,7 @@ import { MessageBus } from '../../application/core/shared/MessageBus';
 import { Selectors } from '../../application/core/shared/Selectors';
 
 jest.mock('./../../../src/application/core/shared/Notification');
+jest.mock('./../../../src/application/core/services/ConfigProvider');
 
 // given
 describe('CommonFrames', () => {
@@ -242,9 +243,7 @@ function commonFramesFixture() {
   };
   const animatedCard = true;
   const gatewayUrl: string = 'https://webservices.securetrading.net/jwt/';
-  const instance = new CommonFrames(jwt, origin, componentsIds, {}, false, false, [], gatewayUrl, animatedCard, [
-    'AUTH'
-  ]);
+  const instance = new CommonFrames(jwt, origin, componentsIds, {}, false, false, [], gatewayUrl, animatedCard);
 
   return { instance };
 }

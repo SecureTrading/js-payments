@@ -14,6 +14,7 @@ import { ConfigProvider } from '../services/ConfigProvider';
 jest.mock('../../../../src/application/core/shared/MessageBus');
 jest.mock('../../../../src/application/core/integrations/GoogleAnalytics');
 jest.mock('../../../../src/client/classes/notification/NotificationService');
+jest.mock('../services/ConfigProvider');
 
 // given
 describe('CardinalCommerce', () => {
@@ -22,22 +23,20 @@ describe('CardinalCommerce', () => {
   const framesHub: FramesHub = mock(FramesHub);
   let configProvider: ConfigProvider;
   configProvider = mock(ConfigProvider);
-  // @ts-ignore
-  when(configProvider.getConfig()).thenReturn({
-    jwt: '',
-    requestTypes: ['AUTH', 'THREEDQUERY']
-  });
 
   // when
   beforeEach(() => {
     when(framesHub.waitForFrame(anyString())).thenCall(name => of(name));
+    // @ts-ignore
+    when(configProvider.getConfig()).thenReturn({
+      jwt: '',
+      requestTypes: ['AUTH', 'THREEDQUERY']
+    });
 
     document.body.innerHTML = `<iframe id='st-control-frame-iframe'>
     </iframe><input id='JWTContainer' value="${jwt}" />`;
-    // @ts-ignore
     ccInstance = new CardinalCommerce(false, jwt, 0);
     ccInstance._framesHub = mockInstance(framesHub);
-    ccInstance._configProvider = mockInstance(configProvider);
   });
 
   // given

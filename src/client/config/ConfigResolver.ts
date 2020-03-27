@@ -51,8 +51,6 @@ export class ConfigResolver {
 
   public resolve(config: IConfig): IConfig {
     this.validate(config, ConfigSchema);
-    let requestTypes = this._getValueOrDefault(config.requestTypes, [...this.DEFAULT_COMPONENTS_REQUEST_TYPES]);
-    requestTypes = requestTypes.length ? requestTypes : this.DEFAULT_COMPONENTS_REQUEST_TYPES;
     return {
       analytics: this._getValueOrDefault(config.analytics, false),
       animatedCard: this._getValueOrDefault(config.animatedCard, false),
@@ -67,7 +65,7 @@ export class ConfigResolver {
       disableNotification: this._getValueOrDefault(config.disableNotification, false),
       fieldsToSubmit: this._getValueOrDefault(config.fieldsToSubmit, [...this.DEFAULT_FIELDS_TO_SUBMIT]),
       formId: this._getValueOrDefault(config.formId, Selectors.MERCHANT_FORM_SELECTOR),
-      init: this._getValueOrDefault(config.init, null),
+      init: this._getValueOrDefault(config.init, { threedinit: '', cachetoken: '' }),
       jwt: this._getValueOrDefault(config.jwt, ''),
       livestatus: this._getValueOrDefault(config.livestatus, 0),
       origin: this._getValueOrDefault(config.origin, window.location.origin),
@@ -77,7 +75,7 @@ export class ConfigResolver {
         expirydate: '',
         securitycode: ''
       }),
-      requestTypes,
+      requestTypes: this._getValueOrDefault(config.requestTypes, [...this.DEFAULT_COMPONENTS_REQUEST_TYPES]),
       styles: this._getValueOrDefault(config.styles, {}),
       submitCallback: this._getValueOrDefault(config.submitCallback, null),
       successCallback: this._getValueOrDefault(config.successCallback, null),
@@ -85,14 +83,25 @@ export class ConfigResolver {
       submitFields: this._getValueOrDefault(config.submitFields, this.DEFAULT_SUBMIT_PROPERTIES),
       submitOnError: this._getValueOrDefault(config.submitOnError, false),
       submitOnSuccess: this._getValueOrDefault(config.submitOnSuccess, true),
-      threedinit: this._getValueOrDefault(config.threedinit, null),
+      threedinit: this._getValueOrDefault(config.threedinit, ''),
       translations: this._getValueOrDefault(config.translations, {}),
       visaCheckout: this._setApmConfig(config.visaCheckout, config.components)
     };
   }
 
   private _getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
-    if (typeof value !== 'undefined') {
+    const type = typeof value;
+    if (type !== 'undefined') {
+      if (Boolean(type === 'object' && Object.keys(value))) {
+        return defaultValue;
+      }
+      if (Boolean(Array.isArray(value) && !value.length)) {
+        return defaultValue;
+      }
+      // @ts-ignore
+      if (Boolean(type === 'string' && !value.length)) {
+        return defaultValue;
+      }
       return value;
     }
     return defaultValue;
@@ -103,23 +112,16 @@ export class ConfigResolver {
       return { ...this.DEFAULT_COMPONENTS_IDS };
     }
     const optionalIds = {
-      animatedCard:
-        this._getValueOrDefault(config.animatedCard, this.DEFAULT_COMPONENTS_IDS.animatedCard) ||
-        this.DEFAULT_COMPONENTS_IDS.animatedCard
+      animatedCard: this._getValueOrDefault(config.animatedCard, this.DEFAULT_COMPONENTS_IDS.animatedCard)
     };
     const requiredIds = {
-      cardNumber:
-        this._getValueOrDefault(config.cardNumber, this.DEFAULT_COMPONENTS_IDS.cardNumber) ||
-        this.DEFAULT_COMPONENTS_IDS.cardNumber,
-      expirationDate:
-        this._getValueOrDefault(config.expirationDate, this.DEFAULT_COMPONENTS_IDS.expirationDate) ||
-        this.DEFAULT_COMPONENTS_IDS.expirationDate,
-      notificationFrame:
-        this._getValueOrDefault(config.notificationFrame, this.DEFAULT_COMPONENTS_IDS.notificationFrame) ||
-        this.DEFAULT_COMPONENTS_IDS.notificationFrame,
-      securityCode:
-        this._getValueOrDefault(config.securityCode, this.DEFAULT_COMPONENTS_IDS.securityCode) ||
-        this.DEFAULT_COMPONENTS_IDS.securityCode
+      cardNumber: this._getValueOrDefault(config.cardNumber, this.DEFAULT_COMPONENTS_IDS.cardNumber),
+      expirationDate: this._getValueOrDefault(config.expirationDate, this.DEFAULT_COMPONENTS_IDS.expirationDate),
+      notificationFrame: this._getValueOrDefault(
+        config.notificationFrame,
+        this.DEFAULT_COMPONENTS_IDS.notificationFrame
+      ),
+      securityCode: this._getValueOrDefault(config.securityCode, this.DEFAULT_COMPONENTS_IDS.securityCode)
     };
     return {
       ...optionalIds,
@@ -137,12 +139,10 @@ export class ConfigResolver {
         startOnLoad: false
       };
     }
-    let requestTypes = this._getValueOrDefault(components.requestTypes, [...this.DEFAULT_COMPONENTS_REQUEST_TYPES]);
-    requestTypes = requestTypes.length ? requestTypes : this.DEFAULT_COMPONENTS_REQUEST_TYPES;
     return {
       defaultPaymentType: this._getValueOrDefault(components.defaultPaymentType, ''),
       paymentTypes: this._getValueOrDefault(components.paymentTypes, ['']),
-      requestTypes,
+      requestTypes: this._getValueOrDefault(components.requestTypes, this.DEFAULT_COMPONENTS_REQUEST_TYPES),
       startOnLoad: this._getValueOrDefault(components.startOnLoad, false)
     };
   }
@@ -153,7 +153,7 @@ export class ConfigResolver {
     }
     return {
       ...apm,
-      requestTypes: components && this._getValueOrDefault(components.requestTypes, [...this.DEFAULT_APMS_REQUEST_TYPES])
+      requestTypes: components && this._getValueOrDefault(components.requestTypes, this.DEFAULT_APMS_REQUEST_TYPES)
     };
   }
 }

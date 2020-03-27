@@ -20,7 +20,7 @@ describe('CardinalCommerce class', () => {
   beforeEach(() => {
     document.body.innerHTML = `<iframe id='st-control-frame-iframe'>
     </iframe><input id='JWTContainer' value="${jwt}" />`;
-    ccInstance = new CardinalCommerceMock(instance(configProvider), false, jwt, 0);
+    ccInstance = new CardinalCommerceMock(false, jwt, 0);
   });
 
   // given
