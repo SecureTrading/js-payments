@@ -43,7 +43,6 @@ export class Notification {
     this._messageMap = new Map(Object.entries(Notification.NOTIFICATION_CLASSES));
     this._notificationFrameElement =
       document.getElementById(this._configProvider.getConfig().componentIds.notificationFrame);
-    console.error(this._configProvider.getConfig().componentIds.notificationFrame);
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, (event: INotificationEvent) => {
       this._displayNotification(event);
     });
