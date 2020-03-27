@@ -43,10 +43,7 @@ export class FramesHub {
     this.communicator.whenReceive(FramesHub.GET_FRAMES_EVENT).thenRespond(() => this.activeFrame$);
 
     fromEventFrame$
-      .pipe(
-        withLatestFrom(this.activeFrame$),
-        takeUntil(this.communicator.communicationClosed$)
-      )
+      .pipe(withLatestFrom(this.activeFrame$), takeUntil(this.communicator.communicationClosed$))
       .subscribe(([newFrame, activeFrames]) => this.onFrameReady(newFrame, activeFrames));
   }
 
@@ -58,15 +55,12 @@ export class FramesHub {
   }
 
   public waitForFrame(name: string): Observable<string> {
-    return this.isFrameActive(name).pipe(
-      filter(Boolean),
-      mapTo(name)
-    );
+    return this.isFrameActive(name).pipe(filter(Boolean), mapTo(name));
   }
 
   public notifyReadyState(): void {
     const frameName = this.identifier.getFrameName();
-
+    console.error(frameName);
     if (frameName === Selectors.MERCHANT_PARENT_FRAME) {
       return;
     }
