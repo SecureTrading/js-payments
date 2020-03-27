@@ -78,6 +78,8 @@ export class ConfigResolver {
       requestTypes: this._getValueOrDefault(config.requestTypes, []),
       styles: this._getValueOrDefault(config.styles,{}),
       submitCallback: this._getValueOrDefault(config.submitCallback, null),
+      successCallback: this._getValueOrDefault(config.successCallback, null),
+      errorCallback: this._getValueOrDefault(config.errorCallback, null),
       submitFields: this._getValueOrDefault(config.submitFields, this.DEFAULT_SUBMIT_PROPERTIES),
       submitOnError: this._getValueOrDefault(config.submitOnError, false),
       submitOnSuccess: this._getValueOrDefault(config.submitOnSuccess, true),
