@@ -204,7 +204,6 @@ export class VisaCheckout {
     this._buttonSettings = this._setConfiguration({ locale: this._stJwt.locale }, settings);
     this.customizeVisaButton(buttonSettings);
     this._setLiveStatus();
-    DomMethods.removeAllChildren(this._placement);
   }
 
   private _setConfiguration = (config: IVisaConfig, settings: IVisaSettings) =>
