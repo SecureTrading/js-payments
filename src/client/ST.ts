@@ -37,6 +37,7 @@ import { BrowserLocalStorage } from '../shared/services/storage/BrowserLocalStor
 import { BrowserSessionStorage } from '../shared/services/storage/BrowserSessionStorage';
 import { Notification } from '../application/core/shared/Notification';
 import './../styles/notification.css';
+import { ConfigResolver } from './config/ConfigResolver';
 
 @Service()
 class ST {
@@ -110,7 +111,6 @@ class ST {
       config = config !== undefined ? config : ({} as IComponentsConfig);
       this._config = { ...this._config, components: { ...this._config.components, ...config } };
       this.configProvider.update(this._config);
-      this._commonFrames.requestTypes = this._config.components.requestTypes;
       this.CardinalCommerce();
       await this._communicator.query({ type: MessageBus.EVENTS_PUBLIC.CONFIG_CHECK }, controlFrame);
       this.CardFrames(this._config);
@@ -180,7 +180,6 @@ class ST {
     return new cardinal(
       this._config.components.startOnLoad,
       this._config.jwt,
-      this._config.components.requestTypes,
       this._config.livestatus,
       this._config.init.cachetoken,
       this._config.init.threedinit,
@@ -215,8 +214,7 @@ class ST {
       config.submitOnError,
       config.submitFields,
       config.datacenterurl,
-      config.animatedCard,
-      config.components.requestTypes
+      config.animatedCard
     );
   }
 

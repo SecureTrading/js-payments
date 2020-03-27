@@ -9,6 +9,7 @@ import { RegisterFrames } from './RegisterFrames.class';
 import { Container } from 'typedi';
 import { BrowserLocalStorage } from '../../shared/services/storage/BrowserLocalStorage';
 import { IComponentsIds } from '../../shared/model/config/IComponentsIds';
+import { ConfigProvider } from '../../application/core/services/ConfigProvider';
 
 export class CommonFrames extends RegisterFrames {
   get requestTypes(): string[] {
@@ -34,6 +35,7 @@ export class CommonFrames extends RegisterFrames {
   private readonly _submitOnError: boolean;
   private readonly _submitOnSuccess: boolean;
   private _localStorage: BrowserLocalStorage = Container.get(BrowserLocalStorage);
+  private _configProvider: ConfigProvider;
 
   constructor(
     jwt: string,
@@ -44,18 +46,18 @@ export class CommonFrames extends RegisterFrames {
     submitOnError: boolean,
     submitFields: string[],
     gatewayUrl: string,
-    animatedCard: boolean,
-    requestTypes: string[]
+    animatedCard: boolean
   ) {
     super(jwt, origin, componentIds, styles, animatedCard);
     this._gatewayUrl = gatewayUrl;
     this._messageBus = Container.get(MessageBus);
+    this._configProvider = Container.get(ConfigProvider);
     this._merchantForm = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR) as HTMLFormElement;
     this._validation = new Validation();
     this._submitFields = submitFields;
     this._submitOnError = submitOnError;
     this._submitOnSuccess = submitOnSuccess;
-    this._requestTypes = requestTypes;
+    this._requestTypes = this._configProvider.getConfig().components.requestTypes;
   }
 
   public init() {

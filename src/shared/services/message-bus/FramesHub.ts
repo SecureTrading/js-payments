@@ -60,7 +60,6 @@ export class FramesHub {
 
   public notifyReadyState(): void {
     const frameName = this.identifier.getFrameName();
-    console.error(frameName);
     if (frameName === Selectors.MERCHANT_PARENT_FRAME) {
       return;
     }

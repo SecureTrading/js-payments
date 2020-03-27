@@ -51,6 +51,8 @@ export class ConfigResolver {
 
   public resolve(config: IConfig): IConfig {
     this.validate(config, ConfigSchema);
+    let requestTypes = this._getValueOrDefault(config.requestTypes, [...this.DEFAULT_COMPONENTS_REQUEST_TYPES]);
+    requestTypes = requestTypes.length ? requestTypes : this.DEFAULT_COMPONENTS_REQUEST_TYPES;
     return {
       analytics: this._getValueOrDefault(config.analytics, false),
       animatedCard: this._getValueOrDefault(config.animatedCard, false),
@@ -60,12 +62,12 @@ export class ConfigResolver {
       cachetoken: this._getValueOrDefault(config.cachetoken, ''),
       componentIds: this._componentIds(config.componentIds),
       components: this._setComponentsProperties(config),
-      datacenterurl: this._getValueOrDefault(config.datacenterurl, environment.GATEWAY_URL),
+      datacenterurl: this._getValueOrDefault(config.datacenterurl, environment.GATEWAY_URL) || environment.GATEWAY_URL,
       deferInit: this._getValueOrDefault(config.deferInit, false),
       disableNotification: this._getValueOrDefault(config.disableNotification, false),
       fieldsToSubmit: this._getValueOrDefault(config.fieldsToSubmit, [...this.DEFAULT_FIELDS_TO_SUBMIT]),
       formId: this._getValueOrDefault(config.formId, Selectors.MERCHANT_FORM_SELECTOR),
-      init: this._getValueOrDefault(config.init, { cachetoken: '', threedinit: '' }),
+      init: this._getValueOrDefault(config.init, null),
       jwt: this._getValueOrDefault(config.jwt, ''),
       livestatus: this._getValueOrDefault(config.livestatus, 0),
       origin: this._getValueOrDefault(config.origin, window.location.origin),
@@ -75,13 +77,13 @@ export class ConfigResolver {
         expirydate: '',
         securitycode: ''
       }),
-      requestTypes: this._getValueOrDefault(config.requestTypes, []),
+      requestTypes,
       styles: this._getValueOrDefault(config.styles, {}),
       submitCallback: this._getValueOrDefault(config.submitCallback, null),
       submitFields: this._getValueOrDefault(config.submitFields, this.DEFAULT_SUBMIT_PROPERTIES),
       submitOnError: this._getValueOrDefault(config.submitOnError, false),
       submitOnSuccess: this._getValueOrDefault(config.submitOnSuccess, true),
-      threedinit: this._getValueOrDefault(config.threedinit, ''),
+      threedinit: this._getValueOrDefault(config.threedinit, null),
       translations: this._getValueOrDefault(config.translations, {}),
       visaCheckout: this._setApmConfig(config.visaCheckout, config.components)
     };
@@ -129,15 +131,16 @@ export class ConfigResolver {
       return {
         defaultPaymentType: '',
         paymentTypes: [''],
-        requestTypes: [...this.DEFAULT_COMPONENTS_REQUEST_TYPES],
+        requestTypes: this.DEFAULT_COMPONENTS_REQUEST_TYPES,
         startOnLoad: false
       };
     }
-
+    let requestTypes = this._getValueOrDefault(components.requestTypes, [...this.DEFAULT_COMPONENTS_REQUEST_TYPES]);
+    requestTypes = requestTypes.length ? requestTypes : this.DEFAULT_COMPONENTS_REQUEST_TYPES;
     return {
       defaultPaymentType: this._getValueOrDefault(components.defaultPaymentType, ''),
       paymentTypes: this._getValueOrDefault(components.paymentTypes, ['']),
-      requestTypes: this._getValueOrDefault(components.requestTypes, [...this.DEFAULT_COMPONENTS_REQUEST_TYPES]),
+      requestTypes,
       startOnLoad: this._getValueOrDefault(components.startOnLoad, false)
     };
   }

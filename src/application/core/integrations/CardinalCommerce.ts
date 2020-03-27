@@ -19,6 +19,7 @@ import { GoogleAnalytics } from './GoogleAnalytics';
 import { Container } from 'typedi';
 import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
+import { ConfigProvider } from '../services/ConfigProvider';
 
 declare const Cardinal: any;
 
@@ -34,18 +35,18 @@ export class CardinalCommerce {
   private readonly _livestatus: number = 0;
   private readonly _startOnLoad: boolean;
   private _jwt: string;
-  private readonly _requestTypes: string[];
+  private _requestTypes: string[];
   private readonly _threedinit: string;
   private _notification: NotificationService;
   private _sdkAddress: string = environment.CARDINAL_COMMERCE.SONGBIRD_TEST_URL;
   private _bypassCards: string[];
   private _jwtUpdated: boolean;
   private _framesHub: FramesHub;
+  private _configProvider: ConfigProvider;
 
   constructor(
     startOnLoad: boolean,
     jwt: string,
-    requestTypes: string[],
     livestatus?: number,
     cachetoken?: string,
     threedinit?: string,
@@ -57,11 +58,12 @@ export class CardinalCommerce {
     this._threedinit = threedinit;
     this._livestatus = livestatus;
     this._cachetoken = cachetoken ? cachetoken : '';
-    this._requestTypes = requestTypes;
+    this._configProvider = Container.get(ConfigProvider);
     this._bypassCards = bypassCards;
     this.messageBus = Container.get(MessageBus);
     this._notification = Container.get(NotificationService);
     this._framesHub = Container.get(FramesHub);
+    this._requestTypes = this._configProvider.getConfig().requestTypes;
     this._setLiveStatus();
     this._onInit();
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
@@ -212,7 +214,8 @@ export class CardinalCommerce {
     this._initSubmitEventListener();
   }
 
-  private _publishRequestTypesEvent(requestTypes: string[]) {
+  private _publishRequestTypesEvent() {
+    const requestTypes = this._requestTypes;
     this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(() => {
       this.messageBus.publish({
         data: { requestTypes },
@@ -223,7 +226,7 @@ export class CardinalCommerce {
 
   private _onInit() {
     this._initSubscriptions();
-    this._publishRequestTypesEvent(this._requestTypes);
+    this._publishRequestTypesEvent();
   }
 
   private _onLoadControlFrame() {
