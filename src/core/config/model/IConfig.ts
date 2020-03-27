@@ -29,6 +29,8 @@ export interface IConfig {
   requestTypes: string[];
   styles?: IStyles;
   submitCallback?: any;
+  successCallback?: any;
+  errorCallback?: any;
   submitFields?: string[];
   submitOnSuccess?: boolean;
   submitOnError?: boolean;
