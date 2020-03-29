@@ -83,7 +83,7 @@
     "husky": "^4.2.3",
     "i18next-conv": "^9.1.0",
     "jest": "^25.1.0",
-    "jest-each": "^25.1.0",
+    "jest-each": "^25.2.3",
     "jest-fetch-mock": "^3.0.1",
     "jest-get-type": "^25.2.1",
     "lint-staged": "^10.0.10",
