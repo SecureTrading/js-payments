@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.9
+
+### Fixed
+
+- Fix to ensure updateJWT works when changing currency from original JWT
+
 ## 2.0.8
 
 ### Fixed
