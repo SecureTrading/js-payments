@@ -12,7 +12,7 @@ if (Card && document.URL.includes('animated')) {
   // @ts-ignore
   const card: Card = new Card({
     animatedCardContainer: 'st-animated-card',
-    locale: localStorage.getItem('locale') ? localStorage.getItem('locale') : 'en_GB'
+    locale: localStorage.getItem('locale') ? localStorage.getItem('locale') : 'en_GB',
   });
 
   (() => {

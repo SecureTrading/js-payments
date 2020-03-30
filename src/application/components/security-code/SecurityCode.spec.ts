@@ -31,7 +31,7 @@ describe('SecurityCode', () => {
     when(configProvider.getConfig()).thenReturn({
       jwt: '',
       disableNotification: false,
-      placeholders: { pan: '4154654', expirydate: '12/22', securitycode: '123' }
+      placeholders: { pan: '4154654', expirydate: '12/22', securitycode: '123' },
     });
     securityCode = new SecurityCode(instance(configProvider));
   });
@@ -96,7 +96,9 @@ describe('SecurityCode', () => {
       // @ts-ignore
       expect(securityCodeInstance._inputElement.hasAttribute(SecurityCode.DISABLED_ATTRIBUTE_NAME)).toEqual(false);
       // @ts-ignore
-      expect(securityCodeInstance._inputElement.classList.contains(SecurityCode.DISABLED_ATTRIBUTE_CLASS)).toEqual(false);
+      expect(securityCodeInstance._inputElement.classList.contains(SecurityCode.DISABLED_ATTRIBUTE_CLASS)).toEqual(
+        false
+      );
     });
   });
 
@@ -177,9 +179,9 @@ describe('SecurityCode', () => {
     beforeEach(() => {
       const event = {
         clipboardData: {
-          getData: jest.fn()
+          getData: jest.fn(),
         },
-        preventDefault: jest.fn()
+        preventDefault: jest.fn(),
       };
       Utils.stripChars = jest.fn().mockReturnValue('111');
       // @ts-ignore
@@ -280,8 +282,8 @@ function securityCodeFixture() {
     placeholders: {
       pan: 'pan placeholder',
       securitycode: 'securitycode placeholder',
-      expirydate: 'expirydate placeholder'
-    }
+      expirydate: 'expirydate placeholder',
+    },
   });
   const securityCodeInstance = new SecurityCode(configProvider);
   return { securityCodeInstance };

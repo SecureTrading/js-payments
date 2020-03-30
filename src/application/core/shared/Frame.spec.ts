@@ -8,7 +8,7 @@ describe('Frame', () => {
     ['/myframe.html?mykey=some%20value&locale=fr_FR', { locale: 'fr_FR', styles: { mykey: 'some value' } }],
     [
       '/myframe.html?mykey=some%20value&locale=fr_FR&origin=https%3A%2F%2Fexample.com',
-      { origin: 'https://example.com', locale: 'fr_FR', styles: { mykey: 'some value' } }
+      { origin: 'https://example.com', locale: 'fr_FR', styles: { mykey: 'some value' } },
     ],
     [
       '/card-number.html?background-color-input=AliceBlue&color-input-error=%23721c24&line-height-input=12px&font-size-input=12px&background-color-input-error=%23f8d7da',
@@ -18,10 +18,10 @@ describe('Frame', () => {
           'background-color-input-error': '#f8d7da',
           'color-input-error': '#721c24',
           'font-size-input': '12px',
-          'line-height-input': '12px'
-        }
-      }
-    ]
+          'line-height-input': '12px',
+        },
+      },
+    ],
   ]).test('Frame.parseUrl', (url, expected) => {
     let frame = new Frame();
     window.history.pushState({}, 'Test Title', url);

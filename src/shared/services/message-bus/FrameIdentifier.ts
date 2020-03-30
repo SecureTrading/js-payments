@@ -13,8 +13,7 @@ export class FrameIdentifier {
     Selectors.ANIMATED_CARD_COMPONENT_IFRAME,
   ];
 
-  constructor(@Inject(WINDOW) private window: Window) {
-  }
+  constructor(@Inject(WINDOW) private window: Window) {}
 
   getFrameName(): string {
     return this.window.name;

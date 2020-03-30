@@ -19,7 +19,7 @@ export class DomMethods {
             {
               name: field,
               type: DomMethods.HIDDEN_ATTRIBUTE,
-              value
+              value,
             },
             DomMethods.INPUT_MARKUP
           )
@@ -48,7 +48,7 @@ export class DomMethods {
 
   public static getAllFormElements = (form: HTMLElement): any[] => [
     ...Array.from(form.querySelectorAll(DomMethods.SELECT_MARKUP)),
-    ...Array.from(form.querySelectorAll(DomMethods.INPUT_MARKUP))
+    ...Array.from(form.querySelectorAll(DomMethods.INPUT_MARKUP)),
   ];
 
   private static isScriptLoaded(params: IScriptParams): Element {

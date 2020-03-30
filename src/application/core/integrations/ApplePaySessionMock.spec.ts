@@ -80,24 +80,24 @@ describe('Class ApplePaySessionMock', () => {
     // then
     it('should call onsuccess', () => {
       session._handleResponse({
-        status: 'SUCCESS'
+        status: 'SUCCESS',
       });
       expect(session.onpaymentauthorized).toHaveBeenCalledTimes(1);
       expect(session.oncancel).toHaveBeenCalledTimes(0);
       expect(session.onpaymentauthorized).toHaveBeenCalledWith({
-        status: 'SUCCESS'
+        status: 'SUCCESS',
       });
     });
 
     // then
     it('should call oncancel', () => {
       session._handleResponse({
-        status: 'ERROR'
+        status: 'ERROR',
       });
       expect(session.onpaymentauthorized).toHaveBeenCalledTimes(0);
       expect(session.oncancel).toHaveBeenCalledTimes(1);
       expect(session.oncancel).toHaveBeenCalledWith({
-        status: 'ERROR'
+        status: 'ERROR',
       });
     });
   });

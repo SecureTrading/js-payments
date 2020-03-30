@@ -49,13 +49,13 @@ export class VisaCheckout {
   protected static VISA_PAYMENT_STATUS = {
     ERROR: 'ERROR',
     SUCCESS: 'SUCCESS',
-    WARNING: 'WARNING'
+    WARNING: 'WARNING',
   };
 
   private static VISA_PAYMENT_RESPONSE_TYPES = {
     CANCEL: 'payment.cancel',
     ERROR: 'payment.error',
-    SUCCESS: 'payment.success'
+    SUCCESS: 'payment.success',
   };
 
   protected requestTypes: string[];
@@ -64,7 +64,7 @@ export class VisaCheckout {
     class: 'v-button',
     id: 'v-button',
     role: 'button',
-    src: environment.VISA_CHECKOUT_URLS.TEST_BUTTON_URL
+    src: environment.VISA_CHECKOUT_URLS.TEST_BUTTON_URL,
   };
 
   private _buttonSettings: any;
@@ -85,9 +85,9 @@ export class VisaCheckout {
     paymentRequest: {
       currencyCode: '' as string,
       subtotal: '' as string,
-      total: '' as string
+      total: '' as string,
     },
-    settings: {}
+    settings: {},
   };
 
   constructor(config: IWalletConfig, jwt: string, gatewayUrl: string, livestatus?: number) {
@@ -143,7 +143,7 @@ export class VisaCheckout {
         this.requestTypes,
         {
           walletsource: this._walletSource,
-          wallettoken: this.paymentDetails
+          wallettoken: this.paymentDetails,
         },
         DomMethods.parseForm()
       )

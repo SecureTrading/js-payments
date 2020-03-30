@@ -21,7 +21,7 @@ describe('RegisterFrames', () => {
       targets,
       cardNumberField,
       expirationDateField,
-      securityCodeField
+      securityCodeField,
     } = registerFramesFixture();
 
     //when
@@ -97,27 +97,27 @@ function registerFramesFixture() {
       'background-color-input-error': '#f8d7da',
       'color-input-error': '#721c24',
       'font-size-input': '12px',
-      'line-height-input': '12px'
+      'line-height-input': '12px',
     },
     expirationDate: {
       'background-color-input': 'AliceBlue',
       'background-color-input-error': '#f8d7da',
       'color-input-error': '#721c24',
       'font-size-input': '12px',
-      'line-height-input': '12px'
+      'line-height-input': '12px',
     },
     securityCode: {
       'background-color-input': 'AliceBlue',
       'background-color-input-error': '#f8d7da',
       'color-input-error': '#721c24',
       'font-size-input': '12px',
-      'line-height-input': '12px'
-    }
+      'line-height-input': '12px',
+    },
   };
   const instance = new RegisterFrames(jwt, origin, componentsIds, styles, animatedCard, [
     'pan',
     'expirydate',
-    'securitycode'
+    'securitycode',
   ]);
   return { instance, fields, targets, cardNumberField, securityCodeField, expirationDateField };
 }

@@ -24,10 +24,10 @@ export class Payment {
     this._stTransport = new StTransport({ jwt, gatewayUrl }, parentOrigin);
     this._validation = new Validation();
     this._walletVerifyRequest = {
-      requesttypedescriptions: ['WALLETVERIFY']
+      requesttypedescriptions: ['WALLETVERIFY'],
     };
     this._threeDInitRequestBody = {
-      requesttypedescriptions: ['JSINIT']
+      requesttypedescriptions: ['JSINIT'],
     };
   }
 
@@ -53,7 +53,7 @@ export class Payment {
   public threeDInitRequest() {
     return this._stTransport.sendRequest(this._threeDInitRequestBody).then((result: { jwt: string; response: any }) => {
       const {
-        payload: { jwt, response }
+        payload: { jwt, response },
       } = new StJwt(result.jwt);
       const threeDInitResult = { jwt, response: response[0] };
       // We should always use the id from the original cachetoken to link up with the THREEDQUERY
@@ -71,7 +71,7 @@ export class Payment {
       {
         cachetoken: this._cardinalCommerceCacheToken,
         requesttypedescriptions: requestTypes,
-        termurl: 'https://termurl.com' // TODO this shouldn't be needed but currently the backend needs this
+        termurl: 'https://termurl.com', // TODO this shouldn't be needed but currently the backend needs this
       },
       merchantData,
       card

@@ -6,9 +6,7 @@ import { IMessageBusEvent } from '../../../application/core/models/IMessageBusEv
 
 @Service()
 export class NotificationService {
-
-  constructor(private _messageBus: MessageBus, private _configProvider: ConfigProvider) {
-  }
+  constructor(private _messageBus: MessageBus, private _configProvider: ConfigProvider) {}
 
   private get disableNotification(): boolean {
     return this._configProvider.getConfig().disableNotification;
@@ -45,7 +43,7 @@ export class NotificationService {
   private _setNotification(type: string, content: string): void {
     const messageBusEvent: IMessageBusEvent = {
       data: { content, type },
-      type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
+      type: MessageBus.EVENTS_PUBLIC.NOTIFICATION,
     };
     this._messageBus.publish(messageBusEvent, true);
   }

@@ -336,9 +336,9 @@ describe('CardNumber', () => {
     beforeEach(() => {
       const event = {
         clipboardData: {
-          getData: jest.fn()
+          getData: jest.fn(),
         },
-        preventDefault: jest.fn()
+        preventDefault: jest.fn(),
       };
       Utils.stripChars = jest.fn().mockReturnValue('41111');
       // @ts-ignore
@@ -388,7 +388,7 @@ function cardNumberFixture() {
   when(configProvider.getConfig()).thenReturn({
     jwt: '',
     disableNotification: false,
-    placeholders: { pan: 'Card number', expirydate: 'MM/YY', securitycode: '***' }
+    placeholders: { pan: 'Card number', expirydate: 'MM/YY', securitycode: '***' },
   });
   const cardNumberInstance: CardNumber = new CardNumber(instance(configProvider), instance(iconFactory));
 
@@ -406,14 +406,14 @@ function cardNumberFixture() {
     format: '(\\d{1,4})(\\d{1,6})?(\\d+)?',
     length: [14, 15, 16, 17, 18, 19],
     luhn: true,
-    type: 'DINERS'
+    type: 'DINERS',
   };
   const testCardNumbers = [
     ['', 0],
     ['0000000000000000', 0],
     ['4111111111111111', true],
     ['79927398713', true],
-    ['6759555555555555', false]
+    ['6759555555555555', false],
   ];
   const cards = [
     { number: 340000000000611, expirationDate: '12/22', securityCode: 1234, brand: 'AMEX' },
@@ -424,7 +424,7 @@ function cardNumberFixture() {
     { number: 5000000000000611, expirationDate: '12/22', securityCode: 123, brand: 'MAESTRO' },
     { number: 5100000000000511, expirationDate: '12/22', securityCode: 123, brand: 'MASTERCARD' },
     { number: 3089500000000000021, expirationDate: '12/22', securityCode: 123, brand: 'PIBA' },
-    { number: 4111110000000211, expirationDate: '12/22', securityCode: 123, brand: 'VISA' }
+    { number: 4111110000000211, expirationDate: '12/22', securityCode: 123, brand: 'VISA' },
   ];
 
   const formattedCards = [
@@ -437,7 +437,7 @@ function cardNumberFixture() {
     ['5100000000000511', '5100 0000 0000 0511'],
     ['3089500000000000021', '3089 5000 0000 0000021'],
     ['4111110000000211', '4111 1100 0000 0211'],
-    ['123456789', '123456789']
+    ['123456789', '123456789'],
   ];
   labelElement.id = Selectors.CARD_NUMBER_LABEL;
   inputElement.id = Selectors.CARD_NUMBER_INPUT;
@@ -452,6 +452,6 @@ function cardNumberFixture() {
     formattedCards,
     unrecognizedCardNumber,
     cardNumberCorrect,
-    receivedObject
+    receivedObject,
   };
 }

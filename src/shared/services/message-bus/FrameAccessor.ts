@@ -5,8 +5,7 @@ import { WINDOW } from '../../dependency-injection/InjectionTokens';
 
 @Service()
 export class FrameAccessor {
-  constructor(private identifier: FrameIdentifier, @Inject(WINDOW) private window: Window) {
-  }
+  constructor(private identifier: FrameIdentifier, @Inject(WINDOW) private window: Window) {}
 
   getParentFrame(): Window {
     if (this.identifier.isParentFrame()) {

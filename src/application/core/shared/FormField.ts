@@ -58,7 +58,7 @@ export class FormField extends Frame {
       'background-color-input': { property: 'background-color', selector: input },
       'background-color-input-error': {
         property: 'background-color',
-        selector: inputError
+        selector: inputError,
       },
       'border-color-input': { property: 'border-color', selector: input },
       'border-color-input-error': { property: 'border-color', selector: inputError },
@@ -83,7 +83,7 @@ export class FormField extends Frame {
       'space-inset-input': { property: 'padding', selector: input },
       'space-inset-input-error': { property: 'padding', selector: inputError },
       'space-outset-input': { property: 'margin', selector: input },
-      'space-outset-input-error': { property: 'margin', selector: inputError }
+      'space-outset-input-error': { property: 'margin', selector: inputError },
     };
     return allowed;
   }
@@ -95,7 +95,7 @@ export class FormField extends Frame {
   protected getState(): IFormFieldState {
     return {
       validity: this._inputElement.validity.valid,
-      value: this._inputElement.value
+      value: this._inputElement.value,
     };
   }
 
@@ -178,7 +178,7 @@ export class FormField extends Frame {
     const formFieldState: IFormFieldState = this.getState();
     return {
       data: formFieldState,
-      type: event
+      type: event,
     };
   }
 

@@ -13,23 +13,19 @@ describe('Element', () => {
 
   beforeEach(() => {
     mockObject = {
-      _name: ''
+      _name: '',
     };
     createNewElement = {
       _name: 'cardNumber',
-      _iframeSrc: `${environment.FRAME_URL}/card-number.html?`
+      _iframeSrc: `${environment.FRAME_URL}/card-number.html?`,
     };
     createNewStyledElement = {
       _name: 'cardNumber',
-      _iframeSrc: `${
-        environment.FRAME_URL
-      }/card-number.html?background-color-input=AliceBlue&color-input-error=%23721c24`
+      _iframeSrc: `${environment.FRAME_URL}/card-number.html?background-color-input=AliceBlue&color-input-error=%23721c24`,
     };
     createNewStyledAndParamedElement = {
       _name: 'cardNumber',
-      _iframeSrc: `${
-        environment.FRAME_URL
-      }/card-number.html?background-color-input=AliceBlue&color-input-error=%23721c24&locale=en_GB`
+      _iframeSrc: `${environment.FRAME_URL}/card-number.html?background-color-input=AliceBlue&color-input-error=%23721c24&locale=en_GB`,
     };
     instance = new Element();
   });
@@ -60,7 +56,7 @@ describe('Element', () => {
     it('should create new element with styles', () => {
       instance.create('cardNumber', {
         'background-color-input': 'AliceBlue',
-        'color-input-error': '#721c24'
+        'color-input-error': '#721c24',
       });
       expect(instance).toMatchObject(createNewStyledElement);
     });
@@ -71,7 +67,7 @@ describe('Element', () => {
         'cardNumber',
         {
           'background-color-input': 'AliceBlue',
-          'color-input-error': '#721c24'
+          'color-input-error': '#721c24',
         },
         { locale: 'en_GB' }
       );

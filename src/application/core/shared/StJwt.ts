@@ -33,7 +33,7 @@ export class StJwt {
     if (mainamount === undefined) {
       mainamount = Money.fromInteger({
         amount: parseInt(this.payload.baseamount, 10),
-        currency: this.currency
+        currency: this.currency,
       }).toString();
     }
     return mainamount;

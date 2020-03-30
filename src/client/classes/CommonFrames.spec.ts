@@ -39,7 +39,7 @@ describe('CommonFrames', () => {
         isThreedComplete(['THREEDQUERY'], {
           acsurl: 'https://example.com',
           enrolled: 'Y',
-          requesttypedescription: 'THREEDQUERY'
+          requesttypedescription: 'THREEDQUERY',
         })
       ).toEqual(false);
     });
@@ -51,7 +51,7 @@ describe('CommonFrames', () => {
           acsurl: 'https://example.com',
           enrolled: 'Y',
           requesttypedescription: 'THREEDQUERY',
-          threedresponse: 'somedata'
+          threedresponse: 'somedata',
         })
       ).toEqual(true);
     });
@@ -156,7 +156,7 @@ describe('CommonFrames', () => {
         getSubmitFieldsFixture(
           {
             something: 'a value',
-            jwt: 'a value'
+            jwt: 'a value',
           },
           ['a', 'b', 'c']
         )
@@ -169,7 +169,7 @@ describe('CommonFrames', () => {
           {
             something: 'a value',
             jwt: 'a value',
-            threedresponse: 'acs response'
+            threedresponse: 'acs response',
           },
           ['a', 'b', 'c']
         )
@@ -182,7 +182,7 @@ describe('CommonFrames', () => {
     const event = new Event('input');
     const messageBusEvent = {
       data: {},
-      type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
+      type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS,
     };
 
     // when
@@ -205,7 +205,7 @@ describe('CommonFrames', () => {
     const { instance } = commonFramesFixture();
     const data = {
       errorcode: '0',
-      errormessage: 'Ok'
+      errormessage: 'Ok',
     };
 
     // when
@@ -239,12 +239,12 @@ function commonFramesFixture() {
     cardNumber: Selectors.CARD_NUMBER_INPUT_SELECTOR,
     expirationDate: Selectors.EXPIRATION_DATE_INPUT_SELECTOR,
     notificationFrame: Selectors.NOTIFICATION_FRAME_ID,
-    securityCode: Selectors.SECURITY_CODE_INPUT_SELECTOR
+    securityCode: Selectors.SECURITY_CODE_INPUT_SELECTOR,
   };
   const animatedCard = true;
   const gatewayUrl: string = 'https://webservices.securetrading.net/jwt/';
   const instance = new CommonFrames(jwt, origin, componentsIds, {}, false, false, [], gatewayUrl, animatedCard, [
-    'AUTH'
+    'AUTH',
   ]);
 
   return { instance };

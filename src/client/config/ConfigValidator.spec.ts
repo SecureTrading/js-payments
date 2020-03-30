@@ -19,7 +19,7 @@ describe('ConfigValidator', () => {
 
     (ConfigSchema.validate as jest.Mock).mockReturnValue({
       error,
-      value: config
+      value: config,
     });
 
     expect(validator.validate(config)).toBe(error);
@@ -28,7 +28,7 @@ describe('ConfigValidator', () => {
   it('returns null when validation suceeds', () => {
     (ConfigSchema.validate as jest.Mock).mockReturnValue({
       error: undefined,
-      value: config
+      value: config,
     });
 
     expect(validator.validate(config)).toBeNull();

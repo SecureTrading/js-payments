@@ -17,7 +17,7 @@ describe('CardFrames', () => {
     const type = MessageBus.EVENTS_PUBLIC.BLOCK_CARD_NUMBER;
     const messageBusEvent = {
       data,
-      type
+      type,
     };
     // when
     beforeEach(() => {
@@ -64,9 +64,9 @@ describe('CardFrames', () => {
       data: {
         billingamount: '',
         billingemail: '',
-        billingfirstname: ''
+        billingfirstname: '',
       },
-      type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
+      type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS,
     };
     // when
     beforeEach(() => {
@@ -161,9 +161,9 @@ describe('CardFrames', () => {
         // @ts-ignore
         deferInit: undefined,
         fieldsToSubmit: ['pan', 'expirydate', 'securitycode'],
-        bypassCards: ['PIBA']
+        bypassCards: ['PIBA'],
       },
-      type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
+      type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM,
     };
     // when
     beforeEach(() => {
@@ -192,7 +192,7 @@ describe('CardFrames', () => {
       return {
         cardNumber: { message: 'card', state: stateCardNumber },
         expirationDate: { message: 'expiration', state: stateExpirationDate },
-        securityCode: { message: 'security', state: stateSecurityCode }
+        securityCode: { message: 'security', state: stateSecurityCode },
       };
     }
 
@@ -279,7 +279,7 @@ describe('CardFrames', () => {
       // @ts-ignore
       expect(instance.messageBus.publish).toHaveBeenCalledWith({
         type: MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD,
-        data: { message: field.message }
+        data: { message: field.message },
       });
     });
   });
@@ -363,7 +363,7 @@ function cardFramesFixture() {
     {
       cardNumber: Selectors.CARD_NUMBER_INPUT_SELECTOR,
       expirationDate: Selectors.EXPIRATION_DATE_INPUT_SELECTOR,
-      securityCode: Selectors.SECURITY_CODE_INPUT_SELECTOR
+      securityCode: Selectors.SECURITY_CODE_INPUT_SELECTOR,
     },
     {},
     ['VISA,MASTERCARD,AMEX'],

@@ -108,7 +108,7 @@ function VisaCheckoutMockFixture() {
     merchantId: '2ig278`13b123872121h31h20e',
     buttonSettings: { size: '154', color: 'neutral' },
     settings: { displayName: 'My Test Site' },
-    paymentRequest: { subtotal: '20.00' }
+    paymentRequest: { subtotal: '20.00' },
   };
   const fakeV = { init: jest.fn(), on: jest.fn() };
 
