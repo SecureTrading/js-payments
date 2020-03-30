@@ -1,4 +1,3 @@
-import { StTransport } from '../classes/StTransport.class';
 import { IWalletConfig } from '../config/model/IWalletConfig';
 import { DomMethods } from '../shared/DomMethods';
 import { Language } from '../shared/Language';
@@ -103,7 +102,6 @@ export class ApplePay {
   private _session: any;
   private _sitesecurity: string;
   private _stJwtInstance: StJwt;
-  private _stTransportInstance: StTransport;
 
   private _validateMerchantRequestData = {
     walletmerchantid: '',
@@ -192,10 +190,6 @@ export class ApplePay {
     this._requestTypes = requestTypes;
     this._validateMerchantRequestData.walletmerchantid = merchantId;
     this._stJwtInstance = new StJwt(jwt);
-    this._stTransportInstance = new StTransport({
-      gatewayUrl,
-      jwt
-    });
     this._translator = new Translator(this._stJwtInstance.locale);
     this._onInit(buttonText, buttonStyle);
   }
@@ -448,7 +442,7 @@ export class ApplePay {
 
   private _displayNotification(errorcode: string) {
     if (errorcode === '0') {
-      this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
+      this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK }, true);
       this._notification.success(Language.translations.PAYMENT_SUCCESS);
     } else {
       this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);

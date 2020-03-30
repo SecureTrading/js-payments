@@ -107,9 +107,7 @@ describe('StCodec class', () => {
     });
 
     // then
-    it('should translate and publish result to parent', () => {
-      // @ts-ignore
-      StCodec._parentOrigin = 'https://example.com';
+    it('should translate and publish result', () => {
       // @ts-ignore
       StCodec.publishResponse({
         errorcode: '0',
@@ -128,27 +126,6 @@ describe('StCodec class', () => {
         },
         true
       );
-    });
-
-    // then
-    it('should translate and publish result to itself', () => {
-      // @ts-ignore
-      StCodec._parentOrigin = undefined;
-      // @ts-ignore
-      StCodec.publishResponse({
-        errorcode: '0',
-        errormessage: 'Ok'
-      });
-      // @ts-ignore
-      expect(translator.translate()).toEqual('Ok');
-      // @ts-ignore
-      expect(StCodec.getMessageBus().publish).toHaveBeenCalledWith({
-        data: {
-          errorcode: '0',
-          errormessage: 'Payment has been successfully processed'
-        },
-        type: 'TRANSACTION_COMPLETE'
-      });
     });
 
     // then
@@ -350,7 +327,7 @@ describe('StCodec class', () => {
   describe('StCodec._createRequestId', () => {
     // when
     beforeEach(() => {
-      str = new StCodec(jwt, 'https://example.com');
+      str = new StCodec(jwt);
     });
 
     // then
