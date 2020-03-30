@@ -329,7 +329,7 @@ describe('Visa Checkout', () => {
   describe('onSuccess()', () => {
     // then
     it('should set paymentDetails and paymentStatus and call _processPayment', () => {
-      instance.payment.processPayment = jest.fn().mockReturnValue(new Promise((resolve) => resolve()));
+      instance.payment.processPayment = jest.fn().mockReturnValue(new Promise(resolve => resolve()));
       const payment = { status: 'SUCCESS', another: 'value' };
       instance.onSuccess(payment);
       expect(instance.paymentDetails).toBe('{"status":"SUCCESS","another":"value"}');

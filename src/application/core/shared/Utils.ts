@@ -35,7 +35,7 @@ export class Utils {
         if (retries > 0 && Date.now() < endtime) {
           promissory()
             .then(resolve)
-            .catch((e) => {
+            .catch(e => {
               retries--;
               error = e;
               setTimeout(() => attempt(), delay);

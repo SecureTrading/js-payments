@@ -27,7 +27,7 @@ describe('StTransport class', () => {
   };
   const timeoutError: any = null; //Error(Language.translations.COMMUNICATION_ERROR_TIMEOUT);
   const resolvingPromise = (result: object) => {
-    return new Promise((resolve) => resolve(result));
+    return new Promise(resolve => resolve(result));
   };
   const rejectingPromise = (reason: Error) => {
     return new Promise((_, reject) => reject(reason));
@@ -47,8 +47,8 @@ describe('StTransport class', () => {
       // @ts-ignore
       instance._fetchRetry = jest.fn();
       // This effectively creates a MVP codec so that we aren't testing all that here
-      instance.codec.encode = jest.fn((x) => JSON.stringify(x));
-      instance.codec.decode = jest.fn((x) => {
+      instance.codec.encode = jest.fn(x => JSON.stringify(x));
+      instance.codec.decode = jest.fn(x => {
         return new Promise((resolve, reject) => {
           if ('json' in x) {
             resolve(x.json());

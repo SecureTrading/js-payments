@@ -97,7 +97,7 @@ class ST {
       submit: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUBMIT_CALLBACK
     };
     // @ts-ignore
-    this._messageBus.subscribe(events[event], (data) => {
+    this._messageBus.subscribe(events[event], data => {
       callback(data);
     });
   }
@@ -107,7 +107,7 @@ class ST {
   }
 
   public Components(config: IComponentsConfig): void {
-    this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(async (controlFrame) => {
+    this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(async controlFrame => {
       config = config !== undefined ? config : ({} as IComponentsConfig);
       this._config = { ...this._config, components: { ...this._config.components, ...config } };
       this.configProvider.update(this._config);

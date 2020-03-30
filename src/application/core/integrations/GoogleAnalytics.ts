@@ -52,11 +52,11 @@ export class GoogleAnalytics {
           .then(() => {
             GoogleAnalytics._disableUserIDTracking();
           })
-          .catch((error) => {
+          .catch(error => {
             throw new Error(error);
           });
       })
-      .catch((error) => {
+      .catch(error => {
         throw new Error(error);
       });
   }

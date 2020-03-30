@@ -183,7 +183,7 @@ export class FormField extends Frame {
   }
 
   private _addTabListener() {
-    window.addEventListener('focus', (event) => {
+    window.addEventListener('focus', event => {
       this.onFocus(event);
     });
   }

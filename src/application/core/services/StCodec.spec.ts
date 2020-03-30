@@ -508,7 +508,7 @@ describe('StCodec class', () => {
       await expect(
         str.decode({
           json: () => {
-            return new Promise((resolve) => resolve(fullResponse));
+            return new Promise(resolve => resolve(fullResponse));
           }
         })
       ).resolves.toEqual({ jwt: fullResponse.jwt, response: { verified: 'data' } });

@@ -26,7 +26,7 @@ describe('CardinalCommerce', () => {
 
   // when
   beforeEach(() => {
-    when(framesHub.waitForFrame(anyString())).thenCall((name) => of(name));
+    when(framesHub.waitForFrame(anyString())).thenCall(name => of(name));
     // @ts-ignore
     when(configProvider.getConfig()).thenReturn({
       jwt: '',

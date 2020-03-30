@@ -416,7 +416,7 @@ describe('ControlFrame', () => {
     // then
     it('should call notification success when promise is resolved', async () => {
       // @ts-ignore
-      instance._payment.processPayment = jest.fn().mockResolvedValueOnce(new Promise((resolve) => resolve()));
+      instance._payment.processPayment = jest.fn().mockResolvedValueOnce(new Promise(resolve => resolve()));
       // @ts-ignore
       instance._processPayment(data);
     });
@@ -424,7 +424,7 @@ describe('ControlFrame', () => {
     // then
     it('should call notification error when promise is rejected', async () => {
       // @ts-ignore
-      instance._payment.processPayment = jest.fn().mockRejectedValueOnce(new Promise((rejected) => rejected()));
+      instance._payment.processPayment = jest.fn().mockRejectedValueOnce(new Promise(rejected => rejected()));
       // @ts-ignore
       instance._processPayment(data);
     });

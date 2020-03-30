@@ -39,7 +39,7 @@ export class MerchantFields {
 
   private _getMerchantInputs(): { inputs: HTMLInputElement[] } {
     return {
-      inputs: Array.from(this._inputs).filter((item) =>
+      inputs: Array.from(this._inputs).filter(item =>
         item.hasAttribute(MerchantFields.DATA_ATTRIBUTE_NAME)
       ) as HTMLInputElement[]
     };

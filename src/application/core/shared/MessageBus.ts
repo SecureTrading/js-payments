@@ -78,7 +78,7 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
   public publish<T>(event: IMessageBusEvent<T>, publishToParent?: boolean): void {
     this.framesHub
       .waitForFrame(Selectors.CONTROL_FRAME_IFRAME)
-      .subscribe((controlFrame) => this.communicator.send(event, controlFrame));
+      .subscribe(controlFrame => this.communicator.send(event, controlFrame));
 
     if (publishToParent) {
       this.publishToParent(event);
@@ -98,7 +98,7 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
 
   public subscribe<T>(...args: any[]): Unsubscribable {
     if (!this.identifier.isParentFrame() && !this.identifier.isControlFrame()) {
-      return this.getControlFrameMessageBus().subscribe((messageBus) => {
+      return this.getControlFrameMessageBus().subscribe(messageBus => {
         messageBus.subscribe.apply(messageBus, args);
       });
     }
@@ -127,7 +127,7 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
 
   private getControlFrameMessageBus(): Observable<MessageBus> {
     return this.framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).pipe(
-      map((frameName) => {
+      map(frameName => {
         const frames: FrameCollection = this.frameAccessor.getFrameCollection();
         const controlFrame: ControlFrameWindow = frames[frameName] as ControlFrameWindow;
 
