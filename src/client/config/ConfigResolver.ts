@@ -60,7 +60,7 @@ export class ConfigResolver {
       cachetoken: this._getValueOrDefault(config.cachetoken, ''),
       componentIds: this._componentIds(config.componentIds),
       components: this._setComponentsProperties(config),
-      datacenterurl: this._getValueOrDefault(config.datacenterurl, environment.GATEWAY_URL),
+      datacenterurl: this._getValueOrDefault(config.datacenterurl, environment.GATEWAY_URL) || environment.GATEWAY_URL,
       deferInit: this._getValueOrDefault(config.deferInit, false),
       disableNotification: this._getValueOrDefault(config.disableNotification, false),
       fieldsToSubmit: this._getValueOrDefault(config.fieldsToSubmit, [...this.DEFAULT_FIELDS_TO_SUBMIT]),
@@ -75,9 +75,11 @@ export class ConfigResolver {
         expirydate: '',
         securitycode: ''
       }),
-      requestTypes: this._getValueOrDefault(config.requestTypes, []),
+      requestTypes: this._getValueOrDefault(config.requestTypes, [...this.DEFAULT_COMPONENTS_REQUEST_TYPES]),
       styles: this._getValueOrDefault(config.styles, {}),
       submitCallback: this._getValueOrDefault(config.submitCallback, null),
+      successCallback: this._getValueOrDefault(config.successCallback, null),
+      errorCallback: this._getValueOrDefault(config.errorCallback, null),
       submitFields: this._getValueOrDefault(config.submitFields, this.DEFAULT_SUBMIT_PROPERTIES),
       submitOnError: this._getValueOrDefault(config.submitOnError, false),
       submitOnSuccess: this._getValueOrDefault(config.submitOnSuccess, true),
@@ -88,12 +90,22 @@ export class ConfigResolver {
   }
 
   private _getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
-    if (typeof (value) !== 'undefined') {
+    const type = typeof value;
+    if (type !== 'undefined') {
+      if (Boolean(type === 'object' && Object.keys(value))) {
+        return defaultValue;
+      }
+      if (Boolean(Array.isArray(value) && !value.length)) {
+        return defaultValue;
+      }
+      // @ts-ignore
+      if (Boolean(type === 'string' && !value.length)) {
+        return defaultValue;
+      }
       return value;
     }
     return defaultValue;
   }
-
 
   private _componentIds(config: IComponentsIds): IComponentsIds {
     if (!config) {
@@ -105,8 +117,10 @@ export class ConfigResolver {
     const requiredIds = {
       cardNumber: this._getValueOrDefault(config.cardNumber, this.DEFAULT_COMPONENTS_IDS.cardNumber),
       expirationDate: this._getValueOrDefault(config.expirationDate, this.DEFAULT_COMPONENTS_IDS.expirationDate),
-      notificationFrame: this._getValueOrDefault(config.notificationFrame,
-        this.DEFAULT_COMPONENTS_IDS.notificationFrame),
+      notificationFrame: this._getValueOrDefault(
+        config.notificationFrame,
+        this.DEFAULT_COMPONENTS_IDS.notificationFrame
+      ),
       securityCode: this._getValueOrDefault(config.securityCode, this.DEFAULT_COMPONENTS_IDS.securityCode)
     };
     return {
@@ -121,15 +135,14 @@ export class ConfigResolver {
       return {
         defaultPaymentType: '',
         paymentTypes: [''],
-        requestTypes: [...this.DEFAULT_COMPONENTS_REQUEST_TYPES],
+        requestTypes: this.DEFAULT_COMPONENTS_REQUEST_TYPES,
         startOnLoad: false
       };
     }
-
     return {
       defaultPaymentType: this._getValueOrDefault(components.defaultPaymentType, ''),
       paymentTypes: this._getValueOrDefault(components.paymentTypes, ['']),
-      requestTypes: this._getValueOrDefault(components.requestTypes, [...this.DEFAULT_COMPONENTS_REQUEST_TYPES]),
+      requestTypes: this._getValueOrDefault(components.requestTypes, this.DEFAULT_COMPONENTS_REQUEST_TYPES),
       startOnLoad: this._getValueOrDefault(components.startOnLoad, false)
     };
   }
@@ -140,8 +153,7 @@ export class ConfigResolver {
     }
     return {
       ...apm,
-      requestTypes:
-        components && this._getValueOrDefault(components.requestTypes, [...this.DEFAULT_APMS_REQUEST_TYPES])
+      requestTypes: components && this._getValueOrDefault(components.requestTypes, this.DEFAULT_APMS_REQUEST_TYPES)
     };
   }
 }
