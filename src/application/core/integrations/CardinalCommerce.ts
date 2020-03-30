@@ -70,7 +70,7 @@ export class CardinalCommerce {
       const { newJwt } = data;
       this._jwtUpdated = true;
       this._jwt = newJwt;
-      this._onInit();
+      this._publishRequestTypesEvent(this._requestTypes);
     });
   }
 

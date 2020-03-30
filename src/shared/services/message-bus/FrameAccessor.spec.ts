@@ -38,7 +38,7 @@ describe('FrameAccessor', () => {
       const frames = ['a', 'b', 'c'];
 
       when(windowMock.parent).thenReturn(parentFrameInstance);
-      when(parentFrameMock.frames).thenReturn(frames as unknown as Window);
+      when(parentFrameMock.frames).thenReturn((frames as unknown) as Window);
       when(identifierMock.isParentFrame()).thenReturn(false);
 
       expect(accessor.getFrameCollection()).toBe(frames);

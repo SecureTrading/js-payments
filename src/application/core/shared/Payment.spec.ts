@@ -2,7 +2,6 @@ import { Payment } from './Payment';
 import { StTransport } from '../services/StTransport.class';
 import { StJwt } from './StJwt';
 
-
 jest.mock('../../../../src/application/core/shared/Notification');
 
 // given
@@ -159,7 +158,7 @@ describe('Payment', () => {
         })
       );
       // @ts-ignore;
-      instance.processPayment().then(result => {
+      instance.processPayment().then((result) => {
         expect(result).toStrictEqual({
           response: {}
         });
@@ -194,7 +193,7 @@ describe('Payment', () => {
         })
       );
       // @ts-ignore;
-      instance.threeDInitRequest().then(result => {
+      instance.threeDInitRequest().then((result) => {
         expect(result).toStrictEqual({
           jwt: 'somejwt',
           response: {}
@@ -215,7 +214,7 @@ describe('Payment', () => {
       );
       const testJWT = new StJwt(jwt);
       // @ts-ignore
-      instance.threeDInitRequest().then(result => {
+      instance.threeDInitRequest().then((result) => {
         // @ts-ignore;
         expect(instance._cardinalCommerceCacheToken).toEqual(testJWT.payload.response[0].cachetoken);
       });

@@ -39,12 +39,7 @@ class StCodec {
    * @return A newly generated random request ID
    */
   public static _createRequestId(length = 10) {
-    return (
-      'J-' +
-      Math.random()
-        .toString(36)
-        .substring(2, length)
-    );
+    return 'J-' + Math.random().toString(36).substring(2, length);
   }
 
   public static getErrorData(data: any) {
@@ -226,7 +221,7 @@ class StCodec {
   public encode(requestObject: IStRequest) {
     if (
       Object.keys(requestObject).length < StCodec.MINIMUM_REQUEST_FIELDS ||
-      !requestObject.requesttypedescriptions.every(val => StCodec.SUPPORTED_REQUEST_TYPES.includes(val))
+      !requestObject.requesttypedescriptions.every((val) => StCodec.SUPPORTED_REQUEST_TYPES.includes(val))
     ) {
       StCodec.getMessageBus().publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
       StCodec.getNotification().error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST);
@@ -239,7 +234,7 @@ class StCodec {
     let decoded: any;
     const promise = await new Promise((resolve, reject) => {
       if ('json' in responseObject) {
-        responseObject.json().then(responseData => {
+        responseObject.json().then((responseData) => {
           decoded = StCodec._decodeResponseJwt(responseData.jwt, reject);
           if (decoded && decoded.payload.response[0].errorcode === '0') {
             StCodec.jwt = decoded.payload.jwt;

@@ -12,8 +12,7 @@ export class IconFactory {
     src: ''
   };
 
-  constructor(private _url: IconMap) {
-  }
+  constructor(private _url: IconMap) {}
 
   getIcon(name: string): HTMLImageElement {
     const icon = document.createElement('img');

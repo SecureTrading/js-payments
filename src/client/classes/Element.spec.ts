@@ -21,15 +21,11 @@ describe('Element', () => {
     };
     createNewStyledElement = {
       _name: 'cardNumber',
-      _iframeSrc: `${
-        environment.FRAME_URL
-      }/card-number.html?background-color-input=AliceBlue&color-input-error=%23721c24`
+      _iframeSrc: `${environment.FRAME_URL}/card-number.html?background-color-input=AliceBlue&color-input-error=%23721c24`
     };
     createNewStyledAndParamedElement = {
       _name: 'cardNumber',
-      _iframeSrc: `${
-        environment.FRAME_URL
-      }/card-number.html?background-color-input=AliceBlue&color-input-error=%23721c24&locale=en_GB`
+      _iframeSrc: `${environment.FRAME_URL}/card-number.html?background-color-input=AliceBlue&color-input-error=%23721c24&locale=en_GB`
     };
     instance = new Element();
   });

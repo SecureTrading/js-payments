@@ -83,10 +83,9 @@ export class ControlFrame extends Frame {
   ) {
     super();
     this.onInit();
-    this._communicator.whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK).thenRespond(() => interval().pipe(
-      mapTo(this._configProvider.getConfig()),
-      filter(Boolean)
-    ));
+    this._communicator
+      .whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK)
+      .thenRespond(() => interval().pipe(mapTo(this._configProvider.getConfig()), filter(Boolean)));
   }
 
   protected async onInit(): Promise<void> {

@@ -880,7 +880,7 @@ describe('ApplePay', () => {
       jest.spyOn(instance, 'isUserLoggedToAppleAccount').mockReturnValueOnce(true);
       // @ts-ignore
       jest.spyOn(instance, 'checkApplePayWalletCardAvailability').mockReturnValue(
-        new Promise(function(resolve, reject) {
+        new Promise(function (resolve, reject) {
           resolve(false);
         })
       );
@@ -900,7 +900,7 @@ describe('ApplePay', () => {
       jest.spyOn(instance, 'isUserLoggedToAppleAccount').mockReturnValueOnce(true);
       // @ts-ignore
       jest.spyOn(instance, 'checkApplePayWalletCardAvailability').mockReturnValue(
-        new Promise(function(resolve, reject) {
+        new Promise(function (resolve, reject) {
           resolve(true);
         })
       );
