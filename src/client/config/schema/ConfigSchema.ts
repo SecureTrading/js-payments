@@ -49,21 +49,11 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   cachetoken: Joi.string().allow(''),
   componentIds: Joi.object()
     .keys({
-      animatedCard: Joi.string()
-        .allow('')
-        .default('st-animated-card'),
-      cardNumber: Joi.string()
-        .allow('')
-        .default('st-card-number'),
-      expirationDate: Joi.string()
-        .allow('')
-        .default('st-expiration-date'),
-      notificationFrame: Joi.string()
-        .allow('')
-        .default('st-notification-frame'),
-      securityCode: Joi.string()
-        .allow('')
-        .default('st-security-code')
+      animatedCard: Joi.string().allow('').default('st-animated-card'),
+      cardNumber: Joi.string().allow('').default('st-card-number'),
+      expirationDate: Joi.string().allow('').default('st-expiration-date'),
+      notificationFrame: Joi.string().allow('').default('st-notification-frame'),
+      securityCode: Joi.string().allow('').default('st-security-code')
     })
     .allow({})
     .default({}),
@@ -74,12 +64,10 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
         Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
       ),
       paymentTypes: Joi.array().items(Joi.string().allow('')),
-      startOnLoad: Joi.boolean()
+      startOnLoad: Joi.boolean().allow('')
     })
     .default({}),
-  datacenterurl: Joi.string()
-    .allow('')
-    .default('st-form'),
+  datacenterurl: Joi.string().allow(''),
   deferInit: Joi.boolean(),
   disableNotification: Joi.boolean().default(false),
   fieldsToSubmit: Joi.array().items(Joi.string().valid('pan', 'expirydate', 'securitycode')),
@@ -102,6 +90,8 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   }),
   styles: Joi.object(),
   submitCallback: Joi.any(),
+  successCallback: Joi.any(),
+  errorCallback: Joi.any(),
   submitFields: Joi.array(),
   submitOnError: Joi.boolean(),
   submitOnSuccess: Joi.boolean(),

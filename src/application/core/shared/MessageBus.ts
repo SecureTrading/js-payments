@@ -11,7 +11,7 @@ import { FrameCollection } from '../../../shared/services/message-bus/interfaces
 import { FrameIdentifier } from '../../../shared/services/message-bus/FrameIdentifier';
 import { FrameAccessor } from '../../../shared/services/message-bus/FrameAccessor';
 
-type ControlFrameWindow = Window & {messageBus: MessageBus};
+type ControlFrameWindow = Window & { messageBus: MessageBus };
 
 @Service()
 export class MessageBus implements Subscribable<IMessageBusEvent> {
@@ -23,7 +23,6 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
     CHANGE_EXPIRATION_DATE: 'CHANGE_EXPIRATION_DATE',
     CHANGE_SECURITY_CODE: 'CHANGE_SECURITY_CODE',
     CHANGE_SECURITY_CODE_LENGTH: 'CHANGE_SECURITY_CODE_LENGTH',
-    DESTROY: 'DESTROY',
     FOCUS_CARD_NUMBER: 'FOCUS_CARD_NUMBER',
     FOCUS_EXPIRATION_DATE: 'FOCUS_EXPIRATION_DATE',
     FOCUS_SECURITY_CODE: 'FOCUS_SECURITY_CODE',
@@ -32,7 +31,7 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
     VALIDATE_EXPIRATION_DATE_FIELD: 'VALIDATE_EXPIRATION_DATE_FIELD',
     VALIDATE_FORM: 'VALIDATE_FORM',
     VALIDATE_MERCHANT_FIELD: 'VALIDATE_MERCHANT_FIELD',
-    VALIDATE_SECURITY_CODE_FIELD: 'VALIDATE_SECURITY_CODE_FIELD',
+    VALIDATE_SECURITY_CODE_FIELD: 'VALIDATE_SECURITY_CODE_FIELD'
   };
   public static EVENTS_PUBLIC = {
     BIN_PROCESS: 'BIN_PROCESS',
@@ -44,6 +43,7 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
     BY_PASS_CARDINAL: 'BY_PASS_CARDINAL',
     BY_PASS_INIT: 'BY_PASS_INIT',
     CALL_SUBMIT_EVENT: 'CALL_SUBMIT_EVENT',
+    DESTROY: 'DESTROY',
     LOAD_CARDINAL: 'LOAD_CARDINAL',
     LOAD_CONTROL_FRAME: 'LOAD_CONTROL_FRAME',
     NOTIFICATION: 'NOTIFICATION',
@@ -61,7 +61,7 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
     UPDATE_JWT: 'UPDATE_JWT',
     UPDATE_MERCHANT_FIELDS: 'UPDATE_MERCHANT_FIELDS',
     SUBSCRIBE: 'SUBSCRIBE',
-    CONFIG_CHECK: 'ST_CONFIG_CHECK',
+    CONFIG_CHECK: 'ST_CONFIG_CHECK'
   };
 
   constructor(
@@ -103,13 +103,15 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
       });
     }
 
-    if (typeof(args[0]) === 'string' && typeof(args[1]) === 'function') {
+    if (typeof args[0] === 'string' && typeof args[1] === 'function') {
       const [eventType, callback] = args;
 
-      return this.communicator.incomingEvent$.pipe(
-        ofType(eventType),
-        map((event: IMessageBusEvent<T>) => event.data),
-      ).subscribe(callback);
+      return this.communicator.incomingEvent$
+        .pipe(
+          ofType(eventType),
+          map((event: IMessageBusEvent<T>) => event.data)
+        )
+        .subscribe(callback);
     }
 
     return this.communicator.incomingEvent$.subscribe.apply(this.communicator.incomingEvent$, args);
@@ -131,7 +133,7 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
 
         return controlFrame.messageBus;
       }),
-      first(),
+      first()
     );
   }
 }

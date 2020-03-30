@@ -36,6 +36,7 @@ import { FramesHub } from '../shared/services/message-bus/FramesHub';
 import { BrowserLocalStorage } from '../shared/services/storage/BrowserLocalStorage';
 import { BrowserSessionStorage } from '../shared/services/storage/BrowserSessionStorage';
 import { Notification } from '../application/core/shared/Notification';
+import './../styles/notification.css';
 
 @Service()
 class ST {
@@ -146,7 +147,7 @@ class ST {
   public destroy(): void {
     this._messageBus.publish(
       {
-        type: MessageBus.EVENTS.DESTROY
+        type: MessageBus.EVENTS_PUBLIC.DESTROY
       },
       true
     );

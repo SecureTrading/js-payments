@@ -26,13 +26,15 @@ export interface IConfig {
   origin?: string;
   panIcon?: boolean;
   placeholders?: IPlaceholdersConfig;
-  requestTypes: string[];
+  requestTypes?: string[];
   styles?: IStyles;
   submitCallback?: any;
+  successCallback?: any;
+  errorCallback?: any;
   submitFields?: string[];
   submitOnSuccess?: boolean;
   submitOnError?: boolean;
-  threedinit: string;
+  threedinit?: string;
   translations?: {};
   visaCheckout?: IWalletConfig;
 }
