@@ -32,10 +32,7 @@ export abstract class AbstractStorage implements IStorage, Subscribable<any> {
     this.subscribe = this.observable$.subscribe.bind(this.observable$);
 
     this.communicator.incomingEvent$
-      .pipe(
-        ofType(this.getSychronizationEventName()),
-        takeUntil(this.communicator.communicationClosed$)
-      )
+      .pipe(ofType(this.getSychronizationEventName()), takeUntil(this.communicator.communicationClosed$))
       .subscribe(event => {
         const { key, value } = event.data;
         this.nativeStorage.setItem(key, value);
@@ -75,7 +72,7 @@ export abstract class AbstractStorage implements IStorage, Subscribable<any> {
   private synchronizeStorage(key: string, value: string): void {
     const event: IMessageBusEvent = {
       type: this.getSychronizationEventName(),
-      data: { key, value }
+      data: { key, value },
     };
 
     if (!this.identifier.isParentFrame()) {

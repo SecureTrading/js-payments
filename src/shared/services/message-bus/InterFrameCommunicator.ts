@@ -62,7 +62,7 @@ export class InterFrameCommunicator {
           },
           error(error) {
             reject(error);
-          }
+          },
         });
 
       this.send(query, target);
@@ -87,7 +87,7 @@ export class InterFrameCommunicator {
           .subscribe((response: ResponseMessage<T>) => {
             this.send(response, response.queryFrame);
           });
-      }
+      },
     };
   }
 

@@ -11,7 +11,7 @@ import {
   shareReplay,
   switchMap,
   takeUntil,
-  withLatestFrom
+  withLatestFrom,
 } from 'rxjs/operators';
 import { IMessageBusEvent } from '../../../application/core/models/IMessageBusEvent';
 import { ArrayUtils } from '../../../application/core/shared/utils/ArrayUtils';
@@ -43,10 +43,7 @@ export class FramesHub {
     this.communicator.whenReceive(FramesHub.GET_FRAMES_EVENT).thenRespond(() => this.activeFrame$);
 
     fromEventFrame$
-      .pipe(
-        withLatestFrom(this.activeFrame$),
-        takeUntil(this.communicator.communicationClosed$)
-      )
+      .pipe(withLatestFrom(this.activeFrame$), takeUntil(this.communicator.communicationClosed$))
       .subscribe(([newFrame, activeFrames]) => this.onFrameReady(newFrame, activeFrames));
   }
 
@@ -58,10 +55,7 @@ export class FramesHub {
   }
 
   public waitForFrame(name: string): Observable<string> {
-    return this.isFrameActive(name).pipe(
-      filter(Boolean),
-      mapTo(name)
-    );
+    return this.isFrameActive(name).pipe(filter(Boolean), mapTo(name));
   }
 
   public notifyReadyState(): void {
@@ -106,7 +100,7 @@ export class FramesHub {
 
     const event: IMessageBusEvent = {
       type: FramesHub.FRAME_READY_EVENT,
-      data: newFrame
+      data: newFrame,
     };
 
     activeFrames.forEach(frame => this.communicator.send(event, frame));

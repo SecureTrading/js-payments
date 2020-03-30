@@ -22,9 +22,9 @@ export class StTransport {
   private static DEFAULT_FETCH_OPTIONS = {
     headers: {
       Accept: StCodec.CONTENT_TYPE,
-      'Content-Type': StCodec.CONTENT_TYPE
+      'Content-Type': StCodec.CONTENT_TYPE,
     },
-    method: 'post'
+    method: 'post',
   };
 
   public static readonly THROTTLE_TIME = 250;

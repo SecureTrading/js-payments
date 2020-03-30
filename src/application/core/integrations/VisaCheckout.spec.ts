@@ -31,7 +31,7 @@ describe('Visa Checkout', () => {
         paymentRequest: { currencyCode: undefined, payment: 'request', subtotal: '10.00', total: '10.00' },
         settings: { settings: 'abc', locale: 'es_ES' },
         apikey: 'myapi',
-        start: 'with value'
+        start: 'with value',
       });
     });
   });
@@ -61,7 +61,7 @@ describe('Visa Checkout', () => {
         overrideMe: 'overridden',
         payment: 'request',
         subtotal: '10.00',
-        total: '10.00'
+        total: '10.00',
       });
     });
     //then
@@ -70,14 +70,14 @@ describe('Visa Checkout', () => {
       const result = instance.getInitPaymentRequest(undefined, {
         currencyiso3a: 'GBP',
         locale: 'es_ES',
-        mainamount: '10.00'
+        mainamount: '10.00',
       });
       expect(result).toMatchObject({
         currencyCode: 'GBP',
         original: 'data',
         overrideMe: 'unchanged',
         subtotal: '10.00',
-        total: '10.00'
+        total: '10.00',
       });
     });
   });
@@ -97,12 +97,12 @@ describe('Visa Checkout', () => {
       const result = instance._setConfiguration(undefined, {
         currencyiso3a: 'GBP',
         locale: 'es_ES',
-        mainamount: '10.00'
+        mainamount: '10.00',
       });
       expect(result).toMatchObject({
         currencyiso3a: 'GBP',
         locale: 'es_ES',
-        mainamount: '10.00'
+        mainamount: '10.00',
       });
     });
 
@@ -442,7 +442,7 @@ function VisaCheckoutFixture() {
     alt: 'Visa Checkout',
     class: 'v-button',
     role: 'button',
-    src: 'https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png'
+    src: 'https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png',
   };
   const config = {
     name: 'VISA',
@@ -450,17 +450,15 @@ function VisaCheckoutFixture() {
     buttonSettings: { size: '154', color: 'neutral' },
     settings: { displayName: 'My Test Site' },
     paymentRequest: { subtotal: '20.00' },
-    requestTypes: ['AUTH']
+    requestTypes: ['AUTH'],
   };
   const productionAssets = {
     sdk: 'https://secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js',
-    buttonImg: `https://secure.checkout.visa.com/wallet-services-web/xo/button.png`
+    buttonImg: `https://secure.checkout.visa.com/wallet-services-web/xo/button.png`,
   };
   const sandboxAssets = {
     sdk: 'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js',
-    buttonImg: `https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png?color=${
-      config.buttonSettings.color
-    }&size=${config.buttonSettings.size}`
+    buttonImg: `https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png?color=${config.buttonSettings.color}&size=${config.buttonSettings.size}`,
   };
   const livestatus: number = 0;
   const fakeVisaButton = document.createElement('img');

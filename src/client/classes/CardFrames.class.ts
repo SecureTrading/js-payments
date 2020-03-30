@@ -137,7 +137,7 @@ export class CardFrames extends RegisterFrames {
         this.componentIds.cardNumber,
         this.componentIds.expirationDate,
         this.componentIds.securityCode,
-        this.componentIds.animatedCard
+        this.componentIds.animatedCard,
       ];
     } else if (this._onlyCvvConfiguration) {
       return [this.componentIds.securityCode];
@@ -147,7 +147,7 @@ export class CardFrames extends RegisterFrames {
       return [
         this.componentIds.cardNumber, //
         this.componentIds.expirationDate,
-        this.componentIds.securityCode
+        this.componentIds.securityCode,
       ];
     }
   }
@@ -178,7 +178,7 @@ export class CardFrames extends RegisterFrames {
   private _disableFormField(state: FormState, eventName: string, target: string): void {
     const messageBusEvent: IMessageBusEvent = {
       data: state,
-      type: eventName
+      type: eventName,
     };
     this.messageBus.publish(messageBusEvent);
   }
@@ -269,7 +269,7 @@ export class CardFrames extends RegisterFrames {
   private _onInput(): void {
     const messageBusEvent: IMessageBusEvent = {
       data: DomMethods.parseForm(),
-      type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
+      type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS,
     };
     this.messageBus.publish(messageBusEvent);
   }
@@ -279,9 +279,9 @@ export class CardFrames extends RegisterFrames {
       data: {
         bypassCards: this._bypassCards,
         deferInit,
-        fieldsToSubmit: this.fieldsToSubmit
+        fieldsToSubmit: this.fieldsToSubmit,
       },
-      type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
+      type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM,
     };
     this.messageBus.publish(messageBusEvent);
   }

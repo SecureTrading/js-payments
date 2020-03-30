@@ -222,7 +222,7 @@ function expirationDateFixture() {
   when(configProvider.getConfig()).thenReturn({
     jwt: '',
     disableNotification: false,
-    placeholders: { pan: '4154654', expirydate: '12/22', securitycode: '123' }
+    placeholders: { pan: '4154654', expirydate: '12/22', securitycode: '123' },
   });
   const expirationDateInstance: ExpirationDate = new ExpirationDate(instance(configProvider));
 

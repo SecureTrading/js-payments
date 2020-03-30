@@ -7,7 +7,7 @@ export class Formatter extends Validation {
   private _dateBlocks = {
     currentDateMonth: '',
     currentDateYear: '',
-    previousDateYear: ''
+    previousDateYear: '',
   };
   private _date: string[] = ['', ''];
 

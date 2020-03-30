@@ -82,11 +82,7 @@ describe('DomMethods', () => {
       const child3 = document.createElement('div');
       element.id = 'some-id';
       document.body.appendChild(element);
-      document
-        .getElementById('some-id')
-        .appendChild(child1)
-        .appendChild(child2)
-        .appendChild(child3);
+      document.getElementById('some-id').appendChild(child1).appendChild(child2).appendChild(child3);
     });
     // then
     it('should remove all children of specified element', () => {
@@ -130,7 +126,7 @@ function createFormFixture() {
     stFieldName: '',
     stFieldName2: 'some value',
     stDuplicate: 'value2',
-    stSelectName: 'B'
+    stSelectName: 'B',
   };
   opt1.value = 'A';
   opt2.value = 'B';

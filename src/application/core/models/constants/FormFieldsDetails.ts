@@ -3,14 +3,14 @@ import { IFormFieldsDetails } from '../IFormFieldsDetails';
 export const FormFieldsDetails: IFormFieldsDetails = {
   cardNumber: {
     validity: false,
-    value: ''
+    value: '',
   },
   expirationDate: {
     validity: false,
-    value: ''
+    value: '',
   },
   securityCode: {
     validity: false,
-    value: ''
-  }
+    value: '',
+  },
 };

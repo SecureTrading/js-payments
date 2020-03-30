@@ -3,5 +3,5 @@ export const PaymentEvents = {
   INIT: 'init',
   JWT_UPDATE: 'jwt.update',
   SETUP_COMPLETE: 'payments.setupComplete',
-  VALIDATED: 'payments.validated'
+  VALIDATED: 'payments.validated',
 };

@@ -21,7 +21,7 @@ export class Language {
     VALIDATION_ERROR: 'Invalid field',
     VALIDATION_ERROR_FIELD_IS_REQUIRED: 'Field is required',
     VALIDATION_ERROR_PATTERN_MISMATCH: 'Value mismatch pattern',
-    VALIDATION_ERROR_VALUE_TOO_SHORT: 'Value is too short'
+    VALIDATION_ERROR_VALUE_TOO_SHORT: 'Value is too short',
   };
   static get translations(): {
     APPLE_PAY_AMOUNT_AND_CURRENCY: string;

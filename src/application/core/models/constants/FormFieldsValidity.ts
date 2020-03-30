@@ -3,14 +3,14 @@ import { IFormFieldsValidity } from '../IFormFieldsValidity';
 export const FormFieldsValidity: IFormFieldsValidity = {
   cardNumber: {
     message: '',
-    state: false
+    state: false,
   },
   expirationDate: {
     message: '',
-    state: false
+    state: false,
   },
   securityCode: {
     message: '',
-    state: false
-  }
+    state: false,
+  },
 };

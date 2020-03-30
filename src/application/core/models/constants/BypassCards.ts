@@ -7,5 +7,5 @@ export enum BypassCards {
   MASTERCARD = 'MASTERCARD',
   MAESTRO = 'MAESTRO',
   PIBA = 'PIBA',
-  VISA = 'VISA'
+  VISA = 'VISA',
 }

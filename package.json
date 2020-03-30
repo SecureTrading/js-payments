@@ -29,7 +29,7 @@
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect",
     "preinstall": "npx npm-force-resolutions",
-    "prettier": "./node_modules/.bin/prettier --single-quote --arrow-parens avoid --write ./src/**/*.{ts,js,css,json}"
+    "prettier": "./node_modules/.bin/prettier --single-quote --write ./src/**/*.{ts,js,css,json}"
   },
   "repository": {
     "type": "git",

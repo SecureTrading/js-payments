@@ -58,7 +58,7 @@ export class ControlFrame extends Frame {
   private _card: ICard = {
     pan: '',
     expirydate: '',
-    securitycode: ''
+    securitycode: '',
   };
   private _isPaymentReady: boolean = false;
   private _formFields: IFormFieldsDetails = FormFieldsDetails;
@@ -69,7 +69,7 @@ export class ControlFrame extends Frame {
   private _preThreeDRequestTypes: string[];
   private _threeDQueryEvent: IMessageBusEvent = {
     data: '',
-    type: MessageBus.EVENTS_PUBLIC.THREEDQUERY
+    type: MessageBus.EVENTS_PUBLIC.THREEDQUERY,
   };
   private _threeDQueryResult: any;
   private _validation: Validation;
@@ -83,10 +83,9 @@ export class ControlFrame extends Frame {
   ) {
     super();
     this.onInit();
-    this._communicator.whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK).thenRespond(() => interval().pipe(
-      mapTo(this._configProvider.getConfig()),
-      filter(Boolean)
-    ));
+    this._communicator
+      .whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK)
+      .thenRespond(() => interval().pipe(mapTo(this._configProvider.getConfig()), filter(Boolean)));
   }
 
   protected async onInit(): Promise<void> {
@@ -122,7 +121,7 @@ export class ControlFrame extends Frame {
     if (!this._isCardWithoutCVV()) {
       this.messageBus.publish({
         data: this._getSecurityCodeLength(),
-        type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
+        type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH,
       });
     }
   }
@@ -194,7 +193,7 @@ export class ControlFrame extends Frame {
     this._payment.bypassInitRequest(cachetoken);
     this.messageBus.publish(
       {
-        type: MessageBus.EVENTS_PUBLIC.BY_PASS_INIT
+        type: MessageBus.EVENTS_PUBLIC.BY_PASS_INIT,
       },
       true
     );
@@ -203,7 +202,7 @@ export class ControlFrame extends Frame {
   private _loadControlFrame(): void {
     this.messageBus.publish(
       {
-        type: MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME
+        type: MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME,
       },
       true
     );
@@ -251,7 +250,7 @@ export class ControlFrame extends Frame {
       .then(() => {
         this.messageBus.publish(
           {
-            type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK
+            type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK,
           },
           true
         );
@@ -321,13 +320,13 @@ export class ControlFrame extends Frame {
 
   private _validateFormFields() {
     this._publishBlurEvent({
-      type: MessageBus.EVENTS.BLUR_CARD_NUMBER
+      type: MessageBus.EVENTS.BLUR_CARD_NUMBER,
     });
     this._publishBlurEvent({
-      type: MessageBus.EVENTS.BLUR_EXPIRATION_DATE
+      type: MessageBus.EVENTS.BLUR_EXPIRATION_DATE,
     });
     this._publishBlurEvent({
-      type: MessageBus.EVENTS.BLUR_SECURITY_CODE
+      type: MessageBus.EVENTS.BLUR_SECURITY_CODE,
     });
     this._validation.setFormValidity(this._formFieldsValidity);
   }
@@ -341,7 +340,7 @@ export class ControlFrame extends Frame {
       this.messageBus.publish(
         {
           data: result.response,
-          type: MessageBus.EVENTS_PUBLIC.THREEDINIT_RESPONSE
+          type: MessageBus.EVENTS_PUBLIC.THREEDINIT_RESPONSE,
         },
         true
       );

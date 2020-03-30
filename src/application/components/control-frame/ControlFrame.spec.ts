@@ -27,11 +27,11 @@ describe('ControlFrame', () => {
   describe('ControlFrame._onFormFieldStateChange()', () => {
     const field: IFormFieldState = {
       validity: false,
-      value: ''
+      value: '',
     };
     const data: IFormFieldState = {
       validity: true,
-      value: '411111111'
+      value: '411111111',
     };
 
     // when
@@ -325,7 +325,7 @@ describe('ControlFrame', () => {
     const { instance } = controlFrameFixture();
     const data = {
       errorcode: '40005',
-      errormessage: 'some error message'
+      errormessage: 'some error message',
     };
 
     const postRequests = ['CACHETOKENISE', 'AUTH'];
@@ -364,11 +364,11 @@ describe('ControlFrame', () => {
     const { instance } = controlFrameFixture();
     const data = {
       errorcode: '40005',
-      errormessage: 'some error message'
+      errormessage: 'some error message',
     };
     const dataWithThreedresponse = {
       ...data,
-      threedresponse: '31232312321'
+      threedresponse: '31232312321',
     };
 
     beforeEach(() => {
@@ -402,7 +402,7 @@ describe('ControlFrame', () => {
     const { instance } = controlFrameFixture();
     const data = {
       errorcode: '40005',
-      errormessage: 'some error message'
+      errormessage: 'some error message',
     };
     // when
     beforeEach(() => {
@@ -451,7 +451,7 @@ describe('ControlFrame', () => {
   describe('_requestThreeDInit', () => {
     const { instance } = controlFrameFixture();
     const result = {
-      response: {}
+      response: {},
     };
     // when
     beforeEach(() => {
@@ -525,7 +525,7 @@ describe('ControlFrame', () => {
     // @ts-ignore
     instance.params = {
       jwt:
-        'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NjQ5MjA1NS44NjY1OSwicGF5bG9hZCI6eyJiYXNlYW1vdW50IjoiMTAwMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiIsInBhbiI6IjMwODk1MDAwMDAwMDAwMDAwMjEiLCJleHBpcnlkYXRlIjoiMDEvMjIifX0.lbNSlaDkbzG6dkm1uc83cc3XvUImysNj_7fkdo___fw'
+        'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NjQ5MjA1NS44NjY1OSwicGF5bG9hZCI6eyJiYXNlYW1vdW50IjoiMTAwMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiIsInBhbiI6IjMwODk1MDAwMDAwMDAwMDAwMjEiLCJleHBpcnlkYXRlIjoiMDEvMjIifX0.lbNSlaDkbzG6dkm1uc83cc3XvUImysNj_7fkdo___fw',
     };
 
     // then
@@ -539,7 +539,7 @@ describe('ControlFrame', () => {
       // @ts-ignore
       instance.params = {
         jwt:
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NjU5MTYxMS43ODM3MzY1LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiNDExMTExMTExMTExMTExMSIsImV4cGlyeWRhdGUiOiIwMS8yMiIsInNlY3VyaXR5Y29kZSI6IjEyMyJ9fQ.Rkhsx1PCXnd_Kf-U9OvQRbp9lnNpFx5ClPpm4zx-hDM'
+          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NjU5MTYxMS43ODM3MzY1LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiNDExMTExMTExMTExMTExMSIsImV4cGlyeWRhdGUiOiIwMS8yMiIsInNlY3VyaXR5Y29kZSI6IjEyMyJ9fQ.Rkhsx1PCXnd_Kf-U9OvQRbp9lnNpFx5ClPpm4zx-hDM',
       };
       // @ts-ignore
       expect(instance._getPan()).toEqual('4111111111111111');
@@ -560,7 +560,7 @@ describe('ControlFrame', () => {
       instance._validation.setFormValidity = jest.fn();
       // @ts-ignore
       instance._payment.threeDQueryRequest = jest.fn().mockResolvedValueOnce({
-        response: {}
+        response: {},
       });
     });
     // then
@@ -568,13 +568,13 @@ describe('ControlFrame', () => {
       // @ts-ignore
       instance._validation.formValidation = jest.fn().mockReturnValueOnce({
         validity: true,
-        data: { expirydate: '12/20', pan: '4111111111111', securitycode: '123' }
+        data: { expirydate: '12/20', pan: '4111111111111', securitycode: '123' },
       });
       // @ts-ignore
       instance._requestPayment({
         deferInit: true,
         dataInJwt: false,
-        fieldsToSubmit: ['pan', 'expirydate', 'securitycode']
+        fieldsToSubmit: ['pan', 'expirydate', 'securitycode'],
       });
       // @ts-ignore
       expect(instance._requestThreeDInit).toHaveBeenCalled();
@@ -585,13 +585,13 @@ describe('ControlFrame', () => {
       // @ts-ignore
       instance._validation.formValidation = jest.fn().mockReturnValueOnce({
         validity: false,
-        data: { expirydate: '', pan: '213214', securitycode: '' }
+        data: { expirydate: '', pan: '213214', securitycode: '' },
       });
       // @ts-ignore
       instance._requestPayment({
         deferInit: false,
         dataInJwt: false,
-        fieldsToSubmit: ['pan', 'expirydate', 'securitycode']
+        fieldsToSubmit: ['pan', 'expirydate', 'securitycode'],
       });
       // @ts-ignore
       expect(instance._validation.setFormValidity).toHaveBeenCalled();
@@ -607,7 +607,7 @@ function controlFrameFixture() {
   const notification: NotificationService = mock(NotificationService);
 
   when(communicator.whenReceive(anyString())).thenReturn({
-    thenRespond: (() => undefined),
+    thenRespond: () => undefined,
   });
 
   const instance = new ControlFrame(
@@ -615,14 +615,14 @@ function controlFrameFixture() {
     mockInstance(sessionStorage),
     mockInstance(communicator),
     mockInstance(configProvider),
-    mockInstance(notification),
+    mockInstance(notification)
   );
   const messageBusEvent = {
-    type: ''
+    type: '',
   };
   const data = {
     validity: true,
-    value: 'test value'
+    value: 'test value',
   };
   return { data, instance, messageBusEvent };
 }
