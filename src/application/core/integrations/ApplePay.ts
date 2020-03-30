@@ -236,9 +236,7 @@ export class ApplePay {
       : (this._buttonText = ApplePay.AVAILABLE_BUTTON_TEXTS[0]);
 
     // tslint:disable-next-line: max-line-length
-    this._applePayButtonProps.style = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${
-      this._buttonText
-    }; -apple-pay-button-style: ${this._buttonStyle}`;
+    this._applePayButtonProps.style = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${this._buttonText}; -apple-pay-button-style: ${this._buttonStyle}`;
   }
 
   private _addApplePayButton = () => DomMethods.appendChildIntoDOM(this._placement, this.createApplePayButton());
@@ -285,7 +283,7 @@ export class ApplePay {
           this._onValidateMerchantResponseSuccess(response);
           GoogleAnalytics.sendGaData('event', 'Apple Pay', 'merchant validation', 'Apple Pay merchant validated');
         })
-        .catch(error => {
+        .catch((error) => {
           const { errorcode, errormessage } = error;
           this._onValidateMerchantResponseFailure(error);
           this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);

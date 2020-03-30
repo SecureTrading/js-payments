@@ -11,7 +11,7 @@ import { FrameCollection } from '../../../shared/services/message-bus/interfaces
 import { FrameIdentifier } from '../../../shared/services/message-bus/FrameIdentifier';
 import { FrameAccessor } from '../../../shared/services/message-bus/FrameAccessor';
 
-type ControlFrameWindow = Window & {messageBus: MessageBus};
+type ControlFrameWindow = Window & { messageBus: MessageBus };
 
 @Service()
 export class MessageBus implements Subscribable<IMessageBusEvent> {
@@ -32,7 +32,7 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
     VALIDATE_EXPIRATION_DATE_FIELD: 'VALIDATE_EXPIRATION_DATE_FIELD',
     VALIDATE_FORM: 'VALIDATE_FORM',
     VALIDATE_MERCHANT_FIELD: 'VALIDATE_MERCHANT_FIELD',
-    VALIDATE_SECURITY_CODE_FIELD: 'VALIDATE_SECURITY_CODE_FIELD',
+    VALIDATE_SECURITY_CODE_FIELD: 'VALIDATE_SECURITY_CODE_FIELD'
   };
   public static EVENTS_PUBLIC = {
     BIN_PROCESS: 'BIN_PROCESS',
@@ -61,7 +61,7 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
     UPDATE_JWT: 'UPDATE_JWT',
     UPDATE_MERCHANT_FIELDS: 'UPDATE_MERCHANT_FIELDS',
     SUBSCRIBE: 'SUBSCRIBE',
-    CONFIG_CHECK: 'ST_CONFIG_CHECK',
+    CONFIG_CHECK: 'ST_CONFIG_CHECK'
   };
 
   constructor(
@@ -78,7 +78,7 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
   public publish<T>(event: IMessageBusEvent<T>, publishToParent?: boolean): void {
     this.framesHub
       .waitForFrame(Selectors.CONTROL_FRAME_IFRAME)
-      .subscribe(controlFrame => this.communicator.send(event, controlFrame));
+      .subscribe((controlFrame) => this.communicator.send(event, controlFrame));
 
     if (publishToParent) {
       this.publishToParent(event);
@@ -98,18 +98,20 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
 
   public subscribe<T>(...args: any[]): Unsubscribable {
     if (!this.identifier.isParentFrame() && !this.identifier.isControlFrame()) {
-      return this.getControlFrameMessageBus().subscribe(messageBus => {
+      return this.getControlFrameMessageBus().subscribe((messageBus) => {
         messageBus.subscribe.apply(messageBus, args);
       });
     }
 
-    if (typeof(args[0]) === 'string' && typeof(args[1]) === 'function') {
+    if (typeof args[0] === 'string' && typeof args[1] === 'function') {
       const [eventType, callback] = args;
 
-      return this.communicator.incomingEvent$.pipe(
-        ofType(eventType),
-        map((event: IMessageBusEvent<T>) => event.data),
-      ).subscribe(callback);
+      return this.communicator.incomingEvent$
+        .pipe(
+          ofType(eventType),
+          map((event: IMessageBusEvent<T>) => event.data)
+        )
+        .subscribe(callback);
     }
 
     return this.communicator.incomingEvent$.subscribe.apply(this.communicator.incomingEvent$, args);
@@ -125,13 +127,13 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
 
   private getControlFrameMessageBus(): Observable<MessageBus> {
     return this.framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).pipe(
-      map(frameName => {
+      map((frameName) => {
         const frames: FrameCollection = this.frameAccessor.getFrameCollection();
         const controlFrame: ControlFrameWindow = frames[frameName] as ControlFrameWindow;
 
         return controlFrame.messageBus;
       }),
-      first(),
+      first()
     );
   }
 }

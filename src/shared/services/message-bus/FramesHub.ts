@@ -35,7 +35,7 @@ export class FramesHub {
 
     this.activeFrame$ = concat(initialFrames$, fromEventFrame$).pipe(
       scan((activeFrames, newFrame) => [...activeFrames, newFrame], []),
-      map(frames => ArrayUtils.unique(frames)),
+      map((frames) => ArrayUtils.unique(frames)),
       distinctUntilChanged((prev, curr) => ArrayUtils.equals(prev, curr)),
       shareReplay(1)
     );
@@ -43,25 +43,19 @@ export class FramesHub {
     this.communicator.whenReceive(FramesHub.GET_FRAMES_EVENT).thenRespond(() => this.activeFrame$);
 
     fromEventFrame$
-      .pipe(
-        withLatestFrom(this.activeFrame$),
-        takeUntil(this.communicator.communicationClosed$)
-      )
+      .pipe(withLatestFrom(this.activeFrame$), takeUntil(this.communicator.communicationClosed$))
       .subscribe(([newFrame, activeFrames]) => this.onFrameReady(newFrame, activeFrames));
   }
 
   public isFrameActive(name: string): Observable<boolean> {
     return this.activeFrame$.pipe(
-      map(frames => frames.indexOf(name) !== -1),
+      map((frames) => frames.indexOf(name) !== -1),
       distinctUntilChanged()
     );
   }
 
   public waitForFrame(name: string): Observable<string> {
-    return this.isFrameActive(name).pipe(
-      filter(Boolean),
-      mapTo(name)
-    );
+    return this.isFrameActive(name).pipe(filter(Boolean), mapTo(name));
   }
 
   public notifyReadyState(): void {
@@ -109,6 +103,6 @@ export class FramesHub {
       data: newFrame
     };
 
-    activeFrames.forEach(frame => this.communicator.send(event, frame));
+    activeFrames.forEach((frame) => this.communicator.send(event, frame));
   }
 }

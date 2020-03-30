@@ -10,11 +10,10 @@ export class FrameIdentifier {
     Selectors.CARD_NUMBER_IFRAME,
     Selectors.EXPIRATION_DATE_IFRAME,
     Selectors.SECURITY_CODE_IFRAME,
-    Selectors.ANIMATED_CARD_COMPONENT_IFRAME,
+    Selectors.ANIMATED_CARD_COMPONENT_IFRAME
   ];
 
-  constructor(@Inject(WINDOW) private window: Window) {
-  }
+  constructor(@Inject(WINDOW) private window: Window) {}
 
   getFrameName(): string {
     return this.window.name;

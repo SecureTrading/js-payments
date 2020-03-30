@@ -24,11 +24,11 @@ export class InterFrameCommunicator {
 
   constructor(private identifier: FrameIdentifier, private frameAccessor: FrameAccessor) {
     this.incomingEvent$ = fromEventPattern<MessageEvent>(
-      handler => window.addEventListener(InterFrameCommunicator.MESSAGE_EVENT, handler, true),
-      handler => window.removeEventListener(InterFrameCommunicator.MESSAGE_EVENT, handler)
+      (handler) => window.addEventListener(InterFrameCommunicator.MESSAGE_EVENT, handler, true),
+      (handler) => window.removeEventListener(InterFrameCommunicator.MESSAGE_EVENT, handler)
     ).pipe(
-      filter(event => event.data.type),
-      map(event => event.data),
+      filter((event) => event.data.type),
+      map((event) => event.data),
       share()
     );
 

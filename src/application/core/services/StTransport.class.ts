@@ -60,7 +60,7 @@ export class StTransport {
   private sendRequestInternal(requestBody: string): Promise<object> {
     return this._fetchRetry(this._gatewayUrl, {
       ...StTransport.DEFAULT_FETCH_OPTIONS,
-      body: requestBody,
+      body: requestBody
     })
       .then(this._codec.decode)
       .catch(() => {

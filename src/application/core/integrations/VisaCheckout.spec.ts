@@ -329,7 +329,7 @@ describe('Visa Checkout', () => {
   describe('onSuccess()', () => {
     // then
     it('should set paymentDetails and paymentStatus and call _processPayment', () => {
-      instance.payment.processPayment = jest.fn().mockReturnValue(new Promise(resolve => resolve()));
+      instance.payment.processPayment = jest.fn().mockReturnValue(new Promise((resolve) => resolve()));
       const payment = { status: 'SUCCESS', another: 'value' };
       instance.onSuccess(payment);
       expect(instance.paymentDetails).toBe('{"status":"SUCCESS","another":"value"}');
@@ -458,9 +458,7 @@ function VisaCheckoutFixture() {
   };
   const sandboxAssets = {
     sdk: 'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js',
-    buttonImg: `https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png?color=${
-      config.buttonSettings.color
-    }&size=${config.buttonSettings.size}`
+    buttonImg: `https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png?color=${config.buttonSettings.color}&size=${config.buttonSettings.size}`
   };
   const livestatus: number = 0;
   const fakeVisaButton = document.createElement('img');

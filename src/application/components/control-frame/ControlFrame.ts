@@ -27,6 +27,7 @@ import { ConfigProvider } from '../../core/services/ConfigProvider';
 import { interval } from 'rxjs';
 import { filter, mapTo } from 'rxjs/operators';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
+import { Cybertonica } from '../../core/integrations/Cybertonica';
 
 @Service()
 export class ControlFrame extends Frame {
@@ -79,14 +80,14 @@ export class ControlFrame extends Frame {
     private _sessionStorage: BrowserSessionStorage,
     private _communicator: InterFrameCommunicator,
     private _configProvider: ConfigProvider,
-    private _notification: NotificationService
+    private _notification: NotificationService,
+    private _cybertonica: Cybertonica
   ) {
     super();
     this.onInit();
-    this._communicator.whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK).thenRespond(() => interval().pipe(
-      mapTo(this._configProvider.getConfig()),
-      filter(Boolean)
-    ));
+    this._communicator
+      .whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK)
+      .thenRespond(() => interval().pipe(mapTo(this._configProvider.getConfig()), filter(Boolean)));
   }
 
   protected async onInit(): Promise<void> {
@@ -106,6 +107,7 @@ export class ControlFrame extends Frame {
     this._resetJwtEvent();
     this._updateJwtEvent();
     this._loadControlFrame();
+    this._initCybertonica();
   }
 
   protected getAllowedParams(): string[] {
@@ -416,5 +418,13 @@ export class ControlFrame extends Frame {
 
   private _updateMerchantFields(data: IMerchantData): void {
     this._merchantFormData = data;
+  }
+
+  private _initCybertonica(): void {
+    const config = this._configProvider.getConfig();
+
+    if (config.cybertonicaApiKey) {
+      this._cybertonica.init(config.cybertonicaApiKey);
+    }
   }
 }

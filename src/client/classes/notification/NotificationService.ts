@@ -6,9 +6,7 @@ import { IMessageBusEvent } from '../../../application/core/models/IMessageBusEv
 
 @Service()
 export class NotificationService {
-
-  constructor(private _messageBus: MessageBus, private _configProvider: ConfigProvider) {
-  }
+  constructor(private _messageBus: MessageBus, private _configProvider: ConfigProvider) {}
 
   private get disableNotification(): boolean {
     return this._configProvider.getConfig().disableNotification;

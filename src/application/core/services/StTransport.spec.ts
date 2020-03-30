@@ -25,9 +25,9 @@ describe('StTransport class', () => {
     retries: 3,
     retryTimeout: 20000
   };
-  const timeoutError: any = null;//Error(Language.translations.COMMUNICATION_ERROR_TIMEOUT);
+  const timeoutError: any = null; //Error(Language.translations.COMMUNICATION_ERROR_TIMEOUT);
   const resolvingPromise = (result: object) => {
-    return new Promise(resolve => resolve(result));
+    return new Promise((resolve) => resolve(result));
   };
   const rejectingPromise = (reason: Error) => {
     return new Promise((_, reject) => reject(reason));
@@ -47,8 +47,8 @@ describe('StTransport class', () => {
       // @ts-ignore
       instance._fetchRetry = jest.fn();
       // This effectively creates a MVP codec so that we aren't testing all that here
-      instance.codec.encode = jest.fn(x => JSON.stringify(x));
-      instance.codec.decode = jest.fn(x => {
+      instance.codec.encode = jest.fn((x) => JSON.stringify(x));
+      instance.codec.decode = jest.fn((x) => {
         return new Promise((resolve, reject) => {
           if ('json' in x) {
             resolve(x.json());
@@ -85,19 +85,19 @@ describe('StTransport class', () => {
     });
 
     // then
-    each([[resolvingPromise({}), resolvingPromise({})], [rejectingPromise(timeoutError), resolvingPromise({})]]).it(
-      'should reject invalid responses',
-      async (mockFetch, expected) => {
-        mockFT.mockReturnValue(mockFetch);
+    each([
+      [resolvingPromise({}), resolvingPromise({})],
+      [rejectingPromise(timeoutError), resolvingPromise({})]
+    ]).it('should reject invalid responses', async (mockFetch, expected) => {
+      mockFT.mockReturnValue(mockFetch);
 
-        async function testSendRequest() {
-          return await instance.sendRequest({ requesttypedescription: 'AUTH' });
-        }
-
-        let response = testSendRequest();
-        expect(response).toMatchObject(expected);
+      async function testSendRequest() {
+        return await instance.sendRequest({ requesttypedescription: 'AUTH' });
       }
-    );
+
+      let response = testSendRequest();
+      expect(response).toMatchObject(expected);
+    });
 
     // then
     each([
@@ -128,8 +128,8 @@ describe('StTransport class', () => {
 
       mockFT.mockReturnValue(
         resolvingPromise({
-          json: () => ({errorcode: 0}),
-        }),
+          json: () => ({ errorcode: 0 })
+        })
       );
 
       await instance.sendRequest(requestObject);

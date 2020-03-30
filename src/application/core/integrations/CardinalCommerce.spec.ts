@@ -22,7 +22,7 @@ describe('CardinalCommerce', () => {
 
   // when
   beforeEach(() => {
-    when(framesHub.waitForFrame(anyString())).thenCall(name => of(name));
+    when(framesHub.waitForFrame(anyString())).thenCall((name) => of(name));
 
     document.body.innerHTML = `<iframe id='st-control-frame-iframe'>
     </iframe><input id='JWTContainer' value="${jwt}" />`;
@@ -60,9 +60,10 @@ describe('CardinalCommerce', () => {
         instance.messageBus = messageBus;
         instance._onCardinalSetupComplete();
         expect(instance._performBinDetection).toHaveBeenCalledWith('4000000000001000');
-        expect(spyPublish).toHaveBeenCalledWith(
-          { data: { dataInJwt: true, requestTypes: ['THREEDQUERY', 'AUTH'] }, type: 'SUBMIT_FORM' }
-        );
+        expect(spyPublish).toHaveBeenCalledWith({
+          data: { dataInJwt: true, requestTypes: ['THREEDQUERY', 'AUTH'] },
+          type: 'SUBMIT_FORM'
+        });
       });
     });
   });
@@ -427,12 +428,10 @@ describe('CardinalCommerce', () => {
       instance._cardinalCommerceCacheToken = 'tokenValue';
       instance._authorizePayment({ some: 'value', cachetoken: 'OVERRIDDEN' });
       expect(instance.messageBus.publish).toHaveBeenCalledTimes(1);
-      expect(instance.messageBus.publish).toHaveBeenCalledWith(
-        {
-          type: 'PROCESS_PAYMENTS',
-          data: { some: 'value', cachetoken: 'tokenValue' }
-        }
-      );
+      expect(instance.messageBus.publish).toHaveBeenCalledWith({
+        type: 'PROCESS_PAYMENTS',
+        data: { some: 'value', cachetoken: 'tokenValue' }
+      });
     });
     // then
     it('should publish control iframe event with AUTH with no data', () => {
@@ -440,9 +439,10 @@ describe('CardinalCommerce', () => {
       instance._cardinalCommerceCacheToken = 'tokenValue';
       instance._authorizePayment();
       expect(instance.messageBus.publish).toHaveBeenCalledTimes(1);
-      expect(instance.messageBus.publish).toHaveBeenCalledWith(
-        { type: 'PROCESS_PAYMENTS', data: { cachetoken: 'tokenValue' } }
-      );
+      expect(instance.messageBus.publish).toHaveBeenCalledWith({
+        type: 'PROCESS_PAYMENTS',
+        data: { cachetoken: 'tokenValue' }
+      });
     });
     // then
     it('should publish control iframe event with CACHETOKENISE', () => {
@@ -451,12 +451,10 @@ describe('CardinalCommerce', () => {
       instance._cardinalCommerceCacheToken = 'tokenValue';
       instance._authorizePayment({ some: 'value', cachetoken: 'OVERRIDDEN' });
       expect(instance.messageBus.publish).toHaveBeenCalledTimes(1);
-      expect(instance.messageBus.publish).toHaveBeenCalledWith(
-        {
-          type: 'PROCESS_PAYMENTS',
-          data: { some: 'value', cachetoken: 'tokenValue' }
-        }
-      );
+      expect(instance.messageBus.publish).toHaveBeenCalledWith({
+        type: 'PROCESS_PAYMENTS',
+        data: { some: 'value', cachetoken: 'tokenValue' }
+      });
     });
   });
 

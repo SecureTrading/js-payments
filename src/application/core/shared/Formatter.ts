@@ -53,7 +53,7 @@ export class Formatter extends Validation {
     const element: HTMLInputElement = document.getElementById(id) as HTMLInputElement;
     let result: string = '';
 
-    this._blocks.forEach(length => {
+    this._blocks.forEach((length) => {
       if (this.expirationDateValue && this.expirationDateValue.length > 0) {
         const sub = this.expirationDateValue.slice(0, length);
         const rest = this.expirationDateValue.slice(length);

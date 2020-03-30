@@ -29,6 +29,9 @@ export const environment = {
     TEST_BUTTON_URL: 'https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png',
     TEST_SDK: 'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js'
   },
+  CYBERTONICA: {
+    CYBERTONICA_LIVE_URL: 'https://p.cybertonica.com/js/beacon.min.js'
+  },
   production: false,
   testEnvironment: true,
   overrideDomain: 'securetrading.net'

@@ -173,9 +173,7 @@ describe('Validation', () => {
       ).toEqual(customErrorMessage);
     });
     // then
-    it(`should return validity state - '${
-      Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH
-    }' when it's card number input and has messageElement and customErrorMessage defined`, () => {
+    it(`should return validity state - '${Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH}' when it's card number input and has messageElement and customErrorMessage defined`, () => {
       inputElement.value = '123';
       expect(
         // @ts-ignore
@@ -190,9 +188,7 @@ describe('Validation', () => {
       ).toEqual(someRandomMessage);
     });
     // then
-    it(`should return '${
-      Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH
-    }' when it's card number input and has messageElement and it's not valid`, () => {
+    it(`should return '${Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH}' when it's card number input and has messageElement and it's not valid`, () => {
       inputElement.setCustomValidity('test');
       expect(
         // @ts-ignore

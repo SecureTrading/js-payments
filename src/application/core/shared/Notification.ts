@@ -12,7 +12,6 @@ import { ConfigProvider } from '../services/ConfigProvider';
 
 @Service()
 export class Notification {
-
   public static NOTIFICATION_CLASSES = {
     error: Selectors.NOTIFICATION_FRAME_ERROR_CLASS,
     info: Selectors.NOTIFICATION_FRAME_INFO_CLASS,
@@ -39,9 +38,11 @@ export class Notification {
   private _messageMap: Map<string, string>;
   private readonly _notificationFrameElement: HTMLElement;
 
-  constructor(private _messageBus: MessageBus,
-              private _browserLocalStorage: BrowserLocalStorage,
-              private _configProvider: ConfigProvider) {
+  constructor(
+    private _messageBus: MessageBus,
+    private _browserLocalStorage: BrowserLocalStorage,
+    private _configProvider: ConfigProvider
+  ) {
     this._messageMap = new Map(Object.entries(Notification.NOTIFICATION_CLASSES));
     this._notificationFrameElement = Notification.getNotificationContainer();
 
@@ -49,9 +50,11 @@ export class Notification {
       this._displayNotification(event);
     });
 
-    Container.get(FramesHub).waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(() => {
-      this._translator = new Translator(this._browserLocalStorage.getItem('locale'));
-    });
+    Container.get(FramesHub)
+      .waitForFrame(Selectors.CONTROL_FRAME_IFRAME)
+      .subscribe(() => {
+        this._translator = new Translator(this._browserLocalStorage.getItem('locale'));
+      });
     this.applyStyles();
   }
 

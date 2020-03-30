@@ -22,7 +22,7 @@ describe('MessageBus', () => {
       instance(communicatorMock),
       instance(framesHubMock),
       instance(frameIdentifierMock),
-      instance(frameAccessorMock),
+      instance(frameAccessorMock)
     );
   });
 
@@ -42,7 +42,7 @@ describe('MessageBus', () => {
         instance(communicatorMock),
         instance(framesHubMock),
         instance(frameIdentifierMock),
-        instance(frameAccessorMock),
+        instance(frameAccessorMock)
       );
 
       expect((window as any).messageBus).toBe(messageBus);
@@ -55,13 +55,13 @@ describe('MessageBus', () => {
         instance(communicatorMock),
         instance(framesHubMock),
         instance(frameIdentifierMock),
-        instance(frameAccessorMock),
+        instance(frameAccessorMock)
       );
 
       expect((window as any).messageBus).toBeUndefined();
     });
   });
-/*
+  /*
     // then
     it('should set origins and event listener', () => {
       window.addEventListener = jest.fn();
