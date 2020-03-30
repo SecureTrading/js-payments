@@ -56,12 +56,7 @@ export class Payment {
         payload: { jwt, response }
       } = new StJwt(result.jwt);
       const threeDInitResult = { jwt, response: response[0] };
-      // We should always use the id from the original cachetoken to link up with the THREEDQUERY
-      // We've already passed this into Cardinal and they have used it for the fingerprint by this point
-      if (this._cardinalCommerceCacheToken === undefined) {
-        // @ts-ignore
-        this._cardinalCommerceCacheToken = result.response.cachetoken;
-      }
+      this._cardinalCommerceCacheToken = result.response.cachetoken;
       return threeDInitResult;
     });
   }
