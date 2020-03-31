@@ -175,7 +175,7 @@ class StCodec {
         StCodec.publishResponse(responseContent, jwtResponse);
         StCodec.getNotification().error(responseContent.errormessage);
         StCodec.getMessageBus().publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
-        throw new Error(responseContent.errormessage);
+        // throw new Error(responseContent.errormessage);
       }
     }
     StCodec.publishResponse(responseContent, jwtResponse);
