@@ -256,41 +256,8 @@ describe('StCodec class', () => {
       // @ts-ignore
       StCodec._handleValidGatewayResponse(content, jwt);
       expect(spy).toHaveBeenCalledTimes(0);
-      expect(StCodec.getErrorData).toHaveBeenCalledTimes(0);
-      expect(StCodec.publishResponse).toHaveBeenCalledTimes(1);
       expect(StCodec.publishResponse).toHaveBeenCalledWith(content, jwt);
       expect(content.errormessage).toBe('Ok');
-    });
-
-    // then
-    it('should raise if error response', () => {
-      const content = { errorcode: '50000', errormessage: 'Timeout', requesttypedescription: 'AUTH' };
-      const jwt = 'jwtString';
-      // @ts-ignore
-      expect(() => StCodec._handleValidGatewayResponse(content, jwt)).toThrow(new Error('Timeout'));
-      expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenCalledWith('Timeout');
-      expect(StCodec.getErrorData).toHaveBeenCalledTimes(0);
-      expect(StCodec.publishResponse).toHaveBeenCalledTimes(1);
-      expect(StCodec.publishResponse).toHaveBeenCalledWith(content, jwt);
-    });
-
-    // then
-    it('should raise if field error response and call getErrorData', () => {
-      const content = {
-        errorcode: '30000',
-        errordata: ['afield'],
-        errormessage: 'Invalid field',
-        requesttypedescription: 'AUTH'
-      };
-      const jwt = 'jwtString';
-      // @ts-ignore
-      expect(() => StCodec._handleValidGatewayResponse(content, jwt)).toThrow(new Error('Invalid field'));
-      expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenCalledWith('Invalid field');
-      expect(StCodec.getErrorData).toHaveBeenCalledTimes(2);
-      expect(StCodec.publishResponse).toHaveBeenCalledTimes(1);
-      expect(StCodec.publishResponse).toHaveBeenCalledWith(content, jwt);
     });
   });
 
