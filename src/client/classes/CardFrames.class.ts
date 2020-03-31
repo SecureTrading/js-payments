@@ -22,18 +22,11 @@ export class CardFrames extends RegisterFrames {
   private static INPUT_EVENT: string = 'input';
   private static NO_CVV_CARDS: string[] = ['PIBA'];
   private static ONLY_CVV_NUMBER_OF_FIELDS: number = 1;
-  private static ON_SUBMIT_ACTION: string = 'onsubmit';
-  private static PREVENT_DEFAULT_EVENT: string = 'event.preventDefault()';
+  private static SUBMIT_EVENT: string = 'submit';
   private static SECURITY_CODE_FIELD_NAME: string = 'securitycode';
   private static SUBMIT_BUTTON_AS_BUTTON_MARKUP: string = 'button[type="submit"]';
   private static SUBMIT_BUTTON_AS_INPUT_MARKUP: string = 'input[type="submit"]';
   private static SUBMIT_BUTTON_DISABLED_CLASS: string = 'st-button-submit__disabled';
-
-  private static _preventFormSubmit() {
-    return document
-      .getElementById(Selectors.MERCHANT_FORM_SELECTOR)
-      .setAttribute(CardFrames.ON_SUBMIT_ACTION, CardFrames.PREVENT_DEFAULT_EVENT);
-  }
 
   private _animatedCardMounted: HTMLElement;
   private _cardNumberMounted: HTMLElement;
@@ -92,7 +85,7 @@ export class CardFrames extends RegisterFrames {
 
   public init() {
     this._deferJsinitOnLoad();
-    CardFrames._preventFormSubmit();
+    this._preventFormSubmit();
     this._createSubmitButton();
     this._initSubscribes();
     this._initCardFrames();
@@ -375,5 +368,11 @@ export class CardFrames extends RegisterFrames {
         this._publishValidatedFieldState(securityCode, MessageBus.EVENTS.VALIDATE_SECURITY_CODE_FIELD);
       }
     });
+  }
+
+  private _preventFormSubmit(): void {
+    document
+      .getElementById(Selectors.MERCHANT_FORM_SELECTOR)
+      .addEventListener(CardFrames.SUBMIT_EVENT, event => event.preventDefault());
   }
 }

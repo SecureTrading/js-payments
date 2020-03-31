@@ -91,6 +91,8 @@ export class ConfigResolver {
         return value.length ? value : defaultValue;
       case 'number':
         return Number.isFinite(value) ? value : defaultValue;
+      case 'boolean':
+        return value;
       case 'object':
         if (value === null) {
           return defaultValue;
