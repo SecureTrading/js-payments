@@ -35,7 +35,10 @@
   },
   "components": {
     "defaultPaymentType": "",
-    "requestTypes": ["THREEDQUERY", "AUTH"],
+    "requestTypes": [
+      "THREEDQUERY",
+      "AUTH"
+    ],
     "paymentTypes": [],
     "startOnLoad": false
   },
@@ -52,7 +55,7 @@
     "cachetoken": "",
     "threedinit": ""
   },
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4NTU5NjAyNy4xMzA4Mjk2LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.Wmev3NzTOj4OWXApu2AoQjSkVsZyy4jkFYvYJzRkbR8",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4NTYzNjgwMC43ODYzNjUzLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.hQBO-YodZuN6pDX07KYdmLxXJOXFBt9W5L4FHEMcQFc",
   "livestatus": 0,
   "origin": "",
   "placeholders": {
@@ -61,7 +64,10 @@
     "securitycode": "***"
   },
   "panIcon": true,
-  "requestTypes": ["THREEDQUERY", "AUTH"],
+  "requestTypes": [
+    "THREEDQUERY",
+    "AUTH"
+  ],
   "styles": {
     "defaultStyles": {
       "background-color-input": "AliceBlue"
@@ -104,7 +110,9 @@
       "subtotal": "20.00"
     },
     "placement": "st-visa-checkout",
-    "requestTypes": [],
+    "requestTypes": [
+      "AUTH"
+    ],
     "settings": {
       "displayName": "My Test Site"
     }
