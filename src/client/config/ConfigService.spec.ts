@@ -24,21 +24,21 @@ describe('ConfigService', () => {
     when(resolverMock.resolve(config)).thenReturn(fullConfig);
   });
 
-  describe('initialize', () => {
+  describe('update', () => {
     it('clears the already existing config in storage', () => {
-      configService.initialize(config);
+      configService.update(config);
 
       verify(storageMock.setItem('app.config', null)).once();
     });
 
     it('resolves the full config and stores it in storage', () => {
-      configService.initialize(config);
+      configService.update(config);
 
       verify(storageMock.setItem('app.config', JSON.stringify(fullConfig))).once();
     });
 
     it('returns the full config', () => {
-      expect(configService.initialize(config)).toBe(fullConfig);
+      expect(configService.update(config)).toBe(fullConfig);
     });
 
     it('throws an error if config validation fails', () => {
@@ -46,27 +46,7 @@ describe('ConfigService', () => {
 
       when(validatorMock.validate(fullConfig)).thenReturn(validationError);
 
-      expect(() => configService.initialize(config)).toThrow();
-    });
-  });
-
-  describe('update', () => {
-    it('resolves the full config and stores it in storage', () => {
-      configService.initialize(config);
-
-      verify(storageMock.setItem('app.config', JSON.stringify(fullConfig))).once();
-    });
-
-    it('returns the full config', () => {
-      expect(configService.initialize(config)).toBe(fullConfig);
-    });
-
-    it('throws an error if config validation fails', () => {
-      const validationError = instance(mock<ValidationError>());
-
-      when(validatorMock.validate(fullConfig)).thenReturn(validationError);
-
-      expect(() => configService.initialize(config)).toThrow();
+      expect(() => configService.update(config)).toThrow();
     });
   });
 });
