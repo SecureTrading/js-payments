@@ -35,17 +35,11 @@ export class ConfigResolver {
     'transactionreference',
   ];
 
-  public init(config: IConfig): IConfig {
-    return {
-      ...this.resolve(config),
-    };
-  }
-
   public validate(config: IConfig | IComponentsConfig | IComponentsIds, schema: Joi.ObjectSchema) {
-    const result = schema.validate(config);
+    const { error } = schema.validate(config);
 
-    if (result.error) {
-      throw result.error;
+    if (error) {
+      throw error;
     }
   }
 
