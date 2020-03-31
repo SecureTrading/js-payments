@@ -21,7 +21,7 @@ const ApplePayContactMap: any = {
   postcode: 'postalCode',
   premise: 'addressLines',
   telephone: 'phoneNumber',
-  town: 'locality',
+  town: 'locality'
 };
 
 /**
@@ -83,14 +83,14 @@ export class ApplePay {
     'jcb',
     'masterCard',
     'privateLabel',
-    'visa',
+    'visa'
   ];
   private static VERSION_4_SUPPORTED_NETWORKS = ApplePay.BASIC_SUPPORTED_NETWORKS.concat([
     'cartesBancaires',
     'eftpos',
     'electron',
     'maestro',
-    'vPay',
+    'vPay'
   ]);
   private static VERSION_5_SUPPORTED_NETWORKS = ApplePay.BASIC_SUPPORTED_NETWORKS.concat(['elo', 'mada']);
 
@@ -109,7 +109,7 @@ export class ApplePay {
     walletmerchantid: '',
     walletrequestdomain: window.location.hostname,
     walletsource: 'APPLEPAY',
-    walletvalidationurl: '',
+    walletvalidationurl: ''
   };
 
   private _jwt: string;
@@ -133,7 +133,7 @@ export class ApplePay {
     this.jwt = jwt;
     this._completion = {
       errors: [],
-      status: ApplePaySession ? this.getPaymentSuccessStatus() : '',
+      status: ApplePaySession ? this.getPaymentSuccessStatus() : ''
     };
     this._configurePaymentProcess(jwt, config, gatewayUrl);
     this._onInit(config.buttonText, config.buttonStyle);
@@ -196,7 +196,7 @@ export class ApplePay {
     this._stJwtInstance = new StJwt(jwt);
     this._stTransportInstance = new StTransport({
       gatewayUrl,
-      jwt,
+      jwt
     });
     this._translator = new Translator(this._stJwtInstance.locale);
   }
@@ -306,7 +306,7 @@ export class ApplePay {
           this._requestTypes,
           {
             walletsource: this._validateMerchantRequestData.walletsource,
-            wallettoken: this.paymentDetails,
+            wallettoken: this.paymentDetails
           },
           DomMethods.parseForm()
         )
@@ -360,22 +360,22 @@ export class ApplePay {
         newTotal: {
           amount: this._paymentRequest.total.amount,
           label: this._paymentRequest.total.label,
-          type: 'final',
-        },
+          type: 'final'
+        }
       });
     };
 
     this._session.onshippingmethodselected = (event: any) => {
       const { paymentMethod } = event;
       this._session.completeShippingMethodSelection({
-        newTotal: { label: this._paymentRequest.total.label, amount: this._paymentRequest.total.amount, type: 'final' },
+        newTotal: { label: this._paymentRequest.total.label, amount: this._paymentRequest.total.amount, type: 'final' }
       });
     };
 
     this._session.onshippingcontactselected = (event: any) => {
       const { shippingContact } = event;
       this._session.completeShippingContactSelection({
-        newTotal: { label: this._paymentRequest.total.label, amount: this._paymentRequest.total.amount, type: 'final' },
+        newTotal: { label: this._paymentRequest.total.label, amount: this._paymentRequest.total.amount, type: 'final' }
       });
     };
   }

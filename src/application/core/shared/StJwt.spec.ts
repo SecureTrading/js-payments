@@ -21,7 +21,7 @@ describe('StJwt', () => {
     [jpyJwt, 'example67890', 'JPY', '1100', 'en_GB'],
     [usdJwt, 'example12345', 'USD', '1234567.89', 'en_GB'],
     [mainamountUsdJwt, 'example12345', 'USD', '1234567.89', 'en_GB'],
-    [localeJwt, 'example12345', 'GBP', '10.00', 'es_ES'],
+    [localeJwt, 'example12345', 'GBP', '10.00', 'es_ES']
   ]).test('StJwt contents', (jwt, expectedSite, expectedCurrency, expectedMainamount, expectedLocale) => {
     let testJwt = new StJwt(jwt);
     expect(testJwt.sitereference).toBe(expectedSite);

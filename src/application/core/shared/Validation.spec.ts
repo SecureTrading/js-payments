@@ -72,7 +72,7 @@ describe('Validation', () => {
       cardNumberErrorData,
       securityCodeErrorData,
       expirationDateErrorData,
-      merchantInputsErrorData,
+      merchantInputsErrorData
     } = validationFixture();
 
     // then
@@ -81,7 +81,7 @@ describe('Validation', () => {
       // @ts-ignore
       expect(instance.getErrorData(cardNumberErrorData)).toEqual({
         field: cardNumberErrorData.errordata[0],
-        errormessage: cardNumberErrorData.errormessage,
+        errormessage: cardNumberErrorData.errormessage
       });
     });
 
@@ -91,7 +91,7 @@ describe('Validation', () => {
       // @ts-ignore
       expect(instance.getErrorData(securityCodeErrorData)).toEqual({
         field: securityCodeErrorData.errordata[0],
-        errormessage: securityCodeErrorData.errormessage,
+        errormessage: securityCodeErrorData.errormessage
       });
     });
 
@@ -101,7 +101,7 @@ describe('Validation', () => {
       // @ts-ignore
       expect(instance.getErrorData(expirationDateErrorData)).toEqual({
         field: expirationDateErrorData.errordata[0],
-        errormessage: expirationDateErrorData.errormessage,
+        errormessage: expirationDateErrorData.errormessage
       });
     });
 
@@ -111,7 +111,7 @@ describe('Validation', () => {
       // @ts-ignore
       expect(instance.getErrorData(merchantInputsErrorData)).toEqual({
         field: merchantInputsErrorData.errordata[0],
-        errormessage: merchantInputsErrorData.errormessage,
+        errormessage: merchantInputsErrorData.errormessage
       });
     });
   });
@@ -203,7 +203,7 @@ describe('Validation', () => {
     const formFields = {
       expirationDate: { value: 'expirydate', validity: true },
       cardNumber: { value: 'pan', validity: false },
-      securityCode: { value: 'securitycode', validity: true },
+      securityCode: { value: 'securitycode', validity: true }
     };
     // when
     beforeEach(() => {
@@ -236,7 +236,7 @@ describe('Validation', () => {
       expect(instance._card).toEqual({
         expirydate: 'expirydate',
         pan: 'pan',
-        securitycode: 'securitycode',
+        securitycode: 'securitycode'
       });
     });
   });
@@ -246,7 +246,7 @@ describe('Validation', () => {
     const { instance } = validationFixture();
     const validationEvent = {
       data: { testValue: 'test value' },
-      type: MessageBus.EVENTS.VALIDATE_FORM,
+      type: MessageBus.EVENTS.VALIDATE_FORM
     };
     // when
     beforeEach(() => {
@@ -277,30 +277,30 @@ function validationFixture() {
   const divElement = document.createElement('div');
   const cardNumberErrorData = {
     errordata: ['pan'],
-    errormessage: 'Invalid field',
+    errormessage: 'Invalid field'
   };
   const expirationDateErrorData = {
     errordata: ['expirydate'],
-    errormessage: 'Invalid field',
+    errormessage: 'Invalid field'
   };
   const securityCodeErrorData = {
     errordata: ['securitycode'],
-    errormessage: 'Invalid field',
+    errormessage: 'Invalid field'
   };
   const backendValidityData = {
     field: 'pan',
-    message: 'some message',
+    message: 'some message'
   };
   const merchantInputsErrorData = {
     errordata: ['billingemail'],
-    errormessage: 'Invalid field',
+    errormessage: 'Invalid field'
   };
 
   const isCharNumberTestCases = [
     [new KeyboardEvent('keypress', { key: 'a' }), true],
     [new KeyboardEvent('keypress', { key: '0' }), false],
     [new KeyboardEvent('keypress', { key: '"' }), true],
-    [new KeyboardEvent('keypress', { key: 'Shift' }), true],
+    [new KeyboardEvent('keypress', { key: 'Shift' }), true]
   ];
 
   // @ts-ignore
@@ -313,7 +313,7 @@ function validationFixture() {
     [{ valid: false, valueMissing: true }, Language.translations.VALIDATION_ERROR_FIELD_IS_REQUIRED],
     [{ valid: false, patternMismatch: true }, Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH],
     [{ valid: false, customError: true }, Language.translations.VALIDATION_ERROR],
-    [{ valid: false, tooShort: true }, Language.translations.VALIDATION_ERROR],
+    [{ valid: false, tooShort: true }, Language.translations.VALIDATION_ERROR]
   ];
   return {
     inputElement,
@@ -334,6 +334,6 @@ function validationFixture() {
     eventWithOther,
     luhnFailed,
     luhnPassed,
-    divElement,
+    divElement
   };
 }

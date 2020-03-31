@@ -9,7 +9,7 @@ export class IconFactory {
     ariaLabel: 'Credit card icon',
     class: 'st-card-icon',
     id: 'card-icon',
-    src: '',
+    src: ''
   };
 
   constructor(private _url: IconMap) {}

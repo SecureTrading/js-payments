@@ -294,7 +294,7 @@ describe('ApplePay', () => {
       const ev = new MouseEvent('click', {
         view: window,
         bubbles: true,
-        cancelable: true,
+        cancelable: true
       });
       // @ts-ignore
       document.getElementById(ApplePay.APPLE_PAY_BUTTON_ID).dispatchEvent(ev);
@@ -469,7 +469,7 @@ describe('ApplePay', () => {
         walletmerchantid: 'merchant.net.securetrading',
         walletrequestdomain: 'localhost',
         walletsource: 'APPLEPAY',
-        walletvalidationurl: 'https://example.com',
+        walletvalidationurl: 'https://example.com'
       });
       // @ts-ignore
       expect(instance._validateMerchantRequestData.walletvalidationurl).toBe('https://example.com');
@@ -506,7 +506,7 @@ describe('ApplePay', () => {
         walletmerchantid: 'merchant.net.securetrading',
         walletrequestdomain: 'localhost',
         walletsource: 'APPLEPAY',
-        walletvalidationurl: 'https://example.com',
+        walletvalidationurl: 'https://example.com'
       });
       // @ts-ignore
       expect(instance._validateMerchantRequestData.walletvalidationurl).toBe('https://example.com');
@@ -515,7 +515,7 @@ describe('ApplePay', () => {
       // @ts-ignore
       expect(instance._onValidateMerchantResponseFailure).toHaveBeenCalledWith({
         errorcode: '30000',
-        errormessage: 'Invalid field',
+        errormessage: 'Invalid field'
       });
       // @ts-ignore
       expect(instance._notification.error).toHaveBeenCalledTimes(1);
@@ -718,7 +718,7 @@ describe('ApplePay', () => {
       // @ts-ignore
       instance._session = {
         abort: jest.fn(),
-        completeMerchantValidation: jest.fn(),
+        completeMerchantValidation: jest.fn()
       };
       // @ts-ignore
       instance._onValidateMerchantResponseSuccess(response);
@@ -757,7 +757,7 @@ describe('ApplePay', () => {
         completeShippingMethodSelection: jest.fn(),
         onpaymentmethodselected: undefined,
         onshippingcontactselected: undefined,
-        onshippingmethodselected: undefined,
+        onshippingmethodselected: undefined
       };
       instance._session = sessionObjectFake;
       instance._paymentRequest = { total: { amount: '10.00', label: 'someLabel' } };
@@ -779,8 +779,8 @@ describe('ApplePay', () => {
         newTotal: {
           amount: '10.00',
           label: 'someLabel',
-          type: 'final',
-        },
+          type: 'final'
+        }
       });
       expect(instance._session.completeShippingMethodSelection).toHaveBeenCalledTimes(0);
       expect(instance._session.completeShippingContactSelection).toHaveBeenCalledTimes(0);
@@ -795,8 +795,8 @@ describe('ApplePay', () => {
         newTotal: {
           amount: '10.00',
           label: 'someLabel',
-          type: 'final',
-        },
+          type: 'final'
+        }
       });
       expect(instance._session.completeShippingContactSelection).toHaveBeenCalledTimes(0);
     });
@@ -811,8 +811,8 @@ describe('ApplePay', () => {
         newTotal: {
           amount: '10.00',
           label: 'someLabel',
-          type: 'final',
-        },
+          type: 'final'
+        }
       });
     });
   });
@@ -1070,13 +1070,13 @@ function ApplePayFixture() {
       countryCode: 'US',
       currencyCode: 'USD',
       merchantCapabilities: ['supports3DS', 'supportsCredit', 'supportsDebit'],
-      supportedNetworks: ['amex', 'visa'],
+      supportedNetworks: ['amex', 'visa']
     },
     merchantId: 'merchant.net.securetrading',
     placement: 'st-apple-pay',
     buttonText: 'donate',
     buttonStyle: 'white-outline',
-    requestTypes: ['AUTH'],
+    requestTypes: ['AUTH']
   };
   const jwt =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
@@ -1085,6 +1085,6 @@ function ApplePayFixture() {
   return {
     config,
     jwt,
-    instance,
+    instance
   };
 }

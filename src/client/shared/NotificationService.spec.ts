@@ -24,7 +24,7 @@ describe('NotificationService', () => {
       when(configProvider.getConfig()).thenReturn({
         disableNotification: false,
         submitOnError: false,
-        submitOnSuccess: false,
+        submitOnSuccess: false
       });
     });
 
@@ -35,7 +35,7 @@ describe('NotificationService', () => {
         messageBus.publish(
           deepEqual({
             data: { type: NotificationType.Error, content: 'Test value' },
-            type: MessageBus.EVENTS_PUBLIC.NOTIFICATION,
+            type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
           }),
           true
         )
@@ -51,7 +51,7 @@ describe('NotificationService', () => {
       when(configProvider.getConfig()).thenReturn({
         disableNotification: false,
         submitOnError: false,
-        submitOnSuccess: false,
+        submitOnSuccess: false
       });
     });
 
@@ -62,7 +62,7 @@ describe('NotificationService', () => {
         messageBus.publish(
           deepEqual({
             data: { type: NotificationType.Success, content: 'Test value' },
-            type: MessageBus.EVENTS_PUBLIC.NOTIFICATION,
+            type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
           }),
           true
         )
@@ -78,7 +78,7 @@ describe('NotificationService', () => {
       when(configProvider.getConfig()).thenReturn({
         disableNotification: false,
         submitOnError: false,
-        submitOnSuccess: false,
+        submitOnSuccess: false
       });
     });
 
@@ -89,7 +89,7 @@ describe('NotificationService', () => {
         messageBus.publish(
           deepEqual({
             data: { type: NotificationType.Warning, content: 'Test value' },
-            type: MessageBus.EVENTS_PUBLIC.NOTIFICATION,
+            type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
           }),
           true
         )
@@ -105,7 +105,7 @@ describe('NotificationService', () => {
       when(configProvider.getConfig()).thenReturn({
         disableNotification: false,
         submitOnError: false,
-        submitOnSuccess: false,
+        submitOnSuccess: false
       });
     });
 
@@ -116,7 +116,7 @@ describe('NotificationService', () => {
         messageBus.publish(
           deepEqual({
             data: { type: NotificationType.Info, content: 'Test value' },
-            type: MessageBus.EVENTS_PUBLIC.NOTIFICATION,
+            type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
           }),
           true
         )

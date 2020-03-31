@@ -72,9 +72,9 @@ describe('FormField', () => {
     const { instance } = formFieldFixture();
     const event = {
       clipboardData: {
-        getData: jest.fn(),
+        getData: jest.fn()
       },
-      preventDefault: jest.fn(),
+      preventDefault: jest.fn()
     };
 
     // @ts-ignore

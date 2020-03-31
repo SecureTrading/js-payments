@@ -43,7 +43,7 @@ export class NotificationService {
   private _setNotification(type: string, content: string): void {
     const messageBusEvent: IMessageBusEvent = {
       data: { content, type },
-      type: MessageBus.EVENTS_PUBLIC.NOTIFICATION,
+      type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
     };
     this._messageBus.publish(messageBusEvent, true);
   }

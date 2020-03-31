@@ -22,24 +22,24 @@ function formatterFixture() {
     ['123', '123'],
     ['  1  2  3  ', '123'],
     ['a1A2A3a', '123'],
-    ['a 1 A2A 3a .! ', '123'],
+    ['a 1 A2A 3a .! ', '123']
   ];
   const trimNonNumericExceptSlash = [
     ['1/2', '1/2'],
     ['///', '///'],
     ['df/33', '/33'],
-    ['@#$333!!!#', '333'],
+    ['@#$333!!!#', '333']
   ];
   const trimNonNumericExceptSpace = [
     ['a 1  A2A 3a .! ', ' 1  2 3 '],
     ['3 33 34 ', '3 33 34'],
-    ['11$% 11', '11 11'],
+    ['11$% 11', '11 11']
   ];
   const maskExpirationDate = [
     ['1', '1'],
     ['11', '11'],
     ['111', '11/1'],
-    ['11/11', '11/11'],
+    ['11/11', '11/11']
   ];
   const maskExpirationDateOnPaste = [
     ['1', '1'],
@@ -48,7 +48,7 @@ function formatterFixture() {
     ['1111', '11/11'],
     ['1@23', '12/3'],
     ['==11', '11'],
-    ['aa3', '3'],
+    ['aa3', '3']
   ];
   return {
     instance,
@@ -56,6 +56,6 @@ function formatterFixture() {
     maskExpirationDateOnPaste,
     trimNonNumeric,
     trimNonNumericExceptSlash,
-    trimNonNumericExceptSpace,
+    trimNonNumericExceptSpace
   };
 }

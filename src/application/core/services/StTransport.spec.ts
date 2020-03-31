@@ -15,7 +15,7 @@ describe('StTransport class', () => {
   const DEFAULT_PARAMS = {
     gatewayUrl: 'https://example.com',
     jwt:
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU3NDIzNDgyLjk0MzE1MywicGF5bG9hZCI6eyJjdXN0b21lcnRvd24iOiJCYW5nb3IiLCJiaWxsaW5ncG9zdGNvZGUiOiJURTEyIDNTVCIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJjdXN0b21lcnByZW1pc2UiOiIxMiIsImJpbGxpbmdsYXN0bmFtZSI6Ik5hbWUiLCJsb2NhbGUiOiJlbl9HQiIsImJhc2VhbW91bnQiOiIxMDAwIiwiYmlsbGluZ2VtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImJpbGxpbmdwcmVtaXNlIjoiMTIiLCJzaXRlcmVmZXJlbmNlIjoidGVzdDEiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImJpbGxpbmdzdHJlZXQiOiJUZXN0IHN0cmVldCIsImN1c3RvbWVyc3RyZWV0IjoiVGVzdCBzdHJlZXQiLCJjdXN0b21lcnBvc3Rjb2RlIjoiVEUxMiAzU1QiLCJjdXN0b21lcmxhc3RuYW1lIjoiTmFtZSIsImJpbGxpbmd0ZWxlcGhvbmUiOiIwMTIzNCAxMTEyMjIiLCJiaWxsaW5nZmlyc3RuYW1lIjoiVGVzdCIsImJpbGxpbmd0b3duIjoiQmFuZ29yIiwiYmlsbGluZ3RlbGVwaG9uZXR5cGUiOiJNIn19.08q3gem0kW0eODs5iGQieKbpqu7pVcvQF2xaJIgtrnc',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU3NDIzNDgyLjk0MzE1MywicGF5bG9hZCI6eyJjdXN0b21lcnRvd24iOiJCYW5nb3IiLCJiaWxsaW5ncG9zdGNvZGUiOiJURTEyIDNTVCIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJjdXN0b21lcnByZW1pc2UiOiIxMiIsImJpbGxpbmdsYXN0bmFtZSI6Ik5hbWUiLCJsb2NhbGUiOiJlbl9HQiIsImJhc2VhbW91bnQiOiIxMDAwIiwiYmlsbGluZ2VtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImJpbGxpbmdwcmVtaXNlIjoiMTIiLCJzaXRlcmVmZXJlbmNlIjoidGVzdDEiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImJpbGxpbmdzdHJlZXQiOiJUZXN0IHN0cmVldCIsImN1c3RvbWVyc3RyZWV0IjoiVGVzdCBzdHJlZXQiLCJjdXN0b21lcnBvc3Rjb2RlIjoiVEUxMiAzU1QiLCJjdXN0b21lcmxhc3RuYW1lIjoiTmFtZSIsImJpbGxpbmd0ZWxlcGhvbmUiOiIwMTIzNCAxMTEyMjIiLCJiaWxsaW5nZmlyc3RuYW1lIjoiVGVzdCIsImJpbGxpbmd0b3duIjoiQmFuZ29yIiwiYmlsbGluZ3RlbGVwaG9uZXR5cGUiOiJNIn19.08q3gem0kW0eODs5iGQieKbpqu7pVcvQF2xaJIgtrnc'
   };
   const fetchRetryObject = {
     url: 'https://example.com',
@@ -23,7 +23,7 @@ describe('StTransport class', () => {
     connectTimeout: 20000,
     delay: 2000,
     retries: 3,
-    retryTimeout: 20000,
+    retryTimeout: 20000
   };
   const timeoutError: any = null; //Error(Language.translations.COMMUNICATION_ERROR_TIMEOUT);
   const resolvingPromise = (result: object) => {
@@ -69,8 +69,8 @@ describe('StTransport class', () => {
         resolvingPromise({
           json: () =>
             resolvingPromise({
-              errorcode: 0,
-            }),
+              errorcode: 0
+            })
         })
       );
       await instance.sendRequest(requestObject);
@@ -80,14 +80,14 @@ describe('StTransport class', () => {
       expect(instance._fetchRetry).toHaveBeenCalledWith(DEFAULT_PARAMS.gatewayUrl, {
         // @ts-ignore
         ...StTransport.DEFAULT_FETCH_OPTIONS,
-        body: JSON.stringify(requestObject),
+        body: JSON.stringify(requestObject)
       });
     });
 
     // then
     each([
       [resolvingPromise({}), resolvingPromise({})],
-      [rejectingPromise(timeoutError), resolvingPromise({})],
+      [rejectingPromise(timeoutError), resolvingPromise({})]
     ]).it('should reject invalid responses', async (mockFetch, expected) => {
       mockFT.mockReturnValue(mockFetch);
 
@@ -107,19 +107,19 @@ describe('StTransport class', () => {
             resolvingPromise({
               response: [
                 {
-                  errorcode: 0,
-                },
+                  errorcode: 0
+                }
               ],
-              version: '1.00',
-            }),
+              version: '1.00'
+            })
         }),
-        { response: [{ errorcode: 0 }], version: '1.00' },
-      ],
+        { response: [{ errorcode: 0 }], version: '1.00' }
+      ]
     ]).it('should decode the json response', async (mockFetch, expected) => {
       mockFT.mockReturnValue(mockFetch);
       await expect(instance.sendRequest({ requesttypedescription: 'AUTH' })).resolves.toEqual(expected);
       expect(instance.codec.decode).toHaveBeenCalledWith({
-        json: expect.any(Function),
+        json: expect.any(Function)
       });
     });
 
@@ -128,7 +128,7 @@ describe('StTransport class', () => {
 
       mockFT.mockReturnValue(
         resolvingPromise({
-          json: () => ({ errorcode: 0 }),
+          json: () => ({ errorcode: 0 })
         })
       );
 

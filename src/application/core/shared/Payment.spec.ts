@@ -47,13 +47,13 @@ describe('Payment', () => {
     // then
     it('should send AUTH request with card', () => {
       instance.processPayment(['AUTH'], card, {
-        merchant: 'data',
+        merchant: 'data'
       });
       // @ts-ignore
       expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
         ...card,
         requesttypedescriptions: ['AUTH'],
-        merchant: 'data',
+        merchant: 'data'
       });
     });
 
@@ -63,7 +63,7 @@ describe('Payment', () => {
       // @ts-ignore
       expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
         ...card,
-        requesttypedescriptions: ['CACHETOKENISE'],
+        requesttypedescriptions: ['CACHETOKENISE']
       });
     });
 
@@ -75,7 +75,7 @@ describe('Payment', () => {
         { pan: 'overridden', merchant: 'data' },
         {
           securitycode: 'overridden',
-          additional: 'some data',
+          additional: 'some data'
         }
       );
       // @ts-ignore
@@ -83,21 +83,21 @@ describe('Payment', () => {
         ...card,
         requesttypedescriptions: ['AUTH'],
         merchant: 'data',
-        additional: 'some data',
+        additional: 'some data'
       });
     });
 
     // then
     it('should send AUTH request with wallet', () => {
       instance.processPayment(['AUTH'], wallet, {
-        merchant: 'data',
+        merchant: 'data'
       });
       // @ts-ignore
       expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
         walletsource: 'APPLEPAY',
         wallettoken: 'encryptedpaymentdata',
         requesttypedescriptions: ['AUTH'],
-        merchant: 'data',
+        merchant: 'data'
       });
     });
 
@@ -108,11 +108,11 @@ describe('Payment', () => {
         wallet,
         {
           wallettoken: 'overridden',
-          merchant: 'data',
+          merchant: 'data'
         },
         {
           walletsource: 'OVERRIDDEN',
-          extra: 'some value',
+          extra: 'some value'
         }
       );
       // @ts-ignore
@@ -121,7 +121,7 @@ describe('Payment', () => {
         wallettoken: 'encryptedpaymentdata',
         requesttypedescriptions: ['AUTH'],
         merchant: 'data',
-        extra: 'some value',
+        extra: 'some value'
       });
     });
 
@@ -132,11 +132,11 @@ describe('Payment', () => {
         wallet,
         {
           wallettoken: 'overridden',
-          merchant: 'data',
+          merchant: 'data'
         },
         {
           walletsource: 'OVERRIDDEN',
-          extra: 'some value',
+          extra: 'some value'
         }
       );
       // @ts-ignore
@@ -145,7 +145,7 @@ describe('Payment', () => {
         wallettoken: 'encryptedpaymentdata',
         requesttypedescriptions: ['CACHETOKENISE'],
         merchant: 'data',
-        extra: 'some value',
+        extra: 'some value'
       });
     });
 
@@ -154,13 +154,13 @@ describe('Payment', () => {
       // @ts-ignore
       instance._stTransport.sendRequest = jest.fn().mockReturnValueOnce(
         Promise.resolve({
-          response: {},
+          response: {}
         })
       );
       // @ts-ignore;
       instance.processPayment().then(result => {
         expect(result).toStrictEqual({
-          response: {},
+          response: {}
         });
       });
     });
@@ -173,13 +173,13 @@ describe('Payment', () => {
       // @ts-ignore
       instance._stTransport.sendRequest = jest.fn().mockReturnValueOnce(
         Promise.resolve({
-          cachetoken: 'content',
+          cachetoken: 'content'
         })
       );
       instance.threeDInitRequest();
       // @ts-ignore
       expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
-        requesttypedescriptions: ['JSINIT'],
+        requesttypedescriptions: ['JSINIT']
       });
     });
 
@@ -189,14 +189,14 @@ describe('Payment', () => {
       instance._stTransport.sendRequest = jest.fn().mockReturnValueOnce(
         Promise.resolve({
           jwt: 'somejwt',
-          response: {},
+          response: {}
         })
       );
       // @ts-ignore;
       instance.threeDInitRequest().then(result => {
         expect(result).toStrictEqual({
           jwt: 'somejwt',
-          response: {},
+          response: {}
         });
       });
     });
@@ -209,7 +209,7 @@ describe('Payment', () => {
       instance._stTransport.sendRequest = jest.fn().mockReturnValueOnce(
         Promise.resolve({
           jwt,
-          response: {},
+          response: {}
         })
       );
       const testJWT = new StJwt(jwt);
@@ -235,7 +235,7 @@ describe('Payment', () => {
       instance._cardinalCommerceCacheToken = 'cardinalcachetoken';
       instance.threeDQueryRequest(['THREEDQUERY'], card, {
         pan: 'overridden',
-        merchant: 'data',
+        merchant: 'data'
       });
 
       // @ts-ignore
@@ -244,7 +244,7 @@ describe('Payment', () => {
         requesttypedescriptions: ['THREEDQUERY'],
         merchant: 'data',
         termurl: 'https://termurl.com',
-        cachetoken: 'cardinalcachetoken',
+        cachetoken: 'cardinalcachetoken'
       });
     });
   });
@@ -260,7 +260,7 @@ describe('Payment', () => {
         walletsource: 'APPLEPAY',
         walletmerchantid: '123456789',
         walletvalidationurl: 'https://example.com',
-        walletrequestdomain: 'https://example2.com',
+        walletrequestdomain: 'https://example2.com'
       });
     });
   });
@@ -275,17 +275,17 @@ function paymentFixture() {
   const card = {
     expirydate: '10/22',
     pan: '4111111111111111',
-    securitycode: '123',
+    securitycode: '123'
   };
   const wallet = {
     walletsource: 'APPLEPAY',
-    wallettoken: 'encryptedpaymentdata',
+    wallettoken: 'encryptedpaymentdata'
   };
   const walletverify = {
     walletsource: 'APPLEPAY',
     walletmerchantid: '123456789',
     walletvalidationurl: 'https://example.com',
-    walletrequestdomain: 'https://example2.com',
+    walletrequestdomain: 'https://example2.com'
   };
   return { card, wallet, walletverify, instance, jwt, cachetoken };
 }

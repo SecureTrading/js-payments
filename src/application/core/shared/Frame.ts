@@ -50,7 +50,7 @@ export class Frame {
       'font-size-body': { property: 'font-size', selector: 'body' },
       'line-height-body': { property: 'line-height', selector: 'body' },
       'space-inset-body': { property: 'padding', selector: 'body' },
-      'space-outset-body': { property: 'margin', selector: 'body' },
+      'space-outset-body': { property: 'margin', selector: 'body' }
     };
     return allowed;
   }

@@ -72,7 +72,7 @@ export abstract class AbstractStorage implements IStorage, Subscribable<any> {
   private synchronizeStorage(key: string, value: string): void {
     const event: IMessageBusEvent = {
       type: this.getSychronizationEventName(),
-      data: { key, value },
+      data: { key, value }
     };
 
     if (!this.identifier.isParentFrame()) {
