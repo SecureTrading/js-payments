@@ -19,9 +19,9 @@ export class Payment {
   private _validation: Validation;
   private readonly _walletVerifyRequest: IStRequest;
 
-  constructor(jwt: string, gatewayUrl: string, parentOrigin?: string) {
+  constructor(jwt: string, gatewayUrl: string) {
     this._notification = Container.get(NotificationService);
-    this._stTransport = new StTransport({ jwt, gatewayUrl }, parentOrigin);
+    this._stTransport = new StTransport({ jwt, gatewayUrl });
     this._validation = new Validation();
     this._walletVerifyRequest = {
       requesttypedescriptions: ['WALLETVERIFY']

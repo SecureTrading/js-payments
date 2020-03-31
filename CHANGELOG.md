@@ -7,6 +7,8 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Fix to ensure updateJWT works when changing currency from original JWT
+- Update StCodec to always publish to parent
+- Update ApplePay successCallback to be called on success
 
 ## 2.0.8
 

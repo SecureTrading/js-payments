@@ -85,11 +85,7 @@ class StCodec {
       data: eventData,
       type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE
     };
-    if (StCodec._parentOrigin !== undefined) {
-      StCodec.getMessageBus().publish(notificationEvent, true);
-    } else {
-      StCodec.getMessageBus().publish(notificationEvent);
-    }
+    StCodec.getMessageBus().publish(notificationEvent, true);
   }
 
   public static updateJWTValue(newJWT: string) {
@@ -107,7 +103,6 @@ class StCodec {
   private static _notification: NotificationService;
   private static _messageBus: MessageBus;
   private static _locale: string;
-  private static _parentOrigin: string;
   private static REQUESTS_WITH_ERROR_MESSAGES = [
     'AUTH',
     'CACHETOKENISE',
@@ -198,13 +193,12 @@ class StCodec {
 
   private readonly _requestId: string;
 
-  constructor(jwt: string, parentOrigin?: string) {
+  constructor(jwt: string) {
     this._requestId = StCodec._createRequestId();
     StCodec._notification = Container.get(NotificationService);
     StCodec.jwt = jwt;
     StCodec.originalJwt = jwt;
     StCodec._locale = new StJwt(StCodec.jwt).locale;
-    StCodec._parentOrigin = parentOrigin;
   }
 
   public buildRequestObject(requestData: object): object {
