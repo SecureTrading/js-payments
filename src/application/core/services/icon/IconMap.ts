@@ -10,7 +10,7 @@ const mapIcon: IIconMap = {
   maestro: './images/maestro.png',
   mastercard: './images/mastercard.png',
   piba: './images/piba.png',
-  visa: './images/visa.png',
+  visa: './images/visa.png'
 };
 
 @Service()

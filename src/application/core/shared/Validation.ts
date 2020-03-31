@@ -19,7 +19,7 @@ import { Utils } from './Utils';
 const {
   VALIDATION_ERROR_FIELD_IS_REQUIRED,
   VALIDATION_ERROR_PATTERN_MISMATCH,
-  VALIDATION_ERROR,
+  VALIDATION_ERROR
 } = Language.translations;
 
 export class Validation extends Frame {
@@ -74,7 +74,7 @@ export class Validation extends Frame {
   public static returnInputAndErrorContainerPair(item: HTMLInputElement) {
     return {
       inputElement: document.getElementById(item.id) as HTMLInputElement,
-      messageElement: document.getElementById(item.id).nextSibling as HTMLElement,
+      messageElement: document.getElementById(item.id).nextSibling as HTMLElement
     };
   }
 
@@ -96,7 +96,7 @@ export class Validation extends Frame {
   private static BACKEND_ERROR_FIELDS_NAMES = {
     cardNumber: Validation.CARD_NUMBER_FIELD_NAME,
     expirationDate: Validation.EXPIRY_DATE_FIELD_NAME,
-    securityCode: Validation.SECURITY_CODE_FIELD_NAME,
+    securityCode: Validation.SECURITY_CODE_FIELD_NAME
   };
 
   private static _setValidateEvent(errordata: string, event: IMessageBusEvent): IMessageBusEvent {
@@ -173,14 +173,14 @@ export class Validation extends Frame {
   public blockForm(state: FormState) {
     const messageBusEvent: IMessageBusEvent = {
       data: state,
-      type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM,
+      type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM
     };
     this.messageBus.publish(messageBusEvent, true);
   }
 
   public callSubmitEvent() {
     const messageBusEvent: IMessageBusEvent = {
-      type: MessageBus.EVENTS_PUBLIC.CALL_SUBMIT_EVENT,
+      type: MessageBus.EVENTS_PUBLIC.CALL_SUBMIT_EVENT
     };
     this.messageBus.publish(messageBusEvent, true);
   }
@@ -204,7 +204,7 @@ export class Validation extends Frame {
     }
     return {
       card: this._card,
-      validity: isFormReadyToSubmit,
+      validity: isFormReadyToSubmit
     };
   }
 
@@ -212,7 +212,7 @@ export class Validation extends Frame {
     const { errordata, errormessage } = StCodec.getErrorData(errorData);
     const validationEvent: IMessageBusEvent = {
       data: { field: errordata[0], message: errormessage },
-      type: Validation.CLEAR_VALUE,
+      type: Validation.CLEAR_VALUE
     };
 
     this._broadcastFormFieldError(errordata[0], validationEvent);
@@ -293,7 +293,7 @@ export class Validation extends Frame {
   public setFormValidity(state: any) {
     const validationEvent: IMessageBusEvent = {
       data: { ...state },
-      type: MessageBus.EVENTS.VALIDATE_FORM,
+      type: MessageBus.EVENTS.VALIDATE_FORM
     };
     this.messageBus.publish(validationEvent);
   }
@@ -401,7 +401,7 @@ export class Validation extends Frame {
       this._card = {
         expirydate: formFields.expirationDate.value,
         pan: formFields.cardNumber.value,
-        securitycode: formFields.securityCode.value,
+        securitycode: formFields.securityCode.value
       };
     }
   }

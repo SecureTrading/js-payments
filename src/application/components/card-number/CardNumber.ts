@@ -113,7 +113,7 @@ export class CardNumber extends FormField {
     const { value } = this.getState();
     const messageBusEvent: IMessageBusEvent = {
       data: this._getSecurityCodeLength(value),
-      type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH,
+      type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH
     };
     this.messageBus.publish(messageBusEvent);
   }
@@ -175,7 +175,7 @@ export class CardNumber extends FormField {
     return {
       formattedValue: this._cardNumberFormatted,
       validity,
-      value: this._cardNumberValue,
+      value: this._cardNumberValue
     };
   }
 
@@ -214,7 +214,7 @@ export class CardNumber extends FormField {
     const formState = isCardPiba ? FormState.BLOCKED : FormState.AVAILABLE;
     const messageBusEventPiba: IMessageBusEvent = {
       data: formState,
-      type: MessageBus.EVENTS.IS_CARD_WITHOUT_CVV,
+      type: MessageBus.EVENTS.IS_CARD_WITHOUT_CVV
     };
     this.messageBus.publish(messageBusEventPiba);
   }
@@ -223,12 +223,12 @@ export class CardNumber extends FormField {
     const { value, validity } = this._getCardNumberFieldState();
     const messageBusEvent: IMessageBusEvent = {
       data: this._getCardNumberFieldState(),
-      type: MessageBus.EVENTS.CHANGE_CARD_NUMBER,
+      type: MessageBus.EVENTS.CHANGE_CARD_NUMBER
     };
     if (validity) {
       const binProcessEvent: IMessageBusEvent = {
         data: { value: CardNumber._getCardNumberForBinProcess(value), validity },
-        type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS,
+        type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS
       };
       this.messageBus.publish(binProcessEvent, true);
     }

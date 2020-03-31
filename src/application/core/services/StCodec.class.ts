@@ -25,7 +25,7 @@ class StCodec {
     'ERROR',
     'RISKDEC',
     'SUBSCRIPTION',
-    'ACCOUNTCHECK',
+    'ACCOUNTCHECK'
   ];
   public static MINIMUM_REQUEST_FIELDS = 1;
   public static jwt: string;
@@ -47,7 +47,7 @@ class StCodec {
     return {
       errordata,
       errormessage,
-      requesttypedescription,
+      requesttypedescription
     };
   }
 
@@ -78,7 +78,7 @@ class StCodec {
     }
     const notificationEvent: IMessageBusEvent = {
       data: eventData,
-      type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE,
+      type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE
     };
     if (StCodec._parentOrigin !== undefined) {
       StCodec.getMessageBus().publish(notificationEvent, true);
@@ -92,9 +92,9 @@ class StCodec {
     StCodec.originalJwt = newJWT ? newJWT : StCodec.originalJwt;
     const messageBusEvent: IMessageBusEvent = {
       data: {
-        newJwt: StCodec.jwt,
+        newJwt: StCodec.jwt
       },
-      type: MessageBus.EVENTS_PUBLIC.UPDATE_JWT,
+      type: MessageBus.EVENTS_PUBLIC.UPDATE_JWT
     };
     StCodec.getMessageBus().publish(messageBusEvent, true);
   }
@@ -111,7 +111,7 @@ class StCodec {
     'WALLETVERIFY',
     'RISKDEC',
     'SUBSCRIPTION',
-    'ACCOUNTCHECK',
+    'ACCOUNTCHECK'
   ];
   private static STATUS_CODES = { invalidfield: '30000', ok: '0', declined: '70000' };
 
@@ -126,7 +126,7 @@ class StCodec {
   private static _createCommunicationError() {
     return {
       errorcode: '50003',
-      errormessage: Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE,
+      errormessage: Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE
     } as IResponseData;
   }
 
@@ -210,11 +210,11 @@ class StCodec {
         {
           ...requestData,
           requestid: this._requestId,
-          sitereference: new StJwt(StCodec.jwt).sitereference,
-        },
+          sitereference: new StJwt(StCodec.jwt).sitereference
+        }
       ],
       version: StCodec.VERSION,
-      versioninfo: StCodec.VERSION_INFO,
+      versioninfo: StCodec.VERSION_INFO
     };
   }
 
@@ -243,7 +243,7 @@ class StCodec {
           }
           resolve({
             jwt: responseData.jwt,
-            response: StCodec.verifyResponseObject(decoded.payload, responseData.jwt),
+            response: StCodec.verifyResponseObject(decoded.payload, responseData.jwt)
           });
         });
       } else {

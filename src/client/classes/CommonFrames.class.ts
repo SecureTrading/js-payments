@@ -101,7 +101,7 @@ export class CommonFrames extends RegisterFrames {
     this._controlFrame.create(Selectors.CONTROL_FRAME_COMPONENT_NAME, controlFrame, {
       gatewayUrl: this._gatewayUrl,
       jwt: this.jwt,
-      origin: this.origin,
+      origin: this.origin
     });
     this._controlFrameMounted = this._controlFrame.mount(Selectors.CONTROL_FRAME_IFRAME, '-1');
     this.elementsToRegister.push(this._controlFrameMounted);
@@ -130,7 +130,7 @@ export class CommonFrames extends RegisterFrames {
   private _onInput(event: Event) {
     const messageBusEvent = {
       data: DomMethods.parseForm(),
-      type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS,
+      type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
     };
     this._messageBus.publish(messageBusEvent);
   }

@@ -15,7 +15,7 @@ export class ConfigResolver {
     cardNumber: Selectors.CARD_NUMBER_INPUT_SELECTOR,
     expirationDate: Selectors.EXPIRATION_DATE_INPUT_SELECTOR,
     notificationFrame: Selectors.NOTIFICATION_FRAME_ID,
-    securityCode: Selectors.SECURITY_CODE_INPUT_SELECTOR,
+    securityCode: Selectors.SECURITY_CODE_INPUT_SELECTOR
   };
 
   private readonly DEFAULT_APMS_REQUEST_TYPES: string[] = ['AUTH'];
@@ -32,7 +32,7 @@ export class ConfigResolver {
     'orderreference',
     'settlestatus',
     'status',
-    'transactionreference',
+    'transactionreference'
   ];
 
   public validate(config: IConfig | IComponentsConfig | IComponentsIds, schema: Joi.ObjectSchema) {
@@ -54,7 +54,7 @@ export class ConfigResolver {
       cachetoken: this._getValueOrDefault(config.cachetoken, ''),
       componentIds: this._componentIds(config.componentIds),
       components: this._setComponentsProperties(config),
-      datacenterurl: this._getValueOrDefault(config.datacenterurl, environment.GATEWAY_URL) || environment.GATEWAY_URL,
+      datacenterurl: this._getValueOrDefault(config.datacenterurl, environment.GATEWAY_URL),
       deferInit: this._getValueOrDefault(config.deferInit, false),
       disableNotification: this._getValueOrDefault(config.disableNotification, false),
       fieldsToSubmit: this._getValueOrDefault(config.fieldsToSubmit, [...this.DEFAULT_FIELDS_TO_SUBMIT]),
@@ -67,7 +67,7 @@ export class ConfigResolver {
       placeholders: this._getValueOrDefault(config.placeholders, {
         pan: '',
         expirydate: '',
-        securitycode: '',
+        securitycode: ''
       }),
       requestTypes: this._getValueOrDefault(config.requestTypes, [...this.DEFAULT_COMPONENTS_REQUEST_TYPES]),
       styles: this._getValueOrDefault(config.styles, {}),
@@ -79,26 +79,29 @@ export class ConfigResolver {
       submitOnSuccess: this._getValueOrDefault(config.submitOnSuccess, true),
       threedinit: this._getValueOrDefault(config.threedinit, ''),
       translations: this._getValueOrDefault(config.translations, {}),
-      visaCheckout: this._setApmConfig(config.visaCheckout, config.components),
+      visaCheckout: this._setApmConfig(config.visaCheckout, config.components)
     };
   }
 
   private _getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
-    const type = typeof value;
-    if (type !== 'undefined') {
-      if (Boolean(type === 'object' && Object.keys(value))) {
+    switch (typeof value) {
+      case 'undefined':
         return defaultValue;
-      }
-      if (Boolean(Array.isArray(value) && !value.length)) {
-        return defaultValue;
-      }
-      // @ts-ignore
-      if (Boolean(type === 'string' && !value.length)) {
-        return defaultValue;
-      }
-      return value;
+      case 'string':
+        return value.length ? value : defaultValue;
+      case 'number':
+        return Number.isFinite(value) ? value : defaultValue;
+      case 'object':
+        if (value === null) {
+          return defaultValue;
+        }
+        if (Array.isArray(value)) {
+          return value.length ? value : defaultValue;
+        }
+        return Object.keys(value).length ? value : defaultValue;
+      default:
+        return Boolean(value) ? value : defaultValue;
     }
-    return defaultValue;
   }
 
   private _componentIds(config: IComponentsIds): IComponentsIds {
@@ -106,7 +109,7 @@ export class ConfigResolver {
       return { ...this.DEFAULT_COMPONENTS_IDS };
     }
     const optionalIds = {
-      animatedCard: this._getValueOrDefault(config.animatedCard, this.DEFAULT_COMPONENTS_IDS.animatedCard),
+      animatedCard: this._getValueOrDefault(config.animatedCard, this.DEFAULT_COMPONENTS_IDS.animatedCard)
     };
     const requiredIds = {
       cardNumber: this._getValueOrDefault(config.cardNumber, this.DEFAULT_COMPONENTS_IDS.cardNumber),
@@ -115,11 +118,11 @@ export class ConfigResolver {
         config.notificationFrame,
         this.DEFAULT_COMPONENTS_IDS.notificationFrame
       ),
-      securityCode: this._getValueOrDefault(config.securityCode, this.DEFAULT_COMPONENTS_IDS.securityCode),
+      securityCode: this._getValueOrDefault(config.securityCode, this.DEFAULT_COMPONENTS_IDS.securityCode)
     };
     return {
       ...optionalIds,
-      ...requiredIds,
+      ...requiredIds
     };
   }
 
@@ -130,14 +133,14 @@ export class ConfigResolver {
         defaultPaymentType: '',
         paymentTypes: [''],
         requestTypes: this.DEFAULT_COMPONENTS_REQUEST_TYPES,
-        startOnLoad: false,
+        startOnLoad: false
       };
     }
     return {
       defaultPaymentType: this._getValueOrDefault(components.defaultPaymentType, ''),
       paymentTypes: this._getValueOrDefault(components.paymentTypes, ['']),
       requestTypes: this._getValueOrDefault(components.requestTypes, this.DEFAULT_COMPONENTS_REQUEST_TYPES),
-      startOnLoad: this._getValueOrDefault(components.startOnLoad, false),
+      startOnLoad: this._getValueOrDefault(components.startOnLoad, false)
     };
   }
 
@@ -147,7 +150,7 @@ export class ConfigResolver {
     }
     return {
       ...apm,
-      requestTypes: components && this._getValueOrDefault(components.requestTypes, this.DEFAULT_APMS_REQUEST_TYPES),
+      requestTypes: components && this._getValueOrDefault(components.requestTypes, this.DEFAULT_APMS_REQUEST_TYPES)
     };
   }
 }

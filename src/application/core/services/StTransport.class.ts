@@ -22,9 +22,9 @@ export class StTransport {
   private static DEFAULT_FETCH_OPTIONS = {
     headers: {
       Accept: StCodec.CONTENT_TYPE,
-      'Content-Type': StCodec.CONTENT_TYPE,
+      'Content-Type': StCodec.CONTENT_TYPE
     },
-    method: 'post',
+    method: 'post'
   };
 
   public static readonly THROTTLE_TIME = 250;
@@ -60,7 +60,7 @@ export class StTransport {
   private sendRequestInternal(requestBody: string): Promise<object> {
     return this._fetchRetry(this._gatewayUrl, {
       ...StTransport.DEFAULT_FETCH_OPTIONS,
-      body: requestBody,
+      body: requestBody
     })
       .then(this._codec.decode)
       .catch(() => {

@@ -96,7 +96,7 @@ export class SecurityCode extends FormField {
   private _broadcastEvent(data: boolean, eventType: string) {
     const messageBusEvent: IMessageBusEvent = {
       data,
-      type: eventType,
+      type: eventType
     };
     this.messageBus.publish(messageBusEvent);
   }

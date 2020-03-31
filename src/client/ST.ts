@@ -93,7 +93,7 @@ class ST {
     const events = {
       success: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK,
       error: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK,
-      submit: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUBMIT_CALLBACK,
+      submit: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUBMIT_CALLBACK
     };
     // @ts-ignore
     this._messageBus.subscribe(events[event], () => {
@@ -147,7 +147,7 @@ class ST {
   public destroy(): void {
     this._messageBus.publish(
       {
-        type: MessageBus.EVENTS_PUBLIC.DESTROY,
+        type: MessageBus.EVENTS_PUBLIC.DESTROY
       },
       true
     );
@@ -224,7 +224,7 @@ class ST {
     return {
       applepay: environment.testEnvironment ? ApplePayMock : ApplePay,
       cardinal: environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce,
-      visa: environment.testEnvironment ? VisaCheckoutMock : VisaCheckout,
+      visa: environment.testEnvironment ? VisaCheckoutMock : VisaCheckout
     };
   }
 
@@ -266,7 +266,7 @@ class ST {
 
     observer.observe(document, {
       subtree: true,
-      childList: true,
+      childList: true
     });
   }
 }

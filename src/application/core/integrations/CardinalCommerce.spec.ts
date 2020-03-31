@@ -62,7 +62,7 @@ describe('CardinalCommerce', () => {
         expect(instance._performBinDetection).toHaveBeenCalledWith('4000000000001000');
         expect(spyPublish).toHaveBeenCalledWith({
           data: { dataInJwt: true, requestTypes: ['THREEDQUERY', 'AUTH'] },
-          type: 'SUBMIT_FORM',
+          type: 'SUBMIT_FORM'
         });
       });
     });
@@ -112,7 +112,7 @@ describe('CardinalCommerce', () => {
         acsurl: 'https://example.com',
         enrolled: 'Y',
         threedpayload: 'CARDINAL_ACS_RESPONSE',
-        transactionreference: '1-2-3',
+        transactionreference: '1-2-3'
       });
       expect(CardinalMock.continue).toHaveBeenCalled();
       expect(CardinalMock.continue).toHaveBeenCalledWith(
@@ -136,8 +136,8 @@ describe('CardinalCommerce', () => {
       expect(CardinalMock.configure).toHaveBeenCalledTimes(1);
       expect(CardinalMock.configure).toHaveBeenCalledWith({
         logging: {
-          level: 'on',
-        },
+          level: 'on'
+        }
       });
       expect(CardinalMock.on).toHaveBeenCalledTimes(2);
       expect(CardinalMock.on.mock.calls[0][0]).toBe('payments.setupComplete');
@@ -152,7 +152,7 @@ describe('CardinalCommerce', () => {
 
       expect(CardinalMock.setup).toHaveBeenCalledTimes(1);
       expect(CardinalMock.setup).toHaveBeenCalledWith('init', {
-        jwt,
+        jwt
       });
     });
 
@@ -352,7 +352,7 @@ describe('CardinalCommerce', () => {
       expect(DomMethods.insertScript).toHaveBeenCalledTimes(1);
       expect(DomMethods.insertScript).toHaveBeenCalledWith('head', {
         id: 'cardinalCommerce',
-        src: 'https://songbirdstag.cardinalcommerce.com/edge/v1/songbird.js',
+        src: 'https://songbirdstag.cardinalcommerce.com/edge/v1/songbird.js'
       });
       expect(script.addEventListener).toHaveBeenCalledTimes(1);
       // @ts-ignore
@@ -403,7 +403,7 @@ describe('CardinalCommerce', () => {
       ['Y', undefined, false],
       ['Y', 'https://example.com', true],
       ['N', 'https://example.com', false],
-      ['N', undefined, false],
+      ['N', undefined, false]
     ]).it(
       'should detect if card is enrolled and we did not get a frictionless 3DS 2.0 response',
       async (enrolled, acsurl, expected) => {
@@ -412,7 +412,7 @@ describe('CardinalCommerce', () => {
           acsurl,
           enrolled,
           threedpayload: 'payload',
-          transactionreference: '1-2-3',
+          transactionreference: '1-2-3'
         };
         // @ts-ignore
         expect(CardinalCommerce._isCardEnrolledAndNotFrictionless(response)).toBe(expected);
@@ -430,7 +430,7 @@ describe('CardinalCommerce', () => {
       expect(instance.messageBus.publish).toHaveBeenCalledTimes(1);
       expect(instance.messageBus.publish).toHaveBeenCalledWith({
         type: 'PROCESS_PAYMENTS',
-        data: { some: 'value', cachetoken: 'tokenValue' },
+        data: { some: 'value', cachetoken: 'tokenValue' }
       });
     });
     // then
@@ -441,7 +441,7 @@ describe('CardinalCommerce', () => {
       expect(instance.messageBus.publish).toHaveBeenCalledTimes(1);
       expect(instance.messageBus.publish).toHaveBeenCalledWith({
         type: 'PROCESS_PAYMENTS',
-        data: { cachetoken: 'tokenValue' },
+        data: { cachetoken: 'tokenValue' }
       });
     });
     // then
@@ -453,7 +453,7 @@ describe('CardinalCommerce', () => {
       expect(instance.messageBus.publish).toHaveBeenCalledTimes(1);
       expect(instance.messageBus.publish).toHaveBeenCalledWith({
         type: 'PROCESS_PAYMENTS',
-        data: { some: 'value', cachetoken: 'tokenValue' },
+        data: { some: 'value', cachetoken: 'tokenValue' }
       });
     });
   });
@@ -462,7 +462,7 @@ describe('CardinalCommerce', () => {
   describe('_bypassInitRequest()', () => {
     const messageBusEvent = {
       data: 'HowmuchisttheFish?:)',
-      type: MessageBus.EVENTS_PUBLIC.BY_PASS_INIT,
+      type: MessageBus.EVENTS_PUBLIC.BY_PASS_INIT
     };
 
     // when
@@ -529,7 +529,7 @@ describe('CardinalCommerce', () => {
     const requestTypes: string[] = ['AUTH', 'WALLETVERIFY'];
     const messageBusEvent = {
       data: { requestTypes },
-      type: MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES,
+      type: MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES
     };
     let spyPublish: SpyInstance;
     // when
@@ -566,7 +566,7 @@ function CardinalCommerceFixture() {
     ActionCode: 'ERROR',
     ErrorDescription: 'Invalid JWT. Error verifying and deserialize JWT.',
     ErrorNumber: 1020,
-    Validated: false,
+    Validated: false
   };
   const jwt =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU3NDIzNDgyLjk0MzE1MywicGF5bG9hZCI6eyJjdXN0b21lcnRvd24iOiJCYW5nb3IiLCJiaWxsaW5ncG9zdGNvZGUiOiJURTEyIDNTVCIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJjdXN0b21lcnByZW1pc2UiOiIxMiIsImJpbGxpbmdsYXN0bmFtZSI6Ik5hbWUiLCJsb2NhbGUiOiJlbl9HQiIsImJhc2VhbW91bnQiOiIxMDAwIiwiYmlsbGluZ2VtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImJpbGxpbmdwcmVtaXNlIjoiMTIiLCJzaXRlcmVmZXJlbmNlIjoidGVzdDEiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImJpbGxpbmdzdHJlZXQiOiJUZXN0IHN0cmVldCIsImN1c3RvbWVyc3RyZWV0IjoiVGVzdCBzdHJlZXQiLCJjdXN0b21lcnBvc3Rjb2RlIjoiVEUxMiAzU1QiLCJjdXN0b21lcmxhc3RuYW1lIjoiTmFtZSIsImJpbGxpbmd0ZWxlcGhvbmUiOiIwMTIzNCAxMTEyMjIiLCJiaWxsaW5nZmlyc3RuYW1lIjoiVGVzdCIsImJpbGxpbmd0b3duIjoiQmFuZ29yIiwiYmlsbGluZ3RlbGVwaG9uZXR5cGUiOiJNIn19.08q3gem0kW0eODs5iGQieKbpqu7pVcvQF2xaJIgtrnc';

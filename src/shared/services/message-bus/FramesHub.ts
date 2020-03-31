@@ -11,7 +11,7 @@ import {
   shareReplay,
   switchMap,
   takeUntil,
-  withLatestFrom,
+  withLatestFrom
 } from 'rxjs/operators';
 import { IMessageBusEvent } from '../../../application/core/models/IMessageBusEvent';
 import { ArrayUtils } from '../../../application/core/shared/utils/ArrayUtils';
@@ -100,7 +100,7 @@ export class FramesHub {
 
     const event: IMessageBusEvent = {
       type: FramesHub.FRAME_READY_EVENT,
-      data: newFrame,
+      data: newFrame
     };
 
     activeFrames.forEach(frame => this.communicator.send(event, frame));

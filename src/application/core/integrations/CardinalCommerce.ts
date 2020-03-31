@@ -77,11 +77,11 @@ export class CardinalCommerce {
       PaymentBrand,
       {
         AcsUrl: responseObject.acsurl,
-        Payload: responseObject.threedpayload,
+        Payload: responseObject.threedpayload
       },
       {
         Cart: [],
-        OrderDetails: { TransactionId: responseObject.acquirertransactionreference },
+        OrderDetails: { TransactionId: responseObject.acquirertransactionreference }
       },
       this._cardinalCommerceJWT
     );
@@ -89,7 +89,7 @@ export class CardinalCommerce {
 
   protected _cardinalSetup() {
     Cardinal.setup(PaymentEvents.INIT, {
-      jwt: this._cardinalCommerceJWT,
+      jwt: this._cardinalCommerceJWT
     });
   }
 
@@ -124,12 +124,12 @@ export class CardinalCommerce {
       this._performBinDetection(pan);
       const submitFormEvent: IMessageBusEvent = {
         data: { dataInJwt: true, requestTypes: this._requestTypes, bypassCards: this._bypassCards },
-        type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM,
+        type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
       };
       this.messageBus.publish(submitFormEvent);
     } else {
       const messageBusEvent: IMessageBusEvent = {
-        type: MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL,
+        type: MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL
       };
       this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BIN_PROCESS, (data: IFormFieldState) => {
         const { value } = data;
@@ -150,19 +150,19 @@ export class CardinalCommerce {
       acquirerresponsecode: errorNum,
       acquirerresponsemessage: ErrorDescription,
       errorcode: '50003',
-      errormessage: Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE,
+      errormessage: Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE
     };
     responseData.errormessage = translator.translate(responseData.errormessage);
     const notificationEvent: IMessageBusEvent = {
       data: responseData,
-      type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE,
+      type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE
     };
 
     if (CardinalCommerceValidationStatus.includes(ActionCode)) {
       this._authorizePayment({ threedresponse: jwt });
     } else {
       const resetNotificationEvent: IMessageBusEvent = {
-        type: MessageBus.EVENTS_PUBLIC.RESET_JWT,
+        type: MessageBus.EVENTS_PUBLIC.RESET_JWT
       };
       this.messageBus.publish(resetNotificationEvent);
       this.messageBus.publish(notificationEvent);
@@ -177,7 +177,7 @@ export class CardinalCommerce {
   protected _threeDSetup() {
     DomMethods.insertScript('head', {
       src: this._sdkAddress,
-      id: 'cardinalCommerce',
+      id: 'cardinalCommerce'
     }).then(() => this._onCardinalLoad());
   }
 
@@ -190,7 +190,7 @@ export class CardinalCommerce {
 
     const messageBusEvent: IMessageBusEvent = {
       data,
-      type: MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS,
+      type: MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS
     };
     this.messageBus.publish(messageBusEvent);
     GoogleAnalytics.sendGaData('event', 'Cardinal', 'auth', 'Cardinal auth completed');
@@ -216,7 +216,7 @@ export class CardinalCommerce {
     this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(() => {
       this.messageBus.publish({
         data: { requestTypes },
-        type: MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES,
+        type: MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES
       });
     });
   }
@@ -259,7 +259,7 @@ export class CardinalCommerce {
   private _bypassInitRequest() {
     const messageBusEvent: IMessageBusEvent = {
       data: this._cachetoken,
-      type: MessageBus.EVENTS_PUBLIC.BY_PASS_INIT,
+      type: MessageBus.EVENTS_PUBLIC.BY_PASS_INIT
     };
     this.messageBus.publish(messageBusEvent);
   }
@@ -272,7 +272,7 @@ export class CardinalCommerce {
 
   private _threeDInitRequest() {
     const messageBusEvent: IMessageBusEvent = {
-      type: MessageBus.EVENTS_PUBLIC.THREEDINIT_REQUEST,
+      type: MessageBus.EVENTS_PUBLIC.THREEDINIT_REQUEST
     };
     this.messageBus.publish(messageBusEvent);
   }
@@ -292,7 +292,7 @@ export class CardinalCommerce {
       const postData: any = {
         expirydate,
         pan,
-        securitycode,
+        securitycode
       };
 
       this._byPassAuthorizePayment(postData);
@@ -302,7 +302,7 @@ export class CardinalCommerce {
   private _byPassAuthorizePayment(data: any): void {
     const messageBusEvent: IMessageBusEvent = {
       data,
-      type: MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS,
+      type: MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS
     };
     this.messageBus.publish(messageBusEvent);
   }

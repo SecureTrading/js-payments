@@ -19,12 +19,12 @@ describe('StCodec class', () => {
   StCodec.getNotification().error = jest.fn();
   const fullResponse = {
     jwt:
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NjExMTUyMDksInBheWxvYWQiOnsicmVxdWVzdHJlZmVyZW5jZSI6IlczMy0wcm0wZ2N5eCIsInJlc3BvbnNlIjpbeyJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImFjcXVpcmVycmVzcG9uc2Vjb2RlIjoiMDAiLCJhdXRoY29kZSI6IlRFU1Q1NiIsImJhc2VhbW91bnQiOiIxMDAiLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwiZGNjZW5hYmxlZCI6IjAiLCJlcnJvcmNvZGUiOiIwIiwiZXJyb3JtZXNzYWdlIjoiT2siLCJpc3N1ZXIiOiJTZWN1cmVUcmFkaW5nIFRlc3QgSXNzdWVyMSIsImlzc3VlcmNvdW50cnlpc28yYSI6IlVTIiwibGl2ZXN0YXR1cyI6IjAiLCJtYXNrZWRwYW4iOiI0MTExMTEjIyMjIyMwMjExIiwibWVyY2hhbnRjb3VudHJ5aXNvMmEiOiJHQiIsIm1lcmNoYW50bmFtZSI6IndlYnNlcnZpY2UgVU5JQ09ERSBtZXJjaGFudG5hbWUiLCJtZXJjaGFudG51bWJlciI6IjAwMDAwMDAwIiwib3BlcmF0b3JuYW1lIjoid2Vic2VydmljZXNAc2VjdXJldHJhZGluZy5jb20iLCJvcmRlcnJlZmVyZW5jZSI6IkFVVEhfVklTQV9QT1NULVBBU1MtSlNPTi1KU09OIiwicGF5bWVudHR5cGVkZXNjcmlwdGlvbiI6IlZJU0EiLCJyZXF1ZXN0dHlwZWRlc2NyaXB0aW9uIjoiQVVUSCIsInNlY3VyaXR5cmVzcG9uc2VhZGRyZXNzIjoiMiIsInNlY3VyaXR5cmVzcG9uc2Vwb3N0Y29kZSI6IjIiLCJzZWN1cml0eXJlc3BvbnNlc2VjdXJpdHljb2RlIjoiMiIsInNldHRsZWR1ZWRhdGUiOiIyMDE5LTAyLTIxIiwic2V0dGxlc3RhdHVzIjoiMCIsInNwbGl0ZmluYWxudW1iZXIiOiIxIiwidGlkIjoiMjc4ODI3ODgiLCJ0cmFuc2FjdGlvbnJlZmVyZW5jZSI6IjMzLTktODAxNjgiLCJ0cmFuc2FjdGlvbnN0YXJ0ZWR0aW1lc3RhbXAiOiIyMDE5LTAyLTIxIDEwOjA2OjM1In1dLCJzZWNyYW5kIjoiWktBVk1za1dRIiwidmVyc2lvbiI6IjEuMDAifX0.lLHIs5UsXht0IyFCGEF_x7AM4u_lOWX47J5cCuakqtc',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NjExMTUyMDksInBheWxvYWQiOnsicmVxdWVzdHJlZmVyZW5jZSI6IlczMy0wcm0wZ2N5eCIsInJlc3BvbnNlIjpbeyJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImFjcXVpcmVycmVzcG9uc2Vjb2RlIjoiMDAiLCJhdXRoY29kZSI6IlRFU1Q1NiIsImJhc2VhbW91bnQiOiIxMDAiLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwiZGNjZW5hYmxlZCI6IjAiLCJlcnJvcmNvZGUiOiIwIiwiZXJyb3JtZXNzYWdlIjoiT2siLCJpc3N1ZXIiOiJTZWN1cmVUcmFkaW5nIFRlc3QgSXNzdWVyMSIsImlzc3VlcmNvdW50cnlpc28yYSI6IlVTIiwibGl2ZXN0YXR1cyI6IjAiLCJtYXNrZWRwYW4iOiI0MTExMTEjIyMjIyMwMjExIiwibWVyY2hhbnRjb3VudHJ5aXNvMmEiOiJHQiIsIm1lcmNoYW50bmFtZSI6IndlYnNlcnZpY2UgVU5JQ09ERSBtZXJjaGFudG5hbWUiLCJtZXJjaGFudG51bWJlciI6IjAwMDAwMDAwIiwib3BlcmF0b3JuYW1lIjoid2Vic2VydmljZXNAc2VjdXJldHJhZGluZy5jb20iLCJvcmRlcnJlZmVyZW5jZSI6IkFVVEhfVklTQV9QT1NULVBBU1MtSlNPTi1KU09OIiwicGF5bWVudHR5cGVkZXNjcmlwdGlvbiI6IlZJU0EiLCJyZXF1ZXN0dHlwZWRlc2NyaXB0aW9uIjoiQVVUSCIsInNlY3VyaXR5cmVzcG9uc2VhZGRyZXNzIjoiMiIsInNlY3VyaXR5cmVzcG9uc2Vwb3N0Y29kZSI6IjIiLCJzZWN1cml0eXJlc3BvbnNlc2VjdXJpdHljb2RlIjoiMiIsInNldHRsZWR1ZWRhdGUiOiIyMDE5LTAyLTIxIiwic2V0dGxlc3RhdHVzIjoiMCIsInNwbGl0ZmluYWxudW1iZXIiOiIxIiwidGlkIjoiMjc4ODI3ODgiLCJ0cmFuc2FjdGlvbnJlZmVyZW5jZSI6IjMzLTktODAxNjgiLCJ0cmFuc2FjdGlvbnN0YXJ0ZWR0aW1lc3RhbXAiOiIyMDE5LTAyLTIxIDEwOjA2OjM1In1dLCJzZWNyYW5kIjoiWktBVk1za1dRIiwidmVyc2lvbiI6IjEuMDAifX0.lLHIs5UsXht0IyFCGEF_x7AM4u_lOWX47J5cCuakqtc'
   };
 
   const fullResponseError = {
     jwt:
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NjExMTUyMDksInBheWxvYWQiOnsicmVxdWVzdHJlZmVyZW5jZSI6IlczMy0wcm0wZ2N5eCIsInJlc3BvbnNlIjpbeyJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImFjcXVpcmVycmVzcG9uc2Vjb2RlIjoiMDAiLCJhdXRoY29kZSI6IlRFU1Q1NiIsImJhc2VhbW91bnQiOiIxMDAiLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwiZGNjZW5hYmxlZCI6IjAiLCJlcnJvcmNvZGUiOiIzMDAwMCIsImVycm9ybWVzc2FnZSI6IkludmFsaWQgZmllbGQiLCJpc3N1ZXIiOiJTZWN1cmVUcmFkaW5nIFRlc3QgSXNzdWVyMSIsImlzc3VlcmNvdW50cnlpc28yYSI6IlVTIiwibGl2ZXN0YXR1cyI6IjAiLCJtYXNrZWRwYW4iOiI0MTExMTEjIyMjIyMwMjExIiwibWVyY2hhbnRjb3VudHJ5aXNvMmEiOiJHQiIsIm1lcmNoYW50bmFtZSI6IndlYnNlcnZpY2UgVU5JQ09ERSBtZXJjaGFudG5hbWUiLCJtZXJjaGFudG51bWJlciI6IjAwMDAwMDAwIiwib3BlcmF0b3JuYW1lIjoid2Vic2VydmljZXNAc2VjdXJldHJhZGluZy5jb20iLCJvcmRlcnJlZmVyZW5jZSI6IkFVVEhfVklTQV9QT1NULVBBU1MtSlNPTi1KU09OIiwicGF5bWVudHR5cGVkZXNjcmlwdGlvbiI6IlZJU0EiLCJyZXF1ZXN0dHlwZWRlc2NyaXB0aW9uIjoiQVVUSCIsInNlY3VyaXR5cmVzcG9uc2VhZGRyZXNzIjoiMiIsInNlY3VyaXR5cmVzcG9uc2Vwb3N0Y29kZSI6IjIiLCJzZWN1cml0eXJlc3BvbnNlc2VjdXJpdHljb2RlIjoiMiIsInNldHRsZWR1ZWRhdGUiOiIyMDE5LTAyLTIxIiwic2V0dGxlc3RhdHVzIjoiMCIsInNwbGl0ZmluYWxudW1iZXIiOiIxIiwidGlkIjoiMjc4ODI3ODgiLCJ0cmFuc2FjdGlvbnJlZmVyZW5jZSI6IjMzLTktODAxNjgiLCJ0cmFuc2FjdGlvbnN0YXJ0ZWR0aW1lc3RhbXAiOiIyMDE5LTAyLTIxIDEwOjA2OjM1In1dLCJzZWNyYW5kIjoiWktBVk1za1dRIiwidmVyc2lvbiI6IjEuMDAifX0.i9YzLn9bQfve_odfCQD4KDchekY_vsDXOiFqZbEb0Jc',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NjExMTUyMDksInBheWxvYWQiOnsicmVxdWVzdHJlZmVyZW5jZSI6IlczMy0wcm0wZ2N5eCIsInJlc3BvbnNlIjpbeyJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImFjcXVpcmVycmVzcG9uc2Vjb2RlIjoiMDAiLCJhdXRoY29kZSI6IlRFU1Q1NiIsImJhc2VhbW91bnQiOiIxMDAiLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwiZGNjZW5hYmxlZCI6IjAiLCJlcnJvcmNvZGUiOiIzMDAwMCIsImVycm9ybWVzc2FnZSI6IkludmFsaWQgZmllbGQiLCJpc3N1ZXIiOiJTZWN1cmVUcmFkaW5nIFRlc3QgSXNzdWVyMSIsImlzc3VlcmNvdW50cnlpc28yYSI6IlVTIiwibGl2ZXN0YXR1cyI6IjAiLCJtYXNrZWRwYW4iOiI0MTExMTEjIyMjIyMwMjExIiwibWVyY2hhbnRjb3VudHJ5aXNvMmEiOiJHQiIsIm1lcmNoYW50bmFtZSI6IndlYnNlcnZpY2UgVU5JQ09ERSBtZXJjaGFudG5hbWUiLCJtZXJjaGFudG51bWJlciI6IjAwMDAwMDAwIiwib3BlcmF0b3JuYW1lIjoid2Vic2VydmljZXNAc2VjdXJldHJhZGluZy5jb20iLCJvcmRlcnJlZmVyZW5jZSI6IkFVVEhfVklTQV9QT1NULVBBU1MtSlNPTi1KU09OIiwicGF5bWVudHR5cGVkZXNjcmlwdGlvbiI6IlZJU0EiLCJyZXF1ZXN0dHlwZWRlc2NyaXB0aW9uIjoiQVVUSCIsInNlY3VyaXR5cmVzcG9uc2VhZGRyZXNzIjoiMiIsInNlY3VyaXR5cmVzcG9uc2Vwb3N0Y29kZSI6IjIiLCJzZWN1cml0eXJlc3BvbnNlc2VjdXJpdHljb2RlIjoiMiIsInNldHRsZWR1ZWRhdGUiOiIyMDE5LTAyLTIxIiwic2V0dGxlc3RhdHVzIjoiMCIsInNwbGl0ZmluYWxudW1iZXIiOiIxIiwidGlkIjoiMjc4ODI3ODgiLCJ0cmFuc2FjdGlvbnJlZmVyZW5jZSI6IjMzLTktODAxNjgiLCJ0cmFuc2FjdGlvbnN0YXJ0ZWR0aW1lc3RhbXAiOiIyMDE5LTAyLTIxIDEwOjA2OjM1In1dLCJzZWNyYW5kIjoiWktBVk1za1dRIiwidmVyc2lvbiI6IjEuMDAifX0.i9YzLn9bQfve_odfCQD4KDchekY_vsDXOiFqZbEb0Jc'
   };
 
   // given
@@ -68,7 +68,7 @@ describe('StCodec class', () => {
       // @ts-ignore
       StCodec._determineResponse.mockReturnValueOnce({ determined: 'response' });
       expect(StCodec.verifyResponseObject({ 'a response': 'some data' }, 'ajwtstring')).toMatchObject({
-        determined: 'response',
+        determined: 'response'
       });
       // @ts-ignore
       expect(StCodec._isInvalidResponse).toHaveBeenCalledTimes(1);
@@ -114,7 +114,7 @@ describe('StCodec class', () => {
       // @ts-ignore
       StCodec.publishResponse({
         errorcode: '0',
-        errormessage: 'Payment has been successfully processed',
+        errormessage: 'Payment has been successfully processed'
       });
       // @ts-ignore
       expect(translator.translate()).toEqual('Ok');
@@ -123,9 +123,9 @@ describe('StCodec class', () => {
         {
           data: {
             errorcode: '0',
-            errormessage: 'Payment has been successfully processed',
+            errormessage: 'Payment has been successfully processed'
           },
-          type: 'TRANSACTION_COMPLETE',
+          type: 'TRANSACTION_COMPLETE'
         },
         true
       );
@@ -138,7 +138,7 @@ describe('StCodec class', () => {
       // @ts-ignore
       StCodec.publishResponse({
         errorcode: '0',
-        errormessage: 'Ok',
+        errormessage: 'Ok'
       });
       // @ts-ignore
       expect(translator.translate()).toEqual('Ok');
@@ -146,9 +146,9 @@ describe('StCodec class', () => {
       expect(StCodec.getMessageBus().publish).toHaveBeenCalledWith({
         data: {
           errorcode: '0',
-          errormessage: 'Payment has been successfully processed',
+          errormessage: 'Payment has been successfully processed'
         },
-        type: 'TRANSACTION_COMPLETE',
+        type: 'TRANSACTION_COMPLETE'
       });
     });
 
@@ -157,7 +157,7 @@ describe('StCodec class', () => {
       StCodec.publishResponse(
         {
           errorcode: '0',
-          errormessage: 'Ok',
+          errormessage: 'Ok'
         },
         'someJwtResponse'
       );
@@ -170,7 +170,7 @@ describe('StCodec class', () => {
       StCodec.publishResponse(
         {
           errorcode: '0',
-          errormessage: 'Ok',
+          errormessage: 'Ok'
         },
         'someJwtResponse',
         'someThreedresponse'
@@ -187,7 +187,7 @@ describe('StCodec class', () => {
       // @ts-ignore
       expect(StCodec._createCommunicationError()).toMatchObject({
         errorcode: '50003',
-        errormessage: 'Invalid response',
+        errormessage: 'Invalid response'
       });
     });
   });
@@ -217,37 +217,37 @@ describe('StCodec class', () => {
       [{ response: [{ requesttypedescription: 'AUTH' }] }, { requesttypedescription: 'AUTH' }],
       [
         { response: [{ requesttypedescription: 'AUTH' }, { requesttypedescription: 'CHARGEBACK' }] },
-        { requesttypedescription: 'CHARGEBACK' },
+        { requesttypedescription: 'CHARGEBACK' }
       ],
       [
         {
           response: [
             { requesttypedescription: 'AUTH', customeroutput: 'RESULT' },
-            { requesttypedescription: 'CHARGEBACK' },
-          ],
+            { requesttypedescription: 'CHARGEBACK' }
+          ]
         },
-        { requesttypedescription: 'AUTH', customeroutput: 'RESULT' },
+        { requesttypedescription: 'AUTH', customeroutput: 'RESULT' }
       ],
       [
         {
           response: [
             { requesttypedescription: 'AUTH', customeroutput: 'RESULT' },
             { requesttypedescription: 'RISKDEC' },
-            { requesttypedescription: 'CHARGEBACK' },
-          ],
+            { requesttypedescription: 'CHARGEBACK' }
+          ]
         },
-        { requesttypedescription: 'AUTH', customeroutput: 'RESULT' },
+        { requesttypedescription: 'AUTH', customeroutput: 'RESULT' }
       ],
       [
         {
           response: [
             { requesttypedescription: 'AUTH' },
             { requesttypedescription: 'RISKDEC', customeroutput: 'RESULT' },
-            { requesttypedescription: 'CHARGEBACK' },
-          ],
+            { requesttypedescription: 'CHARGEBACK' }
+          ]
         },
-        { requesttypedescription: 'RISKDEC', customeroutput: 'RESULT' },
-      ],
+        { requesttypedescription: 'RISKDEC', customeroutput: 'RESULT' }
+      ]
     ]).it('should return a valid response ', (requestObject, expected) => {
       // @ts-ignore
       expect(StCodec._determineResponse(requestObject)).toEqual(expected);
@@ -305,7 +305,7 @@ describe('StCodec class', () => {
         errorcode: '30000',
         errordata: ['afield'],
         errormessage: 'Invalid field',
-        requesttypedescription: 'AUTH',
+        requesttypedescription: 'AUTH'
       };
       const jwt = 'jwtString';
       // @ts-ignore
@@ -331,7 +331,7 @@ describe('StCodec class', () => {
         iat: 1516239022,
         name: 'John Doe',
         payload: { something: 'thats decoded' },
-        sub: '1234567890',
+        sub: '1234567890'
       });
       expect(mock).toHaveBeenCalledTimes(0);
     });
@@ -384,22 +384,22 @@ describe('StCodec class', () => {
     each([
       [
         { pan: '4111111111111111', expirydate: '12/12', securitycode: '321' },
-        { pan: '4111111111111111', expirydate: '12/12', securitycode: '321', sitereference: 'live2' },
+        { pan: '4111111111111111', expirydate: '12/12', securitycode: '321', sitereference: 'live2' }
       ],
       [
         {
           requestid: 'number1',
-          requesttypedescriptions: ['CACHETOKENISE'],
+          requesttypedescriptions: ['CACHETOKENISE']
         },
-        { requesttypedescriptions: ['CACHETOKENISE'], sitereference: 'live2' },
-      ],
+        { requesttypedescriptions: ['CACHETOKENISE'], sitereference: 'live2' }
+      ]
     ]).it('should build the request for a valid object', (requestObject, expected) => {
       expect(str.buildRequestObject(requestObject)).toEqual({
         acceptcustomeroutput: '1.00',
         jwt,
         request: [{ requestid, ...expected }],
         version: StCodec.VERSION,
-        versioninfo: 'STJS::N/A::2.0.0::N/A',
+        versioninfo: 'STJS::N/A::2.0.0::N/A'
       });
     });
   });
@@ -426,7 +426,7 @@ describe('StCodec class', () => {
               ridRegex +
               '","sitereference":"live2"}\\],"version":"1.00","versioninfo":"STJS::N/A::2.0.0::N/A"}$'
           )
-        ),
+        )
       ],
       [
         { pan: '4111111111111111', requesttypedescriptions: ['AUTH', 'SUBSCRIPTION'] },
@@ -439,8 +439,8 @@ describe('StCodec class', () => {
               ridRegex +
               '","sitereference":"live2"}\\],"version":"1.00","versioninfo":"STJS::N/A::2.0.0::N/A"}$'
           )
-        ),
-      ],
+        )
+      ]
     ]).it('should encode valid data', (request, expected) => {
       str.buildRequestObject = jest.fn(str.buildRequestObject);
       expect(str.encode(request)).toEqual(expected);
@@ -452,7 +452,7 @@ describe('StCodec class', () => {
       expect(() =>
         str.encode({
           pan: '4111111111111111',
-          requesttypedescriptions: ['LARGEHADRONCOLLIDER'],
+          requesttypedescriptions: ['LARGEHADRONCOLLIDER']
         })
       ).toThrow(Error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST));
     });
@@ -462,7 +462,7 @@ describe('StCodec class', () => {
       expect(() =>
         str.encode({
           pan: '4111111111111111',
-          requesttypedescriptions: ['AUTH', 'LARGEHADRONCOLLIDER'],
+          requesttypedescriptions: ['AUTH', 'LARGEHADRONCOLLIDER']
         })
       ).toThrow(Error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST));
     });
@@ -484,7 +484,7 @@ describe('StCodec class', () => {
       [{ version: '3.02' }, true],
       [{ version: '1.00', response: [] }, true],
       [{ version: '1.00', response: [{}] }, false],
-      [{ version: '1.00', response: [{}, {}] }, false],
+      [{ version: '1.00', response: [{}, {}] }, false]
     ]).it('should verify the version and number of responses', (responseData, expected) => {
       // @ts-ignore
       expect(instance._isInvalidResponse(responseData)).toBe(expected);
@@ -509,7 +509,7 @@ describe('StCodec class', () => {
         str.decode({
           json: () => {
             return new Promise(resolve => resolve(fullResponse));
-          },
+          }
         })
       ).resolves.toEqual({ jwt: fullResponse.jwt, response: { verified: 'data' } });
       const expectedResult = (JwtDecode(fullResponse.jwt) as any).payload;
@@ -528,9 +528,9 @@ describe('StCodec class', () => {
   describe('StCodec.updateJWTValue', () => {
     const messageBusEvent = {
       data: {
-        newJwt: 'somenewjwt',
+        newJwt: 'somenewjwt'
       },
-      type: MessageBus.EVENTS_PUBLIC.UPDATE_JWT,
+      type: MessageBus.EVENTS_PUBLIC.UPDATE_JWT
     };
 
     // when
