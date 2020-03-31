@@ -15,7 +15,7 @@ import { NotificationService } from '../services/notification/NotificationServic
 class StCodec {
   public static CONTENT_TYPE = 'application/json';
   public static VERSION = '1.00';
-  public static VERSION_INFO = `STJS::N/A::${ version }::N/A`;
+  public static VERSION_INFO = `STJS::N/A::${version}::N/A`;
   public static SUPPORTED_REQUEST_TYPES = [
     'WALLETVERIFY',
     'JSINIT',
@@ -175,7 +175,9 @@ class StCodec {
         StCodec.publishResponse(responseContent, jwtResponse);
         StCodec.getNotification().error(responseContent.errormessage);
         StCodec.getMessageBus().publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
-        // throw new Error(responseContent.errormessage);
+        if (!(responseContent.walletsource && responseContent.walletsource === 'APPLEPAY')) {
+          throw new Error(responseContent.errormessage);
+        }
       }
     }
     StCodec.publishResponse(responseContent, jwtResponse);
