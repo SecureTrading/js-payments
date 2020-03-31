@@ -35,10 +35,7 @@
   },
   "components": {
     "defaultPaymentType": "",
-    "requestTypes": [
-      "THREEDQUERY",
-      "AUTH"
-    ],
+    "requestTypes": [],
     "paymentTypes": [],
     "startOnLoad": false
   },
@@ -55,7 +52,7 @@
     "cachetoken": "",
     "threedinit": ""
   },
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4NTY2Mzc3NC45Mjk4ODUsInBheWxvYWQiOnsibWFpbmFtb3VudCI6IjEwLjAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.pNXDBSS3tU4W0sRg7fNYoik9duZ5bl6fwec0cD4b9ZU",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4NTY2OTYzMi44ODk3MTg4LCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIxMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.e1jtvIZW3Dm1AVrllnM2V1_qIm7XvwllMGDGAKYCa20",
   "livestatus": 0,
   "origin": "",
   "placeholders": {
@@ -64,10 +61,7 @@
     "securitycode": "***"
   },
   "panIcon": true,
-  "requestTypes": [
-    "THREEDQUERY",
-    "AUTH"
-  ],
+  "requestTypes": [],
   "styles": {
     "defaultStyles": {
       "background-color-input": "AliceBlue"
@@ -110,9 +104,7 @@
       "subtotal": "20.00"
     },
     "placement": "st-visa-checkout",
-    "requestTypes": [
-      "AUTH"
-    ],
+    "requestTypes": [],
     "settings": {
       "displayName": "My Test Site"
     }

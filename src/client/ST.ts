@@ -107,9 +107,14 @@ class ST {
 
   public Components(config: IComponentsConfig): void {
     this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(async controlFrame => {
-      config = config !== undefined ? config : ({} as IComponentsConfig);
-      this._config = { ...this._config, components: { ...this._config.components, ...config } };
-      this.configProvider.update(this._config);
+      config = config || {};
+      this._config = this.configProvider.update({
+        ...this._config,
+        components: {
+          ...this._config.components,
+          ...config
+        }
+      });
       this._commonFrames.requestTypes = this._config.components.requestTypes;
       this.CardinalCommerce();
       await this._communicator.query({ type: MessageBus.EVENTS_PUBLIC.CONFIG_CHECK }, controlFrame);
@@ -272,7 +277,7 @@ class ST {
 }
 
 export default (config: IConfig) => {
-  Container.get(ConfigService).initialize(config);
+  Container.get(ConfigService).update(config);
 
   return Container.get(ST);
 };
