@@ -43,11 +43,11 @@ export class Payment {
     additionalData?: any
   ): Promise<object> {
     const processPaymentRequestBody = {
-      additionalData,
-      merchantData,
-      payment,
       requesttypedescriptions: requestTypes,
-      fraudcontroltransactionid: await this._cybertonica.getTransactionId()
+      fraudcontroltransactionid: await this._cybertonica.getTransactionId(),
+      ...additionalData,
+      ...merchantData,
+      ...payment
     };
 
     return this._stTransport.sendRequest(processPaymentRequestBody);
@@ -71,12 +71,12 @@ export class Payment {
 
   public async threeDQueryRequest(requestTypes: string[], card: ICard, merchantData: IMerchantData): Promise<object> {
     const threeDQueryRequestBody = {
-      merchantData,
-      card,
       cachetoken: this._cardinalCommerceCacheToken,
       requesttypedescriptions: requestTypes,
       termurl: 'https://termurl.com', // TODO this shouldn't be needed but currently the backend needs this
-      fraudcontroltransactionid: await this._cybertonica.getTransactionId()
+      fraudcontroltransactionid: await this._cybertonica.getTransactionId(),
+      ...merchantData,
+      ...card
     };
 
     return this._stTransport.sendRequest(threeDQueryRequestBody);

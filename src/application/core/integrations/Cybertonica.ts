@@ -22,9 +22,11 @@ export class Cybertonica {
   }
 
   public init(apiUserName: string): Promise<string> {
-    return DomMethods.insertScript(Cybertonica.SCRIPT_TARGET, { src: Cybertonica.SDK_ADDRESS }).then(
+    this.tid = DomMethods.insertScript(Cybertonica.SCRIPT_TARGET, { src: Cybertonica.SDK_ADDRESS }).then(
       () => AFCYBERTONICA.init(apiUserName) || this.initFailed()
     );
+
+    return this.tid;
   }
 
   public getTransactionId(): Promise<string> {
