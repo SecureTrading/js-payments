@@ -166,7 +166,7 @@ class StCodec {
     const translator = new Translator(StCodec._locale);
     const validation = new Validation();
 
-    const { errorcode, errormessage, walletsource, requesttypedescription } = responseContent;
+    const { errorcode, errormessage, requesttypedescription } = responseContent;
 
     const errormessageTranslated = translator.translate(errormessage);
 
@@ -179,24 +179,22 @@ class StCodec {
       return;
     }
 
-    if (errorcode === StCodec.STATUS_CODES.invalidfield) {
-      validation.getErrorData(StCodec.getErrorData(responseContent));
-      validation.blockForm(FormState.AVAILABLE);
+    if (responseContent.walletsource && responseContent.walletsource === 'APPLEPAY') {
       StCodec.getNotification().error(errormessageTranslated);
       StCodec.getMessageBus().publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
       StCodec.publishResponse(responseContent, jwtResponse);
       return;
     }
 
+    if (errorcode === StCodec.STATUS_CODES.invalidfield) {
+      validation.getErrorData(StCodec.getErrorData(responseContent));
+    }
+
     validation.blockForm(FormState.AVAILABLE);
     StCodec.getNotification().error(errormessageTranslated);
     StCodec.getMessageBus().publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
     StCodec.publishResponse(responseContent, jwtResponse);
-
-    return;
-    // if (!(responseContent.walletsource && responseContent.walletsource === 'APPLEPAY')) {
-    //   throw new Error(responseContent.errormessage);
-    // }
+    throw new Error(errormessage);
   }
 
   private static _decodeResponseJwt(jwt: string, reject: (error: Error) => void) {
