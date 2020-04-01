@@ -16,8 +16,8 @@ export interface IConfig {
   components?: IComponentsConfig;
   componentIds?: IComponentsIds;
   datacenterurl?: string;
-  disableNotification: boolean;
   deferInit?: boolean;
+  disableNotification: boolean;
   fieldsToSubmit?: string[];
   formId?: string;
   init?: IBypassInit;

@@ -27,9 +27,6 @@ export class Notification {
 
   private static readonly NOTIFICATION_TTL = environment.NOTIFICATION_TTL;
 
-  public static getNotificationContainer = (): HTMLElement =>
-    document.getElementById(Selectors.NOTIFICATION_FRAME_ID) as HTMLElement;
-
   public _getMessageClass(messageType: string): string {
     return this._messageMap.get(messageType.toLowerCase());
   }
@@ -44,8 +41,9 @@ export class Notification {
     private _configProvider: ConfigProvider
   ) {
     this._messageMap = new Map(Object.entries(Notification.NOTIFICATION_CLASSES));
-    this._notificationFrameElement = Notification.getNotificationContainer();
-
+    this._notificationFrameElement = document.getElementById(
+      this._configProvider.getConfig().componentIds.notificationFrame
+    );
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, (event: INotificationEvent) => {
       this._displayNotification(event);
     });

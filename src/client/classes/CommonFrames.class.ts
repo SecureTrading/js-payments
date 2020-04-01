@@ -8,6 +8,7 @@ import { Validation } from '../../application/core/shared/Validation';
 import { RegisterFrames } from './RegisterFrames.class';
 import { Container } from 'typedi';
 import { BrowserLocalStorage } from '../../shared/services/storage/BrowserLocalStorage';
+import { IComponentsIds } from '../../shared/model/config/IComponentsIds';
 
 export class CommonFrames extends RegisterFrames {
   get requestTypes(): string[] {
@@ -37,7 +38,7 @@ export class CommonFrames extends RegisterFrames {
   constructor(
     jwt: string,
     origin: string,
-    componentIds: {},
+    componentIds: IComponentsIds,
     styles: IStyles,
     submitOnSuccess: boolean,
     submitOnError: boolean,
@@ -137,7 +138,7 @@ export class CommonFrames extends RegisterFrames {
 
   private _onTransactionComplete(data: any) {
     if (this._isTransactionFinished(data) || data.errorcode !== '0') {
-      this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUBMIT_CALLBACK }, true);
+      this._messageBus.publish({ data, type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUBMIT_CALLBACK }, true);
     }
     if (this._shouldSubmitForm(data)) {
       const form = this._merchantForm;
