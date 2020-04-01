@@ -15,7 +15,7 @@ export class Cybertonica {
   private static SCRIPT_TARGET: string = 'head';
 
   private translator: Translator;
-  private tid: Promise<string>;
+  private tid: Promise<string> = Promise.resolve(undefined);
 
   constructor(private storage: BrowserLocalStorage) {
     this.translator = new Translator(this.storage.getItem(Cybertonica.LOCALE));

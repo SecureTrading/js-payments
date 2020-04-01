@@ -117,5 +117,5 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
       displayName: Joi.string()
     }
   },
-  cybertonicaApiKey: Joi.string()
+  cybertonicaApiKey: Joi.string().allow('')
 });
