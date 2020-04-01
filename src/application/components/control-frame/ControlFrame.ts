@@ -421,10 +421,10 @@ export class ControlFrame extends Frame {
   }
 
   private _initCybertonica(): void {
-    const config = this._configProvider.getConfig();
+    const { cybertonicaApiKey } = this._configProvider.getConfig();
 
-    if (config.cybertonicaApiKey) {
-      this._cybertonica.init(config.cybertonicaApiKey);
+    if (cybertonicaApiKey) {
+      this._cybertonica.init(cybertonicaApiKey);
     }
   }
 }

@@ -4,13 +4,13 @@ import { Service } from 'typedi';
 import { IAFCybertonica } from '../models/cybertonica/IAFCybertonica';
 import { environment } from '../../../environments/environment';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
+import { Language } from '../shared/Language';
 
 declare const AFCYBERTONICA: IAFCybertonica;
 
 @Service()
 export class Cybertonica {
   private static readonly SDK_ADDRESS = environment.CYBERTONICA.CYBERTONICA_LIVE_URL;
-  private static ERROR_KEY: string = 'An error occurred';
   private static LOCALE: string = 'locale';
   private static SCRIPT_TARGET: string = 'head';
 
@@ -34,6 +34,6 @@ export class Cybertonica {
   }
 
   private initFailed(): void {
-    throw new Error(this.translator.translate(Cybertonica.ERROR_KEY));
+    throw new Error(this.translator.translate(Language.translations.PAYMENT_ERROR));
   }
 }
