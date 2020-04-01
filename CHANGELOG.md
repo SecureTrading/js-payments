@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.8
+
+### Fixed
+
+- Fixed submitCallback to be specified in config not just on the ST instance.
+- Fixed submitCallback to be passed data as previously
+
 ## 2.0.7
 
 ### Added

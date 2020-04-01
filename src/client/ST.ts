@@ -96,8 +96,8 @@ class ST {
       submit: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUBMIT_CALLBACK
     };
     // @ts-ignore
-    this._messageBus.subscribe(events[event], () => {
-      callback();
+    this._messageBus.subscribe(events[event], data => {
+      callback(data);
     });
   }
 
@@ -170,7 +170,7 @@ class ST {
   private init(): void {
     // TODO theres probably a better way rather than having to remember to update Selectors
     Selectors.MERCHANT_FORM_SELECTOR = this._config.formId;
-
+    this.initCallbacks(this._config);
     this.Storage(this._config);
     this._translation = new Translator(this._storage.getItem(ST.LOCALE_STORAGE));
     this._googleAnalytics.init();
@@ -273,6 +273,20 @@ class ST {
       subtree: true,
       childList: true
     });
+  }
+
+  private initCallbacks(config: IConfig): void {
+    if (config.submitCallback) {
+      this.submitCallback = config.submitCallback;
+    }
+
+    if (config.successCallback) {
+      this.successCallback = config.successCallback;
+    }
+
+    if (config.errorCallback) {
+      this.errorCallback = config.errorCallback;
+    }
   }
 }
 
