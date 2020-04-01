@@ -64,18 +64,20 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
         Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
       ),
       paymentTypes: Joi.array().items(Joi.string().allow('')),
-      startOnLoad: Joi.boolean()
+      startOnLoad: Joi.boolean().allow('')
     })
     .default({}),
-  datacenterurl: Joi.string().allow('').default('st-form'),
+  datacenterurl: Joi.string().allow(''),
   deferInit: Joi.boolean(),
   disableNotification: Joi.boolean().default(false),
   fieldsToSubmit: Joi.array().items(Joi.string().valid('pan', 'expirydate', 'securitycode')),
   formId: Joi.string(),
-  init: {
-    cachetoken: Joi.string().allow(''),
-    threedinit: Joi.string().allow('')
-  },
+  init: Joi.object()
+    .keys({
+      cachetoken: Joi.string().allow(''),
+      threedinit: Joi.string().allow('')
+    })
+    .allow(null),
   jwt: Joi.string().required(),
   livestatus: Joi.number().valid(0, 1),
   origin: Joi.string().allow(''),
@@ -90,6 +92,8 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   }),
   styles: Joi.object(),
   submitCallback: Joi.any(),
+  successCallback: Joi.any(),
+  errorCallback: Joi.any(),
   submitFields: Joi.array(),
   submitOnError: Joi.boolean(),
   submitOnSuccess: Joi.boolean(),

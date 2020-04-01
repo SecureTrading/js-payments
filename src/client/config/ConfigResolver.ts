@@ -35,17 +35,11 @@ export class ConfigResolver {
     'transactionreference'
   ];
 
-  public init(config: IConfig): IConfig {
-    return {
-      ...this.resolve(config)
-    };
-  }
-
   public validate(config: IConfig | IComponentsConfig | IComponentsIds, schema: Joi.ObjectSchema) {
-    const result = schema.validate(config);
+    const { error } = schema.validate(config);
 
-    if (result.error) {
-      throw result.error;
+    if (error) {
+      throw error;
     }
   }
 
@@ -75,9 +69,11 @@ export class ConfigResolver {
         expirydate: '',
         securitycode: ''
       }),
-      requestTypes: this._getValueOrDefault(config.requestTypes, []),
+      requestTypes: this._getValueOrDefault(config.requestTypes, [...this.DEFAULT_COMPONENTS_REQUEST_TYPES]),
       styles: this._getValueOrDefault(config.styles, {}),
       submitCallback: this._getValueOrDefault(config.submitCallback, null),
+      successCallback: this._getValueOrDefault(config.successCallback, null),
+      errorCallback: this._getValueOrDefault(config.errorCallback, null),
       submitFields: this._getValueOrDefault(config.submitFields, this.DEFAULT_SUBMIT_PROPERTIES),
       submitOnError: this._getValueOrDefault(config.submitOnError, false),
       submitOnSuccess: this._getValueOrDefault(config.submitOnSuccess, true),
@@ -89,10 +85,26 @@ export class ConfigResolver {
   }
 
   private _getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
-    if (typeof value !== 'undefined') {
-      return value;
+    switch (typeof value) {
+      case 'undefined':
+        return defaultValue;
+      case 'string':
+        return value.length ? value : defaultValue;
+      case 'number':
+        return Number.isFinite(value) ? value : defaultValue;
+      case 'boolean':
+        return value;
+      case 'object':
+        if (value === null) {
+          return defaultValue;
+        }
+        if (Array.isArray(value)) {
+          return value.length ? value : defaultValue;
+        }
+        return Object.keys(value).length ? value : defaultValue;
+      default:
+        return Boolean(value) ? value : defaultValue;
     }
-    return defaultValue;
   }
 
   private _componentIds(config: IComponentsIds): IComponentsIds {
@@ -123,15 +135,14 @@ export class ConfigResolver {
       return {
         defaultPaymentType: '',
         paymentTypes: [''],
-        requestTypes: [...this.DEFAULT_COMPONENTS_REQUEST_TYPES],
+        requestTypes: this.DEFAULT_COMPONENTS_REQUEST_TYPES,
         startOnLoad: false
       };
     }
-
     return {
       defaultPaymentType: this._getValueOrDefault(components.defaultPaymentType, ''),
       paymentTypes: this._getValueOrDefault(components.paymentTypes, ['']),
-      requestTypes: this._getValueOrDefault(components.requestTypes, [...this.DEFAULT_COMPONENTS_REQUEST_TYPES]),
+      requestTypes: this._getValueOrDefault(components.requestTypes, this.DEFAULT_COMPONENTS_REQUEST_TYPES),
       startOnLoad: this._getValueOrDefault(components.startOnLoad, false)
     };
   }
@@ -142,7 +153,7 @@ export class ConfigResolver {
     }
     return {
       ...apm,
-      requestTypes: components && this._getValueOrDefault(components.requestTypes, [...this.DEFAULT_APMS_REQUEST_TYPES])
+      requestTypes: components && this._getValueOrDefault(components.requestTypes, this.DEFAULT_APMS_REQUEST_TYPES)
     };
   }
 }

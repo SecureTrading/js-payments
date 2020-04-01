@@ -63,14 +63,6 @@ module.exports = {
       chunks: ['main']
     }),
     new HtmlWebpackPlugin({
-      filename: 'notification-frame.html',
-      template: './src/application/components/index.html',
-      templateParameters: {
-        partial: 'notificationFrame'
-      },
-      chunks: ['main']
-    }),
-    new HtmlWebpackPlugin({
       filename: 'control-frame.html',
       template: './src/application/components/index.html',
       templateParameters: {

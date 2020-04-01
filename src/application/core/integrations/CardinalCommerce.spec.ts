@@ -22,7 +22,7 @@ describe('CardinalCommerce', () => {
 
   // when
   beforeEach(() => {
-    when(framesHub.waitForFrame(anyString())).thenCall((name) => of(name));
+    when(framesHub.waitForFrame(anyString())).thenCall(name => of(name));
 
     document.body.innerHTML = `<iframe id='st-control-frame-iframe'>
     </iframe><input id='JWTContainer' value="${jwt}" />`;

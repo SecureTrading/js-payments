@@ -18,7 +18,7 @@
     "one-variable-per-declaration": true,
     "quotemark": [true, "single"],
     "semicolon": [true, "ignore-bound-class-methods"],
-    "trailing-comma": false,
+    "trailing-comma": true,
     "variable-name": [true, "check-format", "allow-leading-underscore", "allow-pascal-case"]
   },
   "jsRules": {

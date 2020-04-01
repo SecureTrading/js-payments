@@ -36,6 +36,7 @@ import { FramesHub } from '../shared/services/message-bus/FramesHub';
 import { BrowserLocalStorage } from '../shared/services/storage/BrowserLocalStorage';
 import { BrowserSessionStorage } from '../shared/services/storage/BrowserSessionStorage';
 import { Notification } from '../application/core/shared/Notification';
+import './../styles/notification.css';
 
 @Service()
 class ST {
@@ -105,10 +106,14 @@ class ST {
   }
 
   public Components(config: IComponentsConfig): void {
-    this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(async (controlFrame) => {
-      config = config !== undefined ? config : ({} as IComponentsConfig);
-      this._config = { ...this._config, components: { ...this._config.components, ...config } };
-      this.configProvider.update(this._config);
+    this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(async controlFrame => {
+      this._config = this.configProvider.update({
+        ...this._config,
+        components: {
+          ...this._config.components,
+          ...(config || {})
+        }
+      });
       this._commonFrames.requestTypes = this._config.components.requestTypes;
       this.CardinalCommerce();
       await this._communicator.query({ type: MessageBus.EVENTS_PUBLIC.CONFIG_CHECK }, controlFrame);
@@ -146,7 +151,7 @@ class ST {
   public destroy(): void {
     this._messageBus.publish(
       {
-        type: MessageBus.EVENTS.DESTROY
+        type: MessageBus.EVENTS_PUBLIC.DESTROY
       },
       true
     );
@@ -271,7 +276,7 @@ class ST {
 }
 
 export default (config: IConfig) => {
-  Container.get(ConfigService).initialize(config);
+  Container.get(ConfigService).update(config);
 
   return Container.get(ST);
 };
