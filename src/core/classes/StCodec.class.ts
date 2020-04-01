@@ -165,22 +165,38 @@ class StCodec {
   private static _handleValidGatewayResponse(responseContent: IResponseData, jwtResponse: string) {
     const translator = new Translator(StCodec._locale);
     const validation = new Validation();
-    responseContent.errormessage = translator.translate(responseContent.errormessage);
-    if (StCodec.REQUESTS_WITH_ERROR_MESSAGES.includes(responseContent.requesttypedescription)) {
-      if (responseContent.errorcode !== StCodec.STATUS_CODES.ok) {
-        if (responseContent.errorcode === StCodec.STATUS_CODES.invalidfield) {
-          validation.getErrorData(StCodec.getErrorData(responseContent));
-        }
-        validation.blockForm(FormState.AVAILABLE);
-        StCodec.publishResponse(responseContent, jwtResponse);
-        StCodec.getNotification().error(responseContent.errormessage);
-        StCodec.getMessageBus().publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
-        if (!(responseContent.walletsource && responseContent.walletsource === 'APPLEPAY')) {
-          throw new Error(responseContent.errormessage);
-        }
-      }
+
+    const { errorcode, errormessage, walletsource, requesttypedescription } = responseContent;
+
+    const errormessageTranslated = translator.translate(errormessage);
+
+    if (!StCodec.REQUESTS_WITH_ERROR_MESSAGES.includes(requesttypedescription)) {
+      return;
     }
+
+    if (errorcode === StCodec.STATUS_CODES.ok) {
+      StCodec.publishResponse(responseContent, jwtResponse);
+      return;
+    }
+
+    if (errorcode === StCodec.STATUS_CODES.invalidfield) {
+      validation.getErrorData(StCodec.getErrorData(responseContent));
+      validation.blockForm(FormState.AVAILABLE);
+      StCodec.getNotification().error(errormessageTranslated);
+      StCodec.getMessageBus().publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
+      StCodec.publishResponse(responseContent, jwtResponse);
+      return;
+    }
+
+    validation.blockForm(FormState.AVAILABLE);
+    StCodec.getNotification().error(errormessageTranslated);
+    StCodec.getMessageBus().publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
     StCodec.publishResponse(responseContent, jwtResponse);
+
+    return;
+    // if (!(responseContent.walletsource && responseContent.walletsource === 'APPLEPAY')) {
+    //   throw new Error(responseContent.errormessage);
+    // }
   }
 
   private static _decodeResponseJwt(jwt: string, reject: (error: Error) => void) {
