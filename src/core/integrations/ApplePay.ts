@@ -306,10 +306,10 @@ export class ApplePay {
           DomMethods.parseForm()
         )
         .then((response: any) => {
-          const { errorcode } = response;
+          const { errorcode, errormessage } = response;
           this._handleApplePayError(response);
           this._session.completePayment(this._completion);
-          this._displayNotification(errorcode);
+          this._displayNotification(errorcode, errormessage);
           GoogleAnalytics.sendGaData('event', 'Apple Pay', 'payment', 'Apple Pay payment completed');
           this._localStorage.setItem('completePayment', 'true');
         })
@@ -440,13 +440,13 @@ export class ApplePay {
     return this._completion;
   }
 
-  private _displayNotification(errorcode: string) {
+  private _displayNotification(errorcode: string, errormessage: string) {
     if (errorcode === '0') {
       this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK }, true);
       this._notification.success(Language.translations.PAYMENT_SUCCESS);
     } else {
       this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
-      this._notification.error(Language.translations.PAYMENT_ERROR);
+      this._notification.error(errormessage);
     }
   }
 
