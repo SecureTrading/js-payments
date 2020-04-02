@@ -134,17 +134,18 @@ export class SecurityCode extends FormField {
     });
 
     this.messageBus.subscribe(
-      MessageBus.EVENTS.IS_CARD_WITHOUT_CVV, (data: { formState: FormState, isCardPiba: boolean }
-      ) => {
+      MessageBus.EVENTS.IS_CARD_WITHOUT_CVV,
+      (data: { formState: FormState; isCardPiba: boolean }) => {
         const { formState, isCardPiba } = data;
         if (formState !== FormState.AVAILABLE) {
           this._clearInputValue();
         }
-        isCardPiba ?
-          this._inputElement.setAttribute(SecurityCode.BLOCK_CVV_ATTRIBUTE, SecurityCode.BLOCK_CVV_VALUE) :
-          this._inputElement.removeAttribute(SecurityCode.BLOCK_CVV_VALUE);
+        isCardPiba
+          ? this._inputElement.setAttribute(SecurityCode.BLOCK_CVV_ATTRIBUTE, SecurityCode.BLOCK_CVV_VALUE)
+          : this._inputElement.removeAttribute(SecurityCode.BLOCK_CVV_ATTRIBUTE);
         this._toggleSecurityCode(formState);
-      });
+      }
+    );
   }
 
   private _clearInputValue(): void {
