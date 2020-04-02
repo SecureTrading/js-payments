@@ -15,7 +15,7 @@ import { NotificationService } from '../services/notification/NotificationServic
 class StCodec {
   public static CONTENT_TYPE = 'application/json';
   public static VERSION = '1.00';
-  public static VERSION_INFO = `STJS::N/A::${ version }::N/A`;
+  public static VERSION_INFO = `STJS::N/A::${version}::N/A`;
   public static SUPPORTED_REQUEST_TYPES = [
     'WALLETVERIFY',
     'JSINIT',
@@ -85,11 +85,7 @@ class StCodec {
       data: eventData,
       type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE
     };
-    if (StCodec._parentOrigin !== undefined) {
-      StCodec.getMessageBus().publish(notificationEvent, true);
-    } else {
-      StCodec.getMessageBus().publish(notificationEvent);
-    }
+    StCodec.getMessageBus().publish(notificationEvent, true);
   }
 
   public static updateJWTValue(newJWT: string) {
@@ -107,7 +103,6 @@ class StCodec {
   private static _notification: NotificationService;
   private static _messageBus: MessageBus;
   private static _locale: string;
-  private static _parentOrigin: string;
   private static REQUESTS_WITH_ERROR_MESSAGES = [
     'AUTH',
     'CACHETOKENISE',
@@ -170,20 +165,36 @@ class StCodec {
   private static _handleValidGatewayResponse(responseContent: IResponseData, jwtResponse: string) {
     const translator = new Translator(StCodec._locale);
     const validation = new Validation();
-    responseContent.errormessage = translator.translate(responseContent.errormessage);
-    if (StCodec.REQUESTS_WITH_ERROR_MESSAGES.includes(responseContent.requesttypedescription)) {
-      if (responseContent.errorcode !== StCodec.STATUS_CODES.ok) {
-        if (responseContent.errorcode === StCodec.STATUS_CODES.invalidfield) {
-          validation.getErrorData(StCodec.getErrorData(responseContent));
-        }
-        validation.blockForm(FormState.AVAILABLE);
-        StCodec.publishResponse(responseContent, jwtResponse);
-        StCodec.getNotification().error(responseContent.errormessage);
-        StCodec.getMessageBus().publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
-        throw new Error(responseContent.errormessage);
-      }
+
+    const { errorcode, errormessage, requesttypedescription } = responseContent;
+
+    const errormessageTranslated = translator.translate(errormessage);
+
+    if (!StCodec.REQUESTS_WITH_ERROR_MESSAGES.includes(requesttypedescription)) {
+      return;
     }
+
+    if (errorcode === StCodec.STATUS_CODES.ok) {
+      StCodec.publishResponse(responseContent, jwtResponse);
+      return;
+    }
+
+    if (responseContent.walletsource && responseContent.walletsource === 'APPLEPAY') {
+      StCodec.getNotification().error(errormessageTranslated);
+      StCodec.getMessageBus().publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
+      StCodec.publishResponse(responseContent, jwtResponse);
+      return;
+    }
+
+    if (errorcode === StCodec.STATUS_CODES.invalidfield) {
+      validation.getErrorData(StCodec.getErrorData(responseContent));
+    }
+
+    validation.blockForm(FormState.AVAILABLE);
+    StCodec.getNotification().error(errormessageTranslated);
+    StCodec.getMessageBus().publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
     StCodec.publishResponse(responseContent, jwtResponse);
+    throw new Error(errormessage);
   }
 
   private static _decodeResponseJwt(jwt: string, reject: (error: Error) => void) {
@@ -198,13 +209,12 @@ class StCodec {
 
   private readonly _requestId: string;
 
-  constructor(jwt: string, parentOrigin?: string) {
+  constructor(jwt: string) {
     this._requestId = StCodec._createRequestId();
     StCodec._notification = Container.get(NotificationService);
     StCodec.jwt = jwt;
     StCodec.originalJwt = jwt;
     StCodec._locale = new StJwt(StCodec.jwt).locale;
-    StCodec._parentOrigin = parentOrigin;
   }
 
   public buildRequestObject(requestData: object): object {
