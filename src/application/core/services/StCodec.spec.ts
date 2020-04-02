@@ -108,9 +108,7 @@ describe('StCodec class', () => {
     });
 
     // then
-    it('should translate and publish result to parent', () => {
-      // @ts-ignore
-      StCodec._parentOrigin = 'https://example.com';
+    it('should translate and publish result', () => {
       // @ts-ignore
       StCodec.publishResponse({
         errorcode: '0',
@@ -129,27 +127,6 @@ describe('StCodec class', () => {
         },
         true
       );
-    });
-
-    // then
-    it('should translate and publish result to itself', () => {
-      // @ts-ignore
-      StCodec._parentOrigin = undefined;
-      // @ts-ignore
-      StCodec.publishResponse({
-        errorcode: '0',
-        errormessage: 'Ok'
-      });
-      // @ts-ignore
-      expect(translator.translate()).toEqual('Ok');
-      // @ts-ignore
-      expect(StCodec.getMessageBus().publish).toHaveBeenCalledWith({
-        data: {
-          errorcode: '0',
-          errormessage: 'Payment has been successfully processed'
-        },
-        type: 'TRANSACTION_COMPLETE'
-      });
     });
 
     // then
@@ -280,41 +257,8 @@ describe('StCodec class', () => {
       // @ts-ignore
       StCodec._handleValidGatewayResponse(content, jwt);
       expect(spy).toHaveBeenCalledTimes(0);
-      expect(StCodec.getErrorData).toHaveBeenCalledTimes(0);
-      expect(StCodec.publishResponse).toHaveBeenCalledTimes(1);
       expect(StCodec.publishResponse).toHaveBeenCalledWith(content, jwt);
       expect(content.errormessage).toBe('Ok');
-    });
-
-    // then
-    it('should raise if error response', () => {
-      const content = { errorcode: '50000', errormessage: 'Timeout', requesttypedescription: 'AUTH' };
-      const jwt = 'jwtString';
-      // @ts-ignore
-      expect(() => StCodec._handleValidGatewayResponse(content, jwt)).toThrow(new Error('Timeout'));
-      expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenCalledWith('Timeout');
-      expect(StCodec.getErrorData).toHaveBeenCalledTimes(0);
-      expect(StCodec.publishResponse).toHaveBeenCalledTimes(1);
-      expect(StCodec.publishResponse).toHaveBeenCalledWith(content, jwt);
-    });
-
-    // then
-    it('should raise if field error response and call getErrorData', () => {
-      const content = {
-        errorcode: '30000',
-        errordata: ['afield'],
-        errormessage: 'Invalid field',
-        requesttypedescription: 'AUTH'
-      };
-      const jwt = 'jwtString';
-      // @ts-ignore
-      expect(() => StCodec._handleValidGatewayResponse(content, jwt)).toThrow(new Error('Invalid field'));
-      expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenCalledWith('Invalid field');
-      expect(StCodec.getErrorData).toHaveBeenCalledTimes(2);
-      expect(StCodec.publishResponse).toHaveBeenCalledTimes(1);
-      expect(StCodec.publishResponse).toHaveBeenCalledWith(content, jwt);
     });
   });
 
@@ -351,7 +295,7 @@ describe('StCodec class', () => {
   describe('StCodec._createRequestId', () => {
     // when
     beforeEach(() => {
-      str = new StCodec(jwt, 'https://example.com');
+      str = new StCodec(jwt);
     });
 
     // then
