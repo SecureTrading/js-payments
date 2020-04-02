@@ -188,10 +188,14 @@ jobs:
       if: branch=master
       script:
         - ${DOCKER_TAG} -e DEVICE="Samsung Galaxy S10 Plus" -e OS_VERSION=9.0 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$FULL_TESTS_TAG
-    - name: "Behavioural test: IE 11, Windows 10, Full list of tests"
+    - name: "Behavioural test: IE 11, Windows 10, Full list of tests - part 1"
       if: branch=master
       script:
-        - ${DOCKER_TAG} -e OS=Windows -e OS_VERSION=10 -e BROWSER=IE -e BROWSER_VERSION=11.0 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$FULL_TESTS_TAG
+        - ${DOCKER_TAG} -e OS=Windows -e OS_VERSION=10 -e BROWSER=IE -e BROWSER_VERSION=11.0 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=full_test_part_1
+    - name: "Behavioural test: IE 11, Windows 10, Full list of tests - part 2"
+      if: branch=master
+      script:
+        - ${DOCKER_TAG} -e OS=Windows -e OS_VERSION=10 -e BROWSER=IE -e BROWSER_VERSION=11.0 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=full_test_part_2
     - name: "Behavioural test: safari 13, Catalina, Full list of tests"
       if: branch=master
       script:
