@@ -129,8 +129,9 @@ export class CardNumber extends FormField {
   private _setIconImage(type: string, iconId: string): void {
     const icon: HTMLImageElement = this._getIcon(type);
     const iconInDom: HTMLElement = document.getElementById(iconId);
+
     if (iconInDom) {
-      iconInDom.remove();
+      iconInDom.parentNode.removeChild(iconInDom);
     }
     if (icon) {
       this._setIconInDom(icon);
@@ -214,7 +215,7 @@ export class CardNumber extends FormField {
     const isCardPiba: boolean = CardNumber.NO_CVV_CARDS.includes(iinLookup.lookup(number).type);
     const formState = isCardPiba ? FormState.BLOCKED : FormState.AVAILABLE;
     const messageBusEventPiba: IMessageBusEvent = {
-      data: {formState, isCardPiba },
+      data: { formState, isCardPiba },
       type: MessageBus.EVENTS.IS_CARD_WITHOUT_CVV
     };
     this.messageBus.publish(messageBusEventPiba);
