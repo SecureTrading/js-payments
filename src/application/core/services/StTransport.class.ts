@@ -36,9 +36,9 @@ export class StTransport {
   private _gatewayUrl: string;
   private _throttlingRequests = new Map<string, Promise<object>>();
 
-  constructor(params: IStTransportParams, parentOrigin?: string) {
+  constructor(params: IStTransportParams) {
     this._gatewayUrl = params.gatewayUrl;
-    this._codec = new StCodec(params.jwt, parentOrigin);
+    this._codec = new StCodec(params.jwt);
   }
 
   /**

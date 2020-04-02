@@ -19,10 +19,10 @@ export class Payment {
   private _cybertonica: Cybertonica;
   private readonly _walletVerifyRequest: IStRequest;
 
-  constructor(jwt: string, gatewayUrl: string, parentOrigin?: string) {
+  constructor(jwt: string, gatewayUrl: string) {
     this._notification = Container.get(NotificationService);
     this._cybertonica = Container.get(Cybertonica);
-    this._stTransport = new StTransport({ jwt, gatewayUrl }, parentOrigin);
+    this._stTransport = new StTransport({ jwt, gatewayUrl });
     this._validation = new Validation();
     this._walletVerifyRequest = {
       requesttypedescriptions: ['WALLETVERIFY']
@@ -59,12 +59,7 @@ export class Payment {
         payload: { jwt, response }
       } = new StJwt(result.jwt);
       const threeDInitResult = { jwt, response: response[0] };
-      // We should always use the id from the original cachetoken to link up with the THREEDQUERY
-      // We've already passed this into Cardinal and they have used it for the fingerprint by this point
-      if (this._cardinalCommerceCacheToken === undefined) {
-        // @ts-ignore
-        this._cardinalCommerceCacheToken = result.response.cachetoken;
-      }
+      this._cardinalCommerceCacheToken = result.response.cachetoken;
       return threeDInitResult;
     });
   }

@@ -1,4 +1,3 @@
-import { StTransport } from '../services/StTransport.class';
 import { IWalletConfig } from '../../../shared/model/config/IWalletConfig';
 import { DomMethods } from '../shared/DomMethods';
 import { Language } from '../shared/Language';
@@ -103,7 +102,6 @@ export class ApplePay {
   private _session: any;
   private _sitesecurity: string;
   private _stJwtInstance: StJwt;
-  private _stTransportInstance: StTransport;
 
   private _validateMerchantRequestData = {
     walletmerchantid: '',
@@ -194,10 +192,6 @@ export class ApplePay {
     this._requestTypes = requestTypes;
     this._validateMerchantRequestData.walletmerchantid = merchantId;
     this._stJwtInstance = new StJwt(jwt);
-    this._stTransportInstance = new StTransport({
-      gatewayUrl,
-      jwt
-    });
     this._translator = new Translator(this._stJwtInstance.locale);
   }
 
@@ -311,10 +305,10 @@ export class ApplePay {
           DomMethods.parseForm()
         )
         .then((response: any) => {
-          const { errorcode } = response;
+          const { errorcode, errormessage } = response;
           this._handleApplePayError(response);
           this._session.completePayment(this._completion);
-          this._displayNotification(errorcode);
+          this._displayNotification(errorcode, errormessage);
           GoogleAnalytics.sendGaData('event', 'Apple Pay', 'payment', 'Apple Pay payment completed');
           this._localStorage.setItem('completePayment', 'true');
         })
@@ -445,13 +439,13 @@ export class ApplePay {
     return this._completion;
   }
 
-  private _displayNotification(errorcode: string) {
+  private _displayNotification(errorcode: string, errormessage: string) {
     if (errorcode === '0') {
-      this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
+      this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK }, true);
       this._notification.success(Language.translations.PAYMENT_SUCCESS);
     } else {
       this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
-      this._notification.error(Language.translations.PAYMENT_ERROR);
+      this._notification.error(errormessage);
     }
   }
 

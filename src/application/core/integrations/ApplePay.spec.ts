@@ -929,7 +929,7 @@ describe('ApplePay', () => {
     // then
     it('should call success notification when errorcode is equal 0', () => {
       // @ts-ignore
-      instance._displayNotification('0');
+      instance._displayNotification('0', Language.translations.PAYMENT_SUCCESS);
       // @ts-ignore
       expect(instance._notification.success).toHaveBeenCalledWith(Language.translations.PAYMENT_SUCCESS);
     });
@@ -937,7 +937,7 @@ describe('ApplePay', () => {
     // then
     it('should call error notification when errorcode is not equal 0', () => {
       // @ts-ignore
-      instance._displayNotification('30000');
+      instance._displayNotification('30000', Language.translations.PAYMENT_ERROR);
       // @ts-ignore
       expect(instance._notification.error).toHaveBeenCalledWith(Language.translations.PAYMENT_ERROR);
     });

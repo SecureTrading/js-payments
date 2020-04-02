@@ -406,7 +406,7 @@ export class ControlFrame extends Frame {
   }
 
   private _setInstances(): void {
-    this._payment = new Payment(this.params.jwt, this.params.gatewayUrl, this.params.origin);
+    this._payment = new Payment(this.params.jwt, this.params.gatewayUrl);
     this._validation = new Validation();
   }
 
