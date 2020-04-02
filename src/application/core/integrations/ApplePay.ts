@@ -312,7 +312,7 @@ export class ApplePay {
           DomMethods.parseForm()
         )
         .then((response: any) => {
-          const { errorcode, errormessage } = response;
+          const { errorcode, errormessage } = response.response;
           this._handleApplePayError(response);
           this._session.completePayment(this._completion);
           this._displayNotification(errorcode, errormessage);
