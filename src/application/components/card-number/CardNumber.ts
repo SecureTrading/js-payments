@@ -20,6 +20,7 @@ export class CardNumber extends FormField {
 
   private static DISABLED_ATTRIBUTE: string = 'disabled';
   private static DISABLED_CLASS: string = 'st-input--disabled';
+  private static NO_CVV_CARD_NUMBER: string = 'st-card-no-cvv';
   private static NO_CVV_CARDS: string[] = ['PIBA'];
   private static STANDARD_CARD_LENGTH: number = 19;
   private static WHITESPACES_DECREASE_NUMBER: number = 2;
@@ -128,8 +129,9 @@ export class CardNumber extends FormField {
   private _setIconImage(type: string, iconId: string): void {
     const icon: HTMLImageElement = this._getIcon(type);
     const iconInDom: HTMLElement = document.getElementById(iconId);
+
     if (iconInDom) {
-      iconInDom.remove();
+      iconInDom.parentNode.removeChild(iconInDom);
     }
     if (icon) {
       this._setIconInDom(icon);
@@ -213,7 +215,7 @@ export class CardNumber extends FormField {
     const isCardPiba: boolean = CardNumber.NO_CVV_CARDS.includes(iinLookup.lookup(number).type);
     const formState = isCardPiba ? FormState.BLOCKED : FormState.AVAILABLE;
     const messageBusEventPiba: IMessageBusEvent = {
-      data: formState,
+      data: { formState, isCardPiba },
       type: MessageBus.EVENTS.IS_CARD_WITHOUT_CVV
     };
     this.messageBus.publish(messageBusEventPiba);

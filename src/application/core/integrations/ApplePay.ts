@@ -1,3 +1,4 @@
+import { StTransport } from '../services/StTransport.class';
 import { IWalletConfig } from '../../../shared/model/config/IWalletConfig';
 import { DomMethods } from '../shared/DomMethods';
 import { Language } from '../shared/Language';
@@ -102,6 +103,7 @@ export class ApplePay {
   private _session: any;
   private _sitesecurity: string;
   private _stJwtInstance: StJwt;
+  private _stTransportInstance: StTransport;
 
   private _validateMerchantRequestData = {
     walletmerchantid: '',
@@ -183,7 +185,7 @@ export class ApplePay {
   }
 
   private _configurePaymentProcess(jwt: string, config: IWalletConfig, gatewayUrl: string) {
-    const { sitesecurity, placement, paymentRequest, merchantId, requestTypes } = config;
+    const { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId, requestTypes } = config;
     this._merchantId = merchantId;
     this._placement = placement;
     this.payment = new Payment(jwt, gatewayUrl);
@@ -192,7 +194,12 @@ export class ApplePay {
     this._requestTypes = requestTypes;
     this._validateMerchantRequestData.walletmerchantid = merchantId;
     this._stJwtInstance = new StJwt(jwt);
+    this._stTransportInstance = new StTransport({
+      gatewayUrl,
+      jwt
+    });
     this._translator = new Translator(this._stJwtInstance.locale);
+    this._onInit(buttonText, buttonStyle);
   }
 
   private _setSupportedNetworks() {
