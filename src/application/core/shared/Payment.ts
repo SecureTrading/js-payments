@@ -44,11 +44,15 @@ export class Payment {
   ): Promise<object> {
     const processPaymentRequestBody = {
       requesttypedescriptions: requestTypes,
-      fraudcontroltransactionid: await this._cybertonica.getTransactionId(),
       ...additionalData,
       ...merchantData,
       ...payment
     };
+    const cybertonicaTid = await this._cybertonica.getTransactionId();
+
+    if (cybertonicaTid) {
+      (processPaymentRequestBody as any).fraudcontroltransactionid = cybertonicaTid;
+    }
 
     return this._stTransport.sendRequest(processPaymentRequestBody);
   }
@@ -69,10 +73,15 @@ export class Payment {
       cachetoken: this._cardinalCommerceCacheToken,
       requesttypedescriptions: requestTypes,
       termurl: 'https://termurl.com', // TODO this shouldn't be needed but currently the backend needs this
-      fraudcontroltransactionid: await this._cybertonica.getTransactionId(),
       ...merchantData,
       ...card
     };
+
+    const cybertonicaTid = await this._cybertonica.getTransactionId();
+
+    if (cybertonicaTid) {
+      (threeDQueryRequestBody as any).fraudcontroltransactionid = cybertonicaTid;
+    }
 
     return this._stTransport.sendRequest(threeDQueryRequestBody);
   }
