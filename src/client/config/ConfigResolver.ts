@@ -7,35 +7,18 @@ import { IComponentsConfig } from '../../shared/model/config/IComponentsConfig';
 import { environment } from '../../environments/environment';
 import { IWalletConfig } from '../../shared/model/config/IWalletConfig';
 import { ConfigSchema } from './schema/ConfigSchema';
+import { DefaultSubmitFields } from '../../application/core/models/constants/config-resolver/DefaultSubmitFields';
+import { DefaultFieldsToSubmit } from '../../application/core/models/constants/config-resolver/DefaultFieldsToSubmit';
+import { DefaultComponentsRequestTypes } from '../../application/core/models/constants/config-resolver/DefaultComponentsRequestTypes';
+import { DefaultComponentsIds } from '../../application/core/models/constants/config-resolver/DefaultComponentsIds';
+import { DefaultApmsRequestTypes } from '../../application/core/models/constants/config-resolver/DefaultApmsRequestTypes';
+import { DefaultConfig } from '../../application/core/models/constants/config-resolver/DefaultConfig';
+import { DefaultVisaCheckout } from '../../application/core/models/constants/config-resolver/DefaultVisaCheckout';
+import { DefaultComponents } from '../../application/core/models/constants/config-resolver/DefaultComponents';
 
 @Service()
 export class ConfigResolver {
-  private readonly DEFAULT_COMPONENTS_IDS: IComponentsIds = {
-    animatedCard: Selectors.ANIMATED_CARD_INPUT_SELECTOR,
-    cardNumber: Selectors.CARD_NUMBER_INPUT_SELECTOR,
-    expirationDate: Selectors.EXPIRATION_DATE_INPUT_SELECTOR,
-    notificationFrame: Selectors.NOTIFICATION_FRAME_ID,
-    securityCode: Selectors.SECURITY_CODE_INPUT_SELECTOR
-  };
-
-  private readonly DEFAULT_APMS_REQUEST_TYPES: string[] = ['AUTH'];
-  private readonly DEFAULT_COMPONENTS_REQUEST_TYPES: string[] = ['THREEDQUERY', 'AUTH'];
-  private readonly DEFAULT_FIELDS_TO_SUBMIT: string[] = ['pan', 'expirydate', 'securitycode'];
-  private readonly DEFAULT_SUBMIT_PROPERTIES: string[] = [
-    'baseamount',
-    'currencyiso3a',
-    'eci',
-    'enrolled',
-    'errorcode',
-    'errordata',
-    'errormessage',
-    'orderreference',
-    'settlestatus',
-    'status',
-    'transactionreference'
-  ];
-
-  public validate(config: IConfig | IComponentsConfig | IComponentsIds, schema: Joi.ObjectSchema) {
+  public validate(config: IConfig | IComponentsConfig | IComponentsIds, schema: Joi.ObjectSchema): void {
     const { error } = schema.validate(config);
 
     if (error) {
@@ -46,40 +29,36 @@ export class ConfigResolver {
   public resolve(config: IConfig): IConfig {
     this.validate(config, ConfigSchema);
     return {
-      analytics: this._getValueOrDefault(config.analytics, false),
-      animatedCard: this._getValueOrDefault(config.animatedCard, false),
-      applePay: this._setApmConfig(config.applePay, config.components),
-      buttonId: this._getValueOrDefault(config.buttonId, ''),
-      bypassCards: this._getValueOrDefault(config.bypassCards, []),
-      cachetoken: this._getValueOrDefault(config.cachetoken, ''),
+      analytics: this._getValueOrDefault(config.analytics, DefaultConfig.analytics),
+      animatedCard: this._getValueOrDefault(config.animatedCard, DefaultConfig.animatedCard),
+      applePay: this._setApmConfig(config.applePay, DefaultConfig.applePay),
+      buttonId: this._getValueOrDefault(config.buttonId, DefaultConfig.buttonId),
+      bypassCards: this._getValueOrDefault(config.bypassCards, DefaultConfig.bypassCards),
+      cachetoken: this._getValueOrDefault(config.cachetoken, DefaultConfig.cachetoken),
       componentIds: this._componentIds(config.componentIds),
       components: this._setComponentsProperties(config),
-      datacenterurl: this._getValueOrDefault(config.datacenterurl, environment.GATEWAY_URL),
-      deferInit: this._getValueOrDefault(config.deferInit, false),
-      disableNotification: this._getValueOrDefault(config.disableNotification, false),
-      fieldsToSubmit: this._getValueOrDefault(config.fieldsToSubmit, [...this.DEFAULT_FIELDS_TO_SUBMIT]),
-      formId: this._getValueOrDefault(config.formId, Selectors.MERCHANT_FORM_SELECTOR),
-      init: this._getValueOrDefault(config.init, { cachetoken: '', threedinit: '' }),
-      jwt: this._getValueOrDefault(config.jwt, ''),
-      livestatus: this._getValueOrDefault(config.livestatus, 0),
-      origin: this._getValueOrDefault(config.origin, window.location.origin),
-      panIcon: this._getValueOrDefault(config.panIcon, false),
-      placeholders: this._getValueOrDefault(config.placeholders, {
-        pan: '',
-        expirydate: '',
-        securitycode: ''
-      }),
-      requestTypes: this._getValueOrDefault(config.requestTypes, [...this.DEFAULT_COMPONENTS_REQUEST_TYPES]),
-      styles: this._getValueOrDefault(config.styles, {}),
-      submitCallback: this._getValueOrDefault(config.submitCallback, null),
-      successCallback: this._getValueOrDefault(config.successCallback, null),
-      errorCallback: this._getValueOrDefault(config.errorCallback, null),
-      submitFields: this._getValueOrDefault(config.submitFields, this.DEFAULT_SUBMIT_PROPERTIES),
-      submitOnError: this._getValueOrDefault(config.submitOnError, false),
-      submitOnSuccess: this._getValueOrDefault(config.submitOnSuccess, true),
-      threedinit: this._getValueOrDefault(config.threedinit, ''),
-      translations: this._getValueOrDefault(config.translations, {}),
-      visaCheckout: this._setApmConfig(config.visaCheckout, config.components)
+      datacenterurl: this._getValueOrDefault(config.datacenterurl, DefaultConfig.datacenterurl),
+      deferInit: this._getValueOrDefault(config.deferInit, DefaultConfig.deferInit),
+      disableNotification: this._getValueOrDefault(config.disableNotification, DefaultConfig.disableNotification),
+      fieldsToSubmit: this._getValueOrDefault(config.fieldsToSubmit, DefaultConfig.fieldsToSubmit),
+      formId: this._getValueOrDefault(config.formId, DefaultConfig.formId),
+      init: this._getValueOrDefault(config.init, DefaultConfig.init),
+      jwt: this._getValueOrDefault(config.jwt, DefaultConfig.jwt),
+      livestatus: this._getValueOrDefault(config.livestatus, DefaultConfig.livestatus),
+      origin: this._getValueOrDefault(config.origin, DefaultConfig.origin),
+      panIcon: this._getValueOrDefault(config.panIcon, DefaultConfig.panIcon),
+      placeholders: this._getValueOrDefault(config.placeholders, DefaultConfig.placeholders),
+      requestTypes: this._getValueOrDefault(config.requestTypes, DefaultComponentsRequestTypes),
+      styles: this._getValueOrDefault(config.styles, DefaultConfig.styles),
+      submitCallback: this._getValueOrDefault(config.submitCallback, DefaultConfig.submitCallback),
+      successCallback: this._getValueOrDefault(config.successCallback, DefaultConfig.successCallback),
+      errorCallback: this._getValueOrDefault(config.errorCallback, DefaultConfig.errorCallback),
+      submitFields: this._getValueOrDefault(config.submitFields, DefaultSubmitFields),
+      submitOnError: this._getValueOrDefault(config.submitOnError, DefaultConfig.submitOnError),
+      submitOnSuccess: this._getValueOrDefault(config.submitOnSuccess, DefaultConfig.submitOnSuccess),
+      threedinit: this._getValueOrDefault(config.threedinit, DefaultConfig.threedinit),
+      translations: this._getValueOrDefault(config.translations, DefaultConfig.translations),
+      visaCheckout: this._setApmConfig(config.visaCheckout, DefaultVisaCheckout)
     };
   }
 
@@ -108,19 +87,16 @@ export class ConfigResolver {
 
   private _componentIds(config: IComponentsIds): IComponentsIds {
     if (!config) {
-      return { ...this.DEFAULT_COMPONENTS_IDS };
+      return DefaultComponentsIds;
     }
     const optionalIds = {
-      animatedCard: this._getValueOrDefault(config.animatedCard, this.DEFAULT_COMPONENTS_IDS.animatedCard)
+      animatedCard: this._getValueOrDefault(config.animatedCard, DefaultComponentsIds.animatedCard)
     };
     const requiredIds = {
-      cardNumber: this._getValueOrDefault(config.cardNumber, this.DEFAULT_COMPONENTS_IDS.cardNumber),
-      expirationDate: this._getValueOrDefault(config.expirationDate, this.DEFAULT_COMPONENTS_IDS.expirationDate),
-      notificationFrame: this._getValueOrDefault(
-        config.notificationFrame,
-        this.DEFAULT_COMPONENTS_IDS.notificationFrame
-      ),
-      securityCode: this._getValueOrDefault(config.securityCode, this.DEFAULT_COMPONENTS_IDS.securityCode)
+      cardNumber: this._getValueOrDefault(config.cardNumber, DefaultComponentsIds.cardNumber),
+      expirationDate: this._getValueOrDefault(config.expirationDate, DefaultComponentsIds.expirationDate),
+      notificationFrame: this._getValueOrDefault(config.notificationFrame, DefaultComponentsIds.notificationFrame),
+      securityCode: this._getValueOrDefault(config.securityCode, DefaultComponentsIds.securityCode)
     };
     return {
       ...optionalIds,
@@ -131,18 +107,14 @@ export class ConfigResolver {
   private _setComponentsProperties(config: IConfig): IComponentsConfig {
     const { components } = config;
     if (!components) {
-      return {
-        defaultPaymentType: '',
-        paymentTypes: [''],
-        requestTypes: this.DEFAULT_COMPONENTS_REQUEST_TYPES,
-        startOnLoad: false
-      };
+      return DefaultComponents;
     }
+    const { defaultPaymentType, paymentTypes, requestTypes, startOnLoad } = components;
     return {
-      defaultPaymentType: this._getValueOrDefault(components.defaultPaymentType, ''),
-      paymentTypes: this._getValueOrDefault(components.paymentTypes, ['']),
-      requestTypes: this._getValueOrDefault(components.requestTypes, this.DEFAULT_COMPONENTS_REQUEST_TYPES),
-      startOnLoad: this._getValueOrDefault(components.startOnLoad, false)
+      defaultPaymentType: this._getValueOrDefault(defaultPaymentType, DefaultComponents.defaultPaymentType),
+      paymentTypes: this._getValueOrDefault(paymentTypes, DefaultComponents.paymentTypes),
+      requestTypes: this._getValueOrDefault(requestTypes, DefaultComponentsRequestTypes),
+      startOnLoad: this._getValueOrDefault(startOnLoad, DefaultComponents.startOnLoad)
     };
   }
 
@@ -152,7 +124,7 @@ export class ConfigResolver {
     }
     return {
       ...apm,
-      requestTypes: components && this._getValueOrDefault(components.requestTypes, this.DEFAULT_APMS_REQUEST_TYPES)
+      requestTypes: components && this._getValueOrDefault(components.requestTypes, DefaultApmsRequestTypes)
     };
   }
 }

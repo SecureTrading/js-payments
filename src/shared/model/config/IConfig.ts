@@ -5,6 +5,7 @@ import { IComponentsIds } from './IComponentsIds';
 import { IStyles } from './IStyles';
 import { IWalletConfig } from './IWalletConfig';
 import { IPlaceholdersConfig } from './IPlaceholdersConfig';
+import { IVisaCheckout } from '../../../application/core/models/constants/IVisaCheckout';
 
 export interface IConfig {
   analytics?: boolean;
@@ -22,7 +23,7 @@ export interface IConfig {
   formId?: string;
   init?: IBypassInit;
   jwt: string;
-  livestatus?: number;
+  livestatus?: 0 | 1;
   origin?: string;
   panIcon?: boolean;
   placeholders?: IPlaceholdersConfig;
@@ -36,5 +37,5 @@ export interface IConfig {
   submitOnError?: boolean;
   threedinit?: string;
   translations?: {};
-  visaCheckout?: IWalletConfig;
+  visaCheckout?: IVisaCheckout;
 }
