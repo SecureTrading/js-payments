@@ -41,13 +41,14 @@ export class Payment {
     merchantData: IMerchantData,
     additionalData?: any
   ): Promise<object> {
-    this._processPaymentRequestBody = Object.assign(
-      { requesttypedescriptions: requestTypes },
-      additionalData,
-      merchantData,
-      payment
-    );
-    return await this._stTransport.sendRequest(this._processPaymentRequestBody).then(({ response }: any) => response);
+    this._processPaymentRequestBody = {
+      requesttypedescriptions: requestTypes,
+      ...additionalData,
+      ...merchantData,
+      ...payment
+    };
+
+    return this._stTransport.sendRequest(this._processPaymentRequestBody);
   }
 
   public threeDInitRequest() {
