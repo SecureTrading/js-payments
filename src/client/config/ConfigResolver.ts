@@ -90,9 +90,11 @@ export class ConfigResolver {
       return defaultConfig;
     }
 
+    // @ts-ignore
     if (config.requestTypes) {
       return {
         ...config,
+        // @ts-ignore
         requestTypes: this._getValueOrDefault(config.requestTypes, DefaultApmsRequestTypes)
       };
     }
