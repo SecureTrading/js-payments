@@ -6,11 +6,12 @@ import { IStyles } from './IStyles';
 import { IWalletConfig } from './IWalletConfig';
 import { IPlaceholdersConfig } from './IPlaceholdersConfig';
 import { IVisaCheckout } from '../../../application/core/models/constants/IVisaCheckout';
+import { IApplePay } from '../../../application/core/models/IApplePay';
 
 export interface IConfig {
   analytics?: boolean;
   animatedCard?: boolean;
-  applePay?: IWalletConfig;
+  applePay?: IApplePay | {};
   buttonId?: string;
   bypassCards?: BypassCards[];
   cachetoken?: string;
@@ -37,5 +38,5 @@ export interface IConfig {
   submitOnError?: boolean;
   threedinit?: string;
   translations?: {};
-  visaCheckout?: IVisaCheckout;
+  visaCheckout?: IVisaCheckout | {};
 }

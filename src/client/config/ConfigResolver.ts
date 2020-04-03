@@ -2,23 +2,23 @@ import Joi from '@hapi/joi';
 import { IConfig } from '../../shared/model/config/IConfig';
 import { Service } from 'typedi';
 import { IComponentsIds } from '../../shared/model/config/IComponentsIds';
-import { Selectors } from '../../application/core/shared/Selectors';
 import { IComponentsConfig } from '../../shared/model/config/IComponentsConfig';
-import { environment } from '../../environments/environment';
-import { IWalletConfig } from '../../shared/model/config/IWalletConfig';
 import { ConfigSchema } from './schema/ConfigSchema';
 import { DefaultSubmitFields } from '../../application/core/models/constants/config-resolver/DefaultSubmitFields';
-import { DefaultFieldsToSubmit } from '../../application/core/models/constants/config-resolver/DefaultFieldsToSubmit';
 import { DefaultComponentsRequestTypes } from '../../application/core/models/constants/config-resolver/DefaultComponentsRequestTypes';
 import { DefaultComponentsIds } from '../../application/core/models/constants/config-resolver/DefaultComponentsIds';
 import { DefaultApmsRequestTypes } from '../../application/core/models/constants/config-resolver/DefaultApmsRequestTypes';
 import { DefaultConfig } from '../../application/core/models/constants/config-resolver/DefaultConfig';
-import { DefaultVisaCheckout } from '../../application/core/models/constants/config-resolver/DefaultVisaCheckout';
 import { DefaultComponents } from '../../application/core/models/constants/config-resolver/DefaultComponents';
+import { IApplePay } from '../../application/core/models/IApplePay';
+import { IVisaCheckout } from '../../application/core/models/constants/IVisaCheckout';
 
 @Service()
 export class ConfigResolver {
-  public validate(config: IConfig | IComponentsConfig | IComponentsIds, schema: Joi.ObjectSchema): void {
+  public validate(
+    config: IConfig | IComponentsConfig | IComponentsIds | IApplePay | IVisaCheckout,
+    schema: Joi.ObjectSchema
+  ): void {
     const { error } = schema.validate(config);
 
     if (error) {
@@ -35,8 +35,8 @@ export class ConfigResolver {
       buttonId: this._getValueOrDefault(config.buttonId, DefaultConfig.buttonId),
       bypassCards: this._getValueOrDefault(config.bypassCards, DefaultConfig.bypassCards),
       cachetoken: this._getValueOrDefault(config.cachetoken, DefaultConfig.cachetoken),
-      componentIds: this._componentIds(config.componentIds),
-      components: this._setComponentsProperties(config),
+      componentIds: this._setComponentIds(config.componentIds),
+      components: this._setComponentsProperties(config.components),
       datacenterurl: this._getValueOrDefault(config.datacenterurl, DefaultConfig.datacenterurl),
       deferInit: this._getValueOrDefault(config.deferInit, DefaultConfig.deferInit),
       disableNotification: this._getValueOrDefault(config.disableNotification, DefaultConfig.disableNotification),
@@ -58,7 +58,7 @@ export class ConfigResolver {
       submitOnSuccess: this._getValueOrDefault(config.submitOnSuccess, DefaultConfig.submitOnSuccess),
       threedinit: this._getValueOrDefault(config.threedinit, DefaultConfig.threedinit),
       translations: this._getValueOrDefault(config.translations, DefaultConfig.translations),
-      visaCheckout: this._setApmConfig(config.visaCheckout, DefaultVisaCheckout)
+      visaCheckout: this._setApmConfig(config.visaCheckout, DefaultConfig.visaCheckout)
     };
   }
 
@@ -85,7 +85,22 @@ export class ConfigResolver {
     }
   }
 
-  private _componentIds(config: IComponentsIds): IComponentsIds {
+  private _setApmConfig(config: IApplePay | IVisaCheckout | {}, defaultConfig: {}): IApplePay | IVisaCheckout | {} {
+    if (!config) {
+      return defaultConfig;
+    }
+
+    if (config.requestTypes) {
+      return {
+        ...config,
+        requestTypes: this._getValueOrDefault(config.requestTypes, DefaultApmsRequestTypes)
+      };
+    }
+
+    return config;
+  }
+
+  private _setComponentIds(config: IComponentsIds): IComponentsIds {
     if (!config) {
       return DefaultComponentsIds;
     }
@@ -104,27 +119,16 @@ export class ConfigResolver {
     };
   }
 
-  private _setComponentsProperties(config: IConfig): IComponentsConfig {
-    const { components } = config;
-    if (!components) {
+  private _setComponentsProperties(config: IComponentsConfig): IComponentsConfig {
+    if (!config) {
       return DefaultComponents;
     }
-    const { defaultPaymentType, paymentTypes, requestTypes, startOnLoad } = components;
+    const { defaultPaymentType, paymentTypes, requestTypes, startOnLoad } = config;
     return {
       defaultPaymentType: this._getValueOrDefault(defaultPaymentType, DefaultComponents.defaultPaymentType),
       paymentTypes: this._getValueOrDefault(paymentTypes, DefaultComponents.paymentTypes),
       requestTypes: this._getValueOrDefault(requestTypes, DefaultComponentsRequestTypes),
       startOnLoad: this._getValueOrDefault(startOnLoad, DefaultComponents.startOnLoad)
-    };
-  }
-
-  private _setApmConfig(apm: IWalletConfig | {}, components: IComponentsConfig): IWalletConfig {
-    if (!apm) {
-      return apm;
-    }
-    return {
-      ...apm,
-      requestTypes: components && this._getValueOrDefault(components.requestTypes, DefaultApmsRequestTypes)
     };
   }
 }

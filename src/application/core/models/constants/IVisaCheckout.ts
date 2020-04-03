@@ -1,9 +1,11 @@
+import { IVisaSettings } from '../IVisaSettings';
+
 export interface IVisaCheckout {
   merchantId: string; // That's VisaCheckout apikey property
   livestatus: 0 | 1;
   encryptionKey?: string;
   placement: string;
-  requestTypes: [];
+  requestTypes: string[];
   buttonSettings?: {
     size?: number;
     height?: number;
@@ -14,32 +16,7 @@ export interface IVisaCheckout {
     acceptCanadianVisaDebit?: string;
     cobrand?: string;
   };
-  settings?: {
-    locale?: string;
-    countryCode?: string;
-    displayName?: string;
-    websiteUrl?: string;
-    customerSupportUrl?: string;
-    enableUserDataPrefill?: boolean;
-    shipping?: {
-      acceptedRegions?: string[];
-      collectShipping?: 'true' | 'false';
-    };
-    payment?: {
-      cardBrands?: string[];
-      acceptCanadianVisaDebit?: 'true' | 'false';
-      billingCountries?: string[];
-    };
-    review?: {
-      message?: string;
-      buttonAction?: string;
-    };
-    threeDSSetup?: {
-      threeDSActive?: 'true' | 'false';
-      threeDSSuppressChallenge?: 'true' | 'false';
-    };
-    dataLevel?: string;
-  };
+  settings?: IVisaSettings;
   paymentRequest?: {
     merchantRequestId?: string;
     currencyCode?: string;
