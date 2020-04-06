@@ -16,12 +16,14 @@ import { Selectors } from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
 import { GoogleAnalytics } from './GoogleAnalytics';
-import { Container } from 'typedi';
+import { Container, Service } from 'typedi';
 import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
+import { ConfigProvider } from '../services/ConfigProvider';
 
 declare const Cardinal: any;
 
+@Service()
 export class CardinalCommerce {
   private static _isCardEnrolledAndNotFrictionless(response: IThreeDQueryResponse) {
     return response.enrolled === 'Y' && response.acsurl !== undefined;
@@ -42,23 +44,16 @@ export class CardinalCommerce {
   private _jwtUpdated: boolean;
   private _framesHub: FramesHub;
 
-  constructor(
-    startOnLoad: boolean,
-    jwt: string,
-    requestTypes: string[],
-    livestatus?: number,
-    cachetoken?: string,
-    threedinit?: string,
-    bypassCards?: string[]
-  ) {
+  constructor(configProvider: ConfigProvider) {
+    const config = configProvider.getConfig();
     this._jwtUpdated = false;
-    this._startOnLoad = startOnLoad;
-    this._jwt = jwt;
-    this._threedinit = threedinit;
-    this._livestatus = livestatus;
-    this._cachetoken = cachetoken ? cachetoken : '';
-    this._requestTypes = requestTypes;
-    this._bypassCards = bypassCards;
+    this._startOnLoad = config.components.startOnLoad;
+    this._jwt = config.jwt;
+    this._threedinit = config.init.threedinit;
+    this._livestatus = config.livestatus;
+    this._cachetoken = config.init.cachetoken;
+    this._requestTypes = config.components.requestTypes;
+    this._bypassCards = config.bypassCards;
     this.messageBus = Container.get(MessageBus);
     this._notification = Container.get(NotificationService);
     this._framesHub = Container.get(FramesHub);

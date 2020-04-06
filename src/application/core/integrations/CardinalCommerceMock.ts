@@ -1,6 +1,8 @@
 import { environment } from '../../../environments/environment';
 import { CardinalCommerce } from './CardinalCommerce';
+import { Service } from 'typedi';
 
+@Service()
 export class CardinalCommerceMock extends CardinalCommerce {
   protected _performBinDetection(data: string) {
     return true;

@@ -182,15 +182,7 @@ class ST {
 
   private CardinalCommerce(): CardinalCommerce {
     const { cardinal } = this.Environment();
-    return new cardinal(
-      this._config.components.startOnLoad,
-      this._config.jwt,
-      this._config.components.requestTypes,
-      this._config.livestatus,
-      this._config.init.cachetoken,
-      this._config.init.threedinit,
-      this._config.bypassCards
-    );
+    return Container.get(cardinal);
   }
 
   private CardFrames(config: IConfig): void {
