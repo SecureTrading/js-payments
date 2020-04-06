@@ -5,11 +5,12 @@ import { IAFCybertonica } from '../models/cybertonica/IAFCybertonica';
 import { environment } from '../../../environments/environment';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 import { Language } from '../shared/Language';
+import { ICybertonica } from './ICybertonica';
 
 declare const AFCYBERTONICA: IAFCybertonica;
 
 @Service()
-export class Cybertonica {
+export class Cybertonica implements ICybertonica {
   private static readonly SDK_ADDRESS = environment.CYBERTONICA.CYBERTONICA_LIVE_URL;
   private static LOCALE: string = 'locale';
   private static SCRIPT_TARGET: string = 'head';
