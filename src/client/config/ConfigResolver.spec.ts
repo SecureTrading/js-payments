@@ -12,7 +12,7 @@ describe('ConfigResolver', () => {
 
   // then
   it('should validate given config object and throw error ', () => {
-    let { config } = ConfigResolverFixture();
+    let { config, configResolved } = ConfigResolverFixture();
     expect(configResolverInstance.resolve(config)).toEqual(configResolved);
   });
 });
@@ -154,13 +154,14 @@ function ConfigResolverFixture() {
     },
     components: {
       defaultPaymentType: '',
-      requestTypes: [],
-      paymentTypes: [],
+      requestTypes: ['AUTH', 'THREEDQUERY'],
+      paymentTypes: [''],
       startOnLoad: false
     },
-    datacenterurl: '',
+    datacenterurl: 'https://webservices.securetrading.net/jwt/',
     deferInit: false,
     disableNotification: false,
+    errorCallback: null,
     fieldsToSubmit: ['pan', 'expirydate', 'securitycode'],
     formId: 'st-form',
     init: {
@@ -170,14 +171,14 @@ function ConfigResolverFixture() {
     jwt:
       'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4NTkxNDEzOS4wOTc5MjA3LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.7mz-INqaGWutOvSO16WLuJFSCtJQkVPz_2hvQ6tbisc',
     livestatus: 0,
-    origin: '',
+    origin: 'http://localhost',
     placeholders: {
       pan: 'Card number',
       expirydate: 'MM/YY',
       securitycode: '***'
     },
     panIcon: true,
-    requestTypes: [],
+    requestTypes: ['AUTH', 'THREEDQUERY'],
     styles: {
       defaultStyles: {
         'background-color-input': 'AliceBlue'
@@ -201,10 +202,23 @@ function ConfigResolverFixture() {
         'color-error': '#3358FF'
       }
     },
-    submitFields: [],
+    submitFields: [
+      'baseamount',
+      'currencyiso3a',
+      'eci',
+      'enrolled',
+      'errorcode',
+      'errordata',
+      'errormessage',
+      'orderreference',
+      'settlestatus',
+      'status',
+      'transactionreference'
+    ],
     submitOnSuccess: false,
     submitOnError: false,
-    submitCallback: '',
+    submitCallback: null,
+    successCallback: null,
     threedinit: '',
     translations: {
       'An error occurred': 'Wystąpił błąd'
@@ -220,7 +234,7 @@ function ConfigResolverFixture() {
         subtotal: '20.00'
       },
       placement: 'st-visa-checkout',
-      requestTypes: [],
+      requestTypes: ['AUTH'],
       settings: {
         displayName: 'My Test Site'
       }
