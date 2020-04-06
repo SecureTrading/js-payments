@@ -185,7 +185,7 @@ export class ApplePay {
   }
 
   private _configurePaymentProcess(jwt: string, config: IWalletConfig, gatewayUrl: string) {
-    const { sitesecurity, placement, buttonText, buttonStyle, paymentRequest, merchantId, requestTypes } = config;
+    const { sitesecurity, placement, paymentRequest, merchantId, requestTypes } = config;
     this._merchantId = merchantId;
     this._placement = placement;
     this.payment = new Payment(jwt, gatewayUrl);
@@ -199,7 +199,6 @@ export class ApplePay {
       jwt
     });
     this._translator = new Translator(this._stJwtInstance.locale);
-    this._onInit(buttonText, buttonStyle);
   }
 
   private _setSupportedNetworks() {
@@ -312,7 +311,7 @@ export class ApplePay {
           DomMethods.parseForm()
         )
         .then((response: any) => {
-          const { errorcode, errormessage } = response;
+          const { errorcode, errormessage } = response.response;
           this._handleApplePayError(response);
           this._session.completePayment(this._completion);
           this._displayNotification(errorcode, errormessage);
