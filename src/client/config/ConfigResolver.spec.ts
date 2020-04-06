@@ -5,15 +5,22 @@ import { ConfigSchema } from './schema/ConfigSchema';
 // given
 describe('ConfigResolver', () => {
   const configResolverInstance: ConfigResolver = new ConfigResolver();
-  ConfigSchema.validate = jest.fn().mockReturnValueOnce({ error: null });
 
   // when
-  beforeEach(() => {});
+  beforeEach(() => {
+    ConfigSchema.validate = jest.fn().mockReturnValueOnce({ error: null });
+  });
 
   // then
-  it('should validate given config object and throw error ', () => {
+  it('should set default config when some of properties are not set ', () => {
     let { config, configResolved } = ConfigResolverFixture();
     expect(configResolverInstance.resolve(config)).toEqual(configResolved);
+  });
+
+  // then
+  it('should set default config when all of the properties are not set, except of those which are obligatory', () => {
+    let { minimalDefaultConfigResolve, minimalConfig } = ConfigResolverFixture();
+    expect(configResolverInstance.resolve(minimalConfig)).toEqual(minimalDefaultConfigResolve);
   });
 });
 
@@ -154,7 +161,7 @@ function ConfigResolverFixture() {
     },
     components: {
       defaultPaymentType: '',
-      requestTypes: ['AUTH', 'THREEDQUERY'],
+      requestTypes: ['THREEDQUERY', 'AUTH'],
       paymentTypes: [''],
       startOnLoad: false
     },
@@ -178,7 +185,7 @@ function ConfigResolverFixture() {
       securitycode: '***'
     },
     panIcon: true,
-    requestTypes: ['AUTH', 'THREEDQUERY'],
+    requestTypes: ['THREEDQUERY', 'AUTH'],
     styles: {
       defaultStyles: {
         'background-color-input': 'AliceBlue'
@@ -240,8 +247,75 @@ function ConfigResolverFixture() {
       }
     }
   };
+  const minimalConfig: IConfig = {
+    jwt: 'randomjwt',
+    disableNotification: false
+  };
+  const minimalDefaultConfigResolve: IConfig = {
+    analytics: false,
+    animatedCard: false,
+    buttonId: '',
+    // @ts-ignore
+    bypassCards: [],
+    cachetoken: '',
+    componentIds: {
+      animatedCard: 'st-animated-card',
+      cardNumber: 'st-card-number',
+      expirationDate: 'st-expiration-date',
+      notificationFrame: 'st-notification-frame',
+      securityCode: 'st-security-code'
+    },
+    components: {
+      defaultPaymentType: '',
+      requestTypes: ['THREEDQUERY', 'AUTH'],
+      paymentTypes: [''],
+      startOnLoad: false
+    },
+    datacenterurl: 'https://webservices.securetrading.net/jwt/',
+    deferInit: false,
+    disableNotification: false,
+    errorCallback: null,
+    fieldsToSubmit: ['pan', 'expirydate', 'securitycode'],
+    formId: 'st-form',
+    init: {
+      cachetoken: '',
+      threedinit: ''
+    },
+    jwt: 'randomjwt',
+    livestatus: 0,
+    origin: 'http://localhost',
+    placeholders: {
+      pan: '',
+      expirydate: '',
+      securitycode: ''
+    },
+    panIcon: false,
+    requestTypes: ['THREEDQUERY', 'AUTH'],
+    styles: {},
+    submitFields: [
+      'baseamount',
+      'currencyiso3a',
+      'eci',
+      'enrolled',
+      'errorcode',
+      'errordata',
+      'errormessage',
+      'orderreference',
+      'settlestatus',
+      'status',
+      'transactionreference'
+    ],
+    submitOnSuccess: true,
+    submitOnError: false,
+    submitCallback: null,
+    successCallback: null,
+    threedinit: '',
+    translations: {}
+  };
   return {
     config,
-    configResolved
+    configResolved,
+    minimalConfig,
+    minimalDefaultConfigResolve
   };
 }

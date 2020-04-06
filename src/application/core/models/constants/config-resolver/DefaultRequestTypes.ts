@@ -1,1 +1,1 @@
-export const DefaultRequestTypes: string[] = ['AUTH', 'THREEDQUERY'];
+export const DefaultRequestTypes: string[] = ['THREEDQUERY', 'AUTH'];
