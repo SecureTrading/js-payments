@@ -4,5 +4,5 @@ import { CybertonicaMock } from './mocks/CybertonicaMock';
 import { environment } from '../environments/environment';
 
 if (environment.testEnvironment) {
-  Container.set(Cybertonica, CybertonicaMock);
+  Container.set({ id: Cybertonica, type: CybertonicaMock });
 }

@@ -24,10 +24,10 @@ import { BrowserSessionStorage } from '../../../shared/services/storage/BrowserS
 import { Service } from 'typedi';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
-import { interval } from 'rxjs';
-import { filter, mapTo } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
 import { Cybertonica } from '../../core/integrations/Cybertonica';
+import { IConfig } from '../../../shared/model/config/IConfig';
 
 @Service()
 export class ControlFrame extends Frame {
@@ -74,6 +74,7 @@ export class ControlFrame extends Frame {
   };
   private _threeDQueryResult: any;
   private _validation: Validation;
+  private readonly _config$: Observable<IConfig>;
 
   constructor(
     private _localStorage: BrowserLocalStorage,
@@ -84,10 +85,9 @@ export class ControlFrame extends Frame {
     private _cybertonica: Cybertonica
   ) {
     super();
+    this._config$ = this._configProvider.getConfig$();
+    this._communicator.whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK).thenRespond(() => this._config$);
     this.onInit();
-    this._communicator
-      .whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK)
-      .thenRespond(() => interval().pipe(mapTo(this._configProvider.getConfig()), filter(Boolean)));
   }
 
   protected async onInit(): Promise<void> {
@@ -421,10 +421,12 @@ export class ControlFrame extends Frame {
   }
 
   private _initCybertonica(): void {
-    const { cybertonicaApiKey } = this._configProvider.getConfig();
+    this._config$.subscribe(config => {
+      const { cybertonicaApiKey } = config;
 
-    if (cybertonicaApiKey) {
-      this._cybertonica.init(cybertonicaApiKey);
-    }
+      if (cybertonicaApiKey) {
+        this._cybertonica.init(cybertonicaApiKey);
+      }
+    });
   }
 }
