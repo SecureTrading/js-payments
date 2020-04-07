@@ -20,7 +20,29 @@ describe('Visa Checkout', () => {
     when(communicator.whenReceive(anyString())).thenReturn({
       thenRespond: () => undefined
     });
-    when(configProvider.getConfig$()).thenReturn(of({ jwt, disableNotification: false }));
+    when(configProvider.getConfig$()).thenReturn(
+      of({
+        jwt,
+        disableNotification: false,
+        datacenterurl: 'https://example.com',
+        visaCheckout: {
+          buttonSettings: {
+            size: '154',
+            color: 'neutral'
+          },
+          livestatus: 0,
+          merchantId: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4',
+          paymentRequest: {
+            subtotal: '20.00'
+          },
+          placement: 'st-visa-checkout',
+          requestTypes: ['AUTH'],
+          settings: {
+            displayName: 'My Test Site'
+          }
+        }
+      })
+    );
     instance = new VisaCheckout(mockInstance(configProvider), mockInstance(communicator));
     body = document.body;
   });
