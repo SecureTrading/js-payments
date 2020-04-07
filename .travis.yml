@@ -127,14 +127,6 @@ jobs:
       if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
         - ${DOCKER_TAG} -e DEVICE="iPhone SE" -e OS_VERSION=11 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$SMOKE_TESTS_TAG
-    - name: "Behavioural test: iPhone XR, iOS 12.0 - part 1"
-      if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
-      script:
-        - ${DOCKER_TAG} -e DEVICE="iPhone XR" -e OS_VERSION=12 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=smoke_test_part_1
-    - name: "Behavioural test: iPhone XR, iOS 12.0 - part 2"
-      if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
-      script:
-        - ${DOCKER_TAG} -e DEVICE="iPhone XR" -e OS_VERSION=12 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=smoke_test_part_2
     - name: "Behavioural test: iPad 7th, iOS 13.0 - part 1"
       if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
@@ -143,14 +135,6 @@ jobs:
       if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
         - ${DOCKER_TAG} -e DEVICE="iPad 7th" -e OS_VERSION=13 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=smoke_test_part_2
-    - name: "Behavioural test: iPad Mini 4, iOS 11.0 - part 1"
-      if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
-      script:
-        - ${DOCKER_TAG} -e DEVICE="iPad Mini 4" -e OS_VERSION=11 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=smoke_test_part_1
-    - name: "Behavioural test: iPad Mini 4, iOS 11.0 - part 2"
-      if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
-      script:
-        - ${DOCKER_TAG} -e DEVICE="iPad Mini 4" -e OS_VERSION=11 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=smoke_test_part_2
 # jobs with full list of scenarios
     - name: "Behavioural test: chrome 80, Windows 10, Full list of tests"
       if: branch=master
@@ -168,14 +152,14 @@ jobs:
       if: branch=master
       script:
         - ${DOCKER_TAG} -e DEVICE="iPhone X" -e OS_VERSION=11 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=full_test_part_2
-    - name: "Behavioural test: iPhone 11, iOS 13.0, Full list of tests - part 1"
+    - name: "Behavioural test: iPhone XR, iOS 12.0, Full list of tests - part 1"
       if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
-        - ${DOCKER_TAG} -e DEVICE="iPhone 11" -e OS_VERSION=13 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=full_test_part_1
-    - name: "Behavioural test: iPhone 11, iOS 13.0, Full list of tests - part 2"
+        - ${DOCKER_TAG} -e DEVICE="iPhone XR" -e OS_VERSION=12 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=full_test_part_1
+    - name: "Behavioural test: iPhone XR, iOS 12.0, Full list of tests - part 2"
       if: env(TESTS_TYPE)=fullTest OR branch = env(BRANCH_WITH_FULL_TESTS)
       script:
-        - ${DOCKER_TAG} -e DEVICE="iPhone 11" -e OS_VERSION=13 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=full_test_part_2
+        - ${DOCKER_TAG} -e DEVICE="iPhone XR" -e OS_VERSION=12 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=full_test_part_2
     - name: "Behavioural test: Samsung Galaxy S9, Android 8.0, Full list of tests"
       if: branch=master
       script:
