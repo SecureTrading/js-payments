@@ -3,6 +3,7 @@ import { ApplePaySessionMock } from './ApplePaySessionMock';
 import { anyString, instance, mock, when } from 'ts-mockito';
 import { ConfigProvider } from '../services/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
+import { of } from 'rxjs';
 
 jest.mock('../../../../src/application/core/shared/Notification');
 
@@ -139,6 +140,7 @@ function applePayMockFixture() {
   when(communicator.whenReceive(anyString())).thenReturn({
     thenRespond: () => undefined
   });
+  when(configProvider.getConfig$()).thenReturn(of({ jwt: '', disableNotification: false }));
 
   const jwt =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
