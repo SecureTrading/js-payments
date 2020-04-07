@@ -22,6 +22,12 @@ describe('ConfigResolver', () => {
     let { minimalDefaultConfigResolve, minimalConfig } = ConfigResolverFixture();
     expect(configResolverInstance.resolve(minimalConfig)).toEqual(minimalDefaultConfigResolve);
   });
+
+  // then
+  it('should set config with given values if they are correct', () => {
+    let { minimalDefaultConfigResolve } = ConfigResolverFixture();
+    expect(configResolverInstance.resolve(minimalDefaultConfigResolve)).toEqual(minimalDefaultConfigResolve);
+  });
 });
 
 function ConfigResolverFixture() {
@@ -248,8 +254,7 @@ function ConfigResolverFixture() {
     }
   };
   const minimalConfig: IConfig = {
-    jwt: 'randomjwt',
-    disableNotification: false
+    jwt: 'randomjwt'
   };
   const minimalDefaultConfigResolve: IConfig = {
     analytics: false,

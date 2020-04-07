@@ -15,19 +15,8 @@ import { IVisaCheckout } from '../../application/core/models/constants/IVisaChec
 
 @Service()
 export class ConfigResolver {
-  public validate(
-    config: IConfig | IComponentsConfig | IComponentsIds | IApplePay | IVisaCheckout,
-    schema: Joi.ObjectSchema
-  ): void {
-    const { error } = schema.validate(config);
-
-    if (error) {
-      throw error;
-    }
-  }
-
   public resolve(config: IConfig): IConfig {
-    this.validate(config, ConfigSchema);
+    this._validate(config, ConfigSchema);
     return {
       analytics: this._getValueOrDefault(config.analytics, DefaultConfig.analytics),
       animatedCard: this._getValueOrDefault(config.animatedCard, DefaultConfig.animatedCard),
@@ -60,6 +49,17 @@ export class ConfigResolver {
       translations: this._getValueOrDefault(config.translations, DefaultConfig.translations),
       visaCheckout: this._setApmConfig(config.visaCheckout, DefaultConfig.visaCheckout)
     };
+  }
+
+  private _validate(
+    config: IConfig | IComponentsConfig | IComponentsIds | IApplePay | IVisaCheckout,
+    schema: Joi.ObjectSchema
+  ): void {
+    const { error } = schema.validate(config);
+
+    if (error) {
+      throw error;
+    }
   }
 
   private _getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
