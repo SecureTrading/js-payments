@@ -1,4 +1,8 @@
 import { VisaCheckoutMock } from './VisaCheckoutMock';
+import { anyString, instance as mockInstance, mock, when } from 'ts-mockito';
+import { ConfigProvider } from '../services/ConfigProvider';
+import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
+import { of } from 'rxjs';
 
 jest.mock('../../../../src/application/core/shared/Notification');
 
@@ -6,13 +10,17 @@ jest.mock('../../../../src/application/core/shared/Notification');
 describe('Visa Checkout Mock class', () => {
   let body: object;
   let instance: any;
-
+  const configProvider = mock(ConfigProvider);
+  const communicator = mock(InterFrameCommunicator);
+  const jwt =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
   // when
   beforeEach(() => {
-    const { config, livestatus } = VisaCheckoutMockFixture();
-    const jwt =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
-    instance = new VisaCheckoutMock(config, jwt, 'https://example.com', livestatus);
+    when(communicator.whenReceive(anyString())).thenReturn({
+      thenRespond: () => undefined
+    });
+    when(configProvider.getConfig$()).thenReturn(of({ jwt, disableNotification: false }));
+    instance = new VisaCheckoutMock(mockInstance(configProvider), mockInstance(communicator));
     body = document.body;
   });
 

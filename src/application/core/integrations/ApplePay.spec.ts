@@ -11,6 +11,10 @@ const getType = require('jest-get-type');
 import { ApplePay } from './ApplePay';
 import { DomMethods } from '../shared/DomMethods';
 import { Language } from '../shared/Language';
+import { anyString, instance as mockInstance, mock, when } from 'ts-mockito';
+import { ConfigProvider } from '../services/ConfigProvider';
+import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
+import { of } from 'rxjs';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
 jest.mock('../../../../src/application/core/integrations/GoogleAnalytics');
@@ -1078,9 +1082,16 @@ function ApplePayFixture() {
     buttonStyle: 'white-outline',
     requestTypes: ['AUTH']
   };
+  const configProvider = mock(ConfigProvider);
+  const communicator = mock(InterFrameCommunicator);
   const jwt =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
-  const instance = new ApplePay(config, jwt, 'https://example.com');
+
+  when(communicator.whenReceive(anyString())).thenReturn({
+    thenRespond: () => undefined
+  });
+  when(configProvider.getConfig$()).thenReturn(of({ jwt, disableNotification: false, applePay: config }));
+  const instance = new ApplePay(mockInstance(configProvider), mockInstance(communicator));
 
   return {
     config,
