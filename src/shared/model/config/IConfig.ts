@@ -28,12 +28,14 @@ export interface IConfig {
   placeholders?: IPlaceholdersConfig;
   requestTypes?: string[];
   styles?: IStyles;
+  cancelCallback?: any;
+  errorCallback?: any;
   submitCallback?: any;
   successCallback?: any;
-  errorCallback?: any;
   submitFields?: string[];
-  submitOnSuccess?: boolean;
+  submitOnCancel?: boolean;
   submitOnError?: boolean;
+  submitOnSuccess?: boolean;
   threedinit?: string;
   translations?: {};
   visaCheckout?: IWalletConfig;

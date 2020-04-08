@@ -174,6 +174,7 @@ export class VisaCheckout {
     this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.WARNING;
     this._getResponseMessage(this.paymentStatus);
     this._notification.warning(this.responseMessage);
+    this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_CANCEL_CALLBACK }, true);
     GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment canceled');
   }
 

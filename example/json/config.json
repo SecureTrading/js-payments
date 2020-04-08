@@ -52,7 +52,7 @@
     "cachetoken": "",
     "threedinit": ""
   },
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4NTgzNzgwNC42ODQ3NTcyLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.1UMRkw6n3R2ad6MN6i9y7_BQ2M-oYANznznUgOLV5y4",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4NjM1MzM4Ny42Mjg5MTE3LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.Tf6ofSTJZCnXMuKL3vwFXu5W8zgw68tuBoNXn36B_bI",
   "livestatus": 0,
   "origin": "",
   "placeholders": {
@@ -88,6 +88,7 @@
   "submitFields": [],
   "submitOnSuccess": false,
   "submitOnError": false,
+  "submitOnCancel": true,
   "submitCallback": "",
   "threedinit": "",
   "translations": {
