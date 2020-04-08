@@ -577,7 +577,7 @@ describe('ApplePay', () => {
       // @ts-ignore
       expect(instance._session.completePayment).toHaveBeenCalledTimes(1);
       // @ts-ignore
-      expect(instance._handleApplePayError).toHaveBeenCalledWith({ response: { errorcode: '0' } });
+      expect(instance._handleApplePayError).toHaveBeenCalledWith({ errorcode: '0' });
     });
 
     it('should call onpaymentauthorized and set paymentDetails and process successful CACHETOKEN', async () => {
@@ -617,7 +617,7 @@ describe('ApplePay', () => {
       // @ts-ignore
       expect(instance._session.completePayment).toHaveBeenCalledTimes(1);
       // @ts-ignore
-      expect(instance._handleApplePayError).toHaveBeenCalledWith({ response: { errorcode: '0' } });
+      expect(instance._handleApplePayError).toHaveBeenCalledWith({ errorcode: '0' });
     });
 
     it('should call onpaymentauthorized and set paymentDetails and handle failure', async () => {
