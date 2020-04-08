@@ -86,6 +86,72 @@ class ST {
   ) {
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
+
+    window.console.log = (...args) =>
+      this._messageBus.publish(
+        {
+          type: MessageBus.EVENTS_PUBLIC.CONSOLE_LOG,
+          data: { type: 'log', content: JSON.stringify(args) }
+        },
+        true
+      );
+    window.console.warn = (...args) =>
+      this._messageBus.publish(
+        {
+          type: MessageBus.EVENTS_PUBLIC.CONSOLE_LOG,
+          data: { type: 'warn', content: JSON.stringify(args) }
+        },
+        true
+      );
+    window.console.info = (...args) =>
+      this._messageBus.publish(
+        {
+          type: MessageBus.EVENTS_PUBLIC.CONSOLE_LOG,
+          data: { type: 'info', content: JSON.stringify(args) }
+        },
+        true
+      );
+    window.console.error = (...args) =>
+      this._messageBus.publish(
+        {
+          type: MessageBus.EVENTS_PUBLIC.CONSOLE_LOG,
+          data: { type: 'error', content: JSON.stringify(args) }
+        },
+        true
+      );
+
+    window.addEventListener('error', event =>
+      this._messageBus.publish(
+        {
+          type: MessageBus.EVENTS_PUBLIC.CONSOLE_LOG,
+          data: { type: 'error', content: JSON.stringify(event) }
+        },
+        true
+      )
+    );
+
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.CONSOLE_LOG, log => {
+      const colors = {
+        log: '#aaaaaa',
+        error: '#ffaaaa',
+        info: '#aaaaff',
+        warn: '#ffffaa'
+      };
+      const logLevels = {
+        log: 1,
+        info: 2,
+        warn: 3,
+        error: 4
+      };
+      const { type, content } = log;
+      const color = colors[type];
+      const logLevel = logLevels.error;
+
+      if (logLevels[type] >= logLevel) {
+        document.getElementById('log_output').innerHTML += `<div style="background-color: ${color}">${content}</div>`;
+      }
+    });
+
     this.init();
   }
 

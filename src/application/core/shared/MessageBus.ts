@@ -61,7 +61,8 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
     UPDATE_JWT: 'UPDATE_JWT',
     UPDATE_MERCHANT_FIELDS: 'UPDATE_MERCHANT_FIELDS',
     SUBSCRIBE: 'SUBSCRIBE',
-    CONFIG_CHECK: 'ST_CONFIG_CHECK'
+    CONFIG_CHECK: 'ST_CONFIG_CHECK',
+    CONSOLE_LOG: 'CONSOLE_LOG'
   };
 
   constructor(
