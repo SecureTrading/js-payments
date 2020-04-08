@@ -3,7 +3,7 @@
   "animatedCard": true,
   "applePay": {
     "buttonStyle": "white-outline",
-    "buttonText": "donate",
+    "buttonText": "buy",
     "merchantId": "merchant.net.securetrading.test",
     "paymentRequest": {
       "countryCode": "US",
