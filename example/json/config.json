@@ -52,14 +52,9 @@
     "cachetoken": "",
     "threedinit": ""
   },
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4NTgzNzgwNC42ODQ3NTcyLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.1UMRkw6n3R2ad6MN6i9y7_BQ2M-oYANznznUgOLV5y4",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4NjQyMzg1NS40MjY4MjgxLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiMzQwMDAwMDAwMDAwNjExIiwiZXhwaXJ5ZGF0ZSI6IjAxLzIyIn19.GGPYJ69vkTpjw6hDwdJI71SucvR42xmG-ANwyrlRzek",
   "livestatus": 0,
   "origin": "",
-  "placeholders": {
-    "pan": "Card number",
-    "expirydate": "MM/YY",
-    "securitycode": "***"
-  },
   "panIcon": true,
   "requestTypes": [],
   "styles": {
