@@ -54,18 +54,27 @@ export class Payment {
       (processPaymentRequestBody as any).fraudcontroltransactionid = cybertonicaTid;
     }
 
-    return this._stTransport.sendRequest(processPaymentRequestBody);
+    return this._stTransport.sendRequest(processPaymentRequestBody).catch(e => {
+      console.error('process payment catch');
+      console.error(JSON.stringify(e));
+    });
   }
 
   public threeDInitRequest() {
-    return this._stTransport.sendRequest(this._threeDInitRequestBody).then((result: { jwt: string; response: any }) => {
-      const {
-        payload: { jwt, response }
-      } = new StJwt(result.jwt);
-      const threeDInitResult = { jwt, response: response[0] };
-      this._cardinalCommerceCacheToken = result.response.cachetoken;
-      return threeDInitResult;
-    });
+    return this._stTransport
+      .sendRequest(this._threeDInitRequestBody)
+      .then((result: { jwt: string; response: any }) => {
+        const {
+          payload: { jwt, response }
+        } = new StJwt(result.jwt);
+        const threeDInitResult = { jwt, response: response[0] };
+        this._cardinalCommerceCacheToken = result.response.cachetoken;
+        return threeDInitResult;
+      })
+      .catch(e => {
+        console.error('3d init catch');
+        console.error(JSON.stringify(e));
+      });
   }
 
   public async threeDQueryRequest(requestTypes: string[], card: ICard, merchantData: IMerchantData): Promise<object> {
@@ -83,7 +92,10 @@ export class Payment {
       (threeDQueryRequestBody as any).fraudcontroltransactionid = cybertonicaTid;
     }
 
-    return this._stTransport.sendRequest(threeDQueryRequestBody);
+    return this._stTransport.sendRequest(threeDQueryRequestBody).catch(e => {
+      console.error('3d query catch');
+      console.error(JSON.stringify(e));
+    });
   }
 
   public walletVerify(walletVerify: IWalletVerify) {

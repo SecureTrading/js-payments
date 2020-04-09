@@ -371,8 +371,9 @@ export class CardFrames extends RegisterFrames {
   }
 
   private _preventFormSubmit(): void {
-    document
-      .getElementById(Selectors.MERCHANT_FORM_SELECTOR)
-      .addEventListener(CardFrames.SUBMIT_EVENT, event => event.preventDefault());
+    document.getElementById(Selectors.MERCHANT_FORM_SELECTOR).addEventListener(CardFrames.SUBMIT_EVENT, event => {
+      document.getElementById('log_output').innerHTML = '';
+      event.preventDefault();
+    });
   }
 }

@@ -37,20 +37,12 @@ import { MessageBus } from '../../core/shared/MessageBus';
     messageBus.publish(
       {
         type: MessageBus.EVENTS_PUBLIC.CONSOLE_LOG,
-        data: { type: 'error', content: JSON.stringify(args) }
+        data: { type: 'error', content: 'aAAA ' + JSON.stringify(args) }
       },
       true
     );
 
-  window.addEventListener('error', event =>
-    messageBus.publish(
-      {
-        type: MessageBus.EVENTS_PUBLIC.CONSOLE_LOG,
-        data: { type: 'error', content: JSON.stringify(event) }
-      },
-      true
-    )
-  );
+  window.addEventListener('error', event => window.console.error(event));
 
   return Container.get(ControlFrame);
 })();

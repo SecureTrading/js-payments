@@ -89,7 +89,11 @@ export class StTransport {
     retryTimeout = StTransport.RETRY_TIMEOUT
   ) {
     return Utils.retryPromise(
-      () => Utils.promiseWithTimeout<Response>(() => fetch(url, options), connectTimeout),
+      () =>
+        Utils.promiseWithTimeout<Response>(() => fetch(url, options), connectTimeout).catch(e => {
+          console.error('retry catch');
+          console.error(e);
+        }),
       delay,
       retries,
       retryTimeout

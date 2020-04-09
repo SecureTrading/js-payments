@@ -115,20 +115,20 @@ class ST {
       this._messageBus.publish(
         {
           type: MessageBus.EVENTS_PUBLIC.CONSOLE_LOG,
-          data: { type: 'error', content: JSON.stringify(args) }
+          data: { type: 'error', content: 'BBBBB' + JSON.stringify(args) + typeof args + args.length }
         },
         true
       );
 
-    window.addEventListener('error', event =>
-      this._messageBus.publish(
-        {
-          type: MessageBus.EVENTS_PUBLIC.CONSOLE_LOG,
-          data: { type: 'error', content: JSON.stringify(event) }
-        },
-        true
-      )
-    );
+    window.addEventListener('error', event => {
+      window.console.error(event);
+      window.console.error('error kurde');
+    });
+
+    window.addEventListener('unhandledrejection', event => {
+      window.console.error('rejection kurde');
+      window.console.error(event);
+    });
 
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.CONSOLE_LOG, log => {
       const colors = {
@@ -141,11 +141,12 @@ class ST {
         log: 1,
         info: 2,
         warn: 3,
-        error: 4
+        error: 4,
+        none: 5
       };
       const { type, content } = log;
       const color = colors[type];
-      const logLevel = logLevels.error;
+      const logLevel = logLevels.none;
 
       if (logLevels[type] >= logLevel) {
         document.getElementById('log_output').innerHTML += `<div style="background-color: ${color}">${content}</div>`;

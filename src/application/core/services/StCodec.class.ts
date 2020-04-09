@@ -244,18 +244,26 @@ class StCodec {
     let decoded: any;
     const promise = await new Promise((resolve, reject) => {
       if ('json' in responseObject) {
-        responseObject.json().then(responseData => {
-          decoded = StCodec._decodeResponseJwt(responseData.jwt, reject);
-          if (decoded && decoded.payload.response[0].errorcode === '0') {
-            StCodec.jwt = decoded.payload.jwt;
-          } else {
-            StCodec.jwt = StCodec.originalJwt;
-          }
-          resolve({
-            jwt: responseData.jwt,
-            response: StCodec.verifyResponseObject(decoded.payload, responseData.jwt)
+        const clone = responseObject.clone();
+        responseObject
+          .json()
+          .then(responseData => {
+            decoded = StCodec._decodeResponseJwt(responseData.jwt, reject);
+            if (decoded && decoded.payload.response[0].errorcode === '0') {
+              StCodec.jwt = decoded.payload.jwt;
+            } else {
+              StCodec.jwt = StCodec.originalJwt;
+            }
+            resolve({
+              jwt: responseData.jwt,
+              response: StCodec.verifyResponseObject(decoded.payload, responseData.jwt)
+            });
+          })
+          .catch(e => {
+            console.error('decode catch');
+            console.error(e);
+            clone.text().then(text => console.error(text));
           });
-        });
       } else {
         StCodec.jwt = StCodec.originalJwt;
         reject(StCodec._handleInvalidResponse());
