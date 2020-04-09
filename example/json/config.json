@@ -52,7 +52,7 @@
     "cachetoken": "",
     "threedinit": ""
   },
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4NjQyMzg1NS40MjY4MjgxLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiMzQwMDAwMDAwMDAwNjExIiwiZXhwaXJ5ZGF0ZSI6IjAxLzIyIn19.GGPYJ69vkTpjw6hDwdJI71SucvR42xmG-ANwyrlRzek",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4NjQ0MjU2MC44MzQ0Mzk4LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.Lc8rHFAHzWA5qKCIihJYrEyXjPvtw1OgFbNk7GxyLso",
   "livestatus": 0,
   "origin": "",
   "panIcon": true,
