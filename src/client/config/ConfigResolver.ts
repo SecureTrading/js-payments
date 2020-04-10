@@ -26,6 +26,7 @@ export class ConfigResolver {
       cachetoken: this._getValueOrDefault(config.cachetoken, DefaultConfig.cachetoken),
       componentIds: this._setComponentIds(config.componentIds),
       components: this._setComponentsProperties(config.components),
+      cybertonicaApiKey: this._getValueOrDefault(config.cybertonicaApiKey, ''),
       datacenterurl: this._getValueOrDefault(config.datacenterurl, DefaultConfig.datacenterurl),
       deferInit: this._getValueOrDefault(config.deferInit, DefaultConfig.deferInit),
       disableNotification: this._getValueOrDefault(config.disableNotification, DefaultConfig.disableNotification),

@@ -67,6 +67,7 @@ function ConfigResolverFixture() {
       paymentTypes: [],
       startOnLoad: false
     },
+    cybertonicaApiKey: '',
     datacenterurl: '',
     deferInit: false,
     disableNotification: false,
@@ -171,6 +172,7 @@ function ConfigResolverFixture() {
       paymentTypes: [''],
       startOnLoad: false
     },
+    cybertonicaApiKey: '',
     datacenterurl: 'https://webservices.securetrading.net/jwt/',
     deferInit: false,
     disableNotification: false,
@@ -259,6 +261,7 @@ function ConfigResolverFixture() {
   const minimalDefaultConfigResolve: IConfig = {
     analytics: false,
     animatedCard: false,
+    applePay: undefined,
     buttonId: '',
     // @ts-ignore
     bypassCards: [],
@@ -276,6 +279,7 @@ function ConfigResolverFixture() {
       paymentTypes: [''],
       startOnLoad: false
     },
+    cybertonicaApiKey: '',
     datacenterurl: 'https://webservices.securetrading.net/jwt/',
     deferInit: false,
     disableNotification: false,
@@ -315,7 +319,8 @@ function ConfigResolverFixture() {
     submitCallback: null,
     successCallback: null,
     threedinit: '',
-    translations: {}
+    translations: {},
+    visaCheckout: undefined
   };
   return {
     config,
