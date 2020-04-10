@@ -1,4 +1,8 @@
 import { VisaCheckout } from './VisaCheckout';
+import { anyString, mock, when, instance as mockInstance } from 'ts-mockito';
+import { ConfigProvider } from '../services/ConfigProvider';
+import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
+import { of } from 'rxjs';
 
 jest.mock('../../../../src/application/core/integrations/GoogleAnalytics');
 jest.mock('../../../../src/application/core/shared/Notification');
@@ -7,17 +11,44 @@ jest.mock('../../../../src/application/core/shared/Notification');
 describe('Visa Checkout', () => {
   let body: object;
   let instance: any;
+  const configProvider = mock(ConfigProvider);
+  const communicator = mock(InterFrameCommunicator);
+  const jwt =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
   // when
   beforeEach(() => {
-    const { config, livestatus, url } = VisaCheckoutFixture();
-    const jwt =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
-    instance = new VisaCheckout(config, jwt, url, livestatus);
+    when(communicator.whenReceive(anyString())).thenReturn({
+      thenRespond: () => undefined
+    });
+    when(configProvider.getConfig$()).thenReturn(
+      of({
+        jwt,
+        disableNotification: false,
+        datacenterurl: 'https://example.com',
+        visaCheckout: {
+          buttonSettings: {
+            size: '154',
+            color: 'neutral'
+          },
+          livestatus: 0,
+          merchantId: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4',
+          paymentRequest: {
+            subtotal: '20.00'
+          },
+          placement: 'st-visa-checkout',
+          requestTypes: ['AUTH'],
+          settings: {
+            displayName: 'My Test Site'
+          }
+        }
+      })
+    );
+    instance = new VisaCheckout(mockInstance(configProvider), mockInstance(communicator));
     body = document.body;
   });
 
   // given
-  describe('setInitConfiguration()', () => {
+  describe('_setInitConfig()', () => {
     // then
     it('should set _initConfiguration', () => {
       instance._initConfiguration = { start: 'with value', paymentRequest: {} };
@@ -181,7 +212,7 @@ describe('Visa Checkout', () => {
     // then
     it.skip('should call load handler', () => {
       // @ts-ignore
-      const spy = jest.spyOn(VisaCheckout.prototype, 'initPaymentConfiguration').mockImplementation(() => {});
+      const spy = jest.spyOn(VisaCheckout.prototype, '_instantiateVisa').mockImplementation(() => {});
       // @ts-ignore
       const spy2 = jest.spyOn(VisaCheckout.prototype, 'paymentStatusHandler').mockImplementation(() => {});
       const ev = document.createEvent('Event');
@@ -281,7 +312,7 @@ describe('Visa Checkout', () => {
   });
 
   // given
-  describe('initPaymentConfiguration()', () => {
+  describe('_instantiateVisa()', () => {
     // then
     it('should trigger V.init function with proper configuration', () => {
       const { fakeV } = VisaCheckoutFixture();

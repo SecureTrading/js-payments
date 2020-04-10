@@ -146,13 +146,13 @@ export class ConfigResolver {
     };
   }
 
-  private _setApmConfig(apm: IWalletConfig | {}, components: IComponentsConfig): IWalletConfig {
+  private _setApmConfig(apm: IWalletConfig, components: IComponentsConfig): IWalletConfig {
     if (!apm) {
       return apm;
     }
     return {
       ...apm,
-      requestTypes: components && this._getValueOrDefault(components.requestTypes, this.DEFAULT_APMS_REQUEST_TYPES)
+      requestTypes: components && this._getValueOrDefault(apm.requestTypes, this.DEFAULT_APMS_REQUEST_TYPES)
     };
   }
 }

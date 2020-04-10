@@ -1,5 +1,9 @@
 import { ApplePayMock } from './ApplePayMock';
 import { ApplePaySessionMock } from './ApplePaySessionMock';
+import { anyString, instance, mock, when } from 'ts-mockito';
+import { ConfigProvider } from '../services/ConfigProvider';
+import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
+import { of } from 'rxjs';
 
 jest.mock('../../../../src/application/core/shared/Notification');
 
@@ -8,57 +12,57 @@ describe('Class ApplePayMock', () => {
   // given
   describe('ApplePayMock.ifApplePayIsAvailable', () => {
     // when
-    let instance: any;
+    let apInstance: any;
     beforeEach(() => {
-      instance = applePayMockFixture().instance;
+      apInstance = applePayMockFixture().apInstance;
     });
 
     // then
     it('should always return true', () => {
-      expect(instance.ifApplePayIsAvailable()).toBe(true);
+      expect(apInstance.ifApplePayIsAvailable()).toBe(true);
     });
   });
 
   // given
   describe('ApplePayMock.setApplePayVersion', () => {
     // when
-    let instance: any;
+    let apInstance: any;
     beforeEach(() => {
-      instance = applePayMockFixture().instance;
+      apInstance = applePayMockFixture().apInstance;
     });
 
     // then
     it('should always set version to 5', () => {
-      instance.setApplePayVersion();
-      expect(instance.applePayVersion).toBe(5);
+      apInstance.setApplePayVersion();
+      expect(apInstance.applePayVersion).toBe(5);
     });
   });
 
   // given
   describe('ApplePayMock.isUserLoggedToAppleAccount', () => {
     // when
-    let instance: any;
+    let apInstance: any;
     beforeEach(() => {
-      instance = applePayMockFixture().instance;
+      apInstance = applePayMockFixture().apInstance;
     });
 
     // then
     it('should always return true', () => {
-      expect(instance.isUserLoggedToAppleAccount()).toBe(true);
+      expect(apInstance.isUserLoggedToAppleAccount()).toBe(true);
     });
   });
 
   // given
   describe('ApplePayMock.checkApplePayWalletCardAvailability', () => {
     // when
-    let instance: any;
+    let apInstance: any;
     beforeEach(() => {
-      instance = applePayMockFixture().instance;
+      apInstance = applePayMockFixture().apInstance;
     });
 
     // then
     it('should return promise which returns true', () => {
-      instance.checkApplePayWalletCardAvailability().then((response: boolean) => {
+      apInstance.checkApplePayWalletCardAvailability().then((response: boolean) => {
         expect(response).toBe(true);
       });
     });
@@ -67,52 +71,52 @@ describe('Class ApplePayMock', () => {
   // given
   describe('ApplePayMock.getApplePaySessionObject', () => {
     // when
-    let instance: any;
+    let apInstance: any;
     beforeEach(() => {
-      instance = applePayMockFixture().instance;
+      apInstance = applePayMockFixture().apInstance;
     });
 
     // then
     it('should always return mock applepay session', () => {
-      expect(instance.getApplePaySessionObject()).toBe(ApplePaySessionMock);
+      expect(apInstance.getApplePaySessionObject()).toBe(ApplePaySessionMock);
     });
   });
 
   // given
   describe('ApplePayMock.getApplePaySessionObject', () => {
     // when
-    let instance: any;
+    let apInstance: any;
     beforeEach(() => {
-      instance = applePayMockFixture().instance;
+      apInstance = applePayMockFixture().apInstance;
     });
 
     // then
     it('should always return STATUS_SUCCESS as SUCCESS', () => {
       ApplePaySessionMock.STATUS_SUCCESS = 'SUCCESS';
       ApplePaySessionMock.STATUS_FAILURE = 'ERROR';
-      expect(instance.getPaymentSuccessStatus()).toBe('SUCCESS');
+      expect(apInstance.getPaymentSuccessStatus()).toBe('SUCCESS');
     });
 
     // then
     it('should always return STATUS_SUCCESS as ERROR', () => {
       ApplePaySessionMock.STATUS_SUCCESS = 'SUCCESS';
       ApplePaySessionMock.STATUS_FAILURE = 'ERROR';
-      expect(instance.getPaymentFailureStatus()).toBe('ERROR');
+      expect(apInstance.getPaymentFailureStatus()).toBe('ERROR');
     });
   });
 
   // given
   describe('ApplePayMock.createApplePayButton', () => {
     // when
-    let instance: any;
+    let apInstance: any;
     beforeEach(() => {
-      instance = applePayMockFixture().instance;
+      apInstance = applePayMockFixture().apInstance;
     });
 
     // then
     it('should always return Mock button', () => {
-      expect(instance.createApplePayButton().tagName).toBe('IMG');
-      expect(instance.createApplePayButton().id).toBe('st-apple-pay');
+      expect(apInstance.createApplePayButton().tagName).toBe('IMG');
+      expect(apInstance.createApplePayButton().id).toBe('st-apple-pay');
     });
   });
 });
@@ -131,8 +135,15 @@ function applePayMockFixture() {
     buttonText: 'donate',
     buttonStyle: 'white-outline'
   };
+  const configProvider = mock(ConfigProvider);
+  const communicator = mock(InterFrameCommunicator);
+  when(communicator.whenReceive(anyString())).thenReturn({
+    thenRespond: () => undefined
+  });
+  when(configProvider.getConfig$()).thenReturn(of({ jwt: '', disableNotification: false }));
+
   const jwt =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
-  const instance = new ApplePayMock(config, jwt, 'https://example.com');
-  return { instance, config, jwt };
+  const apInstance = new ApplePayMock(instance(configProvider), instance(communicator));
+  return { apInstance, config, jwt };
 }

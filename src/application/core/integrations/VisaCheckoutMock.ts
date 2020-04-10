@@ -3,7 +3,7 @@ import { DomMethods } from '../shared/DomMethods';
 import { VisaCheckout } from './VisaCheckout';
 
 export class VisaCheckoutMock extends VisaCheckout {
-  protected initPaymentConfiguration() {
+  protected _instantiateVisa() {
     // Do nothing on mock because we don't want to use V.
   }
 

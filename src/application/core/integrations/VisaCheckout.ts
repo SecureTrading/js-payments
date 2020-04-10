@@ -1,6 +1,4 @@
 import { environment } from '../../../environments/environment';
-import { IVisaConfig } from '../models/IVisaConfig';
-import { IVisaSettings } from '../models/IVisaSettings';
 import { IWalletConfig } from '../../../shared/model/config/IWalletConfig';
 import { DomMethods } from '../shared/DomMethods';
 import { Language } from '../shared/Language';
@@ -10,178 +8,161 @@ import { StJwt } from '../shared/StJwt';
 import { GoogleAnalytics } from './GoogleAnalytics';
 import { Container } from 'typedi';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
-import { VisaPaymentStatus } from '../models/constants/visa-checkout/VisaPaymentStatus';
 import { VisaResponseTypes } from '../models/constants/visa-checkout/VisaResponseTypes';
 import { VisaButtonProps } from '../models/constants/visa-checkout/VisaButtonProps';
+import { Observable } from 'rxjs';
+import { IConfig } from '../../../shared/model/config/IConfig';
+import { ConfigProvider } from '../services/ConfigProvider';
+import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
+import { IMerchantData } from '../models/IMerchantData';
+import { IVisaInit } from '../models/IVisaInit';
 
 declare const V: any;
 
 export class VisaCheckout {
-  protected requestTypes: string[];
-  private _buttonSettings: any;
+  private _stJwt: StJwt;
   private _messageBus: MessageBus;
   private _payment: Payment;
-  private _paymentDetails: string;
-  private _responseMessage: string;
-  private _sdkAddress: string = environment.VISA_CHECKOUT_URLS.TEST_SDK;
   private _notification: NotificationService;
-  private _stJwt: StJwt;
-  private _livestatus: number = 0;
-  private _placement: string = 'body';
-
-  private _initConfiguration = {
-    apikey: '' as string,
-    paymentRequest: {
-      currencyCode: '' as string,
-      subtotal: '' as string,
-      total: '' as string
-    },
-    settings: {}
+  private _config: IWalletConfig;
+  private readonly _config$: Observable<IConfig>;
+  private _requestTypes: string[];
+  private _urls = {
+    buttonUrl: '',
+    sdkUrl: ''
   };
 
-  constructor(config: IWalletConfig, jwt: string, gatewayUrl: string, livestatus?: number) {
+  private _visaInit: IVisaInit;
+
+  constructor(private _configProvider: ConfigProvider, private _communicator: InterFrameCommunicator) {
     this._messageBus = Container.get(MessageBus);
     this._notification = Container.get(NotificationService);
-    this._stJwt = new StJwt(jwt);
-    this._livestatus = livestatus;
-    this._configurePaymentProcess(jwt, config, gatewayUrl);
-    this._initVisaFlow();
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
-      const { newJwt } = data;
-      this._configurePaymentProcess(newJwt, config, gatewayUrl);
+    this._config$ = this._configProvider.getConfig$();
+    this._communicator.whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK).thenRespond(() => this._config$);
+    this._config$.subscribe(config => {
+      this._init(config);
+    });
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (response: any) => {
+      this._updateJwt(response.newJwt);
+      this._setInitConfig();
+      this._customizeButton();
     });
   }
 
-  public setInitConfiguration(paymentRequest: any, settings: any, stJwt: StJwt, merchantId: string) {
-    this._initConfiguration.apikey = merchantId;
-    this._initConfiguration.paymentRequest = this.getInitPaymentRequest(paymentRequest, stJwt) as any;
-    this._initConfiguration.settings = this._setConfiguration({ locale: stJwt.locale }, settings);
+  private _init(config: IConfig) {
+    this._config = config;
+    const { jwt, visaCheckout } = config;
+    const { placement, livestatus, requestTypes } = visaCheckout;
+    this._requestTypes = requestTypes;
+    this._visaInit = {
+      apikey: visaCheckout.merchantId,
+      settings: visaCheckout.settings,
+      paymentRequest: visaCheckout.paymentRequest
+    };
+    this._updateJwt(jwt);
+    this._setInitConfig();
+    this._customizeButton();
+    this._setEnvUrls(livestatus);
+    this._loadSdk(placement);
   }
 
-  public customizeVisaButton(properties: any) {
-    const { color, size } = properties;
+  private _loadSdk(target: string) {
+    DomMethods.insertScript(target, { src: this._urls.sdkUrl, id: 'visaCheckout' })
+      .then(() => {
+        this._injectButton(target);
+        this._instantiateVisa();
+        this._paymentStatusHandler();
+      })
+      .catch((e: any) => {
+        throw new Error(e);
+      });
+  }
+
+  private _setEnvUrls(livestatus: 0 | 1): void {
+    this._urls = {
+      buttonUrl: livestatus ? environment.VISA_CHECKOUT_URLS.LIVE_BUTTON_URL : VisaButtonProps.src,
+      sdkUrl: livestatus ? environment.VISA_CHECKOUT_URLS.TEST_SDK : environment.VISA_CHECKOUT_URLS.LIVE_SDK
+    };
+  }
+
+  private _updateJwt(jwt: string): void {
+    const { datacenterurl } = this._config;
+    this._stJwt = new StJwt(jwt);
+    this._payment = new Payment(jwt, datacenterurl);
+  }
+
+  private _setInitConfig(): void {
+    const { merchantId } = this._config.visaCheckout;
+    const { currencyiso3a, locale, mainamount } = this._stJwt;
+    this._visaInit.apikey = merchantId;
+    this._visaInit.paymentRequest.currencyCode = currencyiso3a;
+    this._visaInit.paymentRequest.subtotal = mainamount;
+    this._visaInit.paymentRequest.total = mainamount;
+    this._visaInit.settings.locale = locale;
+  }
+
+  private _customizeButton() {
+    const { buttonSettings } = this._config.visaCheckout;
     const url = new URL(VisaButtonProps.src);
-    if (color) {
-      url.searchParams.append('color', color);
-    }
-    if (size) {
-      url.searchParams.append('size', size);
-    }
-    VisaButtonProps.src = url.href;
-    return VisaButtonProps.src;
+    this._urls.buttonUrl = url.href;
+    Object.keys(buttonSettings).forEach((item: any) => {
+      if (buttonSettings[item]) {
+        url.searchParams.append(`${item}`, buttonSettings[item]);
+      }
+    });
   }
 
-  public getInitPaymentRequest(paymentRequest: any, stJwt: StJwt) {
-    const config = this._initConfiguration.paymentRequest;
-    config.currencyCode = stJwt.currencyiso3a;
-    config.subtotal = stJwt.mainamount;
-    config.total = stJwt.mainamount;
-    return this._setConfiguration(config, paymentRequest);
-  }
+  private _createButton = (): HTMLElement => DomMethods.createHtmlElement.apply(this, [VisaButtonProps, 'img']);
 
-  public createVisaButton = () => DomMethods.createHtmlElement.apply(this, [VisaButtonProps, 'img']);
-
-  protected attachVisaButton = () => DomMethods.appendChildIntoDOM(this._placement, this.createVisaButton());
+  private _injectButton = (target: string): Element => DomMethods.appendChildIntoDOM(target, this._createButton());
 
   protected onSuccess(payment: object) {
-    this._paymentDetails = JSON.stringify(payment);
+    const paymentData = {
+      walletsource: 'VISACHECKOUT',
+      wallettoken: JSON.stringify(payment)
+    };
+    const merchantData: IMerchantData = {
+      ...DomMethods.parseForm()
+    };
     this._payment
-      .processPayment(
-        this.requestTypes,
-        {
-          walletsource: 'VISACHECKOUT',
-          wallettoken: this._paymentDetails
-        },
-        DomMethods.parseForm()
-      )
+      .processPayment(this._requestTypes, paymentData, merchantData)
       .then(() => {
-        this._getResponseMessage(VisaPaymentStatus.success);
         this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK }, true);
-        this._notification.success(this._responseMessage);
+        this._notification.success(Language.translations.PAYMENT_SUCCESS);
         GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment success');
       })
       .catch((error: any) => {
-        this._getResponseMessage(VisaPaymentStatus.error);
         this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
-        this._notification.error(this._responseMessage);
+        this._notification.error(Language.translations.PAYMENT_ERROR);
       });
   }
 
   protected onError() {
-    this._getResponseMessage(VisaPaymentStatus.error);
-    this._notification.error(this._responseMessage);
+    this._notification.error(Language.translations.PAYMENT_ERROR);
     this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
     GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment error');
   }
 
   protected onCancel() {
-    this._getResponseMessage(VisaPaymentStatus.warning);
-    this._notification.warning(this._responseMessage);
+    this._notification.warning(Language.translations.PAYMENT_CANCELLED);
     GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment canceled');
   }
 
-  protected initPaymentConfiguration() {
-    V.init(this._initConfiguration);
+  private _instantiateVisa() {
+    V.init(this._visaInit);
   }
 
-  protected paymentStatusHandler() {
-    V.on(VisaResponseTypes.success, (payment: object) => {
+  private _paymentStatusHandler(): void {
+    const { cancel, error, success } = VisaResponseTypes;
+    V.on(success, (payment: object) => {
+      console.error(payment);
       this.onSuccess(payment);
     });
-    V.on(VisaResponseTypes.error, () => {
+    V.on(error, () => {
       this.onError();
     });
-    V.on(VisaResponseTypes.cancel, () => {
+    V.on(cancel, () => {
       this.onCancel();
     });
-  }
-
-  private _configurePaymentProcess(jwt: string, config: IWalletConfig, gatewayUrl: string) {
-    const { merchantId, livestatus, placement, settings, paymentRequest, buttonSettings, requestTypes } = config;
-    this._stJwt = new StJwt(jwt);
-    this._payment = new Payment(jwt, gatewayUrl);
-    this._livestatus = livestatus;
-    this._placement = placement;
-    this.requestTypes = requestTypes;
-    this.setInitConfiguration(paymentRequest, settings, this._stJwt, merchantId);
-    this._buttonSettings = this._setConfiguration({ locale: this._stJwt.locale }, settings);
-    this.customizeVisaButton(buttonSettings);
-    this._setLiveStatus();
-  }
-
-  private _setConfiguration = (config: IVisaConfig, settings: IVisaSettings) =>
-    settings || config ? { ...config, ...settings } : {};
-
-  private _initVisaFlow() {
-    DomMethods.insertScript('body', { src: this._sdkAddress, id: 'visaCheckout' }).then(() => {
-      this.attachVisaButton();
-      this.initPaymentConfiguration();
-      this.paymentStatusHandler();
-    });
-  }
-
-  private _setLiveStatus() {
-    if (this._livestatus) {
-      VisaButtonProps.src = environment.VISA_CHECKOUT_URLS.LIVE_BUTTON_URL;
-      this._sdkAddress = environment.VISA_CHECKOUT_URLS.LIVE_SDK;
-    }
-  }
-
-  private _getResponseMessage(type: string) {
-    const { error, success, warning } = VisaPaymentStatus;
-    switch (type) {
-      case success: {
-        this._responseMessage = Language.translations.PAYMENT_SUCCESS;
-        break;
-      }
-      case warning: {
-        this._responseMessage = Language.translations.PAYMENT_CANCELLED;
-        break;
-      }
-      case error: {
-        this._responseMessage = Language.translations.PAYMENT_ERROR;
-        break;
-      }
-    }
   }
 }

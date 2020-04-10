@@ -37,12 +37,15 @@ export class DomMethods {
       ? document.getElementById(target)
       : document.getElementsByTagName(DomMethods.BODY_MARKUP)[0];
     element.appendChild(child);
+    console.error(element);
+    console.error(child);
     return element;
   }
 
   public static createHtmlElement = (attributes: any, markup: string): HTMLElement => {
     const element: HTMLElement = document.createElement(markup);
     Object.keys(attributes).map(item => element.setAttribute(item, attributes[item]));
+    console.error(element);
     return element;
   };
 
@@ -71,7 +74,11 @@ export class DomMethods {
       if (loaded) {
         resolve(loaded);
       } else {
-        const targetElement: Element = document.getElementsByTagName(target)[0];
+        let targetElement: Element = document.getElementsByTagName(target)[0];
+        if (!targetElement) {
+          targetElement = document.getElementById(target);
+        }
+        console.error(params);
         const script: Element = DomMethods.setMarkupAttributes(DomMethods.SCRIPT_MARKUP, params);
         targetElement.appendChild(script);
         script.addEventListener('load', () => {
