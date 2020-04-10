@@ -9,6 +9,7 @@ import { InterFrameCommunicator } from '../../../shared/services/message-bus/Int
 import { ConfigProvider } from '../../core/services/ConfigProvider';
 import { mock, instance as mockInstance, when, anyString } from 'ts-mockito';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
+import { Cybertonica } from '../../core/integrations/Cybertonica';
 
 jest.mock('../../../../src/application/core/shared/Payment');
 
@@ -605,6 +606,7 @@ function controlFrameFixture() {
   const communicator: InterFrameCommunicator = mock(InterFrameCommunicator);
   const configProvider: ConfigProvider = mock(ConfigProvider);
   const notification: NotificationService = mock(NotificationService);
+  const cybertonica: Cybertonica = mock(Cybertonica);
 
   when(communicator.whenReceive(anyString())).thenReturn({
     thenRespond: () => undefined
@@ -615,7 +617,8 @@ function controlFrameFixture() {
     mockInstance(sessionStorage),
     mockInstance(communicator),
     mockInstance(configProvider),
-    mockInstance(notification)
+    mockInstance(notification),
+    mockInstance(cybertonica)
   );
   const messageBusEvent = {
     type: ''
