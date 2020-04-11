@@ -1,13 +1,17 @@
 import { Payment } from './Payment';
 import { StTransport } from '../services/StTransport.class';
 import { StJwt } from './StJwt';
+import { Container } from 'typedi';
+import { Cybertonica } from '../integrations/Cybertonica';
+import { mock, instance as mockInstance, when } from 'ts-mockito';
 
 jest.mock('../../../../src/application/core/shared/Notification');
+
+const cybertonicaTid = 'b268ab7f-25d7-430a-9be2-82b0f00c4039';
 
 // given
 describe('Payment', () => {
   let { card, wallet, walletverify, instance } = paymentFixture();
-
   // given
   describe('constructor()', () => {
     // when
@@ -45,31 +49,33 @@ describe('Payment', () => {
     });
 
     // then
-    it('should send AUTH request with card', () => {
-      instance.processPayment(['AUTH'], card, {
+    it('should send AUTH request with card', async () => {
+      await instance.processPayment(['AUTH'], card, {
         merchant: 'data'
       });
       // @ts-ignore
       expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
         ...card,
         requesttypedescriptions: ['AUTH'],
-        merchant: 'data'
+        merchant: 'data',
+        fraudcontroltransactionid: cybertonicaTid
       });
     });
 
     // then
-    it('should send CACHETOKENISE request', () => {
-      instance.processPayment(['CACHETOKENISE'], card, {});
+    it('should send CACHETOKENISE request', async () => {
+      await instance.processPayment(['CACHETOKENISE'], card, {});
       // @ts-ignore
       expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
         ...card,
-        requesttypedescriptions: ['CACHETOKENISE']
+        requesttypedescriptions: ['CACHETOKENISE'],
+        fraudcontroltransactionid: cybertonicaTid
       });
     });
 
     // then
-    it('should send AUTH request with card and additional data', () => {
-      instance.processPayment(
+    it('should send AUTH request with card and additional data', async () => {
+      await instance.processPayment(
         ['AUTH'],
         card,
         { pan: 'overridden', merchant: 'data' },
@@ -83,13 +89,14 @@ describe('Payment', () => {
         ...card,
         requesttypedescriptions: ['AUTH'],
         merchant: 'data',
-        additional: 'some data'
+        additional: 'some data',
+        fraudcontroltransactionid: cybertonicaTid
       });
     });
 
     // then
-    it('should send AUTH request with wallet', () => {
-      instance.processPayment(['AUTH'], wallet, {
+    it('should send AUTH request with wallet', async () => {
+      await instance.processPayment(['AUTH'], wallet, {
         merchant: 'data'
       });
       // @ts-ignore
@@ -97,13 +104,14 @@ describe('Payment', () => {
         walletsource: 'APPLEPAY',
         wallettoken: 'encryptedpaymentdata',
         requesttypedescriptions: ['AUTH'],
-        merchant: 'data'
+        merchant: 'data',
+        fraudcontroltransactionid: cybertonicaTid
       });
     });
 
     // then
-    it('should send AUTH request with wallet and additional data', () => {
-      instance.processPayment(
+    it('should send AUTH request with wallet and additional data', async () => {
+      await instance.processPayment(
         ['AUTH'],
         wallet,
         {
@@ -121,13 +129,14 @@ describe('Payment', () => {
         wallettoken: 'encryptedpaymentdata',
         requesttypedescriptions: ['AUTH'],
         merchant: 'data',
-        extra: 'some value'
+        extra: 'some value',
+        fraudcontroltransactionid: cybertonicaTid
       });
     });
 
     // then
-    it('should send CACHETOKENISE request with wallet and additional data', () => {
-      instance.processPayment(
+    it('should send CACHETOKENISE request with wallet and additional data', async () => {
+      await instance.processPayment(
         ['CACHETOKENISE'],
         wallet,
         {
@@ -145,12 +154,13 @@ describe('Payment', () => {
         wallettoken: 'encryptedpaymentdata',
         requesttypedescriptions: ['CACHETOKENISE'],
         merchant: 'data',
-        extra: 'some value'
+        extra: 'some value',
+        fraudcontroltransactionid: cybertonicaTid
       });
     });
 
     // then
-    it('should return response', () => {
+    it('should return response', async () => {
       // @ts-ignore
       instance._stTransport.sendRequest = jest.fn().mockReturnValueOnce(
         Promise.resolve({
@@ -158,7 +168,7 @@ describe('Payment', () => {
         })
       );
       // @ts-ignore;
-      instance.processPayment().then(result => {
+      await instance.processPayment().then(result => {
         expect(result).toStrictEqual({
           response: {}
         });
@@ -230,10 +240,10 @@ describe('Payment', () => {
     });
 
     // then
-    it('should send THREEDQUERY request', () => {
+    it('should send THREEDQUERY request', async () => {
       // @ts-ignore
       instance._cardinalCommerceCacheToken = 'cardinalcachetoken';
-      instance.threeDQueryRequest(['THREEDQUERY'], card, {
+      await instance.threeDQueryRequest(['THREEDQUERY'], card, {
         pan: 'overridden',
         merchant: 'data'
       });
@@ -244,7 +254,8 @@ describe('Payment', () => {
         requesttypedescriptions: ['THREEDQUERY'],
         merchant: 'data',
         termurl: 'https://termurl.com',
-        cachetoken: 'cardinalcachetoken'
+        cachetoken: 'cardinalcachetoken',
+        fraudcontroltransactionid: cybertonicaTid
       });
     });
   });
@@ -271,6 +282,9 @@ function paymentFixture() {
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0ZXN0X2p3dF9pc3N1ZXIiLCJwYXlsb2FkIjp7InNpdGVyZWZlcmVuY2UiOiJleGFtcGxlMTIzNDUiLCJiYXNlYW1vdW50IjoiMTAwMCIsImN1cnJlbmN5aXNvM2EiOiJHQlAifSwiaWF0IjoxNTE2MjM5MDIyfQ.jPuLMHxK3fznVddzkRoYC94hgheBXI1Y7zHAr7qNCig';
   let instance: Payment;
   const cachetoken = 'somecachetoken';
+  const cybertonicaMock = mock(Cybertonica);
+  when(cybertonicaMock.getTransactionId()).thenResolve(cybertonicaTid);
+  Container.set(Cybertonica, mockInstance(cybertonicaMock));
   instance = new Payment(jwt, 'https://example.com');
   const card = {
     expirydate: '10/22',

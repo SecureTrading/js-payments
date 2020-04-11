@@ -119,9 +119,10 @@
     "@babel/polyfill": "^7.7.0",
     "@babel/runtime": "^7.8.4",
     "@hapi/joi": "^17.1.1",
-    "@securetrading/js-payments-card": "^1.0.14",
+    "@securetrading/js-payments-card": "^1.0.15",
     "@securetrading/ts-iin-lookup": "^0.0.6",
     "@securetrading/ts-luhn-check": "^0.0.6",
+    "@sheerun/mutationobserver-shim": "^0.3.3",
     "@types/jwt-decode": "^2.2.1",
     "@types/lodash": "^4.14.149",
     "core-js": "^2.6.11",
@@ -138,7 +139,6 @@
     "ts-money": "^0.4.6",
     "typedi": "^0.8.0",
     "url-polyfill": "^1.1.8",
-    "validate": "^5.1.0",
     "whatwg-fetch": "^3.0.0"
   },
   "snyk": true
