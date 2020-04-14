@@ -3,7 +3,7 @@
   "animatedCard": true,
   "applePay": {
     "buttonStyle": "white-outline",
-    "buttonText": "donate",
+    "buttonText": "buy",
     "merchantId": "merchant.net.securetrading.test",
     "paymentRequest": {
       "countryCode": "US",
@@ -39,6 +39,7 @@
     "paymentTypes": [],
     "startOnLoad": false
   },
+  "cybertonicaApiKey": "test",
   "datacenterurl": "",
   "deferInit": false,
   "disableNotification": false,
@@ -108,6 +109,5 @@
     "settings": {
       "displayName": "My Test Site"
     }
-  },
-  "cybertonicaApiKey": "test"
+  }
 }

@@ -14,7 +14,7 @@ import { Language } from '../shared/Language';
 import { anyString, instance as mockInstance, mock, when } from 'ts-mockito';
 import { ConfigProvider } from '../services/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
-import { of } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
 jest.mock('../../../../src/application/core/integrations/GoogleAnalytics');
@@ -577,7 +577,7 @@ describe('ApplePay', () => {
       // @ts-ignore
       expect(instance._session.completePayment).toHaveBeenCalledTimes(1);
       // @ts-ignore
-      expect(instance._handleApplePayError).toHaveBeenCalledWith({ response: { errorcode: '0' } });
+      expect(instance._handleApplePayError).toHaveBeenCalledWith({ errorcode: '0' });
     });
 
     it('should call onpaymentauthorized and set paymentDetails and process successful CACHETOKEN', async () => {
@@ -617,7 +617,7 @@ describe('ApplePay', () => {
       // @ts-ignore
       expect(instance._session.completePayment).toHaveBeenCalledTimes(1);
       // @ts-ignore
-      expect(instance._handleApplePayError).toHaveBeenCalledWith({ response: { errorcode: '0' } });
+      expect(instance._handleApplePayError).toHaveBeenCalledWith({ errorcode: '0' });
     });
 
     it('should call onpaymentauthorized and set paymentDetails and handle failure', async () => {
@@ -1088,7 +1088,7 @@ function ApplePayFixture() {
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
 
   when(communicator.whenReceive(anyString())).thenReturn({
-    thenRespond: () => undefined
+    thenRespond: () => EMPTY
   });
   when(configProvider.getConfig$()).thenReturn(of({ jwt, disableNotification: false, applePay: config }));
   const instance = new ApplePay(mockInstance(configProvider), mockInstance(communicator));

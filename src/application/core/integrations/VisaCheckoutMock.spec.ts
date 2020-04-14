@@ -2,7 +2,7 @@ import { VisaCheckoutMock } from './VisaCheckoutMock';
 import { anyString, instance as mockInstance, mock, when } from 'ts-mockito';
 import { ConfigProvider } from '../services/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
-import { of } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 
 jest.mock('../../../../src/application/core/shared/Notification');
 
@@ -17,7 +17,7 @@ describe('Visa Checkout Mock class', () => {
   // when
   beforeEach(() => {
     when(communicator.whenReceive(anyString())).thenReturn({
-      thenRespond: () => undefined
+      thenRespond: () => EMPTY
     });
     when(configProvider.getConfig$()).thenReturn(of({ jwt, disableNotification: false }));
     instance = new VisaCheckoutMock(mockInstance(configProvider), mockInstance(communicator));
