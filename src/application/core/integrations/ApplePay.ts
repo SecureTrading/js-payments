@@ -201,7 +201,6 @@ export class ApplePay {
   }
 
   private _configurePaymentProcess(jwt: string) {
-    console.error(this._applePayConfig);
     const { sitesecurity, placement, paymentRequest, merchantId, requestTypes } = this._applePayConfig;
     this._merchantId = merchantId;
     this._placement = placement;
