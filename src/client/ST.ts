@@ -225,6 +225,7 @@ class ST {
       config.styles,
       config.submitOnSuccess,
       config.submitOnError,
+      config.submitOnCancel,
       config.submitFields,
       config.datacenterurl,
       config.animatedCard,
