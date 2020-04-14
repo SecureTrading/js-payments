@@ -85,7 +85,7 @@ export class VisaCheckout {
   private _datacenterurl: string;
   private _placement: string = 'body';
   private readonly _config$: Observable<IConfig>;
-  private _config: IWalletConfig;
+  private _visaCheckoutConfig: IWalletConfig;
 
   private _initConfiguration = {
     apikey: '' as string,
@@ -101,12 +101,11 @@ export class VisaCheckout {
     this._messageBus = Container.get(MessageBus);
     this._notification = Container.get(NotificationService);
     this._config$ = this._configProvider.getConfig$();
-    this._communicator.whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK).thenRespond(() => this._config$);
 
     this._config$.subscribe(config => {
       const { visaCheckout, jwt, datacenterurl, livestatus } = config;
       if (visaCheckout) {
-        this._config = visaCheckout;
+        this._visaCheckoutConfig = visaCheckout;
       }
       this._stJwt = new StJwt(jwt);
       this._livestatus = livestatus;
@@ -210,7 +209,15 @@ export class VisaCheckout {
   }
 
   private _configurePaymentProcess(jwt: string) {
-    const { merchantId, livestatus, placement, settings, paymentRequest, buttonSettings, requestTypes } = this._config;
+    const {
+      merchantId,
+      livestatus,
+      placement,
+      settings,
+      paymentRequest,
+      buttonSettings,
+      requestTypes
+    } = this._visaCheckoutConfig;
     this._stJwt = new StJwt(jwt);
     this.payment = new Payment(jwt, this._datacenterurl);
     this._livestatus = livestatus;

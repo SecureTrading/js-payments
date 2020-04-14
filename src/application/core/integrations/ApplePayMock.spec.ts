@@ -3,7 +3,7 @@ import { ApplePaySessionMock } from './ApplePaySessionMock';
 import { anyString, instance, mock, when } from 'ts-mockito';
 import { ConfigProvider } from '../services/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
-import { of } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 
 jest.mock('../../../../src/application/core/shared/Notification');
 
@@ -133,12 +133,13 @@ function applePayMockFixture() {
     merchantId: 'merchant.net.securetrading',
     placement: 'st-apple-pay',
     buttonText: 'donate',
-    buttonStyle: 'white-outline'
+    buttonStyle: 'white-outline',
+    sitesecurity: 'test'
   };
   const configProvider = mock(ConfigProvider);
   const communicator = mock(InterFrameCommunicator);
   when(communicator.whenReceive(anyString())).thenReturn({
-    thenRespond: () => undefined
+    thenRespond: () => EMPTY
   });
   when(configProvider.getConfig$()).thenReturn(of({ jwt: '', disableNotification: false }));
 

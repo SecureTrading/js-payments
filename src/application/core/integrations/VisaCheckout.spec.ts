@@ -2,7 +2,7 @@ import { VisaCheckout } from './VisaCheckout';
 import { anyString, mock, when, instance as mockInstance } from 'ts-mockito';
 import { ConfigProvider } from '../services/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
-import { of } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 
 jest.mock('../../../../src/application/core/integrations/GoogleAnalytics');
 jest.mock('../../../../src/application/core/shared/Notification');
@@ -18,7 +18,7 @@ describe('Visa Checkout', () => {
   // when
   beforeEach(() => {
     when(communicator.whenReceive(anyString())).thenReturn({
-      thenRespond: () => undefined
+      thenRespond: () => EMPTY
     });
     when(configProvider.getConfig$()).thenReturn(
       of({
