@@ -48,7 +48,7 @@ export class ConfigResolver {
     return {
       analytics: this._getValueOrDefault(config.analytics, false),
       animatedCard: this._getValueOrDefault(config.animatedCard, false),
-      applePay: this._setApmConfig(config.applePay, config.applePay),
+      applePay: this._setApmConfig(config.applePay, config.components),
       buttonId: this._getValueOrDefault(config.buttonId, ''),
       bypassCards: this._getValueOrDefault(config.bypassCards, []),
       cachetoken: this._getValueOrDefault(config.cachetoken, ''),
