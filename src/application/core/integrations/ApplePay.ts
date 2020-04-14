@@ -145,14 +145,13 @@ export class ApplePay {
       }
       this.jwt = jwt;
       this._datacenterurl = datacenterurl;
+      this._onInit(config.applePay.buttonText, config.applePay.buttonStyle);
     });
     this._localStorage.setItem('completePayment', '');
     this._completion = {
       errors: [],
       status: ApplePaySession ? this.getPaymentSuccessStatus() : ''
     };
-    this._configurePaymentProcess(this.jwt);
-    this._onInit(this._applePayConfig.buttonText, this._applePayConfig.buttonStyle);
 
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
       const { newJwt } = data;
@@ -202,6 +201,7 @@ export class ApplePay {
   }
 
   private _configurePaymentProcess(jwt: string) {
+    console.error(this._applePayConfig);
     const { sitesecurity, placement, paymentRequest, merchantId, requestTypes } = this._applePayConfig;
     this._merchantId = merchantId;
     this._placement = placement;
@@ -281,6 +281,7 @@ export class ApplePay {
 
   private _onInit(buttonText: string, buttonStyle: string) {
     if (this.ifApplePayIsAvailable()) {
+      this._configurePaymentProcess(this.jwt);
       this.setApplePayVersion();
       this._setSupportedNetworks();
       this._setAmountAndCurrency();

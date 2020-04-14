@@ -104,6 +104,7 @@ export class VisaCheckout {
 
     this._config$.subscribe(config => {
       const { visaCheckout, jwt, datacenterurl, livestatus } = config;
+      console.error(config);
       if (visaCheckout) {
         this._visaCheckoutConfig = visaCheckout;
       }
