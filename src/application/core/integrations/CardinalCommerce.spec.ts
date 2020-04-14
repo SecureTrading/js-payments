@@ -9,6 +9,9 @@ import { Container } from 'typedi';
 import { of } from 'rxjs';
 import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
 import { mock, instance as mockInstance, when, anyString } from 'ts-mockito';
+import { ConfigProvider } from '../services/ConfigProvider';
+import { NotificationService } from '../../../client/classes/notification/NotificationService';
+import { IConfig } from '../../../shared/model/config/IConfig';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
 jest.mock('../../../../src/application/core/integrations/GoogleAnalytics');
@@ -16,18 +19,41 @@ jest.mock('../../../../src/client/classes/notification/NotificationService');
 
 // given
 describe('CardinalCommerce', () => {
-  let instance: any;
+  let instance: any = {};
+  let configProviderMock: ConfigProvider;
+  let messageBusMock: MessageBus;
+  let notificationServiceMock: NotificationService;
+  let framesHubMock: FramesHub;
+
   const { jwt } = CardinalCommerceFixture();
-  const framesHub: FramesHub = mock(FramesHub);
 
   // when
   beforeEach(() => {
-    when(framesHub.waitForFrame(anyString())).thenCall(name => of(name));
-
+    configProviderMock = mock(ConfigProvider);
+    messageBusMock = mock(MessageBus);
+    notificationServiceMock = mock(NotificationService);
+    framesHubMock = mock(FramesHub);
+    when(framesHubMock.waitForFrame(anyString())).thenCall(name => of(name));
+    when(configProviderMock.getConfig()).thenReturn({
+      jwt,
+      livestatus: 0,
+      components: {
+        startOnLoad: false,
+        requestTypes: ['THREEDQUERY', 'AUTH']
+      },
+      init: {
+        threedinit: '',
+        cachetoken: ''
+      }
+    } as IConfig);
     document.body.innerHTML = `<iframe id='st-control-frame-iframe'>
     </iframe><input id='JWTContainer' value="${jwt}" />`;
-    instance = new CardinalCommerce(false, jwt, ['THREEDQUERY', 'AUTH'], 0);
-    instance._framesHub = mockInstance(framesHub);
+    instance = new CardinalCommerce(
+      mockInstance(configProviderMock),
+      mockInstance(messageBusMock),
+      mockInstance(notificationServiceMock),
+      mockInstance(framesHubMock)
+    );
   });
 
   // given

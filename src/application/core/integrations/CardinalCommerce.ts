@@ -16,7 +16,7 @@ import { Selectors } from '../shared/Selectors';
 import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
 import { GoogleAnalytics } from './GoogleAnalytics';
-import { Container, Service } from 'typedi';
+import { Service } from 'typedi';
 import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
 import { ConfigProvider } from '../services/ConfigProvider';
@@ -29,7 +29,6 @@ export class CardinalCommerce {
     return response.enrolled === 'Y' && response.acsurl !== undefined;
   }
 
-  public messageBus: MessageBus;
   private _cardinalCommerceJWT: string;
   private _cardinalCommerceCacheToken: string;
   private readonly _cachetoken: string;
@@ -38,13 +37,16 @@ export class CardinalCommerce {
   private _jwt: string;
   private readonly _requestTypes: string[];
   private readonly _threedinit: string;
-  private _notification: NotificationService;
   private _sdkAddress: string = environment.CARDINAL_COMMERCE.SONGBIRD_TEST_URL;
-  private _bypassCards: string[];
+  private readonly _bypassCards: string[];
   private _jwtUpdated: boolean;
-  private _framesHub: FramesHub;
 
-  constructor(configProvider: ConfigProvider) {
+  constructor(
+    configProvider: ConfigProvider,
+    private messageBus: MessageBus,
+    private _notification: NotificationService,
+    private _framesHub: FramesHub
+  ) {
     const config = configProvider.getConfig();
     this._jwtUpdated = false;
     this._startOnLoad = config.components.startOnLoad;
@@ -54,9 +56,6 @@ export class CardinalCommerce {
     this._cachetoken = config.init.cachetoken;
     this._requestTypes = config.components.requestTypes;
     this._bypassCards = config.bypassCards;
-    this.messageBus = Container.get(MessageBus);
-    this._notification = Container.get(NotificationService);
-    this._framesHub = Container.get(FramesHub);
     this._setLiveStatus();
     this._onInit();
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
@@ -64,6 +63,10 @@ export class CardinalCommerce {
       this._jwtUpdated = true;
       this._jwt = newJwt;
       this._publishRequestTypesEvent(this._requestTypes);
+    });
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.DESTROY, () => {
+      Cardinal.off(PaymentEvents.SETUP_COMPLETE);
+      Cardinal.off(PaymentEvents.VALIDATED);
     });
   }
 

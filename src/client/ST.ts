@@ -11,7 +11,6 @@ import { StCodec } from '../application/core/services/StCodec.class';
 import { ApplePay } from '../application/core/integrations/ApplePay';
 import { ApplePayMock } from '../application/core/integrations/ApplePayMock';
 import { CardinalCommerce } from '../application/core/integrations/CardinalCommerce';
-import { CardinalCommerceMock } from '../application/core/integrations/CardinalCommerceMock';
 import { GoogleAnalytics } from '../application/core/integrations/GoogleAnalytics';
 import { VisaCheckout } from '../application/core/integrations/VisaCheckout';
 import { VisaCheckoutMock } from '../application/core/integrations/VisaCheckoutMock';
@@ -23,7 +22,6 @@ import { IVisaConfig } from '../application/core/models/IVisaConfig';
 import { MessageBus } from '../application/core/shared/MessageBus';
 import { Translator } from '../application/core/shared/Translator';
 import { environment } from '../environments/environment';
-import { PaymentEvents } from '../application/core/models/constants/PaymentEvents';
 import { Selectors } from '../application/core/shared/Selectors';
 import { Service, Inject, Container } from 'typedi';
 import { CONFIG } from '../application/core/dependency-injection/InjectionTokens';
@@ -156,13 +154,6 @@ class ST {
       true
     );
 
-    const cardinal = (window as any).Cardinal;
-
-    if (cardinal) {
-      cardinal.off(PaymentEvents.SETUP_COMPLETE);
-      cardinal.off(PaymentEvents.VALIDATED);
-    }
-
     this._communicator.close();
   }
 
@@ -180,8 +171,7 @@ class ST {
   }
 
   private CardinalCommerce(): CardinalCommerce {
-    const { cardinal } = this.Environment();
-    return Container.get(cardinal);
+    return Container.get(CardinalCommerce);
   }
 
   private CardFrames(config: IConfig): void {
@@ -216,10 +206,9 @@ class ST {
     );
   }
 
-  private Environment(): { applepay: any; cardinal: any; visa: any } {
+  private Environment(): { applepay: any; visa: any } {
     return {
       applepay: environment.testEnvironment ? ApplePayMock : ApplePay,
-      cardinal: environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce,
       visa: environment.testEnvironment ? VisaCheckoutMock : VisaCheckout
     };
   }

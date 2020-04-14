@@ -1,17 +1,50 @@
 import { CardinalCommerceMock } from './CardinalCommerceMock';
+import { ConfigProvider } from '../services/ConfigProvider';
+import { MessageBus } from '../shared/MessageBus';
+import { NotificationService } from '../../../client/classes/notification/NotificationService';
+import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
+import { anyString, instance as mockInstance, mock, when } from 'ts-mockito';
+import { IConfig } from '../../../shared/model/config/IConfig';
+import { of } from 'rxjs';
 
 jest.mock('../../../../src/application/core/shared/Notification');
 
 // given
 describe('CardinalCommerce class', () => {
-  let instance: any;
+  let instance: any = {};
+  let configProviderMock: ConfigProvider;
+  let messageBusMock: MessageBus;
+  let notificationServiceMock: NotificationService;
+  let framesHubMock: FramesHub;
   const { jwt } = CardinalCommerceMockFixture();
 
   // when
   beforeEach(() => {
     document.body.innerHTML = `<iframe id='st-control-frame-iframe'>
     </iframe><input id='JWTContainer' value="${jwt}" />`;
-    instance = new CardinalCommerceMock(false, jwt, ['THREEDQUERY', 'AUTH'], 0);
+    configProviderMock = mock(ConfigProvider);
+    messageBusMock = mock(MessageBus);
+    notificationServiceMock = mock(NotificationService);
+    framesHubMock = mock(FramesHub);
+    when(framesHubMock.waitForFrame(anyString())).thenCall(name => of(name));
+    when(configProviderMock.getConfig()).thenReturn({
+      jwt,
+      livestatus: 0,
+      components: {
+        startOnLoad: false,
+        requestTypes: ['THREEDQUERY', 'AUTH']
+      },
+      init: {
+        threedinit: '',
+        cachetoken: ''
+      }
+    } as IConfig);
+    instance = new CardinalCommerceMock(
+      mockInstance(configProviderMock),
+      mockInstance(messageBusMock),
+      mockInstance(notificationServiceMock),
+      mockInstance(framesHubMock)
+    );
   });
 
   // given
