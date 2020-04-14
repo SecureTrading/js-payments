@@ -39,4 +39,5 @@ export interface IConfig {
   threedinit?: string;
   translations?: {};
   visaCheckout?: IWalletConfig;
+  cybertonicaApiKey?: string;
 }

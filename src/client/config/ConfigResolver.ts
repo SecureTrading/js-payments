@@ -81,7 +81,8 @@ export class ConfigResolver {
       successCallback: this._getValueOrDefault(config.successCallback, null),
       threedinit: this._getValueOrDefault(config.threedinit, ''),
       translations: this._getValueOrDefault(config.translations, {}),
-      visaCheckout: this._setApmConfig(config.visaCheckout, config.components)
+      visaCheckout: this._setApmConfig(config.visaCheckout, config.components),
+      cybertonicaApiKey: this._getValueOrDefault(config.cybertonicaApiKey, '')
     };
   }
 

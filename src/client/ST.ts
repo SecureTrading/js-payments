@@ -115,12 +115,11 @@ class ST {
 
   public Components(config: IComponentsConfig): void {
     this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(async controlFrame => {
-      config = config || {};
       this._config = this.configProvider.update({
         ...this._config,
         components: {
           ...this._config.components,
-          ...config
+          ...(config || {})
         }
       });
       this._commonFrames.requestTypes = this._config.components.requestTypes;
