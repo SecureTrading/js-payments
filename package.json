@@ -125,7 +125,7 @@
     "@sheerun/mutationobserver-shim": "^0.3.3",
     "@types/jwt-decode": "^2.2.1",
     "@types/lodash": "^4.14.149",
-    "core-js": "^2.6.11",
+    "core-js": "^3.6.5",
     "fastestsmallesttextencoderdecoder": "^1.0.14",
     "i18next": "^19.4.1",
     "jwt-decode": "^2.2.0",
