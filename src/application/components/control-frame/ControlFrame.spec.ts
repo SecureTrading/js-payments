@@ -10,6 +10,7 @@ import { ConfigProvider } from '../../core/services/ConfigProvider';
 import { mock, instance as mockInstance, when, anyString } from 'ts-mockito';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
 import { Cybertonica } from '../../core/integrations/Cybertonica';
+import { CardinalCommerce } from '../../core/integrations/CardinalCommerce';
 
 jest.mock('../../../../src/application/core/shared/Payment');
 
@@ -607,6 +608,7 @@ function controlFrameFixture() {
   const configProvider: ConfigProvider = mock(ConfigProvider);
   const notification: NotificationService = mock(NotificationService);
   const cybertonica: Cybertonica = mock(Cybertonica);
+  const cardinalCommerce: CardinalCommerce = mock(CardinalCommerce);
 
   when(communicator.whenReceive(anyString())).thenReturn({
     thenRespond: () => undefined
@@ -618,7 +620,8 @@ function controlFrameFixture() {
     mockInstance(communicator),
     mockInstance(configProvider),
     mockInstance(notification),
-    mockInstance(cybertonica)
+    mockInstance(cybertonica),
+    mockInstance(cardinalCommerce)
   );
   const messageBusEvent = {
     type: ''
