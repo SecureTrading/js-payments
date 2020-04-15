@@ -1,7 +1,7 @@
 import { IPlaceholdersConfig } from '../../IPlaceholdersConfig';
 
 export const DefaultPlaceholders: IPlaceholdersConfig = {
-  pan: '',
-  expirydate: '',
-  securitycode: ''
+  pan: '***** ***** ***** *****',
+  expirydate: 'MM/YY',
+  securitycode: '****'
 };
