@@ -10,7 +10,6 @@ import { MerchantFields } from './classes/MerchantFields';
 import { StCodec } from '../application/core/services/StCodec.class';
 import { ApplePay } from '../application/core/integrations/ApplePay';
 import { ApplePayMock } from '../application/core/integrations/ApplePayMock';
-import { CardinalCommerce } from '../application/core/integrations/CardinalCommerce';
 import { GoogleAnalytics } from '../application/core/integrations/GoogleAnalytics';
 import { VisaCheckout } from '../application/core/integrations/VisaCheckout';
 import { VisaCheckoutMock } from '../application/core/integrations/VisaCheckoutMock';
@@ -34,7 +33,11 @@ import { FramesHub } from '../shared/services/message-bus/FramesHub';
 import { BrowserLocalStorage } from '../shared/services/storage/BrowserLocalStorage';
 import { BrowserSessionStorage } from '../shared/services/storage/BrowserSessionStorage';
 import { Notification } from '../application/core/shared/Notification';
+import { ofType } from '../shared/services/message-bus/operators/ofType';
 import './../styles/notification.css';
+import './../styles/_control-frame.css';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Service()
 class ST {
@@ -42,11 +45,13 @@ class ST {
   private static JWT_NOT_SPECIFIED_MESSAGE: string = 'Jwt has not been specified';
   private static LOCALE_STORAGE: string = 'locale';
   private static MERCHANT_TRANSLATIONS_STORAGE: string = 'merchantTranslations';
+  private static readonly MODAL_CONTROL_FRAME_CLASS = 'modal';
   private _cardFrames: CardFrames;
   private _commonFrames: CommonFrames;
   private _googleAnalytics: GoogleAnalytics;
   private _merchantFields: MerchantFields;
   private _translation: Translator;
+  private _destroy$: Subject<void> = new Subject();
 
   set submitCallback(callback: (event: ISubmitEvent) => void) {
     if (callback) {
@@ -87,16 +92,14 @@ class ST {
     this.init();
   }
 
-  public on(event: string, callback: any) {
+  public on(event: 'success' | 'error' | 'submit', callback: any) {
     const events = {
       success: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK,
       error: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK,
       submit: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUBMIT_CALLBACK
     };
     // @ts-ignore
-    this._messageBus.subscribe(events[event], data => {
-      callback(data);
-    });
+    this._messageBus.pipe(ofType(events[event]), takeUntil(this._destroy$)).subscribe(callback);
   }
 
   public off(event: string) {
@@ -113,7 +116,6 @@ class ST {
         }
       });
       this._commonFrames.requestTypes = this._config.components.requestTypes;
-      this.CardinalCommerce();
       await this._communicator.query({ type: MessageBus.EVENTS_PUBLIC.CONFIG_CHECK }, controlFrame);
       this.CardFrames(this._config);
       this._cardFrames.init();
@@ -154,6 +156,8 @@ class ST {
       true
     );
 
+    this._destroy$.next();
+    this._destroy$.complete();
     this._communicator.close();
   }
 
@@ -168,10 +172,7 @@ class ST {
     this._commonFrames.init();
     this.displayLiveStatus(Boolean(this._config.livestatus));
     this.watchForFrameUnload();
-  }
-
-  private CardinalCommerce(): CardinalCommerce {
-    return Container.get(CardinalCommerce);
+    this.initControlFrameModal();
   }
 
   private CardFrames(config: IConfig): void {
@@ -267,6 +268,18 @@ class ST {
     if (config.errorCallback) {
       this.errorCallback = config.errorCallback;
     }
+  }
+
+  private initControlFrameModal(): void {
+    const className = ST.MODAL_CONTROL_FRAME_CLASS;
+
+    this._messageBus
+      .pipe(ofType(MessageBus.EVENTS_PUBLIC.CONTROL_FRAME_SHOW), takeUntil(this._destroy$))
+      .subscribe(() => document.getElementById(Selectors.CONTROL_FRAME_IFRAME).classList.add(className));
+
+    this._messageBus
+      .pipe(ofType(MessageBus.EVENTS_PUBLIC.CONTROL_FRAME_HIDE), takeUntil(this._destroy$))
+      .subscribe(() => document.getElementById(Selectors.CONTROL_FRAME_IFRAME).classList.remove(className));
   }
 }
 

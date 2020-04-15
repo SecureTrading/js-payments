@@ -9,7 +9,6 @@ import { Container } from 'typedi';
 import { of } from 'rxjs';
 import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
 import { mock, instance as mockInstance, when, anyString } from 'ts-mockito';
-import { ConfigProvider } from '../services/ConfigProvider';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
 import { IConfig } from '../../../shared/model/config/IConfig';
 
@@ -20,7 +19,6 @@ jest.mock('../../../../src/client/classes/notification/NotificationService');
 // given
 describe('CardinalCommerce', () => {
   let instance: any = {};
-  let configProviderMock: ConfigProvider;
   let messageBusMock: MessageBus;
   let notificationServiceMock: NotificationService;
   let framesHubMock: FramesHub;
@@ -29,12 +27,18 @@ describe('CardinalCommerce', () => {
 
   // when
   beforeEach(() => {
-    configProviderMock = mock(ConfigProvider);
     messageBusMock = mock(MessageBus);
     notificationServiceMock = mock(NotificationService);
     framesHubMock = mock(FramesHub);
     when(framesHubMock.waitForFrame(anyString())).thenCall(name => of(name));
-    when(configProviderMock.getConfig()).thenReturn({
+    document.body.innerHTML = `<iframe id='st-control-frame-iframe'>
+    </iframe><input id='JWTContainer' value="${jwt}" />`;
+    instance = new CardinalCommerce(
+      mockInstance(messageBusMock),
+      mockInstance(notificationServiceMock),
+      mockInstance(framesHubMock)
+    );
+    instance.init({
       jwt,
       livestatus: 0,
       components: {
@@ -46,14 +50,6 @@ describe('CardinalCommerce', () => {
         cachetoken: ''
       }
     } as IConfig);
-    document.body.innerHTML = `<iframe id='st-control-frame-iframe'>
-    </iframe><input id='JWTContainer' value="${jwt}" />`;
-    instance = new CardinalCommerce(
-      mockInstance(configProviderMock),
-      mockInstance(messageBusMock),
-      mockInstance(notificationServiceMock),
-      mockInstance(framesHubMock)
-    );
   });
 
   // given
@@ -165,7 +161,7 @@ describe('CardinalCommerce', () => {
           level: 'on'
         }
       });
-      expect(CardinalMock.on).toHaveBeenCalledTimes(2);
+      expect(CardinalMock.on).toHaveBeenCalledTimes(4);
       expect(CardinalMock.on.mock.calls[0][0]).toBe('payments.setupComplete');
       // Annonymous function so can't test using toHaveBeenCalledWith
       expect(CardinalMock.on.mock.calls[0][1]).toBeInstanceOf(Function);

@@ -28,6 +28,7 @@ import { Observable } from 'rxjs';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
 import { Cybertonica } from '../../core/integrations/Cybertonica';
 import { IConfig } from '../../../shared/model/config/IConfig';
+import { CardinalCommerce } from '../../core/integrations/CardinalCommerce';
 
 @Service()
 export class ControlFrame extends Frame {
@@ -82,7 +83,8 @@ export class ControlFrame extends Frame {
     private _communicator: InterFrameCommunicator,
     private _configProvider: ConfigProvider,
     private _notification: NotificationService,
-    private _cybertonica: Cybertonica
+    private _cybertonica: Cybertonica,
+    private _cardinalCommerce: CardinalCommerce
   ) {
     super();
     this._config$ = this._configProvider.getConfig$();
@@ -108,6 +110,7 @@ export class ControlFrame extends Frame {
     this._updateJwtEvent();
     this._loadControlFrame();
     this._initCybertonica();
+    this._initCardinalCommerce();
   }
 
   protected getAllowedParams(): string[] {
@@ -427,6 +430,12 @@ export class ControlFrame extends Frame {
       if (cybertonicaApiKey) {
         this._cybertonica.init(cybertonicaApiKey);
       }
+    });
+  }
+
+  private _initCardinalCommerce(): void {
+    this._config$.subscribe(config => {
+      this._cardinalCommerce.init(config);
     });
   }
 }

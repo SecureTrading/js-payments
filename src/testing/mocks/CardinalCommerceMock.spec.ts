@@ -1,18 +1,16 @@
 import { CardinalCommerceMock } from './CardinalCommerceMock';
-import { ConfigProvider } from '../services/ConfigProvider';
-import { MessageBus } from '../shared/MessageBus';
-import { NotificationService } from '../../../client/classes/notification/NotificationService';
-import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
+import { MessageBus } from '../../application/core/shared/MessageBus';
+import { NotificationService } from '../../client/classes/notification/NotificationService';
+import { FramesHub } from '../../shared/services/message-bus/FramesHub';
 import { anyString, instance as mockInstance, mock, when } from 'ts-mockito';
-import { IConfig } from '../../../shared/model/config/IConfig';
+import { IConfig } from '../../shared/model/config/IConfig';
 import { of } from 'rxjs';
 
-jest.mock('../../../../src/application/core/shared/Notification');
+jest.mock('../../../src/application/core/shared/Notification');
 
 // given
 describe('CardinalCommerce class', () => {
   let instance: any = {};
-  let configProviderMock: ConfigProvider;
   let messageBusMock: MessageBus;
   let notificationServiceMock: NotificationService;
   let framesHubMock: FramesHub;
@@ -22,12 +20,17 @@ describe('CardinalCommerce class', () => {
   beforeEach(() => {
     document.body.innerHTML = `<iframe id='st-control-frame-iframe'>
     </iframe><input id='JWTContainer' value="${jwt}" />`;
-    configProviderMock = mock(ConfigProvider);
     messageBusMock = mock(MessageBus);
     notificationServiceMock = mock(NotificationService);
     framesHubMock = mock(FramesHub);
     when(framesHubMock.waitForFrame(anyString())).thenCall(name => of(name));
-    when(configProviderMock.getConfig()).thenReturn({
+    instance = new CardinalCommerceMock(
+      mockInstance(messageBusMock),
+      mockInstance(notificationServiceMock),
+      mockInstance(framesHubMock)
+    );
+
+    instance.init({
       jwt,
       livestatus: 0,
       components: {
@@ -39,12 +42,6 @@ describe('CardinalCommerce class', () => {
         cachetoken: ''
       }
     } as IConfig);
-    instance = new CardinalCommerceMock(
-      mockInstance(configProviderMock),
-      mockInstance(messageBusMock),
-      mockInstance(notificationServiceMock),
-      mockInstance(framesHubMock)
-    );
   });
 
   // given

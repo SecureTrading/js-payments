@@ -19,45 +19,36 @@ import { GoogleAnalytics } from './GoogleAnalytics';
 import { Service } from 'typedi';
 import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
-import { ConfigProvider } from '../services/ConfigProvider';
+import { IConfig } from '../../../shared/model/config/IConfig';
 
 declare const Cardinal: any;
 
 @Service()
 export class CardinalCommerce {
+  private static readonly UI_EVENTS = {
+    RENDER: 'ui.render',
+    CLOSE: 'ui.close'
+  };
   private static _isCardEnrolledAndNotFrictionless(response: IThreeDQueryResponse) {
     return response.enrolled === 'Y' && response.acsurl !== undefined;
   }
-
   private _cardinalCommerceJWT: string;
   private _cardinalCommerceCacheToken: string;
-  private readonly _cachetoken: string;
-  private readonly _livestatus: number = 0;
-  private readonly _startOnLoad: boolean;
+  private _cachetoken: string;
+  private _livestatus: number = 0;
+  private _startOnLoad: boolean;
   private _jwt: string;
-  private readonly _requestTypes: string[];
-  private readonly _threedinit: string;
+  private _requestTypes: string[];
+  private _threedinit: string;
   private _sdkAddress: string = environment.CARDINAL_COMMERCE.SONGBIRD_TEST_URL;
-  private readonly _bypassCards: string[];
-  private _jwtUpdated: boolean;
+  private _bypassCards: string[];
+  private _jwtUpdated: boolean = false;
 
   constructor(
-    configProvider: ConfigProvider,
     private messageBus: MessageBus,
     private _notification: NotificationService,
     private _framesHub: FramesHub
   ) {
-    const config = configProvider.getConfig();
-    this._jwtUpdated = false;
-    this._startOnLoad = config.components.startOnLoad;
-    this._jwt = config.jwt;
-    this._threedinit = config.init.threedinit;
-    this._livestatus = config.livestatus;
-    this._cachetoken = config.init.cachetoken;
-    this._requestTypes = config.components.requestTypes;
-    this._bypassCards = config.bypassCards;
-    this._setLiveStatus();
-    this._onInit();
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
       const { newJwt } = data;
       this._jwtUpdated = true;
@@ -67,7 +58,21 @@ export class CardinalCommerce {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.DESTROY, () => {
       Cardinal.off(PaymentEvents.SETUP_COMPLETE);
       Cardinal.off(PaymentEvents.VALIDATED);
+      Cardinal.off(CardinalCommerce.UI_EVENTS.RENDER);
+      Cardinal.off(CardinalCommerce.UI_EVENTS.CLOSE);
     });
+  }
+
+  init(config: IConfig): void {
+    this._startOnLoad = config.components.startOnLoad;
+    this._jwt = config.jwt;
+    this._threedinit = config.init.threedinit;
+    this._livestatus = config.livestatus;
+    this._cachetoken = config.init.cachetoken;
+    this._requestTypes = config.components.requestTypes;
+    this._bypassCards = config.bypassCards;
+    this._setLiveStatus();
+    this._onInit();
   }
 
   protected _authenticateCard(responseObject: IThreeDQueryResponse) {
@@ -88,6 +93,12 @@ export class CardinalCommerce {
   protected _cardinalSetup() {
     Cardinal.setup(PaymentEvents.INIT, {
       jwt: this._cardinalCommerceJWT
+    });
+    Cardinal.on(CardinalCommerce.UI_EVENTS.RENDER, () => {
+      this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CONTROL_FRAME_SHOW }, true);
+    });
+    Cardinal.on(CardinalCommerce.UI_EVENTS.CLOSE, () => {
+      this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CONTROL_FRAME_HIDE }, true);
     });
   }
 

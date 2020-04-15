@@ -61,8 +61,12 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
     UPDATE_JWT: 'UPDATE_JWT',
     UPDATE_MERCHANT_FIELDS: 'UPDATE_MERCHANT_FIELDS',
     SUBSCRIBE: 'SUBSCRIBE',
-    CONFIG_CHECK: 'ST_CONFIG_CHECK'
+    CONFIG_CHECK: 'ST_CONFIG_CHECK',
+    CONTROL_FRAME_SHOW: 'ST_CONTROL_FRAME_SHOW',
+    CONTROL_FRAME_HIDE: 'ST_CONTROL_FRAME_HIDE'
   };
+
+  public readonly pipe: Observable<any>['pipe'];
 
   constructor(
     private communicator: InterFrameCommunicator,
@@ -73,6 +77,8 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
     if (this.identifier.isControlFrame()) {
       (window as any).messageBus = this;
     }
+
+    this.pipe = this.communicator.incomingEvent$.pipe.bind(this.communicator.incomingEvent$);
   }
 
   public publish<T>(event: IMessageBusEvent<T>, publishToParent?: boolean): void {

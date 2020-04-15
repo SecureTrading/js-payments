@@ -1,5 +1,5 @@
-import { environment } from '../../../environments/environment';
-import { CardinalCommerce } from './CardinalCommerce';
+import { environment } from '../../environments/environment';
+import { CardinalCommerce } from '../../application/core/integrations/CardinalCommerce';
 import { Service } from 'typedi';
 
 @Service()

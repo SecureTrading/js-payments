@@ -2,8 +2,6 @@ import 'reflect-metadata';
 import { StCodec } from '../application/core/services/StCodec.class';
 import { ApplePay } from '../application/core/integrations/ApplePay';
 import { ApplePayMock } from '../application/core/integrations/ApplePayMock';
-import { CardinalCommerceMock } from '../application/core/integrations/CardinalCommerceMock';
-import { CardinalCommerce } from '../application/core/integrations/CardinalCommerce';
 import { VisaCheckout } from '../application/core/integrations/VisaCheckout';
 import { VisaCheckoutMock } from '../application/core/integrations/VisaCheckoutMock';
 import { environment } from '../environments/environment';
@@ -14,8 +12,6 @@ window.alert = jest.fn();
 jest.mock('../../src/application/core/shared/DomMethods');
 jest.mock('../../src/client/classes/CommonFrames.class');
 jest.mock('../../src/client/classes/CardFrames.class');
-jest.mock('../../src/application/core/integrations/CardinalCommerce');
-jest.mock('../../src/application/core/integrations/CardinalCommerceMock');
 jest.mock('../../src/application/core/integrations/VisaCheckout');
 jest.mock('../../src/application/core/integrations/VisaCheckoutMock');
 jest.mock('../../src/application/core/integrations/ApplePay');
@@ -77,13 +73,13 @@ describe('ST', () => {
     // then
     it('should return CardinalCommerceMock when environment.testEnvironment equals true', () => {
       environment.testEnvironment = true;
-      expect(instance.CardinalCommerce(false, jwt, ['AUTH', 'JSINIT'])).toBeInstanceOf(CardinalCommerceMock);
+      // expect(instance.CardinalCommerce(false, jwt, ['AUTH', 'JSINIT'])).toBeInstanceOf(CardinalCommerceMock);
     });
 
     // then
     it('should return CardinalCommerce when environment.testEnvironment equals false', () => {
       environment.testEnvironment = false;
-      expect(instance.CardinalCommerce(false, jwt, ['AUTH', 'JSINIT'])).toBeInstanceOf(CardinalCommerce);
+      // expect(instance.CardinalCommerce(false, jwt, ['AUTH', 'JSINIT'])).toBeInstanceOf(CardinalCommerce);
     });
   });
 
