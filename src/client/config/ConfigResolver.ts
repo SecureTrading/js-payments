@@ -79,7 +79,8 @@ export class ConfigResolver {
       submitOnSuccess: this._getValueOrDefault(config.submitOnSuccess, true),
       threedinit: this._getValueOrDefault(config.threedinit, ''),
       translations: this._getValueOrDefault(config.translations, {}),
-      visaCheckout: this._setApmConfig(config.visaCheckout, config.components)
+      visaCheckout: this._setApmConfig(config.visaCheckout, config.components),
+      cybertonicaApiKey: this._getValueOrDefault(config.cybertonicaApiKey, '')
     };
   }
 
@@ -146,13 +147,13 @@ export class ConfigResolver {
     };
   }
 
-  private _setApmConfig(apm: IWalletConfig | {}, components: IComponentsConfig): IWalletConfig {
+  private _setApmConfig(apm: IWalletConfig, components: IComponentsConfig): IWalletConfig {
     if (!apm) {
       return apm;
     }
     return {
       ...apm,
-      requestTypes: components && this._getValueOrDefault(components.requestTypes, this.DEFAULT_APMS_REQUEST_TYPES)
+      requestTypes: components && this._getValueOrDefault(apm.requestTypes, this.DEFAULT_APMS_REQUEST_TYPES)
     };
   }
 }

@@ -8,19 +8,20 @@ import { StJwt } from './StJwt';
 import { Validation } from './Validation';
 import { Container } from 'typedi';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
+import { Cybertonica } from '../integrations/Cybertonica';
 
 export class Payment {
   private _cardinalCommerceCacheToken: string;
   private _notification: NotificationService;
-  private _processPaymentRequestBody: IStRequest;
   private _stTransport: StTransport;
   private _threeDInitRequestBody: IStRequest;
-  private _threeDQueryRequestBody: IStRequest;
   private _validation: Validation;
+  private _cybertonica: Cybertonica;
   private readonly _walletVerifyRequest: IStRequest;
 
   constructor(jwt: string, gatewayUrl: string) {
     this._notification = Container.get(NotificationService);
+    this._cybertonica = Container.get(Cybertonica);
     this._stTransport = new StTransport({ jwt, gatewayUrl });
     this._validation = new Validation();
     this._walletVerifyRequest = {
@@ -41,14 +42,19 @@ export class Payment {
     merchantData: IMerchantData,
     additionalData?: any
   ): Promise<object> {
-    this._processPaymentRequestBody = {
+    const processPaymentRequestBody = {
       requesttypedescriptions: requestTypes,
       ...additionalData,
       ...merchantData,
       ...payment
     };
+    const cybertonicaTid = await this._cybertonica.getTransactionId();
 
-    return this._stTransport.sendRequest(this._processPaymentRequestBody);
+    if (cybertonicaTid) {
+      (processPaymentRequestBody as any).fraudcontroltransactionid = cybertonicaTid;
+    }
+
+    return this._stTransport.sendRequest(processPaymentRequestBody);
   }
 
   public threeDInitRequest() {
@@ -62,17 +68,22 @@ export class Payment {
     });
   }
 
-  public threeDQueryRequest(requestTypes: string[], card: ICard, merchantData: IMerchantData): Promise<object> {
-    this._threeDQueryRequestBody = Object.assign(
-      {
-        cachetoken: this._cardinalCommerceCacheToken,
-        requesttypedescriptions: requestTypes,
-        termurl: 'https://termurl.com' // TODO this shouldn't be needed but currently the backend needs this
-      },
-      merchantData,
-      card
-    );
-    return this._stTransport.sendRequest(this._threeDQueryRequestBody);
+  public async threeDQueryRequest(requestTypes: string[], card: ICard, merchantData: IMerchantData): Promise<object> {
+    const threeDQueryRequestBody = {
+      cachetoken: this._cardinalCommerceCacheToken,
+      requesttypedescriptions: requestTypes,
+      termurl: 'https://termurl.com', // TODO this shouldn't be needed but currently the backend needs this
+      ...merchantData,
+      ...card
+    };
+
+    const cybertonicaTid = await this._cybertonica.getTransactionId();
+
+    if (cybertonicaTid) {
+      (threeDQueryRequestBody as any).fraudcontroltransactionid = cybertonicaTid;
+    }
+
+    return this._stTransport.sendRequest(threeDQueryRequestBody);
   }
 
   public walletVerify(walletVerify: IWalletVerify) {
