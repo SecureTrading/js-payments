@@ -294,9 +294,9 @@ function ConfigResolverFixture() {
     livestatus: 0,
     origin: 'http://localhost',
     placeholders: {
-      pan: '',
-      expirydate: '',
-      securitycode: ''
+      pan: '***** ***** ***** *****',
+      expirydate: 'MM/YY',
+      securitycode: '****'
     },
     panIcon: false,
     requestTypes: ['THREEDQUERY', 'AUTH'],
