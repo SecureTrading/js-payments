@@ -1,3 +1,5 @@
+import './../styles/notification.css';
+import './../styles/_control-frame.css';
 import JwtDecode from 'jwt-decode';
 import 'location-origin';
 import { debounce } from 'lodash';
@@ -34,10 +36,9 @@ import { BrowserLocalStorage } from '../shared/services/storage/BrowserLocalStor
 import { BrowserSessionStorage } from '../shared/services/storage/BrowserSessionStorage';
 import { Notification } from '../application/core/shared/Notification';
 import { ofType } from '../shared/services/message-bus/operators/ofType';
-import './../styles/notification.css';
-import './../styles/_control-frame.css';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ConfigProvider } from '../application/core/services/ConfigProvider';
 
 @Service()
 class ST {
@@ -79,7 +80,8 @@ class ST {
 
   constructor(
     @Inject(CONFIG) private _config: IConfig,
-    private configProvider: ConfigService,
+    private _configService: ConfigService,
+    private _configProvider: ConfigProvider,
     private _communicator: InterFrameCommunicator,
     private _framesHub: FramesHub,
     private _storage: BrowserLocalStorage,
@@ -108,7 +110,7 @@ class ST {
 
   public Components(config: IComponentsConfig): void {
     this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(async controlFrame => {
-      this._config = this.configProvider.update({
+      this._config = this._configService.update({
         ...this._config,
         components: {
           ...this._config.components,
@@ -126,19 +128,19 @@ class ST {
   public ApplePay(config: IApplePayConfig): ApplePay {
     const { applepay } = this.Environment();
 
-    return new applepay(config, this._config.jwt, this._config.datacenterurl);
+    return new applepay(this._configProvider, this._communicator);
   }
 
   public VisaCheckout(config: IVisaConfig): VisaCheckout {
     const { visa } = this.Environment();
 
-    return new visa(config, this._config.jwt, this._config.datacenterurl, this._config.livestatus);
+    return new visa(this._configProvider, this._communicator);
   }
 
   public updateJWT(jwt: string): void {
     if (jwt) {
       this._config = { ...this._config, jwt };
-      this.configProvider.update(this._config);
+      this._configService.update(this._config);
       (() => {
         const a = StCodec.updateJWTValue(jwt);
         debounce(() => a, ST.DEBOUNCE_JWT_VALUE);

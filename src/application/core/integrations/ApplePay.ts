@@ -10,6 +10,10 @@ import { GoogleAnalytics } from './GoogleAnalytics';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 import { Container } from 'typedi';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
+import { ConfigProvider } from '../services/ConfigProvider';
+import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
+import { Observable } from 'rxjs';
+import { IConfig } from '../../../shared/model/config/IConfig';
 
 const ApplePaySession = (window as any).ApplePaySession;
 const ApplePayError = (window as any).ApplePayError;
@@ -121,25 +125,37 @@ export class ApplePay {
   private _merchantId: string;
   private _paymentRequest: any;
   private _placement: string;
-  private readonly _completion: { errors: []; status: string };
+  private _completion: { errors: []; status: string };
   private _localStorage: BrowserLocalStorage;
+  private readonly _config$: Observable<IConfig>;
+  private _applePayConfig: IWalletConfig;
+  private _datacenterurl: string;
 
-  constructor(config: IWalletConfig, jwt: string, gatewayUrl: string) {
+  constructor(private _configProvider: ConfigProvider, private _communicator: InterFrameCommunicator) {
     this._notification = Container.get(NotificationService);
     this._messageBus = Container.get(MessageBus);
     this._localStorage = Container.get(BrowserLocalStorage);
-    config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
+
+    this._config$ = this._configProvider.getConfig$();
+
+    this._config$.subscribe(config => {
+      const { applePay, jwt, datacenterurl } = config;
+      if (applePay) {
+        this._applePayConfig = applePay;
+      }
+      this.jwt = jwt;
+      this._datacenterurl = datacenterurl;
+      this._onInit(config.applePay.buttonText, config.applePay.buttonStyle);
+    });
     this._localStorage.setItem('completePayment', '');
-    this.jwt = jwt;
     this._completion = {
       errors: [],
       status: ApplePaySession ? this.getPaymentSuccessStatus() : ''
     };
-    this._configurePaymentProcess(jwt, config, gatewayUrl);
-    this._onInit(config.buttonText, config.buttonStyle);
+
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
       const { newJwt } = data;
-      this._configurePaymentProcess(newJwt, config, gatewayUrl);
+      this._configurePaymentProcess(newJwt);
       this._setAmountAndCurrency();
     });
   }
@@ -184,18 +200,18 @@ export class ApplePay {
     return ApplePaySession.STATUS_FAILURE;
   }
 
-  private _configurePaymentProcess(jwt: string, config: IWalletConfig, gatewayUrl: string) {
-    const { sitesecurity, placement, paymentRequest, merchantId, requestTypes } = config;
+  private _configurePaymentProcess(jwt: string) {
+    const { sitesecurity, placement, paymentRequest, merchantId, requestTypes } = this._applePayConfig;
     this._merchantId = merchantId;
     this._placement = placement;
-    this.payment = new Payment(jwt, gatewayUrl);
+    this.payment = new Payment(jwt, this._datacenterurl);
     this._paymentRequest = paymentRequest;
     this._sitesecurity = sitesecurity;
     this._requestTypes = requestTypes;
     this._validateMerchantRequestData.walletmerchantid = merchantId;
     this._stJwtInstance = new StJwt(jwt);
     this._stTransportInstance = new StTransport({
-      gatewayUrl,
+      gatewayUrl: this._datacenterurl,
       jwt
     });
     this._translator = new Translator(this._stJwtInstance.locale);
@@ -264,6 +280,7 @@ export class ApplePay {
 
   private _onInit(buttonText: string, buttonStyle: string) {
     if (this.ifApplePayIsAvailable()) {
+      this._configurePaymentProcess(this.jwt);
       this.setApplePayVersion();
       this._setSupportedNetworks();
       this._setAmountAndCurrency();
@@ -312,7 +329,7 @@ export class ApplePay {
         )
         .then((response: any) => {
           const { errorcode, errormessage } = response.response;
-          this._handleApplePayError(response);
+          this._handleApplePayError(response.response);
           this._session.completePayment(this._completion);
           this._displayNotification(errorcode, errormessage);
           GoogleAnalytics.sendGaData('event', 'Apple Pay', 'payment', 'Apple Pay payment completed');

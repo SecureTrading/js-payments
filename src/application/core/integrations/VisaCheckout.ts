@@ -10,6 +10,10 @@ import { StJwt } from '../shared/StJwt';
 import { GoogleAnalytics } from './GoogleAnalytics';
 import { Container } from 'typedi';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
+import { Observable } from 'rxjs';
+import { IConfig } from '../../../shared/model/config/IConfig';
+import { ConfigProvider } from '../services/ConfigProvider';
+import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 
 declare const V: any;
 
@@ -78,7 +82,10 @@ export class VisaCheckout {
   private _notification: NotificationService;
   private _stJwt: StJwt;
   private _livestatus: number = 0;
+  private _datacenterurl: string;
   private _placement: string = 'body';
+  private readonly _config$: Observable<IConfig>;
+  private _visaCheckoutConfig: IWalletConfig;
 
   private _initConfiguration = {
     apikey: '' as string,
@@ -90,17 +97,25 @@ export class VisaCheckout {
     settings: {}
   };
 
-  constructor(config: IWalletConfig, jwt: string, gatewayUrl: string, livestatus?: number) {
+  constructor(private _configProvider: ConfigProvider, private _communicator: InterFrameCommunicator) {
     this._messageBus = Container.get(MessageBus);
     this._notification = Container.get(NotificationService);
-    config.requestTypes = config.requestTypes !== undefined ? config.requestTypes : ['AUTH'];
-    this._stJwt = new StJwt(jwt);
-    this._livestatus = livestatus;
-    this._configurePaymentProcess(jwt, config, gatewayUrl);
-    this._initVisaFlow();
+    this._config$ = this._configProvider.getConfig$();
+
+    this._config$.subscribe(config => {
+      const { visaCheckout, jwt, datacenterurl, livestatus } = config;
+      if (visaCheckout) {
+        this._visaCheckoutConfig = visaCheckout;
+      }
+      this._stJwt = new StJwt(jwt);
+      this._livestatus = livestatus;
+      this._datacenterurl = datacenterurl;
+      this._configurePaymentProcess(jwt);
+      this._initVisaFlow();
+    });
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
       const { newJwt } = data;
-      this._configurePaymentProcess(newJwt, config, gatewayUrl);
+      this._configurePaymentProcess(newJwt);
     });
   }
 
@@ -193,10 +208,18 @@ export class VisaCheckout {
     });
   }
 
-  private _configurePaymentProcess(jwt: string, config: IWalletConfig, gatewayUrl: string) {
-    const { merchantId, livestatus, placement, settings, paymentRequest, buttonSettings, requestTypes } = config;
+  private _configurePaymentProcess(jwt: string) {
+    const {
+      merchantId,
+      livestatus,
+      placement,
+      settings,
+      paymentRequest,
+      buttonSettings,
+      requestTypes
+    } = this._visaCheckoutConfig;
     this._stJwt = new StJwt(jwt);
-    this.payment = new Payment(jwt, gatewayUrl);
+    this.payment = new Payment(jwt, this._datacenterurl);
     this._livestatus = livestatus;
     this._placement = placement;
     this.requestTypes = requestTypes;
