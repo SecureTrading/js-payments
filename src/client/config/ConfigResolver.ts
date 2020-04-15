@@ -65,9 +65,9 @@ export class ConfigResolver {
       origin: this._getValueOrDefault(config.origin, window.location.origin),
       panIcon: this._getValueOrDefault(config.panIcon, false),
       placeholders: this._getValueOrDefault(config.placeholders, {
-        pan: '',
-        expirydate: '',
-        securitycode: ''
+        pan: '***** ***** ***** *****',
+        expirydate: 'MM/YY',
+        securitycode: '****'
       }),
       requestTypes: this._getValueOrDefault(config.requestTypes, [...this.DEFAULT_COMPONENTS_REQUEST_TYPES]),
       styles: this._getValueOrDefault(config.styles, {}),

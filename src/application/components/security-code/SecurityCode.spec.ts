@@ -166,7 +166,7 @@ describe('SecurityCode', () => {
     // then
     it('should trim too long value', () => {
       // @ts-ignore
-      expect(securityCodeInstance._inputElement.value).toEqual('123');
+      expect(securityCodeInstance._inputElement.value).toEqual('1234');
     });
   });
 
