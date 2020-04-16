@@ -7,11 +7,11 @@ export interface IVisaCheckout {
   placement: string;
   requestTypes: string[];
   buttonSettings?: {
-    size?: number;
+    size: number;
     height?: number;
     width?: number;
     locale?: string;
-    color?: 'neutral' | 'standard';
+    color: 'neutral' | 'standard';
     cardBrands?: string;
     acceptCanadianVisaDebit?: string;
     cobrand?: string;
