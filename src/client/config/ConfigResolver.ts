@@ -90,16 +90,11 @@ export class ConfigResolver {
     if (!config) {
       return defaultConfig;
     }
-    // @ts-ignore
-    if (config.requestTypes) {
-      return {
-        ...config,
-        // @ts-ignore
-        requestTypes: this._getValueOrDefault(config.requestTypes, DefaultApmsRequestTypes)
-      };
-    }
-
-    return config;
+    return {
+      ...config,
+      // @ts-ignore
+      requestTypes: this._getValueOrDefault(config.requestTypes, DefaultApmsRequestTypes)
+    };
   }
 
   private _setComponentIds(config: IComponentsIds): IComponentsIds {
