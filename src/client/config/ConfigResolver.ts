@@ -88,9 +88,8 @@ export class ConfigResolver {
 
   private _setApmConfig(config: IApplePay | IVisaCheckout | {}, defaultConfig: {}): IApplePay | IVisaCheckout | {} {
     if (!config) {
-      return;
+      return defaultConfig;
     }
-
     // @ts-ignore
     if (config.requestTypes) {
       return {
