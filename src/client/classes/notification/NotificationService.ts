@@ -36,8 +36,8 @@ export class NotificationService {
     }
   }
 
-  public warning(message: string): void {
-    this._setNotification(NotificationType.Warning, message);
+  public cancel(message: string): void {
+    this._setNotification(NotificationType.Cancel, message);
   }
 
   private _setNotification(type: string, content: string): void {
