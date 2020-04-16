@@ -153,7 +153,9 @@ function ConfigResolverFixture() {
           amount: '10.00'
         }
       },
-      placement: 'st-apple-pay'
+
+      placement: 'st-apple-pay',
+      requestTypes: ['AUTH']
     },
     buttonId: 'merchant-submit-button',
     // @ts-ignore
@@ -261,7 +263,7 @@ function ConfigResolverFixture() {
   const minimalDefaultConfigResolve: IConfig = {
     analytics: false,
     animatedCard: false,
-    applePay: undefined,
+    applePay: {},
     buttonId: '',
     // @ts-ignore
     bypassCards: [],
@@ -320,7 +322,7 @@ function ConfigResolverFixture() {
     successCallback: null,
     threedinit: '',
     translations: {},
-    visaCheckout: undefined
+    visaCheckout: {}
   };
   return {
     config,

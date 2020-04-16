@@ -87,7 +87,7 @@ export class ConfigResolver {
   }
 
   private _setApmConfig(config: IApplePay | IVisaCheckout | {}, defaultConfig: {}): IApplePay | IVisaCheckout | {} {
-    if (!config) {
+    if (!config || !Object.keys(config).length) {
       return defaultConfig;
     }
     return {
@@ -98,7 +98,7 @@ export class ConfigResolver {
   }
 
   private _setComponentIds(config: IComponentsIds): IComponentsIds {
-    if (!config) {
+    if (!config || !Object.keys(config).length) {
       return DefaultComponentsIds;
     }
     return {
@@ -111,7 +111,7 @@ export class ConfigResolver {
   }
 
   private _setComponentsProperties(config: IComponentsConfig): IComponentsConfig {
-    if (!config) {
+    if (!config || !Object.keys(config).length) {
       return DefaultComponents;
     }
     return {
