@@ -65,9 +65,9 @@ export class ConfigResolver {
       origin: this._getValueOrDefault(config.origin, window.location.origin),
       panIcon: this._getValueOrDefault(config.panIcon, false),
       placeholders: this._getValueOrDefault(config.placeholders, {
-        pan: '',
-        expirydate: '',
-        securitycode: ''
+        pan: '***** ***** ***** *****',
+        expirydate: 'MM/YY',
+        securitycode: '****'
       }),
       requestTypes: this._getValueOrDefault(config.requestTypes, [...this.DEFAULT_COMPONENTS_REQUEST_TYPES]),
       styles: this._getValueOrDefault(config.styles, {}),
@@ -79,7 +79,8 @@ export class ConfigResolver {
       submitOnSuccess: this._getValueOrDefault(config.submitOnSuccess, true),
       threedinit: this._getValueOrDefault(config.threedinit, ''),
       translations: this._getValueOrDefault(config.translations, {}),
-      visaCheckout: this._setApmConfig(config.visaCheckout, config.components)
+      visaCheckout: this._setApmConfig(config.visaCheckout, config.components),
+      cybertonicaApiKey: this._getValueOrDefault(config.cybertonicaApiKey, '')
     };
   }
 

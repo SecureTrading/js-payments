@@ -128,7 +128,7 @@ export class ApplePay {
   private _completion: { errors: []; status: string };
   private _localStorage: BrowserLocalStorage;
   private readonly _config$: Observable<IConfig>;
-  private _config: IWalletConfig;
+  private _applePayConfig: IWalletConfig;
   private _datacenterurl: string;
 
   constructor(private _configProvider: ConfigProvider, private _communicator: InterFrameCommunicator) {
@@ -137,23 +137,21 @@ export class ApplePay {
     this._localStorage = Container.get(BrowserLocalStorage);
 
     this._config$ = this._configProvider.getConfig$();
-    this._communicator.whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK).thenRespond(() => this._config$);
 
     this._config$.subscribe(config => {
       const { applePay, jwt, datacenterurl } = config;
       if (applePay) {
-        this._config = applePay;
+        this._applePayConfig = applePay;
       }
-      this._localStorage.setItem('completePayment', '');
       this.jwt = jwt;
       this._datacenterurl = datacenterurl;
-      this._completion = {
-        errors: [],
-        status: ApplePaySession ? this.getPaymentSuccessStatus() : ''
-      };
-      this._configurePaymentProcess(jwt);
-      this._onInit(this._config.buttonText, this._config.buttonStyle);
+      this._onInit(config.applePay.buttonText, config.applePay.buttonStyle);
     });
+    this._localStorage.setItem('completePayment', '');
+    this._completion = {
+      errors: [],
+      status: ApplePaySession ? this.getPaymentSuccessStatus() : ''
+    };
 
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
       const { newJwt } = data;
@@ -203,7 +201,7 @@ export class ApplePay {
   }
 
   private _configurePaymentProcess(jwt: string) {
-    const { sitesecurity, placement, paymentRequest, merchantId, requestTypes } = this._config;
+    const { sitesecurity, placement, paymentRequest, merchantId, requestTypes } = this._applePayConfig;
     this._merchantId = merchantId;
     this._placement = placement;
     this.payment = new Payment(jwt, this._datacenterurl);
@@ -282,6 +280,7 @@ export class ApplePay {
 
   private _onInit(buttonText: string, buttonStyle: string) {
     if (this.ifApplePayIsAvailable()) {
+      this._configurePaymentProcess(this.jwt);
       this.setApplePayVersion();
       this._setSupportedNetworks();
       this._setAmountAndCurrency();

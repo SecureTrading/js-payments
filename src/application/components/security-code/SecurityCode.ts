@@ -34,7 +34,7 @@ export class SecurityCode extends FormField {
     this._formatter = new Formatter();
     this._validation = new Validation();
     this._securityCodeWrapper = document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR) as HTMLElement;
-    this._securityCodeLength = SecurityCode.STANDARD_INPUT_LENGTH;
+    this._securityCodeLength = SecurityCode.SPECIAL_INPUT_LENGTH;
     this._init();
   }
 
@@ -85,7 +85,7 @@ export class SecurityCode extends FormField {
     super.setEventListener(MessageBus.EVENTS.BLUR_SECURITY_CODE);
     this._subscribeSecurityCodeChange();
     this._setDisableListener();
-    this.placeholder = this._configProvider.getConfig().placeholders.securitycode || '';
+    this.placeholder = this._configProvider.getConfig().placeholders.securitycode;
     this._inputElement.setAttribute(SecurityCode.PLACEHOLDER_ATTRIBUTE, this.placeholder);
     this.validation.backendValidation(
       this._inputElement,
