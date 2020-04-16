@@ -12,12 +12,15 @@ import { DefaultConfig } from '../../application/core/models/constants/config-re
 import { DefaultComponents } from '../../application/core/models/constants/config-resolver/DefaultComponents';
 import { IApplePay } from '../../application/core/models/IApplePay';
 import { IVisaCheckout } from '../../application/core/models/constants/IVisaCheckout';
+import { IPlaceholdersConfig } from '../../application/core/models/IPlaceholdersConfig';
+import { DefaultPlaceholders } from '../../application/core/models/constants/config-resolver/DefaultPlaceholders';
+import { environment } from '../../environments/environment';
 
 @Service()
 export class ConfigResolver {
   public resolve(config: IConfig): IConfig {
     this._validate(config, ConfigSchema);
-    return {
+    const validatedConfig: IConfig = {
       analytics: this._getValueOrDefault(config.analytics, DefaultConfig.analytics),
       animatedCard: this._getValueOrDefault(config.animatedCard, DefaultConfig.animatedCard),
       applePay: this._setApmConfig(config.applePay, DefaultConfig.applePay),
@@ -38,7 +41,7 @@ export class ConfigResolver {
       livestatus: this._getValueOrDefault(config.livestatus, DefaultConfig.livestatus),
       origin: this._getValueOrDefault(config.origin, DefaultConfig.origin),
       panIcon: this._getValueOrDefault(config.panIcon, DefaultConfig.panIcon),
-      placeholders: this._getValueOrDefault(config.placeholders, DefaultConfig.placeholders),
+      placeholders: this._setPlaceholders(config.placeholders),
       requestTypes: this._getValueOrDefault(config.requestTypes, DefaultComponentsRequestTypes),
       styles: this._getValueOrDefault(config.styles, DefaultConfig.styles),
       submitCallback: this._getValueOrDefault(config.submitCallback, DefaultConfig.submitCallback),
@@ -50,6 +53,10 @@ export class ConfigResolver {
       translations: this._getValueOrDefault(config.translations, DefaultConfig.translations),
       visaCheckout: this._setApmConfig(config.visaCheckout, DefaultConfig.visaCheckout)
     };
+    if (!environment.production) {
+      console.error(validatedConfig);
+    }
+    return validatedConfig;
   }
 
   private _validate(
@@ -119,6 +126,17 @@ export class ConfigResolver {
       paymentTypes: this._getValueOrDefault(config.paymentTypes, DefaultComponents.paymentTypes),
       requestTypes: this._getValueOrDefault(config.requestTypes, DefaultComponentsRequestTypes),
       startOnLoad: this._getValueOrDefault(config.startOnLoad, DefaultComponents.startOnLoad)
+    };
+  }
+
+  private _setPlaceholders(config: IPlaceholdersConfig): IPlaceholdersConfig {
+    if (!config || !Object.keys(config).length) {
+      return DefaultPlaceholders;
+    }
+    return {
+      pan: this._getValueOrDefault(config.pan, DefaultPlaceholders.pan),
+      expirydate: this._getValueOrDefault(config.expirydate, DefaultPlaceholders.expirydate),
+      securitycode: this._getValueOrDefault(config.securitycode, DefaultPlaceholders.securitycode)
     };
   }
 }

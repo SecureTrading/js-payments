@@ -3,7 +3,7 @@ import { IBypassInit } from './IBypassInit';
 import { IComponentsConfig } from './IComponentsConfig';
 import { IComponentsIds } from './IComponentsIds';
 import { IStyles } from './IStyles';
-import { IPlaceholdersConfig } from './IPlaceholdersConfig';
+import { IPlaceholdersConfig } from '../../../application/core/models/IPlaceholdersConfig';
 import { IVisaCheckout } from '../../../application/core/models/constants/IVisaCheckout';
 import { IApplePay } from '../../../application/core/models/IApplePay';
 
