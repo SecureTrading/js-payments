@@ -2,26 +2,27 @@ import { environment } from '../../../environments/environment';
 import { CardinalCommerceValidationStatus } from '../models/constants/CardinalCommerceValidationStatus';
 import { PaymentBrand } from '../models/constants/PaymentBrand';
 import { PaymentEvents } from '../models/constants/PaymentEvents';
-import { IAuthorizePaymentResponse } from '../models/IAuthorizePaymentResponse';
 import { IFormFieldState } from '../models/IFormFieldState';
 import { IMessageBusEvent } from '../models/IMessageBusEvent';
 import { IOnCardinalValidated } from '../models/IOnCardinalValidated';
-import { IResponseData } from '../models/IResponseData';
-import { IThreeDInitResponse } from '../models/IThreeDInitResponse';
 import { IThreeDQueryResponse } from '../models/IThreeDQueryResponse';
-import { DomMethods } from '../shared/DomMethods';
-import { Language } from '../shared/Language';
 import { MessageBus } from '../shared/MessageBus';
-import { Selectors } from '../shared/Selectors';
-import { StJwt } from '../shared/StJwt';
-import { Translator } from '../shared/Translator';
 import { GoogleAnalytics } from './GoogleAnalytics';
 import { Service } from 'typedi';
 import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
 import { IConfig } from '../../../shared/model/config/IConfig';
-
-declare const Cardinal: any;
+import { CardinalCommerceTokensProvider } from './cardinal-commerce/CardinalCommerceTokensProvider';
+import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { ICardinalCommerceTokens } from './cardinal-commerce/ICardinalCommerceTokens';
+import { defer, from, Observable, of } from 'rxjs';
+import { ICardinal } from './cardinal-commerce/ICardinal';
+import { ofType } from '../../../shared/services/message-bus/operators/ofType';
+import { ICard } from '../models/ICard';
+import { IMerchantData } from '../models/IMerchantData';
+import { StTransport } from '../services/StTransport.class';
+import { CardinalProvider } from './cardinal-commerce/CardinalProvider';
+import { IAuthorizePaymentResponse } from '../models/IAuthorizePaymentResponse';
 
 @Service()
 export class CardinalCommerce {
@@ -29,290 +30,165 @@ export class CardinalCommerce {
     RENDER: 'ui.render',
     CLOSE: 'ui.close'
   };
-  private static _isCardEnrolledAndNotFrictionless(response: IThreeDQueryResponse) {
-    return response.enrolled === 'Y' && response.acsurl !== undefined;
-  }
-  private _cardinalCommerceJWT: string;
-  private _cardinalCommerceCacheToken: string;
-  private _cachetoken: string;
-  private _livestatus: number = 0;
-  private _startOnLoad: boolean;
-  private _jwt: string;
-  private _requestTypes: string[];
-  private _threedinit: string;
-  private _sdkAddress: string = environment.CARDINAL_COMMERCE.SONGBIRD_TEST_URL;
-  private _bypassCards: string[];
-  private _jwtUpdated: boolean = false;
+  private cardinalTokens: ICardinalCommerceTokens;
+  private cardinal$: Observable<ICardinal>;
+  private cardinalValidated$: Observable<[IOnCardinalValidated, string]>;
 
   constructor(
     private messageBus: MessageBus,
-    private _notification: NotificationService,
-    private _framesHub: FramesHub
-  ) {
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
-      const { newJwt } = data;
-      this._jwtUpdated = true;
-      this._jwt = newJwt;
-      this._publishRequestTypesEvent(this._requestTypes);
-    });
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.DESTROY, () => {
-      Cardinal.off(PaymentEvents.SETUP_COMPLETE);
-      Cardinal.off(PaymentEvents.VALIDATED);
-      Cardinal.off(CardinalCommerce.UI_EVENTS.RENDER);
-      Cardinal.off(CardinalCommerce.UI_EVENTS.CLOSE);
-    });
+    private notification: NotificationService,
+    private framesHub: FramesHub,
+    private tokenProvider: CardinalCommerceTokensProvider,
+    private stTransport: StTransport,
+    private cardinalProvider: CardinalProvider
+  ) {}
+
+  init(config: IConfig): Observable<ICardinal> {
+    this._initSubscriptions();
+
+    this.cardinal$ = this.acquireCardinalCommerceTokens().pipe(
+      switchMap(tokens => this.setupCardinalCommerceLibrary(tokens, Boolean(config.livestatus))),
+      tap(() => GoogleAnalytics.sendGaData('event', 'Cardinal', 'init', 'Cardinal Setup Completed'))
+    );
+
+    this.cardinalValidated$ = this.cardinal$.pipe(
+      switchMap(
+        cardinal =>
+          new Observable(observer =>
+            cardinal.on(PaymentEvents.VALIDATED, (data: IOnCardinalValidated, jwt: string) => {
+              observer.next([data, jwt]);
+              observer.complete();
+            })
+          )
+      )
+    );
+
+    return this.cardinal$;
   }
 
-  init(config: IConfig): void {
-    this._startOnLoad = config.components.startOnLoad;
-    this._jwt = config.jwt;
-    this._threedinit = config.init.threedinit;
-    this._livestatus = config.livestatus;
-    this._cachetoken = config.init.cachetoken;
-    this._requestTypes = config.components.requestTypes;
-    this._bypassCards = config.bypassCards;
-    this._setLiveStatus();
-    this._onInit();
-  }
+  performThreeDQuery(
+    requestTypes: string[],
+    card: ICard,
+    merchantData: IMerchantData
+  ): Observable<IAuthorizePaymentResponse> {
+    const threeDQueryRequestBody = {
+      cachetoken: this.cardinalTokens.cacheToken,
+      requesttypedescriptions: requestTypes,
+      termurl: 'https://termurl.com', // TODO this shouldn't be needed but currently the backend needs this
+      ...merchantData,
+      ...card
+    };
 
-  protected _authenticateCard(responseObject: IThreeDQueryResponse) {
-    Cardinal.continue(
-      PaymentBrand,
-      {
-        AcsUrl: responseObject.acsurl,
-        Payload: responseObject.threedpayload
-      },
-      {
-        Cart: [],
-        OrderDetails: { TransactionId: responseObject.acquirertransactionreference }
-      },
-      this._cardinalCommerceJWT
+    return from(this.stTransport.sendRequest(threeDQueryRequestBody)).pipe(
+      switchMap(response => this._authenticateCard(response.response)),
+      map(([validationResult, jwt]) => {
+        if (!CardinalCommerceValidationStatus.includes(validationResult.ActionCode)) {
+          throw validationResult;
+        }
+
+        return {
+          threedresponse: jwt,
+          cachetoken: this.cardinalTokens.cacheToken
+        };
+      }),
+      tap(() => GoogleAnalytics.sendGaData('event', 'Cardinal', 'auth', 'Cardinal auth completed'))
     );
   }
 
-  protected _cardinalSetup() {
-    Cardinal.setup(PaymentEvents.INIT, {
-      jwt: this._cardinalCommerceJWT
-    });
-    Cardinal.on(CardinalCommerce.UI_EVENTS.RENDER, () => {
-      this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CONTROL_FRAME_SHOW }, true);
-    });
-    Cardinal.on(CardinalCommerce.UI_EVENTS.CLOSE, () => {
-      this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CONTROL_FRAME_HIDE }, true);
-    });
+  private acquireCardinalCommerceTokens(): Observable<ICardinalCommerceTokens> {
+    return this.tokenProvider.getTokens().pipe(
+      tap(tokens => (this.cardinalTokens = tokens)),
+      tap(tokens =>
+        this.messageBus.publish({
+          type: MessageBus.EVENTS_PUBLIC.CARDINAL_COMMERCE_TOKENS_ACQUIRED,
+          data: tokens
+        })
+      )
+    );
   }
 
-  protected _cardinalTrigger() {
-    return Cardinal.trigger(PaymentEvents.JWT_UPDATE, this._cardinalCommerceJWT);
+  private setupCardinalCommerceLibrary(tokens: ICardinalCommerceTokens, liveStatus: boolean): Observable<ICardinal> {
+    return this.cardinalProvider.getCardinal$(liveStatus).pipe(
+      switchMap(cardinal => {
+        cardinal.configure(environment.CARDINAL_COMMERCE.CONFIG);
+
+        cardinal.on(CardinalCommerce.UI_EVENTS.RENDER, () => {
+          this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CONTROL_FRAME_SHOW }, true);
+        });
+        cardinal.on(CardinalCommerce.UI_EVENTS.CLOSE, () => {
+          this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CONTROL_FRAME_HIDE }, true);
+        });
+
+        return new Observable(observer => {
+          cardinal.on(PaymentEvents.SETUP_COMPLETE, () => {
+            observer.next(cardinal);
+            observer.complete();
+          });
+
+          cardinal.setup(PaymentEvents.INIT, {
+            jwt: tokens.jwt
+          });
+        });
+      })
+    );
   }
 
-  protected _onCardinalLoad() {
-    Cardinal.configure(environment.CARDINAL_COMMERCE.CONFIG);
-    Cardinal.off(PaymentEvents.SETUP_COMPLETE);
-    Cardinal.off(PaymentEvents.VALIDATED);
+  private _authenticateCard(responseObject: IThreeDQueryResponse): Observable<[IOnCardinalValidated, string]> {
+    const isCardEnrolledAndNotFrictionless = responseObject.enrolled === 'Y' && responseObject.acsurl !== undefined;
 
-    Cardinal.on(PaymentEvents.SETUP_COMPLETE, () => {
-      this._onCardinalSetupComplete();
-      GoogleAnalytics.sendGaData('event', 'Cardinal', 'init', 'Cardinal Setup Completed');
-    });
-
-    Cardinal.on(PaymentEvents.VALIDATED, (data: IOnCardinalValidated, jwt: string) => {
-      this._onCardinalValidated(data, jwt);
-      GoogleAnalytics.sendGaData('event', 'Cardinal', 'validate', 'Cardinal payment validated');
-    });
-    if (this._jwtUpdated) {
-      this._cardinalTrigger();
-    } else {
-      this._cardinalSetup();
-    }
-  }
-
-  protected _onCardinalSetupComplete() {
-    if (this._startOnLoad) {
-      const pan = new StJwt(this._jwt).payload.pan as string;
-      this._performBinDetection(pan);
-      const submitFormEvent: IMessageBusEvent = {
-        data: { dataInJwt: true, requestTypes: this._requestTypes, bypassCards: this._bypassCards },
-        type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
-      };
-      this.messageBus.publish(submitFormEvent);
-    } else {
-      const messageBusEvent: IMessageBusEvent = {
-        type: MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL
-      };
-      this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BIN_PROCESS, (data: IFormFieldState) => {
-        const { value } = data;
-        this._performBinDetection(value);
-      });
-      this.messageBus.publish(messageBusEvent);
-    }
-  }
-
-  protected _onCardinalValidated(data: IOnCardinalValidated, jwt: string) {
-    const { ActionCode, ErrorNumber, ErrorDescription } = data;
-    const translator = new Translator(new StJwt(this._jwt).locale);
-    let errorNum: any = ErrorNumber;
-    if (errorNum !== undefined) {
-      errorNum = errorNum.toString();
-    }
-    const responseData: IResponseData = {
-      acquirerresponsecode: errorNum,
-      acquirerresponsemessage: ErrorDescription,
-      errorcode: '50003',
-      errormessage: Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE
-    };
-    responseData.errormessage = translator.translate(responseData.errormessage);
-    const notificationEvent: IMessageBusEvent = {
-      data: responseData,
-      type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE
-    };
-
-    if (CardinalCommerceValidationStatus.includes(ActionCode)) {
-      this._authorizePayment({ threedresponse: jwt });
-    } else {
-      const resetNotificationEvent: IMessageBusEvent = {
-        type: MessageBus.EVENTS_PUBLIC.RESET_JWT
-      };
-      this.messageBus.publish(resetNotificationEvent);
-      this.messageBus.publish(notificationEvent);
-      this._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
-    }
-  }
-
-  protected _performBinDetection(bin: string) {
-    return Cardinal.trigger(PaymentEvents.BIN_PROCESS, bin);
-  }
-
-  protected _threeDSetup() {
-    DomMethods.insertScript('head', {
-      src: this._sdkAddress,
-      id: 'cardinalCommerce'
-    }).then(() => this._onCardinalLoad());
-  }
-
-  private _authorizePayment(data?: IAuthorizePaymentResponse | object) {
-    data = data || {};
-    if (data) {
-      // @ts-ignore
-      data.cachetoken = this._cardinalCommerceCacheToken;
+    if (!isCardEnrolledAndNotFrictionless) {
+      return of({}, '');
     }
 
-    const messageBusEvent: IMessageBusEvent = {
-      data,
-      type: MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS
-    };
-    this.messageBus.publish(messageBusEvent);
-    GoogleAnalytics.sendGaData('event', 'Cardinal', 'auth', 'Cardinal auth completed');
+    return this.cardinal$.pipe(
+      switchMap(cardinal => {
+        cardinal.continue(
+          PaymentBrand,
+          {
+            AcsUrl: responseObject.acsurl,
+            Payload: responseObject.threedpayload
+          },
+          {
+            Cart: [],
+            OrderDetails: {
+              TransactionId: responseObject.acquirertransactionreference
+            }
+          },
+          this.cardinalTokens.jwt
+        );
+
+        GoogleAnalytics.sendGaData('event', 'Cardinal', 'auth', 'Cardinal card authenticated');
+
+        return this.cardinalValidated$;
+      })
+    );
   }
 
   private _initSubscriptions() {
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.LOAD_CONTROL_FRAME, () => {
-      this._onLoadControlFrame();
-    });
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDINIT_RESPONSE, (data: IThreeDInitResponse) => {
-      this._onThreeDInitEvent(data);
-    });
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BY_PASS_INIT, () => {
-      this._onBypassJsInitEvent();
-    });
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.THREEDQUERY, (data: any) => {
-      this._onThreeDQueryEvent(data);
-    });
-    this._initSubmitEventListener();
-  }
+    this.messageBus
+      .pipe(
+        ofType(MessageBus.EVENTS_PUBLIC.UPDATE_JWT),
+        switchMap(() => this.acquireCardinalCommerceTokens()),
+        withLatestFrom(defer(() => this.cardinal$))
+      )
+      .subscribe(([tokens, cardinal]) => cardinal.trigger(PaymentEvents.JWT_UPDATE, tokens.jwt));
 
-  private _publishRequestTypesEvent(requestTypes: string[]) {
-    this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(() => {
-      this.messageBus.publish({
-        data: { requestTypes },
-        type: MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES
+    this.messageBus
+      .pipe(
+        ofType(MessageBus.EVENTS_PUBLIC.DESTROY),
+        switchMap(() => this.cardinal$)
+      )
+      .subscribe(cardinal => {
+        cardinal.off(PaymentEvents.SETUP_COMPLETE);
+        cardinal.off(PaymentEvents.VALIDATED);
+        cardinal.off(CardinalCommerce.UI_EVENTS.RENDER);
+        cardinal.off(CardinalCommerce.UI_EVENTS.CLOSE);
       });
-    });
-  }
 
-  private _onInit() {
-    this._initSubscriptions();
-    this._publishRequestTypesEvent(this._requestTypes);
-  }
-
-  private _onLoadControlFrame() {
-    if (this._cachetoken) {
-      this._bypassInitRequest();
-    } else {
-      this._threeDInitRequest();
-    }
-  }
-
-  private _onBypassJsInitEvent() {
-    this._cardinalCommerceJWT = this._threedinit;
-    this._cardinalCommerceCacheToken = this._cachetoken;
-    this._threeDSetup();
-  }
-
-  private _onThreeDInitEvent(data: IThreeDInitResponse) {
-    let cachetoken: string;
-    let threedinit: string;
-    if (data) {
-      cachetoken = data.cachetoken;
-      threedinit = data.threedinit;
-    }
-    this._cardinalCommerceJWT = threedinit;
-    this._cardinalCommerceCacheToken = cachetoken;
-    this._threeDSetup();
-  }
-
-  private _onThreeDQueryEvent(data: IThreeDQueryResponse) {
-    this._threeDQueryRequest(data);
-  }
-
-  private _bypassInitRequest() {
-    const messageBusEvent: IMessageBusEvent = {
-      data: this._cachetoken,
-      type: MessageBus.EVENTS_PUBLIC.BY_PASS_INIT
-    };
-    this.messageBus.publish(messageBusEvent);
-  }
-
-  private _setLiveStatus() {
-    if (this._livestatus) {
-      this._sdkAddress = environment.CARDINAL_COMMERCE.SONGBIRD_LIVE_URL;
-    }
-  }
-
-  private _threeDInitRequest() {
-    const messageBusEvent: IMessageBusEvent = {
-      type: MessageBus.EVENTS_PUBLIC.THREEDINIT_REQUEST
-    };
-    this.messageBus.publish(messageBusEvent);
-  }
-
-  private _threeDQueryRequest(responseObject: IThreeDQueryResponse) {
-    if (CardinalCommerce._isCardEnrolledAndNotFrictionless(responseObject)) {
-      this._authenticateCard(responseObject);
-      GoogleAnalytics.sendGaData('event', 'Cardinal', 'auth', 'Cardinal card authenticated');
-    } else {
-      this._authorizePayment();
-    }
-  }
-
-  private _initSubmitEventListener(): void {
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BY_PASS_CARDINAL, (data: any) => {
-      const { pan, expirydate, securitycode } = data;
-      const postData: any = {
-        expirydate,
-        pan,
-        securitycode
-      };
-
-      this._byPassAuthorizePayment(postData);
-    });
-  }
-
-  private _byPassAuthorizePayment(data: any): void {
-    const messageBusEvent: IMessageBusEvent = {
-      data,
-      type: MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS
-    };
-    this.messageBus.publish(messageBusEvent);
+    this.messageBus
+      .pipe(ofType(MessageBus.EVENTS_PUBLIC.BIN_PROCESS), withLatestFrom(defer(() => this.cardinal$)))
+      .subscribe(([event, cardinal]: [IMessageBusEvent<IFormFieldState>, ICardinal]) => {
+        cardinal.trigger(PaymentEvents.BIN_PROCESS, event.data.value);
+      });
   }
 }

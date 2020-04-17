@@ -35,7 +35,7 @@ describe('Payment', () => {
       // @ts-ignore
       instance._stTransport.sendRequest = jest.fn();
     });
-    instance.bypassInitRequest(cachetoken);
+    instance.setCardinalCommerceCacheToken(cachetoken);
     // @ts-ignore
     expect(instance._cardinalCommerceCacheToken).toEqual(cachetoken);
   });

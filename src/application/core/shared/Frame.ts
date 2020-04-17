@@ -6,6 +6,7 @@ import { Styler } from './Styler';
 import { Container } from 'typedi';
 import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
 import './OverrideDomain';
+import { IConfig } from '../../../shared/model/config/IConfig';
 
 export class Frame {
   protected messageBus: MessageBus = Container.get(MessageBus);
@@ -32,7 +33,7 @@ export class Frame {
     new Styler(this.getAllowedStyles()).inject(this.params.styles);
   }
 
-  protected onInit() {
+  protected onInit(config?: IConfig) {
     this.params = this.parseUrl();
     this.applyStyles();
 

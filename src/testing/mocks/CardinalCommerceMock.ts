@@ -12,7 +12,7 @@ export class CardinalCommerceMock extends CardinalCommerce {
     this._onCardinalSetupComplete();
   }
 
-  protected _threeDSetup() {
+  protected setupCardinalCommerceLibrary() {
     this._onCardinalLoad();
   }
 

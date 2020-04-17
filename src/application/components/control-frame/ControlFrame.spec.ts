@@ -310,7 +310,7 @@ describe('ControlFrame', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
-      instance._payment.bypassInitRequest = jest.fn();
+      instance._payment.setCardinalCommerceCacheToken = jest.fn();
       // @ts-ignore
       instance._bypassInit(cachetoken);
     });
@@ -318,7 +318,7 @@ describe('ControlFrame', () => {
     // then
     it('should call _requestThreeDInit', () => {
       // @ts-ignore
-      expect(instance._payment.bypassInitRequest).toHaveBeenCalledWith(cachetoken);
+      expect(instance._payment.setCardinalCommerceCacheToken).toHaveBeenCalledWith(cachetoken);
     });
   });
 
@@ -445,7 +445,7 @@ describe('ControlFrame', () => {
     // then
     it('should call bypassInitRequest', () => {
       // @ts-ignore
-      expect(instance._payment.bypassInitRequest).toHaveBeenCalledWith(cachetoken);
+      expect(instance._payment.setCardinalCommerceCacheToken).toHaveBeenCalledWith(cachetoken);
     });
   });
 
