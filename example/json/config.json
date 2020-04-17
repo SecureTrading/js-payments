@@ -22,9 +22,7 @@
     "placement": "st-apple-pay"
   },
   "buttonId": "merchant-submit-button",
-  "bypassCards": [
-    "PIBA"
-  ],
+  "bypassCards": [],
   "cachetoken": "",
   "componentIds": {
     "animatedCard": "",
@@ -53,15 +51,14 @@
     "cachetoken": "",
     "threedinit": ""
   },
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4Njg4MTc3NC4xNjAzNzU2LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.2Bsl4vBVAplvlGqFgfVZAUsqBtoB2oT0_YSmLFbrA_Q",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4NzEyMjc2Mi43MTY5OTgzLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.yjt_737CqFTpWnKnxf5o3mvRY1tzjIRH_Ey22RmArM0",
   "livestatus": 0,
   "origin": "",
+  "panIcon": true,
   "placeholders": {
-    "pan": "Card number",
     "expirydate": "MM/YY",
     "securitycode": "***"
   },
-  "panIcon": true,
   "requestTypes": [],
   "styles": {
     "defaultStyles": {
@@ -86,7 +83,7 @@
       "color-error": "#3358FF"
     }
   },
-  "submitFields": [],
+  "submitFields": ["errorcode"],
   "submitOnSuccess": false,
   "submitOnError": false,
   "submitCallback": "",
@@ -105,7 +102,6 @@
       "subtotal": "20.00"
     },
     "placement": "st-visa-checkout",
-    "requestTypes": [],
     "settings": {
       "displayName": "My Test Site"
     }
