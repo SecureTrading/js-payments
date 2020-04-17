@@ -16,15 +16,16 @@ import { ConfigProvider } from '../services/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { IMerchantData } from '../models/IMerchantData';
 import { IVisaInit } from '../models/IVisaInit';
+import { Apm } from './Apm';
 
 declare const V: any;
 
-export class VisaCheckout {
+export class VisaCheckout extends Apm {
   private _stJwt: StJwt;
   private _messageBus: MessageBus;
   private _payment: Payment;
   private _notification: NotificationService;
-  private _config: IWalletConfig;
+  private _visaCheckoutConfig: IWalletConfig;
   private readonly _config$: Observable<IConfig>;
   private _requestTypes: string[];
   private _urls = {
@@ -35,6 +36,7 @@ export class VisaCheckout {
   private _visaInit: IVisaInit;
 
   constructor(private _configProvider: ConfigProvider, private _communicator: InterFrameCommunicator) {
+    super();
     this._messageBus = Container.get(MessageBus);
     this._notification = Container.get(NotificationService);
     this._config$ = this._configProvider.getConfig$();
@@ -49,8 +51,8 @@ export class VisaCheckout {
     });
   }
 
-  private _init(config: IConfig) {
-    this._config = config;
+  private _init(config: IConfig): void {
+    this._visaCheckoutConfig = config;
     const { jwt, visaCheckout } = config;
     const { placement, livestatus, requestTypes } = visaCheckout;
     this._requestTypes = requestTypes;
@@ -66,7 +68,7 @@ export class VisaCheckout {
     this._loadSdk(placement);
   }
 
-  private _loadSdk(target: string) {
+  private _loadSdk(target: string): void {
     DomMethods.insertScript(target, { src: this._urls.sdkUrl, id: 'visaCheckout' })
       .then(() => {
         this._injectButton(target);
@@ -86,13 +88,13 @@ export class VisaCheckout {
   }
 
   private _updateJwt(jwt: string): void {
-    const { datacenterurl } = this._config;
+    const { datacenterurl } = this._visaCheckoutConfig;
     this._stJwt = new StJwt(jwt);
     this._payment = new Payment(jwt, datacenterurl);
   }
 
   private _setInitConfig(): void {
-    const { merchantId } = this._config.visaCheckout;
+    const { merchantId } = this._visaCheckoutConfig.visaCheckout;
     const { currencyiso3a, locale, mainamount } = this._stJwt;
     this._visaInit.apikey = merchantId;
     this._visaInit.paymentRequest.currencyCode = currencyiso3a;
@@ -101,8 +103,8 @@ export class VisaCheckout {
     this._visaInit.settings.locale = locale;
   }
 
-  private _customizeButton() {
-    const { buttonSettings } = this._config.visaCheckout;
+  private _customizeButton(): void {
+    const { buttonSettings } = this._visaCheckoutConfig.visaCheckout;
     const url = new URL(VisaButtonProps.src);
     this._urls.buttonUrl = url.href;
     Object.keys(buttonSettings).forEach((item: any) => {
@@ -116,7 +118,7 @@ export class VisaCheckout {
 
   private _injectButton = (target: string): Element => DomMethods.appendChildIntoDOM(target, this._createButton());
 
-  protected onSuccess(payment: object) {
+  private _onSuccess(payment: object): void {
     const paymentData = {
       walletsource: 'VISACHECKOUT',
       wallettoken: JSON.stringify(payment)
@@ -131,24 +133,24 @@ export class VisaCheckout {
         this._notification.success(Language.translations.PAYMENT_SUCCESS);
         GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment success');
       })
-      .catch((error: any) => {
+      .catch(() => {
         this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
         this._notification.error(Language.translations.PAYMENT_ERROR);
       });
   }
 
-  protected onError() {
+  private _onError(): void {
     this._notification.error(Language.translations.PAYMENT_ERROR);
     this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
     GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment error');
   }
 
-  protected onCancel() {
+  private _onCancel(): void {
     this._notification.warning(Language.translations.PAYMENT_CANCELLED);
     GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment canceled');
   }
 
-  private _instantiateVisa() {
+  private _instantiateVisa(): void {
     V.init(this._visaInit);
   }
 
@@ -156,13 +158,13 @@ export class VisaCheckout {
     const { cancel, error, success } = VisaResponseTypes;
     V.on(success, (payment: object) => {
       console.error(payment);
-      this.onSuccess(payment);
+      this._onSuccess(payment);
     });
     V.on(error, () => {
-      this.onError();
+      this._onError();
     });
     V.on(cancel, () => {
-      this.onCancel();
+      this._onCancel();
     });
   }
 }
