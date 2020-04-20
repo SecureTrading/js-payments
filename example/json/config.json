@@ -1,6 +1,6 @@
 {
   "analytics": true,
-  "animatedCard": true,
+  "animatedCard": false,
   "applePay": {
     "buttonStyle": "white-outline",
     "buttonText": "buy",
@@ -22,7 +22,7 @@
     "placement": "st-apple-pay"
   },
   "buttonId": "merchant-submit-button",
-  "bypassCards": [],
+  "bypassCards": ["PIBA"],
   "cachetoken": "",
   "componentIds": {
     "animatedCard": "",
@@ -51,7 +51,7 @@
     "cachetoken": "",
     "threedinit": ""
   },
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4NzEyMjc2Mi43MTY5OTgzLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.yjt_737CqFTpWnKnxf5o3mvRY1tzjIRH_Ey22RmArM0",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4NzM3MjY3NS41NzE2MTI2LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.ocwo2ZXQGAdZxOq9iSmrHWHVC5lT3g1Z-exwbJPG8Vg",
   "livestatus": 0,
   "origin": "",
   "panIcon": true,
@@ -83,7 +83,7 @@
       "color-error": "#3358FF"
     }
   },
-  "submitFields": ["errorcode"],
+  "submitFields": [],
   "submitOnSuccess": false,
   "submitOnError": false,
   "submitCallback": "",
