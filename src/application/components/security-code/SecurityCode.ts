@@ -8,6 +8,13 @@ import { Selectors } from '../../core/shared/Selectors';
 import { Validation } from '../../core/shared/Validation';
 import { Service } from 'typedi';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
+import { map, tap } from 'rxjs/operators';
+import { ofType } from '../../../shared/services/message-bus/operators/ofType';
+import { IFormFieldState } from '../../core/models/IFormFieldState';
+import { merge, Observable } from 'rxjs';
+import JwtDecode from 'jwt-decode';
+import { IDecodedJwt } from '../../core/models/IDecodedJwt';
+import { iinLookup } from '@securetrading/ts-iin-lookup';
 
 @Service()
 export class SecurityCode extends FormField {
@@ -27,15 +34,52 @@ export class SecurityCode extends FormField {
   private _formatter: Formatter;
   private _securityCodeLength: number;
   private _securityCodeWrapper: HTMLElement;
+  private _securityCodeLength$: Observable<number>;
   private _validation: Validation;
 
-  constructor(private _configProvider: ConfigProvider) {
+  constructor(private _configProvider: ConfigProvider, private _messageBus: MessageBus) {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
     this._formatter = new Formatter();
     this._validation = new Validation();
     this._securityCodeWrapper = document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR) as HTMLElement;
-    this._securityCodeLength = SecurityCode.SPECIAL_INPUT_LENGTH;
+    this._securityCodeLength = SecurityCode.STANDARD_INPUT_LENGTH;
+    this._securityCodeLength$ = this._securityCodeUpdate$();
+    this._securityCodeLength$.subscribe(securityCodeLength => {
+      this._securityCodeLength = securityCodeLength;
+      this.placeholder =
+        this._configProvider.getConfig().placeholders.securitycode || this._getPlaceholder(this._securityCodeLength);
+      this._inputElement.setAttribute(SecurityCode.PLACEHOLDER_ATTRIBUTE, this.placeholder);
+      this._messageBus.publish({ type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, data: securityCodeLength });
+    });
     this._init();
+  }
+
+  private _getPlaceholder(securityCodeLength: number): string {
+    return securityCodeLength === 4 ? '****' : '***';
+  }
+
+  private _securityCodeUpdate$(): Observable<number> {
+    const jwtFromConfig$: Observable<string> = this._configProvider.getConfig$().pipe(map(config => config.jwt));
+    const jwtFromUpdate$: Observable<string> = this._messageBus.pipe(
+      ofType(MessageBus.EVENTS_PUBLIC.UPDATE_JWT),
+      map(event => event.data.jwt)
+    );
+    const cardNumberInput$: Observable<string> = this._messageBus.pipe(
+      tap(console.log),
+      ofType(MessageBus.EVENTS.CHANGE_CARD_NUMBER),
+      map((event: IMessageBusEvent<IFormFieldState>) => event.data.value),
+      tap(console.log)
+    );
+    const cardNumberFromJwt$: Observable<string> = merge(jwtFromConfig$, jwtFromUpdate$).pipe(
+      tap(console.log),
+      map(jwt => JwtDecode<IDecodedJwt>(jwt).payload.pan),
+      tap(console.log)
+    );
+
+    return merge(cardNumberInput$, cardNumberFromJwt$).pipe(
+      tap(console.error),
+      map(cardNumber => (cardNumber ? iinLookup.lookup(cardNumber).cvcLength[0] : 0))
+    );
   }
 
   public getLabel(): string {
@@ -85,7 +129,6 @@ export class SecurityCode extends FormField {
     super.setEventListener(MessageBus.EVENTS.BLUR_SECURITY_CODE);
     this._subscribeSecurityCodeChange();
     this._setDisableListener();
-    this.placeholder = this._configProvider.getConfig().placeholders.securitycode;
     this._inputElement.setAttribute(SecurityCode.PLACEHOLDER_ATTRIBUTE, this.placeholder);
     this.validation.backendValidation(
       this._inputElement,
@@ -130,6 +173,9 @@ export class SecurityCode extends FormField {
   private _subscribeSecurityCodeChange(): void {
     this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (length: number) => {
       this._checkSecurityCodeLength(length);
+      this._getPlaceholder(length);
+      this.placeholder = this._configProvider.getConfig().placeholders.securitycode || this._getPlaceholder(length);
+      this._inputElement.setAttribute(SecurityCode.PLACEHOLDER_ATTRIBUTE, this.placeholder);
       this._sendState();
     });
 
