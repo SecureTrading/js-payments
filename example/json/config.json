@@ -1,6 +1,6 @@
 {
   "analytics": true,
-  "animatedCard": false,
+  "animatedCard": true,
   "applePay": {
     "buttonStyle": "white-outline",
     "buttonText": "buy",
