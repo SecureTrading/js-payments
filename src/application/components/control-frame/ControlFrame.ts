@@ -245,6 +245,7 @@ export class ControlFrame extends Frame {
       StCodec.publishResponse(this._threeDQueryResult.response, this._threeDQueryResult.jwt, data.threedresponse);
     }
     this._notification.success(Language.translations.PAYMENT_SUCCESS);
+    this._validation.blockForm(FormState.COMPLETE);
   }
 
   private _processPayment(data: IResponseData): void {
