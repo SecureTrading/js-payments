@@ -77,7 +77,7 @@ export class SecurityCode extends FormField {
     );
 
     return merge(cardNumberInput$, cardNumberFromJwt$).pipe(
-      tap(console.error),
+      tap(console.log),
       map(cardNumber => (cardNumber ? iinLookup.lookup(cardNumber).cvcLength[0] : 0))
     );
   }
@@ -142,16 +142,16 @@ export class SecurityCode extends FormField {
       data,
       type: eventType
     };
-    this.messageBus.publish(messageBusEvent);
+    this._messageBus.publish(messageBusEvent);
   }
 
   private _sendState(): void {
     const messageBusEvent: IMessageBusEvent = this.setMessageBusEvent(MessageBus.EVENTS.CHANGE_SECURITY_CODE);
-    this.messageBus.publish(messageBusEvent);
+    this._messageBus.publish(messageBusEvent);
   }
 
   private _setDisableListener(): void {
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BLOCK_SECURITY_CODE, (state: FormState) => {
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BLOCK_SECURITY_CODE, (state: FormState) => {
       this._toggleSecurityCode(state);
     });
   }
@@ -171,7 +171,7 @@ export class SecurityCode extends FormField {
   }
 
   private _subscribeSecurityCodeChange(): void {
-    this.messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (length: number) => {
+    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (length: number) => {
       this._checkSecurityCodeLength(length);
       this._getPlaceholder(length);
       this.placeholder = this._configProvider.getConfig().placeholders.securitycode || this._getPlaceholder(length);
@@ -179,7 +179,7 @@ export class SecurityCode extends FormField {
       this._sendState();
     });
 
-    this.messageBus.subscribe(
+    this._messageBus.subscribe(
       MessageBus.EVENTS.IS_CARD_WITHOUT_CVV,
       (data: { formState: FormState; isCardPiba: boolean }) => {
         const { formState, isCardPiba } = data;

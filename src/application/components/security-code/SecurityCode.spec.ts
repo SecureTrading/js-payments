@@ -2,7 +2,7 @@ import { SecurityCode } from './SecurityCode';
 import { Selectors } from '../../core/shared/Selectors';
 import { FormField } from '../../core/shared/FormField';
 import { Utils } from '../../core/shared/Utils';
-import { instance, mock, when } from 'ts-mockito';
+import { instance, mock, verify, when } from 'ts-mockito';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { EMPTY, of } from 'rxjs';
@@ -95,14 +95,7 @@ describe('SecurityCode', () => {
     });
 
     // then
-    it('should publish method has been called', () => {
-      // @ts-ignore
-      expect(securityCodeInstance.messageBus.publish).toHaveBeenCalled();
-    });
-
-    // then
     it('should sendState method has been called', () => {
-      // @ts-ignore
       expect(spySendState).toHaveBeenCalled();
     });
   });
@@ -201,11 +194,25 @@ describe('SecurityCode', () => {
   // given
   describe('_sendState', () => {
     const { securityCodeInstance } = securityCodeFixture();
+    // @ts-ignore
+    securityCodeInstance._messageBus.publish = jest.fn();
     it('should publish method has been called', () => {
       // @ts-ignore
       securityCodeInstance._sendState();
       // @ts-ignore
-      expect(securityCodeInstance.messageBus.publish).toHaveBeenCalled();
+      expect(securityCodeInstance._messageBus.publish).toHaveBeenCalled();
+    });
+  });
+
+  // given
+  describe('_subscribeSecurityCodeChange', () => {
+    const { securityCodeInstance, messageBus, configProvider } = securityCodeFixture();
+    when(configProvider.getConfig()).thenReturn({ placeholders: { securitycode: '***' } } as IConfig);
+    it('should return standard security code pattern', () => {
+      // then
+      messageBus.publish({ type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, data: 3 });
+      // @ts-ignore
+      expect(securityCodeInstance.placeholder).toEqual('***');
     });
   });
 
@@ -253,5 +260,5 @@ function securityCodeFixture() {
 
   const messageBus: MessageBus = (new MessageBusMock() as unknown) as MessageBus;
   const securityCodeInstance = new SecurityCode(instance(configProvider), messageBus);
-  return { securityCodeInstance, configProvider, communicatorMock };
+  return { securityCodeInstance, configProvider, communicatorMock, messageBus };
 }
