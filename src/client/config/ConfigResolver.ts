@@ -2,88 +2,73 @@ import Joi from '@hapi/joi';
 import { IConfig } from '../../shared/model/config/IConfig';
 import { Service } from 'typedi';
 import { IComponentsIds } from '../../shared/model/config/IComponentsIds';
-import { Selectors } from '../../application/core/shared/Selectors';
 import { IComponentsConfig } from '../../shared/model/config/IComponentsConfig';
-import { environment } from '../../environments/environment';
-import { IWalletConfig } from '../../shared/model/config/IWalletConfig';
 import { ConfigSchema } from './schema/ConfigSchema';
+import { DefaultSubmitFields } from '../../application/core/models/constants/config-resolver/DefaultSubmitFields';
+import { DefaultComponentsRequestTypes } from '../../application/core/models/constants/config-resolver/DefaultComponentsRequestTypes';
+import { DefaultComponentsIds } from '../../application/core/models/constants/config-resolver/DefaultComponentsIds';
+import { DefaultApmsRequestTypes } from '../../application/core/models/constants/config-resolver/DefaultApmsRequestTypes';
+import { DefaultConfig } from '../../application/core/models/constants/config-resolver/DefaultConfig';
+import { DefaultComponents } from '../../application/core/models/constants/config-resolver/DefaultComponents';
+import { IApplePay } from '../../application/core/models/IApplePay';
+import { IVisaCheckout } from '../../application/core/models/constants/IVisaCheckout';
+import { IPlaceholdersConfig } from '../../application/core/models/IPlaceholdersConfig';
+import { DefaultPlaceholders } from '../../application/core/models/constants/config-resolver/DefaultPlaceholders';
+import { environment } from '../../environments/environment';
 
 @Service()
 export class ConfigResolver {
-  private readonly DEFAULT_COMPONENTS_IDS: IComponentsIds = {
-    animatedCard: Selectors.ANIMATED_CARD_INPUT_SELECTOR,
-    cardNumber: Selectors.CARD_NUMBER_INPUT_SELECTOR,
-    expirationDate: Selectors.EXPIRATION_DATE_INPUT_SELECTOR,
-    notificationFrame: Selectors.NOTIFICATION_FRAME_ID,
-    securityCode: Selectors.SECURITY_CODE_INPUT_SELECTOR
-  };
+  public resolve(config: IConfig): IConfig {
+    this._validate(config, ConfigSchema);
+    const validatedConfig: IConfig = {
+      analytics: this._getValueOrDefault(config.analytics, DefaultConfig.analytics),
+      animatedCard: this._getValueOrDefault(config.animatedCard, DefaultConfig.animatedCard),
+      applePay: this._setApmConfig(config.applePay, DefaultConfig.applePay),
+      buttonId: this._getValueOrDefault(config.buttonId, DefaultConfig.buttonId),
+      bypassCards: this._getValueOrDefault(config.bypassCards, DefaultConfig.bypassCards),
+      cachetoken: this._getValueOrDefault(config.cachetoken, DefaultConfig.cachetoken),
+      componentIds: this._setComponentIds(config.componentIds),
+      components: this._setComponentsProperties(config.components),
+      cybertonicaApiKey: this._getValueOrDefault(config.cybertonicaApiKey, ''),
+      datacenterurl: this._getValueOrDefault(config.datacenterurl, DefaultConfig.datacenterurl),
+      deferInit: this._getValueOrDefault(config.deferInit, DefaultConfig.deferInit),
+      disableNotification: this._getValueOrDefault(config.disableNotification, DefaultConfig.disableNotification),
+      errorCallback: this._getValueOrDefault(config.errorCallback, DefaultConfig.errorCallback),
+      fieldsToSubmit: this._getValueOrDefault(config.fieldsToSubmit, DefaultConfig.fieldsToSubmit),
+      formId: this._getValueOrDefault(config.formId, DefaultConfig.formId),
+      init: this._getValueOrDefault(config.init, DefaultConfig.init),
+      jwt: this._getValueOrDefault(config.jwt, DefaultConfig.jwt),
+      livestatus: this._getValueOrDefault(config.livestatus, DefaultConfig.livestatus),
+      origin: this._getValueOrDefault(config.origin, DefaultConfig.origin),
+      panIcon: this._getValueOrDefault(config.panIcon, DefaultConfig.panIcon),
+      placeholders: this._setPlaceholders(config.placeholders),
+      requestTypes: this._getValueOrDefault(config.requestTypes, DefaultComponentsRequestTypes),
+      styles: this._getValueOrDefault(config.styles, DefaultConfig.styles),
+      submitCallback: this._getValueOrDefault(config.submitCallback, DefaultConfig.submitCallback),
+      submitFields: this._getValueOrDefault(config.submitFields, DefaultSubmitFields),
+      submitOnCancel: this._getValueOrDefault(config.submitOnCancel, false),
+      submitOnError: this._getValueOrDefault(config.submitOnError, DefaultConfig.submitOnError),
+      submitOnSuccess: this._getValueOrDefault(config.submitOnSuccess, DefaultConfig.submitOnSuccess),
+      successCallback: this._getValueOrDefault(config.successCallback, DefaultConfig.successCallback),
+      threedinit: this._getValueOrDefault(config.threedinit, DefaultConfig.threedinit),
+      translations: this._getValueOrDefault(config.translations, DefaultConfig.translations),
+      visaCheckout: this._setApmConfig(config.visaCheckout, DefaultConfig.visaCheckout)
+    };
+    if (!environment.production) {
+      console.error(validatedConfig);
+    }
+    return validatedConfig;
+  }
 
-  private readonly DEFAULT_APMS_REQUEST_TYPES: string[] = ['AUTH'];
-  private readonly DEFAULT_COMPONENTS_REQUEST_TYPES: string[] = ['THREEDQUERY', 'AUTH'];
-  private readonly DEFAULT_FIELDS_TO_SUBMIT: string[] = ['pan', 'expirydate', 'securitycode'];
-  private readonly DEFAULT_SUBMIT_PROPERTIES: string[] = [
-    'baseamount',
-    'currencyiso3a',
-    'eci',
-    'enrolled',
-    'errorcode',
-    'errordata',
-    'errormessage',
-    'orderreference',
-    'settlestatus',
-    'status',
-    'transactionreference'
-  ];
-
-  public validate(config: IConfig | IComponentsConfig | IComponentsIds, schema: Joi.ObjectSchema) {
+  private _validate(
+    config: IConfig | IComponentsConfig | IComponentsIds | IApplePay | IVisaCheckout,
+    schema: Joi.ObjectSchema
+  ): void {
     const { error } = schema.validate(config);
 
     if (error) {
       throw error;
     }
-  }
-
-  public resolve(config: IConfig): IConfig {
-    this.validate(config, ConfigSchema);
-    return {
-      analytics: this._getValueOrDefault(config.analytics, false),
-      animatedCard: this._getValueOrDefault(config.animatedCard, false),
-      applePay: this._setApmConfig(config.applePay, config.components),
-      buttonId: this._getValueOrDefault(config.buttonId, ''),
-      bypassCards: this._getValueOrDefault(config.bypassCards, []),
-      cachetoken: this._getValueOrDefault(config.cachetoken, ''),
-      cancelCallback: this._getValueOrDefault(config.cancelCallback, null),
-      componentIds: this._componentIds(config.componentIds),
-      components: this._setComponentsProperties(config),
-      datacenterurl: this._getValueOrDefault(config.datacenterurl, environment.GATEWAY_URL),
-      deferInit: this._getValueOrDefault(config.deferInit, false),
-      disableNotification: this._getValueOrDefault(config.disableNotification, false),
-      errorCallback: this._getValueOrDefault(config.errorCallback, null),
-      fieldsToSubmit: this._getValueOrDefault(config.fieldsToSubmit, [...this.DEFAULT_FIELDS_TO_SUBMIT]),
-      formId: this._getValueOrDefault(config.formId, Selectors.MERCHANT_FORM_SELECTOR),
-      init: this._getValueOrDefault(config.init, { cachetoken: '', threedinit: '' }),
-      jwt: this._getValueOrDefault(config.jwt, ''),
-      livestatus: this._getValueOrDefault(config.livestatus, 0),
-      origin: this._getValueOrDefault(config.origin, window.location.origin),
-      panIcon: this._getValueOrDefault(config.panIcon, false),
-      placeholders: this._getValueOrDefault(config.placeholders, {
-        pan: '***** ***** ***** *****',
-        expirydate: 'MM/YY',
-        securitycode: '****'
-      }),
-      requestTypes: this._getValueOrDefault(config.requestTypes, [...this.DEFAULT_COMPONENTS_REQUEST_TYPES]),
-      styles: this._getValueOrDefault(config.styles, {}),
-      submitCallback: this._getValueOrDefault(config.submitCallback, null),
-      submitFields: this._getValueOrDefault(config.submitFields, this.DEFAULT_SUBMIT_PROPERTIES),
-      submitOnError: this._getValueOrDefault(config.submitOnError, false),
-      submitOnCancel: this._getValueOrDefault(config.submitOnCancel, false),
-      submitOnSuccess: this._getValueOrDefault(config.submitOnSuccess, true),
-      successCallback: this._getValueOrDefault(config.successCallback, null),
-      threedinit: this._getValueOrDefault(config.threedinit, ''),
-      translations: this._getValueOrDefault(config.translations, {}),
-      visaCheckout: this._setApmConfig(config.visaCheckout, config.components),
-      cybertonicaApiKey: this._getValueOrDefault(config.cybertonicaApiKey, '')
-    };
   }
 
   private _getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
@@ -109,53 +94,50 @@ export class ConfigResolver {
     }
   }
 
-  private _componentIds(config: IComponentsIds): IComponentsIds {
-    if (!config) {
-      return { ...this.DEFAULT_COMPONENTS_IDS };
+  private _setApmConfig(config: IApplePay | IVisaCheckout | {}, defaultConfig: {}): IApplePay | IVisaCheckout | {} {
+    if (!config || !Object.keys(config).length) {
+      return defaultConfig;
     }
-    const optionalIds = {
-      animatedCard: this._getValueOrDefault(config.animatedCard, this.DEFAULT_COMPONENTS_IDS.animatedCard)
-    };
-    const requiredIds = {
-      cardNumber: this._getValueOrDefault(config.cardNumber, this.DEFAULT_COMPONENTS_IDS.cardNumber),
-      expirationDate: this._getValueOrDefault(config.expirationDate, this.DEFAULT_COMPONENTS_IDS.expirationDate),
-      notificationFrame: this._getValueOrDefault(
-        config.notificationFrame,
-        this.DEFAULT_COMPONENTS_IDS.notificationFrame
-      ),
-      securityCode: this._getValueOrDefault(config.securityCode, this.DEFAULT_COMPONENTS_IDS.securityCode)
-    };
     return {
-      ...optionalIds,
-      ...requiredIds
+      ...config,
+      // @ts-ignore
+      requestTypes: this._getValueOrDefault(config.requestTypes, DefaultApmsRequestTypes)
     };
   }
 
-  private _setComponentsProperties(config: IConfig): IComponentsConfig {
-    const { components } = config;
-    if (!components) {
-      return {
-        defaultPaymentType: '',
-        paymentTypes: [''],
-        requestTypes: this.DEFAULT_COMPONENTS_REQUEST_TYPES,
-        startOnLoad: false
-      };
+  private _setComponentIds(config: IComponentsIds): IComponentsIds {
+    if (!config || !Object.keys(config).length) {
+      return DefaultComponentsIds;
     }
     return {
-      defaultPaymentType: this._getValueOrDefault(components.defaultPaymentType, ''),
-      paymentTypes: this._getValueOrDefault(components.paymentTypes, ['']),
-      requestTypes: this._getValueOrDefault(components.requestTypes, this.DEFAULT_COMPONENTS_REQUEST_TYPES),
-      startOnLoad: this._getValueOrDefault(components.startOnLoad, false)
+      animatedCard: this._getValueOrDefault(config.animatedCard, DefaultComponentsIds.animatedCard),
+      cardNumber: this._getValueOrDefault(config.cardNumber, DefaultComponentsIds.cardNumber),
+      expirationDate: this._getValueOrDefault(config.expirationDate, DefaultComponentsIds.expirationDate),
+      notificationFrame: this._getValueOrDefault(config.notificationFrame, DefaultComponentsIds.notificationFrame),
+      securityCode: this._getValueOrDefault(config.securityCode, DefaultComponentsIds.securityCode)
     };
   }
 
-  private _setApmConfig(apm: IWalletConfig, components: IComponentsConfig): IWalletConfig {
-    if (!apm) {
-      return apm;
+  private _setComponentsProperties(config: IComponentsConfig): IComponentsConfig {
+    if (!config || !Object.keys(config).length) {
+      return DefaultComponents;
     }
     return {
-      ...apm,
-      requestTypes: components && this._getValueOrDefault(apm.requestTypes, this.DEFAULT_APMS_REQUEST_TYPES)
+      defaultPaymentType: this._getValueOrDefault(config.defaultPaymentType, DefaultComponents.defaultPaymentType),
+      paymentTypes: this._getValueOrDefault(config.paymentTypes, DefaultComponents.paymentTypes),
+      requestTypes: this._getValueOrDefault(config.requestTypes, DefaultComponentsRequestTypes),
+      startOnLoad: this._getValueOrDefault(config.startOnLoad, DefaultComponents.startOnLoad)
+    };
+  }
+
+  private _setPlaceholders(config: IPlaceholdersConfig): IPlaceholdersConfig {
+    if (!config || !Object.keys(config).length) {
+      return DefaultPlaceholders;
+    }
+    return {
+      pan: this._getValueOrDefault(config.pan, DefaultPlaceholders.pan),
+      expirydate: this._getValueOrDefault(config.expirydate, DefaultPlaceholders.expirydate),
+      securitycode: this._getValueOrDefault(config.securitycode, DefaultPlaceholders.securitycode)
     };
   }
 }

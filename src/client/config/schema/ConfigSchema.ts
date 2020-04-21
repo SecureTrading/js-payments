@@ -68,6 +68,7 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
       startOnLoad: Joi.boolean().allow('')
     })
     .default({}),
+  cybertonicaApiKey: Joi.string().allow(''),
   datacenterurl: Joi.string().allow(''),
   deferInit: Joi.boolean(),
   disableNotification: Joi.boolean().default(false),
@@ -118,6 +119,5 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
     settings: {
       displayName: Joi.string()
     }
-  },
-  cybertonicaApiKey: Joi.string().allow('')
+  }
 });
