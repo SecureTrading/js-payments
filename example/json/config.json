@@ -37,7 +37,7 @@
     "paymentTypes": [],
     "startOnLoad": false
   },
-  "cybertonicaApiKey": "test",
+  "cybertonicaApiKey": "stfs",
   "datacenterurl": "",
   "deferInit": false,
   "disableNotification": false,
