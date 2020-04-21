@@ -298,8 +298,8 @@ class ST {
       this.errorCallback = this._config.errorCallback;
     }
 
-    if (config.cancelCallback) {
-      this.cancelCallback = config.cancelCallback;
+    if (this._config.cancelCallback) {
+      this.cancelCallback = this._config.cancelCallback;
     }
   }
 }

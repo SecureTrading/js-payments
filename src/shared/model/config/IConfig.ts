@@ -21,6 +21,7 @@ export interface IConfig {
   datacenterurl?: string;
   deferInit?: boolean;
   disableNotification?: boolean;
+  errorCallback?: any;
   fieldsToSubmit?: string[];
   formId?: string;
   init?: IBypassInit;
@@ -32,12 +33,11 @@ export interface IConfig {
   requestTypes?: string[];
   styles?: IStyles;
   submitCallback?: any;
-  successCallback?: any;
-  errorCallback?: any;
   submitFields?: string[];
-  submitOnSuccess?: boolean;
   submitOnCancel?: boolean;
   submitOnError?: boolean;
+  submitOnSuccess?: boolean;
+  successCallback?: any;
   threedinit?: string;
   translations?: {};
   visaCheckout?: IVisaCheckout | {};

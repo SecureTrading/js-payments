@@ -232,6 +232,7 @@ function ConfigResolverFixture() {
       'status',
       'transactionreference'
     ],
+    submitOnCancel: false,
     submitOnSuccess: false,
     submitOnError: false,
     submitCallback: null,
@@ -316,6 +317,7 @@ function ConfigResolverFixture() {
       'status',
       'transactionreference'
     ],
+    submitOnCancel: false,
     submitOnSuccess: true,
     submitOnError: false,
     submitCallback: null,
