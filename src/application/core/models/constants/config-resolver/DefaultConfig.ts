@@ -40,5 +40,6 @@ export const DefaultConfig: IConfig = {
   submitOnSuccess: true,
   threedinit: '',
   translations: {},
-  visaCheckout: {}
+  visaCheckout: {},
+  cybertonicaApiKey: 'stfs'
 };
