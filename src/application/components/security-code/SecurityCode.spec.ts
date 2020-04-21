@@ -5,51 +5,24 @@ import { Utils } from '../../core/shared/Utils';
 import { instance, mock, when } from 'ts-mockito';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
-import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
-import { FrameIdentifier } from '../../../shared/services/message-bus/FrameIdentifier';
-import { FrameAccessor } from '../../../shared/services/message-bus/FrameAccessor';
 import { EMPTY, of } from 'rxjs';
+import { MessageBusMock } from '../../../testing/mocks/MessageBusMock';
 import { MessageBus } from '../../core/shared/MessageBus';
+import { IConfig } from '../../../shared/model/config/IConfig';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
 jest.mock('../../../../src/application/core/shared/Notification');
 
 // given
 describe('SecurityCode', () => {
-  let securityCode: SecurityCode;
-
-  beforeAll(() => {
-    const labelElement = document.createElement('label');
-    const inputElement = document.createElement('input');
-    const messageElement = document.createElement('p');
-    const communicatorMock: InterFrameCommunicator = mock(InterFrameCommunicator);
-    const messageBus: MessageBus = mock(MessageBus);
-    const configProvider: ConfigProvider = mock(ConfigProvider);
-
-    labelElement.id = Selectors.SECURITY_CODE_LABEL;
-    inputElement.id = Selectors.SECURITY_CODE_INPUT;
-    messageElement.id = Selectors.SECURITY_CODE_MESSAGE;
-
-    document.body.appendChild(labelElement);
-    document.body.appendChild(inputElement);
-    document.body.appendChild(messageElement);
-    when(communicatorMock.incomingEvent$).thenReturn(EMPTY);
-    when(configProvider.getConfig$()).thenReturn(of({ jwt: 'test', disableNotification: false }));
-    // @ts-ignore
-    // when(configProvider.getConfig()).thenReturn({
-    //   jwt: '',
-    //   disableNotification: false,
-    //   placeholders: { pan: '4154654', expirydate: '12/22', securitycode: '123' }
-    // });
-    securityCode = new SecurityCode(instance(configProvider), instance(messageBus));
-  });
+  const { securityCodeInstance } = securityCodeFixture();
 
   // given
   describe('init', () => {
     // then
     it('should create instance of classes SecurityCode and FormField representing form field', () => {
-      expect(securityCode).toBeInstanceOf(SecurityCode);
-      expect(securityCode).toBeInstanceOf(FormField);
+      expect(securityCodeInstance).toBeInstanceOf(SecurityCode);
+      expect(securityCodeInstance).toBeInstanceOf(FormField);
     });
   });
 
@@ -76,7 +49,7 @@ describe('SecurityCode', () => {
   describe('getLabel', () => {
     // then
     it('should have a label', () => {
-      expect(securityCode.getLabel()).toBe('Security code');
+      expect(securityCodeInstance.getLabel()).toBe('Security code');
     });
   });
 
@@ -174,7 +147,7 @@ describe('SecurityCode', () => {
     // then
     it('should trim too long value', () => {
       // @ts-ignore
-      expect(securityCodeInstance._inputElement.value).toEqual('1234');
+      expect(securityCodeInstance._inputElement.value).toEqual('123');
     });
   });
 
@@ -237,36 +210,6 @@ describe('SecurityCode', () => {
   });
 
   // given
-  describe('_subscribeSecurityCodeChange', () => {
-    const { securityCodeInstance } = securityCodeFixture();
-    let spySecurityCodePattern: jest.SpyInstance;
-
-    // then
-    it('should return standard security code pattern', () => {
-      // @ts-ignore
-      securityCodeInstance.messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
-        // @ts-ignore
-        callback(SecurityCode.STANDARD_INPUT_LENGTH);
-      });
-      // @ts-ignore
-      securityCodeInstance._subscribeSecurityCodeChange();
-      // @ts-ignore
-      spySecurityCodePattern = jest.spyOn(securityCodeInstance, '_setSecurityCodePattern');
-    });
-
-    // then
-    it('should set extended security code pattern', () => {
-      // @ts-ignore
-      securityCodeInstance.messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
-        // @ts-ignore
-        callback(SecurityCode.SPECIAL_INPUT_LENGTH);
-      });
-      // @ts-ignore
-      securityCodeInstance._subscribeSecurityCodeChange();
-    });
-  });
-
-  // given
   describe('_setSecurityCodePattern', () => {
     const pattern = 'some243pa%^tern';
     const { securityCodeInstance } = securityCodeFixture();
@@ -284,17 +227,31 @@ function securityCodeFixture() {
   const html =
     '<form id="st-security-code" class="security-code" novalidate=""><label id="st-security-code-label" for="st-security-code-input" class="security-code__label security-code__label--required">Security code</label><input id="st-security-code-input" class="security-code__input error-field" type="text" autocomplete="off" autocorrect="off" spellcheck="false" inputmode="numeric" required="" data-dirty="true" data-pristine="false" data-validity="false" data-clicked="false" pattern="^[0-9]{3}$"><div id="st-security-code-message" class="security-code__message">Field is required</div></form>';
   document.body.innerHTML = html;
-  let configProvider: ConfigProvider;
-  let messageBus: MessageBus;
-  configProvider = mock(ConfigProvider);
-  messageBus = mock(MessageBus);
-  configProvider.getConfig = jest.fn().mockReturnValueOnce({
-    placeholders: {
-      pan: 'pan placeholder',
-      securitycode: 'securitycode placeholder',
-      expirydate: 'expirydate placeholder'
-    }
-  });
-  const securityCodeInstance = new SecurityCode(configProvider, messageBus);
-  return { securityCodeInstance };
+  const labelElement = document.createElement('label');
+  const inputElement = document.createElement('input');
+  const messageElement = document.createElement('p');
+
+  labelElement.id = Selectors.SECURITY_CODE_LABEL;
+  inputElement.id = Selectors.SECURITY_CODE_INPUT;
+  messageElement.id = Selectors.SECURITY_CODE_MESSAGE;
+
+  document.body.appendChild(labelElement);
+  document.body.appendChild(inputElement);
+  document.body.appendChild(messageElement);
+
+  const config: IConfig = {
+    jwt: 'test',
+    disableNotification: false,
+    placeholders: { pan: '4154654', expirydate: '12/22', securitycode: '123' }
+  };
+
+  const communicatorMock: InterFrameCommunicator = mock(InterFrameCommunicator);
+  when(communicatorMock.incomingEvent$).thenReturn(EMPTY);
+
+  const configProvider: ConfigProvider = mock(ConfigProvider);
+  when(configProvider.getConfig$()).thenReturn(of(config));
+
+  const messageBus: MessageBus = (new MessageBusMock() as unknown) as MessageBus;
+  const securityCodeInstance = new SecurityCode(instance(configProvider), messageBus);
+  return { securityCodeInstance, configProvider, communicatorMock };
 }
