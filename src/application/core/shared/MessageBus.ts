@@ -64,6 +64,8 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
     CONFIG_CHECK: 'ST_CONFIG_CHECK'
   };
 
+  public readonly pipe: Observable<any>['pipe'];
+
   constructor(
     private communicator: InterFrameCommunicator,
     private framesHub: FramesHub,
@@ -73,6 +75,8 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
     if (this.identifier.isControlFrame()) {
       (window as any).messageBus = this;
     }
+
+    this.pipe = this.communicator.incomingEvent$.pipe.bind(this.communicator.incomingEvent$);
   }
 
   public publish<T>(event: IMessageBusEvent<T>, publishToParent?: boolean): void {
