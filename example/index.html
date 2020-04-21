@@ -172,7 +172,23 @@
       var st = ST(stConfig);
       st.Components(stConfig.components);
       st.ApplePay(stConfig.applePay);
-      st.VisaCheckout(stConfig.visaCheckout);
+      st.VisaCheckout({
+        buttonSettings: {
+          size: '154',
+          'color': 'neutral'
+        },
+        livestatus: 0,
+        merchantId: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4',
+        paymentRequest: {
+          'currencyCode': 'GBP',
+          'subtotal': '10.99',
+          'total': '10.99'
+        },
+        placement: 'st-visa-checkout',
+        settings: {
+          displayName: 'My Test Site'
+        }
+      });
 
       document.getElementById('example-form-amount').addEventListener('input', function() {
         st.updateJWT(

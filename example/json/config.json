@@ -51,7 +51,7 @@
     "cachetoken": "",
     "threedinit": ""
   },
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4NzM3MjY3NS41NzE2MTI2LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.ocwo2ZXQGAdZxOq9iSmrHWHVC5lT3g1Z-exwbJPG8Vg",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4NzQ3MDY4My45NDY3NDU2LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.BIC_8JmxersYvt9jxXZdRQC8EHu0WOXiF4fESJ34Upc",
   "livestatus": 0,
   "origin": "",
   "panIcon": true,
@@ -90,20 +90,5 @@
   "threedinit": "",
   "translations": {
     "An error occurred": "Wystąpił błąd"
-  },
-  "visaCheckout": {
-    "buttonSettings": {
-      "size": "154",
-      "color": "neutral"
-    },
-    "livestatus": 0,
-    "merchantId": "SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4",
-    "paymentRequest": {
-      "subtotal": "20.00"
-    },
-    "placement": "st-visa-checkout",
-    "settings": {
-      "displayName": "My Test Site"
-    }
   }
 }
