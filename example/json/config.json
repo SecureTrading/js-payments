@@ -57,7 +57,7 @@
   "panIcon": true,
   "placeholders": {
     "expirydate": "MM/YY",
-    "securitycode": ""
+    "securitycode": "***"
   },
   "requestTypes": [],
   "styles": {
