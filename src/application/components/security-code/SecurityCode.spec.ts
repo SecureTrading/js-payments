@@ -4,6 +4,12 @@ import { FormField } from '../../core/shared/FormField';
 import { Utils } from '../../core/shared/Utils';
 import { instance, mock, when } from 'ts-mockito';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
+import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
+import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
+import { FrameIdentifier } from '../../../shared/services/message-bus/FrameIdentifier';
+import { FrameAccessor } from '../../../shared/services/message-bus/FrameAccessor';
+import { EMPTY, of } from 'rxjs';
+import { MessageBus } from '../../core/shared/MessageBus';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
 jest.mock('../../../../src/application/core/shared/Notification');
@@ -16,6 +22,9 @@ describe('SecurityCode', () => {
     const labelElement = document.createElement('label');
     const inputElement = document.createElement('input');
     const messageElement = document.createElement('p');
+    const communicatorMock: InterFrameCommunicator = mock(InterFrameCommunicator);
+    const messageBus: MessageBus = mock(MessageBus);
+    const configProvider: ConfigProvider = mock(ConfigProvider);
 
     labelElement.id = Selectors.SECURITY_CODE_LABEL;
     inputElement.id = Selectors.SECURITY_CODE_INPUT;
@@ -24,16 +33,15 @@ describe('SecurityCode', () => {
     document.body.appendChild(labelElement);
     document.body.appendChild(inputElement);
     document.body.appendChild(messageElement);
-
-    let configProvider: ConfigProvider;
-    configProvider = mock(ConfigProvider);
+    when(communicatorMock.incomingEvent$).thenReturn(EMPTY);
+    when(configProvider.getConfig$()).thenReturn(of({ jwt: 'test', disableNotification: false }));
     // @ts-ignore
-    when(configProvider.getConfig()).thenReturn({
-      jwt: '',
-      disableNotification: false,
-      placeholders: { pan: '4154654', expirydate: '12/22', securitycode: '123' }
-    });
-    securityCode = new SecurityCode(instance(configProvider));
+    // when(configProvider.getConfig()).thenReturn({
+    //   jwt: '',
+    //   disableNotification: false,
+    //   placeholders: { pan: '4154654', expirydate: '12/22', securitycode: '123' }
+    // });
+    securityCode = new SecurityCode(instance(configProvider), instance(messageBus));
   });
 
   // given
@@ -277,7 +285,9 @@ function securityCodeFixture() {
     '<form id="st-security-code" class="security-code" novalidate=""><label id="st-security-code-label" for="st-security-code-input" class="security-code__label security-code__label--required">Security code</label><input id="st-security-code-input" class="security-code__input error-field" type="text" autocomplete="off" autocorrect="off" spellcheck="false" inputmode="numeric" required="" data-dirty="true" data-pristine="false" data-validity="false" data-clicked="false" pattern="^[0-9]{3}$"><div id="st-security-code-message" class="security-code__message">Field is required</div></form>';
   document.body.innerHTML = html;
   let configProvider: ConfigProvider;
+  let messageBus: MessageBus;
   configProvider = mock(ConfigProvider);
+  messageBus = mock(MessageBus);
   configProvider.getConfig = jest.fn().mockReturnValueOnce({
     placeholders: {
       pan: 'pan placeholder',
@@ -285,6 +295,6 @@ function securityCodeFixture() {
       expirydate: 'expirydate placeholder'
     }
   });
-  const securityCodeInstance = new SecurityCode(configProvider);
+  const securityCodeInstance = new SecurityCode(configProvider, messageBus);
   return { securityCodeInstance };
 }
