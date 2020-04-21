@@ -65,19 +65,14 @@ export class SecurityCode extends FormField {
       map(event => event.data.jwt)
     );
     const cardNumberInput$: Observable<string> = this._messageBus.pipe(
-      tap(console.log),
       ofType(MessageBus.EVENTS.CHANGE_CARD_NUMBER),
-      map((event: IMessageBusEvent<IFormFieldState>) => event.data.value),
-      tap(console.log)
+      map((event: IMessageBusEvent<IFormFieldState>) => event.data.value)
     );
     const cardNumberFromJwt$: Observable<string> = merge(jwtFromConfig$, jwtFromUpdate$).pipe(
-      tap(console.log),
-      map(jwt => JwtDecode<IDecodedJwt>(jwt).payload.pan),
-      tap(console.log)
+      map(jwt => JwtDecode<IDecodedJwt>(jwt).payload.pan)
     );
 
     return merge(cardNumberInput$, cardNumberFromJwt$).pipe(
-      tap(console.log),
       map(cardNumber => (cardNumber ? iinLookup.lookup(cardNumber).cvcLength[0] : 0))
     );
   }
