@@ -38,7 +38,10 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
       total: {
         amount: Joi.string(),
         label: Joi.string()
-      }
+      },
+      requestTypes: Joi.array().items(
+        Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
+      )
     },
     placement: Joi.string()
   },

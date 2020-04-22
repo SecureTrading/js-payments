@@ -7,6 +7,7 @@ export interface IApplePay {
     currencyCode: string;
     merchantCapabilities: string[];
     supportedNetworks: string[];
+    requestTypes: string[];
     total: {
       label: string;
       amount: string;
