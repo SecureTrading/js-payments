@@ -12,6 +12,10 @@ export class Frame {
   protected messageBus: MessageBus = Container.get(MessageBus);
   protected params: IParams;
 
+  constructor() {
+    Container.get(FramesHub).notifyReadyState();
+  }
+
   public parseUrl() {
     const parsedUrl = new URL(window.location.href);
     const styles: IStyle = {};
@@ -36,8 +40,6 @@ export class Frame {
   protected onInit(config?: IConfig) {
     this.params = this.parseUrl();
     this.applyStyles();
-
-    Container.get(FramesHub).notifyReadyState();
   }
 
   protected getAllowedParams() {

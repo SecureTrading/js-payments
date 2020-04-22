@@ -186,11 +186,8 @@ class ST {
       config.components.paymentTypes,
       config.components.defaultPaymentType,
       config.animatedCard,
-      config.deferInit,
       config.buttonId,
-      config.components.startOnLoad,
-      config.fieldsToSubmit,
-      config.bypassCards
+      config.fieldsToSubmit
     );
   }
 

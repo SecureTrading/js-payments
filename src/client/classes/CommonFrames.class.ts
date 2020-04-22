@@ -1,4 +1,4 @@
-import { CardinalCommerce } from '../../application/core/integrations/CardinalCommerce';
+import { CardinalCommerce } from '../../application/core/integrations/cardinal-commerce/CardinalCommerce';
 import { IStyles } from '../../shared/model/config/IStyles';
 import { Element } from './Element';
 import { DomMethods } from '../../application/core/shared/DomMethods';

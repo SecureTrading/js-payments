@@ -10,7 +10,7 @@ import { ConfigProvider } from '../../core/services/ConfigProvider';
 import { mock, instance as mockInstance, when, anyString } from 'ts-mockito';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
 import { Cybertonica } from '../../core/integrations/Cybertonica';
-import { CardinalCommerce } from '../../core/integrations/CardinalCommerce';
+import { CardinalCommerce } from '../../core/integrations/cardinal-commerce/CardinalCommerce';
 
 jest.mock('../../../../src/application/core/shared/Payment');
 

@@ -4,11 +4,12 @@ import { Service } from 'typedi';
 import { DomMethods } from '../../shared/DomMethods';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
+import { ICardinalProvider } from './ICardinalProvider';
 
 declare const Cardinal: ICardinal;
 
 @Service()
-export class CardinalProvider {
+export class CardinalProvider implements ICardinalProvider {
   private static readonly SCRIPT_ID = 'cardinalCommerce';
 
   getCardinal$(liveStatus: boolean): Observable<ICardinal> {

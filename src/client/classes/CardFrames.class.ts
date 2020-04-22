@@ -1,5 +1,4 @@
 import JwtDecode from 'jwt-decode';
-import { BypassCards } from '../../application/core/models/constants/BypassCards';
 import { FormState } from '../../application/core/models/constants/FormState';
 import { IMessageBusEvent } from '../../application/core/models/IMessageBusEvent';
 import { IStyles } from '../../shared/model/config/IStyles';
@@ -41,19 +40,16 @@ export class CardFrames extends RegisterFrames {
   private _messageBusEvent: IMessageBusEvent = { data: { message: '' }, type: '' };
   private _submitButton: HTMLInputElement | HTMLButtonElement;
   private _buttonId: string;
-  private _deferInit: boolean;
   private _defaultPaymentType: string;
   private _paymentTypes: string[];
   private _payMessage: string;
   private _processingMessage: string;
-  private _startOnLoad: boolean;
   private _fieldsToSubmitLength: number;
   private _isCardWithNoCvv: boolean;
   private _noFieldConfiguration: boolean;
   private _onlyCvvConfiguration: boolean;
   private _configurationForStandardCard: boolean;
   private _loadAnimatedCard: boolean;
-  private _bypassCards: BypassCards[];
 
   constructor(
     jwt: string,
@@ -63,28 +59,15 @@ export class CardFrames extends RegisterFrames {
     paymentTypes: string[],
     defaultPaymentType: string,
     animatedCard: boolean,
-    deferInit: boolean,
     buttonId: string,
-    startOnLoad: boolean,
-    fieldsToSubmit: string[],
-    bypassCards: BypassCards[]
+    fieldsToSubmit: string[]
   ) {
     super(jwt, origin, componentIds, styles, animatedCard, fieldsToSubmit);
-    this._setInitValues(
-      buttonId,
-      defaultPaymentType,
-      deferInit,
-      paymentTypes,
-      startOnLoad,
-      animatedCard,
-      bypassCards,
-      jwt
-    );
+    this._setInitValues(buttonId, defaultPaymentType, paymentTypes, animatedCard, jwt);
     this.configureFormFieldsAmount(jwt);
   }
 
   public init() {
-    this._deferJsinitOnLoad();
     this._preventFormSubmit();
     this._createSubmitButton();
     this._initSubscribes();
@@ -161,12 +144,6 @@ export class CardFrames extends RegisterFrames {
     }
     return button;
   };
-
-  private _deferJsinitOnLoad(): void {
-    if (!this._deferInit && this._startOnLoad) {
-      this._publishSubmitEvent(true);
-    }
-  }
 
   private _disableFormField(state: FormState, eventName: string, target: string): void {
     const messageBusEvent: IMessageBusEvent = {
@@ -267,11 +244,9 @@ export class CardFrames extends RegisterFrames {
     this.messageBus.publish(messageBusEvent);
   }
 
-  private _publishSubmitEvent(deferInit: boolean): void {
+  private _publishSubmitEvent(): void {
     const messageBusEvent: IMessageBusEvent = {
       data: {
-        bypassCards: this._bypassCards,
-        deferInit,
         fieldsToSubmit: this.fieldsToSubmit
       },
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
@@ -295,21 +270,15 @@ export class CardFrames extends RegisterFrames {
   private _setInitValues(
     buttonId: string,
     defaultPaymentType: string,
-    deferInit: boolean,
     paymentTypes: any,
-    startOnLoad: boolean,
     loadAnimatedCard: boolean,
-    bypassCards: BypassCards[],
     jwt: string
   ): void {
     this._validation = new Validation();
     this._translator = new Translator(this.params.locale);
     this._buttonId = buttonId;
-    this._deferInit = deferInit;
-    this._startOnLoad = startOnLoad;
     this._defaultPaymentType = defaultPaymentType;
     this._paymentTypes = paymentTypes;
-    this._bypassCards = bypassCards;
     this.jwt = jwt;
     this._payMessage = this._translator.translate(Language.translations.PAY);
     this._processingMessage = `${this._translator.translate(Language.translations.PROCESSING)} ...`;
@@ -338,11 +307,11 @@ export class CardFrames extends RegisterFrames {
   private _submitFormListener(): void {
     if (this._submitButton) {
       this._submitButton.addEventListener(CardFrames.CLICK_EVENT, () => {
-        this._publishSubmitEvent(this._deferInit);
+        this._publishSubmitEvent();
       });
     }
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.CALL_SUBMIT_EVENT, () => {
-      this._publishSubmitEvent(this._deferInit);
+      this._publishSubmitEvent();
     });
   }
 

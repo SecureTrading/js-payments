@@ -26,11 +26,12 @@ import { ConfigProvider } from '../../core/services/ConfigProvider';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
 import { Cybertonica } from '../../core/integrations/Cybertonica';
 import { IConfig } from '../../../shared/model/config/IConfig';
-import { CardinalCommerce } from '../../core/integrations/CardinalCommerce';
+import { CardinalCommerce } from '../../core/integrations/cardinal-commerce/CardinalCommerce';
 import { ICardinalCommerceTokens } from '../../core/integrations/cardinal-commerce/ICardinalCommerceTokens';
 import { from, Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { IAuthorizePaymentResponse } from '../../core/models/IAuthorizePaymentResponse';
+import { StJwt } from '../../core/shared/StJwt';
 
 @Service()
 export class ControlFrame extends Frame {
@@ -67,7 +68,6 @@ export class ControlFrame extends Frame {
   private _payment: Payment;
   private _postThreeDRequestTypes: string[];
   private _preThreeDRequestTypes: string[];
-  private _threeDQueryResult: any;
   private _validation: Validation;
 
   constructor(
@@ -93,7 +93,6 @@ export class ControlFrame extends Frame {
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, this._formFields.expirationDate);
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_SECURITY_CODE, this._formFields.securityCode);
     this._setRequestTypes(config);
-    this._processPaymentsEvent();
     this._submitFormEvent();
     this._updateMerchantFieldsEvent();
     this._resetJwtEvent();
@@ -118,12 +117,6 @@ export class ControlFrame extends Frame {
       this._formFieldChange(event, data.value);
       ControlFrame._setFormFieldValidity(field, data);
       ControlFrame._setFormFieldValue(field, data);
-    });
-  }
-
-  private _processPaymentsEvent(): void {
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS, (data: IResponseData) => {
-      this._onProcessPayments(data);
     });
   }
 
@@ -156,10 +149,8 @@ export class ControlFrame extends Frame {
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, (data?: ISubmitData) => {
       const isPanPiba: boolean = this._isCardWithoutCVV();
       const dataInJwt = data ? data.dataInJwt : false;
-      const deferInit = data ? data.deferInit : false;
       const { validity } = this._validation.formValidation(
         dataInJwt,
-        deferInit,
         data.fieldsToSubmit,
         this._formFields,
         isPanPiba,
@@ -171,51 +162,22 @@ export class ControlFrame extends Frame {
         return;
       }
 
-      if (this._isCardBypassed(data)) {
-        this._bypassCard();
+      if (this._isCardBypassed(this._card.pan || this._getPan())) {
+        this._processPayment(data as IResponseData);
         return;
       }
 
-      this._callThreeDQueryRequest().subscribe(authorizationData => this._processPayment(authorizationData as any));
+      this._callThreeDQueryRequest().subscribe(
+        authorizationData => this._processPayment(authorizationData as any),
+        error => console.error(error)
+      );
     });
   }
 
-  private _bypassCard() {
-    const { pan, expirydate, securitycode } = this._card;
-    const postData: any = {
-      expirydate,
-      pan,
-      securitycode
-    };
-    this.messageBus.publish({
-      data: postData,
-      type: MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS
-    });
-  }
+  private _isCardBypassed(pan: string): boolean {
+    const bypassCards = this._configProvider.getConfig().bypassCards as string[];
 
-  private _isCardBypassed(data: ISubmitData): boolean {
-    return !this._card.pan
-      ? data.bypassCards.includes(iinLookup.lookup(this._getPan()).type)
-      : data.bypassCards.includes(iinLookup.lookup(this._card.pan).type);
-  }
-
-  private _isThreeDRequestCalled(): boolean {
-    return this._postThreeDRequestTypes.length !== 0;
-  }
-
-  private _onProcessPayments(data: IResponseData): void {
-    if (this._isThreeDRequestCalled()) {
-      this._processPayment(data);
-      return;
-    }
-    this._threeDResponse(data);
-  }
-
-  private _threeDResponse(data: IResponseData): void {
-    if (data.threedresponse !== undefined) {
-      StCodec.publishResponse(this._threeDQueryResult.response, this._threeDQueryResult.jwt, data.threedresponse);
-    }
-    this._notification.success(Language.translations.PAYMENT_SUCCESS);
+    return bypassCards.includes(iinLookup.lookup(pan).type);
   }
 
   private _processPayment(data: IResponseData): void {
@@ -255,14 +217,16 @@ export class ControlFrame extends Frame {
   private _callThreeDQueryRequest(): Observable<IAuthorizePaymentResponse> {
     const applyCybertonicaTid = (merchantFormData: IMerchantData) =>
       from(this._cybertonica.getTransactionId()).pipe(
-        map(cybertonicaTid =>
-          !cybertonicaTid
-            ? merchantFormData
-            : {
-                ...merchantFormData,
-                fraudcontroltransactionid: cybertonicaTid
-              }
-        )
+        map(cybertonicaTid => {
+          if (!cybertonicaTid) {
+            return merchantFormData;
+          }
+
+          return {
+            ...merchantFormData,
+            fraudcontroltransactionid: cybertonicaTid
+          };
+        })
       );
 
     return of({ ...this._merchantFormData }).pipe(
@@ -310,23 +274,6 @@ export class ControlFrame extends Frame {
       : '';
   }
 
-  // private _getSecurityCode(): string {
-  //   return JwtDecode<IDecodedJwt>(this.params.jwt).payload.securitycode
-  //     ? JwtDecode<IDecodedJwt>(this.params.jwt).payload.securitycode
-  //     : '';
-  // }
-  //
-  // private _getSecurityCodeLength(): number {
-  //   const cardDetails: IDecodedJwt = JwtDecode(StCodec.jwt);
-  //   const securityCodeLength: number = this._card.securitycode ? this._card.securitycode.length : 0;
-  //   const securityCodeFromJwtLength: number = this._getSecurityCode() ? this._getSecurityCode().length : 0;
-  //   if (cardDetails.payload.pan && !securityCodeLength && !securityCodeFromJwtLength) {
-  //     const { cvcLength } = iinLookup.lookup(cardDetails.payload.pan);
-  //     return cvcLength.slice(-1)[0];
-  //   }
-  //   return securityCodeLength ? securityCodeLength : securityCodeFromJwtLength;
-  // }
-
   private _setCardExpiryDate(value: string): void {
     this._card.expirydate = value;
   }
@@ -365,6 +312,21 @@ export class ControlFrame extends Frame {
   private _initCardinalCommerce(config: IConfig): void {
     this._cardinalCommerce.init(config).subscribe(() => {
       this._isPaymentReady = true;
+
+      if (config.components.startOnLoad) {
+        this.messageBus.publish({
+          type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS,
+          data: new StJwt(config.jwt).payload.pan as string
+        });
+
+        this.messageBus.publish({
+          type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM,
+          data: {
+            dataInJwt: true,
+            requestTypes: config.components.requestTypes
+          }
+        });
+      }
     });
   }
 }

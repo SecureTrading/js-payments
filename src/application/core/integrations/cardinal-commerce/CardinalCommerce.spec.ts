@@ -1,16 +1,16 @@
 import each from 'jest-each';
 import SpyInstance = jest.SpyInstance;
 import { CardinalCommerce } from './CardinalCommerce';
-import { IThreeDQueryResponse } from '../models/IThreeDQueryResponse';
-import { MessageBus } from '../shared/MessageBus';
-import { DomMethods } from '../shared/DomMethods';
-import { Selectors } from '../shared/Selectors';
+import { IThreeDQueryResponse } from '../../models/IThreeDQueryResponse';
+import { MessageBus } from '../../shared/MessageBus';
+import { DomMethods } from '../../shared/DomMethods';
+import { Selectors } from '../../shared/Selectors';
 import { Container } from 'typedi';
 import { of } from 'rxjs';
-import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
+import { FramesHub } from '../../../../shared/services/message-bus/FramesHub';
 import { mock, instance as mockInstance, when, anyString } from 'ts-mockito';
-import { NotificationService } from '../../../client/classes/notification/NotificationService';
-import { IConfig } from '../../../shared/model/config/IConfig';
+import { NotificationService } from '../../../../client/classes/notification/NotificationService';
+import { IConfig } from '../../../../shared/model/config/IConfig';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
 jest.mock('../../../../src/application/core/integrations/GoogleAnalytics');
