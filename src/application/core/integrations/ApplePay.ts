@@ -145,7 +145,7 @@ export class ApplePay {
       }
       this.jwt = jwt;
       this._datacenterurl = datacenterurl;
-      this._onInit(config.applePay.buttonText, config.applePay.buttonStyle);
+      this._onInit(this._applePayConfig.buttonText, this._applePayConfig.buttonStyle);
     });
     this._localStorage.setItem('completePayment', '');
     this._completion = {
