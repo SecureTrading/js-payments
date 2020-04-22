@@ -190,6 +190,7 @@ export class VisaCheckout {
     this._getResponseMessage(this.paymentStatus);
     this._notification.cancel(this.responseMessage);
     this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_CANCEL_CALLBACK }, true);
+    this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE, data: this.responseMessage }, true);
     GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment canceled');
   }
 

@@ -173,6 +173,9 @@ export class CommonFrames extends RegisterFrames {
   }
 
   private _shouldSubmitForm(data: any): boolean {
+    console.error(data);
+    console.error(this._submitOnCancel);
+    console.error(data.errorcode !== '0');
     return (
       (this._submitOnSuccess && data.errorcode === '0' && this._isTransactionFinished(data)) ||
       (this._submitOnError && data.errorcode !== '0') ||
