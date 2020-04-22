@@ -14,6 +14,7 @@ import { ConfigProvider } from '../services/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { Observable } from 'rxjs';
 import { IConfig } from '../../../shared/model/config/IConfig';
+import { Cybertonica } from './Cybertonica';
 
 const ApplePaySession = (window as any).ApplePaySession;
 const ApplePayError = (window as any).ApplePayError;
@@ -131,10 +132,15 @@ export class ApplePay {
   private _applePayConfig: IWalletConfig;
   private _datacenterurl: string;
 
-  constructor(private _configProvider: ConfigProvider, private _communicator: InterFrameCommunicator) {
+  constructor(
+    private _configProvider: ConfigProvider,
+    private _communicator: InterFrameCommunicator,
+    private _cybertonica: Cybertonica
+  ) {
     this._notification = Container.get(NotificationService);
     this._messageBus = Container.get(MessageBus);
     this._localStorage = Container.get(BrowserLocalStorage);
+    console.error(this._cybertonica.getTransactionId());
 
     this._config$ = this._configProvider.getConfig$();
 

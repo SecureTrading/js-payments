@@ -14,6 +14,7 @@ import { Observable } from 'rxjs';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { ConfigProvider } from '../services/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
+import { Cybertonica } from './Cybertonica';
 
 declare const V: any;
 
@@ -97,10 +98,23 @@ export class VisaCheckout {
     settings: {}
   };
 
-  constructor(private _configProvider: ConfigProvider, private _communicator: InterFrameCommunicator) {
+  constructor(
+    private _configProvider: ConfigProvider,
+    private _communicator: InterFrameCommunicator,
+    private _cybertonica: Cybertonica
+  ) {
     this._messageBus = Container.get(MessageBus);
     this._notification = Container.get(NotificationService);
     this._config$ = this._configProvider.getConfig$();
+    console.error(this._cybertonica);
+    const dupa = this._cybertonica
+      .getTransactionId()
+      .then((response: any) => {
+        console.error(response);
+      })
+      .catch((error: any) => {
+        console.error(error);
+      });
 
     this._config$.subscribe(config => {
       const { visaCheckout, jwt, datacenterurl, livestatus } = config;

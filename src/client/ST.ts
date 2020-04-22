@@ -38,6 +38,7 @@ import { BrowserSessionStorage } from '../shared/services/storage/BrowserSession
 import { Notification } from '../application/core/shared/Notification';
 import './../styles/notification.css';
 import { ConfigProvider } from '../application/core/services/ConfigProvider';
+import { Cybertonica } from '../application/core/integrations/Cybertonica';
 
 @Service()
 class ST {
@@ -84,7 +85,8 @@ class ST {
     private _storage: BrowserLocalStorage,
     private _sessionStorage: BrowserSessionStorage,
     private _messageBus: MessageBus,
-    private _notification: Notification
+    private _notification: Notification,
+    private _cybertonica: Cybertonica
   ) {
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
@@ -128,13 +130,13 @@ class ST {
   public ApplePay(config: IApplePayConfig): ApplePay {
     const { applepay } = this.Environment();
 
-    return new applepay(this._configProvider, this._communicator);
+    return new applepay(this._configProvider, this._communicator, this._cybertonica);
   }
 
   public VisaCheckout(config: IVisaConfig): VisaCheckout {
     const { visa } = this.Environment();
 
-    return new visa(this._configProvider, this._communicator);
+    return new visa(this._configProvider, this._communicator, this._cybertonica);
   }
 
   public updateJWT(jwt: string): void {
