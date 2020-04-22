@@ -8,6 +8,8 @@ export interface IApplePayConfig {
     merchantCapabilities: string[];
     requestTypes?: string[];
     supportedNetworks: string[];
+    requiredBillingContactFields: string[];
+    requiredShippingContactFields: string[];
     total: {
       label: string;
       amount: string;

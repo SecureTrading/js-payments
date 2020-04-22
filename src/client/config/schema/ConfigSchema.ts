@@ -39,6 +39,8 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
         amount: Joi.string(),
         label: Joi.string()
       },
+      requiredBillingContactFields: Joi.array().items(Joi.string()),
+      requiredShippingContactFields: Joi.array().items(Joi.string()),
       requestTypes: Joi.array().items(
         Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
       )

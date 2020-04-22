@@ -181,6 +181,8 @@
           merchantCapabilities: ['supports3DS', 'supportsCredit', 'supportsDebit'],
           requestTypes: ['AUTH'],
           supportedNetworks: [],
+          requiredBillingContactFields: ["postalAddress"],
+          requiredShippingContactFields: ["postalAddress","name", "phone", "email"],
           total: {
             label: 'Secure Trading Merchant',
             amount: '10.00'
