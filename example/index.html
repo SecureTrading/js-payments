@@ -171,7 +171,25 @@
 
       var st = ST(stConfig);
       st.Components(stConfig.components);
-      st.ApplePay(stConfig.applePay);
+      st.ApplePay({
+        buttonStyle: 'white-outline',
+        buttonText: 'donate',
+        merchantId: 'merchant.net.securetrading.test',
+        paymentRequest: {
+          countryCode: 'US',
+          currencyCode: 'USD',
+          merchantCapabilities: ['supports3DS', 'supportsCredit', 'supportsDebit'],
+          requestTypes: ['AUTH'],
+          supportedNetworks: [],
+          requiredBillingContactFields: ["postalAddress"],
+          requiredShippingContactFields: ["postalAddress","name", "phone", "email"],
+          total: {
+            label: 'Secure Trading Merchant',
+            amount: '10.00'
+          }
+        },
+        placement: 'st-apple-pay'
+      });
       st.VisaCheckout({
         buttonSettings: {
           size: '154',
