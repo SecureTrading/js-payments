@@ -38,6 +38,7 @@ import { BrowserSessionStorage } from '../shared/services/storage/BrowserSession
 import { Notification } from '../application/core/shared/Notification';
 import './../styles/notification.css';
 import { ConfigProvider } from '../application/core/services/ConfigProvider';
+import { NotificationService } from './classes/notification/NotificationService';
 
 @Service()
 class ST {
@@ -84,7 +85,8 @@ class ST {
     private _storage: BrowserLocalStorage,
     private _sessionStorage: BrowserSessionStorage,
     private _messageBus: MessageBus,
-    private _notification: Notification
+    private _notification: Notification,
+    private _notificationService: NotificationService
   ) {
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
@@ -134,7 +136,7 @@ class ST {
   public VisaCheckout(config: IVisaConfig): VisaCheckout {
     const { visa } = this.Environment();
 
-    return new visa(this._configProvider, this._communicator);
+    return new visa(this._configProvider, this._communicator, this._messageBus, this._notificationService);
   }
 
   public updateJWT(jwt: string): void {

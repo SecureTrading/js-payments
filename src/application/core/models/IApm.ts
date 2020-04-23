@@ -1,9 +1,5 @@
 export interface IApm {
-  init(): void;
+  getConfig(): void;
 
-  loadSdk(): void;
-
-  onCancel(): void;
-
-  onError(): void;
+  updateJwtListener(): void;
 }

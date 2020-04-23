@@ -38,5 +38,5 @@ export interface IConfig {
   submitOnError?: boolean;
   threedinit?: string;
   translations?: {};
-  visaCheckout?: IVisaCheckout | {};
+  visaCheckout?: IVisaCheckout;
 }

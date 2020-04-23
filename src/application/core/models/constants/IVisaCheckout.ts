@@ -1,11 +1,11 @@
 import { IVisaSettings } from '../IVisaSettings';
 
 export interface IVisaCheckout {
-  merchantId: string; // That's VisaCheckout apikey property
-  livestatus: 0 | 1;
+  merchantId?: string; // That's VisaCheckout apikey property
+  livestatus?: 0 | 1;
   encryptionKey?: string;
-  placement: string;
-  requestTypes: string[];
+  placement?: string;
+  requestTypes?: string[];
   buttonSettings?: {
     size: number;
     height?: number;

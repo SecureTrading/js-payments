@@ -1,7 +1,6 @@
 import { environment } from '../../../../../environments/environment';
 import { DefaultFieldsToSubmit } from './DefaultFieldsToSubmit';
 import { Selectors } from '../../../shared/Selectors';
-import { DefaultComponentsRequestTypes } from './DefaultComponentsRequestTypes';
 import { DefaultSubmitFields } from './DefaultSubmitFields';
 import { DefaultComponentsIds } from './DefaultComponentsIds';
 import { IConfig } from '../../../../../shared/model/config/IConfig';
