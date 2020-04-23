@@ -20,6 +20,10 @@ export class NotificationService {
     return this._configProvider.getConfig().submitOnSuccess;
   }
 
+  private get submitOnCancel(): boolean {
+    return this._configProvider.getConfig().submitOnCancel;
+  }
+
   public error(message: string): void {
     if (!this.disableNotification && !this.submitOnError) {
       this._setNotification(NotificationType.Error, message);
@@ -36,8 +40,10 @@ export class NotificationService {
     }
   }
 
-  public warning(message: string): void {
-    this._setNotification(NotificationType.Warning, message);
+  public cancel(message: string): void {
+    if (!this.disableNotification && !this.submitOnCancel) {
+      this._setNotification(NotificationType.Cancel, message);
+    }
   }
 
   private _setNotification(type: string, content: string): void {

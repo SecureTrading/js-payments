@@ -22,7 +22,9 @@
     "placement": "st-apple-pay"
   },
   "buttonId": "merchant-submit-button",
-  "bypassCards": [],
+  "bypassCards": [
+    "PIBA"
+  ],
   "cachetoken": "",
   "componentIds": {
     "animatedCard": "",
@@ -56,6 +58,7 @@
   "origin": "",
   "panIcon": true,
   "placeholders": {
+    "pan": "Card number",
     "expirydate": "MM/YY",
     "securitycode": "***"
   },
@@ -83,9 +86,10 @@
       "color-error": "#3358FF"
     }
   },
-  "submitFields": ["errorcode"],
+  "submitFields": [],
   "submitOnSuccess": false,
   "submitOnError": false,
+  "submitOnCancel": true,
   "submitCallback": "",
   "threedinit": "",
   "translations": {
