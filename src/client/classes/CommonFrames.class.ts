@@ -9,6 +9,7 @@ import { RegisterFrames } from './RegisterFrames.class';
 import { Container } from 'typedi';
 import { BrowserLocalStorage } from '../../shared/services/storage/BrowserLocalStorage';
 import { IComponentsIds } from '../../shared/model/config/IComponentsIds';
+import { Language } from '../../application/core/shared/Language';
 
 export class CommonFrames extends RegisterFrames {
   get requestTypes(): string[] {
@@ -145,7 +146,11 @@ export class CommonFrames extends RegisterFrames {
     }
     if (this._shouldSubmitForm(data)) {
       const form = this._merchantForm;
-      DomMethods.addDataToForm(form, data, this._getSubmitFields(data));
+      let formData = data;
+      if (this._submitOnCancel) {
+        formData = Object.assign(data, { errormessage: Language.translations.PAYMENT_CANCELLED });
+      }
+      DomMethods.addDataToForm(form, formData, this._getSubmitFields(data));
       form.submit();
     }
   }
