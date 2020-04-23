@@ -161,6 +161,7 @@ function ConfigResolverFixture() {
     // @ts-ignore
     bypassCards: ['PIBA'],
     cachetoken: '',
+    cancelCallback: null,
     componentIds: {
       animatedCard: 'st-animated-card',
       cardNumber: 'st-card-number',
@@ -269,6 +270,7 @@ function ConfigResolverFixture() {
     // @ts-ignore
     bypassCards: [],
     cachetoken: '',
+    cancelCallback: null,
     componentIds: {
       animatedCard: 'st-animated-card',
       cardNumber: 'st-card-number',
