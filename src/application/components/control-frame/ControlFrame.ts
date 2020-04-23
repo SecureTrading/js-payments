@@ -32,6 +32,7 @@ import { from, Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { IAuthorizePaymentResponse } from '../../core/models/IAuthorizePaymentResponse';
 import { StJwt } from '../../core/shared/StJwt';
+import { Translator } from '../../core/shared/Translator';
 
 @Service()
 export class ControlFrame extends Frame {
@@ -169,7 +170,22 @@ export class ControlFrame extends Frame {
 
       this._callThreeDQueryRequest().subscribe(
         authorizationData => this._processPayment(authorizationData as any),
-        error => console.error(error)
+        error => {
+          const { ErrorNumber, ErrorDescription } = error;
+          const translator = new Translator(this._localStorage.getItem('locale'));
+
+          this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.RESET_JWT });
+          this.messageBus.publish({
+            type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE,
+            data: {
+              acquirerresponsecode: ErrorNumber ? ErrorNumber.toString() : ErrorNumber,
+              acquirerresponsemessage: ErrorDescription,
+              errorcode: '50003',
+              errormessage: translator.translate(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE)
+            }
+          });
+          this._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
+        }
       );
     });
   }

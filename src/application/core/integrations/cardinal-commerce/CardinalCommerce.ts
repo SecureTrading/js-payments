@@ -14,7 +14,7 @@ import { IConfig } from '../../../../shared/model/config/IConfig';
 import { CardinalCommerceTokensProvider } from './CardinalCommerceTokensProvider';
 import { first, map, mapTo, shareReplay, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { ICardinalCommerceTokens } from './ICardinalCommerceTokens';
-import { from, Observable, of, Subject } from 'rxjs';
+import { from, Observable, of, Subject, throwError } from 'rxjs';
 import { ICardinal } from './ICardinal';
 import { ofType } from '../../../../shared/services/message-bus/operators/ofType';
 import { ICard } from '../../models/ICard';
@@ -148,12 +148,12 @@ export class CardinalCommerce {
       tap(cardinal => cardinalContinue(cardinal)),
       tap(() => GoogleAnalytics.sendGaData('event', 'Cardinal', 'auth', 'Cardinal card authenticated')),
       switchMap(() => this.cardinalValidated$.pipe(first())),
-      map(([validationResult, jwt]: [IOnCardinalValidated, string]) => {
+      switchMap(([validationResult, jwt]: [IOnCardinalValidated, string]) => {
         if (!CardinalCommerceValidationStatus.includes(validationResult.ActionCode)) {
-          throw validationResult;
+          return throwError(validationResult);
         }
 
-        return jwt;
+        return of(jwt);
       })
     );
   }
