@@ -39,7 +39,7 @@ export class Payment {
     this._cardinalCommerceCacheToken = cachetoken;
   }
 
-  public async processPayment(
+  public processPayment(
     requestTypes: string[],
     payment: ICard | IWallet,
     merchantData: IMerchantData,
@@ -71,7 +71,7 @@ export class Payment {
     });
   }
 
-  public async threeDQueryRequest(requestTypes: string[], card: ICard, merchantData: IMerchantData): Promise<object> {
+  public threeDQueryRequest(requestTypes: string[], card: ICard, merchantData: IMerchantData): Promise<object> {
     const threeDQueryRequestBody = {
       cachetoken: this._cardinalCommerceCacheToken,
       requesttypedescriptions: requestTypes,
@@ -80,7 +80,7 @@ export class Payment {
       ...card
     };
 
-    const cybertonicaTid = await this._cybertonica.getTransactionId();
+    const cybertonicaTid = this._storage.getItem('app.tid');
 
     if (cybertonicaTid) {
       (threeDQueryRequestBody as any).fraudcontroltransactionid = cybertonicaTid;

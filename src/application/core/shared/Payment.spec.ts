@@ -181,6 +181,11 @@ describe('Payment', () => {
 
   // given
   describe('threeDInitRequest()', () => {
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._storage.getItem = jest.fn().mockReturnValueOnce(cybertonicaTid);
+    });
     // then
     it('should send JSINIT request', () => {
       // @ts-ignore

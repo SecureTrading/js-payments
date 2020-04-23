@@ -129,13 +129,13 @@ class ST {
   public ApplePay(config: IApplePayConfig): ApplePay {
     const { applepay } = this.Environment();
 
-    return new applepay(this._configProvider, this._communicator, this._storage);
+    return new applepay(this._configProvider, this._communicator);
   }
 
   public VisaCheckout(config: IVisaConfig): VisaCheckout {
     const { visa } = this.Environment();
 
-    return new visa(this._configProvider, this._communicator, this._storage);
+    return new visa(this._configProvider, this._communicator);
   }
 
   public updateJWT(jwt: string): void {
