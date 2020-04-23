@@ -4,6 +4,7 @@ import { StJwt } from './StJwt';
 import { Container } from 'typedi';
 import { Cybertonica } from '../integrations/Cybertonica';
 import { mock, instance as mockInstance, when } from 'ts-mockito';
+import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 
 jest.mock('../../../../src/application/core/shared/Notification');
 
@@ -44,6 +45,8 @@ describe('Payment', () => {
   describe('processPayment()', () => {
     // when
     beforeEach(() => {
+      // @ts-ignore
+      instance._storage.getItem = jest.fn().mockReturnValueOnce(cybertonicaTid);
       // @ts-ignore
       instance._stTransport.sendRequest = jest.fn();
     });

@@ -85,8 +85,7 @@ class ST {
     private _storage: BrowserLocalStorage,
     private _sessionStorage: BrowserSessionStorage,
     private _messageBus: MessageBus,
-    private _notification: Notification,
-    private _cybertonica: Cybertonica
+    private _notification: Notification
   ) {
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
@@ -130,13 +129,13 @@ class ST {
   public ApplePay(config: IApplePayConfig): ApplePay {
     const { applepay } = this.Environment();
 
-    return new applepay(this._configProvider, this._communicator, this._cybertonica);
+    return new applepay(this._configProvider, this._communicator, this._storage);
   }
 
   public VisaCheckout(config: IVisaConfig): VisaCheckout {
     const { visa } = this.Environment();
 
-    return new visa(this._configProvider, this._communicator, this._cybertonica);
+    return new visa(this._configProvider, this._communicator, this._storage);
   }
 
   public updateJWT(jwt: string): void {

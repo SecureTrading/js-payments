@@ -9,6 +9,7 @@ import { Validation } from './Validation';
 import { Container } from 'typedi';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
 import { Cybertonica } from '../integrations/Cybertonica';
+import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 
 export class Payment {
   private _cardinalCommerceCacheToken: string;
@@ -17,11 +18,13 @@ export class Payment {
   private _threeDInitRequestBody: IStRequest;
   private _validation: Validation;
   private _cybertonica: Cybertonica;
+  private _storage: BrowserLocalStorage;
   private readonly _walletVerifyRequest: IStRequest;
 
   constructor(jwt: string, gatewayUrl: string) {
     this._notification = Container.get(NotificationService);
     this._cybertonica = Container.get(Cybertonica);
+    this._storage = Container.get(BrowserLocalStorage);
     this._stTransport = new StTransport({ jwt, gatewayUrl });
     this._validation = new Validation();
     this._walletVerifyRequest = {
@@ -48,7 +51,7 @@ export class Payment {
       ...merchantData,
       ...payment
     };
-    const cybertonicaTid = await this._cybertonica.getTransactionId();
+    const cybertonicaTid = this._storage.getItem('app.tid');
 
     if (cybertonicaTid) {
       (processPaymentRequestBody as any).fraudcontroltransactionid = cybertonicaTid;
