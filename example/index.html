@@ -168,6 +168,9 @@
       stConfig.errorCallback = function() {
         displayPopup('error-popup', 'This is error message', 'red');
       };
+      stConfig.cancelCallback = function() {
+        displayPopup('cancel-popup', 'This is cancel message', '#ffc23a');
+      };
 
       var st = ST(stConfig);
       st.Components(stConfig.components);
