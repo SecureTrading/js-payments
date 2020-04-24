@@ -1,5 +1,5 @@
 export interface IApm {
-  getConfig(): void;
+  init(): void;
 
   updateJwtListener(): void;
 }

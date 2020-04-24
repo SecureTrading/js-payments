@@ -15,9 +15,11 @@ import { InterFrameCommunicator } from '../../../shared/services/message-bus/Int
 import { IVisaInit } from '../models/IVisaInit';
 import { Apm } from './Apm';
 import { IUpdateJwt } from '../models/IUpdateJwt';
+import { Service } from 'typedi';
 
 declare const V: any;
 
+@Service()
 export class VisaCheckout extends Apm {
   private _config$: Observable<IConfig>;
   private _payment: Payment;
@@ -37,11 +39,11 @@ export class VisaCheckout extends Apm {
     private _notification: NotificationService
   ) {
     super();
-    this.getConfig();
+    this.init();
     this.updateJwtListener();
   }
 
-  getConfig(): void {
+  init(): void {
     this._config$ = this._configProvider.getConfig$();
     this._communicator.whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK).thenRespond(() => this._config$);
     this._config$.subscribe((config: IConfig) => {
