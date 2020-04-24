@@ -28,11 +28,19 @@ export class Cybertonica implements ICybertonica {
       () => AFCYBERTONICA.init(apiUserName) || this.initFailed()
     );
     this.tid.then(tid => this.storage.setItem(Cybertonica.TID_KEY, tid));
+
     return this.tid;
   }
 
   public getTransactionId(): Promise<string> {
-    return this.tid;
+    return new Promise((resolve, reject) => {
+      const tid: string = this.storage.getItem('app.tid');
+      if (tid) {
+        resolve(tid);
+      } else {
+        reject('Cannot get transaction ID');
+      }
+    });
   }
 
   private initFailed(): void {

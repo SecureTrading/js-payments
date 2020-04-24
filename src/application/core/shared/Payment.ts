@@ -9,7 +9,6 @@ import { Validation } from './Validation';
 import { Container } from 'typedi';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
 import { Cybertonica } from '../integrations/Cybertonica';
-import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 
 export class Payment {
   private _cardinalCommerceCacheToken: string;
@@ -18,13 +17,11 @@ export class Payment {
   private _threeDInitRequestBody: IStRequest;
   private _validation: Validation;
   private _cybertonica: Cybertonica;
-  private _storage: BrowserLocalStorage;
   private readonly _walletVerifyRequest: IStRequest;
 
   constructor(jwt: string, gatewayUrl: string) {
     this._notification = Container.get(NotificationService);
     this._cybertonica = Container.get(Cybertonica);
-    this._storage = Container.get(BrowserLocalStorage);
     this._stTransport = new StTransport({ jwt, gatewayUrl });
     this._validation = new Validation();
     this._walletVerifyRequest = {
@@ -39,7 +36,7 @@ export class Payment {
     this._cardinalCommerceCacheToken = cachetoken;
   }
 
-  public processPayment(
+  public async processPayment(
     requestTypes: string[],
     payment: ICard | IWallet,
     merchantData: IMerchantData,
@@ -51,7 +48,7 @@ export class Payment {
       ...merchantData,
       ...payment
     };
-    const cybertonicaTid = this._storage.getItem('app.tid');
+    const cybertonicaTid = await this._cybertonica.getTransactionId();
 
     if (cybertonicaTid) {
       (processPaymentRequestBody as any).fraudcontroltransactionid = cybertonicaTid;
@@ -71,7 +68,7 @@ export class Payment {
     });
   }
 
-  public threeDQueryRequest(requestTypes: string[], card: ICard, merchantData: IMerchantData): Promise<object> {
+  public async threeDQueryRequest(requestTypes: string[], card: ICard, merchantData: IMerchantData): Promise<object> {
     const threeDQueryRequestBody = {
       cachetoken: this._cardinalCommerceCacheToken,
       requesttypedescriptions: requestTypes,
@@ -80,7 +77,7 @@ export class Payment {
       ...card
     };
 
-    const cybertonicaTid = this._storage.getItem('app.tid');
+    const cybertonicaTid = await this._cybertonica.getTransactionId();
 
     if (cybertonicaTid) {
       (threeDQueryRequestBody as any).fraudcontroltransactionid = cybertonicaTid;

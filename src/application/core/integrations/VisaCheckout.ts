@@ -150,7 +150,7 @@ export class VisaCheckout {
 
   protected attachVisaButton = () => DomMethods.appendChildIntoDOM(this._placement, this.createVisaButton());
 
-  protected async onSuccess(payment: object) {
+  protected onSuccess(payment: object) {
     this.paymentDetails = JSON.stringify(payment);
     this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
     this.payment

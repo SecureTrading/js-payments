@@ -38,7 +38,6 @@ import { BrowserSessionStorage } from '../shared/services/storage/BrowserSession
 import { Notification } from '../application/core/shared/Notification';
 import './../styles/notification.css';
 import { ConfigProvider } from '../application/core/services/ConfigProvider';
-import { Cybertonica } from '../application/core/integrations/Cybertonica';
 
 @Service()
 class ST {
