@@ -36,6 +36,7 @@ export class Cybertonica implements ICybertonica {
     if (this.storage.getItem(Cybertonica.TID_KEY) !== undefined) {
       return Promise.resolve(this.storage.getItem(Cybertonica.TID_KEY));
     }
+
     return this.tid;
   }
 
