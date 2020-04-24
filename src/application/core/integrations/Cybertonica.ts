@@ -33,14 +33,10 @@ export class Cybertonica implements ICybertonica {
   }
 
   public getTransactionId(): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const tid: string = this.storage.getItem('app.tid');
-      if (tid) {
-        resolve(tid);
-      } else {
-        reject('Cannot get transaction ID');
-      }
-    });
+    if (this.storage.getItem(Cybertonica.TID_KEY) !== undefined) {
+      return Promise.resolve(this.storage.getItem(Cybertonica.TID_KEY));
+    }
+    return this.tid;
   }
 
   private initFailed(): void {
