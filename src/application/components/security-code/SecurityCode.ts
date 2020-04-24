@@ -73,7 +73,7 @@ export class SecurityCode extends FormField {
     );
 
     return merge(cardNumberInput$, cardNumberFromJwt$).pipe(
-      map(cardNumber => (cardNumber ? iinLookup.lookup(cardNumber).cvcLength[0] : 0))
+      map(cardNumber => (cardNumber ? iinLookup.lookup(cardNumber).cvcLength[0] : 3))
     );
   }
 
