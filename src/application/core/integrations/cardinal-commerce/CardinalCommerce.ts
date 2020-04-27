@@ -150,7 +150,10 @@ export class CardinalCommerce {
       tap(() => GoogleAnalytics.sendGaData('event', 'Cardinal', 'auth', 'Cardinal card authenticated')),
       switchMap(() => this.cardinalValidated$.pipe(first())),
       switchMap(([validationResult, jwt]: [IOnCardinalValidated, string]) => {
-        if (!CardinalCommerceValidationStatus.includes(validationResult.ActionCode)) {
+        if (
+          !CardinalCommerceValidationStatus.includes(validationResult.ActionCode) ||
+          validationResult.ActionCode === 'FAILURE'
+        ) {
           return throwError(validationResult);
         }
 

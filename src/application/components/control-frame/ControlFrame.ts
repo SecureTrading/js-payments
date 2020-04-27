@@ -170,8 +170,8 @@ export class ControlFrame extends Frame {
 
       this._callThreeDQueryRequest().subscribe(
         authorizationData => this._processPayment(authorizationData as any),
-        error => {
-          const { ErrorNumber, ErrorDescription } = error;
+        errorData => {
+          const { ErrorNumber, ErrorDescription } = errorData;
           const translator = new Translator(this._localStorage.getItem('locale'));
 
           this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.RESET_JWT });
@@ -184,6 +184,7 @@ export class ControlFrame extends Frame {
               errormessage: translator.translate(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE)
             }
           });
+          this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM, data: FormState.AVAILABLE }, true);
           this._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
         }
       );
