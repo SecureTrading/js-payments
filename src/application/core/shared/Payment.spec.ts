@@ -177,61 +177,6 @@ describe('Payment', () => {
   });
 
   // given
-  describe('threeDInitRequest()', () => {
-    // then
-    it('should send JSINIT request', () => {
-      // @ts-ignore
-      instance._stTransport.sendRequest = jest.fn().mockReturnValueOnce(
-        Promise.resolve({
-          cachetoken: 'content'
-        })
-      );
-      instance.threeDInitRequest();
-      // @ts-ignore
-      expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
-        requesttypedescriptions: ['JSINIT']
-      });
-    });
-
-    // then
-    it('should return result', () => {
-      // @ts-ignore
-      instance._stTransport.sendRequest = jest.fn().mockReturnValueOnce(
-        Promise.resolve({
-          jwt: 'somejwt',
-          response: {}
-        })
-      );
-      // @ts-ignore;
-      instance.threeDInitRequest().then(result => {
-        expect(result).toStrictEqual({
-          jwt: 'somejwt',
-          response: {}
-        });
-      });
-    });
-
-    // then
-    it('should create object StJwt to decode jwt', () => {
-      const jwt =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NjUxNzYwODksInBheWxvYWQiOnsicmVxdWVzdHJlZmVyZW5jZSI6Ilc0Mi0zZjV4NjkzeCIsInZlcnNpb24iOiIxLjAwIiwiand0IjoiZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnBjM01pT2lKc2FYWmxNbDloZFhSdmFuZDBJaXdpYVdGMElqb3hOVFkxTVRjMk1EZzVMQ0p3WVhsc2IyRmtJanA3SW14dlkyRnNaU0k2SW1WdVgwZENJaXdpWW1GelpXRnRiM1Z1ZENJNklqRXdNREFpTENKamRYSnlaVzVqZVdsemJ6TmhJam9pUjBKUUlpd2ljMmwwWlhKbFptVnlaVzVqWlNJNkluUmxjM1F4SWl3aVlXTmpiM1Z1ZEhSNWNHVmtaWE5qY21sd2RHbHZiaUk2SWtWRFQwMGlmWDAuQVNheUtCTWxIWU16UXZjdEZvb1BGbmZSVmVBM2dsZ3h3UTlPeEtqSXhGMCIsInJlc3BvbnNlIjpbeyJ0cmFuc2FjdGlvbnN0YXJ0ZWR0aW1lc3RhbXAiOiIyMDE5LTA4LTA3IDExOjA4OjA5IiwiZXJyb3JtZXNzYWdlIjoiT2siLCJjYWNoZXRva2VuIjoiZXlKa1lYUmhZMlZ1ZEdWeWRYSnNJam9nYm5Wc2JDd2dJbU5oWTJobGRHOXJaVzRpT2lBaU5ESXROMlptTm1JMU5HWmhZalpoTjJKbU5qQmpNamcwTWpaaVpqQTRNak01Tnpka056bGlOalJqWmpVMU0yUTVaVGxoTXpGa016Wm1aVEkxWm1Rd05UZ3dNQ0o5IiwiZXJyb3Jjb2RlIjoiMCIsInJlcXVlc3R0eXBlZGVzY3JpcHRpb24iOiJKU0lOSVQiLCJ0aHJlZWRpbml0IjoiZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SlNaV1psY21WdVkyVkpaQ0k2SWpReUxUZG1aalppTlRSbVlXSTJZVGRpWmpZd1l6STROREkyWW1Zd09ESXpPVGMzWkRjNVlqWTBZMlkxTlROa09XVTVZVE14WkRNMlptVXlOV1prTURVNE1EQWlMQ0pwYzNNaU9pSTFZekV5T0RnME5XTXhNV0k1TWpJd1pHTXdORFpsT0dVaUxDSnFkR2tpT2lJME1pMDNabVkyWWpVMFptRmlObUUzWW1ZMk1HTXlPRFF5Tm1KbU1EZ3lNemszTjJRM09XSTJOR05tTlRVelpEbGxPV0V6TVdRek5tWmxNalZtWkRBMU9EQXdJaXdpYVdGMElqb3hOVFkxTVRjMk1EZzVMQ0pRWVhsc2IyRmtJanA3SWs5eVpHVnlSR1YwWVdsc2N5STZleUpCYlc5MWJuUWlPakV3TURBc0lrTjFjbkpsYm1ONVEyOWtaU0k2SWpneU5pSjlmU3dpVDNKblZXNXBkRWxrSWpvaU5XTXhNVE5sT0dVMlptVXpaREV5TkRZd01UUXhPRFk0SW4wLjV0d0pCTHVSYWg4QXpxcVptQktPVy1XaEJpOGd4SWxBV1c4NS03cE5DZWMiLCJjdXN0b21lcm91dHB1dCI6IlJFU1VMVCJ9XSwic2VjcmFuZCI6Ikl1b3U1UFU5OXFCeWtDMnAifSwiYXVkIjoibGl2ZTJfYXV0b2p3dCJ9.tjxxI1RR7C9bG6F0VAYPvSrZoRqy7pYrQmsT1fBd3rI';
-      // @ts-ignore
-      instance._stTransport.sendRequest = jest.fn().mockReturnValueOnce(
-        Promise.resolve({
-          jwt,
-          response: {}
-        })
-      );
-      const testJWT = new StJwt(jwt);
-      // @ts-ignore
-      instance.threeDInitRequest().then(result => {
-        // @ts-ignore;
-        expect(instance._cardinalCommerceCacheToken).toEqual(testJWT.payload.response[0].cachetoken);
-      });
-    });
-  });
-
-  // given
   describe('threeDQueryRequest()', () => {
     // when
     beforeEach(() => {
@@ -285,7 +230,7 @@ function paymentFixture() {
   const cybertonicaMock = mock(Cybertonica);
   when(cybertonicaMock.getTransactionId()).thenResolve(cybertonicaTid);
   Container.set(Cybertonica, mockInstance(cybertonicaMock));
-  instance = new Payment(jwt, 'https://example.com');
+  instance = new Payment();
   const card = {
     expirydate: '10/22',
     pan: '4111111111111111',

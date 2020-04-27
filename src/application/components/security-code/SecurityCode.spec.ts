@@ -286,5 +286,7 @@ function securityCodeFixture() {
     }
   });
   const securityCodeInstance = new SecurityCode(configProvider);
+  // @ts-ignore
+  securityCodeInstance.messageBus.publish = jest.fn();
   return { securityCodeInstance };
 }

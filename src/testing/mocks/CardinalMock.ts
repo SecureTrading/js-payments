@@ -6,10 +6,10 @@ import { environment } from '../../environments/environment';
 
 export class CardinalMock implements ICardinal {
   private callbacks = {
-    [PaymentEvents.SETUP_COMPLETE]: () => void 0,
-    [PaymentEvents.VALIDATED]: () => void 0,
-    [CardinalCommerce.UI_EVENTS.RENDER]: () => void 0,
-    [CardinalCommerce.UI_EVENTS.CLOSE]: () => void 0
+    [PaymentEvents.SETUP_COMPLETE]: (...args: any[]): any => void 0,
+    [PaymentEvents.VALIDATED]: (...args: any[]): any => void 0,
+    [CardinalCommerce.UI_EVENTS.RENDER]: (...args: any[]): any => void 0,
+    [CardinalCommerce.UI_EVENTS.CLOSE]: (...args: any[]): any => void 0
   };
 
   configure(config: any) {
@@ -35,7 +35,9 @@ export class CardinalMock implements ICardinal {
     this.callbacks[PaymentEvents.SETUP_COMPLETE]();
   }
 
-  trigger(eventName: string, data: any) {
-    // @ts-ignore
+  trigger(eventName: string, ...data: any[]) {
+    if (this.callbacks[eventName]) {
+      this.callbacks[eventName].apply(this, data);
+    }
   }
 }

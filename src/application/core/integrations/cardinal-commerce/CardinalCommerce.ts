@@ -71,7 +71,7 @@ export class CardinalCommerce {
     };
 
     return from(this.stTransport.sendRequest(threeDQueryRequestBody)).pipe(
-      switchMap(response => this._authenticateCard(response.response)),
+      switchMap((response: { response: IThreeDQueryResponse }) => this._authenticateCard(response.response)),
       tap(() => GoogleAnalytics.sendGaData('event', 'Cardinal', 'auth', 'Cardinal auth completed')),
       map(jwt => ({
         threedresponse: jwt,
@@ -107,7 +107,7 @@ export class CardinalCommerce {
           this.cardinalValidated$.next([data, jwt]);
         });
 
-        return new Observable(observer => {
+        return new Observable<ICardinal>(observer => {
           cardinal.on(PaymentEvents.SETUP_COMPLETE, () => {
             observer.next(cardinal);
             observer.complete();
@@ -128,7 +128,7 @@ export class CardinalCommerce {
       return of(undefined);
     }
 
-    const cardinalContinue = cardinal =>
+    const cardinalContinue = (cardinal: ICardinal) => {
       cardinal.continue(
         PaymentBrand,
         {
@@ -143,6 +143,7 @@ export class CardinalCommerce {
         },
         this.cardinalTokens.jwt
       );
+    };
 
     return this.cardinal$.pipe(
       tap(cardinal => cardinalContinue(cardinal)),
