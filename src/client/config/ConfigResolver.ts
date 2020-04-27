@@ -30,7 +30,7 @@ export class ConfigResolver {
       cancelCallback: this._getValueOrDefault(config.cancelCallback, DefaultConfig.cancelCallback),
       componentIds: this._setComponentIds(config.componentIds),
       components: this._setComponentsProperties(config.components),
-      cybertonicaApiKey: this._getValueOrDefault(config.cybertonicaApiKey, DefaultConfig.cybertonicaApiKey),
+      cybertonicaApiKey: this._resolveCybertonicaApiKey(config.cybertonicaApiKey),
       datacenterurl: this._getValueOrDefault(config.datacenterurl, DefaultConfig.datacenterurl),
       deferInit: this._getValueOrDefault(config.deferInit, DefaultConfig.deferInit),
       disableNotification: this._getValueOrDefault(config.disableNotification, DefaultConfig.disableNotification),
@@ -140,5 +140,13 @@ export class ConfigResolver {
       expirydate: this._getValueOrDefault(config.expirydate, DefaultPlaceholders.expirydate),
       securitycode: this._getValueOrDefault(config.securitycode, DefaultPlaceholders.securitycode)
     };
+  }
+
+  private _resolveCybertonicaApiKey(value: string): string {
+    if (value === '') {
+      return '';
+    }
+
+    return this._getValueOrDefault(value, DefaultConfig.cybertonicaApiKey);
   }
 }
