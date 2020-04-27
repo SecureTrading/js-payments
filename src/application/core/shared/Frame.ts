@@ -37,7 +37,7 @@ export class Frame {
     new Styler(this.getAllowedStyles()).inject(this.params.styles);
   }
 
-  protected onInit(config?: IConfig) {
+  protected onInit(config?: IConfig): void {
     this.params = this.parseUrl();
     this.applyStyles();
   }

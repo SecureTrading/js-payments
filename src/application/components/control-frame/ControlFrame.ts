@@ -86,7 +86,7 @@ export class ControlFrame extends Frame {
     config$.subscribe(config => this.onInit(config));
   }
 
-  protected async onInit(config: IConfig): Promise<void> {
+  protected onInit(config: IConfig): void {
     super.onInit();
     this._setInstances();
     this._setFormFieldsValidities();
