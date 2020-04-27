@@ -162,7 +162,6 @@ export class VisaCheckout extends Apm {
     V.init(this._visaInit);
 
     V.on(success, (payment: object) => {
-      console.error(payment);
       this._onSuccess(payment);
     });
 

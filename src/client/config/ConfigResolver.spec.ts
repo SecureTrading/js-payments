@@ -121,7 +121,7 @@ function ConfigResolverFixture() {
     },
     visaCheckout: {
       buttonSettings: {
-        size: '154',
+        size: 154,
         color: 'neutral'
       },
       livestatus: 0,
@@ -242,7 +242,7 @@ function ConfigResolverFixture() {
     },
     visaCheckout: {
       buttonSettings: {
-        size: '154',
+        size: 154,
         color: 'neutral'
       },
       livestatus: 0,
