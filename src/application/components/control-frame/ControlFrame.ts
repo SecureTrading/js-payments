@@ -173,6 +173,9 @@ export class ControlFrame extends Frame {
         errorData => {
           const { ErrorNumber, ErrorDescription } = errorData;
           const translator = new Translator(this._localStorage.getItem('locale'));
+          const translatedErrorMessage = translator.translate(
+            ErrorDescription || Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE
+          );
 
           this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.RESET_JWT });
           this.messageBus.publish({
@@ -181,11 +184,11 @@ export class ControlFrame extends Frame {
               acquirerresponsecode: ErrorNumber ? ErrorNumber.toString() : ErrorNumber,
               acquirerresponsemessage: ErrorDescription,
               errorcode: '50003',
-              errormessage: translator.translate(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE)
+              errormessage: translatedErrorMessage
             }
           });
           this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM, data: FormState.AVAILABLE }, true);
-          this._notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
+          this._notification.error(translatedErrorMessage);
         }
       );
     });
