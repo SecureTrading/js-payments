@@ -16,6 +16,7 @@ export class Cybertonica implements ICybertonica {
   private static readonly STORAGE_KEY = 'app.config';
   private static LOCALE: string = 'locale';
   private static SCRIPT_TARGET: string = 'head';
+  private static TID_KEY: string = 'app.tid';
 
   private translator: Translator;
   private tid: Promise<string> = Promise.resolve(undefined);
@@ -28,10 +29,16 @@ export class Cybertonica implements ICybertonica {
     this.tid = DomMethods.insertScript(Cybertonica.SCRIPT_TARGET, { src: Cybertonica.SDK_ADDRESS }).then(
       () => AFCYBERTONICA.init(apiUserName) || this.initFailed()
     );
+    this.tid.then(tid => this.storage.setItem(Cybertonica.TID_KEY, tid));
+
     return this.tid;
   }
 
   public getTransactionId(): Promise<string> {
+    if (this.storage.getItem(Cybertonica.TID_KEY) !== undefined) {
+      return Promise.resolve(this.storage.getItem(Cybertonica.TID_KEY));
+    }
+
     return this.tid;
   }
 
