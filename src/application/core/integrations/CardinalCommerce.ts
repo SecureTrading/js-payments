@@ -56,7 +56,6 @@ export class CardinalCommerce {
     this._jwt = jwt;
     this._threedinit = threedinit;
     this._livestatus = livestatus;
-    this._cachetoken = cachetoken ? cachetoken : '';
     this._requestTypes = requestTypes;
     this._bypassCards = bypassCards;
     this.messageBus = Container.get(MessageBus);
