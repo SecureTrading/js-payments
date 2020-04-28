@@ -135,12 +135,25 @@ class ST {
 
   public ApplePay(config: IApplePayConfig): ApplePay {
     const { applepay } = this.Environment();
-
+    this._config = this._configService.update({
+      ...this._config,
+      applePay: {
+        ...this._config.applePay,
+        ...(config || {})
+      }
+    });
     return new applepay(this._configProvider, this._communicator);
   }
 
   public VisaCheckout(config: IVisaConfig): VisaCheckout {
     const { visa } = this.Environment();
+    this._config = this._configService.update({
+      ...this._config,
+      visaCheckout: {
+        ...this._config.visaCheckout,
+        ...(config || {})
+      }
+    });
 
     return new visa(this._configProvider, this._communicator);
   }
