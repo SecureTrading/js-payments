@@ -42,6 +42,5 @@ export const DefaultConfig: IConfig = {
   successCallback: null,
   threedinit: '',
   translations: {},
-  visaCheckout: {},
-  cybertonicaApiKey: 'stfs'
+  visaCheckout: {}
 };
