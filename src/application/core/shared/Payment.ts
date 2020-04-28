@@ -52,6 +52,7 @@ export class Payment {
 
     if (cybertonicaTid) {
       (processPaymentRequestBody as any).fraudcontroltransactionid = cybertonicaTid;
+      this._cybertonica.addTidToForm();
     }
 
     return this._stTransport.sendRequest(processPaymentRequestBody);

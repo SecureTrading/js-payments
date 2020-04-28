@@ -38,6 +38,7 @@ import { BrowserSessionStorage } from '../shared/services/storage/BrowserSession
 import { Notification } from '../application/core/shared/Notification';
 import './../styles/notification.css';
 import { ConfigProvider } from '../application/core/services/ConfigProvider';
+import { Cybertonica } from '../application/core/integrations/Cybertonica';
 
 @Service()
 class ST {
@@ -74,6 +75,7 @@ class ST {
       this.off('error');
     }
   }
+
   set cancelCallback(callback: (event: IErrorEvent) => void) {
     if (callback) {
       this.on('cancel', callback);
@@ -143,6 +145,13 @@ class ST {
     const { visa } = this.Environment();
 
     return new visa(this._configProvider, this._communicator);
+  }
+
+  public Cybertonica(apiKey: string): void {
+    this._config = this._configService.update({
+      ...this._config,
+      cybertonicaApiKey: apiKey
+    });
   }
 
   public updateJWT(jwt: string): void {
