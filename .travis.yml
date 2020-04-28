@@ -18,10 +18,11 @@ services:
   - docker
 install: skip
 before_script:
-  - echo $TRAVIS_BRANCH
+  - $TRAVIS_BRANCH
   - echo 'test'
-  - if [ "$TRAVIS_BRANCH" == "ST-629-testing-branch" ]; then git clone --branch=test1 --single-branch --depth=1 https://github.com/SecureTrading/py-payments-testing.git; fi'
-  - if ["$TRAVIS_BRANCH" == "master" ]; then git clone --branch=test2 --single-branch --depth=1 https://github.com/SecureTrading/py-payments-testing.git; fi'
+  - echo $TRAVIS_CURRENT_BRANCH
+  - if [ "$TRAVIS_BRANCH" == "ST-629-testing-branch" ]; then git clone --branch=test1 --single-branch --depth=1 https://github.com/SecureTrading/py-payments-testing.git; fi
+  - if ["$TRAVIS_BRANCH" == "master" ]; then git clone --branch=test2 --single-branch --depth=1 https://github.com/SecureTrading/py-payments-testing.git; fi
   - docker-compose -f py-payments-testing/docker-compose.yml pull
   - docker-compose -f py-payments-testing/docker-compose.yml up -d
 
