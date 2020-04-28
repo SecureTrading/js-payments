@@ -689,13 +689,13 @@ describe('ApplePay', () => {
       expect(getType(instance._session.oncancel)).toBe('function');
 
       // @ts-ignore
-      instance._notification.warning = jest.fn();
+      instance._notification.cancel = jest.fn();
       // @ts-ignore
       instance._session.oncancel({});
       // @ts-ignore
-      expect(instance._notification.warning).toHaveBeenCalledTimes(1);
+      expect(instance._notification.cancel).toHaveBeenCalledTimes(1);
       // @ts-ignore
-      expect(instance._notification.warning).toHaveBeenCalledWith('Payment has been cancelled');
+      expect(instance._notification.cancel).toHaveBeenCalledWith('Payment has been cancelled');
     });
   });
   // given
@@ -1031,16 +1031,16 @@ describe('ApplePay', () => {
     });
 
     // then
-    it(`should call notification with warning if notification type is warning`, () => {
+    it(`should call notification with cancel if notification type is cancel`, () => {
       document.getElementById(id).addEventListener = jest.fn().mockImplementationOnce((event, callback) => {
         callback();
       });
       // @ts-ignore
-      instance._notification.warning = jest.fn();
+      instance._notification.cancel = jest.fn();
       // @ts-ignore
-      instance._addButtonHandler(id, event, 'warning', message);
+      instance._addButtonHandler(id, event, 'cancel', message);
       // @ts-ignore
-      expect(instance._notification.warning).toHaveBeenCalledWith(message);
+      expect(instance._notification.cancel).toHaveBeenCalledWith(message);
     });
 
     // then

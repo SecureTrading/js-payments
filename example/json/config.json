@@ -58,7 +58,6 @@
   "origin": "",
   "panIcon": true,
   "placeholders": {
-    "pan": "Card number",
     "expirydate": "MM/YY",
     "securitycode": "***"
   },
@@ -89,6 +88,7 @@
   "submitFields": [],
   "submitOnSuccess": false,
   "submitOnError": false,
+  "submitOnCancel": true,
   "submitCallback": "",
   "threedinit": "",
   "translations": {
