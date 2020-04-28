@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.1.0
+
+### Added
+- HuskyJS + lint-staged for unifying code format.
+- Cybertonica integration.
+- Apple Pay submitOnSuccess test case.
+- ConfigResolver module for better merging config properties with default library config values.
+- Updated index.html example page to put callbacks into config instead of calling on ST instance.
+
+### Changed
+- Better unit test to config to cover defaults and another covering the callbacks to ensure these are set correctly.
+  and do not change the interface going forward.
+- New folder structure - architectural improvement. 
+
+### Fixed
+- Security code length is not changing when card is recognized as AMEX.
+- ts-modules library vulnerability impact on js-payments.
+- minor vulnerabilities fixed.
+- JSINIT request is duplicated when we use updateJWT feature.
+- IE doesn't support 'remove' method.
+- PIBA card number is wrong recognized on IE browser.
+- Security code re-enabled if server error on PIBA.
+
+
 ## 2.0.9
 
 ### Fixed
