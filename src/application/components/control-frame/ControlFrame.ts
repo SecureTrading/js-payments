@@ -173,20 +173,21 @@ export class ControlFrame extends Frame {
         errorData => {
           const { ErrorNumber, ErrorDescription } = errorData;
           const translator = new Translator(this._localStorage.getItem('locale'));
-          const translatedErrorMessage = translator.translate(
-            ErrorDescription || Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE
-          );
+          const translatedErrorMessage = translator.translate(Language.translations.PAYMENT_ERROR);
 
           this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.RESET_JWT });
-          this.messageBus.publish({
-            type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE,
-            data: {
-              acquirerresponsecode: ErrorNumber ? ErrorNumber.toString() : ErrorNumber,
-              acquirerresponsemessage: ErrorDescription,
-              errorcode: '50003',
-              errormessage: translatedErrorMessage
-            }
-          });
+          this.messageBus.publish(
+            {
+              type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE,
+              data: {
+                acquirerresponsecode: ErrorNumber ? ErrorNumber.toString() : ErrorNumber,
+                acquirerresponsemessage: ErrorDescription,
+                errorcode: '50003',
+                errormessage: translatedErrorMessage
+              }
+            },
+            true
+          );
           this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM, data: FormState.AVAILABLE }, true);
           this._notification.error(translatedErrorMessage);
         }
