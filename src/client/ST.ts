@@ -38,6 +38,9 @@ import { BrowserSessionStorage } from '../shared/services/storage/BrowserSession
 import { Notification } from '../application/core/shared/Notification';
 import './../styles/notification.css';
 import { ConfigProvider } from '../application/core/services/ConfigProvider';
+import { Cybertonica } from '../application/core/integrations/Cybertonica';
+import { filter, switchMap } from 'rxjs/operators';
+import { from } from 'rxjs';
 
 @Service()
 class ST {
@@ -74,6 +77,7 @@ class ST {
       this.off('error');
     }
   }
+
   set cancelCallback(callback: (event: IErrorEvent) => void) {
     if (callback) {
       this.on('cancel', callback);
@@ -156,6 +160,19 @@ class ST {
     });
 
     return new visa(this._configProvider, this._communicator);
+  }
+
+  public Cybertonica(): Promise<string> {
+    return new Promise(resolve =>
+      this._framesHub
+        .waitForFrame(Selectors.CONTROL_FRAME_IFRAME)
+        .pipe(
+          switchMap((controlFrame: string) =>
+            from(this._communicator.query({ type: MessageBus.EVENTS_PUBLIC.GET_TID }, controlFrame))
+          )
+        )
+        .subscribe((tid: string) => resolve(tid))
+    );
   }
 
   public updateJWT(jwt: string): void {
