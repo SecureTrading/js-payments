@@ -19,7 +19,8 @@ services:
 install: skip
 before_script:
   - python3 -c 'import os,sys; os.set_blocking(sys.stdout.fileno(), True)'
-  - git clone --branch=master --single-branch --depth=1 https://github.com/SecureTrading/py-payments-testing.git
+  - if [[ ! $TRAVIS_BRANCH =~ ^release\/.*$ ]] && [[ "$TRAVIS_BRANCH" != "master" ]]; then git clone --branch=test1 --single-branch --depth=1 https://github.com/SecureTrading/py-payments-testing.git; fi
+  - if [[ $TRAVIS_BRANCH =~ ^release\/.*$ ]] || [[ "$TRAVIS_BRANCH" == "master" ]]; then git clone --branch=test2 --single-branch --depth=1 https://github.com/SecureTrading/py-payments-testing.git; fi
   - docker-compose -f py-payments-testing/docker-compose.yml pull
   - docker-compose -f py-payments-testing/docker-compose.yml up -d
 jobs:
