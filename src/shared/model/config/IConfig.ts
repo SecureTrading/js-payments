@@ -13,7 +13,6 @@ export interface IConfig {
   applePay?: IApplePay | {};
   buttonId?: string;
   bypassCards?: BypassCards[];
-  cachetoken?: string;
   cancelCallback?: any;
   components?: IComponentsConfig;
   componentIds?: IComponentsIds;
@@ -30,7 +29,6 @@ export interface IConfig {
   origin?: string;
   panIcon?: boolean;
   placeholders?: IPlaceholdersConfig;
-  requestTypes?: string[];
   styles?: IStyles;
   submitCallback?: any;
   submitFields?: string[];
@@ -38,7 +36,6 @@ export interface IConfig {
   submitOnError?: boolean;
   submitOnSuccess?: boolean;
   successCallback?: any;
-  threedinit?: string;
   translations?: {};
   visaCheckout?: IVisaCheckout | {};
 }

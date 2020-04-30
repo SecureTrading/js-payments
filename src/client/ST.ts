@@ -74,6 +74,7 @@ class ST {
       this.off('error');
     }
   }
+
   set cancelCallback(callback: (event: IErrorEvent) => void) {
     if (callback) {
       this.on('cancel', callback);
