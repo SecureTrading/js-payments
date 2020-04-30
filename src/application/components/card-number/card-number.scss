@@ -1,0 +1,27 @@
+@import '../../../styles/variables';
+@import '../../../styles/placeholders';
+@import '../../../styles/core';
+
+body {
+  @extend %frame-body;
+}
+
+.card-number {
+  @extend %block;
+}
+
+.card-number__label {
+  @extend %label;
+}
+
+.card-number__label--required {
+  @extend %label--required;
+}
+
+.card-number__input {
+  @extend %input;
+}
+
+.card-number__message {
+  @extend %message;
+}

@@ -1,6 +1,6 @@
-@import '../src/core/styles/variables';
-@import '../src/core/styles/placeholders';
-@import '../src/core/styles/core';
+@import '../src/styles/variables';
+@import '../src/styles/placeholders';
+@import '../src/styles/core';
 
 %iframe {
   height: 9.1rem;
@@ -105,7 +105,7 @@ body {
     justify-content: center;
     position: relative;
     overflow: hidden;
-    height: 300px;
+    max-height: 300px;
   }
 }
 
