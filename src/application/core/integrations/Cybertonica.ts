@@ -6,9 +6,6 @@ import { environment } from '../../../environments/environment';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 import { Language } from '../shared/Language';
 import { ICybertonica } from './ICybertonica';
-import { interval, Observable } from 'rxjs';
-import { IConfig } from '../../../shared/model/config/IConfig';
-import { filter, first, map } from 'rxjs/operators';
 
 declare const AFCYBERTONICA: IAFCybertonica;
 

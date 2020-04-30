@@ -109,7 +109,7 @@ export class ControlFrame extends Frame {
     this._loadControlFrame();
     this._initCybertonica();
     this._communicator
-      .whenReceive(MessageBus.EVENTS_PUBLIC.GET_TID)
+      .whenReceive(MessageBus.EVENTS_PUBLIC.GET_CYBERTONICA_TID)
       .thenRespond(() => from(this._cybertonica.getTransactionId()));
   }
 
