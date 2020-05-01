@@ -67,7 +67,7 @@ export class FramesHub {
 
     if (!frameName) {
       // @todo: Validation class should not extend Frame class. Once fixed this line should throw an error */
-      console.warn('Cannot set ready state for frame without name.');
+      // console.warn('Cannot set ready state for frame without name.');
 
       return;
     }
