@@ -28,7 +28,7 @@ import { Cybertonica } from '../../core/integrations/Cybertonica';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { CardinalCommerce } from '../../core/integrations/cardinal-commerce/CardinalCommerce';
 import { ICardinalCommerceTokens } from '../../core/integrations/cardinal-commerce/ICardinalCommerceTokens';
-import { from, iif, Observable, of, throwError } from 'rxjs';
+import { defer, from, iif, Observable, of, throwError } from 'rxjs';
 import { map, mapTo, switchMap } from 'rxjs/operators';
 import { IAuthorizePaymentResponse } from '../../core/models/IAuthorizePaymentResponse';
 import { StJwt } from '../../core/shared/StJwt';
@@ -167,13 +167,15 @@ export class ControlFrame extends Frame {
         ofType(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM),
         map((event: IMessageBusEvent<ISubmitData>) => event.data || {}),
         switchMap((data: ISubmitData) =>
-          this._configProvider
-            .getConfig$()
-            .pipe(
-              switchMap(config =>
-                iif(() => config.deferInit, this._cardinalCommerce.init(config).pipe(mapTo(data)), of(data))
+          this._configProvider.getConfig$().pipe(
+            switchMap(config =>
+              iif(
+                () => config.deferInit,
+                defer(() => this._cardinalCommerce.init(config).pipe(mapTo(data))),
+                of(data)
               )
             )
+          )
         ),
         switchMap((data: ISubmitData) => {
           this._isPaymentReady = true;
