@@ -1,4 +1,4 @@
-export interface IApplePayConfig {
+export interface IApplePay {
   buttonStyle: string;
   buttonText: string;
   merchantId: string;
@@ -6,8 +6,8 @@ export interface IApplePayConfig {
     countryCode: string;
     currencyCode: string;
     merchantCapabilities: string[];
-    requestTypes?: string[];
     supportedNetworks: string[];
+    requestTypes: string[];
     requiredBillingContactFields: string[];
     requiredShippingContactFields: string[];
     total: {
@@ -15,6 +15,6 @@ export interface IApplePayConfig {
       amount: string;
     };
   };
-  requestTypes?: string[];
   placement: string;
+  requestTypes: string[];
 }

@@ -168,11 +168,48 @@
       stConfig.errorCallback = function() {
         displayPopup('error-popup', 'This is error message', 'red');
       };
+      stConfig.cancelCallback = function() {
+        displayPopup('cancel-popup', 'This is cancel message', '#ffc23a');
+      };
 
       var st = ST(stConfig);
       st.Components(stConfig.components);
-      st.ApplePay(stConfig.applePay);
-      st.VisaCheckout(stConfig.visaCheckout);
+      st.ApplePay({
+        buttonStyle: 'white-outline',
+        buttonText: 'donate',
+        merchantId: 'merchant.net.securetrading.test',
+        paymentRequest: {
+          countryCode: 'US',
+          currencyCode: 'USD',
+          merchantCapabilities: ['supports3DS', 'supportsCredit', 'supportsDebit'],
+          requestTypes: ['AUTH'],
+          supportedNetworks: [],
+          requiredBillingContactFields: ["postalAddress"],
+          requiredShippingContactFields: ["postalAddress","name", "phone", "email"],
+          total: {
+            label: 'Secure Trading Merchant',
+            amount: '10.00'
+          }
+        },
+        placement: 'st-apple-pay'
+      });
+      st.VisaCheckout({
+        buttonSettings: {
+          size: '154',
+          'color': 'neutral'
+        },
+        livestatus: 0,
+        merchantId: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4',
+        paymentRequest: {
+          'currencyCode': 'GBP',
+          'subtotal': '10.99',
+          'total': '10.99'
+        },
+        placement: 'st-visa-checkout',
+        settings: {
+          displayName: 'My Test Site'
+        }
+      });
 
       document.getElementById('example-form-amount').addEventListener('input', function() {
         st.updateJWT(
