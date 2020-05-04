@@ -22,10 +22,8 @@
     "placement": "st-apple-pay"
   },
   "buttonId": "merchant-submit-button",
-  "bypassCards": [
-    "PIBA"
-  ],
-  "cachetoken": "",
+  "bypassCards": ["PIBA"],
+  "cancelCallback": null,
   "componentIds": {
     "animatedCard": "",
     "cardNumber": "",
@@ -39,10 +37,11 @@
     "paymentTypes": [],
     "startOnLoad": false
   },
-  "cybertonicaApiKey": "test",
+  "cybertonicaApiKey": "stfs",
   "datacenterurl": "",
   "deferInit": false,
   "disableNotification": false,
+  "errorCallback": null,
   "fieldsToSubmit": [
     "pan",
     "expirydate",
@@ -56,13 +55,12 @@
   "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4Njk0MDc1OC43NDg5OTIyLCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIxMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.SK0haZjBkgmonD9EWyK-jEJFXk97veDYDckIOGx6nE0",
   "livestatus": 0,
   "origin": "",
+  "panIcon": true,
   "placeholders": {
     "pan": "Card number",
     "expirydate": "MM/YY",
     "securitycode": "***"
   },
-  "panIcon": true,
-  "requestTypes": [],
   "styles": {
     "defaultStyles": {
       "background-color-input": "AliceBlue"
@@ -86,11 +84,12 @@
       "color-error": "#3358FF"
     }
   },
+  "submitCallback": null,
   "submitFields": [],
   "submitOnSuccess": false,
   "submitOnError": false,
-  "submitCallback": "",
-  "threedinit": "",
+  "submitOnCancel": true,
+  "successCallback": null,
   "translations": {
     "An error occurred": "Wystąpił błąd"
   },
@@ -105,7 +104,6 @@
       "subtotal": "20.00"
     },
     "placement": "st-visa-checkout",
-    "requestTypes": [],
     "settings": {
       "displayName": "My Test Site"
     }
