@@ -6,6 +6,7 @@ import { Selectors } from './Selectors';
 import { Translator } from './Translator';
 import { Utils } from './Utils';
 import { Validation } from './Validation';
+import { onInputWraper } from './utils/onInputWrapper';
 
 export class FormField extends Frame {
   protected static PLACEHOLDER_ATTRIBUTE: string = 'placeholder';
@@ -213,9 +214,12 @@ export class FormField extends Frame {
       this.onKeydown(event);
     });
 
-    this._inputElement.addEventListener('input', (event: Event) => {
-      this.onInput(event);
-    });
+    this._inputElement.addEventListener(
+      'input',
+      onInputWraper((event: Event) => {
+        this.onInput(event);
+      })
+    );
 
     this._inputElement.addEventListener('focus', (event: Event) => {
       this.onFocus(event);

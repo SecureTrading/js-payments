@@ -25,7 +25,7 @@
 }
 .notification-frame--info,
 .notification-frame--error,
-.notification-frame--warning,
+.notification-frame--cancel,
 .notification-frame--success {
   opacity: 1;
 }
@@ -39,7 +39,7 @@
   border-color: #ff4545;
   color: #fff;
 }
-.notification-frame--warning {
+.notification-frame--cancel {
   background-color: #ffc23a;
   border-color: #ffc23a;
   color: #fff;

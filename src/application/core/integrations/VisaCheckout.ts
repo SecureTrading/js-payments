@@ -53,7 +53,7 @@ export class VisaCheckout {
   protected static VISA_PAYMENT_STATUS = {
     ERROR: 'ERROR',
     SUCCESS: 'SUCCESS',
-    WARNING: 'WARNING'
+    CANCEL: 'WARNING' // Because VisaCheckout API has warnings instead of cancel :/
   };
 
   private static VISA_PAYMENT_RESPONSE_TYPES = {
@@ -186,9 +186,11 @@ export class VisaCheckout {
   }
 
   protected onCancel() {
-    this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.WARNING;
+    this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.CANCEL;
     this._getResponseMessage(this.paymentStatus);
-    this._notification.warning(this.responseMessage);
+    this._notification.cancel(this.responseMessage);
+    this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_CANCEL_CALLBACK }, true);
+    this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE, data: this.responseMessage }, true);
     GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment canceled');
   }
 
@@ -253,7 +255,7 @@ export class VisaCheckout {
         this.responseMessage = Language.translations.PAYMENT_SUCCESS;
         break;
       }
-      case VisaCheckout.VISA_PAYMENT_STATUS.WARNING: {
+      case VisaCheckout.VISA_PAYMENT_STATUS.CANCEL: {
         this.responseMessage = Language.translations.PAYMENT_CANCELLED;
         break;
       }

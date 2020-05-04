@@ -78,6 +78,14 @@ class ST {
     }
   }
 
+  set cancelCallback(callback: (event: IErrorEvent) => void) {
+    if (callback) {
+      this.on('cancel', callback);
+    } else {
+      this.off('cancel');
+    }
+  }
+
   constructor(
     @Inject(CONFIG) private _config: IConfig,
     private _configService: ConfigService,
@@ -94,8 +102,9 @@ class ST {
     this.init();
   }
 
-  public on(event: 'success' | 'error' | 'submit', callback: any) {
+  public on(event: 'success' | 'error' | 'submit' | 'cancel', callback: any): void {
     const events = {
+      cancel: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_CANCEL_CALLBACK,
       success: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK,
       error: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK,
       submit: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUBMIT_CALLBACK
@@ -104,7 +113,7 @@ class ST {
     this._messageBus.pipe(ofType(events[event]), takeUntil(this._destroy$)).subscribe(callback);
   }
 
-  public off(event: string) {
+  public off(event: string): void {
     // @ts-ignore
   }
 
@@ -119,7 +128,7 @@ class ST {
       });
       this._commonFrames.requestTypes = this._config.components.requestTypes;
       await this._communicator.query({ type: MessageBus.EVENTS_PUBLIC.CONFIG_CHECK }, controlFrame);
-      this.CardFrames(this._config);
+      this.CardFrames();
       this._cardFrames.init();
       this._merchantFields.init();
     });
@@ -127,12 +136,25 @@ class ST {
 
   public ApplePay(config: IApplePayConfig): ApplePay {
     const { applepay } = this.Environment();
-
+    this._config = this._configService.update({
+      ...this._config,
+      applePay: {
+        ...this._config.applePay,
+        ...(config || {})
+      }
+    });
     return new applepay(this._configProvider, this._communicator);
   }
 
   public VisaCheckout(config: IVisaConfig): VisaCheckout {
     const { visa } = this.Environment();
+    this._config = this._configService.update({
+      ...this._config,
+      visaCheckout: {
+        ...this._config.visaCheckout,
+        ...(config || {})
+      }
+    });
 
     return new visa(this._configProvider, this._communicator);
   }
@@ -166,43 +188,44 @@ class ST {
   private init(): void {
     // TODO theres probably a better way rather than having to remember to update Selectors
     Selectors.MERCHANT_FORM_SELECTOR = this._config.formId;
-    this.initCallbacks(this._config);
-    this.Storage(this._config);
+    this.initCallbacks();
+    this.Storage();
     this._translation = new Translator(this._storage.getItem(ST.LOCALE_STORAGE));
     this._googleAnalytics.init();
-    this.CommonFrames(this._config);
+    this.CommonFrames();
     this._commonFrames.init();
     this.displayLiveStatus(Boolean(this._config.livestatus));
     this.watchForFrameUnload();
     this.initControlFrameModal();
   }
 
-  private CardFrames(config: IConfig): void {
+  private CardFrames(): void {
     this._cardFrames = new CardFrames(
-      config.jwt,
-      config.origin,
-      config.componentIds,
-      config.styles,
-      config.components.paymentTypes,
-      config.components.defaultPaymentType,
-      config.animatedCard,
-      config.buttonId,
-      config.fieldsToSubmit
+      this._config.jwt,
+      this._config.origin,
+      this._config.componentIds,
+      this._config.styles,
+      this._config.components.paymentTypes,
+      this._config.components.defaultPaymentType,
+      this._config.animatedCard,
+      this._config.buttonId,
+      this._config.fieldsToSubmit
     );
   }
 
-  private CommonFrames(config: IConfig): void {
+  private CommonFrames(): void {
     this._commonFrames = new CommonFrames(
-      config.jwt,
-      config.origin,
-      config.componentIds,
-      config.styles,
-      config.submitOnSuccess,
-      config.submitOnError,
-      config.submitFields,
-      config.datacenterurl,
-      config.animatedCard,
-      config.components.requestTypes
+      this._config.jwt,
+      this._config.origin,
+      this._config.componentIds,
+      this._config.styles,
+      this._config.submitOnSuccess,
+      this._config.submitOnError,
+      this._config.submitOnCancel,
+      this._config.submitFields,
+      this._config.datacenterurl,
+      this._config.animatedCard,
+      this._config.components.requestTypes
     );
   }
 
@@ -213,9 +236,9 @@ class ST {
     };
   }
 
-  private Storage(config: IConfig): void {
-    this._storage.setItem(ST.MERCHANT_TRANSLATIONS_STORAGE, JSON.stringify(config.translations));
-    this._storage.setItem(ST.LOCALE_STORAGE, JwtDecode<IStJwtObj>(config.jwt).payload.locale);
+  private Storage(): void {
+    this._storage.setItem(ST.MERCHANT_TRANSLATIONS_STORAGE, JSON.stringify(this._config.translations));
+    this._storage.setItem(ST.LOCALE_STORAGE, JwtDecode<IStJwtObj>(this._config.jwt).payload.locale);
   }
 
   private displayLiveStatus(liveStatus: boolean): void {
@@ -255,17 +278,21 @@ class ST {
     });
   }
 
-  private initCallbacks(config: IConfig): void {
-    if (config.submitCallback) {
-      this.submitCallback = config.submitCallback;
+  private initCallbacks(): void {
+    if (this._config.submitCallback) {
+      this.submitCallback = this._config.submitCallback;
     }
 
-    if (config.successCallback) {
-      this.successCallback = config.successCallback;
+    if (this._config.successCallback) {
+      this.successCallback = this._config.successCallback;
     }
 
-    if (config.errorCallback) {
-      this.errorCallback = config.errorCallback;
+    if (this._config.errorCallback) {
+      this.errorCallback = this._config.errorCallback;
+    }
+
+    if (this._config.cancelCallback) {
+      this.cancelCallback = this._config.cancelCallback;
     }
   }
 

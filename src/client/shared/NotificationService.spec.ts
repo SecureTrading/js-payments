@@ -71,7 +71,7 @@ describe('NotificationService', () => {
   });
 
   // given
-  describe('warning function has been called', () => {
+  describe('cancel function has been called', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
@@ -83,12 +83,12 @@ describe('NotificationService', () => {
     });
 
     // then
-    it('should call _setNotification with warning message and warning type of notification', () => {
-      notificationService.warning('Test value');
+    it('should call _setNotification with cancel message and cancel type of notification', () => {
+      notificationService.cancel('Test value');
       verify(
         messageBus.publish(
           deepEqual({
-            data: { type: NotificationType.Warning, content: 'Test value' },
+            data: { type: NotificationType.Cancel, content: 'Test value' },
             type: MessageBus.EVENTS_PUBLIC.NOTIFICATION
           }),
           true
