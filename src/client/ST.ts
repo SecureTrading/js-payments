@@ -166,12 +166,18 @@ class ST {
       this._framesHub
         .waitForFrame(Selectors.CONTROL_FRAME_IFRAME)
         .pipe(
-          first(),
           switchMap((controlFrame: string) =>
             from(this._communicator.query({ type: MessageBus.EVENTS_PUBLIC.GET_CYBERTONICA_TID }, controlFrame))
           )
         )
-        .subscribe((tid: string) => resolve(tid))
+        .subscribe((tid: string) => {
+          const hiddenField: HTMLInputElement = document.createElement('input');
+          hiddenField.setAttribute('hidden', '');
+          hiddenField.setAttribute('name', 'tid');
+          resolve(tid);
+          hiddenField.setAttribute('value', tid);
+          document.getElementById(this._config.formId).appendChild(hiddenField);
+        })
     );
   }
 

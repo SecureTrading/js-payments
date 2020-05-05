@@ -108,9 +108,6 @@ export class ControlFrame extends Frame {
     this._updateJwtEvent();
     this._loadControlFrame();
     this._initCybertonica();
-    this._communicator
-      .whenReceive(MessageBus.EVENTS_PUBLIC.GET_CYBERTONICA_TID)
-      .thenRespond(() => from(this._cybertonica.getTransactionId()));
   }
 
   protected getAllowedParams(): string[] {
@@ -430,6 +427,10 @@ export class ControlFrame extends Frame {
 
       if (cybertonicaApiKey) {
         this._cybertonica.init(cybertonicaApiKey);
+
+        this._communicator
+          .whenReceive(MessageBus.EVENTS_PUBLIC.GET_CYBERTONICA_TID)
+          .thenRespond(() => from(this._cybertonica.getTransactionId()));
       }
     });
   }
