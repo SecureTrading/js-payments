@@ -26,7 +26,6 @@ export class ConfigResolver {
       applePay: this._setApmConfig(config.applePay, DefaultConfig.applePay),
       buttonId: this._getValueOrDefault(config.buttonId, DefaultConfig.buttonId),
       bypassCards: this._getValueOrDefault(config.bypassCards, DefaultConfig.bypassCards),
-      cachetoken: this._getValueOrDefault(config.cachetoken, DefaultConfig.cachetoken),
       cancelCallback: this._getValueOrDefault(config.cancelCallback, DefaultConfig.cancelCallback),
       componentIds: this._setComponentIds(config.componentIds),
       components: this._setComponentsProperties(config.components),
@@ -43,7 +42,6 @@ export class ConfigResolver {
       origin: this._getValueOrDefault(config.origin, DefaultConfig.origin),
       panIcon: this._getValueOrDefault(config.panIcon, DefaultConfig.panIcon),
       placeholders: this._setPlaceholders(config.placeholders),
-      requestTypes: this._getValueOrDefault(config.requestTypes, DefaultComponentsRequestTypes),
       styles: this._getValueOrDefault(config.styles, DefaultConfig.styles),
       submitCallback: this._getValueOrDefault(config.submitCallback, DefaultConfig.submitCallback),
       submitFields: this._getValueOrDefault(config.submitFields, DefaultSubmitFields),
@@ -51,7 +49,6 @@ export class ConfigResolver {
       submitOnError: this._getValueOrDefault(config.submitOnError, DefaultConfig.submitOnError),
       submitOnSuccess: this._getValueOrDefault(config.submitOnSuccess, DefaultConfig.submitOnSuccess),
       successCallback: this._getValueOrDefault(config.successCallback, DefaultConfig.successCallback),
-      threedinit: this._getValueOrDefault(config.threedinit, DefaultConfig.threedinit),
       translations: this._getValueOrDefault(config.translations, DefaultConfig.translations),
       visaCheckout: this._setApmConfig(config.visaCheckout, DefaultConfig.visaCheckout)
     };

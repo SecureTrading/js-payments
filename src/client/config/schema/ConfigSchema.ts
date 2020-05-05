@@ -51,7 +51,6 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   bypassCards: Joi.array().items(
     Joi.string().valid('AMEX', 'ASTROPAYCARD', 'DINERS', 'DISCOVER', 'JCB', 'MASTERCARD', 'MAESTRO', 'PIBA', 'VISA')
   ),
-  cachetoken: Joi.string().allow(''),
   cancelCallback: Joi.any(),
   componentIds: Joi.object()
     .keys({
@@ -89,9 +88,6 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   jwt: Joi.string().required(),
   livestatus: Joi.number().valid(0, 1),
   origin: Joi.string().allow(''),
-  requestTypes: Joi.array().items(
-    Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
-  ),
   panIcon: Joi.boolean(),
   placeholders: Joi.object().keys({
     pan: Joi.string().allow(''),
@@ -105,7 +101,6 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   submitOnCancel: Joi.boolean(),
   submitOnError: Joi.boolean(),
   submitOnSuccess: Joi.boolean(),
-  threedinit: Joi.string().allow(''),
   translations: Joi.object(),
   visaCheckout: {
     buttonSettings: Joi.object().keys({

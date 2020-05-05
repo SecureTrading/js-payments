@@ -53,7 +53,6 @@ function ConfigResolverFixture() {
     buttonId: 'merchant-submit-button',
     // @ts-ignore
     bypassCards: ['PIBA'],
-    cachetoken: '',
     componentIds: {
       animatedCard: '',
       cardNumber: '',
@@ -87,7 +86,6 @@ function ConfigResolverFixture() {
       securitycode: '***'
     },
     panIcon: true,
-    requestTypes: [],
     styles: {
       defaultStyles: {
         'background-color-input': 'AliceBlue'
@@ -115,7 +113,6 @@ function ConfigResolverFixture() {
     submitOnSuccess: false,
     submitOnError: false,
     submitCallback: '',
-    threedinit: '',
     translations: {
       'An error occurred': 'Wystąpił błąd'
     },
@@ -160,7 +157,6 @@ function ConfigResolverFixture() {
     buttonId: 'merchant-submit-button',
     // @ts-ignore
     bypassCards: ['PIBA'],
-    cachetoken: '',
     cancelCallback: null,
     componentIds: {
       animatedCard: 'st-animated-card',
@@ -196,7 +192,6 @@ function ConfigResolverFixture() {
       securitycode: '***'
     },
     panIcon: true,
-    requestTypes: ['THREEDQUERY', 'AUTH'],
     styles: {
       defaultStyles: {
         'background-color-input': 'AliceBlue'
@@ -238,7 +233,6 @@ function ConfigResolverFixture() {
     submitOnError: false,
     submitCallback: null,
     successCallback: null,
-    threedinit: '',
     translations: {
       'An error occurred': 'Wystąpił błąd'
     },
@@ -269,7 +263,6 @@ function ConfigResolverFixture() {
     buttonId: '',
     // @ts-ignore
     bypassCards: [],
-    cachetoken: '',
     cancelCallback: null,
     componentIds: {
       animatedCard: 'st-animated-card',
@@ -304,7 +297,6 @@ function ConfigResolverFixture() {
       securitycode: ''
     },
     panIcon: false,
-    requestTypes: ['THREEDQUERY', 'AUTH'],
     styles: {},
     submitFields: [
       'baseamount',
@@ -324,7 +316,6 @@ function ConfigResolverFixture() {
     submitOnError: false,
     submitCallback: null,
     successCallback: null,
-    threedinit: '',
     translations: {},
     visaCheckout: {}
   };
