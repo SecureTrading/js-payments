@@ -132,6 +132,8 @@ export class ControlFrame extends Frame {
     const threeDIndex = requestTypes.indexOf(ControlFrame.THREEDQUERY_EVENT);
     this._preThreeDRequestTypes = requestTypes.slice(0, threeDIndex + 1);
     this._postThreeDRequestTypes = requestTypes.slice(threeDIndex + 1, requestTypes.length);
+    console.error('PRE', this._preThreeDRequestTypes);
+    console.error('POST', this._postThreeDRequestTypes);
   }
 
   private _updateJwtEvent(): void {
@@ -202,6 +204,7 @@ export class ControlFrame extends Frame {
   }
 
   private _processPayment(data: IResponseData): void {
+    console.error(this._postThreeDRequestTypes);
     this._payment
       .processPayment(this._postThreeDRequestTypes, this._card, this._merchantFormData, data)
       .then(() => {
@@ -249,7 +252,7 @@ export class ControlFrame extends Frame {
           };
         })
       );
-
+    console.error(this._preThreeDRequestTypes);
     return of({ ...this._merchantFormData }).pipe(
       switchMap(applyCybertonicaTid),
       switchMap(merchantFormData =>

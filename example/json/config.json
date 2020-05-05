@@ -19,10 +19,23 @@
         "amount": "10.00"
       }
     },
-    "placement": "st-apple-pay"
+    "placement": "st-apple-pay",
+    "requestTypes": [
+      "RISKDEC",
+      "ACCOUNTCHECK",
+      "THREEDQUERY",
+      "AUTH"
+    ]
   },
   "buttonId": "merchant-submit-button",
-  "bypassCards": ["PIBA"],
+  "bypassCards": [
+    "VISA",
+    "MASTERCARD",
+    "AMEX",
+    "DISCOVER",
+    "JCB",
+    "DINERS"
+  ],
   "cancelCallback": null,
   "componentIds": {
     "animatedCard": "",
@@ -33,7 +46,12 @@
   },
   "components": {
     "defaultPaymentType": "",
-    "requestTypes": [],
+    "requestTypes": [
+      "RISKDEC",
+      "ACCOUNTCHECK",
+      "THREEDQUERY",
+      "AUTH"
+    ],
     "paymentTypes": [],
     "startOnLoad": false
   },
@@ -43,8 +61,6 @@
   "disableNotification": false,
   "errorCallback": null,
   "fieldsToSubmit": [
-    "pan",
-    "expirydate",
     "securitycode"
   ],
   "formId": "st-form",
@@ -52,7 +68,7 @@
     "cachetoken": "",
     "threedinit": ""
   },
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4ODEwNTk2MC43NDQ4MjE4LCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIxMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.LISMNAeVP-W3ZAwMhmLXOhyZ1fMePLrqNvIDoXdXe0o",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4ODY5NTEzOS41NTgwOTc0LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiNTIwMDAwMDAwMDAwMTAwNSIsImV4cGlyeWRhdGUiOiIwMS8yMiJ9fQ.wAmn0JqsAfj7ZtsqbDadknWpPhUhJb7CPiQT8VqZ4hk",
   "livestatus": 0,
   "origin": "",
   "panIcon": true,
@@ -104,6 +120,12 @@
       "subtotal": "20.00"
     },
     "placement": "st-visa-checkout",
+    "requestTypes": [
+      "RISKDEC",
+      "ACCOUNTCHECK",
+      "THREEDQUERY",
+      "AUTH"
+    ],
     "settings": {
       "displayName": "My Test Site"
     }
