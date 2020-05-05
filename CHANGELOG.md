@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.1.1
+
+###Changed
+- Cybertonica URLs changed to use new subdomain
+
 ## 2.1.0
 
 ### Added
