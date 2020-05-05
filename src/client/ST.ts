@@ -171,11 +171,12 @@ class ST {
           )
         )
         .subscribe((tid: string) => {
-          const hiddenField: HTMLInputElement = document.createElement('input');
-          hiddenField.setAttribute('hidden', '');
-          hiddenField.setAttribute('name', 'tid');
           resolve(tid);
-          hiddenField.setAttribute('value', tid);
+          const attributes: any = { hidden: '', name: 'tid', value: tid };
+          const hiddenField: HTMLInputElement = document.createElement('input');
+          Object.keys(attributes).forEach((attr: string) => {
+            hiddenField.setAttribute(attr, attributes[attr]);
+          });
           document.getElementById(this._config.formId).appendChild(hiddenField);
         })
     );
