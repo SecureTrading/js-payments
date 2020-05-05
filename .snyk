@@ -2,8 +2,8 @@
 version: v1.13.5
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
-  '567746':
+  SNYK-JS-LODASH-567746:
     - '*':
         reason: None Given
-        expires: 2020-06-04T11:00:21.086Z
+        expires: 2020-06-04T11:05:41.679Z
 patch: {}
