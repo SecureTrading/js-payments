@@ -7,6 +7,25 @@ describe('Cybertonica', () => {
   const { instance } = cybertonicaFixture();
 
   // given
+  describe('_onInit', () => {
+    // when
+    beforeEach(() => {
+      // @ts-ignore
+      instance._insertCybertonicaLibrary = jest.fn();
+      // @ts-ignore
+      instance._insertCybertonicaLibrary = jest.fn().mockResolvedValueOnce('TID VALUE');
+    });
+
+    // then
+    it('should call _insertCybertonicaLibrary', async () => {
+      // @ts-ignore
+      instance.init();
+      // @ts-ignore
+      expect(instance._insertCybertonicaLibrary).toHaveBeenCalled();
+    });
+  });
+
+  // given
   describe('getBasename', () => {
     // then
     it('should calculate base name', async () => {

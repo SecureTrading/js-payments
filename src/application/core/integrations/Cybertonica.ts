@@ -28,8 +28,12 @@ export class Cybertonica implements ICybertonica {
     this.translator = new Translator(this.storage.getItem(Cybertonica.LOCALE));
   }
 
+  private _insertCybertonicaLibrary(): Promise<Element> {
+    return DomMethods.insertScript(Cybertonica.SCRIPT_TARGET, { src: Cybertonica.SDK_ADDRESS });
+  }
+
   public init(apiUserName: string): Promise<string> {
-    this.tid = DomMethods.insertScript(Cybertonica.SCRIPT_TARGET, { src: Cybertonica.SDK_ADDRESS }).then(
+    this.tid = this._insertCybertonicaLibrary().then(
       () => AFCYBERTONICA.init(apiUserName, undefined, Cybertonica.getBasename()) || this.initFailed()
     );
 
