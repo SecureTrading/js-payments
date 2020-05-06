@@ -7,6 +7,7 @@ import { IMessageBusEvent } from '../../../application/core/models/IMessageBusEv
 import { Selectors } from '../../../application/core/shared/Selectors';
 import { FrameIdentifier } from './FrameIdentifier';
 import { ArrayUtils } from '../../../application/core/shared/utils/ArrayUtils';
+import { PUBLIC_EVENTS } from '../../../application/core/shared/EventTypes';
 
 @Service()
 export class FramesHub {
@@ -36,7 +37,7 @@ export class FramesHub {
       .pipe(withLatestFrom(this.activeFrame$), takeUntil(this.communicator.communicationClosed$))
       .subscribe(([newFrame, activeFrames]) => this.onFrameReady(newFrame, activeFrames));
 
-    this.communicator.incomingEvent$.pipe(ofType('DESTROY'), mapTo([])).subscribe(this.activeFrame$);
+    this.communicator.incomingEvent$.pipe(ofType(PUBLIC_EVENTS.DESTROY), mapTo([])).subscribe(this.activeFrame$);
   }
 
   public isFrameActive(name: string): Observable<boolean> {
