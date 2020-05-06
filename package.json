@@ -121,7 +121,7 @@
     "@hapi/joi": "^17.1.1",
     "@securetrading/js-payments-card": "^1.0.15",
     "@securetrading/ts-iin-lookup": "^0.0.7",
-    "@securetrading/ts-luhn-check": "^0.0.7",
+    "@securetrading/ts-luhn-check": "^0.0.8",
     "@sheerun/mutationobserver-shim": "^0.3.3",
     "@types/jwt-decode": "^2.2.1",
     "@types/lodash": "^4.14.150",
