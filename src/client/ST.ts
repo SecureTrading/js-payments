@@ -38,6 +38,8 @@ import { BrowserSessionStorage } from '../shared/services/storage/BrowserSession
 import { Notification } from '../application/core/shared/Notification';
 import './../styles/notification.css';
 import { ConfigProvider } from '../application/core/services/ConfigProvider';
+import { switchMap, first } from 'rxjs/operators';
+import { from } from 'rxjs';
 
 @Service()
 class ST {
@@ -157,6 +159,21 @@ class ST {
     });
 
     return new visa(this._configProvider, this._communicator);
+  }
+
+  public Cybertonica(): Promise<string> {
+    return new Promise(resolve =>
+      this._framesHub
+        .waitForFrame(Selectors.CONTROL_FRAME_IFRAME)
+        .pipe(
+          switchMap((controlFrame: string) =>
+            from(this._communicator.query({ type: MessageBus.EVENTS_PUBLIC.GET_CYBERTONICA_TID }, controlFrame))
+          )
+        )
+        .subscribe((tid: string) => {
+          resolve(tid);
+        })
+    );
   }
 
   public updateJWT(jwt: string): void {

@@ -33,7 +33,7 @@ export class Cybertonica implements ICybertonica {
   }
 
   public getTransactionId(): Promise<string> {
-    if (this.storage.getItem(Cybertonica.TID_KEY) !== undefined) {
+    if (this.storage.getItem(Cybertonica.TID_KEY) !== null) {
       return Promise.resolve(this.storage.getItem(Cybertonica.TID_KEY));
     }
 
