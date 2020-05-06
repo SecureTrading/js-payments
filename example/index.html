@@ -211,7 +211,9 @@
         }
       });
 
-      st.Cybertonica().then((response) => console.error(response));
+      st.Cybertonica().then(function(response) {
+        console.error(response);
+      });
 
       document.getElementById('example-form-amount').addEventListener('input', function() {
         st.updateJWT(
