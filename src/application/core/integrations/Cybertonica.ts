@@ -15,6 +15,12 @@ export class Cybertonica implements ICybertonica {
   private static LOCALE: string = 'locale';
   private static SCRIPT_TARGET: string = 'head';
 
+  private static getBasename(): string {
+    const link = document.createElement('a');
+    link.href = Cybertonica.SDK_ADDRESS;
+    return 'https://' + link.hostname;
+  }
+
   private translator: Translator;
   private tid: Promise<string> = Promise.resolve(undefined);
 
@@ -22,9 +28,13 @@ export class Cybertonica implements ICybertonica {
     this.translator = new Translator(this.storage.getItem(Cybertonica.LOCALE));
   }
 
+  private _insertCybertonicaLibrary(): Promise<Element> {
+    return DomMethods.insertScript(Cybertonica.SCRIPT_TARGET, { src: Cybertonica.SDK_ADDRESS });
+  }
+
   public init(apiUserName: string): Promise<string> {
-    this.tid = DomMethods.insertScript(Cybertonica.SCRIPT_TARGET, { src: Cybertonica.SDK_ADDRESS }).then(
-      () => AFCYBERTONICA.init(apiUserName) || this.initFailed()
+    this.tid = this._insertCybertonicaLibrary().then(
+      () => AFCYBERTONICA.init(apiUserName, undefined, Cybertonica.getBasename()) || this.initFailed()
     );
 
     return this.tid;
