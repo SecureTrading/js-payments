@@ -38,6 +38,8 @@ import { BrowserSessionStorage } from '../shared/services/storage/BrowserSession
 import { Notification } from '../application/core/shared/Notification';
 import './../styles/notification.css';
 import { ConfigProvider } from '../application/core/services/ConfigProvider';
+import { switchMap, first } from 'rxjs/operators';
+import { from } from 'rxjs';
 
 @Service()
 class ST {
@@ -75,6 +77,14 @@ class ST {
     }
   }
 
+  set cancelCallback(callback: (event: IErrorEvent) => void) {
+    if (callback) {
+      this.on('cancel', callback);
+    } else {
+      this.off('cancel');
+    }
+  }
+
   constructor(
     @Inject(CONFIG) private _config: IConfig,
     private _configService: ConfigService,
@@ -93,6 +103,7 @@ class ST {
 
   public on(event: string, callback: any): void {
     const events = {
+      cancel: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_CANCEL_CALLBACK,
       success: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK,
       error: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK,
       submit: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUBMIT_CALLBACK
@@ -148,6 +159,21 @@ class ST {
     });
 
     return new visa(this._configProvider, this._communicator);
+  }
+
+  public Cybertonica(): Promise<string> {
+    return new Promise(resolve =>
+      this._framesHub
+        .waitForFrame(Selectors.CONTROL_FRAME_IFRAME)
+        .pipe(
+          switchMap((controlFrame: string) =>
+            from(this._communicator.query({ type: MessageBus.EVENTS_PUBLIC.GET_CYBERTONICA_TID }, controlFrame))
+          )
+        )
+        .subscribe((tid: string) => {
+          resolve(tid);
+        })
+    );
   }
 
   public updateJWT(jwt: string): void {
@@ -232,6 +258,7 @@ class ST {
       this._config.styles,
       this._config.submitOnSuccess,
       this._config.submitOnError,
+      this._config.submitOnCancel,
       this._config.submitFields,
       this._config.datacenterurl,
       this._config.animatedCard,
@@ -300,6 +327,10 @@ class ST {
 
     if (this._config.errorCallback) {
       this.errorCallback = this._config.errorCallback;
+    }
+
+    if (this._config.cancelCallback) {
+      this.cancelCallback = this._config.cancelCallback;
     }
   }
 }

@@ -14,6 +14,7 @@ export class Cybertonica implements ICybertonica {
   private static readonly SDK_ADDRESS = environment.CYBERTONICA.CYBERTONICA_LIVE_URL;
   private static LOCALE: string = 'locale';
   private static SCRIPT_TARGET: string = 'head';
+  private static TID_KEY: string = 'app.tid';
 
   private static getBasename(): string {
     const link = document.createElement('a');
@@ -36,11 +37,16 @@ export class Cybertonica implements ICybertonica {
     this.tid = this._insertCybertonicaLibrary().then(
       () => AFCYBERTONICA.init(apiUserName, undefined, Cybertonica.getBasename()) || this.initFailed()
     );
+    this.tid.then(tid => this.storage.setItem(Cybertonica.TID_KEY, tid));
 
     return this.tid;
   }
 
   public getTransactionId(): Promise<string> {
+    if (this.storage.getItem(Cybertonica.TID_KEY) !== null) {
+      return Promise.resolve(this.storage.getItem(Cybertonica.TID_KEY));
+    }
+
     return this.tid;
   }
 

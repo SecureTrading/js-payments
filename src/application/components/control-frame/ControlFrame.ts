@@ -24,7 +24,7 @@ import { BrowserSessionStorage } from '../../../shared/services/storage/BrowserS
 import { Service } from 'typedi';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
-import { Observable } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
 import { Cybertonica } from '../../core/integrations/Cybertonica';
 import { IConfig } from '../../../shared/model/config/IConfig';
@@ -245,6 +245,7 @@ export class ControlFrame extends Frame {
       StCodec.publishResponse(this._threeDQueryResult.response, this._threeDQueryResult.jwt, data.threedresponse);
     }
     this._notification.success(Language.translations.PAYMENT_SUCCESS);
+    this._validation.blockForm(FormState.COMPLETE);
   }
 
   private _processPayment(data: IResponseData): void {
@@ -426,6 +427,10 @@ export class ControlFrame extends Frame {
 
       if (cybertonicaApiKey) {
         this._cybertonica.init(cybertonicaApiKey);
+
+        this._communicator
+          .whenReceive(MessageBus.EVENTS_PUBLIC.GET_CYBERTONICA_TID)
+          .thenRespond(() => from(this._cybertonica.getTransactionId()));
       }
     });
   }

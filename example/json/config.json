@@ -23,7 +23,7 @@
   },
   "buttonId": "merchant-submit-button",
   "bypassCards": ["PIBA"],
-  "cachetoken": "",
+  "cancelCallback": null,
   "componentIds": {
     "animatedCard": "",
     "cardNumber": "",
@@ -41,6 +41,7 @@
   "datacenterurl": "",
   "deferInit": false,
   "disableNotification": false,
+  "errorCallback": null,
   "fieldsToSubmit": [
     "pan",
     "expirydate",
@@ -56,10 +57,10 @@
   "origin": "",
   "panIcon": true,
   "placeholders": {
+    "pan": "Card number",
     "expirydate": "MM/YY",
     "securitycode": "***"
   },
-  "requestTypes": [],
   "styles": {
     "defaultStyles": {
       "background-color-input": "AliceBlue"
@@ -83,11 +84,12 @@
       "color-error": "#3358FF"
     }
   },
+  "submitCallback": null,
   "submitFields": [],
   "submitOnSuccess": false,
   "submitOnError": false,
-  "submitCallback": "",
-  "threedinit": "",
+  "submitOnCancel": true,
+  "successCallback": null,
   "translations": {
     "An error occurred": "Wystąpił błąd"
   },
