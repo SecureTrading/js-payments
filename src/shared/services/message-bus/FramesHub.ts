@@ -1,50 +1,42 @@
 import { Service } from 'typedi';
 import { InterFrameCommunicator } from './InterFrameCommunicator';
-import { concat, from, Observable } from 'rxjs';
+import { BehaviorSubject, from, Observable, of, Subject } from 'rxjs';
 import { ofType } from './operators/ofType';
-import {
-  distinctUntilChanged,
-  filter,
-  map,
-  mapTo,
-  scan,
-  shareReplay,
-  switchMap,
-  takeUntil,
-  withLatestFrom
-} from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, mapTo, takeUntil, withLatestFrom } from 'rxjs/operators';
 import { IMessageBusEvent } from '../../../application/core/models/IMessageBusEvent';
-import { ArrayUtils } from '../../../application/core/shared/utils/ArrayUtils';
 import { Selectors } from '../../../application/core/shared/Selectors';
 import { FrameIdentifier } from './FrameIdentifier';
+import { ArrayUtils } from '../../../application/core/shared/utils/ArrayUtils';
 
 @Service()
 export class FramesHub {
   private static readonly FRAME_READY_EVENT = 'ST_FRAME_READY';
   private static readonly GET_FRAMES_EVENT = 'ST_GET_ACTIVE_FRAMES';
-  public readonly activeFrame$: Observable<string[]>;
+  private activeFrame$: Subject<string[]> = new BehaviorSubject([]);
 
   constructor(private communicator: InterFrameCommunicator, private identifier: FrameIdentifier) {
-    const initialFrames$ = this.getInitialFrames();
+    this.communicator.whenReceive(FramesHub.GET_FRAMES_EVENT).thenRespond(() => this.activeFrame$);
+
+    this.getInitialFrames().subscribe(value => this.activeFrame$.next(value));
+
     const fromEventFrame$ = this.communicator.incomingEvent$.pipe(
       ofType(FramesHub.FRAME_READY_EVENT),
       filter((event: IMessageBusEvent) => Boolean(event.data)),
-      map((event: IMessageBusEvent) => event.data),
-      shareReplay()
+      map((event: IMessageBusEvent) => event.data)
     );
 
-    this.activeFrame$ = concat(initialFrames$, fromEventFrame$).pipe(
-      scan((activeFrames, newFrame) => [...activeFrames, newFrame], []),
-      map(frames => ArrayUtils.unique(frames)),
-      distinctUntilChanged((prev, curr) => ArrayUtils.equals(prev, curr)),
-      shareReplay(1)
-    );
-
-    this.communicator.whenReceive(FramesHub.GET_FRAMES_EVENT).thenRespond(() => this.activeFrame$);
+    fromEventFrame$
+      .pipe(
+        withLatestFrom(this.activeFrame$),
+        map(([newFrame, activeFrames]) => ArrayUtils.unique([...activeFrames, newFrame]))
+      )
+      .subscribe(this.activeFrame$);
 
     fromEventFrame$
       .pipe(withLatestFrom(this.activeFrame$), takeUntil(this.communicator.communicationClosed$))
       .subscribe(([newFrame, activeFrames]) => this.onFrameReady(newFrame, activeFrames));
+
+    this.communicator.incomingEvent$.pipe(ofType('DESTROY'), mapTo([])).subscribe(this.activeFrame$);
   }
 
   public isFrameActive(name: string): Observable<boolean> {
@@ -83,13 +75,13 @@ export class FramesHub {
     return window.parent;
   }
 
-  private getInitialFrames(): Observable<string> {
+  private getInitialFrames(): Observable<string[]> {
     if (this.identifier.isParentFrame()) {
-      return from([]);
+      return of([]);
     }
 
-    return from(this.communicator.query({ type: FramesHub.GET_FRAMES_EVENT }, Selectors.MERCHANT_PARENT_FRAME)).pipe(
-      switchMap((frames: string[]) => from(frames))
+    return from(
+      this.communicator.query<string[]>({ type: FramesHub.GET_FRAMES_EVENT }, Selectors.MERCHANT_PARENT_FRAME)
     );
   }
 

@@ -81,9 +81,13 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
   }
 
   public publish<T>(event: IMessageBusEvent<T>, publishToParent?: boolean): void {
-    this.framesHub
-      .waitForFrame(Selectors.CONTROL_FRAME_IFRAME)
-      .subscribe(controlFrame => this.communicator.send(event, controlFrame));
+    this.framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(controlFrame => {
+      try {
+        this.communicator.send(event, controlFrame);
+      } catch (e) {
+        console.warn(`Cannot send event to ControlFrame. ${e}`);
+      }
+    });
 
     if (publishToParent) {
       this.publishToParent(event);

@@ -96,7 +96,6 @@ class ST {
   ) {
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
-    this.init();
   }
 
   public on(event: string, callback: any): void {
@@ -190,7 +189,7 @@ class ST {
     this._communicator.close();
   }
 
-  private init(): void {
+  public init(): void {
     // TODO theres probably a better way rather than having to remember to update Selectors
     Selectors.MERCHANT_FORM_SELECTOR = this._config.formId;
     this.initCallbacks();
@@ -321,5 +320,9 @@ class ST {
 export default (config: IConfig) => {
   Container.get(ConfigService).update(config);
 
-  return Container.get(ST);
+  const st = Container.get(ST);
+
+  st.init();
+
+  return st;
 };
