@@ -221,7 +221,7 @@ export class VisaCheckout {
       requestTypes
     } = this._visaCheckoutConfig;
     this._stJwt = new StJwt(jwt);
-    this.payment = new Payment(jwt, this._datacenterurl);
+    this.payment = new Payment();
     this._livestatus = livestatus;
     this._placement = placement;
     this.requestTypes = requestTypes;

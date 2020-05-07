@@ -102,7 +102,7 @@ class ST {
     this.init();
   }
 
-  public on(event: 'success' | 'error' | 'submit', callback: any): void {
+  public on(event: 'success' | 'error' | 'submit' | 'cancel', callback: any): void {
     const events = {
       cancel: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_CANCEL_CALLBACK,
       success: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK,
@@ -208,11 +208,8 @@ class ST {
       this._config.components.paymentTypes,
       this._config.components.defaultPaymentType,
       this._config.animatedCard,
-      this._config.deferInit,
       this._config.buttonId,
-      this._config.components.startOnLoad,
-      this._config.fieldsToSubmit,
-      this._config.bypassCards
+      this._config.fieldsToSubmit
     );
   }
 
