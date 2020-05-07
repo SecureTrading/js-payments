@@ -28,11 +28,13 @@ import { Cybertonica } from '../../core/integrations/Cybertonica';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { CardinalCommerce } from '../../core/integrations/cardinal-commerce/CardinalCommerce';
 import { ICardinalCommerceTokens } from '../../core/integrations/cardinal-commerce/ICardinalCommerceTokens';
-import { from, Observable, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { defer, from, iif, Observable, of, throwError } from 'rxjs';
+import { map, mapTo, switchMap } from 'rxjs/operators';
 import { IAuthorizePaymentResponse } from '../../core/models/IAuthorizePaymentResponse';
 import { StJwt } from '../../core/shared/StJwt';
 import { Translator } from '../../core/shared/Translator';
+import { ofType } from '../../../shared/services/message-bus/operators/ofType';
+import { IOnCardinalValidated } from '../../core/models/IOnCardinalValidated';
 
 @Service()
 export class ControlFrame extends Frame {
@@ -104,6 +106,18 @@ export class ControlFrame extends Frame {
     this._initCybertonica();
     this._initCardinalCommerce();
 
+    if (!this._config.deferInit) {
+      this._initCardinalCommerce();
+    } else if (this._config.components.startOnLoad) {
+      this.messageBus.publish({
+        type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM,
+        data: {
+          dataInJwt: true,
+          requestTypes: this._config.components.requestTypes
+        }
+      });
+    }
+
     this.messageBus.subscribe(
       MessageBus.EVENTS_PUBLIC.CARDINAL_COMMERCE_TOKENS_ACQUIRED,
       (tokens: ICardinalCommerceTokens) => {
@@ -171,53 +185,84 @@ export class ControlFrame extends Frame {
   }
 
   private _submitFormEvent(): void {
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM, (data?: ISubmitData) => {
-      const isPanPiba: boolean = this._isCardWithoutCVV();
-      const dataInJwt = data ? data.dataInJwt : false;
-      const { validity } = this._validation.formValidation(
-        dataInJwt,
-        data.fieldsToSubmit,
-        this._formFields,
-        isPanPiba,
-        this._isPaymentReady
-      );
-      if (!validity) {
-        this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
-        this._validateFormFields();
-        return;
-      }
-      this._setPostThreeDRequestTypes();
+    const VALIDATION_FAILED = 'VALIDATION_FAILED';
 
-      if (this._isCardBypassed(this._card.pan || this._getPan())) {
-        this._processPayment(data as IResponseData);
-        return;
-      }
-
-      this._callThreeDQueryRequest().subscribe(
+    this.messageBus
+      .pipe(
+        ofType(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM),
+        map((event: IMessageBusEvent<ISubmitData>) => event.data || {}),
+        switchMap((data: ISubmitData) =>
+          this._configProvider.getConfig$().pipe(
+            switchMap(config =>
+              iif(
+                () => config.deferInit,
+                defer(() => this._cardinalCommerce.init(config).pipe(mapTo(data))),
+                of(data)
+              )
+            )
+          )
+        ),
+        switchMap((data: ISubmitData) => {
+          this._isPaymentReady = true;
+          this._setPostThreeDRequestTypes();
+          switch (true) {
+            case !this._isDataValid(data):
+              return throwError(VALIDATION_FAILED);
+            case this._isCardBypassed(this._card.pan || this._getPan()):
+              return of(data);
+            default:
+              return this._callThreeDQueryRequest();
+          }
+        })
+      )
+      .subscribe(
         authorizationData => this._processPayment(authorizationData as any),
         errorData => {
-          const { ErrorNumber, ErrorDescription } = errorData;
-          const translator = new Translator(this._localStorage.getItem('locale'));
-          const translatedErrorMessage = translator.translate(Language.translations.PAYMENT_ERROR);
+          if (errorData === VALIDATION_FAILED) {
+            this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
+            this._validateFormFields();
+            return;
+          }
 
-          this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.RESET_JWT });
-          this.messageBus.publish(
-            {
-              type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE,
-              data: {
-                acquirerresponsecode: ErrorNumber ? ErrorNumber.toString() : ErrorNumber,
-                acquirerresponsemessage: ErrorDescription,
-                errorcode: '50003',
-                errormessage: translatedErrorMessage
-              }
-            },
-            true
-          );
-          this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM, data: FormState.AVAILABLE }, true);
-          this._notification.error(translatedErrorMessage);
+          this._onPaymentFailure(errorData);
         }
       );
-    });
+  }
+
+  private _isDataValid(data: ISubmitData): boolean {
+    const isPanPiba: boolean = this._isCardWithoutCVV();
+    const dataInJwt = data ? data.dataInJwt : false;
+    const { validity } = this._validation.formValidation(
+      dataInJwt,
+      data.fieldsToSubmit,
+      this._formFields,
+      isPanPiba,
+      this._isPaymentReady
+    );
+
+    return validity;
+  }
+
+  private _onPaymentFailure(errorData: ISubmitData | IOnCardinalValidated): void {
+    const { ErrorNumber, ErrorDescription } = errorData;
+    const translator = new Translator(this._localStorage.getItem('locale'));
+    const translatedErrorMessage = translator.translate(Language.translations.PAYMENT_ERROR);
+
+    this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.RESET_JWT });
+    this.messageBus.publish(
+      {
+        type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE,
+        data: {
+          acquirerresponsecode: ErrorNumber ? ErrorNumber.toString() : ErrorNumber,
+          acquirerresponsemessage: ErrorDescription,
+          errorcode: '50003',
+          errormessage: translatedErrorMessage
+        }
+      },
+      true
+    );
+    this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM, data: FormState.AVAILABLE }, true);
+    this._notification.error(translatedErrorMessage);
   }
 
   private _isCardBypassed(pan: string): boolean {
@@ -352,6 +397,10 @@ export class ControlFrame extends Frame {
   private _initCybertonica(): void {
     if (this._config.cybertonicaApiKey) {
       this._cybertonica.init(this._config.cybertonicaApiKey);
+
+      this._communicator
+        .whenReceive(MessageBus.EVENTS_PUBLIC.GET_CYBERTONICA_TID)
+        .thenRespond(() => from(this._cybertonica.getTransactionId()));
     }
   }
 
