@@ -184,8 +184,8 @@
           merchantCapabilities: ['supports3DS', 'supportsCredit', 'supportsDebit'],
           requestTypes: ['AUTH'],
           supportedNetworks: [],
-          requiredBillingContactFields: ["postalAddress"],
-          requiredShippingContactFields: ["postalAddress","name", "phone", "email"],
+          requiredBillingContactFields: ['postalAddress'],
+          requiredShippingContactFields: ['postalAddress', 'name', 'phone', 'email'],
           total: {
             label: 'Secure Trading Merchant',
             amount: '10.00'
@@ -209,6 +209,10 @@
         settings: {
           displayName: 'My Test Site'
         }
+      });
+
+      st.Cybertonica().then(function(response) {
+        console.error(response);
       });
 
       document.getElementById('example-form-amount').addEventListener('input', function() {
