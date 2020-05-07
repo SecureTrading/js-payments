@@ -83,6 +83,7 @@ export class CardinalCommerce {
   private acquireCardinalCommerceTokens(): Observable<ICardinalCommerceTokens> {
     return this.tokenProvider.getTokens().pipe(
       tap(tokens => (this.cardinalTokens = tokens)),
+      tap(tokens => console.error(tokens)),
       tap(tokens =>
         this.messageBus.publish({
           type: MessageBus.EVENTS_PUBLIC.CARDINAL_COMMERCE_TOKENS_ACQUIRED,
