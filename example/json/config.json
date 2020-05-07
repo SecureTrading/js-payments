@@ -22,10 +22,8 @@
     "placement": "st-apple-pay"
   },
   "buttonId": "merchant-submit-button",
-  "bypassCards": [
-    "PIBA"
-  ],
-  "cachetoken": "",
+  "bypassCards": ["PIBA"],
+  "cancelCallback": null,
   "componentIds": {
     "animatedCard": "",
     "cardNumber": "",
@@ -39,10 +37,11 @@
     "paymentTypes": [],
     "startOnLoad": false
   },
-  "cybertonicaApiKey": "test",
+  "cybertonicaApiKey": "stfs",
   "datacenterurl": "",
   "deferInit": false,
   "disableNotification": false,
+  "errorCallback": null,
   "fieldsToSubmit": [
     "pan",
     "expirydate",
@@ -53,7 +52,7 @@
     "cachetoken": "",
     "threedinit": ""
   },
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4NzcyMjkxOC4wOTY0MDc0LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.GFmp-vZp2YZZtCoDCIVKyX8N6qm8PuVxtERZ64O7A5Y",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4ODY3NTI5MC44NDE1LCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIxMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.SUey1XlW4GwDDDkoVh2QAGPhQEbzWJDy2QbDyr_c5fg",
   "livestatus": 0,
   "origin": "",
   "panIcon": true,
@@ -61,7 +60,6 @@
     "expirydate": "MM/YY",
     "securitycode": "***"
   },
-  "requestTypes": [],
   "styles": {
     "defaultStyles": {
       "background-color-input": "AliceBlue"
@@ -85,12 +83,12 @@
       "color-error": "#3358FF"
     }
   },
+  "submitCallback": null,
   "submitFields": [],
   "submitOnSuccess": false,
   "submitOnError": false,
   "submitOnCancel": true,
-  "submitCallback": "",
-  "threedinit": "",
+  "successCallback": null,
   "translations": {
     "An error occurred": "Wystąpił błąd"
   },

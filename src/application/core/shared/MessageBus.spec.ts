@@ -5,6 +5,7 @@ import { FrameIdentifier } from '../../../shared/services/message-bus/FrameIdent
 import { FrameAccessor } from '../../../shared/services/message-bus/FrameAccessor';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
+import { EMPTY } from 'rxjs';
 
 describe('MessageBus', () => {
   let communicatorMock: InterFrameCommunicator;
@@ -18,6 +19,9 @@ describe('MessageBus', () => {
     framesHubMock = mock(FramesHub);
     frameIdentifierMock = mock(FrameIdentifier);
     frameAccessorMock = mock(FrameAccessor);
+
+    when(communicatorMock.incomingEvent$).thenReturn(EMPTY);
+
     messageBus = new MessageBus(
       instance(communicatorMock),
       instance(framesHubMock),

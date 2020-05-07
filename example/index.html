@@ -174,12 +174,50 @@
 
       var st = ST(stConfig);
       st.Components(stConfig.components);
-      st.ApplePay(stConfig.applePay);
-      st.VisaCheckout(stConfig.visaCheckout);
+      st.ApplePay({
+        buttonStyle: 'white-outline',
+        buttonText: 'donate',
+        merchantId: 'merchant.net.securetrading.test',
+        paymentRequest: {
+          countryCode: 'US',
+          currencyCode: 'USD',
+          merchantCapabilities: ['supports3DS', 'supportsCredit', 'supportsDebit'],
+          requestTypes: ['AUTH'],
+          supportedNetworks: [],
+          requiredBillingContactFields: ['postalAddress'],
+          requiredShippingContactFields: ['postalAddress', 'name', 'phone', 'email'],
+          total: {
+            label: 'Secure Trading Merchant',
+            amount: '10.00'
+          }
+        },
+        placement: 'st-apple-pay'
+      });
+      st.VisaCheckout({
+        buttonSettings: {
+          size: '154',
+          'color': 'neutral'
+        },
+        livestatus: 0,
+        merchantId: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4',
+        paymentRequest: {
+          'currencyCode': 'GBP',
+          'subtotal': '10.99',
+          'total': '10.99'
+        },
+        placement: 'st-visa-checkout',
+        settings: {
+          displayName: 'My Test Site'
+        }
+      });
+
+      st.Cybertonica().then(function(response) {
+        console.error(response);
+      });
 
       document.getElementById('example-form-amount').addEventListener('input', function() {
         st.updateJWT(
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4NTE1Mjk2MC4xNjAyNzkzLCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIxMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.sq_hCFSERIQySXv37F-6W62DBRgYRJTFNk1-8TrvhH8'
+          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4ODE1MzMxNC4wODc3MjIsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdF9qYW1lczM4NjQxIiwibG9jYWxlIjoiZW5fR0IifX0.B59usWwcq4OeC-1r0a6OlO27mXNb2bwXGb9T6e7lpo4'
         );
       });
     }

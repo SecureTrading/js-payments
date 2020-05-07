@@ -15,7 +15,6 @@ export const DefaultConfig: IConfig = {
   applePay: {},
   buttonId: '',
   bypassCards: [],
-  cachetoken: '',
   cancelCallback: null,
   componentIds: DefaultComponentsIds,
   components: DefaultComponents,
@@ -32,14 +31,12 @@ export const DefaultConfig: IConfig = {
   origin: window.location.origin,
   panIcon: false,
   placeholders: DefaultPlaceholders,
-  requestTypes: DefaultRequestTypes,
   styles: {},
   submitCallback: null,
   submitFields: DefaultSubmitFields,
   submitOnError: false,
   submitOnSuccess: true,
   successCallback: null,
-  threedinit: '',
   translations: {},
   visaCheckout: {}
 };

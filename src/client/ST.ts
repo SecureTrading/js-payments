@@ -38,6 +38,8 @@ import { BrowserSessionStorage } from '../shared/services/storage/BrowserSession
 import { Notification } from '../application/core/shared/Notification';
 import './../styles/notification.css';
 import { ConfigProvider } from '../application/core/services/ConfigProvider';
+import { switchMap, first } from 'rxjs/operators';
+import { from } from 'rxjs';
 import { NotificationService } from './classes/notification/NotificationService';
 
 @Service()
@@ -75,6 +77,7 @@ class ST {
       this.off('error');
     }
   }
+
   set cancelCallback(callback: (event: IErrorEvent) => void) {
     if (callback) {
       this.on('cancel', callback);
@@ -137,14 +140,42 @@ class ST {
 
   public ApplePay(config: IApplePayConfig): ApplePay {
     const { applepay } = this.Environment();
-
+    this._config = this._configService.update({
+      ...this._config,
+      applePay: {
+        ...this._config.applePay,
+        ...(config || {})
+      }
+    });
     return new applepay(this._configProvider, this._communicator);
   }
 
   public VisaCheckout(config: IVisaConfig): VisaCheckout {
     const { visa } = this.Environment();
+    this._config = this._configService.update({
+      ...this._config,
+      visaCheckout: {
+        ...this._config.visaCheckout,
+        ...(config || {})
+      }
+    });
 
     return new visa(this._configProvider, this._communicator, this._messageBus, this._notificationService);
+  }
+
+  public Cybertonica(): Promise<string> {
+    return new Promise(resolve =>
+      this._framesHub
+        .waitForFrame(Selectors.CONTROL_FRAME_IFRAME)
+        .pipe(
+          switchMap((controlFrame: string) =>
+            from(this._communicator.query({ type: MessageBus.EVENTS_PUBLIC.GET_CYBERTONICA_TID }, controlFrame))
+          )
+        )
+        .subscribe((tid: string) => {
+          resolve(tid);
+        })
+    );
   }
 
   public updateJWT(jwt: string): void {

@@ -38,7 +38,12 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
       total: {
         amount: Joi.string(),
         label: Joi.string()
-      }
+      },
+      requiredBillingContactFields: Joi.array().items(Joi.string()),
+      requiredShippingContactFields: Joi.array().items(Joi.string()),
+      requestTypes: Joi.array().items(
+        Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
+      )
     },
     placement: Joi.string()
   },
@@ -46,7 +51,6 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   bypassCards: Joi.array().items(
     Joi.string().valid('AMEX', 'ASTROPAYCARD', 'DINERS', 'DISCOVER', 'JCB', 'MASTERCARD', 'MAESTRO', 'PIBA', 'VISA')
   ),
-  cachetoken: Joi.string().allow(''),
   cancelCallback: Joi.any(),
   componentIds: Joi.object()
     .keys({
@@ -84,9 +88,6 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   jwt: Joi.string().required(),
   livestatus: Joi.number().valid(0, 1),
   origin: Joi.string().allow(''),
-  requestTypes: Joi.array().items(
-    Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
-  ),
   panIcon: Joi.boolean(),
   placeholders: Joi.object().keys({
     pan: Joi.string().allow(''),
@@ -100,24 +101,64 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   submitOnCancel: Joi.boolean(),
   submitOnError: Joi.boolean(),
   submitOnSuccess: Joi.boolean(),
-  threedinit: Joi.string().allow(''),
   translations: Joi.object(),
   visaCheckout: {
-    buttonSettings: {
-      color: Joi.string(),
-      size: Joi.string()
-    },
+    buttonSettings: Joi.object().keys({
+      color: Joi.string().allow('neutral', 'standard'),
+      size: Joi.number(),
+      height: Joi.number(),
+      width: Joi.number(),
+      locale: Joi.string(),
+      cardBrands: Joi.string(),
+      acceptCanadianVisaDebit: Joi.string(),
+      cobrand: Joi.string()
+    }),
     livestatus: Joi.number().valid(0, 1),
     merchantId: Joi.string(),
-    paymentRequest: {
-      subtotal: Joi.string()
-    },
+    paymentRequest: Joi.object().keys({
+      merchantRequestId: Joi.string().allow(''),
+      currencyCode: Joi.string().allow(''),
+      subtotal: Joi.string().allow(''),
+      shippingHandling: Joi.string().allow(''),
+      tax: Joi.string().allow(''),
+      discount: Joi.string().allow(''),
+      giftWrap: Joi.string().allow(''),
+      misc: Joi.string().allow(''),
+      total: Joi.string().allow(''),
+      orderId: Joi.string().allow(''),
+      description: Joi.string().allow(''),
+      promoCode: Joi.string().allow(''),
+      customData: Joi.any()
+    }),
     placement: Joi.string(),
     requestTypes: Joi.array().items(
       Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
     ),
-    settings: {
-      displayName: Joi.string()
-    }
+    settings: Joi.object().keys({
+      locale: Joi.string(),
+      countryCode: Joi.string(),
+      displayName: Joi.string(),
+      websiteUrl: Joi.string(),
+      customerSupportUrl: Joi.string(),
+      enableUserDataPrefill: Joi.boolean(),
+      shipping: Joi.object().keys({
+        acceptedRegions: Joi.array(),
+        collectShipping: Joi.string().allow('true', 'false')
+      }),
+      payment: Joi.object().keys({
+        cardBrands: Joi.array(),
+        acceptCanadianVisaDebit: Joi.string().allow('true', 'false'),
+        billingCountries: Joi.array()
+      }),
+      review: Joi.object().keys({
+        message: Joi.string(),
+        buttonAction: Joi.string()
+      }),
+      threeDSSetup: Joi.object().keys({
+        threeDSActive: Joi.string().allow('true', 'false'),
+        threeDSSuppressChallenge: Joi.string().allow('true', 'false')
+      }),
+      dataLevel: Joi.string()
+    })
   }
 });
