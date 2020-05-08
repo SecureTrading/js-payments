@@ -80,9 +80,10 @@ export class CardFrames extends RegisterFrames {
     this._fieldsToSubmitLength = this.fieldsToSubmit.length;
     this._isCardWithNoCvv = jwt && CardFrames.NO_CVV_CARDS.includes(this._getCardType(jwt));
     this._noFieldConfiguration =
-      this._fieldsToSubmitLength === CardFrames.ONLY_CVV_NUMBER_OF_FIELDS &&
-      this._isCardWithNoCvv &&
-      this.fieldsToSubmit.includes(CardFrames.SECURITY_CODE_FIELD_NAME);
+      this._fieldsToSubmitLength === 0 ||
+      (this._fieldsToSubmitLength === CardFrames.ONLY_CVV_NUMBER_OF_FIELDS &&
+        this._isCardWithNoCvv &&
+        this.fieldsToSubmit.includes(CardFrames.SECURITY_CODE_FIELD_NAME));
     this._onlyCvvConfiguration =
       this._fieldsToSubmitLength === CardFrames.ONLY_CVV_NUMBER_OF_FIELDS &&
       !this._isCardWithNoCvv &&
