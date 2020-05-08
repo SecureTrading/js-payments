@@ -37,5 +37,5 @@ export interface IConfig {
   submitOnSuccess?: boolean;
   successCallback?: any;
   translations?: {};
-  visaCheckout?: IVisaCheckout | {};
+  visaCheckout?: IVisaCheckout;
 }

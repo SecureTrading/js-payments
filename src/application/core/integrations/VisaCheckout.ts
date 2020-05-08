@@ -76,7 +76,7 @@ export class VisaCheckout extends Apm {
   private _updatePaymentAndStJwt(config: IConfig, newJwt?: string): void {
     const jwt: string = newJwt ? newJwt : config.jwt;
     this._stJwt = new StJwt(jwt);
-    this._payment = new Payment(jwt, config.datacenterurl);
+    this._payment = new Payment();
   }
 
   private _updateInitObject(): void {
@@ -152,7 +152,7 @@ export class VisaCheckout extends Apm {
   }
 
   private _onCancel(): void {
-    this._notification.warning(Language.translations.PAYMENT_CANCELLED);
+    this._notification.cancel(Language.translations.PAYMENT_CANCELLED);
     GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment canceled');
   }
 

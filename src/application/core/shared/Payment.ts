@@ -4,7 +4,6 @@ import { ICard } from '../models/ICard';
 import { IMerchantData } from '../models/IMerchantData';
 import { IWallet } from '../models/IWallet';
 import { IWalletVerify } from '../models/IWalletVerify';
-import { StJwt } from './StJwt';
 import { Validation } from './Validation';
 import { Container } from 'typedi';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
@@ -14,25 +13,21 @@ export class Payment {
   private _cardinalCommerceCacheToken: string;
   private _notification: NotificationService;
   private _stTransport: StTransport;
-  private _threeDInitRequestBody: IStRequest;
   private _validation: Validation;
   private _cybertonica: Cybertonica;
   private readonly _walletVerifyRequest: IStRequest;
 
-  constructor(jwt: string, gatewayUrl: string) {
+  constructor() {
     this._notification = Container.get(NotificationService);
     this._cybertonica = Container.get(Cybertonica);
-    this._stTransport = new StTransport({ jwt, gatewayUrl });
+    this._stTransport = Container.get(StTransport);
     this._validation = new Validation();
     this._walletVerifyRequest = {
       requesttypedescriptions: ['WALLETVERIFY']
     };
-    this._threeDInitRequestBody = {
-      requesttypedescriptions: ['JSINIT']
-    };
   }
 
-  public bypassInitRequest(cachetoken: string) {
+  public setCardinalCommerceCacheToken(cachetoken: string) {
     this._cardinalCommerceCacheToken = cachetoken;
   }
 
@@ -55,17 +50,6 @@ export class Payment {
     }
 
     return this._stTransport.sendRequest(processPaymentRequestBody);
-  }
-
-  public threeDInitRequest() {
-    return this._stTransport.sendRequest(this._threeDInitRequestBody).then((result: { jwt: string; response: any }) => {
-      const {
-        payload: { jwt, response }
-      } = new StJwt(result.jwt);
-      const threeDInitResult = { jwt, response: response[0] };
-      this._cardinalCommerceCacheToken = result.response.cachetoken;
-      return threeDInitResult;
-    });
   }
 
   public async threeDQueryRequest(requestTypes: string[], card: ICard, merchantData: IMerchantData): Promise<object> {

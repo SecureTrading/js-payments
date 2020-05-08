@@ -193,10 +193,11 @@ describe('SecurityCode', () => {
 
   // given
   describe('_sendState', () => {
-    const { securityCodeInstance } = securityCodeFixture();
+    const { securityCodeInstance, messageBus } = securityCodeFixture();
     // @ts-ignore
-    securityCodeInstance._messageBus.publish = jest.fn();
     it('should publish method has been called', () => {
+      spyOn(messageBus, 'publish');
+
       // @ts-ignore
       securityCodeInstance._sendState();
       // @ts-ignore
@@ -260,5 +261,7 @@ function securityCodeFixture() {
 
   const messageBus: MessageBus = (new MessageBusMock() as unknown) as MessageBus;
   const securityCodeInstance = new SecurityCode(instance(configProvider), messageBus);
+  // @ts-ignore
+
   return { securityCodeInstance, configProvider, communicatorMock, messageBus };
 }
