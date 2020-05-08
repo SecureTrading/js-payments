@@ -167,14 +167,6 @@ export class CardFrames extends RegisterFrames {
     }
   }
 
-  private _getSecurityCodeLength(jwt: string): number {
-    const cardDetails = JwtDecode(jwt) as any;
-    if (cardDetails.payload.pan) {
-      const { cvcLength } = iinLookup.lookup(cardDetails.payload.pan);
-      return cvcLength.slice(-1)[0];
-    }
-  }
-
   private _initCardNumberFrame(styles: {}): void {
     this._cardNumber = new Element();
     this._cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, styles, this.params);
@@ -308,6 +300,7 @@ export class CardFrames extends RegisterFrames {
   private _submitFormListener(): void {
     if (this._submitButton) {
       this._submitButton.addEventListener(CardFrames.CLICK_EVENT, () => {
+        this._disableSubmitButton(FormState.BLOCKED);
         this._publishSubmitEvent();
       });
     }
