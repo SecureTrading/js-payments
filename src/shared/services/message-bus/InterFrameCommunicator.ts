@@ -81,8 +81,7 @@ export class InterFrameCommunicator {
                 take(1),
                 map((response: T) => new ResponseMessage(response, queryEvent.queryId, queryEvent.sourceFrame))
               )
-            ),
-            takeUntil(this.close$)
+            )
           )
           .subscribe((response: ResponseMessage<T>) => {
             this.send(response, response.queryFrame);

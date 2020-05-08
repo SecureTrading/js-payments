@@ -34,7 +34,7 @@ export class FramesHub {
       .subscribe(this.activeFrame$);
 
     fromEventFrame$
-      .pipe(withLatestFrom(this.activeFrame$), takeUntil(this.communicator.communicationClosed$))
+      .pipe(withLatestFrom(this.activeFrame$))
       .subscribe(([newFrame, activeFrames]) => this.onFrameReady(newFrame, activeFrames));
 
     this.communicator.incomingEvent$.pipe(ofType(PUBLIC_EVENTS.DESTROY), mapTo([])).subscribe(this.activeFrame$);
