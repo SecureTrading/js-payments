@@ -21,6 +21,7 @@ import { IMerchantData } from '../../models/IMerchantData';
 import { StTransport } from '../../services/StTransport.class';
 import { CardinalProvider } from './CardinalProvider';
 import { IAuthorizePaymentResponse } from '../../models/IAuthorizePaymentResponse';
+import { ICard } from '../../models/ICard';
 
 @Service()
 export class CardinalCommerce {
@@ -56,12 +57,17 @@ export class CardinalCommerce {
     return this.cardinal$;
   }
 
-  performThreeDQuery(requestTypes: string[], merchantData: IMerchantData): Observable<IAuthorizePaymentResponse> {
+  performThreeDQuery(
+    requestTypes: string[],
+    card: ICard,
+    merchantData: IMerchantData
+  ): Observable<IAuthorizePaymentResponse> {
     const threeDQueryRequestBody = {
       cachetoken: this.cardinalTokens.cacheToken,
       requesttypedescriptions: requestTypes,
       termurl: 'https://termurl.com', // TODO this shouldn't be needed but currently the backend needs this
-      ...merchantData
+      ...merchantData,
+      ...card
     };
 
     return from(this.stTransport.sendRequest(threeDQueryRequestBody)).pipe(
