@@ -10,6 +10,9 @@ import { ConfigProvider } from '../../core/services/ConfigProvider';
 import { mock, instance as mockInstance, when, anyString } from 'ts-mockito';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
 import { Cybertonica } from '../../core/integrations/Cybertonica';
+import { CardinalCommerce } from '../../core/integrations/cardinal-commerce/CardinalCommerce';
+import { IConfig } from '../../../shared/model/config/IConfig';
+import { of } from 'rxjs';
 
 jest.mock('../../../../src/application/core/shared/Payment');
 
@@ -89,90 +92,6 @@ describe('ControlFrame', () => {
       instance._formFieldChangeEvent(messageBusEvent.type, instance._formFields.securityCode);
       // @ts-ignore
       expect(ControlFrame._setFormFieldValue).toHaveBeenCalled();
-    });
-  });
-
-  // given
-  describe('_initSetRequestTypesEvent()', () => {
-    // then
-    it('should call _onSetRequestTypesEvent when SET_REQUEST_TYPES event has been called', () => {
-      // @ts-ignore
-      instance._setRequestTypes = jest.fn();
-      messageBusEvent.type = MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES;
-      // @ts-ignore
-      instance._setRequestTypesEvent();
-      // @ts-ignore
-      expect(instance._setRequestTypes).toHaveBeenCalled();
-    });
-  });
-
-  // given
-  describe('_initBypassInitEvent()', () => {
-    // then
-    it('should call _onBypassInitEvent when BY_PASS_INIT event has been called', () => {
-      // @ts-ignore
-      instance._bypassInit = jest.fn();
-      messageBusEvent.type = MessageBus.EVENTS_PUBLIC.BY_PASS_INIT;
-      // @ts-ignore
-      instance._bypassInitEvent();
-      // @ts-ignore
-      expect(instance._bypassInit).toHaveBeenCalled();
-    });
-  });
-
-  // given
-  describe('_initThreedinitEvent()', () => {
-    // then
-    it('should call _onThreeDInitEvent when THREEDINIT event has been called', () => {
-      // @ts-ignore
-      instance._threeDInit = jest.fn();
-      messageBusEvent.type = MessageBus.EVENTS_PUBLIC.THREEDINIT_REQUEST;
-      // @ts-ignore
-      instance._threeDInitEvent();
-      // @ts-ignore
-      expect(instance._threeDInit).toHaveBeenCalled();
-    });
-  });
-
-  // given
-  describe('_initLoadCardinalEvent()', () => {
-    // then
-    it('should call _onLoadCardinal when LOAD_CARDINAL event has been called', () => {
-      // @ts-ignore
-      instance._onLoadCardinal = jest.fn();
-      messageBusEvent.type = MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL;
-      // @ts-ignore
-      instance._loadCardinalEvent();
-      // @ts-ignore
-      expect(instance._onLoadCardinal).toHaveBeenCalled();
-    });
-  });
-
-  // given
-  describe('_initProcessPaymentsEvent()', () => {
-    // then
-    it('should call _onProcessPaymentEvent when PROCESS_PAYMENTS event has been called', () => {
-      // @ts-ignore
-      instance._onProcessPayments = jest.fn();
-      messageBusEvent.type = MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS;
-      // @ts-ignore
-      instance._processPaymentsEvent();
-      // @ts-ignore
-      expect(instance._onProcessPayments).toHaveBeenCalled();
-    });
-  });
-
-  // given
-  describe('_initSubmitFormEvent()', () => {
-    // then
-    it('should call _onSubmit when SUBMIT_FORM event has been called', () => {
-      // @ts-ignore
-      instance._onSubmit = jest.fn();
-      messageBusEvent.type = MessageBus.EVENTS_PUBLIC.SUBMIT_FORM;
-      // @ts-ignore
-      instance._submitFormEvent();
-      // @ts-ignore
-      expect(instance._onSubmit).toHaveBeenCalled();
     });
   });
 
@@ -266,23 +185,6 @@ describe('ControlFrame', () => {
   });
 
   // given
-  describe('_onLoadCardinal', () => {
-    const { instance } = controlFrameFixture();
-
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._onLoadCardinal();
-    });
-
-    // then
-    it('should set _isPaymentReady to true', () => {
-      // @ts-ignore
-      expect(instance._isPaymentReady).toEqual(true);
-    });
-  });
-
-  // given
   describe.skip('_onThreeDInitEvent', () => {
     const { instance } = controlFrameFixture();
 
@@ -298,26 +200,6 @@ describe('ControlFrame', () => {
     it('should call _requestThreeDInit', () => {
       // @ts-ignore
       expect(instance._requestThreeDInit).toHaveBeenCalled();
-    });
-  });
-
-  // given
-  describe('_onBypassInitEvent', () => {
-    const { instance } = controlFrameFixture();
-    const cachetoken = '893h12und9n283n923';
-
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._payment.bypassInitRequest = jest.fn();
-      // @ts-ignore
-      instance._bypassInit(cachetoken);
-    });
-
-    // then
-    it('should call _requestThreeDInit', () => {
-      // @ts-ignore
-      expect(instance._payment.bypassInitRequest).toHaveBeenCalledWith(cachetoken);
     });
   });
 
@@ -428,23 +310,6 @@ describe('ControlFrame', () => {
       instance._payment.processPayment = jest.fn().mockRejectedValueOnce(new Promise(rejected => rejected()));
       // @ts-ignore
       instance._processPayment(data);
-    });
-  });
-
-  // given
-  describe('_requestBypassInit', () => {
-    const { instance } = controlFrameFixture();
-    const cachetoken = 'somecachetoken1234';
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._bypassInit(cachetoken);
-    });
-
-    // then
-    it('should call bypassInitRequest', () => {
-      // @ts-ignore
-      expect(instance._payment.bypassInitRequest).toHaveBeenCalledWith(cachetoken);
     });
   });
 
@@ -607,10 +472,13 @@ function controlFrameFixture() {
   const configProvider: ConfigProvider = mock(ConfigProvider);
   const notification: NotificationService = mock(NotificationService);
   const cybertonica: Cybertonica = mock(Cybertonica);
+  const cardinalCommerce: CardinalCommerce = mock(CardinalCommerce);
 
   when(communicator.whenReceive(anyString())).thenReturn({
     thenRespond: () => undefined
   });
+
+  when(configProvider.getConfig$()).thenReturn(of({} as IConfig));
 
   const instance = new ControlFrame(
     mockInstance(localStorage),
@@ -618,7 +486,8 @@ function controlFrameFixture() {
     mockInstance(communicator),
     mockInstance(configProvider),
     mockInstance(notification),
-    mockInstance(cybertonica)
+    mockInstance(cybertonica),
+    mockInstance(cardinalCommerce)
   );
   const messageBusEvent = {
     type: ''

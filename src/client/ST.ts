@@ -1,3 +1,5 @@
+import './../styles/notification.css';
+import './../styles/_control-frame.css';
 import JwtDecode from 'jwt-decode';
 import 'location-origin';
 import { debounce } from 'lodash';
@@ -10,8 +12,6 @@ import { MerchantFields } from './classes/MerchantFields';
 import { StCodec } from '../application/core/services/StCodec.class';
 import { ApplePay } from '../application/core/integrations/ApplePay';
 import { ApplePayMock } from '../application/core/integrations/ApplePayMock';
-import { CardinalCommerce } from '../application/core/integrations/CardinalCommerce';
-import { CardinalCommerceMock } from '../application/core/integrations/CardinalCommerceMock';
 import { GoogleAnalytics } from '../application/core/integrations/GoogleAnalytics';
 import { VisaCheckout } from '../application/core/integrations/VisaCheckout';
 import { VisaCheckoutMock } from '../application/core/integrations/VisaCheckoutMock';
@@ -23,7 +23,6 @@ import { IVisaConfig } from '../application/core/models/IVisaConfig';
 import { MessageBus } from '../application/core/shared/MessageBus';
 import { Translator } from '../application/core/shared/Translator';
 import { environment } from '../environments/environment';
-import { PaymentEvents } from '../application/core/models/constants/PaymentEvents';
 import { Selectors } from '../application/core/shared/Selectors';
 import { Service, Inject, Container } from 'typedi';
 import { CONFIG } from '../application/core/dependency-injection/InjectionTokens';
@@ -36,8 +35,12 @@ import { FramesHub } from '../shared/services/message-bus/FramesHub';
 import { BrowserLocalStorage } from '../shared/services/storage/BrowserLocalStorage';
 import { BrowserSessionStorage } from '../shared/services/storage/BrowserSessionStorage';
 import { Notification } from '../application/core/shared/Notification';
-import './../styles/notification.css';
+import { ofType } from '../shared/services/message-bus/operators/ofType';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { ConfigProvider } from '../application/core/services/ConfigProvider';
+import { switchMap, first } from 'rxjs/operators';
+import { from } from 'rxjs';
 
 @Service()
 class ST {
@@ -45,11 +48,13 @@ class ST {
   private static JWT_NOT_SPECIFIED_MESSAGE: string = 'Jwt has not been specified';
   private static LOCALE_STORAGE: string = 'locale';
   private static MERCHANT_TRANSLATIONS_STORAGE: string = 'merchantTranslations';
+  private static readonly MODAL_CONTROL_FRAME_CLASS = 'modal';
   private _cardFrames: CardFrames;
   private _commonFrames: CommonFrames;
   private _googleAnalytics: GoogleAnalytics;
   private _merchantFields: MerchantFields;
   private _translation: Translator;
+  private _destroy$: Subject<void> = new Subject();
 
   set submitCallback(callback: (event: ISubmitEvent) => void) {
     if (callback) {
@@ -98,7 +103,7 @@ class ST {
     this._merchantFields = new MerchantFields();
   }
 
-  public on(event: string, callback: any): void {
+  public on(event: 'success' | 'error' | 'submit' | 'cancel', callback: any): void {
     const events = {
       cancel: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_CANCEL_CALLBACK,
       success: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK,
@@ -106,9 +111,7 @@ class ST {
       submit: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUBMIT_CALLBACK
     };
     // @ts-ignore
-    this._messageBus.subscribe(events[event], data => {
-      callback(data);
-    });
+    this._messageBus.pipe(ofType(events[event]), takeUntil(this._destroy$)).subscribe(callback);
   }
 
   public off(event: string): void {
@@ -125,7 +128,6 @@ class ST {
         }
       });
       this._commonFrames.requestTypes = this._config.components.requestTypes;
-      this.CardinalCommerce();
       await this._communicator.query({ type: MessageBus.EVENTS_PUBLIC.CONFIG_CHECK }, controlFrame);
       this.CardFrames();
       this._cardFrames.init();
@@ -158,6 +160,21 @@ class ST {
     return new visa(this._configProvider, this._communicator);
   }
 
+  public Cybertonica(): Promise<string> {
+    return new Promise(resolve =>
+      this._framesHub
+        .waitForFrame(Selectors.CONTROL_FRAME_IFRAME)
+        .pipe(
+          switchMap((controlFrame: string) =>
+            from(this._communicator.query({ type: MessageBus.EVENTS_PUBLIC.GET_CYBERTONICA_TID }, controlFrame))
+          )
+        )
+        .subscribe((tid: string) => {
+          resolve(tid);
+        })
+    );
+  }
+
   public updateJWT(jwt: string): void {
     if (jwt) {
       this._config = { ...this._config, jwt };
@@ -179,13 +196,8 @@ class ST {
       true
     );
 
-    const cardinal = (window as any).Cardinal;
-
-    if (cardinal) {
-      cardinal.off(PaymentEvents.SETUP_COMPLETE);
-      cardinal.off(PaymentEvents.VALIDATED);
-    }
-
+    this._destroy$.next();
+    this._destroy$.complete();
     this._communicator.close();
   }
 
@@ -200,19 +212,7 @@ class ST {
     this._commonFrames.init();
     this.displayLiveStatus(Boolean(this._config.livestatus));
     this.watchForFrameUnload();
-  }
-
-  private CardinalCommerce(): CardinalCommerce {
-    const { cardinal } = this.Environment();
-    return new cardinal(
-      this._config.components.startOnLoad,
-      this._config.jwt,
-      this._config.components.requestTypes,
-      this._config.livestatus,
-      this._config.init.cachetoken,
-      this._config.init.threedinit,
-      this._config.bypassCards
-    );
+    this.initControlFrameModal();
   }
 
   private CardFrames(): void {
@@ -224,11 +224,8 @@ class ST {
       this._config.components.paymentTypes,
       this._config.components.defaultPaymentType,
       this._config.animatedCard,
-      this._config.deferInit,
       this._config.buttonId,
-      this._config.components.startOnLoad,
-      this._config.fieldsToSubmit,
-      this._config.bypassCards
+      this._config.fieldsToSubmit
     );
   }
 
@@ -248,10 +245,9 @@ class ST {
     );
   }
 
-  private Environment(): { applepay: any; cardinal: any; visa: any } {
+  private Environment(): { applepay: any; visa: any } {
     return {
       applepay: environment.testEnvironment ? ApplePayMock : ApplePay,
-      cardinal: environment.testEnvironment ? CardinalCommerceMock : CardinalCommerce,
       visa: environment.testEnvironment ? VisaCheckoutMock : VisaCheckout
     };
   }
@@ -314,6 +310,18 @@ class ST {
     if (this._config.cancelCallback) {
       this.cancelCallback = this._config.cancelCallback;
     }
+  }
+
+  private initControlFrameModal(): void {
+    const className = ST.MODAL_CONTROL_FRAME_CLASS;
+
+    this._messageBus
+      .pipe(ofType(MessageBus.EVENTS_PUBLIC.CONTROL_FRAME_SHOW), takeUntil(this._destroy$))
+      .subscribe(() => document.getElementById(Selectors.CONTROL_FRAME_IFRAME).classList.add(className));
+
+    this._messageBus
+      .pipe(ofType(MessageBus.EVENTS_PUBLIC.CONTROL_FRAME_HIDE), takeUntil(this._destroy$))
+      .subscribe(() => document.getElementById(Selectors.CONTROL_FRAME_IFRAME).classList.remove(className));
   }
 }
 

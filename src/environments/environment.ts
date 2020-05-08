@@ -38,7 +38,7 @@ export const environment = {
     TEST_SDK: 'https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js'
   },
   CYBERTONICA: {
-    CYBERTONICA_LIVE_URL: 'https://pxl.cybertonica.com/js/v2/beacon.min.js'
+    CYBERTONICA_LIVE_URL: 'https://cyber.securetrading.net/js/v2/afeasdwqwdasd.js'
   },
   production: false,
   testEnvironment: false,

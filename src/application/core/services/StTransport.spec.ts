@@ -1,8 +1,11 @@
 import each from 'jest-each';
 import { GlobalWithFetchMock } from 'jest-fetch-mock';
-import { Language } from '../shared/Language';
 import { StTransport } from './StTransport.class';
 import { Utils } from '../shared/Utils';
+import { ConfigProvider } from './ConfigProvider';
+import { mock, instance as mockInstance, when } from 'ts-mockito';
+import { IConfig } from '../../../shared/model/config/IConfig';
+import { StCodec } from './StCodec.class';
 
 const customGlobal: GlobalWithFetchMock = global as GlobalWithFetchMock;
 customGlobal.fetch = require('jest-fetch-mock');
@@ -12,11 +15,11 @@ jest.mock('../../../../src/application/core/shared/Notification');
 
 // given
 describe('StTransport class', () => {
-  const DEFAULT_PARAMS = {
-    gatewayUrl: 'https://example.com',
+  const config = {
+    datacenterurl: 'https://example.com',
     jwt:
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTU3NDIzNDgyLjk0MzE1MywicGF5bG9hZCI6eyJjdXN0b21lcnRvd24iOiJCYW5nb3IiLCJiaWxsaW5ncG9zdGNvZGUiOiJURTEyIDNTVCIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJjdXN0b21lcnByZW1pc2UiOiIxMiIsImJpbGxpbmdsYXN0bmFtZSI6Ik5hbWUiLCJsb2NhbGUiOiJlbl9HQiIsImJhc2VhbW91bnQiOiIxMDAwIiwiYmlsbGluZ2VtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImJpbGxpbmdwcmVtaXNlIjoiMTIiLCJzaXRlcmVmZXJlbmNlIjoidGVzdDEiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImJpbGxpbmdzdHJlZXQiOiJUZXN0IHN0cmVldCIsImN1c3RvbWVyc3RyZWV0IjoiVGVzdCBzdHJlZXQiLCJjdXN0b21lcnBvc3Rjb2RlIjoiVEUxMiAzU1QiLCJjdXN0b21lcmxhc3RuYW1lIjoiTmFtZSIsImJpbGxpbmd0ZWxlcGhvbmUiOiIwMTIzNCAxMTEyMjIiLCJiaWxsaW5nZmlyc3RuYW1lIjoiVGVzdCIsImJpbGxpbmd0b3duIjoiQmFuZ29yIiwiYmlsbGluZ3RlbGVwaG9uZXR5cGUiOiJNIn19.08q3gem0kW0eODs5iGQieKbpqu7pVcvQF2xaJIgtrnc'
-  };
+  } as IConfig;
   const fetchRetryObject = {
     url: 'https://example.com',
     options: {},
@@ -34,10 +37,28 @@ describe('StTransport class', () => {
   };
 
   let instance: StTransport;
+  let configProviderMock = mock(ConfigProvider);
   let mockFT: jest.Mock;
+  let codec: StCodec;
 
   beforeEach(() => {
-    instance = new StTransport(DEFAULT_PARAMS);
+    when(configProviderMock.getConfig()).thenReturn(config);
+    instance = new StTransport(mockInstance(configProviderMock));
+    // This effectively creates a MVP codec so that we aren't testing all that here
+    // @ts-ignore
+    instance._codec = codec = {
+      encode: jest.fn(x => JSON.stringify(x)),
+      decode: jest.fn(
+        x =>
+          new Promise((resolve, reject) => {
+            if ('json' in x) {
+              resolve(x.json());
+              return;
+            }
+            reject(new Error('codec error'));
+          })
+      )
+    } as StCodec;
   });
 
   // given
@@ -46,17 +67,6 @@ describe('StTransport class', () => {
     beforeEach(() => {
       // @ts-ignore
       instance._fetchRetry = jest.fn();
-      // This effectively creates a MVP codec so that we aren't testing all that here
-      instance.codec.encode = jest.fn(x => JSON.stringify(x));
-      instance.codec.decode = jest.fn(x => {
-        return new Promise((resolve, reject) => {
-          if ('json' in x) {
-            resolve(x.json());
-            return;
-          }
-          reject(new Error('codec error'));
-        });
-      });
       // @ts-ignore
       mockFT = instance._fetchRetry as jest.Mock;
     });
@@ -77,7 +87,7 @@ describe('StTransport class', () => {
       // @ts-ignore
       expect(instance._fetchRetry).toHaveBeenCalledTimes(1);
       // @ts-ignore
-      expect(instance._fetchRetry).toHaveBeenCalledWith(DEFAULT_PARAMS.gatewayUrl, {
+      expect(instance._fetchRetry).toHaveBeenCalledWith(config.datacenterurl, {
         // @ts-ignore
         ...StTransport.DEFAULT_FETCH_OPTIONS,
         body: JSON.stringify(requestObject)
@@ -118,7 +128,7 @@ describe('StTransport class', () => {
     ]).it('should decode the json response', async (mockFetch, expected) => {
       mockFT.mockReturnValue(mockFetch);
       await expect(instance.sendRequest({ requesttypedescription: 'AUTH' })).resolves.toEqual(expected);
-      expect(instance.codec.decode).toHaveBeenCalledWith({
+      expect(codec.decode).toHaveBeenCalledWith({
         json: expect.any(Function)
       });
     });
