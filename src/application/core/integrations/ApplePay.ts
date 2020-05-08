@@ -316,14 +316,10 @@ export class ApplePay {
     this._session.onpaymentauthorized = (event: any) => {
       this.paymentDetails = JSON.stringify(event.payment);
       return this.payment
-        .processPayment(
-          this._requestTypes,
-          {
-            walletsource: this._validateMerchantRequestData.walletsource,
-            wallettoken: this.paymentDetails
-          },
-          DomMethods.parseForm()
-        )
+        .processPayment(this._requestTypes, DomMethods.parseForm(), {
+          walletsource: this._validateMerchantRequestData.walletsource,
+          wallettoken: this.paymentDetails
+        })
         .then((response: any) => {
           const { errorcode, errormessage } = response.response;
           this._handleApplePayError(response.response);

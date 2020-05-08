@@ -1,10 +1,8 @@
 import { IStRequest } from '../models/IStRequest';
 import { StTransport } from '../services/StTransport.class';
-import { ICard } from '../models/ICard';
 import { IMerchantData } from '../models/IMerchantData';
 import { IWallet } from '../models/IWallet';
 import { IWalletVerify } from '../models/IWalletVerify';
-import { StJwt } from './StJwt';
 import { Validation } from './Validation';
 import { Container } from 'typedi';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
@@ -14,7 +12,6 @@ export class Payment {
   private _cardinalCommerceCacheToken: string;
   private _notification: NotificationService;
   private _stTransport: StTransport;
-  private _threeDInitRequestBody: IStRequest;
   private _validation: Validation;
   private _cybertonica: Cybertonica;
   private readonly _walletVerifyRequest: IStRequest;
@@ -27,9 +24,6 @@ export class Payment {
     this._walletVerifyRequest = {
       requesttypedescriptions: ['WALLETVERIFY']
     };
-    this._threeDInitRequestBody = {
-      requesttypedescriptions: ['JSINIT']
-    };
   }
 
   public setCardinalCommerceCacheToken(cachetoken: string) {
@@ -38,15 +32,15 @@ export class Payment {
 
   public async processPayment(
     requestTypes: string[],
-    payment: ICard | IWallet,
     merchantData: IMerchantData,
-    additionalData?: any
+    additionalData?: any,
+    wallet?: IWallet
   ): Promise<object> {
     const processPaymentRequestBody = {
       requesttypedescriptions: requestTypes,
       ...additionalData,
       ...merchantData,
-      ...payment
+      ...wallet
     };
     const cybertonicaTid = await this._cybertonica.getTransactionId();
 
@@ -57,13 +51,12 @@ export class Payment {
     return this._stTransport.sendRequest(processPaymentRequestBody);
   }
 
-  public async threeDQueryRequest(requestTypes: string[], card: ICard, merchantData: IMerchantData): Promise<object> {
+  public async threeDQueryRequest(requestTypes: string[], merchantData: IMerchantData): Promise<object> {
     const threeDQueryRequestBody = {
       cachetoken: this._cardinalCommerceCacheToken,
       requesttypedescriptions: requestTypes,
       termurl: 'https://termurl.com', // TODO this shouldn't be needed but currently the backend needs this
-      ...merchantData,
-      ...card
+      ...merchantData
     };
 
     const cybertonicaTid = await this._cybertonica.getTransactionId();

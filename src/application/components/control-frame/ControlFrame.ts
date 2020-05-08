@@ -272,9 +272,9 @@ export class ControlFrame extends Frame {
   }
 
   private _processPayment(data: IResponseData): void {
-    console.error('PROCESS PAYMENT:', this._postThreeDRequestTypes, this._card);
+    console.error('PROCESS PAYMENT:', this._postThreeDRequestTypes);
     this._payment
-      .processPayment(this._postThreeDRequestTypes, this._card, this._merchantFormData, data)
+      .processPayment(this._postThreeDRequestTypes, this._merchantFormData, data)
       .then(() => {
         this.messageBus.publish(
           {
@@ -325,7 +325,7 @@ export class ControlFrame extends Frame {
     return of({ ...this._merchantFormData }).pipe(
       switchMap(applyCybertonicaTid),
       switchMap(merchantFormData =>
-        this._cardinalCommerce.performThreeDQuery(this._preThreeDRequestTypes, this._card, merchantFormData)
+        this._cardinalCommerce.performThreeDQuery(this._preThreeDRequestTypes, merchantFormData)
       )
     );
   }
