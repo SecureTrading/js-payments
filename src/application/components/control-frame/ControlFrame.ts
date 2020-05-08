@@ -104,7 +104,6 @@ export class ControlFrame extends Frame {
     this._resetJwtEvent();
     this._updateJwtEvent();
     this._initCybertonica();
-    this._initCardinalCommerce();
 
     if (!this._config.deferInit) {
       this._initCardinalCommerce();
