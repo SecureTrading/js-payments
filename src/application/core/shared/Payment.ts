@@ -19,10 +19,10 @@ export class Payment {
   private _cybertonica: Cybertonica;
   private readonly _walletVerifyRequest: IStRequest;
 
-  constructor(jwt: string, gatewayUrl: string) {
+  constructor() {
     this._notification = Container.get(NotificationService);
     this._cybertonica = Container.get(Cybertonica);
-    this._stTransport = new StTransport({ jwt, gatewayUrl });
+    this._stTransport = Container.get(StTransport);
     this._validation = new Validation();
     this._walletVerifyRequest = {
       requesttypedescriptions: ['WALLETVERIFY']
@@ -32,7 +32,7 @@ export class Payment {
     };
   }
 
-  public bypassInitRequest(cachetoken: string) {
+  public setCardinalCommerceCacheToken(cachetoken: string) {
     this._cardinalCommerceCacheToken = cachetoken;
   }
 
@@ -55,17 +55,6 @@ export class Payment {
     }
 
     return this._stTransport.sendRequest(processPaymentRequestBody);
-  }
-
-  public threeDInitRequest() {
-    return this._stTransport.sendRequest(this._threeDInitRequestBody).then((result: { jwt: string; response: any }) => {
-      const {
-        payload: { jwt, response }
-      } = new StJwt(result.jwt);
-      const threeDInitResult = { jwt, response: response[0] };
-      this._cardinalCommerceCacheToken = result.response.cachetoken;
-      return threeDInitResult;
-    });
   }
 
   public async threeDQueryRequest(requestTypes: string[], card: ICard, merchantData: IMerchantData): Promise<object> {

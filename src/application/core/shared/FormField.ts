@@ -34,7 +34,7 @@ export class FormField extends Frame {
     this.onInit();
   }
 
-  public onInit() {
+  public onInit(): void {
     super.onInit();
     this._translator = new Translator(this.params.locale);
     this.validation = new Validation();

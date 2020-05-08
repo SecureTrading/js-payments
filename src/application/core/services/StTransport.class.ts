@@ -1,6 +1,8 @@
-import { IStTransportParams } from '../models/IStTransportParams';
 import { Utils } from '../shared/Utils';
 import { IStRequest, StCodec } from './StCodec.class';
+import { Service } from 'typedi';
+import { ConfigProvider } from './ConfigProvider';
+import { IConfig } from '../../../shared/model/config/IConfig';
 
 /**
  * Establishes connection with ST, defines client.
@@ -14,11 +16,8 @@ import { IStRequest, StCodec } from './StCodec.class';
  *     sitereference: 'test_james38641'
  *   }).then();
  */
+@Service()
 export class StTransport {
-  public get codec() {
-    return this._codec;
-  }
-
   private static DEFAULT_FETCH_OPTIONS = {
     headers: {
       Accept: StCodec.CONTENT_TYPE,
@@ -32,14 +31,11 @@ export class StTransport {
   private static RETRY_LIMIT = 5;
   private static RETRY_TIMEOUT = 10000;
   private static TIMEOUT = 10000;
-  private readonly _codec: StCodec;
-  private _gatewayUrl: string;
   private _throttlingRequests = new Map<string, Promise<object>>();
+  private _config: IConfig;
+  private _codec: StCodec;
 
-  constructor(params: IStTransportParams) {
-    this._gatewayUrl = params.gatewayUrl;
-    this._codec = new StCodec(params.jwt);
-  }
+  constructor(private configProvider: ConfigProvider) {}
 
   /**
    * Perform a JSON API request with ST
@@ -47,7 +43,7 @@ export class StTransport {
    * @return A Promise object that resolves the gateway response
    */
   public async sendRequest(requestObject: IStRequest): Promise<object> {
-    const requestBody = this._codec.encode(requestObject);
+    const requestBody = this.getCodec().encode(requestObject);
 
     if (!this._throttlingRequests.has(requestBody)) {
       this._throttlingRequests.set(requestBody, this.sendRequestInternal(requestBody));
@@ -58,13 +54,16 @@ export class StTransport {
   }
 
   private sendRequestInternal(requestBody: string): Promise<object> {
-    return this._fetchRetry(this._gatewayUrl, {
+    const codec = this.getCodec();
+    const gatewayUrl = this.getConfig().datacenterurl;
+
+    return this._fetchRetry(gatewayUrl, {
       ...StTransport.DEFAULT_FETCH_OPTIONS,
       body: requestBody
     })
-      .then(this._codec.decode)
+      .then(codec.decode)
       .catch(() => {
-        return this._codec.decode({});
+        return codec.decode({});
       });
   }
 
@@ -94,5 +93,22 @@ export class StTransport {
       retries,
       retryTimeout
     );
+  }
+
+  private getConfig(): IConfig {
+    if (!this._config) {
+      this._config = this.configProvider.getConfig();
+    }
+
+    return this._config;
+  }
+
+  private getCodec(): StCodec {
+    if (!this._codec) {
+      const { jwt } = this.getConfig();
+      this._codec = new StCodec(jwt);
+    }
+
+    return this._codec;
   }
 }

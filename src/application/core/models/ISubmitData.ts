@@ -1,7 +1,6 @@
 export interface ISubmitData {
+  [index: string]: string;
   fieldsToSubmit?: string[];
-  bypassCards?: string[];
-  deferInit?: boolean;
   dataInJwt?: boolean;
   requestTypes?: string[];
 }
