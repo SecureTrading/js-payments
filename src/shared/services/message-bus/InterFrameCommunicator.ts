@@ -1,7 +1,7 @@
-import { Container, Inject, Service } from 'typedi';
+import { Container, Service } from 'typedi';
 import { fromEventPattern, Observable, Subject } from 'rxjs';
 import { IMessageBusEvent } from '../../../application/core/models/IMessageBusEvent';
-import { filter, map, share, switchMap, take, takeUntil } from 'rxjs/operators';
+import { filter, map, share, switchMap, take } from 'rxjs/operators';
 import { ofType } from './operators/ofType';
 import { QueryMessage } from './messages/QueryMessage';
 import { ResponseMessage } from './messages/ResponseMessage';

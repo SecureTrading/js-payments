@@ -2,7 +2,7 @@ import { Service } from 'typedi';
 import { InterFrameCommunicator } from './InterFrameCommunicator';
 import { BehaviorSubject, from, Observable, of, Subject } from 'rxjs';
 import { ofType } from './operators/ofType';
-import { distinctUntilChanged, filter, map, mapTo, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { distinctUntilChanged, filter, first, map, mapTo, withLatestFrom } from 'rxjs/operators';
 import { IMessageBusEvent } from '../../../application/core/models/IMessageBusEvent';
 import { Selectors } from '../../../application/core/shared/Selectors';
 import { FrameIdentifier } from './FrameIdentifier';
@@ -37,7 +37,9 @@ export class FramesHub {
       .pipe(withLatestFrom(this.activeFrame$))
       .subscribe(([newFrame, activeFrames]) => this.onFrameReady(newFrame, activeFrames));
 
-    this.communicator.incomingEvent$.pipe(ofType(PUBLIC_EVENTS.DESTROY), mapTo([])).subscribe(this.activeFrame$);
+    this.communicator.incomingEvent$
+      .pipe(ofType(PUBLIC_EVENTS.DESTROY), mapTo([]))
+      .subscribe(value => this.activeFrame$.next(value));
   }
 
   public isFrameActive(name: string): Observable<boolean> {
@@ -48,7 +50,7 @@ export class FramesHub {
   }
 
   public waitForFrame(name: string): Observable<string> {
-    return this.isFrameActive(name).pipe(filter(Boolean), mapTo(name));
+    return this.isFrameActive(name).pipe(filter(Boolean), first(), mapTo(name));
   }
 
   public notifyReadyState(): void {
