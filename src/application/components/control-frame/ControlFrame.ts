@@ -29,7 +29,7 @@ import { IConfig } from '../../../shared/model/config/IConfig';
 import { CardinalCommerce } from '../../core/integrations/cardinal-commerce/CardinalCommerce';
 import { ICardinalCommerceTokens } from '../../core/integrations/cardinal-commerce/ICardinalCommerceTokens';
 import { defer, from, iif, Observable, of, throwError } from 'rxjs';
-import { map, mapTo, switchMap, tap } from 'rxjs/operators';
+import { map, mapTo, switchMap } from 'rxjs/operators';
 import { IAuthorizePaymentResponse } from '../../core/models/IAuthorizePaymentResponse';
 import { StJwt } from '../../core/shared/StJwt';
 import { Translator } from '../../core/shared/Translator';
@@ -73,6 +73,7 @@ export class ControlFrame extends Frame {
   private _preThreeDRequestTypes: string[];
   private _validation: Validation;
   private _config: IConfig;
+  private _slicedPan: string;
 
   constructor(
     private _localStorage: BrowserLocalStorage,
@@ -92,8 +93,8 @@ export class ControlFrame extends Frame {
         map((event: IMessageBusEvent) => event.data.maskedpan)
       )
       .subscribe((maskedpan: string) => {
-        const slicedPan: string = maskedpan.slice(0, 6);
-        const cvvLength: number = iinLookup.lookup(slicedPan).cvcLength[0];
+        this._slicedPan = maskedpan.slice(0, 6);
+        const cvvLength: number = iinLookup.lookup(this._slicedPan).cvcLength[0];
 
         this.messageBus.publish({
           type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH,
@@ -102,7 +103,7 @@ export class ControlFrame extends Frame {
 
         this.messageBus.publish({
           type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS,
-          data: slicedPan
+          data: this._slicedPan
         });
       });
     config$.subscribe(config => {
@@ -164,7 +165,7 @@ export class ControlFrame extends Frame {
   }
 
   private _setPreThreeDRequestTypes(): void {
-    if (this._isCardBypassed(this._card.pan || this._getPan())) {
+    if (this._isCardBypassed(this._getPan())) {
       return;
     }
     const threeDIndex = this._config.components.requestTypes.indexOf(ControlFrame.THREEDQUERY_EVENT);
@@ -174,7 +175,7 @@ export class ControlFrame extends Frame {
   }
 
   private _setPostThreeDRequestTypes(): void {
-    if (this._isCardBypassed(this._card.pan || this._getPan())) {
+    if (this._isCardBypassed(this._getPan())) {
       this._postThreeDRequestTypes = this._config.components.requestTypes.filter(
         (request: string) => request !== ControlFrame.THREEDQUERY_EVENT
       );
@@ -227,7 +228,7 @@ export class ControlFrame extends Frame {
           switch (true) {
             case !this._isDataValid(data):
               return throwError(VALIDATION_FAILED);
-            case this._isCardBypassed(this._card.pan || this._getPan()):
+            case this._isCardBypassed(this._getPan()):
               return of(data);
             default:
               return this._callThreeDQueryRequest();
@@ -315,7 +316,7 @@ export class ControlFrame extends Frame {
   }
 
   private _isCardWithoutCVV(): boolean {
-    const panFromJwt: string = this._getPan();
+    const panFromJwt: string = this._getPanFromJwt();
     let pan: string = '';
     if (panFromJwt || this._formFields.cardNumber.value) {
       pan = panFromJwt ? panFromJwt : this._formFields.cardNumber.value;
@@ -380,10 +381,14 @@ export class ControlFrame extends Frame {
     }
   }
 
-  private _getPan(): string {
+  private _getPanFromJwt(): string {
     return JwtDecode<IDecodedJwt>(this.params.jwt).payload.pan
       ? JwtDecode<IDecodedJwt>(this.params.jwt).payload.pan
       : '';
+  }
+
+  private _getPan(): string {
+    return this._card.pan || this._getPanFromJwt() || this._slicedPan;
   }
 
   private _setCardExpiryDate(value: string): void {
