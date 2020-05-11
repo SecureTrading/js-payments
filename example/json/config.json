@@ -57,7 +57,7 @@
   },
   "cybertonicaApiKey": "stfs",
   "datacenterurl": "",
-  "deferInit": true,
+  "deferInit": false,
   "disableNotification": false,
   "errorCallback": null,
   "fieldsToSubmit": [
@@ -70,7 +70,7 @@
     "cachetoken": "",
     "threedinit": ""
   },
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4ODk1Njc0NC42OTA4MDE5LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.6TOAmS4425qufoNaN1oiuinmLH7SteXOTlcrv1fs5cE",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4OTIwOTA5MC43MDM5NjE0LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.D4OnlJLlAOUY-gfRLSGAXL3eFykO6T4QWHOyqKEg_OU",
   "livestatus": 0,
   "origin": "",
   "panIcon": true,
