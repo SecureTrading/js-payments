@@ -83,7 +83,6 @@ export class CardinalCommerce {
   private acquireCardinalCommerceTokens(): Observable<ICardinalCommerceTokens> {
     return this.tokenProvider.getTokens().pipe(
       tap(tokens => (this.cardinalTokens = tokens)),
-      tap(tokens => console.error(tokens)),
       tap(tokens =>
         this.messageBus.publish({
           type: MessageBus.EVENTS_PUBLIC.CARDINAL_COMMERCE_TOKENS_ACQUIRED,
@@ -173,7 +172,7 @@ export class CardinalCommerce {
       .subscribe(tokens => cardinal.trigger(PaymentEvents.JWT_UPDATE, tokens.jwt));
 
     this.messageBus
-      .pipe(ofType(MessageBus.EVENTS_PUBLIC.BIN_PROCESS), takeUntil(this.destroy$), tap(console.error))
+      .pipe(ofType(MessageBus.EVENTS_PUBLIC.BIN_PROCESS), takeUntil(this.destroy$))
       .subscribe((event: IMessageBusEvent<string>) => cardinal.trigger(PaymentEvents.BIN_PROCESS, event.data));
 
     this.destroy$.subscribe(() => {
