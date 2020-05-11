@@ -173,7 +173,7 @@ export class CardinalCommerce {
       .subscribe(tokens => cardinal.trigger(PaymentEvents.JWT_UPDATE, tokens.jwt));
 
     this.messageBus
-      .pipe(ofType(MessageBus.EVENTS_PUBLIC.BIN_PROCESS), takeUntil(this.destroy$))
+      .pipe(ofType(MessageBus.EVENTS_PUBLIC.BIN_PROCESS), takeUntil(this.destroy$), tap(console.error))
       .subscribe((event: IMessageBusEvent<string>) => cardinal.trigger(PaymentEvents.BIN_PROCESS, event.data));
 
     this.destroy$.subscribe(() => {

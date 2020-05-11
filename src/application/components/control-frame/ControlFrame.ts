@@ -29,7 +29,7 @@ import { IConfig } from '../../../shared/model/config/IConfig';
 import { CardinalCommerce } from '../../core/integrations/cardinal-commerce/CardinalCommerce';
 import { ICardinalCommerceTokens } from '../../core/integrations/cardinal-commerce/ICardinalCommerceTokens';
 import { defer, from, iif, Observable, of, throwError } from 'rxjs';
-import { map, mapTo, switchMap } from 'rxjs/operators';
+import { map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { IAuthorizePaymentResponse } from '../../core/models/IAuthorizePaymentResponse';
 import { StJwt } from '../../core/shared/StJwt';
 import { Translator } from '../../core/shared/Translator';
@@ -86,6 +86,25 @@ export class ControlFrame extends Frame {
     super();
     const config$ = this._configProvider.getConfig$();
     this._communicator.whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK).thenRespond(() => config$);
+    this.messageBus
+      .pipe(
+        ofType(MessageBus.EVENTS_PUBLIC.JSINIT_RESPONSE),
+        map((event: IMessageBusEvent) => event.data.maskedpan)
+      )
+      .subscribe((maskedpan: string) => {
+        const slicedPan: string = maskedpan.slice(0, 6);
+        const cvvLength: number = iinLookup.lookup(slicedPan).cvcLength[0];
+
+        this.messageBus.publish({
+          type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH,
+          data: cvvLength
+        });
+
+        this.messageBus.publish({
+          type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS,
+          data: slicedPan
+        });
+      });
     config$.subscribe(config => {
       this._config = config;
       this.onInit();

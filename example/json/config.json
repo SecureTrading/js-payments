@@ -61,8 +61,6 @@
   "disableNotification": false,
   "errorCallback": null,
   "fieldsToSubmit": [
-    "pan",
-    "expirydate",
     "securitycode"
   ],
   "formId": "st-form",
@@ -70,14 +68,13 @@
     "cachetoken": "",
     "threedinit": ""
   },
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4ODg3MDgxNS45NjkzMzcsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdF9qYW1lczM4NjQxIiwibG9jYWxlIjoiZW5fR0IifX0.BldNFHbUOxkIxa0VBu7WNmjZoR3iZjv6tgENnaCKMlg",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4OTE5OTYwOS42MTQ2NDUsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdF9qYW1lczM4NjQxIiwibG9jYWxlIjoiZW5fR0IiLCJwYW4iOiIzNDAwMDAwMDAwMDA2MTEiLCJleHBpcnlkYXRlIjoiMDEvMjIifX0.9IBKRpn_Oc5o9gziJi6tKfy2i795UOS9w4rkMbPAstM",
   "livestatus": 0,
   "origin": "",
   "panIcon": true,
   "placeholders": {
     "pan": "Card number",
-    "expirydate": "MM/YY",
-    "securitycode": "***"
+    "expirydate": "MM/YY"
   },
   "styles": {
     "defaultStyles": {
