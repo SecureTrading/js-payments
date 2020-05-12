@@ -35,6 +35,7 @@ import { StJwt } from '../../core/shared/StJwt';
 import { Translator } from '../../core/shared/Translator';
 import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { IOnCardinalValidated } from '../../core/models/IOnCardinalValidated';
+import { ConfigService } from '../../../client/config/ConfigService';
 
 @Service()
 export class ControlFrame extends Frame {
@@ -80,10 +81,12 @@ export class ControlFrame extends Frame {
     private _configProvider: ConfigProvider,
     private _notification: NotificationService,
     private _cybertonica: Cybertonica,
-    private _cardinalCommerce: CardinalCommerce
+    private _cardinalCommerce: CardinalCommerce,
+    private _configService: ConfigService
   ) {
     super();
     const config$ = this._configProvider.getConfig$();
+    this._configService.clear();
     this._communicator.whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK).thenRespond(() => config$);
     config$.subscribe(config => this.onInit(config));
   }

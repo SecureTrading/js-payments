@@ -24,8 +24,7 @@ import { MessageBus } from '../application/core/shared/MessageBus';
 import { Translator } from '../application/core/shared/Translator';
 import { environment } from '../environments/environment';
 import { Selectors } from '../application/core/shared/Selectors';
-import { Service, Inject, Container } from 'typedi';
-import { CONFIG } from '../application/core/dependency-injection/InjectionTokens';
+import { Service, Container } from 'typedi';
 import { ConfigService } from './config/ConfigService';
 import { ISubmitEvent } from '../application/core/models/ISubmitEvent';
 import { ISuccessEvent } from '../application/core/models/ISuccessEvent';
@@ -49,6 +48,7 @@ class ST {
   private static LOCALE_STORAGE: string = 'locale';
   private static MERCHANT_TRANSLATIONS_STORAGE: string = 'merchantTranslations';
   private static readonly MODAL_CONTROL_FRAME_CLASS = 'modal';
+  private _config: IConfig;
   private _cardFrames: CardFrames;
   private _commonFrames: CommonFrames;
   private _googleAnalytics: GoogleAnalytics;
@@ -89,7 +89,6 @@ class ST {
   }
 
   constructor(
-    @Inject(CONFIG) private _config: IConfig,
     private _configService: ConfigService,
     private _configProvider: ConfigProvider,
     private _communicator: InterFrameCommunicator,
@@ -202,6 +201,7 @@ class ST {
   }
 
   public init(): void {
+    this._config = this._configProvider.getConfig();
     // TODO theres probably a better way rather than having to remember to update Selectors
     Selectors.MERCHANT_FORM_SELECTOR = this._config.formId;
     this.initCallbacks();
