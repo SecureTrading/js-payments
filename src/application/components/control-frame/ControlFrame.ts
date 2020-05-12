@@ -72,7 +72,6 @@ export class ControlFrame extends Frame {
   private _postThreeDRequestTypes: string[];
   private _preThreeDRequestTypes: string[];
   private _validation: Validation;
-  private _config: IConfig;
 
   constructor(
     private _localStorage: BrowserLocalStorage,
