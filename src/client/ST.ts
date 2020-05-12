@@ -200,11 +200,11 @@ class ST {
     this._communicator.close();
   }
 
-  public init(): void {
+  public init(config: IConfig): void {
     this._config = this._configProvider.getConfig();
+    this.initCallbacks(config);
     // TODO theres probably a better way rather than having to remember to update Selectors
     Selectors.MERCHANT_FORM_SELECTOR = this._config.formId;
-    this.initCallbacks();
     this.Storage();
     this._translation = new Translator(this._storage.getItem(ST.LOCALE_STORAGE));
     this._googleAnalytics.init();
@@ -294,21 +294,21 @@ class ST {
     });
   }
 
-  private initCallbacks(): void {
-    if (this._config.submitCallback) {
-      this.submitCallback = this._config.submitCallback;
+  private initCallbacks(config: IConfig): void {
+    if (config.submitCallback) {
+      this.submitCallback = config.submitCallback;
     }
 
-    if (this._config.successCallback) {
-      this.successCallback = this._config.successCallback;
+    if (config.successCallback) {
+      this.successCallback = config.successCallback;
     }
 
-    if (this._config.errorCallback) {
-      this.errorCallback = this._config.errorCallback;
+    if (config.errorCallback) {
+      this.errorCallback = config.errorCallback;
     }
 
-    if (this._config.cancelCallback) {
-      this.cancelCallback = this._config.cancelCallback;
+    if (config.cancelCallback) {
+      this.cancelCallback = config.cancelCallback;
     }
   }
 
@@ -330,7 +330,7 @@ export default (config: IConfig) => {
 
   const st = Container.get(ST);
 
-  st.init();
+  st.init(config);
 
   return st;
 };
