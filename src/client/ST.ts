@@ -15,7 +15,6 @@ import { ApplePayMock } from '../application/core/integrations/ApplePayMock';
 import { GoogleAnalytics } from '../application/core/integrations/GoogleAnalytics';
 import { VisaCheckout } from '../application/core/integrations/VisaCheckout';
 import { VisaCheckoutMock } from '../application/core/integrations/VisaCheckoutMock';
-import { IApplePayConfig } from '../application/core/models/IApplePayConfig';
 import { IComponentsConfig } from '../shared/model/config/IComponentsConfig';
 import { IConfig } from '../shared/model/config/IConfig';
 import { IStJwtObj } from '../application/core/models/IStJwtObj';
@@ -39,8 +38,9 @@ import { ofType } from '../shared/services/message-bus/operators/ofType';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ConfigProvider } from '../application/core/services/ConfigProvider';
-import { switchMap, first } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { from } from 'rxjs';
+import { IApplePay } from '../application/core/models/apple-pay/IApplePay';
 
 @Service()
 class ST {
@@ -136,7 +136,7 @@ class ST {
     });
   }
 
-  public ApplePay(config: IApplePayConfig): ApplePay {
+  public ApplePay(config: IApplePay): ApplePay {
     const { applepay } = this.Environment();
     this._config = this._configService.update({
       ...this._config,
@@ -145,7 +145,7 @@ class ST {
         ...(config || {})
       }
     });
-    return new applepay(this._configProvider, this._communicator);
+    return new applepay(this._communicator, this._configProvider, this._storage, this._messageBus, this._notification);
   }
 
   public VisaCheckout(config: IVisaConfig): VisaCheckout {

@@ -10,7 +10,7 @@ import { DefaultComponentsIds } from '../../application/core/models/constants/co
 import { DefaultApmsRequestTypes } from '../../application/core/models/constants/config-resolver/DefaultApmsRequestTypes';
 import { DefaultConfig } from '../../application/core/models/constants/config-resolver/DefaultConfig';
 import { DefaultComponents } from '../../application/core/models/constants/config-resolver/DefaultComponents';
-import { IApplePay } from '../../application/core/models/IApplePay';
+import { IApplePay } from '../../application/core/models/apple-pay/IApplePay';
 import { IVisaCheckout } from '../../application/core/models/constants/IVisaCheckout';
 import { IPlaceholdersConfig } from '../../application/core/models/IPlaceholdersConfig';
 import { DefaultPlaceholders } from '../../application/core/models/constants/config-resolver/DefaultPlaceholders';

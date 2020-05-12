@@ -1,5 +1,4 @@
 import { StTransport } from '../services/StTransport.class';
-import { IWalletConfig } from '../../../shared/model/config/IWalletConfig';
 import { DomMethods } from '../shared/DomMethods';
 import { Language } from '../shared/Language';
 import { MessageBus } from '../shared/MessageBus';
@@ -8,25 +7,23 @@ import { StJwt } from '../shared/StJwt';
 import { Translator } from '../shared/Translator';
 import { GoogleAnalytics } from './GoogleAnalytics';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
-import { Container } from 'typedi';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
 import { ConfigProvider } from '../services/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { Observable } from 'rxjs';
 import { IConfig } from '../../../shared/model/config/IConfig';
+import { APPLE_PAY_BUTTON_ID } from '../models/constants/apple-pay/ButtonProperties';
+import { APPLE_PAY_OLDEST_VERSION, APPLE_PAY_LATEST_VERSION } from '../models/constants/apple-pay/SdkVersions';
+import {
+  BASIC_SUPPORTED_NETWORKS,
+  VERSION_4_SUPPORTED_NETWORKS,
+  VERSION_5_SUPPORTED_NETWORKS
+} from '../models/constants/apple-pay/SupportedNetworks';
+import { IValidateMerchantRequest } from '../models/apple-pay/IValidateMerchantRequest';
+import { IPaymentRequest } from '../models/apple-pay/IPaymentRequest';
 
 const ApplePaySession = (window as any).ApplePaySession;
 const ApplePayError = (window as any).ApplePayError;
-const ApplePayContactMap: any = {
-  countryiso2a: 'countryCode',
-  email: 'emailAddress',
-  firstname: 'givenName',
-  lastname: 'familyName',
-  postcode: 'postalCode',
-  premise: 'addressLines',
-  telephone: 'phoneNumber',
-  town: 'locality'
-};
 
 /**
  * Apple Pay flow:
@@ -54,177 +51,92 @@ const ApplePayContactMap: any = {
  *     this.session.completePayment function or canceled it with this.session.oncancel handler.
  */
 export class ApplePay {
-  get applePayButtonProps(): any {
-    return this._applePayButtonProps;
-  }
-
-  get payment(): Payment {
-    return this._payment;
-  }
-
-  set payment(value: Payment) {
-    this._payment = value;
-  }
-
-  set jwt(value: string) {
-    this._jwt = value;
-  }
-
-  get jwt(): string {
-    return this._jwt;
-  }
-
-  private static APPLE_PAY_BUTTON_ID: string = 'st-apple-pay';
-  private static APPLE_PAY_MIN_VERSION: number = 3;
-  private static APPLE_PAY_MAX_VERSION: number = 5;
-  private static AVAILABLE_BUTTON_STYLES = ['black', 'white', 'white-outline'];
-  private static AVAILABLE_BUTTON_TEXTS = ['plain', 'buy', 'book', 'donate', 'check-out', 'subscribe'];
-  private static BASIC_SUPPORTED_NETWORKS = [
-    'amex',
-    'chinaUnionPay',
-    'discover',
-    'interac',
-    'jcb',
-    'masterCard',
-    'privateLabel',
-    'visa'
-  ];
-  private static VERSION_4_SUPPORTED_NETWORKS = ApplePay.BASIC_SUPPORTED_NETWORKS.concat([
-    'cartesBancaires',
-    'eftpos',
-    'electron',
-    'maestro',
-    'vPay'
-  ]);
-  private static VERSION_5_SUPPORTED_NETWORKS = ApplePay.BASIC_SUPPORTED_NETWORKS.concat(['elo', 'mada']);
-
   protected applePayVersion: number;
   protected paymentDetails: string;
-  private _buttonStyle: string;
-  private _buttonText: string;
   private _merchantSession: any;
-  private _messageBus: MessageBus;
   private _session: any;
-  private _sitesecurity: string;
-  private _stJwtInstance: StJwt;
-  private _stTransportInstance: StTransport;
 
-  private _validateMerchantRequestData = {
+  private _validateMerchantRequest: IValidateMerchantRequest = {
     walletmerchantid: '',
     walletrequestdomain: window.location.hostname,
     walletsource: 'APPLEPAY',
     walletvalidationurl: ''
   };
 
-  private _jwt: string;
-  private _applePayButtonProps: any = {};
   private _payment: Payment;
-  private _notification: NotificationService;
-  private _requestTypes: string[];
   private _translator: Translator;
-  private _merchantId: string;
-  private _paymentRequest: any;
-  private _placement: string;
+  private _paymentRequest: IPaymentRequest;
   private _completion: { errors: []; status: string };
-  private _localStorage: BrowserLocalStorage;
   private readonly _config$: Observable<IConfig>;
-  private _applePayConfig: IWalletConfig;
-  private _datacenterurl: string;
 
-  constructor(private _configProvider: ConfigProvider, private _communicator: InterFrameCommunicator) {
-    this._notification = Container.get(NotificationService);
-    this._messageBus = Container.get(MessageBus);
-    this._localStorage = Container.get(BrowserLocalStorage);
+  constructor(
+    private _communicator: InterFrameCommunicator,
+    private _configProvider: ConfigProvider,
+    private _localStorage: BrowserLocalStorage,
+    private _messageBus: MessageBus,
+    private _notification: NotificationService,
+    private _stTransport: StTransport
+  ) {
+    if (!!ApplePaySession) {
+      throw new Error('Works only on Safari');
+    }
 
     this._config$ = this._configProvider.getConfig$();
-
-    this._config$.subscribe(config => {
-      const { applePay, jwt, datacenterurl } = config;
-      if (applePay) {
-        this._applePayConfig = applePay;
-      }
-      this.jwt = jwt;
-      this._datacenterurl = datacenterurl;
-      this._onInit(this._applePayConfig.buttonText, this._applePayConfig.buttonStyle);
+    this._config$.subscribe((config: IConfig) => {
+      const { applePay, jwt } = config;
+      const { buttonStyle, buttonText, merchantId, paymentRequest, placement, requestTypes } = applePay;
+      const { currencyiso3a, locale, mainamount } = new StJwt(jwt);
+      this._translator = new Translator(locale);
+      this._validateMerchantRequest.walletmerchantid = merchantId;
+      this._paymentRequest = { ...paymentRequest, ...requestTypes };
+      this.setApplePayVersion();
+      this._setSupportedNetworks();
+      this._setAmountAndCurrency(mainamount, currencyiso3a);
+      this._addApplePayButton(placement, buttonText, buttonStyle);
+      this._applePayProcess(merchantId);
     });
     this._localStorage.setItem('completePayment', '');
     this._completion = {
       errors: [],
-      status: ApplePaySession ? this.getPaymentSuccessStatus() : ''
+      status: ApplePaySession ? ApplePaySession.STATUS_SUCCESS : ''
     };
 
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: { newJwt: string }) => {
-      const { newJwt } = data;
-      this._configurePaymentProcess(newJwt);
-      this._setAmountAndCurrency();
+      const { currencyiso3a, locale, mainamount } = new StJwt(data.newJwt);
+      this._translator = new Translator(locale);
+      this._setAmountAndCurrency(mainamount, currencyiso3a);
     });
   }
 
-  protected ifApplePayIsAvailable() {
-    return !!ApplePaySession;
-  }
-
   protected setApplePayVersion() {
-    for (let i = ApplePay.APPLE_PAY_MAX_VERSION; i >= ApplePay.APPLE_PAY_MIN_VERSION; --i) {
+    for (let i = APPLE_PAY_LATEST_VERSION; i >= APPLE_PAY_OLDEST_VERSION; --i) {
       if (this._ifBrowserSupportsApplePayVersion(i)) {
         this.applePayVersion = i;
         return;
-      } else if (i === ApplePay.APPLE_PAY_MIN_VERSION) {
-        this.applePayVersion = ApplePay.APPLE_PAY_MIN_VERSION;
+      } else if (i === APPLE_PAY_OLDEST_VERSION) {
+        this.applePayVersion = APPLE_PAY_OLDEST_VERSION;
         return;
       }
     }
   }
 
-  protected createApplePayButton() {
-    return DomMethods.createHtmlElement.apply(this, [this._applePayButtonProps, 'div']);
-  }
-
-  protected isUserLoggedToAppleAccount(): boolean {
-    return ApplePaySession.canMakePayments();
-  }
-
-  protected checkApplePayWalletCardAvailability() {
-    return ApplePaySession.canMakePaymentsWithActiveCard(this._merchantId);
-  }
-
-  protected getApplePaySessionObject() {
-    return new ApplePaySession(this.applePayVersion, this._paymentRequest);
-  }
-
-  protected getPaymentSuccessStatus() {
-    return ApplePaySession.STATUS_SUCCESS;
-  }
-
-  protected getPaymentFailureStatus() {
-    return ApplePaySession.STATUS_FAILURE;
-  }
-
-  private _configurePaymentProcess(jwt: string) {
-    const { sitesecurity, placement, paymentRequest, merchantId, requestTypes } = this._applePayConfig;
-    this._merchantId = merchantId;
-    this._placement = placement;
-    this.payment = new Payment();
-    this._paymentRequest = paymentRequest;
-    this._sitesecurity = sitesecurity;
-    this._requestTypes = requestTypes;
-    this._validateMerchantRequestData.walletmerchantid = merchantId;
-    this._stJwtInstance = new StJwt(jwt);
-    this._stTransportInstance = Container.get(StTransport);
-    this._translator = new Translator(this._stJwtInstance.locale);
+  protected createApplePayButton(buttonText: string, buttonStyle: string): HTMLElement {
+    return DomMethods.createHtmlElement.apply(this, [
+      {
+        style: `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${buttonText}; -apple-pay-button-style: ${buttonStyle}`
+      },
+      'div'
+    ]);
   }
 
   private _setSupportedNetworks() {
     let supportedNetworks;
-    if (this.applePayVersion <= ApplePay.APPLE_PAY_MIN_VERSION) {
-      supportedNetworks = ApplePay.BASIC_SUPPORTED_NETWORKS;
-    } else if (
-      this.applePayVersion > ApplePay.APPLE_PAY_MIN_VERSION &&
-      this.applePayVersion < ApplePay.APPLE_PAY_MAX_VERSION
-    ) {
-      supportedNetworks = ApplePay.VERSION_4_SUPPORTED_NETWORKS;
+    if (this.applePayVersion <= APPLE_PAY_OLDEST_VERSION) {
+      supportedNetworks = BASIC_SUPPORTED_NETWORKS;
+    } else if (this.applePayVersion > APPLE_PAY_OLDEST_VERSION && this.applePayVersion < APPLE_PAY_LATEST_VERSION) {
+      supportedNetworks = VERSION_4_SUPPORTED_NETWORKS;
     } else {
-      supportedNetworks = ApplePay.VERSION_5_SUPPORTED_NETWORKS;
+      supportedNetworks = VERSION_5_SUPPORTED_NETWORKS;
     }
     if (this._paymentRequest.supportedNetworks.length > 0) {
       const userDefinedSupportedNetworks: string[] = [];
@@ -240,24 +152,9 @@ export class ApplePay {
     }
   }
 
-  private _setApplePayButtonProps(buttonText: string, buttonStyle: string) {
-    this._ifApplePayButtonStyleIsValid(buttonStyle)
-      ? (this._buttonStyle = buttonStyle)
-      : (this._buttonStyle = ApplePay.AVAILABLE_BUTTON_STYLES[0]);
-    this._ifApplePayButtonTextIsValid(buttonText)
-      ? (this._buttonText = buttonText)
-      : (this._buttonText = ApplePay.AVAILABLE_BUTTON_TEXTS[0]);
-
-    // tslint:disable-next-line: max-line-length
-    this._applePayButtonProps.style = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${this._buttonText}; -apple-pay-button-style: ${this._buttonStyle}`;
-  }
-
-  private _addApplePayButton = () => DomMethods.appendChildIntoDOM(this._placement, this.createApplePayButton());
-
-  private _ifApplePayButtonTextIsValid = (buttonText: string) => ApplePay.AVAILABLE_BUTTON_TEXTS.includes(buttonText);
-
-  private _ifApplePayButtonStyleIsValid = (buttonStyle: string) =>
-    ApplePay.AVAILABLE_BUTTON_STYLES.includes(buttonStyle);
+  private _addApplePayButton = (placement: string, buttonText: string, buttonStyle: string): Element => {
+    return DomMethods.appendChildIntoDOM(placement, this.createApplePayButton(buttonText, buttonStyle));
+  };
 
   private _applePayButtonClickHandler = (elementId: string, event: string) => {
     document.getElementById(elementId).addEventListener(event, () => {
@@ -265,34 +162,16 @@ export class ApplePay {
     });
   };
 
-  private _setAmountAndCurrency() {
-    if (this._paymentRequest.total.amount && this._paymentRequest.currencyCode) {
-      this._paymentRequest.total.amount = this._stJwtInstance.mainamount;
-      this._paymentRequest.currencyCode = this._stJwtInstance.currencyiso3a;
-    } else {
-      this._notification.error(Language.translations.APPLE_PAY_AMOUNT_AND_CURRENCY);
-    }
-    return this._paymentRequest;
-  }
-
-  private _onInit(buttonText: string, buttonStyle: string) {
-    if (this.ifApplePayIsAvailable()) {
-      this._configurePaymentProcess(this.jwt);
-      this.setApplePayVersion();
-      this._setSupportedNetworks();
-      this._setAmountAndCurrency();
-      this._setApplePayButtonProps(buttonText, buttonStyle);
-      this._addApplePayButton();
-      this._applePayProcess();
-    }
+  private _setAmountAndCurrency(amount: string, currencyCode: string): void {
+    this._paymentRequest.total.amount = amount;
+    this._paymentRequest.currencyCode = currencyCode;
   }
 
   private _onValidateMerchantRequest() {
     this._session.onvalidatemerchant = (event: any) => {
-      this._validateMerchantRequestData.walletvalidationurl = event.validationURL;
-      this._validateMerchantRequestData.walletmerchantid = this._merchantId;
-      return this.payment
-        .walletVerify(this._validateMerchantRequestData)
+      this._validateMerchantRequest.walletvalidationurl = event.validationURL;
+      return this._payment
+        .walletVerify(this._validateMerchantRequest)
         .then(({ response }: any) => {
           this._onValidateMerchantResponseSuccess(response);
           GoogleAnalytics.sendGaData('event', 'Apple Pay', 'merchant validation', 'Apple Pay merchant validated');
@@ -314,13 +193,12 @@ export class ApplePay {
 
   private _onPaymentAuthorized() {
     this._session.onpaymentauthorized = (event: any) => {
-      this.paymentDetails = JSON.stringify(event.payment);
-      return this.payment
+      return this._payment
         .processPayment(
-          this._requestTypes,
+          this._paymentRequest.requestTypes,
           {
-            walletsource: this._validateMerchantRequestData.walletsource,
-            wallettoken: this.paymentDetails
+            walletsource: this._validateMerchantRequest.walletsource,
+            wallettoken: JSON.stringify(event.payment)
           },
           DomMethods.parseForm()
         )
@@ -335,7 +213,7 @@ export class ApplePay {
         .catch(() => {
           this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
           this._notification.error(Language.translations.PAYMENT_ERROR);
-          this._session.completePayment({ status: this.getPaymentFailureStatus(), errors: [] });
+          this._session.completePayment({ status: ApplePaySession.STATUS_FAILURE, errors: [] });
           this._localStorage.setItem('completePayment', 'true');
         });
     };
@@ -401,7 +279,8 @@ export class ApplePay {
 
   private _paymentProcess() {
     this._localStorage.setItem('completePayment', 'false');
-    this._session = this.getApplePaySessionObject();
+    this._session = new ApplePaySession(this.applePayVersion, this._paymentRequest);
+    this._payment = new Payment();
     this._onValidateMerchantRequest();
     this._subscribeStatusHandlers();
     this._onPaymentAuthorized();
@@ -409,20 +288,15 @@ export class ApplePay {
     this._session.begin();
   }
 
-  private _applePayProcess() {
+  private _applePayProcess(merchantId: string): void {
     if (ApplePaySession) {
-      if (this.isUserLoggedToAppleAccount()) {
-        this.checkApplePayWalletCardAvailability().then(() => {
-          this._applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
+      if (ApplePaySession.canMakePayments()) {
+        ApplePaySession.canMakePaymentsWithActiveCard(merchantId).then(() => {
+          this._applePayButtonClickHandler(APPLE_PAY_BUTTON_ID, 'click');
           GoogleAnalytics.sendGaData('event', 'Apple Pay', 'init', 'Apple Pay can make payments');
         });
       } else {
-        this._addButtonHandler(
-          ApplePay.APPLE_PAY_BUTTON_ID,
-          'click',
-          'error',
-          Language.translations.APPLE_PAY_NOT_LOGGED
-        );
+        this._addButtonHandler(APPLE_PAY_BUTTON_ID, 'click', 'error', Language.translations.APPLE_PAY_NOT_LOGGED);
       }
     }
   }
@@ -443,23 +317,17 @@ export class ApplePay {
             error.code = 'shippingContactInvalid';
             errordata = errordata.slice(8);
           }
-          if (typeof ApplePayContactMap[errordata] !== 'undefined') {
-            error.contactField = ApplePayContactMap[errordata];
-          } else if (error.code !== 'unknown') {
-            error.code = 'addressUnserviceable';
-          }
         }
         if (error.code !== 'unknown') {
-          // @ts-ignore
           this._completion.errors = [error];
         }
       }
     }
 
     if (errorcode === '0') {
-      this._completion.status = this.getPaymentSuccessStatus();
+      this._completion.status = ApplePaySession.STATUS_SUCCESS;
     } else {
-      this._completion.status = this.getPaymentFailureStatus();
+      this._completion.status = ApplePaySession.STATUS_FAILURE;
     }
     return this._completion;
   }
