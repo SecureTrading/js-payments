@@ -86,7 +86,6 @@ export class ControlFrame extends Frame {
   ) {
     super();
     const config$ = this._configProvider.getConfig$();
-    this._configService.clear();
     this._communicator.whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK).thenRespond(() => config$);
     config$.subscribe(config => this.onInit(config));
   }
