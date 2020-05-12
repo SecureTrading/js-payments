@@ -72,7 +72,6 @@ export class ControlFrame extends Frame {
   private _postThreeDRequestTypes: string[];
   private _preThreeDRequestTypes: string[];
   private _validation: Validation;
-  private _config: IConfig;
 
   constructor(
     private _localStorage: BrowserLocalStorage,
@@ -87,32 +86,31 @@ export class ControlFrame extends Frame {
     const config$ = this._configProvider.getConfig$();
     this._communicator.whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK).thenRespond(() => config$);
     config$.subscribe(config => {
-      this._config = config;
-      this.onInit();
+      this.onInit(config);
     });
   }
 
-  protected onInit(): void {
+  protected onInit(config: IConfig): void {
     super.onInit();
     this._setInstances();
     this._setFormFieldsValidities();
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_CARD_NUMBER, this._formFields.cardNumber);
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, this._formFields.expirationDate);
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_SECURITY_CODE, this._formFields.securityCode);
-    this._submitFormEvent();
+    this._submitFormEvent(config);
     this._updateMerchantFieldsEvent();
     this._resetJwtEvent();
     this._updateJwtEvent();
-    this._initCybertonica();
+    this._initCybertonica(config.cybertonicaApiKey);
 
-    if (!this._config.deferInit) {
-      this._initCardinalCommerce();
-    } else if (this._config.components.startOnLoad) {
+    if (!config.deferInit) {
+      this._initCardinalCommerce(config);
+    } else if (config.components.startOnLoad) {
       this.messageBus.publish({
         type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM,
         data: {
           dataInJwt: true,
-          requestTypes: this._config.components.requestTypes
+          requestTypes: config.components.requestTypes
         }
       });
     }
@@ -143,29 +141,29 @@ export class ControlFrame extends Frame {
     });
   }
 
-  private _setPreThreeDRequestTypes(): void {
+  private _setPreThreeDRequestTypes(config: IConfig): void {
     if (this._isCardBypassed(this._card.pan || this._getPan())) {
       return;
     }
-    const threeDIndex = this._config.components.requestTypes.indexOf(ControlFrame.THREEDQUERY_EVENT);
-    this._preThreeDRequestTypes = this._config.components.requestTypes.slice(0, threeDIndex + 1);
+    const threeDIndex = config.components.requestTypes.indexOf(ControlFrame.THREEDQUERY_EVENT);
+    this._preThreeDRequestTypes = config.components.requestTypes.slice(0, threeDIndex + 1);
     console.error('PRE', this._preThreeDRequestTypes);
     console.error('POST', this._postThreeDRequestTypes);
   }
 
-  private _setPostThreeDRequestTypes(): void {
+  private _setPostThreeDRequestTypes(config: IConfig): void {
     if (this._isCardBypassed(this._card.pan || this._getPan())) {
-      this._postThreeDRequestTypes = this._config.components.requestTypes.filter(
+      this._postThreeDRequestTypes = config.components.requestTypes.filter(
         (request: string) => request !== ControlFrame.THREEDQUERY_EVENT
       );
       console.error('FILTERED REQUESTS:', this._postThreeDRequestTypes);
       return;
     }
 
-    const threeDIndex = this._config.components.requestTypes.indexOf(ControlFrame.THREEDQUERY_EVENT);
-    this._postThreeDRequestTypes = this._config.components.requestTypes.slice(
+    const threeDIndex = config.components.requestTypes.indexOf(ControlFrame.THREEDQUERY_EVENT);
+    this._postThreeDRequestTypes = config.components.requestTypes.slice(
       threeDIndex + 1,
-      this._config.components.requestTypes.length
+      config.components.requestTypes.length
     );
     console.error('PRE', this._preThreeDRequestTypes);
     console.error('POST', this._postThreeDRequestTypes);
@@ -183,7 +181,7 @@ export class ControlFrame extends Frame {
     });
   }
 
-  private _submitFormEvent(): void {
+  private _submitFormEvent(configObject: IConfig): void {
     const VALIDATION_FAILED = 'VALIDATION_FAILED';
 
     this.messageBus
@@ -203,14 +201,14 @@ export class ControlFrame extends Frame {
         ),
         switchMap((data: ISubmitData) => {
           this._isPaymentReady = true;
-          this._setPostThreeDRequestTypes();
+          this._setPostThreeDRequestTypes(configObject);
           switch (true) {
             case !this._isDataValid(data):
               return throwError(VALIDATION_FAILED);
             case this._isCardBypassed(this._card.pan || this._getPan()):
               return of(data);
             default:
-              return this._callThreeDQueryRequest();
+              return this._callThreeDQueryRequest(configObject);
           }
         })
       )
@@ -305,7 +303,7 @@ export class ControlFrame extends Frame {
     return ControlFrame.NON_CVV_CARDS.includes(cardType);
   }
 
-  private _callThreeDQueryRequest(): Observable<IAuthorizePaymentResponse> {
+  private _callThreeDQueryRequest(config: IConfig): Observable<IAuthorizePaymentResponse> {
     const applyCybertonicaTid = (merchantFormData: IMerchantData) =>
       from(this._cybertonica.getTransactionId()).pipe(
         map(cybertonicaTid => {
@@ -319,7 +317,7 @@ export class ControlFrame extends Frame {
           };
         })
       );
-    this._setPreThreeDRequestTypes();
+    this._setPreThreeDRequestTypes(config);
     console.error('CALLING THREEDQUERY:', this._preThreeDRequestTypes);
     return of({ ...this._merchantFormData }).pipe(
       switchMap(applyCybertonicaTid),
@@ -393,9 +391,9 @@ export class ControlFrame extends Frame {
     this._merchantFormData = data;
   }
 
-  private _initCybertonica(): void {
-    if (this._config.cybertonicaApiKey) {
-      this._cybertonica.init(this._config.cybertonicaApiKey);
+  private _initCybertonica(cybertonicaApiKey: string): void {
+    if (cybertonicaApiKey) {
+      this._cybertonica.init(cybertonicaApiKey);
 
       this._communicator
         .whenReceive(MessageBus.EVENTS_PUBLIC.GET_CYBERTONICA_TID)
@@ -403,21 +401,21 @@ export class ControlFrame extends Frame {
     }
   }
 
-  private _initCardinalCommerce(): void {
-    this._cardinalCommerce.init(this._config).subscribe(() => {
+  private _initCardinalCommerce(config: IConfig): void {
+    this._cardinalCommerce.init(config).subscribe(() => {
       this._isPaymentReady = true;
 
-      if (this._config.components.startOnLoad) {
+      if (config.components.startOnLoad) {
         this.messageBus.publish({
           type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS,
-          data: new StJwt(this._config.jwt).payload.pan as string
+          data: new StJwt(config.jwt).payload.pan as string
         });
 
         this.messageBus.publish({
           type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM,
           data: {
             dataInJwt: true,
-            requestTypes: this._config.components.requestTypes
+            requestTypes: config.components.requestTypes
           }
         });
       }
