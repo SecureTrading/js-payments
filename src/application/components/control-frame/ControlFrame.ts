@@ -94,12 +94,6 @@ export class ControlFrame extends Frame {
       )
       .subscribe((maskedpan: string) => {
         this._slicedPan = maskedpan.slice(0, 6);
-        const cvvLength: number = iinLookup.lookup(this._slicedPan).cvcLength[0];
-
-        this.messageBus.publish({
-          type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH,
-          data: cvvLength
-        });
 
         this.messageBus.publish({
           type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS,
