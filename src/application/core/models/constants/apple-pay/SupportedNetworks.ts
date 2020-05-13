@@ -1,4 +1,4 @@
-const BASIC_SUPPORTED_NETWORKS = [
+const STAGE_ONE_NETWORKS = [
   'amex',
   'chinaUnionPay',
   'discover',
@@ -8,13 +8,7 @@ const BASIC_SUPPORTED_NETWORKS = [
   'privateLabel',
   'visa'
 ];
-const VERSION_4_SUPPORTED_NETWORKS = BASIC_SUPPORTED_NETWORKS.concat([
-  'cartesBancaires',
-  'eftpos',
-  'electron',
-  'maestro',
-  'vPay'
-]);
-const VERSION_5_SUPPORTED_NETWORKS = BASIC_SUPPORTED_NETWORKS.concat(['elo', 'mada']);
+const STAGE_TWO_NETWORKS = STAGE_ONE_NETWORKS.concat(['cartesBancaires', 'eftpos', 'electron', 'maestro', 'vPay']);
+const STAGE_THREE_NETWORKS = STAGE_ONE_NETWORKS.concat(['elo', 'mada']);
 
-export { BASIC_SUPPORTED_NETWORKS, VERSION_4_SUPPORTED_NETWORKS, VERSION_5_SUPPORTED_NETWORKS };
+export { STAGE_ONE_NETWORKS, STAGE_TWO_NETWORKS, STAGE_THREE_NETWORKS };
