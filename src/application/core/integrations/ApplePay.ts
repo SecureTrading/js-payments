@@ -90,9 +90,7 @@ export class ApplePay {
       this._paymentRequest.supportedNetworks = this._setSupportedNetworks(
         this._getSupportedNetworks(this._applePayVersion)
       );
-      console.error(this._paymentRequest.supportedNetworks);
       this._setAmountAndCurrency(mainamount, currencyiso3a);
-      this._session = new ApplePaySession(this._applePayVersion, this._paymentRequest);
       this._addApplePayButton(placement, buttonText, buttonStyle);
       this._applePayProcess(merchantId);
     });
@@ -137,9 +135,12 @@ export class ApplePay {
   }
 
   private _setSupportedNetworks(networks: string[]): string[] {
-    return networks.filter((item: string) => {
-      return this._paymentRequest.supportedNetworks.includes(item);
-    });
+    if (this._paymentRequest.supportedNetworks.length) {
+      return networks.filter((item: string) => {
+        return this._paymentRequest.supportedNetworks.includes(item);
+      });
+    }
+    return networks;
   }
 
   private _addApplePayButton = (placement: string, buttonText: string, buttonStyle: string): Element => {
@@ -267,6 +268,7 @@ export class ApplePay {
   }
 
   private _paymentProcess() {
+    this._session = new ApplePaySession(this._applePayVersion, this._paymentRequest); // must be here (gesture handler)
     this._payment = new Payment();
     this._onValidateMerchantRequest();
     this._subscribeStatusHandlers();
