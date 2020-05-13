@@ -691,7 +691,7 @@ describe('ApplePay', () => {
       // @ts-ignore
       instance._notification.cancel = jest.fn();
       // @ts-ignore
-      instance._session.oncancel({});
+      instance._session.oncancel({ sessionError: { code: 'Test' } });
       // @ts-ignore
       expect(instance._notification.cancel).toHaveBeenCalledTimes(1);
       // @ts-ignore
