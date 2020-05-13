@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Secure Trading Example Form</title>
+</head>
+<body>
+<div class="center">
+    <div class="main-intro">
+        <h1 class="no-mb">Secure payment<span class="icon-lock right green"></span></h1>
+    </div>
+    <div class="main-content__padding center">
+        <p class="mt_40">Please wait while we process your payment ...</p>
+        <div class="loading-ring mt_20">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <form id="st-form" action="https://www.example.com" method="POST">
+        </form>
+        <script type="text/javascript" src="<%= WEBSERVICES_URL %>/st.js"></script>
+        <script>
+          (function() {
+            var st = SecureTrading({
+              jwt: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4OTM2MjcyMS42NDkxOTc4LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiNTEwMDAwMDAwMDAwMDUxMSIsImV4cGlyeWRhdGUiOiIwMS8yMiIsInNlY3VyaXR5Y29kZSI6IjEyMyJ9fQ.tgNdoqzRiMVxGuqdO4KqfgAh5fH1u6Bj_y_KEDiom6c',
+              submitOnError: false,
+              livestatus: 0
+            });
+            st.Components({ startOnLoad: true });
+          })();
+        </script>
+    </div>
+</div>
+</body>
+</html>

@@ -85,6 +85,11 @@ module.exports = {
       template: './example/iframe.html',
       chunks: ['iframe']
     }),
+    new HtmlWebpackPlugin({
+      filename: 'startOnLoad.html',
+      template: './example/startOnLoad.html',
+      chunks: ['startOnLoad']
+    }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css'
