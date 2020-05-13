@@ -51,7 +51,7 @@ const ApplePayError = (window as any).ApplePayError;
  *     this.session.completePayment function or canceled it with this.session.oncancel handler.
  */
 export class ApplePay {
-  protected applePayVersion: number;
+  private _applePayVersion: number;
   protected paymentDetails: string;
   private _merchantSession: any;
   private _session: any;
@@ -66,7 +66,7 @@ export class ApplePay {
   private _payment: Payment;
   private _translator: Translator;
   private _paymentRequest: IPaymentRequest;
-  private _completion: { errors: []; status: string };
+  private readonly _completion: { errors: []; status: string };
   private readonly _config$: Observable<IConfig>;
 
   constructor(
@@ -89,7 +89,7 @@ export class ApplePay {
       this._translator = new Translator(locale);
       this._validateMerchantRequest.walletmerchantid = merchantId;
       this._paymentRequest = { ...paymentRequest, ...requestTypes };
-      this.setApplePayVersion();
+      this._applePayVersion = this._supportedApplePayVersion();
       this._setSupportedNetworks();
       this._setAmountAndCurrency(mainamount, currencyiso3a);
       this._addApplePayButton(placement, buttonText, buttonStyle);
@@ -108,18 +108,6 @@ export class ApplePay {
     });
   }
 
-  protected setApplePayVersion() {
-    for (let i = APPLE_PAY_LATEST_VERSION; i >= APPLE_PAY_OLDEST_VERSION; --i) {
-      if (this._ifBrowserSupportsApplePayVersion(i)) {
-        this.applePayVersion = i;
-        return;
-      } else if (i === APPLE_PAY_OLDEST_VERSION) {
-        this.applePayVersion = APPLE_PAY_OLDEST_VERSION;
-        return;
-      }
-    }
-  }
-
   protected createApplePayButton(buttonText: string, buttonStyle: string): HTMLElement {
     return DomMethods.createHtmlElement.apply(this, [
       {
@@ -131,9 +119,9 @@ export class ApplePay {
 
   private _setSupportedNetworks() {
     let supportedNetworks;
-    if (this.applePayVersion <= APPLE_PAY_OLDEST_VERSION) {
+    if (this._applePayVersion <= APPLE_PAY_OLDEST_VERSION) {
       supportedNetworks = BASIC_SUPPORTED_NETWORKS;
-    } else if (this.applePayVersion > APPLE_PAY_OLDEST_VERSION && this.applePayVersion < APPLE_PAY_LATEST_VERSION) {
+    } else if (this._applePayVersion > APPLE_PAY_OLDEST_VERSION && this._applePayVersion < APPLE_PAY_LATEST_VERSION) {
       supportedNetworks = VERSION_4_SUPPORTED_NETWORKS;
     } else {
       supportedNetworks = VERSION_5_SUPPORTED_NETWORKS;
@@ -219,8 +207,13 @@ export class ApplePay {
     };
   }
 
-  private _ifBrowserSupportsApplePayVersion = (version: number) => {
-    return ApplePaySession.supportsVersion(version);
+  private _supportedApplePayVersion = () => {
+    // @ts-ignore
+    const versions: any[] = [...Array(6).keys()].reverse();
+    console.error(versions);
+    return versions.find((version: number) => {
+      ApplePaySession.supportsVersion(version);
+    });
   };
 
   private _onPaymentCanceled() {
@@ -279,7 +272,7 @@ export class ApplePay {
 
   private _paymentProcess() {
     this._localStorage.setItem('completePayment', 'false');
-    this._session = new ApplePaySession(this.applePayVersion, this._paymentRequest);
+    this._session = new ApplePaySession(this._applePayVersion, this._paymentRequest);
     this._payment = new Payment();
     this._onValidateMerchantRequest();
     this._subscribeStatusHandlers();
@@ -302,34 +295,41 @@ export class ApplePay {
   }
 
   private _handleApplePayError(errorObject: any) {
-    const { errorcode } = errorObject;
-    if (this._ifBrowserSupportsApplePayVersion(this.applePayVersion)) {
-      if (errorcode !== '0') {
-        const { errormessage } = errorObject;
-        let errordata = String(errorObject.data); // not sure this line - I can't force ApplePay to throw such error.
-        const error = new ApplePayError('unknown');
-        error.message = this._translator.translate(errormessage);
-        if (errorcode === '30000') {
-          if (errordata.lastIndexOf('billing', 0) === 0) {
-            error.code = 'billingContactInvalid';
-            errordata = errordata.slice(7);
-          } else if (errordata.lastIndexOf('customer', 0) === 0) {
-            error.code = 'shippingContactInvalid';
-            errordata = errordata.slice(8);
-          }
-        }
-        if (error.code !== 'unknown') {
-          this._completion.errors = [error];
-        }
-      }
+    const { errorcode, errormessage } = errorObject;
+    console.error('Error Object: ', errorObject);
+
+    if (!this._supportedApplePayVersion()) {
+      this._completion.status = ApplePaySession.STATUS_FAILURE;
+      return this._completion;
     }
 
     if (errorcode === '0') {
       this._completion.status = ApplePaySession.STATUS_SUCCESS;
-    } else {
-      this._completion.status = ApplePaySession.STATUS_FAILURE;
+      return this._completion;
     }
-    return this._completion;
+
+    if (errorcode !== '0') {
+      this._completion.status = ApplePaySession.STATUS_FAILURE;
+      let errordata = String(errorObject.data); // not sure this line - I can't force ApplePay to throw such error.
+      const error = new ApplePayError('unknown');
+      error.message = this._translator.translate(errormessage);
+
+      if (errorcode !== '30000') {
+        return;
+      }
+
+      if (errordata.lastIndexOf('billing', 0) === 0) {
+        error.code = 'billingContactInvalid';
+        errordata = errordata.slice(7);
+        return;
+      }
+
+      if (errordata.lastIndexOf('customer', 0) === 0) {
+        error.code = 'shippingContactInvalid';
+        errordata = errordata.slice(8);
+        return;
+      }
+    }
   }
 
   private _displayNotification(errorcode: string, errormessage: string) {
