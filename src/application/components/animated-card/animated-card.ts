@@ -5,6 +5,10 @@ import { IFormFieldState } from '../../core/models/IFormFieldState';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 import { Container } from 'typedi';
+import { FrameIdentifier } from '../../../shared/services/message-bus/FrameIdentifier';
+import { Selectors } from '../../core/shared/Selectors';
+
+Container.get(FrameIdentifier).setFrameName(Selectors.ANIMATED_CARD_COMPONENT_IFRAME);
 
 // @ts-ignore
 if (Card && document.URL.includes('animated')) {
