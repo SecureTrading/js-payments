@@ -352,7 +352,7 @@ export class ApplePay {
       this._messageBus.publish(
         {
           type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE,
-          data: { errorcode: Language.translations.PAYMENT_CANCELLED }
+          data: { errorcode: 'cancelled' }
         },
         true
       );
@@ -492,13 +492,6 @@ export class ApplePay {
         } else if (notificationType === 'cancel') {
           this._notification.cancel(message);
           this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_CANCEL_CALLBACK }, true);
-          this._messageBus.publish(
-            {
-              type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE,
-              data: { errorcode: notificationType }
-            },
-            true
-          );
         } else {
           this._notification.info(message);
         }
