@@ -86,9 +86,9 @@
   },
   "submitCallback": null,
   "submitFields": [],
-  "submitOnSuccess": false,
-  "submitOnError": false,
-  "submitOnCancel": false,
+  "submitOnSuccess": true,
+  "submitOnError": true,
+  "submitOnCancel": true,
   "successCallback": null,
   "translations": {
     "An error occurred": "Wystąpił błąd"

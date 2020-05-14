@@ -147,7 +147,7 @@ export class CommonFrames extends RegisterFrames {
     if (this._shouldSubmitForm(data)) {
       const form = this._merchantForm;
       let formData = data;
-      if (this._submitOnCancel && !this._submitOnError && !this._submitOnSuccess) {
+      if (this._submitOnCancel && data.errorcode === Language.translations.PAYMENT_CANCELLED) {
         formData = Object.assign(data, { errormessage: Language.translations.PAYMENT_CANCELLED });
       }
       DomMethods.addDataToForm(form, formData, this._getSubmitFields(data));
