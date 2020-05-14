@@ -349,6 +349,10 @@ export class ApplePay {
     this._session.oncancel = (event: any) => {
       this._notification.cancel(Language.translations.PAYMENT_CANCELLED);
       this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_CANCEL_CALLBACK }, true);
+      this._messageBus.publish(
+        { type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE, data: { errorcode: 'cancel' } },
+        true
+      );
       GoogleAnalytics.sendGaData('event', 'Apple Pay', 'payment status', 'Apple Pay payment cancelled');
     };
   }
