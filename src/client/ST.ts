@@ -126,7 +126,6 @@ class ST {
           ...(config || {})
         }
       });
-      this._commonFrames.requestTypes = this._config.components.requestTypes;
       await this._communicator.query({ type: MessageBus.EVENTS_PUBLIC.CONFIG_CHECK }, controlFrame);
       this.CardFrames();
       this._cardFrames.init();
@@ -203,8 +202,6 @@ class ST {
   public init(config: IConfig): void {
     this._config = this._configProvider.getConfig();
     this.initCallbacks(config);
-    // TODO theres probably a better way rather than having to remember to update Selectors
-    Selectors.MERCHANT_FORM_SELECTOR = this._config.formId;
     this.Storage();
     this._translation = new Translator(this._storage.getItem(ST.LOCALE_STORAGE));
     this._googleAnalytics.init();
