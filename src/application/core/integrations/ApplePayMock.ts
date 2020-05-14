@@ -37,7 +37,7 @@ export class ApplePayMock extends ApplePay {
     return ApplePaySessionMock.STATUS_FAILURE;
   }
 
-  public createApplePayButton() {
+  public _createButton() {
     return DomMethods.createHtmlElement.apply(this, [{ src: applePay, id: 'st-apple-pay' }, 'img']);
   }
 }

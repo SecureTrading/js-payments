@@ -37,7 +37,7 @@ All notable changes to this project will be documented in this file.
 
 - Fix to ensure updateJWT works when changing currency from original JWT
 - Update StCodec to always publish to parent
-- Update ApplePay successCallback to be called on success
+- Update ApplePaySchema successCallback to be called on success
 
 ## 2.0.8
 
@@ -127,7 +127,7 @@ All notable changes to this project will be documented in this file.
 
 - Add option for buttonId in config to allow a specific button to be targetted as the pay button (previously this was always targetting the first button only). If not specified this will keep the original behavior.
 - Improved behavioural tests to be able to more easily define more configuration options for additional test cases.
-- Allow ApplePay supportedNetworks to be overridden in config rather than always using only the supported versions for the current device.
+- Allow ApplePaySchema supportedNetworks to be overridden in config rather than always using only the supported versions for the current device.
 
 ## 2.0.0
 
@@ -145,7 +145,7 @@ All notable changes to this project will be documented in this file.
 
 - In IE animation of card would appear to blink instead of rotate
 - Transactions in IE fixed
-- ApplePay will now be able to process a second payment in the case the transaction was cancelled
+- ApplePaySchema will now be able to process a second payment in the case the transaction was cancelled
 - ApplyPay will display the add new card overlay if no valid cards are inside the customers wallet
 
 ## 2.0.0-beta.2
@@ -169,8 +169,8 @@ All notable changes to this project will be documented in this file.
 - Fields highlighting issues (highlighting on red when field has been validated positively).
 - Blocking form after succeeded payment in some cases.
 - Button targetting is now restricted to the st-form payment form only rather than the whole document.
-- VisaCheckout/ApplePay messages correctly display at the end of the payment.
-- Correct the supported networks for v3 of ApplePay.
+- VisaCheckout/ApplePaySchema messages correctly display at the end of the payment.
+- Correct the supported networks for v3 of ApplePaySchema.
 - Fix the link to the Browser Stack README badge.
 
 ## 2.0.0-beta.1

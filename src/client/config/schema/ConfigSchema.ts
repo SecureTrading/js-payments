@@ -1,52 +1,11 @@
 import Joi from '@hapi/joi';
+import { ComponentsSchema } from './ComponentsSchema';
+import { ApplePaySchema } from './ApplePaySchema';
 
 export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   analytics: Joi.boolean(),
   animatedCard: Joi.boolean(),
-  applePay: {
-    buttonStyle: Joi.string().valid('black', 'white', 'white-outline'),
-    buttonText: Joi.string().valid('plain', 'buy', 'book', 'donate', 'check-out', 'subscribe'),
-    merchantId: Joi.string(),
-    requestTypes: Joi.array().items(
-      Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
-    ),
-    paymentRequest: {
-      countryCode: Joi.string(),
-      currencyCode: Joi.string(),
-      merchantCapabilities: Joi.array().items(
-        Joi.string().valid('supports3DS', 'supportsCredit', 'supportsDebit', 'supportsEMV')
-      ),
-      supportedNetworks: Joi.array().items(
-        Joi.string().valid(
-          'amex',
-          'chinaUnionPay',
-          'discover',
-          'interac',
-          'jcb',
-          'masterCard',
-          'privateLabel',
-          'visa',
-          'cartesBancaires',
-          'eftpos',
-          'electron',
-          'maestro',
-          'vPay',
-          'elo',
-          'mada'
-        )
-      ),
-      total: {
-        amount: Joi.string(),
-        label: Joi.string()
-      },
-      requiredBillingContactFields: Joi.array().items(Joi.string()),
-      requiredShippingContactFields: Joi.array().items(Joi.string()),
-      requestTypes: Joi.array().items(
-        Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
-      )
-    },
-    placement: Joi.string()
-  },
+  applePay: ApplePaySchema,
   buttonId: Joi.string().allow(''),
   bypassCards: Joi.array().items(
     Joi.string().valid('AMEX', 'ASTROPAYCARD', 'DINERS', 'DISCOVER', 'JCB', 'MASTERCARD', 'MAESTRO', 'PIBA', 'VISA')
@@ -62,16 +21,7 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
     })
     .allow({})
     .default({}),
-  components: Joi.object()
-    .keys({
-      defaultPaymentType: Joi.string().allow(''),
-      requestTypes: Joi.array().items(
-        Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
-      ),
-      paymentTypes: Joi.array().items(Joi.string().allow('')),
-      startOnLoad: Joi.boolean().allow('')
-    })
-    .default({}),
+  components: ComponentsSchema,
   cybertonicaApiKey: Joi.string().allow(''),
   datacenterurl: Joi.string().allow(''),
   deferInit: Joi.boolean(),

@@ -14,7 +14,7 @@ jest.mock('../../src/client/classes/CommonFrames.class');
 jest.mock('../../src/client/classes/CardFrames.class');
 jest.mock('../../src/application/core/integrations/VisaCheckout');
 jest.mock('../../src/application/core/integrations/VisaCheckoutMock');
-jest.mock('../../src/application/core/integrations/ApplePay');
+jest.mock('../../src/application/core/integrations/ApplePaySchema');
 jest.mock('../../src/application/core/integrations/ApplePayMock');
 jest.mock('../../src/application/core/integrations/GoogleAnalytics');
 jest.mock('../../src/application/core/shared/Notification');
@@ -34,7 +34,7 @@ describe('ST', () => {
   });
 
   // given
-  describe('ST.ApplePay()', () => {
+  describe('ST.ApplePaySchema()', () => {
     const { applePayConfig } = stFixture();
 
     // then

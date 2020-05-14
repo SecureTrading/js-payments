@@ -106,7 +106,7 @@ describe('Class ApplePayMock', () => {
   });
 
   // given
-  describe('ApplePayMock.createApplePayButton', () => {
+  describe('ApplePayMock._createButton', () => {
     // when
     let apInstance: any;
     beforeEach(() => {

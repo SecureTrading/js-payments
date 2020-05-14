@@ -1,8 +1,8 @@
 import { ApplePayErrorMock } from './ApplePayErrorMock';
 import { ApplePaySessionMock } from './ApplePaySessionMock';
 
-(window as any).ApplePaySession = ApplePaySessionMock; // has to be defined before we import ApplePay
-(window as any).ApplePayError = ApplePayErrorMock; // has to be defined before we import ApplePay
+(window as any).ApplePaySession = ApplePaySessionMock; // has to be defined before we import ApplePaySchema
+(window as any).ApplePayError = ApplePayErrorMock; // has to be defined before we import ApplePaySchema
 (window as any).ApplePaySession.supportsVersion = jest.fn();
 (window as any).ApplePaySession.canMakePayments = jest.fn();
 (window as any).ApplePaySession.canMakePaymentsWithActiveCard = jest.fn();
@@ -218,14 +218,14 @@ describe('ApplePay', () => {
   });
 
   // given
-  describe('createApplePayButton()', () => {
+  describe('_createButton()', () => {
     // then
     it('should return Apple Pay button with all props set', () => {
       const { instance } = ApplePayFixture();
       const css = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: donate; -apple-pay-button-style: white`;
       instance.applePayButtonProps['style'] = css;
       // @ts-ignore
-      const style = instance.createApplePayButton().getAttribute('style');
+      const style = instance._createButton().getAttribute('style');
       expect(style).toEqual(style);
     });
   });
