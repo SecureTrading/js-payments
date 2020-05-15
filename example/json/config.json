@@ -76,8 +76,7 @@
   "panIcon": true,
   "placeholders": {
     "pan": "Card number",
-    "expirydate": "MM/YY",
-    "securitycode": "***"
+    "expirydate": "MM/YY"
   },
   "styles": {
     "defaultStyles": {
