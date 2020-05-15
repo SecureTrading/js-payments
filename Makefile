@@ -1,5 +1,5 @@
-GITHUB_REF ?= refs/head/feature/branchname
-BRANCH_NAME = $(subst refs/head/,,$(GITHUB_REF))
+GITHUB_REF ?= refs/heads/feature/branchname
+BRANCH_NAME = $(subst refs/heads/,,$(GITHUB_REF))
 DOCKER_BRANCH = $(subst /,-,$(BRANCH_NAME))
 APP_REPO = js-payments
 APP_BRANCH = $(DOCKER_BRANCH)
