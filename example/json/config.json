@@ -70,7 +70,7 @@
     "cachetoken": "",
     "threedinit": ""
   },
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4OTQ0NjY3Ni4wMzAyOTkyLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.b3Z7qTRjsyjx2NgRlq5yd_GTOU5yzZFijaAzVVJFz6o",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4OTQ2NDUwNy44ODg2MDcsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdF9qYW1lczM4NjQxIiwibG9jYWxlIjoiZW5fR0IifX0.2EHtbe67Kfm_Zhp2iD5hUjCIEZG9PilGMZZygY6BIy0",
   "livestatus": 0,
   "origin": "",
   "panIcon": true,
@@ -103,9 +103,9 @@
   },
   "submitCallback": null,
   "submitFields": [],
-  "submitOnSuccess": false,
-  "submitOnError": false,
-  "submitOnCancel": false,
+  "submitOnSuccess": true,
+  "submitOnError": true,
+  "submitOnCancel": true,
   "successCallback": null,
   "translations": {
     "An error occurred": "Wystąpił błąd"

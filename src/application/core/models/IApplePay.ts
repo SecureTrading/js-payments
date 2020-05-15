@@ -7,7 +7,7 @@ export interface IApplePay {
     currencyCode: string;
     merchantCapabilities: string[];
     supportedNetworks: string[];
-    requestTypes: string[];
+    requestTypes?: string[];
     requiredBillingContactFields: string[];
     requiredShippingContactFields: string[];
     total: {
@@ -16,5 +16,4 @@ export interface IApplePay {
     };
   };
   placement: string;
-  requestTypes: string[];
 }

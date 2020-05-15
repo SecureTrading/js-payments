@@ -140,19 +140,39 @@ export class CommonFrames extends RegisterFrames {
     this._messageBus.publish(messageBusEvent);
   }
 
-  private _onTransactionComplete(data: any) {
+  private _onTransactionComplete(data: any): void {
     if (this._isTransactionFinished(data) || data.errorcode !== '0') {
       this._messageBus.publish({ data, type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUBMIT_CALLBACK }, true);
     }
-    if (this._shouldSubmitForm(data)) {
-      const form = this._merchantForm;
-      let formData = data;
-      if (this._submitOnCancel) {
-        formData = Object.assign(data, { errormessage: Language.translations.PAYMENT_CANCELLED });
+
+    if (this._isTransactionFinished(data) && data.errorcode === '0') {
+      data = Object.assign(data, { errormessage: Language.translations.PAYMENT_SUCCESS });
+      if (this._submitOnSuccess) {
+        this._submitForm(data);
       }
-      DomMethods.addDataToForm(form, formData, this._getSubmitFields(data));
-      form.submit();
+      return;
     }
+
+    if (data.errorcode === 'cancelled') {
+      data = Object.assign(data, { errormessage: Language.translations.PAYMENT_CANCELLED });
+      if (this._submitOnCancel) {
+        this._submitForm(data);
+      }
+      return;
+    }
+
+    if (data.errorcode !== '0') {
+      data = Object.assign(data, { errormessage: data.errormessage });
+      if (this._submitOnError) {
+        this._submitForm(data);
+      }
+      return;
+    }
+  }
+
+  private _submitForm(data: any) {
+    DomMethods.addDataToForm(this._merchantForm, data, this._getSubmitFields(data));
+    this._merchantForm.submit();
   }
 
   private _setMerchantInputListeners() {
@@ -164,24 +184,16 @@ export class CommonFrames extends RegisterFrames {
 
   private _setTransactionCompleteListener() {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE, (data: any) => {
-      if (data.walletsource === 'APPLEPAY') {
-        const localStore = this._localStorage.getItem('completePayment');
-        setTimeout(() => {
-          if (localStore === 'true') {
-            this._onTransactionComplete(data);
-          }
-        }, 500);
-      } else {
+      if (data.walletsource !== 'APPLEPAY') {
         this._onTransactionComplete(data);
+        return;
       }
+      const localStore = this._localStorage.getItem('completePayment');
+      setTimeout(() => {
+        if (localStore === 'true') {
+          this._onTransactionComplete(data);
+        }
+      }, 500);
     });
-  }
-
-  private _shouldSubmitForm(data: any): boolean {
-    return (
-      (this._submitOnSuccess && data.errorcode === '0' && this._isTransactionFinished(data)) ||
-      (this._submitOnError && data.errorcode !== '0') ||
-      (this._submitOnCancel && data.errorcode !== '0')
-    );
   }
 }
