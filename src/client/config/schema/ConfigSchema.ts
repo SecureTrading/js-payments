@@ -7,9 +7,6 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
     buttonStyle: Joi.string().valid('black', 'white', 'white-outline'),
     buttonText: Joi.string().valid('plain', 'buy', 'book', 'donate', 'check-out', 'subscribe'),
     merchantId: Joi.string(),
-    requestTypes: Joi.array().items(
-      Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
-    ),
     paymentRequest: {
       countryCode: Joi.string(),
       currencyCode: Joi.string(),

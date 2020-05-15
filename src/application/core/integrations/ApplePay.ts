@@ -201,13 +201,13 @@ export class ApplePay {
   }
 
   private _configurePaymentProcess(jwt: string) {
-    const { sitesecurity, placement, paymentRequest, merchantId, requestTypes } = this._applePayConfig;
+    const { sitesecurity, placement, paymentRequest, merchantId } = this._applePayConfig;
     this._merchantId = merchantId;
     this._placement = placement;
     this.payment = new Payment();
     this._paymentRequest = paymentRequest;
     this._sitesecurity = sitesecurity;
-    this._requestTypes = requestTypes;
+    this._requestTypes = paymentRequest.requestTypes;
     this._validateMerchantRequestData.walletmerchantid = merchantId;
     this._stJwtInstance = new StJwt(jwt);
     this._stTransportInstance = Container.get(StTransport);

@@ -15,7 +15,7 @@ import { ApplePayMock } from '../application/core/integrations/ApplePayMock';
 import { GoogleAnalytics } from '../application/core/integrations/GoogleAnalytics';
 import { VisaCheckout } from '../application/core/integrations/VisaCheckout';
 import { VisaCheckoutMock } from '../application/core/integrations/VisaCheckoutMock';
-import { IApplePayConfig } from '../application/core/models/IApplePayConfig';
+import { IApplePay } from '../application/core/models/IApplePay';
 import { IComponentsConfig } from '../shared/model/config/IComponentsConfig';
 import { IConfig } from '../shared/model/config/IConfig';
 import { IStJwtObj } from '../application/core/models/IStJwtObj';
@@ -134,7 +134,7 @@ class ST {
     });
   }
 
-  public ApplePay(config: IApplePayConfig): ApplePay {
+  public ApplePay(config: IApplePay): ApplePay {
     const { applepay } = this.Environment();
     this._config = this._configService.update({
       ...this._config,
