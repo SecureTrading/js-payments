@@ -16,8 +16,8 @@ endif
 
 build-app-docker:
 	docker build . --tag "securetrading1/js-payments:$(DOCKER_BRANCH)"
-	#echo "$(DOCKER_PASSWORD)" | docker login --username "$(DOCKER_USERNAME)" --password-stdin # TODO push to docker
-	#docker push "securetrading1/js-payments:$(DOCKER_BRANCH)"
+	echo "$(DOCKER_PASSWORD)" | docker login --username "$(DOCKER_USERNAME)" --password-stdin
+	docker push "securetrading1/js-payments:$(DOCKER_BRANCH)"
 
 docker-compose-up:
 	git clone --branch=$(TEST_BRANCH) --single-branch --depth=1 https://github.com/SecureTrading/py-payments-testing.git

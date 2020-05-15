@@ -3,6 +3,9 @@ name: behavioural tests
 on: push # TODO change to be more dynamic as to what is run on push and pull etc
 env:
   COMPOSE_COMMAND: docker-compose -f py-payments-testing/docker-compose.yml run tests poetry run behave features # TODO move to makefile
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
