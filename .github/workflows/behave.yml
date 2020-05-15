@@ -19,8 +19,7 @@ jobs:
     needs: [build]
     steps:
       - uses: actions/checkout@v2
-      - run: chmod +x ./.github/workflows/scripts/setup_tests.sh
-      - run: sh ./.github/workflows/scripts/setup_tests.sh
+      - run: ./.github/workflows/scripts/setup_tests.sh
       - run: $COMPOSE_COMMAND --tags=@smoke_test
   chrome-latest-full:
     runs-on: ubuntu-latest
