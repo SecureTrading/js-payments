@@ -22,42 +22,29 @@ import { IValidateMerchantRequest } from '../models/apple-pay/IValidateMerchantR
 import { IPaymentRequest } from '../models/apple-pay/IPaymentRequest';
 import { IApplePayPaymentAuthorizationResult } from '../models/apple-pay/IApplePayPaymentAuthorizationResult ';
 import { IApplePayValidateMerchantEvent } from '../models/apple-pay/IApplePayValidateMerchantEvent';
+import { IApplePayPaymentMethod } from '../models/apple-pay/IApplePayPaymentMethod';
+import { IApplePayPaymentContact } from '../models/apple-pay/IApplePayPaymentContact';
+import { IApplePayShippingMethod } from '../models/apple-pay/IApplePayShippingMethod';
+import { IApplePayPayment } from '../models/apple-pay/IApplePayPayment';
 
 const ApplePaySession = (window as any).ApplePaySession;
 const ApplePayError = (window as any).ApplePayError;
 
-/**
- * Apple Pay flow:
- * 1. Check if ApplePaySession class exists
- *    (it must be iOS 10 and later and macOS 10.12 and later).
- * 2. Call setApplePayVersion() to set latest available ApplePaySchema version.
- * 3. Call setSupportedNetworks() to set available networks which are supported
- *    in this particular version of Apple Pay.
- * 4. Call setAmountAndCurrency() to set amount and currency hidden in provided JWT.
- * 5. Call _createButton(), _setApplePayButtonProps() and addApplePayButton)
- *    to provide styled button for launching Apple Pay Process.
- * 6. Call applePayProcess() which checks by canMakePayments() and canMakePaymentsWithActiveCard(merchantID)
- *    the capability of device for making Apple Pay payments and if there is at least one card in  users Wallet.
- * 7. User taps / clicks ApplePayButton on page and this event triggers applePayButtonClickHandler() -
- *    this is obligatory process -it has to be triggered by users action.
- * 8. Clicking button triggers paymentProcess() which sets ApplePaySession object.
- * 9. Then this.session.begin() is called which begins validating merchant process and display payment sheet.
- * 10. this.onValidateMerchantRequest() - triggers onvalidatemerchant which literally validates merchant.
- * 11. this.subscribeStatusHandlers() - if merchant has been successfully validated, three handlers are set -
- *     onpaymentmethodselected,  onshippingmethodselected, onshippingcontactselected
- *     to handle customer's selections in the payment sheet to complete transaction cost.
- *     We've got 30 seconds to handle each event before the payment sheet times out: completePaymentMethodSelection,
- *     completeShippingMethodSelection, and completeShippingContactSelection
- * 12. Then onPaymentAuthorized() or onPaymentCanceled() has been called which completes payment with
- *     this.session.completePayment function or canceled it with this.session.oncancel handler.
- */
 export class ApplePay {
   private _applePaySession: any;
-  private _validateMerchantRequest: IValidateMerchantRequest;
+  private _validateMerchantRequest: IValidateMerchantRequest = {
+    walletmerchantid: '',
+    walletrequestdomain: window.location.hostname,
+    walletsource: 'APPLEPAY',
+    walletvalidationurl: ''
+  };
   private _payment: Payment;
   private _translator: Translator;
   private _paymentRequest: IPaymentRequest;
-  private readonly _completion: IApplePayPaymentAuthorizationResult;
+  private readonly _completion: IApplePayPaymentAuthorizationResult = {
+    errors: [],
+    status: ''
+  };
   private readonly _config$: Observable<IConfig>;
 
   constructor(
@@ -71,18 +58,6 @@ export class ApplePay {
     if (!Boolean(ApplePaySession)) {
       throw new Error('Works only on Safari');
     }
-
-    this._completion = {
-      errors: [],
-      status: ''
-    };
-
-    this._validateMerchantRequest = {
-      walletmerchantid: '',
-      walletrequestdomain: window.location.hostname,
-      walletsource: 'APPLEPAY',
-      walletvalidationurl: ''
-    };
 
     this._config$ = this._configProvider.getConfig$();
   }
@@ -216,22 +191,26 @@ export class ApplePay {
   }
 
   private _onPaymentAuthorized() {
-    this._applePaySession.onpaymentauthorized = (event: any) => {
+    this._applePaySession.onpaymentauthorized = (event: IApplePayPayment) => {
       return this._payment
         .processPayment(
           this._paymentRequest.requestTypes,
           {
             walletsource: this._validateMerchantRequest.walletsource,
-            wallettoken: JSON.stringify(event.payment)
+            wallettoken: JSON.stringify(event.payment.token)
           },
-          DomMethods.parseForm()
+          DomMethods.parseForm(),
+          {
+            billingContact: event.payment.billingContact,
+            shippingContact: event.payment.shippingContact
+          }
         )
         .then((response: any) => {
-          this._handleApplePayError(response.response);
+          const { errorcode, errormessage } = response.response;
+          this._onError(errorcode, errormessage, response.response.data);
           this._applePaySession.completePayment(this._completion);
           GoogleAnalytics.sendGaData('event', 'Apple Pay', 'payment', 'Apple Pay payment completed');
           this._localStorage.setItem('completePayment', 'true');
-          const { errorcode, errormessage } = response.response;
           this._displayNotification(errorcode, errormessage);
         })
         .catch(() => {
@@ -281,7 +260,7 @@ export class ApplePay {
   }
 
   private _onPaymentMethodSelected(): void {
-    this._applePaySession.onpaymentmethodselected = (event: any) => {
+    this._applePaySession.onpaymentmethodselected = (event: IApplePayPaymentMethod) => {
       const { paymentMethod } = event;
       this._applePaySession.completePaymentMethodSelection({
         newTotal: {
@@ -294,24 +273,30 @@ export class ApplePay {
   }
 
   private _onShippingMethodSelected(): void {
-    this._applePaySession.onshippingmethodselected = (event: any) => {
-      const { paymentMethod } = event;
+    this._applePaySession.onshippingmethodselected = (event: IApplePayShippingMethod) => {
       this._applePaySession.completeShippingMethodSelection({
-        newTotal: { label: this._paymentRequest.total.label, amount: this._paymentRequest.total.amount, type: 'final' }
+        newTotal: {
+          amount: this._paymentRequest.total.amount,
+          label: this._paymentRequest.total.label,
+          type: 'final'
+        }
       });
     };
   }
 
   private _onShippingContactSelected(): void {
-    this._applePaySession.onshippingcontactselected = (event: any) => {
-      const { shippingContact } = event;
+    this._applePaySession.onshippingcontactselected = (event: IApplePayPaymentContact) => {
       this._applePaySession.completeShippingContactSelection({
-        newTotal: { label: this._paymentRequest.total.label, amount: this._paymentRequest.total.amount, type: 'final' }
+        newTotal: {
+          amount: this._paymentRequest.total.amount,
+          label: this._paymentRequest.total.label,
+          type: 'final'
+        }
       });
     };
   }
 
-  private _proceedPayment(applePayVersion: string): void {
+  private _proceedPayment(applePayVersion: number): void {
     this._applePaySession = new ApplePaySession(applePayVersion, this._paymentRequest); // must be here (gesture handler)
     this._onValidateMerchant();
     this._onPaymentMethodSelected();
@@ -347,9 +332,10 @@ export class ApplePay {
       });
   }
 
-  private _handleApplePayError(errorObject: any) {
-    const { errorcode, errormessage } = errorObject;
-    console.error('Error Object: ', errorObject);
+  private _onError(errorcode: string, errormessage: string, data: any): IApplePayPaymentAuthorizationResult {
+    console.error('Error Object: ', errorcode, errormessage, data);
+
+    this._completion.errors.push(errorcode);
 
     if (!this._latestSupportedApplePayVersion()) {
       this._completion.status = ApplePaySession.STATUS_FAILURE;
@@ -361,32 +347,24 @@ export class ApplePay {
       return this._completion;
     }
 
-    if (errorcode !== '0') {
-      this._completion.status = ApplePaySession.STATUS_FAILURE;
-      let errordata = String(errorObject.data); // not sure this line - I can't force ApplePaySchema to throw such error.
-      const error = new ApplePayError('unknown');
-      error.message = this._translator.translate(errormessage);
-      this._localStorage.setItem('completePayment', 'false');
+    let errordata = String(data);
+    const error = new ApplePayError('unknown');
+    error.message = this._translator.translate(errormessage);
+    this._completion.status = ApplePaySession.STATUS_FAILURE;
+    this._localStorage.setItem('completePayment', 'false');
 
-      if (errorcode !== '30000') {
-        return;
-      }
-
-      if (errordata.lastIndexOf('billing', 0) === 0) {
-        error.code = 'billingContactInvalid';
-        errordata = errordata.slice(7);
-        return;
-      }
-
-      if (errordata.lastIndexOf('customer', 0) === 0) {
-        error.code = 'shippingContactInvalid';
-        errordata = errordata.slice(8);
-        return;
-      }
+    if (errordata.lastIndexOf('billing', 0) === 0) {
+      error.code = 'billingContactInvalid';
     }
+
+    if (errordata.lastIndexOf('customer', 0) === 0) {
+      error.code = 'shippingContactInvalid';
+    }
+    this._completion.errors.push(error.code);
+    return this._completion;
   }
 
-  private _displayNotification(errorcode: string, errormessage: string) {
+  private _displayNotification(errorcode: string, errormessage: string): void {
     if (errorcode === '0') {
       this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK }, true);
       this._notification.success(Language.translations.PAYMENT_SUCCESS);
