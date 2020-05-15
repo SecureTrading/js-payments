@@ -31,4 +31,8 @@ export class ConfigService {
 
     return fullConfig;
   }
+
+  clear(): void {
+    this.storage.setItem(ConfigService.STORAGE_KEY, null);
+  }
 }
