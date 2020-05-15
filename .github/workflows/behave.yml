@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: ./.github/workflows/scripts/set_branch_name.py
+      - run: python3 ./.github/workflows/scripts/set_branch_name.py
       - run: echo "$BRANCH_NAME"
       - run: git clone --branch=develop --single-branch --depth=1 https://github.com/SecureTrading/py-payments-testing.git
       - run: docker build . --tag "securetrading1/js-payments:github-actions-1" # TODO add back in concept of DOCKER_BRANCH
