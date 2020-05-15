@@ -17,7 +17,5 @@ jobs:
       APP_REPO: js-payments
       APP_BRANCH: develop
     steps:
-      - run: git clone --branch=develop --single-branch --depth=1 https://github.com/SecureTrading/py-payments-testing.git
-      - run: docker-compose -f py-payments-testing/docker-compose.yml pull
-      - run: docker-compose -f py-payments-testing/docker-compose.yml up -d
+      - run: ./scripts/setup_tests.sh
       - run: docker-compose -f py-payments-testing/docker-compose.yml run tests poetry run behave features --tags=@smoke_test
