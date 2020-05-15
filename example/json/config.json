@@ -22,7 +22,7 @@
     "placement": "st-apple-pay"
   },
   "buttonId": "merchant-submit-button",
-  "bypassCards": ["PIBA"],
+  "bypassCards": [],
   "cancelCallback": null,
   "componentIds": {
     "animatedCard": "",
