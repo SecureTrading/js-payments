@@ -1,0 +1,15 @@
+name: unittest
+
+on: push # TODO change to be more dynamic as to what is run on push and pull etc
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: git clone --branch=develop --single-branch --depth=1 https://github.com/SecureTrading/py-payments-testing.git
+      - run: docker build . --tag "securetrading1/js-payments:github-actions-1" # TODO add back in concept of DOCKER_BRANCH
+  chrome-latest:
+    runs-on: ubuntu-latest
+    steps:
+      - echo 'TODO'

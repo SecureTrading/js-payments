@@ -7,7 +7,7 @@ on:
   # TODO change to be done on a schedule and to run 1 job against master and one against develop
 
 jobs:
-  unittest:
+  snyk:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
