@@ -20,7 +20,7 @@ build-app-docker:
 docker-compose-up:
 	git clone --branch=$(TEST_BRANCH) --single-branch --depth=1 https://github.com/SecureTrading/py-payments-testing.git
 	docker-compose -f py-payments-testing/docker-compose.yml pull
-	docker-compose -f py-payments-testing/docker-compose.yml up -d -e APP_REPO=js-payments -e APP_BRANCH=$(DOCKER_BRANCH)
+	docker-compose -f py-payments-testing/docker-compose.yml up -d -e APP_REPO=js-payments -e APP_BRANCH=${DOCKER_BRANCH}
 
 docker-compose-down:
 	docker-compose -f py-payments-testing/docker-compose.yml down
