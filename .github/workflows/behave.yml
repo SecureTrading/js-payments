@@ -19,12 +19,12 @@ jobs:
     needs: [build]
     steps:
       - run: ls $GITHUB_WORKSPACE
-      - run: $GITHUB_WORKSPACE/scripts/setup_tests.sh
+      - run: $GITHUB_WORKSPACE/.github/workflows/scripts/setup_tests.sh
       - run: $COMPOSE_COMMAND --tags=@smoke_test
   chrome-latest-full:
     runs-on: ubuntu-latest
     needs: [build]
     steps:
-      - run: chmod +x $GITHUB_WORKSPACE/scripts/setup_tests.sh
-      - run: sh $GITHUB_WORKSPACE/scripts/setup_tests.sh
+      - run: chmod +x $GITHUB_WORKSPACE/.github/workflows/scripts/setup_tests.sh
+      - run: sh $GITHUB_WORKSPACE/.github/workflows/scripts/setup_tests.sh
       - run: $COMPOSE_COMMAND --tags=@full_test
