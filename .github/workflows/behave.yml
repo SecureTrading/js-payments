@@ -11,5 +11,7 @@ jobs:
       - run: docker build . --tag "securetrading1/js-payments:github-actions-1" # TODO add back in concept of DOCKER_BRANCH
   chrome-latest:
     runs-on: ubuntu-latest
+    test:
+      needs: [build]
     steps:
       - run: echo 'TODO'
