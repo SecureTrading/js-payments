@@ -1,9 +1,10 @@
 name: snyk
 
 on:
-  push:
+  pull_request:
     branches:
-      - github-actions-1
+      - master
+      - develop
   # TODO change to be done on a schedule and to run 1 job against master and one against develop
 
 jobs:
