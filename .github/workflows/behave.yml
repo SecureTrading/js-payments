@@ -5,13 +5,13 @@ env:
   COMPOSE_COMMAND: docker-compose -f py-payments-testing/docker-compose.yml run tests poetry run behave features
   APP_REPO: js-payments
   APP_BRANCH: develop # TODO need the real branch name
-  BRANCH_NAME: ${GITHUB_REF//[\@\/]/-}
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: echo ${BRANCH_NAME}
+      - run: echo "::set-env BRANCH_NAME=${GITHUB_REF//[\@\/]/-}"
+      - run: echo "${BRANCH_NAME}"
       - run: git clone --branch=develop --single-branch --depth=1 https://github.com/SecureTrading/py-payments-testing.git
       - run: docker build . --tag "securetrading1/js-payments:github-actions-1" # TODO add back in concept of DOCKER_BRANCH
       # TODO add back in push to docker
