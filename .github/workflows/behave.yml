@@ -13,15 +13,17 @@ jobs:
       - run: git clone --branch=develop --single-branch --depth=1 https://github.com/SecureTrading/py-payments-testing.git
       - run: docker build . --tag "securetrading1/js-payments:github-actions-1" # TODO add back in concept of DOCKER_BRANCH
       # TODO add back in push to docker
-  chrome-latest: # TODO make this into sharable steps somehow
+  chrome-latest:
     runs-on: ubuntu-latest
     needs: [build]
     steps:
-      - run: sh ./scripts/setup_tests.sh
+      - run: chmod +x ./scripts/setup_tests.sh
+      - run: ./scripts/setup_tests.sh
       - run: $COMPOSE_COMMAND --tags=@smoke_test
-  chrome-latest-full: # TODO make this into sharable steps somehow
+  chrome-latest-full:
     runs-on: ubuntu-latest
     needs: [build]
     steps:
+      - run: chmod +x ./scripts/setup_tests.sh
       - run: sh ./scripts/setup_tests.sh
       - run: $COMPOSE_COMMAND --tags=@full_test
