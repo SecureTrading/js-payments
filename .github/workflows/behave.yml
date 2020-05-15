@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build]
     steps:
-      - run: chmod +x ./.github/workflows/scripts/setup_tests.sh
-      - run: sh sh ./.github/workflows/scripts/setup_tests.sh
+      - run: chmod +x .github/workflows/scripts/setup_tests.sh
+      - run: sh sh .github/workflows/scripts/setup_tests.sh
       - run: $COMPOSE_COMMAND --tags=@full_test
 
