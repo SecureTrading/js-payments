@@ -2,32 +2,26 @@ name: behavioural tests
 
 on: push # TODO change to be more dynamic as to what is run on push and pull etc
 env:
-  COMPOSE_COMMAND: docker-compose -f py-payments-testing/docker-compose.yml run tests poetry run behave features
-  APP_REPO: js-payments
-  APP_BRANCH: develop # TODO need the real branch name
+  COMPOSE_COMMAND: docker-compose -f py-payments-testing/docker-compose.yml run tests poetry run behave features # TODO move to makefile
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: echo "$GITHUB_REF"
-      - run: echo "::set-env BRANCH_NAME=`python3 ./.github/workflows/scripts/set_branch_name.py`"
-      - run: echo "$BRANCH_NAME"
-      - run: git clone --branch=develop --single-branch --depth=1 https://github.com/SecureTrading/py-payments-testing.git
-      - run: docker build . --tag "securetrading1/js-payments:github-actions-1" # TODO add back in concept of DOCKER_BRANCH
-      # TODO add back in push to docker
-#  chrome-latest:
-#    runs-on: ubuntu-latest
-#    needs: [build]
-#    steps:
-#      - uses: actions/checkout@v2
-#      - run: ./.github/workflows/scripts/setup_tests.sh
-#      - run: $COMPOSE_COMMAND --tags=@smoke_test
+      - run: make build-app-docker
+  chrome-latest:
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v2
+      - run: make docker-compose-up
+      - run: $COMPOSE_COMMAND --tags=@smoke_test
+
 #  chrome-latest-full:
 #    runs-on: ubuntu-latest
 #    needs: [build]
 #    steps:
 #      - uses: actions/checkout@v2
-#      - run: ./.github/workflows/scripts/setup_tests.sh
+#      - run: make docker-compose-py-payments-testing
 #      - run: $COMPOSE_COMMAND --tags=@full_test
 
