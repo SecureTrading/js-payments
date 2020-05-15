@@ -14,6 +14,7 @@ import { ConfigProvider } from '../services/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { Observable } from 'rxjs';
 import { IConfig } from '../../../shared/model/config/IConfig';
+import { IApplePay } from '../models/IApplePay';
 
 const ApplePaySession = (window as any).ApplePaySession;
 const ApplePayError = (window as any).ApplePayError;
@@ -105,7 +106,6 @@ export class ApplePay {
   private _merchantSession: any;
   private _messageBus: MessageBus;
   private _session: any;
-  private _sitesecurity: string;
   private _stJwtInstance: StJwt;
   private _stTransportInstance: StTransport;
 
@@ -128,7 +128,7 @@ export class ApplePay {
   private _completion: { errors: []; status: string };
   private _localStorage: BrowserLocalStorage;
   private readonly _config$: Observable<IConfig>;
-  private _applePayConfig: IWalletConfig;
+  private _applePayConfig: IApplePay;
   private _datacenterurl: string;
 
   constructor(private _configProvider: ConfigProvider, private _communicator: InterFrameCommunicator) {
@@ -141,6 +141,7 @@ export class ApplePay {
     this._config$.subscribe(config => {
       const { applePay, jwt, datacenterurl } = config;
       if (applePay) {
+        // @ts-ignore
         this._applePayConfig = applePay;
       }
       this.jwt = jwt;
@@ -201,13 +202,12 @@ export class ApplePay {
   }
 
   private _configurePaymentProcess(jwt: string) {
-    const { sitesecurity, placement, paymentRequest, merchantId, requestTypes } = this._applePayConfig;
+    const { placement, paymentRequest, merchantId } = this._applePayConfig;
     this._merchantId = merchantId;
     this._placement = placement;
     this.payment = new Payment();
     this._paymentRequest = paymentRequest;
-    this._sitesecurity = sitesecurity;
-    this._requestTypes = requestTypes;
+    this._requestTypes = paymentRequest.requestTypes;
     this._validateMerchantRequestData.walletmerchantid = merchantId;
     this._stJwtInstance = new StJwt(jwt);
     this._stTransportInstance = Container.get(StTransport);
@@ -350,7 +350,10 @@ export class ApplePay {
       this._notification.cancel(Language.translations.PAYMENT_CANCELLED);
       this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_CANCEL_CALLBACK }, true);
       this._messageBus.publish(
-        { type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE, data: { errorcode: event } },
+        {
+          type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE,
+          data: { errorcode: 'cancelled' }
+        },
         true
       );
       GoogleAnalytics.sendGaData('event', 'Apple Pay', 'payment status', 'Apple Pay payment cancelled');
@@ -489,13 +492,6 @@ export class ApplePay {
         } else if (notificationType === 'cancel') {
           this._notification.cancel(message);
           this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_CANCEL_CALLBACK }, true);
-          this._messageBus.publish(
-            {
-              type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE,
-              data: { errorcode: notificationType }
-            },
-            true
-          );
         } else {
           this._notification.info(message);
         }

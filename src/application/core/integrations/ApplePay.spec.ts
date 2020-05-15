@@ -691,7 +691,7 @@ describe('ApplePay', () => {
       // @ts-ignore
       instance._notification.cancel = jest.fn();
       // @ts-ignore
-      instance._session.oncancel({});
+      instance._session.oncancel({ sessionError: { code: 'Test' } });
       // @ts-ignore
       expect(instance._notification.cancel).toHaveBeenCalledTimes(1);
       // @ts-ignore
@@ -1074,13 +1074,13 @@ function ApplePayFixture() {
       countryCode: 'US',
       currencyCode: 'USD',
       merchantCapabilities: ['supports3DS', 'supportsCredit', 'supportsDebit'],
+      requestTypes: ['AUTH'],
       supportedNetworks: ['amex', 'visa']
     },
     merchantId: 'merchant.net.securetrading',
     placement: 'st-apple-pay',
     buttonText: 'donate',
-    buttonStyle: 'white-outline',
-    requestTypes: ['AUTH']
+    buttonStyle: 'white-outline'
   };
   const configProvider = mock(ConfigProvider);
   const communicator = mock(InterFrameCommunicator);
