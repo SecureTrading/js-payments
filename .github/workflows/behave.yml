@@ -19,3 +19,9 @@ jobs:
     steps:
       - run: ./scripts/setup_tests.sh
       - run: $COMPOSE_COMMAND --tags=@smoke_test
+  chrome-latest-full: # TODO make this into sharable steps somehow
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - run: ./scripts/setup_tests.sh
+      - run: $COMPOSE_COMMAND --tags=@full_test
