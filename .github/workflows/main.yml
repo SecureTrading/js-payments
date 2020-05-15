@@ -2,18 +2,13 @@ name: unittest
 
 on: push # TODO change to be more dynamic as to what is run on push and pull etc
 
-env:
-    NODE_VERSION: 12.x
 jobs:
   unittest:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install Node.js $NODE_VERSION
-        uses: actions/setup-node@v1
+      - uses: actions/setup-node@v1
         with:
-          node-version: $NODE_VERSION
-        env:
-          NODE_VERSION: 12.x
+          node-version: 12.x
       - run: npm install
       - run: npm run coverage

@@ -1,18 +1,18 @@
-name: snyk
+name: unittest
 
-on: pull_request # TODO change to be more dynamic as to what is run on push and pull etc
-
+on:
+  branches:
+    - master
+    - github-actions-1
+  # TODO change to be done on a schedule and to run 1 job against master and one against develop
 
 jobs:
   unittest:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install Node.js $NODE_VERSION
-        uses: actions/setup-node@v1
+      - uses: actions/setup-node@v1
         with:
-          node-version: $NODE_VERSION
-        env:
-          NODE_VERSION: 12.x
+          node-version: 12.x
       - run: npm install
-      - run: npm snyk
+      - run: npm run coverage
