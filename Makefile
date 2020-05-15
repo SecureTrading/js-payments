@@ -28,3 +28,6 @@ docker-compose-up:
 
 docker-compose-down:
 	docker-compose -f py-payments-testing/docker-compose.yml down
+
+behave-chrome:
+	docker-compose -f py-payments-testing/docker-compose.yml run tests poetry run behave features --tags=$(BEHAVE_TAGS)
