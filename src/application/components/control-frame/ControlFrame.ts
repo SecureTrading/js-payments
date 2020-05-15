@@ -29,7 +29,7 @@ import { IConfig } from '../../../shared/model/config/IConfig';
 import { CardinalCommerce } from '../../core/integrations/cardinal-commerce/CardinalCommerce';
 import { ICardinalCommerceTokens } from '../../core/integrations/cardinal-commerce/ICardinalCommerceTokens';
 import { defer, EMPTY, from, iif, Observable, of } from 'rxjs';
-import { catchError, map, mapTo, switchMap } from 'rxjs/operators';
+import { catchError, map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { IAuthorizePaymentResponse } from '../../core/models/IAuthorizePaymentResponse';
 import { StJwt } from '../../core/shared/StJwt';
 import { Translator } from '../../core/shared/Translator';
@@ -166,6 +166,9 @@ export class ControlFrame extends Frame {
       .pipe(
         ofType(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM),
         map((event: IMessageBusEvent<ISubmitData>) => event.data || {}),
+        tap(() =>
+          this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM, data: FormState.BLOCKED }, true)
+        ),
         switchMap((data: ISubmitData) =>
           this._configProvider.getConfig$().pipe(
             switchMap(config =>
@@ -183,6 +186,7 @@ export class ControlFrame extends Frame {
           switch (true) {
             case !this._isDataValid(data):
               this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
+              this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM, data: FormState.AVAILABLE }, true);
               this._validateFormFields();
               return EMPTY;
             case this._isCardBypassed(this._card.pan || this._getPan()):
