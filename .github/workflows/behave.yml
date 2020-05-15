@@ -12,4 +12,4 @@ jobs:
   chrome-latest:
     runs-on: ubuntu-latest
     steps:
-      - echo 'TODO'
+      - run: echo 'TODO'
