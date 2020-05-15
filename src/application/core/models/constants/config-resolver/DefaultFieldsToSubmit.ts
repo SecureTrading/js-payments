@@ -1,1 +1,1 @@
-export const DefaultFieldsToSubmit: string[] = [];
+export const DefaultFieldsToSubmit: string[] = ['pan', 'expirydate', 'securitycode'];
