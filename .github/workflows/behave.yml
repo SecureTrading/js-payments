@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: echo "::set-env BRANCH_NAME=${GITHUB_REF}"
-      - run: echo ${BRANCH_NAME}
+      - run: echo $BRANCH_NAME
       - run: git clone --branch=develop --single-branch --depth=1 https://github.com/SecureTrading/py-payments-testing.git
       - run: docker build . --tag "securetrading1/js-payments:github-actions-1" # TODO add back in concept of DOCKER_BRANCH
       # TODO add back in push to docker
