@@ -13,6 +13,7 @@ import { Cybertonica } from '../../core/integrations/Cybertonica';
 import { CardinalCommerce } from '../../core/integrations/cardinal-commerce/CardinalCommerce';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { of } from 'rxjs';
+import { ConfigService } from '../../../client/config/ConfigService';
 
 jest.mock('../../../../src/application/core/shared/Payment');
 
@@ -473,6 +474,7 @@ function controlFrameFixture() {
   const notification: NotificationService = mock(NotificationService);
   const cybertonica: Cybertonica = mock(Cybertonica);
   const cardinalCommerce: CardinalCommerce = mock(CardinalCommerce);
+  const configService: ConfigService = mock(ConfigService);
 
   when(communicator.whenReceive(anyString())).thenReturn({
     thenRespond: () => undefined
@@ -487,7 +489,8 @@ function controlFrameFixture() {
     mockInstance(configProvider),
     mockInstance(notification),
     mockInstance(cybertonica),
-    mockInstance(cardinalCommerce)
+    mockInstance(cardinalCommerce),
+    mockInstance(configService)
   );
   const messageBusEvent = {
     type: ''
