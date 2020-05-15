@@ -161,7 +161,7 @@ export class CommonFrames extends RegisterFrames {
       return;
     }
 
-    if (data.errorcode !== '0' && data.errorcode !== 'cancelled') {
+    if (data.errorcode !== '0') {
       data = Object.assign(data, { errormessage: Language.translations.PAYMENT_ERROR });
       if (this._submitOnError) {
         this._submitForm(data);
