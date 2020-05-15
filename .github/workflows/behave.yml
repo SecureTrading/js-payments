@@ -10,9 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: echo 'TODO PUT BACK THE BELOW COMMANDS'
-      # - run: git clone --branch=develop --single-branch --depth=1 https://github.com/SecureTrading/py-payments-testing.git
-      # - run: docker build . --tag "securetrading1/js-payments:github-actions-1" # TODO add back in concept of DOCKER_BRANCH
+      - run: git clone --branch=develop --single-branch --depth=1 https://github.com/SecureTrading/py-payments-testing.git
+      - run: docker build . --tag "securetrading1/js-payments:github-actions-1" # TODO add back in concept of DOCKER_BRANCH
       # TODO add back in push to docker
   chrome-latest:
     runs-on: ubuntu-latest
