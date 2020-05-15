@@ -1,6 +1,11 @@
 name: unittest
 
-on: push # TODO change to be more dynamic as to what is run on push and pull etc
+on:
+  push:
+    branches:
+      - master
+      - develop
+  # TODO change to be more dynamic as to what is run on push and pull etc
 
 jobs:
   unittest:
