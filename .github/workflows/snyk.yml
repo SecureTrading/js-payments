@@ -6,13 +6,13 @@ on: pull_request # TODO change to be more dynamic as to what is run on push and 
 jobs:
   unittest:
     runs-on: ubuntu-latest
-    env:
-      NODE_VERSION: 12.x
     steps:
       - uses: actions/checkout@v2
       - name: Install Node.js $NODE_VERSION
         uses: actions/setup-node@v1
         with:
           node-version: $NODE_VERSION
+        env:
+          NODE_VERSION: 12.x
       - run: npm install
       - run: npm snyk
