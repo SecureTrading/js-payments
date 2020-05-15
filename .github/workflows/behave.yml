@@ -1,4 +1,4 @@
-name: unittest
+name: behavioural tests
 
 on: push # TODO change to be more dynamic as to what is run on push and pull etc
 
