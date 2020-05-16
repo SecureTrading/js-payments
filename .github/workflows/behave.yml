@@ -8,7 +8,6 @@ env:
 jobs:
   chrome-latest:
     runs-on: ubuntu-latest
-    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - run: make run-behave-chrome
