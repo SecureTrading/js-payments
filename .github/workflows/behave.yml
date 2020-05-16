@@ -1,4 +1,4 @@
-name: behavioural tests
+name: chrome-latest
 
 on:
   repository_dispatch:
