@@ -11,7 +11,7 @@ TEST_BRANCH = master
 else ifeq ($(findstring hotfix/,$(BRANCH_NAME)),hotfix/)
 TEST_BRANCH = master
 else
-TEST_BRANCH = develop
+TEST_BRANCH = add_fast_selenium # TODO change back to develop once add_fast_selenium is merged
 endif
 
 build-app-docker:
