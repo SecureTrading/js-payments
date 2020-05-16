@@ -20,9 +20,9 @@ build-app-docker:
 	docker push "securetrading1/js-payments:$(DOCKER_BRANCH)"
 
 
-
+DOCKER_CHECK_ENV=DOCKER_BRANCH=$(DOCKER_BRANCH) DOCKER_USERNAME=$(DOCKER_USERNAME) DOCKER_PASSWORD=$(DOCKER_PASSWORD)
 check-docker-file-exists:
-	DOCKER_BRANCH=$(DOCKER_BRANCH) sh ./.github/workflows/scripts/docker_image_exists.sh
+	 sh ./.github/workflows/scripts/docker_image_exists.sh
 
 DOCKER_COMPOSE_ENV=APP_REPO=$(APP_REPO) APP_BRANCH=$(APP_BRANCH)
 docker-compose-up: check-docker-file-exists
