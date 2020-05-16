@@ -3,9 +3,9 @@ name: chrome-latest-smoke
 on:
   push:
     branches-ignore:
-      - master
-      - develop
-      - release/**
+      - 'master'
+      - 'develop'
+      - 'release/**'
 env:
   BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
   BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}

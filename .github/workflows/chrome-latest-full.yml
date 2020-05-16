@@ -3,12 +3,12 @@ name: chrome-latest-full
 on:
   pull_request:
     branches:
-      - **
+      - '**'
   push:
     branches:
-      - master
-      - develop
-      - release/**
+      - 'master'
+      - 'develop'
+      - 'release/**'
 
 env:
   BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
