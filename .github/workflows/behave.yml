@@ -39,7 +39,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: make docker-compose-up
-      - run: setup-hosts-file
+      - run: make setup-hosts-file
       - run: make browserstack-local-start
       - run: make behave-browserstack
     env:
