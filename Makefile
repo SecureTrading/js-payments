@@ -22,7 +22,7 @@ build-app-docker:
 
 DOCKER_CHECK_ENV=DOCKER_BRANCH=$(DOCKER_BRANCH) DOCKER_USERNAME=$(DOCKER_USERNAME) DOCKER_PASSWORD=$(DOCKER_PASSWORD)
 check-docker-file-exists:
-	 sh ./.github/workflows/scripts/docker_image_exists.sh
+	 $(DOCKER_CHECK_ENV) sh ./.github/workflows/scripts/docker_image_exists.sh
 
 DOCKER_COMPOSE_ENV=APP_REPO=$(APP_REPO) APP_BRANCH=$(APP_BRANCH)
 docker-compose-up: check-docker-file-exists
