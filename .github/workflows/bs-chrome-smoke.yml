@@ -1,4 +1,4 @@
-name: bs-chrome-smoke
+name: 3-bs-chrome-smoke
 
 on: push # TODO change to be match bs-firefox
 env:

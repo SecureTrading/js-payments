@@ -1,4 +1,4 @@
-name: build docker
+name: 2-build
 
 on: [push, pull_request]
 env:

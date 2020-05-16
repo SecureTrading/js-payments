@@ -1,4 +1,4 @@
-name: bs-firefox-smoke
+name: 3-bs-firefox-smoke
 
 on:
   pull_request:

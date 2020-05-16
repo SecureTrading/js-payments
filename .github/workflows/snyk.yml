@@ -1,4 +1,4 @@
-name: snyk
+name: 4-snyk
 
 on:
   pull_request:

@@ -40,11 +40,13 @@ behave-chrome:
 behave-browserstack:
 	$(DOCKER_COMPOSE) run -e OS=$(OS) -e OS_VERSION=$(OS_VERSION) -e BROWSER=$(BROWSER) -e BROWSER_VERSION=$(BROWSER_VERSION) -e BS_ACCESS_KEY=$(BROWSERSTACK_ACCESS_KEY) -e BS_USERNAME=$(BROWSERSTACK_USERNAME) -e BS_LOCAL_IDENTIFIER=$(GITHUB_RUN_ID) -e BUILD_NAME=$(GITHUB_RUN_ID) -e REMOTE=true tests poetry run behave features --tags=$(BEHAVE_TAGS)
 
+BROWSERSTACK_CHECK_ENV=BROWSERSTACK_USERNAME=$(BROWSERSTACK_USERNAME) BROWSERSTACK_PASSWORD=$(BROWSERSTACK_PASSWORD)
 browserstack-local-start:
 	rm -f ./BrowserStackLocal
 	wget https://www.browserstack.com/browserstack-local/BrowserStackLocal-linux-x64.zip
 	unzip 'BrowserStackLocal-linux-x64.zip'
 	rm 'BrowserStackLocal-linux-x64.zip'
+	$(BROWSERSTACK_CHECK_ENV) sh ./.github/workflows/scripts/check_browserstack_sessions.sh
 	./BrowserStackLocal --key=$(BROWSERSTACK_ACCESS_KEY) --force-local --daemon start --local-identifier $(GITHUB_RUN_ID)
 
 browserstack-local-stop:
