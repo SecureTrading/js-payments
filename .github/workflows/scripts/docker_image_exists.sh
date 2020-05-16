@@ -1,8 +1,8 @@
 # Checks if a docker image already exists
 TOKEN=$( curl -sSLd "username=${DOCKER_USERNAME}&password=${DOCKER_PASSWORD}" https://hub.docker.com/v2/users/login | jq -r ".token" )
 TAG_EXISTS=null
-MAX_RETRY=2 # Will mean we have 300s of retries ~5minutes
-SLEEP=1
+MAX_RETRY=30 # Will mean we have 300s of retries ~5minutes
+SLEEP=10
 
 ATTEMPT=1
 while :

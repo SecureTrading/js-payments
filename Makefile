@@ -20,6 +20,10 @@ build-app-docker:
 	docker push "securetrading1/js-payments:$(DOCKER_BRANCH)"
 
 DOCKER_COMPOSE_ENV=APP_REPO=$(APP_REPO) APP_BRANCH=$(APP_BRANCH)
+
+check-docker-file-exists:
+	./.github/workflows/scripts/docker_image_exists.sh
+
 docker-compose-up: check-docker-file-exists
 	rm -Rf py-payments-testing
 	git clone --branch=$(TEST_BRANCH) --single-branch --depth=1 https://github.com/SecureTrading/py-payments-testing.git
@@ -44,9 +48,6 @@ browserstack-local-start:
 
 browserstack-local-stop:
 	./BrowserStackLocal --daemon stop
-
-check-docker-file-exists:
-	./.github/workflows/scripts/docker_image_exists.sh
 
 setup-hosts-file:
 	sudo echo "127.0.0.1 webservices.securetrading.net" | sudo tee -a /etc/hosts
