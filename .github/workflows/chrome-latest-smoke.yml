@@ -12,7 +12,7 @@ env:
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 jobs:
-  chrome-latest:
+  behave:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

@@ -15,7 +15,7 @@ env:
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 jobs:
-  bs-chrome-smoke:
+  behave:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
