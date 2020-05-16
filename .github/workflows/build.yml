@@ -1,6 +1,6 @@
 name: build docker
 
-on: push # TODO change to be more dynamic as to what is run on push and pull etc
+on: [push, pull_request]
 env:
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}

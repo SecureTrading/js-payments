@@ -24,21 +24,21 @@ DOCKER_CHECK_ENV=DOCKER_BRANCH=$(DOCKER_BRANCH) DOCKER_USERNAME=$(DOCKER_USERNAM
 check-docker-file-exists:
 	 $(DOCKER_CHECK_ENV) sh ./.github/workflows/scripts/docker_image_exists.sh
 
-DOCKER_COMPOSE_ENV=APP_REPO=$(APP_REPO) APP_BRANCH=$(APP_BRANCH)
-docker-compose-up: check-docker-file-exists
+DOCKER_COMPOSE=APP_REPO=$(APP_REPO) APP_BRANCH=$(APP_BRANCH) docker-compose -f py-payments-testing/docker-compose.yml
+docker-compose-up:
 	rm -Rf py-payments-testing
 	git clone --branch=$(TEST_BRANCH) --single-branch --depth=1 https://github.com/SecureTrading/py-payments-testing.git
-	$(DOCKER_COMPOSE_ENV) docker-compose -f py-payments-testing/docker-compose.yml pull
-	$(DOCKER_COMPOSE_ENV) docker-compose -f py-payments-testing/docker-compose.yml up -d
+	$(DOCKER_COMPOSE) pull
+	$(DOCKER_COMPOSE) up -d
 
 docker-compose-down:
-	docker-compose -f py-payments-testing/docker-compose.yml down
+	$(DOCKER_COMPOSE) down
 
 behave-chrome:
-	docker-compose -f py-payments-testing/docker-compose.yml run tests poetry run behave features --tags=$(BEHAVE_TAGS)
+	$(DOCKER_COMPOSE) run tests poetry run behave features --tags=$(BEHAVE_TAGS)
 
 behave-browserstack:
-	docker-compose -f py-payments-testing/docker-compose.yml run -e OS=$(OS) -e OS_VERSION=$(OS_VERSION) -e BROWSER=$(BROWSER) -e BROWSER_VERSION=$(BROWSER_VERSION) -e BS_ACCESS_KEY=$(BROWSERSTACK_ACCESS_KEY) -e BS_USERNAME=$(BROWSERSTACK_USERNAME) -e BS_LOCAL_IDENTIFIER=$(GITHUB_RUN_ID) -e BUILD_NAME=$(GITHUB_RUN_ID) -e REMOTE=true tests poetry run behave features --tags=$(BEHAVE_TAGS)
+	$(DOCKER_COMPOSE) run -e OS=$(OS) -e OS_VERSION=$(OS_VERSION) -e BROWSER=$(BROWSER) -e BROWSER_VERSION=$(BROWSER_VERSION) -e BS_ACCESS_KEY=$(BROWSERSTACK_ACCESS_KEY) -e BS_USERNAME=$(BROWSERSTACK_USERNAME) -e BS_LOCAL_IDENTIFIER=$(GITHUB_RUN_ID) -e BUILD_NAME=$(GITHUB_RUN_ID) -e REMOTE=true tests poetry run behave features --tags=$(BEHAVE_TAGS)
 
 browserstack-local-start:
 	rm -f ./BrowserStackLocal
