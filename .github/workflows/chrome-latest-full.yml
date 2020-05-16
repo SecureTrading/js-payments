@@ -1,14 +1,14 @@
 name: chrome-latest-full
 
-on: push
-  #pull_request:
-  #  branches:
-  #    - '**'
-  #push:
-  #  branches:
-  #    - 'master'
-  #    - 'develop'
-  #    - 'release/**'
+on:
+  pull_request:
+    branches:
+      - '**'
+  push:
+    branches:
+      - 'master'
+      - 'develop'
+      - 'release/**'
 
 env:
   BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
