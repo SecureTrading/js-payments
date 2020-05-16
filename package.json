@@ -101,7 +101,7 @@
     "source-map-loader": "^0.2.4",
     "style-loader": "^1.2.1",
     "stylelint-webpack-plugin": "^2.0.0",
-    "ts-jest": "^25.4.0",
+    "ts-jest": "^25.5.1",
     "ts-loader": "^7.0.3",
     "ts-mockito": "^2.5.0",
     "tslint": "^6.1.2",
