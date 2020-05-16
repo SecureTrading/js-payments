@@ -46,6 +46,6 @@ browserstack-local-stop:
 	./BrowserStackLocal --daemon stop
 
 setup-hosts-file:
-	sudo echo "127.0.0.1 webservices.securetrading.net" >> /etc/hosts
-	sudo echo "127.0.0.1 merchant.securetrading.net" >> /etc/hosts
-	sudo echo "127.0.0.1 thirdparty.example.com" >> /etc/hosts
+	sudo echo "127.0.0.1 webservices.securetrading.net" | sudo tee -a /etc/hosts
+	sudo echo "127.0.0.1 merchant.securetrading.net" | sudo tee -a /etc/hosts
+	sudo echo "127.0.0.1 thirdparty.example.com" | sudo tee -a /etc/hosts
