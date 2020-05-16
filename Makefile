@@ -40,7 +40,7 @@ browserstack-local-start:
 	wget https://www.browserstack.com/browserstack-local/BrowserStackLocal-linux-x64.zip
 	unzip 'BrowserStackLocal-linux-x64.zip'
 	rm 'BrowserStackLocal-linux-x64.zip'
-	./BrowserStackLocal --key=$(BROWSERSTACK_ACCESS_KEY) --force-local --daemon start
+	./BrowserStackLocal --key=$(BROWSERSTACK_ACCESS_KEY) --force-local --daemon start --local-identifier $(GITHUB_RUN_ID)
 
 browserstack-local-stop:
 	./BrowserStackLocal --daemon stop
