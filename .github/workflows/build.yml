@@ -11,8 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: make build-app-docker
-      - name: Repository Dispatch
-          uses: peter-evans/repository-dispatch@v1
-          with:
-            token: ${{ secrets.REPO_ACCESS_TOKEN }}
-            event-type: run-behave-event
+      - uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          event-type: run-behave-event
