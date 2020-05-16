@@ -22,7 +22,7 @@ build-app-docker:
 
 
 check-docker-file-exists:
-	APP_BRANCH=$(APP_BRANCH) sh ./.github/workflows/scripts/docker_image_exists.sh
+	DOCKER_BRANCH=$(DOCKER_BRANCH) sh ./.github/workflows/scripts/docker_image_exists.sh
 
 DOCKER_COMPOSE_ENV=APP_REPO=$(APP_REPO) APP_BRANCH=$(APP_BRANCH)
 docker-compose-up: check-docker-file-exists
