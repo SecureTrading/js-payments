@@ -8,43 +8,51 @@ env:
   BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
 
 jobs:
-  #build:
-  #  runs-on: ubuntu-latest
-  #  steps:
-  #    - uses: actions/checkout@v2
-  #    - run: make build-app-docker
-  #chrome-latest:
-  #  runs-on: ubuntu-latest
-  #  needs: [build]
-  #  steps:
-  #    - uses: actions/checkout@v2
-  #    - run: make docker-compose-up
-  #    - run: make behave-chrome
-  #  env:
-  #    BEHAVE_TAGS: @smoke_test
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: make build-app-docker
+  chrome-latest:
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v2
+      - run: make run-behave-chrome
+    env:
+      BEHAVE_TAGS: "@smoke_test"
 
-  #chrome-latest-full:
-  #  runs-on: ubuntu-latest
-  #  needs: [build]
-  #  steps:
-  #    - uses: actions/checkout@v2
-  #    - run: make docker-compose-up
-  #    - run: make behave-chrome
-  #  env:
-  #    BEHAVE_TAGS: @full_test
+  chrome-latest-full:
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v2
+      - run: make run-behave-chrome
+    env:
+      BEHAVE_TAGS: "@full_test"
 
   browserstack-chrome-79-smoke:
     runs-on: ubuntu-latest
-    #needs: [build]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
-      - run: make docker-compose-up
-      - run: make setup-hosts-file
-      - run: make browserstack-local-start
-      - run: make behave-browserstack
+      - run: make run-behave-browserstack
     env:
       BEHAVE_TAGS: "@smoke_test"
       OS: Windows
       OS_VERSION: 8.1
       BROWSER: chrome
       BROWSER_VERSION: 79.0
+
+  browserstack-firefox-73-smoke:
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v2
+      - run: make run-behave-browserstack
+    env:
+      BEHAVE_TAGS: "@smoke_test"
+      OS: Windows
+      OS_VERSION: 10
+      BROWSER: Firefox
+      BROWSER_VERSION: 73.0
