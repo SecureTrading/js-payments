@@ -61,4 +61,5 @@ setup-hosts-file:
 	sudo echo "127.0.0.1 thirdparty.example.com" | sudo tee -a /etc/hosts
 
 run-behave-browserstack: docker-compose-up setup-hosts-file browserstack-local-start behave-browserstack browserstack-local-stop
+run-behave-browserstack-real-device: docker-compose-up setup-hosts-file browserstack-local-start behave-browserstack-real-device browserstack-local-stop
 run-behave-chrome: docker-compose-up setup-hosts-file behave-chrome
