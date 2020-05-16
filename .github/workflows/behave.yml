@@ -42,7 +42,7 @@ jobs:
       - run: browserstack-local-start
       - run: make behave-browserstack
     env:
-      BEHAVE_TAGS: @smoke_test
+      BEHAVE_TAGS: "@smoke_test"
       OS: Windows
       OS_VERSION: 8.1
       BROWSER: chrome
