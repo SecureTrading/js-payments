@@ -31,7 +31,7 @@ jobs:
     env:
       BEHAVE_TAGS: "@full_test"
 
-  browserstack-chrome-79-smoke:
+  bs-chrome-79-smoke:
     runs-on: ubuntu-latest
     needs: [build]
     steps:
@@ -44,7 +44,7 @@ jobs:
       BROWSER: chrome
       BROWSER_VERSION: 79.0
 
-  browserstack-firefox-73-smoke:
+  bs-firefox-73-smoke:
     runs-on: ubuntu-latest
     needs: [build]
     steps:
