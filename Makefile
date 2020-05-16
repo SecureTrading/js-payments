@@ -22,7 +22,7 @@ build-app-docker:
 DOCKER_COMPOSE_ENV=APP_REPO=$(APP_REPO) APP_BRANCH=$(APP_BRANCH)
 
 check-docker-file-exists:
-	./.github/workflows/scripts/docker_image_exists.sh
+	sh ./.github/workflows/scripts/docker_image_exists.sh
 
 docker-compose-up: check-docker-file-exists
 	rm -Rf py-payments-testing
