@@ -21,7 +21,7 @@ jobs:
   #    - run: make docker-compose-up
   #    - run: make behave-chrome
   #  env:
-  #    BEHAVE_TAGS=@smoke_test
+  #    BEHAVE_TAGS: @smoke_test
 
   #chrome-latest-full:
   #  runs-on: ubuntu-latest
@@ -31,7 +31,7 @@ jobs:
   #    - run: make docker-compose-up
   #    - run: make behave-chrome
   #  env:
-  #    BEHAVE_TAGS=@full_test
+  #    BEHAVE_TAGS: @full_test
 
   browserstack-chrome-79-smoke:
     runs-on: ubuntu-latest
@@ -42,8 +42,8 @@ jobs:
       - run: browserstack-local-start
       - run: make behave-browserstack
     env:
-      BEHAVE_TAGS=@smoke_test
-      OS=Windows
-      OS_VERSION=8.1
-      BROWSER=chrome
-      BROWSER_VERSION=79.0
+      BEHAVE_TAGS: @smoke_test
+      OS: Windows
+      OS_VERSION: 8.1
+      BROWSER: chrome
+      BROWSER_VERSION: 79.0
