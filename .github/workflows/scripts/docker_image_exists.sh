@@ -8,6 +8,8 @@ ATTEMPT=1
 while :
 do
   echo "Checking if docker has been tagged ${DOCKER_BRANCH} ${ATTEMPT}/${MAX_RETRY}"
+  RESULT=$(curl -sH "Authorization: JWT $TOKEN" "https://hub.docker.com/v2/repositories/securetrading1/${APP_REPO}/tags/${DOCKER_BRANCH}/")
+  echo $RESULT
   TAG_EXISTS=$(curl -sH "Authorization: JWT $TOKEN" "https://hub.docker.com/v2/repositories/securetrading1/${APP_REPO}/tags/${DOCKER_BRANCH}/" | jq -r ".id")
   echo "Tag id ${TAG_EXISTS}"
   ATTEMPT=$((ATTEMPT+1));

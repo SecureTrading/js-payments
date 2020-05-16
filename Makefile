@@ -1,6 +1,6 @@
 GITHUB_REF ?= refs/heads/github-actions-1
 BRANCH_NAME = $(subst refs/heads/,,$(GITHUB_REF))
-DOCKER_BRANCH = $(GITHUB_RUN_ID)
+DOCKER_BRANCH = $(GITHUB_SHA)
 APP_REPO=js-payments
 APP_BRANCH=$(DOCKER_BRANCH)
 
