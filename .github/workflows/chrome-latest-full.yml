@@ -1,7 +1,9 @@
 name: chrome-latest-full
 
 on:
-  pull_request
+  pull_request:
+    branches:
+      - '**'
   push:
     branches:
       - master
