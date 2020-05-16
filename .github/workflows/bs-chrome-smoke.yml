@@ -6,15 +6,15 @@ env:
   BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-
-bs-chrome-smoke:
-  runs-on: ubuntu-latest
-  steps:
-    - uses: actions/checkout@v2
-    - run: make run-behave-browserstack
-  env:
-    BEHAVE_TAGS: "@smoke_test"
-    OS: Windows
-    OS_VERSION: 8.1
-    BROWSER: chrome
-    BROWSER_VERSION: 79.0
+jobs:
+  bs-chrome-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: make run-behave-browserstack
+    env:
+      BEHAVE_TAGS: "@smoke_test"
+      OS: Windows
+      OS_VERSION: 8.1
+      BROWSER: chrome
+      BROWSER_VERSION: 79.0
