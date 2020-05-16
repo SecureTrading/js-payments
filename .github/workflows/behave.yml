@@ -1,8 +1,6 @@
 name: chrome-latest
 
-on:
-  repository_dispatch:
-    types: [run-behave-event]
+on: push # TODO change to be more dynamic as to what is run on push and pull etc
 env:
   BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
   BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
