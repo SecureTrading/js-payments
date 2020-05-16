@@ -19,11 +19,12 @@ build-app-docker:
 	echo "$(DOCKER_PASSWORD)" | docker login --username "$(DOCKER_USERNAME)" --password-stdin
 	docker push "securetrading1/js-payments:$(DOCKER_BRANCH)"
 
-DOCKER_COMPOSE_ENV=APP_REPO=$(APP_REPO) APP_BRANCH=$(APP_BRANCH)
+
 
 check-docker-file-exists:
-	sh ./.github/workflows/scripts/docker_image_exists.sh
+	APP_BRANCH=$(APP_BRANCH) sh ./.github/workflows/scripts/docker_image_exists.sh
 
+DOCKER_COMPOSE_ENV=APP_REPO=$(APP_REPO) APP_BRANCH=$(APP_BRANCH)
 docker-compose-up: check-docker-file-exists
 	rm -Rf py-payments-testing
 	git clone --branch=$(TEST_BRANCH) --single-branch --depth=1 https://github.com/SecureTrading/py-payments-testing.git
