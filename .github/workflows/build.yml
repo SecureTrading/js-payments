@@ -1,4 +1,4 @@
-name: behavioural tests
+name: build docker
 
 on: push # TODO change to be more dynamic as to what is run on push and pull etc
 env:
