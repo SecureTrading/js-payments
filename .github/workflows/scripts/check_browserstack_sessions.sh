@@ -1,5 +1,5 @@
 # Checks if browserstack already has too many active sessions
-MAX_RETRY=60 # Will mean we have 300s of retries ~5minutes
+MAX_RETRY=360 # Will mean we have 3600s of retries ~1hr
 SLEEP=10
 ATTEMPT=1
 

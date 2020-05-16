@@ -1,4 +1,4 @@
-name: 3-bs-firefox-smoke
+name: 3-bs-iphone-smoke
 
 on:
   pull_request:
@@ -15,15 +15,13 @@ env:
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 jobs:
-  bs-firefox-smoke:
+  bs-chrome-smoke:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - run: make check-docker-file-exists
-      - run: make run-behave-browserstack
+      - run: make run-behave-browserstack-real-device
     env:
       BEHAVE_TAGS: "@smoke_test"
-      OS: Windows
+      DEVICE: "iPhone X"
       OS_VERSION: 10
-      BROWSER: Firefox
-      BROWSER_VERSION: 76.0

@@ -1,6 +1,14 @@
 name: 3-bs-chrome-smoke
 
-on: push # TODO change to be match bs-firefox
+on:
+  pull_request:
+    branches:
+      - '**'
+  push:
+    branches:
+      - 'master'
+      - 'develop'
+      - 'release/**'
 env:
   BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
   BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
@@ -16,6 +24,6 @@ jobs:
     env:
       BEHAVE_TAGS: "@smoke_test"
       OS: Windows
-      OS_VERSION: 8.1
+      OS_VERSION: 10
       BROWSER: chrome
-      BROWSER_VERSION: 79.0
+      BROWSER_VERSION: 81.0

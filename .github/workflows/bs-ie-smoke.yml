@@ -1,4 +1,4 @@
-name: 3-bs-firefox-smoke
+name: 3-bs-ie-smoke
 
 on:
   pull_request:
@@ -15,7 +15,7 @@ env:
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 jobs:
-  bs-firefox-smoke:
+  bs-chrome-smoke:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -25,5 +25,5 @@ jobs:
       BEHAVE_TAGS: "@smoke_test"
       OS: Windows
       OS_VERSION: 10
-      BROWSER: Firefox
-      BROWSER_VERSION: 76.0
+      BROWSER: IE
+      BROWSER_VERSION: 11.0
