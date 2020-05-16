@@ -1,4 +1,3 @@
-import { CardinalCommerce } from '../../application/core/integrations/CardinalCommerce';
 import { IStyles } from '../../shared/model/config/IStyles';
 import { Element } from './Element';
 import { DomMethods } from '../../application/core/shared/DomMethods';
@@ -9,6 +8,7 @@ import { RegisterFrames } from './RegisterFrames.class';
 import { Container } from 'typedi';
 import { BrowserLocalStorage } from '../../shared/services/storage/BrowserLocalStorage';
 import { IComponentsIds } from '../../shared/model/config/IComponentsIds';
+import { Language } from '../../application/core/shared/Language';
 
 export class CommonFrames extends RegisterFrames {
   get requestTypes(): string[] {
@@ -33,6 +33,7 @@ export class CommonFrames extends RegisterFrames {
   private readonly _submitFields: string[];
   private readonly _submitOnError: boolean;
   private readonly _submitOnSuccess: boolean;
+  private readonly _submitOnCancel: boolean;
   private _localStorage: BrowserLocalStorage = Container.get(BrowserLocalStorage);
 
   constructor(
@@ -42,6 +43,7 @@ export class CommonFrames extends RegisterFrames {
     styles: IStyles,
     submitOnSuccess: boolean,
     submitOnError: boolean,
+    submitOnCancel: boolean,
     submitFields: string[],
     gatewayUrl: string,
     animatedCard: boolean,
@@ -54,6 +56,7 @@ export class CommonFrames extends RegisterFrames {
     this._validation = new Validation();
     this._submitFields = submitFields;
     this._submitOnError = submitOnError;
+    this._submitOnCancel = submitOnCancel;
     this._submitOnSuccess = submitOnSuccess;
     this._requestTypes = requestTypes;
   }
@@ -110,9 +113,10 @@ export class CommonFrames extends RegisterFrames {
 
   private _isThreedComplete(data: any): boolean {
     if (this.requestTypes[this.requestTypes.length - 1] === 'THREEDQUERY') {
+      const isCardEnrolledAndNotFrictionless = data.enrolled === 'Y' && data.acsurl !== undefined;
+
       return (
-        // @ts-ignore
-        (!CardinalCommerce._isCardEnrolledAndNotFrictionless(data) && data.requesttypedescription === 'THREEDQUERY') ||
+        (!isCardEnrolledAndNotFrictionless && data.requesttypedescription === 'THREEDQUERY') ||
         data.threedresponse !== undefined
       );
     }
@@ -142,7 +146,11 @@ export class CommonFrames extends RegisterFrames {
     }
     if (this._shouldSubmitForm(data)) {
       const form = this._merchantForm;
-      DomMethods.addDataToForm(form, data, this._getSubmitFields(data));
+      let formData = data;
+      if (this._submitOnCancel) {
+        formData = Object.assign(data, { errormessage: Language.translations.PAYMENT_CANCELLED });
+      }
+      DomMethods.addDataToForm(form, formData, this._getSubmitFields(data));
       form.submit();
     }
   }
@@ -172,7 +180,8 @@ export class CommonFrames extends RegisterFrames {
   private _shouldSubmitForm(data: any): boolean {
     return (
       (this._submitOnSuccess && data.errorcode === '0' && this._isTransactionFinished(data)) ||
-      (this._submitOnError && data.errorcode !== '0')
+      (this._submitOnError && data.errorcode !== '0') ||
+      (this._submitOnCancel && data.errorcode !== '0')
     );
   }
 }

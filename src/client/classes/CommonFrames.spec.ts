@@ -98,7 +98,13 @@ describe('CommonFrames', () => {
     // when
     const { instance } = commonFramesFixture();
 
-    function shouldSubmitFormFixture(errorcode: string, isFinished: boolean, onSuccess: boolean, onError: boolean) {
+    function shouldSubmitFormFixture(
+      errorcode: string,
+      isFinished: boolean,
+      onSuccess: boolean,
+      onError: boolean,
+      onCancel: boolean
+    ) {
       const data = { errorcode };
       // @ts-ignore
       instance._isTransactionFinished = jest.fn().mockReturnValueOnce(isFinished);
@@ -112,25 +118,25 @@ describe('CommonFrames', () => {
 
     // then
     it('should submit if submit on success true', () => {
-      expect(shouldSubmitFormFixture('0', true, true, false)).toEqual(true);
+      expect(shouldSubmitFormFixture('0', true, true, false, false)).toEqual(true);
     });
 
     // then
     it('should not submit if submit on success false', () => {
-      expect(shouldSubmitFormFixture('0', true, false, true)).toEqual(false);
+      expect(shouldSubmitFormFixture('0', true, false, true, false)).toEqual(false);
     });
 
     // then
     it('should not submit if transaction finished is false', () => {
-      expect(shouldSubmitFormFixture('0', false, true, false)).toEqual(false);
+      expect(shouldSubmitFormFixture('0', false, true, false, false)).toEqual(false);
     });
     // then
-    it('should not submit if errorcode is not 0 and submit on error is false', () => {
-      expect(shouldSubmitFormFixture('3000', true, true, false)).toEqual(false);
+    it('should not submit if errorcode is not 0 and submit on error is false and submit on cancel is false', () => {
+      expect(shouldSubmitFormFixture('3000', true, true, false, false)).toEqual(false);
     });
     // then
     it('should submit if errorcode is not 0 but submit on error is true', () => {
-      expect(shouldSubmitFormFixture('30000', true, true, true)).toEqual(true);
+      expect(shouldSubmitFormFixture('30000', true, true, true, false)).toEqual(true);
     });
   });
 
@@ -242,7 +248,7 @@ function commonFramesFixture() {
   };
   const animatedCard = true;
   const gatewayUrl: string = 'https://webservices.securetrading.net/jwt/';
-  const instance = new CommonFrames(jwt, origin, componentsIds, {}, false, false, [], gatewayUrl, animatedCard, [
+  const instance = new CommonFrames(jwt, origin, componentsIds, {}, false, false, false, [], gatewayUrl, animatedCard, [
     'AUTH'
   ]);
 

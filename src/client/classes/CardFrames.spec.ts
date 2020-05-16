@@ -159,9 +159,7 @@ describe('CardFrames', () => {
     const submitFormEvent = {
       data: {
         // @ts-ignore
-        deferInit: undefined,
-        fieldsToSubmit: ['pan', 'expirydate', 'securitycode'],
-        bypassCards: ['PIBA']
+        fieldsToSubmit: ['pan', 'expirydate', 'securitycode']
       },
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
@@ -369,11 +367,8 @@ function cardFramesFixture() {
     ['VISA,MASTERCARD,AMEX'],
     'AMEX',
     true,
-    false,
     'merchant-submit-button',
-    false,
-    ['pan', 'expirydate', 'securitycode'],
-    [BypassCards.PIBA]
+    ['pan', 'expirydate', 'securitycode']
   );
   instance.init();
   return { instance };

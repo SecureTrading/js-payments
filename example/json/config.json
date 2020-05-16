@@ -23,7 +23,7 @@
   },
   "buttonId": "merchant-submit-button",
   "bypassCards": ["PIBA"],
-  "cachetoken": "",
+  "cancelCallback": null,
   "componentIds": {
     "animatedCard": "",
     "cardNumber": "",
@@ -41,6 +41,7 @@
   "datacenterurl": "",
   "deferInit": false,
   "disableNotification": false,
+  "errorCallback": null,
   "fieldsToSubmit": [
     "pan",
     "expirydate",
@@ -51,15 +52,15 @@
     "cachetoken": "",
     "threedinit": ""
   },
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4ODY3NTI5MC44NDE1LCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIxMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.SUey1XlW4GwDDDkoVh2QAGPhQEbzWJDy2QbDyr_c5fg",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4OTI5MTc4My4yNjU2MTQ1LCJwYXlsb2FkIjp7Im1haW5hbW91bnQiOiIxMC4wMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiJ9fQ.4pYsBXIOLl9z5SzxJTBpNI4xH_C6MjUnkEYJIpA7SA0",
   "livestatus": 0,
   "origin": "",
   "panIcon": true,
   "placeholders": {
+    "pan": "Card number",
     "expirydate": "MM/YY",
     "securitycode": "***"
   },
-  "requestTypes": [],
   "styles": {
     "defaultStyles": {
       "background-color-input": "AliceBlue"
@@ -83,11 +84,12 @@
       "color-error": "#3358FF"
     }
   },
+  "submitCallback": null,
   "submitFields": [],
   "submitOnSuccess": false,
   "submitOnError": false,
-  "submitCallback": "",
-  "threedinit": "",
+  "submitOnCancel": false,
+  "successCallback": null,
   "translations": {
     "An error occurred": "Wystąpił błąd"
   },

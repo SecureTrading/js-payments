@@ -204,16 +204,13 @@ export class ApplePay {
     const { sitesecurity, placement, paymentRequest, merchantId, requestTypes } = this._applePayConfig;
     this._merchantId = merchantId;
     this._placement = placement;
-    this.payment = new Payment(jwt, this._datacenterurl);
+    this.payment = new Payment();
     this._paymentRequest = paymentRequest;
     this._sitesecurity = sitesecurity;
     this._requestTypes = requestTypes;
     this._validateMerchantRequestData.walletmerchantid = merchantId;
     this._stJwtInstance = new StJwt(jwt);
-    this._stTransportInstance = new StTransport({
-      gatewayUrl: this._datacenterurl,
-      jwt
-    });
+    this._stTransportInstance = Container.get(StTransport);
     this._translator = new Translator(this._stJwtInstance.locale);
   }
 
@@ -350,7 +347,12 @@ export class ApplePay {
 
   private _onPaymentCanceled() {
     this._session.oncancel = (event: any) => {
-      this._notification.warning(Language.translations.PAYMENT_CANCELLED);
+      this._notification.cancel(Language.translations.PAYMENT_CANCELLED);
+      this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_CANCEL_CALLBACK }, true);
+      this._messageBus.publish(
+        { type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE, data: { errorcode: event } },
+        true
+      );
       GoogleAnalytics.sendGaData('event', 'Apple Pay', 'payment status', 'Apple Pay payment cancelled');
     };
   }
@@ -484,8 +486,16 @@ export class ApplePay {
         } else if (notificationType === 'error') {
           this._notification.error(message);
           this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
-        } else if (notificationType === 'warning') {
-          this._notification.warning(message);
+        } else if (notificationType === 'cancel') {
+          this._notification.cancel(message);
+          this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_CANCEL_CALLBACK }, true);
+          this._messageBus.publish(
+            {
+              type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE,
+              data: { errorcode: notificationType }
+            },
+            true
+          );
         } else {
           this._notification.info(message);
         }

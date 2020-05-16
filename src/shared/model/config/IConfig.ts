@@ -13,13 +13,14 @@ export interface IConfig {
   applePay?: IApplePay | {};
   buttonId?: string;
   bypassCards?: BypassCards[];
-  cachetoken?: string;
+  cancelCallback?: any;
   components?: IComponentsConfig;
   componentIds?: IComponentsIds;
   cybertonicaApiKey?: string;
   datacenterurl?: string;
   deferInit?: boolean;
   disableNotification?: boolean;
+  errorCallback?: any;
   fieldsToSubmit?: string[];
   formId?: string;
   init?: IBypassInit;
@@ -28,15 +29,13 @@ export interface IConfig {
   origin?: string;
   panIcon?: boolean;
   placeholders?: IPlaceholdersConfig;
-  requestTypes?: string[];
   styles?: IStyles;
   submitCallback?: any;
-  successCallback?: any;
-  errorCallback?: any;
   submitFields?: string[];
-  submitOnSuccess?: boolean;
+  submitOnCancel?: boolean;
   submitOnError?: boolean;
-  threedinit?: string;
+  submitOnSuccess?: boolean;
+  successCallback?: any;
   translations?: {};
   visaCheckout?: IVisaCheckout | {};
 }

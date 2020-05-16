@@ -9,15 +9,19 @@ export class NotificationService {
   constructor(private _messageBus: MessageBus, private _configProvider: ConfigProvider) {}
 
   private get disableNotification(): boolean {
-    return this._configProvider.getConfig().disableNotification;
+    return this._configProvider.getConfig() ? this._configProvider.getConfig().disableNotification : false;
   }
 
   private get submitOnError(): boolean {
-    return this._configProvider.getConfig().submitOnError;
+    return this._configProvider.getConfig() ? this._configProvider.getConfig().submitOnError : false;
   }
 
   private get submitOnSuccess(): boolean {
-    return this._configProvider.getConfig().submitOnSuccess;
+    return this._configProvider.getConfig() ? this._configProvider.getConfig().submitOnSuccess : false;
+  }
+
+  private get submitOnCancel(): boolean {
+    return this._configProvider.getConfig() ? this._configProvider.getConfig().submitOnCancel : false;
   }
 
   public error(message: string): void {
@@ -36,8 +40,10 @@ export class NotificationService {
     }
   }
 
-  public warning(message: string): void {
-    this._setNotification(NotificationType.Warning, message);
+  public cancel(message: string): void {
+    if (!this.disableNotification && !this.submitOnCancel) {
+      this._setNotification(NotificationType.Cancel, message);
+    }
   }
 
   private _setNotification(type: string, content: string): void {
