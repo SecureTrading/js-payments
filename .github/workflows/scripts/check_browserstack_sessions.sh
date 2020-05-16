@@ -7,7 +7,8 @@ SESSION_AVAILABLE=false
 while :
 do
   echo "Checking if browserstack has active sessions"
-  SESSION_DATA=$(curl -su "${BROWSERSTACK_USERNAME}:${BROWSERSTACK_PASSWORD}" "https://api.browserstack.com/automate/plan.json")
+  SESSION_DATA=$(curl -su "${BROWSERSTACK_USERNAME}:${BROWSERSTACK_ACCESS_KEY}" "https://api.browserstack.com/automate/plan.json")
+  echo $SESSON_DATA
   ACTIVE_SESSIONS=$(echo $SESSION_DATA | jq -r ".parallel_sessions_running")
   MAX_ACTIVE_SESSIONS=$(echo $SESSION_DATA | jq -r ".parallel_sessions_max_allowed")
   QUEUED_SESSIONS=$(echo $SESSION_DATA | jq -r ".queued_sessions")

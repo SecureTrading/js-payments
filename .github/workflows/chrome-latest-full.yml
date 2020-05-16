@@ -1,4 +1,4 @@
-name: 3-chrome-latest-full
+name: 3-local-chrome-full
 
 on:
   pull_request:

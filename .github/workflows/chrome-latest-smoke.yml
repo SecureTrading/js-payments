@@ -1,4 +1,4 @@
-name: 3-chrome-latest-smoke
+name: 3-local-chrome-smoke
 
 on:
   push:
