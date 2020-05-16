@@ -119,7 +119,7 @@
     "@babel/polyfill": "^7.7.0",
     "@babel/runtime": "^7.9.6",
     "@hapi/joi": "^17.1.1",
-    "@securetrading/js-payments-card": "^1.0.15",
+    "@securetrading/js-payments-card": "^1.0.16",
     "@securetrading/ts-iin-lookup": "^0.0.7",
     "@securetrading/ts-luhn-check": "^0.0.8",
     "@sheerun/mutationobserver-shim": "^0.3.3",
