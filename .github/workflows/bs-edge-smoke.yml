@@ -26,4 +26,4 @@ jobs:
       OS: Windows
       OS_VERSION: 10
       BROWSER: Edge
-      BROWSER_VERSION: 81.0
+      BROWSER_VERSION: 18.0

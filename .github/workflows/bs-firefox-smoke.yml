@@ -26,4 +26,4 @@ jobs:
       OS: Windows
       OS_VERSION: 10
       BROWSER: Firefox
-      BROWSER_VERSION: 76.0
+      BROWSER_VERSION: 74.0
