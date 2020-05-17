@@ -23,5 +23,5 @@ jobs:
       - run: make run-behave-browserstack-real-device
     env:
       BEHAVE_TAGS: "@smoke_test"
-      DEVICE: "iPhone X"
-      OS_VERSION: 10
+      DEVICE: "iPhone XS"
+      OS_VERSION: 13
