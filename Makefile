@@ -49,7 +49,7 @@ browserstack-local-start:
 	wget https://www.browserstack.com/browserstack-local/BrowserStackLocal-linux-x64.zip
 	unzip 'BrowserStackLocal-linux-x64.zip'
 	rm 'BrowserStackLocal-linux-x64.zip'
-	$(BROWSERSTACK_CHECK_ENV) sh ./.github/workflows/scripts/check_browserstack_sessions.sh
+	$(BROWSERSTACK_CHECK_ENV) bash ./.github/workflows/scripts/check_browserstack_sessions.sh
 	./BrowserStackLocal --key=$(BROWSERSTACK_ACCESS_KEY) --force-local --daemon start --local-identifier $(GITHUB_RUN_ID)
 
 browserstack-local-stop:
