@@ -16,7 +16,6 @@
       "requestTypes": [
         "RISKDEC",
         "ACCOUNTCHECK",
-        "THREEDQUERY",
         "AUTH"
       ],
       "supportedNetworks": [],
@@ -124,7 +123,6 @@
     "requestTypes": [
       "RISKDEC",
       "ACCOUNTCHECK",
-      "THREEDQUERY",
       "AUTH"
     ],
     "settings": {
