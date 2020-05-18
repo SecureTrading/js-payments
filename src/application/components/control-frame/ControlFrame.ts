@@ -229,6 +229,7 @@ export class ControlFrame extends Frame {
             case !this._isDataValid(data):
               this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
               this._validateFormFields();
+              return EMPTY;
             case this._isCardBypassed(this._getPan()):
               return of(data);
             default:
