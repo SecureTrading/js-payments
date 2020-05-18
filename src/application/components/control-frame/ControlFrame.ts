@@ -96,12 +96,13 @@ export class ControlFrame extends Frame {
         map((event: IMessageBusEvent<IThreeDInitResponse>) => event.data.maskedpan)
       )
       .subscribe((maskedpan: string) => {
-        this._slicedPan = maskedpan.slice(0, 6);
-
-        this.messageBus.publish({
-          type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS,
-          data: this._slicedPan
-        });
+        if (maskedpan) {
+          this._slicedPan = maskedpan.slice(0, 6);
+          this.messageBus.publish({
+            type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS,
+            data: this._slicedPan
+          });
+        }
       });
     config$.subscribe(config => {
       this.onInit(config);
@@ -158,6 +159,7 @@ export class ControlFrame extends Frame {
       ControlFrame._resetJwt();
     });
   }
+
   private _setRequestTypes(config: IConfig): void {
     const requestTypes = config.components.requestTypes;
     const threeDIndex = requestTypes.indexOf(ControlFrame.THREEDQUERY_EVENT);
@@ -372,7 +374,7 @@ export class ControlFrame extends Frame {
       case MessageBus.EVENTS.CHANGE_EXPIRATION_DATE:
         this._setCardExpiryDate(value);
         break;
-      case MessageBus.EVENTS.CHANGE_SECURITY_CODE:
+      case MessageBus.EVENTS.CHANGE_SECURITY_CmaskedODE:
         this._setCardSecurityCode(value);
         break;
     }

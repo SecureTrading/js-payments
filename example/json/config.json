@@ -60,8 +60,6 @@
   "disableNotification": false,
   "errorCallback": null,
   "fieldsToSubmit": [
-    "pan",
-    "expirydate",
     "securitycode"
   ],
   "formId": "st-form",
@@ -69,7 +67,7 @@
     "cachetoken": "",
     "threedinit": ""
   },
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4OTc4NDQ4My4xODMxODEzLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.qKiazsZWtwDQNGyeu_ZjVtXjceqRvMDr0O-7lxv5u0A",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4OTgxMzA2Mi4yMjU1MDQ5LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFyZW50dHJhbnNhY3Rpb25yZWZlcmVuY2UiOiI3LTktNTIwNDI4NSIsInBhbiI6IjM0MDAwMDAwMDAwMDYxMSIsImV4cGlyeWRhdGUiOiIxMS8yMiJ9fQ.7sNXes-q7zthI5WbMwmsVjb7FKaO9W0TrXpvsDZZU64",
   "livestatus": 0,
   "origin": "",
   "panIcon": true,
