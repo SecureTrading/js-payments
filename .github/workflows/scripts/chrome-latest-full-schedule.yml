@@ -1,9 +1,8 @@
-name: 3-bs-iphone-smoke
+name: 3-local-chrome-full-scheduled
 
-on: # TODO decide when to run
-  pull_request:
-    branches:
-      - 'master'
+on:
+  schedule:
+    - cron: '*/10 * * * *'
 env:
   BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
   BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
@@ -14,9 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: github-actions-1 # TODO Change to run on develop and master following https://github.community/t5/GitHub-Actions/Scheduled-builds-of-non-default-branch/m-p/53587#M8883
       - run: make check-docker-file-exists
-      - run: make run-behave-browserstack-real-device
+      - run: make run-behave-chrome
     env:
-      BEHAVE_TAGS: "@smoke_test"
-      DEVICE: "iPhone XS"
-      OS_VERSION: 13
+      BEHAVE_TAGS: "@full_test"
