@@ -29,13 +29,14 @@ import { IConfig } from '../../../shared/model/config/IConfig';
 import { CardinalCommerce } from '../../core/integrations/cardinal-commerce/CardinalCommerce';
 import { ICardinalCommerceTokens } from '../../core/integrations/cardinal-commerce/ICardinalCommerceTokens';
 import { defer, EMPTY, from, iif, Observable, of } from 'rxjs';
-import { catchError, map, mapTo, switchMap, tap } from 'rxjs/operators';
+import { catchError, filter, map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { IAuthorizePaymentResponse } from '../../core/models/IAuthorizePaymentResponse';
 import { StJwt } from '../../core/shared/StJwt';
 import { Translator } from '../../core/shared/Translator';
 import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { IOnCardinalValidated } from '../../core/models/IOnCardinalValidated';
 import { ConfigService } from '../../../client/config/ConfigService';
+import { IThreeDInitResponse } from '../../core/models/IThreeDInitResponse';
 
 @Service()
 export class ControlFrame extends Frame {
@@ -91,7 +92,8 @@ export class ControlFrame extends Frame {
     this.messageBus
       .pipe(
         ofType(MessageBus.EVENTS_PUBLIC.JSINIT_RESPONSE),
-        map((event: IMessageBusEvent) => event.data.maskedpan)
+        filter((event: IMessageBusEvent<IThreeDInitResponse>) => Boolean(event.data.maskedpan)),
+        map((event: IMessageBusEvent<IThreeDInitResponse>) => event.data.maskedpan)
       )
       .subscribe((maskedpan: string) => {
         this._slicedPan = maskedpan.slice(0, 6);

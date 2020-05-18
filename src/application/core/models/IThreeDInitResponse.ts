@@ -5,4 +5,5 @@ export interface IThreeDInitResponse {
   requesttypedescription: string;
   threedinit: string;
   transactionstartedtimestamp: string;
+  maskedpan?: string;
 }
