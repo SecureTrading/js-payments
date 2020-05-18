@@ -172,7 +172,6 @@ export class SecurityCode extends FormField {
 
   private _subscribeSecurityCodeChange(): void {
     this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (length: number) => {
-      console.error(length, 'CVV length');
       this._checkSecurityCodeLength(length);
       this._getPlaceholder(length);
       this.placeholder = this._configProvider.getConfig().placeholders.securitycode || this._getPlaceholder(length);

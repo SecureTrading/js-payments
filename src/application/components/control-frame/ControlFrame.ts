@@ -173,8 +173,6 @@ export class ControlFrame extends Frame {
     }
     const threeDIndex = config.components.requestTypes.indexOf(ControlFrame.THREEDQUERY_EVENT);
     this._preThreeDRequestTypes = config.components.requestTypes.slice(0, threeDIndex + 1);
-    console.error('PRE', this._preThreeDRequestTypes);
-    console.error('POST', this._postThreeDRequestTypes);
   }
 
   private _setPostThreeDRequestTypes(config: IConfig): void {
@@ -182,7 +180,6 @@ export class ControlFrame extends Frame {
       this._postThreeDRequestTypes = config.components.requestTypes.filter(
         (request: string) => request !== ControlFrame.THREEDQUERY_EVENT
       );
-      console.error('FILTERED REQUESTS:', this._postThreeDRequestTypes);
       return;
     }
 
@@ -191,8 +188,6 @@ export class ControlFrame extends Frame {
       threeDIndex + 1,
       config.components.requestTypes.length
     );
-    console.error('PRE', this._preThreeDRequestTypes);
-    console.error('POST', this._postThreeDRequestTypes);
   }
 
   private _updateJwtEvent(): void {
@@ -291,7 +286,6 @@ export class ControlFrame extends Frame {
   }
 
   private _processPayment(data: IResponseData): void {
-    console.error('PROCESS PAYMENT:', this._postThreeDRequestTypes, this._card);
     this._payment
       .processPayment(this._postThreeDRequestTypes, this._card, this._merchantFormData, data)
       .then(() => {
@@ -340,7 +334,6 @@ export class ControlFrame extends Frame {
         })
       );
     this._setPreThreeDRequestTypes(config);
-    console.error('CALLING THREEDQUERY:', this._preThreeDRequestTypes);
     return of({ ...this._merchantFormData }).pipe(
       switchMap(applyCybertonicaTid),
       switchMap(merchantFormData =>
@@ -374,7 +367,7 @@ export class ControlFrame extends Frame {
       case MessageBus.EVENTS.CHANGE_EXPIRATION_DATE:
         this._setCardExpiryDate(value);
         break;
-      case MessageBus.EVENTS.CHANGE_SECURITY_CmaskedODE:
+      case MessageBus.EVENTS.CHANGE_SECURITY_CODE:
         this._setCardSecurityCode(value);
         break;
     }
