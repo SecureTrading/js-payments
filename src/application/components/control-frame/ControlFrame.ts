@@ -28,13 +28,14 @@ import { Cybertonica } from '../../core/integrations/Cybertonica';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { CardinalCommerce } from '../../core/integrations/cardinal-commerce/CardinalCommerce';
 import { ICardinalCommerceTokens } from '../../core/integrations/cardinal-commerce/ICardinalCommerceTokens';
-import { defer, from, iif, Observable, of, throwError } from 'rxjs';
-import { map, mapTo, switchMap } from 'rxjs/operators';
+import { defer, EMPTY, from, iif, Observable, of } from 'rxjs';
+import { catchError, map, mapTo, switchMap } from 'rxjs/operators';
 import { IAuthorizePaymentResponse } from '../../core/models/IAuthorizePaymentResponse';
 import { StJwt } from '../../core/shared/StJwt';
 import { Translator } from '../../core/shared/Translator';
 import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { IOnCardinalValidated } from '../../core/models/IOnCardinalValidated';
+import { ConfigService } from '../../../client/config/ConfigService';
 
 @Service()
 export class ControlFrame extends Frame {
@@ -80,14 +81,13 @@ export class ControlFrame extends Frame {
     private _configProvider: ConfigProvider,
     private _notification: NotificationService,
     private _cybertonica: Cybertonica,
-    private _cardinalCommerce: CardinalCommerce
+    private _cardinalCommerce: CardinalCommerce,
+    private _configService: ConfigService
   ) {
     super();
     const config$ = this._configProvider.getConfig$();
     this._communicator.whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK).thenRespond(() => config$);
-    config$.subscribe(config => {
-      this.onInit(config);
-    });
+    config$.subscribe(config => this.onInit(config));
   }
 
   protected onInit(config: IConfig): void {
@@ -97,11 +97,12 @@ export class ControlFrame extends Frame {
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_CARD_NUMBER, this._formFields.cardNumber);
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, this._formFields.expirationDate);
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_SECURITY_CODE, this._formFields.securityCode);
+    this._setRequestTypes(config);
     this._submitFormEvent(config);
     this._updateMerchantFieldsEvent();
     this._resetJwtEvent();
     this._updateJwtEvent();
-    this._initCybertonica(config.cybertonicaApiKey);
+    this._initCybertonica(config);
 
     if (!config.deferInit) {
       this._initCardinalCommerce(config);
@@ -204,26 +205,17 @@ export class ControlFrame extends Frame {
           this._setPostThreeDRequestTypes(configObject);
           switch (true) {
             case !this._isDataValid(data):
-              return throwError(VALIDATION_FAILED);
+              this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
+              this._validateFormFields();
+              return EMPTY;
             case this._isCardBypassed(this._card.pan || this._getPan()):
               return of(data);
             default:
-              return this._callThreeDQueryRequest(configObject);
+              return this._callThreeDQueryRequest().pipe(catchError(errorData => this._onPaymentFailure(errorData)));
           }
         })
       )
-      .subscribe(
-        authorizationData => this._processPayment(authorizationData as any),
-        errorData => {
-          if (errorData === VALIDATION_FAILED) {
-            this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
-            this._validateFormFields();
-            return;
-          }
-
-          this._onPaymentFailure(errorData);
-        }
-      );
+      .subscribe(authorizationData => this._processPayment(authorizationData as any));
   }
 
   private _isDataValid(data: ISubmitData): boolean {
@@ -240,7 +232,7 @@ export class ControlFrame extends Frame {
     return validity;
   }
 
-  private _onPaymentFailure(errorData: ISubmitData | IOnCardinalValidated): void {
+  private _onPaymentFailure(errorData: ISubmitData | IOnCardinalValidated): Observable<never> {
     const { ErrorNumber, ErrorDescription } = errorData;
     const translator = new Translator(this._localStorage.getItem('locale'));
     const translatedErrorMessage = translator.translate(Language.translations.PAYMENT_ERROR);
@@ -260,6 +252,8 @@ export class ControlFrame extends Frame {
     );
     this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM, data: FormState.AVAILABLE }, true);
     this._notification.error(translatedErrorMessage);
+
+    return EMPTY;
   }
 
   private _isCardBypassed(pan: string): boolean {
@@ -391,7 +385,9 @@ export class ControlFrame extends Frame {
     this._merchantFormData = data;
   }
 
-  private _initCybertonica(cybertonicaApiKey: string): void {
+  private _initCybertonica(config: IConfig): void {
+    const { cybertonicaApiKey } = config;
+
     if (cybertonicaApiKey) {
       this._cybertonica.init(cybertonicaApiKey);
 
