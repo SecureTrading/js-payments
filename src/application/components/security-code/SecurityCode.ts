@@ -72,7 +72,12 @@ export class SecurityCode extends FormField {
       map(jwt => JwtDecode<IDecodedJwt>(jwt).payload.pan)
     );
 
-    return merge(cardNumberInput$, cardNumberFromJwt$).pipe(
+    const maskedPanFromJsInit$: Observable<string> = this._messageBus.pipe(
+      ofType(MessageBus.EVENTS_PUBLIC.JSINIT_RESPONSE),
+      map((event: IMessageBusEvent) => event.data.maskedpan)
+    );
+
+    return merge(cardNumberInput$, cardNumberFromJwt$, maskedPanFromJsInit$).pipe(
       map(cardNumber => (cardNumber ? iinLookup.lookup(cardNumber).cvcLength[0] : 3))
     );
   }
@@ -167,6 +172,7 @@ export class SecurityCode extends FormField {
 
   private _subscribeSecurityCodeChange(): void {
     this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (length: number) => {
+      console.error(length, 'CVV length');
       this._checkSecurityCodeLength(length);
       this._getPlaceholder(length);
       this.placeholder = this._configProvider.getConfig().placeholders.securitycode || this._getPlaceholder(length);

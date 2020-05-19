@@ -4,7 +4,6 @@ import { ICard } from '../models/ICard';
 import { IMerchantData } from '../models/IMerchantData';
 import { IWallet } from '../models/IWallet';
 import { IWalletVerify } from '../models/IWalletVerify';
-import { StJwt } from './StJwt';
 import { Validation } from './Validation';
 import { Container } from 'typedi';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
@@ -14,7 +13,6 @@ export class Payment {
   private _cardinalCommerceCacheToken: string;
   private _notification: NotificationService;
   private _stTransport: StTransport;
-  private _threeDInitRequestBody: IStRequest;
   private _validation: Validation;
   private _cybertonica: Cybertonica;
   private readonly _walletVerifyRequest: IStRequest;
@@ -26,9 +24,6 @@ export class Payment {
     this._validation = new Validation();
     this._walletVerifyRequest = {
       requesttypedescriptions: ['WALLETVERIFY']
-    };
-    this._threeDInitRequestBody = {
-      requesttypedescriptions: ['JSINIT']
     };
   }
 
