@@ -81,9 +81,7 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
       customData: Joi.any()
     }),
     placement: Joi.string(),
-    requestTypes: Joi.array().items(
-      Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
-    ),
+    requestTypes: Joi.array().items(Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'RISKDEC', 'SUBSCRIPTION')),
     settings: Joi.object().keys({
       locale: Joi.string(),
       countryCode: Joi.string(),

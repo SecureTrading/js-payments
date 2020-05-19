@@ -42,6 +42,7 @@ function ConfigResolverFixture() {
         countryCode: 'US',
         currencyCode: 'USD',
         merchantCapabilities: ['supports3DS', 'supportsCredit', 'supportsDebit'],
+        requestTypes: ['AUTH'],
         supportedNetworks: [],
         total: {
           label: 'Secure Trading Merchant',
@@ -144,15 +145,14 @@ function ConfigResolverFixture() {
         countryCode: 'US',
         currencyCode: 'USD',
         merchantCapabilities: ['supports3DS', 'supportsCredit', 'supportsDebit'],
+        requestTypes: ['AUTH'],
         supportedNetworks: [],
         total: {
           label: 'Secure Trading Merchant',
           amount: '10.00'
         }
       },
-
-      placement: 'st-apple-pay',
-      requestTypes: ['AUTH']
+      placement: 'st-apple-pay'
     },
     buttonId: 'merchant-submit-button',
     // @ts-ignore

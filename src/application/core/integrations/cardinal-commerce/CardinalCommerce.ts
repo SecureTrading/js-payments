@@ -12,7 +12,7 @@ import { FramesHub } from '../../../../shared/services/message-bus/FramesHub';
 import { NotificationService } from '../../../../client/classes/notification/NotificationService';
 import { IConfig } from '../../../../shared/model/config/IConfig';
 import { CardinalCommerceTokensProvider } from './CardinalCommerceTokensProvider';
-import { first, map, mapTo, shareReplay, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { filter, first, map, mapTo, shareReplay, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { ICardinalCommerceTokens } from './ICardinalCommerceTokens';
 import { from, Observable, of, Subject, throwError } from 'rxjs';
 import { ICardinal } from './ICardinal';
@@ -22,6 +22,7 @@ import { IMerchantData } from '../../models/IMerchantData';
 import { StTransport } from '../../services/StTransport.class';
 import { CardinalProvider } from './CardinalProvider';
 import { IAuthorizePaymentResponse } from '../../models/IAuthorizePaymentResponse';
+import { Language } from '../../shared/Language';
 
 @Service()
 export class CardinalCommerce {
@@ -44,6 +45,10 @@ export class CardinalCommerce {
   ) {
     this.destroy$ = this.messageBus.pipe(ofType(MessageBus.EVENTS_PUBLIC.DESTROY), mapTo(void 0));
     this.cardinalValidated$ = new Subject<[IOnCardinalValidated, string]>();
+
+    this.cardinalValidated$
+      .pipe(filter(data => data[0].ActionCode === 'ERROR'))
+      .subscribe(() => this.notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
   }
 
   init(config: IConfig): Observable<ICardinal> {
