@@ -14,7 +14,6 @@ jest.mock('../../src/client/classes/CommonFrames.class');
 jest.mock('../../src/client/classes/CardFrames.class');
 jest.mock('../../src/application/core/integrations/VisaCheckout');
 jest.mock('../../src/application/core/integrations/VisaCheckoutMock');
-jest.mock('../../src/application/core/integrations/ApplePaySchema');
 jest.mock('../../src/application/core/integrations/ApplePayMock');
 jest.mock('../../src/application/core/integrations/GoogleAnalytics');
 jest.mock('../../src/application/core/shared/Notification');
@@ -30,22 +29,6 @@ describe('ST', () => {
       instance.Init = jest.fn();
       // @ts-ignore
       stObject = ST(cacheConfig);
-    });
-  });
-
-  // given
-  describe('ST.ApplePaySchema()', () => {
-    const { applePayConfig } = stFixture();
-
-    // then
-    it('should return ApplePayMock object when environment.testEnvironment equals true', () => {
-      environment.testEnvironment = true;
-      expect(instance.ApplePay(applePayConfig, config.jwt)).toBeInstanceOf(ApplePayMock);
-    });
-    // then
-    it('should return ApplePay object when environment.testEnvironment equals false', () => {
-      environment.testEnvironment = false;
-      expect(instance.ApplePay(applePayConfig, config.jwt)).toBeInstanceOf(ApplePay);
     });
   });
 

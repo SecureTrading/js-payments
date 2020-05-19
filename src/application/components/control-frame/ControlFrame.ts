@@ -119,7 +119,7 @@ export class ControlFrame extends Frame {
     this._updateMerchantFieldsEvent();
     this._resetJwtEvent();
     this._updateJwtEvent();
-    this._initCybertonica(config.cybertonicaApiKey);
+    this._initCybertonica(config);
 
     if (!config.deferInit) {
       this._initCardinalCommerce(config);

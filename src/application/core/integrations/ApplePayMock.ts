@@ -11,10 +11,6 @@ export class ApplePayMock extends ApplePay {
     return true;
   }
 
-  public setApplePayVersion() {
-    this.applePayVersion = 5;
-  }
-
   public isUserLoggedToAppleAccount() {
     return true;
   }
@@ -35,9 +31,5 @@ export class ApplePayMock extends ApplePay {
 
   public getPaymentFailureStatus() {
     return ApplePaySessionMock.STATUS_FAILURE;
-  }
-
-  public _createButton() {
-    return DomMethods.createHtmlElement.apply(this, [{ src: applePay, id: 'st-apple-pay' }, 'img']);
   }
 }
