@@ -97,7 +97,6 @@ export class ControlFrame extends Frame {
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_CARD_NUMBER, this._formFields.cardNumber);
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, this._formFields.expirationDate);
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_SECURITY_CODE, this._formFields.securityCode);
-    this._setRequestTypes(config);
     this._submitFormEvent();
     this._updateMerchantFieldsEvent();
     this._resetJwtEvent();
@@ -171,6 +170,7 @@ export class ControlFrame extends Frame {
         ),
         switchMap((data: ISubmitData) =>
           this._configProvider.getConfig$().pipe(
+            tap(config => this._setRequestTypes(config)),
             switchMap(config =>
               iif(
                 () => config.deferInit,
