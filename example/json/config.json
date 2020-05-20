@@ -60,8 +60,6 @@
   "disableNotification": false,
   "errorCallback": null,
   "fieldsToSubmit": [
-    "pan",
-    "expirydate",
     "securitycode"
   ],
   "formId": "st-form",
@@ -69,7 +67,7 @@
     "cachetoken": "",
     "threedinit": ""
   },
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4OTc4NDQ4My4xODMxODEzLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.qKiazsZWtwDQNGyeu_ZjVtXjceqRvMDr0O-7lxv5u0A",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4OTk2NTAwNi41NTgwMzksInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdF9qYW1lczM4NjQxIiwibG9jYWxlIjoiZW5fR0IiLCJwYXJlbnR0cmFuc2FjdGlvbnJlZmVyZW5jZSI6IjU3LTktMTI0MDEifX0.xMP7x1PAlsVWYcHDBaKRU7tNXZqht-vCfJQkg5LF6W8",
   "livestatus": 0,
   "origin": "",
   "panIcon": true,
@@ -102,9 +100,9 @@
   },
   "submitCallback": null,
   "submitFields": [],
-  "submitOnSuccess": true,
-  "submitOnError": true,
-  "submitOnCancel": true,
+  "submitOnSuccess": false,
+  "submitOnError": false,
+  "submitOnCancel": false,
   "successCallback": null,
   "translations": {
     "An error occurred": "Wystąpił błąd"
