@@ -45,12 +45,14 @@ export class SecurityCode extends FormField {
     private _sessionStorage: BrowserSessionStorage
   ) {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
+
     this._formatter = new Formatter();
     this._validation = new Validation();
     this._securityCodeWrapper = document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR) as HTMLElement;
     this._securityCodeLength = SecurityCode.STANDARD_INPUT_LENGTH;
+    this.placeholder = this._getPlaceholder(this._securityCodeLength);
     this._securityCodeLength$ = this._securityCodeUpdate$();
-    this._securityCodeLength$.subscribe(securityCodeLength => {
+    this._securityCodeLength$.pipe(filter(Boolean)).subscribe((securityCodeLength: number) => {
       this._securityCodeLength = securityCodeLength;
       this.placeholder =
         this._configProvider.getConfig().placeholders.securitycode || this._getPlaceholder(this._securityCodeLength);
@@ -175,7 +177,7 @@ export class SecurityCode extends FormField {
   }
 
   private _subscribeSecurityCodeChange(): void {
-    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (length: number) => {
+    this._messageBus.pipe(ofType(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH)).subscribe((length: number) => {
       this._checkSecurityCodeLength(length);
       this._getPlaceholder(length);
       this.placeholder = this._configProvider.getConfig().placeholders.securitycode || this._getPlaceholder(length);
