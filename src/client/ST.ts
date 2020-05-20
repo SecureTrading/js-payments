@@ -19,7 +19,6 @@ import { IApplePay } from '../application/core/models/IApplePay';
 import { IComponentsConfig } from '../shared/model/config/IComponentsConfig';
 import { IConfig } from '../shared/model/config/IConfig';
 import { IStJwtObj } from '../application/core/models/IStJwtObj';
-import { IVisaConfig } from '../application/core/models/IVisaConfig';
 import { MessageBus } from '../application/core/shared/MessageBus';
 import { Translator } from '../application/core/shared/Translator';
 import { environment } from '../environments/environment';
@@ -41,6 +40,7 @@ import { ConfigProvider } from '../application/core/services/ConfigProvider';
 import { switchMap, first } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { NotificationService } from './classes/notification/NotificationService';
+import { IVisaCheckout } from '../application/core/models/IVisaCheckout';
 
 @Service()
 class ST {
@@ -147,7 +147,7 @@ class ST {
     return new applepay(this._configProvider, this._communicator);
   }
 
-  public VisaCheckout(config: IVisaConfig): VisaCheckout {
+  public VisaCheckout(config: IVisaCheckout): VisaCheckout {
     const { visa } = this.Environment();
     this._config = this._configService.update({
       ...this._config,

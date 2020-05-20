@@ -12,7 +12,7 @@ import { DefaultRequestTypes } from './DefaultRequestTypes';
 export const DefaultConfig: IConfig = {
   analytics: false,
   animatedCard: false,
-  applePay: {},
+  // applePay: {},
   buttonId: '',
   bypassCards: [],
   cancelCallback: null,
@@ -37,6 +37,6 @@ export const DefaultConfig: IConfig = {
   submitOnError: false,
   submitOnSuccess: true,
   successCallback: null,
-  translations: {},
-  visaCheckout: {}
+  translations: {}
+  // visaCheckout: {}
 };

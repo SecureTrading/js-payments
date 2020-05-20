@@ -11,7 +11,7 @@ import { DefaultApmsRequestTypes } from '../../application/core/models/constants
 import { DefaultConfig } from '../../application/core/models/constants/config-resolver/DefaultConfig';
 import { DefaultComponents } from '../../application/core/models/constants/config-resolver/DefaultComponents';
 import { IApplePay } from '../../application/core/models/IApplePay';
-import { IVisaCheckout } from '../../application/core/models/constants/IVisaCheckout';
+import { IVisaCheckout } from '../../application/core/models/IVisaCheckout';
 import { IPlaceholdersConfig } from '../../application/core/models/IPlaceholdersConfig';
 import { DefaultPlaceholders } from '../../application/core/models/constants/config-resolver/DefaultPlaceholders';
 import { environment } from '../../environments/environment';
@@ -23,7 +23,7 @@ export class ConfigResolver {
     const validatedConfig: IConfig = {
       analytics: this._getValueOrDefault(config.analytics, DefaultConfig.analytics),
       animatedCard: this._getValueOrDefault(config.animatedCard, DefaultConfig.animatedCard),
-      applePay: this._setApplePayConfig(config.applePay, DefaultConfig.applePay),
+      applePay: this._setApplePayConfig(config.applePay),
       buttonId: this._getValueOrDefault(config.buttonId, DefaultConfig.buttonId),
       bypassCards: this._getValueOrDefault(config.bypassCards, DefaultConfig.bypassCards),
       cancelCallback: this._getValueOrDefault(config.cancelCallback, DefaultConfig.cancelCallback),
@@ -50,7 +50,7 @@ export class ConfigResolver {
       submitOnSuccess: this._getValueOrDefault(config.submitOnSuccess, DefaultConfig.submitOnSuccess),
       successCallback: this._getValueOrDefault(config.successCallback, DefaultConfig.successCallback),
       translations: this._getValueOrDefault(config.translations, DefaultConfig.translations),
-      visaCheckout: this._setVisaCheckoutConfig(config.visaCheckout, DefaultConfig.visaCheckout)
+      visaCheckout: this._setVisaCheckoutConfig(config.visaCheckout)
     };
     if (!environment.production) {
       console.error(validatedConfig);
@@ -92,20 +92,18 @@ export class ConfigResolver {
     }
   }
 
-  private _setVisaCheckoutConfig(config: IVisaCheckout | {}, defaultConfig: {}): IVisaCheckout | {} {
+  private _setVisaCheckoutConfig(config: IVisaCheckout): IVisaCheckout {
     if (!config || !Object.keys(config).length) {
-      return defaultConfig;
+      return;
     }
     return {
-      ...config,
-      // @ts-ignore
-      requestTypes: this._getValueOrDefault(config.requestTypes, DefaultApmsRequestTypes)
+      ...config
     };
   }
 
-  private _setApplePayConfig(config: IApplePay | {}, defaultConfig: {}): IApplePay | {} {
+  private _setApplePayConfig(config: IApplePay): IApplePay {
     if (!config || !Object.keys(config).length) {
-      return defaultConfig;
+      return;
     }
     return {
       ...config
