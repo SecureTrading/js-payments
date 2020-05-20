@@ -9,6 +9,7 @@ import { EMPTY, of } from 'rxjs';
 import { MessageBusMock } from '../../../testing/mocks/MessageBusMock';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { IConfig } from '../../../shared/model/config/IConfig';
+import { BrowserSessionStorage } from '../../../shared/services/storage/BrowserSessionStorage';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
 jest.mock('../../../../src/application/core/shared/Notification');
@@ -257,10 +258,12 @@ function securityCodeFixture() {
   when(communicatorMock.incomingEvent$).thenReturn(EMPTY);
 
   const configProvider: ConfigProvider = mock(ConfigProvider);
+
+  const sessionStorage: BrowserSessionStorage = mock(BrowserSessionStorage);
   when(configProvider.getConfig$()).thenReturn(of(config));
 
   const messageBus: MessageBus = (new MessageBusMock() as unknown) as MessageBus;
-  const securityCodeInstance = new SecurityCode(instance(configProvider), messageBus);
+  const securityCodeInstance = new SecurityCode(instance(configProvider), messageBus, instance(sessionStorage));
   // @ts-ignore
 
   return { securityCodeInstance, configProvider, communicatorMock, messageBus };

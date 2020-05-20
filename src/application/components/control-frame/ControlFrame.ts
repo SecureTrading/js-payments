@@ -97,6 +97,7 @@ export class ControlFrame extends Frame {
       )
       .subscribe((maskedpan: string) => {
         this._slicedPan = maskedpan.slice(0, 6);
+        this._sessionStorage.setItem('app.maskedpan', this._slicedPan);
 
         this.messageBus.publish({
           type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS,
@@ -268,7 +269,6 @@ export class ControlFrame extends Frame {
   }
 
   private _processPayment(data: IResponseData): void {
-    console.error('PROCESS PAYMENT:', this._postThreeDRequestTypes, this._card);
     this._payment
       .processPayment(this._postThreeDRequestTypes, this._card, this._merchantFormData, data)
       .then(() => {
