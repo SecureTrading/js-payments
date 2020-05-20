@@ -10,65 +10,14 @@ import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { FrameCollection } from '../../../shared/services/message-bus/interfaces/FrameCollection';
 import { FrameIdentifier } from '../../../shared/services/message-bus/FrameIdentifier';
 import { FrameAccessor } from '../../../shared/services/message-bus/FrameAccessor';
+import { PRIVATE_EVENTS, PUBLIC_EVENTS } from './EventTypes';
 
 type ControlFrameWindow = Window & { messageBus: MessageBus };
 
 @Service()
 export class MessageBus implements Subscribable<IMessageBusEvent> {
-  public static EVENTS = {
-    BLUR_CARD_NUMBER: 'BLUR_CARD_NUMBER',
-    BLUR_EXPIRATION_DATE: 'BLUR_EXPIRATION_DATE',
-    BLUR_SECURITY_CODE: 'BLUR_SECURITY_CODE',
-    CHANGE_CARD_NUMBER: 'CHANGE_CARD_NUMBER',
-    CHANGE_EXPIRATION_DATE: 'CHANGE_EXPIRATION_DATE',
-    CHANGE_SECURITY_CODE: 'CHANGE_SECURITY_CODE',
-    CHANGE_SECURITY_CODE_LENGTH: 'CHANGE_SECURITY_CODE_LENGTH',
-    FOCUS_CARD_NUMBER: 'FOCUS_CARD_NUMBER',
-    FOCUS_EXPIRATION_DATE: 'FOCUS_EXPIRATION_DATE',
-    FOCUS_SECURITY_CODE: 'FOCUS_SECURITY_CODE',
-    IS_CARD_WITHOUT_CVV: 'IS_CARD_WITHOUT_CVV',
-    VALIDATE_CARD_NUMBER_FIELD: 'VALIDATE_CARD_NUMBER_FIELD',
-    VALIDATE_EXPIRATION_DATE_FIELD: 'VALIDATE_EXPIRATION_DATE_FIELD',
-    VALIDATE_FORM: 'VALIDATE_FORM',
-    VALIDATE_MERCHANT_FIELD: 'VALIDATE_MERCHANT_FIELD',
-    VALIDATE_SECURITY_CODE_FIELD: 'VALIDATE_SECURITY_CODE_FIELD'
-  };
-  public static EVENTS_PUBLIC = {
-    BIN_PROCESS: 'BIN_PROCESS',
-    BLOCK_FORM: 'BLOCK_FORM',
-    BLOCK_CARD_NUMBER: 'BLOCK_CARD_NUMBER',
-    BLOCK_EXPIRATION_DATE: 'BLOCK_EXPIRATION_DATE',
-    BLOCK_SECURITY_CODE: 'BLOCK_SECURITY_CODE',
-    BLUR_FIELDS: 'BLUR_FIELDS',
-    BY_PASS_CARDINAL: 'BY_PASS_CARDINAL',
-    BY_PASS_INIT: 'BY_PASS_INIT',
-    CALL_MERCHANT_ERROR_CALLBACK: 'CALL_MERCHANT_ERROR_CALLBACK',
-    CALL_MERCHANT_CANCEL_CALLBACK: 'CALL_MERCHANT_CANCEL_CALLBACK',
-    CALL_MERCHANT_SUCCESS_CALLBACK: 'CALL_MERCHANT_SUCCESS_CALLBACK',
-    CALL_MERCHANT_SUBMIT_CALLBACK: 'CALL_MERCHANT_SUBMIT_CALLBACK',
-    CALL_SUBMIT_EVENT: 'CALL_SUBMIT_EVENT',
-    DESTROY: 'DESTROY',
-    GET_CYBERTONICA_TID: 'GET_CYBERTONICA_TID ',
-    LOAD_CARDINAL: 'LOAD_CARDINAL',
-    LOAD_CONTROL_FRAME: 'LOAD_CONTROL_FRAME',
-    NOTIFICATION: 'NOTIFICATION',
-    PROCESS_PAYMENTS: 'PROCESS_PAYMENTS',
-    RESET_JWT: 'RESET_JWT',
-    SET_REQUEST_TYPES: 'SET_REQUEST_TYPES',
-    SUBMIT_FORM: 'SUBMIT_FORM',
-    THREEDINIT_REQUEST: 'THREEDINIT_REQUEST',
-    THREEDINIT_RESPONSE: 'THREEDINIT_RESPONSE',
-    THREEDQUERY: 'THREEDQUERY',
-    TRANSACTION_COMPLETE: 'TRANSACTION_COMPLETE',
-    UPDATE_JWT: 'UPDATE_JWT',
-    UPDATE_MERCHANT_FIELDS: 'UPDATE_MERCHANT_FIELDS',
-    SUBSCRIBE: 'SUBSCRIBE',
-    CONFIG_CHECK: 'ST_CONFIG_CHECK',
-    CONTROL_FRAME_SHOW: 'ST_CONTROL_FRAME_SHOW',
-    CONTROL_FRAME_HIDE: 'ST_CONTROL_FRAME_HIDE',
-    CARDINAL_COMMERCE_TOKENS_ACQUIRED: 'ST_CARDINAL_COMMERCE_TOKENS_ACQUIRED'
-  };
-
+  public static EVENTS = PRIVATE_EVENTS;
+  public static EVENTS_PUBLIC = PUBLIC_EVENTS;
   public readonly pipe: Observable<any>['pipe'];
 
   constructor(
@@ -85,9 +34,13 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
   }
 
   public publish<T>(event: IMessageBusEvent<T>, publishToParent?: boolean): void {
-    this.framesHub
-      .waitForFrame(Selectors.CONTROL_FRAME_IFRAME)
-      .subscribe(controlFrame => this.communicator.send(event, controlFrame));
+    this.framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(controlFrame => {
+      try {
+        this.communicator.send(event, controlFrame);
+      } catch (e) {
+        console.warn(`Cannot send event to ControlFrame. ${e}`);
+      }
+    });
 
     if (publishToParent) {
       this.publishToParent(event);

@@ -24,8 +24,7 @@ import { MessageBus } from '../application/core/shared/MessageBus';
 import { Translator } from '../application/core/shared/Translator';
 import { environment } from '../environments/environment';
 import { Selectors } from '../application/core/shared/Selectors';
-import { Service, Inject, Container } from 'typedi';
-import { CONFIG } from '../application/core/dependency-injection/InjectionTokens';
+import { Service, Container } from 'typedi';
 import { ConfigService } from './config/ConfigService';
 import { ISubmitEvent } from '../application/core/models/ISubmitEvent';
 import { ISuccessEvent } from '../application/core/models/ISuccessEvent';
@@ -50,6 +49,7 @@ class ST {
   private static LOCALE_STORAGE: string = 'locale';
   private static MERCHANT_TRANSLATIONS_STORAGE: string = 'merchantTranslations';
   private static readonly MODAL_CONTROL_FRAME_CLASS = 'modal';
+  private _config: IConfig;
   private _cardFrames: CardFrames;
   private _commonFrames: CommonFrames;
   private _googleAnalytics: GoogleAnalytics;
@@ -90,7 +90,6 @@ class ST {
   }
 
   constructor(
-    @Inject(CONFIG) private _config: IConfig,
     private _configService: ConfigService,
     private _configProvider: ConfigProvider,
     private _communicator: InterFrameCommunicator,
@@ -103,7 +102,6 @@ class ST {
   ) {
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
-    this.init();
   }
 
   public on(event: 'success' | 'error' | 'submit' | 'cancel', callback: any): void {
@@ -204,10 +202,11 @@ class ST {
     this._communicator.close();
   }
 
-  private init(): void {
+  public init(config: IConfig): void {
+    this._config = this._configProvider.getConfig();
+    this.initCallbacks(config);
     // TODO theres probably a better way rather than having to remember to update Selectors
     Selectors.MERCHANT_FORM_SELECTOR = this._config.formId;
-    this.initCallbacks();
     this.Storage();
     this._translation = new Translator(this._storage.getItem(ST.LOCALE_STORAGE));
     this._googleAnalytics.init();
@@ -297,21 +296,21 @@ class ST {
     });
   }
 
-  private initCallbacks(): void {
-    if (this._config.submitCallback) {
-      this.submitCallback = this._config.submitCallback;
+  private initCallbacks(config: IConfig): void {
+    if (config.submitCallback) {
+      this.submitCallback = config.submitCallback;
     }
 
-    if (this._config.successCallback) {
-      this.successCallback = this._config.successCallback;
+    if (config.successCallback) {
+      this.successCallback = config.successCallback;
     }
 
-    if (this._config.errorCallback) {
-      this.errorCallback = this._config.errorCallback;
+    if (config.errorCallback) {
+      this.errorCallback = config.errorCallback;
     }
 
-    if (this._config.cancelCallback) {
-      this.cancelCallback = this._config.cancelCallback;
+    if (config.cancelCallback) {
+      this.cancelCallback = config.cancelCallback;
     }
   }
 
@@ -331,5 +330,9 @@ class ST {
 export default (config: IConfig) => {
   Container.get(ConfigService).update(config);
 
-  return Container.get(ST);
+  const st = Container.get(ST);
+
+  st.init(config);
+
+  return st;
 };

@@ -57,6 +57,7 @@
   "origin": "",
   "panIcon": true,
   "placeholders": {
+    "pan": "Card number",
     "expirydate": "MM/YY",
     "securitycode": "***"
   },
