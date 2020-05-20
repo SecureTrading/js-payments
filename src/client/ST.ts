@@ -15,7 +15,7 @@ import { ApplePayMock } from '../application/core/integrations/ApplePayMock';
 import { GoogleAnalytics } from '../application/core/integrations/GoogleAnalytics';
 import { VisaCheckout } from '../application/core/integrations/VisaCheckout';
 import { VisaCheckoutMock } from '../application/core/integrations/VisaCheckoutMock';
-import { IApplePayConfig } from '../application/core/models/IApplePayConfig';
+import { IApplePay } from '../application/core/models/IApplePay';
 import { IComponentsConfig } from '../shared/model/config/IComponentsConfig';
 import { IConfig } from '../shared/model/config/IConfig';
 import { IStJwtObj } from '../application/core/models/IStJwtObj';
@@ -128,7 +128,6 @@ class ST {
           ...(config || {})
         }
       });
-      this._commonFrames.requestTypes = this._config.components.requestTypes;
       await this._communicator.query({ type: MessageBus.EVENTS_PUBLIC.CONFIG_CHECK }, controlFrame);
       this.CardFrames();
       this._cardFrames.init();
@@ -136,7 +135,7 @@ class ST {
     });
   }
 
-  public ApplePay(config: IApplePayConfig): ApplePay {
+  public ApplePay(config: IApplePay): ApplePay {
     const { applepay } = this.Environment();
     this._config = this._configService.update({
       ...this._config,
@@ -205,8 +204,6 @@ class ST {
   public init(config: IConfig): void {
     this._config = this._configProvider.getConfig();
     this.initCallbacks(config);
-    // TODO theres probably a better way rather than having to remember to update Selectors
-    Selectors.MERCHANT_FORM_SELECTOR = this._config.formId;
     this.Storage();
     this._translation = new Translator(this._storage.getItem(ST.LOCALE_STORAGE));
     this._googleAnalytics.init();

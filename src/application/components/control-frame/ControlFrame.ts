@@ -29,7 +29,7 @@ import { IConfig } from '../../../shared/model/config/IConfig';
 import { CardinalCommerce } from '../../core/integrations/cardinal-commerce/CardinalCommerce';
 import { ICardinalCommerceTokens } from '../../core/integrations/cardinal-commerce/ICardinalCommerceTokens';
 import { defer, EMPTY, from, iif, Observable, of } from 'rxjs';
-import { catchError, map, mapTo, switchMap } from 'rxjs/operators';
+import { catchError, map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { IAuthorizePaymentResponse } from '../../core/models/IAuthorizePaymentResponse';
 import { StJwt } from '../../core/shared/StJwt';
 import { Translator } from '../../core/shared/Translator';
@@ -97,7 +97,6 @@ export class ControlFrame extends Frame {
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_CARD_NUMBER, this._formFields.cardNumber);
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, this._formFields.expirationDate);
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_SECURITY_CODE, this._formFields.securityCode);
-    this._setRequestTypes(config);
     this._submitFormEvent();
     this._updateMerchantFieldsEvent();
     this._resetJwtEvent();
@@ -168,6 +167,7 @@ export class ControlFrame extends Frame {
         map((event: IMessageBusEvent<ISubmitData>) => event.data || {}),
         switchMap((data: ISubmitData) =>
           this._configProvider.getConfig$().pipe(
+            tap(config => this._setRequestTypes(config)),
             switchMap(config =>
               iif(
                 () => config.deferInit,

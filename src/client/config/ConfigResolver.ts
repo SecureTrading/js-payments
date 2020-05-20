@@ -92,7 +92,7 @@ export class ConfigResolver {
     }
   }
 
-  private _setApplePayConfig(config: IApplePay, defaultConfig: IApplePay): IApplePay {
+  private _setVisaCheckoutConfig(config: IVisaCheckout | {}, defaultConfig: {}): IVisaCheckout | {} {
     if (!config || !Object.keys(config).length) {
       return defaultConfig;
     }
@@ -103,14 +103,12 @@ export class ConfigResolver {
     };
   }
 
-  private _setVisaCheckoutConfig(config: IVisaCheckout, defaultConfig: IVisaCheckout): IVisaCheckout {
+  private _setApplePayConfig(config: IApplePay | {}, defaultConfig: {}): IApplePay | {} {
     if (!config || !Object.keys(config).length) {
       return defaultConfig;
     }
     return {
-      ...config,
-      // @ts-ignore
-      requestTypes: this._getValueOrDefault(config.requestTypes, DefaultApmsRequestTypes)
+      ...config
     };
   }
 
