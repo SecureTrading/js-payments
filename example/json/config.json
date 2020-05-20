@@ -13,6 +13,11 @@
         "supportsCredit",
         "supportsDebit"
       ],
+      "requestTypes": [
+        "RISKDEC",
+        "ACCOUNTCHECK",
+        "AUTH"
+      ],
       "supportedNetworks": [],
       "total": {
         "label": "Secure Trading Merchant",
@@ -22,7 +27,14 @@
     "placement": "st-apple-pay"
   },
   "buttonId": "merchant-submit-button",
-  "bypassCards": ["PIBA"],
+  "bypassCards": [
+    "VISA",
+    "MASTERCARD",
+    "AMEX",
+    "DISCOVER",
+    "JCB",
+    "DINERS"
+  ],
   "cancelCallback": null,
   "componentIds": {
     "animatedCard": "",
@@ -33,7 +45,12 @@
   },
   "components": {
     "defaultPaymentType": "",
-    "requestTypes": [],
+    "requestTypes": [
+      "THREEDQUERY",
+      "RISKDEC",
+      "ACCOUNTCHECK",
+      "AUTH"
+    ],
     "paymentTypes": [],
     "startOnLoad": false
   },
@@ -52,7 +69,7 @@
     "cachetoken": "",
     "threedinit": ""
   },
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4ODk0MTg1OC45MDY2MzQ2LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.aKWOTkqcaLAk1e8bDhek5Sqxm66xyt4vecWgiMZ02Ss",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4OTk4MTc0NC40ODYyMDYsInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjEwMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdF9qYW1lczM4NjQxIiwibG9jYWxlIjoiZW5fR0IifX0.1R2rB37HxaVl54c0M-dnvyJ-hRlpDiMfnOwhTjOuXUE",
   "livestatus": 0,
   "origin": "",
   "panIcon": true,
@@ -104,7 +121,11 @@
       "subtotal": "20.00"
     },
     "placement": "st-visa-checkout",
-    "requestTypes": [],
+    "requestTypes": [
+      "RISKDEC",
+      "ACCOUNTCHECK",
+      "AUTH"
+    ],
     "settings": {
       "displayName": "My Test Site"
     }
