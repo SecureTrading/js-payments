@@ -108,9 +108,7 @@ export class ApplePay {
       {
         style: `-webkit-appearance: -apple-pay-button;
                 -apple-pay-button-type: ${buttonText};
-                -apple-pay-button-style: ${buttonStyle}`
-      },
-      {
+                -apple-pay-button-style: ${buttonStyle}`,
         lang: locale
       },
       'div'
@@ -347,7 +345,7 @@ export class ApplePay {
       return this._completion;
     }
 
-    let errordata = String(data);
+    const errordata = String(data);
     const error = new ApplePayError('unknown');
     error.message = this._translator.translate(errormessage);
     this._completion.status = ApplePaySession.STATUS_FAILURE;
