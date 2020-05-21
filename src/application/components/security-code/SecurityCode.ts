@@ -57,6 +57,7 @@ export class SecurityCode extends FormField {
       this.placeholder =
         this._configProvider.getConfig().placeholders.securitycode || this._getPlaceholder(this._securityCodeLength);
       this._inputElement.setAttribute(SecurityCode.PLACEHOLDER_ATTRIBUTE, this.placeholder);
+      this._checkSecurityCodeLength(securityCodeLength);
       this._messageBus.publish({ type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, data: securityCodeLength });
     });
     this._init();
@@ -177,13 +178,18 @@ export class SecurityCode extends FormField {
   }
 
   private _subscribeSecurityCodeChange(): void {
-    this._messageBus.pipe(ofType(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH)).subscribe((length: number) => {
-      this._checkSecurityCodeLength(length);
-      this._getPlaceholder(length);
-      this.placeholder = this._configProvider.getConfig().placeholders.securitycode || this._getPlaceholder(length);
-      this._inputElement.setAttribute(SecurityCode.PLACEHOLDER_ATTRIBUTE, this.placeholder);
-      this._sendState();
-    });
+    this._messageBus
+      .pipe(
+        ofType(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH),
+        map(event => event.data)
+      )
+      .subscribe((length: number) => {
+        this._checkSecurityCodeLength(length);
+        this._getPlaceholder(length);
+        this.placeholder = this._configProvider.getConfig().placeholders.securitycode || this._getPlaceholder(length);
+        this._inputElement.setAttribute(SecurityCode.PLACEHOLDER_ATTRIBUTE, this.placeholder);
+        this._sendState();
+      });
 
     this._messageBus.subscribe(
       MessageBus.EVENTS.IS_CARD_WITHOUT_CVV,
