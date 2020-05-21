@@ -5,7 +5,9 @@ import { FrameIdentifier } from '../../../shared/services/message-bus/FrameIdent
 import { FrameAccessor } from '../../../shared/services/message-bus/FrameAccessor';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
-import { EMPTY } from 'rxjs';
+import { EMPTY, Observable, of } from 'rxjs';
+import { Selectors } from './Selectors';
+import { IMessageBusEvent } from '../models/IMessageBusEvent';
 
 describe('MessageBus', () => {
   let communicatorMock: InterFrameCommunicator;
@@ -13,6 +15,7 @@ describe('MessageBus', () => {
   let frameIdentifierMock: FrameIdentifier;
   let frameAccessorMock: FrameAccessor;
   let messageBus: MessageBus;
+  const incomingEvent$: Observable<IMessageBusEvent> = EMPTY;
 
   beforeEach(() => {
     communicatorMock = mock(InterFrameCommunicator);
@@ -20,7 +23,8 @@ describe('MessageBus', () => {
     frameIdentifierMock = mock(FrameIdentifier);
     frameAccessorMock = mock(FrameAccessor);
 
-    when(communicatorMock.incomingEvent$).thenReturn(EMPTY);
+    when(communicatorMock.incomingEvent$).thenReturn(incomingEvent$);
+    when(framesHubMock.waitForFrame(Selectors.CONTROL_FRAME_IFRAME)).thenReturn(of(Selectors.CONTROL_FRAME_IFRAME));
 
     messageBus = new MessageBus(
       instance(communicatorMock),
@@ -42,14 +46,14 @@ describe('MessageBus', () => {
     it('should put messageBus instance in window object inside the control frame', () => {
       when(frameIdentifierMock.isControlFrame()).thenReturn(true);
 
-      const messageBus = new MessageBus(
+      new MessageBus(
         instance(communicatorMock),
         instance(framesHubMock),
         instance(frameIdentifierMock),
         instance(frameAccessorMock)
       );
 
-      expect((window as any).stMessages).toBe(messageBus);
+      expect((window as any).stMessages).toBe(incomingEvent$);
     });
 
     it('should not put messageBus instance in window object inside other frames', () => {
