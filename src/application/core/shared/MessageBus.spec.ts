@@ -36,7 +36,7 @@ describe('MessageBus', () => {
 
   describe('constructor()', () => {
     beforeEach(() => {
-      (window as any).messageBus = undefined;
+      (window as any).stMessages = undefined;
     });
 
     it('should put messageBus instance in window object inside the control frame', () => {
@@ -49,7 +49,7 @@ describe('MessageBus', () => {
         instance(frameAccessorMock)
       );
 
-      expect((window as any).messageBus).toBe(messageBus);
+      expect((window as any).stMessages).toBe(messageBus);
     });
 
     it('should not put messageBus instance in window object inside other frames', () => {
@@ -62,7 +62,7 @@ describe('MessageBus', () => {
         instance(frameAccessorMock)
       );
 
-      expect((window as any).messageBus).toBeUndefined();
+      expect((window as any).stMessages).toBeUndefined();
     });
   });
   /*
