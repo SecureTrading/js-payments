@@ -3,7 +3,7 @@ import { Service } from 'typedi';
 import { Observable, Subscribable } from 'rxjs';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
-import { first, map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { Selectors } from './Selectors';
 import { PartialObserver, Unsubscribable } from 'rxjs/src/internal/types';
 import { ofType } from '../../../shared/services/message-bus/operators/ofType';
@@ -12,13 +12,14 @@ import { FrameIdentifier } from '../../../shared/services/message-bus/FrameIdent
 import { FrameAccessor } from '../../../shared/services/message-bus/FrameAccessor';
 import { PRIVATE_EVENTS, PUBLIC_EVENTS } from './EventTypes';
 
-type ControlFrameWindow = Window & { messageBus: MessageBus };
+type ControlFrameWindow = Window & { stMessages: Observable<IMessageBusEvent> };
 
 @Service()
 export class MessageBus implements Subscribable<IMessageBusEvent> {
   public static EVENTS = PRIVATE_EVENTS;
   public static EVENTS_PUBLIC = PUBLIC_EVENTS;
   public readonly pipe: Observable<any>['pipe'];
+  private readonly messageStream$: Observable<IMessageBusEvent>;
 
   constructor(
     private communicator: InterFrameCommunicator,
@@ -26,11 +27,12 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
     private identifier: FrameIdentifier,
     private frameAccessor: FrameAccessor
   ) {
-    if (this.identifier.isControlFrame()) {
-      (window as any).messageBus = this;
-    }
+    this.messageStream$ = this.getMessageStream();
+    this.pipe = this.messageStream$.pipe.bind(this.messageStream$);
 
-    this.pipe = this.communicator.incomingEvent$.pipe.bind(this.communicator.incomingEvent$);
+    if (this.identifier.isControlFrame()) {
+      ((window as unknown) as ControlFrameWindow).stMessages = this.messageStream$;
+    }
   }
 
   public publish<T>(event: IMessageBusEvent<T>, publishToParent?: boolean): void {
@@ -59,16 +61,10 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
   public subscribe<T>(eventType: string, callback: (data: T) => void): Unsubscribable;
 
   public subscribe<T>(...args: any[]): Unsubscribable {
-    if (!this.identifier.isParentFrame() && !this.identifier.isControlFrame()) {
-      return this.getControlFrameMessageBus().subscribe(messageBus => {
-        messageBus.subscribe.apply(messageBus, args);
-      });
-    }
-
     if (typeof args[0] === 'string' && typeof args[1] === 'function') {
       const [eventType, callback] = args;
 
-      return this.communicator.incomingEvent$
+      return this.messageStream$
         .pipe(
           ofType(eventType),
           map((event: IMessageBusEvent<T>) => event.data)
@@ -76,7 +72,7 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
         .subscribe(callback);
     }
 
-    return this.communicator.incomingEvent$.subscribe.apply(this.communicator.incomingEvent$, args);
+    return this.messageStream$.subscribe.apply(this.messageStream$, args);
   }
 
   private publishToParent<T>(event: IMessageBusEvent<T>): void {
@@ -87,15 +83,18 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
     this.communicator.send(event, Selectors.MERCHANT_PARENT_FRAME);
   }
 
-  private getControlFrameMessageBus(): Observable<MessageBus> {
+  private getMessageStream(): Observable<IMessageBusEvent> {
+    if (this.identifier.isParentFrame() || this.identifier.isControlFrame()) {
+      return this.communicator.incomingEvent$;
+    }
+
     return this.framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).pipe(
-      map(frameName => {
+      switchMap(frameName => {
         const frames: FrameCollection = this.frameAccessor.getFrameCollection();
         const controlFrame: ControlFrameWindow = frames[frameName] as ControlFrameWindow;
 
-        return controlFrame.messageBus;
-      }),
-      first()
+        return controlFrame.stMessages;
+      })
     );
   }
 }
