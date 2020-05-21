@@ -89,22 +89,22 @@ module.exports = {
       filename: '[name].css',
       chunkFilename: '[id].css'
     }),
-    new CopyPlugin([
-      {
-        from: 'src/images',
+    new CopyPlugin({
+      patterns: [{
+        from: 'src/images/*.png',
         to: 'images',
-        test: /([^/]+)\/(.+)\.png$/,
-        force: true
-      }
-    ]),
-    new CopyPlugin([
-      {
-        from: 'example/json',
+        force: true,
+        flatten: true
+      }]
+    }),
+    new CopyPlugin({
+      patterns: [{
+        from: 'example/json/*.json',
         to: 'json',
-        test: /([^/]+)\/(.+)\.json$/,
-        force: true
-      }
-    ]),
+        force: true,
+        flatten: true
+      }]
+    }),
     new StyleLintPlugin(),
     new FriendlyErrorsWebpackPlugin()
   ],
