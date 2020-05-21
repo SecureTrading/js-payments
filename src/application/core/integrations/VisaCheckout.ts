@@ -25,12 +25,11 @@ export class VisaCheckout extends Apm {
   private _payment: Payment;
   private _stJwt: StJwt;
   private _visaConfig: IConfig;
+  private _visaInit: IVisaInit;
   private _urls = {
     buttonUrl: '',
     sdkUrl: ''
   };
-
-  private _visaInit: IVisaInit;
 
   constructor(
     private _configProvider: ConfigProvider,
@@ -156,7 +155,7 @@ export class VisaCheckout extends Apm {
     GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment canceled');
   }
 
-  private _setHandlers() {
+  private _setHandlers(): void {
     const { cancel, error, success } = VisaResponseTypes;
 
     V.init(this._visaInit);
