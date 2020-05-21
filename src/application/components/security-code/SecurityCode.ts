@@ -53,6 +53,7 @@ export class SecurityCode extends FormField {
     this.placeholder = this._getPlaceholder(this._securityCodeLength);
     this._securityCodeLength$ = this._securityCodeUpdate$();
     this._securityCodeLength$.pipe(filter(Boolean)).subscribe((securityCodeLength: number) => {
+      console.error(securityCodeLength);
       this._securityCodeLength = securityCodeLength;
       this.placeholder =
         this._configProvider.getConfig().placeholders.securitycode || this._getPlaceholder(this._securityCodeLength);
@@ -84,7 +85,16 @@ export class SecurityCode extends FormField {
 
     return merge(cardNumberInput$, cardNumberFromJwt$, maskedPanFromJsInit$).pipe(
       filter(Boolean),
-      map((cardNumber: string) => (cardNumber ? iinLookup.lookup(cardNumber).cvcLength[0] : 3))
+      tap(console.error),
+      map((cardNumber: string) => {
+        if (!cardNumber || !iinLookup.lookup(cardNumber).type) {
+          return 3;
+        }
+        if (!iinLookup.lookup(cardNumber).cvcLength[0]) {
+          return 3;
+        }
+        return iinLookup.lookup(cardNumber).cvcLength[0];
+      })
     );
   }
 
