@@ -118,14 +118,15 @@ class ST {
   }
 
   public Components(config: IComponentsConfig): void {
+    this._config = this._configService.update({
+      ...this._config,
+      components: {
+        ...this._config.components,
+        ...(config || {})
+      }
+    });
+
     this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(async controlFrame => {
-      this._config = this._configService.update({
-        ...this._config,
-        components: {
-          ...this._config.components,
-          ...(config || {})
-        }
-      });
       await this._communicator.query({ type: MessageBus.EVENTS_PUBLIC.CONFIG_CHECK }, controlFrame);
       this.CardFrames();
       this._cardFrames.init();
@@ -135,6 +136,7 @@ class ST {
 
   public ApplePay(config: IApplePay): ApplePay {
     const { applepay } = this.Environment();
+
     this._config = this._configService.update({
       ...this._config,
       applePay: {
@@ -142,11 +144,13 @@ class ST {
         ...(config || {})
       }
     });
+
     return new applepay(this._configProvider, this._communicator);
   }
 
   public VisaCheckout(config: IVisaConfig): VisaCheckout {
     const { visa } = this.Environment();
+
     this._config = this._configService.update({
       ...this._config,
       visaCheckout: {
