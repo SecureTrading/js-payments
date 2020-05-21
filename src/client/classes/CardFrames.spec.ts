@@ -174,7 +174,7 @@ describe('CardFrames', () => {
     // then
     it('should call publish method', () => {
       // @ts-ignore
-      expect(instance.messageBus.publish).toHaveBeenCalledWith(submitFormEvent);
+      expect(instance.messageBus.publish).toHaveBeenCalledWith(submitFormEvent, true);
     });
   });
 
