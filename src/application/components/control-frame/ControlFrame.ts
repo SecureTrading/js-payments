@@ -29,13 +29,14 @@ import { IConfig } from '../../../shared/model/config/IConfig';
 import { CardinalCommerce } from '../../core/integrations/cardinal-commerce/CardinalCommerce';
 import { ICardinalCommerceTokens } from '../../core/integrations/cardinal-commerce/ICardinalCommerceTokens';
 import { defer, EMPTY, from, iif, Observable, of } from 'rxjs';
-import { catchError, map, mapTo, switchMap, tap } from 'rxjs/operators';
+import { catchError, filter, map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { IAuthorizePaymentResponse } from '../../core/models/IAuthorizePaymentResponse';
 import { StJwt } from '../../core/shared/StJwt';
 import { Translator } from '../../core/shared/Translator';
 import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { IOnCardinalValidated } from '../../core/models/IOnCardinalValidated';
 import { ConfigService } from '../../../client/config/ConfigService';
+import { IThreeDInitResponse } from '../../core/models/IThreeDInitResponse';
 
 @Service()
 export class ControlFrame extends Frame {
@@ -73,6 +74,7 @@ export class ControlFrame extends Frame {
   private _postThreeDRequestTypes: string[];
   private _preThreeDRequestTypes: string[];
   private _validation: Validation;
+  private _slicedPan: string;
 
   constructor(
     private _localStorage: BrowserLocalStorage,
@@ -87,6 +89,22 @@ export class ControlFrame extends Frame {
     super();
     const config$ = this._configProvider.getConfig$();
     this._communicator.whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK).thenRespond(() => config$);
+    this.messageBus
+      .pipe(
+        ofType(MessageBus.EVENTS_PUBLIC.JSINIT_RESPONSE),
+        filter((event: IMessageBusEvent<IThreeDInitResponse>) => Boolean(event.data.maskedpan)),
+        map((event: IMessageBusEvent<IThreeDInitResponse>) => event.data.maskedpan)
+      )
+      .subscribe((maskedpan: string) => {
+        this._slicedPan = maskedpan.slice(0, 6);
+        this._sessionStorage.setItem('app.maskedpan', this._slicedPan);
+
+        this.messageBus.publish({
+          type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS,
+          data: this._slicedPan
+        });
+      });
+
     config$.subscribe(config => this.onInit(config));
   }
 
@@ -142,8 +160,18 @@ export class ControlFrame extends Frame {
   }
 
   private _setRequestTypes(config: IConfig): void {
-    const requestTypes = config.components.requestTypes;
+    const skipThreeDQuery = this._isCardBypassed(this._getPan());
+    const filterThreeDQuery = (requestType: string) =>
+      !skipThreeDQuery || requestType !== ControlFrame.THREEDQUERY_EVENT;
+    const requestTypes = [...config.components.requestTypes].filter(filterThreeDQuery);
     const threeDIndex = requestTypes.indexOf(ControlFrame.THREEDQUERY_EVENT);
+
+    if (threeDIndex === -1) {
+      this._preThreeDRequestTypes = [];
+      this._postThreeDRequestTypes = requestTypes;
+      return;
+    }
+
     this._preThreeDRequestTypes = requestTypes.slice(0, threeDIndex + 1);
     this._postThreeDRequestTypes = requestTypes.slice(threeDIndex + 1, requestTypes.length);
   }
@@ -165,8 +193,17 @@ export class ControlFrame extends Frame {
       .pipe(
         ofType(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM),
         map((event: IMessageBusEvent<ISubmitData>) => event.data || {}),
-        switchMap((data: ISubmitData) =>
-          this._configProvider.getConfig$().pipe(
+        switchMap((data: ISubmitData) => {
+          this._isPaymentReady = true;
+
+          if (!this._isDataValid(data)) {
+            this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
+            this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM, data: FormState.AVAILABLE }, true);
+            this._validateFormFields();
+            return EMPTY;
+          }
+
+          return this._configProvider.getConfig$().pipe(
             tap(config => this._setRequestTypes(config)),
             switchMap(config =>
               iif(
@@ -174,22 +211,17 @@ export class ControlFrame extends Frame {
                 defer(() => this._cardinalCommerce.init(config).pipe(mapTo(data))),
                 of(data)
               )
+            ),
+            switchMap(() =>
+              iif(
+                () => Boolean(this._preThreeDRequestTypes.length),
+                defer(() => this._callThreeDQueryRequest()).pipe(
+                  catchError(errorData => this._onPaymentFailure(errorData))
+                ),
+                of(data)
+              )
             )
-          )
-        ),
-        switchMap((data: ISubmitData) => {
-          this._isPaymentReady = true;
-
-          switch (true) {
-            case !this._isDataValid(data):
-              this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
-              this._validateFormFields();
-              return EMPTY;
-            case this._isCardBypassed(this._card.pan || this._getPan()):
-              return of(data);
-            default:
-              return this._callThreeDQueryRequest().pipe(catchError(errorData => this._onPaymentFailure(errorData)));
-          }
+          );
         })
       )
       .subscribe(authorizationData => this._processPayment(authorizationData as any));
@@ -263,7 +295,7 @@ export class ControlFrame extends Frame {
   }
 
   private _isCardWithoutCVV(): boolean {
-    const panFromJwt: string = this._getPan();
+    const panFromJwt: string = this._getPanFromJwt();
     let pan: string = '';
     if (panFromJwt || this._formFields.cardNumber.value) {
       pan = panFromJwt ? panFromJwt : this._formFields.cardNumber.value;
@@ -327,10 +359,14 @@ export class ControlFrame extends Frame {
     }
   }
 
-  private _getPan(): string {
+  private _getPanFromJwt(): string {
     return JwtDecode<IDecodedJwt>(this.params.jwt).payload.pan
       ? JwtDecode<IDecodedJwt>(this.params.jwt).payload.pan
       : '';
+  }
+
+  private _getPan(): string {
+    return this._card.pan || this._getPanFromJwt() || this._slicedPan;
   }
 
   private _setCardExpiryDate(value: string): void {
@@ -382,13 +418,16 @@ export class ControlFrame extends Frame {
           data: new StJwt(config.jwt).payload.pan as string
         });
 
-        this.messageBus.publish({
-          type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM,
-          data: {
-            dataInJwt: true,
-            requestTypes: config.components.requestTypes
-          }
-        });
+        this.messageBus.publish(
+          {
+            type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM,
+            data: {
+              dataInJwt: true,
+              requestTypes: config.components.requestTypes
+            }
+          },
+          true
+        );
       }
     });
   }

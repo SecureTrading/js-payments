@@ -8,13 +8,16 @@ import { Selectors } from '../../core/shared/Selectors';
 import { Validation } from '../../core/shared/Validation';
 import { Service } from 'typedi';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
-import { map, tap } from 'rxjs/operators';
+import { filter, map, tap } from 'rxjs/operators';
 import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { IFormFieldState } from '../../core/models/IFormFieldState';
 import { merge, Observable } from 'rxjs';
 import JwtDecode from 'jwt-decode';
 import { IDecodedJwt } from '../../core/models/IDecodedJwt';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
+import { IThreeDInitResponse } from '../../core/models/IThreeDInitResponse';
+import { BrowserSessionStorage } from '../../../shared/services/storage/BrowserSessionStorage';
+import { DefaultPlaceholders } from '../../core/models/constants/config-resolver/DefaultPlaceholders';
 
 @Service()
 export class SecurityCode extends FormField {
@@ -34,28 +37,37 @@ export class SecurityCode extends FormField {
   private _formatter: Formatter;
   private _securityCodeLength: number;
   private _securityCodeWrapper: HTMLElement;
-  private _securityCodeLength$: Observable<number>;
   private _validation: Validation;
 
-  constructor(private _configProvider: ConfigProvider, private _messageBus: MessageBus) {
+  constructor(
+    private _configProvider: ConfigProvider,
+    private _messageBus: MessageBus,
+    private _sessionStorage: BrowserSessionStorage
+  ) {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
+
     this._formatter = new Formatter();
     this._validation = new Validation();
     this._securityCodeWrapper = document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR) as HTMLElement;
     this._securityCodeLength = SecurityCode.STANDARD_INPUT_LENGTH;
-    this._securityCodeLength$ = this._securityCodeUpdate$();
-    this._securityCodeLength$.subscribe(securityCodeLength => {
-      this._securityCodeLength = securityCodeLength;
-      this.placeholder =
-        this._configProvider.getConfig().placeholders.securitycode || this._getPlaceholder(this._securityCodeLength);
-      this._inputElement.setAttribute(SecurityCode.PLACEHOLDER_ATTRIBUTE, this.placeholder);
-      this._messageBus.publish({ type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, data: securityCodeLength });
-    });
+    this.placeholder = this._getPlaceholder(this._securityCodeLength);
+    this._securityCodeUpdate$()
+      .pipe(filter(Boolean))
+      .subscribe((securityCodeLength: number) => {
+        this._securityCodeLength = securityCodeLength;
+        this._messageBus.publish({ type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, data: securityCodeLength });
+      });
     this._init();
   }
 
   private _getPlaceholder(securityCodeLength: number): string {
-    return securityCodeLength === 4 ? '****' : '***';
+    if (
+      this._configProvider.getConfig().placeholders.securitycode &&
+      this._configProvider.getConfig().placeholders.securitycode === DefaultPlaceholders.securitycode
+    ) {
+      return securityCodeLength === 4 ? '****' : DefaultPlaceholders.securitycode;
+    }
+    return this._configProvider.getConfig().placeholders.securitycode;
   }
 
   private _securityCodeUpdate$(): Observable<number> {
@@ -72,8 +84,19 @@ export class SecurityCode extends FormField {
       map(jwt => JwtDecode<IDecodedJwt>(jwt).payload.pan)
     );
 
-    return merge(cardNumberInput$, cardNumberFromJwt$).pipe(
-      map(cardNumber => (cardNumber ? iinLookup.lookup(cardNumber).cvcLength[0] : 3))
+    const maskedPanFromJsInit$: Observable<string> = this._sessionStorage.select(store => store['app.maskedpan']);
+
+    return merge(cardNumberInput$, cardNumberFromJwt$, maskedPanFromJsInit$).pipe(
+      filter(Boolean),
+      map((cardNumber: string) => {
+        if (!cardNumber || !iinLookup.lookup(cardNumber).type) {
+          return 3;
+        }
+        if (!iinLookup.lookup(cardNumber).cvcLength[0]) {
+          return 3;
+        }
+        return iinLookup.lookup(cardNumber).cvcLength[0];
+      })
     );
   }
 
@@ -166,13 +189,15 @@ export class SecurityCode extends FormField {
   }
 
   private _subscribeSecurityCodeChange(): void {
-    this._messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, (length: number) => {
-      this._checkSecurityCodeLength(length);
-      this._getPlaceholder(length);
-      this.placeholder = this._configProvider.getConfig().placeholders.securitycode || this._getPlaceholder(length);
-      this._inputElement.setAttribute(SecurityCode.PLACEHOLDER_ATTRIBUTE, this.placeholder);
-      this._sendState();
-    });
+    this._messageBus
+      .pipe(ofType(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH))
+      .subscribe((response: IMessageBusEvent) => {
+        const { data } = response;
+        this._checkSecurityCodeLength(data);
+        this.placeholder = this._getPlaceholder(data);
+        this._inputElement.setAttribute(SecurityCode.PLACEHOLDER_ATTRIBUTE, this.placeholder);
+        this._sendState();
+      });
 
     this._messageBus.subscribe(
       MessageBus.EVENTS.IS_CARD_WITHOUT_CVV,
