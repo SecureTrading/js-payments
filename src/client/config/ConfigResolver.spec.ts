@@ -294,7 +294,7 @@ function ConfigResolverFixture() {
     placeholders: {
       pan: '***** ***** ***** *****',
       expirydate: 'MM/YY',
-      securitycode: ''
+      securitycode: '***'
     },
     panIcon: false,
     styles: {},
