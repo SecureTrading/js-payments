@@ -261,6 +261,7 @@ function securityCodeFixture() {
 
   const sessionStorage: BrowserSessionStorage = mock(BrowserSessionStorage);
   when(configProvider.getConfig$()).thenReturn(of(config));
+  when(configProvider.getConfig()).thenReturn(config);
 
   const messageBus: MessageBus = (new MessageBusMock() as unknown) as MessageBus;
   const securityCodeInstance = new SecurityCode(instance(configProvider), messageBus, instance(sessionStorage));
