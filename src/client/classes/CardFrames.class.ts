@@ -12,6 +12,7 @@ import { Translator } from '../../application/core/shared/Translator';
 import { Validation } from '../../application/core/shared/Validation';
 import { RegisterFrames } from './RegisterFrames.class';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
+import { ofType } from '../../shared/services/message-bus/operators/ofType';
 
 export class CardFrames extends RegisterFrames {
   private static CARD_NUMBER_FIELD_NAME: string = 'pan';
@@ -251,7 +252,7 @@ export class CardFrames extends RegisterFrames {
       },
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
-    this.messageBus.publish(messageBusEvent);
+    this.messageBus.publish(messageBusEvent, true);
   }
 
   private _publishValidatedFieldState(field: { message: string; state: boolean }, eventType: string): void {
@@ -316,6 +317,10 @@ export class CardFrames extends RegisterFrames {
   }
 
   private _subscribeBlockSubmit(): void {
+    this.messageBus
+      .pipe(ofType(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM))
+      .subscribe(() => this._disableSubmitButton(FormState.BLOCKED));
+
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BLOCK_FORM, (state: FormState) => {
       this._disableSubmitButton(state);
       this._disableFormField(state, MessageBus.EVENTS_PUBLIC.BLOCK_CARD_NUMBER, Selectors.CARD_NUMBER_IFRAME);

@@ -115,7 +115,7 @@ export class ControlFrame extends Frame {
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_CARD_NUMBER, this._formFields.cardNumber);
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, this._formFields.expirationDate);
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_SECURITY_CODE, this._formFields.securityCode);
-    this._submitFormEvent(config);
+    this._submitFormEvent();
     this._updateMerchantFieldsEvent();
     this._resetJwtEvent();
     this._updateJwtEvent();
@@ -188,13 +188,22 @@ export class ControlFrame extends Frame {
     });
   }
 
-  private _submitFormEvent(configObject: IConfig): void {
+  private _submitFormEvent(): void {
     this.messageBus
       .pipe(
         ofType(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM),
         map((event: IMessageBusEvent<ISubmitData>) => event.data || {}),
-        switchMap((data: ISubmitData) =>
-          this._configProvider.getConfig$().pipe(
+        switchMap((data: ISubmitData) => {
+          this._isPaymentReady = true;
+
+          if (!this._isDataValid(data)) {
+            this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
+            this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM, data: FormState.AVAILABLE }, true);
+            this._validateFormFields();
+            return EMPTY;
+          }
+
+          return this._configProvider.getConfig$().pipe(
             tap(config => this._setRequestTypes(config)),
             switchMap(config =>
               iif(
@@ -202,23 +211,17 @@ export class ControlFrame extends Frame {
                 defer(() => this._cardinalCommerce.init(config).pipe(mapTo(data))),
                 of(data)
               )
+            ),
+            switchMap(() =>
+              iif(
+                () => Boolean(this._preThreeDRequestTypes.length),
+                defer(() => this._callThreeDQueryRequest()).pipe(
+                  catchError(errorData => this._onPaymentFailure(errorData))
+                ),
+                of(data)
+              )
             )
-          )
-        ),
-        switchMap((data: ISubmitData) => {
-          this._isPaymentReady = true;
-          switch (true) {
-            case !this._isDataValid(data):
-              this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
-              this._validateFormFields();
-              return EMPTY;
-            case !this._preThreeDRequestTypes.length:
-              return of(data);
-            default:
-              return this._callThreeDQueryRequest(configObject).pipe(
-                catchError(errorData => this._onPaymentFailure(errorData))
-              );
-          }
+          );
         })
       )
       .subscribe(authorizationData => this._processPayment(authorizationData as any));
@@ -302,7 +305,7 @@ export class ControlFrame extends Frame {
     return ControlFrame.NON_CVV_CARDS.includes(cardType);
   }
 
-  private _callThreeDQueryRequest(config: IConfig): Observable<IAuthorizePaymentResponse> {
+  private _callThreeDQueryRequest(): Observable<IAuthorizePaymentResponse> {
     const applyCybertonicaTid = (merchantFormData: IMerchantData) =>
       from(this._cybertonica.getTransactionId()).pipe(
         map(cybertonicaTid => {
@@ -415,13 +418,16 @@ export class ControlFrame extends Frame {
           data: new StJwt(config.jwt).payload.pan as string
         });
 
-        this.messageBus.publish({
-          type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM,
-          data: {
-            dataInJwt: true,
-            requestTypes: config.components.requestTypes
-          }
-        });
+        this.messageBus.publish(
+          {
+            type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM,
+            data: {
+              dataInJwt: true,
+              requestTypes: config.components.requestTypes
+            }
+          },
+          true
+        );
       }
     });
   }
