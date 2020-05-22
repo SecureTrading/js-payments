@@ -107,6 +107,9 @@ export class ConfigResolver {
     if (!config || !Object.keys(config).length) {
       return defaultConfig;
     }
+
+    // @ts-ignore
+    config.paymentRequest.requestTypes = this._getValueOrDefault(config.requestTypes, DefaultApmsRequestTypes);
     return {
       ...config
     };
