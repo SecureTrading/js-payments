@@ -49,4 +49,18 @@ describe('ConfigService', () => {
       expect(() => configService.update(config)).toThrow();
     });
   });
+
+  describe('clear', () => {
+    it('sets config value to null with synchronization', () => {
+      configService.clear(true);
+
+      verify(storageMock.setItem('app.config', null, true)).once();
+    });
+
+    it('sets config value to null without synchronization', () => {
+      configService.clear(false);
+
+      verify(storageMock.setItem('app.config', null, false)).once();
+    });
+  });
 });
