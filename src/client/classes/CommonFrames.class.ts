@@ -47,12 +47,14 @@ export class CommonFrames extends RegisterFrames {
     submitFields: string[],
     gatewayUrl: string,
     animatedCard: boolean,
-    requestTypes: string[]
+    requestTypes: string[],
+    formId: string
   ) {
-    super(jwt, origin, componentIds, styles, animatedCard);
+    super(jwt, origin, componentIds, styles, animatedCard, formId);
     this._gatewayUrl = gatewayUrl;
     this._messageBus = Container.get(MessageBus);
-    this._merchantForm = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR) as HTMLFormElement;
+    this.formId = formId;
+    this._merchantForm = document.getElementById(formId) as HTMLFormElement;
     this._validation = new Validation();
     this._submitFields = submitFields;
     this._submitOnError = submitOnError;
@@ -79,7 +81,7 @@ export class CommonFrames extends RegisterFrames {
 
   protected setElementsFields() {
     const elements = [];
-    elements.push(Selectors.MERCHANT_FORM_SELECTOR);
+    elements.push(this.formId);
     return elements;
   }
 
@@ -134,7 +136,7 @@ export class CommonFrames extends RegisterFrames {
 
   private _onInput(event: Event) {
     const messageBusEvent = {
-      data: DomMethods.parseForm(),
+      data: DomMethods.parseForm(this.formId),
       type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
     };
     this._messageBus.publish(messageBusEvent);

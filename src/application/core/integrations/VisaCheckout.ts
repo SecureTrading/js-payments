@@ -86,6 +86,7 @@ export class VisaCheckout {
   private _placement: string = 'body';
   private readonly _config$: Observable<IConfig>;
   private _visaCheckoutConfig: IWalletConfig;
+  private _formId: string;
 
   private _initConfiguration = {
     apikey: '' as string,
@@ -103,12 +104,13 @@ export class VisaCheckout {
     this._config$ = this._configProvider.getConfig$();
 
     this._config$.subscribe(config => {
-      const { visaCheckout, jwt, datacenterurl, livestatus } = config;
+      const { visaCheckout, jwt, datacenterurl, livestatus, formId } = config;
       if (visaCheckout) {
         this._visaCheckoutConfig = visaCheckout;
       }
       this._stJwt = new StJwt(jwt);
       this._livestatus = livestatus;
+      this._formId = formId;
       this._datacenterurl = datacenterurl;
       this._configurePaymentProcess(jwt);
       this._initVisaFlow();
@@ -160,7 +162,7 @@ export class VisaCheckout {
           walletsource: this._walletSource,
           wallettoken: this.paymentDetails
         },
-        DomMethods.parseForm()
+        DomMethods.parseForm(this._formId)
       )
       .then(() => {
         this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;

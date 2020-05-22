@@ -226,7 +226,8 @@ class ST {
       this._config.components.defaultPaymentType,
       this._config.animatedCard,
       this._config.buttonId,
-      this._config.fieldsToSubmit
+      this._config.fieldsToSubmit,
+      this._config.formId
     );
   }
 
@@ -242,7 +243,8 @@ class ST {
       this._config.submitFields,
       this._config.datacenterurl,
       this._config.animatedCard,
-      this._config.components.requestTypes
+      this._config.components.requestTypes,
+      this._config.formId
     );
   }
 

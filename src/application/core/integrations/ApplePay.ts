@@ -130,6 +130,7 @@ export class ApplePay {
   private readonly _config$: Observable<IConfig>;
   private _applePayConfig: IApplePay;
   private _datacenterurl: string;
+  private _formId: string;
 
   constructor(private _configProvider: ConfigProvider, private _communicator: InterFrameCommunicator) {
     this._notification = Container.get(NotificationService);
@@ -139,12 +140,13 @@ export class ApplePay {
     this._config$ = this._configProvider.getConfig$();
 
     this._config$.subscribe(config => {
-      const { applePay, jwt, datacenterurl } = config;
+      const { applePay, jwt, datacenterurl, formId } = config;
       if (applePay) {
         // @ts-ignore
         this._applePayConfig = applePay;
       }
       this.jwt = jwt;
+      this._formId = formId;
       this._datacenterurl = datacenterurl;
       this._onInit(this._applePayConfig.buttonText, this._applePayConfig.buttonStyle);
     });
@@ -322,7 +324,7 @@ export class ApplePay {
             walletsource: this._validateMerchantRequestData.walletsource,
             wallettoken: this.paymentDetails
           },
-          DomMethods.parseForm()
+          DomMethods.parseForm(this._formId)
         )
         .then((response: any) => {
           const { errorcode, errormessage } = response.response;

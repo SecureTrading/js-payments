@@ -368,7 +368,8 @@ function cardFramesFixture() {
     'AMEX',
     true,
     'merchant-submit-button',
-    ['pan', 'expirydate', 'securitycode']
+    ['pan', 'expirydate', 'securitycode'],
+    'st-form'
   );
   instance.init();
   return { instance };
