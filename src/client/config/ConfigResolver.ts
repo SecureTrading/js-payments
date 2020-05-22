@@ -109,7 +109,11 @@ export class ConfigResolver {
     }
 
     // @ts-ignore
-    config.paymentRequest.requestTypes = this._getValueOrDefault(config.requestTypes, DefaultApmsRequestTypes);
+    config.paymentRequest.requestTypes = this._getValueOrDefault(
+      // @ts-ignore
+      config.paymentRequest.requestTypes,
+      DefaultApmsRequestTypes
+    );
     return {
       ...config
     };
