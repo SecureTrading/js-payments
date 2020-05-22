@@ -93,8 +93,8 @@
   },
   "submitCallback": null,
   "submitFields": [],
-  "submitOnSuccess": false,
-  "submitOnError": false,
+  "submitOnSuccess": true,
+  "submitOnError": true,
   "submitOnCancel": false,
   "successCallback": null,
   "translations": {

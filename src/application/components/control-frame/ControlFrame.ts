@@ -272,26 +272,53 @@ export class ControlFrame extends Frame {
   }
 
   private _processPayment(data: IResponseData): void {
-    this._payment
-      .processPayment(this._postThreeDRequestTypes, this._card, this._merchantFormData, data)
-      .then(() => {
-        this.messageBus.publish(
-          {
-            type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK
-          },
-          true
-        );
-        this._notification.success(Language.translations.PAYMENT_SUCCESS);
-        this._validation.blockForm(FormState.COMPLETE);
-      })
-      .catch((error: any) => {
-        this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
-        this._notification.error(Language.translations.PAYMENT_ERROR);
-        this._validation.blockForm(FormState.AVAILABLE);
-      })
-      .finally(() => {
-        ControlFrame._resetJwt();
-      });
+    if (this._postThreeDRequestTypes.length > 0) {
+      this._payment
+        .processPayment(this._postThreeDRequestTypes, this._card, this._merchantFormData, data)
+        .then(() => {
+          this.messageBus.publish(
+            {
+              type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK
+            },
+            true
+          );
+          this._notification.success(Language.translations.PAYMENT_SUCCESS);
+          this._validation.blockForm(FormState.COMPLETE);
+        })
+        .catch((error: any) => {
+          this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
+          this._notification.error(Language.translations.PAYMENT_ERROR);
+          this._validation.blockForm(FormState.AVAILABLE);
+        })
+        .finally(() => {
+          ControlFrame._resetJwt();
+        });
+    } else {
+      //  TODO is this matching the previous behaviour exactly, we need to compare for submitOnSuccess true&false and submitOnError true&false
+      // We'll only be here if the 3DS process was successful but the merchant
+      // has chosen to not process any more requests to the gateway inside the
+      // JavaScript (instead deciding to process the request on their own server)
+      this.messageBus.publish(
+        {
+          type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE,
+          data: {
+            threedresponse: data.threedresponse,
+            errorcode: '0', // TODO is it okay to hardcode this - do we also need the jwt response from the gateway - we need to see what we used to return in v2.1.0
+            errormessage: 'Ok'
+          }
+        },
+        true
+      );
+
+      this.messageBus.publish(
+        {
+          type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK
+        },
+        true
+      );
+      this._notification.success(Language.translations.PAYMENT_SUCCESS);
+      this._validation.blockForm(FormState.COMPLETE);
+    }
   }
 
   private _isCardWithoutCVV(): boolean {
