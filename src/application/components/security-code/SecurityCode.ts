@@ -17,6 +17,7 @@ import { IDecodedJwt } from '../../core/models/IDecodedJwt';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { IThreeDInitResponse } from '../../core/models/IThreeDInitResponse';
 import { BrowserSessionStorage } from '../../../shared/services/storage/BrowserSessionStorage';
+import { DefaultPlaceholders } from '../../core/models/constants/config-resolver/DefaultPlaceholders';
 
 @Service()
 export class SecurityCode extends FormField {
@@ -36,7 +37,6 @@ export class SecurityCode extends FormField {
   private _formatter: Formatter;
   private _securityCodeLength: number;
   private _securityCodeWrapper: HTMLElement;
-  private _securityCodeLength$: Observable<number>;
   private _validation: Validation;
 
   constructor(
@@ -51,19 +51,23 @@ export class SecurityCode extends FormField {
     this._securityCodeWrapper = document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR) as HTMLElement;
     this._securityCodeLength = SecurityCode.STANDARD_INPUT_LENGTH;
     this.placeholder = this._getPlaceholder(this._securityCodeLength);
-    this._securityCodeLength$ = this._securityCodeUpdate$();
-    this._securityCodeLength$.pipe(filter(Boolean)).subscribe((securityCodeLength: number) => {
-      this._securityCodeLength = securityCodeLength;
-      this.placeholder =
-        this._configProvider.getConfig().placeholders.securitycode || this._getPlaceholder(this._securityCodeLength);
-      this._inputElement.setAttribute(SecurityCode.PLACEHOLDER_ATTRIBUTE, this.placeholder);
-      this._messageBus.publish({ type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, data: securityCodeLength });
-    });
+    this._securityCodeUpdate$()
+      .pipe(filter(Boolean))
+      .subscribe((securityCodeLength: number) => {
+        this._securityCodeLength = securityCodeLength;
+        this._messageBus.publish({ type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, data: securityCodeLength });
+      });
     this._init();
   }
 
   private _getPlaceholder(securityCodeLength: number): string {
-    return securityCodeLength === 4 ? '****' : '***';
+    if (
+      this._configProvider.getConfig().placeholders.securitycode &&
+      this._configProvider.getConfig().placeholders.securitycode === DefaultPlaceholders.securitycode
+    ) {
+      return securityCodeLength === 4 ? '****' : DefaultPlaceholders.securitycode;
+    }
+    return this._configProvider.getConfig().placeholders.securitycode;
   }
 
   private _securityCodeUpdate$(): Observable<number> {
@@ -84,7 +88,15 @@ export class SecurityCode extends FormField {
 
     return merge(cardNumberInput$, cardNumberFromJwt$, maskedPanFromJsInit$).pipe(
       filter(Boolean),
-      map((cardNumber: string) => (cardNumber ? iinLookup.lookup(cardNumber).cvcLength[0] : 3))
+      map((cardNumber: string) => {
+        if (!cardNumber || !iinLookup.lookup(cardNumber).type) {
+          return 3;
+        }
+        if (!iinLookup.lookup(cardNumber).cvcLength[0]) {
+          return 3;
+        }
+        return iinLookup.lookup(cardNumber).cvcLength[0];
+      })
     );
   }
 
@@ -177,13 +189,15 @@ export class SecurityCode extends FormField {
   }
 
   private _subscribeSecurityCodeChange(): void {
-    this._messageBus.pipe(ofType(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH)).subscribe((length: number) => {
-      this._checkSecurityCodeLength(length);
-      this._getPlaceholder(length);
-      this.placeholder = this._configProvider.getConfig().placeholders.securitycode || this._getPlaceholder(length);
-      this._inputElement.setAttribute(SecurityCode.PLACEHOLDER_ATTRIBUTE, this.placeholder);
-      this._sendState();
-    });
+    this._messageBus
+      .pipe(ofType(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH))
+      .subscribe((response: IMessageBusEvent) => {
+        const { data } = response;
+        this._checkSecurityCodeLength(data);
+        this.placeholder = this._getPlaceholder(data);
+        this._inputElement.setAttribute(SecurityCode.PLACEHOLDER_ATTRIBUTE, this.placeholder);
+        this._sendState();
+      });
 
     this._messageBus.subscribe(
       MessageBus.EVENTS.IS_CARD_WITHOUT_CVV,
