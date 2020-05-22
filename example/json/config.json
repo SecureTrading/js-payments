@@ -64,7 +64,7 @@
     "expirydate",
     "securitycode"
   ],
-  "formId": "",
+  "formId": "st-form",
   "init": {
     "cachetoken": "",
     "threedinit": ""
