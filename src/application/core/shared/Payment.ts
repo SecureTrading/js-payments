@@ -8,6 +8,7 @@ import { Validation } from './Validation';
 import { Container } from 'typedi';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
 import { Cybertonica } from '../integrations/Cybertonica';
+import { MessageBus } from './MessageBus';
 
 export class Payment {
   private _cardinalCommerceCacheToken: string;
@@ -15,12 +16,14 @@ export class Payment {
   private _stTransport: StTransport;
   private _validation: Validation;
   private _cybertonica: Cybertonica;
+  private _messageBus: MessageBus;
   private readonly _walletVerifyRequest: IStRequest;
 
   constructor() {
     this._notification = Container.get(NotificationService);
     this._cybertonica = Container.get(Cybertonica);
     this._stTransport = Container.get(StTransport);
+    this._messageBus = Container.get(MessageBus);
     this._validation = new Validation();
     this._walletVerifyRequest = {
       requesttypedescriptions: ['WALLETVERIFY']
@@ -37,6 +40,25 @@ export class Payment {
     merchantData: IMerchantData,
     additionalData?: any
   ): Promise<object> {
+    if (requestTypes.length === 0) {
+      this._messageBus.publish(
+        {
+          type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE,
+          data: {
+            threedresponse: additionalData.threedresponse,
+            errorcode: '0', // TODO is it okay to hardcode this - do we also need the jwt
+            // response from the gateway - we need to see what we used to return in v2.1.0
+            errormessage: 'Ok'
+          }
+        },
+        true
+      );
+
+      return Promise.resolve({
+        response: {}
+      });
+    }
+
     const processPaymentRequestBody = {
       requesttypedescriptions: requestTypes,
       ...additionalData,
