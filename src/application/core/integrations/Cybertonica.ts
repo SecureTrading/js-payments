@@ -26,6 +26,7 @@ export class Cybertonica implements ICybertonica {
   private tid: Promise<string> = Promise.resolve(undefined);
 
   constructor(private storage: BrowserLocalStorage) {
+    this.storage.setItem(Cybertonica.TID_KEY, '');
     this.translator = new Translator(this.storage.getItem(Cybertonica.LOCALE));
   }
 
@@ -43,8 +44,9 @@ export class Cybertonica implements ICybertonica {
   }
 
   public getTransactionId(): Promise<string> {
-    if (this.storage.getItem(Cybertonica.TID_KEY) !== null) {
-      return Promise.resolve(this.storage.getItem(Cybertonica.TID_KEY));
+    const tid = this.storage.getItem(Cybertonica.TID_KEY);
+    if (tid !== null && tid !== '') {
+      return Promise.resolve(tid);
     }
 
     return this.tid;
