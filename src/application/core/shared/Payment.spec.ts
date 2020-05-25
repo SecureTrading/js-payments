@@ -164,6 +164,8 @@ describe('Payment', () => {
     // then
     it('should return response', async () => {
       // @ts-ignore
+      instance._stTransport._threeDQueryResult = { response: { errormessage: 'Ok' }, jwt: 'jwt' };
+      // @ts-ignore
       instance._stTransport.sendRequest = jest.fn().mockReturnValueOnce(
         Promise.resolve({
           response: {}

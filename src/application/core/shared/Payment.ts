@@ -1,9 +1,11 @@
 import { IStRequest } from '../models/IStRequest';
+import { StCodec } from '../services/StCodec.class';
 import { StTransport } from '../services/StTransport.class';
 import { ICard } from '../models/ICard';
 import { IMerchantData } from '../models/IMerchantData';
 import { IWallet } from '../models/IWallet';
 import { IWalletVerify } from '../models/IWalletVerify';
+import { Language } from './Language';
 import { Validation } from './Validation';
 import { Container } from 'typedi';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
@@ -41,19 +43,13 @@ export class Payment {
     additionalData?: any
   ): Promise<object> {
     if (requestTypes.length === 0) {
-      this._messageBus.publish(
-        {
-          type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE,
-          data: {
-            threedresponse: additionalData.threedresponse,
-            errorcode: '0', // TODO is it okay to hardcode this - do we also need the jwt
-            // response from the gateway - we need to see what we used to return in v2.1.0
-            errormessage: 'Ok'
-          }
-        },
-        true
+      // This should only happen if were processing a 3DS payment with no requests after the THREEDQUERY
+      StCodec.publishResponse(
+        this._stTransport._threeDQueryResult.response,
+        this._stTransport._threeDQueryResult.jwt,
+        additionalData.threedresponse
       );
-
+      this._notification.success(Language.translations.PAYMENT_SUCCESS);
       return Promise.resolve({
         response: {}
       });
@@ -74,6 +70,7 @@ export class Payment {
     return this._stTransport.sendRequest(processPaymentRequestBody);
   }
 
+  // TODO is this even used anymore?
   public async threeDQueryRequest(requestTypes: string[], card: ICard, merchantData: IMerchantData): Promise<object> {
     const threeDQueryRequestBody = {
       cachetoken: this._cardinalCommerceCacheToken,
