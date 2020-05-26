@@ -8,14 +8,13 @@ import { Selectors } from '../../core/shared/Selectors';
 import { Validation } from '../../core/shared/Validation';
 import { Service } from 'typedi';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
-import { filter, map, tap } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { IFormFieldState } from '../../core/models/IFormFieldState';
 import { merge, Observable } from 'rxjs';
 import JwtDecode from 'jwt-decode';
 import { IDecodedJwt } from '../../core/models/IDecodedJwt';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
-import { IThreeDInitResponse } from '../../core/models/IThreeDInitResponse';
 import { BrowserSessionStorage } from '../../../shared/services/storage/BrowserSessionStorage';
 import { DefaultPlaceholders } from '../../core/models/constants/config-resolver/DefaultPlaceholders';
 
@@ -74,7 +73,7 @@ export class SecurityCode extends FormField {
     const jwtFromConfig$: Observable<string> = this._configProvider.getConfig$().pipe(map(config => config.jwt));
     const jwtFromUpdate$: Observable<string> = this._messageBus.pipe(
       ofType(MessageBus.EVENTS_PUBLIC.UPDATE_JWT),
-      map(event => event.data.jwt)
+      map(event => event.data.newJwt)
     );
     const cardNumberInput$: Observable<string> = this._messageBus.pipe(
       ofType(MessageBus.EVENTS.CHANGE_CARD_NUMBER),
