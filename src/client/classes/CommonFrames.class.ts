@@ -30,6 +30,7 @@ export class CommonFrames extends RegisterFrames {
   private readonly _gatewayUrl: string;
   private readonly _merchantForm: HTMLFormElement;
   private _validation: Validation;
+  private _done: boolean;
   private readonly _submitFields: string[];
   private readonly _submitOnError: boolean;
   private readonly _submitOnSuccess: boolean;
@@ -56,6 +57,7 @@ export class CommonFrames extends RegisterFrames {
     this.formId = formId;
     this._merchantForm = document.getElementById(formId) as HTMLFormElement;
     this._validation = new Validation();
+    this._done = false;
     this._submitFields = submitFields;
     this._submitOnError = submitOnError;
     this._submitOnCancel = submitOnCancel;
@@ -93,8 +95,6 @@ export class CommonFrames extends RegisterFrames {
     if (data.hasOwnProperty('threedresponse') && fields.indexOf('threedresponse') === -1) {
       fields.push('threedresponse');
     }
-    console.log('TODO HERE SUBMIT FIELDS');
-    console.log(fields);
     return fields;
   }
 
@@ -185,8 +185,11 @@ export class CommonFrames extends RegisterFrames {
   }
 
   private _submitForm(data: any) {
-    DomMethods.addDataToForm(this._merchantForm, data, this._getSubmitFields(data));
-    this._merchantForm.submit();
+    if (!this._done) {
+      this._done = true;
+      DomMethods.addDataToForm(this._merchantForm, data, this._getSubmitFields(data));
+      this._merchantForm.submit();
+    }
   }
 
   private _setMerchantInputListeners() {
