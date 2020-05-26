@@ -30,7 +30,7 @@ export class CommonFrames extends RegisterFrames {
   private readonly _gatewayUrl: string;
   private readonly _merchantForm: HTMLFormElement;
   private _validation: Validation;
-  private _done: boolean;
+  private _formSubmitted: boolean;
   private readonly _submitFields: string[];
   private readonly _submitOnError: boolean;
   private readonly _submitOnSuccess: boolean;
@@ -57,7 +57,7 @@ export class CommonFrames extends RegisterFrames {
     this.formId = formId;
     this._merchantForm = document.getElementById(formId) as HTMLFormElement;
     this._validation = new Validation();
-    this._done = false;
+    this._formSubmitted = false;
     this._submitFields = submitFields;
     this._submitOnError = submitOnError;
     this._submitOnCancel = submitOnCancel;
@@ -116,12 +116,8 @@ export class CommonFrames extends RegisterFrames {
   }
 
   private _isThreedComplete(data: any): boolean {
-    console.log(this.requestTypes[this.requestTypes.length - 1]);
     if (this.requestTypes[this.requestTypes.length - 1] === 'THREEDQUERY') {
       const isCardEnrolledAndNotFrictionless = data.enrolled === 'Y' && data.acsurl !== undefined;
-
-      console.log(data.threedresponse !== undefined);
-      console.log(!isCardEnrolledAndNotFrictionless && data.requesttypedescription);
 
       return (
         (!isCardEnrolledAndNotFrictionless && data.requesttypedescription === 'THREEDQUERY') ||
@@ -149,12 +145,6 @@ export class CommonFrames extends RegisterFrames {
   }
 
   private _onTransactionComplete(data: any): void {
-    console.log('TRANSACTION COMPLETE');
-    console.log(this._isTransactionFinished(data));
-    console.log(data);
-    console.log(data.errorcode);
-    console.log(this._submitOnError);
-    console.log(this._submitOnSuccess);
     if (this._isTransactionFinished(data) || data.errorcode !== '0') {
       this._messageBus.publish({ data, type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUBMIT_CALLBACK }, true);
     }
@@ -185,8 +175,8 @@ export class CommonFrames extends RegisterFrames {
   }
 
   private _submitForm(data: any) {
-    if (!this._done) {
-      this._done = true;
+    if (!this._formSubmitted) {
+      this._formSubmitted = true;
       DomMethods.addDataToForm(this._merchantForm, data, this._getSubmitFields(data));
       this._merchantForm.submit();
     }
