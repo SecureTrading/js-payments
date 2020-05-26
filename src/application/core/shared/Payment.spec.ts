@@ -5,6 +5,7 @@ import { Container } from 'typedi';
 import { Cybertonica } from '../integrations/Cybertonica';
 import { mock, instance as mockInstance, when } from 'ts-mockito';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
+import { ICard } from '../models/ICard';
 
 jest.mock('../../../../src/application/core/shared/Notification');
 
@@ -163,13 +164,15 @@ describe('Payment', () => {
     // then
     it('should return response', async () => {
       // @ts-ignore
+      instance._stTransport._threeDQueryResult = { response: { errormessage: 'Ok' }, jwt: 'jwt' };
+      // @ts-ignore
       instance._stTransport.sendRequest = jest.fn().mockReturnValueOnce(
         Promise.resolve({
           response: {}
         })
       );
       // @ts-ignore;
-      await instance.processPayment().then(result => {
+      await instance.processPayment([], {} as ICard, {}, {}).then(result => {
         expect(result).toStrictEqual({
           response: {}
         });

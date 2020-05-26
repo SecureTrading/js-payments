@@ -76,6 +76,7 @@ export class CardinalCommerce {
     };
 
     return from(this.stTransport.sendRequest(threeDQueryRequestBody)).pipe(
+      tap((response: { response: IThreeDQueryResponse }) => (this.stTransport._threeDQueryResult = response)),
       switchMap((response: { response: IThreeDQueryResponse }) => this._authenticateCard(response.response)),
       tap(() => GoogleAnalytics.sendGaData('event', 'Cardinal', 'auth', 'Cardinal auth completed')),
       map(jwt => ({
