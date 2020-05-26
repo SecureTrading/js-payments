@@ -97,15 +97,15 @@ export class ControlFrame extends Frame {
       )
       .subscribe((maskedpan: string) => {
         this._slicedPan = maskedpan.slice(0, 6);
+        this._sessionStorage.setItem('app.maskedpan', this._slicedPan);
 
         this.messageBus.publish({
           type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS,
           data: this._slicedPan
         });
       });
-    config$.subscribe(config => {
-      this.onInit(config);
-    });
+
+    config$.subscribe(config => this.onInit(config));
   }
 
   protected onInit(config: IConfig): void {
@@ -115,7 +115,7 @@ export class ControlFrame extends Frame {
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_CARD_NUMBER, this._formFields.cardNumber);
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, this._formFields.expirationDate);
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_SECURITY_CODE, this._formFields.securityCode);
-    this._submitFormEvent(config);
+    this._submitFormEvent();
     this._updateMerchantFieldsEvent();
     this._resetJwtEvent();
     this._updateJwtEvent();
@@ -158,39 +158,22 @@ export class ControlFrame extends Frame {
       ControlFrame._resetJwt();
     });
   }
+
   private _setRequestTypes(config: IConfig): void {
-    const requestTypes = config.components.requestTypes;
+    const skipThreeDQuery = this._isCardBypassed(this._getPan());
+    const filterThreeDQuery = (requestType: string) =>
+      !skipThreeDQuery || requestType !== ControlFrame.THREEDQUERY_EVENT;
+    const requestTypes = [...config.components.requestTypes].filter(filterThreeDQuery);
     const threeDIndex = requestTypes.indexOf(ControlFrame.THREEDQUERY_EVENT);
+
+    if (threeDIndex === -1) {
+      this._preThreeDRequestTypes = [];
+      this._postThreeDRequestTypes = requestTypes;
+      return;
+    }
+
     this._preThreeDRequestTypes = requestTypes.slice(0, threeDIndex + 1);
     this._postThreeDRequestTypes = requestTypes.slice(threeDIndex + 1, requestTypes.length);
-  }
-
-  private _setPreThreeDRequestTypes(config: IConfig): void {
-    if (this._isCardBypassed(this._getPan())) {
-      return;
-    }
-    const threeDIndex = config.components.requestTypes.indexOf(ControlFrame.THREEDQUERY_EVENT);
-    this._preThreeDRequestTypes = config.components.requestTypes.slice(0, threeDIndex + 1);
-    console.error('PRE', this._preThreeDRequestTypes);
-    console.error('POST', this._postThreeDRequestTypes);
-  }
-
-  private _setPostThreeDRequestTypes(config: IConfig): void {
-    if (this._isCardBypassed(this._getPan())) {
-      this._postThreeDRequestTypes = config.components.requestTypes.filter(
-        (request: string) => request !== ControlFrame.THREEDQUERY_EVENT
-      );
-      console.error('FILTERED REQUESTS:', this._postThreeDRequestTypes);
-      return;
-    }
-
-    const threeDIndex = config.components.requestTypes.indexOf(ControlFrame.THREEDQUERY_EVENT);
-    this._postThreeDRequestTypes = config.components.requestTypes.slice(
-      threeDIndex + 1,
-      config.components.requestTypes.length
-    );
-    console.error('PRE', this._preThreeDRequestTypes);
-    console.error('POST', this._postThreeDRequestTypes);
   }
 
   private _updateJwtEvent(): void {
@@ -205,15 +188,22 @@ export class ControlFrame extends Frame {
     });
   }
 
-  private _submitFormEvent(configObject: IConfig): void {
-    const VALIDATION_FAILED = 'VALIDATION_FAILED';
-
+  private _submitFormEvent(): void {
     this.messageBus
       .pipe(
         ofType(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM),
         map((event: IMessageBusEvent<ISubmitData>) => event.data || {}),
-        switchMap((data: ISubmitData) =>
-          this._configProvider.getConfig$().pipe(
+        switchMap((data: ISubmitData) => {
+          this._isPaymentReady = true;
+
+          if (!this._isDataValid(data)) {
+            this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
+            this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM, data: FormState.AVAILABLE }, true);
+            this._validateFormFields();
+            return EMPTY;
+          }
+
+          return this._configProvider.getConfig$().pipe(
             tap(config => this._setRequestTypes(config)),
             switchMap(config =>
               iif(
@@ -221,24 +211,17 @@ export class ControlFrame extends Frame {
                 defer(() => this._cardinalCommerce.init(config).pipe(mapTo(data))),
                 of(data)
               )
+            ),
+            switchMap(() =>
+              iif(
+                () => Boolean(this._preThreeDRequestTypes.length),
+                defer(() => this._callThreeDQueryRequest()).pipe(
+                  catchError(errorData => this._onPaymentFailure(errorData))
+                ),
+                of(data)
+              )
             )
-          )
-        ),
-        switchMap((data: ISubmitData) => {
-          this._isPaymentReady = true;
-          this._setPostThreeDRequestTypes(configObject);
-          switch (true) {
-            case !this._isDataValid(data):
-              this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
-              this._validateFormFields();
-              return EMPTY;
-            case this._isCardBypassed(this._getPan()):
-              return of(data);
-            default:
-              return this._callThreeDQueryRequest(configObject).pipe(
-                catchError(errorData => this._onPaymentFailure(errorData))
-              );
-          }
+          );
         })
       )
       .subscribe(authorizationData => this._processPayment(authorizationData as any));
@@ -289,7 +272,6 @@ export class ControlFrame extends Frame {
   }
 
   private _processPayment(data: IResponseData): void {
-    console.error('PROCESS PAYMENT:', this._postThreeDRequestTypes, this._card);
     this._payment
       .processPayment(this._postThreeDRequestTypes, this._card, this._merchantFormData, data)
       .then(() => {
@@ -323,7 +305,7 @@ export class ControlFrame extends Frame {
     return ControlFrame.NON_CVV_CARDS.includes(cardType);
   }
 
-  private _callThreeDQueryRequest(config: IConfig): Observable<IAuthorizePaymentResponse> {
+  private _callThreeDQueryRequest(): Observable<IAuthorizePaymentResponse> {
     const applyCybertonicaTid = (merchantFormData: IMerchantData) =>
       from(this._cybertonica.getTransactionId()).pipe(
         map(cybertonicaTid => {
@@ -337,8 +319,7 @@ export class ControlFrame extends Frame {
           };
         })
       );
-    this._setPreThreeDRequestTypes(config);
-    console.error('CALLING THREEDQUERY:', this._preThreeDRequestTypes);
+
     return of({ ...this._merchantFormData }).pipe(
       switchMap(applyCybertonicaTid),
       switchMap(merchantFormData =>
@@ -437,13 +418,16 @@ export class ControlFrame extends Frame {
           data: new StJwt(config.jwt).payload.pan as string
         });
 
-        this.messageBus.publish({
-          type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM,
-          data: {
-            dataInJwt: true,
-            requestTypes: config.components.requestTypes
-          }
-        });
+        this.messageBus.publish(
+          {
+            type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM,
+            data: {
+              dataInJwt: true,
+              requestTypes: config.components.requestTypes
+            }
+          },
+          true
+        );
       }
     });
   }

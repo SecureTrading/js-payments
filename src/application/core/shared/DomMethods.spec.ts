@@ -67,7 +67,7 @@ describe('DomMethods', () => {
 
     // then
     it('should call parseForm()', () => {
-      DomMethods.parseForm();
+      DomMethods.parseForm('st-form');
       expect(spy).toHaveBeenCalled();
     });
   });

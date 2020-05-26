@@ -174,7 +174,7 @@ describe('CardFrames', () => {
     // then
     it('should call publish method', () => {
       // @ts-ignore
-      expect(instance.messageBus.publish).toHaveBeenCalledWith(submitFormEvent);
+      expect(instance.messageBus.publish).toHaveBeenCalledWith(submitFormEvent, true);
     });
   });
 
@@ -368,7 +368,8 @@ function cardFramesFixture() {
     'AMEX',
     true,
     'merchant-submit-button',
-    ['pan', 'expirydate', 'securitycode']
+    ['pan', 'expirydate', 'securitycode'],
+    'st-form'
   );
   instance.init();
   return { instance };

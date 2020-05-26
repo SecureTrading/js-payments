@@ -23,6 +23,7 @@ describe('Visa Checkout', () => {
     when(configProvider.getConfig$()).thenReturn(
       of({
         jwt,
+        formId: 'st-form',
         disableNotification: false,
         datacenterurl: 'https://example.com',
         visaCheckout: {
@@ -505,6 +506,7 @@ function VisaCheckoutFixture() {
   );
   const url = 'https://example.com';
   const fakeV = { init: jest.fn(), on: jest.fn() };
+  const formId = 'st-form';
 
-  return { config, fakeVisaButton, livestatus, sdkMarkup, productionAssets, sandboxAssets, fakeV, url };
+  return { config, fakeVisaButton, livestatus, sdkMarkup, productionAssets, sandboxAssets, fakeV, url, formId };
 }

@@ -37,7 +37,7 @@ import { ofType } from '../shared/services/message-bus/operators/ofType';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ConfigProvider } from '../application/core/services/ConfigProvider';
-import { switchMap, first } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { IApplePay } from '../application/core/models/apple-pay/IApplePay';
 
@@ -118,14 +118,16 @@ class ST {
   }
 
   public Components(config: IComponentsConfig): void {
+    this._config = this._configService.update({
+      ...this._config,
+      components: {
+        ...this._config.components,
+        ...(config || {})
+      }
+    });
+    // @ts-ignore
+    this._commonFrames._requestTypes = this._config.components.requestTypes;
     this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(async controlFrame => {
-      this._config = this._configService.update({
-        ...this._config,
-        components: {
-          ...this._config.components,
-          ...(config || {})
-        }
-      });
       await this._communicator.query({ type: MessageBus.EVENTS_PUBLIC.CONFIG_CHECK }, controlFrame);
       this.CardFrames();
       this._cardFrames.init();
@@ -135,6 +137,7 @@ class ST {
 
   public ApplePay(config: IApplePay): ApplePay {
     const { applepay } = this.Environment();
+
     this._config = this._configService.update({
       ...this._config,
       applePay: {
@@ -142,11 +145,13 @@ class ST {
         ...(config || {})
       }
     });
+
     return new applepay(this._communicator, this._configProvider, this._storage, this._messageBus, this._notification);
   }
 
   public VisaCheckout(config: IVisaConfig): VisaCheckout {
     const { visa } = this.Environment();
+
     this._config = this._configService.update({
       ...this._config,
       visaCheckout: {
@@ -222,7 +227,8 @@ class ST {
       this._config.components.defaultPaymentType,
       this._config.animatedCard,
       this._config.buttonId,
-      this._config.fieldsToSubmit
+      this._config.fieldsToSubmit,
+      this._config.formId
     );
   }
 
@@ -238,7 +244,8 @@ class ST {
       this._config.submitFields,
       this._config.datacenterurl,
       this._config.animatedCard,
-      this._config.components.requestTypes
+      this._config.components.requestTypes,
+      this._config.formId
     );
   }
 
