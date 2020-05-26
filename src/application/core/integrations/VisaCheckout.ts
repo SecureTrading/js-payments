@@ -22,6 +22,7 @@ declare const V: any;
 @Service()
 export class VisaCheckout extends Apm {
   private _config$: Observable<IConfig>;
+  private _formId: string;
   private _payment: Payment;
   private _stJwt: StJwt;
   private _visaConfig: IConfig;
@@ -74,6 +75,7 @@ export class VisaCheckout extends Apm {
 
   private _updatePaymentAndStJwt(config: IConfig, newJwt?: string): void {
     const jwt: string = newJwt ? newJwt : config.jwt;
+    this._formId = config.formId;
     this._stJwt = new StJwt(jwt);
     this._payment = new Payment();
   }
@@ -152,6 +154,17 @@ export class VisaCheckout extends Apm {
 
   private _onCancel(): void {
     this._notification.cancel(Language.translations.PAYMENT_CANCELLED);
+    this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_CANCEL_CALLBACK }, true);
+    this._messageBus.publish(
+      {
+        type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE,
+        data: {
+          errorcode: 'cancelled',
+          errormessage: Language.translations.PAYMENT_CANCELLED
+        }
+      },
+      true
+    );
     GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment canceled');
   }
 

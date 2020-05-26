@@ -94,7 +94,7 @@ describe('CardinalCommerce', () => {
         jest.spyOn(cardinal, 'trigger');
 
         when(tokenProviderMock.getTokens()).thenReturn(of({ jwt: 'foo2', cacheToken: 'bar2' }));
-        messageBusMock.publish({ type: MessageBus.EVENTS_PUBLIC.UPDATE_JWT, data: 'foobar' });
+        messageBusMock.publish({ type: MessageBus.EVENTS_PUBLIC.UPDATE_JWT, data: { newJwt: 'foobar' } });
 
         expect(cardinal.trigger).toHaveBeenCalledWith(PaymentEvents.JWT_UPDATE, 'foo2');
         done();

@@ -37,7 +37,7 @@ import { ofType } from '../shared/services/message-bus/operators/ofType';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ConfigProvider } from '../application/core/services/ConfigProvider';
-import { switchMap, first } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { NotificationService } from './classes/notification/NotificationService';
 import { IVisaCheckout } from '../application/core/models/IVisaCheckout';
@@ -127,7 +127,8 @@ class ST {
         ...(config || {})
       }
     });
-
+    // @ts-ignore
+    this._commonFrames._requestTypes = this._config.components.requestTypes;
     this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(async controlFrame => {
       await this._communicator.query({ type: MessageBus.EVENTS_PUBLIC.CONFIG_CHECK }, controlFrame);
       this.CardFrames();
@@ -228,7 +229,8 @@ class ST {
       this._config.components.defaultPaymentType,
       this._config.animatedCard,
       this._config.buttonId,
-      this._config.fieldsToSubmit
+      this._config.fieldsToSubmit,
+      this._config.formId
     );
   }
 
@@ -244,7 +246,8 @@ class ST {
       this._config.submitFields,
       this._config.datacenterurl,
       this._config.animatedCard,
-      this._config.components.requestTypes
+      this._config.components.requestTypes,
+      this._config.formId
     );
   }
 

@@ -7,7 +7,7 @@ import { Container } from 'typedi';
 import { ConfigService } from '../../../client/config/ConfigService';
 
 (() => {
-  Container.get(ConfigService).clear();
+  Container.get(ConfigService).clear(false);
 
   return Container.get(ControlFrame);
 })();

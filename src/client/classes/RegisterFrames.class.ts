@@ -17,6 +17,7 @@ export class RegisterFrames {
   protected submitCallback: any;
   protected fieldsToSubmit: string[];
   protected messageBus: MessageBus;
+  protected formId: string;
   private stJwt: StJwt;
 
   constructor(
@@ -25,9 +26,11 @@ export class RegisterFrames {
     componentIds: {},
     styles: IStyles,
     animatedCard: boolean,
+    formId: string,
     fieldsToSubmit?: string[]
   ) {
     this.messageBus = Container.get(MessageBus);
+    this.formId = formId;
     this.fieldsToSubmit = fieldsToSubmit || RegisterFrames.COMPLETE_FORM_FIELDS;
     this.componentIds = componentIds;
     this.hasAnimatedCard = animatedCard;
