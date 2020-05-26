@@ -30,6 +30,7 @@ export class CommonFrames extends RegisterFrames {
   private readonly _gatewayUrl: string;
   private readonly _merchantForm: HTMLFormElement;
   private _validation: Validation;
+  private _formSubmitted: boolean;
   private readonly _submitFields: string[];
   private readonly _submitOnError: boolean;
   private readonly _submitOnSuccess: boolean;
@@ -56,6 +57,7 @@ export class CommonFrames extends RegisterFrames {
     this.formId = formId;
     this._merchantForm = document.getElementById(formId) as HTMLFormElement;
     this._validation = new Validation();
+    this._formSubmitted = false;
     this._submitFields = submitFields;
     this._submitOnError = submitOnError;
     this._submitOnCancel = submitOnCancel;
@@ -173,8 +175,11 @@ export class CommonFrames extends RegisterFrames {
   }
 
   private _submitForm(data: any) {
-    DomMethods.addDataToForm(this._merchantForm, data, this._getSubmitFields(data));
-    this._merchantForm.submit();
+    if (!this._formSubmitted) {
+      this._formSubmitted = true;
+      DomMethods.addDataToForm(this._merchantForm, data, this._getSubmitFields(data));
+      this._merchantForm.submit();
+    }
   }
 
   private _setMerchantInputListeners() {
