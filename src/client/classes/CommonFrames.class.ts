@@ -114,8 +114,12 @@ export class CommonFrames extends RegisterFrames {
   }
 
   private _isThreedComplete(data: any): boolean {
+    console.log(this.requestTypes[this.requestTypes.length - 1]);
     if (this.requestTypes[this.requestTypes.length - 1] === 'THREEDQUERY') {
       const isCardEnrolledAndNotFrictionless = data.enrolled === 'Y' && data.acsurl !== undefined;
+
+      console.log(data.threedresponse !== undefined);
+      console.log(!isCardEnrolledAndNotFrictionless && data.requesttypedescription);
 
       return (
         (!isCardEnrolledAndNotFrictionless && data.requesttypedescription === 'THREEDQUERY') ||
