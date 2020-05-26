@@ -133,7 +133,7 @@ export class VisaCheckout extends Apm {
       .processPayment(
         this._visaConfig.visaCheckout.requestTypes,
         { walletsource: 'VISACHECKOUT', wallettoken: JSON.stringify(payment) },
-        DomMethods.parseForm()
+        DomMethods.parseForm(this._formId)
       )
       .then(() => {
         this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK }, true);
