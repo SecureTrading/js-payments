@@ -93,6 +93,8 @@ export class CommonFrames extends RegisterFrames {
     if (data.hasOwnProperty('threedresponse') && fields.indexOf('threedresponse') === -1) {
       fields.push('threedresponse');
     }
+    console.log('TODO HERE SUBMIT FIELDS');
+    console.log(fields);
     return fields;
   }
 
