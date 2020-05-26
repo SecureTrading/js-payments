@@ -143,6 +143,11 @@ export class CommonFrames extends RegisterFrames {
   }
 
   private _onTransactionComplete(data: any): void {
+    console.log('TRANSACTION COMPLETE');
+    console.log(this._isTransactionFinished(data));
+    console.log(data.errorcode);
+    console.log(this._submitOnError);
+    console.log(this._submitOnSuccess);
     if (this._isTransactionFinished(data) || data.errorcode !== '0') {
       this._messageBus.publish({ data, type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUBMIT_CALLBACK }, true);
     }
