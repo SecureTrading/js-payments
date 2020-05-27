@@ -12,7 +12,7 @@ import { Observable } from 'rxjs';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { ConfigProvider } from '../services/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
-import { IVisaInit } from '../models/IVisaInit';
+import { IVisaInit } from '../models/visa-checkout/IVisaInit';
 import { Apm } from './Apm';
 import { IUpdateJwt } from '../models/IUpdateJwt';
 import { Service } from 'typedi';

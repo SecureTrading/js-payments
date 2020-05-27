@@ -11,7 +11,7 @@ import { DefaultApmsRequestTypes } from '../../application/core/models/constants
 import { DefaultConfig } from '../../application/core/models/constants/config-resolver/DefaultConfig';
 import { DefaultComponents } from '../../application/core/models/constants/config-resolver/DefaultComponents';
 import { IApplePay } from '../../application/core/models/IApplePay';
-import { IVisaCheckout } from '../../application/core/models/IVisaCheckout';
+import { IVisaCheckout } from '../../application/core/models/visa-checkout/IVisaCheckout';
 import { IPlaceholdersConfig } from '../../application/core/models/IPlaceholdersConfig';
 import { DefaultPlaceholders } from '../../application/core/models/constants/config-resolver/DefaultPlaceholders';
 import { environment } from '../../environments/environment';

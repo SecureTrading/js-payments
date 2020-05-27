@@ -40,7 +40,7 @@ import { ConfigProvider } from '../application/core/services/ConfigProvider';
 import { switchMap } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { NotificationService } from './classes/notification/NotificationService';
-import { IVisaCheckout } from '../application/core/models/IVisaCheckout';
+import { IVisaCheckout } from '../application/core/models/visa-checkout/IVisaCheckout';
 
 @Service()
 class ST {
