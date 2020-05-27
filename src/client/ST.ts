@@ -145,8 +145,15 @@ class ST {
         ...(config || {})
       }
     });
-
-    return new applepay(this._communicator, this._configProvider, this._storage, this._messageBus, this._notification);
+    const applePay: ApplePay = new applepay(
+      this._communicator,
+      this._configProvider,
+      this._storage,
+      this._messageBus,
+      this._notification
+    );
+    applePay.init();
+    return applePay;
   }
 
   public VisaCheckout(config: IVisaConfig): VisaCheckout {

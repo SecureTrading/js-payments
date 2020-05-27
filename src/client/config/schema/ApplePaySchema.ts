@@ -4,9 +4,7 @@ export const ApplePaySchema = Joi.object().keys({
   buttonStyle: Joi.string().valid('black', 'white', 'white-outline'),
   buttonText: Joi.string().valid('plain', 'buy', 'book', 'donate', 'check-out', 'subscribe', 'set-up'),
   merchantId: Joi.string(),
-  requestTypes: Joi.array().items(
-    Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
-  ),
+  requestTypes: Joi.array().items(Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'RISKDEC', 'SUBSCRIPTION')),
   paymentRequest: {
     countryCode: Joi.string(),
     currencyCode: Joi.string(),

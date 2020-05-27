@@ -11,6 +11,7 @@ import { Container } from 'typedi';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
 import { Cybertonica } from '../integrations/Cybertonica';
 import { MessageBus } from './MessageBus';
+import { IApplePayRequestTypes } from '../models/apple-pay/IApplePayRequestTypes';
 
 export class Payment {
   private _cardinalCommerceCacheToken: string;
@@ -37,7 +38,7 @@ export class Payment {
   }
 
   public async processPayment(
-    requestTypes: string[],
+    requestTypes: string[] | IApplePayRequestTypes[],
     payment: ICard | IWallet,
     merchantData: IMerchantData,
     additionalData?: any
@@ -54,13 +55,13 @@ export class Payment {
         response: {}
       });
     }
-
     const processPaymentRequestBody = {
       requesttypedescriptions: requestTypes,
       ...additionalData,
       ...merchantData,
       ...payment
     };
+    console.error(JSON.parse(processPaymentRequestBody.wallettoken));
     const cybertonicaTid = await this._cybertonica.getTransactionId();
 
     if (cybertonicaTid) {

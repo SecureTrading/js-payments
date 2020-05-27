@@ -26,6 +26,8 @@ import { IApplePayPaymentMethod } from '../models/apple-pay/IApplePayPaymentMeth
 import { IApplePayPaymentContact } from '../models/apple-pay/IApplePayPaymentContact';
 import { IApplePayShippingMethod } from '../models/apple-pay/IApplePayShippingMethod';
 import { IApplePayPayment } from '../models/apple-pay/IApplePayPayment';
+import { IApplePayRequestTypes } from '../models/apple-pay/IApplePayRequestTypes';
+import { IApplePaySupportedNetworks } from '../models/apple-pay/IApplePaySupportedNetworks';
 
 const ApplePaySession = (window as any).ApplePaySession;
 const ApplePayError = (window as any).ApplePayError;
@@ -41,6 +43,7 @@ export class ApplePay {
   private _payment: Payment;
   private _translator: Translator;
   private _paymentRequest: IPaymentRequest;
+  private _formId: string;
   private readonly _completion: IApplePayPaymentAuthorizationResult = {
     errors: [],
     status: ''
@@ -64,12 +67,21 @@ export class ApplePay {
 
   public init(): void {
     this._config$.subscribe((config: IConfig) => {
-      const { applePay, jwt } = config;
+      const { applePay, jwt, formId } = config;
       const { buttonStyle, buttonText, merchantId, paymentRequest, placement, requestTypes } = applePay;
       const { currencyiso3a, locale, mainamount } = new StJwt(jwt);
       const applePayVersion: number = this._latestSupportedApplePayVersion();
       this._canMakePayments();
-      this._setConfig(applePayVersion, currencyiso3a, locale, merchantId, mainamount, paymentRequest, requestTypes);
+      this._setConfig(
+        applePayVersion,
+        currencyiso3a,
+        locale,
+        merchantId,
+        mainamount,
+        paymentRequest,
+        requestTypes,
+        formId
+      );
       this._insertButton(placement, buttonText, buttonStyle, locale);
       this._hasActiveCards(merchantId, applePayVersion);
     });
@@ -83,10 +95,12 @@ export class ApplePay {
     merchantId: string,
     mainamount: string,
     paymentRequest: IPaymentRequest,
-    requestTypes: string[]
+    requestTypes: IApplePayRequestTypes[],
+    formId: string
   ): void {
     this._translator = new Translator(locale);
     this._payment = new Payment();
+    this._formId = formId;
     this._setMerchantId(merchantId);
     this._setPaymentRequest(paymentRequest, requestTypes);
     this._setSupportedNetworks(this._getSupportedNetworks(applePayVersion));
@@ -119,7 +133,7 @@ export class ApplePay {
     return DomMethods.appendChildIntoDOM(placement, this._createButton(buttonText, buttonStyle, locale));
   }
 
-  private _getSupportedNetworks(version: number): string[] {
+  private _getSupportedNetworks(version: number): IApplePaySupportedNetworks[] {
     const stageOneVersions: number[] = [1, 2, 3];
     const stageTwoVersions: number[] = [4];
     const stageThreeVersions: number[] = [5, 6];
@@ -137,8 +151,8 @@ export class ApplePay {
     }
   }
 
-  private _setSupportedNetworks(networks: string[]): void {
-    this._paymentRequest.supportedNetworks = networks.filter((item: string) => {
+  private _setSupportedNetworks(networks: IApplePaySupportedNetworks[]): void {
+    this._paymentRequest.supportedNetworks = networks.filter((item: IApplePaySupportedNetworks) => {
       return this._paymentRequest.supportedNetworks.includes(item);
     });
   }
@@ -197,7 +211,7 @@ export class ApplePay {
             walletsource: this._validateMerchantRequest.walletsource,
             wallettoken: JSON.stringify(event.payment.token)
           },
-          DomMethods.parseForm(),
+          DomMethods.parseForm(this._formId),
           {
             billingContact: event.payment.billingContact,
             shippingContact: event.payment.shippingContact
@@ -222,15 +236,14 @@ export class ApplePay {
 
   private _latestSupportedApplePayVersion(): number {
     const versions: number[] = Array.from(Array(7).keys()).slice(1).reverse();
-    console.error(versions);
     return versions.find((version: number) => {
-      console.error(version);
       return ApplePaySession.supportsVersion(version);
     });
   }
 
   private _onCancel(): void {
     this._applePaySession.oncancel = (event: any) => {
+      console.error(this._notification);
       this._notification.cancel(Language.translations.PAYMENT_CANCELLED);
       this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_CANCEL_CALLBACK }, true);
       this._messageBus.publish(
@@ -295,7 +308,7 @@ export class ApplePay {
   }
 
   private _proceedPayment(applePayVersion: number): void {
-    this._applePaySession = new ApplePaySession(applePayVersion, this._paymentRequest); // must be here (gesture handler)
+    this._applePaySession = new ApplePaySession(applePayVersion, this._paymentRequest); // must be here (gesture handl.)
     this._onValidateMerchant();
     this._onPaymentMethodSelected();
     this._onShippingMethodSelected();

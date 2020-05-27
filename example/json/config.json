@@ -13,7 +13,7 @@
         "supportsCredit",
         "supportsDebit"
       ],
-      "supportedNetworks": [],
+      "supportedNetworks": ["visa", "masterCard"],
       "total": {
         "label": "Secure Trading Merchant",
         "amount": "10.00"
@@ -23,7 +23,6 @@
     "requestTypes": [
       "RISKDEC",
       "ACCOUNTCHECK",
-      "THREEDQUERY",
       "AUTH"
     ]
   },
@@ -70,7 +69,7 @@
     "cachetoken": "",
     "threedinit": ""
   },
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU5MDE0MzYwNS4yMDk0MTY2LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.SPNsd9LgD5I_iSF2Xw2q0OMksiwMb3QC4LI04_g1lgg",
+  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU5MDYxNTE1MC41MjM3MDEyLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIn19.r8-U4PEyTT8VUVKMCOA_m62cghc-XgjlzWo_4n6AhEs",
   "livestatus": 0,
   "origin": "",
   "panIcon": true,
@@ -125,7 +124,6 @@
     "requestTypes": [
       "RISKDEC",
       "ACCOUNTCHECK",
-      "THREEDQUERY",
       "AUTH"
     ],
     "settings": {
