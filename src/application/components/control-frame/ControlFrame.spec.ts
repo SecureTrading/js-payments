@@ -10,6 +10,10 @@ import { ConfigProvider } from '../../core/services/ConfigProvider';
 import { mock, instance as mockInstance, when, anyString } from 'ts-mockito';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
 import { Cybertonica } from '../../core/integrations/Cybertonica';
+import { CardinalCommerce } from '../../core/integrations/cardinal-commerce/CardinalCommerce';
+import { IConfig } from '../../../shared/model/config/IConfig';
+import { of } from 'rxjs';
+import { ConfigService } from '../../../client/config/ConfigService';
 
 jest.mock('../../../../src/application/core/shared/Payment');
 
@@ -89,90 +93,6 @@ describe('ControlFrame', () => {
       instance._formFieldChangeEvent(messageBusEvent.type, instance._formFields.securityCode);
       // @ts-ignore
       expect(ControlFrame._setFormFieldValue).toHaveBeenCalled();
-    });
-  });
-
-  // given
-  describe('_initSetRequestTypesEvent()', () => {
-    // then
-    it('should call _onSetRequestTypesEvent when SET_REQUEST_TYPES event has been called', () => {
-      // @ts-ignore
-      instance._setRequestTypes = jest.fn();
-      messageBusEvent.type = MessageBus.EVENTS_PUBLIC.SET_REQUEST_TYPES;
-      // @ts-ignore
-      instance._setRequestTypesEvent();
-      // @ts-ignore
-      expect(instance._setRequestTypes).toHaveBeenCalled();
-    });
-  });
-
-  // given
-  describe('_initBypassInitEvent()', () => {
-    // then
-    it('should call _onBypassInitEvent when BY_PASS_INIT event has been called', () => {
-      // @ts-ignore
-      instance._bypassInit = jest.fn();
-      messageBusEvent.type = MessageBus.EVENTS_PUBLIC.BY_PASS_INIT;
-      // @ts-ignore
-      instance._bypassInitEvent();
-      // @ts-ignore
-      expect(instance._bypassInit).toHaveBeenCalled();
-    });
-  });
-
-  // given
-  describe('_initThreedinitEvent()', () => {
-    // then
-    it('should call _onThreeDInitEvent when THREEDINIT event has been called', () => {
-      // @ts-ignore
-      instance._threeDInit = jest.fn();
-      messageBusEvent.type = MessageBus.EVENTS_PUBLIC.THREEDINIT_REQUEST;
-      // @ts-ignore
-      instance._threeDInitEvent();
-      // @ts-ignore
-      expect(instance._threeDInit).toHaveBeenCalled();
-    });
-  });
-
-  // given
-  describe('_initLoadCardinalEvent()', () => {
-    // then
-    it('should call _onLoadCardinal when LOAD_CARDINAL event has been called', () => {
-      // @ts-ignore
-      instance._onLoadCardinal = jest.fn();
-      messageBusEvent.type = MessageBus.EVENTS_PUBLIC.LOAD_CARDINAL;
-      // @ts-ignore
-      instance._loadCardinalEvent();
-      // @ts-ignore
-      expect(instance._onLoadCardinal).toHaveBeenCalled();
-    });
-  });
-
-  // given
-  describe('_initProcessPaymentsEvent()', () => {
-    // then
-    it('should call _onProcessPaymentEvent when PROCESS_PAYMENTS event has been called', () => {
-      // @ts-ignore
-      instance._onProcessPayments = jest.fn();
-      messageBusEvent.type = MessageBus.EVENTS_PUBLIC.PROCESS_PAYMENTS;
-      // @ts-ignore
-      instance._processPaymentsEvent();
-      // @ts-ignore
-      expect(instance._onProcessPayments).toHaveBeenCalled();
-    });
-  });
-
-  // given
-  describe('_initSubmitFormEvent()', () => {
-    // then
-    it('should call _onSubmit when SUBMIT_FORM event has been called', () => {
-      // @ts-ignore
-      instance._onSubmit = jest.fn();
-      messageBusEvent.type = MessageBus.EVENTS_PUBLIC.SUBMIT_FORM;
-      // @ts-ignore
-      instance._submitFormEvent();
-      // @ts-ignore
-      expect(instance._onSubmit).toHaveBeenCalled();
     });
   });
 
@@ -266,23 +186,6 @@ describe('ControlFrame', () => {
   });
 
   // given
-  describe('_onLoadCardinal', () => {
-    const { instance } = controlFrameFixture();
-
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._onLoadCardinal();
-    });
-
-    // then
-    it('should set _isPaymentReady to true', () => {
-      // @ts-ignore
-      expect(instance._isPaymentReady).toEqual(true);
-    });
-  });
-
-  // given
   describe.skip('_onThreeDInitEvent', () => {
     const { instance } = controlFrameFixture();
 
@@ -298,26 +201,6 @@ describe('ControlFrame', () => {
     it('should call _requestThreeDInit', () => {
       // @ts-ignore
       expect(instance._requestThreeDInit).toHaveBeenCalled();
-    });
-  });
-
-  // given
-  describe('_onBypassInitEvent', () => {
-    const { instance } = controlFrameFixture();
-    const cachetoken = '893h12und9n283n923';
-
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._payment.bypassInitRequest = jest.fn();
-      // @ts-ignore
-      instance._bypassInit(cachetoken);
-    });
-
-    // then
-    it('should call _requestThreeDInit', () => {
-      // @ts-ignore
-      expect(instance._payment.bypassInitRequest).toHaveBeenCalledWith(cachetoken);
     });
   });
 
@@ -432,23 +315,6 @@ describe('ControlFrame', () => {
   });
 
   // given
-  describe('_requestBypassInit', () => {
-    const { instance } = controlFrameFixture();
-    const cachetoken = 'somecachetoken1234';
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._bypassInit(cachetoken);
-    });
-
-    // then
-    it('should call bypassInitRequest', () => {
-      // @ts-ignore
-      expect(instance._payment.bypassInitRequest).toHaveBeenCalledWith(cachetoken);
-    });
-  });
-
-  // given
   describe('_requestThreeDInit', () => {
     const { instance } = controlFrameFixture();
     const result = {
@@ -532,7 +398,7 @@ describe('ControlFrame', () => {
     // then
     it('should return pan from jwt', () => {
       // @ts-ignore
-      expect(instance._getPan()).toEqual('3089500000000000021');
+      expect(instance._getPanFromJwt()).toEqual('3089500000000000021');
     });
 
     // then
@@ -543,7 +409,7 @@ describe('ControlFrame', () => {
           'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NjU5MTYxMS43ODM3MzY1LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiNDExMTExMTExMTExMTExMSIsImV4cGlyeWRhdGUiOiIwMS8yMiIsInNlY3VyaXR5Y29kZSI6IjEyMyJ9fQ.Rkhsx1PCXnd_Kf-U9OvQRbp9lnNpFx5ClPpm4zx-hDM'
       };
       // @ts-ignore
-      expect(instance._getPan()).toEqual('4111111111111111');
+      expect(instance._getPanFromJwt()).toEqual('4111111111111111');
     });
   });
 
@@ -607,10 +473,14 @@ function controlFrameFixture() {
   const configProvider: ConfigProvider = mock(ConfigProvider);
   const notification: NotificationService = mock(NotificationService);
   const cybertonica: Cybertonica = mock(Cybertonica);
+  const cardinalCommerce: CardinalCommerce = mock(CardinalCommerce);
+  const configService: ConfigService = mock(ConfigService);
 
   when(communicator.whenReceive(anyString())).thenReturn({
     thenRespond: () => undefined
   });
+
+  when(configProvider.getConfig$()).thenReturn(of({} as IConfig));
 
   const instance = new ControlFrame(
     mockInstance(localStorage),
@@ -618,7 +488,9 @@ function controlFrameFixture() {
     mockInstance(communicator),
     mockInstance(configProvider),
     mockInstance(notification),
-    mockInstance(cybertonica)
+    mockInstance(cybertonica),
+    mockInstance(cardinalCommerce),
+    mockInstance(configService)
   );
   const messageBusEvent = {
     type: ''

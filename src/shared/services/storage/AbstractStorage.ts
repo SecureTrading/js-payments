@@ -31,23 +31,24 @@ export abstract class AbstractStorage implements IStorage, Subscribable<any> {
     this.pipe = this.observable$.pipe.bind(this.observable$);
     this.subscribe = this.observable$.subscribe.bind(this.observable$);
 
-    this.communicator.incomingEvent$
-      .pipe(ofType(this.getSychronizationEventName()), takeUntil(this.communicator.communicationClosed$))
-      .subscribe(event => {
-        const { key, value } = event.data;
-        this.nativeStorage.setItem(key, value);
-        this.emitStorageEvent();
-      });
+    this.communicator.incomingEvent$.pipe(ofType(this.getSychronizationEventName())).subscribe(event => {
+      const { key, value } = event.data;
+      this.nativeStorage.setItem(key, value);
+      this.emitStorageEvent();
+    });
   }
 
   public getItem(name: string): string {
     return this.nativeStorage.getItem(name);
   }
 
-  public setItem(name: string, value: string): void {
+  public setItem(name: string, value: string, synchronize: boolean = true): void {
     this.nativeStorage.setItem(name, value);
     this.emitStorageEvent();
-    this.synchronizeStorage(name, value);
+
+    if (synchronize) {
+      this.synchronizeStorage(name, value);
+    }
   }
 
   public select<T>(selector: (storage: { [key: string]: any }) => T): Observable<T> {

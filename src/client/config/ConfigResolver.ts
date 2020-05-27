@@ -23,10 +23,10 @@ export class ConfigResolver {
     const validatedConfig: IConfig = {
       analytics: this._getValueOrDefault(config.analytics, DefaultConfig.analytics),
       animatedCard: this._getValueOrDefault(config.animatedCard, DefaultConfig.animatedCard),
-      applePay: this._setApmConfig(config.applePay, DefaultConfig.applePay),
+      applePay: this._setApplePayConfig(config.applePay, DefaultConfig.applePay),
       buttonId: this._getValueOrDefault(config.buttonId, DefaultConfig.buttonId),
       bypassCards: this._getValueOrDefault(config.bypassCards, DefaultConfig.bypassCards),
-      cachetoken: this._getValueOrDefault(config.cachetoken, DefaultConfig.cachetoken),
+      cancelCallback: this._getValueOrDefault(config.cancelCallback, DefaultConfig.cancelCallback),
       componentIds: this._setComponentIds(config.componentIds),
       components: this._setComponentsProperties(config.components),
       cybertonicaApiKey: this._resolveCybertonicaApiKey(config.cybertonicaApiKey),
@@ -42,16 +42,15 @@ export class ConfigResolver {
       origin: this._getValueOrDefault(config.origin, DefaultConfig.origin),
       panIcon: this._getValueOrDefault(config.panIcon, DefaultConfig.panIcon),
       placeholders: this._setPlaceholders(config.placeholders),
-      requestTypes: this._getValueOrDefault(config.requestTypes, DefaultComponentsRequestTypes),
       styles: this._getValueOrDefault(config.styles, DefaultConfig.styles),
       submitCallback: this._getValueOrDefault(config.submitCallback, DefaultConfig.submitCallback),
       submitFields: this._getValueOrDefault(config.submitFields, DefaultSubmitFields),
+      submitOnCancel: this._getValueOrDefault(config.submitOnCancel, false),
       submitOnError: this._getValueOrDefault(config.submitOnError, DefaultConfig.submitOnError),
       submitOnSuccess: this._getValueOrDefault(config.submitOnSuccess, DefaultConfig.submitOnSuccess),
       successCallback: this._getValueOrDefault(config.successCallback, DefaultConfig.successCallback),
-      threedinit: this._getValueOrDefault(config.threedinit, DefaultConfig.threedinit),
       translations: this._getValueOrDefault(config.translations, DefaultConfig.translations),
-      visaCheckout: this._setApmConfig(config.visaCheckout, DefaultConfig.visaCheckout)
+      visaCheckout: this._setVisaCheckoutConfig(config.visaCheckout, DefaultConfig.visaCheckout)
     };
     if (!environment.production) {
       console.error(validatedConfig);
@@ -93,7 +92,7 @@ export class ConfigResolver {
     }
   }
 
-  private _setApmConfig(config: IApplePay | IVisaCheckout | {}, defaultConfig: {}): IApplePay | IVisaCheckout | {} {
+  private _setVisaCheckoutConfig(config: IVisaCheckout | {}, defaultConfig: {}): IVisaCheckout | {} {
     if (!config || !Object.keys(config).length) {
       return defaultConfig;
     }
@@ -101,6 +100,22 @@ export class ConfigResolver {
       ...config,
       // @ts-ignore
       requestTypes: this._getValueOrDefault(config.requestTypes, DefaultApmsRequestTypes)
+    };
+  }
+
+  private _setApplePayConfig(config: IApplePay | {}, defaultConfig: {}): IApplePay | {} {
+    if (!config || !Object.keys(config).length) {
+      return defaultConfig;
+    }
+
+    // @ts-ignore
+    config.paymentRequest.requestTypes = this._getValueOrDefault(
+      // @ts-ignore
+      config.paymentRequest.requestTypes,
+      DefaultApmsRequestTypes
+    );
+    return {
+      ...config
     };
   }
 

@@ -23,6 +23,7 @@ describe('Visa Checkout', () => {
     when(configProvider.getConfig$()).thenReturn(
       of({
         jwt,
+        formId: 'st-form',
         disableNotification: false,
         datacenterurl: 'https://example.com',
         visaCheckout: {
@@ -390,14 +391,14 @@ describe('Visa Checkout', () => {
     // then
     it('should set paymentStatus and call __getResponseMessage and _setNotification', () => {
       instance._getResponseMessage = jest.fn();
-      instance._notification.warning = jest.fn();
+      instance._notification.cancel = jest.fn();
       instance.responseMessage = 'MY MESSAGE';
       instance.onCancel();
       expect(instance.paymentStatus).toBe('WARNING');
       expect(instance._getResponseMessage).toHaveBeenCalledTimes(1);
       expect(instance._getResponseMessage).toHaveBeenCalledWith('WARNING');
-      expect(instance._notification.warning).toHaveBeenCalledTimes(1);
-      expect(instance._notification.warning).toHaveBeenCalledWith('MY MESSAGE');
+      expect(instance._notification.cancel).toHaveBeenCalledTimes(1);
+      expect(instance._notification.cancel).toHaveBeenCalledWith('MY MESSAGE');
     });
   });
 
@@ -505,6 +506,7 @@ function VisaCheckoutFixture() {
   );
   const url = 'https://example.com';
   const fakeV = { init: jest.fn(), on: jest.fn() };
+  const formId = 'st-form';
 
-  return { config, fakeVisaButton, livestatus, sdkMarkup, productionAssets, sandboxAssets, fakeV, url };
+  return { config, fakeVisaButton, livestatus, sdkMarkup, productionAssets, sandboxAssets, fakeV, url, formId };
 }

@@ -1,7 +1,7 @@
 import { Service } from 'typedi';
 import { IIconMap } from '../../models/IIconMap';
 
-const mapIcon: IIconMap = {
+export const mapIcon: IIconMap = {
   amex: './images/amex.png',
   astropaycard: './images/astropaycard.png',
   diners: './images/diners.png',

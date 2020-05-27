@@ -3,13 +3,19 @@ import { IParams } from '../models/IParams';
 import { IStyle } from '../../../shared/model/config/IStyle';
 import { MessageBus } from './MessageBus';
 import { Styler } from './Styler';
-import { Container } from 'typedi';
 import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
 import './OverrideDomain';
+import { IConfig } from '../../../shared/model/config/IConfig';
+import { Container } from 'typedi';
 
 export class Frame {
-  protected messageBus: MessageBus = Container.get(MessageBus);
   protected params: IParams;
+
+  constructor(protected messageBus?: MessageBus, protected framesHub?: FramesHub) {
+    this.messageBus = this.messageBus || Container.get(MessageBus);
+    this.framesHub = this.framesHub || Container.get(FramesHub);
+    this.framesHub.notifyReadyState();
+  }
 
   public parseUrl() {
     const parsedUrl = new URL(window.location.href);
@@ -32,11 +38,9 @@ export class Frame {
     new Styler(this.getAllowedStyles()).inject(this.params.styles);
   }
 
-  protected onInit() {
+  protected onInit(config?: IConfig): void {
     this.params = this.parseUrl();
     this.applyStyles();
-
-    Container.get(FramesHub).notifyReadyState();
   }
 
   protected getAllowedParams() {

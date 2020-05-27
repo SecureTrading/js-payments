@@ -1,0 +1,12 @@
+#st-control-frame-iframe {
+  width: 0 !important;
+  height: 0 !important;
+  position: fixed !important;
+  bottom: 0 !important;
+  right: 0 !important;
+}
+
+#st-control-frame-iframe.modal {
+  width: 100% !important;
+  height: 100% !important;
+}

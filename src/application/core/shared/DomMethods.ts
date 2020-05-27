@@ -93,8 +93,8 @@ export class DomMethods {
     contents.forEach((item: string) => (style.sheet as CSSStyleSheet).insertRule(item, 0));
   }
 
-  public static parseForm(): {} {
-    const form: HTMLElement = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR);
+  public static parseForm(formId: string): {} {
+    const form: HTMLElement = document.getElementById(formId);
     const els = this.getAllFormElements(form);
     const result: any = {};
     for (const el of els) {

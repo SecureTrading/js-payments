@@ -7,9 +7,6 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
     buttonStyle: Joi.string().valid('black', 'white', 'white-outline'),
     buttonText: Joi.string().valid('plain', 'buy', 'book', 'donate', 'check-out', 'subscribe'),
     merchantId: Joi.string(),
-    requestTypes: Joi.array().items(
-      Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
-    ),
     paymentRequest: {
       countryCode: Joi.string(),
       currencyCode: Joi.string(),
@@ -41,9 +38,7 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
       },
       requiredBillingContactFields: Joi.array().items(Joi.string()),
       requiredShippingContactFields: Joi.array().items(Joi.string()),
-      requestTypes: Joi.array().items(
-        Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
-      )
+      requestTypes: Joi.array().items(Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'RISKDEC', 'SUBSCRIPTION'))
     },
     placement: Joi.string()
   },
@@ -51,7 +46,7 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   bypassCards: Joi.array().items(
     Joi.string().valid('AMEX', 'ASTROPAYCARD', 'DINERS', 'DISCOVER', 'JCB', 'MASTERCARD', 'MAESTRO', 'PIBA', 'VISA')
   ),
-  cachetoken: Joi.string().allow(''),
+  cancelCallback: Joi.any(),
   componentIds: Joi.object()
     .keys({
       animatedCard: Joi.string().allow('').default('st-animated-card'),
@@ -76,6 +71,7 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   datacenterurl: Joi.string().allow(''),
   deferInit: Joi.boolean(),
   disableNotification: Joi.boolean().default(false),
+  errorCallback: Joi.any(),
   fieldsToSubmit: Joi.array().items(Joi.string().valid('pan', 'expirydate', 'securitycode')),
   formId: Joi.string(),
   init: Joi.object()
@@ -87,9 +83,6 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   jwt: Joi.string().required(),
   livestatus: Joi.number().valid(0, 1),
   origin: Joi.string().allow(''),
-  requestTypes: Joi.array().items(
-    Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
-  ),
   panIcon: Joi.boolean(),
   placeholders: Joi.object().keys({
     pan: Joi.string().allow(''),
@@ -99,11 +92,10 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
   styles: Joi.object(),
   submitCallback: Joi.any(),
   successCallback: Joi.any(),
-  errorCallback: Joi.any(),
   submitFields: Joi.array(),
+  submitOnCancel: Joi.boolean(),
   submitOnError: Joi.boolean(),
   submitOnSuccess: Joi.boolean(),
-  threedinit: Joi.string().allow(''),
   translations: Joi.object(),
   visaCheckout: {
     buttonSettings: Joi.object().keys({
@@ -134,9 +126,7 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
       customData: Joi.any()
     }),
     placement: Joi.string(),
-    requestTypes: Joi.array().items(
-      Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
-    ),
+    requestTypes: Joi.array().items(Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'RISKDEC', 'SUBSCRIPTION')),
     settings: Joi.object().keys({
       locale: Joi.string(),
       countryCode: Joi.string(),

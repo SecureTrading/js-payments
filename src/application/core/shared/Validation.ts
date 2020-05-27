@@ -187,7 +187,6 @@ export class Validation extends Frame {
 
   public formValidation(
     dataInJwt: boolean,
-    deferInit: boolean,
     fieldsToSubmit: string[],
     formFields: {
       cardNumber: IFormFieldState;
@@ -198,7 +197,7 @@ export class Validation extends Frame {
     paymentReady: boolean
   ): { card: ICard; validity: boolean } {
     this._setValidationResult(dataInJwt, fieldsToSubmit, formFields, isPanPiba, paymentReady);
-    const isFormReadyToSubmit: boolean = this._isFormReadyToSubmit(deferInit);
+    const isFormReadyToSubmit: boolean = this._isFormReadyToSubmit();
     if (isFormReadyToSubmit) {
       this.blockForm(FormState.BLOCKED);
     }
@@ -356,8 +355,8 @@ export class Validation extends Frame {
     }
   }
 
-  private _isFormReadyToSubmit(deferInit: boolean): boolean {
-    return (this._isPaymentReady && this._formValidity) || (deferInit && this._formValidity);
+  private _isFormReadyToSubmit(): boolean {
+    return this._isPaymentReady && this._formValidity;
   }
 
   private _isPressedKeyBackspace(): boolean {

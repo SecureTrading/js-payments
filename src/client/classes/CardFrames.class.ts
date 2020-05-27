@@ -1,5 +1,4 @@
 import JwtDecode from 'jwt-decode';
-import { BypassCards } from '../../application/core/models/constants/BypassCards';
 import { FormState } from '../../application/core/models/constants/FormState';
 import { IMessageBusEvent } from '../../application/core/models/IMessageBusEvent';
 import { IStyles } from '../../shared/model/config/IStyles';
@@ -13,6 +12,7 @@ import { Translator } from '../../application/core/shared/Translator';
 import { Validation } from '../../application/core/shared/Validation';
 import { RegisterFrames } from './RegisterFrames.class';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
+import { ofType } from '../../shared/services/message-bus/operators/ofType';
 
 export class CardFrames extends RegisterFrames {
   private static CARD_NUMBER_FIELD_NAME: string = 'pan';
@@ -41,19 +41,16 @@ export class CardFrames extends RegisterFrames {
   private _messageBusEvent: IMessageBusEvent = { data: { message: '' }, type: '' };
   private _submitButton: HTMLInputElement | HTMLButtonElement;
   private _buttonId: string;
-  private _deferInit: boolean;
   private _defaultPaymentType: string;
   private _paymentTypes: string[];
   private _payMessage: string;
   private _processingMessage: string;
-  private _startOnLoad: boolean;
   private _fieldsToSubmitLength: number;
   private _isCardWithNoCvv: boolean;
   private _noFieldConfiguration: boolean;
   private _onlyCvvConfiguration: boolean;
   private _configurationForStandardCard: boolean;
   private _loadAnimatedCard: boolean;
-  private _bypassCards: BypassCards[];
 
   constructor(
     jwt: string,
@@ -63,28 +60,16 @@ export class CardFrames extends RegisterFrames {
     paymentTypes: string[],
     defaultPaymentType: string,
     animatedCard: boolean,
-    deferInit: boolean,
     buttonId: string,
-    startOnLoad: boolean,
     fieldsToSubmit: string[],
-    bypassCards: BypassCards[]
+    formId: string
   ) {
-    super(jwt, origin, componentIds, styles, animatedCard, fieldsToSubmit);
-    this._setInitValues(
-      buttonId,
-      defaultPaymentType,
-      deferInit,
-      paymentTypes,
-      startOnLoad,
-      animatedCard,
-      bypassCards,
-      jwt
-    );
+    super(jwt, origin, componentIds, styles, animatedCard, formId, fieldsToSubmit);
+    this._setInitValues(buttonId, defaultPaymentType, paymentTypes, animatedCard, jwt, formId);
     this.configureFormFieldsAmount(jwt);
   }
 
   public init() {
-    this._deferJsinitOnLoad();
     this._preventFormSubmit();
     this._createSubmitButton();
     this._initSubscribes();
@@ -146,7 +131,7 @@ export class CardFrames extends RegisterFrames {
   }
 
   private _createSubmitButton = (): HTMLInputElement | HTMLButtonElement => {
-    const form = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR);
+    const form = document.getElementById(this.formId);
     let button: HTMLInputElement | HTMLButtonElement = this._buttonId
       ? (document.getElementById(this._buttonId) as HTMLButtonElement | HTMLInputElement)
       : null;
@@ -161,12 +146,6 @@ export class CardFrames extends RegisterFrames {
     }
     return button;
   };
-
-  private _deferJsinitOnLoad(): void {
-    if (!this._deferInit && this._startOnLoad) {
-      this._publishSubmitEvent(true);
-    }
-  }
 
   private _disableFormField(state: FormState, eventName: string, target: string): void {
     const messageBusEvent: IMessageBusEvent = {
@@ -261,22 +240,20 @@ export class CardFrames extends RegisterFrames {
 
   private _onInput(): void {
     const messageBusEvent: IMessageBusEvent = {
-      data: DomMethods.parseForm(),
+      data: DomMethods.parseForm(this.formId),
       type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
     };
     this.messageBus.publish(messageBusEvent);
   }
 
-  private _publishSubmitEvent(deferInit: boolean): void {
+  private _publishSubmitEvent(): void {
     const messageBusEvent: IMessageBusEvent = {
       data: {
-        bypassCards: this._bypassCards,
-        deferInit,
         fieldsToSubmit: this.fieldsToSubmit
       },
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
-    this.messageBus.publish(messageBusEvent);
+    this.messageBus.publish(messageBusEvent, true);
   }
 
   private _publishValidatedFieldState(field: { message: string; state: boolean }, eventType: string): void {
@@ -286,7 +263,7 @@ export class CardFrames extends RegisterFrames {
   }
 
   private _setMerchantInputListeners(): void {
-    const els = DomMethods.getAllFormElements(document.getElementById(Selectors.MERCHANT_FORM_SELECTOR));
+    const els = DomMethods.getAllFormElements(document.getElementById(this.formId));
     for (const el of els) {
       el.addEventListener(CardFrames.INPUT_EVENT, this._onInput.bind(this));
     }
@@ -295,21 +272,17 @@ export class CardFrames extends RegisterFrames {
   private _setInitValues(
     buttonId: string,
     defaultPaymentType: string,
-    deferInit: boolean,
     paymentTypes: any,
-    startOnLoad: boolean,
     loadAnimatedCard: boolean,
-    bypassCards: BypassCards[],
-    jwt: string
+    jwt: string,
+    formId: string
   ): void {
     this._validation = new Validation();
     this._translator = new Translator(this.params.locale);
     this._buttonId = buttonId;
-    this._deferInit = deferInit;
-    this._startOnLoad = startOnLoad;
+    this.formId = formId;
     this._defaultPaymentType = defaultPaymentType;
     this._paymentTypes = paymentTypes;
-    this._bypassCards = bypassCards;
     this.jwt = jwt;
     this._payMessage = this._translator.translate(Language.translations.PAY);
     this._processingMessage = `${this._translator.translate(Language.translations.PROCESSING)} ...`;
@@ -338,15 +311,19 @@ export class CardFrames extends RegisterFrames {
   private _submitFormListener(): void {
     if (this._submitButton) {
       this._submitButton.addEventListener(CardFrames.CLICK_EVENT, () => {
-        this._publishSubmitEvent(this._deferInit);
+        this._publishSubmitEvent();
       });
     }
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.CALL_SUBMIT_EVENT, () => {
-      this._publishSubmitEvent(this._deferInit);
+      this._publishSubmitEvent();
     });
   }
 
   private _subscribeBlockSubmit(): void {
+    this.messageBus
+      .pipe(ofType(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM))
+      .subscribe(() => this._disableSubmitButton(FormState.BLOCKED));
+
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BLOCK_FORM, (state: FormState) => {
       this._disableSubmitButton(state);
       this._disableFormField(state, MessageBus.EVENTS_PUBLIC.BLOCK_CARD_NUMBER, Selectors.CARD_NUMBER_IFRAME);
@@ -371,8 +348,6 @@ export class CardFrames extends RegisterFrames {
   }
 
   private _preventFormSubmit(): void {
-    document
-      .getElementById(Selectors.MERCHANT_FORM_SELECTOR)
-      .addEventListener(CardFrames.SUBMIT_EVENT, event => event.preventDefault());
+    document.getElementById(this.formId).addEventListener(CardFrames.SUBMIT_EVENT, event => event.preventDefault());
   }
 }

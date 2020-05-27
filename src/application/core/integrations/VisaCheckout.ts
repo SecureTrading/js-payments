@@ -53,7 +53,7 @@ export class VisaCheckout {
   protected static VISA_PAYMENT_STATUS = {
     ERROR: 'ERROR',
     SUCCESS: 'SUCCESS',
-    WARNING: 'WARNING'
+    CANCEL: 'WARNING' // Because VisaCheckout API has warnings instead of cancel :/
   };
 
   private static VISA_PAYMENT_RESPONSE_TYPES = {
@@ -86,6 +86,7 @@ export class VisaCheckout {
   private _placement: string = 'body';
   private readonly _config$: Observable<IConfig>;
   private _visaCheckoutConfig: IWalletConfig;
+  private _formId: string;
 
   private _initConfiguration = {
     apikey: '' as string,
@@ -103,12 +104,13 @@ export class VisaCheckout {
     this._config$ = this._configProvider.getConfig$();
 
     this._config$.subscribe(config => {
-      const { visaCheckout, jwt, datacenterurl, livestatus } = config;
+      const { visaCheckout, jwt, datacenterurl, livestatus, formId } = config;
       if (visaCheckout) {
         this._visaCheckoutConfig = visaCheckout;
       }
       this._stJwt = new StJwt(jwt);
       this._livestatus = livestatus;
+      this._formId = formId;
       this._datacenterurl = datacenterurl;
       this._configurePaymentProcess(jwt);
       this._initVisaFlow();
@@ -160,7 +162,7 @@ export class VisaCheckout {
           walletsource: this._walletSource,
           wallettoken: this.paymentDetails
         },
-        DomMethods.parseForm()
+        DomMethods.parseForm(this._formId)
       )
       .then(() => {
         this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS;
@@ -186,9 +188,20 @@ export class VisaCheckout {
   }
 
   protected onCancel() {
-    this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.WARNING;
+    this.paymentStatus = VisaCheckout.VISA_PAYMENT_STATUS.CANCEL;
     this._getResponseMessage(this.paymentStatus);
-    this._notification.warning(this.responseMessage);
+    this._notification.cancel(this.responseMessage);
+    this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_CANCEL_CALLBACK }, true);
+    this._messageBus.publish(
+      {
+        type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE,
+        data: {
+          errorcode: 'cancelled',
+          errormessage: this.responseMessage
+        }
+      },
+      true
+    );
     GoogleAnalytics.sendGaData('event', 'Visa Checkout', 'payment status', 'Visa Checkout payment canceled');
   }
 
@@ -219,7 +232,7 @@ export class VisaCheckout {
       requestTypes
     } = this._visaCheckoutConfig;
     this._stJwt = new StJwt(jwt);
-    this.payment = new Payment(jwt, this._datacenterurl);
+    this.payment = new Payment();
     this._livestatus = livestatus;
     this._placement = placement;
     this.requestTypes = requestTypes;
@@ -253,7 +266,7 @@ export class VisaCheckout {
         this.responseMessage = Language.translations.PAYMENT_SUCCESS;
         break;
       }
-      case VisaCheckout.VISA_PAYMENT_STATUS.WARNING: {
+      case VisaCheckout.VISA_PAYMENT_STATUS.CANCEL: {
         this.responseMessage = Language.translations.PAYMENT_CANCELLED;
         break;
       }
