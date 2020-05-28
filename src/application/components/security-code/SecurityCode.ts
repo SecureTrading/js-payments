@@ -8,7 +8,7 @@ import { Selectors } from '../../core/shared/Selectors';
 import { Validation } from '../../core/shared/Validation';
 import { Service } from 'typedi';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { IFormFieldState } from '../../core/models/IFormFieldState';
 import { merge, Observable } from 'rxjs';
