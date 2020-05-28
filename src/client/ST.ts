@@ -38,7 +38,7 @@ import { ofType } from '../shared/services/message-bus/operators/ofType';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ConfigProvider } from '../application/core/services/ConfigProvider';
-import { switchMap, first } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { FrameIdentifier } from '../shared/services/message-bus/FrameIdentifier';
 
