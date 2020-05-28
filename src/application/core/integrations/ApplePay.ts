@@ -251,15 +251,8 @@ export class ApplePay {
       ? (this._buttonText = buttonText)
       : (this._buttonText = ApplePay.AVAILABLE_BUTTON_TEXTS[0]);
 
-    this._applePayButtonProps.style = `
-    -webkit-appearance: -apple-pay-button;
-    -apple-pay-button-type: ${this._buttonText};
-    -apple-pay-button-style: ${this._buttonStyle};
-    pointer-events: auto;
-    cursor: pointer;
-    display: flex;
-    role: button;
-    `;
+    // tslint:disable-next-line: max-line-length
+    this._applePayButtonProps.style = `-webkit-appearance: -apple-pay-button;-apple-pay-button-type: ${this._buttonText};-apple-pay-button-style: ${this._buttonStyle};pointer-events: auto;cursor: pointer;display: flex;role: button;`;
   }
 
   private _addApplePayButton = () => DomMethods.appendChildIntoDOM(this._placement, this.createApplePayButton());
