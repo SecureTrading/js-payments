@@ -181,7 +181,7 @@ export class ApplePay {
   }
 
   protected createApplePayButton() {
-    return DomMethods.createHtmlElement.apply(this, [this._applePayButtonProps, 'div']);
+    return DomMethods.createHtmlElement.apply(this, [this._applePayButtonProps, 'a']);
   }
 
   protected isUserLoggedToAppleAccount(): boolean {
@@ -251,8 +251,15 @@ export class ApplePay {
       ? (this._buttonText = buttonText)
       : (this._buttonText = ApplePay.AVAILABLE_BUTTON_TEXTS[0]);
 
-    // tslint:disable-next-line: max-line-length
-    this._applePayButtonProps.style = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${this._buttonText}; -apple-pay-button-style: ${this._buttonStyle}`;
+    this._applePayButtonProps.style = `
+    -webkit-appearance: -apple-pay-button;
+    -apple-pay-button-type: ${this._buttonText};
+    -apple-pay-button-style: ${this._buttonStyle};
+    pointer-events: auto;
+    cursor: pointer;
+    display: flex;
+    role: button;
+    `;
   }
 
   private _addApplePayButton = () => DomMethods.appendChildIntoDOM(this._placement, this.createApplePayButton());
@@ -263,8 +270,10 @@ export class ApplePay {
     ApplePay.AVAILABLE_BUTTON_STYLES.includes(buttonStyle);
 
   private _applePayButtonClickHandler = (elementId: string, event: string) => {
-    document.getElementById(elementId).addEventListener(event, () => {
-      // this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM, data: FormState.BLOCKED }, true);
+    const button = document.getElementById(elementId);
+    button.addEventListener(event, () => {
+      button.style.pointerEvents = 'none';
+      button.getElementsByTagName('a')[0].style.pointerEvents = 'none';
       this._paymentProcess();
     });
   };
