@@ -10,7 +10,7 @@ import { Selectors } from '../../core/shared/Selectors';
 
 (() => {
   Container.get(FrameIdentifier).setFrameName(Selectors.CONTROL_FRAME_IFRAME);
-  Container.get(ConfigService).clear();
+  Container.get(ConfigService).clear(false);
 
   return Container.get(ControlFrame);
 })();

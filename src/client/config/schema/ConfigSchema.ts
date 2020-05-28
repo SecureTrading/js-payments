@@ -7,9 +7,6 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
     buttonStyle: Joi.string().valid('black', 'white', 'white-outline'),
     buttonText: Joi.string().valid('plain', 'buy', 'book', 'donate', 'check-out', 'subscribe'),
     merchantId: Joi.string(),
-    requestTypes: Joi.array().items(
-      Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
-    ),
     paymentRequest: {
       countryCode: Joi.string(),
       currencyCode: Joi.string(),
@@ -41,9 +38,7 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
       },
       requiredBillingContactFields: Joi.array().items(Joi.string()),
       requiredShippingContactFields: Joi.array().items(Joi.string()),
-      requestTypes: Joi.array().items(
-        Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
-      )
+      requestTypes: Joi.array().items(Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'RISKDEC', 'SUBSCRIPTION'))
     },
     placement: Joi.string()
   },
@@ -131,9 +126,7 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
       customData: Joi.any()
     }),
     placement: Joi.string(),
-    requestTypes: Joi.array().items(
-      Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'JSINIT', 'RISKDEC', 'SUBSCRIPTION', 'THREEDQUERY')
-    ),
+    requestTypes: Joi.array().items(Joi.string().valid('ACCOUNTCHECK', 'AUTH', 'RISKDEC', 'SUBSCRIPTION')),
     settings: Joi.object().keys({
       locale: Joi.string(),
       countryCode: Joi.string(),

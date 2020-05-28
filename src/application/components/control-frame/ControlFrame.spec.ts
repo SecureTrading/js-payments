@@ -398,7 +398,7 @@ describe('ControlFrame', () => {
     // then
     it('should return pan from jwt', () => {
       // @ts-ignore
-      expect(instance._getPan()).toEqual('3089500000000000021');
+      expect(instance._getPanFromJwt()).toEqual('3089500000000000021');
     });
 
     // then
@@ -409,7 +409,7 @@ describe('ControlFrame', () => {
           'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NjU5MTYxMS43ODM3MzY1LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiNDExMTExMTExMTExMTExMSIsImV4cGlyeWRhdGUiOiIwMS8yMiIsInNlY3VyaXR5Y29kZSI6IjEyMyJ9fQ.Rkhsx1PCXnd_Kf-U9OvQRbp9lnNpFx5ClPpm4zx-hDM'
       };
       // @ts-ignore
-      expect(instance._getPan()).toEqual('4111111111111111');
+      expect(instance._getPanFromJwt()).toEqual('4111111111111111');
     });
   });
 

@@ -42,10 +42,13 @@ export abstract class AbstractStorage implements IStorage, Subscribable<any> {
     return this.nativeStorage.getItem(name);
   }
 
-  public setItem(name: string, value: string): void {
+  public setItem(name: string, value: string, synchronize: boolean = true): void {
     this.nativeStorage.setItem(name, value);
     this.emitStorageEvent();
-    this.synchronizeStorage(name, value);
+
+    if (synchronize) {
+      this.synchronizeStorage(name, value);
+    }
   }
 
   public select<T>(selector: (storage: { [key: string]: any }) => T): Observable<T> {

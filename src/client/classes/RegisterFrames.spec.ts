@@ -114,7 +114,7 @@ function registerFramesFixture() {
       'line-height-input': '12px'
     }
   };
-  const instance = new RegisterFrames(jwt, origin, componentsIds, styles, animatedCard, [
+  const instance = new RegisterFrames(jwt, origin, componentsIds, styles, animatedCard, 'st-form', [
     'pan',
     'expirydate',
     'securitycode'

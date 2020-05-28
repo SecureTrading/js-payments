@@ -12,6 +12,7 @@ import { Translator } from '../../application/core/shared/Translator';
 import { Validation } from '../../application/core/shared/Validation';
 import { RegisterFrames } from './RegisterFrames.class';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
+import { ofType } from '../../shared/services/message-bus/operators/ofType';
 
 export class CardFrames extends RegisterFrames {
   private static CARD_NUMBER_FIELD_NAME: string = 'pan';
@@ -60,10 +61,11 @@ export class CardFrames extends RegisterFrames {
     defaultPaymentType: string,
     animatedCard: boolean,
     buttonId: string,
-    fieldsToSubmit: string[]
+    fieldsToSubmit: string[],
+    formId: string
   ) {
-    super(jwt, origin, componentIds, styles, animatedCard, fieldsToSubmit);
-    this._setInitValues(buttonId, defaultPaymentType, paymentTypes, animatedCard, jwt);
+    super(jwt, origin, componentIds, styles, animatedCard, formId, fieldsToSubmit);
+    this._setInitValues(buttonId, defaultPaymentType, paymentTypes, animatedCard, jwt, formId);
     this.configureFormFieldsAmount(jwt);
   }
 
@@ -129,7 +131,7 @@ export class CardFrames extends RegisterFrames {
   }
 
   private _createSubmitButton = (): HTMLInputElement | HTMLButtonElement => {
-    const form = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR);
+    const form = document.getElementById(this.formId);
     let button: HTMLInputElement | HTMLButtonElement = this._buttonId
       ? (document.getElementById(this._buttonId) as HTMLButtonElement | HTMLInputElement)
       : null;
@@ -230,7 +232,7 @@ export class CardFrames extends RegisterFrames {
 
   private _onInput(): void {
     const messageBusEvent: IMessageBusEvent = {
-      data: DomMethods.parseForm(),
+      data: DomMethods.parseForm(this.formId),
       type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
     };
     this.messageBus.publish(messageBusEvent);
@@ -243,7 +245,7 @@ export class CardFrames extends RegisterFrames {
       },
       type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM
     };
-    this.messageBus.publish(messageBusEvent);
+    this.messageBus.publish(messageBusEvent, true);
   }
 
   private _publishValidatedFieldState(field: { message: string; state: boolean }, eventType: string): void {
@@ -253,7 +255,7 @@ export class CardFrames extends RegisterFrames {
   }
 
   private _setMerchantInputListeners(): void {
-    const els = DomMethods.getAllFormElements(document.getElementById(Selectors.MERCHANT_FORM_SELECTOR));
+    const els = DomMethods.getAllFormElements(document.getElementById(this.formId));
     for (const el of els) {
       el.addEventListener(CardFrames.INPUT_EVENT, this._onInput.bind(this));
     }
@@ -264,11 +266,13 @@ export class CardFrames extends RegisterFrames {
     defaultPaymentType: string,
     paymentTypes: any,
     loadAnimatedCard: boolean,
-    jwt: string
+    jwt: string,
+    formId: string
   ): void {
     this._validation = new Validation();
     this._translator = new Translator(this.params.locale);
     this._buttonId = buttonId;
+    this.formId = formId;
     this._defaultPaymentType = defaultPaymentType;
     this._paymentTypes = paymentTypes;
     this.jwt = jwt;
@@ -308,6 +312,10 @@ export class CardFrames extends RegisterFrames {
   }
 
   private _subscribeBlockSubmit(): void {
+    this.messageBus
+      .pipe(ofType(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM))
+      .subscribe(() => this._disableSubmitButton(FormState.BLOCKED));
+
     this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BLOCK_FORM, (state: FormState) => {
       this._disableSubmitButton(state);
       this._disableFormField(state, MessageBus.EVENTS_PUBLIC.BLOCK_CARD_NUMBER, Selectors.CARD_NUMBER_IFRAME);
@@ -332,8 +340,6 @@ export class CardFrames extends RegisterFrames {
   }
 
   private _preventFormSubmit(): void {
-    document
-      .getElementById(Selectors.MERCHANT_FORM_SELECTOR)
-      .addEventListener(CardFrames.SUBMIT_EVENT, event => event.preventDefault());
+    document.getElementById(this.formId).addEventListener(CardFrames.SUBMIT_EVENT, event => event.preventDefault());
   }
 }

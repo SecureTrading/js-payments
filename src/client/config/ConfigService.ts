@@ -32,7 +32,7 @@ export class ConfigService {
     return fullConfig;
   }
 
-  clear(): void {
-    this.storage.setItem(ConfigService.STORAGE_KEY, null);
+  clear(synchronize: boolean): void {
+    this.storage.setItem(ConfigService.STORAGE_KEY, null, synchronize);
   }
 }
