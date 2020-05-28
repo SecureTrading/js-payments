@@ -30,6 +30,7 @@ export class CommonFrames extends RegisterFrames {
   private readonly _gatewayUrl: string;
   private readonly _merchantForm: HTMLFormElement;
   private _validation: Validation;
+  private _formSubmitted: boolean;
   private readonly _submitFields: string[];
   private readonly _submitOnError: boolean;
   private readonly _submitOnSuccess: boolean;
@@ -47,13 +48,16 @@ export class CommonFrames extends RegisterFrames {
     submitFields: string[],
     gatewayUrl: string,
     animatedCard: boolean,
-    requestTypes: string[]
+    requestTypes: string[],
+    formId: string
   ) {
-    super(jwt, origin, componentIds, styles, animatedCard);
+    super(jwt, origin, componentIds, styles, animatedCard, formId);
     this._gatewayUrl = gatewayUrl;
     this._messageBus = Container.get(MessageBus);
-    this._merchantForm = document.getElementById(Selectors.MERCHANT_FORM_SELECTOR) as HTMLFormElement;
+    this.formId = formId;
+    this._merchantForm = document.getElementById(formId) as HTMLFormElement;
     this._validation = new Validation();
+    this._formSubmitted = false;
     this._submitFields = submitFields;
     this._submitOnError = submitOnError;
     this._submitOnCancel = submitOnCancel;
@@ -79,7 +83,7 @@ export class CommonFrames extends RegisterFrames {
 
   protected setElementsFields() {
     const elements = [];
-    elements.push(Selectors.MERCHANT_FORM_SELECTOR);
+    elements.push(this.formId);
     return elements;
   }
 
@@ -134,24 +138,47 @@ export class CommonFrames extends RegisterFrames {
 
   private _onInput(event: Event) {
     const messageBusEvent = {
-      data: DomMethods.parseForm(),
+      data: DomMethods.parseForm(this.formId),
       type: MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS
     };
     this._messageBus.publish(messageBusEvent);
   }
 
-  private _onTransactionComplete(data: any) {
+  private _onTransactionComplete(data: any): void {
     if (this._isTransactionFinished(data) || data.errorcode !== '0') {
       this._messageBus.publish({ data, type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUBMIT_CALLBACK }, true);
     }
-    if (this._shouldSubmitForm(data)) {
-      const form = this._merchantForm;
-      let formData = data;
-      if (this._submitOnCancel) {
-        formData = Object.assign(data, { errormessage: Language.translations.PAYMENT_CANCELLED });
+
+    if (this._isTransactionFinished(data) && data.errorcode === '0') {
+      data = Object.assign(data, { errormessage: Language.translations.PAYMENT_SUCCESS });
+      if (this._submitOnSuccess) {
+        this._submitForm(data);
       }
-      DomMethods.addDataToForm(form, formData, this._getSubmitFields(data));
-      form.submit();
+      return;
+    }
+
+    if (data.errorcode === 'cancelled') {
+      data = Object.assign(data, { errormessage: Language.translations.PAYMENT_CANCELLED });
+      if (this._submitOnCancel) {
+        this._submitForm(data);
+      }
+      return;
+    }
+
+    if (data.errorcode !== '0') {
+      data = Object.assign(data, { errormessage: data.errormessage });
+      if (this._submitOnError) {
+        this._submitForm(data);
+      }
+      return;
+    }
+  }
+
+  private _submitForm(data: any) {
+    if (!this._formSubmitted) {
+      this._formSubmitted = true;
+      DomMethods.addDataToForm(this._merchantForm, data, this._getSubmitFields(data));
+      this._merchantForm.submit();
     }
   }
 
@@ -164,24 +191,16 @@ export class CommonFrames extends RegisterFrames {
 
   private _setTransactionCompleteListener() {
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE, (data: any) => {
-      if (data.walletsource === 'APPLEPAY') {
-        const localStore = this._localStorage.getItem('completePayment');
-        setTimeout(() => {
-          if (localStore === 'true') {
-            this._onTransactionComplete(data);
-          }
-        }, 500);
-      } else {
+      if (data.walletsource !== 'APPLEPAY') {
         this._onTransactionComplete(data);
+        return;
       }
+      const localStore = this._localStorage.getItem('completePayment');
+      setTimeout(() => {
+        if (localStore === 'true') {
+          this._onTransactionComplete(data);
+        }
+      }, 500);
     });
-  }
-
-  private _shouldSubmitForm(data: any): boolean {
-    return (
-      (this._submitOnSuccess && data.errorcode === '0' && this._isTransactionFinished(data)) ||
-      (this._submitOnError && data.errorcode !== '0') ||
-      (this._submitOnCancel && data.errorcode !== '0')
-    );
   }
 }

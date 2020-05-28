@@ -15,7 +15,7 @@ import { ApplePayMock } from '../application/core/integrations/ApplePayMock';
 import { GoogleAnalytics } from '../application/core/integrations/GoogleAnalytics';
 import { VisaCheckout } from '../application/core/integrations/VisaCheckout';
 import { VisaCheckoutMock } from '../application/core/integrations/VisaCheckoutMock';
-import { IApplePayConfig } from '../application/core/models/IApplePayConfig';
+import { IApplePay } from '../application/core/models/IApplePay';
 import { IComponentsConfig } from '../shared/model/config/IComponentsConfig';
 import { IConfig } from '../shared/model/config/IConfig';
 import { IStJwtObj } from '../application/core/models/IStJwtObj';
@@ -38,7 +38,7 @@ import { ofType } from '../shared/services/message-bus/operators/ofType';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ConfigProvider } from '../application/core/services/ConfigProvider';
-import { switchMap, first } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { FrameIdentifier } from '../shared/services/message-bus/FrameIdentifier';
 
@@ -119,15 +119,16 @@ class ST {
   }
 
   public Components(config: IComponentsConfig): void {
+    this._config = this._configService.update({
+      ...this._config,
+      components: {
+        ...this._config.components,
+        ...(config || {})
+      }
+    });
+    // @ts-ignore
+    this._commonFrames._requestTypes = this._config.components.requestTypes;
     this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(async controlFrame => {
-      this._config = this._configService.update({
-        ...this._config,
-        components: {
-          ...this._config.components,
-          ...(config || {})
-        }
-      });
-      this._commonFrames.requestTypes = this._config.components.requestTypes;
       await this._communicator.query({ type: MessageBus.EVENTS_PUBLIC.CONFIG_CHECK }, controlFrame);
       this.CardFrames();
       this._cardFrames.init();
@@ -135,8 +136,9 @@ class ST {
     });
   }
 
-  public ApplePay(config: IApplePayConfig): ApplePay {
+  public ApplePay(config: IApplePay): ApplePay {
     const { applepay } = this.Environment();
+
     this._config = this._configService.update({
       ...this._config,
       applePay: {
@@ -144,11 +146,13 @@ class ST {
         ...(config || {})
       }
     });
+
     return new applepay(this._configProvider, this._communicator);
   }
 
   public VisaCheckout(config: IVisaConfig): VisaCheckout {
     const { visa } = this.Environment();
+
     this._config = this._configService.update({
       ...this._config,
       visaCheckout: {
@@ -204,8 +208,6 @@ class ST {
   public init(config: IConfig): void {
     this._config = this._configProvider.getConfig();
     this.initCallbacks(config);
-    // TODO theres probably a better way rather than having to remember to update Selectors
-    Selectors.MERCHANT_FORM_SELECTOR = this._config.formId;
     this.Storage();
     this._translation = new Translator(this._storage.getItem(ST.LOCALE_STORAGE));
     this._googleAnalytics.init();
@@ -226,7 +228,8 @@ class ST {
       this._config.components.defaultPaymentType,
       this._config.animatedCard,
       this._config.buttonId,
-      this._config.fieldsToSubmit
+      this._config.fieldsToSubmit,
+      this._config.formId
     );
   }
 
@@ -242,7 +245,8 @@ class ST {
       this._config.submitFields,
       this._config.datacenterurl,
       this._config.animatedCard,
-      this._config.components.requestTypes
+      this._config.components.requestTypes,
+      this._config.formId
     );
   }
 
