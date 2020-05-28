@@ -67,6 +67,9 @@ export class CardFrames extends RegisterFrames {
     super(jwt, origin, componentIds, styles, animatedCard, formId, fieldsToSubmit);
     this._setInitValues(buttonId, defaultPaymentType, paymentTypes, animatedCard, jwt, formId);
     this.configureFormFieldsAmount(jwt);
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.CARDINAL_LOADED, (event: FormState) => {
+      this._disableSubmitButton(event);
+    });
   }
 
   public init() {
@@ -143,7 +146,10 @@ export class CardFrames extends RegisterFrames {
     if (button) {
       button.textContent = this._payMessage;
       this._submitButton = button;
+      this._disableSubmitButton(FormState.BLOCKED);
+      console.error(this._submitButton);
     }
+    console.error(button);
     return button;
   };
 
