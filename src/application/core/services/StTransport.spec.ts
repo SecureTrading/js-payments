@@ -7,7 +7,7 @@ import { mock, instance as mockInstance, when } from 'ts-mockito';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { StCodec } from './StCodec.class';
 
-const customGlobal: GlobalWithFetchMock = global as GlobalWithFetchMock;
+const customGlobal: GlobalWithFetchMock = (global as unknown) as GlobalWithFetchMock;
 customGlobal.fetch = require('jest-fetch-mock');
 customGlobal.fetchMock = customGlobal.fetch;
 
