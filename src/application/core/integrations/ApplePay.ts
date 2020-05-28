@@ -15,6 +15,7 @@ import { InterFrameCommunicator } from '../../../shared/services/message-bus/Int
 import { Observable } from 'rxjs';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { IApplePay } from '../models/IApplePay';
+import { FormState } from '../models/constants/FormState';
 
 const ApplePaySession = (window as any).ApplePaySession;
 const ApplePayError = (window as any).ApplePayError;
@@ -263,6 +264,7 @@ export class ApplePay {
 
   private _applePayButtonClickHandler = (elementId: string, event: string) => {
     document.getElementById(elementId).addEventListener(event, () => {
+      // this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM, data: FormState.BLOCKED }, true);
       this._paymentProcess();
     });
   };
