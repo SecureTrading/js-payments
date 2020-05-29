@@ -93,7 +93,9 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
         const frames: FrameCollection = this.frameAccessor.getFrameCollection();
         const controlFrame: ControlFrameWindow = frames[frameName] as ControlFrameWindow;
 
-        return controlFrame.stMessages;
+        return new Observable(subscriber => {
+          controlFrame.stMessages.subscribe(value => subscriber.next(value));
+        });
       })
     );
   }
