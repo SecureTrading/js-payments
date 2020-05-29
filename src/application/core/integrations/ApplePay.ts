@@ -496,6 +496,7 @@ export class ApplePay {
           this._notification.error(message);
           this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
         } else if (notificationType === 'cancel') {
+          element.style.pointerEvents = 'auto';
           this._notification.cancel(message);
           this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_CANCEL_CALLBACK }, true);
         } else {
