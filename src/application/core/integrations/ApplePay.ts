@@ -303,6 +303,7 @@ export class ApplePay {
         })
         .catch(error => {
           const { errorcode, errormessage } = error;
+          this._applePayButtonClickHandler();
           this._onValidateMerchantResponseFailure(error);
           this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
           this._notification.error(`${errorcode}: ${errormessage}`);
@@ -468,9 +469,10 @@ export class ApplePay {
     if (errorcode === '0') {
       this._completion.status = this.getPaymentSuccessStatus();
     } else {
+      this._applePayButtonClickHandler();
       this._completion.status = this.getPaymentFailureStatus();
     }
-    this._applePayButtonClickHandler();
+
     return this._completion;
   }
 
