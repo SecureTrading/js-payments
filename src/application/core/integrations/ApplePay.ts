@@ -261,9 +261,12 @@ export class ApplePay {
     ApplePay.AVAILABLE_BUTTON_STYLES.includes(buttonStyle);
 
   private _applePayButtonClickHandler() {
-    document.getElementById(ApplePay.APPLE_PAY_BUTTON_ID).addEventListener('click', () => {
+    const button = document.getElementById(ApplePay.APPLE_PAY_BUTTON_ID);
+    const handler = () => {
       this._paymentProcess();
-    });
+      button.removeEventListener('click', handler);
+    };
+    button.addEventListener('click', handler);
   }
 
   private _setAmountAndCurrency() {
@@ -405,9 +408,6 @@ export class ApplePay {
   }
 
   private _paymentProcess() {
-    document
-      .getElementById(ApplePay.APPLE_PAY_BUTTON_ID)
-      .removeEventListener('click', this._applePayButtonClickHandler);
     this._localStorage.setItem('completePayment', 'false');
     this._session = this.getApplePaySessionObject();
     this._onValidateMerchantRequest();
