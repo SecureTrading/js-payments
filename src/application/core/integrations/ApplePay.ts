@@ -340,6 +340,7 @@ export class ApplePay {
           this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
           this._notification.error(Language.translations.PAYMENT_ERROR);
           this._session.completePayment({ status: this.getPaymentFailureStatus(), errors: [] });
+          this._applePayButtonClickHandler();
           this._localStorage.setItem('completePayment', 'true');
         });
     };
@@ -469,6 +470,7 @@ export class ApplePay {
     } else {
       this._completion.status = this.getPaymentFailureStatus();
     }
+    this._applePayButtonClickHandler();
     return this._completion;
   }
 
