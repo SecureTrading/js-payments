@@ -62,7 +62,7 @@
     "@babel/plugin-transform-runtime": "^7.9.6",
     "@babel/plugin-transform-typescript": "^7.9.6",
     "@babel/preset-env": "^7.10.1",
-    "@babel/preset-typescript": "^7.9.0",
+    "@babel/preset-typescript": "^7.10.1",
     "@types/hapi__joi": "^17.1.0",
     "@types/jest": "^25.2.3",
     "@types/jest-each": "^24.3.0",
