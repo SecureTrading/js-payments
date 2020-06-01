@@ -7,7 +7,6 @@ import { IConfig } from '../../../../../shared/model/config/IConfig';
 import { DefaultComponents } from './DefaultComponents';
 import { DefaultPlaceholders } from './DefaultPlaceholders';
 import { DefaultInit } from './DefaultInit';
-import { DefaultRequestTypes } from './DefaultRequestTypes';
 
 export const DefaultConfig: IConfig = {
   analytics: false,

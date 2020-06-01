@@ -2,9 +2,34 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.2.0
+
+### Added
+- submitOnCancel feature for cancelled payments.
+- Support ApplePay and VisaCheckout with Cybertonica.
+- Moved CardinalCommerce to ControlFrame.
+- Frictionless 3Ds to work with Cardinal with updateJwt function.
+- Automated tests for most basic required config.
+- Standalone Cybertonica.
+- Detect payment type when using parenttransactionreference.
+
+### Fixed
+- Form locking says as processing if requestTypes equals THREEDQUERY.
+- bypassCards feature not working with fieldsToSubmit.
+- Disappearing form on returning to payment page.
+- ApplePay - requestTypes issue.
+- JSINIT request duplicated if user clicked on submit button multiple times (with deferInit option: on).
+- ReactJS: updatJWT function sent wrong jwt during second payment.
+- ReactJS: notification frame is not displayed after second payment.
+- submitOnCancel doesn't work on ApplePay.
+- submitOnCancel doesn't work on VisaCheckout.
+- Default requestTypes doesn't work for ApplePay.
+- overridden payment formId.
+- updateJWT - invalid token specified.
+
 ## 2.1.1
 
-###Changed
+### Changed
 - Cybertonica URLs changed to use new subdomain
 
 ## 2.1.0

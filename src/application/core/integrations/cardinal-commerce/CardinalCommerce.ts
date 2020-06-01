@@ -5,6 +5,7 @@ import { PaymentEvents } from '../../models/constants/PaymentEvents';
 import { IMessageBusEvent } from '../../models/IMessageBusEvent';
 import { IOnCardinalValidated } from '../../models/IOnCardinalValidated';
 import { IThreeDQueryResponse } from '../../models/IThreeDQueryResponse';
+import { StCodec } from '../../services/StCodec.class';
 import { MessageBus } from '../../shared/MessageBus';
 import { GoogleAnalytics } from '../GoogleAnalytics';
 import { Service } from 'typedi';
@@ -160,6 +161,11 @@ export class CardinalCommerce {
           !CardinalCommerceValidationStatus.includes(validationResult.ActionCode) ||
           validationResult.ActionCode === 'FAILURE'
         ) {
+          StCodec.publishResponse(
+            this.stTransport._threeDQueryResult.response,
+            this.stTransport._threeDQueryResult.jwt,
+            jwt
+          );
           return throwError(validationResult);
         }
 
