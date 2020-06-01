@@ -9,6 +9,7 @@ import { Container } from 'typedi';
 import { BrowserLocalStorage } from '../../shared/services/storage/BrowserLocalStorage';
 import { IComponentsIds } from '../../shared/model/config/IComponentsIds';
 import { Language } from '../../application/core/shared/Language';
+import { filter, first } from 'rxjs/operators';
 
 export class CommonFrames extends RegisterFrames {
   get requestTypes(): string[] {
@@ -195,12 +196,13 @@ export class CommonFrames extends RegisterFrames {
         this._onTransactionComplete(data);
         return;
       }
-      const localStore = this._localStorage.getItem('completePayment');
-      setTimeout(() => {
-        if (localStore === 'true') {
-          this._onTransactionComplete(data);
-        }
-      }, 4000);
+      this._localStorage
+        .select(store => store.completePayment)
+        .pipe(
+          filter((value: string) => value === 'true'),
+          first()
+        )
+        .subscribe(() => this._onTransactionComplete(data));
     });
   }
 }
