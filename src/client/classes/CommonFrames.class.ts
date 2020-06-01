@@ -9,7 +9,7 @@ import { Container } from 'typedi';
 import { BrowserLocalStorage } from '../../shared/services/storage/BrowserLocalStorage';
 import { IComponentsIds } from '../../shared/model/config/IComponentsIds';
 import { Language } from '../../application/core/shared/Language';
-import { filter, first } from 'rxjs/operators';
+import { filter, first, delay } from 'rxjs/operators';
 
 export class CommonFrames extends RegisterFrames {
   get requestTypes(): string[] {
@@ -200,7 +200,8 @@ export class CommonFrames extends RegisterFrames {
         .select(store => store.completePayment)
         .pipe(
           filter((value: string) => value === 'true'),
-          first()
+          first(),
+          delay(4000)
         )
         .subscribe(() => this._onTransactionComplete(data));
     });
