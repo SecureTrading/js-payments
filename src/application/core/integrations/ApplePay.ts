@@ -298,12 +298,10 @@ export class ApplePay {
       return this.payment
         .walletVerify(this._validateMerchantRequestData)
         .then(({ response }: any) => {
-          console.error('dupa');
           this._onValidateMerchantResponseSuccess(response);
           GoogleAnalytics.sendGaData('event', 'Apple Pay', 'merchant validation', 'Apple Pay merchant validated');
         })
         .catch(error => {
-          console.error('dupa 2');
           const { errorcode, errormessage } = error;
           this._applePayButtonClickHandler();
           this._onValidateMerchantResponseFailure(error);
@@ -322,7 +320,6 @@ export class ApplePay {
   private _onPaymentAuthorized() {
     this._session.onpaymentauthorized = (event: any) => {
       this.paymentDetails = JSON.stringify(event.payment);
-      console.error('dupa 1');
       return this.payment
         .processPayment(
           this._requestTypes,
@@ -333,7 +330,6 @@ export class ApplePay {
           DomMethods.parseForm(this._formId)
         )
         .then((response: any) => {
-          console.error('dupa 5');
           const { errorcode, errormessage } = response.response;
           this._handleApplePayError(response.response);
           this._session.completePayment(this._completion);
@@ -342,7 +338,6 @@ export class ApplePay {
           this._localStorage.setItem('completePayment', 'true');
         })
         .catch(() => {
-          console.error('dupa 3');
           this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
           this._notification.error(Language.translations.PAYMENT_ERROR);
           this._session.completePayment({ status: this.getPaymentFailureStatus(), errors: [] });
