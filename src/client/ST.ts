@@ -40,6 +40,7 @@ import { ConfigProvider } from '../application/core/services/ConfigProvider';
 import { switchMap } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { IApplePay } from '../application/core/models/apple-pay/IApplePay';
+import { FrameIdentifier } from '../shared/services/message-bus/FrameIdentifier';
 
 @Service()
 class ST {
@@ -337,6 +338,7 @@ class ST {
 }
 
 export default (config: IConfig) => {
+  Container.get(FrameIdentifier).setFrameName(Selectors.MERCHANT_PARENT_FRAME);
   Container.get(ConfigService).update(config);
 
   const st = Container.get(ST);
