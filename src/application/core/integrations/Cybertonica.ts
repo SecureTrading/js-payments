@@ -42,7 +42,6 @@ export class Cybertonica implements ICybertonica {
 
     this.tid = Promise.race([tid, timeout]);
     this.tid.then(value => this.storage.setItem(Cybertonica.TID_KEY, value));
-    this.tid.then(value => console.log('TID', value));
 
     return this.tid;
   }
