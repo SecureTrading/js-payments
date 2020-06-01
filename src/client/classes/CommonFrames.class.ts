@@ -200,7 +200,7 @@ export class CommonFrames extends RegisterFrames {
         if (localStore === 'true') {
           this._onTransactionComplete(data);
         }
-      }, 500);
+      }, 4000);
     });
   }
 }
