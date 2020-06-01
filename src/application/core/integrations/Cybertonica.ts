@@ -4,7 +4,6 @@ import { Service } from 'typedi';
 import { IAFCybertonica } from '../models/cybertonica/IAFCybertonica';
 import { environment } from '../../../environments/environment';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
-import { Language } from '../shared/Language';
 import { ICybertonica } from './ICybertonica';
 
 declare const AFCYBERTONICA: IAFCybertonica;
@@ -15,6 +14,7 @@ export class Cybertonica implements ICybertonica {
   private static LOCALE: string = 'locale';
   private static SCRIPT_TARGET: string = 'head';
   private static TID_KEY: string = 'app.tid';
+  private static TID_TIMEOUT = 5000;
 
   private static getBasename(): string {
     const link = document.createElement('a');
@@ -35,24 +35,25 @@ export class Cybertonica implements ICybertonica {
   }
 
   public init(apiUserName: string): Promise<string> {
-    this.tid = this._insertCybertonicaLibrary().then(
-      () => AFCYBERTONICA.init(apiUserName, undefined, Cybertonica.getBasename()) || this.initFailed()
+    const tid = this._insertCybertonicaLibrary().then(() =>
+      AFCYBERTONICA.init(apiUserName, undefined, Cybertonica.getBasename())
     );
-    this.tid.then(tid => this.storage.setItem(Cybertonica.TID_KEY, tid));
+    const timeout = new Promise(resolve => setTimeout(() => resolve(null), Cybertonica.TID_TIMEOUT));
+
+    this.tid = Promise.race([tid, timeout]);
+    this.tid.then(value => this.storage.setItem(Cybertonica.TID_KEY, value));
+    this.tid.then(value => console.log('TID', value));
 
     return this.tid;
   }
 
   public getTransactionId(): Promise<string> {
     const tid = this.storage.getItem(Cybertonica.TID_KEY);
+
     if (tid !== null && tid !== '') {
       return Promise.resolve(tid);
     }
 
     return this.tid;
-  }
-
-  private initFailed(): void {
-    throw new Error(this.translator.translate(Language.translations.PAYMENT_ERROR));
   }
 }
