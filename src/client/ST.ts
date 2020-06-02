@@ -113,8 +113,8 @@ class ST {
     this._messageBus
       .pipe(
         ofType(events[eventName]),
-        takeUntil(this._destroy$),
-        map(event => event.data)
+        map(event => event.data),
+        takeUntil(this._destroy$)
       )
       .subscribe(callback);
   }
