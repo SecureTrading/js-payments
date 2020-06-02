@@ -4,6 +4,7 @@
   position: fixed !important;
   bottom: 0 !important;
   right: 0 !important;
+  z-index: 999999;
 }
 
 #st-control-frame-iframe.modal {
