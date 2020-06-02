@@ -209,7 +209,7 @@ describe('ApplePay', () => {
 
     // then
     it('should set _applePayButtonProps style value', () => {
-      const css = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${buttonText}; -apple-pay-button-style: ${buttonStyle}`;
+      const css = `-webkit-appearance: -apple-pay-button;-apple-pay-button-type: ${buttonText};-apple-pay-button-style: ${buttonStyle};pointer-events: auto;cursor: pointer;display: flex;role: button;`;
       const { instance } = ApplePayFixture();
       // @ts-ignore
       instance._setApplePayButtonProps(buttonText, buttonStyle);
