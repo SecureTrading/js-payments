@@ -181,10 +181,6 @@ describe('CommonFrames', () => {
     // then
     it('should call _merchantForm() method', () => {
       // @ts-ignore
-      // instance._messageBus.subscribe = jest.fn().mockImplementationOnce((event, callback) => {
-      //   callback(data);
-      // });
-      // @ts-ignore
       instance._setTransactionCompleteListener();
 
       messageBus.publish({ type: PUBLIC_EVENTS.TRANSACTION_COMPLETE, data });
