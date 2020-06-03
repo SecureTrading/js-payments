@@ -40,6 +40,7 @@ export class ApplePay {
     walletsource: 'APPLEPAY',
     walletvalidationurl: ''
   };
+  private _applePayVersion: number;
   private _payment: Payment;
   private _translator: Translator;
   private _paymentRequest: IPaymentRequest;
@@ -70,10 +71,10 @@ export class ApplePay {
       const { applePay, jwt, formId } = config;
       const { buttonStyle, buttonText, merchantId, paymentRequest, placement, requestTypes } = applePay;
       const { currencyiso3a, locale, mainamount } = new StJwt(jwt);
-      const applePayVersion: number = this._latestSupportedApplePayVersion();
+      this._applePayVersion = this._latestSupportedApplePayVersion();
       this._canMakePayments();
       this._setConfig(
-        applePayVersion,
+        this._applePayVersion,
         currencyiso3a,
         locale,
         merchantId,
@@ -83,7 +84,7 @@ export class ApplePay {
         formId
       );
       this._insertButton(placement, buttonText, buttonStyle, locale);
-      this._hasActiveCards(merchantId, applePayVersion);
+      this._hasActiveCards(merchantId, this._applePayVersion);
     });
     this._subscribeUpdateJwt();
   }
@@ -122,10 +123,10 @@ export class ApplePay {
       {
         style: `-webkit-appearance: -apple-pay-button;
                 -apple-pay-button-type: ${buttonText};
-                -apple-pay-button-style: ${buttonStyle}`,
+                -apple-pay-button-style: ${buttonStyle};pointer-events: auto;cursor: pointer;display: flex;role: button;`,
         lang: locale
       },
-      'div'
+      'a'
     ]);
   }
 
@@ -177,6 +178,15 @@ export class ApplePay {
     this._validateMerchantRequest.walletvalidationurl = url;
   }
 
+  private _applePayButtonClickHandler() {
+    const button = document.getElementById(APPLE_PAY_BUTTON_ID);
+    const handler = () => {
+      this._proceedPayment();
+      button.removeEventListener('click', handler);
+    };
+    button.addEventListener('click', handler);
+  }
+
   private _onValidateMerchant() {
     this._applePaySession.onvalidatemerchant = (event: IApplePayValidateMerchantEvent) => {
       this._setValidationUrl(event.validationURL);
@@ -189,6 +199,7 @@ export class ApplePay {
         })
         .catch(error => {
           const { errorcode, errormessage } = error;
+          this._applePayButtonClickHandler(this._applePayVersion);
           this._onValidateMerchantResponseFailure(error);
           this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
           this._notification.error(`${errorcode}: ${errormessage}`);
@@ -229,6 +240,7 @@ export class ApplePay {
           this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
           this._notification.error(Language.translations.PAYMENT_ERROR);
           this._applePaySession.completePayment({ status: ApplePaySession.STATUS_FAILURE, errors: [] });
+          this._applePayButtonClickHandler(this._applePayVersion);
           this._localStorage.setItem('completePayment', 'true');
         });
     };
@@ -250,6 +262,7 @@ export class ApplePay {
         { type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE, data: { errorcode: event } },
         true
       );
+      this._applePayButtonClickHandler(this._applePayVersion);
       GoogleAnalytics.sendGaData('event', 'Apple Pay', 'payment status', 'Apple Pay payment cancelled');
     };
   }
@@ -307,8 +320,8 @@ export class ApplePay {
     };
   }
 
-  private _proceedPayment(applePayVersion: number): void {
-    this._applePaySession = new ApplePaySession(applePayVersion, this._paymentRequest); // must be here (gesture handl.)
+  private _proceedPayment(): void {
+    this._applePaySession = new ApplePaySession(this._applePayVersion, this._paymentRequest); // must be here (gesture handl.)
     this._onValidateMerchant();
     this._onPaymentMethodSelected();
     this._onShippingMethodSelected();
@@ -324,14 +337,12 @@ export class ApplePay {
     }
   }
 
-  private _hasActiveCards(merchantId: string, applePayVersion: number): void {
+  private _hasActiveCards(merchantId: string): void {
     ApplePaySession.canMakePaymentsWithActiveCard(merchantId)
       .then((canMakePayments: boolean) => {
         if (canMakePayments) {
           GoogleAnalytics.sendGaData('event', 'Apple Pay', 'init', 'Apple Pay can make payments');
-          document.getElementById(APPLE_PAY_BUTTON_ID).addEventListener('click', () => {
-            this._proceedPayment(applePayVersion);
-          });
+          this._applePayButtonClickHandler(this._applePayVersion);
         } else {
           GoogleAnalytics.sendGaData('event', 'Apple Pay', 'init', 'Apple Pay cannot make payments');
           throw new Error('User has not an active card provisioned into Wallet');
@@ -371,6 +382,7 @@ export class ApplePay {
     if (errordata.lastIndexOf('customer', 0) === 0) {
       error.code = 'shippingContactInvalid';
     }
+    this._applePayButtonClickHandler(this._applePayVersion);
     this._completion.errors.push(error.code);
     return this._completion;
   }

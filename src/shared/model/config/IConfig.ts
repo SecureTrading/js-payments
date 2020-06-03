@@ -10,7 +10,7 @@ import { IApplePay } from '../../../application/core/models/apple-pay/IApplePay'
 export interface IConfig {
   analytics?: boolean;
   animatedCard?: boolean;
-  applePay?: IApplePay;
+  applePay?: IApplePay | {};
   buttonId?: string;
   bypassCards?: BypassCards[];
   cancelCallback?: any;
