@@ -102,7 +102,6 @@ export class ApplePay {
   protected paymentDetails: string;
   private _buttonStyle: string;
   private _buttonText: string;
-  private _merchantSession: any;
   private _messageBus: MessageBus;
   private _session: any;
   private _stJwtInstance: StJwt;
@@ -130,6 +129,7 @@ export class ApplePay {
   private _applePayConfig: IApplePay;
   private _datacenterurl: string;
   private _formId: string;
+  private _paymentCancelled: boolean = false;
 
   constructor(private _configProvider: ConfigProvider, private _communicator: InterFrameCommunicator) {
     this._notification = Container.get(NotificationService);
@@ -298,13 +298,16 @@ export class ApplePay {
       return this.payment
         .walletVerify(this._validateMerchantRequestData)
         .then(({ response }: any) => {
-          this._onValidateMerchantResponseSuccess(response);
           GoogleAnalytics.sendGaData('event', 'Apple Pay', 'merchant validation', 'Apple Pay merchant validated');
+          return this._onValidateMerchantResponseSuccess(response);
         })
         .catch(error => {
+          if (this._paymentCancelled) {
+            return;
+          }
           const { errorcode, errormessage } = error;
-          this._applePayButtonClickHandler();
           this._onValidateMerchantResponseFailure(error);
+          this._applePayButtonClickHandler();
           this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
           this._notification.error(`${errorcode}: ${errormessage}`);
           GoogleAnalytics.sendGaData(
@@ -353,6 +356,7 @@ export class ApplePay {
 
   private _onPaymentCanceled() {
     this._session.oncancel = (event: any) => {
+      this._paymentCancelled = true;
       this._notification.cancel(Language.translations.PAYMENT_CANCELLED);
       this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_CANCEL_CALLBACK }, true);
       this._messageBus.publish(
@@ -367,18 +371,32 @@ export class ApplePay {
     };
   }
 
-  private _onValidateMerchantResponseSuccess(response: any) {
+  private _onValidateMerchantResponseSuccess(response: any): Promise<any> {
     const { requestid, walletsession } = response;
-    if (walletsession) {
-      this._merchantSession = JSON.parse(walletsession);
-      this._session.completeMerchantValidation(this._merchantSession);
-    } else {
-      this._onValidateMerchantResponseFailure(requestid);
+    if (this._paymentCancelled) {
+      return Promise.reject(requestid);
     }
+    return new Promise((resolve, reject) => {
+      if (walletsession) {
+        try {
+          this._session.completeMerchantValidation(JSON.parse(walletsession));
+          resolve();
+        } catch (error) {
+          console.warn(error);
+          reject(requestid);
+        }
+      } else {
+        reject(requestid);
+      }
+    });
   }
 
   private _onValidateMerchantResponseFailure(error: any) {
-    this._session.abort();
+    try {
+      this._session.abort();
+    } catch (error) {
+      console.warn(error);
+    }
     this._notification.error(Language.translations.MERCHANT_VALIDATION_FAILURE);
   }
 
@@ -407,13 +425,18 @@ export class ApplePay {
   }
 
   private _paymentProcess() {
+    this._paymentCancelled = false;
     this._localStorage.setItem('completePayment', 'false');
     this._session = this.getApplePaySessionObject();
-    this._onValidateMerchantRequest();
+    this._onPaymentCanceled();
     this._subscribeStatusHandlers();
     this._onPaymentAuthorized();
-    this._onPaymentCanceled();
-    this._session.begin();
+    this._onValidateMerchantRequest();
+    try {
+      this._session.begin();
+    } catch (error) {
+      console.warn(error);
+    }
   }
 
   private _applePayProcess() {
