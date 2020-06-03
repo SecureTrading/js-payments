@@ -226,6 +226,7 @@ class ST {
 
   private CardFrames(): void {
     this._cardFrames = new CardFrames(
+      this._sessionStorage,
       this._config.jwt,
       this._config.origin,
       this._config.componentIds,
