@@ -9,7 +9,11 @@ import { Container } from 'typedi';
 import { BrowserLocalStorage } from '../../shared/services/storage/BrowserLocalStorage';
 import { IComponentsIds } from '../../shared/model/config/IComponentsIds';
 import { Language } from '../../application/core/shared/Language';
-import { filter, first, delay } from 'rxjs/operators';
+import { filter, first, delay, map, takeUntil } from 'rxjs/operators';
+import { ofType } from '../../shared/services/message-bus/operators/ofType';
+import { Observable } from 'rxjs';
+import { PUBLIC_EVENTS } from '../../application/core/shared/EventTypes';
+import { IMessageBusEvent } from '../../application/core/models/IMessageBusEvent';
 
 export class CommonFrames extends RegisterFrames {
   get requestTypes(): string[] {
@@ -37,6 +41,7 @@ export class CommonFrames extends RegisterFrames {
   private readonly _submitOnSuccess: boolean;
   private readonly _submitOnCancel: boolean;
   private _localStorage: BrowserLocalStorage = Container.get(BrowserLocalStorage);
+  private _destroy$: Observable<IMessageBusEvent>;
 
   constructor(
     jwt: string,
@@ -64,6 +69,7 @@ export class CommonFrames extends RegisterFrames {
     this._submitOnCancel = submitOnCancel;
     this._submitOnSuccess = submitOnSuccess;
     this._requestTypes = requestTypes;
+    this._destroy$ = this._messageBus.pipe(ofType(PUBLIC_EVENTS.DESTROY));
   }
 
   public init() {
@@ -191,19 +197,26 @@ export class CommonFrames extends RegisterFrames {
   }
 
   private _setTransactionCompleteListener() {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE, (data: any) => {
-      if (data.walletsource !== 'APPLEPAY') {
-        this._onTransactionComplete(data);
-        return;
-      }
-      this._localStorage
-        .select(store => store.completePayment)
-        .pipe(
-          filter((value: string) => value === 'true'),
-          first(),
-          delay(4000)
-        )
-        .subscribe(() => this._onTransactionComplete(data));
-    });
+    this._messageBus
+      .pipe(
+        ofType(MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE),
+        map(event => event.data),
+        takeUntil(this._destroy$)
+      )
+      .subscribe((data: any) => {
+        if (data.walletsource !== 'APPLEPAY') {
+          this._onTransactionComplete(data);
+          return;
+        }
+
+        this._localStorage
+          .select(store => store.completePayment)
+          .pipe(
+            filter((value: string) => value === 'true'),
+            first(),
+            delay(4000)
+          )
+          .subscribe(() => this._onTransactionComplete(data));
+      });
   }
 }
