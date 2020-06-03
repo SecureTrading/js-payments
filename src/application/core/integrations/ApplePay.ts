@@ -1,5 +1,4 @@
 import { StTransport } from '../services/StTransport.class';
-import { IWalletConfig } from '../../../shared/model/config/IWalletConfig';
 import { DomMethods } from '../shared/DomMethods';
 import { Language } from '../shared/Language';
 import { MessageBus } from '../shared/MessageBus';
@@ -180,7 +179,7 @@ export class ApplePay {
   }
 
   protected createApplePayButton() {
-    return DomMethods.createHtmlElement.apply(this, [this._applePayButtonProps, 'div']);
+    return DomMethods.createHtmlElement.apply(this, [this._applePayButtonProps, 'a']);
   }
 
   protected isUserLoggedToAppleAccount(): boolean {
@@ -251,7 +250,7 @@ export class ApplePay {
       : (this._buttonText = ApplePay.AVAILABLE_BUTTON_TEXTS[0]);
 
     // tslint:disable-next-line: max-line-length
-    this._applePayButtonProps.style = `-webkit-appearance: -apple-pay-button; -apple-pay-button-type: ${this._buttonText}; -apple-pay-button-style: ${this._buttonStyle}`;
+    this._applePayButtonProps.style = `-webkit-appearance: -apple-pay-button;-apple-pay-button-type: ${this._buttonText};-apple-pay-button-style: ${this._buttonStyle};pointer-events: auto;cursor: pointer;display: flex;role: button;`;
   }
 
   private _addApplePayButton = () => DomMethods.appendChildIntoDOM(this._placement, this.createApplePayButton());
@@ -261,11 +260,14 @@ export class ApplePay {
   private _ifApplePayButtonStyleIsValid = (buttonStyle: string) =>
     ApplePay.AVAILABLE_BUTTON_STYLES.includes(buttonStyle);
 
-  private _applePayButtonClickHandler = (elementId: string, event: string) => {
-    document.getElementById(elementId).addEventListener(event, () => {
+  private _applePayButtonClickHandler() {
+    const button = document.getElementById(ApplePay.APPLE_PAY_BUTTON_ID);
+    const handler = () => {
       this._paymentProcess();
-    });
-  };
+      button.removeEventListener('click', handler);
+    };
+    button.addEventListener('click', handler);
+  }
 
   private _setAmountAndCurrency() {
     if (this._paymentRequest.total.amount && this._paymentRequest.currencyCode) {
@@ -301,6 +303,7 @@ export class ApplePay {
         })
         .catch(error => {
           const { errorcode, errormessage } = error;
+          this._applePayButtonClickHandler();
           this._onValidateMerchantResponseFailure(error);
           this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
           this._notification.error(`${errorcode}: ${errormessage}`);
@@ -338,6 +341,7 @@ export class ApplePay {
           this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
           this._notification.error(Language.translations.PAYMENT_ERROR);
           this._session.completePayment({ status: this.getPaymentFailureStatus(), errors: [] });
+          this._applePayButtonClickHandler();
           this._localStorage.setItem('completePayment', 'true');
         });
     };
@@ -358,6 +362,7 @@ export class ApplePay {
         },
         true
       );
+      this._applePayButtonClickHandler();
       GoogleAnalytics.sendGaData('event', 'Apple Pay', 'payment status', 'Apple Pay payment cancelled');
     };
   }
@@ -415,7 +420,7 @@ export class ApplePay {
     if (ApplePaySession) {
       if (this.isUserLoggedToAppleAccount()) {
         this.checkApplePayWalletCardAvailability().then(() => {
-          this._applePayButtonClickHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click');
+          this._applePayButtonClickHandler();
           GoogleAnalytics.sendGaData('event', 'Apple Pay', 'init', 'Apple Pay can make payments');
         });
       } else {
@@ -461,8 +466,10 @@ export class ApplePay {
     if (errorcode === '0') {
       this._completion.status = this.getPaymentSuccessStatus();
     } else {
+      this._applePayButtonClickHandler();
       this._completion.status = this.getPaymentFailureStatus();
     }
+
     return this._completion;
   }
 
