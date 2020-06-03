@@ -35,8 +35,8 @@ import { BrowserLocalStorage } from '../shared/services/storage/BrowserLocalStor
 import { BrowserSessionStorage } from '../shared/services/storage/BrowserSessionStorage';
 import { Notification } from '../application/core/shared/Notification';
 import { ofType } from '../shared/services/message-bus/operators/ofType';
-import { Subject } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { Subject, Subscription } from 'rxjs';
+import { filter, map, takeUntil, tap } from 'rxjs/operators';
 import { ConfigProvider } from '../application/core/services/ConfigProvider';
 import { switchMap } from 'rxjs/operators';
 import { from } from 'rxjs';
@@ -56,6 +56,7 @@ class ST {
   private _merchantFields: MerchantFields;
   private _translation: Translator;
   private _destroy$: Subject<void> = new Subject();
+  private _registeredCallbacks: { [eventName: string]: Subscription } = {};
 
   set submitCallback(callback: (event: ISubmitEvent) => void) {
     if (callback) {
@@ -103,15 +104,17 @@ class ST {
     this._merchantFields = new MerchantFields();
   }
 
-  public on(eventName: 'success' | 'error' | 'submit' | 'cancel', callback: any): void {
+  public on(eventName: 'success' | 'error' | 'submit' | 'cancel', callback: (event: any) => void): void {
     const events = {
       cancel: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_CANCEL_CALLBACK,
       success: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK,
       error: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK,
       submit: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUBMIT_CALLBACK
     };
-    // @ts-ignore
-    this._messageBus
+
+    this.off(eventName);
+
+    this._registeredCallbacks[eventName] = this._messageBus
       .pipe(
         ofType(events[eventName]),
         map(event => event.data),
@@ -120,8 +123,11 @@ class ST {
       .subscribe(callback);
   }
 
-  public off(event: string): void {
-    // @ts-ignore
+  public off(eventName: string): void {
+    if (this._registeredCallbacks[eventName]) {
+      this._registeredCallbacks[eventName].unsubscribe();
+      this._registeredCallbacks[eventName] = undefined;
+    }
   }
 
   public Components(config: IComponentsConfig): void {
