@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.2.1
+
+### Fixed
+- ApplePay submitOnSucces is not redirecting user to the target URL.
+- ApplePay multiple click causing multiple instances of ApplePaySession.
+- Css protection against not displaying ControlFrame component.
+- submitCallback data destructuring bug.
+
 ## 2.2.0
 
 ### Added
