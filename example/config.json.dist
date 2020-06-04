@@ -4,7 +4,7 @@
     "applePay": {
         "buttonStyle": "white-outline",
         "buttonText": "buy",
-        "merchantId": "merchant.net.securetrading.test",
+        "merchantId": "",
         "paymentRequest": {
             "countryCode": "US",
             "currencyCode": "USD",
@@ -116,7 +116,7 @@
             "color": "neutral"
         },
         "livestatus": 0,
-        "merchantId": "SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4",
+        "merchantId": "",
         "paymentRequest": {
             "subtotal": "20.00"
         },
