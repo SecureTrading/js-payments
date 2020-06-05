@@ -28,12 +28,7 @@
     },
     "buttonId": "merchant-submit-button",
     "bypassCards": [
-        "VISA",
-        "MASTERCARD",
-        "AMEX",
-        "DISCOVER",
-        "JCB",
-        "DINERS"
+        "PIBA"
     ],
     "cancelCallback": null,
     "componentIds": {
@@ -46,10 +41,10 @@
     "components": {
         "defaultPaymentType": "",
         "requestTypes": [
-            "THREEDQUERY",
-            "RISKDEC",
-            "ACCOUNTCHECK",
-            "AUTH"
+           "RISKDEC",
+           "ACCOUNTCHECK",
+           "THREEDQUERY",
+           "AUTH"
         ],
         "paymentTypes": [],
         "startOnLoad": false
