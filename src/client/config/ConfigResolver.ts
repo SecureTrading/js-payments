@@ -50,7 +50,8 @@ export class ConfigResolver {
       submitOnSuccess: this._getValueOrDefault(config.submitOnSuccess, DefaultConfig.submitOnSuccess),
       successCallback: this._getValueOrDefault(config.successCallback, DefaultConfig.successCallback),
       translations: this._getValueOrDefault(config.translations, DefaultConfig.translations),
-      visaCheckout: this._setVisaCheckoutConfig(config.visaCheckout, DefaultConfig.visaCheckout)
+      visaCheckout: this._setVisaCheckoutConfig(config.visaCheckout, DefaultConfig.visaCheckout),
+      sentryDsn: this._getValueOrDefault(config.sentryDsn, '')
     };
     if (!environment.production) {
       console.error(validatedConfig);

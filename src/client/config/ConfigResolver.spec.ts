@@ -132,7 +132,8 @@ function ConfigResolverFixture() {
       settings: {
         displayName: 'My Test Site'
       }
-    }
+    },
+    sentryDsn: ''
   };
   const configResolved: IConfig = {
     analytics: true,
@@ -251,7 +252,8 @@ function ConfigResolverFixture() {
       settings: {
         displayName: 'My Test Site'
       }
-    }
+    },
+    sentryDsn: ''
   };
   const minimalConfig: IConfig = {
     jwt: 'randomjwt'
@@ -317,7 +319,8 @@ function ConfigResolverFixture() {
     submitCallback: null,
     successCallback: null,
     translations: {},
-    visaCheckout: {}
+    visaCheckout: {},
+    sentryDsn: ''
   };
   return {
     config,

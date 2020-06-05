@@ -38,4 +38,5 @@ export interface IConfig {
   successCallback?: any;
   translations?: {};
   visaCheckout?: IVisaCheckout | {};
+  sentryDsn?: string;
 }

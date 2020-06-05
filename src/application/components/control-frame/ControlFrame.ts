@@ -37,6 +37,7 @@ import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { IOnCardinalValidated } from '../../core/models/IOnCardinalValidated';
 import { ConfigService } from '../../../client/config/ConfigService';
 import { IThreeDInitResponse } from '../../core/models/IThreeDInitResponse';
+import * as Sentry from '@sentry/browser';
 
 @Service()
 export class ControlFrame extends Frame {
@@ -87,7 +88,7 @@ export class ControlFrame extends Frame {
     private _configService: ConfigService
   ) {
     super();
-    const config$ = this._configProvider.getConfig$();
+    const config$ = this._configProvider.getConfig$().pipe(tap(console.log));
     this._communicator.whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK).thenRespond(() => config$);
     this.messageBus
       .pipe(

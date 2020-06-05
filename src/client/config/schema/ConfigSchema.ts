@@ -153,5 +153,6 @@ export const ConfigSchema: Joi.ObjectSchema = Joi.object().keys({
       }),
       dataLevel: Joi.string()
     })
-  }
+  },
+  sentryDsn: Joi.string().allow('')
 });
