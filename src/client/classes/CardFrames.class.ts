@@ -54,7 +54,6 @@ export class CardFrames extends RegisterFrames {
   private _loadAnimatedCard: boolean;
 
   constructor(
-    private _sessionStorage: BrowserSessionStorage,
     jwt: string,
     origin: string,
     componentIds: {},
@@ -300,7 +299,6 @@ export class CardFrames extends RegisterFrames {
       disabledState = true;
     } else if (state === FormState.LOADING) {
       element.textContent = this._payMessage;
-      element.classList.add(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS);
       disabledState = true;
     } else {
       element.textContent = this._payMessage;
