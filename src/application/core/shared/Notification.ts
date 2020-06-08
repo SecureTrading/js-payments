@@ -1,5 +1,5 @@
 import { INotificationEvent } from '../models/INotificationEvent';
-import { Container, Service } from 'typedi';
+import { Service } from 'typedi';
 import { Selectors } from './Selectors';
 import { environment } from '../../../environments/environment';
 import { Translator } from './Translator';
