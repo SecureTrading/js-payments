@@ -170,6 +170,9 @@ export class Notification {
     const notificationElementClass = this._getMessageClass(type);
     notificationFrameElement.classList.add(Selectors.NOTIFICATION_FRAME_CORE_CLASS);
     if (notificationElementClass) {
+      console.error(Object.values(Notification.NOTIFICATION_CLASSES));
+      // @ts-ignore
+      notificationFrameElement.classList.remove(...Object.values(Notification.NOTIFICATION_CLASSES));
       notificationFrameElement.classList.add(notificationElementClass);
       this._setDataNotificationColorAttribute(notificationFrameElement, type);
       if (type !== Notification.MESSAGE_TYPES.success) {
