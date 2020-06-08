@@ -21,6 +21,7 @@ export interface IConfig {
   deferInit?: boolean;
   disableNotification?: boolean;
   errorCallback?: any;
+  errorReporting?: boolean;
   fieldsToSubmit?: string[];
   formId?: string;
   init?: IBypassInit;
@@ -38,5 +39,4 @@ export interface IConfig {
   successCallback?: any;
   translations?: {};
   visaCheckout?: IVisaCheckout | {};
-  sentryDsn?: string;
 }

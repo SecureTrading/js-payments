@@ -37,7 +37,7 @@ describe('SentryService', () => {
   });
 
   it('doesnt initialize sentry if dsn is empty', () => {
-    sentryService.init('');
+    sentryService.init(null);
 
     verify(sentryMock.init(anything())).never();
   });

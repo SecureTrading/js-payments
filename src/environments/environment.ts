@@ -42,5 +42,6 @@ export const environment = {
   },
   production: false,
   testEnvironment: false,
-  overrideDomain: ''
+  overrideDomain: '',
+  SENTRY_DSN: null as string
 };

@@ -71,6 +71,7 @@ function ConfigResolverFixture() {
     datacenterurl: '',
     deferInit: false,
     disableNotification: false,
+    errorReporting: true,
     fieldsToSubmit: ['pan', 'expirydate', 'securitycode'],
     formId: 'st-form',
     init: {
@@ -132,8 +133,7 @@ function ConfigResolverFixture() {
       settings: {
         displayName: 'My Test Site'
       }
-    },
-    sentryDsn: ''
+    }
   };
   const configResolved: IConfig = {
     analytics: true,
@@ -177,6 +177,7 @@ function ConfigResolverFixture() {
     deferInit: false,
     disableNotification: false,
     errorCallback: null,
+    errorReporting: true,
     fieldsToSubmit: ['pan', 'expirydate', 'securitycode'],
     formId: 'st-form',
     init: {
@@ -252,8 +253,7 @@ function ConfigResolverFixture() {
       settings: {
         displayName: 'My Test Site'
       }
-    },
-    sentryDsn: ''
+    }
   };
   const minimalConfig: IConfig = {
     jwt: 'randomjwt'
@@ -284,6 +284,7 @@ function ConfigResolverFixture() {
     deferInit: false,
     disableNotification: false,
     errorCallback: null,
+    errorReporting: false,
     fieldsToSubmit: ['pan', 'expirydate', 'securitycode'],
     formId: 'st-form',
     init: {
@@ -319,8 +320,7 @@ function ConfigResolverFixture() {
     submitCallback: null,
     successCallback: null,
     translations: {},
-    visaCheckout: {},
-    sentryDsn: ''
+    visaCheckout: {}
   };
   return {
     config,

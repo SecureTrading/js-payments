@@ -18,25 +18,26 @@ describe('EventScrubber', () => {
       }
     };
 
-    const result = eventScrubber.scrub(event);
+    const { config } = eventScrubber.scrub(event).extra;
 
-    expect(result.extra.config).toEqual({
+    expect(config).toEqual({
       jwt: '*****',
       foo: 'bar'
     });
   });
 
   it('masks the jwt in requests url and query_string', () => {
+    const urlWithJwt = (jwt: string) => `https://webservices.securetrading.net?foo=bar&jwt=${jwt}&xyz=abc`;
     const event: Event = {
       request: {
-        url: 'https://webservices.securetrading.net?foo=bar&jwt=some-long-jwt&xyz=abc',
+        url: urlWithJwt('some-long-jwt'),
         query_string: 'jwt=some-long-jwt'
       }
     };
 
     const result = eventScrubber.scrub(event);
 
-    expect(result.request.url).toBe('https://webservices.securetrading.net?foo=bar&jwt=*****&xyz=abc');
+    expect(result.request.url).toBe(urlWithJwt('*****'));
     expect(result.request.query_string).toBe('jwt=*****');
   });
 });

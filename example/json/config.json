@@ -59,6 +59,7 @@
   "deferInit": false,
   "disableNotification": false,
   "errorCallback": null,
+  "errorReporting": false,
   "fieldsToSubmit": [
     "pan",
     "expirydate",
@@ -129,6 +130,5 @@
     "settings": {
       "displayName": "My Test Site"
     }
-  },
-  "sentryDsn": "https://6319b9ff1fb14ba48cd2c9025d67bd2d@o402164.ingest.sentry.io/5262818"
+  }
 }
