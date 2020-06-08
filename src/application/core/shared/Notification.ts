@@ -25,15 +25,8 @@ export class Notification {
     cancel: 'CANCEL'
   };
 
-  private static readonly NOTIFICATION_TTL = environment.NOTIFICATION_TTL;
-
-  public _getMessageClass(messageType: string): string {
-    return this._messageMap.get(messageType.toLowerCase());
-  }
-
   private _translator: Translator;
   private _messageMap: Map<string, string>;
-  private _notificationElementId: string;
 
   constructor(
     private _messageBus: MessageBus,
@@ -41,7 +34,6 @@ export class Notification {
     private _configProvider: ConfigProvider,
     private _framesHub: FramesHub
   ) {
-    this._notificationElementId = this._configProvider.getConfig().componentIds.notificationFrame;
     this._messageMap = new Map(Object.entries(Notification.NOTIFICATION_CLASSES));
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, (event: INotificationEvent) => {
       this._displayNotification(event);
@@ -59,7 +51,7 @@ export class Notification {
     new Styler(this.getAllowedStyles()).inject(this._configProvider.getConfig().styles.notificationFrame);
   }
 
-  protected getAllowedStyles() {
+  protected getAllowedStyles(): IAllowedStyles {
     let allowed: IAllowedStyles = {
       'background-color-body': { property: 'background-color', selector: 'body' },
       'color-body': { property: 'color', selector: 'body' },
@@ -147,6 +139,8 @@ export class Notification {
     notificationFrameElement.textContent = this._translator.translate(content);
   }
 
+  private _getMessageClass = (messageType: string): string => this._messageMap.get(messageType.toLowerCase());
+
   private _setDataNotificationColorAttribute(notificationFrameElement: HTMLElement, messageType: string): void {
     switch (messageType) {
       case Notification.MESSAGE_TYPES.error:
@@ -170,8 +164,6 @@ export class Notification {
     const notificationElementClass = this._getMessageClass(type);
     notificationFrameElement.classList.add(Selectors.NOTIFICATION_FRAME_CORE_CLASS);
     if (notificationElementClass) {
-      console.error(Object.values(Notification.NOTIFICATION_CLASSES));
-      // @ts-ignore
       notificationFrameElement.classList.remove(...Object.values(Notification.NOTIFICATION_CLASSES));
       notificationFrameElement.classList.add(notificationElementClass);
       this._setDataNotificationColorAttribute(notificationFrameElement, type);
@@ -187,12 +179,14 @@ export class Notification {
       notificationFrameElement.classList.remove(Selectors.NOTIFICATION_FRAME_CORE_CLASS);
       this._insertContent(notificationFrameElement, '');
       window.clearTimeout(timeoutId);
-    }, Notification.NOTIFICATION_TTL);
+    }, environment.NOTIFICATION_TTL);
   }
 
   private _displayNotification(data: INotificationEvent): void {
     const { content, type } = data;
-    const notificationFrameElement = document.getElementById(this._notificationElementId);
+    const notificationFrameElement = document.getElementById(
+      this._configProvider.getConfig().componentIds.notificationFrame
+    );
 
     if (!notificationFrameElement) {
       return;
