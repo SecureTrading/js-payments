@@ -339,20 +339,17 @@ class ST {
       .subscribe(() => document.getElementById(Selectors.CONTROL_FRAME_IFRAME).classList.remove(className));
   }
 
-  private blockSubmitButton() {
+  private blockSubmitButton(): void {
     const form: HTMLFormElement = document.getElementById(this._config.formId) as HTMLFormElement;
 
     if (!form) {
       return;
     }
 
-    let submitButton: HTMLInputElement | HTMLButtonElement = this._config.buttonId
-      ? (document.getElementById(this._config.buttonId) as HTMLButtonElement | HTMLInputElement)
-      : null;
-
-    if (!submitButton) {
-      submitButton = form.querySelector(ST.BUTTON_SUBMIT_SELECTOR) || form.querySelector(ST.INPUT_SUBMIT_SELECTOR);
-    }
+    const submitButton: HTMLInputElement | HTMLButtonElement =
+      (document.getElementById(this._config.buttonId) as HTMLInputElement | HTMLButtonElement) ||
+      form.querySelector(ST.BUTTON_SUBMIT_SELECTOR) ||
+      form.querySelector(ST.INPUT_SUBMIT_SELECTOR);
 
     submitButton.classList.add(ST.BUTTON_DISABLED_CLASS);
     submitButton.disabled = true;
