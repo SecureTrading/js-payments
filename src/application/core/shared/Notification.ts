@@ -16,6 +16,7 @@ import { NotificationsMessageTypes } from '../models/constants/notifications/Not
 export class Notification {
   private _messageMap: Map<string, string>;
   private _translator: Translator;
+  private _timeoutId: number;
 
   constructor(
     private _messageBus: MessageBus,
@@ -156,19 +157,17 @@ export class Notification {
       notificationFrameElement.classList.remove(...Object.values(NotificationsClasses));
       notificationFrameElement.classList.add(notificationElementClass);
       this._setDataNotificationColorAttribute(notificationFrameElement, type);
+      if (type === NotificationsMessageTypes.success) {
+        window.clearTimeout(this._timeoutId);
+      }
       if (type !== NotificationsMessageTypes.success) {
-        this._autoHide(notificationFrameElement, notificationElementClass);
+        this._timeoutId = window.setTimeout(() => {
+          notificationFrameElement.classList.remove(notificationElementClass);
+          notificationFrameElement.classList.remove(Selectors.NOTIFICATION_FRAME_CORE_CLASS);
+          this._insertContent(notificationFrameElement, '');
+        }, environment.NOTIFICATION_TTL);
       }
     }
-  }
-
-  private _autoHide(notificationFrameElement: HTMLElement, notificationElementClass: string): void {
-    const timeoutId = window.setTimeout(() => {
-      notificationFrameElement.classList.remove(notificationElementClass);
-      notificationFrameElement.classList.remove(Selectors.NOTIFICATION_FRAME_CORE_CLASS);
-      this._insertContent(notificationFrameElement, '');
-      window.clearTimeout(timeoutId);
-    }, environment.NOTIFICATION_TTL);
   }
 
   private _displayNotification(data: INotificationEvent): void {
