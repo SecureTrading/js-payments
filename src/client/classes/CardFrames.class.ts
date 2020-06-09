@@ -13,7 +13,6 @@ import { Validation } from '../../application/core/shared/Validation';
 import { RegisterFrames } from './RegisterFrames.class';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { ofType } from '../../shared/services/message-bus/operators/ofType';
-import { BrowserSessionStorage } from '../../shared/services/storage/BrowserSessionStorage';
 
 export class CardFrames extends RegisterFrames {
   private static CARD_NUMBER_FIELD_NAME: string = 'pan';
@@ -68,9 +67,6 @@ export class CardFrames extends RegisterFrames {
     super(jwt, origin, componentIds, styles, animatedCard, formId, fieldsToSubmit);
     this._setInitValues(buttonId, defaultPaymentType, paymentTypes, animatedCard, jwt, formId);
     this.configureFormFieldsAmount(jwt);
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.CARDINAL_LOADED, () => {
-      this._disableSubmitButton(FormState.AVAILABLE);
-    });
   }
 
   public init() {
@@ -80,6 +76,9 @@ export class CardFrames extends RegisterFrames {
     this._initCardFrames();
     this.elementsTargets = this.setElementsFields();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UNLOCK_BUTTON, () => {
+      this._disableSubmitButton(FormState.AVAILABLE);
+    });
   }
 
   protected configureFormFieldsAmount(jwt: string): void {

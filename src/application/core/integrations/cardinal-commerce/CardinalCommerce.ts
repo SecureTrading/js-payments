@@ -118,7 +118,7 @@ export class CardinalCommerce {
           cardinal.on(PaymentEvents.SETUP_COMPLETE, () => {
             observer.next(cardinal);
             observer.complete();
-            this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CARDINAL_LOADED }, true);
+            this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.UNLOCK_BUTTON }, true);
           });
 
           cardinal.setup(PaymentEvents.INIT, {
