@@ -159,14 +159,13 @@ export class Notification {
       this._setDataNotificationColorAttribute(notificationFrameElement, type);
       if (type === NotificationsMessageTypes.success) {
         window.clearTimeout(this._timeoutId);
+        return;
       }
-      if (type !== NotificationsMessageTypes.success) {
-        this._timeoutId = window.setTimeout(() => {
-          notificationFrameElement.classList.remove(notificationElementClass);
-          notificationFrameElement.classList.remove(Selectors.NOTIFICATION_FRAME_CORE_CLASS);
-          this._insertContent(notificationFrameElement, '');
-        }, environment.NOTIFICATION_TTL);
-      }
+      this._timeoutId = window.setTimeout(() => {
+        notificationFrameElement.classList.remove(notificationElementClass);
+        notificationFrameElement.classList.remove(Selectors.NOTIFICATION_FRAME_CORE_CLASS);
+        this._insertContent(notificationFrameElement, '');
+      }, environment.NOTIFICATION_TTL);
     }
   }
 
