@@ -2,7 +2,7 @@ import { IConfig } from '../../../shared/model/config/IConfig';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 import { Service } from 'typedi';
 import { Observable } from 'rxjs';
-import { distinctUntilChanged, filter, first, map, tap } from 'rxjs/operators';
+import { distinctUntilChanged, filter, first, map, shareReplay } from 'rxjs/operators';
 
 @Service()
 export class ConfigProvider {
@@ -26,7 +26,8 @@ export class ConfigProvider {
             return null;
           }
         }),
-        filter<IConfig>(Boolean)
+        filter<IConfig>(Boolean),
+        shareReplay(1)
       );
 
     return watchForChanges ? config$ : config$.pipe(first());

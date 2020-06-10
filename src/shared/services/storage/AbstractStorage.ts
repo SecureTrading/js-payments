@@ -52,7 +52,10 @@ export abstract class AbstractStorage implements IStorage, Subscribable<any> {
   }
 
   public select<T>(selector: (storage: { [key: string]: any }) => T): Observable<T> {
-    return this.observable$.pipe(map(storage => selector(storage)));
+    return this.observable$.pipe(
+      map(storage => selector(storage)),
+      shareReplay(1)
+    );
   }
 
   protected abstract getSychronizationEventName(): string;
