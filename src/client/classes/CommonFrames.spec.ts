@@ -1,6 +1,8 @@
 import { CommonFrames } from './CommonFrames.class';
 import { MessageBus } from '../../application/core/shared/MessageBus';
 import { Selectors } from '../../application/core/shared/Selectors';
+import { MessageBusMock } from '../../testing/mocks/MessageBusMock';
+import { PUBLIC_EVENTS } from '../../application/core/shared/EventTypes';
 
 jest.mock('./../../../src/application/core/shared/Notification');
 
@@ -166,9 +168,12 @@ describe('CommonFrames', () => {
       errorcode: '0',
       errormessage: 'Ok'
     };
+    const messageBus: MessageBus = (new MessageBusMock() as unknown) as MessageBus;
 
     // when
     beforeEach(() => {
+      // @ts-ignore
+      instance._messageBus = messageBus;
       // @ts-ignore
       instance._onTransactionComplete = jest.fn();
     });
@@ -176,11 +181,10 @@ describe('CommonFrames', () => {
     // then
     it('should call _merchantForm() method', () => {
       // @ts-ignore
-      instance._messageBus.subscribe = jest.fn().mockImplementationOnce((event, callback) => {
-        callback(data);
-      });
-      // @ts-ignore
       instance._setTransactionCompleteListener();
+
+      messageBus.publish({ type: PUBLIC_EVENTS.TRANSACTION_COMPLETE, data });
+
       // @ts-ignore
       expect(instance._onTransactionComplete).toHaveBeenCalled();
     });
