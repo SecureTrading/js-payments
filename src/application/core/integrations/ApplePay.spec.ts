@@ -727,8 +727,6 @@ describe('ApplePay', () => {
       // @ts-ignore
       instance._onValidateMerchantResponseSuccess(response);
       // @ts-ignore
-      expect(instance._merchantSession).toEqual({ someproperty: 'somewalletsession' });
-      // @ts-ignore
       expect(instance._session.completeMerchantValidation).toHaveBeenCalledWith({ someproperty: 'somewalletsession' });
     });
   });
