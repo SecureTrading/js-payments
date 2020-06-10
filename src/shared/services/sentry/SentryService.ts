@@ -21,7 +21,7 @@ export class SentryService {
     this.config$ = configProvider.getConfig$(true);
   }
 
-  init(dsn: string): void {
+  init(dsn: string, whitelistUrls: string[] = []): void {
     if (!dsn) {
       return;
     }
@@ -30,21 +30,21 @@ export class SentryService {
       .pipe(
         first(),
         filter(config => config.errorReporting),
-        tap(() => this.initSentry(dsn)),
+        tap(() => this.initSentry(dsn, whitelistUrls)),
         switchMap(() => this.config$)
       )
       .subscribe(config => this.sentry.setExtra('config', config));
   }
 
-  private initSentry(dsn: string): void {
+  private initSentry(dsn: string, whitelistUrls: string[]): void {
     this.sentry.setTag('hostName', this.sentryContext.getHostName());
     this.sentry.setTag('frameName', this.sentryContext.getFrameName());
 
     this.sentry.init({
       dsn,
+      whitelistUrls,
       environment: this.sentryContext.getEnvironmentName(),
       release: this.sentryContext.getReleaseVersion(),
-      whitelistUrls: ['https://webservices.securetrading.net'],
       beforeSend: (event: Event) => this.eventScrubber.scrub(event)
     });
   }

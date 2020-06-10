@@ -14,5 +14,5 @@ import { environment } from '../../../environments/environment';
   Container.get(FrameIdentifier).setFrameName(Selectors.CONTROL_FRAME_IFRAME);
   Container.get(ConfigService).clear(false);
   Container.get(ControlFrame);
-  Container.get(SentryService).init(environment.SENTRY_DSN);
+  Container.get(SentryService).init(environment.SENTRY_DSN, environment.SENTRY_WHITELIST_URLS);
 })();

@@ -21,7 +21,7 @@ if (Card && document.URL.includes('animated')) {
     locale: localStorage.getItem('locale') ? localStorage.getItem('locale') : 'en_GB'
   });
 
-  Container.get(SentryService).init(environment.SENTRY_DSN);
+  Container.get(SentryService).init(environment.SENTRY_DSN, environment.SENTRY_WHITELIST_URLS);
 
   (() => {
     const messageBus: MessageBus = Container.get(MessageBus);

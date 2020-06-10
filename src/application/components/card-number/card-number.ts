@@ -11,6 +11,6 @@ import { environment } from '../../../environments/environment';
 
   if (CardNumber.ifFieldExists()) {
     Container.get(CardNumber);
-    Container.get(SentryService).init(environment.SENTRY_DSN);
+    Container.get(SentryService).init(environment.SENTRY_DSN, environment.SENTRY_WHITELIST_URLS);
   }
 })();
