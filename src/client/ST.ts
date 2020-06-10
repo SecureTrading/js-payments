@@ -239,7 +239,8 @@ class ST {
       this._config.animatedCard,
       this._config.buttonId,
       this._config.fieldsToSubmit,
-      this._config.formId
+      this._config.formId,
+      this._configProvider
     );
   }
 

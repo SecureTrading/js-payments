@@ -121,11 +121,6 @@ export class ControlFrame extends Frame {
     this._updateJwtEvent();
     this._initCybertonica(config);
 
-    if (config.components.startOnLoad || config.deferInit) {
-      console.error('dupa');
-      this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.UNLOCK_BUTTON }, true);
-    }
-
     if (!config.deferInit) {
       this._initCardinalCommerce(config);
     } else if (config.components.startOnLoad) {

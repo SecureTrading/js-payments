@@ -13,6 +13,11 @@ import { Validation } from '../../application/core/shared/Validation';
 import { RegisterFrames } from './RegisterFrames.class';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { ofType } from '../../shared/services/message-bus/operators/ofType';
+import { map } from 'rxjs/operators';
+import { IFormFieldState } from '../../application/core/models/IFormFieldState';
+import { config, Observable } from 'rxjs';
+import { ConfigProvider } from '../../application/core/services/ConfigProvider';
+import { IConfig } from '../../shared/model/config/IConfig';
 
 export class CardFrames extends RegisterFrames {
   private static CARD_NUMBER_FIELD_NAME: string = 'pan';
@@ -51,6 +56,7 @@ export class CardFrames extends RegisterFrames {
   private _onlyCvvConfiguration: boolean;
   private _configurationForStandardCard: boolean;
   private _loadAnimatedCard: boolean;
+  private _config$: Observable<IConfig>;
 
   constructor(
     jwt: string,
@@ -62,9 +68,11 @@ export class CardFrames extends RegisterFrames {
     animatedCard: boolean,
     buttonId: string,
     fieldsToSubmit: string[],
-    formId: string
+    formId: string,
+    private _configProvider: ConfigProvider
   ) {
     super(jwt, origin, componentIds, styles, animatedCard, formId, fieldsToSubmit);
+    this._config$ = this._configProvider.getConfig$();
     this._setInitValues(buttonId, defaultPaymentType, paymentTypes, animatedCard, jwt, formId);
     this.configureFormFieldsAmount(jwt);
   }
@@ -76,9 +84,6 @@ export class CardFrames extends RegisterFrames {
     this._initCardFrames();
     this.elementsTargets = this.setElementsFields();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UNLOCK_BUTTON, () => {
-      this._disableSubmitButton(FormState.AVAILABLE);
-    });
   }
 
   protected configureFormFieldsAmount(jwt: string): void {
@@ -135,21 +140,28 @@ export class CardFrames extends RegisterFrames {
 
   private _createSubmitButton = (): HTMLInputElement | HTMLButtonElement => {
     const form = document.getElementById(this.formId);
-    let button: HTMLInputElement | HTMLButtonElement = this._buttonId
-      ? (document.getElementById(this._buttonId) as HTMLButtonElement | HTMLInputElement)
-      : null;
-    if (!button) {
-      button =
-        form.querySelector(CardFrames.SUBMIT_BUTTON_AS_BUTTON_MARKUP) ||
-        form.querySelector(CardFrames.SUBMIT_BUTTON_AS_INPUT_MARKUP);
-    }
-    if (button) {
-      button.textContent = this._payMessage;
-      this._submitButton = button;
-      this._disableSubmitButton(FormState.LOADING);
-    }
+    const submitButton: HTMLInputElement | HTMLButtonElement =
+      (document.getElementById(this._buttonId) as HTMLInputElement | HTMLButtonElement) ||
+      form.querySelector(CardFrames.SUBMIT_BUTTON_AS_BUTTON_MARKUP) ||
+      form.querySelector(CardFrames.SUBMIT_BUTTON_AS_INPUT_MARKUP);
+    this._config$.subscribe(response => {
+      const { deferInit, components } = response;
 
-    return button;
+      submitButton.textContent = this._payMessage;
+      this._submitButton = submitButton;
+
+      if (deferInit || components.startOnLoad) {
+        this._disableSubmitButton(FormState.AVAILABLE);
+        return submitButton;
+      }
+
+      if (submitButton) {
+        this._disableSubmitButton(FormState.LOADING);
+        return submitButton;
+      }
+    });
+
+    return submitButton;
   };
 
   private _disableFormField(state: FormState, eventName: string, target: string): void {
