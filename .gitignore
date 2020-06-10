@@ -67,4 +67,4 @@ typings/
 dist/
 
 # config file
-example/json/
+example/json/config.json

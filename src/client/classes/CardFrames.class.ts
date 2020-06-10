@@ -75,6 +75,9 @@ export class CardFrames extends RegisterFrames {
     this._config$ = this._configProvider.getConfig$();
     this._setInitValues(buttonId, defaultPaymentType, paymentTypes, animatedCard, jwt, formId);
     this.configureFormFieldsAmount(jwt);
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UNLOCK_BUTTON, () => {
+      this._disableSubmitButton(FormState.AVAILABLE);
+    });
   }
 
   public init() {
