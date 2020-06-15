@@ -71,6 +71,7 @@ function ConfigResolverFixture() {
     datacenterurl: '',
     deferInit: false,
     disableNotification: false,
+    errorReporting: true,
     fieldsToSubmit: ['pan', 'expirydate', 'securitycode'],
     formId: 'st-form',
     init: {
@@ -176,6 +177,7 @@ function ConfigResolverFixture() {
     deferInit: false,
     disableNotification: false,
     errorCallback: null,
+    errorReporting: true,
     fieldsToSubmit: ['pan', 'expirydate', 'securitycode'],
     formId: 'st-form',
     init: {
@@ -282,6 +284,7 @@ function ConfigResolverFixture() {
     deferInit: false,
     disableNotification: false,
     errorCallback: null,
+    errorReporting: false,
     fieldsToSubmit: ['pan', 'expirydate', 'securitycode'],
     formId: 'st-form',
     init: {
