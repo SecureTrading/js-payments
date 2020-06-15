@@ -143,28 +143,24 @@ export class CardFrames extends RegisterFrames {
 
   private _createSubmitButton = (): HTMLInputElement | HTMLButtonElement => {
     const form = document.getElementById(this.formId);
-    const submitButton: HTMLInputElement | HTMLButtonElement =
+
+    this._submitButton =
       (document.getElementById(this._buttonId) as HTMLInputElement | HTMLButtonElement) ||
       form.querySelector(CardFrames.SUBMIT_BUTTON_AS_BUTTON_MARKUP) ||
       form.querySelector(CardFrames.SUBMIT_BUTTON_AS_INPUT_MARKUP);
+    this._disableSubmitButton(FormState.LOADING);
+
     this._config$.subscribe(response => {
       const { deferInit, components } = response;
 
-      submitButton.textContent = this._payMessage;
-      this._submitButton = submitButton;
+      this._submitButton.textContent = this._payMessage;
 
       if (deferInit || components.startOnLoad) {
         this._disableSubmitButton(FormState.AVAILABLE);
-        return submitButton;
-      }
-
-      if (submitButton) {
-        this._disableSubmitButton(FormState.LOADING);
-        return submitButton;
       }
     });
 
-    return submitButton;
+    return this._submitButton;
   };
 
   private _disableFormField(state: FormState, eventName: string, target: string): void {
