@@ -1,15 +1,15 @@
 #st-control-frame-iframe {
-    width: 0 !important;
-    height: 0 !important;
-    position: fixed !important;
-    bottom: 0 !important;
-    right: 0 !important;
-    z-index: 999999;
+  width: 0 !important;
+  height: 0 !important;
+  position: fixed !important;
+  bottom: 0 !important;
+  right: 0 !important;
+  z-index: 999999;
 }
 
 #st-control-frame-iframe.modal {
-    width: 100% !important;
-    height: 100% !important;
-    display: block !important;
-    opacity: 1 !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+  opacity: 1 !important;
 }

@@ -54,6 +54,7 @@
     "deferInit": false,
     "disableNotification": false,
     "errorCallback": null,
+    "errorReporting": false,
     "fieldsToSubmit": [
         "pan",
         "expirydate",

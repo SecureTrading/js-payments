@@ -7,6 +7,8 @@ import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLoc
 import { Container } from 'typedi';
 import { FrameIdentifier } from '../../../shared/services/message-bus/FrameIdentifier';
 import { Selectors } from '../../core/shared/Selectors';
+import { SentryService } from '../../../shared/services/sentry/SentryService';
+import { environment } from '../../../environments/environment';
 
 Container.get(FrameIdentifier).setFrameName(Selectors.ANIMATED_CARD_COMPONENT_IFRAME);
 
@@ -18,6 +20,8 @@ if (Card && document.URL.includes('animated')) {
     animatedCardContainer: 'st-animated-card',
     locale: localStorage.getItem('locale') ? localStorage.getItem('locale') : 'en_GB'
   });
+
+  Container.get(SentryService).init(environment.SENTRY_DSN, environment.SENTRY_WHITELIST_URLS);
 
   (() => {
     const messageBus: MessageBus = Container.get(MessageBus);

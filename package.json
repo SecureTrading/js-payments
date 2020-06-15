@@ -123,6 +123,7 @@
     "@securetrading/js-payments-card": "^1.0.20-rc.1",
     "@securetrading/ts-iin-lookup": "^0.0.8",
     "@securetrading/ts-luhn-check": "^0.0.8",
+    "@sentry/browser": "^5.16.0",
     "@sheerun/mutationobserver-shim": "^0.3.3",
     "@types/jwt-decode": "^2.2.1",
     "@types/lodash": "^4.14.155",
