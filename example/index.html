@@ -95,6 +95,7 @@
 <script type="text/javascript" src="<%= WEBSERVICES_URL %>/st.js"></script>
 <script>
   (function() {
+
     var ST = SecureTrading;
     window
       .fetch('<%= WEBSERVICES_URL %>/config.json')
@@ -174,8 +175,8 @@
 
       var st = ST(stConfig);
       st.Components(stConfig.components);
-      st.VisaCheckout(stConfig.visaCheckout);
-      st.ApplePay(stConfig.applePay);
+      // st.VisaCheckout(stConfig.visaCheckout);
+      // st.ApplePay(stConfig.applePay);
 
       st.Cybertonica().then(function(response) {
         console.error(response);

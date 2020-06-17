@@ -1,0 +1,14 @@
+{
+    "iss": "am0310.autoapi",
+    "secret": "ja<n}yP]3$1E$iUYtn_*i7))24I,=^",
+    "payload": {
+        "baseamount": "1000",
+        "accounttypedescription": "ECOM",
+        "currencyiso3a": "GBP",
+        "sitereference": "test_james38641",
+        "locale": "en_GB",
+        #"pan": "5100000000000511",
+        #"expirydate": "01/22",
+        #"securitycode": "123"
+    }
+}
