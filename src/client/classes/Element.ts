@@ -3,11 +3,7 @@ import { Selectors } from '../../application/core/shared/Selectors';
 
 export class Element {
   private static readonly IFRAME_ID: string = 'st-animated-card-iframe';
-  private static readonly IFRAME_STYLES: string =
-    'position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;display: block;max-width: 410px;max-height: 280px;box-sizing: border-box;';
   private static readonly WRAPPER_ID: string = 'st-iframe-wrapper';
-  private static readonly WRAPPER_STYLES: string =
-    'position: relative; overflow: hidden; padding: 56.25% 0;width: 410px;';
 
   public static getComponentAddress(name: string): string {
     if (name === Selectors.CARD_NUMBER_COMPONENT_NAME) {
@@ -77,9 +73,7 @@ export class Element {
       iframe.setAttribute('tabindex', tabindex);
     }
     if (fieldId === Element.IFRAME_ID) {
-      iframe.setAttribute('style', Element.IFRAME_STYLES);
       const iframeWrapper = Element.createFormElement('div', Element.WRAPPER_ID);
-      iframeWrapper.setAttribute('style', Element.WRAPPER_STYLES);
       iframeWrapper.appendChild(iframe);
       return iframeWrapper;
     }

@@ -101,11 +101,9 @@ body {
 
 .example-form {
   &__st-animated-card {
-    display: flex;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-    max-height: 300px;
+    max-height: 260px;
+    display: block;
+    width: 100%;
   }
 }
 
