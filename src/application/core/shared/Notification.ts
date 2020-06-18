@@ -1,5 +1,5 @@
 import { INotificationEvent } from '../models/INotificationEvent';
-import { Container, Service } from 'typedi';
+import { Service } from 'typedi';
 import { Selectors } from './Selectors';
 import { environment } from '../../../environments/environment';
 import { Translator } from './Translator';
@@ -9,31 +9,14 @@ import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLoc
 import { Styler } from './Styler';
 import { IAllowedStyles } from '../models/IAllowedStyles';
 import { ConfigProvider } from '../services/ConfigProvider';
+import { NotificationsClasses } from '../models/constants/notifications/NotificationsClasses';
+import { NotificationsMessageTypes } from '../models/constants/notifications/NotificationsMessageTypes';
 
 @Service()
 export class Notification {
-  public static NOTIFICATION_CLASSES = {
-    error: Selectors.NOTIFICATION_FRAME_ERROR_CLASS,
-    info: Selectors.NOTIFICATION_FRAME_INFO_CLASS,
-    success: Selectors.NOTIFICATION_FRAME_SUCCESS_CLASS,
-    cancel: Selectors.NOTIFICATION_FRAME_CANCEL_CLASS
-  };
-  public static MESSAGE_TYPES = {
-    error: 'ERROR',
-    info: 'INFO',
-    success: 'SUCCESS',
-    cancel: 'CANCEL'
-  };
-
-  private static readonly NOTIFICATION_TTL = environment.NOTIFICATION_TTL;
-
-  public _getMessageClass(messageType: string): string {
-    return this._messageMap.get(messageType.toLowerCase());
-  }
-
-  private _translator: Translator;
   private _messageMap: Map<string, string>;
-  private _notificationElementId: string;
+  private _translator: Translator;
+  private _timeoutId: number;
 
   constructor(
     private _messageBus: MessageBus,
@@ -41,8 +24,7 @@ export class Notification {
     private _configProvider: ConfigProvider,
     private _framesHub: FramesHub
   ) {
-    this._notificationElementId = this._configProvider.getConfig().componentIds.notificationFrame;
-    this._messageMap = new Map(Object.entries(Notification.NOTIFICATION_CLASSES));
+    this._messageMap = new Map(Object.entries(NotificationsClasses));
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, (event: INotificationEvent) => {
       this._displayNotification(event);
     });
@@ -51,15 +33,15 @@ export class Notification {
       this._translator = new Translator(this._browserLocalStorage.getItem('locale'));
     });
 
-    this.applyStyles();
+    this._applyStyles();
   }
 
-  private applyStyles(): void {
+  private _applyStyles(): void {
     // @ts-ignore
-    new Styler(this.getAllowedStyles()).inject(this._configProvider.getConfig().styles.notificationFrame);
+    new Styler(this._getAllowedStyles()).inject(this._configProvider.getConfig().styles.notificationFrame);
   }
 
-  protected getAllowedStyles() {
+  private _getAllowedStyles(): IAllowedStyles {
     let allowed: IAllowedStyles = {
       'background-color-body': { property: 'background-color', selector: 'body' },
       'color-body': { property: 'color', selector: 'body' },
@@ -69,10 +51,10 @@ export class Notification {
       'space-outset-body': { property: 'margin', selector: 'body' }
     };
     const notification = `#${Selectors.NOTIFICATION_FRAME_ID}`;
-    const error = `.${Notification.NOTIFICATION_CLASSES.error}${notification}`;
-    const success = `.${Notification.NOTIFICATION_CLASSES.success}${notification}`;
-    const cancel = `.${Notification.NOTIFICATION_CLASSES.cancel}${notification}`;
-    const info = `.${Notification.NOTIFICATION_CLASSES.info}${notification}`;
+    const error = `.${NotificationsClasses.error}${notification}`;
+    const success = `.${NotificationsClasses.success}${notification}`;
+    const cancel = `.${NotificationsClasses.cancel}${notification}`;
+    const info = `.${NotificationsClasses.info}${notification}`;
     allowed = {
       ...allowed,
       'background-color-notification': {
@@ -147,18 +129,20 @@ export class Notification {
     notificationFrameElement.textContent = this._translator.translate(content);
   }
 
+  private _getMessageClass = (messageType: string): string => this._messageMap.get(messageType.toLowerCase());
+
   private _setDataNotificationColorAttribute(notificationFrameElement: HTMLElement, messageType: string): void {
     switch (messageType) {
-      case Notification.MESSAGE_TYPES.error:
+      case NotificationsMessageTypes.error:
         notificationFrameElement.setAttribute('data-notification-color', 'red');
         break;
-      case Notification.MESSAGE_TYPES.info:
+      case NotificationsMessageTypes.info:
         notificationFrameElement.setAttribute('data-notification-color', 'grey');
         break;
-      case Notification.MESSAGE_TYPES.success:
+      case NotificationsMessageTypes.success:
         notificationFrameElement.setAttribute('data-notification-color', 'green');
         break;
-      case Notification.MESSAGE_TYPES.cancel:
+      case NotificationsMessageTypes.cancel:
         notificationFrameElement.setAttribute('data-notification-color', 'yellow');
         break;
       default:
@@ -170,26 +154,26 @@ export class Notification {
     const notificationElementClass = this._getMessageClass(type);
     notificationFrameElement.classList.add(Selectors.NOTIFICATION_FRAME_CORE_CLASS);
     if (notificationElementClass) {
+      notificationFrameElement.classList.remove(...Object.values(NotificationsClasses));
       notificationFrameElement.classList.add(notificationElementClass);
       this._setDataNotificationColorAttribute(notificationFrameElement, type);
-      if (type !== Notification.MESSAGE_TYPES.success) {
-        this._autoHide(notificationFrameElement, notificationElementClass);
+      if (type === NotificationsMessageTypes.success) {
+        window.clearTimeout(this._timeoutId);
+        return;
       }
+      this._timeoutId = window.setTimeout(() => {
+        notificationFrameElement.classList.remove(notificationElementClass);
+        notificationFrameElement.classList.remove(Selectors.NOTIFICATION_FRAME_CORE_CLASS);
+        this._insertContent(notificationFrameElement, '');
+      }, environment.NOTIFICATION_TTL);
     }
-  }
-
-  private _autoHide(notificationFrameElement: HTMLElement, notificationElementClass: string): void {
-    const timeoutId = window.setTimeout(() => {
-      notificationFrameElement.classList.remove(notificationElementClass);
-      notificationFrameElement.classList.remove(Selectors.NOTIFICATION_FRAME_CORE_CLASS);
-      this._insertContent(notificationFrameElement, '');
-      window.clearTimeout(timeoutId);
-    }, Notification.NOTIFICATION_TTL);
   }
 
   private _displayNotification(data: INotificationEvent): void {
     const { content, type } = data;
-    const notificationFrameElement = document.getElementById(this._notificationElementId);
+    const notificationFrameElement = document.getElementById(
+      this._configProvider.getConfig().componentIds.notificationFrame
+    );
 
     if (!notificationFrameElement) {
       return;

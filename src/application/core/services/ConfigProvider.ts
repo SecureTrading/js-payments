@@ -1,8 +1,8 @@
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 import { Service } from 'typedi';
-import { interval, Observable } from 'rxjs';
-import { filter, first, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { distinctUntilChanged, filter, first, map, shareReplay } from 'rxjs/operators';
 
 @Service()
 export class ConfigProvider {
@@ -14,11 +14,22 @@ export class ConfigProvider {
     return JSON.parse(this.storage.getItem(ConfigProvider.STORAGE_KEY));
   }
 
-  getConfig$(): Observable<IConfig> {
-    return interval().pipe(
-      map(() => this.getConfig()),
-      filter<IConfig>(Boolean),
-      first()
-    );
+  getConfig$(watchForChanges: boolean = false): Observable<IConfig> {
+    const config$ = this.storage
+      .select(storage => storage[ConfigProvider.STORAGE_KEY])
+      .pipe(
+        distinctUntilChanged(),
+        map(serializedConfig => {
+          try {
+            return JSON.parse(serializedConfig) as IConfig;
+          } catch (e) {
+            return null;
+          }
+        }),
+        filter<IConfig>(Boolean),
+        shareReplay(1)
+      );
+
+    return watchForChanges ? config$ : config$.pipe(first());
   }
 }

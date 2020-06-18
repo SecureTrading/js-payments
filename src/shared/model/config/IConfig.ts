@@ -21,6 +21,7 @@ export interface IConfig {
   deferInit?: boolean;
   disableNotification?: boolean;
   errorCallback?: any;
+  errorReporting?: boolean;
   fieldsToSubmit?: string[];
   formId?: string;
   init?: IBypassInit;

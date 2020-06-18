@@ -97,6 +97,15 @@ module.exports = {
         flatten: true
       }]
     }),
+    new CopyPlugin({
+      patterns: [{
+        from: 'example/json/*.json',
+        to: 'json',
+        force: true,
+        flatten: true,
+        noErrorOnMissing: true,
+      }]
+    }),
     new StyleLintPlugin(),
     new FriendlyErrorsWebpackPlugin()
   ],
