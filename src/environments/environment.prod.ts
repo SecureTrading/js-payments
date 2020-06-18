@@ -28,5 +28,7 @@ export const environment = {
   },
   production: true,
   testEnvironment: false,
-  overrideDomain: ''
+  overrideDomain: '',
+  SENTRY_DSN: 'https://6319b9ff1fb14ba48cd2c9025d67bd2d@o402164.ingest.sentry.io/5262818',
+  SENTRY_WHITELIST_URLS: ['https://webservices.securetrading.net']
 };
