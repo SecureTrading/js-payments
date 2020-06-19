@@ -200,8 +200,8 @@ class ST {
       this._config = { ...this._config, jwt };
       this._configService.update(this._config);
       (() => {
-        const a = () => StCodec.updateJWTValue(jwt);
-        debounce(a, ST.DEBOUNCE_JWT_VALUE);
+        const a = StCodec.updateJWTValue(jwt);
+        debounce(() => a, ST.DEBOUNCE_JWT_VALUE);
       })();
     } else {
       throw Error(this._translation.translate(ST.JWT_NOT_SPECIFIED_MESSAGE));
