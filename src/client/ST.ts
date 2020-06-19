@@ -60,6 +60,7 @@ class ST {
   private _translation: Translator;
   private _destroy$: Subject<void> = new Subject();
   private _registeredCallbacks: { [eventName: string]: Subscription } = {};
+  private _debouncedUpdateJwt = debounce(StCodec.updateJWTValue, ST.DEBOUNCE_JWT_VALUE);
 
   set submitCallback(callback: (event: ISubmitEvent) => void) {
     if (callback) {
@@ -199,10 +200,7 @@ class ST {
     if (jwt) {
       this._config = { ...this._config, jwt };
       this._configService.update(this._config);
-      (() => {
-        const a = StCodec.updateJWTValue(jwt);
-        debounce(() => a, ST.DEBOUNCE_JWT_VALUE);
-      })();
+      this._debouncedUpdateJwt(jwt);
     } else {
       throw Error(this._translation.translate(ST.JWT_NOT_SPECIFIED_MESSAGE));
     }
