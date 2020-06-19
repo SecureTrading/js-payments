@@ -85,25 +85,21 @@ describe('ST', () => {
 
   // given
   describe('updateJWT()', () => {
-    const lodash = jest.requireActual('lodash');
-
     // when
     beforeEach(() => {
-      StCodec.updateJWTValue = jest.fn();
-      instance.updateJWT('somenewjwtvalue');
-      lodash.debounce = jest.fn().mockImplementationOnce(() => {
-        StCodec.updateJWTValue('somenewjwtvalue');
-      });
+      spyOn(instance, '_debouncedUpdateJwt');
     });
 
     // then
     it('should assign new jwt value', () => {
+      instance.updateJWT('somenewjwtvalue');
       expect(instance._config.jwt).toEqual('somenewjwtvalue');
     });
 
     // then
     it('should call updateJWTValue', () => {
-      expect(StCodec.updateJWTValue).toHaveBeenCalled();
+      instance.updateJWT('somenewjwtvalue');
+      expect(instance._debouncedUpdateJwt).toHaveBeenCalledWith('somenewjwtvalue');
     });
 
     // then
@@ -233,6 +229,11 @@ function stFixture() {
       displayName: 'My Test Site'
     }
   };
+
+  const lodash = jest.requireActual('lodash');
+
+  lodash.debounce = jest.fn().mockImplementationOnce(func => func);
+
   // @ts-ignore
   const instance: any = ST(config);
   return { cacheConfig, config, instance, applePayConfig, visaCheckoutConfig };
