@@ -101,7 +101,7 @@
     "snyk": "^1.336.0",
     "source-map-loader": "^1.0.0",
     "style-loader": "^1.2.1",
-    "stylelint-webpack-plugin": "^2.0.0",
+    "stylelint-webpack-plugin": "^2.1.0",
     "ts-jest": "^25.5.1",
     "ts-loader": "^7.0.5",
     "ts-mockito": "^2.6.1",
