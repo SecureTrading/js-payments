@@ -40,8 +40,8 @@ jobs:
         - docker push "securetrading1/js-payments:$DOCKER_BRANCH"
     - stage: Behavioral test
       name: 'Card payments tests'
-        script:
-          - ${DOCKER_TAG} tests poetry run behave -i card_payments_tests.feature
+      script:
+        - ${DOCKER_TAG} tests poetry run behave -i card_payments_tests.feature
     - name: 'Visa Checkout tests'
       script:
         - ${DOCKER_TAG} tests poetry run behave -i visa_checkout_tests.feature
