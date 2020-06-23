@@ -80,114 +80,100 @@
     </div>
 
     <div class="example-form__section">
-        <div class="example-form__group example-form__group--submit">
-            <button type="submit" class="example-form__button" id="merchant-submit-button">Zapłać</button>
-        </div>
-    </div>
-
-    <div class="example-form__section">
         <div id="st-control-frame" class="example-form__group"></div>
         <div id="st-visa-checkout" class="example-form__group"></div>
         <div id="st-apple-pay" class="example-form__group"></div>
     </div>
+
     <div id="st-animated-card" class="example-form__st-animated-card"></div>
+
+    <div class="example-form__section">
+        <div class="example-form__group example-form__group--submit">
+            <button type="submit" class="example-form__button" id="merchant-submit-button">Zapłać</button>
+        </div>
+    </div>
 </form>
 <script type="text/javascript" src="<%= WEBSERVICES_URL %>/st.js"></script>
-<script>
-  (function() {
-    var ST = SecureTrading;
-    window
-      .fetch('<%= WEBSERVICES_URL %>/config.json')
-      .then(function(response) {
-        if (response.status !== 200) {
-          return Promise.reject('Configuration has not been set !');
-        }
-        return response.json();
-      })
-      .then(function(data) {
-        try {
-          configurationInit(ST, data);
-        } catch (e) {
-          console.error(e);
-        }
-      })
-      .catch(function() {
-        fetchDefaultConfig();
-      });
+  <script>
+  (function () {
+    const parsedUrl = new URL(window.location.href);
 
-    function fetchDefaultConfig() {
-      fetch('./../json/config.json')
-        .then(function(response) {
-          if (response.status !== 200) {
-            return Promise.reject('Default configuration has not been set !');
-          }
-          return response.json();
-        })
-        .then(function(data) {
-          if (data) {
-            configurationInit(ST, data);
-          }
-        });
-    }
-
-    function displayPopup(id, text, tp) {
-      if (!document.getElementById(id)) {
-        var div = document.createElement('div');
-        div.innerText = text;
-        div.setAttribute('id', id);
-        div.setAttribute(
-          'style',
-          'display: flex; justify-content: center; position: fixed; height: 70px;right:0;color: white;padding: 0 50px;align-items: center;border-radius: 10px;font-family: Verdana;font-size: 20px;z-index:2'
-        );
-        div.style.backgroundColor = tp;
-        if (tp === 'green') {
-          div.style.top = 0;
-        } else {
-          div.style.bottom = 0;
-        }
-        var popup = document.getElementById('st-popup');
-        popup.appendChild(div);
-        setTimeout(function() {
-          popup.removeChild(div);
-        }, 3000);
+    const cardinalJwt='%s';
+    const jwt  = parsedUrl.searchParams.get('jwt') || cardinalJwt;
+    console.log(jwt);
+    const st = SecureTrading({
+      jwt,
+      livestatus:0,
+      submitOnSuccess:false,
+      submitOnError:false,
+      animatedCard:true,
+      panIcon:true,
+      disableNotification:false,
+      animatedCard:true,
+      submitCallback : callback,
+      styles: {
+        'background-color-input': '#e71b5a',
+        'font-size-label': '18px',
+        'color-input': '#fff',
+        'line-height-body': '2px',
+        'space-outset-body': '2px',
+        'space-inset-body': '2px',
       }
-    }
+    });
+    function callback(data) { console.log(JSON.stringify(data)); }
 
-    function configurationInit(ST, data) {
-      var stConfig = data;
-      var parsedUrl = new URL(window.location.href);
-      stConfig.jwt = parsedUrl.searchParams.get('jwt') || stConfig.jwt;
-      stConfig.submitCallback = function someFancyfunction(data) {
-        var stringified = JSON.stringify(data);
-        var testVariable = 'This is what we have got after submit' + stringified;
-        console.error(testVariable);
-      };
-      stConfig.successCallback = function() {
-        displayPopup('success-popup', 'This is success message', 'green');
-      };
-      stConfig.errorCallback = function() {
-        displayPopup('error-popup', 'This is error message', 'red');
-      };
-      stConfig.cancelCallback = function() {
-        displayPopup('cancel-popup', 'This is cancel message', '#ffc23a');
-      };
+    st.Components()
+    st.VisaCheckout({
+      buttonSettings: {
+        size: '154',
+        color: 'neutral'
+      },
+      livestatus: 0,
+      merchantId: 'SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4',
+      paymentRequest: {
+        "currencyCode": "GBP",
+        "subtotal": "10.99",
+        "total": "10.99",
+      },
+      placement: 'st-visa-checkout',
+      settings: {
+        displayName: 'My Test Site'
+      }
+    });
 
-      var st = ST(stConfig);
-      st.Components(stConfig.components);
-      st.VisaCheckout(stConfig.visaCheckout);
-      st.ApplePay(stConfig.applePay);
+    st.ApplePay({
+      buttonStyle: 'white-outline',
+      buttonText: 'plain',
+      merchantId: 'merchant.net.securetrading.test',
+      paymentRequest: {
+        countryCode: 'US',
+        currencyCode: 'USD',
+        merchantCapabilities: ['supports3DS', 'supportsCredit', 'supportsDebit'],
+        requiredBillingContactFields: ["postalAddress"],
+        requiredShippingContactFields: ["postalAddress","name", "phone", "email"],
+        supportedNetworks: ["visa","masterCard"],
+        total: {
+          label: 'Secure Trading Merchant',
+          amount: '10.00'
+        }
+      },
+      placement: 'st-apple-pay'
+    });
 
-      st.Cybertonica().then(function(response) {
-        console.error(response);
-      });
 
-      document.getElementById('example-form-amount').addEventListener('input', function() {
-        st.updateJWT(
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4ODY5NTEzOS41NTgwOTc0LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiNTIwMDAwMDAwMDAwMTAwNSIsImV4cGlyeWRhdGUiOiIwMS8yMiJ9fQ.wAmn0JqsAfj7ZtsqbDadknWpPhUhJb7CPiQT8VqZ4hk'
-        );
-      });
-    }
+    document.getElementById('update-amount').addEventListener('click', function(event) {
+      event.preventDefault();
+      var upJwt = '%s';
+      st.updateJWT(
+        upJwt
+      );
+
+    });
+
   })();
+
 </script>
+
+
 </body>
 </html>
