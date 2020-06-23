@@ -32,7 +32,7 @@ export class CardinalMock implements ICardinal {
   }
 
   setup(initializationType: 'init' | 'complete' | 'confirm', initializationData: any) {
-    this.callbacks[PaymentEvents.SETUP_COMPLETE]();
+    setTimeout(() => this.callbacks[PaymentEvents.SETUP_COMPLETE](), 100);
   }
 
   trigger(eventName: string, ...data: any[]) {

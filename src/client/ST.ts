@@ -49,6 +49,9 @@ class ST {
   private static LOCALE_STORAGE: string = 'locale';
   private static MERCHANT_TRANSLATIONS_STORAGE: string = 'merchantTranslations';
   private static readonly MODAL_CONTROL_FRAME_CLASS = 'modal';
+  private static readonly BUTTON_SUBMIT_SELECTOR: string = 'button[type="submit"]';
+  private static readonly INPUT_SUBMIT_SELECTOR: string = 'input[type="submit"]';
+  private static readonly BUTTON_DISABLED_CLASS: string = 'st-button-submit__disabled';
   private _config: IConfig;
   private _cardFrames: CardFrames;
   private _commonFrames: CommonFrames;
@@ -138,6 +141,7 @@ class ST {
         ...(config || {})
       }
     });
+    this.blockSubmitButton();
     // @ts-ignore
     this._commonFrames._requestTypes = this._config.components.requestTypes;
     this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(async controlFrame => {
@@ -241,7 +245,8 @@ class ST {
       this._config.animatedCard,
       this._config.buttonId,
       this._config.fieldsToSubmit,
-      this._config.formId
+      this._config.formId,
+      this._configProvider
     );
   }
 
@@ -339,6 +344,22 @@ class ST {
     this._messageBus
       .pipe(ofType(MessageBus.EVENTS_PUBLIC.CONTROL_FRAME_HIDE), takeUntil(this._destroy$))
       .subscribe(() => document.getElementById(Selectors.CONTROL_FRAME_IFRAME).classList.remove(className));
+  }
+
+  private blockSubmitButton(): void {
+    const form: HTMLFormElement = document.getElementById(this._config.formId) as HTMLFormElement;
+
+    if (!form) {
+      return;
+    }
+
+    const submitButton: HTMLInputElement | HTMLButtonElement =
+      (document.getElementById(this._config.buttonId) as HTMLInputElement | HTMLButtonElement) ||
+      form.querySelector(ST.BUTTON_SUBMIT_SELECTOR) ||
+      form.querySelector(ST.INPUT_SUBMIT_SELECTOR);
+
+    submitButton.classList.add(ST.BUTTON_DISABLED_CLASS);
+    submitButton.disabled = true;
   }
 }
 
