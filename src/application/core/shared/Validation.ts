@@ -23,7 +23,7 @@ const {
 } = Language.translations;
 
 export class Validation extends Frame {
-  public static ERROR_FIELD_CLASS: string = 'error-field';
+  public static ERROR_FIELD_CLASS: string = 'st-error-field';
 
   public static clearNonDigitsChars(value: string): string {
     return value.replace(Validation.ESCAPE_DIGITS_REGEXP, Validation.CLEAR_VALUE);

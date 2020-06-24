@@ -1,0 +1,18 @@
+.st-button-submit {
+  &__disabled {
+    opacity: .5;
+    cursor: not-allowed;
+  }
+
+  &:hover {
+    background: transparent;
+  }
+}
+
+.st-input {
+  &--disabled {
+    opacity: .5;
+    cursor: not-allowed;
+    background: transparent;
+  }
+}

@@ -1,89 +1,222 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html class="no-js" lang="en">
+
 <head>
     <meta charset="utf-8"/>
+    <title>Secure Trading Example Form</title>
+    <meta name="description" content="Secure Trading example page with form">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-    <title>Secure Trading Example Form</title>
+    <link rel="icon" href="./img/example/favicon.webp" sizes="32x32">
+    <link rel="icon" href="./img/example/favicon.webp" sizes="192x192">
+    <link rel="apple-touch-icon" href="./img/example/favicon.webp">
+    <script src="<%= WEBSERVICES_URL %>/st.js"></script>
 </head>
 
 <body>
-<form id="st-form" class="st-form" autocomplete="off" novalidate>
-    <div id="st-popup"></div>
-    <h1 class="st-form__title">Secure Trading<span>AMOUNT: <strong>10.00 GBP</strong></span></h1>
-    <div class="st-form__section st-form__section--horizontal">
-        <div class="st-form__group">
-            <label for="st-form-name" class="st-form__label">AMOUNT</label>
-            <input id="st-form-amount"
-                   class="st-form__input"
-                   type="number"
-                   placeholder=""
-                   name="myBillAmount"
-                   data-st-name="billingamount"
-            />
-        </div>
-    </div>
+<main>
 
-    <div class="st-form__section st-form__section--horizontal">
-        <div class="st-form__group">
-            <label for="st-form-name" class="st-form__label">NAME</label>
-            <input id="st-form-name"
-                   class="st-form__input"
-                   type="text"
-                   placeholder="John Doe"
-                   autocomplete="name"
-                   name="myBillName"
-                   data-st-name="billingfirstname"
-            />
-        </div>
-        <div class="st-form__group">
-            <label for="st-form-email" class="st-form__label">E-MAIL</label>
-            <input id="st-form-email"
-                   class="st-form__input"
-                   type="email"
-                   placeholder="test@mail.com"
-                   autocomplete="email"
-                   name="myBillEmail"
-                   data-st-name="billingemail"
-            />
-        </div>
-        <div class="st-form__group">
-            <label for="st-form-phone" class="st-form__label">PHONE</label>
-            <input id="st-form-phone"
-                   class="st-form__input"
-                   type="tel"
-                   placeholder="+00 000 000 000"
-                   autocomplete="tel"
-                   name="myBillTel"
-            />
-            <!-- no data-st-name attribute so this field will not be submitted to ST -->
-        </div>
-    </div>
+    <header class="st-header">
+        <figure class="st-header__logo">
+            <img src="./img/example/st-logo.png" alt="Secure Trading logo" title="Secure Trading" role="img">
+        </figure>
+        <h1 class="st-header__title">Example Form</h1>
+    </header>
 
-    <div class="st-form__spacer"></div>
+    <form role="form" name="st-form" id="st-form" class="st-form" autocomplete="off" novalidate>
 
-    <div class="st-form__section">
-        <div id="st-notification-frame" class="st-form__group"></div>
-        <div id="st-card-number" class="st-form__group"></div>
-        <div id="st-expiration-date" class="st-form__group"></div>
-        <div id="st-security-code" class="st-form__group"></div>
-    </div>
+        <div id="st-popup" class="st-popup"></div>
 
-    <div class="st-form__section">
+        <div class="st-form__section">
+            <div id="st-notification-frame" class="st-form__group"></div>
+        </div>
+
+        <fieldset class="st-form__fieldset">
+            <legend>Payment details:</legend>
+            <div class="st-form__section st-form__section--horizontal">
+                <div class="st-form__field">
+
+                    <label for="st-form-amount" class="st-form__label">
+                        price:
+                        <abbr title="required" aria-label="required">*</abbr>
+                    </label>
+
+                    <input type="text"
+                           name="myBillAmount"
+                           value="10"
+                           id="st-form-price"
+                           class="st-form__input"
+                           placeholder="myBillPrice"
+                           data-st-name="billingprice"
+                           disabled
+                    />
+                </div>
+                <div class="st-form__field">
+                    <label for="st-form-amount" class="st-form__label">
+                        amount:
+                        <abbr title="required" aria-label="required">*</abbr>
+                    </label>
+                    <input type="number"
+                           name="myBillAmount"
+                           id="st-form-amount"
+                           class="st-form__input"
+                           placeholder="myBillAmount"
+                           data-st-name="billingamount"
+                           autocomplete="amount"
+                    />
+                </div>
+            </div>
+            <div class="st-form__section st-form__section--horizontal">
+                <div class="st-form__field">
+                    <label for="st-form-subscribe" class="st-form__label">
+                        type of payment:
+                        <abbr title="required" aria-label="required">*</abbr>
+                    </label>
+                    <select name="myBillSubscribe"
+                            id="st-form-subscribe"
+                            class="st-form__input"
+                            placeholder="myBillSubscribe"
+                            autocomplete="subscribe">
+                        <option value="one-off payment">one-off payment</option>
+                        <option value="monthly payment">monthly payment</option>
+                    </select>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="st-form__fieldset">
+            <legend>Personal data:</legend>
+            <div class="st-form__section st-form__section--horizontal">
+                <div class="st-form__field">
+                    <label for="st-form-title" class="st-form__label">title:</label>
+                    <select id="st-form-title"
+                            class="st-form__input"
+                            name="myBillTitle"
+                            placeholder="Title"
+                            autocomplete="title">
+                        <option value="Mr">Mr</option>
+                        <option value="Mrs">Mrs</option>
+                        <option value="Ms">Ms</option>
+                        <option value="Miss">Miss</option>
+                        <option value="Dr">Dr</option>
+                    </select>
+                </div>
+            </div>
+            <div class="st-form__section st-form__section--horizontal">
+                <div class="st-form__field">
+                    <label for="st-form-first-name" class="st-form__label">first name: </label>
+                    <input type="text"
+                           name="myBillFirstName"
+                           id="st-form-first-name"
+                           class="st-form__input"
+                           placeholder="John"
+                           data-st-name="billingfirstname"
+                           autocomplete="given-name"
+                    />
+                </div>
+
+                <div class="st-form__field">
+                    <label for="st-form-last-name" class="st-form__label">last name: </label>
+                    <input type="text"
+                           name="myBillLastName"
+                           id="st-form-last-name"
+                           class="st-form__input"
+                           placeholder="Doe"
+                           data-st-name="billinglastname"
+                           autocomplete="family-name"
+                    />
+                </div>
+            </div>
+            <div class="st-form__section st-form__section--horizontal">
+                <div class="st-form__field">
+                    <label for="st-form-title" class="st-form__label">date of birth:</label>
+                    <input type="date" name="myBillDateOfBirth"
+                           id="st-form-date-of-birth"
+                           class="st-form__input"
+                           placeholder="myBillDateOfBirth"
+                           data-st-name="billingdateofbirth"
+                           autocomplete="date"/>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="st-form__fieldset">
+            <legend>Contact data:</legend>
+            <div class="st-form__section st-form__section--horizontal">
+                <div class="st-form__field">
+                    <label for="st-form-email" class="st-form__label">e-mail: </label>
+                    <input type="email"
+                           name="myBillEmail"
+                           id="st-form-email"
+                           class="st-form__input"
+                           placeholder="test@mail.com"
+                           data-st-name="billingemail"
+                           autocomplete="email"
+                    />
+                </div>
+
+                <div class="st-form__field">
+                    <label for="st-form-phone" class="st-form__label">phone: </label>
+                    <input type="tel"
+                           name="myBillTel"
+                           id="st-form-phone"
+                           class="st-form__input"
+                           placeholder="+00 000 000 000"
+                           autocomplete="tel"
+                    />
+                </div>
+            </div>
+            <div class="st-form__section st-form__section--horizontal">
+                <div class="st-form__field">
+                    <label for="st-form-address1" class="st-form__label">street: </label>
+                    <input type="text"
+                           name="myBillAddress1"
+                           id="st-form-address1"
+                           class="st-form__input"
+                           placeholder="Park Str."
+                           data-st-name="billingaddress1"
+                    />
+                </div>
+
+                <div class="st-form__field">
+                    <label for="st-form-address2" class="st-form__label">city: </label>
+                    <input type="tel"
+                           name="myBillAddress2"
+                           id="st-form-address2"
+                           class="st-form__input"
+                           placeholder="Richmond"
+                           data-st-name="billingaddress2"
+                    />
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="st-form__fieldset">
+            <legend>APM's:</legend>
+            <div id="st-visa-checkout" class="st-form__group"></div>
+            <div id="st-apple-pay" class="st-form__group"></div>
+        </fieldset>
+
+        <div class="st-form__section">
+            <div id="st-card-number" class="st-form__group"></div>
+            <div id="st-expiration-date" class="st-form__group"></div>
+            <div id="st-security-code" class="st-form__group"></div>
+        </div>
+
+        <div id="st-animated-card" class="st-form__st-animated-card"></div>
         <div id="st-control-frame" class="st-form__group"></div>
-        <div id="st-visa-checkout" class="st-form__group"></div>
-        <div id="st-apple-pay" class="st-form__group"></div>
-    </div>
 
-    <div id="st-animated-card" class="st-form__st-animated-card"></div>
-
-    <div class="st-form__section">
-        <div class="st-form__group st-form__group--submit">
-            <button type="submit" class="st-form__button" id="merchant-submit-button">Zapłać</button>
+        <div class="st-form__section">
+            <div class="st-form__group st-form__group--submit">
+                <button type="submit" class="st-form__button" id="merchant-submit-button">Zapłać</button>
+            </div>
         </div>
-    </div>
-</form>
+    </form>
+    <footer class="st-footer">
+        <p>&copy; Secure Trading 2019</p>
+    </footer>
+</main>
 <script type="text/javascript" src="<%= WEBSERVICES_URL %>/st.js"></script>
 <script>
   (function() {
@@ -175,6 +308,13 @@
 
       document.getElementById('st-form-amount').addEventListener('input', function() {
         st.updateJWT('somejwt');
+      });
+
+      document.getElementById('st-form-amount').addEventListener('input', () => {
+        var amountField = document.getElementById('st-form-amount');
+        var priceField = document.getElementById('st-form-price');
+        var amount = amountField.value ? amountField.value : 1;
+        priceField.value = amount * 10;
       });
     }
   })();

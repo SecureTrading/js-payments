@@ -5,7 +5,7 @@ import { Validation } from '../../application/core/shared/Validation';
 export class MerchantFields {
   private static readonly ADJACENT_HTML_PLACEMENT: InsertPosition = 'afterend';
   private static readonly DATA_ATTRIBUTE_NAME: string = 'data-st-name';
-  private static readonly ERROR_LABEL_MARKUP: string = `<div class="error-label"></div>`;
+  private static readonly ERROR_LABEL_MARKUP: string = `<div class="st-error-label"></div>`;
   private static readonly INPUT_MARKUP: string = 'input';
   private static readonly KEYPRESS_EVENT: string = 'keypress';
 

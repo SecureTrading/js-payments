@@ -50,7 +50,7 @@ export class FormField extends Frame {
   protected getAllowedStyles() {
     let allowed = super.getAllowedStyles();
     const input = `#${this._inputSelector}`;
-    const inputError = `#${this._inputSelector}.error-field`;
+    const inputError = `#${this._inputSelector}.st-error-field`;
     const inputPlaceholder = `${input}::placeholder`;
     const message = `#${this._messageSelector}`;
     const label = `label[for=${this._inputSelector}]`;

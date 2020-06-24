@@ -1,0 +1,11 @@
+@media screen and (max-width: 350px) {
+  #st-animated-card-iframe {
+    min-height: 200px;
+  }
+}
+
+@media screen and (max-width: 300px) {
+  #st-animated-card-iframe {
+    min-height: 175px;
+  }
+}

@@ -1,6 +1,6 @@
-@import '../../../../example/styles/variables';
-@import '../../../../example/styles/placeholders';
-@import '../../../../example/styles/core';
+@import '../../../styles/scss/variables';
+@import '../../../styles/scss/placeholders';
+@import '../../../styles/scss/core';
 
 body {
   @extend %frame-body;

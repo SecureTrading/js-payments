@@ -13,7 +13,7 @@ module.exports = {
     controlFrame: ['./polyfills', './src/bootstrap.ts', './src/application/components/control-frame/control-frame.ts'],
     example: './example/index.ts',
     receipt: './example/receipt.ts',
-    iframe: './example/iframe.ts',
+    iframe: './example/iframe.ts'
   },
   output: {
     filename: '[name].js',
@@ -92,7 +92,15 @@ module.exports = {
     new CopyPlugin({
       patterns: [{
         from: 'src/images/*.png',
-        to: 'images',
+        to: 'img/cards',
+        force: true,
+        flatten: true
+      }]
+    }),
+    new CopyPlugin({
+      patterns: [{
+        from: 'example/img/*.png',
+        to: 'img/example',
         force: true,
         flatten: true
       }]
@@ -103,7 +111,7 @@ module.exports = {
         to: 'json',
         force: true,
         flatten: true,
-        noErrorOnMissing: true,
+        noErrorOnMissing: true
       }]
     }),
     new StyleLintPlugin(),
@@ -122,7 +130,7 @@ module.exports = {
             }
           },
           'postcss-loader',
-          'sass-loader',
+          'sass-loader'
         ]
       },
       {

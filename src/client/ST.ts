@@ -1,4 +1,4 @@
-import '../styles/st.css';
+import '../styles/css/st.css';
 import JwtDecode from 'jwt-decode';
 import 'location-origin';
 import { debounce } from 'lodash';
