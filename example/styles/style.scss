@@ -1,33 +1,18 @@
-@import '../src/styles/variables';
-@import '../src/styles/placeholders';
-@import '../src/styles/core';
+@import 'variables';
+@import 'placeholders';
+@import 'core';
 
-%iframe {
-  height: 9.1rem;
-  width: 100%;
-  border: 0;
-
-  &:hover,
-  &:focus,
-  &:active {
-    outline: none;
-  }
-}
-
-.example-form iframe {
-  @extend %iframe;
-}
 
 body {
   padding: 4rem 2rem;
 }
 
-.example-form {
+.st-form {
   max-width: 80rem;
   margin: 0 auto;
 }
 
-.example-form__title {
+.st-form__title {
   font-size: 2rem;
   font-weight: normal;
   border-bottom: 0.1rem solid $color-placeholder;
@@ -47,11 +32,11 @@ body {
   }
 }
 
-.example-form__section--horizontal {
+.st-form__section--horizontal {
   display: flex;
   justify-content: space-between;
 
-  .example-form__group {
+  .st-form__group {
     flex: 1;
     margin: 0 0 0 $space-l;
 
@@ -61,12 +46,8 @@ body {
   }
 }
 
-.example-form__group {
+.st-form__group {
   margin: 0 0 $space-xs;
-
-  iframe {
-    @extend %iframe;
-  }
 
   &--submit {
     display: flex;
@@ -75,34 +56,26 @@ body {
   }
 }
 
-.example-form__spacer {
+.st-form__spacer {
   height: $space-l * 2;
 }
 
-.example-form__label {
+.st-form__label {
   @extend %label;
 }
 
-.example-form__label--required {
+.st-form__label--required {
   @extend %label--required;
 }
 
-.example-form__input {
+.st-form__input {
   @extend %input;
 }
 
-.example-form__message {
+.st-form__message {
   @extend %message;
 }
 
-.example-form__button {
+.st-form__button {
   @extend %button;
-}
-
-.st-notification-frame {
-  height: 6.2rem;
-}
-
-#st-control-frame-iframe {
-  display: none;
 }

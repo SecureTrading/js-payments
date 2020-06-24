@@ -1,5 +1,4 @@
-import './../styles/notification.css';
-import './../styles/_control-frame.css';
+import '../styles/st.css';
 import JwtDecode from 'jwt-decode';
 import 'location-origin';
 import { debounce } from 'lodash';

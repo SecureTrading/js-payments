@@ -69,6 +69,7 @@ export class Element {
     iframe.setAttribute('allowtransparency', 'true');
     iframe.setAttribute('scrolling', 'no');
     iframe.setAttribute('frameborder', '0');
+    iframe.setAttribute('style', '');
     if (tabindex !== undefined) {
       iframe.setAttribute('tabindex', tabindex);
     }

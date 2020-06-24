@@ -1,0 +1,11 @@
+iframe {
+    height: 90px;
+    width: 100%;
+    border: 0;
+}
+
+iframe:hover,
+iframe:focus,
+iframe:active {
+    outline: none;
+}
