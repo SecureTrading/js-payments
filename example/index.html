@@ -37,7 +37,7 @@
             <div class="st-form__section st-form__section--horizontal">
                 <div class="st-form__field">
 
-                    <label for="st-form-amount" class="st-form__label">
+                    <label for="st-form-price" class="st-form__label">
                         price:
                         <abbr title="required" aria-label="required">*</abbr>
                     </label>
@@ -53,13 +53,13 @@
                     />
                 </div>
                 <div class="st-form__field">
-                    <label for="st-form-amount" class="st-form__label">
+                    <label for="example-form-amount" class="st-form__label">
                         amount:
                         <abbr title="required" aria-label="required">*</abbr>
                     </label>
                     <input type="number"
                            name="myBillAmount"
-                           id="st-form-amount"
+                           id="example-form-amount"
                            class="st-form__input"
                            placeholder="myBillAmount"
                            data-st-name="billingamount"
@@ -310,8 +310,8 @@
         st.updateJWT('somejwt');
       });
 
-      document.getElementById('st-form-amount').addEventListener('input', () => {
-        var amountField = document.getElementById('st-form-amount');
+      document.getElementById('example-form-amount').addEventListener('input', () => {
+        var amountField = document.getElementById('example-form-amount');
         var priceField = document.getElementById('st-form-price');
         var amount = amountField.value ? amountField.value : 1;
         priceField.value = amount * 10;
