@@ -114,15 +114,6 @@ module.exports = {
         noErrorOnMissing: true
       }]
     }),
-    new CopyPlugin({
-      patterns: [{
-        from: 'example/js/*.js',
-        to: 'js',
-        force: true,
-        flatten: true,
-        noErrorOnMissing: true
-      }]
-    }),
     new StyleLintPlugin(),
     new FriendlyErrorsWebpackPlugin()
   ],
