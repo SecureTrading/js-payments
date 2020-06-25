@@ -99,6 +99,14 @@ module.exports = {
     }),
     new CopyPlugin({
       patterns: [{
+        from: 'example/js/*.js',
+        to: 'js',
+        force: true,
+        flatten: true
+      }]
+    }),
+    new CopyPlugin({
+      patterns: [{
         from: 'example/json/*.json',
         to: 'json',
         force: true,
