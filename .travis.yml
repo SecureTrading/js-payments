@@ -52,10 +52,10 @@ jobs:
       script:
         - ${DOCKER_TAG} -e OS="OS X" -e OS_VERSION=Catalina -e BROWSER=Safari -e BROWSER_VERSION=13 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=apple_test_part2
     - stage: BrowserStack - smoke tests
-      name: "Behavioural test: firefox 76 Windows 10"
+      name: "Behavioural test: firefox 74 Windows 10"
       if: branch=develop
       script:
-        - ${DOCKER_TAG} -e OS=Windows -e OS_VERSION=10 -e BROWSER=Firefox -e BROWSER_VERSION=76.0 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$SMOKE_TESTS_TAG
+        - ${DOCKER_TAG} -e OS=Windows -e OS_VERSION=10 -e BROWSER=Firefox -e BROWSER_VERSION=74.0 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$SMOKE_TESTS_TAG
     - name: "Behavioural test: IE 11, Windows 10"
       if: branch=develop
       script:
@@ -104,6 +104,10 @@ jobs:
       if: branch=develop
       script:
         - ${DOCKER_TAG} -e OS="OS X" -e OS_VERSION="High Sierra" -e BROWSER=Safari -e BROWSER_VERSION=11.1 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$SMOKE_TESTS_TAG
+    - name: "Behavioural test: iPad 7th, iOS 13.0"
+      if: branch=develop
+      script:
+        - ${DOCKER_TAG} -e DEVICE="iPad 7th" -e OS_VERSION=13 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$SMOKE_TESTS_TAG
     - name: "Behavioural test: Samsung Galaxy S8, Android 7.0"
       if: branch=develop
       script:
@@ -120,23 +124,11 @@ jobs:
       if: branch=develop
       script:
         - ${DOCKER_TAG} -e DEVICE="Google Nexus 6" -e OS_VERSION=6.0 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$SMOKE_TESTS_TAG
-    - name: "Behavioural test: iPad 7th, iOS 13.0 - part 1"
-      if: branch=develop
-      script:
-        - ${DOCKER_TAG} -e DEVICE="iPad 7th" -e OS_VERSION=13 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$SMOKE_TESTS_TAG
     - stage: BrowserStack - extended set of tests
-    - name: "Behavioural test: firefox 77, Windows 10"
+      name: "Behavioural test: firefox 74, Windows 10"
       if: branch=develop
       script:
-        - ${DOCKER_TAG} -e OS=Windows -e OS_VERSION=10 -e BROWSER=Firefox -e BROWSER_VERSION=77.0 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$EXTENDED_TESTS_TAG
-    - name: "Behavioural test: iPhone X, iOS 11.0, part 1"
-      if: branch=develop
-      script:
-        - ${DOCKER_TAG} -e DEVICE="iPhone X" -e OS_VERSION=11 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=extended_tests_part_1
-    - name: "Behavioural test: iPhone X, iOS 11.0, part 2"
-      if: branch=develop
-      script:
-        - ${DOCKER_TAG} -e DEVICE="iPhone X" -e OS_VERSION=11 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=extended_tests_part_2
+        - ${DOCKER_TAG} -e OS=Windows -e OS_VERSION=10 -e BROWSER=Firefox -e BROWSER_VERSION=74.0 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$EXTENDED_TESTS_TAG
     # - name: "Behavioural test: iPhone XR, iOS 12.0, Full list of tests - part 1"
     #   if: branch=develop
     #   script:
@@ -148,7 +140,11 @@ jobs:
     - name: "Behavioural test: Samsung Galaxy S9, Android 8.0"
       if: branch=develop
       script:
-        - ${DOCKER_TAG} -e DEVICE="Samsung Galaxy S9" -e OS_VERSION=8.0 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$EXTENDED_TESTS_TAG
+        - ${DOCKER_TAG} -e DEVICE="Samsung Galaxy S9" -e OS_VERSION=8.0 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=extended_tests_part_1
+    - name: "Behavioural test: Samsung Galaxy S9, Android 8.0"
+        if: branch=develop
+        script:
+          - ${DOCKER_TAG} -e DEVICE="Samsung Galaxy S9" -e OS_VERSION=8.0 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=extended_tests_part_2
     - name: "Behavioural test: IE 11, Windows 10, part 1"
       if: branch=develop
       script:
@@ -157,11 +153,14 @@ jobs:
       if: branch=develop
       script:
         - ${DOCKER_TAG} -e OS=Windows -e OS_VERSION=10 -e BROWSER=IE -e BROWSER_VERSION=11.0 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=extended_tests_part_2
-    - name: "Behavioural test: safari 13, Catalina"
+    - name: "Behavioural test: safari 13, Catalina, part 1"
       if: branch=develop
       script:
-        - ${DOCKER_TAG} -e OS="OS X" -e OS_VERSION=Catalina -e BROWSER=Safari -e BROWSER_VERSION=13 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=$EXTENDED_TESTS_TAG
-
+        - ${DOCKER_TAG} -e OS="OS X" -e OS_VERSION=Catalina -e BROWSER=Safari -e BROWSER_VERSION=13 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=extended_tests_part_1
+    - name: "Behavioural test: safari 13, Catalina, part 2"
+      if: branch=develop
+      script:
+        - ${DOCKER_TAG} -e OS="OS X" -e OS_VERSION=Catalina -e BROWSER=Safari -e BROWSER_VERSION=13 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=extended_tests_part_2
 after_success:
   - cat ./coverage/lcov.info | coveralls
 addons:
