@@ -156,7 +156,6 @@
     function configurationInit(ST, data) {
       var stConfig = data;
       var parsedUrl = new URL(window.location.href);
-      console.error(window.configJWT());
       stConfig.jwt = window.configJWT();
       stConfig.jwt = parsedUrl.searchParams.get('jwt') || stConfig.jwt;
       stConfig.submitCallback = function someFancyfunction(data) {
