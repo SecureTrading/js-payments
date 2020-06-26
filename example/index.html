@@ -93,48 +93,103 @@
     <div id="st-animated-card" class="example-form__st-animated-card"></div>
 </form>
 <script type="text/javascript" src="<%= WEBSERVICES_URL %>/st.js"></script>
-<script src="example.js"></script>
 <script>
-
-  window.onload = function() {
+  (function() {
     var ST = SecureTrading;
-    var stConfig = getConfig('<%= WEBSERVICES_URL %>/json/config.json');
-    var parsedUrl = new URL(window.location.href);
-    stConfig.jwt = getJwt();
-    stConfig.jwt = parsedUrl.searchParams.get('jwt') || stConfig.jwt;
+    window
+      .fetch('<%= WEBSERVICES_URL %>/config.json')
+      .then(function(response) {
+        if (response.status !== 200) {
+          return Promise.reject('Configuration has not been set !');
+        }
+        return response.json();
+      })
+      .then(function(data) {
+        try {
+          configurationInit(ST, data);
+        } catch (e) {
+          console.error(e);
+        }
+      })
+      .catch(function() {
+        fetchDefaultConfig();
+      });
 
-    stConfig.submitCallback = function someFancyfunction(data) {
-      var stringified = JSON.stringify(data);
-      var testVariable = 'This is what we have got after submit' + stringified;
-      console.error(testVariable);
-    };
+    function fetchDefaultConfig() {
+      fetch('./../json/config.json')
+        .then(function(response) {
+          if (response.status !== 200) {
+            return Promise.reject('Default configuration has not been set !');
+          }
+          return response.json();
+        })
+        .then(function(data) {
+          if (data) {
+            configurationInit(ST, data);
+          }
+        });
+    }
 
-    stConfig.successCallback = function() {
-      displayPopup('success-popup', 'This is success message', 'green');
-    };
+    function displayPopup(id, text, tp) {
+      if (!document.getElementById(id)) {
+        var div = document.createElement('div');
+        div.innerText = text;
+        div.setAttribute('id', id);
+        div.setAttribute(
+          'style',
+          'display: flex; justify-content: center; position: fixed; height: 70px;right:0;color: white;padding: 0 50px;align-items: center;border-radius: 10px;font-family: Verdana;font-size: 20px;z-index:2'
+        );
+        div.style.backgroundColor = tp;
+        if (tp === 'green') {
+          div.style.top = 0;
+        } else {
+          div.style.bottom = 0;
+        }
+        var popup = document.getElementById('st-popup');
+        popup.appendChild(div);
+        setTimeout(function() {
+          popup.removeChild(div);
+        }, 3000);
+      }
+    }
 
-    stConfig.errorCallback = function() {
-      displayPopup('error-popup', 'This is error message', 'red');
-    };
+    function configurationInit(ST, data) {
+      var stConfig = data;
+      var parsedUrl = new URL(window.location.href);
+      console.error(window.configJWT());
+      stConfig.jwt = window.configJWT();
+      stConfig.jwt = parsedUrl.searchParams.get('jwt') || stConfig.jwt;
+      stConfig.submitCallback = function someFancyfunction(data) {
+        var stringified = JSON.stringify(data);
+        var testVariable = 'This is what we have got after submit' + stringified;
+        console.error(testVariable);
+      };
+      stConfig.successCallback = function() {
+        displayPopup('success-popup', 'This is success message', 'green');
+      };
+      stConfig.errorCallback = function() {
+        displayPopup('error-popup', 'This is error message', 'red');
+      };
+      stConfig.cancelCallback = function() {
+        displayPopup('cancel-popup', 'This is cancel message', '#ffc23a');
+      };
 
-    stConfig.cancelCallback = function() {
-      displayPopup('cancel-popup', 'This is cancel message', '#ffc23a');
-    };
+      var st = ST(stConfig);
+      st.Components(stConfig.components);
+      st.VisaCheckout(stConfig.visaCheckout);
+      st.ApplePay(stConfig.applePay);
 
-    var st = ST(stConfig);
-    st.Components(stConfig.components);
-    // st.VisaCheckout(stConfig.visaCheckout);
-    // st.ApplePay(stConfig.applePay);
+      st.Cybertonica().then(function(response) {
+        console.error(response);
+      });
 
-    st.Cybertonica().then(function(response) {
-      console.error(response);
-    });
-
-    document.getElementById('example-form-amount').addEventListener('input', function() {
-      var jwt = getJwt();
-      st.updateJWT(jwt);
-    });
-  };
+      document.getElementById('example-form-amount').addEventListener('input', function() {
+        st.updateJWT(
+          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4ODY5NTEzOS41NTgwOTc0LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiNTIwMDAwMDAwMDAwMTAwNSIsImV4cGlyeWRhdGUiOiIwMS8yMiJ9fQ.wAmn0JqsAfj7ZtsqbDadknWpPhUhJb7CPiQT8VqZ4hk'
+        );
+      });
+    }
+  })();
 </script>
 </body>
 </html>
