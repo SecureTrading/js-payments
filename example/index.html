@@ -157,7 +157,6 @@
       var stConfig = data;
       var parsedUrl = new URL(window.location.href);
       window.configJWT('./../json/jwtdata.json').then((jwt) => {
-        console.error(stConfig.jwt);
         stConfig.jwt = jwt;
         stConfig.jwt = parsedUrl.searchParams.get('jwt') || stConfig.jwt;
         stConfig.submitCallback = function someFancyfunction(data) {
