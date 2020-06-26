@@ -1,9 +1,13 @@
 import './style.scss';
 
 import { jwtgenerator } from '@securetrading/jwt-generator';
-import { payload, secret, iss } from './json/jwtdata.json';
 
 // @ts-ignore
-window.configJWT = () => {
-  return jwtgenerator(payload, secret, iss);
+window.configJWT = async (url: string) => {
+  return await fetch(url)
+    .then(response => response.json())
+    .then(out => {
+      console.error(out);
+      return jwtgenerator(out.payload, out.secret, out.iss);
+    });
 };
