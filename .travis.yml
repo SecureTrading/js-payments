@@ -142,9 +142,9 @@ jobs:
       script:
         - ${DOCKER_TAG} -e DEVICE="Samsung Galaxy S9" -e OS_VERSION=8.0 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=extended_tests_part_1
     - name: "Behavioural test: Samsung Galaxy S9, Android 8.0"
-        if: branch=develop
-        script:
-          - ${DOCKER_TAG} -e DEVICE="Samsung Galaxy S9" -e OS_VERSION=8.0 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=extended_tests_part_2
+      if: branch=develop
+      script:
+        - ${DOCKER_TAG} -e DEVICE="Samsung Galaxy S9" -e OS_VERSION=8.0 -e REAL_MOBILE=true -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=extended_tests_part_2
     - name: "Behavioural test: IE 11, Windows 10, part 1"
       if: branch=develop
       script:
