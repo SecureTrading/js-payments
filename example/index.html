@@ -157,8 +157,7 @@
       var stConfig = data;
       var parsedUrl = new URL(window.location.href);
       window.configJWT('./../json/jwtdata.json').then((jwt) => {
-        stConfig.jwt = jwt;
-        stConfig.jwt = parsedUrl.searchParams.get('jwt') || stConfig.jwt;
+        stConfig.jwt = parsedUrl.searchParams.get('jwt') || jwt;
         stConfig.submitCallback = function someFancyfunction(data) {
           var stringified = JSON.stringify(data);
           var testVariable = 'This is what we have got after submit' + stringified;
