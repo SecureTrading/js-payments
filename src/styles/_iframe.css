@@ -1,25 +1,34 @@
 iframe {
-    height: 90px;
-    width: 100%;
-    border: 0;
-    margin: 15px 0;
+  height: 90px;
+  width: 100%;
+  border: 0;
+  margin: 15px 0;
 }
 
 iframe:hover,
 iframe:focus,
 iframe:active {
-    outline: none;
+  outline: none;
+}
+
+#st-animated-card-iframe {
+  max-width: 400px;
+  min-height: 260px;
+  height: 100%;
+  width: 100%;
+  border: 0;
+  display: block;
+  box-sizing: border-box;
 }
 
 @media screen and (max-width: 350px) {
-    #st-animated-card-iframe {
-        min-height: 200px;
-    }
+  #st-animated-card-iframe {
+    min-height: 200px;
+  }
 }
 
 @media screen and (max-width: 300px) {
-    #st-animated-card-iframe {
-        min-height: 175px;
-    }
+  #st-animated-card-iframe {
+    min-height: 175px;
+  }
 }
-
