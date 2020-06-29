@@ -17,6 +17,7 @@ import { IDecodedJwt } from '../../core/models/IDecodedJwt';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { BrowserSessionStorage } from '../../../shared/services/storage/BrowserSessionStorage';
 import { DefaultPlaceholders } from '../../core/models/constants/config-resolver/DefaultPlaceholders';
+import { Store } from '../../core/store/Store';
 
 @Service()
 export class SecurityCode extends FormField {
@@ -41,9 +42,11 @@ export class SecurityCode extends FormField {
   constructor(
     private _configProvider: ConfigProvider,
     private _messageBus: MessageBus,
-    private _sessionStorage: BrowserSessionStorage
+    private _sessionStorage: BrowserSessionStorage,
+    private store: Store
   ) {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
+    this.store.select$(state => state.config.config).subscribe(console.log);
 
     this._formatter = new Formatter();
     this._validation = new Validation();

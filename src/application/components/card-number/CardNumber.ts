@@ -12,6 +12,8 @@ import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { Service } from 'typedi';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
 import { IconFactory } from '../../core/services/icon/IconFactory';
+import { Store } from '../../core/store/Store';
+import { UPDATE_CONFIG } from '../../core/store/reducers/config/ConfigActions';
 
 @Service()
 export class CardNumber extends FormField {
@@ -37,7 +39,7 @@ export class CardNumber extends FormField {
   private _fieldInstance: HTMLInputElement = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
   private readonly _cardNumberField: HTMLInputElement;
 
-  constructor(private configProvider: ConfigProvider, private _iconFactory: IconFactory) {
+  constructor(private configProvider: ConfigProvider, private _iconFactory: IconFactory, private store: Store) {
     super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE, Selectors.CARD_NUMBER_LABEL);
     this._cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     this.validation = new Validation();
@@ -57,6 +59,8 @@ export class CardNumber extends FormField {
     );
     this._sendState();
     this._inputElement.setAttribute(CardNumber.PLACEHOLDER_ATTRIBUTE, this.placeholder);
+
+    this.store.dispatch({ type: UPDATE_CONFIG, payload: configProvider.getConfig() });
   }
 
   protected getLabel(): string {
