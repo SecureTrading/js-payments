@@ -220,6 +220,7 @@ class ST {
   }
 
   public init(config: IConfig): void {
+    StCodec.updateJWTValue(config.jwt);
     this._config = this._configProvider.getConfig();
     this.initCallbacks(config);
     this.Storage();

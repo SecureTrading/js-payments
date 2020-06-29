@@ -11,6 +11,8 @@ import { Selectors } from '../../../application/core/shared/Selectors';
 import { CONFIG } from '../../../application/core/dependency-injection/InjectionTokens';
 import { FrameIdentifier } from './FrameIdentifier';
 import { FrameAccessor } from './FrameAccessor';
+import { FrameNotFound } from './errors/FrameNotFound';
+import { Debug } from '../../Debug';
 
 @Service()
 export class InterFrameCommunicator {
@@ -37,11 +39,19 @@ export class InterFrameCommunicator {
   }
 
   public send(message: IMessageBusEvent, target: Window | string): void {
-    const parentFrame = this.frameAccessor.getParentFrame();
-    const targetFrame = this.resolveTargetFrame(target);
-    const frameOrigin = targetFrame === parentFrame ? this.getParentOrigin() : this.frameOrigin;
+    try {
+      const parentFrame = this.frameAccessor.getParentFrame();
+      const targetFrame = this.resolveTargetFrame(target);
+      const frameOrigin = targetFrame === parentFrame ? this.getParentOrigin() : this.frameOrigin;
 
-    targetFrame.postMessage(message, frameOrigin);
+      targetFrame.postMessage(message, frameOrigin);
+    } catch (e) {
+      if (e instanceof FrameNotFound) {
+        return Debug.warn(e.message);
+      }
+
+      throw e;
+    }
   }
 
   public query<T>(message: IMessageBusEvent, target: Window | string): Promise<T> {
@@ -107,7 +117,7 @@ export class InterFrameCommunicator {
     const frames: FrameCollection = this.frameAccessor.getFrameCollection();
 
     if (target === '' || !frames[target]) {
-      throw new Error(`Target frame "${target}" not found.`);
+      throw new FrameNotFound(`Target frame "${target}" not found.`);
     }
 
     return frames[target];
