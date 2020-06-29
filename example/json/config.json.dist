@@ -1,0 +1,129 @@
+{
+  "analytics": true,
+  "applePay": {
+    "buttonStyle": "white-outline",
+    "buttonText": "buy",
+    "merchantId": "",
+    "paymentRequest": {
+      "countryCode": "US",
+      "currencyCode": "USD",
+      "merchantCapabilities": [
+        "supports3DS",
+        "supportsCredit",
+        "supportsDebit"
+      ],
+      "requestTypes": [
+        "RISKDEC",
+        "ACCOUNTCHECK",
+        "AUTH"
+      ],
+      "supportedNetworks": [],
+      "total": {
+        "label": "Secure Trading Merchant",
+        "amount": "10.00"
+      }
+    },
+    "placement": "st-apple-pay"
+  },
+  "animatedCard": true,
+  "buttonId": "merchant-submit-button",
+  "bypassCards": [
+    "PIBA"
+  ],
+  "cancelCallback": null,
+  "componentIds": {
+    "animatedCard": "",
+    "cardNumber": "",
+    "expirationDate": "",
+    "notificationFrame": "",
+    "securityCode": ""
+  },
+  "components": {
+    "defaultPaymentType": "",
+    "requestTypes": [
+      "RISKDEC",
+      "ACCOUNTCHECK",
+      "THREEDQUERY",
+      "AUTH"
+    ],
+    "paymentTypes": [],
+    "startOnLoad": false
+  },
+  "cybertonicaApiKey": "stfs",
+  "datacenterurl": "",
+  "deferInit": false,
+  "disableNotification": false,
+  "errorCallback": null,
+  "errorReporting": false,
+  "fieldsToSubmit": [
+    "pan",
+    "expirydate",
+    "securitycode"
+  ],
+  "formId": "st-form",
+  "init": {
+    "cachetoken": "",
+    "threedinit": ""
+  },
+  "jwt": "",
+  "livestatus": 0,
+  "origin": "",
+  "panIcon": true,
+  "placeholders": {
+    "pan": "Card number",
+    "expirydate": "MM/YY",
+    "securitycode": "***"
+  },
+  "styles": {
+    "defaultStyles": {
+      "background-color-input": "AliceBlue"
+    },
+    "cardNumber": {
+      "font-size-input": "1.5rem",
+      "line-height-input": "1.6rem"
+    },
+    "expirationDate": {
+      "font-size-input": "1.5rem",
+      "line-height-input": "1.6rem"
+    },
+    "securityCode": {
+      "font-size-input": "1.5rem",
+      "line-height-input": "1.6rem"
+    },
+    "notificationFrame": {
+      "color-error": "#FFF333"
+    },
+    "controlFrame": {
+      "color-error": "#3358FF"
+    }
+  },
+  "submitCallback": null,
+  "submitFields": [],
+  "submitOnSuccess": false,
+  "submitOnError": false,
+  "submitOnCancel": false,
+  "successCallback": null,
+  "translations": {
+    "An error occurred": "Wystąpił błąd"
+  },
+  "visaCheckout": {
+    "buttonSettings": {
+      "size": "154",
+      "color": "neutral"
+    },
+    "livestatus": 0,
+    "merchantId": "",
+    "paymentRequest": {
+      "subtotal": "20.00"
+    },
+    "placement": "st-visa-checkout",
+    "requestTypes": [
+      "RISKDEC",
+      "ACCOUNTCHECK",
+      "AUTH"
+    ],
+    "settings": {
+      "displayName": "My Test Site"
+    }
+  }
+}
