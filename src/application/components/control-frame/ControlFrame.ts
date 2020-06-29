@@ -204,14 +204,14 @@ export class ControlFrame extends Frame {
           }
 
           return this._configProvider.getConfig$().pipe(
-            tap(config => this._setRequestTypes(config)),
             switchMap(config =>
               iif(
                 () => config.deferInit,
                 defer(() => this._cardinalCommerce.init(config).pipe(mapTo(data))),
                 of(data)
-              )
+              ).pipe(mapTo(config))
             ),
+            tap(config => this._setRequestTypes(config)),
             switchMap(() =>
               iif(
                 () => Boolean(this._preThreeDRequestTypes.length),
