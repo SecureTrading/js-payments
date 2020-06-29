@@ -99,7 +99,6 @@
     window
       .fetch('<%= WEBSERVICES_URL %>/config.json')
       .then(function(response) {
-        console.error(response);
         if (response.status !== 200) {
           return Promise.reject('Configuration has not been set !');
         }
