@@ -1,4 +1,4 @@
-import { mock } from 'ts-mockito';
+import { mock, when } from 'ts-mockito';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 import { Cybertonica } from './Cybertonica';
 
@@ -39,6 +39,7 @@ describe('Cybertonica', () => {
 
 function cybertonicaFixture() {
   const localStorage: BrowserLocalStorage = mock(BrowserLocalStorage);
+  localStorage.getItem = jest.fn().mockReturnValueOnce('en');
   const instance = new Cybertonica(localStorage);
   return { instance };
 }
