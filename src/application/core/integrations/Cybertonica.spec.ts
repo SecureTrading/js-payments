@@ -1,4 +1,4 @@
-import { mock, when } from 'ts-mockito';
+import { mock } from 'ts-mockito';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 import { Cybertonica } from './Cybertonica';
 
