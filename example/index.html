@@ -272,10 +272,7 @@
       }
     }
 
-    function configurationInit(ST, data) {
-      var stConfig = data;
-      var parsedUrl = new URL(window.location.href);
-      stConfig.jwt = parsedUrl.searchParams.get('jwt') || stConfig.jwt;
+    function init(stConfig) {
       stConfig.submitCallback = function someFancyfunction(data) {
         var stringified = JSON.stringify(data);
         var testVariable = 'This is what we have got after submit' + stringified;
@@ -308,6 +305,18 @@
         var amount = amountField.value ? amountField.value : 1;
         priceField.value = amount * 10;
       });
+    }
+
+    function configurationInit(ST, data) {
+      var stConfig = data;
+      var parsedUrl = new URL(window.location.href);
+      window.configJWT('./../json/jwtdata.json').then(function(jwt){
+        stConfig.jwt = parsedUrl.searchParams.get('jwt') || jwt;
+        init(stConfig);
+      }).catch(function() {
+        stConfig.jwt = parsedUrl.searchParams.get('jwt') || stConfig.jwt;
+        init(stConfig);
+      })
     }
   })();
 
