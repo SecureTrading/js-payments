@@ -1,0 +1,12 @@
+{
+  "iat": 1592298893548,
+  "iss": "test",
+  "secret": "test",
+  "payload": {
+    "baseamount": "1000",
+    "accounttypedescription": "ECOM",
+    "currencyiso3a": "GBP",
+    "sitereference": "",
+    "locale": "en_GB"
+  }
+}
