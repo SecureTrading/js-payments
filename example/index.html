@@ -188,10 +188,10 @@
     function configurationInit(ST, data) {
       var stConfig = data;
       var parsedUrl = new URL(window.location.href);
-      window.configJWT('./../json/jwtdata.json').then((jwt) => {
+      window.configJWT('./../json/jwtdata.json').then(function(jwt){
         stConfig.jwt = parsedUrl.searchParams.get('jwt') || jwt;
         init(stConfig);
-      }).catch(() => {
+      }).catch(function() {
         stConfig.jwt = parsedUrl.searchParams.get('jwt') || stConfig.jwt;
         init(stConfig);
       })
