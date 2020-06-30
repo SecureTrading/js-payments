@@ -39,7 +39,7 @@ export class CardNumber extends FormField {
   private _fieldInstance: HTMLInputElement = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
   private readonly _cardNumberField: HTMLInputElement;
 
-  constructor(private configProvider: ConfigProvider, private _iconFactory: IconFactory, private store: Store) {
+  constructor(private configProvider: ConfigProvider, private _iconFactory: IconFactory) {
     super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE, Selectors.CARD_NUMBER_LABEL);
     this._cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     this.validation = new Validation();
@@ -59,8 +59,6 @@ export class CardNumber extends FormField {
     );
     this._sendState();
     this._inputElement.setAttribute(CardNumber.PLACEHOLDER_ATTRIBUTE, this.placeholder);
-
-    this.store.dispatch({ type: UPDATE_CONFIG, payload: configProvider.getConfig() });
   }
 
   protected getLabel(): string {

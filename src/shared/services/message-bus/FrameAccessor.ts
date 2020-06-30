@@ -3,6 +3,7 @@ import { FrameIdentifier } from './FrameIdentifier';
 import { FrameCollection } from './interfaces/FrameCollection';
 import { WINDOW } from '../../dependency-injection/InjectionTokens';
 import { Selectors } from '../../../application/core/shared/Selectors';
+import { IControlFrameWindow } from '../../interfaces/IControlFrameWindow';
 
 @Service()
 export class FrameAccessor {
@@ -16,7 +17,7 @@ export class FrameAccessor {
     return this.window.parent;
   }
 
-  getControlFrame(): Window | undefined {
+  getControlFrame(): IControlFrameWindow | undefined {
     if (this.identifier.isControlFrame()) {
       return this.window;
     }

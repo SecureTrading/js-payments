@@ -42,11 +42,9 @@ export class SecurityCode extends FormField {
   constructor(
     private _configProvider: ConfigProvider,
     private _messageBus: MessageBus,
-    private _sessionStorage: BrowserSessionStorage,
-    private store: Store
+    private _sessionStorage: BrowserSessionStorage
   ) {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
-    this.store.select$(state => state.config.config).subscribe(console.log);
 
     this._formatter = new Formatter();
     this._validation = new Validation();

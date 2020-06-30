@@ -5,25 +5,28 @@ import { IState } from './IState';
 import { map, shareReplay } from 'rxjs/operators';
 import { PartialObserver, Unsubscribable } from 'rxjs/src/internal/types';
 import { IMessageBusEvent } from '../models/IMessageBusEvent';
-import { IAction } from './IAction';
+import { ActionName, IAction } from './IAction';
 import { Store as ReduxStore } from 'redux';
-import { IActionsMap } from './IActionsMap';
 
 @Service()
 export class Store {
   private readonly state$: Observable<IState>;
 
   constructor(private storeAccessor: StoreAccessor) {
-    this.state$ = new Observable(observer => {
-      observer.next(this.store.getState());
+    this.state$ = new Observable<IState>(observer => {
+      observer.next(this.store.getState() as IState);
 
       return this.store.subscribe(() => {
-        observer.next(this.store.getState());
+        observer.next(this.store.getState() as IState);
       });
     }).pipe(shareReplay(1));
   }
 
-  dispatch<T extends keyof IActionsMap>(action: IAction<T>): void {
+  getState(): IState {
+    return this.store.getState();
+  }
+
+  dispatch<T extends ActionName>(action: IAction<T>): void {
     this.store.dispatch(action);
   }
 
