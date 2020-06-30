@@ -1,8 +1,6 @@
 iframe {
   height: 90px;
-  width: 100%;
   border: 0;
-  margin: 15px 0;
 }
 
 iframe:hover,
