@@ -2,22 +2,6 @@
 @import '../src/styles/placeholders';
 @import '../src/styles/core';
 
-%iframe {
-  height: 9.1rem;
-  width: 100%;
-  border: 0;
-
-  &:hover,
-  &:focus,
-  &:active {
-    outline: none;
-  }
-}
-
-.example-form iframe {
-  @extend %iframe;
-}
-
 body {
   padding: 4rem 2rem;
 }
@@ -25,6 +9,10 @@ body {
 .example-form {
   max-width: 80rem;
   margin: 0 auto;
+}
+
+.example-form iframe {
+  width: 100%;
 }
 
 .example-form__title {
@@ -63,10 +51,6 @@ body {
 
 .example-form__group {
   margin: 0 0 $space-xs;
-
-  iframe {
-    @extend %iframe;
-  }
 
   &--submit {
     display: flex;

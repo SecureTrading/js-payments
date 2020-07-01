@@ -11,7 +11,7 @@ export interface IVisaCheckout {
     height?: number;
     width?: number;
     locale?: string;
-    color: 'neutral' | 'standard';
+    color?: 'neutral' | 'standard';
     cardBrands?: string;
     acceptCanadianVisaDebit?: string;
     cobrand?: string;
