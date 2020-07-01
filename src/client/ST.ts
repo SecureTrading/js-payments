@@ -1,4 +1,5 @@
 import '../styles/css/st.css';
+import './../styles/_iframe.css';
 import JwtDecode from 'jwt-decode';
 import 'location-origin';
 import { debounce } from 'lodash';
@@ -35,7 +36,7 @@ import { BrowserSessionStorage } from '../shared/services/storage/BrowserSession
 import { Notification } from '../application/core/shared/Notification';
 import { ofType } from '../shared/services/message-bus/operators/ofType';
 import { Subject, Subscription } from 'rxjs';
-import { filter, map, takeUntil, tap } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { ConfigProvider } from '../application/core/services/ConfigProvider';
 import { switchMap } from 'rxjs/operators';
 import { from } from 'rxjs';

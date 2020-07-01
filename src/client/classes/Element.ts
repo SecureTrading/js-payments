@@ -2,9 +2,6 @@ import { IStyle } from '../../shared/model/config/IStyle';
 import { Selectors } from '../../application/core/shared/Selectors';
 
 export class Element {
-  private static readonly IFRAME_ID: string = 'st-animated-card-iframe';
-  private static readonly WRAPPER_ID: string = 'st-iframe-wrapper';
-
   public static getComponentAddress(name: string): string {
     if (name === Selectors.CARD_NUMBER_COMPONENT_NAME) {
       return Selectors.CARD_NUMBER_COMPONENT;
@@ -72,11 +69,6 @@ export class Element {
     iframe.setAttribute('style', '');
     if (tabindex !== undefined) {
       iframe.setAttribute('tabindex', tabindex);
-    }
-    if (fieldId === Element.IFRAME_ID) {
-      const iframeWrapper = Element.createFormElement('div', Element.WRAPPER_ID);
-      iframeWrapper.appendChild(iframe);
-      return iframeWrapper;
     }
     return iframe;
   }
