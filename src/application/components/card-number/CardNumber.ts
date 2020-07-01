@@ -12,8 +12,6 @@ import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { Service } from 'typedi';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
 import { IconFactory } from '../../core/services/icon/IconFactory';
-import { Store } from '../../core/store/Store';
-import { UPDATE_CONFIG } from '../../core/store/reducers/config/ConfigActions';
 
 @Service()
 export class CardNumber extends FormField {
