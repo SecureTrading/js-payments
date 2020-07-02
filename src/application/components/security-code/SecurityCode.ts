@@ -53,9 +53,12 @@ export class SecurityCode extends FormField {
     this._securityCodeUpdate$()
       .pipe(filter(Boolean))
       .subscribe((securityCodeLength: number) => {
-        this.placeholder = this._getPlaceholder(this._securityCodeLength);
+        this.placeholder = this._getPlaceholder(securityCodeLength);
         this._securityCodeLength = securityCodeLength !== -1 ? securityCodeLength : 4;
-        this._messageBus.publish({ type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, data: securityCodeLength });
+        this._messageBus.publish({
+          type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH,
+          data: this._securityCodeLength
+        });
       });
     this._init();
   }
@@ -74,7 +77,6 @@ export class SecurityCode extends FormField {
   }
 
   private _securityCodeUpdate$(): Observable<number> {
-    const deferInit = this._configProvider.getConfig().deferInit;
     const jwtFromConfig$: Observable<string> = this._configProvider.getConfig$().pipe(map(config => config.jwt));
     const jwtFromUpdate$: Observable<string> = this._messageBus.pipe(
       ofType(MessageBus.EVENTS_PUBLIC.UPDATE_JWT),
@@ -90,7 +92,7 @@ export class SecurityCode extends FormField {
 
     const maskedPanFromJsInit$: Observable<string> = this._sessionStorage
       .select(store => store['app.maskedpan'])
-      .pipe(filter(() => deferInit === false));
+      .pipe(filter(() => this._configProvider.getConfig().deferInit === false));
 
     return merge(cardNumberInput$, cardNumberFromJwt$, maskedPanFromJsInit$).pipe(
       filter(Boolean),
