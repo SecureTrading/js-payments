@@ -48,25 +48,29 @@ export class SecurityCode extends FormField {
     this._formatter = new Formatter();
     this._validation = new Validation();
     this._securityCodeWrapper = document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR) as HTMLElement;
-    this._securityCodeLength = SecurityCode.SPECIAL_INPUT_LENGTH;
+    this._securityCodeLength = SecurityCode.STANDARD_INPUT_LENGTH;
     this.placeholder = this._getPlaceholder(this._securityCodeLength);
     this._securityCodeUpdate$()
       .pipe(filter(Boolean))
       .subscribe((securityCodeLength: number) => {
-        this._securityCodeLength = securityCodeLength;
+        if (securityCodeLength === -1) {
+          this._securityCodeLength = 4;
+        } else {
+          this._securityCodeLength = securityCodeLength;
+        }
         this._messageBus.publish({ type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, data: securityCodeLength });
       });
     this._init();
   }
 
   private _getPlaceholder(securityCodeLength: number): string {
+    if (securityCodeLength === -1) {
+      return '****';
+    }
     if (
       this._configProvider.getConfig().placeholders.securitycode &&
       this._configProvider.getConfig().placeholders.securitycode === DefaultPlaceholders.securitycode
     ) {
-      if (this._configProvider.getConfig().deferInit) {
-        return '***';
-      }
       return securityCodeLength === 4 ? '****' : DefaultPlaceholders.securitycode;
     }
     return this._configProvider.getConfig().placeholders.securitycode;
@@ -86,13 +90,15 @@ export class SecurityCode extends FormField {
       map(jwt => JwtDecode<IDecodedJwt>(jwt).payload.pan)
     );
 
-    // const maskedPanFromJsInit$: Observable<string> = this._sessionStorage.select(store => store['app.maskedpan']);
+    const maskedPanFromJsInit$: Observable<string> = this._sessionStorage
+      .select(store => store['app.maskedpan'])
+      .pipe(filter(() => this._configProvider.getConfig().deferInit === false));
 
-    return merge(cardNumberInput$, cardNumberFromJwt$).pipe(
+    return merge(cardNumberInput$, cardNumberFromJwt$, maskedPanFromJsInit$).pipe(
       filter(Boolean),
       map((cardNumber: string) => {
         if (!cardNumber || !iinLookup.lookup(cardNumber).type) {
-          return 4;
+          return -1;
         }
         if (!iinLookup.lookup(cardNumber).cvcLength[0]) {
           return 4;
