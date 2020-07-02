@@ -48,12 +48,15 @@ export class SecurityCode extends FormField {
     this._formatter = new Formatter();
     this._validation = new Validation();
     this._securityCodeWrapper = document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR) as HTMLElement;
-    this._securityCodeLength = SecurityCode.STANDARD_INPUT_LENGTH;
+    this._securityCodeLength = SecurityCode.SPECIAL_INPUT_LENGTH;
+    console.error(this._securityCodeLength);
     this.placeholder = this._getPlaceholder(this._securityCodeLength);
+    console.error(this.placeholder);
     this._securityCodeUpdate$()
       .pipe(filter(Boolean))
       .subscribe((securityCodeLength: number) => {
         this._securityCodeLength = securityCodeLength;
+        console.error(this._securityCodeLength);
         this._messageBus.publish({ type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, data: securityCodeLength });
       });
     this._init();
@@ -83,16 +86,16 @@ export class SecurityCode extends FormField {
       map(jwt => JwtDecode<IDecodedJwt>(jwt).payload.pan)
     );
 
-    const maskedPanFromJsInit$: Observable<string> = this._sessionStorage.select(store => store['app.maskedpan']);
+    // const maskedPanFromJsInit$: Observable<string> = this._sessionStorage.select(store => store['app.maskedpan']);
 
-    return merge(cardNumberInput$, cardNumberFromJwt$, maskedPanFromJsInit$).pipe(
+    return merge(cardNumberInput$, cardNumberFromJwt$).pipe(
       filter(Boolean),
       map((cardNumber: string) => {
         if (!cardNumber || !iinLookup.lookup(cardNumber).type) {
-          return 3;
+          return 4;
         }
         if (!iinLookup.lookup(cardNumber).cvcLength[0]) {
-          return 3;
+          return 4;
         }
         return iinLookup.lookup(cardNumber).cvcLength[0];
       })
