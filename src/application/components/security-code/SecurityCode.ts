@@ -75,7 +75,6 @@ export class SecurityCode extends FormField {
 
   private _securityCodeUpdate$(): Observable<number> {
     const deferInit = this._configProvider.getConfig().deferInit;
-    console.error(deferInit);
     const jwtFromConfig$: Observable<string> = this._configProvider.getConfig$().pipe(map(config => config.jwt));
     const jwtFromUpdate$: Observable<string> = this._messageBus.pipe(
       ofType(MessageBus.EVENTS_PUBLIC.UPDATE_JWT),
@@ -96,7 +95,6 @@ export class SecurityCode extends FormField {
     return merge(cardNumberInput$, cardNumberFromJwt$, maskedPanFromJsInit$).pipe(
       filter(Boolean),
       map((cardNumber: string) => {
-        console.error(cardNumber);
         if (!cardNumber || !iinLookup.lookup(cardNumber).type) {
           return -1;
         }
