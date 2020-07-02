@@ -64,6 +64,9 @@ export class SecurityCode extends FormField {
       this._configProvider.getConfig().placeholders.securitycode &&
       this._configProvider.getConfig().placeholders.securitycode === DefaultPlaceholders.securitycode
     ) {
+      if (this._configProvider.getConfig().deferInit) {
+        return '***';
+      }
       return securityCodeLength === 4 ? '****' : DefaultPlaceholders.securitycode;
     }
     return this._configProvider.getConfig().placeholders.securitycode;
