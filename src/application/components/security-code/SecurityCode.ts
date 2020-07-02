@@ -49,14 +49,11 @@ export class SecurityCode extends FormField {
     this._validation = new Validation();
     this._securityCodeWrapper = document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR) as HTMLElement;
     this._securityCodeLength = SecurityCode.SPECIAL_INPUT_LENGTH;
-    console.error(this._securityCodeLength);
     this.placeholder = this._getPlaceholder(this._securityCodeLength);
-    console.error(this.placeholder);
     this._securityCodeUpdate$()
       .pipe(filter(Boolean))
       .subscribe((securityCodeLength: number) => {
         this._securityCodeLength = securityCodeLength;
-        console.error(this._securityCodeLength);
         this._messageBus.publish({ type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, data: securityCodeLength });
       });
     this._init();
