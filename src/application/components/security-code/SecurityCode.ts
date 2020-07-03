@@ -53,7 +53,7 @@ export class SecurityCode extends FormField {
       .pipe(filter(Boolean))
       .subscribe((securityCodeLength: number) => {
         this.placeholder = this._getPlaceholder(securityCodeLength);
-        this._securityCodeLength = securityCodeLength !== -1 ? securityCodeLength : 4;
+        this._securityCodeLength = securityCodeLength;
         this._messageBus.publish({
           type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH,
           data: this._securityCodeLength
@@ -193,6 +193,8 @@ export class SecurityCode extends FormField {
       this._setSecurityCodeProperties(length, SecurityCode.MATCH_EXACTLY_FOUR_DIGITS);
     } else if (length === SHORT_CVC) {
       this._setSecurityCodeProperties(length, SecurityCode.MATCH_EXACTLY_THREE_DIGITS);
+    } else {
+      this._setSecurityCodeProperties(LONG_CVC, '^[0-9]{3,4}$');
     }
   }
 
