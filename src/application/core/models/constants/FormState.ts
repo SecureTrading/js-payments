@@ -1,5 +1,6 @@
 export enum FormState {
   BLOCKED = 'BLOCKED',
+  LOADING = 'LOADING',
   AVAILABLE = 'AVAILABLE',
   COMPLETE = 'COMPLETE'
 }

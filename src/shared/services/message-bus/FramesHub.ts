@@ -2,7 +2,7 @@ import { Service } from 'typedi';
 import { InterFrameCommunicator } from './InterFrameCommunicator';
 import { BehaviorSubject, from, Observable, of, Subject } from 'rxjs';
 import { ofType } from './operators/ofType';
-import { distinctUntilChanged, filter, first, map, mapTo, withLatestFrom } from 'rxjs/operators';
+import { distinctUntilChanged, filter, first, map, mapTo, takeUntil, withLatestFrom } from 'rxjs/operators';
 import { IMessageBusEvent } from '../../../application/core/models/IMessageBusEvent';
 import { Selectors } from '../../../application/core/shared/Selectors';
 import { FrameIdentifier } from './FrameIdentifier';

@@ -185,7 +185,10 @@ export class ApplePay {
       this._proceedPayment();
       button.removeEventListener('click', handler);
     };
-    button.addEventListener('click', handler);
+
+    if (button) {
+      button.addEventListener('click', handler);
+    }
   }
 
   private _onValidateMerchant() {
