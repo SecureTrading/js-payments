@@ -8,7 +8,7 @@ import { Selectors } from '../../core/shared/Selectors';
 import { Validation } from '../../core/shared/Validation';
 import { Service } from 'typedi';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
-import { filter, map, startWith } from 'rxjs/operators';
+import { filter, map, startWith, switchMap } from 'rxjs/operators';
 import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { IFormFieldState } from '../../core/models/IFormFieldState';
 import { merge, Observable } from 'rxjs';
@@ -18,6 +18,7 @@ import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { BrowserSessionStorage } from '../../../shared/services/storage/BrowserSessionStorage';
 import { DefaultPlaceholders } from '../../core/models/constants/config-resolver/DefaultPlaceholders';
 import { LONG_CVC, SHORT_CVC } from '../../core/models/constants/SecurityCode';
+import { IConfig } from '../../../shared/model/config/IConfig';
 
 @Service()
 export class SecurityCode extends FormField {
@@ -89,9 +90,10 @@ export class SecurityCode extends FormField {
       map(jwt => JwtDecode<IDecodedJwt>(jwt).payload.pan)
     );
 
-    const maskedPanFromJsInit$: Observable<string> = this._sessionStorage
-      .select(store => store['app.maskedpan'])
-      .pipe(filter(() => this._configProvider.getConfig().deferInit === false));
+    const maskedPanFromJsInit$: Observable<string> = this._configProvider.getConfig$().pipe(
+      filter((config: IConfig) => config.deferInit === false),
+      switchMap(() => this._sessionStorage.select(store => store['app.maskedpan']))
+    );
 
     return merge(cardNumberInput$, cardNumberFromJwt$, maskedPanFromJsInit$).pipe(
       filter(Boolean),
