@@ -43,6 +43,7 @@ import { from } from 'rxjs';
 import { NotificationService } from './classes/notification/NotificationService';
 import { IVisaCheckout } from '../application/core/models/visa-checkout/IVisaCheckout';
 import { FrameIdentifier } from '../shared/services/message-bus/FrameIdentifier';
+import { PUBLIC_EVENTS } from '../application/core/shared/EventTypes';
 
 @Service()
 class ST {
@@ -148,6 +149,7 @@ class ST {
     // @ts-ignore
     this._commonFrames._requestTypes = this._config.components.requestTypes;
     this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(async controlFrame => {
+      this._messageBus.publish({ type: PUBLIC_EVENTS.INIT_CONTROL_FRAME, data: this._config });
       await this._communicator.query({ type: MessageBus.EVENTS_PUBLIC.CONFIG_CHECK }, controlFrame);
       this.CardFrames();
       this._cardFrames.init();
