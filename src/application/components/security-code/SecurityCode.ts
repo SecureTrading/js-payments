@@ -8,7 +8,7 @@ import { Selectors } from '../../core/shared/Selectors';
 import { Validation } from '../../core/shared/Validation';
 import { Service } from 'typedi';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
-import { filter, map, startWith, switchMap } from 'rxjs/operators';
+import { filter, map, startWith, switchMap, tap } from 'rxjs/operators';
 import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { IFormFieldState } from '../../core/models/IFormFieldState';
 import { merge, Observable } from 'rxjs';
@@ -37,6 +37,7 @@ export class SecurityCode extends FormField {
   private _securityCodeLength: number;
   private _securityCodeWrapper: HTMLElement;
   private _validation: Validation;
+  private _config: IConfig;
 
   constructor(
     private _configProvider: ConfigProvider,
@@ -64,7 +65,7 @@ export class SecurityCode extends FormField {
   }
 
   private _getPlaceholder(securityCodeLength: number): string {
-    if (securityCodeLength === -1) {
+    if (securityCodeLength === -1 || !this._configProvider.getConfig()) {
       return '***';
     }
     if (
@@ -92,6 +93,7 @@ export class SecurityCode extends FormField {
 
     const maskedPanFromJsInit$: Observable<string> = this._configProvider.getConfig$().pipe(
       filter((config: IConfig) => config.deferInit === false),
+      tap((config: IConfig) => (this._config = config)),
       switchMap(() => this._sessionStorage.select(store => store['app.maskedpan']))
     );
 
