@@ -64,7 +64,7 @@ export class SecurityCode extends FormField {
 
   private _getPlaceholder(securityCodeLength: number): string {
     if (securityCodeLength === -1) {
-      return '****';
+      return '***';
     }
     if (
       this._configProvider.getConfig().placeholders.securitycode &&
