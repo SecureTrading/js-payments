@@ -1,11 +1,13 @@
 import { Payment } from './Payment';
 import { StTransport } from '../services/StTransport.class';
-import { StJwt } from './StJwt';
 import { Container } from 'typedi';
 import { Cybertonica } from '../integrations/Cybertonica';
 import { mock, instance as mockInstance, when } from 'ts-mockito';
-import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 import { ICard } from '../models/ICard';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
+import { TestConfigProvider } from '../../../testing/mocks/TestConfigProvider';
+
+Container.set({ id: ConfigProvider, type: TestConfigProvider });
 
 jest.mock('../../../../src/application/core/shared/Notification');
 

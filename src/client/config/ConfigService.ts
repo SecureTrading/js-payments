@@ -46,9 +46,9 @@ export class ConfigService implements ConfigProvider {
 
   getConfig$(watchForChanges?: boolean): Observable<IConfig> {
     if (watchForChanges) {
-      return this.config$.pipe(filter(Boolean));
+      return this.config$.pipe(filter<IConfig>(Boolean));
     }
 
-    return this.config$.pipe(filter(Boolean), first());
+    return this.config$.pipe(filter<IConfig>(Boolean), first());
   }
 }
