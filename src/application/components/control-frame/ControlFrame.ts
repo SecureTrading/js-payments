@@ -370,7 +370,6 @@ export class ControlFrame extends Frame {
   }
 
   private _getPanFromJwt(): string {
-    console.log(this.params);
     return JwtDecode<IDecodedJwt>(this.params.jwt).payload.pan
       ? JwtDecode<IDecodedJwt>(this.params.jwt).payload.pan
       : '';

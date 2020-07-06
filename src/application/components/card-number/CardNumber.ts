@@ -158,7 +158,6 @@ export class CardNumber extends FormField {
 
   private _getMaxLengthOfCardNumber() {
     const cardLengthFromBin = this._getPossibleCardLength(this._inputElement.value);
-    console.log(1, this._inputElement.value);
     this._cardNumberValue = this._inputElement.value.replace(/\s/g, '');
     const cardFormat = this._getCardFormat(this._cardNumberValue);
     let numberOfWhitespaces;
