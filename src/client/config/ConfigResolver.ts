@@ -34,6 +34,7 @@ export class ConfigResolver {
       deferInit: this._getValueOrDefault(config.deferInit, DefaultConfig.deferInit),
       disableNotification: this._getValueOrDefault(config.disableNotification, DefaultConfig.disableNotification),
       errorCallback: this._getValueOrDefault(config.errorCallback, DefaultConfig.errorCallback),
+      errorReporting: this._getValueOrDefault(config.errorReporting, DefaultConfig.errorReporting),
       fieldsToSubmit: this._getValueOrDefault(config.fieldsToSubmit, DefaultConfig.fieldsToSubmit),
       formId: this._getValueOrDefault(config.formId, DefaultConfig.formId),
       init: this._getValueOrDefault(config.init, DefaultConfig.init),

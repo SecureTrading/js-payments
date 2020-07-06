@@ -1,5 +1,6 @@
 import './../styles/notification.css';
 import './../styles/_control-frame.css';
+import './../styles/_iframe.css';
 import JwtDecode from 'jwt-decode';
 import 'location-origin';
 import { debounce } from 'lodash';
@@ -35,11 +36,13 @@ import { BrowserLocalStorage } from '../shared/services/storage/BrowserLocalStor
 import { BrowserSessionStorage } from '../shared/services/storage/BrowserSessionStorage';
 import { Notification } from '../application/core/shared/Notification';
 import { ofType } from '../shared/services/message-bus/operators/ofType';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { ConfigProvider } from '../application/core/services/ConfigProvider';
 import { switchMap } from 'rxjs/operators';
 import { from } from 'rxjs';
+import { FrameIdentifier } from '../shared/services/message-bus/FrameIdentifier';
+import { PUBLIC_EVENTS } from '../application/core/shared/EventTypes';
 
 @Service()
 class ST {
@@ -48,6 +51,9 @@ class ST {
   private static LOCALE_STORAGE: string = 'locale';
   private static MERCHANT_TRANSLATIONS_STORAGE: string = 'merchantTranslations';
   private static readonly MODAL_CONTROL_FRAME_CLASS = 'modal';
+  private static readonly BUTTON_SUBMIT_SELECTOR: string = 'button[type="submit"]';
+  private static readonly INPUT_SUBMIT_SELECTOR: string = 'input[type="submit"]';
+  private static readonly BUTTON_DISABLED_CLASS: string = 'st-button-submit__disabled';
   private _config: IConfig;
   private _cardFrames: CardFrames;
   private _commonFrames: CommonFrames;
@@ -55,6 +61,7 @@ class ST {
   private _merchantFields: MerchantFields;
   private _translation: Translator;
   private _destroy$: Subject<void> = new Subject();
+  private _registeredCallbacks: { [eventName: string]: Subscription } = {};
 
   set submitCallback(callback: (event: ISubmitEvent) => void) {
     if (callback) {
@@ -102,15 +109,17 @@ class ST {
     this._merchantFields = new MerchantFields();
   }
 
-  public on(eventName: 'success' | 'error' | 'submit' | 'cancel', callback: any): void {
+  public on(eventName: 'success' | 'error' | 'submit' | 'cancel', callback: (event: any) => void): void {
     const events = {
       cancel: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_CANCEL_CALLBACK,
       success: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK,
       error: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK,
       submit: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUBMIT_CALLBACK
     };
-    // @ts-ignore
-    this._messageBus
+
+    this.off(eventName);
+
+    this._registeredCallbacks[eventName] = this._messageBus
       .pipe(
         ofType(events[eventName]),
         map(event => event.data),
@@ -119,8 +128,11 @@ class ST {
       .subscribe(callback);
   }
 
-  public off(event: string): void {
-    // @ts-ignore
+  public off(eventName: string): void {
+    if (this._registeredCallbacks[eventName]) {
+      this._registeredCallbacks[eventName].unsubscribe();
+      this._registeredCallbacks[eventName] = undefined;
+    }
   }
 
   public Components(config: IComponentsConfig): void {
@@ -131,9 +143,11 @@ class ST {
         ...(config || {})
       }
     });
+    this.blockSubmitButton();
     // @ts-ignore
     this._commonFrames._requestTypes = this._config.components.requestTypes;
     this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(async controlFrame => {
+      this._messageBus.publish({ type: PUBLIC_EVENTS.INIT_CONTROL_FRAME, data: this._config });
       await this._communicator.query({ type: MessageBus.EVENTS_PUBLIC.CONFIG_CHECK }, controlFrame);
       this.CardFrames();
       this._cardFrames.init();
@@ -211,6 +225,7 @@ class ST {
   }
 
   public init(config: IConfig): void {
+    StCodec.updateJWTValue(config.jwt);
     this._config = this._configProvider.getConfig();
     this.initCallbacks(config);
     this.Storage();
@@ -234,7 +249,8 @@ class ST {
       this._config.animatedCard,
       this._config.buttonId,
       this._config.fieldsToSubmit,
-      this._config.formId
+      this._config.formId,
+      this._configProvider
     );
   }
 
@@ -333,9 +349,26 @@ class ST {
       .pipe(ofType(MessageBus.EVENTS_PUBLIC.CONTROL_FRAME_HIDE), takeUntil(this._destroy$))
       .subscribe(() => document.getElementById(Selectors.CONTROL_FRAME_IFRAME).classList.remove(className));
   }
+
+  private blockSubmitButton(): void {
+    const form: HTMLFormElement = document.getElementById(this._config.formId) as HTMLFormElement;
+
+    if (!form) {
+      return;
+    }
+
+    const submitButton: HTMLInputElement | HTMLButtonElement =
+      (document.getElementById(this._config.buttonId) as HTMLInputElement | HTMLButtonElement) ||
+      form.querySelector(ST.BUTTON_SUBMIT_SELECTOR) ||
+      form.querySelector(ST.INPUT_SUBMIT_SELECTOR);
+
+    submitButton.classList.add(ST.BUTTON_DISABLED_CLASS);
+    submitButton.disabled = true;
+  }
 }
 
 export default (config: IConfig) => {
+  Container.get(FrameIdentifier).setFrameName(Selectors.MERCHANT_PARENT_FRAME);
   Container.get(ConfigService).update(config);
 
   const st = Container.get(ST);

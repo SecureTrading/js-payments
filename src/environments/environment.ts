@@ -42,5 +42,7 @@ export const environment = {
   },
   production: false,
   testEnvironment: false,
-  overrideDomain: ''
+  overrideDomain: '',
+  SENTRY_DSN: null as string,
+  SENTRY_WHITELIST_URLS: ['https://webservices.securetrading.net']
 };

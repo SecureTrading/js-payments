@@ -102,7 +102,8 @@ module.exports = {
         from: 'example/json/*.json',
         to: 'json',
         force: true,
-        flatten: true
+        flatten: true,
+        noErrorOnMissing: true,
       }]
     }),
     new StyleLintPlugin(),

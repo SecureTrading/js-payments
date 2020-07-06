@@ -266,7 +266,10 @@ export class ApplePay {
       this._paymentProcess();
       button.removeEventListener('click', handler);
     };
-    button.addEventListener('click', handler);
+
+    if (button) {
+      button.addEventListener('click', handler);
+    }
   }
 
   private _setAmountAndCurrency() {
@@ -402,7 +405,6 @@ export class ApplePay {
 
   private _subscribeStatusHandlers() {
     this._session.onpaymentmethodselected = (event: any) => {
-      const { paymentMethod } = event;
       this._session.completePaymentMethodSelection({
         newTotal: {
           amount: this._paymentRequest.total.amount,
@@ -413,14 +415,12 @@ export class ApplePay {
     };
 
     this._session.onshippingmethodselected = (event: any) => {
-      const { paymentMethod } = event;
       this._session.completeShippingMethodSelection({
         newTotal: { label: this._paymentRequest.total.label, amount: this._paymentRequest.total.amount, type: 'final' }
       });
     };
 
     this._session.onshippingcontactselected = (event: any) => {
-      const { shippingContact } = event;
       this._session.completeShippingContactSelection({
         newTotal: { label: this._paymentRequest.total.label, amount: this._paymentRequest.total.amount, type: 'final' }
       });

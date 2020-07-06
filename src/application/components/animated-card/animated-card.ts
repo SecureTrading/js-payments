@@ -5,6 +5,12 @@ import { IFormFieldState } from '../../core/models/IFormFieldState';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 import { Container } from 'typedi';
+import { FrameIdentifier } from '../../../shared/services/message-bus/FrameIdentifier';
+import { Selectors } from '../../core/shared/Selectors';
+import { SentryService } from '../../../shared/services/sentry/SentryService';
+import { environment } from '../../../environments/environment';
+
+Container.get(FrameIdentifier).setFrameName(Selectors.ANIMATED_CARD_COMPONENT_IFRAME);
 
 // @ts-ignore
 if (Card && document.URL.includes('animated')) {
@@ -14,6 +20,8 @@ if (Card && document.URL.includes('animated')) {
     animatedCardContainer: 'st-animated-card',
     locale: localStorage.getItem('locale') ? localStorage.getItem('locale') : 'en_GB'
   });
+
+  Container.get(SentryService).init(environment.SENTRY_DSN, environment.SENTRY_WHITELIST_URLS);
 
   (() => {
     const messageBus: MessageBus = Container.get(MessageBus);

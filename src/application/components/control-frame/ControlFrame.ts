@@ -37,6 +37,7 @@ import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { IOnCardinalValidated } from '../../core/models/IOnCardinalValidated';
 import { ConfigService } from '../../../client/config/ConfigService';
 import { IThreeDInitResponse } from '../../core/models/IThreeDInitResponse';
+import { PUBLIC_EVENTS } from '../../core/shared/EventTypes';
 
 @Service()
 export class ControlFrame extends Frame {
@@ -88,7 +89,9 @@ export class ControlFrame extends Frame {
   ) {
     super();
     const config$ = this._configProvider.getConfig$();
+
     this._communicator.whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK).thenRespond(() => config$);
+
     this.messageBus
       .pipe(
         ofType(MessageBus.EVENTS_PUBLIC.JSINIT_RESPONSE),
@@ -105,7 +108,12 @@ export class ControlFrame extends Frame {
         });
       });
 
-    config$.subscribe(config => this.onInit(config));
+    this.messageBus
+      .pipe(
+        ofType(PUBLIC_EVENTS.INIT_CONTROL_FRAME),
+        map((event: IMessageBusEvent<IConfig>) => event.data)
+      )
+      .subscribe(config => this.onInit(config));
   }
 
   protected onInit(config: IConfig): void {
@@ -204,14 +212,14 @@ export class ControlFrame extends Frame {
           }
 
           return this._configProvider.getConfig$().pipe(
-            tap(config => this._setRequestTypes(config)),
             switchMap(config =>
               iif(
                 () => config.deferInit,
                 defer(() => this._cardinalCommerce.init(config).pipe(mapTo(data))),
                 of(data)
-              )
+              ).pipe(mapTo(config))
             ),
+            tap(config => this._setRequestTypes(config)),
             switchMap(() =>
               iif(
                 () => Boolean(this._preThreeDRequestTypes.length),

@@ -13,6 +13,11 @@ import { Validation } from '../../application/core/shared/Validation';
 import { RegisterFrames } from './RegisterFrames.class';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { ofType } from '../../shared/services/message-bus/operators/ofType';
+import { map } from 'rxjs/operators';
+import { IFormFieldState } from '../../application/core/models/IFormFieldState';
+import { config, Observable } from 'rxjs';
+import { ConfigProvider } from '../../application/core/services/ConfigProvider';
+import { IConfig } from '../../shared/model/config/IConfig';
 
 export class CardFrames extends RegisterFrames {
   private static CARD_NUMBER_FIELD_NAME: string = 'pan';
@@ -51,6 +56,7 @@ export class CardFrames extends RegisterFrames {
   private _onlyCvvConfiguration: boolean;
   private _configurationForStandardCard: boolean;
   private _loadAnimatedCard: boolean;
+  private _config$: Observable<IConfig>;
 
   constructor(
     jwt: string,
@@ -62,11 +68,16 @@ export class CardFrames extends RegisterFrames {
     animatedCard: boolean,
     buttonId: string,
     fieldsToSubmit: string[],
-    formId: string
+    formId: string,
+    private _configProvider: ConfigProvider
   ) {
     super(jwt, origin, componentIds, styles, animatedCard, formId, fieldsToSubmit);
+    this._config$ = this._configProvider.getConfig$();
     this._setInitValues(buttonId, defaultPaymentType, paymentTypes, animatedCard, jwt, formId);
     this.configureFormFieldsAmount(jwt);
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UNLOCK_BUTTON, () => {
+      this._disableSubmitButton(FormState.AVAILABLE);
+    });
   }
 
   public init() {
@@ -132,19 +143,24 @@ export class CardFrames extends RegisterFrames {
 
   private _createSubmitButton = (): HTMLInputElement | HTMLButtonElement => {
     const form = document.getElementById(this.formId);
-    let button: HTMLInputElement | HTMLButtonElement = this._buttonId
-      ? (document.getElementById(this._buttonId) as HTMLButtonElement | HTMLInputElement)
-      : null;
-    if (!button) {
-      button =
-        form.querySelector(CardFrames.SUBMIT_BUTTON_AS_BUTTON_MARKUP) ||
-        form.querySelector(CardFrames.SUBMIT_BUTTON_AS_INPUT_MARKUP);
-    }
-    if (button) {
-      button.textContent = this._payMessage;
-      this._submitButton = button;
-    }
-    return button;
+
+    this._submitButton =
+      (document.getElementById(this._buttonId) as HTMLInputElement | HTMLButtonElement) ||
+      form.querySelector(CardFrames.SUBMIT_BUTTON_AS_BUTTON_MARKUP) ||
+      form.querySelector(CardFrames.SUBMIT_BUTTON_AS_INPUT_MARKUP);
+    this._disableSubmitButton(FormState.LOADING);
+
+    this._config$.subscribe(response => {
+      const { deferInit, components } = response;
+
+      this._submitButton.textContent = this._payMessage;
+
+      if (deferInit || components.startOnLoad) {
+        this._disableSubmitButton(FormState.AVAILABLE);
+      }
+    });
+
+    return this._submitButton;
   };
 
   private _disableFormField(state: FormState, eventName: string, target: string): void {
@@ -165,14 +181,6 @@ export class CardFrames extends RegisterFrames {
     const cardDetails = JwtDecode(jwt) as any;
     if (cardDetails.payload.pan) {
       return iinLookup.lookup(cardDetails.payload.pan).type;
-    }
-  }
-
-  private _getSecurityCodeLength(jwt: string): number {
-    const cardDetails = JwtDecode(jwt) as any;
-    if (cardDetails.payload.pan) {
-      const { cvcLength } = iinLookup.lookup(cardDetails.payload.pan);
-      return cvcLength.slice(-1)[0];
     }
   }
 
@@ -298,6 +306,9 @@ export class CardFrames extends RegisterFrames {
     } else if (state === FormState.COMPLETE) {
       element.textContent = this._payMessage;
       element.classList.add(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS); // Keep it locked but return it to original text
+      disabledState = true;
+    } else if (state === FormState.LOADING) {
+      element.textContent = this._payMessage;
       disabledState = true;
     } else {
       element.textContent = this._payMessage;

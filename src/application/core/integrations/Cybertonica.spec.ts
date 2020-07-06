@@ -39,6 +39,7 @@ describe('Cybertonica', () => {
 
 function cybertonicaFixture() {
   const localStorage: BrowserLocalStorage = mock(BrowserLocalStorage);
+  localStorage.getItem = jest.fn().mockReturnValueOnce('en');
   const instance = new Cybertonica(localStorage);
   return { instance };
 }

@@ -1,10 +1,9 @@
 {
   "analytics": true,
-  "animatedCard": true,
   "applePay": {
     "buttonStyle": "white-outline",
     "buttonText": "buy",
-    "merchantId": "merchant.net.securetrading.test",
+    "merchantId": "",
     "paymentRequest": {
       "countryCode": "US",
       "currencyCode": "USD",
@@ -26,14 +25,10 @@
     },
     "placement": "st-apple-pay"
   },
+  "animatedCard": true,
   "buttonId": "merchant-submit-button",
   "bypassCards": [
-    "VISA",
-    "MASTERCARD",
-    "AMEX",
-    "DISCOVER",
-    "JCB",
-    "DINERS"
+    "PIBA"
   ],
   "cancelCallback": null,
   "componentIds": {
@@ -46,9 +41,9 @@
   "components": {
     "defaultPaymentType": "",
     "requestTypes": [
-      "THREEDQUERY",
       "RISKDEC",
       "ACCOUNTCHECK",
+      "THREEDQUERY",
       "AUTH"
     ],
     "paymentTypes": [],
@@ -59,6 +54,7 @@
   "deferInit": false,
   "disableNotification": false,
   "errorCallback": null,
+  "errorReporting": false,
   "fieldsToSubmit": [
     "pan",
     "expirydate",
@@ -69,7 +65,7 @@
     "cachetoken": "",
     "threedinit": ""
   },
-  "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU5MTE4OTE0MC4yOTgyNjksInBheWxvYWQiOnsiYmFzZWFtb3VudCI6IjIwMDAiLCJhY2NvdW50dHlwZWRlc2NyaXB0aW9uIjoiRUNPTSIsImN1cnJlbmN5aXNvM2EiOiJHQlAiLCJzaXRlcmVmZXJlbmNlIjoidGVzdF9qYW1lczM4NjQxIiwibG9jYWxlIjoiZW5fR0IifX0.gXmnRUfTPtUX4GxYhsofDw5dPSVHOnZ1B7Zms7lfMGA",
+  "jwt": "",
   "livestatus": 0,
   "origin": "",
   "panIcon": true,
@@ -116,7 +112,7 @@
       "color": "neutral"
     },
     "livestatus": 0,
-    "merchantId": "SDUT1MEXJO10RARJF2S521ImTyKfn3_JmxePdXcydQIUb4kx4",
+    "merchantId": "",
     "paymentRequest": {
       "subtotal": "20.00"
     },
