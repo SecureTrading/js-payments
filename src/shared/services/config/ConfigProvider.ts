@@ -5,6 +5,5 @@ import { Service } from 'typedi';
 @Service()
 export abstract class ConfigProvider {
   abstract getConfig(): IConfig;
-  abstract getConfig$(): Observable<IConfig>;
-  abstract getConfig$(watchForChanges: boolean): Observable<IConfig>;
+  abstract getConfig$(watchForChanges?: boolean): Observable<IConfig>;
 }
