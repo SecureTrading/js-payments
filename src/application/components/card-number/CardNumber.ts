@@ -10,7 +10,7 @@ import { Utils } from '../../core/shared/Utils';
 import { Validation } from '../../core/shared/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { Service } from 'typedi';
-import { ConfigProvider } from '../../core/services/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 import { IconFactory } from '../../core/services/icon/IconFactory';
 
 @Service()
@@ -158,6 +158,7 @@ export class CardNumber extends FormField {
 
   private _getMaxLengthOfCardNumber() {
     const cardLengthFromBin = this._getPossibleCardLength(this._inputElement.value);
+    console.log(1, this._inputElement.value);
     this._cardNumberValue = this._inputElement.value.replace(/\s/g, '');
     const cardFormat = this._getCardFormat(this._cardNumberValue);
     let numberOfWhitespaces;

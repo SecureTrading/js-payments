@@ -1,4 +1,4 @@
-import { ConfigProvider } from '../../../application/core/services/ConfigProvider';
+import { ConfigProvider } from '../config/ConfigProvider';
 import { anyFunction, anything, deepEqual, instance, mock, verify, when } from 'ts-mockito';
 import { Sentry } from './Sentry';
 import { SentryContext } from './SentryContext';
@@ -20,7 +20,7 @@ describe('SentryService', () => {
   let config$: Subject<IConfig>;
 
   beforeEach(() => {
-    configProviderMock = mock(ConfigProvider);
+    configProviderMock = mock<ConfigProvider>();
     sentryMock = mock(Sentry);
     sentryContextMock = mock(SentryContext);
     eventScrubberMock = mock(EventScrubber);

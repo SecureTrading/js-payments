@@ -1,7 +1,7 @@
 import { MessageBus } from './MessageBus';
 import { instance, mock, when } from 'ts-mockito';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
-import { ConfigProvider } from '../services/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 import { Notification } from './Notification';
 import { NotificationType } from '../models/constants/NotificationType';
 import { MessageBusMock } from '../../../testing/mocks/MessageBusMock';
@@ -20,7 +20,7 @@ describe('Notification', () => {
   beforeEach(() => {
     messageBus = (new MessageBusMock() as unknown) as MessageBus;
     browserLocalStorage = mock(BrowserLocalStorage);
-    configProvider = mock(ConfigProvider);
+    configProvider = mock<ConfigProvider>();
     framesHub = mock(FramesHub);
 
     document.body.innerHTML = `<div id="st-notification-frame"></div>`;

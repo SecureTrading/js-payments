@@ -1,7 +1,7 @@
 import { Utils } from '../shared/Utils';
 import { IStRequest, StCodec } from './StCodec.class';
 import { Service } from 'typedi';
-import { ConfigProvider } from './ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 import { IConfig } from '../../../shared/model/config/IConfig';
 
 /**

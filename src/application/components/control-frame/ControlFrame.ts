@@ -22,7 +22,6 @@ import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLoc
 import { BrowserSessionStorage } from '../../../shared/services/storage/BrowserSessionStorage';
 import { Service } from 'typedi';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
-import { ConfigProvider } from '../../core/services/ConfigProvider';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
 import { Cybertonica } from '../../core/integrations/Cybertonica';
 import { IConfig } from '../../../shared/model/config/IConfig';
@@ -35,8 +34,11 @@ import { StJwt } from '../../core/shared/StJwt';
 import { Translator } from '../../core/shared/Translator';
 import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { IOnCardinalValidated } from '../../core/models/IOnCardinalValidated';
-import { ConfigService } from '../../../client/config/ConfigService';
 import { IThreeDInitResponse } from '../../core/models/IThreeDInitResponse';
+import { Store } from '../../core/store/Store';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
+import { PUBLIC_EVENTS } from '../../core/shared/EventTypes';
+import { CLEAR_CONFIG, UPDATE_CONFIG } from '../../core/store/reducers/config/ConfigActions';
 
 @Service()
 export class ControlFrame extends Frame {
@@ -84,7 +86,7 @@ export class ControlFrame extends Frame {
     private _notification: NotificationService,
     private _cybertonica: Cybertonica,
     private _cardinalCommerce: CardinalCommerce,
-    private _configService: ConfigService
+    private _store: Store
   ) {
     super();
     const config$ = this._configProvider.getConfig$();
@@ -104,6 +106,14 @@ export class ControlFrame extends Frame {
           data: this._slicedPan
         });
       });
+
+    this.messageBus.pipe(ofType(PUBLIC_EVENTS.CONFIG_CHANGED)).subscribe((event: IMessageBusEvent<IConfig>) => {
+      if (event.data) {
+        this._store.dispatch({ type: UPDATE_CONFIG, payload: event.data });
+      } else {
+        this._store.dispatch({ type: CLEAR_CONFIG });
+      }
+    });
 
     config$.subscribe(config => this.onInit(config));
   }
@@ -360,6 +370,7 @@ export class ControlFrame extends Frame {
   }
 
   private _getPanFromJwt(): string {
+    console.log(this.params);
     return JwtDecode<IDecodedJwt>(this.params.jwt).payload.pan
       ? JwtDecode<IDecodedJwt>(this.params.jwt).payload.pan
       : '';

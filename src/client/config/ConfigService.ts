@@ -3,21 +3,19 @@ import { IConfig } from '../../shared/model/config/IConfig';
 import { ConfigResolver } from './ConfigResolver';
 import { ConfigValidator } from './ConfigValidator';
 import { CONFIG } from '../../application/core/dependency-injection/InjectionTokens';
-import { BrowserLocalStorage } from '../../shared/services/storage/BrowserLocalStorage';
+import { MessageBus } from '../../application/core/shared/MessageBus';
+import { PUBLIC_EVENTS } from '../../application/core/shared/EventTypes';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { ConfigProvider } from '../../shared/services/config/ConfigProvider';
+import { filter, first } from 'rxjs/operators';
 
 @Service()
-export class ConfigService {
-  private static readonly STORAGE_KEY = 'app.config';
+export class ConfigService implements ConfigProvider {
+  private config$: BehaviorSubject<IConfig> = new BehaviorSubject(null);
 
-  constructor(
-    private storage: BrowserLocalStorage,
-    private resolver: ConfigResolver,
-    private validator: ConfigValidator
-  ) {}
+  constructor(private resolver: ConfigResolver, private validator: ConfigValidator, private messageBus: MessageBus) {}
 
   update(config: IConfig): IConfig {
-    this.storage.setItem(ConfigService.STORAGE_KEY, null);
-
     const fullConfig = this.resolver.resolve(config);
     const validationError = this.validator.validate(fullConfig);
 
@@ -25,14 +23,32 @@ export class ConfigService {
       throw validationError;
     }
 
-    this.storage.setItem(ConfigService.STORAGE_KEY, JSON.stringify(fullConfig));
+    this.config$.next(fullConfig);
+    this.messageBus.publish({
+      type: PUBLIC_EVENTS.CONFIG_CHANGED,
+      data: JSON.parse(JSON.stringify(fullConfig))
+    });
 
     Container.set(CONFIG, fullConfig);
 
     return fullConfig;
   }
 
-  clear(synchronize: boolean): void {
-    this.storage.setItem(ConfigService.STORAGE_KEY, null, synchronize);
+  clear(): void {
+    this.config$.next(null);
+    this.messageBus.publish({ type: PUBLIC_EVENTS.CONFIG_CHANGED, data: null });
+    Container.set(CONFIG, null);
+  }
+
+  getConfig(): IConfig {
+    return this.config$.getValue();
+  }
+
+  getConfig$(watchForChanges?: boolean): Observable<IConfig> {
+    if (watchForChanges) {
+      return this.config$.pipe(filter(Boolean));
+    }
+
+    return this.config$.pipe(filter(Boolean), first());
   }
 }

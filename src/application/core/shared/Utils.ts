@@ -50,6 +50,7 @@ export class Utils {
   }
 
   public static stripChars(string: string, regex: any) {
+    console.log(2, string);
     if (typeof regex === 'undefined' || !Boolean(regex)) {
       regex = /[\D+]/g;
       return string.replace(regex, '');

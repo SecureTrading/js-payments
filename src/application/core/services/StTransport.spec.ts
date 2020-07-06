@@ -2,7 +2,7 @@ import each from 'jest-each';
 import { GlobalWithFetchMock } from 'jest-fetch-mock';
 import { StTransport } from './StTransport.class';
 import { Utils } from '../shared/Utils';
-import { ConfigProvider } from './ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 import { mock, instance as mockInstance, when } from 'ts-mockito';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { StCodec } from './StCodec.class';
@@ -37,7 +37,7 @@ describe('StTransport class', () => {
   };
 
   let instance: StTransport;
-  let configProviderMock = mock(ConfigProvider);
+  let configProviderMock = mock<ConfigProvider>();
   let mockFT: jest.Mock;
   let codec: StCodec;
 

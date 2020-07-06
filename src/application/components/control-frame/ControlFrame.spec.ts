@@ -6,14 +6,14 @@ import { MessageBus } from '../../core/shared/MessageBus';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 import { BrowserSessionStorage } from '../../../shared/services/storage/BrowserSessionStorage';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
-import { ConfigProvider } from '../../core/services/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 import { mock, instance as mockInstance, when, anyString } from 'ts-mockito';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
 import { Cybertonica } from '../../core/integrations/Cybertonica';
 import { CardinalCommerce } from '../../core/integrations/cardinal-commerce/CardinalCommerce';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { of } from 'rxjs';
-import { ConfigService } from '../../../client/config/ConfigService';
+import { Store } from '../../core/store/Store';
 
 jest.mock('../../../../src/application/core/shared/Payment');
 
@@ -470,11 +470,11 @@ function controlFrameFixture() {
   const localStorage: BrowserLocalStorage = mock(BrowserLocalStorage);
   const sessionStorage: BrowserSessionStorage = mock(BrowserSessionStorage);
   const communicator: InterFrameCommunicator = mock(InterFrameCommunicator);
-  const configProvider: ConfigProvider = mock(ConfigProvider);
+  const configProvider: ConfigProvider = mock<ConfigProvider>();
   const notification: NotificationService = mock(NotificationService);
   const cybertonica: Cybertonica = mock(Cybertonica);
   const cardinalCommerce: CardinalCommerce = mock(CardinalCommerce);
-  const configService: ConfigService = mock(ConfigService);
+  const storeMock: Store = mock(Store);
 
   when(communicator.whenReceive(anyString())).thenReturn({
     thenRespond: () => undefined
@@ -490,7 +490,7 @@ function controlFrameFixture() {
     mockInstance(notification),
     mockInstance(cybertonica),
     mockInstance(cardinalCommerce),
-    mockInstance(configService)
+    mockInstance(storeMock)
   );
   const messageBusEvent = {
     type: ''
