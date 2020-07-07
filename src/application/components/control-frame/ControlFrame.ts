@@ -110,9 +110,10 @@ export class ControlFrame extends Frame {
     this.messageBus.pipe(ofType(PUBLIC_EVENTS.CONFIG_CHANGED)).subscribe((event: IMessageBusEvent<IConfig>) => {
       if (event.data) {
         this._store.dispatch({ type: UPDATE_CONFIG, payload: event.data });
-      } else {
-        this._store.dispatch({ type: CLEAR_CONFIG });
+        return;
       }
+
+      this._store.dispatch({ type: CLEAR_CONFIG });
     });
 
     config$.subscribe(config => this.onInit(config));
