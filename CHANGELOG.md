@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.3.0
+
+### Added
+- JWT generator for example purposes.
+- New option errorReporting optionally enables live debugging using Sentry (currently defaults to false)
+
+### Fixed
+- window.name conflict with shopping carts
+- updateJWT with deferInit allows 4 digit security codes for use with AMEX
+- Duplicate submit callback triggered after switching between views (ReactJS)
+- ApplePay updateJWT wrong base amount sent during second payment (ReactJS)
+- Notification banner will now correctly clear cancel/error but keep success messages
+
+### Changed
+- Padding for iframe wrapper to provide better default styling especially for padding inside hosted iframes
+- Made changes suggested by lgtm
+- Card issuer pop-up to use view based styling for width/height to ensure on mobile the ACS is in view
+- Various package updates
+
 ## 2.2.2
 
 ### Fixed
