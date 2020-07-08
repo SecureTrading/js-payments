@@ -1,23 +1,23 @@
 import JwtDecode from 'jwt-decode';
-import { FormState } from '../../application/core/models/constants/FormState';
-import { IMessageBusEvent } from '../../application/core/models/IMessageBusEvent';
-import { IStyles } from '../../shared/model/config/IStyles';
-import { IValidationMessageBus } from '../../application/core/models/IValidationMessageBus';
-import { Element } from './Element';
-import { DomMethods } from '../../application/core/shared/DomMethods';
-import { Language } from '../../application/core/shared/Language';
-import { MessageBus } from '../../application/core/shared/MessageBus';
-import { Selectors } from '../../application/core/shared/Selectors';
-import { Translator } from '../../application/core/shared/Translator';
-import { Validation } from '../../application/core/shared/Validation';
-import { RegisterFrames } from './RegisterFrames.class';
+import { FormState } from '../../../application/core/models/constants/FormState';
+import { IMessageBusEvent } from '../../../application/core/models/IMessageBusEvent';
+import { IStyles } from '../../../shared/model/config/IStyles';
+import { IValidationMessageBus } from '../../../application/core/models/IValidationMessageBus';
+import { Element } from '../element/Element';
+import { DomMethods } from '../../../application/core/shared/DomMethods';
+import { Language } from '../../../application/core/shared/Language';
+import { MessageBus } from '../../../application/core/shared/MessageBus';
+import { Selectors } from '../../../application/core/shared/Selectors';
+import { Translator } from '../../../application/core/shared/Translator';
+import { Validation } from '../../../application/core/shared/Validation';
+import { RegisterFrames } from '../register-fields/RegisterFrames.class';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
-import { ofType } from '../../shared/services/message-bus/operators/ofType';
+import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { map } from 'rxjs/operators';
-import { IFormFieldState } from '../../application/core/models/IFormFieldState';
+import { IFormFieldState } from '../../../application/core/models/IFormFieldState';
 import { config, Observable } from 'rxjs';
-import { ConfigProvider } from '../../application/core/services/ConfigProvider';
-import { IConfig } from '../../shared/model/config/IConfig';
+import { ConfigProvider } from '../../../application/core/services/ConfigProvider';
+import { IConfig } from '../../../shared/model/config/IConfig';
 
 export class CardFrames extends RegisterFrames {
   private static CARD_NUMBER_FIELD_NAME: string = 'pan';
@@ -185,28 +185,39 @@ export class CardFrames extends RegisterFrames {
   }
 
   private _initCardNumberFrame(styles: {}): void {
-    this._cardNumber = new Element();
-    this._cardNumber.create(Selectors.CARD_NUMBER_COMPONENT_NAME, styles, this.params);
-    this._cardNumberMounted = this._cardNumber.mount(Selectors.CARD_NUMBER_IFRAME);
+    this._cardNumber = new Element(
+      Selectors.CARD_NUMBER_COMPONENT_NAME,
+      Selectors.CARD_NUMBER_IFRAME,
+      styles,
+      this.params
+    );
+    this._cardNumberMounted = this._cardNumber.init();
     this.elementsToRegister.push(this._cardNumberMounted);
   }
 
   private _initExpiryDateFrame(styles: {}): void {
-    this._expirationDate = new Element();
-    this._expirationDate.create(Selectors.EXPIRATION_DATE_COMPONENT_NAME, styles, this.params);
-    this._expirationDateMounted = this._expirationDate.mount(Selectors.EXPIRATION_DATE_IFRAME);
+    this._expirationDate = new Element(
+      Selectors.EXPIRATION_DATE_COMPONENT_NAME,
+      Selectors.EXPIRATION_DATE_IFRAME,
+      styles,
+      this.params
+    );
+    this._expirationDateMounted = this._expirationDate.init();
     this.elementsToRegister.push(this._expirationDateMounted);
   }
 
   private _initSecurityCodeFrame(styles: {}): void {
-    this._securityCode = new Element();
-    this._securityCode.create(Selectors.SECURITY_CODE_COMPONENT_NAME, styles, this.params);
-    this._securityCodeMounted = this._securityCode.mount(Selectors.SECURITY_CODE_IFRAME);
+    this._securityCode = new Element(
+      Selectors.SECURITY_CODE_COMPONENT_NAME,
+      Selectors.SECURITY_CODE_IFRAME,
+      styles,
+      this.params
+    );
+    this._securityCodeMounted = this._securityCode.init();
     this.elementsToRegister.push(this._securityCodeMounted);
   }
 
   private _initAnimatedCardFrame(): void {
-    this._animatedCard = new Element();
     const animatedCardConfig = { ...this.params };
     if (this._paymentTypes !== undefined) {
       animatedCardConfig.paymentTypes = this._paymentTypes;
@@ -214,8 +225,14 @@ export class CardFrames extends RegisterFrames {
     if (this._defaultPaymentType !== undefined) {
       animatedCardConfig.defaultPaymentType = this._defaultPaymentType;
     }
-    this._animatedCard.create(Selectors.ANIMATED_CARD_COMPONENT_NAME, {}, animatedCardConfig);
-    this._animatedCardMounted = this._animatedCard.mount(Selectors.ANIMATED_CARD_COMPONENT_IFRAME, '-1');
+    this._animatedCard = new Element(
+      Selectors.ANIMATED_CARD_COMPONENT_NAME,
+      Selectors.ANIMATED_CARD_COMPONENT_IFRAME,
+      {},
+      animatedCardConfig,
+      '-1'
+    );
+    this._animatedCardMounted = this._animatedCard.init();
     this.elementsToRegister.push(this._animatedCardMounted);
   }
 

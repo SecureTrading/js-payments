@@ -1,8 +1,8 @@
 import { CommonFrames } from './CommonFrames.class';
-import { MessageBus } from '../../application/core/shared/MessageBus';
-import { Selectors } from '../../application/core/shared/Selectors';
-import { MessageBusMock } from '../../testing/mocks/MessageBusMock';
-import { PUBLIC_EVENTS } from '../../application/core/shared/EventTypes';
+import { MessageBus } from '../../../application/core/shared/MessageBus';
+import { Selectors } from '../../../application/core/shared/Selectors';
+import { MessageBusMock } from '../../../testing/mocks/MessageBusMock';
+import { PUBLIC_EVENTS } from '../../../application/core/shared/EventTypes';
 
 jest.mock('./../../../src/application/core/shared/Notification');
 

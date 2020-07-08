@@ -1,7 +1,7 @@
 import { Container } from 'typedi';
-import { IStyles } from '../../shared/model/config/IStyles';
-import { MessageBus } from '../../application/core/shared/MessageBus';
-import { StJwt } from '../../application/core/shared/StJwt';
+import { IStyles } from '../../../shared/model/config/IStyles';
+import { MessageBus } from '../../../application/core/shared/MessageBus';
+import { StJwt } from '../../../application/core/shared/StJwt';
 
 export class RegisterFrames {
   private static COMPLETE_FORM_FIELDS: string[] = ['pan', 'expirydate', 'securitycode'];

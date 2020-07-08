@@ -1,19 +1,19 @@
-import { IStyles } from '../../shared/model/config/IStyles';
-import { Element } from './Element';
-import { DomMethods } from '../../application/core/shared/DomMethods';
-import { MessageBus } from '../../application/core/shared/MessageBus';
-import { Selectors } from '../../application/core/shared/Selectors';
-import { Validation } from '../../application/core/shared/Validation';
-import { RegisterFrames } from './RegisterFrames.class';
+import { IStyles } from '../../../shared/model/config/IStyles';
+import { Element } from '../element/Element';
+import { DomMethods } from '../../../application/core/shared/DomMethods';
+import { MessageBus } from '../../../application/core/shared/MessageBus';
+import { Selectors } from '../../../application/core/shared/Selectors';
+import { Validation } from '../../../application/core/shared/Validation';
+import { RegisterFrames } from '../register-fields/RegisterFrames.class';
 import { Container } from 'typedi';
-import { BrowserLocalStorage } from '../../shared/services/storage/BrowserLocalStorage';
-import { IComponentsIds } from '../../shared/model/config/IComponentsIds';
-import { Language } from '../../application/core/shared/Language';
+import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
+import { IComponentsIds } from '../../../shared/model/config/IComponentsIds';
+import { Language } from '../../../application/core/shared/Language';
 import { filter, first, delay, map, takeUntil } from 'rxjs/operators';
-import { ofType } from '../../shared/services/message-bus/operators/ofType';
+import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { Observable } from 'rxjs';
-import { PUBLIC_EVENTS } from '../../application/core/shared/EventTypes';
-import { IMessageBusEvent } from '../../application/core/models/IMessageBusEvent';
+import { PUBLIC_EVENTS } from '../../../application/core/shared/EventTypes';
+import { IMessageBusEvent } from '../../../application/core/models/IMessageBusEvent';
 
 export class CommonFrames extends RegisterFrames {
   get requestTypes(): string[] {
@@ -30,7 +30,6 @@ export class CommonFrames extends RegisterFrames {
   private _controlFrame: Element;
   private _controlFrameMounted: HTMLElement;
   private _messageBus: MessageBus;
-  private _notificationFrame: Element;
   private _requestTypes: string[];
   private readonly _gatewayUrl: string;
   private readonly _merchantForm: HTMLFormElement;
@@ -111,14 +110,19 @@ export class CommonFrames extends RegisterFrames {
 
     controlFrame = Object.assign({}, defaultStyles, controlFrame);
 
-    this._notificationFrame = new Element();
-    this._controlFrame = new Element();
-    this._controlFrame.create(Selectors.CONTROL_FRAME_COMPONENT_NAME, controlFrame, {
-      gatewayUrl: this._gatewayUrl,
-      jwt: this.jwt,
-      origin: this.origin
-    });
-    this._controlFrameMounted = this._controlFrame.mount(Selectors.CONTROL_FRAME_IFRAME, '-1');
+    this._controlFrame = new Element(
+      Selectors.CONTROL_FRAME_COMPONENT_NAME,
+      Selectors.CONTROL_FRAME_IFRAME,
+      controlFrame,
+      {
+        gatewayUrl: this._gatewayUrl,
+        jwt: this.jwt,
+        origin: this.origin
+      },
+      '-1'
+    );
+
+    this._controlFrameMounted = this._controlFrame.init();
     this.elementsToRegister.push(this._controlFrameMounted);
   }
 

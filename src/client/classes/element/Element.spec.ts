@@ -1,6 +1,6 @@
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
 import { Element } from './Element';
-import { Selectors } from '../../application/core/shared/Selectors';
+import { Selectors } from '../../../application/core/shared/Selectors';
 
 // given
 describe('Element', () => {
@@ -30,7 +30,7 @@ describe('Element', () => {
     instance = new Element();
   });
   // given
-  describe('Element.constructor', () => {
+  describe('element.constructor', () => {
     //then
     it('should have initial settings ', () => {
       expect(instance).toMatchObject(mockObject);
@@ -76,7 +76,7 @@ describe('Element', () => {
   });
 
   // given
-  describe('Element.createFormElement', () => {
+  describe('element.createFormElement', () => {
     // then
     it('should create new DOM element', () => {
       // @ts-ignore
@@ -88,7 +88,7 @@ describe('Element', () => {
   });
 
   // given
-  describe('Element.mount', () => {
+  describe('element.mount', () => {
     // then
     it('should create iframe element', () => {
       instance.iframeSrc = 'https://example.com';
@@ -121,7 +121,7 @@ describe('Element', () => {
   });
 
   // given
-  describe('Element.name', () => {
+  describe('element.name', () => {
     // then
     it('should use set and get', () => {
       instance.name = 'Some name';

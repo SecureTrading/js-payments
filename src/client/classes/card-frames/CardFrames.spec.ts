@@ -1,10 +1,10 @@
 import { CardFrames } from './CardFrames.class';
-import { FormState } from '../../application/core/models/constants/FormState';
-import { DomMethods } from '../../application/core/shared/DomMethods';
-import { Language } from '../../application/core/shared/Language';
-import { MessageBus } from '../../application/core/shared/MessageBus';
-import { Selectors } from '../../application/core/shared/Selectors';
-import { ConfigProvider } from '../../application/core/services/ConfigProvider';
+import { FormState } from '../../../application/core/models/constants/FormState';
+import { DomMethods } from '../../../application/core/shared/DomMethods';
+import { Language } from '../../../application/core/shared/Language';
+import { MessageBus } from '../../../application/core/shared/MessageBus';
+import { Selectors } from '../../../application/core/shared/Selectors';
+import { ConfigProvider } from '../../../application/core/services/ConfigProvider';
 import { instance as instanceOf, mock, when } from 'ts-mockito';
 import { of } from 'rxjs';
 

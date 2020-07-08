@@ -1,6 +1,6 @@
 import { Container } from 'typedi';
-import { MessageBus } from '../../application/core/shared/MessageBus';
-import { Validation } from '../../application/core/shared/Validation';
+import { MessageBus } from '../../../application/core/shared/MessageBus';
+import { Validation } from '../../../application/core/shared/Validation';
 
 export class MerchantFields {
   private static readonly ADJACENT_HTML_PLACEMENT: InsertPosition = 'afterend';
