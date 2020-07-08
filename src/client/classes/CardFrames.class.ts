@@ -153,7 +153,9 @@ export class CardFrames extends RegisterFrames {
     this._config$.subscribe(response => {
       const { deferInit, components } = response;
 
-      this._submitButton.textContent = this._payMessage;
+      if (this._submitButton) {
+        this._submitButton.textContent = this._payMessage;
+      }
 
       if (deferInit || components.startOnLoad) {
         this._disableSubmitButton(FormState.AVAILABLE);
