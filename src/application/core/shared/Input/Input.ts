@@ -47,15 +47,14 @@ export class Input extends Frame {
     this._inputElement.value = data;
   }
 
-  protected getAllowedStyles() {
-    let allowed = super.getAllowedStyles();
-    const input = `#${this._inputSelector}`;
-    const inputError = `#${this._inputSelector}.error-field`;
-    const inputPlaceholder = `${input}::placeholder`;
-    const message = `#${this._messageSelector}`;
-    const label = `label[for=${this._inputSelector}]`;
-    allowed = {
-      ...allowed,
+  private _getInputAllowedStyles(
+    input: string,
+    inputError: string,
+    inputPlaceholder: string,
+    message: string,
+    label: string
+  ) {
+    return {
       'background-color-input': { property: 'background-color', selector: input },
       'background-color-input-error': {
         property: 'background-color',
@@ -67,6 +66,7 @@ export class Input extends Frame {
       'border-radius-input-error': { property: 'border-radius', selector: inputError },
       'border-size-input': { property: 'border-width', selector: input },
       'border-size-input-error': { property: 'border-width', selector: inputError },
+      'box-shadow-input': { property: 'box-shadow', selector: input },
       'color-error': { property: 'color', selector: message },
       'color-input': { property: 'color', selector: input },
       'color-input-error': { property: 'color', selector: inputError },
@@ -77,14 +77,37 @@ export class Input extends Frame {
       'font-size-input-error': { property: 'font-size', selector: inputError },
       'font-size-label': { property: 'font-size', selector: label },
       'font-size-message': { property: 'font-size', selector: message },
+      'font-family-input': { property: 'font-family', selector: input },
+      'font-family-input-error': { property: 'font-family', selector: inputError },
+      'font-family-label': { property: 'font-family', selector: label },
+      'font-family-message': { property: 'font-family', selector: message },
+      'height-input': { property: 'height', selector: input },
+      'height-label': { property: 'height', selector: label },
       'line-height-input': { property: 'line-height', selector: input },
       'line-height-input-error': { property: 'line-height', selector: inputError },
       'line-height-label': { property: 'line-height', selector: label },
       'line-height-message': { property: 'line-height', selector: message },
+      'margin-input': { property: 'margin', selector: input },
+      'margin-message': { property: 'margin', selector: message },
+      'outline-input': { property: 'outline', selector: input },
       'space-inset-input': { property: 'padding', selector: input },
       'space-inset-input-error': { property: 'padding', selector: inputError },
       'space-outset-input': { property: 'margin', selector: input },
       'space-outset-input-error': { property: 'margin', selector: inputError }
+    };
+  }
+
+  protected getAllowedStyles() {
+    let allowed = super.getAllowedStyles();
+    allowed = {
+      ...allowed,
+      ...this._getInputAllowedStyles(
+        `#${this._inputSelector}`,
+        `#${this._inputSelector}.error-field`,
+        `#${this._inputSelector}::placeholder`,
+        `#${this._messageSelector}`,
+        `label[for=${this._inputSelector}]`
+      )
     };
     return allowed;
   }
