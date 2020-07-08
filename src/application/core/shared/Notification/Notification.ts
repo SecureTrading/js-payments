@@ -1,16 +1,16 @@
-import { INotificationEvent } from '../models/INotificationEvent';
+import { INotificationEvent } from '../../models/INotificationEvent';
 import { Service } from 'typedi';
-import { Selectors } from './Selectors';
-import { environment } from '../../../environments/environment';
-import { Translator } from './Translator';
-import { MessageBus } from './MessageBus';
-import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
-import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
-import { Styler } from './Styler';
-import { IAllowedStyles } from '../models/IAllowedStyles';
-import { ConfigProvider } from '../services/ConfigProvider';
-import { NotificationsClasses } from '../models/constants/notifications/NotificationsClasses';
-import { NotificationsMessageTypes } from '../models/constants/notifications/NotificationsMessageTypes';
+import { Selectors } from '../Selectors';
+import { environment } from '../../../../environments/environment';
+import { Translator } from '../Translator';
+import { MessageBus } from '../MessageBus';
+import { FramesHub } from '../../../../shared/services/message-bus/FramesHub';
+import { BrowserLocalStorage } from '../../../../shared/services/storage/BrowserLocalStorage';
+import { Styler } from '../Styler';
+import { IAllowedStyles } from '../../models/IAllowedStyles';
+import { ConfigProvider } from '../../services/ConfigProvider';
+import { NotificationsClasses } from '../../models/constants/notifications/NotificationsClasses';
+import { NotificationsMessageTypes } from '../../models/constants/notifications/NotificationsMessageTypes';
 
 @Service()
 export class Notification {
@@ -33,10 +33,6 @@ export class Notification {
       this._translator = new Translator(this._browserLocalStorage.getItem('locale'));
     });
 
-    this._applyStyles();
-  }
-
-  private _applyStyles(): void {
     // @ts-ignore
     new Styler(this._getAllowedStyles()).inject(this._configProvider.getConfig().styles.notificationFrame);
   }

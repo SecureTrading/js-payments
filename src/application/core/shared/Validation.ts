@@ -9,7 +9,7 @@ import { IFormFieldState } from '../models/IFormFieldState';
 import { IMessageBusEvent } from '../models/IMessageBusEvent';
 import { IMessageBusValidateField } from '../models/IMessageBusValidateField';
 import { IValidation } from '../models/IValidation';
-import { Frame } from './Frame';
+import { Frame } from './Frame/Frame';
 import { Language } from './Language';
 import { MessageBus } from './MessageBus';
 import { Selectors } from './Selectors';
@@ -161,7 +161,7 @@ export class Validation extends Frame {
 
   constructor() {
     super();
-    this.onInit();
+    this.init();
   }
 
   public backendValidation(inputElement: HTMLInputElement, messageElement: HTMLElement, event: string) {
@@ -302,8 +302,8 @@ export class Validation extends Frame {
     this._setMessage(inputElement, messageElement, customErrorMessage);
   }
 
-  protected async onInit() {
-    super.onInit();
+  protected async init() {
+    super.init();
     this._matchDigitsRegexp = new RegExp(Validation.MATCH_DIGITS);
     this._translator = new Translator(this.params.locale);
   }

@@ -1,12 +1,12 @@
-import { IFormFieldState } from '../models/IFormFieldState';
-import { IMessageBusEvent } from '../models/IMessageBusEvent';
-import { Frame } from './Frame';
-import { Language } from './Language';
-import { Selectors } from './Selectors';
-import { Translator } from './Translator';
-import { Utils } from './Utils';
-import { Validation } from './Validation';
-import { onInputWraper } from './utils/onInputWrapper';
+import { IFormFieldState } from '../../models/IFormFieldState';
+import { IMessageBusEvent } from '../../models/IMessageBusEvent';
+import { Frame } from '../Frame/Frame';
+import { Language } from '../Language';
+import { Selectors } from '../Selectors';
+import { Translator } from '../Translator';
+import { Utils } from '../Utils';
+import { Validation } from '../Validation';
+import { onInputWraper } from '../utils/onInputWrapper';
 
 export class FormField extends Frame {
   protected static PLACEHOLDER_ATTRIBUTE: string = 'placeholder';
@@ -31,11 +31,11 @@ export class FormField extends Frame {
     this._labelSelector = labelSelector;
     this._messageSelector = messageSelector;
     this._setInputListeners();
-    this.onInit();
+    this.init();
   }
 
-  public onInit(): void {
-    super.onInit();
+  public init(): void {
+    super.init();
     this._translator = new Translator(this.params.locale);
     this.validation = new Validation();
 

@@ -12,7 +12,7 @@ import { IMerchantData } from '../../core/models/IMerchantData';
 import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
 import { IResponseData } from '../../core/models/IResponseData';
 import { ISubmitData } from '../../core/models/ISubmitData';
-import { Frame } from '../../core/shared/Frame';
+import { Frame } from '../../core/shared/Frame/Frame';
 import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { Payment } from '../../core/shared/Payment';
@@ -105,11 +105,11 @@ export class ControlFrame extends Frame {
         });
       });
 
-    config$.subscribe(config => this.onInit(config));
+    config$.subscribe(config => this.init(config));
   }
 
-  protected onInit(config: IConfig): void {
-    super.onInit();
+  protected init(config: IConfig): void {
+    super.init();
     this._setInstances();
     this._setFormFieldsValidities();
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_CARD_NUMBER, this._formFields.cardNumber);

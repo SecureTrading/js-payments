@@ -2,7 +2,7 @@ import { FormState } from '../../core/models/constants/FormState';
 import { IFormFieldState } from '../../core/models/IFormFieldState';
 import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
 import { Formatter } from '../../core/shared/Formatter';
-import { FormField } from '../../core/shared/FormField';
+import { FormField } from '../../core/shared/FormField/FormField';
 import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { Selectors } from '../../core/shared/Selectors';

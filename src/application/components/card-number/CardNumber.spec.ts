@@ -2,7 +2,7 @@ import SpyInstance = jest.SpyInstance;
 import { CardNumber } from './CardNumber';
 import { FormState } from '../../core/models/constants/FormState';
 import { Selectors } from '../../core/shared/Selectors';
-import { FormField } from '../../core/shared/FormField';
+import { FormField } from '../../core/shared/FormField/FormField';
 import { Utils } from '../../core/shared/Utils';
 import { Validation } from '../../core/shared/Validation';
 import { MessageBus } from '../../core/shared/MessageBus';
