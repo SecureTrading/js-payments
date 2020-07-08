@@ -1,6 +1,6 @@
 import { SecurityCode } from './SecurityCode';
 import { Selectors } from '../../core/shared/Selectors';
-import { FormField } from '../../core/shared/FormField/FormField';
+import { Input } from '../../core/shared/Input/Input';
 import { Utils } from '../../core/shared/Utils';
 import { instance, mock, verify, when } from 'ts-mockito';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
@@ -21,9 +21,9 @@ describe('SecurityCode', () => {
   // given
   describe('init', () => {
     // then
-    it('should create instance of classes SecurityCode and FormField representing form field', () => {
+    it('should create instance of classes SecurityCode and Input representing form field', () => {
       expect(securityCodeInstance).toBeInstanceOf(SecurityCode);
-      expect(securityCodeInstance).toBeInstanceOf(FormField);
+      expect(securityCodeInstance).toBeInstanceOf(Input);
     });
   });
 

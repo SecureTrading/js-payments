@@ -8,7 +8,7 @@ import { Utils } from '../Utils';
 import { Validation } from '../Validation';
 import { onInputWraper } from '../utils/onInputWrapper';
 
-export class FormField extends Frame {
+export class Input extends Frame {
   protected static PLACEHOLDER_ATTRIBUTE: string = 'placeholder';
   public validation: Validation;
   protected _inputSelector: string;

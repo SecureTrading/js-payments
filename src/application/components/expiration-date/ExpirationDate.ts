@@ -1,7 +1,7 @@
 import { FormState } from '../../core/models/constants/FormState';
 import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
 import { Formatter } from '../../core/shared/Formatter';
-import { FormField } from '../../core/shared/FormField/FormField';
+import { Input } from '../../core/shared/Input/Input';
 import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { Selectors } from '../../core/shared/Selectors';
@@ -9,7 +9,7 @@ import { Service } from 'typedi';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
 
 @Service()
-export class ExpirationDate extends FormField {
+export class ExpirationDate extends Input {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.EXPIRATION_DATE_INPUT) as HTMLInputElement;
   private static DISABLED_ATTRIBUTE: string = 'disabled';

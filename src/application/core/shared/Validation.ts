@@ -151,7 +151,6 @@ export class Validation extends Frame {
   public validation: IValidation;
   private _card: ICard;
   private _currentKeyCode: number;
-  private _cursorSkip: number = 0;
   private _formValidity: boolean;
   private _isPaymentReady: boolean;
   private _matchDigitsRegexp: RegExp;
@@ -302,7 +301,7 @@ export class Validation extends Frame {
     this._setMessage(inputElement, messageElement, customErrorMessage);
   }
 
-  protected async init() {
+  protected init() {
     super.init();
     this._matchDigitsRegexp = new RegExp(Validation.MATCH_DIGITS);
     this._translator = new Translator(this.params.locale);

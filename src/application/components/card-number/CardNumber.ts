@@ -2,7 +2,7 @@ import { FormState } from '../../core/models/constants/FormState';
 import { IFormFieldState } from '../../core/models/IFormFieldState';
 import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
 import { Formatter } from '../../core/shared/Formatter';
-import { FormField } from '../../core/shared/FormField/FormField';
+import { Input } from '../../core/shared/Input/Input';
 import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { Selectors } from '../../core/shared/Selectors';
@@ -14,7 +14,7 @@ import { ConfigProvider } from '../../core/services/ConfigProvider';
 import { IconFactory } from '../../core/services/icon/IconFactory';
 
 @Service()
-export class CardNumber extends FormField {
+export class CardNumber extends Input {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
 

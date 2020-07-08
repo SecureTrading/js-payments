@@ -2,7 +2,7 @@ import SpyInstance = jest.SpyInstance;
 import { CardNumber } from './CardNumber';
 import { FormState } from '../../core/models/constants/FormState';
 import { Selectors } from '../../core/shared/Selectors';
-import { FormField } from '../../core/shared/FormField/FormField';
+import { Input } from '../../core/shared/Input/Input';
 import { Utils } from '../../core/shared/Utils';
 import { Validation } from '../../core/shared/Validation';
 import { MessageBus } from '../../core/shared/MessageBus';
@@ -30,7 +30,7 @@ describe('CardNumber', () => {
 
   // then
   it('should create cardNumberInstance of class CardNumber', () => {
-    expect(cardNumberInstance).toBeInstanceOf(FormField);
+    expect(cardNumberInstance).toBeInstanceOf(Input);
   });
 
   // then

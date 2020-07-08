@@ -1,7 +1,7 @@
 import { FormState } from '../../core/models/constants/FormState';
 import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
 import { Formatter } from '../../core/shared/Formatter';
-import { FormField } from '../../core/shared/FormField/FormField';
+import { Input } from '../../core/shared/Input/Input';
 import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { Selectors } from '../../core/shared/Selectors';
@@ -19,7 +19,7 @@ import { BrowserSessionStorage } from '../../../shared/services/storage/BrowserS
 import { DefaultPlaceholders } from '../../core/models/constants/config-resolver/DefaultPlaceholders';
 
 @Service()
-export class SecurityCode extends FormField {
+export class SecurityCode extends Input {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.SECURITY_CODE_INPUT) as HTMLInputElement;
   private static BLOCK_CVV_ATTRIBUTE: string = 'block-cvv';

@@ -1,8 +1,6 @@
 import { Container } from 'typedi';
-import { IConfig } from '../../../../shared/model/config/IConfig';
 import { IAllowedStyles } from '../../models/IAllowedStyles';
 import { IParams } from '../../models/IParams';
-import { IStyle } from '../../../../shared/model/config/IStyle';
 import { MessageBus } from '../MessageBus';
 import { Styler } from '../Styler';
 import { FramesHub } from '../../../../shared/services/message-bus/FramesHub';
@@ -10,7 +8,10 @@ import '../OverrideDomain';
 import { frameAllowedStyles } from './frame-const';
 
 export class Frame {
-  protected params: IParams;
+  protected params: IParams = {
+    // @ts-ignore
+    styles: {}
+  };
 
   constructor(protected messageBus?: MessageBus, protected framesHub?: FramesHub) {
     this.messageBus = this.messageBus || Container.get(MessageBus);
@@ -18,25 +19,8 @@ export class Frame {
     this.framesHub.notifyReadyState();
   }
 
-  public parseUrl(): IParams {
-    const parsedUrl = new URL(window.location.href);
-    const styles: IStyle = {};
-    const params: IParams = {};
-    const allowedParams = this.getAllowedParams();
-    parsedUrl.searchParams.forEach((value, param) => {
-      if (allowedParams.includes(param)) {
-        params[param] = value;
-      } else {
-        styles[param] = value;
-      }
-    });
-    // @ts-ignore
-    params.styles = styles;
-    return params;
-  }
-
-  protected init(config?: IConfig): void {
-    this.params = this.parseUrl();
+  protected init(): void {
+    this.params.styles = this._parseUrl().styles;
     new Styler(this.getAllowedStyles()).inject(this.params.styles);
   }
 
@@ -46,5 +30,20 @@ export class Frame {
 
   protected getAllowedStyles(): IAllowedStyles {
     return frameAllowedStyles;
+  }
+
+  private _parseUrl(): IParams {
+    const parsedUrl = new URL(window.location.href);
+    const allowedParams = this.getAllowedParams();
+
+    parsedUrl.searchParams.forEach((value: string, param: string) => {
+      if (allowedParams.includes(param)) {
+        this.params[param] = value;
+      } else {
+        // @ts-ignore
+        this.params.styles[param] = value;
+      }
+    });
+    return this.params;
   }
 }
