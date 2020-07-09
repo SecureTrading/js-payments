@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.3.1
+
+### Fixed
+- Error which occurs on forms without submit button.
+- Feature for removing listener which blocks submitting a form.
+
 ## 2.3.0
 
 ### Added
