@@ -109,7 +109,7 @@ export class ControlFrame extends Frame {
   }
 
   protected init(config: IConfig): void {
-    super.init();
+    super.init(config);
     this._setInstances();
     this._setFormFieldsValidities();
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_CARD_NUMBER, this._formFields.cardNumber);

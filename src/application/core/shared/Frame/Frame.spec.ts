@@ -27,22 +27,21 @@ describe('Frame', () => {
     window.history.pushState({}, 'Test Title', url);
     // @ts-ignore
     frame.getAllowedParams = jest.fn().mockReturnValueOnce(['locale', 'origin']);
-    let actual = frame.parseUrl();
+    // @ts-ignore
+    let actual = frame._parseUrl();
     expect(actual.length).toBe(expected.length);
     expect(actual).toMatchObject(expected);
   });
 
-  describe('Frame.onInit', () => {
+  describe('Frame.init', () => {
     it('should call parseUrl', () => {
       let frame = new Frame();
-      frame.parseUrl = jest.fn().mockReturnValueOnce({ origin: 'https://example.com' });
-      frame.applyStyles = jest.fn();
       // @ts-ignore
-      frame.onInit();
-      expect(frame.parseUrl).toHaveBeenCalledTimes(1);
-      expect(frame.applyStyles).toHaveBeenCalledTimes(1);
+      frame._parseUrl = jest.fn().mockReturnValueOnce({ origin: 'https://example.com' });
       // @ts-ignore
-      expect(frame.params).toMatchObject({ origin: 'https://example.com' });
+      frame.init();
+      // @ts-ignore
+      expect(frame._parseUrl).toHaveBeenCalledTimes(1);
     });
   });
 });

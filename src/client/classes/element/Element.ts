@@ -10,8 +10,8 @@ export class Element {
     const urls = new Map(
       Object.entries({
         cardNumber: Selectors.CARD_NUMBER_COMPONENT,
-        expiryDate: Selectors.SECURITY_CODE_COMPONENT,
-        securityCode: Selectors.EXPIRATION_DATE_COMPONENT,
+        expirationDate: Selectors.EXPIRATION_DATE_COMPONENT,
+        securityCode: Selectors.SECURITY_CODE_COMPONENT,
         animatedCard: Selectors.ANIMATED_CARD_COMPONENT,
         controlFrame: Selectors.CONTROL_FRAME_COMPONENT
       })
@@ -35,11 +35,10 @@ export class Element {
     };
   }
 
-  public init() {
+  public init(): HTMLIFrameElement {
     const iframe = document.createElement('iframe');
-    Object.keys(this._attributes).forEach((name: string) => {
-      iframe.setAttribute(name, this._attributes[name]);
-    });
+    // @ts-ignore
+    Object.keys(this._attributes).forEach((name: string) => iframe.setAttribute(name, this._attributes[name]));
     return iframe;
   }
 }
