@@ -24,11 +24,16 @@ import { StTransport } from '../../services/StTransport.class';
 import { CardinalProvider } from './CardinalProvider';
 import { IAuthorizePaymentResponse } from '../../models/IAuthorizePaymentResponse';
 import { Language } from '../../shared/Language';
-import { CardinalRemoteClient } from './CardinalRemoteClient';
 
 @Service()
 export class CardinalCommerce {
+  public static readonly UI_EVENTS = {
+    RENDER: 'ui.render',
+    CLOSE: 'ui.close'
+  };
   private cardinalTokens: ICardinalCommerceTokens;
+  private cardinal$: Observable<ICardinal>;
+  private cardinalValidated$: Subject<[IOnCardinalValidated, string]>;
   private destroy$: Observable<void>;
 
   constructor(
@@ -37,32 +42,25 @@ export class CardinalCommerce {
     private framesHub: FramesHub,
     private tokenProvider: CardinalCommerceTokensProvider,
     private stTransport: StTransport,
-    private cardinalProvider: CardinalProvider,
-    private cardinalClient: CardinalRemoteClient
+    private cardinalProvider: CardinalProvider
   ) {
     this.destroy$ = this.messageBus.pipe(ofType(MessageBus.EVENTS_PUBLIC.DESTROY), mapTo(void 0));
+    this.cardinalValidated$ = new Subject<[IOnCardinalValidated, string]>();
 
-    // this.cardinalValidated$
-    //   .pipe(filter(data => data[0].ActionCode === 'ERROR'))
-    //   .subscribe(() => this.notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
+    this.cardinalValidated$
+      .pipe(filter(data => data[0].ActionCode === 'ERROR'))
+      .subscribe(() => this.notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
   }
 
-  init(): Observable<any> {
-    return this.acquireCardinalCommerceTokens().pipe(
-      switchMap(tokens => this.cardinalClient.setup(tokens.jwt)),
-      tap(() => GoogleAnalytics.sendGaData('event', 'Cardinal', 'init', 'Cardinal Setup Completed'))
+  init(config: IConfig): Observable<ICardinal> {
+    this.cardinal$ = this.acquireCardinalCommerceTokens().pipe(
+      switchMap(tokens => this.setupCardinalCommerceLibrary(tokens, Boolean(config.livestatus))),
+      tap(cardinal => this._initSubscriptions(cardinal)),
+      tap(() => GoogleAnalytics.sendGaData('event', 'Cardinal', 'init', 'Cardinal Setup Completed')),
+      shareReplay(1)
     );
-    //
-    // this.cardinalClient.setup(config.)
-    //
-    // this.cardinal$ = this.acquireCardinalCommerceTokens().pipe(
-    //   switchMap(tokens => this.setupCardinalCommerceLibrary(tokens, Boolean(config.livestatus))),
-    //   tap(cardinal => this._initSubscriptions(cardinal)),
-    //   tap(() => GoogleAnalytics.sendGaData('event', 'Cardinal', 'init', 'Cardinal Setup Completed')),
-    //   shareReplay(1)
-    // );
-    //
-    // return this.cardinal$;
+
+    return this.cardinal$;
   }
 
   performThreeDQuery(
@@ -98,6 +96,36 @@ export class CardinalCommerce {
           data: tokens
         })
       )
+    );
+  }
+
+  private setupCardinalCommerceLibrary(tokens: ICardinalCommerceTokens, liveStatus: boolean): Observable<ICardinal> {
+    return this.cardinalProvider.getCardinal$(liveStatus).pipe(
+      switchMap(cardinal => {
+        cardinal.configure(environment.CARDINAL_COMMERCE.CONFIG);
+
+        cardinal.on(CardinalCommerce.UI_EVENTS.RENDER, () => {
+          this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CONTROL_FRAME_SHOW }, true);
+        });
+        cardinal.on(CardinalCommerce.UI_EVENTS.CLOSE, () => {
+          this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CONTROL_FRAME_HIDE }, true);
+        });
+        cardinal.on(PaymentEvents.VALIDATED, (data: IOnCardinalValidated, jwt: string) => {
+          this.cardinalValidated$.next([data, jwt]);
+        });
+
+        return new Observable<ICardinal>(observer => {
+          cardinal.on(PaymentEvents.SETUP_COMPLETE, () => {
+            observer.next(cardinal);
+            observer.complete();
+            this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.UNLOCK_BUTTON }, true);
+          });
+
+          cardinal.setup(PaymentEvents.INIT, {
+            jwt: tokens.jwt
+          });
+        });
+      })
     );
   }
 
