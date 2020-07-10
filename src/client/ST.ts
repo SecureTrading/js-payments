@@ -369,8 +369,10 @@ class ST {
       form.querySelector(ST.BUTTON_SUBMIT_SELECTOR) ||
       form.querySelector(ST.INPUT_SUBMIT_SELECTOR);
 
-    submitButton.classList.add(ST.BUTTON_DISABLED_CLASS);
-    submitButton.disabled = true;
+    if (submitButton) {
+      submitButton.classList.add(ST.BUTTON_DISABLED_CLASS);
+      submitButton.disabled = true;
+    }
   }
 }
 
