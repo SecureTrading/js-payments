@@ -20,7 +20,7 @@ export class Frame {
     this.framesHub.notifyReadyState();
   }
 
-  protected init(config: IConfig): void {
+  protected init(config?: IConfig): void {
     this.params.styles = this._parseUrl().styles;
     new Styler(this.getAllowedStyles()).inject(this.params.styles);
   }

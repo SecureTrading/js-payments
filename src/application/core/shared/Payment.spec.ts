@@ -7,7 +7,7 @@ import { mock, instance as mockInstance, when } from 'ts-mockito';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 import { ICard } from '../models/ICard';
 
-jest.mock('../../../../src/application/core/shared/Notification');
+jest.mock('../../../../src/application/core/shared/notification/Notification');
 
 const cybertonicaTid = 'b268ab7f-25d7-430a-9be2-82b0f00c4039';
 

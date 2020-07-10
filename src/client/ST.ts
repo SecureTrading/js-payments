@@ -34,7 +34,7 @@ import { InterFrameCommunicator } from '../shared/services/message-bus/InterFram
 import { FramesHub } from '../shared/services/message-bus/FramesHub';
 import { BrowserLocalStorage } from '../shared/services/storage/BrowserLocalStorage';
 import { BrowserSessionStorage } from '../shared/services/storage/BrowserSessionStorage';
-import { Notification } from '../application/core/shared/Notification/Notification';
+import { Notification } from '../application/core/shared/notification/Notification';
 import { ofType } from '../shared/services/message-bus/operators/ofType';
 import { Subject, Subscription } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';

@@ -1,6 +1,6 @@
 import { SecurityCode } from './SecurityCode';
 import { Selectors } from '../../core/shared/Selectors';
-import { Input } from '../../core/shared/Input/Input';
+import { Input } from '../../core/shared/input/Input';
 import { Utils } from '../../core/shared/Utils';
 import { instance, mock, verify, when } from 'ts-mockito';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
@@ -12,7 +12,7 @@ import { IConfig } from '../../../shared/model/config/IConfig';
 import { BrowserSessionStorage } from '../../../shared/services/storage/BrowserSessionStorage';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
-jest.mock('../../../../src/application/core/shared/Notification');
+jest.mock('../../../../src/application/core/shared/notification/Notification');
 
 // given
 describe('SecurityCode', () => {
@@ -21,7 +21,7 @@ describe('SecurityCode', () => {
   // given
   describe('init', () => {
     // then
-    it('should create instance of classes SecurityCode and Input representing form field', () => {
+    it('should create instance of classes SecurityCode and input representing form field', () => {
       expect(securityCodeInstance).toBeInstanceOf(SecurityCode);
       expect(securityCodeInstance).toBeInstanceOf(Input);
     });

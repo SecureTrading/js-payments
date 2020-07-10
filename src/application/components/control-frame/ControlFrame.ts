@@ -12,7 +12,7 @@ import { IMerchantData } from '../../core/models/IMerchantData';
 import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
 import { IResponseData } from '../../core/models/IResponseData';
 import { ISubmitData } from '../../core/models/ISubmitData';
-import { Frame } from '../../core/shared/Frame/Frame';
+import { Frame } from '../../core/shared/frame/Frame';
 import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { Payment } from '../../core/shared/Payment';

@@ -1,6 +1,6 @@
 import { IFormFieldState } from '../../models/IFormFieldState';
 import { IMessageBusEvent } from '../../models/IMessageBusEvent';
-import { Frame } from '../Frame/Frame';
+import { Frame } from '../frame/Frame';
 import { Language } from '../Language';
 import { Selectors } from '../Selectors';
 import { Translator } from '../Translator';

@@ -9,7 +9,7 @@ import { IFormFieldState } from '../models/IFormFieldState';
 import { IMessageBusEvent } from '../models/IMessageBusEvent';
 import { IMessageBusValidateField } from '../models/IMessageBusValidateField';
 import { IValidation } from '../models/IValidation';
-import { Frame } from './Frame/Frame';
+import { Frame } from './frame/Frame';
 import { Language } from './Language';
 import { MessageBus } from './MessageBus';
 import { Selectors } from './Selectors';

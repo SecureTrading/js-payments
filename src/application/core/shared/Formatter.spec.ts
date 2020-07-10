@@ -1,7 +1,7 @@
 import { Formatter } from './Formatter';
 import { Selectors } from './Selectors';
 
-jest.mock('../../../../src/application/core/shared/Notification');
+jest.mock('../../../../src/application/core/shared/notification/Notification');
 
 // given
 describe('Formatter', () => {
