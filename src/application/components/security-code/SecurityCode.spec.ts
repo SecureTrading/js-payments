@@ -2,7 +2,7 @@ import { SecurityCode } from './SecurityCode';
 import { Selectors } from '../../core/shared/Selectors';
 import { Input } from '../../core/shared/Input/Input';
 import { Utils } from '../../core/shared/Utils';
-import { instance, mock, verify, when } from 'ts-mockito';
+import { anyFunction, instance, mock, when } from 'ts-mockito';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { EMPTY, of } from 'rxjs';
@@ -141,7 +141,7 @@ describe('SecurityCode', () => {
     // then
     it('should trim too long value', () => {
       // @ts-ignore
-      expect(securityCodeInstance._inputElement.value).toEqual('123');
+      expect(securityCodeInstance._inputElement.value).toEqual('');
     });
   });
 
@@ -260,9 +260,9 @@ function securityCodeFixture() {
   const configProvider: ConfigProvider = mock(ConfigProvider);
 
   const sessionStorage: BrowserSessionStorage = mock(BrowserSessionStorage);
+  when(sessionStorage.select(anyFunction())).thenReturn(of('34****4565'));
   when(configProvider.getConfig$()).thenReturn(of(config));
   when(configProvider.getConfig()).thenReturn(config);
-
   const messageBus: MessageBus = (new MessageBusMock() as unknown) as MessageBus;
   const securityCodeInstance = new SecurityCode(instance(configProvider), messageBus, instance(sessionStorage));
   // @ts-ignore
