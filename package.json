@@ -141,7 +141,7 @@
     "redux-logger": "^3.0.6",
     "redux-observable": "^1.2.0",
     "reflect-metadata": "0.1.13",
-    "rxjs": "^6.5.5",
+    "rxjs": "^6.6.0",
     "stylelint": "^13.6.1",
     "ts-money": "^0.4.6",
     "typedi": "^0.8.0",
