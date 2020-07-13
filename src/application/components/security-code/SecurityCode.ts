@@ -8,7 +8,7 @@ import { Selectors } from '../../core/shared/Selectors';
 import { Validation } from '../../core/shared/Validation';
 import { Service } from 'typedi';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, startWith, switchMap, tap } from 'rxjs/operators';
 import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { IFormFieldState } from '../../core/models/IFormFieldState';
 import { merge, Observable } from 'rxjs';
@@ -17,6 +17,8 @@ import { IDecodedJwt } from '../../core/models/IDecodedJwt';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { BrowserSessionStorage } from '../../../shared/services/storage/BrowserSessionStorage';
 import { DefaultPlaceholders } from '../../core/models/constants/config-resolver/DefaultPlaceholders';
+import { LONG_CVC, SHORT_CVC } from '../../core/models/constants/SecurityCode';
+import { IConfig } from '../../../shared/model/config/IConfig';
 
 @Service()
 export class SecurityCode extends Input {
@@ -30,13 +32,12 @@ export class SecurityCode extends Input {
   private static DISABLED_PARAM: string = 'disabled';
   private static MATCH_EXACTLY_FOUR_DIGITS: string = '^[0-9]{4}$';
   private static MATCH_EXACTLY_THREE_DIGITS: string = '^[0-9]{3}$';
-  private static SPECIAL_INPUT_LENGTH: number = 4;
-  private static STANDARD_INPUT_LENGTH: number = 3;
 
   private _formatter: Formatter;
   private _securityCodeLength: number;
   private _securityCodeWrapper: HTMLElement;
   private _validation: Validation;
+  private _config: IConfig;
 
   constructor(
     private _configProvider: ConfigProvider,
@@ -48,18 +49,34 @@ export class SecurityCode extends Input {
     this._formatter = new Formatter();
     this._validation = new Validation();
     this._securityCodeWrapper = document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR) as HTMLElement;
-    this._securityCodeLength = SecurityCode.STANDARD_INPUT_LENGTH;
+    this._securityCodeLength = SHORT_CVC;
     this.placeholder = this._getPlaceholder(this._securityCodeLength);
     this._securityCodeUpdate$()
       .pipe(filter(Boolean))
       .subscribe((securityCodeLength: number) => {
+        this.placeholder = this._getPlaceholder(securityCodeLength);
         this._securityCodeLength = securityCodeLength;
-        this._messageBus.publish({ type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH, data: securityCodeLength });
+        this._messageBus.publish({
+          type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH,
+          data: this._securityCodeLength
+        });
       });
     this._init();
   }
 
   private _getPlaceholder(securityCodeLength: number): string {
+    if (!this._configProvider.getConfig()) {
+      return '***';
+    }
+    if (
+      securityCodeLength === -1 &&
+      this._configProvider.getConfig() &&
+      this._configProvider.getConfig().placeholders
+    ) {
+      return this._configProvider.getConfig().placeholders.securitycode
+        ? this._configProvider.getConfig().placeholders.securitycode
+        : '***';
+    }
     if (
       this._configProvider.getConfig().placeholders.securitycode &&
       this._configProvider.getConfig().placeholders.securitycode === DefaultPlaceholders.securitycode
@@ -83,19 +100,24 @@ export class SecurityCode extends Input {
       map(jwt => JwtDecode<IDecodedJwt>(jwt).payload.pan)
     );
 
-    const maskedPanFromJsInit$: Observable<string> = this._sessionStorage.select(store => store['app.maskedpan']);
+    const maskedPanFromJsInit$: Observable<string> = this._configProvider.getConfig$().pipe(
+      filter((config: IConfig) => config.deferInit === false),
+      tap((config: IConfig) => (this._config = config)),
+      switchMap(() => this._sessionStorage.select(store => store['app.maskedpan']))
+    );
 
     return merge(cardNumberInput$, cardNumberFromJwt$, maskedPanFromJsInit$).pipe(
       filter(Boolean),
       map((cardNumber: string) => {
         if (!cardNumber || !iinLookup.lookup(cardNumber).type) {
-          return 3;
+          return -1;
         }
         if (!iinLookup.lookup(cardNumber).cvcLength[0]) {
-          return 3;
+          return 4;
         }
         return iinLookup.lookup(cardNumber).cvcLength[0];
-      })
+      }),
+      startWith(-1)
     );
   }
 
@@ -180,10 +202,12 @@ export class SecurityCode extends Input {
   }
 
   private _checkSecurityCodeLength(length: number): void {
-    if (length === SecurityCode.SPECIAL_INPUT_LENGTH) {
+    if (length === LONG_CVC) {
       this._setSecurityCodeProperties(length, SecurityCode.MATCH_EXACTLY_FOUR_DIGITS);
-    } else if (length === SecurityCode.STANDARD_INPUT_LENGTH) {
+    } else if (length === SHORT_CVC) {
       this._setSecurityCodeProperties(length, SecurityCode.MATCH_EXACTLY_THREE_DIGITS);
+    } else {
+      this._setSecurityCodeProperties(LONG_CVC, '^[0-9]{3,4}$');
     }
   }
 

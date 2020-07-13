@@ -40,7 +40,7 @@ export class Styler {
     const sanitized: IStyle = {};
     // tslint:disable-next-line:forin
     for (const style in styles) {
-      if (/^[A-Za-z0-9 _%#]*[A-Za-z0-9][A-Za-z0-9 _%#]*$/i.test(styles[style])) {
+      if (/^[A-Za-z0-9 _%#)(,.]*[A-Za-z0-9][A-Za-z0-9 _%#)(,.]*$/i.test(styles[style])) {
         sanitized[style] = styles[style];
       }
     }

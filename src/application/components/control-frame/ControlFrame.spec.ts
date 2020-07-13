@@ -7,12 +7,12 @@ import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLoc
 import { BrowserSessionStorage } from '../../../shared/services/storage/BrowserSessionStorage';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
-import { mock, instance as mockInstance, when, anyString } from 'ts-mockito';
+import { mock, instance as mockInstance, when, anyString, anything } from 'ts-mockito';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
 import { Cybertonica } from '../../core/integrations/Cybertonica';
 import { CardinalCommerce } from '../../core/integrations/cardinal-commerce/CardinalCommerce';
 import { IConfig } from '../../../shared/model/config/IConfig';
-import { of } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import { ConfigService } from '../../../client/config/ConfigService';
 
 jest.mock('../../../../src/application/core/shared/Payment');
@@ -479,8 +479,8 @@ function controlFrameFixture() {
   when(communicator.whenReceive(anyString())).thenReturn({
     thenRespond: () => undefined
   });
-
   when(configProvider.getConfig$()).thenReturn(of({} as IConfig));
+  when(cardinalCommerce.init(anything())).thenReturn(EMPTY);
 
   const instance = new ControlFrame(
     mockInstance(localStorage),
@@ -499,5 +499,9 @@ function controlFrameFixture() {
     validity: true,
     value: 'test value'
   };
+
+  // @ts-ignore
+  instance.init({} as IConfig);
+
   return { data, instance, messageBusEvent };
 }
