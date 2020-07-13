@@ -5,7 +5,7 @@ import { InterFrameCommunicator } from '../../../shared/services/message-bus/Int
 import { EMPTY, of } from 'rxjs';
 
 jest.mock('../../../../src/application/core/integrations/GoogleAnalytics');
-jest.mock('../../../../src/application/core/shared/Notification');
+jest.mock('../../../../src/application/core/shared/Notification/Notification');
 
 // given
 describe('Visa Checkout', () => {

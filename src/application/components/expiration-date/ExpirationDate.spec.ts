@@ -6,7 +6,7 @@ import { ConfigProvider } from '../../core/services/ConfigProvider';
 import { mock, instance, when } from 'ts-mockito';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
-jest.mock('../../../../src/application/core/shared/Notification');
+jest.mock('../../../../src/application/core/shared/Notification/Notification');
 
 // given
 describe('ExpirationDate', () => {

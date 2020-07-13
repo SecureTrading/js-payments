@@ -12,7 +12,7 @@ import { IConfig } from '../../../shared/model/config/IConfig';
 import { BrowserSessionStorage } from '../../../shared/services/storage/BrowserSessionStorage';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
-jest.mock('../../../../src/application/core/shared/Notification');
+jest.mock('../../../../src/application/core/shared/Notification/Notification');
 
 // given
 describe('SecurityCode', () => {

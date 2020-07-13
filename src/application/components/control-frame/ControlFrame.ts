@@ -116,7 +116,7 @@ export class ControlFrame extends Frame {
       .subscribe(config => this.init(config));
   }
 
-  protected init(config: IConfig): void {
+  protected init(config?: IConfig): void {
     super.init();
     this._setInstances();
     this._setFormFieldsValidities();

@@ -3,8 +3,8 @@ import { Language } from '../Language';
 import { Utils } from '../Utils';
 import { Validation } from '../Validation';
 
-jest.mock('../../../../src/application/core/shared/Validation');
-jest.mock('../../../../src/application/core/shared/Notification');
+jest.mock('./../../../../../src/application/core/shared/Notification/Notification');
+jest.mock('./../../../../../src/application/core/shared/Validation');
 
 // given
 describe('FormField', () => {

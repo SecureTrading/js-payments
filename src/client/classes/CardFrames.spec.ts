@@ -8,7 +8,7 @@ import { ConfigProvider } from '../../application/core/services/ConfigProvider';
 import { instance as instanceOf, mock, when } from 'ts-mockito';
 import { of } from 'rxjs';
 
-jest.mock('./../../../src/application/core/shared/Notification');
+jest.mock('./../../../src/application/core/shared/Notification/Notification');
 
 // given
 describe('CardFrames', () => {

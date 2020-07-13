@@ -501,7 +501,7 @@ function controlFrameFixture() {
   };
 
   // @ts-ignore
-  instance.onInit({} as IConfig);
+  instance.init({} as IConfig);
 
   return { data, instance, messageBusEvent };
 }
