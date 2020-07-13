@@ -81,8 +81,6 @@ export class Input extends Frame {
       'font-family-input-error': { property: 'font-family', selector: inputError },
       'font-family-label': { property: 'font-family', selector: label },
       'font-family-message': { property: 'font-family', selector: message },
-      'height-input': { property: 'height', selector: input },
-      'height-label': { property: 'height', selector: label },
       'line-height-input': { property: 'line-height', selector: input },
       'line-height-input-error': { property: 'line-height', selector: inputError },
       'line-height-label': { property: 'line-height', selector: label },
