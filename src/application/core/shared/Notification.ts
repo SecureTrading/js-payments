@@ -37,8 +37,10 @@ export class Notification {
   }
 
   private _applyStyles(): void {
-    // @ts-ignore
-    new Styler(this._getAllowedStyles()).inject(this._configProvider.getConfig().styles.notificationFrame);
+    this._configProvider.getConfig$().subscribe(config => {
+      // @ts-ignore
+      new Styler(this._getAllowedStyles()).inject(config.styles.notificationFrame);
+    });
   }
 
   private _getAllowedStyles(): IAllowedStyles {

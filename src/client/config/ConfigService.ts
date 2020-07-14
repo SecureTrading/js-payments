@@ -16,8 +16,6 @@ export class ConfigService {
   ) {}
 
   update(config: IConfig): IConfig {
-    this.storage.setItem(ConfigService.STORAGE_KEY, null);
-
     const fullConfig = this.resolver.resolve(config);
     const validationError = this.validator.validate(fullConfig);
 
@@ -25,7 +23,7 @@ export class ConfigService {
       throw validationError;
     }
 
-    this.storage.setItem(ConfigService.STORAGE_KEY, JSON.stringify(fullConfig));
+    this.storage.setItem(ConfigService.STORAGE_KEY, fullConfig);
 
     Container.set(CONFIG, fullConfig);
 
@@ -33,6 +31,6 @@ export class ConfigService {
   }
 
   clear(synchronize: boolean): void {
-    this.storage.setItem(ConfigService.STORAGE_KEY, null, synchronize);
+    this.storage.setItem(ConfigService.STORAGE_KEY, null);
   }
 }
