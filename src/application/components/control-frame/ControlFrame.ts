@@ -86,6 +86,18 @@ export class ControlFrame extends Frame {
     private _configService: ConfigService
   ) {
     super();
+    this._localStorage.init();
+
+    this._communicator
+      .whenReceive(MessageBus.EVENTS_PUBLIC.INIT_CONTROL_FRAME)
+      .thenRespond((event: IMessageBusEvent<string>) => {
+        const config: IConfig = JSON.parse(event.data);
+        this._configService.update(config);
+        this.onInit(config);
+
+        return of(config);
+      });
+
     this.messageBus
       .pipe(
         ofType(MessageBus.EVENTS_PUBLIC.JSINIT_RESPONSE),
@@ -101,31 +113,6 @@ export class ControlFrame extends Frame {
           data: this._slicedPan
         });
       });
-
-    // this._communicator.whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK).thenRespond(() => config$);
-
-    this._communicator
-      .whenReceive(MessageBus.EVENTS_PUBLIC.INIT_CONTROL_FRAME)
-      .thenRespond((event: IMessageBusEvent<string>) => {
-        const config: IConfig = JSON.parse(event.data);
-        this._localStorage.init();
-        this._configService.update(config);
-        this.onInit(config);
-
-        return of(config);
-      });
-
-    // this.messageBus
-    //   .pipe(
-    //     ofType(PUBLIC_EVENTS.INIT_CONTROL_FRAME),
-    //     map((event: IMessageBusEvent<string>) => JSON.parse(event.data))
-    //   )
-    //   .subscribe(config => {
-    //     this._localStorage.init();
-    //     this._configService.update(config);
-    //     config$.next(config);
-    //     this.onInit(config);
-    //   });
   }
 
   protected onInit(config: IConfig): void {

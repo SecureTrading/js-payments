@@ -24,6 +24,8 @@ export class Notification {
     private _configProvider: ConfigProvider,
     private _framesHub: FramesHub
   ) {
+    this._applyStyles();
+
     this._messageMap = new Map(Object.entries(NotificationsClasses));
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, (event: INotificationEvent) => {
       this._displayNotification(event);
@@ -32,8 +34,6 @@ export class Notification {
     this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(() => {
       this._translator = new Translator(this._browserLocalStorage.getItem('locale'));
     });
-
-    this._applyStyles();
   }
 
   private _applyStyles(): void {
