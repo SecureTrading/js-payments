@@ -1,10 +1,12 @@
+import { Service } from 'typedi';
 import { IStyle } from '../../../shared/model/config/IStyle';
 import { Selectors } from '../../../application/core/shared/Selectors';
 import { IframeFactoryAttributes } from './IframeFactoryAttributes';
-import { Service } from 'typedi';
 
-@Service
+@Service()
 export class IframeFactory {
+  private static ATTRIBUTES: IframeFactoryAttributes;
+  private static SRC: string;
   private static URLS = new Map(
     Object.entries({
       cardNumber: Selectors.CARD_NUMBER_COMPONENT,
@@ -14,8 +16,6 @@ export class IframeFactory {
       controlFrame: Selectors.CONTROL_FRAME_COMPONENT
     })
   );
-  private static _attributes: IframeFactoryAttributes;
-  private static _src: string;
 
   create(name: string, id: string, styles?: IStyle, params?: {}, tabIndex?: number): HTMLIFrameElement {
     const componentParams = new URLSearchParams(params).toString();
@@ -23,20 +23,23 @@ export class IframeFactory {
     const componentAddress = IframeFactory.URLS.get(name);
     const iframe = document.createElement('iframe');
 
-    IframeFactory._src = `${componentAddress}?${componentStyles}${componentParams ? '&' + componentParams : ''}`;
+    IframeFactory.SRC = `${componentAddress}?${componentStyles}${componentParams ? '&' + componentParams : ''}`;
 
-    IframeFactory._attributes = {
+    IframeFactory.ATTRIBUTES = {
       id,
       class: id,
-      src: IframeFactory._src,
+      src: IframeFactory.SRC,
       name: id,
       allowTransparency: true,
       scrolling: 'no',
       frameBorder: 0,
       tabIndex
     };
-    // @ts-ignore
-    Object.keys(this._attributes).forEach((value: string) => iframe.setAttribute(value, this._attributes[value]));
+
+    Object.keys(IframeFactory.ATTRIBUTES).forEach((value: string) =>
+      // @ts-ignore
+      iframe.setAttribute(value, IframeFactory.ATTRIBUTES[value])
+    );
     return iframe;
   }
 }
