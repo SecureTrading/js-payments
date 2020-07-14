@@ -43,6 +43,7 @@ import { switchMap } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { FrameIdentifier } from '../shared/services/message-bus/FrameIdentifier';
 import { PUBLIC_EVENTS } from '../application/core/shared/EventTypes';
+import { IframeFactory } from './classes/element/IframeFactory';
 
 @Service()
 class ST {
@@ -103,7 +104,8 @@ class ST {
     private _storage: BrowserLocalStorage,
     private _sessionStorage: BrowserSessionStorage,
     private _messageBus: MessageBus,
-    private _notification: Notification
+    private _notification: Notification,
+    private _iframeFactory: IframeFactory
   ) {
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
@@ -250,7 +252,8 @@ class ST {
       this._config.buttonId,
       this._config.fieldsToSubmit,
       this._config.formId,
-      this._configProvider
+      this._configProvider,
+      this._iframeFactory
     );
   }
 
@@ -267,7 +270,8 @@ class ST {
       this._config.datacenterurl,
       this._config.animatedCard,
       this._config.components.requestTypes,
-      this._config.formId
+      this._config.formId,
+      this._iframeFactory
     );
   }
 

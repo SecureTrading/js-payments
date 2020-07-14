@@ -1,5 +1,5 @@
 import { IStyles } from '../../../shared/model/config/IStyles';
-import { Element } from '../element/Element';
+import { IframeFactory } from '../element/IframeFactory';
 import { DomMethods } from '../../../application/core/shared/DomMethods';
 import { MessageBus } from '../../../application/core/shared/MessageBus';
 import { Selectors } from '../../../application/core/shared/Selectors';
@@ -27,8 +27,7 @@ export class CommonFrames extends RegisterFrames {
   private static readonly COMPLETED_REQUEST_TYPES = ['AUTH', 'CACHETOKENISE', 'ACCOUNTCHECK'];
   public elementsTargets: any;
   public elementsToRegister: HTMLElement[];
-  private _controlFrame: Element;
-  private _controlFrameMounted: HTMLElement;
+  private _controlFrame: HTMLIFrameElement;
   private _messageBus: MessageBus;
   private _requestTypes: string[];
   private readonly _gatewayUrl: string;
@@ -54,7 +53,8 @@ export class CommonFrames extends RegisterFrames {
     gatewayUrl: string,
     animatedCard: boolean,
     requestTypes: string[],
-    formId: string
+    formId: string,
+    private _iframeFactory: IframeFactory
   ) {
     super(jwt, origin, componentIds, styles, animatedCard, formId);
     this._gatewayUrl = gatewayUrl;
@@ -110,7 +110,7 @@ export class CommonFrames extends RegisterFrames {
 
     controlFrame = Object.assign({}, defaultStyles, controlFrame);
 
-    this._controlFrame = new Element(
+    this._controlFrame = this._iframeFactory.create(
       Selectors.CONTROL_FRAME_COMPONENT_NAME,
       Selectors.CONTROL_FRAME_IFRAME,
       controlFrame,
@@ -119,11 +119,10 @@ export class CommonFrames extends RegisterFrames {
         jwt: this.jwt,
         origin: this.origin
       },
-      '-1'
+      -1
     );
 
-    this._controlFrameMounted = this._controlFrame.init();
-    this.elementsToRegister.push(this._controlFrameMounted);
+    this.elementsToRegister.push(this._controlFrame);
   }
 
   private _isThreedComplete(data: any): boolean {

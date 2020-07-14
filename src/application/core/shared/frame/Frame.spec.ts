@@ -22,7 +22,7 @@ describe('Frame', () => {
         }
       }
     ]
-  ]).test('frame.parseUrl', (url, expected) => {
+  ]).test('Frame.parseUrl', (url, expected) => {
     let frame = new Frame();
     window.history.pushState({}, 'Test Title', url);
     // @ts-ignore
@@ -33,7 +33,7 @@ describe('Frame', () => {
     expect(actual).toMatchObject(expected);
   });
 
-  describe('frame.init', () => {
+  describe('Frame.init', () => {
     it('should call parseUrl', () => {
       let frame = new Frame();
       // @ts-ignore

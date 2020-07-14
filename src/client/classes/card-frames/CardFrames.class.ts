@@ -3,7 +3,7 @@ import { FormState } from '../../../application/core/models/constants/FormState'
 import { IMessageBusEvent } from '../../../application/core/models/IMessageBusEvent';
 import { IStyles } from '../../../shared/model/config/IStyles';
 import { IValidationMessageBus } from '../../../application/core/models/IValidationMessageBus';
-import { Element } from '../element/Element';
+import { IframeFactory } from '../element/IframeFactory';
 import { DomMethods } from '../../../application/core/shared/DomMethods';
 import { Language } from '../../../application/core/shared/Language';
 import { MessageBus } from '../../../application/core/shared/MessageBus';
@@ -13,9 +13,7 @@ import { Validation } from '../../../application/core/shared/Validation';
 import { RegisterFrames } from '../register-fields/RegisterFrames.class';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { ofType } from '../../../shared/services/message-bus/operators/ofType';
-import { map } from 'rxjs/operators';
-import { IFormFieldState } from '../../../application/core/models/IFormFieldState';
-import { config, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ConfigProvider } from '../../../application/core/services/ConfigProvider';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { PUBLIC_EVENTS } from '../../../application/core/shared/EventTypes';
@@ -35,14 +33,10 @@ export class CardFrames extends RegisterFrames {
   private static SUBMIT_BUTTON_AS_INPUT_MARKUP: string = 'input[type="submit"]';
   private static SUBMIT_BUTTON_DISABLED_CLASS: string = 'st-button-submit__disabled';
 
-  private _animatedCardMounted: HTMLElement;
-  private _cardNumberMounted: HTMLElement;
-  private _expirationDateMounted: HTMLElement;
-  private _securityCodeMounted: HTMLElement;
-  private _animatedCard: Element;
-  private _cardNumber: Element;
-  private _expirationDate: Element;
-  private _securityCode: Element;
+  private _animatedCard: HTMLIFrameElement;
+  private _cardNumber: HTMLIFrameElement;
+  private _expirationDate: HTMLIFrameElement;
+  private _securityCode: HTMLIFrameElement;
   private _validation: Validation;
   private _translator: Translator;
   private _messageBusEvent: IMessageBusEvent = { data: { message: '' }, type: '' };
@@ -71,7 +65,8 @@ export class CardFrames extends RegisterFrames {
     buttonId: string,
     fieldsToSubmit: string[],
     formId: string,
-    private _configProvider: ConfigProvider
+    private _configProvider: ConfigProvider,
+    private _iframeFactory: IframeFactory
   ) {
     super(jwt, origin, componentIds, styles, animatedCard, formId, fieldsToSubmit);
     this._config$ = this._configProvider.getConfig$();
@@ -189,36 +184,33 @@ export class CardFrames extends RegisterFrames {
   }
 
   private _initCardNumberFrame(styles: {}): void {
-    this._cardNumber = new Element(
+    this._cardNumber = this._iframeFactory.create(
       Selectors.CARD_NUMBER_COMPONENT_NAME,
       Selectors.CARD_NUMBER_IFRAME,
       styles,
       this.params
     );
-    this._cardNumberMounted = this._cardNumber.init();
-    this.elementsToRegister.push(this._cardNumberMounted);
+    this.elementsToRegister.push(this._cardNumber);
   }
 
   private _initExpiryDateFrame(styles: {}): void {
-    this._expirationDate = new Element(
+    this._expirationDate = this._iframeFactory.create(
       Selectors.EXPIRATION_DATE_COMPONENT_NAME,
       Selectors.EXPIRATION_DATE_IFRAME,
       styles,
       this.params
     );
-    this._expirationDateMounted = this._expirationDate.init();
-    this.elementsToRegister.push(this._expirationDateMounted);
+    this.elementsToRegister.push(this._expirationDate);
   }
 
   private _initSecurityCodeFrame(styles: {}): void {
-    this._securityCode = new Element(
+    this._securityCode = this._iframeFactory.create(
       Selectors.SECURITY_CODE_COMPONENT_NAME,
       Selectors.SECURITY_CODE_IFRAME,
       styles,
       this.params
     );
-    this._securityCodeMounted = this._securityCode.init();
-    this.elementsToRegister.push(this._securityCodeMounted);
+    this.elementsToRegister.push(this._securityCode);
   }
 
   private _initAnimatedCardFrame(): void {
@@ -229,15 +221,14 @@ export class CardFrames extends RegisterFrames {
     if (this._defaultPaymentType !== undefined) {
       animatedCardConfig.defaultPaymentType = this._defaultPaymentType;
     }
-    this._animatedCard = new Element(
+    this._animatedCard = this._iframeFactory.create(
       Selectors.ANIMATED_CARD_COMPONENT_NAME,
       Selectors.ANIMATED_CARD_COMPONENT_IFRAME,
       {},
       animatedCardConfig,
-      '-1'
+      -1
     );
-    this._animatedCardMounted = this._animatedCard.init();
-    this.elementsToRegister.push(this._animatedCardMounted);
+    this.elementsToRegister.push(this._animatedCard);
   }
 
   private _initCardFrames(): void {
