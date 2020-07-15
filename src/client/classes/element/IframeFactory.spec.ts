@@ -8,6 +8,10 @@ describe('IframeFactory', () => {
   // when
   beforeEach(() => {
     instance = new IframeFactory();
+  });
+
+  // then
+  it('should create an iframe an provide all properties set by default', () => {
     iframe = instance.create(
       'someName',
       'someId',
@@ -15,10 +19,6 @@ describe('IframeFactory', () => {
       { locale: 'en_GB' },
       -1
     );
-  });
-
-  // then
-  it('should create an iframe an provide all properties set by default', () => {
     expect(iframe.tagName).toBe('IFRAME');
     expect(iframe.id).toBe('someId');
     expect(iframe.className).toBe('someId');
