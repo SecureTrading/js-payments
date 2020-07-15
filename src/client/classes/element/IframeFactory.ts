@@ -5,8 +5,6 @@ import { IframeFactoryAttributes } from './IframeFactoryAttributes';
 
 @Service()
 export class IframeFactory {
-  private static ATTRIBUTES: IframeFactoryAttributes;
-  private static SRC: string;
   private static URLS = new Map(
     Object.entries({
       cardNumber: Selectors.CARD_NUMBER_COMPONENT,
@@ -22,13 +20,12 @@ export class IframeFactory {
     const componentStyles = new URLSearchParams(styles).toString();
     const componentAddress = IframeFactory.URLS.get(name);
     const iframe = document.createElement('iframe');
+    const src: string = `${componentAddress}?${componentStyles}${componentParams ? '&' + componentParams : ''}`;
 
-    IframeFactory.SRC = `${componentAddress}?${componentStyles}${componentParams ? '&' + componentParams : ''}`;
-
-    IframeFactory.ATTRIBUTES = {
+    const attributes: IframeFactoryAttributes = {
       id,
       class: id,
-      src: IframeFactory.SRC,
+      src,
       name: id,
       allowTransparency: true,
       scrolling: 'no',
@@ -36,7 +33,7 @@ export class IframeFactory {
       tabIndex
     };
 
-    Object.keys(IframeFactory.ATTRIBUTES).forEach((value: string) =>
+    Object.keys(attributes).forEach((value: string) =>
       // @ts-ignore
       iframe.setAttribute(value, IframeFactory.ATTRIBUTES[value])
     );
