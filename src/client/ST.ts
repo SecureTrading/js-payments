@@ -292,7 +292,7 @@ class ST {
       /* tslint:disable:no-console */
       console.log(
         '%cThe %csecure%c//%ctrading %cLibrary is currently working in test mode. Please check your configuration.',
-        'margin: 100px 0; font-size: 2em; colQ  or: #e71b5a',
+        'margin: 100px 0; font-size: 2em; color: #e71b5a',
         'font-size: 2em; font-weight: bold',
         'font-size: 2em; font-weight: 1000; color: #e71b5a',
         'font-size: 2em; font-weight: bold',

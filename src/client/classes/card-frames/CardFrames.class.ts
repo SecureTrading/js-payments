@@ -184,14 +184,19 @@ export class CardFrames extends RegisterFrames {
   }
 
   private _initCardNumberFrame(styles: {}): void {
-    this._cardNumber = this._iframeFactory.create('cardNumber', 'st-card-number-iframe', styles, this.params);
+    this._cardNumber = this._iframeFactory.create(
+      Selectors.CARD_NUMBER_COMPONENT_NAME,
+      Selectors.CARD_NUMBER_IFRAME,
+      styles,
+      this.params
+    );
     this.elementsToRegister.push(this._cardNumber);
   }
 
   private _initExpiryDateFrame(styles: {}): void {
     this._expirationDate = this._iframeFactory.create(
-      'expirationDate',
-      'st-expiration-date-iframe',
+      Selectors.EXPIRATION_DATE_COMPONENT_NAME,
+      Selectors.EXPIRATION_DATE_IFRAME,
       styles,
       this.params
     );
@@ -199,7 +204,12 @@ export class CardFrames extends RegisterFrames {
   }
 
   private _initSecurityCodeFrame(styles: {}): void {
-    this._securityCode = this._iframeFactory.create('securityCode', 'st-security-code-iframe', styles, this.params);
+    this._securityCode = this._iframeFactory.create(
+      Selectors.SECURITY_CODE_COMPONENT_NAME,
+      Selectors.SECURITY_CODE_IFRAME,
+      styles,
+      this.params
+    );
     this.elementsToRegister.push(this._securityCode);
   }
 
