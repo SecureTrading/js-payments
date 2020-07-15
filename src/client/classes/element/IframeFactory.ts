@@ -33,10 +33,8 @@ export class IframeFactory {
       tabIndex
     };
 
-    Object.keys(attributes).forEach((value: string) =>
-      // @ts-ignore
-      iframe.setAttribute(value, IframeFactory.ATTRIBUTES[value])
-    );
+    // @ts-ignore
+    Object.keys(attributes).forEach((value: string) => iframe.setAttribute(value, attributes[value]));
     return iframe;
   }
 }
