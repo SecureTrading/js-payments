@@ -3,6 +3,8 @@ import { MessageBus } from '../../../application/core/shared/MessageBus';
 import { Selectors } from '../../../application/core/shared/Selectors';
 import { MessageBusMock } from '../../../testing/mocks/MessageBusMock';
 import { PUBLIC_EVENTS } from '../../../application/core/shared/EventTypes';
+import { IframeFactory } from '../element/IframeFactory';
+import { anyString, instance as instanceOf, mock, when } from 'ts-mockito';
 
 jest.mock('./../../../../src/application/core/shared/notification/Notification');
 
@@ -205,6 +207,15 @@ function commonFramesFixture() {
   };
   const animatedCard = true;
   const gatewayUrl: string = 'https://webservices.securetrading.net/jwt/';
+  let iframeFactory: IframeFactory;
+  iframeFactory = mock(IframeFactory);
+  when(iframeFactory.create(anyString(), anyString())).thenCall((name: string, id: string) => {
+    const iframe: HTMLIFrameElement = document.createElement('iframe');
+    iframe.setAttribute('name', name);
+    iframe.setAttribute('id', id);
+    return iframe;
+  });
+
   const instance = new CommonFrames(
     jwt,
     origin,
@@ -217,7 +228,8 @@ function commonFramesFixture() {
     gatewayUrl,
     animatedCard,
     ['AUTH'],
-    'st-form'
+    'st-form',
+    instanceOf(iframeFactory)
   );
 
   return { instance };
