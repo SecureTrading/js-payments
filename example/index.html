@@ -142,6 +142,8 @@
         div.style.backgroundColor = tp;
         if (tp === 'green') {
           div.style.top = 0;
+        } else if (tp === 'blue'){
+          div.style.top = 10;
         } else {
           div.style.bottom = 0;
         }
@@ -157,6 +159,7 @@
       stConfig.submitCallback = function someFancyfunction(data) {
         var stringified = JSON.stringify(data);
         var testVariable = 'This is what we have got after submit' + stringified;
+        displayPopup('data-popup', 'Error code: ' + (data.errorcode == "0" ? "OK" : "Error"), 'blue');
         console.error(testVariable);
       };
       stConfig.successCallback = function() {
