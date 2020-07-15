@@ -6,22 +6,28 @@ body {
   @extend %frame-body;
 }
 
-.expiration-date {
+.st-expiration-date {
   @extend %block;
-}
 
-.expiration-date__label {
-  @extend %label;
-}
+  &__label {
+    @extend %label;
+  }
 
-.expiration-date__label--required {
-  @extend %label--required;
-}
+  &__label--required {
+    @extend %label--required;
+  }
 
-.expiration-date__input {
-  @extend %input;
-}
+  &__input {
+    @extend %input;
+  }
 
-.expiration-date__message {
-  @extend %message;
+  &__message {
+    @extend %message;
+  }
+
+  &__wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center
+  }
 }

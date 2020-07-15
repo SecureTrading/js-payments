@@ -6,22 +6,28 @@ body {
   @extend %frame-body;
 }
 
-.security-code {
+.st-security-code {
   @extend %block;
-}
 
-.security-code__label {
-  @extend %label;
-}
+  &__label {
+    @extend %label;
+  }
 
-.security-code__label--required {
-  @extend %label--required;
-}
+  &__label--required {
+    @extend %label--required;
+  }
 
-.security-code__input {
-  @extend %input;
-}
+  &__input {
+    @extend %input;
+  }
 
-.security-code__message {
-  @extend %message;
+  &__message {
+    @extend %message;
+  }
+
+  &__wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center
+  }
 }

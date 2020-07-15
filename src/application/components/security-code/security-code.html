@@ -1,19 +1,20 @@
-<form id="st-security-code" class="security-code" novalidate>
-  <label
-    id="st-security-code-label"
-    for="st-security-code-input"
-    class="security-code__label security-code__label--required"
-  >
-  </label>
-  <input
-    id="st-security-code-input"
-    class="security-code__input"
-    type="text"
-    autocomplete="off"
-    autocorrect="off"
-    spellcheck="false"
-    inputmode="numeric"
-    required
-  />
-  <div id="st-security-code-message" class="security-code__message"></div>
+<form id="st-security-code"
+      class="st-security-code"
+      novalidate>
+    <label id="st-security-code-label"
+           for="st-security-code-input"
+           class="security-code__label st-security-code__label--required">
+    </label>
+    <div class="st-expiration-date__wrapper">
+        <input id="st-security-code-input"
+               class="st-security-code__input"
+               type="text"
+               autocomplete="off"
+               autocorrect="off"
+               spellcheck="false"
+               inputmode="numeric"
+               required
+        />
+        <div id="st-security-code-message" class="st-security-code__message"></div>
+    </div>
 </form>
