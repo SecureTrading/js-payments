@@ -95,7 +95,7 @@ export class DomMethods {
 
   public static parseForm(formId: string): {} {
     const form: HTMLElement = document.getElementById(formId);
-    const els = this.getAllFormElements(form);
+    const els = DomMethods.getAllFormElements(form);
     const result: any = {};
     for (const el of els) {
       if (el.hasAttribute(DomMethods.ST_NAME_ATTRIBUTE)) {

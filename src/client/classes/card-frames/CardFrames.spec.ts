@@ -5,7 +5,7 @@ import { Language } from '../../../application/core/shared/Language';
 import { MessageBus } from '../../../application/core/shared/MessageBus';
 import { Selectors } from '../../../application/core/shared/Selectors';
 import { ConfigProvider } from '../../../application/core/services/ConfigProvider';
-import { anyString, instance as instanceOf, mock, when } from 'ts-mockito';
+import { anyString, anything, instance as instanceOf, mock, when } from 'ts-mockito';
 import { of } from 'rxjs';
 import { IframeFactory } from '../element/IframeFactory';
 
@@ -22,6 +22,8 @@ describe('CardFrames', () => {
   beforeEach(() => {
     configProvider = mock(ConfigProvider);
     iframeFactory = mock(IframeFactory);
+    const element = document.createElement('input');
+    DomMethods.getAllFormElements = jest.fn().mockReturnValue([element]);
 
     when(configProvider.getConfig$()).thenReturn(
       of({
@@ -30,12 +32,14 @@ describe('CardFrames', () => {
         placeholders: { pan: 'Card number', expirydate: 'MM/YY', securitycode: '***' }
       })
     );
-    when(iframeFactory.create(anyString(), anyString())).thenCall((name: string, id: string) => {
-      const iframe: HTMLIFrameElement = document.createElement('iframe');
-      iframe.setAttribute('name', name);
-      iframe.setAttribute('id', id);
-      return iframe;
-    });
+    when(iframeFactory.create(anyString(), anyString(), anything(), anything())).thenCall(
+      (name: string, id: string) => {
+        const iframe: HTMLIFrameElement = document.createElement('iframe');
+        iframe.setAttribute('name', name);
+        iframe.setAttribute('id', id);
+        return iframe;
+      }
+    );
 
     instance = new CardFrames(
       'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NTM2NzE1OC44NDk1NDUyLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiMzA4OTUwMDAwMDAwMDAwMDAyMSIsImV4cGlyeWRhdGUiOiIwMS8yMiJ9fQ.ey0e7_JVcwXinHZR-MFBWARiVy6F3GU5JrcuCgicGhU',
@@ -115,14 +119,19 @@ describe('CardFrames', () => {
     };
     // when
     beforeEach(() => {
+      DomMethods.parseForm = jest.fn().mockReturnValueOnce({
+        billingamount: '',
+        billingemail: '',
+        billingfirstname: ''
+      });
       // @ts-ignore
       instance.messageBus.publish = jest.fn();
-      // @ts-ignore
-      instance._onInput();
     });
 
     // then
     it('should call publish method', () => {
+      // @ts-ignore
+      instance._onInput();
       // @ts-ignore
       expect(instance.messageBus.publish).toHaveBeenCalledWith(messageBusEvent);
     });
@@ -130,10 +139,8 @@ describe('CardFrames', () => {
 
   // given
   describe('_setMerchantInputListeners', () => {
-    const element = document.createElement('input');
     // when
     beforeEach(() => {
-      DomMethods.getAllFormElements = jest.fn().mockReturnValueOnce(element);
       // @ts-ignore
       instance._setMerchantInputListeners();
     });
@@ -182,7 +189,7 @@ describe('CardFrames', () => {
       // @ts-ignore
       instance._disableSubmitButton = jest.fn();
       // @ts-ignore
-      instance.messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
+      instance.messageBus.subscribe = jest.fn().mockImplementationOnce((event, callback) => {
         callback(true);
       });
       // @ts-ignore
@@ -205,6 +212,12 @@ describe('CardFrames', () => {
     };
     // when
     beforeEach(() => {
+      // @ts-ignore
+      instance.messageBus.subscribe = jest.fn().mockReturnValueOnce({
+        cardNumber: '',
+        expirationDate: '',
+        securityCode: ''
+      });
       // @ts-ignore
       instance.messageBus.publish = jest.fn();
       // @ts-ignore
