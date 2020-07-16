@@ -19,7 +19,6 @@ import { Payment } from '../../core/shared/Payment';
 import { Validation } from '../../core/shared/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
-import { BrowserSessionStorage } from '../../../shared/services/storage/BrowserSessionStorage';
 import { Service } from 'typedi';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
@@ -28,8 +27,8 @@ import { Cybertonica } from '../../core/integrations/Cybertonica';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { CardinalCommerce } from '../../core/integrations/cardinal-commerce/CardinalCommerce';
 import { ICardinalCommerceTokens } from '../../core/integrations/cardinal-commerce/ICardinalCommerceTokens';
-import { defer, EMPTY, from, iif, Observable, of } from 'rxjs';
-import { catchError, filter, map, mapTo, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, defer, EMPTY, from, iif, Observable, of, Subject } from 'rxjs';
+import { catchError, filter, map, mapTo, shareReplay, switchMap, tap } from 'rxjs/operators';
 import { IAuthorizePaymentResponse } from '../../core/models/IAuthorizePaymentResponse';
 import { StJwt } from '../../core/shared/StJwt';
 import { Translator } from '../../core/shared/Translator';
@@ -79,7 +78,6 @@ export class ControlFrame extends Frame {
 
   constructor(
     private _localStorage: BrowserLocalStorage,
-    private _sessionStorage: BrowserSessionStorage,
     private _communicator: InterFrameCommunicator,
     private _configProvider: ConfigProvider,
     private _notification: NotificationService,
@@ -88,9 +86,17 @@ export class ControlFrame extends Frame {
     private _configService: ConfigService
   ) {
     super();
-    const config$ = this._configProvider.getConfig$();
+    this._localStorage.init();
 
-    this._communicator.whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK).thenRespond(() => config$);
+    this._communicator
+      .whenReceive(MessageBus.EVENTS_PUBLIC.INIT_CONTROL_FRAME)
+      .thenRespond((event: IMessageBusEvent<string>) => {
+        const config: IConfig = JSON.parse(event.data);
+        this._configService.update(config);
+        this.onInit(config);
+
+        return of(config);
+      });
 
     this.messageBus
       .pipe(
@@ -100,7 +106,7 @@ export class ControlFrame extends Frame {
       )
       .subscribe((maskedpan: string) => {
         this._slicedPan = maskedpan.slice(0, 6);
-        this._sessionStorage.setItem('app.maskedpan', this._slicedPan);
+        this._localStorage.setItem('app.maskedpan', this._slicedPan);
 
         this.messageBus.publish({
           type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS,

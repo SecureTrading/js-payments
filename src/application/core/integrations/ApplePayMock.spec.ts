@@ -4,8 +4,13 @@ import { anyString, instance, mock, when } from 'ts-mockito';
 import { ConfigProvider } from '../services/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { EMPTY, of } from 'rxjs';
+import { Container } from 'typedi';
+import { StoreBasedStorage } from '../../../shared/services/storage/StoreBasedStorage';
+import { SimpleStorage } from '../../../shared/services/storage/SimpleStorage';
 
 jest.mock('../../../../src/application/core/shared/Notification/Notification');
+
+Container.set({ id: StoreBasedStorage, type: SimpleStorage });
 
 // given
 describe('Class ApplePayMock', () => {
