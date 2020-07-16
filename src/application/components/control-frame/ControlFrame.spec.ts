@@ -468,7 +468,6 @@ describe('ControlFrame', () => {
 
 function controlFrameFixture() {
   const localStorage: BrowserLocalStorage = mock(BrowserLocalStorage);
-  const sessionStorage: BrowserSessionStorage = mock(BrowserSessionStorage);
   const communicator: InterFrameCommunicator = mock(InterFrameCommunicator);
   const configProvider: ConfigProvider = mock(ConfigProvider);
   const notification: NotificationService = mock(NotificationService);
@@ -484,7 +483,6 @@ function controlFrameFixture() {
 
   const instance = new ControlFrame(
     mockInstance(localStorage),
-    mockInstance(sessionStorage),
     mockInstance(communicator),
     mockInstance(configProvider),
     mockInstance(notification),
