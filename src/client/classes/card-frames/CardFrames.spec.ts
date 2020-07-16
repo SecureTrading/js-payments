@@ -11,6 +11,7 @@ import { IframeFactory } from '../element/IframeFactory';
 import { Frame } from '../../../application/core/shared/frame/Frame';
 
 jest.mock('./../../../../src/application/core/shared/notification/Notification');
+jest.mock('./../../../../src/application/core/shared/Validation');
 
 // given
 describe('CardFrames', () => {

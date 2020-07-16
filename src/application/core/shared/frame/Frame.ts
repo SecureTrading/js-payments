@@ -21,7 +21,7 @@ export class Frame {
   }
 
   init(): void {
-    this.params.styles = this._parseUrl().styles;
+    this.params.styles = this.parseUrl().styles;
     new Styler(this.getAllowedStyles()).inject(this.params.styles);
   }
 
@@ -33,7 +33,7 @@ export class Frame {
     return frameAllowedStyles;
   }
 
-  private _parseUrl(): IParams {
+  parseUrl(): IParams {
     const parsedUrl = new URL(window.location.href);
     const allowedParams = this.getAllowedParams();
 

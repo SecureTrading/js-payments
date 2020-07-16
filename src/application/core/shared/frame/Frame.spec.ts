@@ -28,7 +28,7 @@ describe('Frame', () => {
     // @ts-ignore
     frame.getAllowedParams = jest.fn().mockReturnValueOnce(['locale', 'origin']);
     // @ts-ignore
-    let actual = frame._parseUrl();
+    let actual = frame.parseUrl();
     expect(actual.length).toBe(expected.length);
     expect(actual).toMatchObject(expected);
   });
@@ -37,11 +37,11 @@ describe('Frame', () => {
     it('should call parseUrl', () => {
       let frame = new Frame();
       // @ts-ignore
-      frame._parseUrl = jest.fn().mockReturnValueOnce({ origin: 'https://example.com' });
+      frame.parseUrl = jest.fn().mockReturnValueOnce({ origin: 'https://example.com' });
       // @ts-ignore
       frame.init();
       // @ts-ignore
-      expect(frame._parseUrl).toHaveBeenCalledTimes(1);
+      expect(frame.parseUrl).toHaveBeenCalledTimes(1);
     });
   });
 });

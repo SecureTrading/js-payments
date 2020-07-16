@@ -303,7 +303,7 @@ export class Validation {
   protected init() {
     this._frame.init();
     this._matchDigitsRegexp = new RegExp(Validation.MATCH_DIGITS);
-    this._translator = new Translator(this._frame.params.locale);
+    this._translator = new Translator(this._frame.parseUrl().locale);
   }
 
   protected removeNonDigits(value: string): string {

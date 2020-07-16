@@ -300,7 +300,7 @@ export class CardFrames extends RegisterFrames {
     formId: string
   ): void {
     this._validation = new Validation(this.messageBus, this._frame);
-    this._translator = new Translator(this._frame.params.locale);
+    this._translator = new Translator(this._frame.parseUrl().locale);
     this._buttonId = buttonId;
     this.formId = formId;
     this._defaultPaymentType = defaultPaymentType;
