@@ -11,7 +11,7 @@ import { IAllowedStyles } from '../../models/IAllowedStyles';
 import { ConfigProvider } from '../../services/ConfigProvider';
 import { NotificationsClasses } from '../../models/constants/notifications/NotificationsClasses';
 import { NotificationsMessageTypes } from '../../models/constants/notifications/NotificationsMessageTypes';
-import { IConfig } from '../../../shared/model/config/IConfig';
+import { IConfig } from '../../../../shared/model/config/IConfig';
 
 @Service()
 export class Notification {

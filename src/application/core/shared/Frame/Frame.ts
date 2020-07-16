@@ -6,6 +6,7 @@ import { Styler } from '../Styler';
 import { FramesHub } from '../../../../shared/services/message-bus/FramesHub';
 import '../OverrideDomain';
 import { frameAllowedStyles } from './frame-const';
+import { IConfig } from '../../../../shared/model/config/IConfig';
 
 export class Frame {
   protected params: IParams = {
@@ -19,7 +20,7 @@ export class Frame {
     this.framesHub.notifyReadyState();
   }
 
-  protected init(): void {
+  protected init(config: IConfig): void {
     this.params.styles = this._parseUrl().styles;
     new Styler(this.getAllowedStyles()).inject(this.params.styles);
   }

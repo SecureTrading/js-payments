@@ -93,7 +93,7 @@ export class ControlFrame extends Frame {
       .thenRespond((event: IMessageBusEvent<string>) => {
         const config: IConfig = JSON.parse(event.data);
         this._configService.update(config);
-        this.onInit(config);
+        this.init(config);
 
         return of(config);
       });
@@ -122,8 +122,8 @@ export class ControlFrame extends Frame {
       .subscribe(config => this.init(config));
   }
 
-  protected init(config?: IConfig): void {
-    super.init();
+  protected init(config: IConfig): void {
+    super.init(config);
     this._setInstances();
     this._setFormFieldsValidities();
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_CARD_NUMBER, this._formFields.cardNumber);
