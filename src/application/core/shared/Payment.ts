@@ -11,6 +11,7 @@ import { Container } from 'typedi';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
 import { Cybertonica } from '../integrations/Cybertonica';
 import { MessageBus } from './MessageBus';
+import { Frame } from './frame/Frame';
 
 export class Payment {
   private _cardinalCommerceCacheToken: string;
@@ -19,6 +20,7 @@ export class Payment {
   private _validation: Validation;
   private _cybertonica: Cybertonica;
   private _messageBus: MessageBus;
+  private _frame: Frame;
   private readonly _walletVerifyRequest: IStRequest;
 
   constructor() {
@@ -26,7 +28,8 @@ export class Payment {
     this._cybertonica = Container.get(Cybertonica);
     this._stTransport = Container.get(StTransport);
     this._messageBus = Container.get(MessageBus);
-    this._validation = new Validation();
+    this._frame = Container.get(Frame);
+    this._validation = new Validation(this._messageBus, this._frame);
     this._walletVerifyRequest = {
       requesttypedescriptions: ['WALLETVERIFY']
     };

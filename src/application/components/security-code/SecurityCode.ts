@@ -46,8 +46,8 @@ export class SecurityCode extends Input {
   ) {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
 
-    this._formatter = new Formatter();
-    this._validation = new Validation();
+    this._formatter = new Formatter(this._messageBus, this.frame);
+    this._validation = new Validation(this._messageBus, this.frame);
     this._securityCodeWrapper = document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR) as HTMLElement;
     this._securityCodeLength = SHORT_CVC;
     this.placeholder = this._getPlaceholder(this._securityCodeLength);

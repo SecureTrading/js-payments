@@ -11,6 +11,7 @@ import { Validation } from '../shared/Validation';
 import { version } from '../../../../package.json';
 import { Container } from 'typedi';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
+import { Frame } from '../shared/frame/Frame';
 
 class StCodec {
   public static CONTENT_TYPE = 'application/json';
@@ -126,7 +127,9 @@ class StCodec {
   }
 
   private static _handleInvalidResponse() {
-    const validation = new Validation();
+    const messageBus: MessageBus = Container.get(MessageBus);
+    const frame: Frame = Container.get(Frame);
+    const validation = new Validation(messageBus, frame);
     StCodec.publishResponse(StCodec._createCommunicationError());
     StCodec.getNotification().error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
     validation.blockForm(FormState.AVAILABLE);
@@ -158,8 +161,10 @@ class StCodec {
   }
 
   private static _handleValidGatewayResponse(responseContent: IResponseData, jwtResponse: string) {
+    const messageBus: MessageBus = Container.get(MessageBus);
+    const frame: Frame = Container.get(Frame);
     const translator = new Translator(StCodec._locale);
-    const validation = new Validation();
+    const validation = new Validation(messageBus, frame);
 
     const { errorcode, errormessage, requesttypedescription } = responseContent;
 

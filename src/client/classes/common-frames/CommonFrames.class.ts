@@ -14,6 +14,7 @@ import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { Observable } from 'rxjs';
 import { PUBLIC_EVENTS } from '../../../application/core/shared/EventTypes';
 import { IMessageBusEvent } from '../../../application/core/models/IMessageBusEvent';
+import { Frame } from '../../../application/core/shared/frame/Frame';
 
 export class CommonFrames extends RegisterFrames {
   get requestTypes(): string[] {
@@ -54,14 +55,15 @@ export class CommonFrames extends RegisterFrames {
     animatedCard: boolean,
     requestTypes: string[],
     formId: string,
-    private _iframeFactory: IframeFactory
+    private _iframeFactory: IframeFactory,
+    private _frame: Frame
   ) {
     super(jwt, origin, componentIds, styles, animatedCard, formId);
     this._gatewayUrl = gatewayUrl;
     this._messageBus = Container.get(MessageBus);
     this.formId = formId;
     this._merchantForm = document.getElementById(formId) as HTMLFormElement;
-    this._validation = new Validation();
+    this._validation = new Validation(this._messageBus, this._frame);
     this._formSubmitted = false;
     this._submitFields = submitFields;
     this._submitOnError = submitOnError;

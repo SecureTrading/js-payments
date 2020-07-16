@@ -40,8 +40,8 @@ export class CardNumber extends Input {
   constructor(private configProvider: ConfigProvider, private _iconFactory: IconFactory) {
     super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE, Selectors.CARD_NUMBER_LABEL);
     this._cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
-    this.validation = new Validation();
-    this._formatter = new Formatter();
+    this.validation = new Validation(this.messageBus, this.frame);
+    this._formatter = new Formatter(this.messageBus, this.frame);
     this._isCardNumberValid = true;
     this._cardNumberLength = CardNumber.STANDARD_CARD_LENGTH;
     this.placeholder = this.configProvider.getConfig().placeholders.pan || '';

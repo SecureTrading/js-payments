@@ -12,7 +12,6 @@ import { IMerchantData } from '../../core/models/IMerchantData';
 import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
 import { IResponseData } from '../../core/models/IResponseData';
 import { ISubmitData } from '../../core/models/ISubmitData';
-import { Frame } from '../../core/shared/frame/Frame';
 import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { Payment } from '../../core/shared/Payment';
@@ -27,8 +26,8 @@ import { Cybertonica } from '../../core/integrations/Cybertonica';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { CardinalCommerce } from '../../core/integrations/cardinal-commerce/CardinalCommerce';
 import { ICardinalCommerceTokens } from '../../core/integrations/cardinal-commerce/ICardinalCommerceTokens';
-import { BehaviorSubject, defer, EMPTY, from, iif, Observable, of, Subject } from 'rxjs';
-import { catchError, filter, map, mapTo, shareReplay, switchMap, tap } from 'rxjs/operators';
+import { defer, EMPTY, from, iif, Observable, of } from 'rxjs';
+import { catchError, filter, map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { IAuthorizePaymentResponse } from '../../core/models/IAuthorizePaymentResponse';
 import { StJwt } from '../../core/shared/StJwt';
 import { Translator } from '../../core/shared/Translator';
@@ -37,9 +36,10 @@ import { IOnCardinalValidated } from '../../core/models/IOnCardinalValidated';
 import { ConfigService } from '../../../client/config/ConfigService';
 import { IThreeDInitResponse } from '../../core/models/IThreeDInitResponse';
 import { PUBLIC_EVENTS } from '../../core/shared/EventTypes';
+import { Frame } from '../../core/shared/frame/Frame';
 
 @Service()
-export class ControlFrame extends Frame {
+export class ControlFrame {
   private static ALLOWED_PARAMS: string[] = ['jwt', 'gatewayUrl'];
   private static NON_CVV_CARDS: string[] = ['PIBA'];
   private static THREEDQUERY_EVENT: string = 'THREEDQUERY';
@@ -83,9 +83,10 @@ export class ControlFrame extends Frame {
     private _notification: NotificationService,
     private _cybertonica: Cybertonica,
     private _cardinalCommerce: CardinalCommerce,
-    private _configService: ConfigService
+    private _configService: ConfigService,
+    private _messageBus: MessageBus,
+    private _frame: Frame
   ) {
-    super();
     this._localStorage.init();
 
     this._communicator
@@ -98,7 +99,7 @@ export class ControlFrame extends Frame {
         return of(config);
       });
 
-    this.messageBus
+    this._messageBus
       .pipe(
         ofType(MessageBus.EVENTS_PUBLIC.JSINIT_RESPONSE),
         filter((event: IMessageBusEvent<IThreeDInitResponse>) => Boolean(event.data.maskedpan)),
@@ -108,13 +109,13 @@ export class ControlFrame extends Frame {
         this._slicedPan = maskedpan.slice(0, 6);
         this._localStorage.setItem('app.maskedpan', this._slicedPan);
 
-        this.messageBus.publish({
+        this._messageBus.publish({
           type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS,
           data: this._slicedPan
         });
       });
 
-    this.messageBus
+    this._messageBus
       .pipe(
         ofType(PUBLIC_EVENTS.INIT_CONTROL_FRAME),
         map((event: IMessageBusEvent<IConfig>) => event.data)
@@ -123,7 +124,7 @@ export class ControlFrame extends Frame {
   }
 
   protected init(config: IConfig): void {
-    super.init(config);
+    this._frame.init();
     this._setInstances();
     this._setFormFieldsValidities();
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_CARD_NUMBER, this._formFields.cardNumber);
@@ -138,7 +139,7 @@ export class ControlFrame extends Frame {
     if (!config.deferInit) {
       this._initCardinalCommerce(config);
     } else if (config.components.startOnLoad) {
-      this.messageBus.publish({
+      this._messageBus.publish({
         type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM,
         data: {
           dataInJwt: true,
@@ -147,7 +148,7 @@ export class ControlFrame extends Frame {
       });
     }
 
-    this.messageBus.subscribe(
+    this._messageBus.subscribe(
       MessageBus.EVENTS_PUBLIC.CARDINAL_COMMERCE_TOKENS_ACQUIRED,
       (tokens: ICardinalCommerceTokens) => {
         this._payment.setCardinalCommerceCacheToken(tokens.cacheToken);
@@ -156,11 +157,11 @@ export class ControlFrame extends Frame {
   }
 
   protected getAllowedParams(): string[] {
-    return super.getAllowedParams().concat(ControlFrame.ALLOWED_PARAMS);
+    return this._frame.getAllowedParams().concat(ControlFrame.ALLOWED_PARAMS);
   }
 
   private _formFieldChangeEvent(event: string, field: IFormFieldState): void {
-    this.messageBus.subscribe(event, (data: IFormFieldState) => {
+    this._messageBus.subscribe(event, (data: IFormFieldState) => {
       this._formFieldChange(event, data.value);
       ControlFrame._setFormFieldValidity(field, data);
       ControlFrame._setFormFieldValue(field, data);
@@ -168,7 +169,7 @@ export class ControlFrame extends Frame {
   }
 
   private _resetJwtEvent(): void {
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.RESET_JWT, () => {
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.RESET_JWT, () => {
       ControlFrame._resetJwt();
     });
   }
@@ -191,19 +192,19 @@ export class ControlFrame extends Frame {
   }
 
   private _updateJwtEvent(): void {
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: any) => {
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_JWT, (data: any) => {
       ControlFrame._updateJwt(data.newJwt);
     });
   }
 
   private _updateMerchantFieldsEvent(): void {
-    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS, (data: IMerchantData) => {
+    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.UPDATE_MERCHANT_FIELDS, (data: IMerchantData) => {
       this._updateMerchantFields(data);
     });
   }
 
   private _submitFormEvent(): void {
-    this.messageBus
+    this._messageBus
       .pipe(
         ofType(MessageBus.EVENTS_PUBLIC.SUBMIT_FORM),
         map((event: IMessageBusEvent<ISubmitData>) => event.data || {}),
@@ -211,8 +212,8 @@ export class ControlFrame extends Frame {
           this._isPaymentReady = true;
 
           if (!this._isDataValid(data)) {
-            this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
-            this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM, data: FormState.AVAILABLE }, true);
+            this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
+            this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM, data: FormState.AVAILABLE }, true);
             this._validateFormFields();
             return EMPTY;
           }
@@ -260,8 +261,8 @@ export class ControlFrame extends Frame {
     const translator = new Translator(this._localStorage.getItem('locale'));
     const translatedErrorMessage = translator.translate(Language.translations.PAYMENT_ERROR);
 
-    this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.RESET_JWT });
-    this.messageBus.publish(
+    this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.RESET_JWT });
+    this._messageBus.publish(
       {
         type: MessageBus.EVENTS_PUBLIC.TRANSACTION_COMPLETE,
         data: {
@@ -273,7 +274,7 @@ export class ControlFrame extends Frame {
       },
       true
     );
-    this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM, data: FormState.AVAILABLE }, true);
+    this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM, data: FormState.AVAILABLE }, true);
     this._notification.error(translatedErrorMessage);
 
     return EMPTY;
@@ -289,7 +290,7 @@ export class ControlFrame extends Frame {
     this._payment
       .processPayment(this._postThreeDRequestTypes, this._card, this._merchantFormData, data)
       .then(() => {
-        this.messageBus.publish(
+        this._messageBus.publish(
           {
             type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK
           },
@@ -299,7 +300,7 @@ export class ControlFrame extends Frame {
         this._validation.blockForm(FormState.COMPLETE);
       })
       .catch((error: any) => {
-        this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
+        this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
         this._notification.error(Language.translations.PAYMENT_ERROR);
         this._validation.blockForm(FormState.AVAILABLE);
       })
@@ -356,7 +357,7 @@ export class ControlFrame extends Frame {
   }
 
   private _publishBlurEvent(event: IMessageBusEvent): void {
-    this.messageBus.publish(event);
+    this._messageBus.publish(event);
   }
 
   private _formFieldChange(event: string, value: string) {
@@ -374,8 +375,8 @@ export class ControlFrame extends Frame {
   }
 
   private _getPanFromJwt(): string {
-    return JwtDecode<IDecodedJwt>(this.params.jwt).payload.pan
-      ? JwtDecode<IDecodedJwt>(this.params.jwt).payload.pan
+    return JwtDecode<IDecodedJwt>(this._frame.params.jwt).payload.pan
+      ? JwtDecode<IDecodedJwt>(this._frame.params.jwt).payload.pan
       : '';
   }
 
@@ -403,7 +404,7 @@ export class ControlFrame extends Frame {
 
   private _setInstances(): void {
     this._payment = new Payment();
-    this._validation = new Validation();
+    this._validation = new Validation(this._messageBus, this._frame);
   }
 
   private _updateMerchantFields(data: IMerchantData): void {
@@ -427,12 +428,12 @@ export class ControlFrame extends Frame {
       this._isPaymentReady = true;
 
       if (config.components.startOnLoad) {
-        this.messageBus.publish({
+        this._messageBus.publish({
           type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS,
           data: new StJwt(config.jwt).payload.pan as string
         });
 
-        this.messageBus.publish(
+        this._messageBus.publish(
           {
             type: MessageBus.EVENTS_PUBLIC.SUBMIT_FORM,
             data: {

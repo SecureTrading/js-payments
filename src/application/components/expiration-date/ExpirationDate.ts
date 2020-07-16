@@ -24,7 +24,7 @@ export class ExpirationDate extends Input {
 
   constructor(private _configProvider: ConfigProvider) {
     super(Selectors.EXPIRATION_DATE_INPUT, Selectors.EXPIRATION_DATE_MESSAGE, Selectors.EXPIRATION_DATE_LABEL);
-    this._formatter = new Formatter();
+    this._formatter = new Formatter(this.messageBus, this.frame);
     this._init();
   }
 

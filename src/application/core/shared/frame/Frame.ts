@@ -1,4 +1,4 @@
-import { Container } from 'typedi';
+import { Container, Service } from 'typedi';
 import { IAllowedStyles } from '../../models/IAllowedStyles';
 import { IParams } from '../../models/IParams';
 import { MessageBus } from '../MessageBus';
@@ -6,10 +6,10 @@ import { Styler } from '../Styler';
 import { FramesHub } from '../../../../shared/services/message-bus/FramesHub';
 import '../OverrideDomain';
 import { frameAllowedStyles } from './frame-const';
-import { IConfig } from '../../../../shared/model/config/IConfig';
 
+@Service()
 export class Frame {
-  protected params: IParams = {
+  public params: IParams = {
     // @ts-ignore
     styles: {}
   };
@@ -20,16 +20,16 @@ export class Frame {
     this.framesHub.notifyReadyState();
   }
 
-  protected init(config: IConfig): void {
+  init(): void {
     this.params.styles = this._parseUrl().styles;
     new Styler(this.getAllowedStyles()).inject(this.params.styles);
   }
 
-  protected getAllowedParams(): string[] {
+  getAllowedParams(): string[] {
     return ['locale', 'origin'];
   }
 
-  protected getAllowedStyles(): IAllowedStyles {
+  getAllowedStyles(): IAllowedStyles {
     return frameAllowedStyles;
   }
 

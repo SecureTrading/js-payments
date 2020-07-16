@@ -18,6 +18,7 @@ import { ConfigProvider } from '../../../application/core/services/ConfigProvide
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { PUBLIC_EVENTS } from '../../../application/core/shared/EventTypes';
 import { first } from 'rxjs/operators';
+import { Frame } from '../../../application/core/shared/frame/Frame';
 
 export class CardFrames extends RegisterFrames {
   private static CARD_NUMBER_FIELD_NAME: string = 'pan';
@@ -66,7 +67,8 @@ export class CardFrames extends RegisterFrames {
     fieldsToSubmit: string[],
     formId: string,
     private _configProvider: ConfigProvider,
-    private _iframeFactory: IframeFactory
+    private _iframeFactory: IframeFactory,
+    private _frame: Frame
   ) {
     super(jwt, origin, componentIds, styles, animatedCard, formId, fieldsToSubmit);
     this._config$ = this._configProvider.getConfig$();
@@ -297,8 +299,8 @@ export class CardFrames extends RegisterFrames {
     jwt: string,
     formId: string
   ): void {
-    this._validation = new Validation();
-    this._translator = new Translator(this.params.locale);
+    this._validation = new Validation(this.messageBus, this._frame);
+    this._translator = new Translator(this._frame.params.locale);
     this._buttonId = buttonId;
     this.formId = formId;
     this._defaultPaymentType = defaultPaymentType;

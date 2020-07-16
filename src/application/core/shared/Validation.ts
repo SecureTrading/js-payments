@@ -22,7 +22,7 @@ const {
   VALIDATION_ERROR
 } = Language.translations;
 
-export class Validation extends Frame {
+export class Validation {
   public static ERROR_FIELD_CLASS: string = 'error-field';
 
   public static clearNonDigitsChars(value: string): string {
@@ -158,13 +158,12 @@ export class Validation extends Frame {
   private _selectionRangeStart: number;
   private _translator: Translator;
 
-  constructor() {
-    super();
+  constructor(private _messageBus: MessageBus, private _frame: Frame) {
     this.init();
   }
 
   public backendValidation(inputElement: HTMLInputElement, messageElement: HTMLElement, event: string) {
-    this.messageBus.subscribe(event, (data: IMessageBusValidateField) => {
+    this._messageBus.subscribe(event, (data: IMessageBusValidateField) => {
       this.setError(inputElement, messageElement, data);
     });
   }
@@ -174,14 +173,14 @@ export class Validation extends Frame {
       data: state,
       type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM
     };
-    this.messageBus.publish(messageBusEvent, true);
+    this._messageBus.publish(messageBusEvent, true);
   }
 
   public callSubmitEvent() {
     const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.CALL_SUBMIT_EVENT
     };
-    this.messageBus.publish(messageBusEvent, true);
+    this._messageBus.publish(messageBusEvent, true);
   }
 
   public formValidation(
@@ -217,7 +216,7 @@ export class Validation extends Frame {
 
     if (errordata.find((element: string) => element.includes(Validation.MERCHANT_EXTRA_FIELDS_PREFIX))) {
       validationEvent.type = MessageBus.EVENTS.VALIDATE_MERCHANT_FIELD;
-      this.messageBus.publish(validationEvent);
+      this._messageBus.publish(validationEvent);
     }
 
     return { field: errordata[0], errormessage };
@@ -293,7 +292,7 @@ export class Validation extends Frame {
       data: { ...state },
       type: MessageBus.EVENTS.VALIDATE_FORM
     };
-    this.messageBus.publish(validationEvent);
+    this._messageBus.publish(validationEvent);
   }
 
   public validate(inputElement: HTMLInputElement, messageElement: HTMLElement, customErrorMessage?: string) {
@@ -302,9 +301,9 @@ export class Validation extends Frame {
   }
 
   protected init() {
-    super.init();
+    this._frame.init();
     this._matchDigitsRegexp = new RegExp(Validation.MATCH_DIGITS);
-    this._translator = new Translator(this.params.locale);
+    this._translator = new Translator(this._frame.params.locale);
   }
 
   protected removeNonDigits(value: string): string {
@@ -335,7 +334,7 @@ export class Validation extends Frame {
   }
 
   private _broadcastFormFieldError(errordata: string, event: IMessageBusEvent) {
-    this.messageBus.publish(Validation._setValidateEvent(errordata, event));
+    this._messageBus.publish(Validation._setValidateEvent(errordata, event));
   }
 
   private _getTranslation(

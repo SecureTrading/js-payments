@@ -1,14 +1,16 @@
 import { IFormFieldState } from '../../models/IFormFieldState';
 import { IMessageBusEvent } from '../../models/IMessageBusEvent';
-import { Frame } from '../frame/Frame';
 import { Language } from '../Language';
 import { Selectors } from '../Selectors';
 import { Translator } from '../Translator';
 import { Utils } from '../Utils';
 import { Validation } from '../Validation';
 import { onInputWraper } from '../utils/onInputWrapper';
+import { Frame } from '../frame/Frame';
+import { MessageBus } from '../MessageBus';
+import { Container } from 'typedi';
 
-export class Input extends Frame {
+export class Input {
   protected static PLACEHOLDER_ATTRIBUTE: string = 'placeholder';
   public validation: Validation;
   protected _inputSelector: string;
@@ -20,9 +22,12 @@ export class Input extends Frame {
   protected _cardNumberInput: HTMLInputElement;
   protected placeholder: string;
   private _translator: Translator;
+  protected frame: Frame;
+  protected messageBus: MessageBus;
 
   constructor(inputSelector: string, messageSelector: string, labelSelector: string) {
-    super();
+    this.messageBus = Container.get(MessageBus);
+    this.frame = Container.get(Frame);
     this._cardNumberInput = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     this._inputElement = document.getElementById(inputSelector) as HTMLInputElement;
     this._labelElement = document.getElementById(labelSelector) as HTMLLabelElement;
@@ -35,9 +40,9 @@ export class Input extends Frame {
   }
 
   public init(): void {
-    super.init();
-    this._translator = new Translator(this.params.locale);
-    this.validation = new Validation();
+    this.frame.init();
+    this._translator = new Translator(this.frame.params.locale);
+    this.validation = new Validation(this.messageBus, this.frame);
 
     this._setLabelText();
     this._addTabListener();
@@ -96,7 +101,7 @@ export class Input extends Frame {
   }
 
   protected getAllowedStyles() {
-    let allowed = super.getAllowedStyles();
+    let allowed = this.frame.getAllowedStyles();
     allowed = {
       ...allowed,
       ...this._getInputAllowedStyles(

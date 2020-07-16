@@ -4,7 +4,6 @@ import { IFormFieldState } from '../../core/models/IFormFieldState';
 import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
-import { BrowserSessionStorage } from '../../../shared/services/storage/BrowserSessionStorage';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
 import { mock, instance as mockInstance, when, anyString, anything } from 'ts-mockito';
@@ -14,6 +13,7 @@ import { CardinalCommerce } from '../../core/integrations/cardinal-commerce/Card
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { EMPTY, of } from 'rxjs';
 import { ConfigService } from '../../../client/config/ConfigService';
+import { Frame } from '../../core/shared/frame/Frame';
 
 jest.mock('../../../../src/application/core/shared/Payment');
 
@@ -23,7 +23,7 @@ describe('ControlFrame', () => {
 
   beforeEach(() => {
     // @ts-ignore
-    instance.messageBus.subscribe = jest.fn().mockImplementationOnce((event, callback) => {
+    instance._messageBus.subscribe = jest.fn().mockImplementationOnce((event, callback) => {
       callback(data);
     });
   });
@@ -117,7 +117,7 @@ describe('ControlFrame', () => {
     // then
     it('should call _initResetJwtEvent when RESET_JWT event has been called', () => {
       // @ts-ignore
-      instance.messageBus.subscribe = jest
+      instance._messageBus.subscribe = jest
         .fn()
         .mockImplementationOnce((even, callback) => {
           callback();
@@ -344,7 +344,7 @@ describe('ControlFrame', () => {
       // @ts-ignore
       instance._updateMerchantFields(data);
       // @ts-ignore
-      instance.messageBus.publish = jest.fn();
+      instance._messageBus.publish = jest.fn();
     });
 
     // then
@@ -422,7 +422,7 @@ describe('ControlFrame', () => {
       // @ts-ignore
       instance._requestThreeDInit = jest.fn();
       // @ts-ignore
-      instance.messageBus.publish = jest.fn();
+      instance._messageBus.publish = jest.fn();
       // @ts-ignore
       instance._validation.setFormValidity = jest.fn();
       // @ts-ignore
@@ -474,6 +474,8 @@ function controlFrameFixture() {
   const cybertonica: Cybertonica = mock(Cybertonica);
   const cardinalCommerce: CardinalCommerce = mock(CardinalCommerce);
   const configService: ConfigService = mock(ConfigService);
+  const messageBus: MessageBus = mock(MessageBus);
+  const frame: Frame = mock(Frame);
 
   when(communicator.whenReceive(anyString())).thenReturn({
     thenRespond: () => undefined
@@ -488,7 +490,9 @@ function controlFrameFixture() {
     mockInstance(notification),
     mockInstance(cybertonica),
     mockInstance(cardinalCommerce),
-    mockInstance(configService)
+    mockInstance(configService),
+    mockInstance(messageBus),
+    mockInstance(frame)
   );
   const messageBusEvent = {
     type: ''
