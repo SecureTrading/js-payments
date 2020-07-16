@@ -162,7 +162,7 @@
       stConfig.submitCallback = function someFancyfunction(data) {
         var stringified = JSON.stringify(data);
         var testVariable = 'This is what we have got after submit' + stringified;
-        displayPopup('data-popup', 'Error code: ' + (data && data.errorcode == '0' ? 'OK' : 'Error'), 'blue');
+        displayPopup(!data || data.errorcode != '0' ? 'Error' : 'OK') , 'blue');
         console.error(testVariable);
       };
       stConfig.successCallback = function() {
