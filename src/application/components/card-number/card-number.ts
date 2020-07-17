@@ -5,9 +5,12 @@ import { FrameIdentifier } from '../../../shared/services/message-bus/FrameIdent
 import { Selectors } from '../../core/shared/Selectors';
 import { SentryService } from '../../../shared/services/sentry/SentryService';
 import { environment } from '../../../environments/environment';
+import '../OverrideDomain';
+import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
 
 (() => {
   Container.get(FrameIdentifier).setFrameName(Selectors.CARD_NUMBER_IFRAME);
+  Container.get(FramesHub).notifyReadyState();
 
   if (CardNumber.ifFieldExists()) {
     Container.get(CardNumber);

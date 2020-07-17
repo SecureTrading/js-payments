@@ -375,9 +375,8 @@ export class ControlFrame {
   }
 
   private _getPanFromJwt(): string {
-    return JwtDecode<IDecodedJwt>(this._frame.params.jwt).payload.pan
-      ? JwtDecode<IDecodedJwt>(this._frame.params.jwt).payload.pan
-      : '';
+    const { jwt } = this._frame.parseUrl();
+    return JwtDecode<IDecodedJwt>(jwt).payload.pan ? JwtDecode<IDecodedJwt>(jwt).payload.pan : '';
   }
 
   private _getPan(): string {

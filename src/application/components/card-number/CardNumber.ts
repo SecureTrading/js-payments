@@ -9,9 +9,10 @@ import { Selectors } from '../../core/shared/Selectors';
 import { Utils } from '../../core/shared/Utils';
 import { Validation } from '../../core/shared/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
-import { Service } from 'typedi';
+import { Container, Service } from 'typedi';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
 import { IconFactory } from '../../core/services/icon/IconFactory';
+import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
 
 @Service()
 export class CardNumber extends Input {

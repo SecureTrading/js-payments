@@ -41,7 +41,7 @@ export class Input {
 
   public init(): void {
     this.frame.init();
-    this._translator = new Translator(this.frame.params.locale);
+    this._translator = new Translator(this.frame.parseUrl().locale);
     this.validation = new Validation(this.messageBus, this.frame);
 
     this._setLabelText();
@@ -101,7 +101,7 @@ export class Input {
   }
 
   protected getAllowedStyles() {
-    let allowed = this.frame.getAllowedStyles();
+    let allowed = this.frame._getAllowedStyles();
     allowed = {
       ...allowed,
       ...this._getInputAllowedStyles(

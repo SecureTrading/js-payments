@@ -14,6 +14,7 @@ import { IConfig } from '../../../shared/model/config/IConfig';
 import { EMPTY, of } from 'rxjs';
 import { ConfigService } from '../../../client/config/ConfigService';
 import { Frame } from '../../core/shared/frame/Frame';
+import { MessageBusMock } from '../../../testing/mocks/MessageBusMock';
 
 jest.mock('../../../../src/application/core/shared/Payment');
 
@@ -400,17 +401,6 @@ describe('ControlFrame', () => {
       // @ts-ignore
       expect(instance._getPanFromJwt()).toEqual('3089500000000000021');
     });
-
-    // then
-    it('should return pan from jwt', () => {
-      // @ts-ignore
-      instance.params = {
-        jwt:
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NjU5MTYxMS43ODM3MzY1LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiNDExMTExMTExMTExMTExMSIsImV4cGlyeWRhdGUiOiIwMS8yMiIsInNlY3VyaXR5Y29kZSI6IjEyMyJ9fQ.Rkhsx1PCXnd_Kf-U9OvQRbp9lnNpFx5ClPpm4zx-hDM'
-      };
-      // @ts-ignore
-      expect(instance._getPanFromJwt()).toEqual('4111111111111111');
-    });
   });
 
   // given
@@ -474,7 +464,7 @@ function controlFrameFixture() {
   const cybertonica: Cybertonica = mock(Cybertonica);
   const cardinalCommerce: CardinalCommerce = mock(CardinalCommerce);
   const configService: ConfigService = mock(ConfigService);
-  const messageBus: MessageBus = mock(MessageBus);
+  const messageBus: MessageBus = (new MessageBusMock() as unknown) as MessageBus;
   const frame: Frame = mock(Frame);
 
   when(communicator.whenReceive(anyString())).thenReturn({
@@ -482,6 +472,11 @@ function controlFrameFixture() {
   });
   when(configProvider.getConfig$()).thenReturn(of({} as IConfig));
   when(cardinalCommerce.init(anything())).thenReturn(EMPTY);
+  when(frame.parseUrl()).thenReturn({
+    locale: 'en_GB',
+    jwt:
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NjQ5MjA1NS44NjY1OSwicGF5bG9hZCI6eyJiYXNlYW1vdW50IjoiMTAwMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiIsInBhbiI6IjMwODk1MDAwMDAwMDAwMDAwMjEiLCJleHBpcnlkYXRlIjoiMDEvMjIifX0.lbNSlaDkbzG6dkm1uc83cc3XvUImysNj_7fkdo___fw'
+  });
 
   const instance = new ControlFrame(
     mockInstance(localStorage),
@@ -491,7 +486,7 @@ function controlFrameFixture() {
     mockInstance(cybertonica),
     mockInstance(cardinalCommerce),
     mockInstance(configService),
-    mockInstance(messageBus),
+    messageBus,
     mockInstance(frame)
   );
   const messageBusEvent = {
