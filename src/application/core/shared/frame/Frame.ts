@@ -20,20 +20,20 @@ export class Frame {
     this.framesHub.notifyReadyState();
   }
 
-  init(): void {
+  public init(): void {
     this.params.styles = this.parseUrl().styles;
     new Styler(this.getAllowedStyles()).inject(this.params.styles);
   }
 
-  getAllowedParams(): string[] {
+  public getAllowedParams(): string[] {
     return ['locale', 'origin'];
   }
 
-  getAllowedStyles(): IAllowedStyles {
+  public getAllowedStyles(): IAllowedStyles {
     return frameAllowedStyles;
   }
 
-  parseUrl(): IParams {
+  public parseUrl(): IParams {
     const parsedUrl = new URL(window.location.href);
     const allowedParams = this.getAllowedParams();
 

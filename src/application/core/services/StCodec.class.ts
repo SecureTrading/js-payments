@@ -98,6 +98,7 @@ class StCodec {
 
   private static _notification: NotificationService;
   private static _messageBus: MessageBus;
+  private static _frame: Frame;
   private static _locale: string;
   private static REQUESTS_WITH_ERROR_MESSAGES = [
     'AUTH',
@@ -119,6 +120,10 @@ class StCodec {
     return StCodec._notification || (StCodec._notification = Container.get(NotificationService));
   }
 
+  private static getFrameService(): Frame {
+    return StCodec._frame || (StCodec._frame = Container.get(Frame));
+  }
+
   private static _createCommunicationError() {
     return {
       errorcode: '50003',
@@ -127,9 +132,7 @@ class StCodec {
   }
 
   private static _handleInvalidResponse() {
-    const messageBus: MessageBus = Container.get(MessageBus);
-    const frame: Frame = Container.get(Frame);
-    const validation = new Validation(messageBus, frame);
+    const validation = new Validation(StCodec.getMessageBus(), StCodec.getFrameService());
     StCodec.publishResponse(StCodec._createCommunicationError());
     StCodec.getNotification().error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
     validation.blockForm(FormState.AVAILABLE);
@@ -161,10 +164,8 @@ class StCodec {
   }
 
   private static _handleValidGatewayResponse(responseContent: IResponseData, jwtResponse: string) {
-    const messageBus: MessageBus = Container.get(MessageBus);
-    const frame: Frame = Container.get(Frame);
     const translator = new Translator(StCodec._locale);
-    const validation = new Validation(messageBus, frame);
+    const validation = new Validation(StCodec.getMessageBus(), StCodec.getFrameService());
 
     const { errorcode, errormessage, requesttypedescription } = responseContent;
 

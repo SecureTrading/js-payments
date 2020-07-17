@@ -44,6 +44,7 @@ import { FrameIdentifier } from '../shared/services/message-bus/FrameIdentifier'
 import { PUBLIC_EVENTS } from '../application/core/shared/EventTypes';
 import { IframeFactory } from './classes/element/IframeFactory';
 import { IMessageBusEvent } from '../application/core/models/IMessageBusEvent';
+import { Frame } from '../application/core/shared/frame/Frame';
 
 @Service()
 class ST {
@@ -104,7 +105,8 @@ class ST {
     private _storage: BrowserLocalStorage,
     private _messageBus: MessageBus,
     private _notification: Notification,
-    private _iframeFactory: IframeFactory
+    private _iframeFactory: IframeFactory,
+    private _frameService: Frame
   ) {
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
@@ -264,7 +266,8 @@ class ST {
       this._config.fieldsToSubmit,
       this._config.formId,
       this._configProvider,
-      this._iframeFactory
+      this._iframeFactory,
+      this._frameService
     );
   }
 
@@ -282,7 +285,8 @@ class ST {
       this._config.animatedCard,
       this._config.components.requestTypes,
       this._config.formId,
-      this._iframeFactory
+      this._iframeFactory,
+      this._frameService
     );
   }
 

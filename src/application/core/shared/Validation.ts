@@ -301,8 +301,8 @@ export class Validation {
   }
 
   protected init() {
-    this._frame.init();
     this._matchDigitsRegexp = new RegExp(Validation.MATCH_DIGITS);
+    this._frame.init();
     this._translator = new Translator(this._frame.parseUrl().locale);
   }
 

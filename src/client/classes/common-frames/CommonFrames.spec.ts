@@ -218,6 +218,8 @@ function commonFramesFixture() {
     return iframe;
   });
 
+  when(frame.parseUrl()).thenReturn({ params: { locale: 'en_GB' } });
+
   const instance = new CommonFrames(
     jwt,
     origin,
