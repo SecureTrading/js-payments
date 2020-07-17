@@ -36,7 +36,7 @@ export class StoreBasedStorage implements IStorage, ISynchronizedStorage {
   initSynchronization() {
     this.interFrameCommunicator.incomingEvent$.pipe(ofType(PUBLIC_EVENTS.STORAGE_SYNC)).subscribe(event => {
       const { key, value } = event.data;
-      this.setItemWithoutSync(key, JSON.parse(value));
+      this.setItemWithoutSync(key, this.parseEventData(value));
     });
   }
 
@@ -45,5 +45,13 @@ export class StoreBasedStorage implements IStorage, ISynchronizedStorage {
       type: 'STORAGE/SET_ITEM',
       payload: { key: name, value }
     });
+  }
+
+  private parseEventData(jsonData: string): any {
+    try {
+      return JSON.parse(jsonData);
+    } catch (e) {
+      return undefined;
+    }
   }
 }
