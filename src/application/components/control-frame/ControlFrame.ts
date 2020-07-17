@@ -135,6 +135,7 @@ export class ControlFrame {
     this._resetJwtEvent();
     this._updateJwtEvent();
     this._initCybertonica(config);
+    this._frame.getAllowedParams().concat(ControlFrame.ALLOWED_PARAMS);
 
     if (!config.deferInit) {
       this._initCardinalCommerce(config);
@@ -154,10 +155,6 @@ export class ControlFrame {
         this._payment.setCardinalCommerceCacheToken(tokens.cacheToken);
       }
     );
-  }
-
-  protected getAllowedParams(): string[] {
-    return this._frame.getAllowedParams().concat(ControlFrame.ALLOWED_PARAMS);
   }
 
   private _formFieldChangeEvent(event: string, field: IFormFieldState): void {

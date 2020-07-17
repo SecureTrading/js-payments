@@ -7,20 +7,20 @@ import { frameAllowedStyles } from './frame-const';
 @Service()
 export class Frame {
   public init(): void {
-    new Styler(this._getAllowedStyles()).inject(this.parseUrl().styles);
+    new Styler(this.getAllowedStyles()).inject(this.parseUrl().styles);
   }
 
-  private _getAllowedParams(): string[] {
+  public getAllowedParams(): string[] {
     return ['locale', 'origin'];
   }
 
-  public _getAllowedStyles(): IAllowedStyles {
+  public getAllowedStyles(): IAllowedStyles {
     return frameAllowedStyles;
   }
 
   public parseUrl(): IParams {
     const parsedUrl = new URL(window.location.href);
-    const allowedParams = this._getAllowedParams();
+    const allowedParams = this.getAllowedParams();
     const params: IParams = { styles: [] };
 
     parsedUrl.searchParams.forEach((value: string, param: string) => {

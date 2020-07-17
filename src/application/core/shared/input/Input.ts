@@ -101,7 +101,7 @@ export class Input {
   }
 
   protected getAllowedStyles() {
-    let allowed = this.frame._getAllowedStyles();
+    let allowed = this.frame.getAllowedStyles();
     allowed = {
       ...allowed,
       ...this._getInputAllowedStyles(
