@@ -25,16 +25,10 @@ describe('ConfigService', () => {
   });
 
   describe('update', () => {
-    it('clears the already existing config in storage', () => {
-      configService.update(config);
-
-      verify(storageMock.setItem('app.config', null)).once();
-    });
-
     it('resolves the full config and stores it in storage', () => {
       configService.update(config);
 
-      verify(storageMock.setItem('app.config', JSON.stringify(fullConfig))).once();
+      verify(storageMock.setItem('app.config', fullConfig)).once();
     });
 
     it('returns the full config', () => {
@@ -51,16 +45,10 @@ describe('ConfigService', () => {
   });
 
   describe('clear', () => {
-    it('sets config value to null with synchronization', () => {
-      configService.clear(true);
+    it('sets config value to null', () => {
+      configService.clear();
 
-      verify(storageMock.setItem('app.config', null, true)).once();
-    });
-
-    it('sets config value to null without synchronization', () => {
-      configService.clear(false);
-
-      verify(storageMock.setItem('app.config', null, false)).once();
+      verify(storageMock.setItem('app.config', null)).once();
     });
   });
 });

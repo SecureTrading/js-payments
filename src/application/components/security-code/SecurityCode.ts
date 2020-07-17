@@ -15,10 +15,10 @@ import { merge, Observable } from 'rxjs';
 import JwtDecode from 'jwt-decode';
 import { IDecodedJwt } from '../../core/models/IDecodedJwt';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
-import { BrowserSessionStorage } from '../../../shared/services/storage/BrowserSessionStorage';
 import { DefaultPlaceholders } from '../../core/models/constants/config-resolver/DefaultPlaceholders';
 import { LONG_CVC, SHORT_CVC } from '../../core/models/constants/SecurityCode';
 import { IConfig } from '../../../shared/model/config/IConfig';
+import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 
 @Service()
 export class SecurityCode extends FormField {
@@ -42,7 +42,7 @@ export class SecurityCode extends FormField {
   constructor(
     private _configProvider: ConfigProvider,
     private _messageBus: MessageBus,
-    private _sessionStorage: BrowserSessionStorage
+    private _localStorage: BrowserLocalStorage
   ) {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
 
@@ -103,7 +103,7 @@ export class SecurityCode extends FormField {
     const maskedPanFromJsInit$: Observable<string> = this._configProvider.getConfig$().pipe(
       filter((config: IConfig) => config.deferInit === false),
       tap((config: IConfig) => (this._config = config)),
-      switchMap(() => this._sessionStorage.select(store => store['app.maskedpan']))
+      switchMap(() => this._localStorage.select(store => store['app.maskedpan']))
     );
 
     return merge(cardNumberInput$, cardNumberFromJwt$, maskedPanFromJsInit$).pipe(
