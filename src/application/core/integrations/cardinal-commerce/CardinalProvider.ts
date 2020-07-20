@@ -1,8 +1,8 @@
-import { from, Observable } from 'rxjs';
+import { from, interval, Observable } from 'rxjs';
 import { ICardinal } from './ICardinal';
 import { Service } from 'typedi';
 import { DomMethods } from '../../shared/DomMethods';
-import { map } from 'rxjs/operators';
+import { delay, filter, map, switchMap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { ICardinalProvider } from './ICardinalProvider';
 
@@ -22,6 +22,11 @@ export class CardinalProvider implements ICardinalProvider {
       id: CardinalProvider.SCRIPT_ID
     };
 
-    return from(DomMethods.insertScript('head', scriptOptions)).pipe(map(() => Cardinal));
+    return from(DomMethods.insertScript('head', scriptOptions)).pipe(
+      switchMap(
+        // @ts-ignore
+        () => interval().pipe(map(window.Cardinal), filter(Boolean)) as ICardinal
+      )
+    );
   }
 }
