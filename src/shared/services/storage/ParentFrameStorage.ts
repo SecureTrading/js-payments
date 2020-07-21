@@ -45,12 +45,20 @@ export class ParentFrameStorage implements IStorage, ISynchronizedStorage {
       .pipe(ofType(PUBLIC_EVENTS.STORAGE_SYNC), takeUntil(this.interFrameCommunicator.communicationClosed$))
       .subscribe(event => {
         const { key, value } = event.data;
-        this.setItemWithoutSync(key, JSON.parse(value));
+        this.setItemWithoutSync(key, this.parseEventData(value));
       });
   }
 
   private setItemWithoutSync(name: string, value: any): void {
     const storage = this.storage$.getValue();
     this.storage$.next({ ...storage, [name]: value });
+  }
+
+  private parseEventData(jsonData: string): any {
+    try {
+      return JSON.parse(jsonData);
+    } catch (e) {
+      return undefined;
+    }
   }
 }
