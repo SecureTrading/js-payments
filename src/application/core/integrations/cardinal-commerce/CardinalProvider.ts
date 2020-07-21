@@ -24,12 +24,11 @@ export class CardinalProvider implements ICardinalProvider {
 
     return from(DomMethods.insertScript('head', scriptOptions)).pipe(
       switchMap(
-        // @ts-ignore
         () =>
           interval().pipe(
-            map(() => window.Cardinal),
+            map(() => Cardinal),
             filter(Boolean)
-          ) as ICardinal
+          ) as Observable<ICardinal>
       )
     );
   }
