@@ -24,7 +24,8 @@ describe('Notification', () => {
     framesHub = mock(FramesHub);
 
     document.body.innerHTML = `<div id="st-notification-frame"></div>`;
-    when(configProvider.getConfig()).thenReturn({
+
+    const config = {
       jwt: '',
       disableNotification: false,
       componentIds: {
@@ -38,7 +39,10 @@ describe('Notification', () => {
           'color-error': '#FFF333'
         }
       }
-    });
+    };
+
+    when(configProvider.getConfig()).thenReturn(config);
+    when(configProvider.getConfig$()).thenReturn(of(config));
     when(browserLocalStorage.getItem('locale')).thenReturn('en');
     when(framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME)).thenReturn(of(Selectors.CONTROL_FRAME_IFRAME));
 
