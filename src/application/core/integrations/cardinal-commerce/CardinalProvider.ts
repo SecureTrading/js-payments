@@ -2,7 +2,7 @@ import { from, interval, Observable } from 'rxjs';
 import { ICardinal } from './ICardinal';
 import { Service } from 'typedi';
 import { DomMethods } from '../../shared/DomMethods';
-import { delay, filter, map, switchMap } from 'rxjs/operators';
+import { delay, filter, first, map, switchMap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { ICardinalProvider } from './ICardinalProvider';
 
@@ -27,7 +27,8 @@ export class CardinalProvider implements ICardinalProvider {
         () =>
           interval().pipe(
             map(() => Cardinal),
-            filter(Boolean)
+            filter(Boolean),
+            first()
           ) as Observable<ICardinal>
       )
     );
