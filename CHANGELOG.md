@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.4.0
+
+### Fixed
+- Firefox with Enhanced Tracking Protection throws SecurityError.
+- Slow loading app issue.
+- Error callback duplicated after ApplePay payment.
+
+### Added
+- Improve state storage - Redux.
+
 ## 2.3.1
 
 ### Fixed

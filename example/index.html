@@ -140,10 +140,15 @@
           'display: flex; justify-content: center; position: fixed; height: 70px;right:0;color: white;padding: 0 50px;align-items: center;border-radius: 10px;font-family: Verdana;font-size: 20px;z-index:2'
         );
         div.style.backgroundColor = tp;
-        if (tp === 'green') {
-          div.style.top = 0;
-        } else {
-          div.style.bottom = 0;
+        switch(tp) {
+          case 'green':
+            div.style.top = 0;
+            break;
+          case 'blue':
+            div.style.top = '100px';
+            break;
+          default:
+            div.style.bottom = 0;
         }
         var popup = document.getElementById('st-popup');
         popup.appendChild(div);
@@ -157,6 +162,7 @@
       stConfig.submitCallback = function someFancyfunction(data) {
         var stringified = JSON.stringify(data);
         var testVariable = 'This is what we have got after submit' + stringified;
+        displayPopup('data-popup', 'Error code: ' + (!data || data.errorcode != '0' ? 'Error' : 'OK'), 'blue');
         console.error(testVariable);
       };
       stConfig.successCallback = function() {
