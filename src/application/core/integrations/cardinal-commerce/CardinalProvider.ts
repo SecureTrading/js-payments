@@ -26,7 +26,8 @@ export class CardinalProvider implements ICardinalProvider {
       switchMap(
         () =>
           interval().pipe(
-            map(() => Cardinal),
+            // @ts-ignore
+            map(() => window.Cardinal),
             filter(Boolean),
             first()
           ) as Observable<ICardinal>
