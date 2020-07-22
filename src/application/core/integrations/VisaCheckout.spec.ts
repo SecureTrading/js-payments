@@ -210,35 +210,6 @@ describe('Visa Checkout', () => {
     });
   });
 
-  // given
-  describe('_initVisaFlow()', () => {
-    // @ts-ignore
-    const initPayment = VisaCheckout.prototype.initPaymentConfiguration;
-    // @ts-ignore
-    const statusHandler = VisaCheckout.prototype.paymentStatusHandler;
-
-    // then
-    it.skip('should call load handler', () => {
-      // @ts-ignore
-      const spy = jest.spyOn(VisaCheckout.prototype, 'initPaymentConfiguration').mockImplementation(() => {});
-      // @ts-ignore
-      const spy2 = jest.spyOn(VisaCheckout.prototype, 'paymentStatusHandler').mockImplementation(() => {});
-      const ev = document.createEvent('Event');
-      ev.initEvent('load', false, false);
-      const script = document.getElementsByTagName('script')[0];
-      script.dispatchEvent(ev);
-      expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy2).toHaveBeenCalledTimes(1);
-    });
-
-    afterEach(() => {
-      // @ts-ignore
-      VisaCheckout.prototype.initPaymentConfiguration = initPayment;
-      // @ts-ignore
-      VisaCheckout.prototype.paymentStatusHandler = statusHandler;
-    });
-  });
-
   describe('paymentStatusHandler()', () => {
     // then
     it('should trigger V.on functions with proper configuration', () => {
