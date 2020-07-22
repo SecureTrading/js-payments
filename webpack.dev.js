@@ -21,7 +21,7 @@ module.exports = merge(common, {
     hot: true,
     host: '0.0.0.0',
     writeToDisk: true,
-    index: '',
+    index: 'index.html',
     disableHostCheck: true,
     watchOptions: {
       ignored: ['node_modules']

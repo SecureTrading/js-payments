@@ -15,10 +15,15 @@ import { anyString, instance as mockInstance, mock, when } from 'ts-mockito';
 import { ConfigProvider } from '../services/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { EMPTY, of } from 'rxjs';
+import { StoreBasedStorage } from '../../../shared/services/storage/StoreBasedStorage';
+import { Container } from 'typedi';
+import { SimpleStorage } from '../../../shared/services/storage/SimpleStorage';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
 jest.mock('../../../../src/application/core/integrations/GoogleAnalytics');
 jest.mock('../../../../src/client/classes/notification/NotificationService');
+
+Container.set({ id: StoreBasedStorage, type: SimpleStorage });
 
 // given
 describe('ApplePay', () => {

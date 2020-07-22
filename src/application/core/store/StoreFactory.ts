@@ -7,6 +7,7 @@ import { dummyEpic } from './epics/dummyEpic';
 import { catchError } from 'rxjs/operators';
 import { IAction } from './IAction';
 import { environment } from '../../../environments/environment';
+import { storageReducer } from './reducers/storage/StorageReducer';
 
 @Service()
 export class StoreFactory {
@@ -27,7 +28,8 @@ export class StoreFactory {
 
   private getRootReducer(): Reducer {
     return combineReducers({
-      config: configReducer
+      config: configReducer,
+      storage: storageReducer
     });
   }
 
