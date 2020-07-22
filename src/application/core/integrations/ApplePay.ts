@@ -504,7 +504,6 @@ export class ApplePay {
       this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK }, true);
       this._notification.success(Language.translations.PAYMENT_SUCCESS);
     } else {
-      this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
       this._notification.error(errormessage);
     }
   }
