@@ -16,6 +16,8 @@ import { ofType } from '../../shared/services/message-bus/operators/ofType';
 import { Observable } from 'rxjs';
 import { ConfigProvider } from '../../shared/services/config/ConfigProvider';
 import { IConfig } from '../../shared/model/config/IConfig';
+import { PUBLIC_EVENTS } from '../../application/core/shared/EventTypes';
+import { first } from 'rxjs/operators';
 
 export class CardFrames extends RegisterFrames {
   private static CARD_NUMBER_FIELD_NAME: string = 'pan';
@@ -151,7 +153,9 @@ export class CardFrames extends RegisterFrames {
     this._config$.subscribe(response => {
       const { deferInit, components } = response;
 
-      this._submitButton.textContent = this._payMessage;
+      if (this._submitButton) {
+        this._submitButton.textContent = this._payMessage;
+      }
 
       if (deferInit || components.startOnLoad) {
         this._disableSubmitButton(FormState.AVAILABLE);
@@ -357,6 +361,13 @@ export class CardFrames extends RegisterFrames {
   }
 
   private _preventFormSubmit(): void {
-    document.getElementById(this.formId).addEventListener(CardFrames.SUBMIT_EVENT, event => event.preventDefault());
+    const preventFunction = (event: Event) => event.preventDefault();
+    const paymentForm = document.getElementById(this.formId);
+
+    paymentForm.addEventListener(CardFrames.SUBMIT_EVENT, preventFunction);
+
+    this.messageBus.pipe(ofType(PUBLIC_EVENTS.DESTROY), first()).subscribe(() => {
+      paymentForm.removeEventListener(CardFrames.SUBMIT_EVENT, preventFunction);
+    });
   }
 }

@@ -24,6 +24,7 @@ export class ConfigService implements ConfigProvider {
     }
 
     this.config$.next(fullConfig);
+
     this.messageBus.publish({
       type: PUBLIC_EVENTS.CONFIG_CHANGED,
       data: JSON.parse(JSON.stringify(fullConfig))

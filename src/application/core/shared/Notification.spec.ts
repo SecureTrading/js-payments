@@ -24,7 +24,9 @@ describe('Notification', () => {
     configProvider = mock<ConfigProvider>();
     framesHub = mock(FramesHub);
 
-    const config: IConfig = {
+    document.body.innerHTML = `<div id="st-notification-frame"></div>`;
+
+    const config = {
       jwt: '',
       disableNotification: false,
       componentIds: {
@@ -40,7 +42,6 @@ describe('Notification', () => {
       }
     };
 
-    document.body.innerHTML = `<div id="st-notification-frame"></div>`;
     when(configProvider.getConfig()).thenReturn(config);
     when(configProvider.getConfig$()).thenReturn(of(config));
     when(browserLocalStorage.getItem('locale')).thenReturn('en');

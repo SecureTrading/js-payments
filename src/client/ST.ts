@@ -33,7 +33,6 @@ import { IErrorEvent } from '../application/core/models/IErrorEvent';
 import { InterFrameCommunicator } from '../shared/services/message-bus/InterFrameCommunicator';
 import { FramesHub } from '../shared/services/message-bus/FramesHub';
 import { BrowserLocalStorage } from '../shared/services/storage/BrowserLocalStorage';
-import { BrowserSessionStorage } from '../shared/services/storage/BrowserSessionStorage';
 import { Notification } from '../application/core/shared/Notification';
 import { ofType } from '../shared/services/message-bus/operators/ofType';
 import { Subject, Subscription } from 'rxjs';
@@ -42,6 +41,8 @@ import { switchMap } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { FrameIdentifier } from '../shared/services/message-bus/FrameIdentifier';
 import { ConfigProvider } from '../shared/services/config/ConfigProvider';
+import { PUBLIC_EVENTS } from '../application/core/shared/EventTypes';
+import { IMessageBusEvent } from '../application/core/models/IMessageBusEvent';
 
 @Service()
 class ST {
@@ -100,7 +101,6 @@ class ST {
     private _communicator: InterFrameCommunicator,
     private _framesHub: FramesHub,
     private _storage: BrowserLocalStorage,
-    private _sessionStorage: BrowserSessionStorage,
     private _messageBus: MessageBus,
     private _notification: Notification
   ) {
@@ -145,12 +145,24 @@ class ST {
     this.blockSubmitButton();
     // @ts-ignore
     this._commonFrames._requestTypes = this._config.components.requestTypes;
-    this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(async controlFrame => {
-      await this._communicator.query({ type: MessageBus.EVENTS_PUBLIC.CONFIG_CHECK }, controlFrame);
-      this.CardFrames();
-      this._cardFrames.init();
-      this._merchantFields.init();
-    });
+
+    this._framesHub
+      .waitForFrame(Selectors.CONTROL_FRAME_IFRAME)
+      .pipe(
+        switchMap(controlFrame => {
+          const queryEvent: IMessageBusEvent<string> = {
+            type: PUBLIC_EVENTS.INIT_CONTROL_FRAME,
+            data: JSON.stringify(this._config)
+          };
+
+          return from(this._communicator.query(queryEvent, controlFrame));
+        })
+      )
+      .subscribe(() => {
+        this.CardFrames();
+        this._cardFrames.init();
+        this._merchantFields.init();
+      });
   }
 
   public ApplePay(config: IApplePay): ApplePay {
@@ -223,8 +235,9 @@ class ST {
   }
 
   public init(config: IConfig): void {
+    this._storage.init();
+    this._config = this._configService.update(config);
     StCodec.updateJWTValue(config.jwt);
-    this._config = this._configProvider.getConfig();
     this.initCallbacks(config);
     this.Storage();
     this._translation = new Translator(this._storage.getItem(ST.LOCALE_STORAGE));
@@ -360,15 +373,15 @@ class ST {
       form.querySelector(ST.BUTTON_SUBMIT_SELECTOR) ||
       form.querySelector(ST.INPUT_SUBMIT_SELECTOR);
 
-    submitButton.classList.add(ST.BUTTON_DISABLED_CLASS);
-    submitButton.disabled = true;
+    if (submitButton) {
+      submitButton.classList.add(ST.BUTTON_DISABLED_CLASS);
+      submitButton.disabled = true;
+    }
   }
 }
 
 export default (config: IConfig) => {
   Container.get(FrameIdentifier).setFrameName(Selectors.MERCHANT_PARENT_FRAME);
-  Container.get(ConfigService).clear();
-  Container.get(ConfigService).update(config);
 
   const st = Container.get(ST);
 

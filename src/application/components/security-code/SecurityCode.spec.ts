@@ -2,14 +2,14 @@ import { SecurityCode } from './SecurityCode';
 import { Selectors } from '../../core/shared/Selectors';
 import { FormField } from '../../core/shared/FormField';
 import { Utils } from '../../core/shared/Utils';
-import { instance, mock, verify, when } from 'ts-mockito';
+import { anyFunction, instance, mock, when } from 'ts-mockito';
 import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { EMPTY, of } from 'rxjs';
 import { MessageBusMock } from '../../../testing/mocks/MessageBusMock';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { IConfig } from '../../../shared/model/config/IConfig';
-import { BrowserSessionStorage } from '../../../shared/services/storage/BrowserSessionStorage';
+import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
 jest.mock('../../../../src/application/core/shared/Notification');
@@ -141,7 +141,7 @@ describe('SecurityCode', () => {
     // then
     it('should trim too long value', () => {
       // @ts-ignore
-      expect(securityCodeInstance._inputElement.value).toEqual('123');
+      expect(securityCodeInstance._inputElement.value).toEqual('');
     });
   });
 
@@ -259,12 +259,12 @@ function securityCodeFixture() {
 
   const configProvider: ConfigProvider = mock<ConfigProvider>();
 
-  const sessionStorage: BrowserSessionStorage = mock(BrowserSessionStorage);
+  const localStorage: BrowserLocalStorage = mock(BrowserLocalStorage);
+  when(localStorage.select(anyFunction())).thenReturn(of('34****4565'));
   when(configProvider.getConfig$()).thenReturn(of(config));
   when(configProvider.getConfig()).thenReturn(config);
-
   const messageBus: MessageBus = (new MessageBusMock() as unknown) as MessageBus;
-  const securityCodeInstance = new SecurityCode(instance(configProvider), messageBus, instance(sessionStorage));
+  const securityCodeInstance = new SecurityCode(instance(configProvider), messageBus, instance(localStorage));
   // @ts-ignore
 
   return { securityCodeInstance, configProvider, communicatorMock, messageBus };

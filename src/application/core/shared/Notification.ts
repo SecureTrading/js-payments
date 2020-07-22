@@ -11,6 +11,7 @@ import { IAllowedStyles } from '../models/IAllowedStyles';
 import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 import { NotificationsClasses } from '../models/constants/notifications/NotificationsClasses';
 import { NotificationsMessageTypes } from '../models/constants/notifications/NotificationsMessageTypes';
+import { IConfig } from '../../../shared/model/config/IConfig';
 
 @Service()
 export class Notification {
@@ -24,6 +25,8 @@ export class Notification {
     private _configProvider: ConfigProvider,
     private _framesHub: FramesHub
   ) {
+    this._applyStyles();
+
     this._messageMap = new Map(Object.entries(NotificationsClasses));
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, (event: INotificationEvent) => {
       this._displayNotification(event);
@@ -32,12 +35,10 @@ export class Notification {
     this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(() => {
       this._translator = new Translator(this._browserLocalStorage.getItem('locale'));
     });
-
-    this._applyStyles();
   }
 
   private _applyStyles(): void {
-    this._configProvider.getConfig$().subscribe(config => {
+    this._configProvider.getConfig$().subscribe((config: IConfig) => {
       // @ts-ignore
       new Styler(this._getAllowedStyles()).inject(config.styles.notificationFrame);
     });

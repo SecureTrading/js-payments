@@ -1,19 +1,18 @@
 import { ControlFrame } from './ControlFrame';
 import { StCodec } from '../../core/services/StCodec.class';
 import { IFormFieldState } from '../../core/models/IFormFieldState';
-import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
-import { BrowserSessionStorage } from '../../../shared/services/storage/BrowserSessionStorage';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
-import { mock, instance as mockInstance, when, anyString } from 'ts-mockito';
+import { mock, instance as mockInstance, when, anyString, anything } from 'ts-mockito';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
 import { Cybertonica } from '../../core/integrations/Cybertonica';
 import { CardinalCommerce } from '../../core/integrations/cardinal-commerce/CardinalCommerce';
 import { IConfig } from '../../../shared/model/config/IConfig';
-import { of } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import { Store } from '../../core/store/Store';
+import { ConfigService } from '../../../client/config/ConfigService';
 
 jest.mock('../../../../src/application/core/shared/Payment');
 
@@ -135,151 +134,6 @@ describe('ControlFrame', () => {
     });
   });
 
-  // given
-  describe('_onSetRequestTypesEvent', () => {
-    const { instance } = controlFrameFixture();
-    const data = { requestTypes: ['JSINIT', 'THREEDQUERY', 'CACHETOKENISE', 'AUTH'] };
-
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._setRequestTypesEvent(data);
-    });
-
-    // then
-    it.skip('should set _preThreeDRequestTypes and _postThreeDRequestTypes ', () => {
-      // @ts-ignore
-      expect(instance._preThreeDRequestTypes).toEqual(['JSINIT', 'THREEDQUERY']);
-      // @ts-ignore
-      expect(instance._postThreeDRequestTypes).toEqual(['CACHETOKENISE', 'AUTH']);
-    });
-  });
-
-  // given
-  describe.skip('_onSubmit', () => {
-    const { instance } = controlFrameFixture();
-    const data = { requestTypes: ['JSINIT', 'THREEDQUERY', 'CACHETOKENISE', 'AUTH'], bypassCards: ['VISA'] };
-
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._requestPayment = jest.fn();
-      // @ts-ignore
-      instance._onSetRequestTypesEvent = jest.fn();
-      // @ts-ignore
-      instance._isCardBypassed = jest.fn().mockReturnValueOnce(true);
-      // @ts-ignore
-      instance._onSubmit(data);
-    });
-
-    //then
-    it('should call _requestPayment', () => {
-      // @ts-ignore
-      expect(instance._requestPayment).toHaveBeenCalledWith(data, true);
-    });
-
-    //then
-    it.skip('should call _onSetRequestTypesEvent when data is not undefined and data.requestTypes is not undefined', () => {
-      // @ts-ignore
-      expect(instance._onSetRequestTypesEvent).toHaveBeenCalledWith(data);
-    });
-  });
-
-  // given
-  describe.skip('_onThreeDInitEvent', () => {
-    const { instance } = controlFrameFixture();
-
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._payment.threeDInitReques = jest.fn();
-      // @ts-ignore
-      instance._threeDInit();
-    });
-
-    // then
-    it('should call _requestThreeDInit', () => {
-      // @ts-ignore
-      expect(instance._requestThreeDInit).toHaveBeenCalled();
-    });
-  });
-
-  // given
-  describe.skip('_onProcessPaymentEvent', () => {
-    const { instance } = controlFrameFixture();
-    const data = {
-      errorcode: '40005',
-      errormessage: 'some error message'
-    };
-
-    const postRequests = ['CACHETOKENISE', 'AUTH'];
-
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._isThreeDRequestCalled = jest.fn().mockReturnValueOnce(true);
-      // @ts-ignore
-      instance._processPayment = jest.fn();
-    });
-
-    // then
-    it('should call _processThreeDResponse if _postThreeDRequestTypes has no requests included', () => {
-      // @ts-ignore
-      instance._postThreeDRequestTypes = [];
-      // @ts-ignore
-      instance._onProcessPayments(data);
-      // @ts-ignore
-      expect(instance._processPayment).toHaveBeenCalledWith(data);
-    });
-
-    // then
-    it('should call _requestThreeDInit if _postThreeDRequestTypes has some requests', () => {
-      // @ts-ignore
-      instance._postThreeDRequestTypes = postRequests;
-      // @ts-ignore
-      instance._onProcessPaymentEvent(data);
-      // @ts-ignore
-      expect(instance._processPayment).toHaveBeenCalledWith(data);
-    });
-  });
-
-  // given
-  describe.skip('_processThreeDResponse', () => {
-    const { instance } = controlFrameFixture();
-    const data = {
-      errorcode: '40005',
-      errormessage: 'some error message'
-    };
-    const dataWithThreedresponse = {
-      ...data,
-      threedresponse: '31232312321'
-    };
-
-    beforeEach(() => {
-      // @ts-ignore
-      instance._notification.success = jest.fn();
-      // @ts-ignore
-      instance._threeDQueryResult = { response: 'someresponse' };
-      StCodec.publishResponse = jest.fn();
-    });
-
-    // then
-    it('should call publishResponse if threedresponse is defined', () => {
-      // @ts-ignore
-      instance._processThreeDResponse(dataWithThreedresponse);
-      // @ts-ignore
-      expect(StCodec.publishResponse).toHaveBeenCalled();
-    });
-
-    // then
-    it('should call notification success, no matter if threedresponse is in data', () => {
-      // @ts-ignore
-      instance._processThreeDResponse(data);
-      // @ts-ignore
-      expect(instance._notification.success).toHaveBeenCalledWith(Language.translations.PAYMENT_SUCCESS);
-    });
-  });
-
   // TODO: get know how handle this promise
   // given
   describe('_processPayment', () => {
@@ -315,26 +169,6 @@ describe('ControlFrame', () => {
   });
 
   // given
-  describe('_requestThreeDInit', () => {
-    const { instance } = controlFrameFixture();
-    const result = {
-      response: {}
-    };
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._payment.threeDInitRequest = jest.fn().mockImplementation(() => Promise.resolve(result));
-      // @ts-ignore
-      instance._requestThreeDInit();
-    });
-    // then
-    it.skip('should call _threeDInitRequest()', () => {
-      // @ts-ignore
-      expect(instance._payment.threeDInitRequest).toBeCalled();
-    });
-  });
-
-  // given
   describe('_storeMerchantData', () => {
     const { instance } = controlFrameFixture();
     const data = 'some data';
@@ -351,22 +185,6 @@ describe('ControlFrame', () => {
     it('should set _merchantFormData', () => {
       // @ts-ignore
       expect(instance._merchantFormData).toEqual(data);
-    });
-  });
-
-  // given
-  describe('_onResetJWT', () => {
-    // when
-    beforeEach(() => {
-      StCodec.originalJwt = '56789';
-      StCodec.jwt = '1234';
-      // @ts-ignore
-      ControlFrame._resetJwt();
-    });
-    // then
-    it.skip('should set STCodec.jwt', () => {
-      // @ts-ignore
-      expect(StCodec.jwt).toEqual(StCodec.originalJwt);
     });
   });
 
@@ -412,85 +230,33 @@ describe('ControlFrame', () => {
       expect(instance._getPanFromJwt()).toEqual('4111111111111111');
     });
   });
-
-  // given
-  describe('_requestPayment()', () => {
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._threeDQueryEvent = { data: {} };
-      // @ts-ignore
-      instance._requestThreeDInit = jest.fn();
-      // @ts-ignore
-      instance.messageBus.publish = jest.fn();
-      // @ts-ignore
-      instance._validation.setFormValidity = jest.fn();
-      // @ts-ignore
-      instance._payment.threeDQueryRequest = jest.fn().mockResolvedValueOnce({
-        response: {}
-      });
-    });
-    // then
-    it.skip('should call requestThreeDInit if validity is true and deferInit is true', () => {
-      // @ts-ignore
-      instance._validation.formValidation = jest.fn().mockReturnValueOnce({
-        validity: true,
-        data: { expirydate: '12/20', pan: '4111111111111', securitycode: '123' }
-      });
-      // @ts-ignore
-      instance._requestPayment({
-        deferInit: true,
-        dataInJwt: false,
-        fieldsToSubmit: ['pan', 'expirydate', 'securitycode']
-      });
-      // @ts-ignore
-      expect(instance._requestThreeDInit).toHaveBeenCalled();
-    });
-
-    // then
-    it.skip('should call setFormValidity if validity is falsee', () => {
-      // @ts-ignore
-      instance._validation.formValidation = jest.fn().mockReturnValueOnce({
-        validity: false,
-        data: { expirydate: '', pan: '213214', securitycode: '' }
-      });
-      // @ts-ignore
-      instance._requestPayment({
-        deferInit: false,
-        dataInJwt: false,
-        fieldsToSubmit: ['pan', 'expirydate', 'securitycode']
-      });
-      // @ts-ignore
-      expect(instance._validation.setFormValidity).toHaveBeenCalled();
-    });
-  });
 });
 
 function controlFrameFixture() {
   const localStorage: BrowserLocalStorage = mock(BrowserLocalStorage);
-  const sessionStorage: BrowserSessionStorage = mock(BrowserSessionStorage);
   const communicator: InterFrameCommunicator = mock(InterFrameCommunicator);
   const configProvider: ConfigProvider = mock<ConfigProvider>();
   const notification: NotificationService = mock(NotificationService);
   const cybertonica: Cybertonica = mock(Cybertonica);
   const cardinalCommerce: CardinalCommerce = mock(CardinalCommerce);
   const storeMock: Store = mock(Store);
+  const configService: ConfigService = mock(ConfigService);
 
   when(communicator.whenReceive(anyString())).thenReturn({
     thenRespond: () => undefined
   });
-
   when(configProvider.getConfig$()).thenReturn(of({} as IConfig));
+  when(cardinalCommerce.init(anything())).thenReturn(EMPTY);
 
   const instance = new ControlFrame(
     mockInstance(localStorage),
-    mockInstance(sessionStorage),
     mockInstance(communicator),
     mockInstance(configProvider),
     mockInstance(notification),
     mockInstance(cybertonica),
     mockInstance(cardinalCommerce),
-    mockInstance(storeMock)
+    mockInstance(storeMock),
+    mockInstance(configService)
   );
   const messageBusEvent = {
     type: ''
@@ -499,5 +265,9 @@ function controlFrameFixture() {
     validity: true,
     value: 'test value'
   };
+
+  // @ts-ignore
+  instance.onInit({} as IConfig);
+
   return { data, instance, messageBusEvent };
 }
