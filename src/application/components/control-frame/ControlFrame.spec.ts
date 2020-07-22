@@ -240,7 +240,6 @@ function controlFrameFixture() {
   const cybertonica: Cybertonica = mock(Cybertonica);
   const cardinalCommerce: CardinalCommerce = mock(CardinalCommerce);
   const storeMock: Store = mock(Store);
-  const configService: ConfigService = mock(ConfigService);
 
   when(communicator.whenReceive(anyString())).thenReturn({
     thenRespond: () => undefined
@@ -255,8 +254,7 @@ function controlFrameFixture() {
     mockInstance(notification),
     mockInstance(cybertonica),
     mockInstance(cardinalCommerce),
-    mockInstance(storeMock),
-    mockInstance(configService)
+    mockInstance(storeMock)
   );
   const messageBusEvent = {
     type: ''

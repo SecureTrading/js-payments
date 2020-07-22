@@ -23,6 +23,7 @@ module.exports = {
     controlFrame: [
       './polyfills',
       './src/bootstrap.ts',
+      './src/application/dependency-injection/ServiceDefinitions.ts',
       './src/application/components/control-frame/control-frame.ts'
     ],
     example: './example/index.ts',

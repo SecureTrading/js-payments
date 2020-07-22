@@ -85,8 +85,7 @@ export class ControlFrame extends Frame {
     private _notification: NotificationService,
     private _cybertonica: Cybertonica,
     private _cardinalCommerce: CardinalCommerce,
-    private _store: Store,
-    private _configService: ConfigService
+    private _store: Store
   ) {
     super();
     this._localStorage.init();
@@ -95,7 +94,7 @@ export class ControlFrame extends Frame {
       .whenReceive(MessageBus.EVENTS_PUBLIC.INIT_CONTROL_FRAME)
       .thenRespond((event: IMessageBusEvent<string>) => {
         const config: IConfig = JSON.parse(event.data);
-        this._configService.update(config);
+        this._store.dispatch({ type: UPDATE_CONFIG, payload: config });
         this.onInit(config);
 
         return of(config);
