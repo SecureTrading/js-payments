@@ -124,9 +124,10 @@ export class ControlFrame {
   }
 
   protected init(config: IConfig): void {
-    this._frame.init();
+    this._frame.init(this._frame.getAllowedStyles());
     this._setInstances();
     this._setFormFieldsValidities();
+    console.error('control -frame');
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_CARD_NUMBER, this._formFields.cardNumber);
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, this._formFields.expirationDate);
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_SECURITY_CODE, this._formFields.securityCode);
@@ -358,6 +359,7 @@ export class ControlFrame {
   }
 
   private _formFieldChange(event: string, value: string) {
+    console.error(event, value);
     switch (event) {
       case MessageBus.EVENTS.CHANGE_CARD_NUMBER:
         this._setCardPan(value);
@@ -389,6 +391,7 @@ export class ControlFrame {
   }
 
   private _setCardSecurityCode(value: string): void {
+    console.error(value);
     this._card.securitycode = value;
   }
 

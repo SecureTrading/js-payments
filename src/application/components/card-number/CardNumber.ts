@@ -9,10 +9,9 @@ import { Selectors } from '../../core/shared/Selectors';
 import { Utils } from '../../core/shared/Utils';
 import { Validation } from '../../core/shared/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
-import { Container, Service } from 'typedi';
+import { Service } from 'typedi';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
 import { IconFactory } from '../../core/services/icon/IconFactory';
-import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
 
 @Service()
 export class CardNumber extends Input {
@@ -29,7 +28,6 @@ export class CardNumber extends Input {
   private static _getCardNumberForBinProcess = (cardNumber: string) => cardNumber.slice(0, 6);
 
   public validation: Validation;
-  private _formatter: Formatter;
   private _panIcon: boolean;
   private _cardNumberFormatted: string;
   private _cardNumberLength: number;
@@ -38,11 +36,14 @@ export class CardNumber extends Input {
   private _fieldInstance: HTMLInputElement = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
   private readonly _cardNumberField: HTMLInputElement;
 
-  constructor(private configProvider: ConfigProvider, private _iconFactory: IconFactory) {
+  constructor(
+    private configProvider: ConfigProvider,
+    private _iconFactory: IconFactory,
+    private _formatter: Formatter
+  ) {
     super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE, Selectors.CARD_NUMBER_LABEL);
     this._cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     this.validation = new Validation(this.messageBus, this.frame);
-    this._formatter = new Formatter(this.messageBus, this.frame);
     this._isCardNumberValid = true;
     this._cardNumberLength = CardNumber.STANDARD_CARD_LENGTH;
     this.placeholder = this.configProvider.getConfig().placeholders.pan || '';
@@ -188,7 +189,9 @@ export class CardNumber extends Input {
     this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._cardNumberLength);
     const { formatted, nonformatted } = this._formatter.number(this._inputElement.value, Selectors.CARD_NUMBER_INPUT);
     this._inputElement.value = formatted;
+    this._cardNumberFormatted = formatted;
     this._cardNumberValue = nonformatted;
+    console.error(formatted, nonformatted);
     this.validation.keepCursorsPosition(this._inputElement);
     const type = this._getBinLookupDetails(this._cardNumberValue)
       ? this._getBinLookupDetails(this._cardNumberValue).type
@@ -233,8 +236,11 @@ export class CardNumber extends Input {
         data: CardNumber._getCardNumberForBinProcess(value),
         type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS
       };
+      console.error('binProcessEvent', binProcessEvent);
       this.messageBus.publish(binProcessEvent, true);
     }
+    console.error('messageBusEvent', messageBusEvent);
+    console.error(this.messageBus);
     this.messageBus.publish(messageBusEvent);
   }
 }

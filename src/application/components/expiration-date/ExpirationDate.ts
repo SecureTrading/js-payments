@@ -18,13 +18,11 @@ export class ExpirationDate extends Input {
   private static INPUT_PATTERN: string = '^(0[1-9]|1[0-2])\\/([0-9]{2})$';
 
   private _currentKeyCode: number;
-  private _formatter: Formatter;
   private _inputSelectionEnd: number;
   private _inputSelectionStart: number;
 
-  constructor(private _configProvider: ConfigProvider) {
+  constructor(private _configProvider: ConfigProvider, private _formatter: Formatter) {
     super(Selectors.EXPIRATION_DATE_INPUT, Selectors.EXPIRATION_DATE_MESSAGE, Selectors.EXPIRATION_DATE_LABEL);
-    this._formatter = new Formatter(this.messageBus, this.frame);
     this._init();
   }
 

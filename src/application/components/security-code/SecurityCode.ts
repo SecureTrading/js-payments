@@ -33,7 +33,6 @@ export class SecurityCode extends Input {
   private static MATCH_EXACTLY_FOUR_DIGITS: string = '^[0-9]{4}$';
   private static MATCH_EXACTLY_THREE_DIGITS: string = '^[0-9]{3}$';
 
-  private _formatter: Formatter;
   private _securityCodeLength: number;
   private _securityCodeWrapper: HTMLElement;
   private _validation: Validation;
@@ -42,18 +41,19 @@ export class SecurityCode extends Input {
   constructor(
     private _configProvider: ConfigProvider,
     private _messageBus: MessageBus,
-    private _localStorage: BrowserLocalStorage
+    private _localStorage: BrowserLocalStorage,
+    private _formatter: Formatter
   ) {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
-
-    this._formatter = new Formatter(this._messageBus, this.frame);
     this._validation = new Validation(this._messageBus, this.frame);
     this._securityCodeWrapper = document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR) as HTMLElement;
     this._securityCodeLength = SHORT_CVC;
     this.placeholder = this._getPlaceholder(this._securityCodeLength);
     this._securityCodeUpdate$()
-      .pipe(filter(Boolean))
+      .pipe(filter(Boolean), tap(console.error))
       .subscribe((securityCodeLength: number) => {
+        console.error(securityCodeLength);
+        console.error(securityCodeLength, '0');
         this.placeholder = this._getPlaceholder(securityCodeLength);
         this._securityCodeLength = securityCodeLength;
         this._messageBus.publish({
@@ -87,6 +87,7 @@ export class SecurityCode extends Input {
   }
 
   private _securityCodeUpdate$(): Observable<number> {
+    console.error('test test');
     const jwtFromConfig$: Observable<string> = this._configProvider.getConfig$().pipe(map(config => config.jwt));
     const jwtFromUpdate$: Observable<string> = this._messageBus.pipe(
       ofType(MessageBus.EVENTS_PUBLIC.UPDATE_JWT),
@@ -108,13 +109,18 @@ export class SecurityCode extends Input {
 
     return merge(cardNumberInput$, cardNumberFromJwt$, maskedPanFromJsInit$).pipe(
       filter(Boolean),
+      tap(console.error),
       map((cardNumber: string) => {
+        console.error(cardNumber, 'map');
         if (!cardNumber || !iinLookup.lookup(cardNumber).type) {
+          console.error(cardNumber, '1');
           return -1;
         }
         if (!iinLookup.lookup(cardNumber).cvcLength[0]) {
+          console.error(cardNumber, '2');
           return 4;
         }
+        console.error(cardNumber, '3');
         return iinLookup.lookup(cardNumber).cvcLength[0];
       }),
       startWith(-1)

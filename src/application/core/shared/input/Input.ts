@@ -40,7 +40,7 @@ export class Input {
   }
 
   public init(): void {
-    this.frame.init();
+    this.frame.init(this.getAllowedStyles());
     this._translator = new Translator(this.frame.parseUrl().locale);
     this.validation = new Validation(this.messageBus, this.frame);
 

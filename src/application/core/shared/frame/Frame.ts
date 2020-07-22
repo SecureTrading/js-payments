@@ -6,8 +6,8 @@ import { frameAllowedStyles } from './frame-const';
 
 @Service()
 export class Frame {
-  public init(): void {
-    new Styler(this.getAllowedStyles()).inject(this.parseUrl().styles);
+  public init(styles: IAllowedStyles): void {
+    new Styler(styles).inject(this.parseUrl().styles);
   }
 
   public getAllowedParams(): string[] {

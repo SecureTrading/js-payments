@@ -15,6 +15,7 @@ import { MessageBus } from './MessageBus';
 import { Selectors } from './Selectors';
 import { Translator } from './Translator';
 import { Utils } from './Utils';
+import { Service } from 'typedi';
 
 const {
   VALIDATION_ERROR_FIELD_IS_REQUIRED,
@@ -22,6 +23,7 @@ const {
   VALIDATION_ERROR
 } = Language.translations;
 
+@Service()
 export class Validation {
   public static ERROR_FIELD_CLASS: string = 'error-field';
 
@@ -78,7 +80,6 @@ export class Validation {
     };
   }
 
-  protected static STANDARD_FORMAT_PATTERN: string = '(\\d{1,4})(\\d{1,4})?(\\d{1,4})?(\\d+)?';
   private static BACKSPACE_KEY_CODE: number = 8;
   private static CARD_NUMBER_DEFAULT_LENGTH: number = 16;
   private static CARD_NUMBER_FIELD_NAME: string = 'pan';
@@ -94,9 +95,9 @@ export class Validation {
   private static MERCHANT_EXTRA_FIELDS_PREFIX = 'billing';
   private static SECURITY_CODE_FIELD_NAME: string = 'securitycode';
   private static BACKEND_ERROR_FIELDS_NAMES = {
-    cardNumber: Validation.CARD_NUMBER_FIELD_NAME,
-    expirationDate: Validation.EXPIRY_DATE_FIELD_NAME,
-    securityCode: Validation.SECURITY_CODE_FIELD_NAME
+    cardNumber: 'pan',
+    expirationDate: 'expirydate',
+    securityCode: 'securitycode'
   };
 
   private static _setValidateEvent(errordata: string, event: IMessageBusEvent): IMessageBusEvent {
@@ -300,23 +301,22 @@ export class Validation {
     this._setMessage(inputElement, messageElement, customErrorMessage);
   }
 
-  protected init() {
+  public init() {
     this._matchDigitsRegexp = new RegExp(Validation.MATCH_DIGITS);
-    this._frame.init();
     this._translator = new Translator(this._frame.parseUrl().locale);
   }
 
-  protected removeNonDigits(value: string): string {
+  public removeNonDigits(value: string): string {
     if (value) {
       return value.replace(Validation.MATCH_CHARS, Validation.CLEAR_VALUE);
     }
   }
 
-  protected getCardDetails(cardNumber: string = Validation.CLEAR_VALUE): BrandDetailsType {
+  public getCardDetails(cardNumber: string = Validation.CLEAR_VALUE): BrandDetailsType {
     return iinLookup.lookup(cardNumber);
   }
 
-  protected cardNumber(value: string) {
+  public cardNumber(value: string) {
     this.cardNumberValue = this.removeNonDigits(value);
     this.cardDetails = this.getCardDetails(this.cardNumberValue);
     const length = this.cardDetails.type
@@ -325,11 +325,11 @@ export class Validation {
     this.cardNumberValue = this.limitLength(this.cardNumberValue, length);
   }
 
-  protected expirationDate(value: string) {
+  public expirationDate(value: string) {
     this.expirationDateValue = value ? this.removeNonDigits(value) : Validation.CLEAR_VALUE;
   }
 
-  protected securityCode(value: string, length: number) {
+  public securityCode(value: string, length: number) {
     this.securityCodeValue = value ? this.limitLength(this.removeNonDigits(value), length) : Validation.CLEAR_VALUE;
   }
 
