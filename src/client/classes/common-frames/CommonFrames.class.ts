@@ -4,7 +4,6 @@ import { DomMethods } from '../../../application/core/shared/DomMethods';
 import { MessageBus } from '../../../application/core/shared/MessageBus';
 import { Selectors } from '../../../application/core/shared/Selectors';
 import { Validation } from '../../../application/core/shared/Validation';
-import { RegisterFrames } from '../register-fields/RegisterFrames.class';
 import { Container } from 'typedi';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 import { IComponentsIds } from '../../../shared/model/config/IComponentsIds';
@@ -15,8 +14,9 @@ import { Observable } from 'rxjs';
 import { PUBLIC_EVENTS } from '../../../application/core/shared/EventTypes';
 import { IMessageBusEvent } from '../../../application/core/models/IMessageBusEvent';
 import { Frame } from '../../../application/core/shared/frame/Frame';
+import { StJwt } from '../../../application/core/shared/StJwt';
 
-export class CommonFrames extends RegisterFrames {
+export class CommonFrames {
   get requestTypes(): string[] {
     return this._requestTypes;
   }
@@ -41,6 +41,16 @@ export class CommonFrames extends RegisterFrames {
   private readonly _submitOnCancel: boolean;
   private _localStorage: BrowserLocalStorage = Container.get(BrowserLocalStorage);
   private _destroy$: Observable<IMessageBusEvent>;
+  protected styles: IStyles;
+  protected params: any;
+  protected jwt: string;
+  protected origin: string;
+  protected componentIds: any;
+  protected submitCallback: any;
+  protected fieldsToSubmit: string[];
+  protected messageBus: MessageBus;
+  protected formId: string;
+  private _stJwt: StJwt;
 
   constructor(
     jwt: string,
@@ -58,7 +68,6 @@ export class CommonFrames extends RegisterFrames {
     private _iframeFactory: IframeFactory,
     private _frame: Frame
   ) {
-    super(jwt, origin, componentIds, styles, animatedCard, formId);
     this._gatewayUrl = gatewayUrl;
     this._messageBus = Container.get(MessageBus);
     this.formId = formId;
@@ -70,14 +79,36 @@ export class CommonFrames extends RegisterFrames {
     this._submitOnCancel = submitOnCancel;
     this._submitOnSuccess = submitOnSuccess;
     this._requestTypes = requestTypes;
+    this.elementsToRegister = [];
+    this.componentIds = componentIds;
+    this.formId = formId;
+    this.componentIds = componentIds;
+    this.elementsToRegister = [];
+    this.jwt = jwt;
+    this.origin = origin;
+    this.styles = this._getStyles(styles);
+    this._stJwt = new StJwt(jwt);
+    this.params = { locale: this._stJwt.locale, origin: this.origin };
     this._destroy$ = this._messageBus.pipe(ofType(PUBLIC_EVENTS.DESTROY));
+    this.styles = this._getStyles(styles);
   }
 
   public init() {
     this._initFormFields();
     this._setMerchantInputListeners();
     this._setTransactionCompleteListener();
+    this.elementsTargets = this.setElementsFields();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
+  }
+
+  private _getStyles(styles: any) {
+    for (const key in styles) {
+      if (styles[key] instanceof Object) {
+        return styles;
+      }
+    }
+    styles = { defaultStyles: styles };
+    return styles;
   }
 
   protected registerElements(fields: HTMLElement[], targets: string[]) {

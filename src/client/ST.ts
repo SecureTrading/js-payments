@@ -267,7 +267,8 @@ class ST {
       this._config.formId,
       this._configProvider,
       this._iframeFactory,
-      this._frameService
+      this._frameService,
+      this._messageBus
     );
   }
 
