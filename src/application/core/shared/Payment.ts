@@ -19,17 +19,13 @@ export class Payment {
   private _stTransport: StTransport;
   private _validation: Validation;
   private _cybertonica: Cybertonica;
-  private _messageBus: MessageBus;
-  private _frame: Frame;
   private readonly _walletVerifyRequest: IStRequest;
 
   constructor() {
     this._notification = Container.get(NotificationService);
     this._cybertonica = Container.get(Cybertonica);
     this._stTransport = Container.get(StTransport);
-    this._messageBus = Container.get(MessageBus);
-    this._frame = Container.get(Frame);
-    this._validation = new Validation(this._messageBus, this._frame);
+    this._validation = new Validation();
     this._walletVerifyRequest = {
       requesttypedescriptions: ['WALLETVERIFY']
     };

@@ -15,7 +15,7 @@ import { MessageBus } from './MessageBus';
 import { Selectors } from './Selectors';
 import { Translator } from './Translator';
 import { Utils } from './Utils';
-import { Service } from 'typedi';
+import { Container, Service } from 'typedi';
 
 const {
   VALIDATION_ERROR_FIELD_IS_REQUIRED,
@@ -158,8 +158,12 @@ export class Validation {
   private _selectionRangeEnd: number;
   private _selectionRangeStart: number;
   private _translator: Translator;
+  private _messageBus: MessageBus;
+  private _frame: Frame;
 
-  constructor(private _messageBus: MessageBus, private _frame: Frame) {
+  constructor() {
+    this._messageBus = Container.get(MessageBus);
+    this._frame = Container.get(Frame);
     this.init();
   }
 

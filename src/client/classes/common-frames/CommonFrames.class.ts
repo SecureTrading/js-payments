@@ -63,7 +63,7 @@ export class CommonFrames extends RegisterFrames {
     this._messageBus = Container.get(MessageBus);
     this.formId = formId;
     this._merchantForm = document.getElementById(formId) as HTMLFormElement;
-    this._validation = new Validation(this._messageBus, this._frame);
+    this._validation = new Validation();
     this._formSubmitted = false;
     this._submitFields = submitFields;
     this._submitOnError = submitOnError;

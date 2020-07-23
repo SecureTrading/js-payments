@@ -299,7 +299,7 @@ export class CardFrames extends RegisterFrames {
     jwt: string,
     formId: string
   ): void {
-    this._validation = new Validation(this.messageBus, this._frame);
+    this._validation = new Validation();
     this._translator = new Translator(this._frame.parseUrl().locale);
     this._buttonId = buttonId;
     this.formId = formId;

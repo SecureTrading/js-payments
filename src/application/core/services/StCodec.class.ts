@@ -132,7 +132,7 @@ class StCodec {
   }
 
   private static _handleInvalidResponse() {
-    const validation = new Validation(StCodec.getMessageBus(), StCodec.getFrameService());
+    const validation = new Validation();
     StCodec.publishResponse(StCodec._createCommunicationError());
     StCodec.getNotification().error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
     validation.blockForm(FormState.AVAILABLE);
@@ -165,7 +165,7 @@ class StCodec {
 
   private static _handleValidGatewayResponse(responseContent: IResponseData, jwtResponse: string) {
     const translator = new Translator(StCodec._locale);
-    const validation = new Validation(StCodec.getMessageBus(), StCodec.getFrameService());
+    const validation = new Validation();
 
     const { errorcode, errormessage, requesttypedescription } = responseContent;
 

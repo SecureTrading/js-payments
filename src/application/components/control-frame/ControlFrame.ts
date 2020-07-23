@@ -159,7 +159,9 @@ export class ControlFrame {
   }
 
   private _formFieldChangeEvent(event: string, field: IFormFieldState): void {
-    this._messageBus.subscribe(event, (data: IFormFieldState) => {
+    console.error('_formFieldChangeEvent');
+    this._messageBus.pipe(ofType(event)).subscribe((data: IFormFieldState) => {
+      console.error(event, data);
       this._formFieldChange(event, data.value);
       ControlFrame._setFormFieldValidity(field, data);
       ControlFrame._setFormFieldValue(field, data);
@@ -403,7 +405,7 @@ export class ControlFrame {
 
   private _setInstances(): void {
     this._payment = new Payment();
-    this._validation = new Validation(this._messageBus, this._frame);
+    this._validation = new Validation();
   }
 
   private _updateMerchantFields(data: IMerchantData): void {

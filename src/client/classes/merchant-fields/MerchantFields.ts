@@ -19,7 +19,7 @@ export class MerchantFields {
     this._inputs = document.getElementsByTagName(MerchantFields.INPUT_MARKUP);
     this._messageBus = Container.get(MessageBus);
     this._frame = Container.get(Frame);
-    this._validation = new Validation(this._messageBus, this._frame);
+    this._validation = new Validation();
   }
 
   public init(): void {

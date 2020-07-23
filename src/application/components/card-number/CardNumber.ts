@@ -20,7 +20,6 @@ export class CardNumber extends Input {
 
   private static DISABLED_ATTRIBUTE: string = 'disabled';
   private static DISABLED_CLASS: string = 'st-input--disabled';
-  private static NO_CVV_CARD_NUMBER: string = 'st-card-no-cvv';
   private static NO_CVV_CARDS: string[] = ['PIBA'];
   private static STANDARD_CARD_LENGTH: number = 19;
   private static WHITESPACES_DECREASE_NUMBER: number = 2;
@@ -43,7 +42,7 @@ export class CardNumber extends Input {
   ) {
     super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE, Selectors.CARD_NUMBER_LABEL);
     this._cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
-    this.validation = new Validation(this.messageBus, this.frame);
+    this.validation = new Validation();
     this._isCardNumberValid = true;
     this._cardNumberLength = CardNumber.STANDARD_CARD_LENGTH;
     this.placeholder = this.configProvider.getConfig().placeholders.pan || '';
