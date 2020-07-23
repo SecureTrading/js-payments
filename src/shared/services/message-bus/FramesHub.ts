@@ -51,6 +51,9 @@ export class FramesHub {
 
   public waitForFrame(name: string): Observable<string> {
     console.error(name);
+    this.isFrameActive(Selectors.CONTROL_FRAME_IFRAME)
+      .pipe(filter(Boolean), first(), mapTo(name))
+      .subscribe(test => console.error(test));
     return this.isFrameActive(name).pipe(filter(Boolean), first(), mapTo(name));
   }
 

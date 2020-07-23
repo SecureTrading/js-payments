@@ -87,7 +87,7 @@ export class ControlFrame {
     private _frame: Frame
   ) {
     this._localStorage.init();
-    this._messageBus.subscribe(console.log);
+    this._messageBus.subscribe(console.error);
     this._communicator
       .whenReceive(MessageBus.EVENTS_PUBLIC.INIT_CONTROL_FRAME)
       .thenRespond((event: IMessageBusEvent<string>) => {
@@ -116,10 +116,11 @@ export class ControlFrame {
   }
 
   protected init(config: IConfig): void {
+    console.error(this._frame);
     this._frame.init(this._frame.getAllowedStyles());
+    this._frame.getAllowedParams().concat(ControlFrame.ALLOWED_PARAMS);
     this._setInstances();
     this._setFormFieldsValidities();
-    console.error('control -frame');
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_CARD_NUMBER, this._formFields.cardNumber);
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_EXPIRATION_DATE, this._formFields.expirationDate);
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_SECURITY_CODE, this._formFields.securityCode);
@@ -128,7 +129,6 @@ export class ControlFrame {
     this._resetJwtEvent();
     this._updateJwtEvent();
     this._initCybertonica(config);
-    this._frame.getAllowedParams().concat(ControlFrame.ALLOWED_PARAMS);
 
     if (!config.deferInit) {
       this._initCardinalCommerce(config);
