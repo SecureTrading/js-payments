@@ -3,7 +3,9 @@ import { IGroupedStyles } from '../models/IGroupedStyles';
 import { IStyle } from '../../../shared/model/config/IStyle';
 import { ISubStyles } from '../models/ISubStyles';
 import { DomMethods } from './DomMethods';
+import { Service } from 'typedi';
 
+@Service()
 export class Styler {
   private static _getTagStyles(styles: ISubStyles): string {
     const results = [];

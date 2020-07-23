@@ -12,6 +12,9 @@ import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { Service } from 'typedi';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
 import { IconFactory } from '../../core/services/icon/IconFactory';
+import { IConfig } from '../../../shared/model/config/IConfig';
+import { Styler } from '../../core/shared/Styler';
+import { Frame } from '../../core/shared/frame/Frame';
 
 @Service()
 export class CardNumber extends Input {
@@ -38,10 +41,10 @@ export class CardNumber extends Input {
   constructor(
     private configProvider: ConfigProvider,
     private _iconFactory: IconFactory,
-    private _formatter: Formatter
+    private _formatter: Formatter,
+    private _frame: Frame
   ) {
     super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE, Selectors.CARD_NUMBER_LABEL);
-    this.messageBus.subscribe(console.log);
     this._cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     this.validation = new Validation();
     this._isCardNumberValid = true;
@@ -59,6 +62,10 @@ export class CardNumber extends Input {
     );
     this._sendState();
     this._inputElement.setAttribute(CardNumber.PLACEHOLDER_ATTRIBUTE, this.placeholder);
+    this.configProvider.getConfig$().subscribe((config: IConfig) => {
+      // @ts-ignore
+      new Styler(this._frame.getAllowedStyles()).inject(config.styles.cardNumber);
+    });
   }
 
   protected getLabel(): string {
@@ -191,7 +198,6 @@ export class CardNumber extends Input {
     this._inputElement.value = formatted;
     this._cardNumberFormatted = formatted;
     this._cardNumberValue = nonformatted;
-    console.error(formatted, nonformatted);
     this.validation.keepCursorsPosition(this._inputElement);
     const type = this._getBinLookupDetails(this._cardNumberValue)
       ? this._getBinLookupDetails(this._cardNumberValue).type
@@ -236,11 +242,8 @@ export class CardNumber extends Input {
         data: CardNumber._getCardNumberForBinProcess(value),
         type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS
       };
-      console.error('binProcessEvent', binProcessEvent);
       this.messageBus.publish(binProcessEvent, true);
     }
-    console.error('messageBusEvent', messageBusEvent);
-    console.error(this.messageBus);
     this.messageBus.publish(messageBusEvent);
   }
 }

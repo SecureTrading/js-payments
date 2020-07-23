@@ -2,7 +2,7 @@ import { Service } from 'typedi';
 import { InterFrameCommunicator } from './InterFrameCommunicator';
 import { BehaviorSubject, from, Observable, of, Subject } from 'rxjs';
 import { ofType } from './operators/ofType';
-import { distinctUntilChanged, filter, first, map, mapTo, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { distinctUntilChanged, filter, first, map, mapTo, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 import { IMessageBusEvent } from '../../../application/core/models/IMessageBusEvent';
 import { Selectors } from '../../../application/core/shared/Selectors';
 import { FrameIdentifier } from './FrameIdentifier';
@@ -40,6 +40,10 @@ export class FramesHub {
     this.communicator.incomingEvent$
       .pipe(ofType(PUBLIC_EVENTS.DESTROY), mapTo([]))
       .subscribe(value => this.activeFrame$.next(value));
+
+    if (this.identifier.getFrameName() === Selectors.CARD_NUMBER_IFRAME) {
+      this.activeFrame$.subscribe(console.log);
+    }
   }
 
   public isFrameActive(name: string): Observable<boolean> {
@@ -50,15 +54,12 @@ export class FramesHub {
   }
 
   public waitForFrame(name: string): Observable<string> {
-    console.error(name);
-    this.isFrameActive(Selectors.CONTROL_FRAME_IFRAME)
-      .pipe(filter(Boolean), first(), mapTo(name))
-      .subscribe(test => console.error(test));
     return this.isFrameActive(name).pipe(filter(Boolean), first(), mapTo(name));
   }
 
   public notifyReadyState(): void {
     const frameName = this.identifier.getFrameName();
+    console.log(frameName);
 
     if (frameName === Selectors.MERCHANT_PARENT_FRAME) {
       return;

@@ -87,7 +87,6 @@ export class ControlFrame {
     private _frame: Frame
   ) {
     this._localStorage.init();
-    this._messageBus.subscribe(console.error);
     this._communicator
       .whenReceive(MessageBus.EVENTS_PUBLIC.INIT_CONTROL_FRAME)
       .thenRespond((event: IMessageBusEvent<string>) => {
@@ -116,7 +115,6 @@ export class ControlFrame {
   }
 
   protected init(config: IConfig): void {
-    console.error(this._frame);
     this._frame.init(this._frame.getAllowedStyles());
     this._frame.getAllowedParams().concat(ControlFrame.ALLOWED_PARAMS);
     this._setInstances();
@@ -151,9 +149,7 @@ export class ControlFrame {
   }
 
   private _formFieldChangeEvent(event: string, field: IFormFieldState): void {
-    console.error('_formFieldChangeEvent');
     this._messageBus.pipe(ofType(event)).subscribe((data: IFormFieldState) => {
-      console.error(event, data);
       this._formFieldChange(event, data.value);
       ControlFrame._setFormFieldValidity(field, data);
       ControlFrame._setFormFieldValue(field, data);
@@ -353,7 +349,6 @@ export class ControlFrame {
   }
 
   private _formFieldChange(event: string, value: string) {
-    console.error(event, value);
     switch (event) {
       case MessageBus.EVENTS.CHANGE_CARD_NUMBER:
         this._setCardPan(value);
@@ -385,7 +380,6 @@ export class ControlFrame {
   }
 
   private _setCardSecurityCode(value: string): void {
-    console.error(value);
     this._card.securitycode = value;
   }
 

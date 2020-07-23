@@ -29,7 +29,6 @@ if (Card && document.URL.includes('animated')) {
   (() => {
     const messageBus: MessageBus = Container.get(MessageBus);
     messageBus.subscribe(MessageBus.EVENTS.CHANGE_CARD_NUMBER, (data: IFormFieldState) => {
-      console.error(data);
       const { value } = data;
       card.onCardNumberChange(value, true);
     });
@@ -38,7 +37,6 @@ if (Card && document.URL.includes('animated')) {
       card.onExpirationDateChange(value, true);
     });
     messageBus.subscribe(MessageBus.EVENTS.CHANGE_SECURITY_CODE, (data: IFormFieldState) => {
-      console.error(data);
       const { value } = data;
       card.onSecurityCodeChange(value, true);
     });

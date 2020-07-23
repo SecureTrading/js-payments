@@ -48,12 +48,9 @@ export class SecurityCode extends Input {
     this._securityCodeWrapper = document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR) as HTMLElement;
     this._securityCodeLength = SHORT_CVC;
     this.placeholder = this._getPlaceholder(this._securityCodeLength);
-    this.messageBus.subscribe(console.log);
     this._securityCodeUpdate$()
-      .pipe(filter(Boolean), tap(console.error))
+      .pipe(filter(Boolean))
       .subscribe((securityCodeLength: number) => {
-        console.error(securityCodeLength);
-        console.error(securityCodeLength, '0');
         this.placeholder = this._getPlaceholder(securityCodeLength);
         this._securityCodeLength = securityCodeLength;
         this.messageBus.publish({
@@ -87,7 +84,6 @@ export class SecurityCode extends Input {
   }
 
   private _securityCodeUpdate$(): Observable<number> {
-    console.error('test test');
     const jwtFromConfig$: Observable<string> = this._configProvider.getConfig$().pipe(map(config => config.jwt));
     const jwtFromUpdate$: Observable<string> = this.messageBus.pipe(
       ofType(MessageBus.EVENTS_PUBLIC.UPDATE_JWT),
@@ -109,18 +105,13 @@ export class SecurityCode extends Input {
 
     return merge(cardNumberInput$, cardNumberFromJwt$, maskedPanFromJsInit$).pipe(
       filter(Boolean),
-      tap(console.error),
       map((cardNumber: string) => {
-        console.error(cardNumber, 'map');
         if (!cardNumber || !iinLookup.lookup(cardNumber).type) {
-          console.error(cardNumber, '1');
           return -1;
         }
         if (!iinLookup.lookup(cardNumber).cvcLength[0]) {
-          console.error(cardNumber, '2');
           return 4;
         }
-        console.error(cardNumber, '3');
         return iinLookup.lookup(cardNumber).cvcLength[0];
       }),
       startWith(-1)

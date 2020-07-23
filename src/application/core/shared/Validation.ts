@@ -164,7 +164,6 @@ export class Validation {
   constructor() {
     this._messageBus = Container.get(MessageBus);
     this._frame = Container.get(Frame);
-    this._messageBus.subscribe(console.log);
     this.init();
   }
 
