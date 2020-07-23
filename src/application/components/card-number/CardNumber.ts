@@ -41,6 +41,7 @@ export class CardNumber extends Input {
     private _formatter: Formatter
   ) {
     super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE, Selectors.CARD_NUMBER_LABEL);
+    this.messageBus.subscribe(console.log);
     this._cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     this.validation = new Validation();
     this._isCardNumberValid = true;

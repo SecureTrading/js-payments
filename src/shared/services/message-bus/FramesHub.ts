@@ -50,6 +50,7 @@ export class FramesHub {
   }
 
   public waitForFrame(name: string): Observable<string> {
+    console.error(name);
     return this.isFrameActive(name).pipe(filter(Boolean), first(), mapTo(name));
   }
 

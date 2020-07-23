@@ -23,6 +23,7 @@ export class ExpirationDate extends Input {
 
   constructor(private _configProvider: ConfigProvider, private _formatter: Formatter) {
     super(Selectors.EXPIRATION_DATE_INPUT, Selectors.EXPIRATION_DATE_MESSAGE, Selectors.EXPIRATION_DATE_LABEL);
+    this.messageBus.subscribe(console.log);
     this._init();
   }
 

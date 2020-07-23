@@ -35,7 +35,6 @@ import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { IOnCardinalValidated } from '../../core/models/IOnCardinalValidated';
 import { ConfigService } from '../../../client/config/ConfigService';
 import { IThreeDInitResponse } from '../../core/models/IThreeDInitResponse';
-import { PUBLIC_EVENTS } from '../../core/shared/EventTypes';
 import { Frame } from '../../core/shared/frame/Frame';
 
 @Service()
@@ -88,7 +87,7 @@ export class ControlFrame {
     private _frame: Frame
   ) {
     this._localStorage.init();
-
+    this._messageBus.subscribe(console.log);
     this._communicator
       .whenReceive(MessageBus.EVENTS_PUBLIC.INIT_CONTROL_FRAME)
       .thenRespond((event: IMessageBusEvent<string>) => {
@@ -114,13 +113,6 @@ export class ControlFrame {
           data: this._slicedPan
         });
       });
-
-    this._messageBus
-      .pipe(
-        ofType(PUBLIC_EVENTS.INIT_CONTROL_FRAME),
-        map((event: IMessageBusEvent<IConfig>) => event.data)
-      )
-      .subscribe(config => this.init(config));
   }
 
   protected init(config: IConfig): void {

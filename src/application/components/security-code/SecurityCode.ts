@@ -40,7 +40,6 @@ export class SecurityCode extends Input {
 
   constructor(
     private _configProvider: ConfigProvider,
-    private _messageBus: MessageBus,
     private _localStorage: BrowserLocalStorage,
     private _formatter: Formatter
   ) {
@@ -49,6 +48,7 @@ export class SecurityCode extends Input {
     this._securityCodeWrapper = document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR) as HTMLElement;
     this._securityCodeLength = SHORT_CVC;
     this.placeholder = this._getPlaceholder(this._securityCodeLength);
+    this.messageBus.subscribe(console.log);
     this._securityCodeUpdate$()
       .pipe(filter(Boolean), tap(console.error))
       .subscribe((securityCodeLength: number) => {
@@ -56,7 +56,7 @@ export class SecurityCode extends Input {
         console.error(securityCodeLength, '0');
         this.placeholder = this._getPlaceholder(securityCodeLength);
         this._securityCodeLength = securityCodeLength;
-        this._messageBus.publish({
+        this.messageBus.publish({
           type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH,
           data: this._securityCodeLength
         });
@@ -89,11 +89,11 @@ export class SecurityCode extends Input {
   private _securityCodeUpdate$(): Observable<number> {
     console.error('test test');
     const jwtFromConfig$: Observable<string> = this._configProvider.getConfig$().pipe(map(config => config.jwt));
-    const jwtFromUpdate$: Observable<string> = this._messageBus.pipe(
+    const jwtFromUpdate$: Observable<string> = this.messageBus.pipe(
       ofType(MessageBus.EVENTS_PUBLIC.UPDATE_JWT),
       map(event => event.data.newJwt)
     );
-    const cardNumberInput$: Observable<string> = this._messageBus.pipe(
+    const cardNumberInput$: Observable<string> = this.messageBus.pipe(
       ofType(MessageBus.EVENTS.CHANGE_CARD_NUMBER),
       map((event: IMessageBusEvent<IFormFieldState>) => event.data.value)
     );
@@ -187,16 +187,16 @@ export class SecurityCode extends Input {
       data,
       type: eventType
     };
-    this._messageBus.publish(messageBusEvent);
+    this.messageBus.publish(messageBusEvent);
   }
 
   private _sendState(): void {
     const messageBusEvent: IMessageBusEvent = this.setMessageBusEvent(MessageBus.EVENTS.CHANGE_SECURITY_CODE);
-    this._messageBus.publish(messageBusEvent);
+    this.messageBus.publish(messageBusEvent);
   }
 
   private _setDisableListener(): void {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BLOCK_SECURITY_CODE, (state: FormState) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BLOCK_SECURITY_CODE, (state: FormState) => {
       this._toggleSecurityCode(state);
     });
   }
@@ -218,7 +218,7 @@ export class SecurityCode extends Input {
   }
 
   private _subscribeSecurityCodeChange(): void {
-    this._messageBus
+    this.messageBus
       .pipe(ofType(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH))
       .subscribe((response: IMessageBusEvent) => {
         const { data } = response;
@@ -228,7 +228,7 @@ export class SecurityCode extends Input {
         this._sendState();
       });
 
-    this._messageBus.subscribe(
+    this.messageBus.subscribe(
       MessageBus.EVENTS.IS_CARD_WITHOUT_CVV,
       (data: { formState: FormState; isCardPiba: boolean }) => {
         const { formState, isCardPiba } = data;

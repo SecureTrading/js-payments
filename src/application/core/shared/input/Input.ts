@@ -28,6 +28,8 @@ export class Input {
   constructor(inputSelector: string, messageSelector: string, labelSelector: string) {
     this.messageBus = Container.get(MessageBus);
     this.frame = Container.get(Frame);
+    console.error(this.messageBus);
+    console.error(this.frame);
     this._cardNumberInput = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     this._inputElement = document.getElementById(inputSelector) as HTMLInputElement;
     this._labelElement = document.getElementById(labelSelector) as HTMLLabelElement;
