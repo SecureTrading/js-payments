@@ -1,5 +1,5 @@
 import { INITIAL_STATE, IStorageState } from './IStorageState';
-import { SET_ITEM } from './StorageActions';
+import { SET_ITEM } from './IStorageActionsMap';
 import { createReducer, on } from '../../createReducer';
 
 export const storageReducer = createReducer<IStorageState>(

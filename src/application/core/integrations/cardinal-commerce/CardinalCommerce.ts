@@ -1,68 +1,47 @@
-import { environment } from '../../../../environments/environment';
-import { CardinalCommerceValidationStatus } from '../../models/constants/CardinalCommerceValidationStatus';
-import { PaymentBrand } from '../../models/constants/PaymentBrand';
-import { PaymentEvents } from '../../models/constants/PaymentEvents';
 import { IMessageBusEvent } from '../../models/IMessageBusEvent';
-import { IOnCardinalValidated } from '../../models/IOnCardinalValidated';
 import { IThreeDQueryResponse } from '../../models/IThreeDQueryResponse';
 import { StCodec } from '../../services/StCodec.class';
 import { MessageBus } from '../../shared/MessageBus';
 import { GoogleAnalytics } from '../GoogleAnalytics';
 import { Service } from 'typedi';
-import { FramesHub } from '../../../../shared/services/message-bus/FramesHub';
 import { NotificationService } from '../../../../client/classes/notification/NotificationService';
 import { IConfig } from '../../../../shared/model/config/IConfig';
 import { CardinalCommerceTokensProvider } from './CardinalCommerceTokensProvider';
-import { filter, first, map, mapTo, shareReplay, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { ICardinalCommerceTokens } from './ICardinalCommerceTokens';
-import { from, Observable, of, Subject, throwError } from 'rxjs';
-import { ICardinal } from './ICardinal';
+import { Observable, of, throwError } from 'rxjs';
 import { ofType } from '../../../../shared/services/message-bus/operators/ofType';
 import { ICard } from '../../models/ICard';
 import { IMerchantData } from '../../models/IMerchantData';
 import { StTransport } from '../../services/StTransport.class';
-import { CardinalProvider } from './CardinalProvider';
 import { IAuthorizePaymentResponse } from '../../models/IAuthorizePaymentResponse';
 import { Language } from '../../shared/Language';
 import { CardinalRemoteClient } from './CardinalRemoteClient';
+import { GatewayClient } from '../../services/GatewayClient';
+import { IContinueData } from '../../../../shared/integrations/cardinal-commerce/IContinueData';
+import { ThreeDQueryRequest } from './ThreeDQueryRequest';
+import { IValidationResult } from '../../../../shared/integrations/cardinal-commerce/IValidationResult';
+import { ActionCode } from '../../../../shared/integrations/cardinal-commerce/ActionCode';
 
 @Service()
 export class CardinalCommerce {
   private cardinalTokens: ICardinalCommerceTokens;
-  private destroy$: Observable<void>;
 
   constructor(
     private messageBus: MessageBus,
     private notification: NotificationService,
-    private framesHub: FramesHub,
     private tokenProvider: CardinalCommerceTokensProvider,
     private stTransport: StTransport,
-    private cardinalProvider: CardinalProvider,
-    private cardinalClient: CardinalRemoteClient
-  ) {
-    this.destroy$ = this.messageBus.pipe(ofType(MessageBus.EVENTS_PUBLIC.DESTROY), mapTo(void 0));
+    private cardinalClient: CardinalRemoteClient,
+    private gatewayClient: GatewayClient
+  ) {}
 
-    // this.cardinalValidated$
-    //   .pipe(filter(data => data[0].ActionCode === 'ERROR'))
-    //   .subscribe(() => this.notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
-  }
+  init(config: IConfig): Observable<ICardinalCommerceTokens | undefined> {
+    if (config.deferInit) {
+      return of(this.cardinalTokens);
+    }
 
-  init(): Observable<any> {
-    return this.acquireCardinalCommerceTokens().pipe(
-      switchMap(tokens => this.cardinalClient.setup(tokens.jwt)),
-      tap(() => GoogleAnalytics.sendGaData('event', 'Cardinal', 'init', 'Cardinal Setup Completed'))
-    );
-    //
-    // this.cardinalClient.setup(config.)
-    //
-    // this.cardinal$ = this.acquireCardinalCommerceTokens().pipe(
-    //   switchMap(tokens => this.setupCardinalCommerceLibrary(tokens, Boolean(config.livestatus))),
-    //   tap(cardinal => this._initSubscriptions(cardinal)),
-    //   tap(() => GoogleAnalytics.sendGaData('event', 'Cardinal', 'init', 'Cardinal Setup Completed')),
-    //   shareReplay(1)
-    // );
-    //
-    // return this.cardinal$;
+    return this.ensureCardinalReady();
   }
 
   performThreeDQuery(
@@ -70,101 +49,76 @@ export class CardinalCommerce {
     card: ICard,
     merchantData: IMerchantData
   ): Observable<IAuthorizePaymentResponse> {
-    const threeDQueryRequestBody = {
-      cachetoken: this.cardinalTokens.cacheToken,
-      requesttypedescriptions: requestTypes,
-      termurl: 'https://termurl.com', // TODO this shouldn't be needed but currently the backend needs this
-      ...merchantData,
-      ...card
-    };
-
-    return from(this.stTransport.sendRequest(threeDQueryRequestBody)).pipe(
-      tap((response: { response: IThreeDQueryResponse }) => (this.stTransport._threeDQueryResult = response)),
-      switchMap((response: { response: IThreeDQueryResponse }) => this._authenticateCard(response.response)),
-      tap(() => GoogleAnalytics.sendGaData('event', 'Cardinal', 'auth', 'Cardinal auth completed')),
-      map(jwt => ({
-        threedresponse: jwt,
-        cachetoken: this.cardinalTokens.cacheToken
-      }))
+    return this.ensureCardinalReady().pipe(
+      map(tokens => new ThreeDQueryRequest(tokens.cacheToken, requestTypes, card, merchantData)),
+      switchMap(request => this.gatewayClient.threedQuery(request)),
+      switchMap(response => this._authenticateCard(response)),
+      tap(() => GoogleAnalytics.sendGaData('event', 'Cardinal', 'auth', 'Cardinal auth completed'))
     );
   }
 
-  private acquireCardinalCommerceTokens(): Observable<ICardinalCommerceTokens> {
-    return this.tokenProvider.getTokens().pipe(
-      tap(tokens => (this.cardinalTokens = tokens)),
-      tap(tokens =>
-        this.messageBus.publish({
-          type: MessageBus.EVENTS_PUBLIC.CARDINAL_COMMERCE_TOKENS_ACQUIRED,
-          data: tokens
-        })
-      )
-    );
-  }
-
-  private _authenticateCard(responseObject: IThreeDQueryResponse): Observable<string | undefined> {
+  private _authenticateCard(responseObject: IThreeDQueryResponse): Observable<IAuthorizePaymentResponse | undefined> {
     const isCardEnrolledAndNotFrictionless = responseObject.enrolled === 'Y' && responseObject.acsurl !== undefined;
 
     if (!isCardEnrolledAndNotFrictionless) {
       return of(undefined);
     }
 
-    const cardinalContinue = (cardinal: ICardinal) => {
-      cardinal.continue(
-        PaymentBrand,
-        {
-          AcsUrl: responseObject.acsurl,
-          Payload: responseObject.threedpayload
-        },
-        {
-          Cart: [],
-          OrderDetails: {
-            TransactionId: responseObject.acquirertransactionreference
-          }
-        },
-        this.cardinalTokens.jwt
-      );
-    };
-
-    return this.cardinal$.pipe(
-      tap(cardinal => cardinalContinue(cardinal)),
+    return this.createContinueData(responseObject).pipe(
+      switchMap((data: IContinueData) => this.cardinalClient.continue(data)),
       tap(() => GoogleAnalytics.sendGaData('event', 'Cardinal', 'auth', 'Cardinal card authenticated')),
-      switchMap(() => this.cardinalValidated$.pipe(first())),
-      switchMap(([validationResult, jwt]: [IOnCardinalValidated, string]) => {
-        if (
-          !CardinalCommerceValidationStatus.includes(validationResult.ActionCode) ||
-          validationResult.ActionCode === 'FAILURE'
-        ) {
-          StCodec.publishResponse(
-            this.stTransport._threeDQueryResult.response,
-            this.stTransport._threeDQueryResult.jwt,
-            jwt
-          );
-          return throwError(validationResult);
-        }
+      switchMap(validationResult => this.handleCardValidationResult(validationResult))
+    );
+  }
 
-        return of(jwt);
+  private ensureCardinalReady(): Observable<ICardinalCommerceTokens> {
+    if (this.cardinalTokens) {
+      return of(this.cardinalTokens);
+    }
+
+    return this.tokenProvider.getTokens().pipe(
+      tap(tokens => (this.cardinalTokens = tokens)),
+      switchMap(tokens => this.cardinalClient.setup(tokens.jwt)),
+      map(() => this.cardinalTokens),
+      tap(() => GoogleAnalytics.sendGaData('event', 'Cardinal', 'init', 'Cardinal Setup Completed')),
+      tap(() => this.messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.UNLOCK_BUTTON }, true)),
+      tap(() => {
+        this.messageBus
+          .pipe(ofType(MessageBus.EVENTS_PUBLIC.BIN_PROCESS))
+          .subscribe((event: IMessageBusEvent<string>) => this.cardinalClient.binProcess(event.data));
       })
     );
   }
 
-  private _initSubscriptions(cardinal: ICardinal): void {
-    this.messageBus
-      .pipe(
-        ofType(MessageBus.EVENTS_PUBLIC.UPDATE_JWT),
-        switchMap(() => this.acquireCardinalCommerceTokens()),
-        takeUntil(this.destroy$)
-      )
-      .subscribe(tokens => cardinal.trigger(PaymentEvents.JWT_UPDATE, tokens.jwt));
+  private createContinueData(threeDQueryResponse: IThreeDQueryResponse): Observable<IContinueData> {
+    return this.tokenProvider.getTokens().pipe(
+      map(tokens => ({
+        transactionId: threeDQueryResponse.acquirertransactionreference,
+        jwt: tokens.jwt,
+        acsUrl: threeDQueryResponse.acsurl,
+        payload: threeDQueryResponse.threedpayload
+      }))
+    );
+  }
 
-    this.messageBus
-      .pipe(ofType(MessageBus.EVENTS_PUBLIC.BIN_PROCESS), takeUntil(this.destroy$))
-      .subscribe((event: IMessageBusEvent<string>) => cardinal.trigger(PaymentEvents.BIN_PROCESS, event.data));
-
-    this.destroy$.subscribe(() => {
-      cardinal.off(PaymentEvents.SETUP_COMPLETE);
-      cardinal.off(PaymentEvents.VALIDATED);
-      cardinal.off(CardinalCommerce.UI_EVENTS.RENDER);
-      cardinal.off(CardinalCommerce.UI_EVENTS.CLOSE);
-    });
+  private handleCardValidationResult(validationResult: IValidationResult): Observable<IAuthorizePaymentResponse> {
+    switch (validationResult.ActionCode) {
+      case ActionCode.ERROR:
+        this.notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
+        return throwError(validationResult);
+      case ActionCode.FAILURE:
+        StCodec.publishResponse(
+          this.stTransport._threeDQueryResult.response,
+          this.stTransport._threeDQueryResult.jwt,
+          validationResult.jwt
+        );
+        return throwError(validationResult);
+      case ActionCode.SUCCESS:
+      case ActionCode.NOACTION:
+        return of({
+          cachetoken: this.cardinalTokens.cacheToken,
+          threedresponse: validationResult.jwt
+        });
+    }
   }
 }

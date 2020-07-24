@@ -8,6 +8,7 @@ import { catchError } from 'rxjs/operators';
 import { IAction } from './IAction';
 import { environment } from '../../../environments/environment';
 import { storageReducer } from './reducers/storage/StorageReducer';
+import { cardinalReducer } from './reducers/cardinal/ICardinalReducer';
 
 @Service()
 export class StoreFactory {
@@ -29,7 +30,8 @@ export class StoreFactory {
   private getRootReducer(): Reducer {
     return combineReducers({
       config: configReducer,
-      storage: storageReducer
+      storage: storageReducer,
+      cardinal: cardinalReducer
     });
   }
 

@@ -1,15 +1,12 @@
 import { ICardinal } from '../../application/core/integrations/cardinal-commerce/ICardinal';
 import { PaymentEvents } from '../../application/core/models/constants/PaymentEvents';
-import { CardinalCommerce } from '../../application/core/integrations/cardinal-commerce/CardinalCommerce';
 import { ajaxGet } from 'rxjs/internal-compatibility';
 import { environment } from '../../environments/environment';
 
 export class CardinalMock implements ICardinal {
   private callbacks = {
     [PaymentEvents.SETUP_COMPLETE]: (...args: any[]): any => void 0,
-    [PaymentEvents.VALIDATED]: (...args: any[]): any => void 0,
-    [CardinalCommerce.UI_EVENTS.RENDER]: (...args: any[]): any => void 0,
-    [CardinalCommerce.UI_EVENTS.CLOSE]: (...args: any[]): any => void 0
+    [PaymentEvents.VALIDATED]: (...args: any[]): any => void 0
   };
 
   configure(config: any) {

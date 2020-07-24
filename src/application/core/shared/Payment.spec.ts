@@ -36,19 +36,6 @@ describe('Payment', () => {
   });
 
   // given
-  describe('bypassInitRequest()', () => {
-    const { cachetoken } = paymentFixture();
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._stTransport.sendRequest = jest.fn();
-    });
-    instance.setCardinalCommerceCacheToken(cachetoken);
-    // @ts-ignore
-    expect(instance._cardinalCommerceCacheToken).toEqual(cachetoken);
-  });
-
-  // given
   describe('processPayment()', () => {
     // when
     beforeEach(() => {
@@ -182,35 +169,6 @@ describe('Payment', () => {
         expect(result).toStrictEqual({
           response: {}
         });
-      });
-    });
-  });
-
-  // given
-  describe('threeDQueryRequest()', () => {
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._stTransport.sendRequest = jest.fn();
-    });
-
-    // then
-    it('should send THREEDQUERY request', async () => {
-      // @ts-ignore
-      instance._cardinalCommerceCacheToken = 'cardinalcachetoken';
-      await instance.threeDQueryRequest(['THREEDQUERY'], card, {
-        pan: 'overridden',
-        merchant: 'data'
-      });
-
-      // @ts-ignore
-      expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
-        ...card,
-        requesttypedescriptions: ['THREEDQUERY'],
-        merchant: 'data',
-        termurl: 'https://termurl.com',
-        cachetoken: 'cardinalcachetoken',
-        fraudcontroltransactionid: cybertonicaTid
       });
     });
   });

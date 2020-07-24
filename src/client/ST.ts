@@ -43,6 +43,7 @@ import { FrameIdentifier } from '../shared/services/message-bus/FrameIdentifier'
 import { ConfigProvider } from '../shared/services/config/ConfigProvider';
 import { PUBLIC_EVENTS } from '../application/core/shared/EventTypes';
 import { IMessageBusEvent } from '../application/core/models/IMessageBusEvent';
+import { CardinalClient } from './integrations/CardinalClient';
 
 @Service()
 class ST {
@@ -102,7 +103,8 @@ class ST {
     private _framesHub: FramesHub,
     private _storage: BrowserLocalStorage,
     private _messageBus: MessageBus,
-    private _notification: Notification
+    private _notification: Notification,
+    private _cardinalClient: CardinalClient
   ) {
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
@@ -247,6 +249,7 @@ class ST {
     this.displayLiveStatus(Boolean(this._config.livestatus));
     this.watchForFrameUnload();
     this.initControlFrameModal();
+    this._cardinalClient.init();
   }
 
   private CardFrames(): void {

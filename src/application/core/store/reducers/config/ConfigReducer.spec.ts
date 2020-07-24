@@ -1,5 +1,5 @@
 import { IConfig } from '../../../../../shared/model/config/IConfig';
-import { CLEAR_CONFIG, UPDATE_CONFIG } from './ConfigActions';
+import { CLEAR_CONFIG, UPDATE_CONFIG } from './IConfigActionsMap';
 import { configReducer } from './ConfigReducer';
 import { IConfigState } from './IConfigState';
 

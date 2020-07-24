@@ -2,7 +2,7 @@ import { from, interval, Observable } from 'rxjs';
 import { ICardinal } from './ICardinal';
 import { Service } from 'typedi';
 import { DomMethods } from '../../shared/DomMethods';
-import { delay, filter, first, map, switchMap } from 'rxjs/operators';
+import { filter, first, map, switchMap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { ICardinalProvider } from './ICardinalProvider';
 

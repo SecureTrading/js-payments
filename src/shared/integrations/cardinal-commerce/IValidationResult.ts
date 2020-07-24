@@ -5,4 +5,5 @@ export interface IValidationResult {
   ActionCode: ActionCode;
   ErrorNumber: number;
   ErrorDescription: string;
+  jwt?: string;
 }

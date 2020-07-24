@@ -1,9 +1,5 @@
-import { IConfig } from '../../../shared/model/config/IConfig';
-import { CLEAR_CONFIG, UPDATE_CONFIG } from './reducers/config/ConfigActions';
-import { ISetItemPayload, SET_ITEM } from './reducers/storage/StorageActions';
+import { IConfigActionsMap } from './reducers/config/IConfigActionsMap';
+import { IStorageActionsMap } from './reducers/storage/IStorageActionsMap';
+import { ICardinalActionsMap } from './reducers/cardinal/ICardinalActionsMap';
 
-export interface IActionsMap {
-  [UPDATE_CONFIG]: IConfig;
-  [CLEAR_CONFIG]: undefined;
-  [SET_ITEM]: ISetItemPayload;
-}
+export type IActionsMap = IConfigActionsMap & ICardinalActionsMap & IStorageActionsMap;

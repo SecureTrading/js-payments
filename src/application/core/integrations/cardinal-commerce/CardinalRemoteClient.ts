@@ -20,7 +20,7 @@ export class CardinalRemoteClient {
       data: { jwt }
     };
 
-    return from(this.interFrameCommunicator.query(queryEvent, Selectors.MERCHANT_PARENT_FRAME));
+    return from(this.interFrameCommunicator.query<void>(queryEvent, Selectors.MERCHANT_PARENT_FRAME));
   }
 
   continue(data: IContinueData): Observable<IValidationResult> {
@@ -29,7 +29,7 @@ export class CardinalRemoteClient {
       data
     };
 
-    return from(this.interFrameCommunicator.query(queryEvent, Selectors.MERCHANT_PARENT_FRAME));
+    return from(this.interFrameCommunicator.query<IValidationResult>(queryEvent, Selectors.MERCHANT_PARENT_FRAME));
   }
 
   binProcess(pan: string): Observable<void> {
@@ -41,7 +41,7 @@ export class CardinalRemoteClient {
       }
     };
 
-    return from(this.interFrameCommunicator.query(queryEvent, Selectors.MERCHANT_PARENT_FRAME));
+    return from(this.interFrameCommunicator.query<void>(queryEvent, Selectors.MERCHANT_PARENT_FRAME));
   }
 
   updateJwt(jwt: string): Observable<void> {
@@ -53,6 +53,6 @@ export class CardinalRemoteClient {
       }
     };
 
-    return from(this.interFrameCommunicator.query(queryEvent, Selectors.MERCHANT_PARENT_FRAME));
+    return from(this.interFrameCommunicator.query<void>(queryEvent, Selectors.MERCHANT_PARENT_FRAME));
   }
 }

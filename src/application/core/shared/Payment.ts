@@ -13,7 +13,6 @@ import { Cybertonica } from '../integrations/Cybertonica';
 import { MessageBus } from './MessageBus';
 
 export class Payment {
-  private _cardinalCommerceCacheToken: string;
   private _notification: NotificationService;
   private _stTransport: StTransport;
   private _validation: Validation;
@@ -30,10 +29,6 @@ export class Payment {
     this._walletVerifyRequest = {
       requesttypedescriptions: ['WALLETVERIFY']
     };
-  }
-
-  public setCardinalCommerceCacheToken(cachetoken: string) {
-    this._cardinalCommerceCacheToken = cachetoken;
   }
 
   public async processPayment(
@@ -68,25 +63,6 @@ export class Payment {
     }
 
     return this._stTransport.sendRequest(processPaymentRequestBody);
-  }
-
-  // TODO is this even used anymore?
-  public async threeDQueryRequest(requestTypes: string[], card: ICard, merchantData: IMerchantData): Promise<object> {
-    const threeDQueryRequestBody = {
-      cachetoken: this._cardinalCommerceCacheToken,
-      requesttypedescriptions: requestTypes,
-      termurl: 'https://termurl.com', // TODO this shouldn't be needed but currently the backend needs this
-      ...merchantData,
-      ...card
-    };
-
-    const cybertonicaTid = await this._cybertonica.getTransactionId();
-
-    if (cybertonicaTid) {
-      (threeDQueryRequestBody as any).fraudcontroltransactionid = cybertonicaTid;
-    }
-
-    return this._stTransport.sendRequest(threeDQueryRequestBody);
   }
 
   public walletVerify(walletVerify: IWalletVerify) {

@@ -148,13 +148,6 @@ export class ControlFrame extends Frame {
         }
       });
     }
-
-    this.messageBus.subscribe(
-      MessageBus.EVENTS_PUBLIC.CARDINAL_COMMERCE_TOKENS_ACQUIRED,
-      (tokens: ICardinalCommerceTokens) => {
-        this._payment.setCardinalCommerceCacheToken(tokens.cacheToken);
-      }
-    );
   }
 
   protected getAllowedParams(): string[] {

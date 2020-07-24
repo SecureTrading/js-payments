@@ -1,5 +1,5 @@
 import { IConfigState, INITIAL_STATE } from './IConfigState';
-import { CLEAR_CONFIG, UPDATE_CONFIG } from './ConfigActions';
+import { CLEAR_CONFIG, UPDATE_CONFIG } from './IConfigActionsMap';
 import { createReducer, on } from '../../createReducer';
 
 export const configReducer = createReducer<IConfigState>(

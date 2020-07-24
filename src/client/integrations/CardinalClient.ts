@@ -4,7 +4,6 @@ import { PUBLIC_EVENTS } from '../../application/core/shared/EventTypes';
 import { IMessageBusEvent } from '../../application/core/models/IMessageBusEvent';
 import { IInitializationData } from '../../shared/integrations/cardinal-commerce/IInitializationData';
 import { CardinalProvider } from '../../application/core/integrations/cardinal-commerce/CardinalProvider';
-import { ConfigProvider } from '../../application/core/services/ConfigProvider';
 import { first, mapTo, shareReplay, switchMap, tap } from 'rxjs/operators';
 import { ICardinal } from './ICardinal';
 import { defer, Observable } from 'rxjs';
@@ -15,6 +14,7 @@ import { PaymentBrand } from '../../application/core/models/constants/PaymentBra
 import { ITriggerData } from '../../shared/integrations/cardinal-commerce/ITriggerData';
 import { IValidationResult } from '../../shared/integrations/cardinal-commerce/IValidationResult';
 import { environment } from '../../environments/environment';
+import { ConfigProvider } from '../../shared/services/config/ConfigProvider';
 
 @Service()
 export class CardinalClient {
@@ -51,7 +51,7 @@ export class CardinalClient {
     return this.cardinal$.pipe(
       switchMap(
         (cardinal: ICardinal) =>
-          new Observable(subscriber => {
+          new Observable<void>(subscriber => {
             cardinal.on(PaymentEvents.SETUP_COMPLETE, () => {
               subscriber.next(void 0);
               subscriber.complete();
@@ -70,9 +70,9 @@ export class CardinalClient {
     return this.cardinal$.pipe(
       switchMap(
         (cardinal: ICardinal) =>
-          new Observable(subscriber => {
-            cardinal.on(PaymentEvents.VALIDATED, (result: IValidationResult) => {
-              subscriber.next(result);
+          new Observable<IValidationResult>(subscriber => {
+            cardinal.on(PaymentEvents.VALIDATED, (result: IValidationResult, responseJwt: string) => {
+              subscriber.next({ ...result, jwt: responseJwt });
               subscriber.complete();
               cardinal.off(PaymentEvents.VALIDATED);
             });

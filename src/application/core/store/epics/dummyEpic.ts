@@ -1,7 +1,7 @@
 import { Epic } from 'redux-observable';
 import { mapTo, switchMap } from 'rxjs/operators';
 import { ActionName, IAction } from '../IAction';
-import { UPDATE_CONFIG } from '../reducers/config/ConfigActions';
+import { UPDATE_CONFIG } from '../reducers/config/IConfigActionsMap';
 import { ofType } from '../operators/ofType';
 import { EMPTY } from 'rxjs';
 
