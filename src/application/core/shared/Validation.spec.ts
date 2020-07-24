@@ -270,7 +270,7 @@ function validationFixture() {
   let messageBus: MessageBus;
   frame = mock(Frame);
   messageBus = mock(MessageBus);
-  const instance: Validation = new Validation(messageBus, frame);
+  const instance: Validation = new Validation();
   const inputElement = document.createElement('input');
   const inputElementMerchant = document.createElement('input');
   inputElementMerchant.setAttribute('data-st-name', 'billingemail');

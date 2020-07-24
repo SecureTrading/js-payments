@@ -22,7 +22,7 @@ function formatterFixture() {
   document.body.innerHTML = html;
   const messageBus: MessageBus = mock(MessageBus);
   const frame: Frame = mock(Frame);
-  const instance = new Formatter(messageBus, frame);
+  const instance = new Formatter();
   const trimNonNumeric = [
     ['123', '123'],
     ['  1  2  3  ', '123'],
