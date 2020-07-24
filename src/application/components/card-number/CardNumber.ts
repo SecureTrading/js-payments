@@ -42,7 +42,8 @@ export class CardNumber extends Input {
     private configProvider: ConfigProvider,
     private _iconFactory: IconFactory,
     private _formatter: Formatter,
-    private _frame: Frame
+    private frame: Frame,
+    private messageBus: MessageBus
   ) {
     super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE, Selectors.CARD_NUMBER_LABEL);
     this._cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
@@ -64,7 +65,7 @@ export class CardNumber extends Input {
     this._inputElement.setAttribute(CardNumber.PLACEHOLDER_ATTRIBUTE, this.placeholder);
     this.configProvider.getConfig$().subscribe((config: IConfig) => {
       // @ts-ignore
-      new Styler(this._frame.getAllowedStyles()).inject(config.styles.cardNumber);
+      new Styler(this.frame.getAllowedStyles()).inject(config.styles.cardNumber);
     });
   }
 

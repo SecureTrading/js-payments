@@ -41,7 +41,8 @@ export class SecurityCode extends Input {
   constructor(
     private _configProvider: ConfigProvider,
     private _localStorage: BrowserLocalStorage,
-    private _formatter: Formatter
+    private _formatter: Formatter,
+    private messageBus: MessageBus
   ) {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
     this._validation = new Validation();

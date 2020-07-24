@@ -87,7 +87,6 @@ export class CardFrames {
     this.elementsToRegister = [];
     this.componentIds = componentIds;
     this.formId = formId;
-    this.componentIds = componentIds;
     this.jwt = jwt;
     this.origin = origin;
     this.styles = this._getStyles(styles);

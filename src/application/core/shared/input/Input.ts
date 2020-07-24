@@ -22,12 +22,12 @@ export class Input {
   protected _cardNumberInput: HTMLInputElement;
   protected placeholder: string;
   private _translator: Translator;
-  protected frame: Frame;
-  protected messageBus: MessageBus;
+  private _frame: Frame;
+  private _messageBus: MessageBus;
 
   constructor(inputSelector: string, messageSelector: string, labelSelector: string) {
-    this.messageBus = Container.get(MessageBus);
-    this.frame = Container.get(Frame);
+    this._messageBus = Container.get(MessageBus);
+    this._frame = Container.get(Frame);
     this._cardNumberInput = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     this._inputElement = document.getElementById(inputSelector) as HTMLInputElement;
     this._labelElement = document.getElementById(labelSelector) as HTMLLabelElement;
@@ -40,8 +40,8 @@ export class Input {
   }
 
   public init(): void {
-    this.frame.init(this.getAllowedStyles());
-    this._translator = new Translator(this.frame.parseUrl().locale);
+    this._frame.init(this.getAllowedStyles());
+    this._translator = new Translator(this._frame.parseUrl().locale);
     this.validation = new Validation();
 
     this._setLabelText();
@@ -101,7 +101,7 @@ export class Input {
   }
 
   protected getAllowedStyles() {
-    let allowed = this.frame.getAllowedStyles();
+    let allowed = this._frame.getAllowedStyles();
     allowed = {
       ...allowed,
       ...this._getInputAllowedStyles(
@@ -190,7 +190,7 @@ export class Input {
   }
 
   protected setEventListener(event: string, validate: boolean = true) {
-    this.messageBus.subscribe(event, () => {
+    this._messageBus.subscribe(event, () => {
       if (validate) {
         this._validateInput();
       }

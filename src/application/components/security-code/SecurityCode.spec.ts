@@ -203,7 +203,7 @@ describe('SecurityCode', () => {
       // @ts-ignore
       securityCodeInstance._sendState();
       // @ts-ignore
-      expect(securityCodeInstance._messageBus.publish).toHaveBeenCalled();
+      expect(securityCodeInstance.messageBus.publish).toHaveBeenCalled();
     });
   });
 
@@ -266,7 +266,12 @@ function securityCodeFixture() {
   when(configProvider.getConfig$()).thenReturn(of(config));
   when(configProvider.getConfig()).thenReturn(config);
   const messageBus: MessageBus = (new MessageBusMock() as unknown) as MessageBus;
-  const securityCodeInstance = new SecurityCode(instance(configProvider), instance(localStorage), instance(formatter));
+  const securityCodeInstance = new SecurityCode(
+    instance(configProvider),
+    instance(localStorage),
+    instance(formatter),
+    messageBus
+  );
   // @ts-ignore
 
   return { securityCodeInstance, configProvider, communicatorMock, messageBus };

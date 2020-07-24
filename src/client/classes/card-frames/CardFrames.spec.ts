@@ -38,6 +38,7 @@ describe('CardFrames', () => {
         placeholders: { pan: 'Card number', expirydate: 'MM/YY', securitycode: '***' }
       })
     );
+
     when(iframeFactory.create(anyString(), anyString(), anything(), anything())).thenCall(
       (name: string, id: string) => {
         const iframe: HTMLIFrameElement = document.createElement('iframe');
