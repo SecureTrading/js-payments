@@ -6,7 +6,7 @@ import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { Selectors } from '../../core/shared/Selectors';
 import { Service } from 'typedi';
-import { ConfigProvider } from '../../core/services/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 
 @Service()
 export class ExpirationDate extends FormField {

@@ -9,7 +9,7 @@ import { GoogleAnalytics } from './GoogleAnalytics';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 import { Container } from 'typedi';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
-import { ConfigProvider } from '../services/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { Observable } from 'rxjs';
 import { IConfig } from '../../../shared/model/config/IConfig';
@@ -504,7 +504,6 @@ export class ApplePay {
       this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK }, true);
       this._notification.success(Language.translations.PAYMENT_SUCCESS);
     } else {
-      this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
       this._notification.error(errormessage);
     }
   }
