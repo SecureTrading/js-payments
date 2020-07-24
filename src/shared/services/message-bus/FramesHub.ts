@@ -40,10 +40,6 @@ export class FramesHub {
     this.communicator.incomingEvent$
       .pipe(ofType(PUBLIC_EVENTS.DESTROY), mapTo([]))
       .subscribe(value => this.activeFrame$.next(value));
-
-    if (this.identifier.getFrameName() === Selectors.CARD_NUMBER_IFRAME) {
-      this.activeFrame$.subscribe(console.log);
-    }
   }
 
   public isFrameActive(name: string): Observable<boolean> {
@@ -59,8 +55,6 @@ export class FramesHub {
 
   public notifyReadyState(): void {
     const frameName = this.identifier.getFrameName();
-    console.log(frameName);
-
     if (frameName === Selectors.MERCHANT_PARENT_FRAME) {
       return;
     }
