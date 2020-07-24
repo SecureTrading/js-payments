@@ -1,7 +1,6 @@
 import { ControlFrame } from './ControlFrame';
 import { StCodec } from '../../core/services/StCodec.class';
 import { IFormFieldState } from '../../core/models/IFormFieldState';
-import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';

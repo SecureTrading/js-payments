@@ -4,6 +4,7 @@ import { Language } from '../../core/shared/Language';
 import { Selectors } from '../../core/shared/Selectors';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
 import { mock, instance, when } from 'ts-mockito';
+import { Formatter } from '../../core/shared/Formatter';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
 jest.mock('../../../../src/application/core/shared/notification/Notification');
@@ -218,13 +219,15 @@ function expirationDateFixture() {
   const correctDataValue = '12/19';
   let configProvider: ConfigProvider;
   configProvider = mock(ConfigProvider);
+  let formatter: Formatter;
+  formatter = mock(Formatter);
   // @ts-ignore
   when(configProvider.getConfig()).thenReturn({
     jwt: '',
     disableNotification: false,
     placeholders: { pan: '4154654', expirydate: '12/22', securitycode: '123' }
   });
-  const expirationDateInstance: ExpirationDate = new ExpirationDate(instance(configProvider));
+  const expirationDateInstance: ExpirationDate = new ExpirationDate(instance(configProvider), instance(formatter));
 
   const labelElement = document.createElement('label');
   const inputElement = document.createElement('input');

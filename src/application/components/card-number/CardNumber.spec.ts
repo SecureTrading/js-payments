@@ -9,6 +9,8 @@ import { MessageBus } from '../../core/shared/MessageBus';
 import { instance, mock, when } from 'ts-mockito';
 import { IconFactory } from '../../core/services/icon/IconFactory';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
+import { Frame } from '../../core/shared/frame/Frame';
+import { Formatter } from '../../core/shared/Formatter';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
 jest.mock('../../../../src/application/core/shared/Validation');
@@ -382,15 +384,24 @@ function cardNumberFixture() {
   document.body.innerHTML = html;
   let configProvider: ConfigProvider;
   let iconFactory: IconFactory;
+  let frame: Frame;
+  let formatter: Formatter;
   iconFactory = mock(IconFactory);
   configProvider = mock(ConfigProvider);
+  frame = mock(Frame);
+  formatter = mock(Formatter);
   // @ts-ignore
   when(configProvider.getConfig()).thenReturn({
     jwt: '',
     disableNotification: false,
     placeholders: { pan: 'Card number', expirydate: 'MM/YY', securitycode: '***' }
   });
-  const cardNumberInstance: CardNumber = new CardNumber(instance(configProvider), instance(iconFactory));
+  const cardNumberInstance: CardNumber = new CardNumber(
+    instance(configProvider),
+    instance(iconFactory),
+    instance(formatter),
+    instance(frame)
+  );
 
   function createElement(markup: string) {
     return document.createElement(markup);

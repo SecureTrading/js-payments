@@ -21,10 +21,12 @@ describe('CardFrames', () => {
   let iframeFactory: IframeFactory;
   let frame: Frame;
   let instance: CardFrames;
+  let messageBus: MessageBus;
 
   beforeEach(() => {
     configProvider = mock(ConfigProvider);
     iframeFactory = mock(IframeFactory);
+    messageBus = mock(MessageBus);
     frame = mock(Frame);
     const element = document.createElement('input');
     DomMethods.getAllFormElements = jest.fn().mockReturnValue([element]);
@@ -63,7 +65,8 @@ describe('CardFrames', () => {
       'st-form',
       instanceOf(configProvider),
       instanceOf(iframeFactory),
-      instanceOf(frame)
+      instanceOf(frame),
+      instanceOf(messageBus)
     );
     instance.init();
   });
@@ -81,7 +84,7 @@ describe('CardFrames', () => {
       // @ts-ignore
       instance._broadcastSecurityCodeProperties = jest.fn();
       // @ts-ignore
-      instance.messageBus.publish = jest.fn();
+      instance._messageBus.publish = jest.fn();
       // @ts-ignore
       instance._disableFormField(data, type, Selectors.CARD_NUMBER_IFRAME);
     });
@@ -89,7 +92,7 @@ describe('CardFrames', () => {
     // then
     it('should call publish method', () => {
       // @ts-ignore
-      expect(instance.messageBus.publish).toHaveBeenCalledWith(messageBusEvent);
+      expect(instance._messageBus.publish).toHaveBeenCalledWith(messageBusEvent);
     });
   });
 
@@ -131,7 +134,7 @@ describe('CardFrames', () => {
         billingfirstname: ''
       });
       // @ts-ignore
-      instance.messageBus.publish = jest.fn();
+      instance._messageBus.publish = jest.fn();
     });
 
     // then
@@ -139,7 +142,7 @@ describe('CardFrames', () => {
       // @ts-ignore
       instance._onInput();
       // @ts-ignore
-      expect(instance.messageBus.publish).toHaveBeenCalledWith(messageBusEvent);
+      expect(instance._messageBus.publish).toHaveBeenCalledWith(messageBusEvent);
     });
   });
 
@@ -183,11 +186,11 @@ describe('CardFrames', () => {
     // then
     it('should subscribe listener been called', () => {
       // @ts-ignore
-      instance.messageBus.subscribe = jest.fn();
+      instance._messageBus.subscribe = jest.fn();
       // @ts-ignore
       instance._subscribeBlockSubmit();
       // @ts-ignore
-      expect(instance.messageBus.subscribe).toHaveBeenCalled();
+      expect(instance._messageBus.subscribe).toHaveBeenCalled();
     });
 
     // then
@@ -195,13 +198,13 @@ describe('CardFrames', () => {
       // @ts-ignore
       instance._disableSubmitButton = jest.fn();
       // @ts-ignore
-      instance.messageBus.subscribe = jest.fn().mockImplementationOnce((event, callback) => {
+      instance._messageBus.subscribe = jest.fn().mockImplementationOnce((event, callback) => {
         callback(true);
       });
       // @ts-ignore
       instance._subscribeBlockSubmit();
       // @ts-ignore
-      instance.messageBus.publish({ data: true, type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM });
+      instance._messageBus.publish({ data: true, type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM });
       // @ts-ignore
       expect(instance._disableSubmitButton).toHaveBeenCalled();
     });
@@ -219,13 +222,13 @@ describe('CardFrames', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
-      instance.messageBus.subscribe = jest.fn().mockReturnValueOnce({
+      instance._messageBus.subscribe = jest.fn().mockReturnValueOnce({
         cardNumber: '',
         expirationDate: '',
         securityCode: ''
       });
       // @ts-ignore
-      instance.messageBus.publish = jest.fn();
+      instance._messageBus.publish = jest.fn();
       // @ts-ignore
       instance._publishSubmitEvent();
     });
@@ -233,7 +236,7 @@ describe('CardFrames', () => {
     // then
     it('should call publish method', () => {
       // @ts-ignore
-      expect(instance.messageBus.publish).toHaveBeenCalledWith(submitFormEvent, true);
+      expect(instance._messageBus.publish).toHaveBeenCalledWith(submitFormEvent, true);
     });
   });
 
@@ -260,7 +263,7 @@ describe('CardFrames', () => {
     // then
     it(`should call _publishValidatedFieldState for cardNumber if it's state is false`, () => {
       // @ts-ignore
-      instance.messageBus.subscribe = jest.fn().mockImplementationOnce((event, callback) => {
+      instance._messageBus.subscribe = jest.fn().mockImplementationOnce((event, callback) => {
         callback(validateFieldsAfterSubmitFixture(false, true, true));
       });
       // @ts-ignore
@@ -276,7 +279,7 @@ describe('CardFrames', () => {
     // then
     it(`should call _publishValidatedFieldState for expirationDate if it's state is false`, () => {
       // @ts-ignore
-      instance.messageBus.subscribe = jest.fn().mockImplementationOnce((event, callback) => {
+      instance._messageBus.subscribe = jest.fn().mockImplementationOnce((event, callback) => {
         callback(validateFieldsAfterSubmitFixture(true, false, true));
       });
 
@@ -293,7 +296,7 @@ describe('CardFrames', () => {
     // then
     it(`should call _publishValidatedFieldState for securityCode if it's state is false`, () => {
       // @ts-ignore
-      instance.messageBus.subscribe = jest.fn().mockImplementationOnce((event, callback) => {
+      instance._messageBus.subscribe = jest.fn().mockImplementationOnce((event, callback) => {
         callback(validateFieldsAfterSubmitFixture(true, true, false));
       });
 
@@ -315,7 +318,7 @@ describe('CardFrames', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
-      instance.messageBus.publish = jest.fn();
+      instance._messageBus.publish = jest.fn();
       // @ts-ignore
       instance._publishValidatedFieldState(field, eventType);
     });
@@ -331,7 +334,7 @@ describe('CardFrames', () => {
     // then
     it('should set messageBusEvent properties', () => {
       // @ts-ignore
-      expect(instance.messageBus.publish).toHaveBeenCalledWith({
+      expect(instance._messageBus.publish).toHaveBeenCalledWith({
         type: MessageBus.EVENTS.VALIDATE_EXPIRATION_DATE_FIELD,
         data: { message: field.message }
       });

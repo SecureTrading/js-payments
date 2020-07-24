@@ -149,7 +149,7 @@ export class ControlFrame {
   }
 
   private _formFieldChangeEvent(event: string, field: IFormFieldState): void {
-    this._messageBus.pipe(ofType(event)).subscribe((data: IFormFieldState) => {
+    this._messageBus.subscribe(event, (data: IFormFieldState) => {
       this._formFieldChange(event, data.value);
       ControlFrame._setFormFieldValidity(field, data);
       ControlFrame._setFormFieldValue(field, data);

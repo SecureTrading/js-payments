@@ -10,6 +10,7 @@ import { MessageBusMock } from '../../../testing/mocks/MessageBusMock';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
+import { Formatter } from '../../core/shared/Formatter';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
 jest.mock('../../../../src/application/core/shared/notification/Notification');
@@ -258,13 +259,14 @@ function securityCodeFixture() {
   when(communicatorMock.incomingEvent$).thenReturn(EMPTY);
 
   const configProvider: ConfigProvider = mock(ConfigProvider);
-
+  let formatter: Formatter;
+  formatter = mock(Formatter);
   const localStorage: BrowserLocalStorage = mock(BrowserLocalStorage);
   when(localStorage.select(anyFunction())).thenReturn(of('34****4565'));
   when(configProvider.getConfig$()).thenReturn(of(config));
   when(configProvider.getConfig()).thenReturn(config);
   const messageBus: MessageBus = (new MessageBusMock() as unknown) as MessageBus;
-  const securityCodeInstance = new SecurityCode(instance(configProvider), messageBus, instance(localStorage));
+  const securityCodeInstance = new SecurityCode(instance(configProvider), instance(localStorage), instance(formatter));
   // @ts-ignore
 
   return { securityCodeInstance, configProvider, communicatorMock, messageBus };
