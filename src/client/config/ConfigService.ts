@@ -3,17 +3,17 @@ import { IConfig } from '../../shared/model/config/IConfig';
 import { ConfigResolver } from './ConfigResolver';
 import { ConfigValidator } from './ConfigValidator';
 import { CONFIG } from '../../application/core/dependency-injection/InjectionTokens';
-import { BrowserLocalStorage } from '../../shared/services/storage/BrowserLocalStorage';
+import { MessageBus } from '../../application/core/shared/MessageBus';
+import { PUBLIC_EVENTS } from '../../application/core/shared/EventTypes';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { ConfigProvider } from '../../shared/services/config/ConfigProvider';
+import { filter, first } from 'rxjs/operators';
 
 @Service()
-export class ConfigService {
-  private static readonly STORAGE_KEY = 'app.config';
+export class ConfigService implements ConfigProvider {
+  private config$: BehaviorSubject<IConfig> = new BehaviorSubject(null);
 
-  constructor(
-    private storage: BrowserLocalStorage,
-    private resolver: ConfigResolver,
-    private validator: ConfigValidator
-  ) {}
+  constructor(private resolver: ConfigResolver, private validator: ConfigValidator, private messageBus: MessageBus) {}
 
   update(config: IConfig): IConfig {
     const fullConfig = this.resolver.resolve(config);
@@ -23,7 +23,12 @@ export class ConfigService {
       throw validationError;
     }
 
-    this.storage.setItem(ConfigService.STORAGE_KEY, fullConfig);
+    this.config$.next(fullConfig);
+
+    this.messageBus.publish({
+      type: PUBLIC_EVENTS.CONFIG_CHANGED,
+      data: JSON.parse(JSON.stringify(fullConfig))
+    });
 
     Container.set(CONFIG, fullConfig);
 
@@ -31,6 +36,20 @@ export class ConfigService {
   }
 
   clear(): void {
-    this.storage.setItem(ConfigService.STORAGE_KEY, null);
+    this.config$.next(null);
+    this.messageBus.publish({ type: PUBLIC_EVENTS.CONFIG_CHANGED, data: null });
+    Container.set(CONFIG, null);
+  }
+
+  getConfig(): IConfig {
+    return this.config$.getValue();
+  }
+
+  getConfig$(watchForChanges?: boolean): Observable<IConfig> {
+    if (watchForChanges) {
+      return this.config$.pipe(filter<IConfig>(Boolean));
+    }
+
+    return this.config$.pipe(filter<IConfig>(Boolean), first());
   }
 }

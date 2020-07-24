@@ -8,7 +8,7 @@ import { Validation } from '../../core/shared/Validation';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { instance, mock, when } from 'ts-mockito';
 import { IconFactory } from '../../core/services/icon/IconFactory';
-import { ConfigProvider } from '../../core/services/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
 jest.mock('../../../../src/application/core/shared/Validation');
@@ -383,7 +383,7 @@ function cardNumberFixture() {
   let configProvider: ConfigProvider;
   let iconFactory: IconFactory;
   iconFactory = mock(IconFactory);
-  configProvider = mock(ConfigProvider);
+  configProvider = mock<ConfigProvider>();
   // @ts-ignore
   when(configProvider.getConfig()).thenReturn({
     jwt: '',

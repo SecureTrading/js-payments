@@ -21,22 +21,24 @@ import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 import { Service } from 'typedi';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
-import { ConfigProvider } from '../../core/services/ConfigProvider';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
 import { Cybertonica } from '../../core/integrations/Cybertonica';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { CardinalCommerce } from '../../core/integrations/cardinal-commerce/CardinalCommerce';
 import { ICardinalCommerceTokens } from '../../core/integrations/cardinal-commerce/ICardinalCommerceTokens';
-import { BehaviorSubject, defer, EMPTY, from, iif, Observable, of, Subject } from 'rxjs';
-import { catchError, filter, map, mapTo, shareReplay, switchMap, tap } from 'rxjs/operators';
+import { defer, EMPTY, from, iif, Observable, of } from 'rxjs';
+import { catchError, filter, map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { IAuthorizePaymentResponse } from '../../core/models/IAuthorizePaymentResponse';
 import { StJwt } from '../../core/shared/StJwt';
 import { Translator } from '../../core/shared/Translator';
 import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { IOnCardinalValidated } from '../../core/models/IOnCardinalValidated';
-import { ConfigService } from '../../../client/config/ConfigService';
 import { IThreeDInitResponse } from '../../core/models/IThreeDInitResponse';
+import { Store } from '../../core/store/Store';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
+import { UPDATE_CONFIG } from '../../core/store/reducers/config/ConfigActions';
 import { PUBLIC_EVENTS } from '../../core/shared/EventTypes';
+import { ConfigService } from '../../../client/config/ConfigService';
 
 @Service()
 export class ControlFrame extends Frame {
@@ -83,7 +85,7 @@ export class ControlFrame extends Frame {
     private _notification: NotificationService,
     private _cybertonica: Cybertonica,
     private _cardinalCommerce: CardinalCommerce,
-    private _configService: ConfigService
+    private _store: Store
   ) {
     super();
     this._localStorage.init();
@@ -92,7 +94,7 @@ export class ControlFrame extends Frame {
       .whenReceive(MessageBus.EVENTS_PUBLIC.INIT_CONTROL_FRAME)
       .thenRespond((event: IMessageBusEvent<string>) => {
         const config: IConfig = JSON.parse(event.data);
-        this._configService.update(config);
+        this._store.dispatch({ type: UPDATE_CONFIG, payload: config });
         this.onInit(config);
 
         return of(config);
@@ -113,6 +115,13 @@ export class ControlFrame extends Frame {
           data: this._slicedPan
         });
       });
+
+    this.messageBus.pipe(ofType(PUBLIC_EVENTS.CONFIG_CHANGED)).subscribe((event: IMessageBusEvent<IConfig>) => {
+      if (event.data) {
+        this._store.dispatch({ type: UPDATE_CONFIG, payload: event.data });
+        return;
+      }
+    });
   }
 
   protected onInit(config: IConfig): void {
