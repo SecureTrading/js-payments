@@ -1,4 +1,4 @@
-iframe {
+iframe[id^="st-"] {
   height: 90px;
   border: 0;
 }
