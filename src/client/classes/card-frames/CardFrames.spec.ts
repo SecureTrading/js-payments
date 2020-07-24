@@ -9,6 +9,7 @@ import { anyString, anything, instance as instanceOf, mock, when } from 'ts-mock
 import { of } from 'rxjs';
 import { IframeFactory } from '../element/IframeFactory';
 import { Frame } from '../../../application/core/shared/frame/Frame';
+import { MessageBusMock } from '../../../testing/mocks/MessageBusMock';
 
 jest.mock('./../../../../src/application/core/shared/notification/Notification');
 jest.mock('./../../../../src/application/core/shared/Validation');
@@ -21,12 +22,11 @@ describe('CardFrames', () => {
   let iframeFactory: IframeFactory;
   let frame: Frame;
   let instance: CardFrames;
-  let messageBus: MessageBus;
+  const messageBus: MessageBus = (new MessageBusMock() as unknown) as MessageBus;
 
   beforeEach(() => {
     configProvider = mock(ConfigProvider);
     iframeFactory = mock(IframeFactory);
-    messageBus = mock(MessageBus);
     frame = mock(Frame);
     const element = document.createElement('input');
     DomMethods.getAllFormElements = jest.fn().mockReturnValue([element]);
@@ -67,7 +67,7 @@ describe('CardFrames', () => {
       instanceOf(configProvider),
       instanceOf(iframeFactory),
       instanceOf(frame),
-      instanceOf(messageBus)
+      messageBus
     );
     instance.init();
   });
