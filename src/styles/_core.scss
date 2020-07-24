@@ -66,11 +66,77 @@ input:-webkit-autofill.error-field {
   width: 30px;
   height: 20px;
   position: absolute;
-  top: 27px;
-  right: 8px;
+  top: 7px;
   padding: 3px;
   right: 8px;
   background-color: #fff;
   border: 1px solid #6d6d6d;
   border-radius: 4px;
+}
+
+.st-card-number {
+  &__wrapper {
+    display: block;
+    position: relative;
+  }
+
+  &--vertical {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.card-number {
+  &__label.vertical {
+    top: 13px;
+    left: -20px;
+  }
+}
+
+.expiration-date {
+  &__label.vertical {
+    top: 13px;
+    left: -20px;
+  }
+}
+
+.security-code {
+  &__label.vertical {
+    top: 13px;
+    left: -20px;
+  }
+}
+
+.st-expiration-date {
+  &__label.vertical {
+    top: 13px;
+    left: -20px;
+  }
+
+  &__wrapper {
+    display: block;
+    position: relative;
+  }
+
+  &--vertical {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.st-security-code {
+  &__label.vertical {
+    top: 13px;
+    left: -20px;
+  }
+
+  &__wrapper {
+    display: block;
+    position: relative;
+  }
+
+  &--vertical {
+    display: flex;
+    justify-content: center;
+  }
 }

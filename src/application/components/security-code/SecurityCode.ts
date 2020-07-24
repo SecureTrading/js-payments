@@ -19,6 +19,8 @@ import { DefaultPlaceholders } from '../../core/models/constants/config-resolver
 import { LONG_CVC, SHORT_CVC } from '../../core/models/constants/SecurityCode';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
+import { Styler } from '../../core/shared/Styler';
+import { Frame } from '../../core/shared/frame/Frame';
 
 @Service()
 export class SecurityCode extends Input {
@@ -42,13 +44,26 @@ export class SecurityCode extends Input {
     private _configProvider: ConfigProvider,
     private _localStorage: BrowserLocalStorage,
     private _formatter: Formatter,
-    private messageBus: MessageBus
+    private messageBus: MessageBus,
+    private frame: Frame
   ) {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
     this._validation = new Validation();
     this._securityCodeWrapper = document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR) as HTMLElement;
     this._securityCodeLength = SHORT_CVC;
     this.placeholder = this._getPlaceholder(this._securityCodeLength);
+    this._configProvider.getConfig$().subscribe((config: IConfig) => {
+      const styler: Styler = new Styler(this.frame.getAllowedStyles());
+      styler.inject(config.styles.securityCode);
+      if (styler.isHorizontal(config.styles.cardNumber)) {
+        const wrapper = document.getElementById('st-security-code');
+        const label = document.getElementById('st-security-code-label');
+        wrapper.className = '';
+        label.className = '';
+        wrapper.classList.add('st-security-code', 'st-security-code--vertical');
+        label.classList.add('security-code__label', 'security-code__label--required', 'vertical');
+      }
+    });
     this._securityCodeUpdate$()
       .pipe(filter(Boolean))
       .subscribe((securityCodeLength: number) => {

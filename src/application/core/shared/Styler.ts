@@ -22,8 +22,21 @@ export class Styler {
     this._allowed = allowed;
   }
 
-  public inject(styles: IStyle[]): void {
+  public inject(styles: IStyle): void {
     DomMethods.insertStyle(this._getStyleString(styles));
+  }
+
+  public isHorizontal(styles: IStyle): boolean {
+    console.error(styles);
+    // tslint:disable-next-line:forin
+    for (const style in styles) {
+      console.error(style);
+      console.error(styles[style]);
+      if (style === 'isVertical' && styles[style] === 'true') {
+        return true;
+      }
+    }
+    return false;
   }
 
   private _filter(styles: IStyle[]): IStyle {
@@ -62,7 +75,7 @@ export class Styler {
     return grouped;
   }
 
-  private _getStyleString(styles: IStyle[]): string[] {
+  private _getStyleString(styles: IStyle): string[] {
     let groupedStyles: IGroupedStyles;
     let styled: IStyle;
     let tag: string;

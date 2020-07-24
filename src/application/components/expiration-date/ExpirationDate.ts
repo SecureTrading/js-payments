@@ -7,6 +7,9 @@ import { MessageBus } from '../../core/shared/MessageBus';
 import { Selectors } from '../../core/shared/Selectors';
 import { Service } from 'typedi';
 import { ConfigProvider } from '../../core/services/ConfigProvider';
+import { IConfig } from '../../../shared/model/config/IConfig';
+import { Styler } from '../../core/shared/Styler';
+import { Frame } from '../../core/shared/frame/Frame';
 
 @Service()
 export class ExpirationDate extends Input {
@@ -21,9 +24,26 @@ export class ExpirationDate extends Input {
   private _inputSelectionEnd: number;
   private _inputSelectionStart: number;
 
-  constructor(private _configProvider: ConfigProvider, private _formatter: Formatter, private messageBus: MessageBus) {
+  constructor(
+    private _configProvider: ConfigProvider,
+    private _formatter: Formatter,
+    private messageBus: MessageBus,
+    private frame: Frame
+  ) {
     super(Selectors.EXPIRATION_DATE_INPUT, Selectors.EXPIRATION_DATE_MESSAGE, Selectors.EXPIRATION_DATE_LABEL);
     this._init();
+    this._configProvider.getConfig$().subscribe((config: IConfig) => {
+      const styler: Styler = new Styler(this.frame.getAllowedStyles());
+      styler.inject(config.styles.expirationDate);
+      if (styler.isHorizontal(config.styles.expirationDate)) {
+        const wrapper = document.getElementById('st-expiration-date');
+        const label = document.getElementById('st-expiration-date-label');
+        wrapper.className = '';
+        label.className = '';
+        wrapper.classList.add('st-expiration-date', 'st-expiration-date--vertical');
+        label.classList.add('expiration-date__label', 'expiration-date__label--required', 'vertical');
+      }
+    });
   }
 
   public getLabel(): string {

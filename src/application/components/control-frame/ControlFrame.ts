@@ -115,7 +115,6 @@ export class ControlFrame {
   }
 
   protected init(config: IConfig): void {
-    this._frame.init(this._frame.getAllowedStyles());
     this._frame.getAllowedParams().concat(ControlFrame.ALLOWED_PARAMS);
     this._setInstances();
     this._setFormFieldsValidities();

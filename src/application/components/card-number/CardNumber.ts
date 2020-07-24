@@ -15,6 +15,7 @@ import { IconFactory } from '../../core/services/icon/IconFactory';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { Styler } from '../../core/shared/Styler';
 import { Frame } from '../../core/shared/frame/Frame';
+import { doc } from 'prettier';
 
 @Service()
 export class CardNumber extends Input {
@@ -64,8 +65,16 @@ export class CardNumber extends Input {
     this._sendState();
     this._inputElement.setAttribute(CardNumber.PLACEHOLDER_ATTRIBUTE, this.placeholder);
     this.configProvider.getConfig$().subscribe((config: IConfig) => {
-      // @ts-ignore
-      new Styler(this.frame.getAllowedStyles()).inject(config.styles.cardNumber);
+      const styler: Styler = new Styler(this.frame.getAllowedStyles());
+      styler.inject(config.styles.cardNumber);
+      if (styler.isHorizontal(config.styles.cardNumber)) {
+        const wrapper = document.getElementById('st-card-number');
+        const label = document.getElementById('st-card-number-label');
+        wrapper.className = '';
+        label.className = '';
+        wrapper.classList.add('st-card-number', 'st-card-number--vertical');
+        label.classList.add('card-number__label', 'card-number__label--required', 'vertical');
+      }
     });
   }
 
@@ -139,6 +148,8 @@ export class CardNumber extends Input {
   private _setIconImage(type: string, iconId: string): void {
     const icon: HTMLImageElement = this._getIcon(type);
     const iconInDom: HTMLElement = document.getElementById(iconId);
+    console.error(icon);
+    console.error(iconInDom);
 
     if (iconInDom) {
       iconInDom.parentNode.removeChild(iconInDom);
@@ -149,8 +160,9 @@ export class CardNumber extends Input {
   }
 
   private _setIconInDom(element: HTMLElement): void {
-    const input: HTMLElement = document.getElementById(Selectors.CARD_NUMBER_INPUT_SELECTOR);
-    document.getElementById(Selectors.CARD_NUMBER_INPUT_SELECTOR).insertBefore(element, input.childNodes[0]);
+    const input: HTMLElement = document.getElementById('st-card-number-wrapper');
+    console.error(input);
+    input.insertBefore(element, input.childNodes[0]);
   }
 
   private _getBinLookupDetails = (cardNumber: string) => {
@@ -203,6 +215,7 @@ export class CardNumber extends Input {
     const type = this._getBinLookupDetails(this._cardNumberValue)
       ? this._getBinLookupDetails(this._cardNumberValue).type
       : null;
+    console.error(this._panIcon);
     if (this._panIcon) {
       this._setIconImage(type, 'card-icon');
     }
