@@ -20,7 +20,6 @@ import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 import { Service } from 'typedi';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
-import { ConfigProvider } from '../../core/services/ConfigProvider';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
 import { Cybertonica } from '../../core/integrations/Cybertonica';
 import { IConfig } from '../../../shared/model/config/IConfig';
@@ -33,8 +32,12 @@ import { StJwt } from '../../core/shared/StJwt';
 import { Translator } from '../../core/shared/Translator';
 import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { IOnCardinalValidated } from '../../core/models/IOnCardinalValidated';
-import { ConfigService } from '../../../client/config/ConfigService';
 import { IThreeDInitResponse } from '../../core/models/IThreeDInitResponse';
+import { Store } from '../../core/store/Store';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
+import { UPDATE_CONFIG } from '../../core/store/reducers/config/ConfigActions';
+import { PUBLIC_EVENTS } from '../../core/shared/EventTypes';
+import { ConfigService } from '../../../client/config/ConfigService';
 import { Frame } from '../../core/shared/frame/Frame';
 
 @Service()
@@ -82,6 +85,7 @@ export class ControlFrame {
     private _notification: NotificationService,
     private _cybertonica: Cybertonica,
     private _cardinalCommerce: CardinalCommerce,
+    private _store: Store,
     private _configService: ConfigService,
     private _messageBus: MessageBus,
     private _frame: Frame
@@ -91,6 +95,7 @@ export class ControlFrame {
       .whenReceive(MessageBus.EVENTS_PUBLIC.INIT_CONTROL_FRAME)
       .thenRespond((event: IMessageBusEvent<string>) => {
         const config: IConfig = JSON.parse(event.data);
+        this._store.dispatch({ type: UPDATE_CONFIG, payload: config });
         this._configService.update(config);
         this.init(config);
 
@@ -112,6 +117,13 @@ export class ControlFrame {
           data: this._slicedPan
         });
       });
+
+    this.messageBus.pipe(ofType(PUBLIC_EVENTS.CONFIG_CHANGED)).subscribe((event: IMessageBusEvent<IConfig>) => {
+      if (event.data) {
+        this._store.dispatch({ type: UPDATE_CONFIG, payload: event.data });
+        return;
+      }
+    });
   }
 
   protected init(config: IConfig): void {

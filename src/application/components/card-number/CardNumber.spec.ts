@@ -8,7 +8,7 @@ import { Validation } from '../../core/shared/Validation';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { instance, mock, when } from 'ts-mockito';
 import { IconFactory } from '../../core/services/icon/IconFactory';
-import { ConfigProvider } from '../../core/services/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 import { Frame } from '../../core/shared/frame/Frame';
 import { Formatter } from '../../core/shared/Formatter';
 import { of } from 'rxjs';
@@ -360,7 +360,7 @@ function cardNumberFixture() {
   let frame: Frame;
   let formatter: Formatter;
   iconFactory = mock(IconFactory);
-  configProvider = mock(ConfigProvider);
+  configProvider = mock<ConfigProvider>();
   const messageBus: MessageBus = (new MessageBusMock() as unknown) as MessageBus;
   when(configProvider.getConfig$()).thenReturn(of({} as IConfig));
   frame = mock(Frame);

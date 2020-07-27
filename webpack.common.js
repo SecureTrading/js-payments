@@ -8,30 +8,40 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: {
-    st: ['./polyfills', './src/bootstrap.ts', './src/client/ST.ts'],
+    st: [
+      './polyfills',
+      './src/bootstrap.ts',
+      './src/client/dependency-injection/ServiceDefinitions.ts',
+      './src/client/ST.ts'
+    ],
     controlFrame: [
       './polyfills',
       './src/bootstrap.ts',
-      './src/application/components/control-frame/control-frame.ts',
+      './src/application/dependency-injection/ServiceDefinitions.ts',
+      './src/application/components/control-frame/control-frame.ts'
     ],
     creditCardNumber: [
       './polyfills',
       './src/bootstrap.ts',
+      './src/application/dependency-injection/ServiceDefinitions.ts',
       './src/application/components/card-number/card-number.ts',
     ],
     expirationDate: [
       './polyfills',
       './src/bootstrap.ts',
+      './src/application/dependency-injection/ServiceDefinitions.ts',
       './src/application/components/expiration-date/expiration-date.ts',
     ],
     securityCode: [
       './polyfills',
       './src/bootstrap.ts',
+      './src/application/dependency-injection/ServiceDefinitions.ts',
       './src/application/components/security-code/security-code.ts',
     ],
     animatedCard: [
       './polyfills',
       './src/bootstrap.ts',
+      './src/application/dependency-injection/ServiceDefinitions.ts',
       './src/application/components/animated-card/animated-card.ts',
     ],
     example: './example/index.ts',

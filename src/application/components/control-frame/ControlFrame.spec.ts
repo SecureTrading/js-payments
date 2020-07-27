@@ -4,13 +4,14 @@ import { IFormFieldState } from '../../core/models/IFormFieldState';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
-import { ConfigProvider } from '../../core/services/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 import { mock, instance as mockInstance, when, anyString, anything } from 'ts-mockito';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
 import { Cybertonica } from '../../core/integrations/Cybertonica';
 import { CardinalCommerce } from '../../core/integrations/cardinal-commerce/CardinalCommerce';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { EMPTY, of } from 'rxjs';
+import { Store } from '../../core/store/Store';
 import { ConfigService } from '../../../client/config/ConfigService';
 import { Frame } from '../../core/shared/frame/Frame';
 import { MessageBusMock } from '../../../testing/mocks/MessageBusMock';
@@ -225,13 +226,14 @@ describe('ControlFrame', () => {
 function controlFrameFixture() {
   const localStorage: BrowserLocalStorage = mock(BrowserLocalStorage);
   const communicator: InterFrameCommunicator = mock(InterFrameCommunicator);
-  const configProvider: ConfigProvider = mock(ConfigProvider);
+  const configProvider: ConfigProvider = mock<ConfigProvider>();
   const notification: NotificationService = mock(NotificationService);
   const cybertonica: Cybertonica = mock(Cybertonica);
   const cardinalCommerce: CardinalCommerce = mock(CardinalCommerce);
   const configService: ConfigService = mock(ConfigService);
   const messageBus: MessageBus = (new MessageBusMock() as unknown) as MessageBus;
   const frame: Frame = mock(Frame);
+  const storeMock: Store = mock(Store);
 
   when(communicator.whenReceive(anyString())).thenReturn({
     thenRespond: () => undefined
@@ -252,6 +254,7 @@ function controlFrameFixture() {
     mockInstance(notification),
     mockInstance(cybertonica),
     mockInstance(cardinalCommerce),
+    mockInstance(storeMock),
     mockInstance(configService),
     messageBus,
     mockInstance(frame)

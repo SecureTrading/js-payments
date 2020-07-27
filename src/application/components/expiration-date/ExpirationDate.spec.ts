@@ -2,7 +2,7 @@ import { ExpirationDate } from './ExpirationDate';
 import { FormState } from '../../core/models/constants/FormState';
 import { Language } from '../../core/shared/Language';
 import { Selectors } from '../../core/shared/Selectors';
-import { ConfigProvider } from '../../core/services/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 import { mock, instance, when } from 'ts-mockito';
 import { Formatter } from '../../core/shared/Formatter';
 import { MessageBus } from '../../core/shared/MessageBus';
@@ -220,7 +220,7 @@ function expirationDateFixture() {
   const incorrectValue = 'a';
   const correctDataValue = '12/19';
   let configProvider: ConfigProvider;
-  configProvider = mock(ConfigProvider);
+  configProvider = mock<ConfigProvider>();
   let formatter: Formatter;
   const messageBus: MessageBus = (new MessageBusMock() as unknown) as MessageBus;
   formatter = mock(Formatter);
