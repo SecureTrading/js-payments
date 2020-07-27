@@ -19,10 +19,8 @@ import { Payment } from '../../core/shared/Payment';
 import { Validation } from '../../core/shared/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
-import { BrowserSessionStorage } from '../../../shared/services/storage/BrowserSessionStorage';
 import { Service } from 'typedi';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
-import { ConfigProvider } from '../../core/services/ConfigProvider';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
 import { Cybertonica } from '../../core/integrations/Cybertonica';
 import { IConfig } from '../../../shared/model/config/IConfig';
@@ -35,9 +33,12 @@ import { StJwt } from '../../core/shared/StJwt';
 import { Translator } from '../../core/shared/Translator';
 import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { IOnCardinalValidated } from '../../core/models/IOnCardinalValidated';
-import { ConfigService } from '../../../client/config/ConfigService';
 import { IThreeDInitResponse } from '../../core/models/IThreeDInitResponse';
+import { Store } from '../../core/store/Store';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
+import { UPDATE_CONFIG } from '../../core/store/reducers/config/ConfigActions';
 import { PUBLIC_EVENTS } from '../../core/shared/EventTypes';
+import { ConfigService } from '../../../client/config/ConfigService';
 
 @Service()
 export class ControlFrame extends Frame {
@@ -79,18 +80,25 @@ export class ControlFrame extends Frame {
 
   constructor(
     private _localStorage: BrowserLocalStorage,
-    private _sessionStorage: BrowserSessionStorage,
     private _communicator: InterFrameCommunicator,
     private _configProvider: ConfigProvider,
     private _notification: NotificationService,
     private _cybertonica: Cybertonica,
     private _cardinalCommerce: CardinalCommerce,
-    private _configService: ConfigService
+    private _store: Store
   ) {
     super();
-    const config$ = this._configProvider.getConfig$();
+    this._localStorage.init();
 
-    this._communicator.whenReceive(MessageBus.EVENTS_PUBLIC.CONFIG_CHECK).thenRespond(() => config$);
+    this._communicator
+      .whenReceive(MessageBus.EVENTS_PUBLIC.INIT_CONTROL_FRAME)
+      .thenRespond((event: IMessageBusEvent<string>) => {
+        const config: IConfig = JSON.parse(event.data);
+        this._store.dispatch({ type: UPDATE_CONFIG, payload: config });
+        this.onInit(config);
+
+        return of(config);
+      });
 
     this.messageBus
       .pipe(
@@ -100,7 +108,7 @@ export class ControlFrame extends Frame {
       )
       .subscribe((maskedpan: string) => {
         this._slicedPan = maskedpan.slice(0, 6);
-        this._sessionStorage.setItem('app.maskedpan', this._slicedPan);
+        this._localStorage.setItem('app.maskedpan', this._slicedPan);
 
         this.messageBus.publish({
           type: MessageBus.EVENTS_PUBLIC.BIN_PROCESS,
@@ -108,12 +116,12 @@ export class ControlFrame extends Frame {
         });
       });
 
-    this.messageBus
-      .pipe(
-        ofType(PUBLIC_EVENTS.INIT_CONTROL_FRAME),
-        map((event: IMessageBusEvent<IConfig>) => event.data)
-      )
-      .subscribe(config => this.onInit(config));
+    this.messageBus.pipe(ofType(PUBLIC_EVENTS.CONFIG_CHANGED)).subscribe((event: IMessageBusEvent<IConfig>) => {
+      if (event.data) {
+        this._store.dispatch({ type: UPDATE_CONFIG, payload: event.data });
+        return;
+      }
+    });
   }
 
   protected onInit(config: IConfig): void {

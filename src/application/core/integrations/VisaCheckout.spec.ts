@@ -1,22 +1,29 @@
 import { VisaCheckout } from './VisaCheckout';
 import { anyString, mock, when, instance as mockInstance } from 'ts-mockito';
-import { ConfigProvider } from '../services/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { EMPTY, of } from 'rxjs';
+import { Container } from 'typedi';
+import { StoreBasedStorage } from '../../../shared/services/storage/StoreBasedStorage';
+import { SimpleStorage } from '../../../shared/services/storage/SimpleStorage';
 
 jest.mock('../../../../src/application/core/integrations/GoogleAnalytics');
 jest.mock('../../../../src/application/core/shared/Notification');
+
+Container.set({ id: StoreBasedStorage, type: SimpleStorage });
 
 // given
 describe('Visa Checkout', () => {
   let body: object;
   let instance: any;
-  const configProvider = mock(ConfigProvider);
-  const communicator = mock(InterFrameCommunicator);
+  let configProvider: ConfigProvider;
+  let communicator: InterFrameCommunicator;
   const jwt =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';
   // when
   beforeEach(() => {
+    configProvider = mock<ConfigProvider>();
+    communicator = mock(InterFrameCommunicator);
     when(communicator.whenReceive(anyString())).thenReturn({
       thenRespond: () => EMPTY
     });
@@ -200,35 +207,6 @@ describe('Visa Checkout', () => {
       instance._setLiveStatus();
       expect(instance.visaCheckoutButtonProps.src).toEqual(productionAssets.buttonImg);
       expect(instance._sdkAddress).toEqual(productionAssets.sdk);
-    });
-  });
-
-  // given
-  describe('_initVisaFlow()', () => {
-    // @ts-ignore
-    const initPayment = VisaCheckout.prototype.initPaymentConfiguration;
-    // @ts-ignore
-    const statusHandler = VisaCheckout.prototype.paymentStatusHandler;
-
-    // then
-    it.skip('should call load handler', () => {
-      // @ts-ignore
-      const spy = jest.spyOn(VisaCheckout.prototype, 'initPaymentConfiguration').mockImplementation(() => {});
-      // @ts-ignore
-      const spy2 = jest.spyOn(VisaCheckout.prototype, 'paymentStatusHandler').mockImplementation(() => {});
-      const ev = document.createEvent('Event');
-      ev.initEvent('load', false, false);
-      const script = document.getElementsByTagName('script')[0];
-      script.dispatchEvent(ev);
-      expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy2).toHaveBeenCalledTimes(1);
-    });
-
-    afterEach(() => {
-      // @ts-ignore
-      VisaCheckout.prototype.initPaymentConfiguration = initPayment;
-      // @ts-ignore
-      VisaCheckout.prototype.paymentStatusHandler = statusHandler;
     });
   });
 

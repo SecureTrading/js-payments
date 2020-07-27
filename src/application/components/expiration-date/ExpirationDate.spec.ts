@@ -2,7 +2,7 @@ import { ExpirationDate } from './ExpirationDate';
 import { FormState } from '../../core/models/constants/FormState';
 import { Language } from '../../core/shared/Language';
 import { Selectors } from '../../core/shared/Selectors';
-import { ConfigProvider } from '../../core/services/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 import { mock, instance, when } from 'ts-mockito';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
@@ -217,7 +217,7 @@ function expirationDateFixture() {
   const incorrectValue = 'a';
   const correctDataValue = '12/19';
   let configProvider: ConfigProvider;
-  configProvider = mock(ConfigProvider);
+  configProvider = mock<ConfigProvider>();
   // @ts-ignore
   when(configProvider.getConfig()).thenReturn({
     jwt: '',

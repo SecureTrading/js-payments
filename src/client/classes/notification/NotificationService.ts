@@ -1,8 +1,8 @@
 import { MessageBus } from '../../../application/core/shared/MessageBus';
 import { Service } from 'typedi';
 import { NotificationType } from '../../../application/core/models/constants/NotificationType';
-import { ConfigProvider } from '../../../application/core/services/ConfigProvider';
 import { IMessageBusEvent } from '../../../application/core/models/IMessageBusEvent';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 
 @Service()
 export class NotificationService {
