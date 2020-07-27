@@ -128,7 +128,7 @@
     "@sentry/browser": "^5.20.1",
     "@sheerun/mutationobserver-shim": "^0.3.3",
     "@types/jwt-decode": "^2.2.1",
-    "@types/lodash": "^4.14.157",
+    "@types/lodash": "^4.14.158",
     "@types/redux-logger": "^3.0.8",
     "core-js": "^2.6.11",
     "fastestsmallesttextencoderdecoder": "^1.0.22",
