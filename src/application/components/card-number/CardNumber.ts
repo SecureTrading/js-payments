@@ -15,7 +15,6 @@ import { IconFactory } from '../../core/services/icon/IconFactory';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { Styler } from '../../core/shared/Styler';
 import { Frame } from '../../core/shared/frame/Frame';
-import { doc } from 'prettier';
 
 @Service()
 export class CardNumber extends Input {

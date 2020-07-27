@@ -39,6 +39,7 @@ import { UPDATE_CONFIG } from '../../core/store/reducers/config/ConfigActions';
 import { PUBLIC_EVENTS } from '../../core/shared/EventTypes';
 import { ConfigService } from '../../../client/config/ConfigService';
 import { Frame } from '../../core/shared/frame/Frame';
+import { Styler } from '../../core/shared/Styler';
 
 @Service()
 export class ControlFrame {
@@ -127,7 +128,7 @@ export class ControlFrame {
   }
 
   protected init(config: IConfig): void {
-    this._frame.getAllowedParams().concat(ControlFrame.ALLOWED_PARAMS);
+    const styler: Styler = new Styler(this._frame.getAllowedStyles());
     this._setInstances();
     this._setFormFieldsValidities();
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_CARD_NUMBER, this._formFields.cardNumber);
@@ -209,7 +210,6 @@ export class ControlFrame {
         map((event: IMessageBusEvent<ISubmitData>) => event.data || {}),
         switchMap((data: ISubmitData) => {
           this._isPaymentReady = true;
-
           if (!this._isDataValid(data)) {
             this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
             this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM, data: FormState.AVAILABLE }, true);
@@ -244,6 +244,7 @@ export class ControlFrame {
   private _isDataValid(data: ISubmitData): boolean {
     const isPanPiba: boolean = this._isCardWithoutCVV();
     const dataInJwt = data ? data.dataInJwt : false;
+    console.error('dataInJwt', dataInJwt);
     const { validity } = this._validation.formValidation(
       dataInJwt,
       data.fieldsToSubmit,
@@ -374,7 +375,7 @@ export class ControlFrame {
   }
 
   private _getPanFromJwt(): string {
-    const { jwt } = this._frame.parseUrl();
+    const { jwt } = this._frame.parseUrl(ControlFrame.ALLOWED_PARAMS);
     return JwtDecode<IDecodedJwt>(jwt).payload.pan ? JwtDecode<IDecodedJwt>(jwt).payload.pan : '';
   }
 

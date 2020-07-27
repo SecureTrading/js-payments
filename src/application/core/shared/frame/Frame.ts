@@ -13,9 +13,9 @@ export class Frame {
     return frameAllowedStyles;
   }
 
-  public parseUrl(): IParams {
+  public parseUrl(additionalParams?: string[]): IParams {
     const parsedUrl = new URL(window.location.href);
-    const allowedParams = this.getAllowedParams();
+    const allowedParams = this.getAllowedParams().concat(additionalParams);
     const params: IParams = { styles: [] };
 
     parsedUrl.searchParams.forEach((value: string, param: string) => {
