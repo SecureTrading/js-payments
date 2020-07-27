@@ -118,7 +118,7 @@ export class ControlFrame {
         });
       });
 
-    this.messageBus.pipe(ofType(PUBLIC_EVENTS.CONFIG_CHANGED)).subscribe((event: IMessageBusEvent<IConfig>) => {
+    this._messageBus.pipe(ofType(PUBLIC_EVENTS.CONFIG_CHANGED)).subscribe((event: IMessageBusEvent<IConfig>) => {
       if (event.data) {
         this._store.dispatch({ type: UPDATE_CONFIG, payload: event.data });
         return;

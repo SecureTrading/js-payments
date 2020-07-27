@@ -4,7 +4,7 @@ import { DomMethods } from '../../../application/core/shared/DomMethods';
 import { Language } from '../../../application/core/shared/Language';
 import { MessageBus } from '../../../application/core/shared/MessageBus';
 import { Selectors } from '../../../application/core/shared/Selectors';
-import { ConfigProvider } from '../../shared/services/config/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 import { anyString, anything, instance as instanceOf, mock, when } from 'ts-mockito';
 import { of } from 'rxjs';
 import { IframeFactory } from '../element/IframeFactory';
@@ -18,14 +18,13 @@ jest.mock('./../../../../src/application/core/shared/Validation');
 describe('CardFrames', () => {
   document.body.innerHTML =
     '<form id="st-form" class="example-form" autocomplete="off" novalidate> <h1 class="example-form__title"> Secure Trading<span>AMOUNT: <strong>10.00 GBP</strong></span> </h1> <div class="example-form__section example-form__section--horizontal"> <div class="example-form__group"> <label for="example-form-name" class="example-form__label">AMOUNT</label> <input id="example-form-amount" class="example-form__input" type="number" placeholder="" name="myBillAmount" data-st-name="billingamount" /> </div> </div> <div class="example-form__section example-form__section--horizontal"> <div class="example-form__group"> <label for="example-form-name" class="example-form__label">NAME</label> <input id="example-form-name" class="example-form__input" type="text" placeholder="John Doe" autocomplete="name" name="myBillName" data-st-name="billingfirstname" /> </div> <div class="example-form__group"> <label for="example-form-email" class="example-form__label">E-MAIL</label> <input id="example-form-email" class="example-form__input" type="email" placeholder="test@mail.com" autocomplete="email" name="myBillEmail" data-st-name="billingemail" /> </div> <div class="example-form__group"> <label for="example-form-phone" class="example-form__label">PHONE</label> <input id="example-form-phone" class="example-form__input" type="tel" placeholder="+00 000 000 000" autocomplete="tel" name="myBillTel" /> <!-- no data-st-name attribute so this field will not be submitted to ST --> </div> </div> <div class="example-form__spacer"></div> <div class="example-form__section"> <div id="st-notification-frame" class="example-form__group"></div> <div id="st-card-number" class="example-form__group"></div> <div id="st-expiration-date" class="example-form__group"></div> <div id="st-security-code" class="example-form__group"></div> <div class="example-form__spacer"></div> </div> <div class="example-form__section"> <div class="example-form__group example-form__group--submit"> <button type="submit" class="example-form__button">Back</button> <button type="submit" class="example-form__button" id="merchant-submit-button">Submit</button> </div> </div> <div class="example-form__section"> <div id="st-control-frame" class="example-form__group"></div> <div id="st-visa-checkout" class="example-form__group"></div> <div id="st-apple-pay" class="example-form__group"></div> </div> <div id="st-animated-card" class="st-animated-card-wrapper"></div> </form>';
-  let configProvider: ConfigProvider;
+  const configProvider: ConfigProvider = mock<ConfigProvider>();
   let iframeFactory: IframeFactory;
   let frame: Frame;
   let instance: CardFrames;
   const messageBus: MessageBus = (new MessageBusMock() as unknown) as MessageBus;
 
   beforeEach(() => {
-    configProvider = mock(ConfigProvider);
     iframeFactory = mock(IframeFactory);
     frame = mock(Frame);
     const element = document.createElement('input');

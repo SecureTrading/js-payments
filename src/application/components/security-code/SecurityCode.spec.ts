@@ -11,6 +11,7 @@ import { MessageBus } from '../../core/shared/MessageBus';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 import { Formatter } from '../../core/shared/Formatter';
+import { Frame } from '../../core/shared/frame/Frame';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
 jest.mock('../../../../src/application/core/shared/notification/Notification');
@@ -261,6 +262,8 @@ function securityCodeFixture() {
   const configProvider: ConfigProvider = mock<ConfigProvider>();
   let formatter: Formatter;
   formatter = mock(Formatter);
+  let frame: Frame;
+  frame = mock(Frame);
   const localStorage: BrowserLocalStorage = mock(BrowserLocalStorage);
   when(localStorage.select(anyFunction())).thenReturn(of('34****4565'));
   when(configProvider.getConfig$()).thenReturn(of(config));
@@ -270,7 +273,8 @@ function securityCodeFixture() {
     instance(configProvider),
     instance(localStorage),
     instance(formatter),
-    messageBus
+    messageBus,
+    instance(frame)
   );
   // @ts-ignore
 

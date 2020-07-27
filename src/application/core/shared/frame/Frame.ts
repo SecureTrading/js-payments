@@ -21,12 +21,14 @@ export class Frame {
   public parseUrl(): IParams {
     const parsedUrl = new URL(window.location.href);
     const allowedParams = this.getAllowedParams();
+    // @ts-ignore
     const params: IParams = { styles: [] };
 
     parsedUrl.searchParams.forEach((value: string, param: string) => {
       if (allowedParams.includes(param)) {
         params[param] = value;
       } else {
+        // @ts-ignore
         params.styles.push({ [param]: value });
       }
     });

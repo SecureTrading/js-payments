@@ -8,7 +8,7 @@ import { FramesHub } from '../../../../shared/services/message-bus/FramesHub';
 import { BrowserLocalStorage } from '../../../../shared/services/storage/BrowserLocalStorage';
 import { Styler } from '../Styler';
 import { IAllowedStyles } from '../../models/IAllowedStyles';
-import { ConfigProvider } from '../../services/ConfigProvider';
+import { ConfigProvider } from '../../../../shared/services/config/ConfigProvider';
 import { NotificationsClasses } from '../../models/constants/notifications/NotificationsClasses';
 import { NotificationsMessageTypes } from '../../models/constants/notifications/NotificationsMessageTypes';
 import { IConfig } from '../../../../shared/model/config/IConfig';

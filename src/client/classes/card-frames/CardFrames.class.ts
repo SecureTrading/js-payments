@@ -13,14 +13,14 @@ import { Validation } from '../../../application/core/shared/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { Observable } from 'rxjs';
-import { ConfigProvider } from '../../shared/services/config/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { PUBLIC_EVENTS } from '../../../application/core/shared/EventTypes';
 import { first } from 'rxjs/operators';
 import { Frame } from '../../../application/core/shared/frame/Frame';
 import { StJwt } from '../../../application/core/shared/StJwt';
 
-export class CardFrames extends RegisterFrames {
+export class CardFrames {
   private static CARD_NUMBER_FIELD_NAME: string = 'pan';
   private static CLICK_EVENT: string = 'click';
   private static COMPLETE_FORM_NUMBER_OF_FIELDS: number = 3;

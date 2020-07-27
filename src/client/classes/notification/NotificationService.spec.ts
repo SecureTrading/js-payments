@@ -2,7 +2,7 @@ import { NotificationService } from './NotificationService';
 import { MessageBus } from '../../../application/core/shared/MessageBus';
 import { NotificationType } from '../../../application/core/models/constants/NotificationType';
 import { deepEqual, instance, mock, verify, when } from 'ts-mockito';
-import { ConfigProvider } from '../../../application/core/services/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 import { IConfig } from '../../../shared/model/config/IConfig';
 
 // given

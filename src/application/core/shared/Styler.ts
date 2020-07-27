@@ -39,7 +39,7 @@ export class Styler {
     return false;
   }
 
-  private _filter(styles: IStyle[]): IStyle {
+  private _filter(styles: IStyle): IStyle {
     const filtered: IStyle = {};
     // tslint:disable-next-line:forin
     for (const style in styles) {

@@ -6,7 +6,7 @@ import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { Selectors } from '../../core/shared/Selectors';
 import { Service } from 'typedi';
-import { ConfigProvider } from '../../core/services/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { Styler } from '../../core/shared/Styler';
 import { Frame } from '../../core/shared/frame/Frame';
