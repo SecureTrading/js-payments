@@ -40,7 +40,7 @@ export class Notification {
   private _applyStyles(): void {
     this._configProvider.getConfig$().subscribe((config: IConfig) => {
       // @ts-ignore
-      new Styler(this._getAllowedStyles()).inject(config.styles.notificationFrame);
+      const styler: Styler = new Styler(this._getAllowedStyles());
     });
   }
 

@@ -90,7 +90,6 @@ export class DomMethods {
       style.setAttribute('type', 'text/css');
       document.head.appendChild(style);
     }
-
     contents.forEach((item: string) => (style.sheet as CSSStyleSheet).insertRule(item, 0));
   }
 

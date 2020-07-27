@@ -53,8 +53,7 @@ export class SecurityCode extends Input {
     this._securityCodeLength = SHORT_CVC;
     this.placeholder = this._getPlaceholder(this._securityCodeLength);
     this._configProvider.getConfig$().subscribe((config: IConfig) => {
-      const styler: Styler = new Styler(this.frame.getAllowedStyles());
-      styler.inject(config.styles.securityCode);
+      const styler: Styler = new Styler(this.getAllowedStyles());
       if (styler.isHorizontal(config.styles.cardNumber)) {
         const wrapper = document.getElementById('st-security-code');
         const label = document.getElementById('st-security-code-label');

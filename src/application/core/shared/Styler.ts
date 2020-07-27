@@ -3,7 +3,9 @@ import { IGroupedStyles } from '../models/IGroupedStyles';
 import { IStyle } from '../../../shared/model/config/IStyle';
 import { ISubStyles } from '../models/ISubStyles';
 import { DomMethods } from './DomMethods';
-import { Service } from 'typedi';
+import { Container, Service } from 'typedi';
+import { Frame } from './frame/Frame';
+import { IStyles } from '../../../shared/model/config/IStyles';
 
 @Service()
 export class Styler {
@@ -16,22 +18,23 @@ export class Styler {
     return results.join(' ');
   }
 
+  private _frame: Frame;
   private readonly _allowed: IAllowedStyles;
 
   constructor(allowed: IAllowedStyles) {
+    this._frame = Container.get(Frame);
     this._allowed = allowed;
+    console.error(this._frame.parseUrl().styles);
+    this.inject(this._frame.parseUrl().styles);
   }
 
-  public inject(styles: IStyle): void {
+  public inject(styles: IStyles[]): void {
     DomMethods.insertStyle(this._getStyleString(styles));
   }
 
   public isHorizontal(styles: IStyle): boolean {
-    console.error(styles);
     // tslint:disable-next-line:forin
     for (const style in styles) {
-      console.error(style);
-      console.error(styles[style]);
       if (style === 'isVertical' && styles[style] === 'true') {
         return true;
       }
@@ -39,15 +42,21 @@ export class Styler {
     return false;
   }
 
-  private _filter(styles: IStyle): IStyle {
+  private _filter(styles: IStyles[]): IStyle {
     const filtered: IStyle = {};
     // tslint:disable-next-line:forin
-    for (const style in styles) {
-      if (this._allowed.hasOwnProperty(style)) {
+    styles.forEach((style: IStyle, index) => {
+      const propName: string = Object.keys(style)[0];
+      console.error(style);
+      console.error(index);
+      console.error(propName);
+      console.error(this._allowed);
+      console.error(this._allowed.hasOwnProperty(propName));
+      if (this._allowed.hasOwnProperty(propName)) {
         // @ts-ignore
-        filtered[style] = styles[style];
+        filtered[propName] = styles[index][propName];
       }
-    }
+    });
     return filtered;
   }
 
@@ -75,12 +84,14 @@ export class Styler {
     return grouped;
   }
 
-  private _getStyleString(styles: IStyle): string[] {
+  private _getStyleString(styles: IStyles[]): string[] {
     let groupedStyles: IGroupedStyles;
     let styled: IStyle;
     let tag: string;
     const templates: string[] = [`body { display: block; }`];
+    console.error(styles);
     styled = this._filter(styles);
+    console.error(styled);
     styled = this._sanitize(styled);
     groupedStyles = this._group(styled);
     // tslint:disable-next-line:forin
@@ -88,7 +99,7 @@ export class Styler {
       const tagStyle = Styler._getTagStyles(groupedStyles[tag]);
       templates.push(`${tag} { ${tagStyle} }`);
     }
-
+    console.error(templates);
     return templates;
   }
 }

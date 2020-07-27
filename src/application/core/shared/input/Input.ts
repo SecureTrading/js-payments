@@ -40,7 +40,6 @@ export class Input {
   }
 
   public init(): void {
-    this._frame.init(this.getAllowedStyles());
     this._translator = new Translator(this._frame.parseUrl().locale);
     this.validation = new Validation();
 
@@ -52,7 +51,7 @@ export class Input {
     this._inputElement.value = data;
   }
 
-  private _getInputAllowedStyles(
+  protected getInputAllowedStyles(
     input: string,
     inputError: string,
     inputPlaceholder: string,
@@ -65,6 +64,7 @@ export class Input {
         property: 'background-color',
         selector: inputError
       },
+      'background-color-label': { property: 'background-color', selector: label },
       'border-color-input': { property: 'border-color', selector: input },
       'border-color-input-error': { property: 'border-color', selector: inputError },
       'border-radius-input': { property: 'border-radius', selector: input },
@@ -104,7 +104,7 @@ export class Input {
     let allowed = this._frame.getAllowedStyles();
     allowed = {
       ...allowed,
-      ...this._getInputAllowedStyles(
+      ...this.getInputAllowedStyles(
         `#${this._inputSelector}`,
         `#${this._inputSelector}.error-field`,
         `#${this._inputSelector}::placeholder`,

@@ -33,8 +33,7 @@ export class ExpirationDate extends Input {
     super(Selectors.EXPIRATION_DATE_INPUT, Selectors.EXPIRATION_DATE_MESSAGE, Selectors.EXPIRATION_DATE_LABEL);
     this._init();
     this._configProvider.getConfig$().subscribe((config: IConfig) => {
-      const styler: Styler = new Styler(this.frame.getAllowedStyles());
-      styler.inject(config.styles.expirationDate);
+      const styler: Styler = new Styler(this.getAllowedStyles());
       if (styler.isHorizontal(config.styles.expirationDate)) {
         const wrapper = document.getElementById('st-expiration-date');
         const label = document.getElementById('st-expiration-date-label');

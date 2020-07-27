@@ -42,16 +42,4 @@ describe('Frame', () => {
     expect(actual.length).toBe(expected.length);
     expect(actual).toMatchObject(expected);
   });
-
-  describe('Frame.init', () => {
-    it('should call parseUrl', () => {
-      let frame = new Frame();
-      // @ts-ignore
-      frame.parseUrl = jest.fn().mockReturnValueOnce({ origin: 'https://example.com' });
-      // @ts-ignore
-      frame.init();
-      // @ts-ignore
-      expect(frame.parseUrl).toHaveBeenCalledTimes(1);
-    });
-  });
 });
