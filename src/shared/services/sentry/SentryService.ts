@@ -1,4 +1,4 @@
-import { ConfigProvider } from '../../../application/core/services/ConfigProvider';
+import { ConfigProvider } from '../config/ConfigProvider';
 import { Service } from 'typedi';
 import { SentryContext } from './SentryContext';
 import { Event } from '@sentry/types';

@@ -10,7 +10,7 @@ import { VisaResponseTypes } from '../models/constants/visa-checkout/VisaRespons
 import { VisaButtonProps } from '../models/constants/visa-checkout/VisaButtonProps';
 import { Observable } from 'rxjs';
 import { IConfig } from '../../../shared/model/config/IConfig';
-import { ConfigProvider } from '../services/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { IVisaInit } from '../models/visa-checkout/IVisaInit';
 import { Apm } from './Apm';

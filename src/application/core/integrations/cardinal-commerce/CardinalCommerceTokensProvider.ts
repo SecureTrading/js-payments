@@ -1,5 +1,4 @@
 import { Service } from 'typedi';
-import { ConfigProvider } from '../../services/ConfigProvider';
 import { from, Observable, of } from 'rxjs';
 import { ICardinalCommerceTokens } from './ICardinalCommerceTokens';
 import { ThreeDInitRequest } from './ThreeDInitRequest';
@@ -7,6 +6,7 @@ import { IThreeDInitResponse } from '../../models/IThreeDInitResponse';
 import { map, tap } from 'rxjs/operators';
 import { StTransport } from '../../services/StTransport.class';
 import { MessageBus } from '../../shared/MessageBus';
+import { ConfigProvider } from '../../../../shared/services/config/ConfigProvider';
 
 @Service()
 export class CardinalCommerceTokensProvider {

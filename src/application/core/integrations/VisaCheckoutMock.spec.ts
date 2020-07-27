@@ -1,10 +1,10 @@
 import { VisaCheckoutMock } from './VisaCheckoutMock';
 import { anyString, instance as mockInstance, mock, when } from 'ts-mockito';
-import { ConfigProvider } from '../services/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
-import { of } from 'rxjs';
 import { MessageBus } from '../shared/MessageBus';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
+import { EMPTY, of } from 'rxjs';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 
 jest.mock('../../../../src/application/core/shared/Notification');
 
@@ -12,7 +12,7 @@ jest.mock('../../../../src/application/core/shared/Notification');
 describe('Visa Checkout Mock class', () => {
   let body: object;
   let instance: any;
-  const configProvider = mock(ConfigProvider);
+  const configProvider = mock<ConfigProvider>();
   const communicator = mock(InterFrameCommunicator);
   const messageBus = mock(MessageBus);
   const notification = mock(NotificationService);
