@@ -64,6 +64,7 @@ export class Input {
         property: 'background-color',
         selector: inputError
       },
+      'background-color-message': { property: 'background-color', selector: message },
       'background-color-label': { property: 'background-color', selector: label },
       'border-color-input': { property: 'border-color', selector: input },
       'border-color-input-error': { property: 'border-color', selector: inputError },

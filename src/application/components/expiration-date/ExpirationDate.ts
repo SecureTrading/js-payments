@@ -34,7 +34,7 @@ export class ExpirationDate extends Input {
     this._init();
     this._configProvider.getConfig$().subscribe((config: IConfig) => {
       const styler: Styler = new Styler(this.getAllowedStyles());
-      if (styler.isHorizontal(config.styles.expirationDate)) {
+      if (styler.isVertical(config.styles.expirationDate)) {
         const wrapper = document.getElementById('st-expiration-date');
         const label = document.getElementById('st-expiration-date-label');
         wrapper.className = '';
