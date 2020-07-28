@@ -10,7 +10,7 @@ import { Utils } from '../../core/shared/Utils';
 import { Validation } from '../../core/shared/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { Service } from 'typedi';
-import { ConfigProvider } from '../../core/services/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 import { IconFactory } from '../../core/services/icon/IconFactory';
 
 @Service()

@@ -1,15 +1,9 @@
 import { IConfigState, INITIAL_STATE } from './IConfigState';
-import { ActionName, IAction } from '../../IAction';
-import { UPDATE_CONFIG } from './ConfigActions';
+import { CLEAR_CONFIG, UPDATE_CONFIG } from './ConfigActions';
+import { createReducer, on } from '../../createReducer';
 
-export function configReducer<T extends ActionName>(
-  state: IConfigState = INITIAL_STATE,
-  action: IAction<T>
-): IConfigState {
-  switch (action.type) {
-    case UPDATE_CONFIG:
-      return { ...state, config: action.payload };
-    default:
-      return state;
-  }
-}
+export const configReducer = createReducer<IConfigState>(
+  INITIAL_STATE,
+  on(UPDATE_CONFIG, (state, action) => ({ ...state, config: action.payload })),
+  on(CLEAR_CONFIG, state => ({ ...state, config: null }))
+);
