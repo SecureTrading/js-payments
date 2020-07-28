@@ -13,6 +13,7 @@ import { NotificationsClasses } from '../../models/constants/notifications/Notif
 import { NotificationsMessageTypes } from '../../models/constants/notifications/NotificationsMessageTypes';
 import { IConfig } from '../../../../shared/model/config/IConfig';
 import { Frame } from '../frame/Frame';
+import { IStyles } from '../../../../shared/model/config/IStyles';
 
 @Service()
 export class Notification {
@@ -41,8 +42,11 @@ export class Notification {
 
   private _applyStyles(): void {
     this._configProvider.getConfig$().subscribe((config: IConfig) => {
-      // @ts-ignore
-      const styler: Styler = new Styler(this._getAllowedStyles(), this._frame.parseUrl().styles);
+      console.error(config.styles.notificationFrame);
+      const styles = Object.keys(config.styles.notificationFrame).map((item: string) => {
+        return { [item]: config.styles.notificationFrame[item] };
+      });
+      const styler: Styler = new Styler(this._getAllowedStyles(), styles);
     });
   }
 
