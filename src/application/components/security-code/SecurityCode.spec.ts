@@ -3,7 +3,7 @@ import { Selectors } from '../../core/shared/Selectors';
 import { FormField } from '../../core/shared/FormField';
 import { Utils } from '../../core/shared/Utils';
 import { anyFunction, instance, mock, when } from 'ts-mockito';
-import { ConfigProvider } from '../../core/services/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { EMPTY, of } from 'rxjs';
 import { MessageBusMock } from '../../../testing/mocks/MessageBusMock';
@@ -257,7 +257,7 @@ function securityCodeFixture() {
   const communicatorMock: InterFrameCommunicator = mock(InterFrameCommunicator);
   when(communicatorMock.incomingEvent$).thenReturn(EMPTY);
 
-  const configProvider: ConfigProvider = mock(ConfigProvider);
+  const configProvider: ConfigProvider = mock<ConfigProvider>();
 
   const localStorage: BrowserLocalStorage = mock(BrowserLocalStorage);
   when(localStorage.select(anyFunction())).thenReturn(of('34****4565'));

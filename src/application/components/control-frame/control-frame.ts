@@ -4,7 +4,6 @@ import 'whatwg-fetch';
 import './control-frame.scss';
 import { ControlFrame } from './ControlFrame';
 import { Container } from 'typedi';
-import { ConfigService } from '../../../client/config/ConfigService';
 import { FrameIdentifier } from '../../../shared/services/message-bus/FrameIdentifier';
 import { Selectors } from '../../core/shared/Selectors';
 import { SentryService } from '../../../shared/services/sentry/SentryService';

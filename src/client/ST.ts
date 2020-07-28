@@ -37,10 +37,10 @@ import { Notification } from '../application/core/shared/Notification';
 import { ofType } from '../shared/services/message-bus/operators/ofType';
 import { Subject, Subscription } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
-import { ConfigProvider } from '../application/core/services/ConfigProvider';
 import { switchMap } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { FrameIdentifier } from '../shared/services/message-bus/FrameIdentifier';
+import { ConfigProvider } from '../shared/services/config/ConfigProvider';
 import { PUBLIC_EVENTS } from '../application/core/shared/EventTypes';
 import { IMessageBusEvent } from '../application/core/models/IMessageBusEvent';
 

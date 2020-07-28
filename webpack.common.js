@@ -8,9 +8,24 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: {
-    st: ['./polyfills', './src/bootstrap.ts', './src/client/ST.ts'],
-    main: ['./polyfills', './src/bootstrap.ts', './src/application/components/index.ts'],
-    controlFrame: ['./polyfills', './src/bootstrap.ts', './src/application/components/control-frame/control-frame.ts'],
+    st: [
+      './polyfills',
+      './src/bootstrap.ts',
+      './src/client/dependency-injection/ServiceDefinitions.ts',
+      './src/client/ST.ts'
+    ],
+    main: [
+      './polyfills',
+      './src/bootstrap.ts',
+      './src/application/dependency-injection/ServiceDefinitions.ts',
+      './src/application/components/index.ts'
+    ],
+    controlFrame: [
+      './polyfills',
+      './src/bootstrap.ts',
+      './src/application/dependency-injection/ServiceDefinitions.ts',
+      './src/application/components/control-frame/control-frame.ts'
+    ],
     example: './example/index.ts',
     receipt: './example/receipt.ts',
     iframe: './example/iframe.ts',
