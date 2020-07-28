@@ -21,10 +21,10 @@ export class Styler {
   private _frame: Frame;
   private readonly _allowed: IAllowedStyles;
 
-  constructor(allowed: IAllowedStyles) {
+  constructor(allowed: IAllowedStyles, styles: IStyles[]) {
     this._frame = Container.get(Frame);
     this._allowed = allowed;
-    this.inject(this._frame.parseUrl().styles);
+    this.inject(styles);
   }
 
   public inject(styles: IStyles[]): void {

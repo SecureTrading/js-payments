@@ -19,6 +19,7 @@ import { PUBLIC_EVENTS } from '../../../application/core/shared/EventTypes';
 import { first } from 'rxjs/operators';
 import { Frame } from '../../../application/core/shared/frame/Frame';
 import { StJwt } from '../../../application/core/shared/StJwt';
+import { IStJwtObj } from '../../../application/core/models/IStJwtObj';
 
 export class CardFrames {
   private static CARD_NUMBER_FIELD_NAME: string = 'pan';
@@ -332,7 +333,8 @@ export class CardFrames {
     formId: string
   ): void {
     this._validation = new Validation();
-    this._translator = new Translator(this._frame.parseUrl().locale);
+    const locale: string = this._frame.parseUrl().locale || JwtDecode<IStJwtObj>(jwt).payload.locale;
+    this._translator = new Translator(locale);
     this._buttonId = buttonId;
     this.formId = formId;
     this._defaultPaymentType = defaultPaymentType;

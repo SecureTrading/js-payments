@@ -12,6 +12,7 @@ import { ConfigProvider } from '../../../../shared/services/config/ConfigProvide
 import { NotificationsClasses } from '../../models/constants/notifications/NotificationsClasses';
 import { NotificationsMessageTypes } from '../../models/constants/notifications/NotificationsMessageTypes';
 import { IConfig } from '../../../../shared/model/config/IConfig';
+import { Frame } from '../frame/Frame';
 
 @Service()
 export class Notification {
@@ -23,7 +24,8 @@ export class Notification {
     private _messageBus: MessageBus,
     private _browserLocalStorage: BrowserLocalStorage,
     private _configProvider: ConfigProvider,
-    private _framesHub: FramesHub
+    private _framesHub: FramesHub,
+    private _frame: Frame
   ) {
     this._applyStyles();
 
@@ -40,7 +42,7 @@ export class Notification {
   private _applyStyles(): void {
     this._configProvider.getConfig$().subscribe((config: IConfig) => {
       // @ts-ignore
-      const styler: Styler = new Styler(this._getAllowedStyles());
+      const styler: Styler = new Styler(this._getAllowedStyles(), this._frame.parseUrl().styles);
     });
   }
 

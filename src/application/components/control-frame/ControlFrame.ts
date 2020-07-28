@@ -128,7 +128,7 @@ export class ControlFrame {
   }
 
   protected init(config: IConfig): void {
-    const styler: Styler = new Styler(this._frame.getAllowedStyles());
+    const styler: Styler = new Styler(this._frame.getAllowedStyles(), this._frame.parseUrl().styles);
     this._setInstances();
     this._setFormFieldsValidities();
     this._formFieldChangeEvent(MessageBus.EVENTS.CHANGE_CARD_NUMBER, this._formFields.cardNumber);
@@ -244,7 +244,6 @@ export class ControlFrame {
   private _isDataValid(data: ISubmitData): boolean {
     const isPanPiba: boolean = this._isCardWithoutCVV();
     const dataInJwt = data ? data.dataInJwt : false;
-    console.error('dataInJwt', dataInJwt);
     const { validity } = this._validation.formValidation(
       dataInJwt,
       data.fieldsToSubmit,
