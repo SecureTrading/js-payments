@@ -15,6 +15,8 @@ import { Store } from '../../core/store/Store';
 import { ConfigService } from '../../../client/config/ConfigService';
 import { Frame } from '../../core/shared/frame/Frame';
 import { MessageBusMock } from '../../../testing/mocks/MessageBusMock';
+import { IStyles } from '../../../shared/model/config/IStyles';
+import { frameAllowedStyles } from '../../core/shared/frame/frame-const';
 
 jest.mock('../../../../src/application/core/shared/Payment');
 
@@ -216,12 +218,10 @@ describe('ControlFrame', () => {
     };
 
     // @ts-ignore
-    instance._frame.parseUrl = jest
-      .fn()
-      .mockReturnValueOnce({
-        jwt:
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NjQ5MjA1NS44NjY1OSwicGF5bG9hZCI6eyJiYXNlYW1vdW50IjoiMTAwMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiIsInBhbiI6IjMwODk1MDAwMDAwMDAwMDAwMjEiLCJleHBpcnlkYXRlIjoiMDEvMjIifX0.lbNSlaDkbzG6dkm1uc83cc3XvUImysNj_7fkdo___fw'
-      });
+    instance._frame.parseUrl = jest.fn().mockReturnValueOnce({
+      jwt:
+        'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NjQ5MjA1NS44NjY1OSwicGF5bG9hZCI6eyJiYXNlYW1vdW50IjoiMTAwMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiIsInBhbiI6IjMwODk1MDAwMDAwMDAwMDAwMjEiLCJleHBpcnlkYXRlIjoiMDEvMjIifX0.lbNSlaDkbzG6dkm1uc83cc3XvUImysNj_7fkdo___fw'
+    });
 
     // then
     it('should return pan from jwt', () => {
@@ -242,6 +242,13 @@ function controlFrameFixture() {
   const messageBus: MessageBus = (new MessageBusMock() as unknown) as MessageBus;
   const frame: Frame = mock(Frame);
   const storeMock: Store = mock(Store);
+  const controlFrame: IStyles[] = [
+    {
+      controlFrame: {
+        'color-body': '#fff'
+      }
+    }
+  ];
 
   when(communicator.whenReceive(anyString())).thenReturn({
     thenRespond: () => undefined
@@ -251,9 +258,12 @@ function controlFrameFixture() {
   when(frame.parseUrl()).thenReturn({
     locale: 'en_GB',
     jwt:
-      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NjQ5MjA1NS44NjY1OSwicGF5bG9hZCI6eyJiYXNlYW1vdW50IjoiMTAwMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiIsInBhbiI6IjMwODk1MDAwMDAwMDAwMDAwMjEiLCJleHBpcnlkYXRlIjoiMDEvMjIifX0.lbNSlaDkbzG6dkm1uc83cc3XvUImysNj_7fkdo___fw'
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NjQ5MjA1NS44NjY1OSwicGF5bG9hZCI6eyJiYXNlYW1vdW50IjoiMTAwMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiIsInBhbiI6IjMwODk1MDAwMDAwMDAwMDAwMjEiLCJleHBpcnlkYXRlIjoiMDEvMjIifX0.lbNSlaDkbzG6dkm1uc83cc3XvUImysNj_7fkdo___fw',
+
+    styles: controlFrame
   });
-  when(frame.getAllowedParams()).thenReturn(['locale', 'origin']);
+  when(frame.getAllowedParams()).thenReturn(['locale', 'origin', 'styles']);
+  when(frame.getAllowedStyles()).thenReturn(frameAllowedStyles);
 
   const instance = new ControlFrame(
     mockInstance(localStorage),
