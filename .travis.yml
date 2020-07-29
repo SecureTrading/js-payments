@@ -19,7 +19,7 @@ services:
 install: skip
 before_script:
   - python3 -c 'import os,sys; os.set_blocking(sys.stdout.fileno(), True)'
-  - if [[ ! $TRAVIS_BRANCH =~ ^release\/.*$ ]] && [[ "$TRAVIS_BRANCH" != "master" ]]; then git clone --branch=develop --depth=1 https://github.com/SecureTrading/py-payments-testing.git; fi
+  - if [[ ! $TRAVIS_BRANCH =~ ^release\/.*$ ]] && [[ "$TRAVIS_BRANCH" != "master" ]]; then git clone --branch=feature/STJS-761-split-card-payment-tests --depth=1 https://github.com/SecureTrading/py-payments-testing.git; fi
   - if [[ $TRAVIS_BRANCH =~ ^release\/.*$ ]] || [[ "$TRAVIS_BRANCH" == "master" ]]; then git clone --branch=master --single-branch --depth=1 https://github.com/SecureTrading/py-payments-testing.git; fi
   - docker-compose -f py-payments-testing/docker-compose.yml pull
   - docker-compose -f py-payments-testing/docker-compose.yml up -d
@@ -39,9 +39,48 @@ jobs:
         - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
         - docker push "securetrading1/js-payments:$DOCKER_BRANCH"
     - stage: Behavioral test - full set of tests
-      name: 'Card payments tests - chrome'
+      name: 'Card payments common tests - chrome'
       script:
-        - ${DOCKER_TAG} tests poetry run behave -i card_payments_tests.feature
+        - ${DOCKER_TAG} tests poetry run behave -i card_payments_common.feature
+    - name: 'Bypass Card tests - chrome'
+      script:
+          - ${DOCKER_TAG} tests poetry run behave -i bypass_card.feature
+    - name: 'Callback function tests - chrome'
+      script:
+          - ${DOCKER_TAG} tests poetry run behave -i callback_function.feature
+    - name: 'Card type recognition tests - chrome'
+      script:
+          - ${DOCKER_TAG} tests poetry run behave -i card_type_recognition.feature
+    - name: 'Cardinal commerce tests - chrome'
+        script:
+          - ${DOCKER_TAG} tests poetry run behave -i cardinal_commerce.feature
+    - name: 'Cybertonica tests - chrome'
+        script:
+          - ${DOCKER_TAG} tests poetry run behave -i cybertonica.feature
+    - name: 'Form style tests - chrome'
+        script:
+          - ${DOCKER_TAG} tests poetry run behave -i form_styles.feature
+    - name: 'Immediate payment tests - chrome'
+        script:
+          - ${DOCKER_TAG} tests poetry run behave -i immediate_payment.feature
+    - name: 'Notification frame tests - chrome'
+        script:
+          - ${DOCKER_TAG} tests poetry run behave -i notification_frame.feature
+    - name: 'Parent iframe tests - chrome'
+        script:
+          - ${DOCKER_TAG} tests poetry run behave -i parent_iframe.feature
+    - name: 'Payment form translations tests - chrome'
+        script:
+          - ${DOCKER_TAG} tests poetry run behave -i payment_form_translations.feature
+    - name: 'Payment form validations tests - chrome'
+        script:
+          - ${DOCKER_TAG} tests poetry run behave -i payment_form_validations.feature
+    - name: 'Successfull payments tests - chrome'
+        script:
+          - ${DOCKER_TAG} tests poetry run behave -i successful_payments.feature
+    - name: 'Tokenization tests - chrome'
+        script:
+          - ${DOCKER_TAG} tests poetry run behave -i tokenization.feature
     - name: 'Visa Checkout tests - chrome'
       script:
           - ${DOCKER_TAG} tests poetry run behave -i visa_checkout_tests.feature
