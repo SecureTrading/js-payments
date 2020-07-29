@@ -56,7 +56,8 @@ export class Input {
     inputError: string,
     inputPlaceholder: string,
     message: string,
-    label: string
+    label: string,
+    icon?: string
   ) {
     return {
       'background-color-input': { property: 'background-color', selector: input },
@@ -97,7 +98,11 @@ export class Input {
       'space-inset-input': { property: 'padding', selector: input },
       'space-inset-input-error': { property: 'padding', selector: inputError },
       'space-outset-input': { property: 'margin', selector: input },
-      'space-outset-input-error': { property: 'margin', selector: inputError }
+      'space-outset-input-error': { property: 'margin', selector: inputError },
+      'position-top-icon': { property: 'top', selector: icon },
+      'position-bottom-icon': { property: 'bottom', selector: icon },
+      'position-right-icon': { property: 'right', selector: icon },
+      'position-left-icon': { property: 'left', selector: icon }
     };
   }
 
@@ -110,7 +115,8 @@ export class Input {
         `#${this._inputSelector}.error-field`,
         `#${this._inputSelector}::placeholder`,
         `#${this._messageSelector}`,
-        `label[for=${this._inputSelector}]`
+        `label[for=${this._inputSelector}]`,
+        `.st-card-number__wrapper #card-icon`
       )
     };
     return allowed;
