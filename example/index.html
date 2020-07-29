@@ -214,6 +214,11 @@
 <script src="<%= WEBSERVICES_URL %>/st.js"></script>
 <script>
   (function() {
+
+
+    const test = new URLSearchParams(window.location.search.substring(1)).get('config');
+    console.error(test);
+
     var ST = SecureTrading;
     window
       .fetch('<%= WEBSERVICES_URL %>/config.json')
@@ -259,7 +264,7 @@
           'display: flex; justify-content: center; position: fixed; height: 70px;right:0;color: white;padding: 0 50px;align-items: center;border-radius: 10px;font-family: Verdana;font-size: 20px;z-index:2'
         );
         div.style.backgroundColor = tp;
-        switch(tp) {
+        switch (tp) {
           case 'green':
             div.style.top = 0;
             break;
@@ -313,13 +318,13 @@
     function configurationInit(ST, data) {
       var stConfig = data;
       var parsedUrl = new URL(window.location.href);
-      window.configJWT('./../json/jwtdata.json').then(function(jwt){
+      window.configJWT('./../json/jwtdata.json').then(function(jwt) {
         stConfig.jwt = parsedUrl.searchParams.get('jwt') || jwt;
         init(stConfig);
       }).catch(function() {
         stConfig.jwt = parsedUrl.searchParams.get('jwt') || stConfig.jwt;
         init(stConfig);
-      })
+      });
     }
   })();
 
