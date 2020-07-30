@@ -81,6 +81,9 @@ jobs:
     - name: 'Tokenization tests - chrome'
       script:
         - ${DOCKER_TAG} tests poetry run behave -i tokenization.feature
+    - name: 'Tokenization tests - chrome'
+      script:
+        - ${DOCKER_TAG} tests poetry run behave -i redirect_functionality.feature
     - name: 'Visa Checkout tests - chrome'
       script:
         - ${DOCKER_TAG} tests poetry run behave -i visa_checkout_tests.feature
