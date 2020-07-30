@@ -94,6 +94,7 @@ export class Input {
       'line-height-message': { property: 'line-height', selector: message },
       'margin-input': { property: 'margin', selector: input },
       'margin-message': { property: 'margin', selector: message },
+      'max-width-label': { property: 'max-width', selector: label },
       'outline-input': { property: 'outline', selector: input },
       'space-inset-input': { property: 'padding', selector: input },
       'space-inset-input-error': { property: 'padding', selector: inputError },
@@ -102,7 +103,12 @@ export class Input {
       'position-top-icon': { property: 'top', selector: icon },
       'position-bottom-icon': { property: 'bottom', selector: icon },
       'position-right-icon': { property: 'right', selector: icon },
-      'position-left-icon': { property: 'left', selector: icon }
+      'position-left-icon': { property: 'left', selector: icon },
+      'position-top-label': { property: 'top', selector: label },
+      'position-bottom-label': { property: 'bottom', selector: label },
+      'position-right-label': { property: 'right', selector: label },
+      'position-left-label': { property: 'left', selector: label },
+      'width-label': { property: 'width', selector: label }
     };
   }
 
