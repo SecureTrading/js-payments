@@ -78,6 +78,8 @@ input:-webkit-autofill.error-field {
   &__wrapper {
     display: block;
     position: relative;
+    width: 100%;
+    margin: 0 10px 0 5px;
   }
 
   &--vertical {
@@ -90,6 +92,10 @@ input:-webkit-autofill.error-field {
   &__label.vertical {
     top: 13px;
     left: -20px;
+    max-width: 100px;
+    width: 100%;
+    word-wrap: break-word;
+    text-align: right;
   }
 }
 
@@ -97,6 +103,10 @@ input:-webkit-autofill.error-field {
   &__label.vertical {
     top: 13px;
     left: -20px;
+    max-width: 100px;
+    width: 100%;
+    word-wrap: break-word;
+    text-align: right;
   }
 }
 
@@ -104,6 +114,10 @@ input:-webkit-autofill.error-field {
   &__label.vertical {
     top: 13px;
     left: -20px;
+    max-width: 100px;
+    width: 100%;
+    word-wrap: break-word;
+    text-align: right;
   }
 }
 
@@ -116,6 +130,8 @@ input:-webkit-autofill.error-field {
   &__wrapper {
     display: block;
     position: relative;
+    width: 100%;
+    margin: 0 10px 0 5px;
   }
 
   &--vertical {
@@ -133,6 +149,8 @@ input:-webkit-autofill.error-field {
   &__wrapper {
     display: block;
     position: relative;
+    width: 100%;
+    margin: 0 10px 0 5px;
   }
 
   &--vertical {
