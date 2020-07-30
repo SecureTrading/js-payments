@@ -79,7 +79,8 @@ input:-webkit-autofill.error-field {
     display: block;
     position: relative;
     width: 100%;
-    margin: 0 10px 0 5px;
+    padding: 0 10px 0 5px;
+    box-sizing: border-box;
   }
 
   &--vertical {
@@ -131,7 +132,8 @@ input:-webkit-autofill.error-field {
     display: block;
     position: relative;
     width: 100%;
-    margin: 0 10px 0 5px;
+    padding: 0 10px 0 5px;
+    box-sizing: border-box;
   }
 
   &--vertical {
@@ -150,7 +152,8 @@ input:-webkit-autofill.error-field {
     display: block;
     position: relative;
     width: 100%;
-    margin: 0 10px 0 5px;
+    padding: 0 10px 0 5px;
+    box-sizing: border-box;
   }
 
   &--vertical {
