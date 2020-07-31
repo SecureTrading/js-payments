@@ -83,14 +83,14 @@ input:-webkit-autofill.error-field {
     box-sizing: border-box;
   }
 
-  &--vertical {
+  &--lined-up {
     display: flex;
     justify-content: center;
   }
 }
 
 .card-number {
-  &__label.vertical {
+  &__label.lined-up {
     max-width: 100px;
     width: 100%;
     word-wrap: break-word;
@@ -99,7 +99,7 @@ input:-webkit-autofill.error-field {
 }
 
 .expiration-date {
-  &__label.vertical {
+  &__label.lined-up {
     max-width: 100px;
     width: 100%;
     word-wrap: break-word;
@@ -108,7 +108,7 @@ input:-webkit-autofill.error-field {
 }
 
 .security-code {
-  &__label.vertical {
+  &__label.lined-up {
     max-width: 100px;
     width: 100%;
     word-wrap: break-word;
@@ -125,7 +125,7 @@ input:-webkit-autofill.error-field {
     box-sizing: border-box;
   }
 
-  &--vertical {
+  &--lined-up {
     display: flex;
     justify-content: center;
   }
@@ -140,7 +140,7 @@ input:-webkit-autofill.error-field {
     box-sizing: border-box;
   }
 
-  &--vertical {
+  &--lined-up {
     display: flex;
     justify-content: center;
   }

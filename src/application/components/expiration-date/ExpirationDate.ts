@@ -34,13 +34,13 @@ export class ExpirationDate extends Input {
     this._init();
     this._configProvider.getConfig$().subscribe((config: IConfig) => {
       const styler: Styler = new Styler(this.getAllowedStyles(), this.frame.parseUrl().styles);
-      if (styler.isVertical(config.styles.expirationDate)) {
-        const wrapper = document.getElementById('st-expiration-date');
-        const label = document.getElementById('st-expiration-date-label');
-        wrapper.className = '';
-        label.className = '';
-        wrapper.classList.add('st-expiration-date', 'st-expiration-date--vertical');
-        label.classList.add('expiration-date__label', 'expiration-date__label--required', 'vertical');
+      if (styler.isLinedUp(config.styles.securityCode)) {
+        styler.lineUp(
+          'st-expiration-date',
+          'st-expiration-date-label',
+          ['st-expiration-date', 'st-expiration-date--lined-up'],
+          ['expiration-date__label', 'expiration-date__label--required', 'lined-up']
+        );
       }
     });
   }

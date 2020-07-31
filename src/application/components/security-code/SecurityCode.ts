@@ -54,13 +54,13 @@ export class SecurityCode extends Input {
     this.placeholder = this._getPlaceholder(this._securityCodeLength);
     this._configProvider.getConfig$().subscribe((config: IConfig) => {
       const styler: Styler = new Styler(this.getAllowedStyles(), this.frame.parseUrl().styles);
-      if (styler.isVertical(config.styles.securityCode)) {
-        const wrapper = document.getElementById('st-security-code');
-        const label = document.getElementById('st-security-code-label');
-        wrapper.className = '';
-        label.className = '';
-        wrapper.classList.add('st-security-code', 'st-security-code--vertical');
-        label.classList.add('security-code__label', 'security-code__label--required', 'vertical');
+      if (styler.isLinedUp(config.styles.securityCode)) {
+        styler.lineUp(
+          'st-security-code',
+          'st-security-code-label',
+          ['st-security-code', 'st-security-code--lined-up'],
+          ['security-code__label', 'security-code__label--required', 'lined-up']
+        );
       }
     });
     this._securityCodeUpdate$()

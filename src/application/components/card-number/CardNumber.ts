@@ -65,13 +65,13 @@ export class CardNumber extends Input {
     this._inputElement.setAttribute(CardNumber.PLACEHOLDER_ATTRIBUTE, this.placeholder);
     this.configProvider.getConfig$().subscribe((config: IConfig) => {
       const styler: Styler = new Styler(this.getAllowedStyles(), this.frame.parseUrl().styles);
-      if (styler.isVertical(config.styles.cardNumber)) {
-        const wrapper = document.getElementById('st-card-number');
-        const label = document.getElementById('st-card-number-label');
-        wrapper.className = '';
-        label.className = '';
-        wrapper.classList.add('st-card-number', 'st-card-number--vertical');
-        label.classList.add('card-number__label', 'card-number__label--required', 'vertical');
+      if (styler.isLinedUp(config.styles.securityCode)) {
+        styler.lineUp(
+          'st-card-number',
+          'st-card-number-label',
+          ['st-card-number', 'st-card-number--lined-up'],
+          ['card-number__label', 'card-number__label--required', 'lined-up']
+        );
       }
     });
   }

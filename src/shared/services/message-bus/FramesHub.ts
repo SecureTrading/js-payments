@@ -59,13 +59,6 @@ export class FramesHub {
       return;
     }
 
-    if (!frameName) {
-      // @todo: Validation class should not extend frame class. Once fixed this line should throw an error */
-      console.warn('Cannot set ready state for frame without name.');
-
-      return;
-    }
-
     this.communicator.send({ type: FramesHub.FRAME_READY_EVENT, data: frameName }, Selectors.MERCHANT_PARENT_FRAME);
   }
 

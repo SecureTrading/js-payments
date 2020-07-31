@@ -31,14 +31,23 @@ export class Styler {
     DomMethods.insertStyle(this._getStyleString(styles));
   }
 
-  public isVertical(styles: IStyle): boolean {
+  public isLinedUp(styles: IStyle): boolean {
     // tslint:disable-next-line:forin
     for (const style in styles) {
-      if (style === 'isVertical' && styles[style] === 'true') {
+      if (style === 'isLinedUp' && styles[style] === 'true') {
         return true;
       }
     }
     return false;
+  }
+
+  public lineUp(wrapperId: string, labelId: string, wrapperClassList: string[], labelClassList: string[]): void {
+    const wrapper = document.getElementById(wrapperId);
+    const label = document.getElementById(labelId);
+    wrapper.className = '';
+    label.className = '';
+    wrapper.classList.add(...wrapperClassList);
+    label.classList.add(...labelClassList);
   }
 
   private _filter(styles: IStyles[]): IStyle {
