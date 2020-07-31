@@ -41,7 +41,7 @@ jobs:
     - stage: Behavioral test - full set of tests
       name: 'Card payments common tests - chrome'
       script:
-        - ${DOCKER_TAG} tests poetry run behave -i card_payments_common.feature -i bypass_card.feature -i callback_function.feature -i card_type_recognition.feature -i cardinal_commerce.feature -i cybertonica.feature -i form_styles.feature -i immediate_payment.feature -i notification_frame.feature -i notification_frame.feature -i parent_iframe.feature -i payment_form_translations.feature -i payment_form_validations.feature -i successful_payments.feature -i tokenization.feature -i redirect_functionality.feature
+        - ${DOCKER_TAG} tests poetry run behave -n card_payments_common.feature -n bypass_card.feature -n callback_function.feature -n card_type_recognition.feature -n cardinal_commerce.feature -n cybertonica.feature -n form_styles.feature -n immediate_payment.feature -n notification_frame.feature -n notification_frame.feature -n parent_iframe.feature -n payment_form_translations.feature -n payment_form_validations.feature -n successful_payments.feature -n tokenization.feature -n redirect_functionality.feature
     - name: 'Visa Checkout tests - chrome'
       script:
         - ${DOCKER_TAG} tests poetry run behave -i visa_checkout_tests.feature
