@@ -65,7 +65,7 @@ export class CardNumber extends Input {
     this._inputElement.setAttribute(CardNumber.PLACEHOLDER_ATTRIBUTE, this.placeholder);
     this.configProvider.getConfig$().subscribe((config: IConfig) => {
       const styler: Styler = new Styler(this.getAllowedStyles(), this.frame.parseUrl().styles);
-      if (styler.isLinedUp(config.styles.securityCode)) {
+      if (styler.isLinedUp(config.styles.cardNumber)) {
         styler.lineUp(
           'st-card-number',
           'st-card-number-label',
