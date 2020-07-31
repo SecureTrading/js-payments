@@ -42,7 +42,6 @@ export class Notification {
 
   private _applyStyles(): void {
     this._configProvider.getConfig$().subscribe((config: IConfig) => {
-      console.error(config.styles.notificationFrame);
       const styles = Object.keys(config.styles.notificationFrame).map((item: string) => {
         return { [item]: config.styles.notificationFrame[item] };
       });

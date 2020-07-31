@@ -91,8 +91,6 @@ input:-webkit-autofill.error-field {
 
 .card-number {
   &__label.vertical {
-    top: 13px;
-    left: -20px;
     max-width: 100px;
     width: 100%;
     word-wrap: break-word;
@@ -102,8 +100,6 @@ input:-webkit-autofill.error-field {
 
 .expiration-date {
   &__label.vertical {
-    top: 13px;
-    left: -20px;
     max-width: 100px;
     width: 100%;
     word-wrap: break-word;
@@ -113,8 +109,6 @@ input:-webkit-autofill.error-field {
 
 .security-code {
   &__label.vertical {
-    top: 13px;
-    left: -20px;
     max-width: 100px;
     width: 100%;
     word-wrap: break-word;
@@ -123,11 +117,6 @@ input:-webkit-autofill.error-field {
 }
 
 .st-expiration-date {
-  &__label.vertical {
-    top: 13px;
-    left: -20px;
-  }
-
   &__wrapper {
     display: block;
     position: relative;
@@ -143,11 +132,6 @@ input:-webkit-autofill.error-field {
 }
 
 .st-security-code {
-  &__label.vertical {
-    top: 13px;
-    left: -20px;
-  }
-
   &__wrapper {
     display: block;
     position: relative;
