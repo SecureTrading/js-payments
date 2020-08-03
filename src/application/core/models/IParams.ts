@@ -1,8 +1,8 @@
-import { IStyle } from '../../../shared/model/config/IStyle';
+import { IStyles } from '../../../shared/model/config/IStyles';
 
 export interface IParams {
   [name: string]: object | string;
-  styles?: IStyle[];
+  styles?: IStyles[];
   locale?: string;
   origin?: string;
   jwt?: string;

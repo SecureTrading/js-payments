@@ -1,14 +1,14 @@
-import { MessageBus } from './MessageBus';
+import { MessageBus } from '../MessageBus';
 import { instance, mock, when } from 'ts-mockito';
-import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
-import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
+import { BrowserLocalStorage } from '../../../../shared/services/storage/BrowserLocalStorage';
+import { ConfigProvider } from '../../../../shared/services/config/ConfigProvider';
 import { Notification } from './Notification';
-import { NotificationType } from '../models/constants/NotificationType';
-import { MessageBusMock } from '../../../testing/mocks/MessageBusMock';
-import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
-import { Selectors } from './Selectors';
+import { NotificationType } from '../../models/constants/NotificationType';
+import { MessageBusMock } from '../../../../testing/mocks/MessageBusMock';
+import { FramesHub } from '../../../../shared/services/message-bus/FramesHub';
+import { Selectors } from '../Selectors';
 import { of } from 'rxjs';
-import { IConfig } from '../../../shared/model/config/IConfig';
+import { Frame } from '../frame/Frame';
 
 describe('Notification', () => {
   let messageBus: MessageBus;
@@ -16,6 +16,7 @@ describe('Notification', () => {
   let configProvider: ConfigProvider;
   let framesHub: FramesHub;
   let notification: Notification;
+  let frame: Frame;
 
   // when
   beforeEach(() => {
@@ -23,6 +24,7 @@ describe('Notification', () => {
     browserLocalStorage = mock(BrowserLocalStorage);
     configProvider = mock<ConfigProvider>();
     framesHub = mock(FramesHub);
+    frame = mock(Frame);
 
     document.body.innerHTML = `<div id="st-notification-frame"></div>`;
 
@@ -51,7 +53,8 @@ describe('Notification', () => {
       messageBus,
       instance(browserLocalStorage),
       instance(configProvider),
-      instance(framesHub)
+      instance(framesHub),
+      instance(frame)
     );
   });
 
