@@ -41,7 +41,49 @@ jobs:
     - stage: Behavioral test - full set of tests
       name: 'Card payments common tests - chrome'
       script:
-        - ${DOCKER_TAG} tests poetry run behave -n card_payments_common.feature -n bypass_card.feature -n callback_function.feature -n card_type_recognition.feature -n cardinal_commerce.feature -n cybertonica.feature -n form_styles.feature -n immediate_payment.feature -n notification_frame.feature -n notification_frame.feature -n parent_iframe.feature -n payment_form_translations.feature -n payment_form_validations.feature -n successful_payments.feature -n tokenization.feature -n redirect_functionality.feature
+        - ${DOCKER_TAG} tests poetry run behave -i card_payments_common.feature
+    - name: 'Bypass Card tests - chrome'
+      script:
+        - ${DOCKER_TAG} tests poetry run behave -i bypass_card.feature
+    - name: 'Callback function tests - chrome'
+      script:
+        - ${DOCKER_TAG} tests poetry run behave -i callback_function.feature
+    - name: 'Card type recognition tests - chrome'
+      script:
+        - ${DOCKER_TAG} tests poetry run behave -i card_type_recognition.feature
+    - name: 'Cardinal commerce tests - chrome'
+      script:
+        - ${DOCKER_TAG} tests poetry run behave -i cardinal_commerce.feature
+    - name: 'Cybertonica tests - chrome'
+      script:
+        - ${DOCKER_TAG} tests poetry run behave -i cybertonica.feature
+    - name: 'Form style tests - chrome'
+      script:
+        - ${DOCKER_TAG} tests poetry run behave -i form_styles.feature
+    - name: 'Immediate payment tests - chrome'
+      script:
+        - ${DOCKER_TAG} tests poetry run behave -i immediate_payment.feature
+    - name: 'Notification frame tests - chrome'
+      script:
+        - ${DOCKER_TAG} tests poetry run behave -i notification_frame.feature
+    - name: 'Parent iframe tests - chrome'
+      script:
+        - ${DOCKER_TAG} tests poetry run behave -i parent_iframe.feature
+    - name: 'Payment form translations tests - chrome'
+      script:
+        - ${DOCKER_TAG} tests poetry run behave -i payment_form_translations.feature
+    - name: 'Payment form validations tests - chrome'
+      script:
+        - ${DOCKER_TAG} tests poetry run behave -i payment_form_validations.feature
+    - name: 'Successfull payments tests - chrome'
+      script:
+        - ${DOCKER_TAG} tests poetry run behave -i successful_payments.feature
+    - name: 'Tokenization tests - chrome'
+      script:
+        - ${DOCKER_TAG} tests poetry run behave -i tokenization.feature
+    - name: 'Tokenization tests - chrome'
+      script:
+        - ${DOCKER_TAG} tests poetry run behave -i redirect_functionality.feature
     - name: 'Visa Checkout tests - chrome'
       script:
         - ${DOCKER_TAG} tests poetry run behave -i visa_checkout_tests.feature
