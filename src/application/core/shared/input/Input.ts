@@ -57,7 +57,8 @@ export class Input {
     inputPlaceholder: string,
     message: string,
     label: string,
-    icon?: string
+    icon?: string,
+    wrapper?: string
   ) {
     return {
       'background-color-input': { property: 'background-color', selector: input },
@@ -108,7 +109,8 @@ export class Input {
       'position-bottom-label': { property: 'bottom', selector: label },
       'position-right-label': { property: 'right', selector: label },
       'position-left-label': { property: 'left', selector: label },
-      'width-label': { property: 'width', selector: label }
+      'width-label': { property: 'width', selector: label },
+      'space-inset-wrapper': { property: 'padding', selector: wrapper }
     };
   }
 
@@ -122,7 +124,8 @@ export class Input {
         `#${this._inputSelector}::placeholder`,
         `#${this._messageSelector}`,
         `label[for=${this._inputSelector}]`,
-        `.st-card-number__wrapper #card-icon`
+        `.st-card-number__wrapper #card-icon`,
+        '.st-card-number__wrapper'
       )
     };
     return allowed;
