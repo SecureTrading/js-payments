@@ -205,6 +205,10 @@
         <div class="st-form__group st-form__group--submit">
             <button type="submit" class="st-form__button" id="merchant-submit-button">Zapłać</button>
         </div>
+
+        <div class="st-form__group st-form__group--submit">
+            <button type="submit" class="st-form__button" id="additional-button">Additional Button</button>
+        </div>
     </form>
 
     <footer class="st-footer">
@@ -215,9 +219,25 @@
 <script>
   (function() {
 
+    const params = new URLSearchParams(window.location.search.substring(1));
+    const formId = params.get('formId');
+    const noSubmitButton = params.get('noSubmitButton');
+    const additionalButton = params.get('additionalButton');
+    const inlineConfig = params.get('inlineConfig');
+    const updateJwt = params.get('updateJwt');
+    const extraFunction = params.get('extraFunction');
 
-    const test = new URLSearchParams(window.location.search.substring(1)).get('config');
-    console.error(test);
+    if (noSubmitButton === 'true') {
+      document.getElementById('merchant-submit-button').setAttribute('hidden', 'hidden');
+    }
+
+    if (formId) {
+      document.getElementById('st-form').setAttribute('id', formId);
+    }
+
+    if (additionalButton === 'true') {
+      document.getElementById('additional-button').removeAttribute('hidden');
+    }
 
     var ST = SecureTrading;
     window

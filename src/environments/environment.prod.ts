@@ -12,7 +12,7 @@ export const environment = {
     SONGBIRD_LIVE_URL: 'https://songbird.cardinalcommerce.com/edge/v1/songbird.js',
     SONGBIRD_TEST_URL: 'https://songbirdstag.cardinalcommerce.com/edge/v1/songbird.js'
   },
-  FRAME_URL: 'https://webservices.securetrading.net/js/v2',
+  FRAME_URL: 'https://localhost:8443',
   GATEWAY_URL,
   GA_MEASUREMENT_ID: '42057093-6',
   GA_SCRIPT_SRC: 'https://www.google-analytics.com/analytics.js',
