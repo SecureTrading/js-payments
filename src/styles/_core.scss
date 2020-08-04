@@ -66,11 +66,82 @@ input:-webkit-autofill.error-field {
   width: 30px;
   height: 20px;
   position: absolute;
-  top: 27px;
-  right: 8px;
+  top: 7px;
+  right: 7px;
   padding: 3px;
-  right: 8px;
   background-color: #fff;
   border: 1px solid #6d6d6d;
   border-radius: 4px;
+}
+
+.st-card-number {
+  &__wrapper {
+    display: block;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    margin-right: 10px;
+  }
+
+  &--lined-up {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.card-number {
+  &__label.lined-up {
+    max-width: 100px;
+    width: 100%;
+    word-wrap: break-word;
+    text-align: right;
+  }
+}
+
+.expiration-date {
+  &__label.lined-up {
+    max-width: 100px;
+    width: 100%;
+    word-wrap: break-word;
+    text-align: right;
+  }
+}
+
+.security-code {
+  &__label.lined-up {
+    max-width: 100px;
+    width: 100%;
+    word-wrap: break-word;
+    text-align: right;
+  }
+}
+
+.st-expiration-date {
+  &__wrapper {
+    display: block;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    margin-right: 10px;
+  }
+
+  &--lined-up {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.st-security-code {
+  &__wrapper {
+    display: block;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    margin-right: 10px;
+  }
+
+  &--lined-up {
+    display: flex;
+    justify-content: center;
+  }
 }

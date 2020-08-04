@@ -22,7 +22,6 @@ export class Selectors {
   public static readonly SECURITY_CODE_MESSAGE: string = 'st-security-code-message';
   public static readonly SECURITY_CODE_LABEL: string = 'st-security-code-label';
 
-  public static readonly NOTIFICATION_FRAME_IFRAME: string = 'st-notification-frame-iframe';
   public static readonly NOTIFICATION_FRAME_ID: string = 'st-notification-frame';
   public static readonly NOTIFICATION_FRAME_CORE_CLASS: string = 'notification-frame';
   public static readonly NOTIFICATION_FRAME_ERROR_CLASS: string = 'notification-frame--error';

@@ -1,14 +1,16 @@
-import { IFormFieldState } from '../models/IFormFieldState';
-import { IMessageBusEvent } from '../models/IMessageBusEvent';
-import { Frame } from './Frame';
-import { Language } from './Language';
-import { Selectors } from './Selectors';
-import { Translator } from './Translator';
-import { Utils } from './Utils';
-import { Validation } from './Validation';
-import { onInputWraper } from './utils/onInputWrapper';
+import { IFormFieldState } from '../../models/IFormFieldState';
+import { IMessageBusEvent } from '../../models/IMessageBusEvent';
+import { Language } from '../Language';
+import { Selectors } from '../Selectors';
+import { Translator } from '../Translator';
+import { Utils } from '../Utils';
+import { Validation } from '../Validation';
+import { onInputWraper } from '../utils/onInputWrapper';
+import { Frame } from '../frame/Frame';
+import { MessageBus } from '../MessageBus';
+import { Container } from 'typedi';
 
-export class FormField extends Frame {
+export class Input {
   protected static PLACEHOLDER_ATTRIBUTE: string = 'placeholder';
   public validation: Validation;
   protected _inputSelector: string;
@@ -20,9 +22,12 @@ export class FormField extends Frame {
   protected _cardNumberInput: HTMLInputElement;
   protected placeholder: string;
   private _translator: Translator;
+  private _frame: Frame;
+  private _messageBus: MessageBus;
 
   constructor(inputSelector: string, messageSelector: string, labelSelector: string) {
-    super();
+    this._messageBus = Container.get(MessageBus);
+    this._frame = Container.get(Frame);
     this._cardNumberInput = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     this._inputElement = document.getElementById(inputSelector) as HTMLInputElement;
     this._labelElement = document.getElementById(labelSelector) as HTMLLabelElement;
@@ -31,12 +36,11 @@ export class FormField extends Frame {
     this._labelSelector = labelSelector;
     this._messageSelector = messageSelector;
     this._setInputListeners();
-    this.onInit();
+    this.init();
   }
 
-  public onInit(): void {
-    super.onInit();
-    this._translator = new Translator(this.params.locale);
+  public init(): void {
+    this._translator = new Translator(this._frame.parseUrl().locale);
     this.validation = new Validation();
 
     this._setLabelText();
@@ -47,26 +51,30 @@ export class FormField extends Frame {
     this._inputElement.value = data;
   }
 
-  protected getAllowedStyles() {
-    let allowed = super.getAllowedStyles();
-    const input = `#${this._inputSelector}`;
-    const inputError = `#${this._inputSelector}.error-field`;
-    const inputPlaceholder = `${input}::placeholder`;
-    const message = `#${this._messageSelector}`;
-    const label = `label[for=${this._inputSelector}]`;
-    allowed = {
-      ...allowed,
+  protected getInputAllowedStyles(
+    input: string,
+    inputError: string,
+    inputPlaceholder: string,
+    message: string,
+    label: string,
+    icon?: string,
+    wrapper?: string
+  ) {
+    return {
       'background-color-input': { property: 'background-color', selector: input },
       'background-color-input-error': {
         property: 'background-color',
         selector: inputError
       },
+      'background-color-message': { property: 'background-color', selector: message },
+      'background-color-label': { property: 'background-color', selector: label },
       'border-color-input': { property: 'border-color', selector: input },
       'border-color-input-error': { property: 'border-color', selector: inputError },
       'border-radius-input': { property: 'border-radius', selector: input },
       'border-radius-input-error': { property: 'border-radius', selector: inputError },
       'border-size-input': { property: 'border-width', selector: input },
       'border-size-input-error': { property: 'border-width', selector: inputError },
+      'box-shadow-input': { property: 'box-shadow', selector: input },
       'color-error': { property: 'color', selector: message },
       'color-input': { property: 'color', selector: input },
       'color-input-error': { property: 'color', selector: inputError },
@@ -77,14 +85,48 @@ export class FormField extends Frame {
       'font-size-input-error': { property: 'font-size', selector: inputError },
       'font-size-label': { property: 'font-size', selector: label },
       'font-size-message': { property: 'font-size', selector: message },
+      'font-family-input': { property: 'font-family', selector: input },
+      'font-family-input-error': { property: 'font-family', selector: inputError },
+      'font-family-label': { property: 'font-family', selector: label },
+      'font-family-message': { property: 'font-family', selector: message },
       'line-height-input': { property: 'line-height', selector: input },
       'line-height-input-error': { property: 'line-height', selector: inputError },
       'line-height-label': { property: 'line-height', selector: label },
       'line-height-message': { property: 'line-height', selector: message },
+      'max-width-label': { property: 'max-width', selector: label },
+      'outline-input': { property: 'outline', selector: input },
       'space-inset-input': { property: 'padding', selector: input },
       'space-inset-input-error': { property: 'padding', selector: inputError },
+      'space-inset-message': { property: 'padding', selector: message },
       'space-outset-input': { property: 'margin', selector: input },
-      'space-outset-input-error': { property: 'margin', selector: inputError }
+      'space-outset-input-error': { property: 'margin', selector: inputError },
+      'space-outset-message': { property: 'margin', selector: message },
+      'position-top-icon': { property: 'top', selector: icon },
+      'position-bottom-icon': { property: 'bottom', selector: icon },
+      'position-right-icon': { property: 'right', selector: icon },
+      'position-left-icon': { property: 'left', selector: icon },
+      'position-top-label': { property: 'top', selector: label },
+      'position-bottom-label': { property: 'bottom', selector: label },
+      'position-right-label': { property: 'right', selector: label },
+      'position-left-label': { property: 'left', selector: label },
+      'width-label': { property: 'width', selector: label },
+      'space-inset-wrapper': { property: 'padding', selector: wrapper }
+    };
+  }
+
+  protected getAllowedStyles() {
+    let allowed = this._frame.getAllowedStyles();
+    allowed = {
+      ...allowed,
+      ...this.getInputAllowedStyles(
+        `#${this._inputSelector}`,
+        `#${this._inputSelector}.error-field`,
+        `#${this._inputSelector}::placeholder`,
+        `#${this._messageSelector}`,
+        `label[for=${this._inputSelector}]`,
+        `.st-card-number__wrapper #card-icon`,
+        '.st-card-number__wrapper'
+      )
     };
     return allowed;
   }
@@ -164,7 +206,7 @@ export class FormField extends Frame {
   }
 
   protected setEventListener(event: string, validate: boolean = true) {
-    this.messageBus.subscribe(event, () => {
+    this._messageBus.subscribe(event, () => {
       if (validate) {
         this._validateInput();
       }
