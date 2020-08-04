@@ -2,7 +2,7 @@ import { Service } from 'typedi';
 import { InterFrameCommunicator } from './InterFrameCommunicator';
 import { BehaviorSubject, from, Observable, of, Subject } from 'rxjs';
 import { ofType } from './operators/ofType';
-import { distinctUntilChanged, filter, first, map, mapTo, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { distinctUntilChanged, filter, first, map, mapTo, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 import { IMessageBusEvent } from '../../../application/core/models/IMessageBusEvent';
 import { Selectors } from '../../../application/core/shared/Selectors';
 import { FrameIdentifier } from './FrameIdentifier';
@@ -55,15 +55,7 @@ export class FramesHub {
 
   public notifyReadyState(): void {
     const frameName = this.identifier.getFrameName();
-
     if (frameName === Selectors.MERCHANT_PARENT_FRAME) {
-      return;
-    }
-
-    if (!frameName) {
-      // @todo: Validation class should not extend Frame class. Once fixed this line should throw an error */
-      console.warn('Cannot set ready state for frame without name.');
-
       return;
     }
 

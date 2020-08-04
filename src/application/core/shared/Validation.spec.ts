@@ -4,9 +4,11 @@ import { FormState } from '../models/constants/FormState';
 import { Language } from './Language';
 import { MessageBus } from './MessageBus';
 import { Validation } from './Validation';
+import { mock } from 'ts-mockito';
+import { Frame } from './frame/Frame';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
-jest.mock('../../../../src/application/core/shared/Notification');
+jest.mock('../../../../src/application/core/shared/notification/Notification');
 
 describe('Validation', () => {
   // given
@@ -251,19 +253,23 @@ describe('Validation', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
-      instance.messageBus.publish = jest.fn();
+      instance._messageBus.publish = jest.fn();
       instance.setFormValidity({ testValue: 'test value' });
     });
 
     // then
     it('should call publish event', () => {
       // @ts-ignore
-      expect(instance.messageBus.publish).toHaveBeenCalledWith(validationEvent);
+      expect(instance._messageBus.publish).toHaveBeenCalledWith(validationEvent);
     });
   });
 });
 
 function validationFixture() {
+  let frame: Frame;
+  let messageBus: MessageBus;
+  frame = mock(Frame);
+  messageBus = mock(MessageBus);
   const instance: Validation = new Validation();
   const inputElement = document.createElement('input');
   const inputElementMerchant = document.createElement('input');

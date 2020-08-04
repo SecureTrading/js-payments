@@ -1,17 +1,19 @@
 <form id="st-card-number" class="card-number" novalidate>
-  <label
-    id="st-card-number-label"
-    for="st-card-number-input"
-    class="card-number__label card-number__label--required"
-  ></label>
-  <input
-    id="st-card-number-input"
-    class="card-number__input"
-    autocomplete="off"
-    autocorrect="off"
-    spellcheck="false"
-    inputmode="numeric"
-    required
-  />
-  <div id="st-card-number-message" class="card-number__message"></div>
+    <label
+            id="st-card-number-label"
+            for="st-card-number-input"
+            class="card-number__label card-number__label--required"
+    ></label>
+    <div class="st-card-number__wrapper" id="st-card-number-wrapper">
+        <input
+                id="st-card-number-input"
+                class="card-number__input"
+                autocomplete="off"
+                autocorrect="off"
+                spellcheck="false"
+                inputmode="numeric"
+                required
+        />
+        <div id="st-card-number-message" class="card-number__message"></div>
+    </div>
 </form>
