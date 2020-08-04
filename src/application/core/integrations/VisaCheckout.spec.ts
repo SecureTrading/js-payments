@@ -8,7 +8,7 @@ import { StoreBasedStorage } from '../../../shared/services/storage/StoreBasedSt
 import { SimpleStorage } from '../../../shared/services/storage/SimpleStorage';
 
 jest.mock('../../../../src/application/core/integrations/GoogleAnalytics');
-jest.mock('../../../../src/application/core/shared/Notification');
+jest.mock('../../../../src/application/core/shared/notification/Notification');
 
 Container.set({ id: StoreBasedStorage, type: SimpleStorage });
 

@@ -1,10 +1,10 @@
-import { FormField } from './FormField';
-import { Language } from './Language';
-import { Utils } from './Utils';
-import { Validation } from './Validation';
+import { Input } from './Input';
+import { Language } from '../Language';
+import { Utils } from '../Utils';
+import { Validation } from '../Validation';
 
-jest.mock('../../../../src/application/core/shared/Validation');
-jest.mock('../../../../src/application/core/shared/Notification');
+jest.mock('../../../../../src/application/core/shared/Validation');
+jest.mock('../../../../../src/application/core/shared/notification/Notification');
 
 // given
 describe('FormField', () => {
@@ -248,9 +248,9 @@ function formFieldFixture() {
   document.body.appendChild(inputElement);
   document.body.appendChild(messageElement);
   // @ts-ignore
-  FormField.prototype.getLabel = jest.fn().mockReturnValueOnce(() => {
+  Input.prototype.getLabel = jest.fn().mockReturnValueOnce(() => {
     throw new Error(Language.translations.NOT_IMPLEMENTED_ERROR);
   });
-  const instance = new FormField('st-form-field-input', 'st-form-field-message', 'st-form-field-label');
+  const instance = new Input('st-form-field-input', 'st-form-field-message', 'st-form-field-label');
   return { instance, inputElement, messageElement, labelElement };
 }

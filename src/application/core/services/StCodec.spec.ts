@@ -6,7 +6,7 @@ import { MessageBus } from '../shared/MessageBus';
 import { Translator } from '../shared/Translator';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
-jest.mock('../../../../src/application/core/shared/Notification');
+jest.mock('../../../../src/application/core/shared/notification/Notification');
 
 // given
 describe('StCodec class', () => {

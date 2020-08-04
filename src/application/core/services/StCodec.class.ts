@@ -11,6 +11,7 @@ import { Validation } from '../shared/Validation';
 import { version } from '../../../../package.json';
 import { Container } from 'typedi';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
+import { Frame } from '../shared/frame/Frame';
 
 class StCodec {
   public static CONTENT_TYPE = 'application/json';
@@ -97,6 +98,7 @@ class StCodec {
 
   private static _notification: NotificationService;
   private static _messageBus: MessageBus;
+  private static _frame: Frame;
   private static _locale: string;
   private static REQUESTS_WITH_ERROR_MESSAGES = [
     'AUTH',
@@ -116,6 +118,10 @@ class StCodec {
 
   private static getNotification(): NotificationService {
     return StCodec._notification || (StCodec._notification = Container.get(NotificationService));
+  }
+
+  private static getFrameService(): Frame {
+    return StCodec._frame || (StCodec._frame = Container.get(Frame));
   }
 
   private static _createCommunicationError() {

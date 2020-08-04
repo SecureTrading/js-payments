@@ -1,19 +1,21 @@
 <form id="st-security-code" class="security-code" novalidate>
-  <label
-    id="st-security-code-label"
-    for="st-security-code-input"
-    class="security-code__label security-code__label--required"
-  >
-  </label>
-  <input
-    id="st-security-code-input"
-    class="security-code__input"
-    type="text"
-    autocomplete="off"
-    autocorrect="off"
-    spellcheck="false"
-    inputmode="numeric"
-    required
-  />
-  <div id="st-security-code-message" class="security-code__message"></div>
+    <label
+            id="st-security-code-label"
+            for="st-security-code-input"
+            class="security-code__label security-code__label--required"
+    >
+    </label>
+    <div class="st-security-code__wrapper" id="st-security-code-wrapper">
+        <input
+                id="st-security-code-input"
+                class="security-code__input"
+                type="text"
+                autocomplete="off"
+                autocorrect="off"
+                spellcheck="false"
+                inputmode="numeric"
+                required
+        />
+        <div id="st-security-code-message" class="security-code__message"></div>
+    </div>
 </form>

@@ -9,12 +9,13 @@ import { IFormFieldState } from '../models/IFormFieldState';
 import { IMessageBusEvent } from '../models/IMessageBusEvent';
 import { IMessageBusValidateField } from '../models/IMessageBusValidateField';
 import { IValidation } from '../models/IValidation';
-import { Frame } from './Frame';
+import { Frame } from './frame/Frame';
 import { Language } from './Language';
 import { MessageBus } from './MessageBus';
 import { Selectors } from './Selectors';
 import { Translator } from './Translator';
 import { Utils } from './Utils';
+import { Container, Service } from 'typedi';
 
 const {
   VALIDATION_ERROR_FIELD_IS_REQUIRED,
@@ -22,7 +23,8 @@ const {
   VALIDATION_ERROR
 } = Language.translations;
 
-export class Validation extends Frame {
+@Service()
+export class Validation {
   public static ERROR_FIELD_CLASS: string = 'error-field';
 
   public static clearNonDigitsChars(value: string): string {
@@ -78,7 +80,6 @@ export class Validation extends Frame {
     };
   }
 
-  protected static STANDARD_FORMAT_PATTERN: string = '(\\d{1,4})(\\d{1,4})?(\\d{1,4})?(\\d+)?';
   private static BACKSPACE_KEY_CODE: number = 8;
   private static CARD_NUMBER_DEFAULT_LENGTH: number = 16;
   private static CARD_NUMBER_FIELD_NAME: string = 'pan';
@@ -94,9 +95,9 @@ export class Validation extends Frame {
   private static MERCHANT_EXTRA_FIELDS_PREFIX = 'billing';
   private static SECURITY_CODE_FIELD_NAME: string = 'securitycode';
   private static BACKEND_ERROR_FIELDS_NAMES = {
-    cardNumber: Validation.CARD_NUMBER_FIELD_NAME,
-    expirationDate: Validation.EXPIRY_DATE_FIELD_NAME,
-    securityCode: Validation.SECURITY_CODE_FIELD_NAME
+    cardNumber: 'pan',
+    expirationDate: 'expirydate',
+    securityCode: 'securitycode'
   };
 
   private static _setValidateEvent(errordata: string, event: IMessageBusEvent): IMessageBusEvent {
@@ -151,21 +152,23 @@ export class Validation extends Frame {
   public validation: IValidation;
   private _card: ICard;
   private _currentKeyCode: number;
-  private _cursorSkip: number = 0;
   private _formValidity: boolean;
   private _isPaymentReady: boolean;
   private _matchDigitsRegexp: RegExp;
   private _selectionRangeEnd: number;
   private _selectionRangeStart: number;
   private _translator: Translator;
+  private _messageBus: MessageBus;
+  private _frame: Frame;
 
   constructor() {
-    super();
-    this.onInit();
+    this._messageBus = Container.get(MessageBus);
+    this._frame = Container.get(Frame);
+    this.init();
   }
 
   public backendValidation(inputElement: HTMLInputElement, messageElement: HTMLElement, event: string) {
-    this.messageBus.subscribe(event, (data: IMessageBusValidateField) => {
+    this._messageBus.subscribe(event, (data: IMessageBusValidateField) => {
       this.setError(inputElement, messageElement, data);
     });
   }
@@ -175,14 +178,14 @@ export class Validation extends Frame {
       data: state,
       type: MessageBus.EVENTS_PUBLIC.BLOCK_FORM
     };
-    this.messageBus.publish(messageBusEvent, true);
+    this._messageBus.publish(messageBusEvent, true);
   }
 
   public callSubmitEvent() {
     const messageBusEvent: IMessageBusEvent = {
       type: MessageBus.EVENTS_PUBLIC.CALL_SUBMIT_EVENT
     };
-    this.messageBus.publish(messageBusEvent, true);
+    this._messageBus.publish(messageBusEvent, true);
   }
 
   public formValidation(
@@ -218,7 +221,7 @@ export class Validation extends Frame {
 
     if (errordata.find((element: string) => element.includes(Validation.MERCHANT_EXTRA_FIELDS_PREFIX))) {
       validationEvent.type = MessageBus.EVENTS.VALIDATE_MERCHANT_FIELD;
-      this.messageBus.publish(validationEvent);
+      this._messageBus.publish(validationEvent);
     }
 
     return { field: errordata[0], errormessage };
@@ -294,7 +297,7 @@ export class Validation extends Frame {
       data: { ...state },
       type: MessageBus.EVENTS.VALIDATE_FORM
     };
-    this.messageBus.publish(validationEvent);
+    this._messageBus.publish(validationEvent);
   }
 
   public validate(inputElement: HTMLInputElement, messageElement: HTMLElement, customErrorMessage?: string) {
@@ -302,23 +305,22 @@ export class Validation extends Frame {
     this._setMessage(inputElement, messageElement, customErrorMessage);
   }
 
-  protected async onInit() {
-    super.onInit();
+  public init() {
     this._matchDigitsRegexp = new RegExp(Validation.MATCH_DIGITS);
-    this._translator = new Translator(this.params.locale);
+    this._translator = new Translator(this._frame.parseUrl().locale);
   }
 
-  protected removeNonDigits(value: string): string {
+  public removeNonDigits(value: string): string {
     if (value) {
       return value.replace(Validation.MATCH_CHARS, Validation.CLEAR_VALUE);
     }
   }
 
-  protected getCardDetails(cardNumber: string = Validation.CLEAR_VALUE): BrandDetailsType {
+  public getCardDetails(cardNumber: string = Validation.CLEAR_VALUE): BrandDetailsType {
     return iinLookup.lookup(cardNumber);
   }
 
-  protected cardNumber(value: string) {
+  public cardNumber(value: string) {
     this.cardNumberValue = this.removeNonDigits(value);
     this.cardDetails = this.getCardDetails(this.cardNumberValue);
     const length = this.cardDetails.type
@@ -327,16 +329,16 @@ export class Validation extends Frame {
     this.cardNumberValue = this.limitLength(this.cardNumberValue, length);
   }
 
-  protected expirationDate(value: string) {
+  public expirationDate(value: string) {
     this.expirationDateValue = value ? this.removeNonDigits(value) : Validation.CLEAR_VALUE;
   }
 
-  protected securityCode(value: string, length: number) {
+  public securityCode(value: string, length: number) {
     this.securityCodeValue = value ? this.limitLength(this.removeNonDigits(value), length) : Validation.CLEAR_VALUE;
   }
 
   private _broadcastFormFieldError(errordata: string, event: IMessageBusEvent) {
-    this.messageBus.publish(Validation._setValidateEvent(errordata, event));
+    this._messageBus.publish(Validation._setValidateEvent(errordata, event));
   }
 
   private _getTranslation(

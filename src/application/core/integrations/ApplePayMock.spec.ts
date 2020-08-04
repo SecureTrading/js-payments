@@ -8,7 +8,7 @@ import { Container } from 'typedi';
 import { StoreBasedStorage } from '../../../shared/services/storage/StoreBasedStorage';
 import { SimpleStorage } from '../../../shared/services/storage/SimpleStorage';
 
-jest.mock('../../../../src/application/core/shared/Notification');
+jest.mock('../../../../src/application/core/shared/notification/Notification');
 
 Container.set({ id: StoreBasedStorage, type: SimpleStorage });
 
