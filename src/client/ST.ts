@@ -6,9 +6,9 @@ import { debounce } from 'lodash';
 import 'url-polyfill';
 import 'whatwg-fetch';
 import '../application/core/shared/OverrideDomain';
-import { CardFrames } from './classes/CardFrames.class';
-import { CommonFrames } from './classes/CommonFrames.class';
-import { MerchantFields } from './classes/MerchantFields';
+import { CardFrames } from './classes/card-frames/CardFrames.class';
+import { CommonFrames } from './classes/common-frames/CommonFrames.class';
+import { MerchantFields } from './classes/merchant-fields/MerchantFields';
 import { StCodec } from '../application/core/services/StCodec.class';
 import { ApplePay } from '../application/core/integrations/ApplePay';
 import { ApplePayMock } from '../application/core/integrations/ApplePayMock';
@@ -32,7 +32,7 @@ import { IErrorEvent } from '../application/core/models/IErrorEvent';
 import { InterFrameCommunicator } from '../shared/services/message-bus/InterFrameCommunicator';
 import { FramesHub } from '../shared/services/message-bus/FramesHub';
 import { BrowserLocalStorage } from '../shared/services/storage/BrowserLocalStorage';
-import { Notification } from '../application/core/shared/Notification';
+import { Notification } from '../application/core/shared/notification/Notification';
 import { ofType } from '../shared/services/message-bus/operators/ofType';
 import { Subject, Subscription } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
@@ -41,7 +41,9 @@ import { from } from 'rxjs';
 import { FrameIdentifier } from '../shared/services/message-bus/FrameIdentifier';
 import { ConfigProvider } from '../shared/services/config/ConfigProvider';
 import { PUBLIC_EVENTS } from '../application/core/shared/EventTypes';
+import { IframeFactory } from './classes/element/IframeFactory';
 import { IMessageBusEvent } from '../application/core/models/IMessageBusEvent';
+import { Frame } from '../application/core/shared/frame/Frame';
 
 @Service()
 class ST {
@@ -101,7 +103,9 @@ class ST {
     private _framesHub: FramesHub,
     private _storage: BrowserLocalStorage,
     private _messageBus: MessageBus,
-    private _notification: Notification
+    private _notification: Notification,
+    private _iframeFactory: IframeFactory,
+    private _frameService: Frame
   ) {
     this._googleAnalytics = new GoogleAnalytics();
     this._merchantFields = new MerchantFields();
@@ -260,7 +264,10 @@ class ST {
       this._config.buttonId,
       this._config.fieldsToSubmit,
       this._config.formId,
-      this._configProvider
+      this._configProvider,
+      this._iframeFactory,
+      this._frameService,
+      this._messageBus
     );
   }
 
@@ -277,7 +284,9 @@ class ST {
       this._config.datacenterurl,
       this._config.animatedCard,
       this._config.components.requestTypes,
-      this._config.formId
+      this._config.formId,
+      this._iframeFactory,
+      this._frameService
     );
   }
 

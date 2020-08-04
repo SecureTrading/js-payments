@@ -13,6 +13,10 @@ import { IConfig } from '../../../shared/model/config/IConfig';
 import { EMPTY, of } from 'rxjs';
 import { Store } from '../../core/store/Store';
 import { ConfigService } from '../../../client/config/ConfigService';
+import { Frame } from '../../core/shared/frame/Frame';
+import { MessageBusMock } from '../../../testing/mocks/MessageBusMock';
+import { IStyles } from '../../../shared/model/config/IStyles';
+import { frameAllowedStyles } from '../../core/shared/frame/frame-const';
 
 jest.mock('../../../../src/application/core/shared/Payment');
 
@@ -22,7 +26,7 @@ describe('ControlFrame', () => {
 
   beforeEach(() => {
     // @ts-ignore
-    instance.messageBus.subscribe = jest.fn().mockImplementationOnce((event, callback) => {
+    instance._messageBus.subscribe = jest.fn().mockImplementationOnce((event, callback) => {
       callback(data);
     });
   });
@@ -116,7 +120,7 @@ describe('ControlFrame', () => {
     // then
     it('should call _initResetJwtEvent when RESET_JWT event has been called', () => {
       // @ts-ignore
-      instance.messageBus.subscribe = jest
+      instance._messageBus.subscribe = jest
         .fn()
         .mockImplementationOnce((even, callback) => {
           callback();
@@ -178,7 +182,7 @@ describe('ControlFrame', () => {
       // @ts-ignore
       instance._updateMerchantFields(data);
       // @ts-ignore
-      instance.messageBus.publish = jest.fn();
+      instance._messageBus.publish = jest.fn();
     });
 
     // then
@@ -213,21 +217,16 @@ describe('ControlFrame', () => {
         'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NjQ5MjA1NS44NjY1OSwicGF5bG9hZCI6eyJiYXNlYW1vdW50IjoiMTAwMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiIsInBhbiI6IjMwODk1MDAwMDAwMDAwMDAwMjEiLCJleHBpcnlkYXRlIjoiMDEvMjIifX0.lbNSlaDkbzG6dkm1uc83cc3XvUImysNj_7fkdo___fw'
     };
 
-    // then
-    it('should return pan from jwt', () => {
-      // @ts-ignore
-      expect(instance._getPanFromJwt()).toEqual('3089500000000000021');
+    // @ts-ignore
+    instance._frame.parseUrl = jest.fn().mockReturnValueOnce({
+      jwt:
+        'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NjQ5MjA1NS44NjY1OSwicGF5bG9hZCI6eyJiYXNlYW1vdW50IjoiMTAwMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiIsInBhbiI6IjMwODk1MDAwMDAwMDAwMDAwMjEiLCJleHBpcnlkYXRlIjoiMDEvMjIifX0.lbNSlaDkbzG6dkm1uc83cc3XvUImysNj_7fkdo___fw'
     });
 
     // then
     it('should return pan from jwt', () => {
       // @ts-ignore
-      instance.params = {
-        jwt:
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NjU5MTYxMS43ODM3MzY1LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiNDExMTExMTExMTExMTExMSIsImV4cGlyeWRhdGUiOiIwMS8yMiIsInNlY3VyaXR5Y29kZSI6IjEyMyJ9fQ.Rkhsx1PCXnd_Kf-U9OvQRbp9lnNpFx5ClPpm4zx-hDM'
-      };
-      // @ts-ignore
-      expect(instance._getPanFromJwt()).toEqual('4111111111111111');
+      expect(instance._getPanFromJwt(['jwt', 'gatewayUrl'])).toEqual('3089500000000000021');
     });
   });
 });
@@ -239,13 +238,32 @@ function controlFrameFixture() {
   const notification: NotificationService = mock(NotificationService);
   const cybertonica: Cybertonica = mock(Cybertonica);
   const cardinalCommerce: CardinalCommerce = mock(CardinalCommerce);
+  const configService: ConfigService = mock(ConfigService);
+  const messageBus: MessageBus = (new MessageBusMock() as unknown) as MessageBus;
+  const frame: Frame = mock(Frame);
   const storeMock: Store = mock(Store);
+  const controlFrame: IStyles[] = [
+    {
+      controlFrame: {
+        'color-body': '#fff'
+      }
+    }
+  ];
 
   when(communicator.whenReceive(anyString())).thenReturn({
     thenRespond: () => undefined
   });
   when(configProvider.getConfig$()).thenReturn(of({} as IConfig));
   when(cardinalCommerce.init(anything())).thenReturn(EMPTY);
+  when(frame.parseUrl()).thenReturn({
+    locale: 'en_GB',
+    jwt:
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NjQ5MjA1NS44NjY1OSwicGF5bG9hZCI6eyJiYXNlYW1vdW50IjoiMTAwMCIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJ0ZXN0X2phbWVzMzg2NDEiLCJsb2NhbGUiOiJlbl9HQiIsInBhbiI6IjMwODk1MDAwMDAwMDAwMDAwMjEiLCJleHBpcnlkYXRlIjoiMDEvMjIifX0.lbNSlaDkbzG6dkm1uc83cc3XvUImysNj_7fkdo___fw',
+
+    styles: controlFrame
+  });
+  when(frame.getAllowedParams()).thenReturn(['locale', 'origin', 'styles']);
+  when(frame.getAllowedStyles()).thenReturn(frameAllowedStyles);
 
   const instance = new ControlFrame(
     mockInstance(localStorage),
@@ -254,7 +272,10 @@ function controlFrameFixture() {
     mockInstance(notification),
     mockInstance(cybertonica),
     mockInstance(cardinalCommerce),
-    mockInstance(storeMock)
+    mockInstance(storeMock),
+    mockInstance(configService),
+    messageBus,
+    mockInstance(frame)
   );
   const messageBusEvent = {
     type: ''
@@ -265,7 +286,7 @@ function controlFrameFixture() {
   };
 
   // @ts-ignore
-  instance.onInit({} as IConfig);
+  instance.init({} as IConfig);
 
   return { data, instance, messageBusEvent };
 }

@@ -2,6 +2,10 @@
 @import '../../../styles/scss/placeholders';
 @import '../../../styles/scss/core';
 
+html, body, form {
+  height: 100%;
+}
+
 body {
   @extend %frame-body;
 }

@@ -1,10 +1,13 @@
 import { CommonFrames } from './CommonFrames.class';
-import { MessageBus } from '../../application/core/shared/MessageBus';
-import { Selectors } from '../../application/core/shared/Selectors';
-import { MessageBusMock } from '../../testing/mocks/MessageBusMock';
-import { PUBLIC_EVENTS } from '../../application/core/shared/EventTypes';
+import { MessageBus } from '../../../application/core/shared/MessageBus';
+import { Selectors } from '../../../application/core/shared/Selectors';
+import { MessageBusMock } from '../../../testing/mocks/MessageBusMock';
+import { PUBLIC_EVENTS } from '../../../application/core/shared/EventTypes';
+import { IframeFactory } from '../element/IframeFactory';
+import { anyString, instance as instanceOf, mock, when } from 'ts-mockito';
+import { Frame } from '../../../application/core/shared/frame/Frame';
 
-jest.mock('./../../../src/application/core/shared/Notification');
+jest.mock('./../../../../src/application/core/shared/notification/Notification');
 
 // given
 describe('CommonFrames', () => {
@@ -205,6 +208,18 @@ function commonFramesFixture() {
   };
   const animatedCard = true;
   const gatewayUrl: string = 'https://webservices.securetrading.net/jwt/';
+  let iframeFactory: IframeFactory;
+  iframeFactory = mock(IframeFactory);
+  const frame: Frame = mock(Frame);
+  when(iframeFactory.create(anyString(), anyString())).thenCall((name: string, id: string) => {
+    const iframe: HTMLIFrameElement = document.createElement('iframe');
+    iframe.setAttribute('name', name);
+    iframe.setAttribute('id', id);
+    return iframe;
+  });
+
+  when(frame.parseUrl()).thenReturn({ params: { locale: 'en_GB' } });
+
   const instance = new CommonFrames(
     jwt,
     origin,
@@ -217,7 +232,9 @@ function commonFramesFixture() {
     gatewayUrl,
     animatedCard,
     ['AUTH'],
-    'st-form'
+    'st-form',
+    instanceOf(iframeFactory),
+    instanceOf(frame)
   );
 
   return { instance };

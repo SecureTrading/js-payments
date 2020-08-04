@@ -1,21 +1,22 @@
-import { IStyles } from '../../shared/model/config/IStyles';
-import { Element } from './Element';
-import { DomMethods } from '../../application/core/shared/DomMethods';
-import { MessageBus } from '../../application/core/shared/MessageBus';
-import { Selectors } from '../../application/core/shared/Selectors';
-import { Validation } from '../../application/core/shared/Validation';
-import { RegisterFrames } from './RegisterFrames.class';
+import { IStyles } from '../../../shared/model/config/IStyles';
+import { IframeFactory } from '../element/IframeFactory';
+import { DomMethods } from '../../../application/core/shared/DomMethods';
+import { MessageBus } from '../../../application/core/shared/MessageBus';
+import { Selectors } from '../../../application/core/shared/Selectors';
+import { Validation } from '../../../application/core/shared/Validation';
 import { Container } from 'typedi';
-import { BrowserLocalStorage } from '../../shared/services/storage/BrowserLocalStorage';
-import { IComponentsIds } from '../../shared/model/config/IComponentsIds';
-import { Language } from '../../application/core/shared/Language';
+import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
+import { IComponentsIds } from '../../../shared/model/config/IComponentsIds';
+import { Language } from '../../../application/core/shared/Language';
 import { filter, first, delay, map, takeUntil } from 'rxjs/operators';
-import { ofType } from '../../shared/services/message-bus/operators/ofType';
+import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { Observable } from 'rxjs';
-import { PUBLIC_EVENTS } from '../../application/core/shared/EventTypes';
-import { IMessageBusEvent } from '../../application/core/models/IMessageBusEvent';
+import { PUBLIC_EVENTS } from '../../../application/core/shared/EventTypes';
+import { IMessageBusEvent } from '../../../application/core/models/IMessageBusEvent';
+import { Frame } from '../../../application/core/shared/frame/Frame';
+import { StJwt } from '../../../application/core/shared/StJwt';
 
-export class CommonFrames extends RegisterFrames {
+export class CommonFrames {
   get requestTypes(): string[] {
     return this._requestTypes;
   }
@@ -27,10 +28,8 @@ export class CommonFrames extends RegisterFrames {
   private static readonly COMPLETED_REQUEST_TYPES = ['AUTH', 'CACHETOKENISE', 'ACCOUNTCHECK'];
   public elementsTargets: any;
   public elementsToRegister: HTMLElement[];
-  private _controlFrame: Element;
-  private _controlFrameMounted: HTMLElement;
+  private _controlFrame: HTMLIFrameElement;
   private _messageBus: MessageBus;
-  private _notificationFrame: Element;
   private _requestTypes: string[];
   private readonly _gatewayUrl: string;
   private readonly _merchantForm: HTMLFormElement;
@@ -42,6 +41,16 @@ export class CommonFrames extends RegisterFrames {
   private readonly _submitOnCancel: boolean;
   private _localStorage: BrowserLocalStorage = Container.get(BrowserLocalStorage);
   private _destroy$: Observable<IMessageBusEvent>;
+  protected styles: IStyles;
+  protected params: any;
+  protected jwt: string;
+  protected origin: string;
+  protected componentIds: any;
+  protected submitCallback: any;
+  protected fieldsToSubmit: string[];
+  protected messageBus: MessageBus;
+  protected formId: string;
+  private _stJwt: StJwt;
 
   constructor(
     jwt: string,
@@ -55,9 +64,10 @@ export class CommonFrames extends RegisterFrames {
     gatewayUrl: string,
     animatedCard: boolean,
     requestTypes: string[],
-    formId: string
+    formId: string,
+    private _iframeFactory: IframeFactory,
+    private _frame: Frame
   ) {
-    super(jwt, origin, componentIds, styles, animatedCard, formId);
     this._gatewayUrl = gatewayUrl;
     this._messageBus = Container.get(MessageBus);
     this.formId = formId;
@@ -69,14 +79,36 @@ export class CommonFrames extends RegisterFrames {
     this._submitOnCancel = submitOnCancel;
     this._submitOnSuccess = submitOnSuccess;
     this._requestTypes = requestTypes;
+    this.elementsToRegister = [];
+    this.componentIds = componentIds;
+    this.formId = formId;
+    this.componentIds = componentIds;
+    this.elementsToRegister = [];
+    this.jwt = jwt;
+    this.origin = origin;
+    this.styles = this._getStyles(styles);
+    this._stJwt = new StJwt(jwt);
+    this.params = { locale: this._stJwt.locale, origin: this.origin };
     this._destroy$ = this._messageBus.pipe(ofType(PUBLIC_EVENTS.DESTROY));
+    this.styles = this._getStyles(styles);
   }
 
   public init() {
     this._initFormFields();
     this._setMerchantInputListeners();
     this._setTransactionCompleteListener();
+    this.elementsTargets = this.setElementsFields();
     this.registerElements(this.elementsToRegister, this.elementsTargets);
+  }
+
+  private _getStyles(styles: any) {
+    for (const key in styles) {
+      if (styles[key] instanceof Object) {
+        return styles;
+      }
+    }
+    styles = { defaultStyles: styles };
+    return styles;
   }
 
   protected registerElements(fields: HTMLElement[], targets: string[]) {
@@ -111,15 +143,19 @@ export class CommonFrames extends RegisterFrames {
 
     controlFrame = Object.assign({}, defaultStyles, controlFrame);
 
-    this._notificationFrame = new Element();
-    this._controlFrame = new Element();
-    this._controlFrame.create(Selectors.CONTROL_FRAME_COMPONENT_NAME, controlFrame, {
-      gatewayUrl: this._gatewayUrl,
-      jwt: this.jwt,
-      origin: this.origin
-    });
-    this._controlFrameMounted = this._controlFrame.mount(Selectors.CONTROL_FRAME_IFRAME, '-1');
-    this.elementsToRegister.push(this._controlFrameMounted);
+    this._controlFrame = this._iframeFactory.create(
+      Selectors.CONTROL_FRAME_COMPONENT_NAME,
+      Selectors.CONTROL_FRAME_IFRAME,
+      controlFrame,
+      {
+        gatewayUrl: this._gatewayUrl,
+        jwt: this.jwt,
+        origin: this.origin
+      },
+      -1
+    );
+
+    this.elementsToRegister.push(this._controlFrame);
   }
 
   private _isThreedComplete(data: any): boolean {

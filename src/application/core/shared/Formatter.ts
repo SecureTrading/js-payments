@@ -1,7 +1,9 @@
 import { Utils } from './Utils';
+import { Container, Service } from 'typedi';
 import { Validation } from './Validation';
 
-export class Formatter extends Validation {
+@Service()
+export class Formatter {
   private _blocks: number[] = [2, 2];
   private _cardNumberFormatted: string;
   private _dateBlocks = {
@@ -10,14 +12,19 @@ export class Formatter extends Validation {
     previousDateYear: ''
   };
   private _date: string[] = ['', ''];
+  private _validation: Validation;
+
+  constructor() {
+    this._validation = Container.get(Validation);
+  }
 
   public number(cardNumber: string, id: string) {
-    super.cardNumber(cardNumber);
+    this._validation.cardNumber(cardNumber);
     const element: HTMLInputElement = document.getElementById(id) as HTMLInputElement;
-    const cardNumberCleaned: string = this.removeNonDigits(this.cardNumberValue);
+    const cardNumberCleaned: string = this._validation.removeNonDigits(this._validation.cardNumberValue);
     element.value = cardNumberCleaned;
-    const cardDetails = this.getCardDetails(cardNumberCleaned);
-    const format = cardDetails ? cardDetails.format : Formatter.STANDARD_FORMAT_PATTERN;
+    const cardDetails = this._validation.getCardDetails(cardNumberCleaned);
+    const format = cardDetails ? cardDetails.format : '(\\d{1,4})(\\d{1,4})?(\\d{1,4})?(\\d+)?';
     const previousValue = cardNumberCleaned;
     let value = previousValue;
     let selectEnd = element.selectionEnd;
@@ -43,22 +50,22 @@ export class Formatter extends Validation {
     }
     this._cardNumberFormatted = value ? value : '';
     if (value) {
-      this.cardNumberValue = value.replace(/\s/g, '');
+      this._validation.cardNumberValue = value.replace(/\s/g, '');
     }
-    return { formatted: this._cardNumberFormatted, nonformatted: this.cardNumberValue };
+    return { formatted: this._cardNumberFormatted, nonformatted: this._validation.cardNumberValue };
   }
 
   public date(value: string, id?: string) {
-    super.expirationDate(value);
+    this._validation.expirationDate(value);
     const element: HTMLInputElement = document.getElementById(id) as HTMLInputElement;
     let result: string = '';
 
     this._blocks.forEach(length => {
-      if (this.expirationDateValue && this.expirationDateValue.length > 0) {
-        const sub = this.expirationDateValue.slice(0, length);
-        const rest = this.expirationDateValue.slice(length);
+      if (this._validation.expirationDateValue && this._validation.expirationDateValue.length > 0) {
+        const sub = this._validation.expirationDateValue.slice(0, length);
+        const rest = this._validation.expirationDateValue.slice(length);
         result += sub;
-        this.expirationDateValue = rest;
+        this._validation.expirationDateValue = rest;
       }
     });
     let fixedDate = this._dateFixed(result);
@@ -68,10 +75,10 @@ export class Formatter extends Validation {
   }
 
   public code(value: string, length: number, id?: string) {
-    super.securityCode(value, length);
+    this._validation.securityCode(value, length);
     const element: HTMLInputElement = document.getElementById(id) as HTMLInputElement;
-    element.value = this.securityCodeValue ? this.securityCodeValue : '';
-    return this.securityCodeValue;
+    element.value = this._validation.securityCodeValue ? this._validation.securityCodeValue : '';
+    return this._validation.securityCodeValue;
   }
 
   private _dateISO(previousDate: string[], currentDate: string[]) {

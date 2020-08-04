@@ -41,7 +41,7 @@ jobs:
     - stage: Behavioral test - full set of tests
       name: 'Card payments tests - chrome'
       script:
-        - ${DOCKER_TAG} tests poetry run behave -i card_payments_tests.feature
+        - ${DOCKER_TAG} tests poetry run behave -i card_payments_tests.feature -e e2e
     - name: 'Visa Checkout tests - chrome'
       script:
           - ${DOCKER_TAG} tests poetry run behave -i visa_checkout_tests.feature
