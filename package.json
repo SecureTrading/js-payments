@@ -105,7 +105,7 @@
     "style-loader": "^1.2.1",
     "stylelint-webpack-plugin": "^2.1.0",
     "ts-jest": "^25.5.1",
-    "ts-loader": "^8.0.0",
+    "ts-loader": "^8.0.2",
     "ts-mockito": "^2.6.1",
     "tslint": "^6.1.2",
     "tslint-loader": "^3.5.4",
@@ -120,7 +120,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.10.4",
-    "@babel/runtime": "^7.10.5",
+    "@babel/runtime": "^7.11.0",
     "@hapi/joi": "^17.1.1",
     "@securetrading/js-payments-card": "^1.0.21",
     "@securetrading/jwt-generator": "0.0.2",
