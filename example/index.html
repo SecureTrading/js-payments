@@ -104,7 +104,7 @@
         </div>
 
         <div class="st-form__group st-form__group--submit">
-            <button type="submit" class="st-form__button" id="additional-button">Additional Button</button>
+            <button type="submit" class="st-form__button" id="additional-button" hidden>Additional Button</button>
         </div>
     </form>
 
@@ -117,29 +117,14 @@
   (function() {
     var ST = SecureTrading;
     var params = new URLSearchParams(window.location.search.substring(1));
-    var formId = params.get('formId');
-    var noSubmitButton = params.get('noSubmitButton');
-    var additionalButton = params.get('additionalButton');
-    var inlineConfig = params.get('inlineConfig');
-    var updatedJwt = params.get('updatedJwt');
+    var inlineConfig = params.get('inlineConfig') ? JSON.parse(params.get('inlineConfig')) : '';
+    var jwt = params.get('jwt') || '';
+    var updatedJwt = params.get('updatedJwt') || '';
     var extraFunction = params.get('extraFunction');
 
-    if (noSubmitButton === 'true') {
-      document.getElementById('merchant-submit-button').setAttribute('hidden', 'hidden');
-    }
-
-    if (formId) {
-      document.getElementById('st-form').setAttribute('id', formId);
-    }
-
-    if (additionalButton === 'true') {
-      document.getElementById('additional-button').removeAttribute('hidden');
-    }
 
     if (inlineConfig) {
-      let c = JSON.parse(inlineConfig);
-      init(c);
-
+      init(inlineConfig);
     } else {
       window
         .fetch('<%= WEBSERVICES_URL %>/config.json')
@@ -151,18 +136,18 @@
         })
         .then(function(data) {
           try {
-            configurationInit(ST, data);
+            getJwt(data);
           } catch (e) {
             console.error(e);
           }
         })
         .catch(function() {
-          fetchDefaultConfig();
+          getDefaultConfig();
         });
     }
 
 
-    function fetchDefaultConfig() {
+    function getDefaultConfig() {
       fetch('./../json/config.json')
         .then(function(response) {
           if (response.status !== 200) {
@@ -172,84 +157,90 @@
         })
         .then(function(data) {
           if (data) {
-            configurationInit(ST, data);
+            getJwt(data);
           }
         });
     }
 
-    function displayPopup(id, text, tp) {
-      if (!document.getElementById(id)) {
-        var div = document.createElement('div');
-        div.innerText = text;
-        div.setAttribute('id', id);
-        div.setAttribute(
-          'style',
-          'display: flex; justify-content: center; position: fixed; height: 70px;right:0;color: white;padding: 0 50px;align-items: center;border-radius: 10px;font-family: Verdana;font-size: 20px;z-index:2'
-        );
-        div.style.backgroundColor = tp;
-        switch (tp) {
-          case 'green':
-            div.style.top = 0;
-            break;
-          case 'blue':
-            div.style.top = '100px';
-            break;
-          default:
-            div.style.bottom = 0;
-        }
-        var popup = document.getElementById('st-popup');
-        popup.appendChild(div);
-        setTimeout(function() {
-          popup.removeChild(div);
-        }, 3000);
-      }
+    function updateJwtListener(st) {
+      document.getElementById('example-form-amount').addEventListener('input', function() {
+        st.updateJWT(updatedJwt);
+      });
     }
 
-    function init(stConfig) {
+    function buildPopup(id, text, tp) {
+      if (document.getElementById(id)) {
+        return;
+      }
+      var popupStyling = 'display: flex; justify-content: center; position: fixed; height: 70px;right:0;color: white;padding: 0 50px;align-items: center;border-radius: 10px;font-family: Verdana;font-size: 20px;z-index:2';
+      var div = document.createElement('div');
+      div.innerText = text;
+      div.setAttribute('id', id);
+      div.setAttribute('style', popupStyling);
+      div.style.backgroundColor = tp;
+      switch (tp) {
+        case 'green':
+          div.style.top = 0;
+          break;
+        case 'blue':
+          div.style.top = '100px';
+          break;
+        default:
+          div.style.bottom = 0;
+      }
+      return div;
+    }
 
+    function displayPopup(id, text, tp) {
+      var popup = document.getElementById('st-popup');
+      var content = buildPopup(id, text, tp);
+      popup.appendChild(content);
+      setTimeout(function() {
+        popup.removeChild(content);
+      }, 3000);
+    }
+
+    function setCallbacks(config) {
       if (extraFunction) {
-        stConfig.submitCallback = eval('(' + extraFunction + ')');
+        config.submitCallback = eval('(' + extraFunction + ')');
       } else {
-        stConfig.submitCallback = function(data) {
+        config.submitCallback = function(data) {
           var stringified = JSON.stringify(data);
           var testVariable = 'This is what we have got after submit' + stringified;
           displayPopup('data-popup', 'Error code: ' + (!data || data.errorcode != '0' ? 'Error' : 'OK'), 'blue');
           console.error(testVariable);
         };
       }
-      stConfig.successCallback = function() {
+      config.successCallback = function() {
         displayPopup('success-popup', 'This is success message', 'green');
       };
-      stConfig.errorCallback = function() {
+      config.errorCallback = function() {
         displayPopup('error-popup', 'This is error message', 'red');
       };
-      stConfig.cancelCallback = function() {
+      config.cancelCallback = function() {
         displayPopup('cancel-popup', 'This is cancel message', '#ffc23a');
       };
+    }
 
-      var st = ST(stConfig);
-      st.Components(stConfig.components);
-      st.VisaCheckout(stConfig.visaCheckout);
-      st.ApplePay(stConfig.applePay);
-
+    function init(config) {
+      setCallbacks(config);
+      var st = ST(config);
+      st.Components(config.components);
+      st.VisaCheckout(config.visaCheckout);
+      st.ApplePay(config.applePay);
       st.Cybertonica().then(function(response) {
         console.error(response);
       });
-
-      document.getElementById('example-form-amount').addEventListener('input', function() {
-        var jwt = updatedJwt || '';
-        st.updateJWT(jwt);
-      });
+      updateJwtListener(st);
     }
 
-    function configurationInit(ST, data) {
+    function getJwt(data) {
       var stConfig = data;
-      var parsedUrl = new URL(window.location.href);
-      window.configJWT('./../json/jwtdata.json').then(function(jwt) {
-        stConfig.jwt = parsedUrl.searchParams.get('jwt') || jwt;
+      stConfig.jwt = jwt;
+      window.configJWT('./../json/jwtdata.json').then(function(generatedJwt) {
+        stConfig.jwt = generatedJwt;
         init(stConfig);
       }).catch(function() {
-        stConfig.jwt = parsedUrl.searchParams.get('jwt') || stConfig.jwt;
         init(stConfig);
       });
     }

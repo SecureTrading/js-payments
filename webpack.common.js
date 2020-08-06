@@ -46,7 +46,8 @@ module.exports = {
     ],
     example: './example/index.ts',
     receipt: './example/receipt.ts',
-    iframe: './example/iframe.ts'
+    iframe: './example/iframe.ts',
+    inlineConfig: './example/inline-config.ts'
   },
   output: {
     filename: '[name].js',
