@@ -90,13 +90,12 @@ export class DomMethods {
       style.setAttribute('type', 'text/css');
       document.head.appendChild(style);
     }
-
     contents.forEach((item: string) => (style.sheet as CSSStyleSheet).insertRule(item, 0));
   }
 
   public static parseForm(formId: string): {} {
     const form: HTMLElement = document.getElementById(formId);
-    const els = this.getAllFormElements(form);
+    const els = DomMethods.getAllFormElements(form);
     const result: any = {};
     for (const el of els) {
       if (el.hasAttribute(DomMethods.ST_NAME_ATTRIBUTE)) {

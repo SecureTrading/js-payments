@@ -12,6 +12,7 @@ import { NotificationService } from '../../../client/classes/notification/Notifi
 import { Cybertonica } from '../integrations/Cybertonica';
 import { MessageBus } from './MessageBus';
 import { IApplePayRequestTypes } from '../models/apple-pay/IApplePayRequestTypes';
+import { Frame } from './frame/Frame';
 
 export class Payment {
   private _cardinalCommerceCacheToken: string;
@@ -19,14 +20,12 @@ export class Payment {
   private _stTransport: StTransport;
   private _validation: Validation;
   private _cybertonica: Cybertonica;
-  private _messageBus: MessageBus;
   private readonly _walletVerifyRequest: IStRequest;
 
   constructor() {
     this._notification = Container.get(NotificationService);
     this._cybertonica = Container.get(Cybertonica);
     this._stTransport = Container.get(StTransport);
-    this._messageBus = Container.get(MessageBus);
     this._validation = new Validation();
     this._walletVerifyRequest = {
       requesttypedescriptions: ['WALLETVERIFY']

@@ -39,12 +39,12 @@ jobs:
         - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
         - docker push "securetrading1/js-payments:$DOCKER_BRANCH"
     - stage: Behavioral test - full set of tests
-      name: 'Card payments tests - chrome'
+      name: 'Card payments common tests - chrome'
       script:
-        - ${DOCKER_TAG} tests poetry run behave -i card_payments_tests.feature
+        - ${DOCKER_TAG} tests poetry run behave -i mock_
     - name: 'Visa Checkout tests - chrome'
       script:
-          - ${DOCKER_TAG} tests poetry run behave -i visa_checkout_tests.feature
+        - ${DOCKER_TAG} tests poetry run behave -i visa_checkout_tests.feature
     - name: 'ApplePay tests part 1 - safari 12.1, OS X Mojave'
       script:
         - ${DOCKER_TAG} -e OS="OS X" -e OS_VERSION=Mojave -e BROWSER=Safari -e BROWSER_VERSION=12.1 -e BS_ACCESS_KEY=$BROWSERSTACK_ACCESS_KEY -e BS_USERNAME=$BROWSERSTACK_USERNAME -e BS_LOCAL_IDENTIFIER=$BROWSERSTACK_LOCAL_IDENTIFIER -e BUILD_NAME=$BUILD_NAME ${RUN_TESTS} --tags=apple_test_part1
