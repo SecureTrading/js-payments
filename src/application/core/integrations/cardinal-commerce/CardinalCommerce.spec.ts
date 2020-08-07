@@ -1,8 +1,8 @@
-import { MessageBus } from '../../shared/MessageBus';
-import { NotificationService } from '../../../../client/classes/notification/NotificationService';
+import { MessageBus } from '../../shared/message-bus/MessageBus';
+import { NotificationService } from '../../../../client/notification/NotificationService';
 import { FramesHub } from '../../../../shared/services/message-bus/FramesHub';
 import { CardinalCommerceTokensProvider } from './CardinalCommerceTokensProvider';
-import { StTransport } from '../../services/StTransport.class';
+import { StTransport } from '../../services/st-transport/StTransport.class';
 import { CardinalProvider } from './CardinalProvider';
 import { deepEqual, instance, mock, when } from 'ts-mockito';
 import { CardinalCommerce } from './CardinalCommerce';

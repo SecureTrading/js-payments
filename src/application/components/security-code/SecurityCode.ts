@@ -1,13 +1,13 @@
 import { FormState } from '../../core/models/constants/FormState';
 import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
-import { Formatter } from '../../core/shared/Formatter';
+import { Formatter } from '../../core/shared/formatter/Formatter';
 import { Input } from '../../core/shared/input/Input';
-import { Language } from '../../core/shared/Language';
-import { MessageBus } from '../../core/shared/MessageBus';
-import { Selectors } from '../../core/shared/Selectors';
-import { Validation } from '../../core/shared/Validation';
+import { Language } from '../../core/models/constants/Language';
+import { MessageBus } from '../../core/shared/message-bus/MessageBus';
+import { Selectors } from '../../core/models/constants/Selectors';
+import { Validation } from '../../core/shared/validation/Validation';
 import { Service } from 'typedi';
-import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config-provider/ConfigProvider';
 import { filter, map, startWith, switchMap, tap } from 'rxjs/operators';
 import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { IFormFieldState } from '../../core/models/IFormFieldState';
@@ -19,7 +19,7 @@ import { DefaultPlaceholders } from '../../core/models/constants/config-resolver
 import { LONG_CVC, SHORT_CVC } from '../../core/models/constants/SecurityCode';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
-import { Styler } from '../../core/shared/Styler';
+import { Styler } from '../../core/shared/styler/Styler';
 import { Frame } from '../../core/shared/frame/Frame';
 
 @Service()

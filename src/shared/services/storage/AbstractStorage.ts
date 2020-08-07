@@ -4,7 +4,7 @@ import { map, shareReplay, startWith, takeUntil } from 'rxjs/operators';
 import { InterFrameCommunicator } from '../message-bus/InterFrameCommunicator';
 import { ofType } from '../message-bus/operators/ofType';
 import { FramesHub } from '../message-bus/FramesHub';
-import { Selectors } from '../../../application/core/shared/Selectors';
+import { Selectors } from '../../../application/core/models/constants/Selectors';
 import { IMessageBusEvent } from '../../../application/core/models/IMessageBusEvent';
 import { FrameIdentifier } from '../message-bus/FrameIdentifier';
 

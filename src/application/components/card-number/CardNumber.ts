@@ -1,19 +1,19 @@
 import { FormState } from '../../core/models/constants/FormState';
 import { IFormFieldState } from '../../core/models/IFormFieldState';
 import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
-import { Formatter } from '../../core/shared/Formatter';
+import { Formatter } from '../../core/shared/formatter/Formatter';
 import { Input } from '../../core/shared/input/Input';
-import { Language } from '../../core/shared/Language';
-import { MessageBus } from '../../core/shared/MessageBus';
-import { Selectors } from '../../core/shared/Selectors';
-import { Utils } from '../../core/shared/Utils';
-import { Validation } from '../../core/shared/Validation';
+import { Language } from '../../core/models/constants/Language';
+import { MessageBus } from '../../core/shared/message-bus/MessageBus';
+import { Selectors } from '../../core/models/constants/Selectors';
+import { Utils } from '../../core/shared/utils/Utils';
+import { Validation } from '../../core/shared/validation/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { Service } from 'typedi';
-import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config-provider/ConfigProvider';
 import { IconFactory } from '../../core/services/icon/IconFactory';
 import { IConfig } from '../../../shared/model/config/IConfig';
-import { Styler } from '../../core/shared/Styler';
+import { Styler } from '../../core/shared/styler/Styler';
 import { Frame } from '../../core/shared/frame/Frame';
 
 @Service()

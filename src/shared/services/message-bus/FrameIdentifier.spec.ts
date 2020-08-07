@@ -1,5 +1,5 @@
 import { FrameIdentifier } from './FrameIdentifier';
-import { Selectors } from '../../../application/core/shared/Selectors';
+import { Selectors } from '../../../application/core/models/constants/Selectors';
 
 describe('FrameIdentifier', () => {
   let identifier: FrameIdentifier;

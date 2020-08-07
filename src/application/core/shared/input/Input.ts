@@ -1,13 +1,13 @@
 import { IFormFieldState } from '../../models/IFormFieldState';
 import { IMessageBusEvent } from '../../models/IMessageBusEvent';
-import { Language } from '../Language';
-import { Selectors } from '../Selectors';
-import { Translator } from '../Translator';
-import { Utils } from '../Utils';
-import { Validation } from '../Validation';
-import { onInputWraper } from '../utils/onInputWrapper';
+import { Language } from '../../models/constants/Language';
+import { Selectors } from '../../models/constants/Selectors';
+import { Translator } from '../translator/Translator';
+import { Utils } from '../utils/Utils';
+import { Validation } from '../validation/Validation';
+import { onInputWraper } from '../on-input-wrapper/onInputWrapper';
 import { Frame } from '../frame/Frame';
-import { MessageBus } from '../MessageBus';
+import { MessageBus } from '../message-bus/MessageBus';
 import { Container } from 'typedi';
 
 export class Input {

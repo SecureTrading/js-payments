@@ -1,10 +1,10 @@
-import { ConfigProvider } from '../config/ConfigProvider';
+import { ConfigProvider } from '../config-provider/ConfigProvider';
 import { anyFunction, anything, deepEqual, instance, mock, verify, when } from 'ts-mockito';
 import { Sentry } from './Sentry';
 import { SentryContext } from './SentryContext';
 import { EventScrubber } from './EventScrubber';
 import { SentryService } from './SentryService';
-import { Selectors } from '../../../application/core/shared/Selectors';
+import { Selectors } from '../../../application/core/models/constants/Selectors';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { IConfig } from '../../model/config/IConfig';
 
@@ -77,7 +77,7 @@ describe('SentryService', () => {
     setTimeout(() => done());
   });
 
-  it('sets config to extras whenever config changes', () => {
+  it('sets config-provider to extras whenever config-provider changes', () => {
     sentryService.init(DSN);
 
     config$.next(config);

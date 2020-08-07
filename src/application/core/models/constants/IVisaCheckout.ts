@@ -1,4 +1,4 @@
-import { IVisaSettings } from '../IVisaSettings';
+import { IVisaSettings } from '../../integrations/visa-checkout/IVisaSettings';
 
 export interface IVisaCheckout {
   merchantId: string; // That's VisaCheckout apikey property

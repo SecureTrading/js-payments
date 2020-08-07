@@ -1,5 +1,5 @@
 import { Service } from 'typedi';
-import { Selectors } from '../../../application/core/shared/Selectors';
+import { Selectors } from '../../../application/core/models/constants/Selectors';
 
 @Service()
 export class FrameIdentifier {

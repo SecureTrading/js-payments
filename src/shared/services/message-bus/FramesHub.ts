@@ -4,10 +4,10 @@ import { BehaviorSubject, from, Observable, of, Subject } from 'rxjs';
 import { ofType } from './operators/ofType';
 import { distinctUntilChanged, filter, first, map, mapTo, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 import { IMessageBusEvent } from '../../../application/core/models/IMessageBusEvent';
-import { Selectors } from '../../../application/core/shared/Selectors';
+import { Selectors } from '../../../application/core/models/constants/Selectors';
 import { FrameIdentifier } from './FrameIdentifier';
-import { ArrayUtils } from '../../../application/core/shared/utils/ArrayUtils';
-import { PUBLIC_EVENTS } from '../../../application/core/shared/EventTypes';
+import { ArrayUtils } from '../../../application/core/shared/array-utils/ArrayUtils';
+import { PUBLIC_EVENTS } from '../../../application/core/models/constants/EventTypes';
 
 @Service()
 export class FramesHub {

@@ -7,7 +7,7 @@ import { QueryMessage } from './messages/QueryMessage';
 import { ResponseMessage } from './messages/ResponseMessage';
 import { environment } from '../../../environments/environment';
 import { FrameCollection } from './interfaces/FrameCollection';
-import { Selectors } from '../../../application/core/shared/Selectors';
+import { Selectors } from '../../../application/core/models/constants/Selectors';
 import { CONFIG } from '../../../application/core/dependency-injection/InjectionTokens';
 import { FrameIdentifier } from './FrameIdentifier';
 import { FrameAccessor } from './FrameAccessor';

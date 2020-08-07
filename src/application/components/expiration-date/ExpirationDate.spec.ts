@@ -1,30 +1,30 @@
 import { ExpirationDate } from './ExpirationDate';
 import { FormState } from '../../core/models/constants/FormState';
-import { Language } from '../../core/shared/Language';
-import { Selectors } from '../../core/shared/Selectors';
-import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
+import { Language } from '../../core/models/constants/Language';
+import { Selectors } from '../../core/models/constants/Selectors';
+import { ConfigProvider } from '../../../shared/services/config-provider/ConfigProvider';
 import { mock, instance, when } from 'ts-mockito';
-import { Formatter } from '../../core/shared/Formatter';
-import { MessageBus } from '../../core/shared/MessageBus';
+import { Formatter } from '../../core/shared/formatter/Formatter';
+import { MessageBus } from '../../core/shared/message-bus/MessageBus';
 import { MessageBusMock } from '../../../testing/mocks/MessageBusMock';
 import { Frame } from '../../core/shared/frame/Frame';
 import { of } from 'rxjs';
 import { IConfig } from '../../../shared/model/config/IConfig';
 
-jest.mock('../../../../src/application/core/shared/MessageBus');
-jest.mock('../../../../src/application/core/shared/notification/Notification');
+jest.mock('./../../core/shared/notification/Notification');
+jest.mock('./../../core/shared/message-bus/MessageBus');
 
 // given
 describe('ExpirationDate', () => {
   // given
   describe('ExpirationDate.ifFieldExists()', () => {
     // then
-    it('should return input element', () => {
+    it('should return input iframe-factory', () => {
       expect(ExpirationDate.ifFieldExists()).toBeTruthy();
     });
 
     // then
-    it('should return input element', () => {
+    it('should return input iframe-factory', () => {
       expect(ExpirationDate.ifFieldExists()).toBeInstanceOf(HTMLInputElement);
     });
   });

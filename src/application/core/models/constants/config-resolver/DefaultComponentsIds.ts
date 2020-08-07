@@ -1,5 +1,5 @@
 import { IComponentsIds } from '../../../../../shared/model/config/IComponentsIds';
-import { Selectors } from '../../../shared/Selectors';
+import { Selectors } from '../Selectors';
 
 export const DefaultComponentsIds: IComponentsIds = {
   animatedCard: Selectors.ANIMATED_CARD_INPUT_SELECTOR,

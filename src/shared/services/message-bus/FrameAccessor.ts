@@ -2,7 +2,7 @@ import { Inject, Service } from 'typedi';
 import { FrameIdentifier } from './FrameIdentifier';
 import { FrameCollection } from './interfaces/FrameCollection';
 import { WINDOW } from '../../dependency-injection/InjectionTokens';
-import { Selectors } from '../../../application/core/shared/Selectors';
+import { Selectors } from '../../../application/core/models/constants/Selectors';
 import { IControlFrameWindow } from '../../interfaces/IControlFrameWindow';
 
 @Service()

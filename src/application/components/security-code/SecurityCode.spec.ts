@@ -1,20 +1,20 @@
 import { SecurityCode } from './SecurityCode';
-import { Selectors } from '../../core/shared/Selectors';
+import { Selectors } from '../../core/models/constants/Selectors';
 import { Input } from '../../core/shared/input/Input';
-import { Utils } from '../../core/shared/Utils';
+import { Utils } from '../../core/shared/utils/Utils';
 import { anyFunction, instance, mock, when } from 'ts-mockito';
-import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config-provider/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { EMPTY, of } from 'rxjs';
 import { MessageBusMock } from '../../../testing/mocks/MessageBusMock';
-import { MessageBus } from '../../core/shared/MessageBus';
+import { MessageBus } from '../../core/shared/message-bus/MessageBus';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
-import { Formatter } from '../../core/shared/Formatter';
+import { Formatter } from '../../core/shared/formatter/Formatter';
 import { Frame } from '../../core/shared/frame/Frame';
 
-jest.mock('../../../../src/application/core/shared/MessageBus');
-jest.mock('../../../../src/application/core/shared/notification/Notification');
+jest.mock('./../../core/shared/notification/Notification');
+jest.mock('./../../core/shared/message-bus/MessageBus');
 
 // given
 describe('SecurityCode', () => {

@@ -1,4 +1,4 @@
-import { ConfigProvider } from '../../shared/services/config/ConfigProvider';
+import { ConfigProvider } from '../../shared/services/config-provider/ConfigProvider';
 import { IConfig } from '../../shared/model/config/IConfig';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Service } from 'typedi';

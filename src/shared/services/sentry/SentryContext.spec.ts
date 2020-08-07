@@ -1,6 +1,6 @@
 import { FrameIdentifier } from '../message-bus/FrameIdentifier';
 import { instance, mock, when } from 'ts-mockito';
-import { Selectors } from '../../../application/core/shared/Selectors';
+import { Selectors } from '../../../application/core/models/constants/Selectors';
 import { SentryContext } from './SentryContext';
 
 describe('SentryContext', () => {

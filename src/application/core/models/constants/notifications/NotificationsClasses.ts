@@ -1,4 +1,4 @@
-import { Selectors } from '../../../shared/Selectors';
+import { Selectors } from '../Selectors';
 
 export const NotificationsClasses = {
   error: Selectors.NOTIFICATION_FRAME_ERROR_CLASS,
