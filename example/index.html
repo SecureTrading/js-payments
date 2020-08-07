@@ -236,7 +236,11 @@
 
     function getJwt(data) {
       var stConfig = data;
-      stConfig.jwt = jwt;
+      if (jwt) {
+        stConfig.jwt = jwt;
+        init(stConfig);
+      }
+
       window.configJWT('./../json/jwtdata.json').then(function(generatedJwt) {
         stConfig.jwt = generatedJwt;
         init(stConfig);
