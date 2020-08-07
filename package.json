@@ -16,6 +16,7 @@
     "build": "webpack --config webpack.prod.js",
     "build:automated": "webpack --config webpack.test.js",
     "build:dev": "webpack --config webpack.dev.js",
+    "build:rc": "webpack --config webpack.rc.js",
     "start:automated": "webpack-dev-server --color --progress --config webpack.test.js",
     "start": "webpack-dev-server --color --progress --config webpack.dev.js",
     "example": "ws --rewrite '/* -> /dist/$1' --https",
