@@ -11,7 +11,7 @@ import { SimpleStorage } from '../../../../shared/services/storage/SimpleStorage
 
 Container.set({ id: ConfigProvider, type: TestConfigProvider });
 
-jest.mock('../../../../src/application/core/shared/notification/Notification');
+jest.mock('./../notification/Notification');
 
 const cybertonicaTid = 'b268ab7f-25d7-430a-9be2-82b0f00c4039';
 

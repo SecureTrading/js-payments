@@ -4,7 +4,7 @@ import { MessageBus } from '../message-bus/MessageBus';
 import { mock } from 'ts-mockito';
 import { Frame } from '../frame/Frame';
 
-jest.mock('../../../../src/application/core/shared/notification/Notification');
+jest.mock('./../notification/Notification');
 
 // given
 describe('Formatter', () => {

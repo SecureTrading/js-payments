@@ -1,6 +1,6 @@
 import { GoogleAnalytics } from './GoogleAnalytics';
 
-jest.mock('../../../../src/application/core/shared/MessageBus');
+jest.mock('./../../shared/message-bus/MessageBus');
 
 // given
 describe('GoogleAnalytics', () => {

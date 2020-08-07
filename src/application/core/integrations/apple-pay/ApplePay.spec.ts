@@ -19,9 +19,9 @@ import { StoreBasedStorage } from '../../../../shared/services/storage/StoreBase
 import { Container } from 'typedi';
 import { SimpleStorage } from '../../../../shared/services/storage/SimpleStorage';
 
-jest.mock('../../../../src/application/core/shared/MessageBus');
-jest.mock('../../../../src/application/core/integrations/GoogleAnalytics');
-jest.mock('../../../../src/client/classes/notification/NotificationService');
+jest.mock('./../../shared/message-bus/MessageBus');
+jest.mock('./../google-analytics/GoogleAnalytics');
+jest.mock('./../../../../client/notification/NotificationService');
 
 Container.set({ id: StoreBasedStorage, type: SimpleStorage });
 

@@ -4,7 +4,7 @@ import { InterFrameCommunicator } from '../../../../shared/services/message-bus/
 import { EMPTY, of } from 'rxjs';
 import { ConfigProvider } from '../../../../shared/services/config-provider/ConfigProvider';
 
-jest.mock('../../../../src/application/core/shared/notification/Notification');
+jest.mock('./../../shared/notification/Notification');
 
 // given
 describe('Visa Checkout Mock class', () => {

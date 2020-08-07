@@ -7,8 +7,8 @@ import { Validation } from './Validation';
 import { mock } from 'ts-mockito';
 import { Frame } from '../frame/Frame';
 
-jest.mock('../../../../src/application/core/shared/MessageBus');
-jest.mock('../../../../src/application/core/shared/notification/Notification');
+jest.mock('./../message-bus/MessageBus');
+jest.mock('./../notification/Notification');
 
 describe('Validation', () => {
   // given

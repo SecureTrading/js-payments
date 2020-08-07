@@ -11,7 +11,7 @@ const customGlobal: GlobalWithFetchMock = (global as unknown) as GlobalWithFetch
 customGlobal.fetch = require('jest-fetch-mock');
 customGlobal.fetchMock = customGlobal.fetch;
 
-jest.mock('../../../../src/application/core/shared/notification/Notification');
+jest.mock('./../../shared/notification/Notification');
 
 // given
 describe('StTransport class', () => {
