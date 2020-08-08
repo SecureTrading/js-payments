@@ -121,7 +121,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.10.4",
-    "@babel/runtime": "^7.11.0",
+    "@babel/runtime": "^7.11.2",
     "@hapi/joi": "^17.1.1",
     "@securetrading/js-payments-card": "^1.0.22",
     "@securetrading/jwt-generator": "0.0.2",
