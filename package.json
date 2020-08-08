@@ -100,7 +100,7 @@
     "postcss-preset-env": "^6.7.0",
     "postcss-scss": "^2.1.1",
     "prettier": "2.0.5",
-    "sass-loader": "^9.0.2",
+    "sass-loader": "^9.0.3",
     "snyk": "^1.369.2",
     "source-map-loader": "^1.0.1",
     "style-loader": "^1.2.1",
