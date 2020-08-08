@@ -117,7 +117,7 @@
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0",
     "webpack-manifest-plugin": "^2.2.0",
-    "webpack-merge": "^4.2.2"
+    "webpack-merge": "^5.1.1"
   },
   "dependencies": {
     "@babel/polyfill": "^7.10.4",
