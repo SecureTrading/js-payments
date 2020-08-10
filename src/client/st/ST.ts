@@ -1,9 +1,6 @@
 import './st.css';
 import JwtDecode from 'jwt-decode';
-import 'location-origin';
 import { debounce } from 'lodash';
-import 'url-polyfill';
-import 'whatwg-fetch';
 import '../../application/core/shared/override-domain/OverrideDomain';
 import { CardFrames } from '../card-frames/CardFrames.class';
 import { CommonFrames } from '../common-frames/CommonFrames.class';
