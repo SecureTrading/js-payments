@@ -112,8 +112,8 @@
         <p>&copy; Secure Trading 2020</p>
     </footer>
 </main>
-<script type="text/javascript" src="<%= WEBSERVICES_URL %>/st.js"></script>
 <script type="text/javascript" src="<%= WEBSERVICES_URL %>/inlineConfig.js"></script>
+<script type="text/javascript" src="<%= WEBSERVICES_URL %>/st.js"></script>
 <script type="text/javascript">
   (function() {
     var ST = SecureTrading;
@@ -123,13 +123,12 @@
     var updatedJwt = params.get('updatedJwt') || '';
     var extraFunction = params.get('extraFunction');
 
-
     if (inlineConfig) {
       init(ST, inlineConfig);
     } else {
-      console.error(ST);
       window
         .fetch('<%= WEBSERVICES_URL %>/config.json')
+
         .then(function(response) {
           if (response.status !== 200) {
             return Promise.reject('Configuration has not been set !');
