@@ -1,10 +1,7 @@
 import '../styles/css/st.css';
 import './../styles/_iframe.css';
 import JwtDecode from 'jwt-decode';
-import 'location-origin';
 import { debounce } from 'lodash';
-import 'url-polyfill';
-import 'whatwg-fetch';
 import '../application/core/shared/OverrideDomain';
 import { CardFrames } from './classes/card-frames/CardFrames.class';
 import { CommonFrames } from './classes/common-frames/CommonFrames.class';

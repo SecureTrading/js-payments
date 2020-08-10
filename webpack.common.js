@@ -1,4 +1,4 @@
-const path = require('path');
+`const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
@@ -9,45 +9,57 @@ const CopyPlugin = require('copy-webpack-plugin');
 module.exports = {
   entry: {
     st: [
-      './polyfills',
+      './src/shared/imports/polyfills',
       './src/bootstrap.ts',
       './src/client/dependency-injection/ServiceDefinitions.ts',
       './src/client/ST.ts'
     ],
     controlFrame: [
-      './polyfills',
+      './src/shared/imports/polyfills',
       './src/bootstrap.ts',
       './src/application/dependency-injection/ServiceDefinitions.ts',
       './src/application/components/control-frame/control-frame.ts'
     ],
     creditCardNumber: [
-      './polyfills',
+      './src/shared/imports/polyfills',
       './src/bootstrap.ts',
       './src/application/dependency-injection/ServiceDefinitions.ts',
-      './src/application/components/card-number/card-number.ts',
+      './src/application/components/card-number/card-number.ts'
     ],
     expirationDate: [
-      './polyfills',
+      './src/shared/imports/polyfills',
       './src/bootstrap.ts',
       './src/application/dependency-injection/ServiceDefinitions.ts',
-      './src/application/components/expiration-date/expiration-date.ts',
+      './src/application/components/expiration-date/expiration-date.ts'
     ],
     securityCode: [
-      './polyfills',
+      './src/shared/imports/polyfills',
       './src/bootstrap.ts',
       './src/application/dependency-injection/ServiceDefinitions.ts',
-      './src/application/components/security-code/security-code.ts',
+      './src/application/components/security-code/security-code.ts'
     ],
     animatedCard: [
-      './polyfills',
+      './src/shared/imports/polyfills',
       './src/bootstrap.ts',
       './src/application/dependency-injection/ServiceDefinitions.ts',
-      './src/application/components/animated-card/animated-card.ts',
+      './src/application/components/animated-card/animated-card.ts'
     ],
-    example: './example/index.ts',
-    receipt: './example/receipt.ts',
-    iframe: './example/iframe.ts',
-    inlineConfig: './example/inline-config.ts'
+    example: [
+      './src/shared/imports/polyfills',
+      './example/index.ts'
+    ],
+    receipt: [
+      './src/shared/imports/polyfills',
+      './example/receipt.ts'
+    ],
+    iframe: [
+      './src/shared/imports/polyfills',
+      './example/iframe.ts'
+    ],
+    inlineConfig: [
+      './src/shared/imports/polyfills',
+      './example/inline-config.ts'
+    ]
   },
   output: {
     filename: '[name].js',

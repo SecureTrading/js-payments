@@ -112,8 +112,9 @@
         <p>&copy; Secure Trading 2020</p>
     </footer>
 </main>
-<script src="<%= WEBSERVICES_URL %>/st.js"></script>
-<script>
+<script type="text/javascript" src="<%= WEBSERVICES_URL %>/st.js"></script>
+<script type="text/javascript" src="<%= WEBSERVICES_URL %>/inlineConfig.js"></script>
+<script type="text/javascript">
   (function() {
     var ST = SecureTrading;
     var params = new URLSearchParams(window.location.search.substring(1));
@@ -124,8 +125,9 @@
 
 
     if (inlineConfig) {
-      init(inlineConfig);
+      init(ST, inlineConfig);
     } else {
+      console.error(ST);
       window
         .fetch('<%= WEBSERVICES_URL %>/config.json')
         .then(function(response) {
@@ -136,18 +138,18 @@
         })
         .then(function(data) {
           try {
-            getJwt(data);
+            getJwt(ST, data);
           } catch (e) {
             console.error(e);
           }
         })
         .catch(function() {
-          getDefaultConfig();
+          getDefaultConfig(ST);
         });
     }
 
 
-    function getDefaultConfig() {
+    function getDefaultConfig(ST) {
       fetch('./../json/config.json')
         .then(function(response) {
           if (response.status !== 200) {
@@ -157,7 +159,7 @@
         })
         .then(function(data) {
           if (data) {
-            getJwt(data);
+            getJwt(ST, data);
           }
         });
     }
@@ -222,7 +224,7 @@
       };
     }
 
-    function init(config) {
+    function init(ST, config) {
       setCallbacks(config);
       var st = ST(config);
       st.Components(config.components);
@@ -234,18 +236,18 @@
       updateJwtListener(st);
     }
 
-    function getJwt(data) {
+    function getJwt(ST, data) {
       var stConfig = data;
       if (jwt) {
         stConfig.jwt = jwt;
-        init(stConfig);
+        init(ST, stConfig);
       }
 
       window.configJWT('./../json/jwtdata.json').then(function(generatedJwt) {
         stConfig.jwt = generatedJwt;
-        init(stConfig);
+        init(ST, stConfig);
       }).catch(function() {
-        init(stConfig);
+        init(ST, stConfig);
       });
     }
   })();
