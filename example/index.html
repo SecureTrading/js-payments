@@ -67,6 +67,18 @@
             />
             <!-- no data-st-name attribute so this field will not be submitted to ST -->
         </div>
+    </div>
+
+    <div class="example-form__spacer"></div>
+
+    <div class="example-form__section">
+        <div id="st-notification-frame" class="example-form__group"></div>
+        <div id="st-card-number" class="example-form__group"></div>
+        <div id="st-expiration-date" class="example-form__group"></div>
+        <div id="st-security-code" class="example-form__group"></div>
+    </div>
+
+    <div id="st-animated-card" class="example-form__st-animated-card"></div>
 
     <div class="example-form__section">
         <div class="example-form__group example-form__group--submit">
@@ -76,13 +88,13 @@
             <button type="submit" class="example-form__button" id="merchant-submit-button">Zapłać</button>
         </div>
     </div>
-        <div class="example-form__section">
-            <div id="st-control-frame" class="example-form__group"></div>
-            <div id="st-visa-checkout" class="example-form__group"></div>
-            <div id="st-apple-pay" class="example-form__group"></div>
-        </div>
-    </form>
-</main>
+
+    <div class="example-form__section">
+        <div id="st-control-frame" class="example-form__group"></div>
+        <div id="st-visa-checkout" class="example-form__group"></div>
+        <div id="st-apple-pay" class="example-form__group"></div>
+    </div>
+</form>
 <script type="text/javascript" src="<%= WEBSERVICES_URL %>/inlineConfig.js"></script>
 <script type="text/javascript" src="<%= WEBSERVICES_URL %>/st.js"></script>
 <script type="text/javascript">
