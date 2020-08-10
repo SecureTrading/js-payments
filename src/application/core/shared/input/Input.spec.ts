@@ -1,5 +1,5 @@
 import { Input } from './Input';
-import { Language } from '../../models/constants/Language';
+import { NOT_IMPLEMENTED_ERROR } from '../../models/constants/Translations';
 import { Utils } from '../utils/Utils';
 import { Validation } from '../validation/Validation';
 
@@ -16,7 +16,7 @@ describe('FormField', () => {
       // @ts-ignore
       instance.getLabel();
       expect(() => {
-        throw new Error(Language.translations.NOT_IMPLEMENTED_ERROR);
+        throw new Error(NOT_IMPLEMENTED_ERROR);
       }).toThrow();
     });
   });
@@ -249,7 +249,7 @@ function formFieldFixture() {
   document.body.appendChild(messageElement);
   // @ts-ignore
   Input.prototype.getLabel = jest.fn().mockReturnValueOnce(() => {
-    throw new Error(Language.translations.NOT_IMPLEMENTED_ERROR);
+    throw new Error(NOT_IMPLEMENTED_ERROR);
   });
   const instance = new Input('st-form-field-input', 'st-form-field-message', 'st-form-field-label');
   return { instance, inputElement, messageElement, labelElement };

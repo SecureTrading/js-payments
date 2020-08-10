@@ -10,18 +10,16 @@ import { IMessageBusEvent } from '../../models/IMessageBusEvent';
 import { IMessageBusValidateField } from '../../models/IMessageBusValidateField';
 import { IValidation } from '../../models/IValidation';
 import { Frame } from '../frame/Frame';
-import { Language } from '../../models/constants/Language';
+import {
+  VALIDATION_ERROR,
+  VALIDATION_ERROR_FIELD_IS_REQUIRED,
+  VALIDATION_ERROR_PATTERN_MISMATCH
+} from '../../models/constants/Translations';
 import { MessageBus } from '../message-bus/MessageBus';
 import { Selectors } from '../../models/constants/Selectors';
 import { Translator } from '../translator/Translator';
 import { Utils } from '../utils/Utils';
 import { Container, Service } from 'typedi';
-
-const {
-  VALIDATION_ERROR_FIELD_IS_REQUIRED,
-  VALIDATION_ERROR_PATTERN_MISMATCH,
-  VALIDATION_ERROR
-} = Language.translations;
 
 @Service()
 export class Validation {
@@ -255,8 +253,8 @@ export class Validation {
   public luhnCheck(field: HTMLInputElement, input: HTMLInputElement, message: HTMLDivElement) {
     const { value } = input;
     if (!luhnCheck(value)) {
-      Validation.setCustomValidationError(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH, field);
-      this.validate(input, message, Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
+      Validation.setCustomValidationError(VALIDATION_ERROR_PATTERN_MISMATCH, field);
+      this.validate(input, message, VALIDATION_ERROR_PATTERN_MISMATCH);
     } else {
       Validation.setCustomValidationError(Validation.CLEAR_VALUE, field);
     }
@@ -273,11 +271,7 @@ export class Validation {
 
   public setError(inputElement: HTMLInputElement, messageElement: HTMLElement, data: IMessageBusValidateField) {
     const { message } = data;
-    if (
-      message &&
-      messageElement &&
-      messageElement.innerText !== Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH
-    ) {
+    if (message && messageElement && messageElement.innerText !== VALIDATION_ERROR_PATTERN_MISMATCH) {
       messageElement.innerText = this._translator.translate(message);
       inputElement.classList.add(Validation.ERROR_FIELD_CLASS);
       inputElement.setCustomValidity(message);
@@ -351,7 +345,7 @@ export class Validation {
     if (messageElement && customErrorMessage && !isCardNumberInput) {
       return this._translator.translate(customErrorMessage);
     } else if (messageElement && inputElement.value && isCardNumberInput && !inputElement.validity.valid) {
-      return this._translator.translate(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
+      return this._translator.translate(VALIDATION_ERROR_PATTERN_MISMATCH);
     } else {
       return this._translator.translate(validityState);
     }

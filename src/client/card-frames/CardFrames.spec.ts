@@ -1,7 +1,6 @@
 import { CardFrames } from './CardFrames.class';
 import { FormState } from '../../application/core/models/constants/FormState';
 import { DomMethods } from '../../application/core/shared/dom-methods/DomMethods';
-import { Language } from '../../application/core/models/constants/Language';
 import { MessageBus } from '../../application/core/shared/message-bus/MessageBus';
 import { Selectors } from '../../application/core/models/constants/Selectors';
 import { ConfigProvider } from '../../shared/services/config-provider/ConfigProvider';
@@ -10,6 +9,7 @@ import { of } from 'rxjs';
 import { IframeFactory } from '../iframe-factory/IframeFactory';
 import { Frame } from '../../application/core/shared/frame/Frame';
 import { MessageBusMock } from '../../testing/mocks/MessageBusMock';
+import { PAY, PROCESSING } from '../../application/core/models/constants/Translations';
 
 jest.mock('./../../application/core/shared/notification/Notification');
 jest.mock('./../../application/core/shared/validation/Validation');
@@ -349,7 +349,7 @@ describe('CardFrames', () => {
     it('should mark button as disabled when form state is blocked', () => {
       // @ts-ignore
       instance._setSubmitButtonProperties(button, FormState.BLOCKED);
-      expect(button.textContent).toEqual(`${Language.translations.PROCESSING} ...`);
+      expect(button.textContent).toEqual(`${PROCESSING} ...`);
       // @ts-ignore
       expect(button.classList.contains(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS)).toEqual(true);
       expect(button.disabled).toEqual(true);
@@ -359,7 +359,7 @@ describe('CardFrames', () => {
     it('should mark button as disabled when form state is complete but text should be pay', () => {
       // @ts-ignore
       instance._setSubmitButtonProperties(button, FormState.COMPLETE);
-      expect(button.textContent).toEqual(Language.translations.PAY);
+      expect(button.textContent).toEqual(PAY);
       // @ts-ignore
       expect(button.classList.contains(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS)).toEqual(true);
       expect(button.disabled).toEqual(true);
@@ -369,7 +369,7 @@ describe('CardFrames', () => {
     it('should remove disabled attributes from button when form state is available', () => {
       // @ts-ignore
       instance._setSubmitButtonProperties(button, FormState.AVAILABLE);
-      expect(button.textContent).toEqual(Language.translations.PAY);
+      expect(button.textContent).toEqual(PAY);
       // @ts-ignore
       expect(button.classList.contains(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS)).toEqual(false);
       expect(button.disabled).toEqual(false);

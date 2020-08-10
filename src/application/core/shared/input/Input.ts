@@ -1,6 +1,5 @@
 import { IFormFieldState } from '../../models/IFormFieldState';
 import { IMessageBusEvent } from '../../models/IMessageBusEvent';
-import { Language } from '../../models/constants/Language';
 import { Selectors } from '../../models/constants/Selectors';
 import { Translator } from '../translator/Translator';
 import { Utils } from '../utils/Utils';
@@ -9,6 +8,7 @@ import { onInputWraper } from '../on-input-wrapper/onInputWrapper';
 import { Frame } from '../frame/Frame';
 import { MessageBus } from '../message-bus/MessageBus';
 import { Container } from 'typedi';
+import { NOT_IMPLEMENTED_ERROR } from '../../models/constants/Translations';
 
 export class Input {
   protected static PLACEHOLDER_ATTRIBUTE: string = 'placeholder';
@@ -132,7 +132,7 @@ export class Input {
   }
 
   protected getLabel(): string {
-    throw new Error(Language.translations.NOT_IMPLEMENTED_ERROR);
+    throw new Error(NOT_IMPLEMENTED_ERROR);
   }
 
   protected getState(): IFormFieldState {

@@ -2,7 +2,7 @@ import { FormState } from '../../core/models/constants/FormState';
 import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
 import { Formatter } from '../../core/shared/formatter/Formatter';
 import { Input } from '../../core/shared/input/Input';
-import { Language } from '../../core/models/constants/Language';
+import { LABEL_SECURITY_CODE } from '../../core/models/constants/Translations';
 import { MessageBus } from '../../core/shared/message-bus/MessageBus';
 import { Selectors } from '../../core/models/constants/Selectors';
 import { Validation } from '../../core/shared/validation/Validation';
@@ -134,7 +134,7 @@ export class SecurityCode extends Input {
   }
 
   public getLabel(): string {
-    return Language.translations.LABEL_SECURITY_CODE;
+    return LABEL_SECURITY_CODE;
   }
 
   protected onBlur(): void {

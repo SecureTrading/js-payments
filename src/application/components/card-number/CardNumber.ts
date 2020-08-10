@@ -3,7 +3,6 @@ import { IFormFieldState } from '../../core/models/IFormFieldState';
 import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
 import { Formatter } from '../../core/shared/formatter/Formatter';
 import { Input } from '../../core/shared/input/Input';
-import { Language } from '../../core/models/constants/Language';
 import { MessageBus } from '../../core/shared/message-bus/MessageBus';
 import { Selectors } from '../../core/models/constants/Selectors';
 import { Utils } from '../../core/shared/utils/Utils';
@@ -15,6 +14,7 @@ import { IconFactory } from '../../core/services/icon/IconFactory';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { Styler } from '../../core/shared/styler/Styler';
 import { Frame } from '../../core/shared/frame/Frame';
+import { LABEL_CARD_NUMBER } from '../../core/models/constants/Translations';
 
 @Service()
 export class CardNumber extends Input {
@@ -77,7 +77,7 @@ export class CardNumber extends Input {
   }
 
   protected getLabel(): string {
-    return Language.translations.LABEL_CARD_NUMBER;
+    return LABEL_CARD_NUMBER;
   }
 
   protected onBlur() {

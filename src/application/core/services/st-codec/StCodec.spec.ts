@@ -1,6 +1,9 @@
 import each from 'jest-each';
 import JwtDecode from 'jwt-decode';
-import { Language } from '../../models/constants/Language';
+import {
+  COMMUNICATION_ERROR_INVALID_REQUEST,
+  COMMUNICATION_ERROR_INVALID_RESPONSE
+} from '../../models/constants/Translations';
 import { StCodec } from './StCodec.class';
 import { MessageBus } from '../../shared/message-bus/MessageBus';
 import { Translator } from '../../shared/translator/Translator';
@@ -177,13 +180,11 @@ describe('StCodec class', () => {
       // @ts-ignore
       let spy2 = jest.spyOn(StCodec.getNotification(), 'error');
       // @ts-ignore
-      expect(StCodec._handleInvalidResponse()).toMatchObject(
-        new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE)
-      );
+      expect(StCodec._handleInvalidResponse()).toMatchObject(new Error(COMMUNICATION_ERROR_INVALID_RESPONSE));
       expect(spy1).toHaveBeenCalledTimes(1);
       expect(spy1).toHaveBeenCalledWith({ errorcode: '50003', errormessage: 'Invalid response' });
       expect(spy2).toHaveBeenCalledTimes(1);
-      expect(spy2).toHaveBeenCalledWith(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
+      expect(spy2).toHaveBeenCalledWith(COMMUNICATION_ERROR_INVALID_RESPONSE);
     });
   });
 
@@ -287,7 +288,7 @@ describe('StCodec class', () => {
       // @ts-ignore
       StCodec._decodeResponseJwt(jwt, mock);
       expect(mock).toHaveBeenCalledTimes(1);
-      expect(mock).toHaveBeenCalledWith(new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
+      expect(mock).toHaveBeenCalledWith(new Error(COMMUNICATION_ERROR_INVALID_RESPONSE));
     });
   });
 
@@ -398,7 +399,7 @@ describe('StCodec class', () => {
           pan: '4111111111111111',
           requesttypedescriptions: ['LARGEHADRONCOLLIDER']
         })
-      ).toThrow(Error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST));
+      ).toThrow(Error(COMMUNICATION_ERROR_INVALID_REQUEST));
     });
 
     // then
@@ -408,7 +409,7 @@ describe('StCodec class', () => {
           pan: '4111111111111111',
           requesttypedescriptions: ['AUTH', 'LARGEHADRONCOLLIDER']
         })
-      ).toThrow(Error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST));
+      ).toThrow(Error(COMMUNICATION_ERROR_INVALID_REQUEST));
     });
   });
 
@@ -441,9 +442,7 @@ describe('StCodec class', () => {
     beforeEach(() => {
       str = new StCodec(jwt);
       // @ts-ignore
-      StCodec._handleInvalidResponse = jest
-        .fn()
-        .mockReturnValueOnce(Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
+      StCodec._handleInvalidResponse = jest.fn().mockReturnValueOnce(Error(COMMUNICATION_ERROR_INVALID_RESPONSE));
     });
 
     // then
@@ -462,7 +461,7 @@ describe('StCodec class', () => {
 
     // then
     it('should error an invalid response', async () => {
-      await expect(str.decode({})).rejects.toThrow(Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
+      await expect(str.decode({})).rejects.toThrow(Error(COMMUNICATION_ERROR_INVALID_RESPONSE));
       // @ts-ignore
       expect(StCodec._handleInvalidResponse).toHaveBeenCalledTimes(1);
     });

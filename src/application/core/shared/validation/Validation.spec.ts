@@ -1,7 +1,11 @@
 import each from 'jest-each';
 import { StCodec } from '../../services/st-codec/StCodec.class';
 import { FormState } from '../../models/constants/FormState';
-import { Language } from '../../models/constants/Language';
+import {
+  VALIDATION_ERROR,
+  VALIDATION_ERROR_FIELD_IS_REQUIRED,
+  VALIDATION_ERROR_PATTERN_MISMATCH
+} from '../../models/constants/Translations';
 import { MessageBus } from '../message-bus/MessageBus';
 import { Validation } from './Validation';
 import { mock } from 'ts-mockito';
@@ -175,7 +179,7 @@ describe('Validation', () => {
       ).toEqual(customErrorMessage);
     });
     // then
-    it(`should return validity state - '${Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH}' when it's card number input and has messageElement and customErrorMessage defined`, () => {
+    it(`should return validity state - '${VALIDATION_ERROR_PATTERN_MISMATCH}' when it's card number input and has messageElement and customErrorMessage defined`, () => {
       inputElement.value = '123';
       expect(
         // @ts-ignore
@@ -190,12 +194,12 @@ describe('Validation', () => {
       ).toEqual(someRandomMessage);
     });
     // then
-    it(`should return '${Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH}' when it's card number input and has messageElement and it's not valid`, () => {
+    it(`should return '${VALIDATION_ERROR_PATTERN_MISMATCH}' when it's card number input and has messageElement and it's not valid`, () => {
       inputElement.setCustomValidity('test');
       expect(
         // @ts-ignore
         instance._getTranslation(inputElement, isCardNumberInput, someRandomMessage, messageElement)
-      ).toEqual(Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH);
+      ).toEqual(VALIDATION_ERROR_PATTERN_MISMATCH);
     });
   });
 
@@ -316,10 +320,10 @@ function validationFixture() {
 
   const getValidationMessagesTestCases = [
     [{ valid: true, valueMissing: false }, undefined],
-    [{ valid: false, valueMissing: true }, Language.translations.VALIDATION_ERROR_FIELD_IS_REQUIRED],
-    [{ valid: false, patternMismatch: true }, Language.translations.VALIDATION_ERROR_PATTERN_MISMATCH],
-    [{ valid: false, customError: true }, Language.translations.VALIDATION_ERROR],
-    [{ valid: false, tooShort: true }, Language.translations.VALIDATION_ERROR]
+    [{ valid: false, valueMissing: true }, VALIDATION_ERROR_FIELD_IS_REQUIRED],
+    [{ valid: false, patternMismatch: true }, VALIDATION_ERROR_PATTERN_MISMATCH],
+    [{ valid: false, customError: true }, VALIDATION_ERROR],
+    [{ valid: false, tooShort: true }, VALIDATION_ERROR]
   ];
   return {
     inputElement,

@@ -187,35 +187,6 @@ describe('Payment', () => {
   });
 
   // given
-  describe('threeDQueryRequest()', () => {
-    // when
-    beforeEach(() => {
-      // @ts-ignore
-      instance._stTransport.sendRequest = jest.fn();
-    });
-
-    // then
-    it('should send THREEDQUERY request', async () => {
-      // @ts-ignore
-      instance._cardinalCommerceCacheToken = 'cardinalcachetoken';
-      await instance.threeDQueryRequest(['THREEDQUERY'], card, {
-        pan: 'overridden',
-        merchant: 'data'
-      });
-
-      // @ts-ignore
-      expect(instance._stTransport.sendRequest).toHaveBeenCalledWith({
-        ...card,
-        requesttypedescriptions: ['THREEDQUERY'],
-        merchant: 'data',
-        termurl: 'https://termurl.com',
-        cachetoken: 'cardinalcachetoken',
-        fraudcontroltransactionid: cybertonicaTid
-      });
-    });
-  });
-
-  // given
   describe('walletVerify()', () => {
     // then
     it('should send WALLETVERIFY request with walletverify', () => {

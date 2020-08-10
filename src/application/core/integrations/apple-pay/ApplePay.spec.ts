@@ -10,7 +10,6 @@ import { ApplePaySessionMock } from './ApplePaySessionMock';
 const getType = require('jest-get-type');
 import { ApplePay } from './ApplePay';
 import { DomMethods } from '../../shared/dom-methods/DomMethods';
-import { Language } from '../../models/constants/Language';
 import { anyString, instance as mockInstance, mock, when } from 'ts-mockito';
 import { ConfigProvider } from '../../../../shared/services/config-provider/ConfigProvider';
 import { InterFrameCommunicator } from '../../../../shared/services/message-bus/InterFrameCommunicator';
@@ -18,6 +17,7 @@ import { EMPTY, of } from 'rxjs';
 import { StoreBasedStorage } from '../../../../shared/services/storage/StoreBasedStorage';
 import { Container } from 'typedi';
 import { SimpleStorage } from '../../../../shared/services/storage/SimpleStorage';
+import { APPLE_PAY_NOT_LOGGED, PAYMENT_ERROR, PAYMENT_SUCCESS } from '../../models/constants/Translations';
 
 jest.mock('./../../shared/message-bus/MessageBus');
 jest.mock('./../google-analytics/GoogleAnalytics');
@@ -936,17 +936,17 @@ describe('ApplePay', () => {
     // then
     it('should call success notification when errorcode is equal 0', () => {
       // @ts-ignore
-      instance._displayNotification('0', Language.translations.PAYMENT_SUCCESS);
+      instance._displayNotification('0', PAYMENT_SUCCESS);
       // @ts-ignore
-      expect(instance._notification.success).toHaveBeenCalledWith(Language.translations.PAYMENT_SUCCESS);
+      expect(instance._notification.success).toHaveBeenCalledWith(PAYMENT_SUCCESS);
     });
 
     // then
     it('should call error notification when errorcode is not equal 0', () => {
       // @ts-ignore
-      instance._displayNotification('30000', Language.translations.PAYMENT_ERROR);
+      instance._displayNotification('30000', PAYMENT_ERROR);
       // @ts-ignore
-      expect(instance._notification.error).toHaveBeenCalledWith(Language.translations.PAYMENT_ERROR);
+      expect(instance._notification.error).toHaveBeenCalledWith(PAYMENT_ERROR);
     });
   });
 
@@ -1005,7 +1005,7 @@ describe('ApplePay', () => {
     const id: string = ApplePay.APPLE_PAY_BUTTON_ID;
     const fakeId: string = 'blah';
     const event: string = 'click';
-    const message: string = Language.translations.APPLE_PAY_NOT_LOGGED;
+    const message: string = APPLE_PAY_NOT_LOGGED;
 
     // then
     it(`should call notification with success if notification type is success`, () => {

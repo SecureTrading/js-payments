@@ -1,6 +1,5 @@
 import { ExpirationDate } from './ExpirationDate';
 import { FormState } from '../../core/models/constants/FormState';
-import { Language } from '../../core/models/constants/Language';
 import { Selectors } from '../../core/models/constants/Selectors';
 import { ConfigProvider } from '../../../shared/services/config-provider/ConfigProvider';
 import { mock, instance, when } from 'ts-mockito';
@@ -10,6 +9,7 @@ import { MessageBusMock } from '../../../testing/mocks/MessageBusMock';
 import { Frame } from '../../core/shared/frame/Frame';
 import { of } from 'rxjs';
 import { IConfig } from '../../../shared/model/config/IConfig';
+import { LABEL_EXPIRATION_DATE } from '../../core/models/constants/Translations';
 
 jest.mock('./../../core/shared/notification/Notification');
 jest.mock('./../../core/shared/message-bus/MessageBus');
@@ -34,7 +34,7 @@ describe('ExpirationDate', () => {
     const { expirationDateInstance } = expirationDateFixture();
     // then
     it('should return translated label', () => {
-      expect(expirationDateInstance.getLabel()).toEqual(Language.translations.LABEL_EXPIRATION_DATE);
+      expect(expirationDateInstance.getLabel()).toEqual(LABEL_EXPIRATION_DATE);
     });
   });
 

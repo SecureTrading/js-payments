@@ -2,7 +2,6 @@ import { FormState } from '../../core/models/constants/FormState';
 import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
 import { Formatter } from '../../core/shared/formatter/Formatter';
 import { Input } from '../../core/shared/input/Input';
-import { Language } from '../../core/models/constants/Language';
 import { MessageBus } from '../../core/shared/message-bus/MessageBus';
 import { Selectors } from '../../core/models/constants/Selectors';
 import { Service } from 'typedi';
@@ -10,6 +9,7 @@ import { ConfigProvider } from '../../../shared/services/config-provider/ConfigP
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { Styler } from '../../core/shared/styler/Styler';
 import { Frame } from '../../core/shared/frame/Frame';
+import { LABEL_EXPIRATION_DATE } from '../../core/models/constants/Translations';
 
 @Service()
 export class ExpirationDate extends Input {
@@ -46,7 +46,7 @@ export class ExpirationDate extends Input {
   }
 
   public getLabel(): string {
-    return Language.translations.LABEL_EXPIRATION_DATE;
+    return LABEL_EXPIRATION_DATE;
   }
 
   public setDisableListener() {

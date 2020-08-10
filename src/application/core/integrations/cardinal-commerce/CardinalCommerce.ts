@@ -23,7 +23,7 @@ import { IMerchantData } from '../../models/IMerchantData';
 import { StTransport } from '../../services/st-transport/StTransport.class';
 import { CardinalProvider } from './CardinalProvider';
 import { IAuthorizePaymentResponse } from '../../models/IAuthorizePaymentResponse';
-import { Language } from '../../models/constants/Language';
+import { COMMUNICATION_ERROR_INVALID_RESPONSE } from '../../models/constants/Translations';
 
 @Service()
 export class CardinalCommerce {
@@ -49,7 +49,7 @@ export class CardinalCommerce {
 
     this.cardinalValidated$
       .pipe(filter(data => data[0].ActionCode === 'ERROR'))
-      .subscribe(() => this.notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
+      .subscribe(() => this.notification.error(COMMUNICATION_ERROR_INVALID_RESPONSE));
   }
 
   init(config: IConfig): Observable<ICardinal> {
