@@ -3,7 +3,11 @@ import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
 import { Formatter } from '../../core/shared/formatter/Formatter';
 import { Input } from '../../core/shared/input/Input';
 import { MessageBus } from '../../core/shared/message-bus/MessageBus';
-import { Selectors } from '../../core/models/constants/Selectors';
+import {
+  EXPIRATION_DATE_INPUT,
+  EXPIRATION_DATE_LABEL,
+  EXPIRATION_DATE_MESSAGE
+} from '../../core/models/constants/Selectors';
 import { Service } from 'typedi';
 import { ConfigProvider } from '../../../shared/services/config-provider/ConfigProvider';
 import { IConfig } from '../../../shared/model/config/IConfig';
@@ -14,7 +18,7 @@ import { LABEL_EXPIRATION_DATE } from '../../core/models/constants/Translations'
 @Service()
 export class ExpirationDate extends Input {
   public static ifFieldExists = (): HTMLInputElement =>
-    document.getElementById(Selectors.EXPIRATION_DATE_INPUT) as HTMLInputElement;
+    document.getElementById(EXPIRATION_DATE_INPUT) as HTMLInputElement;
   private static DISABLED_ATTRIBUTE: string = 'disabled';
   private static DISABLED_CLASS: string = 'st-input--disabled';
   private static EXPIRATION_DATE_LENGTH: number = 5;
@@ -30,7 +34,7 @@ export class ExpirationDate extends Input {
     private messageBus: MessageBus,
     private frame: Frame
   ) {
-    super(Selectors.EXPIRATION_DATE_INPUT, Selectors.EXPIRATION_DATE_MESSAGE, Selectors.EXPIRATION_DATE_LABEL);
+    super(EXPIRATION_DATE_INPUT, EXPIRATION_DATE_MESSAGE, EXPIRATION_DATE_LABEL);
     this._init();
     this._configProvider.getConfig$().subscribe((config: IConfig) => {
       const styler: Styler = new Styler(this.getAllowedStyles(), this.frame.parseUrl().styles);
@@ -61,13 +65,13 @@ export class ExpirationDate extends Input {
 
   protected onBlur() {
     super.onBlur();
-    this._inputElement.value = this._formatter.date(this._inputElement.value, Selectors.EXPIRATION_DATE_INPUT);
+    this._inputElement.value = this._formatter.date(this._inputElement.value, EXPIRATION_DATE_INPUT);
     this._sendState();
   }
 
   protected onFocus(event: Event) {
     super.onFocus(event);
-    this._inputElement.value = this._formatter.date(this._inputElement.value, Selectors.EXPIRATION_DATE_INPUT);
+    this._inputElement.value = this._formatter.date(this._inputElement.value, EXPIRATION_DATE_INPUT);
   }
 
   protected onInput(event: Event) {
@@ -76,7 +80,7 @@ export class ExpirationDate extends Input {
       this._inputElement.value,
       ExpirationDate.EXPIRATION_DATE_LENGTH
     );
-    this._inputElement.value = this._formatter.date(this._inputElement.value, Selectors.EXPIRATION_DATE_INPUT);
+    this._inputElement.value = this._formatter.date(this._inputElement.value, EXPIRATION_DATE_INPUT);
     this.validation.keepCursorsPosition(this._inputElement);
     this._sendState();
   }
@@ -100,7 +104,7 @@ export class ExpirationDate extends Input {
       this._inputElement.value,
       ExpirationDate.EXPIRATION_DATE_LENGTH
     );
-    this._inputElement.value = this._formatter.date(this._inputElement.value, Selectors.EXPIRATION_DATE_INPUT);
+    this._inputElement.value = this._formatter.date(this._inputElement.value, EXPIRATION_DATE_INPUT);
     this._sendState();
   }
 

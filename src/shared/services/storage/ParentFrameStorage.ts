@@ -3,7 +3,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { InterFrameCommunicator } from '../message-bus/InterFrameCommunicator';
 import { FramesHub } from '../message-bus/FramesHub';
-import { Selectors } from '../../../application/core/models/constants/Selectors';
+import { CONTROL_FRAME_IFRAME } from '../../../application/core/models/constants/Selectors';
 import { PUBLIC_EVENTS } from '../../../application/core/models/constants/EventTypes';
 import { ofType } from '../message-bus/operators/ofType';
 import { IStorage } from './IStorage';
@@ -25,7 +25,7 @@ export class ParentFrameStorage implements IStorage, ISynchronizedStorage {
 
   setItem(name: string, value: any): void {
     this.setItemWithoutSync(name, value);
-    this.framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(controlFrame => {
+    this.framesHub.waitForFrame(CONTROL_FRAME_IFRAME).subscribe(controlFrame => {
       this.interFrameCommunicator.send(
         {
           type: PUBLIC_EVENTS.STORAGE_SYNC,

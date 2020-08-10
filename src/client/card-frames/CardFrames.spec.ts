@@ -2,7 +2,6 @@ import { CardFrames } from './CardFrames.class';
 import { FormState } from '../../application/core/models/constants/FormState';
 import { DomMethods } from '../../application/core/shared/dom-methods/DomMethods';
 import { MessageBus } from '../../application/core/shared/message-bus/MessageBus';
-import { Selectors } from '../../application/core/models/constants/Selectors';
 import { ConfigProvider } from '../../shared/services/config-provider/ConfigProvider';
 import { anyString, anything, instance as instanceOf, mock, when } from 'ts-mockito';
 import { of } from 'rxjs';
@@ -10,6 +9,12 @@ import { IframeFactory } from '../iframe-factory/IframeFactory';
 import { Frame } from '../../application/core/shared/frame/Frame';
 import { MessageBusMock } from '../../testing/mocks/MessageBusMock';
 import { PAY, PROCESSING } from '../../application/core/models/constants/Translations';
+import {
+  CARD_NUMBER_IFRAME,
+  CARD_NUMBER_INPUT_SELECTOR,
+  EXPIRATION_DATE_INPUT_SELECTOR,
+  SECURITY_CODE_INPUT_SELECTOR
+} from '../../application/core/models/constants/Selectors';
 
 jest.mock('./../../application/core/shared/notification/Notification');
 jest.mock('./../../application/core/shared/validation/Validation');
@@ -52,9 +57,9 @@ describe('CardFrames', () => {
       'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NTM2NzE1OC44NDk1NDUyLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiMzA4OTUwMDAwMDAwMDAwMDAyMSIsImV4cGlyeWRhdGUiOiIwMS8yMiJ9fQ.ey0e7_JVcwXinHZR-MFBWARiVy6F3GU5JrcuCgicGhU',
       'localhost',
       {
-        cardNumber: Selectors.CARD_NUMBER_INPUT_SELECTOR,
-        expirationDate: Selectors.EXPIRATION_DATE_INPUT_SELECTOR,
-        securityCode: Selectors.SECURITY_CODE_INPUT_SELECTOR
+        cardNumber: CARD_NUMBER_INPUT_SELECTOR,
+        expirationDate: EXPIRATION_DATE_INPUT_SELECTOR,
+        securityCode: SECURITY_CODE_INPUT_SELECTOR
       },
       {},
       ['VISA,MASTERCARD,AMEX'],
@@ -86,7 +91,7 @@ describe('CardFrames', () => {
       // @ts-ignore
       instance._messageBus.publish = jest.fn();
       // @ts-ignore
-      instance._disableFormField(data, type, Selectors.CARD_NUMBER_IFRAME);
+      instance._disableFormField(data, type, CARD_NUMBER_IFRAME);
     });
 
     // then

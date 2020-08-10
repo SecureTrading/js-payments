@@ -1,17 +1,23 @@
 import { Service } from 'typedi';
 import { IStyle } from '../../shared/model/config/IStyle';
-import { Selectors } from '../../application/core/models/constants/Selectors';
 import { IframeFactoryAttributes } from './IframeFactoryAttributes';
+import {
+  ANIMATED_CARD_COMPONENT,
+  CARD_NUMBER_COMPONENT,
+  CONTROL_FRAME_COMPONENT,
+  EXPIRATION_DATE_COMPONENT,
+  SECURITY_CODE_COMPONENT
+} from '../../application/core/models/constants/Selectors';
 
 @Service()
 export class IframeFactory {
   private static URLS = new Map(
     Object.entries({
-      cardNumber: Selectors.CARD_NUMBER_COMPONENT,
-      expirationDate: Selectors.EXPIRATION_DATE_COMPONENT,
-      securityCode: Selectors.SECURITY_CODE_COMPONENT,
-      animatedCard: Selectors.ANIMATED_CARD_COMPONENT,
-      controlFrame: Selectors.CONTROL_FRAME_COMPONENT
+      cardNumber: CARD_NUMBER_COMPONENT,
+      expirationDate: EXPIRATION_DATE_COMPONENT,
+      securityCode: SECURITY_CODE_COMPONENT,
+      animatedCard: ANIMATED_CARD_COMPONENT,
+      controlFrame: CONTROL_FRAME_COMPONENT
     })
   );
 

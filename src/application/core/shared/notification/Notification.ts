@@ -1,6 +1,10 @@
 import { INotificationEvent } from '../../models/INotificationEvent';
 import { Service } from 'typedi';
-import { Selectors } from '../../models/constants/Selectors';
+import {
+  CONTROL_FRAME_IFRAME,
+  NOTIFICATION_FRAME_CORE_CLASS,
+  NOTIFICATION_FRAME_ID
+} from '../../models/constants/Selectors';
 import { environment } from '../../../../environments/environment';
 import { Translator } from '../translator/Translator';
 import { MessageBus } from '../message-bus/MessageBus';
@@ -13,7 +17,6 @@ import { NotificationsClasses } from '../../models/constants/notifications/Notif
 import { NotificationsMessageTypes } from '../../models/constants/notifications/NotificationsMessageTypes';
 import { IConfig } from '../../../../shared/model/config/IConfig';
 import { Frame } from '../frame/Frame';
-import { IStyles } from '../../../../shared/model/config/IStyles';
 
 @Service()
 export class Notification {
@@ -35,7 +38,7 @@ export class Notification {
       this._displayNotification(event);
     });
 
-    this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(() => {
+    this._framesHub.waitForFrame(CONTROL_FRAME_IFRAME).subscribe(() => {
       this._translator = new Translator(this._browserLocalStorage.getItem('locale'));
     });
   }
@@ -58,7 +61,7 @@ export class Notification {
       'space-inset-body': { property: 'padding', selector: 'body' },
       'space-outset-body': { property: 'margin', selector: 'body' }
     };
-    const notification = `#${Selectors.NOTIFICATION_FRAME_ID}`;
+    const notification = `#${NOTIFICATION_FRAME_ID}`;
     const error = `.${NotificationsClasses.error}${notification}`;
     const success = `.${NotificationsClasses.success}${notification}`;
     const cancel = `.${NotificationsClasses.cancel}${notification}`;
@@ -160,7 +163,7 @@ export class Notification {
 
   private _setAttributeClass(notificationFrameElement: HTMLElement, type: string): void {
     const notificationElementClass = this._getMessageClass(type);
-    notificationFrameElement.classList.add(Selectors.NOTIFICATION_FRAME_CORE_CLASS);
+    notificationFrameElement.classList.add(NOTIFICATION_FRAME_CORE_CLASS);
     if (notificationElementClass) {
       notificationFrameElement.classList.remove(...Object.values(NotificationsClasses));
       notificationFrameElement.classList.add(notificationElementClass);
@@ -171,7 +174,7 @@ export class Notification {
       }
       this._timeoutId = window.setTimeout(() => {
         notificationFrameElement.classList.remove(notificationElementClass);
-        notificationFrameElement.classList.remove(Selectors.NOTIFICATION_FRAME_CORE_CLASS);
+        notificationFrameElement.classList.remove(NOTIFICATION_FRAME_CORE_CLASS);
         this._insertContent(notificationFrameElement, '');
       }, environment.NOTIFICATION_TTL);
     }

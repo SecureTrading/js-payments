@@ -16,7 +16,7 @@ import {
   VALIDATION_ERROR_PATTERN_MISMATCH
 } from '../../models/constants/Translations';
 import { MessageBus } from '../message-bus/MessageBus';
-import { Selectors } from '../../models/constants/Selectors';
+import { CARD_NUMBER_INPUT } from '../../models/constants/Selectors';
 import { Translator } from '../translator/Translator';
 import { Utils } from '../utils/Utils';
 import { Container, Service } from 'typedi';
@@ -364,8 +364,7 @@ export class Validation {
   }
 
   private _setMessage(inputElement: HTMLInputElement, messageElement: HTMLElement, customErrorMessage?: string) {
-    const isCardNumberInput: boolean =
-      inputElement.getAttribute(Validation.ID_PARAM_NAME) === Selectors.CARD_NUMBER_INPUT;
+    const isCardNumberInput: boolean = inputElement.getAttribute(Validation.ID_PARAM_NAME) === CARD_NUMBER_INPUT;
     const validityState = Validation.getValidationMessage(inputElement.validity);
     messageElement.innerText = this._getTranslation(
       inputElement,

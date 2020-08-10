@@ -1,6 +1,5 @@
 import { IFormFieldState } from '../../models/IFormFieldState';
 import { IMessageBusEvent } from '../../models/IMessageBusEvent';
-import { Selectors } from '../../models/constants/Selectors';
 import { Translator } from '../translator/Translator';
 import { Utils } from '../utils/Utils';
 import { Validation } from '../validation/Validation';
@@ -9,6 +8,7 @@ import { Frame } from '../frame/Frame';
 import { MessageBus } from '../message-bus/MessageBus';
 import { Container } from 'typedi';
 import { NOT_IMPLEMENTED_ERROR } from '../../models/constants/Translations';
+import { CARD_NUMBER_INPUT } from '../../models/constants/Selectors';
 
 export class Input {
   protected static PLACEHOLDER_ATTRIBUTE: string = 'placeholder';
@@ -28,7 +28,7 @@ export class Input {
   constructor(inputSelector: string, messageSelector: string, labelSelector: string) {
     this._messageBus = Container.get(MessageBus);
     this._frame = Container.get(Frame);
-    this._cardNumberInput = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
+    this._cardNumberInput = document.getElementById(CARD_NUMBER_INPUT) as HTMLInputElement;
     this._inputElement = document.getElementById(inputSelector) as HTMLInputElement;
     this._labelElement = document.getElementById(labelSelector) as HTMLLabelElement;
     this._messageElement = document.getElementById(messageSelector) as HTMLInputElement;
@@ -164,7 +164,7 @@ export class Input {
   protected onKeyPress(event: KeyboardEvent) {
     if (Validation.isEnter(event)) {
       event.preventDefault();
-      if (this._inputElement.id === Selectors.CARD_NUMBER_INPUT) {
+      if (this._inputElement.id === CARD_NUMBER_INPUT) {
         this.validation.luhnCheck(this._cardNumberInput, this._inputElement, this._messageElement);
       }
       this._validateInput();
@@ -282,7 +282,7 @@ export class Input {
 
   private _validateInput() {
     this.format(this._inputElement.value);
-    if (this._inputElement.id === Selectors.CARD_NUMBER_INPUT) {
+    if (this._inputElement.id === CARD_NUMBER_INPUT) {
       this.validation.luhnCheck(this._cardNumberInput, this._inputElement, this._messageElement);
     }
     this.validation.validate(this._inputElement, this._messageElement);

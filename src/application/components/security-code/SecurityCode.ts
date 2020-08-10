@@ -4,7 +4,12 @@ import { Formatter } from '../../core/shared/formatter/Formatter';
 import { Input } from '../../core/shared/input/Input';
 import { LABEL_SECURITY_CODE } from '../../core/models/constants/Translations';
 import { MessageBus } from '../../core/shared/message-bus/MessageBus';
-import { Selectors } from '../../core/models/constants/Selectors';
+import {
+  SECURITY_CODE_INPUT,
+  SECURITY_CODE_INPUT_SELECTOR,
+  SECURITY_CODE_LABEL,
+  SECURITY_CODE_MESSAGE
+} from '../../core/models/constants/Selectors';
 import { Validation } from '../../core/shared/validation/Validation';
 import { Service } from 'typedi';
 import { ConfigProvider } from '../../../shared/services/config-provider/ConfigProvider';
@@ -25,7 +30,7 @@ import { Frame } from '../../core/shared/frame/Frame';
 @Service()
 export class SecurityCode extends Input {
   public static ifFieldExists = (): HTMLInputElement =>
-    document.getElementById(Selectors.SECURITY_CODE_INPUT) as HTMLInputElement;
+    document.getElementById(SECURITY_CODE_INPUT) as HTMLInputElement;
   private static BLOCK_CVV_ATTRIBUTE: string = 'block-cvv';
   private static BLOCK_CVV_VALUE: string = 'true';
   private static CLEAR_VALUE: string = '';
@@ -47,9 +52,9 @@ export class SecurityCode extends Input {
     private messageBus: MessageBus,
     private frame: Frame
   ) {
-    super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
+    super(SECURITY_CODE_INPUT, SECURITY_CODE_MESSAGE, SECURITY_CODE_LABEL);
     this._validation = new Validation();
-    this._securityCodeWrapper = document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR) as HTMLElement;
+    this._securityCodeWrapper = document.getElementById(SECURITY_CODE_INPUT_SELECTOR) as HTMLElement;
     this._securityCodeLength = SHORT_CVC;
     this.placeholder = this._getPlaceholder(this._securityCodeLength);
     this._configProvider.getConfig$().subscribe((config: IConfig) => {
@@ -171,7 +176,7 @@ export class SecurityCode extends Input {
     this._inputElement.value = this._formatter.code(
       this._inputElement.value,
       this._securityCodeLength,
-      Selectors.SECURITY_CODE_INPUT
+      SECURITY_CODE_INPUT
     );
   }
 

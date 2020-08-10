@@ -6,7 +6,7 @@ import { FrameAccessor } from '../../../../shared/services/message-bus/FrameAcce
 import { InterFrameCommunicator } from '../../../../shared/services/message-bus/InterFrameCommunicator';
 import { FramesHub } from '../../../../shared/services/message-bus/FramesHub';
 import { EMPTY, Observable, of } from 'rxjs';
-import { Selectors } from '../../models/constants/Selectors';
+import { CONTROL_FRAME_IFRAME } from '../../models/constants/Selectors';
 import { IMessageBusEvent } from '../../models/IMessageBusEvent';
 
 describe('MessageBus', () => {
@@ -24,7 +24,7 @@ describe('MessageBus', () => {
     frameAccessorMock = mock(FrameAccessor);
 
     when(communicatorMock.incomingEvent$).thenReturn(incomingEvent$);
-    when(framesHubMock.waitForFrame(Selectors.CONTROL_FRAME_IFRAME)).thenReturn(of(Selectors.CONTROL_FRAME_IFRAME));
+    when(framesHubMock.waitForFrame(CONTROL_FRAME_IFRAME)).thenReturn(of(CONTROL_FRAME_IFRAME));
 
     messageBus = new MessageBus(
       instance(communicatorMock),
