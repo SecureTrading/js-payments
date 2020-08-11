@@ -14,7 +14,7 @@
 <script type="text/javascript">
   (function() {
     var params = new URLSearchParams(window.location.search.substring(1));
-    var inlineConfig = params.get('inlineConfig') ? JSON.parse(params.get('inlineConfig')) : '';
+    var inlineConfig = params.get('inlineConfig') ? params.get('inlineConfig') : '';
     var url = `./index.html?inlineConfig=${inlineConfig}`;
     var iframe = document.createElement('iframe');
     iframe.setAttribute('src', url);
