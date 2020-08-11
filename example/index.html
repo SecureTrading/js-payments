@@ -23,7 +23,8 @@
         <h1 class="st-header__title">Example Form</h1>
     </header>
 
-    <form role="form" name="st-form" id="st-form" action="https://www.example.com" class="st-form" autocomplete="off" novalidate>
+    <form role="form" name="st-form" id="st-form" action="https://www.example.com" class="st-form" autocomplete="off"
+          novalidate>
 
         <div id="st-popup" class="st-popup"></div>
 
@@ -266,8 +267,15 @@
 
     function updateJwtListener(st, updatedJwt) {
       document.getElementById('example-form-amount').addEventListener('input', function() {
-        st.updateJWT(updatedJwt);
-      });
+          if (updatedJwt) {
+            st.updateJWT(updatedJwt);
+            return;
+          }
+          window.configJWT('./../json/jwtdata.json').then(function(generatedJwt) {
+            st.updateJWT(generatedJwt);
+          });
+        }
+      );
     }
 
     function buildPopup(id, text, tp) {
@@ -350,7 +358,8 @@
         init(ST, stConfig);
       });
     }
-  })();
+  })
+  ();
 </script>
 </body>
 </html>
