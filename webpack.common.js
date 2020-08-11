@@ -59,6 +59,10 @@ module.exports = {
     inlineConfig: [
       './src/shared/imports/polyfills',
       './example/inline-config.ts'
+    ],
+    counter: [
+      './src/shared/imports/polyfills',
+      './example/counter.ts'
     ]
   },
   output: {

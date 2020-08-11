@@ -147,6 +147,7 @@
         <p>&copy; Secure Trading 2020</p>
     </footer>
 </main>
+<script type="text/javascript" src="<%= WEBSERVICES_URL %>/counter.js"></script>
 <script type="text/javascript" src="<%= WEBSERVICES_URL %>/inlineConfig.js"></script>
 <script type="text/javascript" src="<%= WEBSERVICES_URL %>/st.js"></script>
 <script type="text/javascript">
@@ -245,17 +246,21 @@
           var stringified = JSON.stringify(data);
           var testVariable = 'This is what we have got after submit' + stringified;
           displayPopup('data-popup', 'Error code: ' + (!data || data.errorcode != '0' ? 'Error' : 'OK'), 'blue');
+          window.displayCallbackCounter('submit-callback-counter', 'submit', 'blue')
           console.error(testVariable);
         };
       }
       config.successCallback = function() {
         displayPopup('success-popup', 'This is success message', 'green');
+        window.displayCallbackCounter('success-callback-counter', 'success', 'green')
       };
       config.errorCallback = function() {
         displayPopup('error-popup', 'This is error message', 'red');
+        window.displayCallbackCounter('error-callback-counter', 'error', 'red')
       };
       config.cancelCallback = function() {
         displayPopup('cancel-popup', 'This is cancel message', '#ffc23a');
+        window.displayCallbackCounter('cancel-callback-counter', 'cancel', '#ffc23a')
       };
     }
 
