@@ -1,5 +1,4 @@
 import { IScriptParams } from '../../models/IScriptParams';
-import { Selectors } from '../../models/constants/Selectors';
 
 export class DomMethods {
   private static BODY_MARKUP: string = 'body';
