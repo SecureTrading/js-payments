@@ -1,4 +1,3 @@
-// @TODO: changed implementation and references to const
 import { environment } from '../../../../environments/environment';
 
 const CARD_NUMBER_COMPONENT_NAME: string = 'cardNumber';
