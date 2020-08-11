@@ -1,6 +1,6 @@
 import { CardNumber } from './CardNumber';
 import { FormState } from '../../core/models/constants/FormState';
-import { Selectors } from '../../core/models/constants/Selectors';
+import { CARD_NUMBER_INPUT, CARD_NUMBER_LABEL, CARD_NUMBER_MESSAGE } from '../../core/models/constants/Selectors';
 import { Input } from '../../core/shared/input/Input';
 import { Utils } from '../../core/shared/utils/Utils';
 import { Validation } from '../../core/shared/validation/Validation';
@@ -425,9 +425,9 @@ function cardNumberFixture() {
     ['4111110000000211', '4111 1100 0000 0211'],
     ['123456789', '123456789']
   ];
-  labelElement.id = Selectors.CARD_NUMBER_LABEL;
-  inputElement.id = Selectors.CARD_NUMBER_INPUT;
-  messageElement.id = Selectors.CARD_NUMBER_MESSAGE;
+  labelElement.id = CARD_NUMBER_LABEL;
+  inputElement.id = CARD_NUMBER_INPUT;
+  messageElement.id = CARD_NUMBER_MESSAGE;
 
   return {
     cardNumberInstance,

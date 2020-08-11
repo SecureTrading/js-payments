@@ -4,7 +4,7 @@ import { Sentry } from './Sentry';
 import { SentryContext } from './SentryContext';
 import { EventScrubber } from './EventScrubber';
 import { SentryService } from './SentryService';
-import { Selectors } from '../../../application/core/models/constants/Selectors';
+import { CONTROL_FRAME_IFRAME } from '../../../application/core/models/constants/Selectors';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { IConfig } from '../../model/config/IConfig';
 
@@ -26,7 +26,7 @@ describe('SentryService', () => {
     eventScrubberMock = mock(EventScrubber);
     config$ = new BehaviorSubject(config);
 
-    when(sentryContextMock.getFrameName()).thenReturn(Selectors.CONTROL_FRAME_IFRAME);
+    when(sentryContextMock.getFrameName()).thenReturn(CONTROL_FRAME_IFRAME);
     when(sentryContextMock.getReleaseVersion()).thenReturn('1.2.3');
     when(sentryContextMock.getEnvironmentName()).thenReturn('prod');
     when(sentryContextMock.getHostName()).thenReturn('webservices.securetrading.net');
@@ -60,7 +60,7 @@ describe('SentryService', () => {
     sentryService.init(DSN, whitelistUrls);
 
     verify(sentryMock.setTag('hostName', 'webservices.securetrading.net')).once();
-    verify(sentryMock.setTag('frameName', Selectors.CONTROL_FRAME_IFRAME)).once();
+    verify(sentryMock.setTag('frameName', CONTROL_FRAME_IFRAME)).once();
     verify(sentryMock.setExtra('config', config));
     verify(
       sentryMock.init(

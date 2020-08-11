@@ -1,5 +1,5 @@
 import { Formatter } from './Formatter';
-import { Selectors } from '../../models/constants/Selectors';
+import { EXPIRATION_DATE_INPUT } from '../../models/constants/Selectors';
 import { MessageBus } from '../message-bus/MessageBus';
 import { mock } from 'ts-mockito';
 import { Frame } from '../frame/Frame';
@@ -11,7 +11,7 @@ describe('Formatter', () => {
   describe('date', () => {
     const { instance } = formatterFixture();
     it('should return fixed date', () => {
-      expect(instance.date('123', Selectors.EXPIRATION_DATE_INPUT)).toEqual('12/3');
+      expect(instance.date('123', EXPIRATION_DATE_INPUT)).toEqual('12/3');
     });
   });
 });

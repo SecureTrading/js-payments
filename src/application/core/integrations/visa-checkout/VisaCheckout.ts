@@ -3,7 +3,6 @@ import { IVisaConfig } from './IVisaConfig';
 import { IVisaSettings } from './IVisaSettings';
 import { IWalletConfig } from '../../../../shared/model/config/IWalletConfig';
 import { DomMethods } from '../../shared/dom-methods/DomMethods';
-import { Language } from '../../models/constants/Language';
 import { MessageBus } from '../../shared/message-bus/MessageBus';
 import { Payment } from '../../shared/payment/Payment';
 import { StJwt } from '../../shared/stjwt/StJwt';
@@ -14,6 +13,7 @@ import { Observable } from 'rxjs';
 import { IConfig } from '../../../../shared/model/config/IConfig';
 import { ConfigProvider } from '../../../../shared/services/config-provider/ConfigProvider';
 import { InterFrameCommunicator } from '../../../../shared/services/message-bus/InterFrameCommunicator';
+import { PAYMENT_CANCELLED, PAYMENT_ERROR, PAYMENT_SUCCESS } from '../../models/constants/Translations';
 
 declare const V: any;
 
@@ -263,15 +263,15 @@ export class VisaCheckout {
   private _getResponseMessage(type: string) {
     switch (type) {
       case VisaCheckout.VISA_PAYMENT_STATUS.SUCCESS: {
-        this.responseMessage = Language.translations.PAYMENT_SUCCESS;
+        this.responseMessage = PAYMENT_SUCCESS;
         break;
       }
       case VisaCheckout.VISA_PAYMENT_STATUS.CANCEL: {
-        this.responseMessage = Language.translations.PAYMENT_CANCELLED;
+        this.responseMessage = PAYMENT_CANCELLED;
         break;
       }
       case VisaCheckout.VISA_PAYMENT_STATUS.ERROR: {
-        this.responseMessage = Language.translations.PAYMENT_ERROR;
+        this.responseMessage = PAYMENT_ERROR;
         break;
       }
     }

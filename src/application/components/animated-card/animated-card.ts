@@ -6,13 +6,13 @@ import { MessageBus } from '../../core/shared/message-bus/MessageBus';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 import { Container } from 'typedi';
 import { FrameIdentifier } from '../../../shared/services/message-bus/FrameIdentifier';
-import { Selectors } from '../../core/models/constants/Selectors';
 import { SentryService } from '../../../shared/services/sentry/SentryService';
 import { environment } from '../../../environments/environment';
 import '../../core/shared/override-domain/OverrideDomain';
 import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
+import { ANIMATED_CARD_COMPONENT_IFRAME } from '../../core/models/constants/Selectors';
 
-Container.get(FrameIdentifier).setFrameName(Selectors.ANIMATED_CARD_COMPONENT_IFRAME);
+Container.get(FrameIdentifier).setFrameName(ANIMATED_CARD_COMPONENT_IFRAME);
 Container.get(FramesHub).notifyReadyState();
 
 // @ts-ignore

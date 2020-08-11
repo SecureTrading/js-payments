@@ -3,10 +3,10 @@ import { Store } from '../../../application/core/store/Store';
 import { Service } from 'typedi';
 import { InterFrameCommunicator } from '../message-bus/InterFrameCommunicator';
 import { PUBLIC_EVENTS } from '../../../application/core/models/constants/EventTypes';
-import { Selectors } from '../../../application/core/models/constants/Selectors';
 import { ofType } from '../message-bus/operators/ofType';
 import { IStorage } from './IStorage';
 import { ISynchronizedStorage } from './ISynchronizedStorage';
+import { MERCHANT_PARENT_FRAME } from '../../../application/core/models/constants/Selectors';
 
 @Service()
 export class StoreBasedStorage implements IStorage, ISynchronizedStorage {
@@ -25,7 +25,7 @@ export class StoreBasedStorage implements IStorage, ISynchronizedStorage {
         type: PUBLIC_EVENTS.STORAGE_SYNC,
         data: { key: name, value: JSON.stringify(value) }
       },
-      Selectors.MERCHANT_PARENT_FRAME
+      MERCHANT_PARENT_FRAME
     );
   }
 

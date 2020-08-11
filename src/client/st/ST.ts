@@ -19,7 +19,6 @@ import { IVisaConfig } from '../../application/core/integrations/visa-checkout/I
 import { MessageBus } from '../../application/core/shared/message-bus/MessageBus';
 import { Translator } from '../../application/core/shared/translator/Translator';
 import { environment } from '../../environments/environment';
-import { Selectors } from '../../application/core/models/constants/Selectors';
 import { Service, Container } from 'typedi';
 import { ConfigService } from '../../shared/services/config-service/ConfigService';
 import { ISubmitEvent } from '../../application/core/models/ISubmitEvent';
@@ -40,6 +39,7 @@ import { PUBLIC_EVENTS } from '../../application/core/models/constants/EventType
 import { IframeFactory } from '../iframe-factory/IframeFactory';
 import { IMessageBusEvent } from '../../application/core/models/IMessageBusEvent';
 import { Frame } from '../../application/core/shared/frame/Frame';
+import { CONTROL_FRAME_IFRAME, MERCHANT_PARENT_FRAME } from '../../application/core/models/constants/Selectors';
 
 @Service()
 class ST {
@@ -146,7 +146,7 @@ class ST {
     this._commonFrames._requestTypes = this._config.components.requestTypes;
 
     this._framesHub
-      .waitForFrame(Selectors.CONTROL_FRAME_IFRAME)
+      .waitForFrame(CONTROL_FRAME_IFRAME)
       .pipe(
         switchMap(controlFrame => {
           const queryEvent: IMessageBusEvent<string> = {
@@ -195,7 +195,7 @@ class ST {
   public Cybertonica(): Promise<string> {
     return new Promise(resolve =>
       this._framesHub
-        .waitForFrame(Selectors.CONTROL_FRAME_IFRAME)
+        .waitForFrame(CONTROL_FRAME_IFRAME)
         .pipe(
           switchMap((controlFrame: string) =>
             from(this._communicator.query({ type: MessageBus.EVENTS_PUBLIC.GET_CYBERTONICA_TID }, controlFrame))
@@ -316,7 +316,7 @@ class ST {
     const controlFrameStatus = [false, false];
 
     const observer = new MutationObserver(() => {
-      const controlFrame = document.getElementById(Selectors.CONTROL_FRAME_IFRAME);
+      const controlFrame = document.getElementById(CONTROL_FRAME_IFRAME);
 
       controlFrameStatus.push(Boolean(controlFrame));
       controlFrameStatus.shift();
@@ -358,11 +358,11 @@ class ST {
 
     this._messageBus
       .pipe(ofType(MessageBus.EVENTS_PUBLIC.CONTROL_FRAME_SHOW), takeUntil(this._destroy$))
-      .subscribe(() => document.getElementById(Selectors.CONTROL_FRAME_IFRAME).classList.add(className));
+      .subscribe(() => document.getElementById(CONTROL_FRAME_IFRAME).classList.add(className));
 
     this._messageBus
       .pipe(ofType(MessageBus.EVENTS_PUBLIC.CONTROL_FRAME_HIDE), takeUntil(this._destroy$))
-      .subscribe(() => document.getElementById(Selectors.CONTROL_FRAME_IFRAME).classList.remove(className));
+      .subscribe(() => document.getElementById(CONTROL_FRAME_IFRAME).classList.remove(className));
   }
 
   private blockSubmitButton(): void {
@@ -385,7 +385,7 @@ class ST {
 }
 
 export default (config: IConfig) => {
-  Container.get(FrameIdentifier).setFrameName(Selectors.MERCHANT_PARENT_FRAME);
+  Container.get(FrameIdentifier).setFrameName(MERCHANT_PARENT_FRAME);
 
   const st = Container.get(ST);
 

@@ -2,12 +2,10 @@ import { IStyles } from '../../shared/model/config/IStyles';
 import { IframeFactory } from '../iframe-factory/IframeFactory';
 import { DomMethods } from '../../application/core/shared/dom-methods/DomMethods';
 import { MessageBus } from '../../application/core/shared/message-bus/MessageBus';
-import { Selectors } from '../../application/core/models/constants/Selectors';
 import { Validation } from '../../application/core/shared/validation/Validation';
 import { Container } from 'typedi';
 import { BrowserLocalStorage } from '../../shared/services/storage/BrowserLocalStorage';
 import { IComponentsIds } from '../../shared/model/config/IComponentsIds';
-import { Language } from '../../application/core/models/constants/Language';
 import { filter, first, delay, map, takeUntil } from 'rxjs/operators';
 import { ofType } from '../../shared/services/message-bus/operators/ofType';
 import { Observable } from 'rxjs';
@@ -15,6 +13,8 @@ import { PUBLIC_EVENTS } from '../../application/core/models/constants/EventType
 import { IMessageBusEvent } from '../../application/core/models/IMessageBusEvent';
 import { Frame } from '../../application/core/shared/frame/Frame';
 import { StJwt } from '../../application/core/shared/stjwt/StJwt';
+import { PAYMENT_CANCELLED, PAYMENT_SUCCESS } from '../../application/core/models/constants/Translations';
+import { CONTROL_FRAME_COMPONENT_NAME, CONTROL_FRAME_IFRAME } from '../../application/core/models/constants/Selectors';
 
 export class CommonFrames {
   get requestTypes(): string[] {
@@ -144,8 +144,8 @@ export class CommonFrames {
     controlFrame = Object.assign({}, defaultStyles, controlFrame);
 
     this._controlFrame = this._iframeFactory.create(
-      Selectors.CONTROL_FRAME_COMPONENT_NAME,
-      Selectors.CONTROL_FRAME_IFRAME,
+      CONTROL_FRAME_COMPONENT_NAME,
+      CONTROL_FRAME_IFRAME,
       controlFrame,
       {
         gatewayUrl: this._gatewayUrl,
@@ -193,7 +193,7 @@ export class CommonFrames {
     }
 
     if (this._isTransactionFinished(data) && data.errorcode === '0') {
-      data = Object.assign(data, { errormessage: Language.translations.PAYMENT_SUCCESS });
+      data = Object.assign(data, { errormessage: PAYMENT_SUCCESS });
       if (this._submitOnSuccess) {
         this._submitForm(data);
       }
@@ -201,7 +201,7 @@ export class CommonFrames {
     }
 
     if (data.errorcode === 'cancelled') {
-      data = Object.assign(data, { errormessage: Language.translations.PAYMENT_CANCELLED });
+      data = Object.assign(data, { errormessage: PAYMENT_CANCELLED });
       if (this._submitOnCancel) {
         this._submitForm(data);
       }

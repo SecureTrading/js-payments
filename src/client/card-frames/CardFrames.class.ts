@@ -5,9 +5,17 @@ import { IStyles } from '../../shared/model/config/IStyles';
 import { IValidationMessageBus } from '../../application/core/models/IValidationMessageBus';
 import { IframeFactory } from '../iframe-factory/IframeFactory';
 import { DomMethods } from '../../application/core/shared/dom-methods/DomMethods';
-import { Language } from '../../application/core/models/constants/Language';
 import { MessageBus } from '../../application/core/shared/message-bus/MessageBus';
-import { Selectors } from '../../application/core/models/constants/Selectors';
+import {
+  ANIMATED_CARD_COMPONENT_IFRAME,
+  ANIMATED_CARD_COMPONENT_NAME,
+  CARD_NUMBER_COMPONENT_NAME,
+  CARD_NUMBER_IFRAME,
+  EXPIRATION_DATE_COMPONENT_NAME,
+  EXPIRATION_DATE_IFRAME,
+  SECURITY_CODE_COMPONENT_NAME,
+  SECURITY_CODE_IFRAME
+} from '../../application/core/models/constants/Selectors';
 import { Translator } from '../../application/core/shared/translator/Translator';
 import { Validation } from '../../application/core/shared/validation/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
@@ -20,6 +28,7 @@ import { first } from 'rxjs/operators';
 import { Frame } from '../../application/core/shared/frame/Frame';
 import { StJwt } from '../../application/core/shared/stjwt/StJwt';
 import { IStJwtObj } from '../../application/core/models/IStJwtObj';
+import { PAY, PROCESSING } from '../../application/core/models/constants/Translations';
 
 export class CardFrames {
   private static CARD_NUMBER_FIELD_NAME: string = 'pan';
@@ -219,19 +228,14 @@ export class CardFrames {
   }
 
   private _initCardNumberFrame(styles: {}): void {
-    this._cardNumber = this._iframeFactory.create(
-      Selectors.CARD_NUMBER_COMPONENT_NAME,
-      Selectors.CARD_NUMBER_IFRAME,
-      styles,
-      this.params
-    );
+    this._cardNumber = this._iframeFactory.create(CARD_NUMBER_COMPONENT_NAME, CARD_NUMBER_IFRAME, styles, this.params);
     this.elementsToRegister.push(this._cardNumber);
   }
 
   private _initExpiryDateFrame(styles: {}): void {
     this._expirationDate = this._iframeFactory.create(
-      Selectors.EXPIRATION_DATE_COMPONENT_NAME,
-      Selectors.EXPIRATION_DATE_IFRAME,
+      EXPIRATION_DATE_COMPONENT_NAME,
+      EXPIRATION_DATE_IFRAME,
       styles,
       this.params
     );
@@ -240,8 +244,8 @@ export class CardFrames {
 
   private _initSecurityCodeFrame(styles: {}): void {
     this._securityCode = this._iframeFactory.create(
-      Selectors.SECURITY_CODE_COMPONENT_NAME,
-      Selectors.SECURITY_CODE_IFRAME,
+      SECURITY_CODE_COMPONENT_NAME,
+      SECURITY_CODE_IFRAME,
       styles,
       this.params
     );
@@ -257,8 +261,8 @@ export class CardFrames {
       animatedCardConfig.defaultPaymentType = this._defaultPaymentType;
     }
     this._animatedCard = this._iframeFactory.create(
-      Selectors.ANIMATED_CARD_COMPONENT_NAME,
-      Selectors.ANIMATED_CARD_COMPONENT_IFRAME,
+      ANIMATED_CARD_COMPONENT_NAME,
+      ANIMATED_CARD_COMPONENT_IFRAME,
       {},
       animatedCardConfig,
       -1
@@ -340,8 +344,8 @@ export class CardFrames {
     this._defaultPaymentType = defaultPaymentType;
     this._paymentTypes = paymentTypes;
     this.jwt = jwt;
-    this._payMessage = this._translator.translate(Language.translations.PAY);
-    this._processingMessage = `${this._translator.translate(Language.translations.PROCESSING)} ...`;
+    this._payMessage = this._translator.translate(PAY);
+    this._processingMessage = `${this._translator.translate(PROCESSING)} ...`;
     this._loadAnimatedCard = loadAnimatedCard !== undefined ? loadAnimatedCard : true;
   }
 
@@ -385,9 +389,9 @@ export class CardFrames {
 
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BLOCK_FORM, (state: FormState) => {
       this._disableSubmitButton(state);
-      this._disableFormField(state, MessageBus.EVENTS_PUBLIC.BLOCK_CARD_NUMBER, Selectors.CARD_NUMBER_IFRAME);
-      this._disableFormField(state, MessageBus.EVENTS_PUBLIC.BLOCK_EXPIRATION_DATE, Selectors.EXPIRATION_DATE_IFRAME);
-      this._disableFormField(state, MessageBus.EVENTS_PUBLIC.BLOCK_SECURITY_CODE, Selectors.SECURITY_CODE_IFRAME);
+      this._disableFormField(state, MessageBus.EVENTS_PUBLIC.BLOCK_CARD_NUMBER, CARD_NUMBER_IFRAME);
+      this._disableFormField(state, MessageBus.EVENTS_PUBLIC.BLOCK_EXPIRATION_DATE, EXPIRATION_DATE_IFRAME);
+      this._disableFormField(state, MessageBus.EVENTS_PUBLIC.BLOCK_SECURITY_CODE, SECURITY_CODE_IFRAME);
     });
   }
 

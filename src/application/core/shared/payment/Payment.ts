@@ -5,13 +5,11 @@ import { ICard } from '../../models/ICard';
 import { IMerchantData } from '../../models/IMerchantData';
 import { IWallet } from '../../models/IWallet';
 import { IWalletVerify } from '../../models/IWalletVerify';
-import { Language } from '../../models/constants/Language';
 import { Validation } from '../validation/Validation';
 import { Container } from 'typedi';
 import { NotificationService } from '../../../../client/notification/NotificationService';
 import { Cybertonica } from '../../integrations/cybertonica/Cybertonica';
-import { MessageBus } from '../message-bus/MessageBus';
-import { Frame } from '../frame/Frame';
+import { PAYMENT_SUCCESS } from '../../models/constants/Translations';
 
 export class Payment {
   private _cardinalCommerceCacheToken: string;
@@ -48,7 +46,7 @@ export class Payment {
         this._stTransport._threeDQueryResult.jwt,
         additionalData.threedresponse
       );
-      this._notification.success(Language.translations.PAYMENT_SUCCESS);
+      this._notification.success(PAYMENT_SUCCESS);
       return Promise.resolve({
         response: {}
       });
@@ -67,25 +65,6 @@ export class Payment {
     }
 
     return this._stTransport.sendRequest(processPaymentRequestBody);
-  }
-
-  // TODO is this even used anymore?
-  public async threeDQueryRequest(requestTypes: string[], card: ICard, merchantData: IMerchantData): Promise<object> {
-    const threeDQueryRequestBody = {
-      cachetoken: this._cardinalCommerceCacheToken,
-      requesttypedescriptions: requestTypes,
-      termurl: 'https://termurl.com', // TODO this shouldn't be needed but currently the backend needs this
-      ...merchantData,
-      ...card
-    };
-
-    const cybertonicaTid = await this._cybertonica.getTransactionId();
-
-    if (cybertonicaTid) {
-      (threeDQueryRequestBody as any).fraudcontroltransactionid = cybertonicaTid;
-    }
-
-    return this._stTransport.sendRequest(threeDQueryRequestBody);
   }
 
   public walletVerify(walletVerify: IWalletVerify) {

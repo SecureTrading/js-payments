@@ -4,7 +4,7 @@ import { Observable, Subscribable } from 'rxjs';
 import { InterFrameCommunicator } from '../../../../shared/services/message-bus/InterFrameCommunicator';
 import { FramesHub } from '../../../../shared/services/message-bus/FramesHub';
 import { map, switchMap } from 'rxjs/operators';
-import { Selectors } from '../../models/constants/Selectors';
+import { CONTROL_FRAME_IFRAME, MERCHANT_PARENT_FRAME } from '../../models/constants/Selectors';
 import { PartialObserver, Unsubscribable } from 'rxjs/src/internal/types';
 import { ofType } from '../../../../shared/services/message-bus/operators/ofType';
 import { FrameCollection } from '../../../../shared/services/message-bus/interfaces/FrameCollection';
@@ -36,7 +36,7 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
   }
 
   public publish<T>(event: IMessageBusEvent<T>, publishToParent?: boolean): void {
-    this.framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(controlFrame => {
+    this.framesHub.waitForFrame(CONTROL_FRAME_IFRAME).subscribe(controlFrame => {
       try {
         this.communicator.send(event, controlFrame);
       } catch (e) {
@@ -80,7 +80,7 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
       throw new Error(`Cannot publish private event "${event.type}" to parent frame.`);
     }
 
-    this.communicator.send(event, Selectors.MERCHANT_PARENT_FRAME);
+    this.communicator.send(event, MERCHANT_PARENT_FRAME);
   }
 
   private getMessageStream(): Observable<IMessageBusEvent> {
@@ -88,7 +88,7 @@ export class MessageBus implements Subscribable<IMessageBusEvent> {
       return this.communicator.incomingEvent$;
     }
 
-    return this.framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).pipe(
+    return this.framesHub.waitForFrame(CONTROL_FRAME_IFRAME).pipe(
       switchMap(frameName => {
         const frames: FrameCollection = this.frameAccessor.getFrameCollection();
         const controlFrame: ControlFrameWindow = frames[frameName] as ControlFrameWindow;

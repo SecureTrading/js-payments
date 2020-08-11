@@ -1,15 +1,20 @@
 import { CardFrames } from './CardFrames.class';
 import { FormState } from '../../application/core/models/constants/FormState';
 import { DomMethods } from '../../application/core/shared/dom-methods/DomMethods';
-import { Language } from '../../application/core/models/constants/Language';
 import { MessageBus } from '../../application/core/shared/message-bus/MessageBus';
-import { Selectors } from '../../application/core/models/constants/Selectors';
 import { ConfigProvider } from '../../shared/services/config-provider/ConfigProvider';
 import { anyString, anything, instance as instanceOf, mock, when } from 'ts-mockito';
 import { of } from 'rxjs';
 import { IframeFactory } from '../iframe-factory/IframeFactory';
 import { Frame } from '../../application/core/shared/frame/Frame';
 import { MessageBusMock } from '../../testing/mocks/MessageBusMock';
+import { PAY, PROCESSING } from '../../application/core/models/constants/Translations';
+import {
+  CARD_NUMBER_IFRAME,
+  CARD_NUMBER_INPUT_SELECTOR,
+  EXPIRATION_DATE_INPUT_SELECTOR,
+  SECURITY_CODE_INPUT_SELECTOR
+} from '../../application/core/models/constants/Selectors';
 
 jest.mock('./../../application/core/shared/notification/Notification');
 jest.mock('./../../application/core/shared/validation/Validation');
@@ -52,9 +57,9 @@ describe('CardFrames', () => {
       'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU3NTM2NzE1OC44NDk1NDUyLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiMzA4OTUwMDAwMDAwMDAwMDAyMSIsImV4cGlyeWRhdGUiOiIwMS8yMiJ9fQ.ey0e7_JVcwXinHZR-MFBWARiVy6F3GU5JrcuCgicGhU',
       'localhost',
       {
-        cardNumber: Selectors.CARD_NUMBER_INPUT_SELECTOR,
-        expirationDate: Selectors.EXPIRATION_DATE_INPUT_SELECTOR,
-        securityCode: Selectors.SECURITY_CODE_INPUT_SELECTOR
+        cardNumber: CARD_NUMBER_INPUT_SELECTOR,
+        expirationDate: EXPIRATION_DATE_INPUT_SELECTOR,
+        securityCode: SECURITY_CODE_INPUT_SELECTOR
       },
       {},
       ['VISA,MASTERCARD,AMEX'],
@@ -86,7 +91,7 @@ describe('CardFrames', () => {
       // @ts-ignore
       instance._messageBus.publish = jest.fn();
       // @ts-ignore
-      instance._disableFormField(data, type, Selectors.CARD_NUMBER_IFRAME);
+      instance._disableFormField(data, type, CARD_NUMBER_IFRAME);
     });
 
     // then
@@ -349,7 +354,7 @@ describe('CardFrames', () => {
     it('should mark button as disabled when form state is blocked', () => {
       // @ts-ignore
       instance._setSubmitButtonProperties(button, FormState.BLOCKED);
-      expect(button.textContent).toEqual(`${Language.translations.PROCESSING} ...`);
+      expect(button.textContent).toEqual(`${PROCESSING} ...`);
       // @ts-ignore
       expect(button.classList.contains(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS)).toEqual(true);
       expect(button.disabled).toEqual(true);
@@ -359,7 +364,7 @@ describe('CardFrames', () => {
     it('should mark button as disabled when form state is complete but text should be pay', () => {
       // @ts-ignore
       instance._setSubmitButtonProperties(button, FormState.COMPLETE);
-      expect(button.textContent).toEqual(Language.translations.PAY);
+      expect(button.textContent).toEqual(PAY);
       // @ts-ignore
       expect(button.classList.contains(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS)).toEqual(true);
       expect(button.disabled).toEqual(true);
@@ -369,7 +374,7 @@ describe('CardFrames', () => {
     it('should remove disabled attributes from button when form state is available', () => {
       // @ts-ignore
       instance._setSubmitButtonProperties(button, FormState.AVAILABLE);
-      expect(button.textContent).toEqual(Language.translations.PAY);
+      expect(button.textContent).toEqual(PAY);
       // @ts-ignore
       expect(button.classList.contains(CardFrames.SUBMIT_BUTTON_DISABLED_CLASS)).toEqual(false);
       expect(button.disabled).toEqual(false);

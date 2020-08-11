@@ -12,7 +12,7 @@ import { IMerchantData } from '../../core/models/IMerchantData';
 import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
 import { IResponseData } from '../../core/models/IResponseData';
 import { ISubmitData } from '../../core/models/ISubmitData';
-import { Language } from '../../core/models/constants/Language';
+import { PAYMENT_SUCCESS, PAYMENT_ERROR } from '../../core/models/constants/Translations';
 import { MessageBus } from '../../core/shared/message-bus/MessageBus';
 import { Payment } from '../../core/shared/payment/Payment';
 import { Validation } from '../../core/shared/validation/Validation';
@@ -258,7 +258,7 @@ export class ControlFrame {
   private _onPaymentFailure(errorData: ISubmitData | IOnCardinalValidated): Observable<never> {
     const { ErrorNumber, ErrorDescription } = errorData;
     const translator = new Translator(this._localStorage.getItem('locale'));
-    const translatedErrorMessage = translator.translate(Language.translations.PAYMENT_ERROR);
+    const translatedErrorMessage = translator.translate(PAYMENT_ERROR);
 
     this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.RESET_JWT });
     this._messageBus.publish(
@@ -295,12 +295,12 @@ export class ControlFrame {
           },
           true
         );
-        this._notification.success(Language.translations.PAYMENT_SUCCESS);
+        this._notification.success(PAYMENT_SUCCESS);
         this._validation.blockForm(FormState.COMPLETE);
       })
       .catch((error: any) => {
         this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
-        this._notification.error(Language.translations.PAYMENT_ERROR);
+        this._notification.error(PAYMENT_ERROR);
         this._validation.blockForm(FormState.AVAILABLE);
       })
       .finally(() => {

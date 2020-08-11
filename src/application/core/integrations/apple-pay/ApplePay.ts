@@ -1,6 +1,5 @@
 import { StTransport } from '../../services/st-transport/StTransport.class';
 import { DomMethods } from '../../shared/dom-methods/DomMethods';
-import { Language } from '../../models/constants/Language';
 import { MessageBus } from '../../shared/message-bus/MessageBus';
 import { Payment } from '../../shared/payment/Payment';
 import { StJwt } from '../../shared/stjwt/StJwt';
@@ -14,6 +13,14 @@ import { InterFrameCommunicator } from '../../../../shared/services/message-bus/
 import { Observable } from 'rxjs';
 import { IConfig } from '../../../../shared/model/config/IConfig';
 import { IApplePay } from '../../models/IApplePay';
+import {
+  APPLE_PAY_AMOUNT_AND_CURRENCY,
+  APPLE_PAY_NOT_LOGGED,
+  MERCHANT_VALIDATION_FAILURE,
+  PAYMENT_CANCELLED,
+  PAYMENT_ERROR,
+  PAYMENT_SUCCESS
+} from '../../models/constants/Translations';
 
 const ApplePaySession = (window as any).ApplePaySession;
 const ApplePayError = (window as any).ApplePayError;
@@ -277,7 +284,7 @@ export class ApplePay {
       this._paymentRequest.total.amount = this._stJwtInstance.mainamount;
       this._paymentRequest.currencyCode = this._stJwtInstance.currencyiso3a;
     } else {
-      this._notification.error(Language.translations.APPLE_PAY_AMOUNT_AND_CURRENCY);
+      this._notification.error(APPLE_PAY_AMOUNT_AND_CURRENCY);
     }
     return this._paymentRequest;
   }
@@ -345,7 +352,7 @@ export class ApplePay {
         })
         .catch(() => {
           this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
-          this._notification.error(Language.translations.PAYMENT_ERROR);
+          this._notification.error(PAYMENT_ERROR);
           this._session.completePayment({ status: this.getPaymentFailureStatus(), errors: [] });
           this._applePayButtonClickHandler();
           this._localStorage.setItem('completePayment', 'true');
@@ -360,7 +367,7 @@ export class ApplePay {
   private _onPaymentCanceled() {
     this._session.oncancel = (event: any) => {
       this._paymentCancelled = true;
-      this._notification.cancel(Language.translations.PAYMENT_CANCELLED);
+      this._notification.cancel(PAYMENT_CANCELLED);
       this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_CANCEL_CALLBACK }, true);
       this._messageBus.publish(
         {
@@ -400,7 +407,7 @@ export class ApplePay {
     } catch (error) {
       console.warn(error);
     }
-    this._notification.error(Language.translations.MERCHANT_VALIDATION_FAILURE);
+    this._notification.error(MERCHANT_VALIDATION_FAILURE);
   }
 
   private _subscribeStatusHandlers() {
@@ -450,12 +457,7 @@ export class ApplePay {
           GoogleAnalytics.sendGaData('event', 'Apple Pay', 'init', 'Apple Pay can make payments');
         });
       } else {
-        this._addButtonHandler(
-          ApplePay.APPLE_PAY_BUTTON_ID,
-          'click',
-          'error',
-          Language.translations.APPLE_PAY_NOT_LOGGED
-        );
+        this._addButtonHandler(ApplePay.APPLE_PAY_BUTTON_ID, 'click', 'error', APPLE_PAY_NOT_LOGGED);
       }
     }
   }
@@ -502,7 +504,7 @@ export class ApplePay {
   private _displayNotification(errorcode: string, errormessage: string) {
     if (errorcode === '0') {
       this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_SUCCESS_CALLBACK }, true);
-      this._notification.success(Language.translations.PAYMENT_SUCCESS);
+      this._notification.success(PAYMENT_SUCCESS);
     } else {
       this._notification.error(errormessage);
     }

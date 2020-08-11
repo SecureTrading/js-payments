@@ -3,7 +3,10 @@ import { FormState } from '../../models/constants/FormState';
 import { IMessageBusEvent } from '../../models/IMessageBusEvent';
 import { IResponseData } from '../../models/IResponseData';
 import { IStRequest } from '../../models/IStRequest';
-import { Language } from '../../models/constants/Language';
+import {
+  COMMUNICATION_ERROR_INVALID_RESPONSE,
+  COMMUNICATION_ERROR_INVALID_REQUEST
+} from '../../models/constants/Translations';
 import { MessageBus } from '../../shared/message-bus/MessageBus';
 import { StJwt } from '../../shared/stjwt/StJwt';
 import { Translator } from '../../shared/translator/Translator';
@@ -127,18 +130,18 @@ class StCodec {
   private static _createCommunicationError() {
     return {
       errorcode: '50003',
-      errormessage: Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE
+      errormessage: COMMUNICATION_ERROR_INVALID_RESPONSE
     } as IResponseData;
   }
 
   private static _handleInvalidResponse() {
     const validation = new Validation();
     StCodec.publishResponse(StCodec._createCommunicationError());
-    StCodec.getNotification().error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
+    StCodec.getNotification().error(COMMUNICATION_ERROR_INVALID_RESPONSE);
     validation.blockForm(FormState.AVAILABLE);
     StCodec.getMessageBus().publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
 
-    return new Error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE);
+    return new Error(COMMUNICATION_ERROR_INVALID_RESPONSE);
   }
 
   private static _isInvalidResponse(responseData: any) {
@@ -240,8 +243,8 @@ class StCodec {
       !requestObject.requesttypedescriptions.every(val => StCodec.SUPPORTED_REQUEST_TYPES.includes(val))
     ) {
       StCodec.getMessageBus().publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
-      StCodec.getNotification().error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST);
-      throw new Error(Language.translations.COMMUNICATION_ERROR_INVALID_REQUEST);
+      StCodec.getNotification().error(COMMUNICATION_ERROR_INVALID_REQUEST);
+      throw new Error(COMMUNICATION_ERROR_INVALID_REQUEST);
     }
     return JSON.stringify(this.buildRequestObject(requestObject));
   }

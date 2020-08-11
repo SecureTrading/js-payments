@@ -1,5 +1,5 @@
 import { SecurityCode } from './SecurityCode';
-import { Selectors } from '../../core/models/constants/Selectors';
+import { SECURITY_CODE_INPUT, SECURITY_CODE_LABEL, SECURITY_CODE_MESSAGE } from '../../core/models/constants/Selectors';
 import { Input } from '../../core/shared/input/Input';
 import { Utils } from '../../core/shared/utils/Utils';
 import { anyFunction, instance, mock, when } from 'ts-mockito';
@@ -242,9 +242,9 @@ function securityCodeFixture() {
   const inputElement = document.createElement('input');
   const messageElement = document.createElement('p');
 
-  labelElement.id = Selectors.SECURITY_CODE_LABEL;
-  inputElement.id = Selectors.SECURITY_CODE_INPUT;
-  messageElement.id = Selectors.SECURITY_CODE_MESSAGE;
+  labelElement.id = SECURITY_CODE_LABEL;
+  inputElement.id = SECURITY_CODE_INPUT;
+  messageElement.id = SECURITY_CODE_MESSAGE;
 
   document.body.appendChild(labelElement);
   document.body.appendChild(inputElement);

@@ -1,6 +1,28 @@
 import { BrowserLocalStorage } from '../../../../shared/services/storage/BrowserLocalStorage';
 import { Translator } from './Translator';
-import { Language } from '../../models/constants/Language';
+import {
+  LABEL_SECURITY_CODE,
+  PAYMENT_ERROR,
+  PAYMENT_SUCCESS,
+  VALIDATION_ERROR_PATTERN_MISMATCH,
+  VALIDATION_ERROR_FIELD_IS_REQUIRED,
+  VALIDATION_ERROR,
+  COMMUNICATION_ERROR_INVALID_RESPONSE,
+  VALIDATION_ERROR_VALUE_TOO_SHORT,
+  TARGET_ELEMENT_IS_NOT_SPECIFIED,
+  PROCESSING,
+  PAYMENT_CANCELLED,
+  PAY,
+  NOT_IMPLEMENTED_ERROR,
+  MERCHANT_VALIDATION_FAILURE,
+  LABEL_EXPIRATION_DATE,
+  LABEL_CARD_NUMBER,
+  FORM_IS_NOT_VALID,
+  COMMUNICATION_ERROR_TIMEOUT,
+  COMMUNICATION_ERROR_INVALID_REQUEST,
+  APPLE_PAY_NOT_LOGGED,
+  APPLE_PAY_AMOUNT_AND_CURRENCY
+} from '../../models/constants/Translations';
 import cy_GB from './../../../../translations/json/cy_GB.json';
 import da_DK from './../../../../translations/json/da_DK.json';
 import de_DE from './../../../../translations/json/de_DE.json';
@@ -13,6 +35,29 @@ import no_NO from './../../../../translations/json/no_NO.json';
 import sv_SE from './../../../../translations/json/sv_SE.json';
 import { Container } from 'typedi';
 
+const translationItems = {
+  LABEL_SECURITY_CODE,
+  PAYMENT_ERROR,
+  PAYMENT_SUCCESS,
+  VALIDATION_ERROR_PATTERN_MISMATCH,
+  VALIDATION_ERROR_FIELD_IS_REQUIRED,
+  VALIDATION_ERROR,
+  COMMUNICATION_ERROR_INVALID_RESPONSE,
+  VALIDATION_ERROR_VALUE_TOO_SHORT,
+  TARGET_ELEMENT_IS_NOT_SPECIFIED,
+  PROCESSING,
+  PAYMENT_CANCELLED,
+  PAY,
+  NOT_IMPLEMENTED_ERROR,
+  MERCHANT_VALIDATION_FAILURE,
+  LABEL_EXPIRATION_DATE,
+  LABEL_CARD_NUMBER,
+  FORM_IS_NOT_VALID,
+  COMMUNICATION_ERROR_TIMEOUT,
+  COMMUNICATION_ERROR_INVALID_REQUEST,
+  APPLE_PAY_NOT_LOGGED,
+  APPLE_PAY_AMOUNT_AND_CURRENCY
+};
 // given
 describe('translate()', () => {
   //then
@@ -41,7 +86,7 @@ describe('translate()', () => {
     let translations = [en_GB, cy_GB, da_DK, de_DE, en_US, es_ES, fr_FR, nl_NL, no_NO, sv_SE];
     for (let i in translations) {
       let translation: any = translations[i];
-      let language: any = Language.translations;
+      let language: any = translationItems;
       for (let key in language) {
         let text = language[key];
         // @TODO: looks like this test was not working, after changes it appeared that there is no translation for:

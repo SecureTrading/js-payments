@@ -28,7 +28,7 @@ describe('StTransport class', () => {
     retries: 3,
     retryTimeout: 20000
   };
-  const timeoutError: any = null; //Error(Language.translations.COMMUNICATION_ERROR_TIMEOUT);
+  const timeoutError: any = null;
   const resolvingPromise = (result: object) => {
     return new Promise(resolve => resolve(result));
   };
