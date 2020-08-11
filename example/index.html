@@ -81,6 +81,109 @@
         </fieldset>
 
         <fieldset class="st-form__fieldset">
+            <legend>Personal data:</legend>
+            <div class="st-form__section st-form__section--horizontal">
+                <div class="st-form__field">
+                    <label for="st-form-title" class="st-form__label">title:</label>
+                    <select id="st-form-title"
+                            class="st-form__input"
+                            placeholder="Title"
+                            autocomplete="title">
+                        <option value="Mr">Mr</option>
+                        <option value="Mrs">Mrs</option>
+                        <option value="Ms">Ms</option>
+                        <option value="Miss">Miss</option>
+                        <option value="Dr">Dr</option>
+                    </select>
+                </div>
+            </div>
+            <div class="st-form__section st-form__section--horizontal">
+                <div class="st-form__field">
+                    <label for="st-form-first-name" class="st-form__label">first name: </label>
+                    <input type="text"
+                           name="myBillFirstName"
+                           id="st-form-first-name"
+                           class="st-form__input"
+                           placeholder="John"
+                           data-st-name="billingfirstname"
+                           autocomplete="given-name"
+                    />
+                </div>
+
+                <div class="st-form__field">
+                    <label for="st-form-last-name" class="st-form__label">last name: </label>
+                    <input type="text"
+                           name="myBillLastName"
+                           id="st-form-last-name"
+                           class="st-form__input"
+                           placeholder="Doe"
+                           data-st-name="billinglastname"
+                           autocomplete="family-name"
+                    />
+                </div>
+            </div>
+            <div class="st-form__section st-form__section--horizontal">
+                <div class="st-form__field">
+                    <label for="st-form-title" class="st-form__label">date of birth:</label>
+                    <input type="date" name="myBillDateOfBirth"
+                           id="st-form-date-of-birth"
+                           class="st-form__input"
+                           placeholder="myBillDateOfBirth"
+                           data-st-name="billingdateofbirth"
+                           autocomplete="date"/>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="st-form__fieldset">
+            <legend>Contact data:</legend>
+            <div class="st-form__section st-form__section--horizontal">
+
+                <div class="st-form__field">
+                    <label for="st-form-email" class="st-form__label">e-mail: </label>
+                    <input type="email"
+                           name="myBillEmail"
+                           id="st-form-email"
+                           class="st-form__input"
+                           placeholder="test@mail.com"
+                           data-st-name="billingemail"
+                           autocomplete="email"
+                    />
+                </div>
+
+                <div class="st-form__field">
+                    <label for="st-form-phone" class="st-form__label">phone: </label>
+                    <input type="tel"
+                           name="myBillTel"
+                           id="st-form-phone"
+                           class="st-form__input"
+                           placeholder="+00 000 000 000"
+                           autocomplete="tel"
+                    />
+                </div>
+            </div>
+            <div class="st-form__section st-form__section--horizontal">
+                <div class="st-form__field">
+                    <label for="st-form-address1" class="st-form__label">street: </label>
+                    <input type="text"
+                           id="st-form-address1"
+                           class="st-form__input"
+                           placeholder="Park Str."
+                    />
+                </div>
+
+                <div class="st-form__field">
+                    <label for="st-form-address2" class="st-form__label">city: </label>
+                    <input type="tel"
+                           id="st-form-address2"
+                           class="st-form__input"
+                           placeholder="Richmond"
+                    />
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="st-form__fieldset">
             <legend>APM's:</legend>
             <div id="st-visa-checkout" class="st-form__group"></div>
             <div id="st-apple-pay" class="st-form__group"></div>
@@ -161,7 +264,7 @@
         });
     }
 
-    function updateJwtListener(st) {
+    function updateJwtListener(st, updatedJwt) {
       document.getElementById('example-form-amount').addEventListener('input', function() {
         st.updateJWT(updatedJwt);
       });
@@ -230,7 +333,7 @@
       st.Cybertonica().then(function(response) {
         console.error(response);
       });
-      updateJwtListener(st);
+      updateJwtListener(st, updatedJwt);
     }
 
     function getJwt(ST, data) {
