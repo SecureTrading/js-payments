@@ -130,6 +130,37 @@
         });
     }
 
+    var callbackCounter = 0;
+    var submitCallbackCounter = 0;
+    function displayCallbackCounter(id, text, tp) {
+      callbackCounter += 1;
+      var div = document.createElement('div');
+      if (id === 'submit-callback-counter') {
+        submitCallbackCounter += 1;
+        div.innerText = text + "Callback counter: " + submitCallbackCounter;
+      } else {
+        div.innerText = text + "Callback counter: " + callbackCounter;
+      }
+      div.setAttribute('id', id);
+      div.setAttribute(
+        'style',
+        'display: flex; justify-content: center; position: fixed; left: 0; height: 70px; width: 280px;right:0;color: white;padding: 0 40px;align-items: center;border-radius: 10px;font-family: Verdana;font-size: 20px;z-index:2'
+      );
+      div.style.backgroundColor = tp;
+      switch(tp) {
+        case 'blue':
+          div.style.top = '150px';
+          break;
+        default:
+          div.style.top = '250px';
+      }
+      var popup = document.getElementById('st-popup');
+      popup.appendChild(div);
+      setTimeout(function() {
+        popup.removeChild(div);
+      }, 5000);
+    }
+
     function displayPopup(id, text, tp) {
       if (!document.getElementById(id)) {
         var div = document.createElement('div');
@@ -163,16 +194,20 @@
         var stringified = JSON.stringify(data);
         var testVariable = 'This is what we have got after submit' + stringified;
         displayPopup('data-popup', 'Error code: ' + (!data || data.errorcode != '0' ? 'Error' : 'OK'), 'blue');
+        displayCallbackCounter('submit-callback-counter', 'submit', 'blue')
         console.error(testVariable);
       };
       stConfig.successCallback = function() {
         displayPopup('success-popup', 'This is success message', 'green');
+        displayCallbackCounter('success-callback-counter', 'success', 'green')
       };
       stConfig.errorCallback = function() {
         displayPopup('error-popup', 'This is error message', 'red');
+        displayCallbackCounter('error-callback-counter', 'error', 'red')
       };
       stConfig.cancelCallback = function() {
         displayPopup('cancel-popup', 'This is cancel message', '#ffc23a');
+        displayCallbackCounter('cancel-callback-counter', 'cancel', '#ffc23a')
       };
 
       var st = ST(stConfig);
