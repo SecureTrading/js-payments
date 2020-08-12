@@ -228,10 +228,9 @@
 
     function displayPopup(id, text, tp) {
       var popup = document.getElementById('st-popup');
-      if (document.getElementById(id)) {
-        return;
-      }
       var content = buildPopup(id, text, tp);
+      console.error(content);
+      console.error(popup);
       popup.appendChild(content);
       setTimeout(function() {
         popup.removeChild(content);
