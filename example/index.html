@@ -207,9 +207,6 @@
     }
 
     function buildPopup(id, text, tp) {
-      if (document.getElementById(id)) {
-        return;
-      }
       var popupStyling = 'display: flex; justify-content: center; position: fixed; height: 70px;right:0;color: white;padding: 0 50px;align-items: center;border-radius: 10px;font-family: Verdana;font-size: 20px;z-index:2';
       var div = document.createElement('div');
       div.innerText = text;
@@ -231,6 +228,9 @@
 
     function displayPopup(id, text, tp) {
       var popup = document.getElementById('st-popup');
+      if (document.getElementById(id)) {
+        return;
+      }
       var content = buildPopup(id, text, tp);
       popup.appendChild(content);
       setTimeout(function() {
