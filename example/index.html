@@ -157,7 +157,10 @@
     var inlineConfig = params.get('inlineConfig') ? JSON.parse(params.get('inlineConfig')) : '';
     var jwt = params.get('jwt') || '';
     var updatedJwt = params.get('updatedJwt') || 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4ODY5NTEzOS41NTgwOTc0LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiNTIwMDAwMDAwMDAwMTAwNSIsImV4cGlyeWRhdGUiOiIwMS8yMiJ9fQ.wAmn0JqsAfj7ZtsqbDadknWpPhUhJb7CPiQT8VqZ4hk';
-    var extraFunction = params.get('extraFunction');
+    var extraSubmitFunction = params.get('extraSubmitFunction');
+    var extraErrorFunction = params.get('extraErrorFunction');
+    var extraSuccessFunction = params.get('extraSuccessFunction');
+    var extraCancelFunction = params.get('extraCancelFunction');
 
     if (inlineConfig) {
       init(ST, inlineConfig);
@@ -229,8 +232,6 @@
     function displayPopup(id, text, tp) {
       var popup = document.getElementById('st-popup');
       var content = buildPopup(id, text, tp);
-      console.error(content);
-      console.error(popup);
       popup.appendChild(content);
       setTimeout(function() {
         popup.removeChild(content);
@@ -238,27 +239,35 @@
     }
 
     function setCallbacks(config) {
-      if (extraFunction) {
-        config.submitCallback = eval('(' + extraFunction + ')');
-      } else {
-        config.submitCallback = function(data) {
-          var stringified = JSON.stringify(data);
-          var testVariable = 'This is what we have got after submit' + stringified;
-          displayPopup('data-popup', 'Error code: ' + (!data || data.errorcode != '0' ? 'Error' : 'OK'), 'blue');
-          window.displayCallbackCounter('submit-callback-counter', 'submit', 'blue')
-          console.error(testVariable);
-        };
-      }
+      config.submitCallback = function(data) {
+        var stringified = JSON.stringify(data);
+        var testVariable = 'This is what we have got after submit' + stringified;
+        displayPopup('data-popup', 'Error code: ' + (!data || data.errorcode != '0' ? 'Error' : 'OK'), 'blue');
+        if (extraSubmitFunction) {
+          eval('(' + extraSubmitFunction + ')');
+        }
+        window.displayCallbackCounter('submit-callback-counter', 'submit', 'blue')
+        console.error(testVariable);
+      };
       config.successCallback = function() {
         displayPopup('success-popup', 'This is success message', 'green');
+        if (extraSuccessFunction) {
+          eval('(' + extraSuccessFunction + ')')
+        }
         window.displayCallbackCounter('success-callback-counter', 'success', 'green')
       };
       config.errorCallback = function() {
         displayPopup('error-popup', 'This is error message', 'red');
+        if (extraErrorFunction) {
+          eval('(' + extraErrorFunction + ')');
+        }
         window.displayCallbackCounter('error-callback-counter', 'error', 'red')
       };
       config.cancelCallback = function() {
         displayPopup('cancel-popup', 'This is cancel message', '#ffc23a');
+        if (extraCancelFunction) {
+          eval('(' + extraCancelFunction + ')');
+        }
         window.displayCallbackCounter('cancel-callback-counter', 'cancel', '#ffc23a')
       };
     }
