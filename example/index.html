@@ -163,31 +163,31 @@
     var extraCancelFunction = params.get('extraCancelFunction');
 
     if (inlineConfig) {
-      init(ST, inlineConfig);
+      init(inlineConfig);
     } else {
       window
         .fetch('<%= WEBSERVICES_URL %>/config.json')
-
         .then(function(response) {
           if (response.status !== 200) {
             return Promise.reject('Configuration has not been set !');
           }
+          console.error(response);
           return response.json();
         })
         .then(function(data) {
           try {
-            getJwt(ST, data);
+            getJwt(data);
           } catch (e) {
             console.error(e);
           }
         })
         .catch(function() {
-          getDefaultConfig(ST);
+          getDefaultConfig();
         });
     }
 
 
-    function getDefaultConfig(ST) {
+    function getDefaultConfig() {
       fetch('./../json/config.json')
         .then(function(response) {
           if (response.status !== 200) {
@@ -197,7 +197,8 @@
         })
         .then(function(data) {
           if (data) {
-            getJwt(ST, data);
+            console.error('gdc', data);
+            getJwt(data);
           }
         });
     }
@@ -246,33 +247,34 @@
         if (extraSubmitFunction) {
           eval('(' + extraSubmitFunction + ')');
         }
-        window.displayCallbackCounter('submit-callback-counter', 'submit', 'blue')
+        window.displayCallbackCounter('submit-callback-counter', 'submit', 'blue');
         console.error(testVariable);
       };
       config.successCallback = function() {
         displayPopup('success-popup', 'This is success message', 'green');
         if (extraSuccessFunction) {
-          eval('(' + extraSuccessFunction + ')')
+          eval('(' + extraSuccessFunction + ')');
         }
-        window.displayCallbackCounter('success-callback-counter', 'success', 'green')
+        window.displayCallbackCounter('success-callback-counter', 'success', 'green');
       };
       config.errorCallback = function() {
         displayPopup('error-popup', 'This is error message', 'red');
         if (extraErrorFunction) {
           eval('(' + extraErrorFunction + ')');
         }
-        window.displayCallbackCounter('error-callback-counter', 'error', 'red')
+        window.displayCallbackCounter('error-callback-counter', 'error', 'red');
       };
       config.cancelCallback = function() {
         displayPopup('cancel-popup', 'This is cancel message', '#ffc23a');
         if (extraCancelFunction) {
           eval('(' + extraCancelFunction + ')');
         }
-        window.displayCallbackCounter('cancel-callback-counter', 'cancel', '#ffc23a')
+        window.displayCallbackCounter('cancel-callback-counter', 'cancel', '#ffc23a');
       };
     }
 
-    function init(ST, config) {
+    function init(config) {
+      console.error(ST, config);
       setCallbacks(config);
       var st = ST(config);
       st.Components(config.components);
@@ -284,24 +286,23 @@
       updateJwtListener(st, updatedJwt);
     }
 
-    function getJwt(ST, data) {
+    function getJwt(data) {
       var stConfig = data;
+      console.error(jwt);
       if (jwt) {
         stConfig.jwt = jwt;
-        init(ST, stConfig);
+        init(stConfig);
       }
+      console.error(window.configJWT);
 
       window.configJWT('./../json/jwtdata.json').then(function(generatedJwt) {
         stConfig.jwt = generatedJwt;
-        init(ST, stConfig);
+        init(stConfig);
       }).catch(function() {
-        init(ST, stConfig);
+        init(stConfig);
       });
     }
-  })
-  ();
+  })();
 </script>
 </body>
 </html>
-
-

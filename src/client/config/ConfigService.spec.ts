@@ -3,7 +3,7 @@ import { ConfigValidator } from './ConfigValidator';
 import { anything, instance, mock, when } from 'ts-mockito';
 import { ConfigService } from './ConfigService';
 import { IConfig } from '../../shared/model/config/IConfig';
-import { ValidationError } from '@hapi/joi';
+import { ValidationError } from 'joi';
 import { MessageBus } from '../../application/core/shared/MessageBus';
 import { MessageBusMock } from '../../testing/mocks/MessageBusMock';
 import { PUBLIC_EVENTS } from '../../application/core/shared/EventTypes';
