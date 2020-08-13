@@ -15,7 +15,13 @@
   (function() {
     var params = new URLSearchParams(window.location.search.substring(1));
     var inlineConfig = params.get('inlineConfig') ? params.get('inlineConfig') : '';
-    var url = `./index.html?inlineConfig=${inlineConfig}`;
+    var formIdValue = params.get('formId');
+    var noSubmitButton = params.get('noSubmitButton');
+    var additionalButtonValue = params.get('additionalButton');
+    var jwt = params.get('jwt') || '';
+    var updatedJwt = params.get('updatedJwt') || 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhbTAzMTAuYXV0b2FwaSIsImlhdCI6MTU4ODY5NTEzOS41NTgwOTc0LCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiYWNjb3VudHR5cGVkZXNjcmlwdGlvbiI6IkVDT00iLCJjdXJyZW5jeWlzbzNhIjoiR0JQIiwic2l0ZXJlZmVyZW5jZSI6InRlc3RfamFtZXMzODY0MSIsImxvY2FsZSI6ImVuX0dCIiwicGFuIjoiNTIwMDAwMDAwMDAwMTAwNSIsImV4cGlyeWRhdGUiOiIwMS8yMiJ9fQ.wAmn0JqsAfj7ZtsqbDadknWpPhUhJb7CPiQT8VqZ4hk';
+    var extraFunction = params.get('extraFunction');
+    var url = `./index.html?inlineConfig=${inlineConfig}&formId=${formIdValue}&noSubmitButton=${noSubmitButton}&additionalButton=${additionalButtonValue}&jwt=${jwt}&updatedJwt=${updatedJwt}&extraFunction=${extraFunction}`;
     var iframe = document.createElement('iframe');
     iframe.setAttribute('src', url);
     iframe.setAttribute('class', 'st-parent-frame');
