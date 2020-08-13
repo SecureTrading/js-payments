@@ -25,7 +25,7 @@
     var extraSuccessFunction = params.get('extraSuccessFunction');
     var extraCancelFunction = params.get('extraCancelFunction');
 
-    var url = `./index.html?inlineConfig=${inlineConfig}&formId=${formIdValue}&noSubmitButton=${noSubmitButton}&additionalButton=${additionalButtonValue}&jwt=${jwt}&updatedJwt=${updatedJwt}&extraSubmitFunction=${extraSubmitFunction}&extraErrorFunction=${extraErrorFunction}&extraSuccessFunction=${extraSuccessFunction}&extraCancelFunction=${extraCancelFunction}`;
+    var url = `./index.html?inlineConfig=${inlineConfig}&formId=${formIdValue? formIdValue : 'st-form'}&noSubmitButton=${noSubmitButton}&additionalButton=${additionalButtonValue}&jwt=${jwt}&updatedJwt=${updatedJwt}&extraSubmitFunction=${extraSubmitFunction}&extraErrorFunction=${extraErrorFunction}&extraSuccessFunction=${extraSuccessFunction}&extraCancelFunction=${extraCancelFunction}`;
     var iframe = document.createElement('iframe');
     iframe.setAttribute('src', url);
     iframe.setAttribute('class', 'st-parent-frame');
