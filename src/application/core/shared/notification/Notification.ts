@@ -42,8 +42,9 @@ export class Notification {
 
   private _applyStyles(): void {
     this._configProvider.getConfig$().subscribe((config: IConfig) => {
-      const styles = Object.keys(config.styles.notificationFrame).map((item: string) => {
-        return { [item]: config.styles.notificationFrame[item] };
+      const definedStyles = config.styles.notificationFrame || [];
+      const styles = Object.keys(definedStyles).map((item: string) => {
+        return { [item]: definedStyles[item] };
       });
       const styler: Styler = new Styler(this._getAllowedStyles(), styles);
     });
