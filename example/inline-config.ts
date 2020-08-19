@@ -1,4 +1,4 @@
-(() => {
+window.addEventListener('load', () => {
   const additionalButtonId: string = 'additional-button';
   const submitButtonId: string = 'merchant-submit-button';
   const formId: string = 'st-form';
@@ -17,4 +17,4 @@
   if (additionalButtonValue === 'true') {
     document.getElementById(additionalButtonId).removeAttribute('hidden');
   }
-})();
+});

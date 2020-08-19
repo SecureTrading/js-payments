@@ -57,14 +57,11 @@ module.exports = {
       './example/iframe.ts'
     ],
     inlineConfig: [
-      './src/shared/imports/polyfills',
       './example/inline-config.ts'
     ],
     counter: [
-      './src/shared/imports/polyfills',
       './example/counter.ts'
-    ],
-    polyfills: './src/shared/imports/polyfills',
+    ]
   },
   output: {
     filename: '[name].js',

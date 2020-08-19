@@ -151,8 +151,8 @@
 <script type="text/javascript" src="<%= WEBSERVICES_URL %>/inlineConfig.js"></script>
 <script type="text/javascript" src="<%= WEBSERVICES_URL %>/st.js"></script>
 <script type="text/javascript">
-  (function() {
-    var ST = SecureTrading;
+  var ST = SecureTrading;
+  window.addEventListener('load', function() {
     var params = new URLSearchParams(window.location.search.substring(1));
     var inlineConfig = params.get('inlineConfig') ? JSON.parse(params.get('inlineConfig')) : '';
     var jwt = params.get('jwt') || '';
@@ -302,7 +302,7 @@
         init(stConfig);
       });
     }
-  })();
+  });
 </script>
 </body>
 </html>
