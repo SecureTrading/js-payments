@@ -16,7 +16,7 @@ import { Container } from 'typedi';
 import { NotificationService } from '../../../../client/notification/NotificationService';
 import { Frame } from '../../shared/frame/Frame';
 
-class StCodec {
+export class StCodec {
   public static CONTENT_TYPE = 'application/json';
   public static VERSION = '1.00';
   public static VERSION_INFO = `STJS::N/A::${version}::N/A`;
@@ -274,5 +274,3 @@ class StCodec {
     return promise;
   }
 }
-
-export { StCodec, IStRequest };
