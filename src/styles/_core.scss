@@ -74,12 +74,6 @@ input:-webkit-autofill.error-field {
   border-radius: 4px;
 }
 
-.st-card-number {
-  &__wrapper {
-    min-width: 225px;
-  }
-}
-
 .st-card-number,
 .st-expiration-date,
 .st-security-code {
@@ -89,6 +83,7 @@ input:-webkit-autofill.error-field {
     width: 100%;
     box-sizing: border-box;
     margin-right: 10px;
+    min-width: 225px;
   }
 
   &--lined-up {
