@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.5.0
+
+### Fixed
+-
+-
+-
+
 ## 2.4.0
 
 ### Fixed
