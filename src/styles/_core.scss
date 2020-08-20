@@ -98,7 +98,7 @@ input:-webkit-autofill.error-field {
   &__label.lined-up {
     max-width: 110px;
     width: 100%;
-    word-wrap: break-word;
+    word-break: break-all;
     text-align: right;
   }
 }
