@@ -1,8 +1,9 @@
 import { Utils } from '../../shared/utils/Utils';
-import { IStRequest, StCodec } from '../st-codec/StCodec.class';
+import { StCodec } from '../st-codec/StCodec.class';
 import { Service } from 'typedi';
 import { ConfigProvider } from '../../../../shared/services/config-provider/ConfigProvider';
 import { IConfig } from '../../../../shared/model/config/IConfig';
+import { IStRequest } from '../../models/IStRequest';
 
 /**
  * Establishes connection with ST, defines client.
