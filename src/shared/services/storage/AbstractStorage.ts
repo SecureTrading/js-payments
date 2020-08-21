@@ -1,12 +1,12 @@
-import { IStorage } from '../../../application/core/models/IStorage';
+import { IStorage } from './IStorage';
 import { fromEventPattern, Observable, Subscribable } from 'rxjs';
-import { map, shareReplay, startWith, takeUntil } from 'rxjs/operators';
+import { map, shareReplay, startWith } from 'rxjs/operators';
 import { InterFrameCommunicator } from '../message-bus/InterFrameCommunicator';
 import { ofType } from '../message-bus/operators/ofType';
 import { FramesHub } from '../message-bus/FramesHub';
-import { Selectors } from '../../../application/core/shared/Selectors';
 import { IMessageBusEvent } from '../../../application/core/models/IMessageBusEvent';
 import { FrameIdentifier } from '../message-bus/FrameIdentifier';
+import { CONTROL_FRAME_IFRAME, MERCHANT_PARENT_FRAME } from '../../../application/core/models/constants/Selectors';
 
 export abstract class AbstractStorage implements IStorage, Subscribable<any> {
   private static readonly STORAGE_EVENT = 'storage';
@@ -80,11 +80,11 @@ export abstract class AbstractStorage implements IStorage, Subscribable<any> {
     };
 
     if (!this.identifier.isParentFrame()) {
-      return this.communicator.send(event, Selectors.MERCHANT_PARENT_FRAME);
+      return this.communicator.send(event, MERCHANT_PARENT_FRAME);
     }
 
     this.framesHub
-      .waitForFrame(Selectors.CONTROL_FRAME_IFRAME)
+      .waitForFrame(CONTROL_FRAME_IFRAME)
       .subscribe(controlFrame => this.communicator.send(event, controlFrame));
   }
 }

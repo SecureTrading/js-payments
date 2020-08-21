@@ -5,12 +5,12 @@ import { PaymentEvents } from '../../models/constants/PaymentEvents';
 import { IMessageBusEvent } from '../../models/IMessageBusEvent';
 import { IOnCardinalValidated } from '../../models/IOnCardinalValidated';
 import { IThreeDQueryResponse } from '../../models/IThreeDQueryResponse';
-import { StCodec } from '../../services/StCodec.class';
-import { MessageBus } from '../../shared/MessageBus';
-import { GoogleAnalytics } from '../GoogleAnalytics';
+import { StCodec } from '../../services/st-codec/StCodec.class';
+import { MessageBus } from '../../shared/message-bus/MessageBus';
+import { GoogleAnalytics } from '../google-analytics/GoogleAnalytics';
 import { Service } from 'typedi';
 import { FramesHub } from '../../../../shared/services/message-bus/FramesHub';
-import { NotificationService } from '../../../../client/classes/notification/NotificationService';
+import { NotificationService } from '../../../../client/notification/NotificationService';
 import { IConfig } from '../../../../shared/model/config/IConfig';
 import { CardinalCommerceTokensProvider } from './CardinalCommerceTokensProvider';
 import { filter, first, map, mapTo, shareReplay, switchMap, takeUntil, tap } from 'rxjs/operators';
@@ -20,10 +20,10 @@ import { ICardinal } from './ICardinal';
 import { ofType } from '../../../../shared/services/message-bus/operators/ofType';
 import { ICard } from '../../models/ICard';
 import { IMerchantData } from '../../models/IMerchantData';
-import { StTransport } from '../../services/StTransport.class';
+import { StTransport } from '../../services/st-transport/StTransport.class';
 import { CardinalProvider } from './CardinalProvider';
 import { IAuthorizePaymentResponse } from '../../models/IAuthorizePaymentResponse';
-import { Language } from '../../shared/Language';
+import { COMMUNICATION_ERROR_INVALID_RESPONSE } from '../../models/constants/Translations';
 
 @Service()
 export class CardinalCommerce {
@@ -49,7 +49,7 @@ export class CardinalCommerce {
 
     this.cardinalValidated$
       .pipe(filter(data => data[0].ActionCode === 'ERROR'))
-      .subscribe(() => this.notification.error(Language.translations.COMMUNICATION_ERROR_INVALID_RESPONSE));
+      .subscribe(() => this.notification.error(COMMUNICATION_ERROR_INVALID_RESPONSE));
   }
 
   init(config: IConfig): Observable<ICardinal> {

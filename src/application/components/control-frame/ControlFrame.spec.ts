@@ -1,24 +1,24 @@
 import { ControlFrame } from './ControlFrame';
-import { StCodec } from '../../core/services/StCodec.class';
+import { StCodec } from '../../core/services/st-codec/StCodec.class';
 import { IFormFieldState } from '../../core/models/IFormFieldState';
-import { MessageBus } from '../../core/shared/MessageBus';
+import { MessageBus } from '../../core/shared/message-bus/MessageBus';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
-import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config-provider/ConfigProvider';
 import { mock, instance as mockInstance, when, anyString, anything } from 'ts-mockito';
-import { NotificationService } from '../../../client/classes/notification/NotificationService';
-import { Cybertonica } from '../../core/integrations/Cybertonica';
+import { NotificationService } from '../../../client/notification/NotificationService';
+import { Cybertonica } from '../../core/integrations/cybertonica/Cybertonica';
 import { CardinalCommerce } from '../../core/integrations/cardinal-commerce/CardinalCommerce';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { EMPTY, of } from 'rxjs';
 import { Store } from '../../core/store/Store';
-import { ConfigService } from '../../../client/config/ConfigService';
+import { ConfigService } from '../../../shared/services/config-service/ConfigService';
 import { Frame } from '../../core/shared/frame/Frame';
 import { MessageBusMock } from '../../../testing/mocks/MessageBusMock';
 import { IStyles } from '../../../shared/model/config/IStyles';
 import { frameAllowedStyles } from '../../core/shared/frame/frame-const';
 
-jest.mock('../../../../src/application/core/shared/Payment');
+jest.mock('./../../core/shared/payment/Payment');
 
 // given
 describe('ControlFrame', () => {
