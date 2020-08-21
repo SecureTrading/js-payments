@@ -1,25 +1,24 @@
 import { FormState } from '../../core/models/constants/FormState';
 import { IFormFieldState } from '../../core/models/IFormFieldState';
 import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
-import { Formatter } from '../../core/shared/Formatter';
+import { Formatter } from '../../core/shared/formatter/Formatter';
 import { Input } from '../../core/shared/input/Input';
-import { Language } from '../../core/shared/Language';
-import { MessageBus } from '../../core/shared/MessageBus';
-import { Selectors } from '../../core/shared/Selectors';
-import { Utils } from '../../core/shared/Utils';
-import { Validation } from '../../core/shared/Validation';
+import { MessageBus } from '../../core/shared/message-bus/MessageBus';
+import { Utils } from '../../core/shared/utils/Utils';
+import { Validation } from '../../core/shared/validation/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { Service } from 'typedi';
-import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config-provider/ConfigProvider';
 import { IconFactory } from '../../core/services/icon/IconFactory';
 import { IConfig } from '../../../shared/model/config/IConfig';
-import { Styler } from '../../core/shared/Styler';
+import { Styler } from '../../core/shared/styler/Styler';
 import { Frame } from '../../core/shared/frame/Frame';
+import { LABEL_CARD_NUMBER } from '../../core/models/constants/Translations';
+import { CARD_NUMBER_INPUT, CARD_NUMBER_LABEL, CARD_NUMBER_MESSAGE } from '../../core/models/constants/Selectors';
 
 @Service()
 export class CardNumber extends Input {
-  public static ifFieldExists = (): HTMLInputElement =>
-    document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
+  public static ifFieldExists = (): HTMLInputElement => document.getElementById(CARD_NUMBER_INPUT) as HTMLInputElement;
 
   private static DISABLED_ATTRIBUTE: string = 'disabled';
   private static DISABLED_CLASS: string = 'st-input--disabled';
@@ -35,7 +34,7 @@ export class CardNumber extends Input {
   private _cardNumberLength: number;
   private _cardNumberValue: string;
   private _isCardNumberValid: boolean;
-  private _fieldInstance: HTMLInputElement = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
+  private _fieldInstance: HTMLInputElement = document.getElementById(CARD_NUMBER_INPUT) as HTMLInputElement;
   private readonly _cardNumberField: HTMLInputElement;
 
   constructor(
@@ -45,8 +44,8 @@ export class CardNumber extends Input {
     private frame: Frame,
     private messageBus: MessageBus
   ) {
-    super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE, Selectors.CARD_NUMBER_LABEL);
-    this._cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
+    super(CARD_NUMBER_INPUT, CARD_NUMBER_MESSAGE, CARD_NUMBER_LABEL);
+    this._cardNumberField = document.getElementById(CARD_NUMBER_INPUT) as HTMLInputElement;
     this.validation = new Validation();
     this._isCardNumberValid = true;
     this._cardNumberLength = CardNumber.STANDARD_CARD_LENGTH;
@@ -77,7 +76,7 @@ export class CardNumber extends Input {
   }
 
   protected getLabel(): string {
-    return Language.translations.LABEL_CARD_NUMBER;
+    return LABEL_CARD_NUMBER;
   }
 
   protected onBlur() {
@@ -202,7 +201,7 @@ export class CardNumber extends Input {
     this._getMaxLengthOfCardNumber();
     this._disableSecurityCodeField(this._inputElement.value);
     this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._cardNumberLength);
-    const { formatted, nonformatted } = this._formatter.number(this._inputElement.value, Selectors.CARD_NUMBER_INPUT);
+    const { formatted, nonformatted } = this._formatter.number(this._inputElement.value, CARD_NUMBER_INPUT);
     this._inputElement.value = formatted;
     this._cardNumberFormatted = formatted;
     this._cardNumberValue = nonformatted;

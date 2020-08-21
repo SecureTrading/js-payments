@@ -1,13 +1,18 @@
 import { FormState } from '../../core/models/constants/FormState';
 import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
-import { Formatter } from '../../core/shared/Formatter';
+import { Formatter } from '../../core/shared/formatter/Formatter';
 import { Input } from '../../core/shared/input/Input';
-import { Language } from '../../core/shared/Language';
-import { MessageBus } from '../../core/shared/MessageBus';
-import { Selectors } from '../../core/shared/Selectors';
-import { Validation } from '../../core/shared/Validation';
+import { LABEL_SECURITY_CODE } from '../../core/models/constants/Translations';
+import { MessageBus } from '../../core/shared/message-bus/MessageBus';
+import {
+  SECURITY_CODE_INPUT,
+  SECURITY_CODE_INPUT_SELECTOR,
+  SECURITY_CODE_LABEL,
+  SECURITY_CODE_MESSAGE
+} from '../../core/models/constants/Selectors';
+import { Validation } from '../../core/shared/validation/Validation';
 import { Service } from 'typedi';
-import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config-provider/ConfigProvider';
 import { filter, map, startWith, switchMap, tap } from 'rxjs/operators';
 import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { IFormFieldState } from '../../core/models/IFormFieldState';
@@ -19,13 +24,13 @@ import { DefaultPlaceholders } from '../../core/models/constants/config-resolver
 import { LONG_CVC, SHORT_CVC } from '../../core/models/constants/SecurityCode';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
-import { Styler } from '../../core/shared/Styler';
+import { Styler } from '../../core/shared/styler/Styler';
 import { Frame } from '../../core/shared/frame/Frame';
 
 @Service()
 export class SecurityCode extends Input {
   public static ifFieldExists = (): HTMLInputElement =>
-    document.getElementById(Selectors.SECURITY_CODE_INPUT) as HTMLInputElement;
+    document.getElementById(SECURITY_CODE_INPUT) as HTMLInputElement;
   private static BLOCK_CVV_ATTRIBUTE: string = 'block-cvv';
   private static BLOCK_CVV_VALUE: string = 'true';
   private static CLEAR_VALUE: string = '';
@@ -47,9 +52,9 @@ export class SecurityCode extends Input {
     private messageBus: MessageBus,
     private frame: Frame
   ) {
-    super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
+    super(SECURITY_CODE_INPUT, SECURITY_CODE_MESSAGE, SECURITY_CODE_LABEL);
     this._validation = new Validation();
-    this._securityCodeWrapper = document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR) as HTMLElement;
+    this._securityCodeWrapper = document.getElementById(SECURITY_CODE_INPUT_SELECTOR) as HTMLElement;
     this._securityCodeLength = SHORT_CVC;
     this.placeholder = this._getPlaceholder(this._securityCodeLength);
     this._configProvider.getConfig$().subscribe((config: IConfig) => {
@@ -134,7 +139,7 @@ export class SecurityCode extends Input {
   }
 
   public getLabel(): string {
-    return Language.translations.LABEL_SECURITY_CODE;
+    return LABEL_SECURITY_CODE;
   }
 
   protected onBlur(): void {
@@ -171,7 +176,7 @@ export class SecurityCode extends Input {
     this._inputElement.value = this._formatter.code(
       this._inputElement.value,
       this._securityCodeLength,
-      Selectors.SECURITY_CODE_INPUT
+      SECURITY_CODE_INPUT
     );
   }
 

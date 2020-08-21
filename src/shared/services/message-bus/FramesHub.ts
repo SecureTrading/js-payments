@@ -2,12 +2,12 @@ import { Service } from 'typedi';
 import { InterFrameCommunicator } from './InterFrameCommunicator';
 import { BehaviorSubject, from, Observable, of, Subject } from 'rxjs';
 import { ofType } from './operators/ofType';
-import { distinctUntilChanged, filter, first, map, mapTo, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
+import { distinctUntilChanged, filter, first, map, mapTo, withLatestFrom } from 'rxjs/operators';
 import { IMessageBusEvent } from '../../../application/core/models/IMessageBusEvent';
-import { Selectors } from '../../../application/core/shared/Selectors';
+import { MERCHANT_PARENT_FRAME } from '../../../application/core/models/constants/Selectors';
 import { FrameIdentifier } from './FrameIdentifier';
-import { ArrayUtils } from '../../../application/core/shared/utils/ArrayUtils';
-import { PUBLIC_EVENTS } from '../../../application/core/shared/EventTypes';
+import { ArrayUtils } from '../../../application/core/shared/array-utils/ArrayUtils';
+import { PUBLIC_EVENTS } from '../../../application/core/models/constants/EventTypes';
 
 @Service()
 export class FramesHub {
@@ -55,11 +55,11 @@ export class FramesHub {
 
   public notifyReadyState(): void {
     const frameName = this.identifier.getFrameName();
-    if (frameName === Selectors.MERCHANT_PARENT_FRAME) {
+    if (frameName === MERCHANT_PARENT_FRAME) {
       return;
     }
 
-    this.communicator.send({ type: FramesHub.FRAME_READY_EVENT, data: frameName }, Selectors.MERCHANT_PARENT_FRAME);
+    this.communicator.send({ type: FramesHub.FRAME_READY_EVENT, data: frameName }, MERCHANT_PARENT_FRAME);
   }
 
   public getParentFrame(): Window {
@@ -75,9 +75,7 @@ export class FramesHub {
       return of([]);
     }
 
-    return from(
-      this.communicator.query<string[]>({ type: FramesHub.GET_FRAMES_EVENT }, Selectors.MERCHANT_PARENT_FRAME)
-    );
+    return from(this.communicator.query<string[]>({ type: FramesHub.GET_FRAMES_EVENT }, MERCHANT_PARENT_FRAME));
   }
 
   private onFrameReady(newFrame: string, activeFrames: string[]): void {

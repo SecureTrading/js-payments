@@ -66,6 +66,6 @@ typings/
 # Generated files folder
 dist/
 
-# config file
+# config-provider file
 example/json/config.json
 example/json/jwtdata.json

@@ -1,5 +1,5 @@
 import JwtDecode from 'jwt-decode';
-import { StCodec } from '../../core/services/StCodec.class';
+import { StCodec } from '../../core/services/st-codec/StCodec.class';
 import { FormFieldsDetails } from '../../core/models/constants/FormFieldsDetails';
 import { FormFieldsValidity } from '../../core/models/constants/FormFieldsValidity';
 import { FormState } from '../../core/models/constants/FormState';
@@ -12,34 +12,34 @@ import { IMerchantData } from '../../core/models/IMerchantData';
 import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
 import { IResponseData } from '../../core/models/IResponseData';
 import { ISubmitData } from '../../core/models/ISubmitData';
-import { Language } from '../../core/shared/Language';
-import { MessageBus } from '../../core/shared/MessageBus';
-import { Payment } from '../../core/shared/Payment';
-import { Validation } from '../../core/shared/Validation';
+import { PAYMENT_SUCCESS, PAYMENT_ERROR } from '../../core/models/constants/Translations';
+import { MessageBus } from '../../core/shared/message-bus/MessageBus';
+import { Payment } from '../../core/shared/payment/Payment';
+import { Validation } from '../../core/shared/validation/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 import { Service } from 'typedi';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
-import { NotificationService } from '../../../client/classes/notification/NotificationService';
-import { Cybertonica } from '../../core/integrations/Cybertonica';
+import { NotificationService } from '../../../client/notification/NotificationService';
+import { Cybertonica } from '../../core/integrations/cybertonica/Cybertonica';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { CardinalCommerce } from '../../core/integrations/cardinal-commerce/CardinalCommerce';
 import { ICardinalCommerceTokens } from '../../core/integrations/cardinal-commerce/ICardinalCommerceTokens';
 import { defer, EMPTY, from, iif, Observable, of } from 'rxjs';
 import { catchError, filter, map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { IAuthorizePaymentResponse } from '../../core/models/IAuthorizePaymentResponse';
-import { StJwt } from '../../core/shared/StJwt';
-import { Translator } from '../../core/shared/Translator';
+import { StJwt } from '../../core/shared/stjwt/StJwt';
+import { Translator } from '../../core/shared/translator/Translator';
 import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { IOnCardinalValidated } from '../../core/models/IOnCardinalValidated';
 import { IThreeDInitResponse } from '../../core/models/IThreeDInitResponse';
 import { Store } from '../../core/store/Store';
-import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config-provider/ConfigProvider';
 import { UPDATE_CONFIG } from '../../core/store/reducers/config/ConfigActions';
-import { PUBLIC_EVENTS } from '../../core/shared/EventTypes';
-import { ConfigService } from '../../../client/config/ConfigService';
+import { PUBLIC_EVENTS } from '../../core/models/constants/EventTypes';
+import { ConfigService } from '../../../shared/services/config-service/ConfigService';
 import { Frame } from '../../core/shared/frame/Frame';
-import { Styler } from '../../core/shared/Styler';
+import { Styler } from '../../core/shared/styler/Styler';
 
 @Service()
 export class ControlFrame {
@@ -258,7 +258,7 @@ export class ControlFrame {
   private _onPaymentFailure(errorData: ISubmitData | IOnCardinalValidated): Observable<never> {
     const { ErrorNumber, ErrorDescription } = errorData;
     const translator = new Translator(this._localStorage.getItem('locale'));
-    const translatedErrorMessage = translator.translate(Language.translations.PAYMENT_ERROR);
+    const translatedErrorMessage = translator.translate(PAYMENT_ERROR);
 
     this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.RESET_JWT });
     this._messageBus.publish(
@@ -295,12 +295,12 @@ export class ControlFrame {
           },
           true
         );
-        this._notification.success(Language.translations.PAYMENT_SUCCESS);
+        this._notification.success(PAYMENT_SUCCESS);
         this._validation.blockForm(FormState.COMPLETE);
       })
       .catch((error: any) => {
         this._messageBus.publish({ type: MessageBus.EVENTS_PUBLIC.CALL_MERCHANT_ERROR_CALLBACK }, true);
-        this._notification.error(Language.translations.PAYMENT_ERROR);
+        this._notification.error(PAYMENT_ERROR);
         this._validation.blockForm(FormState.AVAILABLE);
       })
       .finally(() => {

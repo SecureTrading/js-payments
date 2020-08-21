@@ -1,6 +1,6 @@
 import { IAllowedStyles } from '../../models/IAllowedStyles';
 
-const frameAllowedStyles: IAllowedStyles = {
+export const frameAllowedStyles: IAllowedStyles = {
   'background-color-body': { property: 'background-color', selector: 'body' },
   'color-body': { property: 'color', selector: 'body' },
   'font-size-body': { property: 'font-size', selector: 'body' },
@@ -8,5 +8,3 @@ const frameAllowedStyles: IAllowedStyles = {
   'space-inset-body': { property: 'padding', selector: 'body' },
   'space-outset-body': { property: 'margin', selector: 'body' }
 };
-
-export { frameAllowedStyles };
