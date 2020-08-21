@@ -36,15 +36,15 @@ import { Subject, Subscription } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { switchMap } from 'rxjs/operators';
 import { from } from 'rxjs';
-import { FrameIdentifier } from '../shared/services/message-bus/FrameIdentifier';
 import { ConfigProvider } from '../shared/services/config/ConfigProvider';
 import { PUBLIC_EVENTS } from '../application/core/shared/EventTypes';
 import { IframeFactory } from './classes/element/IframeFactory';
 import { IMessageBusEvent } from '../application/core/models/IMessageBusEvent';
 import { Frame } from '../application/core/shared/frame/Frame';
+import { ClientBootstrap } from './classes/client-bootstrap/ClientBootstrap';
 
 @Service()
-class ST {
+export class ST {
   private static DEBOUNCE_JWT_VALUE: number = 900;
   private static JWT_NOT_SPECIFIED_MESSAGE: string = 'Jwt has not been specified';
   private static LOCALE_STORAGE: string = 'locale';
@@ -387,11 +387,5 @@ class ST {
 }
 
 export default (config: IConfig) => {
-  Container.get(FrameIdentifier).setFrameName(Selectors.MERCHANT_PARENT_FRAME);
-
-  const st = Container.get(ST);
-
-  st.init(config);
-
-  return st;
+  return Container.get(ClientBootstrap).run(config);
 };

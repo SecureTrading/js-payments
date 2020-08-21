@@ -53,8 +53,9 @@ export class FramesHub {
     return this.isFrameActive(name).pipe(filter(Boolean), first(), mapTo(name));
   }
 
-  public notifyReadyState(): void {
-    const frameName = this.identifier.getFrameName();
+  public notifyReadyState(frameName?: string): void {
+    frameName = frameName || this.identifier.getFrameName();
+
     if (frameName === Selectors.MERCHANT_PARENT_FRAME) {
       return;
     }

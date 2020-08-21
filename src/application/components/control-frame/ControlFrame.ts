@@ -91,7 +91,6 @@ export class ControlFrame {
     private _messageBus: MessageBus,
     private _frame: Frame
   ) {
-    this._localStorage.init();
     this._communicator
       .whenReceive(MessageBus.EVENTS_PUBLIC.INIT_CONTROL_FRAME)
       .thenRespond((event: IMessageBusEvent<string>) => {
