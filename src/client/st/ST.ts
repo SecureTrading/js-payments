@@ -1,5 +1,4 @@
 import './st.css';
-import './../styles/_iframe.css';
 import JwtDecode from 'jwt-decode';
 import { debounce } from 'lodash';
 import '../../application/core/shared/override-domain/OverrideDomain';
