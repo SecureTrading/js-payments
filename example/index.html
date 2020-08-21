@@ -210,14 +210,14 @@
       );
     }
 
-    function buildPopup(id, text, tp) {
+    function buildPopup(id, text, bgColor) {
       var popupStyling = 'display: flex; justify-content: center; position: fixed; height: 70px;right:0;color: white;padding: 0 50px;align-items: center;border-radius: 10px;font-family: Verdana;font-size: 20px;z-index:2';
       var div = document.createElement('div');
       div.innerText = text;
       div.setAttribute('id', id);
       div.setAttribute('style', popupStyling);
-      div.style.backgroundColor = tp;
-      switch (tp) {
+      div.style.backgroundColor = bgColor;
+      switch (bgColor) {
         case 'green':
           div.style.top = 0;
           break;
@@ -230,9 +230,9 @@
       return div;
     }
 
-    function displayPopup(id, text, tp) {
+    function displayPopup(id, text, bgColor) {
       var popup = document.getElementById('st-popup');
-      var content = buildPopup(id, text, tp);
+      var content = buildPopup(id, text, bgColor);
       popup.appendChild(content);
       setTimeout(function() {
         popup.removeChild(content);

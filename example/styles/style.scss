@@ -108,3 +108,19 @@
   justify-content: end;
   padding: 0 90px;
 }
+
+.st-popup {
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  height: 70px;
+  right: 0;
+  color: white;
+  padding: 0 50px;
+  align-items: center;
+  border-radius: 10px;
+  font-family: Verdana, sans-serif;
+  font-size: 20px;
+  z-index: 2;
+}
+
