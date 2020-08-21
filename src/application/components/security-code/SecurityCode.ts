@@ -1,13 +1,13 @@
 import { FormState } from '../../core/models/constants/FormState';
 import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
 import { Formatter } from '../../core/shared/Formatter';
-import { FormField } from '../../core/shared/FormField';
+import { Input } from '../../core/shared/input/Input';
 import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { Selectors } from '../../core/shared/Selectors';
 import { Validation } from '../../core/shared/Validation';
 import { Service } from 'typedi';
-import { ConfigProvider } from '../../core/services/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 import { filter, map, startWith, switchMap, tap } from 'rxjs/operators';
 import { ofType } from '../../../shared/services/message-bus/operators/ofType';
 import { IFormFieldState } from '../../core/models/IFormFieldState';
@@ -19,9 +19,11 @@ import { DefaultPlaceholders } from '../../core/models/constants/config-resolver
 import { LONG_CVC, SHORT_CVC } from '../../core/models/constants/SecurityCode';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
+import { Styler } from '../../core/shared/Styler';
+import { Frame } from '../../core/shared/frame/Frame';
 
 @Service()
-export class SecurityCode extends FormField {
+export class SecurityCode extends Input {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.SECURITY_CODE_INPUT) as HTMLInputElement;
   private static BLOCK_CVV_ATTRIBUTE: string = 'block-cvv';
@@ -33,7 +35,6 @@ export class SecurityCode extends FormField {
   private static MATCH_EXACTLY_FOUR_DIGITS: string = '^[0-9]{4}$';
   private static MATCH_EXACTLY_THREE_DIGITS: string = '^[0-9]{3}$';
 
-  private _formatter: Formatter;
   private _securityCodeLength: number;
   private _securityCodeWrapper: HTMLElement;
   private _validation: Validation;
@@ -41,22 +42,33 @@ export class SecurityCode extends FormField {
 
   constructor(
     private _configProvider: ConfigProvider,
-    private _messageBus: MessageBus,
-    private _localStorage: BrowserLocalStorage
+    private _localStorage: BrowserLocalStorage,
+    private _formatter: Formatter,
+    private messageBus: MessageBus,
+    private frame: Frame
   ) {
     super(Selectors.SECURITY_CODE_INPUT, Selectors.SECURITY_CODE_MESSAGE, Selectors.SECURITY_CODE_LABEL);
-
-    this._formatter = new Formatter();
     this._validation = new Validation();
     this._securityCodeWrapper = document.getElementById(Selectors.SECURITY_CODE_INPUT_SELECTOR) as HTMLElement;
     this._securityCodeLength = SHORT_CVC;
     this.placeholder = this._getPlaceholder(this._securityCodeLength);
+    this._configProvider.getConfig$().subscribe((config: IConfig) => {
+      const styler: Styler = new Styler(this.getAllowedStyles(), this.frame.parseUrl().styles);
+      if (styler.isLinedUp(config.styles.securityCode)) {
+        styler.lineUp(
+          'st-security-code',
+          'st-security-code-label',
+          ['st-security-code', 'st-security-code--lined-up'],
+          ['security-code__label', 'security-code__label--required', 'lined-up']
+        );
+      }
+    });
     this._securityCodeUpdate$()
       .pipe(filter(Boolean))
       .subscribe((securityCodeLength: number) => {
         this.placeholder = this._getPlaceholder(securityCodeLength);
         this._securityCodeLength = securityCodeLength;
-        this._messageBus.publish({
+        this.messageBus.publish({
           type: MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH,
           data: this._securityCodeLength
         });
@@ -88,11 +100,11 @@ export class SecurityCode extends FormField {
 
   private _securityCodeUpdate$(): Observable<number> {
     const jwtFromConfig$: Observable<string> = this._configProvider.getConfig$().pipe(map(config => config.jwt));
-    const jwtFromUpdate$: Observable<string> = this._messageBus.pipe(
+    const jwtFromUpdate$: Observable<string> = this.messageBus.pipe(
       ofType(MessageBus.EVENTS_PUBLIC.UPDATE_JWT),
       map(event => event.data.newJwt)
     );
-    const cardNumberInput$: Observable<string> = this._messageBus.pipe(
+    const cardNumberInput$: Observable<string> = this.messageBus.pipe(
       ofType(MessageBus.EVENTS.CHANGE_CARD_NUMBER),
       map((event: IMessageBusEvent<IFormFieldState>) => event.data.value)
     );
@@ -181,16 +193,16 @@ export class SecurityCode extends FormField {
       data,
       type: eventType
     };
-    this._messageBus.publish(messageBusEvent);
+    this.messageBus.publish(messageBusEvent);
   }
 
   private _sendState(): void {
     const messageBusEvent: IMessageBusEvent = this.setMessageBusEvent(MessageBus.EVENTS.CHANGE_SECURITY_CODE);
-    this._messageBus.publish(messageBusEvent);
+    this.messageBus.publish(messageBusEvent);
   }
 
   private _setDisableListener(): void {
-    this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BLOCK_SECURITY_CODE, (state: FormState) => {
+    this.messageBus.subscribe(MessageBus.EVENTS_PUBLIC.BLOCK_SECURITY_CODE, (state: FormState) => {
       this._toggleSecurityCode(state);
     });
   }
@@ -212,7 +224,7 @@ export class SecurityCode extends FormField {
   }
 
   private _subscribeSecurityCodeChange(): void {
-    this._messageBus
+    this.messageBus
       .pipe(ofType(MessageBus.EVENTS.CHANGE_SECURITY_CODE_LENGTH))
       .subscribe((response: IMessageBusEvent) => {
         const { data } = response;
@@ -222,7 +234,7 @@ export class SecurityCode extends FormField {
         this._sendState();
       });
 
-    this._messageBus.subscribe(
+    this.messageBus.subscribe(
       MessageBus.EVENTS.IS_CARD_WITHOUT_CVV,
       (data: { formState: FormState; isCardPiba: boolean }) => {
         const { formState, isCardPiba } = data;

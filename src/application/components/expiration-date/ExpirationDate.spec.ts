@@ -2,11 +2,17 @@ import { ExpirationDate } from './ExpirationDate';
 import { FormState } from '../../core/models/constants/FormState';
 import { Language } from '../../core/shared/Language';
 import { Selectors } from '../../core/shared/Selectors';
-import { ConfigProvider } from '../../core/services/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 import { mock, instance, when } from 'ts-mockito';
+import { Formatter } from '../../core/shared/Formatter';
+import { MessageBus } from '../../core/shared/MessageBus';
+import { MessageBusMock } from '../../../testing/mocks/MessageBusMock';
+import { Frame } from '../../core/shared/frame/Frame';
+import { of } from 'rxjs';
+import { IConfig } from '../../../shared/model/config/IConfig';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
-jest.mock('../../../../src/application/core/shared/Notification');
+jest.mock('../../../../src/application/core/shared/notification/Notification');
 
 // given
 describe('ExpirationDate', () => {
@@ -216,15 +222,31 @@ function expirationDateFixture() {
   const correctValue = '55';
   const incorrectValue = 'a';
   const correctDataValue = '12/19';
+  const config: IConfig = {
+    jwt: 'test',
+    disableNotification: false,
+    placeholders: { pan: '4154654', expirydate: '12/22', securitycode: '123' }
+  };
   let configProvider: ConfigProvider;
-  configProvider = mock(ConfigProvider);
+  configProvider = mock<ConfigProvider>();
+  let formatter: Formatter;
+  let frame: Frame;
+  frame = mock(Frame);
+  const messageBus: MessageBus = (new MessageBusMock() as unknown) as MessageBus;
+  formatter = mock(Formatter);
   // @ts-ignore
   when(configProvider.getConfig()).thenReturn({
     jwt: '',
     disableNotification: false,
     placeholders: { pan: '4154654', expirydate: '12/22', securitycode: '123' }
   });
-  const expirationDateInstance: ExpirationDate = new ExpirationDate(instance(configProvider));
+  when(configProvider.getConfig$()).thenReturn(of(config));
+  const expirationDateInstance: ExpirationDate = new ExpirationDate(
+    instance(configProvider),
+    instance(formatter),
+    messageBus,
+    instance(frame)
+  );
 
   const labelElement = document.createElement('label');
   const inputElement = document.createElement('input');

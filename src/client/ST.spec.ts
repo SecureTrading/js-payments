@@ -6,18 +6,23 @@ import { VisaCheckout } from '../application/core/integrations/VisaCheckout';
 import { VisaCheckoutMock } from '../application/core/integrations/VisaCheckoutMock';
 import { environment } from '../environments/environment';
 import ST from '../../src/client/ST';
+import { Container } from 'typedi';
+import { ConfigProvider } from '../shared/services/config/ConfigProvider';
+import { TestConfigProvider } from '../testing/mocks/TestConfigProvider';
 
 window.alert = jest.fn();
 
 jest.mock('../../src/application/core/shared/DomMethods');
-jest.mock('../../src/client/classes/CommonFrames.class');
-jest.mock('../../src/client/classes/CardFrames.class');
+jest.mock('../../src/client/classes/common-frames/CommonFrames.class');
+jest.mock('../../src/client/classes/card-frames/CardFrames.class');
 jest.mock('../../src/application/core/integrations/VisaCheckout');
 jest.mock('../../src/application/core/integrations/VisaCheckoutMock');
 jest.mock('../../src/application/core/integrations/ApplePay');
 jest.mock('../../src/application/core/integrations/ApplePayMock');
 jest.mock('../../src/application/core/integrations/GoogleAnalytics');
-jest.mock('../../src/application/core/shared/Notification');
+jest.mock('../../src/application/core/shared/notification/Notification');
+
+Container.set({ id: ConfigProvider, type: TestConfigProvider });
 
 // given
 describe('ST', () => {

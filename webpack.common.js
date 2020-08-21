@@ -8,9 +8,42 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: {
-    st: ['./polyfills', './src/bootstrap.ts', './src/client/ST.ts'],
-    main: ['./polyfills', './src/bootstrap.ts', './src/application/components/index.ts'],
-    controlFrame: ['./polyfills', './src/bootstrap.ts', './src/application/components/control-frame/control-frame.ts'],
+    st: [
+      './polyfills',
+      './src/bootstrap.ts',
+      './src/client/dependency-injection/ServiceDefinitions.ts',
+      './src/client/ST.ts'
+    ],
+    controlFrame: [
+      './polyfills',
+      './src/bootstrap.ts',
+      './src/application/dependency-injection/ServiceDefinitions.ts',
+      './src/application/components/control-frame/control-frame.ts'
+    ],
+    creditCardNumber: [
+      './polyfills',
+      './src/bootstrap.ts',
+      './src/application/dependency-injection/ServiceDefinitions.ts',
+      './src/application/components/card-number/card-number.ts',
+    ],
+    expirationDate: [
+      './polyfills',
+      './src/bootstrap.ts',
+      './src/application/dependency-injection/ServiceDefinitions.ts',
+      './src/application/components/expiration-date/expiration-date.ts',
+    ],
+    securityCode: [
+      './polyfills',
+      './src/bootstrap.ts',
+      './src/application/dependency-injection/ServiceDefinitions.ts',
+      './src/application/components/security-code/security-code.ts',
+    ],
+    animatedCard: [
+      './polyfills',
+      './src/bootstrap.ts',
+      './src/application/dependency-injection/ServiceDefinitions.ts',
+      './src/application/components/animated-card/animated-card.ts',
+    ],
     example: './example/index.ts',
     receipt: './example/receipt.ts',
     iframe: './example/iframe.ts',
@@ -36,7 +69,7 @@ module.exports = {
       templateParameters: {
         partial: 'creditCardNumber'
       },
-      chunks: ['main']
+      chunks: ['creditCardNumber']
     }),
     new HtmlWebpackPlugin({
       filename: 'expiration-date.html',
@@ -44,7 +77,7 @@ module.exports = {
       templateParameters: {
         partial: 'expirationDate'
       },
-      chunks: ['main']
+      chunks: ['expirationDate']
     }),
     new HtmlWebpackPlugin({
       filename: 'security-code.html',
@@ -52,7 +85,7 @@ module.exports = {
       templateParameters: {
         partial: 'securityCode'
       },
-      chunks: ['main']
+      chunks: ['securityCode']
     }),
     new HtmlWebpackPlugin({
       filename: 'animated-card.html',
@@ -60,7 +93,7 @@ module.exports = {
       templateParameters: {
         partial: 'animatedCard'
       },
-      chunks: ['main']
+      chunks: ['animatedCard']
     }),
     new HtmlWebpackPlugin({
       filename: 'control-frame.html',

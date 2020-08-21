@@ -4,10 +4,14 @@ import { Container } from 'typedi';
 import { Cybertonica } from '../integrations/Cybertonica';
 import { mock, instance as mockInstance, when } from 'ts-mockito';
 import { ICard } from '../models/ICard';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
+import { TestConfigProvider } from '../../../testing/mocks/TestConfigProvider';
 import { StoreBasedStorage } from '../../../shared/services/storage/StoreBasedStorage';
 import { SimpleStorage } from '../../../shared/services/storage/SimpleStorage';
 
-jest.mock('../../../../src/application/core/shared/Notification');
+Container.set({ id: ConfigProvider, type: TestConfigProvider });
+
+jest.mock('../../../../src/application/core/shared/notification/Notification');
 
 const cybertonicaTid = 'b268ab7f-25d7-430a-9be2-82b0f00c4039';
 

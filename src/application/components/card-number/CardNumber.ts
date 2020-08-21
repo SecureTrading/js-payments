@@ -2,7 +2,7 @@ import { FormState } from '../../core/models/constants/FormState';
 import { IFormFieldState } from '../../core/models/IFormFieldState';
 import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
 import { Formatter } from '../../core/shared/Formatter';
-import { FormField } from '../../core/shared/FormField';
+import { Input } from '../../core/shared/input/Input';
 import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { Selectors } from '../../core/shared/Selectors';
@@ -10,17 +10,19 @@ import { Utils } from '../../core/shared/Utils';
 import { Validation } from '../../core/shared/Validation';
 import { iinLookup } from '@securetrading/ts-iin-lookup';
 import { Service } from 'typedi';
-import { ConfigProvider } from '../../core/services/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 import { IconFactory } from '../../core/services/icon/IconFactory';
+import { IConfig } from '../../../shared/model/config/IConfig';
+import { Styler } from '../../core/shared/Styler';
+import { Frame } from '../../core/shared/frame/Frame';
 
 @Service()
-export class CardNumber extends FormField {
+export class CardNumber extends Input {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
 
   private static DISABLED_ATTRIBUTE: string = 'disabled';
   private static DISABLED_CLASS: string = 'st-input--disabled';
-  private static NO_CVV_CARD_NUMBER: string = 'st-card-no-cvv';
   private static NO_CVV_CARDS: string[] = ['PIBA'];
   private static STANDARD_CARD_LENGTH: number = 19;
   private static WHITESPACES_DECREASE_NUMBER: number = 2;
@@ -28,7 +30,6 @@ export class CardNumber extends FormField {
   private static _getCardNumberForBinProcess = (cardNumber: string) => cardNumber.slice(0, 6);
 
   public validation: Validation;
-  private _formatter: Formatter;
   private _panIcon: boolean;
   private _cardNumberFormatted: string;
   private _cardNumberLength: number;
@@ -37,11 +38,16 @@ export class CardNumber extends FormField {
   private _fieldInstance: HTMLInputElement = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
   private readonly _cardNumberField: HTMLInputElement;
 
-  constructor(private configProvider: ConfigProvider, private _iconFactory: IconFactory) {
+  constructor(
+    private configProvider: ConfigProvider,
+    private _iconFactory: IconFactory,
+    private _formatter: Formatter,
+    private frame: Frame,
+    private messageBus: MessageBus
+  ) {
     super(Selectors.CARD_NUMBER_INPUT, Selectors.CARD_NUMBER_MESSAGE, Selectors.CARD_NUMBER_LABEL);
     this._cardNumberField = document.getElementById(Selectors.CARD_NUMBER_INPUT) as HTMLInputElement;
     this.validation = new Validation();
-    this._formatter = new Formatter();
     this._isCardNumberValid = true;
     this._cardNumberLength = CardNumber.STANDARD_CARD_LENGTH;
     this.placeholder = this.configProvider.getConfig().placeholders.pan || '';
@@ -57,6 +63,17 @@ export class CardNumber extends FormField {
     );
     this._sendState();
     this._inputElement.setAttribute(CardNumber.PLACEHOLDER_ATTRIBUTE, this.placeholder);
+    this.configProvider.getConfig$().subscribe((config: IConfig) => {
+      const styler: Styler = new Styler(this.getAllowedStyles(), this.frame.parseUrl().styles);
+      if (styler.isLinedUp(config.styles.cardNumber)) {
+        styler.lineUp(
+          'st-card-number',
+          'st-card-number-label',
+          ['st-card-number', 'st-card-number--lined-up'],
+          ['card-number__label', 'card-number__label--required', 'lined-up']
+        );
+      }
+    });
   }
 
   protected getLabel(): string {
@@ -139,8 +156,8 @@ export class CardNumber extends FormField {
   }
 
   private _setIconInDom(element: HTMLElement): void {
-    const input: HTMLElement = document.getElementById(Selectors.CARD_NUMBER_INPUT_SELECTOR);
-    document.getElementById(Selectors.CARD_NUMBER_INPUT_SELECTOR).insertBefore(element, input.childNodes[0]);
+    const input: HTMLElement = document.getElementById('st-card-number-wrapper');
+    input.insertBefore(element, input.childNodes[0]);
   }
 
   private _getBinLookupDetails = (cardNumber: string) => {
@@ -187,6 +204,7 @@ export class CardNumber extends FormField {
     this._inputElement.value = this.validation.limitLength(this._inputElement.value, this._cardNumberLength);
     const { formatted, nonformatted } = this._formatter.number(this._inputElement.value, Selectors.CARD_NUMBER_INPUT);
     this._inputElement.value = formatted;
+    this._cardNumberFormatted = formatted;
     this._cardNumberValue = nonformatted;
     this.validation.keepCursorsPosition(this._inputElement);
     const type = this._getBinLookupDetails(this._cardNumberValue)

@@ -12,7 +12,7 @@ import { Container } from 'typedi';
 import { NotificationService } from '../../../client/classes/notification/NotificationService';
 import { Observable } from 'rxjs';
 import { IConfig } from '../../../shared/model/config/IConfig';
-import { ConfigProvider } from '../services/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 
 declare const V: any;

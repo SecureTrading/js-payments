@@ -1,17 +1,19 @@
-import { INotificationEvent } from '../models/INotificationEvent';
+import { INotificationEvent } from '../../models/INotificationEvent';
 import { Service } from 'typedi';
-import { Selectors } from './Selectors';
-import { environment } from '../../../environments/environment';
-import { Translator } from './Translator';
-import { MessageBus } from './MessageBus';
-import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
-import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
-import { Styler } from './Styler';
-import { IAllowedStyles } from '../models/IAllowedStyles';
-import { ConfigProvider } from '../services/ConfigProvider';
-import { NotificationsClasses } from '../models/constants/notifications/NotificationsClasses';
-import { NotificationsMessageTypes } from '../models/constants/notifications/NotificationsMessageTypes';
-import { IConfig } from '../../../shared/model/config/IConfig';
+import { Selectors } from '../Selectors';
+import { environment } from '../../../../environments/environment';
+import { Translator } from '../Translator';
+import { MessageBus } from '../MessageBus';
+import { FramesHub } from '../../../../shared/services/message-bus/FramesHub';
+import { BrowserLocalStorage } from '../../../../shared/services/storage/BrowserLocalStorage';
+import { Styler } from '../Styler';
+import { IAllowedStyles } from '../../models/IAllowedStyles';
+import { ConfigProvider } from '../../../../shared/services/config/ConfigProvider';
+import { NotificationsClasses } from '../../models/constants/notifications/NotificationsClasses';
+import { NotificationsMessageTypes } from '../../models/constants/notifications/NotificationsMessageTypes';
+import { IConfig } from '../../../../shared/model/config/IConfig';
+import { Frame } from '../frame/Frame';
+import { IStyles } from '../../../../shared/model/config/IStyles';
 
 @Service()
 export class Notification {
@@ -23,7 +25,8 @@ export class Notification {
     private _messageBus: MessageBus,
     private _browserLocalStorage: BrowserLocalStorage,
     private _configProvider: ConfigProvider,
-    private _framesHub: FramesHub
+    private _framesHub: FramesHub,
+    private _frame: Frame
   ) {
     this._applyStyles();
 
@@ -39,8 +42,11 @@ export class Notification {
 
   private _applyStyles(): void {
     this._configProvider.getConfig$().subscribe((config: IConfig) => {
-      // @ts-ignore
-      new Styler(this._getAllowedStyles()).inject(config.styles.notificationFrame);
+      const definedStyles = config.styles.notificationFrame || {};
+      const styles = Object.keys(definedStyles).map((item: string) => {
+        return { [item]: definedStyles[item] };
+      });
+      const styler: Styler = new Styler(this._getAllowedStyles(), styles);
     });
   }
 

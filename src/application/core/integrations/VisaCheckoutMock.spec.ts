@@ -1,16 +1,16 @@
 import { VisaCheckoutMock } from './VisaCheckoutMock';
 import { anyString, instance as mockInstance, mock, when } from 'ts-mockito';
-import { ConfigProvider } from '../services/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { EMPTY, of } from 'rxjs';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 
-jest.mock('../../../../src/application/core/shared/Notification');
+jest.mock('../../../../src/application/core/shared/notification/Notification');
 
 // given
 describe('Visa Checkout Mock class', () => {
   let body: object;
   let instance: any;
-  const configProvider = mock(ConfigProvider);
+  const configProvider = mock<ConfigProvider>();
   const communicator = mock(InterFrameCommunicator);
   const jwt =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsaXZlMl9hdXRvand0IiwiaWF0IjoxNTUzMjcwODAwLCJwYXlsb2FkIjp7ImJhc2VhbW91bnQiOiIxMDAwIiwiY3VycmVuY3lpc28zYSI6IkdCUCIsInNpdGVyZWZlcmVuY2UiOiJsaXZlMiIsImFjY291bnR0eXBlZGVzY3JpcHRpb24iOiJFQ09NIn19.SGLwyTcqh6JGlrgzEabOLvCWRx_jeroYk67f_xSQpLM';

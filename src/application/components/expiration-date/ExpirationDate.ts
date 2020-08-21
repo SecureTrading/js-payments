@@ -1,15 +1,18 @@
 import { FormState } from '../../core/models/constants/FormState';
 import { IMessageBusEvent } from '../../core/models/IMessageBusEvent';
 import { Formatter } from '../../core/shared/Formatter';
-import { FormField } from '../../core/shared/FormField';
+import { Input } from '../../core/shared/input/Input';
 import { Language } from '../../core/shared/Language';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { Selectors } from '../../core/shared/Selectors';
 import { Service } from 'typedi';
-import { ConfigProvider } from '../../core/services/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
+import { IConfig } from '../../../shared/model/config/IConfig';
+import { Styler } from '../../core/shared/Styler';
+import { Frame } from '../../core/shared/frame/Frame';
 
 @Service()
-export class ExpirationDate extends FormField {
+export class ExpirationDate extends Input {
   public static ifFieldExists = (): HTMLInputElement =>
     document.getElementById(Selectors.EXPIRATION_DATE_INPUT) as HTMLInputElement;
   private static DISABLED_ATTRIBUTE: string = 'disabled';
@@ -18,14 +21,28 @@ export class ExpirationDate extends FormField {
   private static INPUT_PATTERN: string = '^(0[1-9]|1[0-2])\\/([0-9]{2})$';
 
   private _currentKeyCode: number;
-  private _formatter: Formatter;
   private _inputSelectionEnd: number;
   private _inputSelectionStart: number;
 
-  constructor(private _configProvider: ConfigProvider) {
+  constructor(
+    private _configProvider: ConfigProvider,
+    private _formatter: Formatter,
+    private messageBus: MessageBus,
+    private frame: Frame
+  ) {
     super(Selectors.EXPIRATION_DATE_INPUT, Selectors.EXPIRATION_DATE_MESSAGE, Selectors.EXPIRATION_DATE_LABEL);
-    this._formatter = new Formatter();
     this._init();
+    this._configProvider.getConfig$().subscribe((config: IConfig) => {
+      const styler: Styler = new Styler(this.getAllowedStyles(), this.frame.parseUrl().styles);
+      if (styler.isLinedUp(config.styles.expirationDate)) {
+        styler.lineUp(
+          'st-expiration-date',
+          'st-expiration-date-label',
+          ['st-expiration-date', 'st-expiration-date--lined-up'],
+          ['expiration-date__label', 'expiration-date__label--required', 'lined-up']
+        );
+      }
+    });
   }
 
   public getLabel(): string {

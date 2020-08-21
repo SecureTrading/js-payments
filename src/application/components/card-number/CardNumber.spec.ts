@@ -2,15 +2,19 @@ import SpyInstance = jest.SpyInstance;
 import { CardNumber } from './CardNumber';
 import { FormState } from '../../core/models/constants/FormState';
 import { Selectors } from '../../core/shared/Selectors';
-import { FormField } from '../../core/shared/FormField';
+import { Input } from '../../core/shared/input/Input';
 import { Utils } from '../../core/shared/Utils';
 import { Validation } from '../../core/shared/Validation';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { instance, mock, when } from 'ts-mockito';
 import { IconFactory } from '../../core/services/icon/IconFactory';
-import { ConfigProvider } from '../../core/services/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
+import { Frame } from '../../core/shared/frame/Frame';
+import { Formatter } from '../../core/shared/Formatter';
+import { of } from 'rxjs';
+import { IConfig } from '../../../shared/model/config/IConfig';
+import { MessageBusMock } from '../../../testing/mocks/MessageBusMock';
 
-jest.mock('../../../../src/application/core/shared/MessageBus');
 jest.mock('../../../../src/application/core/shared/Validation');
 
 // given
@@ -30,7 +34,7 @@ describe('CardNumber', () => {
 
   // then
   it('should create cardNumberInstance of class CardNumber', () => {
-    expect(cardNumberInstance).toBeInstanceOf(FormField);
+    expect(cardNumberInstance).toBeInstanceOf(Input);
   });
 
   // then
@@ -147,35 +151,6 @@ describe('CardNumber', () => {
     it('should return possible cvc lengths if card format is recognized', () => {
       // @ts-ignore
       expect(cardNumberInstance._getSecurityCodeLength(cardNumberCorrect)).toEqual(receivedObject.cvcLength[0]);
-    });
-  });
-
-  // given
-  describe('setFocusListener()', () => {
-    let spy: SpyInstance;
-
-    beforeEach(() => {
-      // @ts-ignore
-      spy = jest.spyOn(cardNumberInstance, 'format');
-      // @ts-ignore
-      cardNumberInstance.messageBus.subscribe = jest.fn().mockImplementation((event, callback) => {
-        callback();
-      });
-      // @ts-ignore
-      cardNumberInstance.setFocusListener();
-    });
-    // then
-    it('should set MessageBus listener function', () => {
-      // @ts-ignore
-      expect(cardNumberInstance.messageBus.subscribe.mock.calls[0][0]).toBe(MessageBus.EVENTS.FOCUS_CARD_NUMBER);
-      // @ts-ignore
-      expect(cardNumberInstance.messageBus.subscribe.mock.calls[0][1]).toBeInstanceOf(Function);
-      // @ts-ignore
-      expect(cardNumberInstance.messageBus.subscribe).toHaveBeenCalledTimes(1);
-    });
-
-    it('should call format function', () => {
-      expect(spy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -382,15 +357,27 @@ function cardNumberFixture() {
   document.body.innerHTML = html;
   let configProvider: ConfigProvider;
   let iconFactory: IconFactory;
+  let frame: Frame;
+  let formatter: Formatter;
   iconFactory = mock(IconFactory);
-  configProvider = mock(ConfigProvider);
+  configProvider = mock<ConfigProvider>();
+  const messageBus: MessageBus = (new MessageBusMock() as unknown) as MessageBus;
+  when(configProvider.getConfig$()).thenReturn(of({} as IConfig));
+  frame = mock(Frame);
+  formatter = mock(Formatter);
   // @ts-ignore
   when(configProvider.getConfig()).thenReturn({
     jwt: '',
     disableNotification: false,
     placeholders: { pan: 'Card number', expirydate: 'MM/YY', securitycode: '***' }
   });
-  const cardNumberInstance: CardNumber = new CardNumber(instance(configProvider), instance(iconFactory));
+  const cardNumberInstance: CardNumber = new CardNumber(
+    instance(configProvider),
+    instance(iconFactory),
+    instance(formatter),
+    instance(frame),
+    messageBus
+  );
 
   function createElement(markup: string) {
     return document.createElement(markup);

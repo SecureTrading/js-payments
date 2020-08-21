@@ -1,18 +1,20 @@
 import { SecurityCode } from './SecurityCode';
 import { Selectors } from '../../core/shared/Selectors';
-import { FormField } from '../../core/shared/FormField';
+import { Input } from '../../core/shared/input/Input';
 import { Utils } from '../../core/shared/Utils';
 import { anyFunction, instance, mock, when } from 'ts-mockito';
-import { ConfigProvider } from '../../core/services/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { EMPTY, of } from 'rxjs';
 import { MessageBusMock } from '../../../testing/mocks/MessageBusMock';
 import { MessageBus } from '../../core/shared/MessageBus';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
+import { Formatter } from '../../core/shared/Formatter';
+import { Frame } from '../../core/shared/frame/Frame';
 
 jest.mock('../../../../src/application/core/shared/MessageBus');
-jest.mock('../../../../src/application/core/shared/Notification');
+jest.mock('../../../../src/application/core/shared/notification/Notification');
 
 // given
 describe('SecurityCode', () => {
@@ -21,9 +23,9 @@ describe('SecurityCode', () => {
   // given
   describe('init', () => {
     // then
-    it('should create instance of classes SecurityCode and FormField representing form field', () => {
+    it('should create instance of classes SecurityCode and input representing form field', () => {
       expect(securityCodeInstance).toBeInstanceOf(SecurityCode);
-      expect(securityCodeInstance).toBeInstanceOf(FormField);
+      expect(securityCodeInstance).toBeInstanceOf(Input);
     });
   });
 
@@ -202,7 +204,7 @@ describe('SecurityCode', () => {
       // @ts-ignore
       securityCodeInstance._sendState();
       // @ts-ignore
-      expect(securityCodeInstance._messageBus.publish).toHaveBeenCalled();
+      expect(securityCodeInstance.messageBus.publish).toHaveBeenCalled();
     });
   });
 
@@ -257,14 +259,23 @@ function securityCodeFixture() {
   const communicatorMock: InterFrameCommunicator = mock(InterFrameCommunicator);
   when(communicatorMock.incomingEvent$).thenReturn(EMPTY);
 
-  const configProvider: ConfigProvider = mock(ConfigProvider);
-
+  const configProvider: ConfigProvider = mock<ConfigProvider>();
+  let formatter: Formatter;
+  formatter = mock(Formatter);
+  let frame: Frame;
+  frame = mock(Frame);
   const localStorage: BrowserLocalStorage = mock(BrowserLocalStorage);
   when(localStorage.select(anyFunction())).thenReturn(of('34****4565'));
   when(configProvider.getConfig$()).thenReturn(of(config));
   when(configProvider.getConfig()).thenReturn(config);
   const messageBus: MessageBus = (new MessageBusMock() as unknown) as MessageBus;
-  const securityCodeInstance = new SecurityCode(instance(configProvider), messageBus, instance(localStorage));
+  const securityCodeInstance = new SecurityCode(
+    instance(configProvider),
+    instance(localStorage),
+    instance(formatter),
+    messageBus,
+    instance(frame)
+  );
   // @ts-ignore
 
   return { securityCodeInstance, configProvider, communicatorMock, messageBus };

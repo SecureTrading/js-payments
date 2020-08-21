@@ -66,11 +66,39 @@ input:-webkit-autofill.error-field {
   width: 30px;
   height: 20px;
   position: absolute;
-  top: 27px;
-  right: 8px;
+  top: 7px;
+  right: 7px;
   padding: 3px;
-  right: 8px;
   background-color: #fff;
   border: 1px solid #6d6d6d;
   border-radius: 4px;
+}
+
+.st-card-number,
+.st-expiration-date,
+.st-security-code {
+  &__wrapper {
+    display: block;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    margin-right: 10px;
+    min-width: 225px;
+  }
+
+  &--lined-up {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.card-number,
+.expiration-date,
+.security-code {
+  &__label.lined-up {
+    max-width: 110px;
+    width: 100%;
+    word-break: break-all;
+    text-align: right;
+  }
 }

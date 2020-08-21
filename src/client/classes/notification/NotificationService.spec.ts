@@ -1,8 +1,9 @@
-import { NotificationService } from '../classes/notification/NotificationService';
-import { MessageBus } from '../../application/core/shared/MessageBus';
-import { ConfigProvider } from '../../application/core/services/ConfigProvider';
-import { NotificationType } from '../../application/core/models/constants/NotificationType';
+import { NotificationService } from './NotificationService';
+import { MessageBus } from '../../../application/core/shared/MessageBus';
+import { NotificationType } from '../../../application/core/models/constants/NotificationType';
 import { deepEqual, instance, mock, verify, when } from 'ts-mockito';
+import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
+import { IConfig } from '../../../shared/model/config/IConfig';
 
 // given
 describe('NotificationService', () => {
@@ -13,7 +14,7 @@ describe('NotificationService', () => {
   beforeEach(() => {
     // given
     messageBus = mock(MessageBus);
-    configProvider = mock(ConfigProvider);
+    configProvider = mock<ConfigProvider>();
     notificationService = new NotificationService(instance(messageBus), instance(configProvider));
   });
   // given
@@ -21,11 +22,11 @@ describe('NotificationService', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
-      when(configProvider.getConfig()).thenReturn({
+      when(configProvider.getConfig()).thenReturn(({
         disableNotification: false,
         submitOnError: false,
         submitOnSuccess: false
-      });
+      } as unknown) as IConfig);
     });
 
     // then
@@ -48,11 +49,11 @@ describe('NotificationService', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
-      when(configProvider.getConfig()).thenReturn({
+      when(configProvider.getConfig()).thenReturn(({
         disableNotification: false,
         submitOnError: false,
         submitOnSuccess: false
-      });
+      } as unknown) as IConfig);
     });
 
     // then
@@ -75,11 +76,11 @@ describe('NotificationService', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
-      when(configProvider.getConfig()).thenReturn({
+      when(configProvider.getConfig()).thenReturn(({
         disableNotification: false,
         submitOnError: false,
         submitOnSuccess: false
-      });
+      } as unknown) as IConfig);
     });
 
     // then
@@ -102,11 +103,11 @@ describe('NotificationService', () => {
     // when
     beforeEach(() => {
       // @ts-ignore
-      when(configProvider.getConfig()).thenReturn({
+      when(configProvider.getConfig()).thenReturn(({
         disableNotification: false,
         submitOnError: false,
         submitOnSuccess: false
-      });
+      } as unknown) as IConfig);
     });
 
     // then
