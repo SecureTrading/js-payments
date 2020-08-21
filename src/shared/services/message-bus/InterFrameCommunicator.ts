@@ -7,7 +7,7 @@ import { QueryMessage } from './messages/QueryMessage';
 import { ResponseMessage } from './messages/ResponseMessage';
 import { environment } from '../../../environments/environment';
 import { FrameCollection } from './interfaces/FrameCollection';
-import { Selectors } from '../../../application/core/shared/Selectors';
+import { MERCHANT_PARENT_FRAME } from '../../../application/core/models/constants/Selectors';
 import { CONFIG } from '../../../application/core/dependency-injection/InjectionTokens';
 import { FrameIdentifier } from './FrameIdentifier';
 import { FrameAccessor } from './FrameAccessor';
@@ -56,7 +56,7 @@ export class InterFrameCommunicator {
 
   public query<T>(message: IMessageBusEvent, target: Window | string): Promise<T> {
     return new Promise((resolve, reject) => {
-      const sourceFrame = this.identifier.getFrameName() || Selectors.MERCHANT_PARENT_FRAME;
+      const sourceFrame = this.identifier.getFrameName() || MERCHANT_PARENT_FRAME;
       const query = new QueryMessage(message, sourceFrame);
 
       this.incomingEvent$
@@ -110,7 +110,7 @@ export class InterFrameCommunicator {
       return target;
     }
 
-    if (target === Selectors.MERCHANT_PARENT_FRAME) {
+    if (target === MERCHANT_PARENT_FRAME) {
       return this.frameAccessor.getParentFrame();
     }
 

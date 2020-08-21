@@ -1,4 +1,4 @@
-import { ICybertonica } from '../../application/core/integrations/ICybertonica';
+import { ICybertonica } from '../../application/core/integrations/cybertonica/ICybertonica';
 import { Service } from 'typedi';
 import { BrowserLocalStorage } from '../../shared/services/storage/BrowserLocalStorage';
 

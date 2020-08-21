@@ -1,5 +1,5 @@
 import { Container } from 'typedi';
-import { Cybertonica } from '../application/core/integrations/Cybertonica';
+import { Cybertonica } from '../application/core/integrations/cybertonica/Cybertonica';
 import { CybertonicaMock } from './mocks/CybertonicaMock';
 import { environment } from '../environments/environment';
 import { CardinalProvider } from '../application/core/integrations/cardinal-commerce/CardinalProvider';
