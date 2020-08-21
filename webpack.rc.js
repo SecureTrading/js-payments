@@ -7,13 +7,13 @@ module.exports = merge(common, {
   mode: 'production',
   plugins: [
     new webpack.DefinePlugin({
-      WEBSERVICES_URL: JSON.stringify('https://webservices.securetrading.net/js/v2')
+      WEBSERVICES_URL: JSON.stringify('https://webservices.securetrading.net/js/rc')
     })
   ],
   resolve: {
     alias: {
-      [path.resolve(__dirname, "src/environments/environment")]:
-        path.resolve(__dirname, "src/environments/environment.prod.ts")
+      [path.resolve(__dirname, 'src/environments/environment')]:
+        path.resolve(__dirname, 'src/environments/environment.rc.ts')
     }
   }
 });
