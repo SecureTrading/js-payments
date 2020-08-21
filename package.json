@@ -122,7 +122,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.10.4",
     "@babel/runtime": "^7.11.2",
-    "@securetrading/js-payments-card": "^1.0.22",
+    "@securetrading/js-payments-card": "^1.0.23",
     "@securetrading/jwt-generator": "0.0.2",
     "@securetrading/ts-iin-lookup": "^0.0.8",
     "@securetrading/ts-luhn-check": "^0.0.8",
