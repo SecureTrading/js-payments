@@ -134,7 +134,7 @@
     "@types/redux-logger": "^3.0.8",
     "core-js": "^2.6.11",
     "fastestsmallesttextencoderdecoder": "^1.0.22",
-    "i18next": "^19.6.3",
+    "i18next": "^19.7.0",
     "jwt-decode": "^2.2.0",
     "location-origin": "^1.1.4",
     "minimist": "^1.2.5",
