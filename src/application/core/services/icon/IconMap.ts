@@ -2,15 +2,15 @@ import { Service } from 'typedi';
 import { IIconMap } from '../../models/IIconMap';
 
 export const mapIcon: IIconMap = {
-  amex: './images/amex.png',
-  astropaycard: './images/astropaycard.png',
-  diners: './images/diners.png',
-  discover: './images/discover.png',
-  jcb: './images/jcb.png',
-  maestro: './images/maestro.png',
-  mastercard: './images/mastercard.png',
-  piba: './images/piba.png',
-  visa: './images/visa.png'
+  amex: './img/cards/amex.png',
+  astropaycard: './img/cards/astropaycard.png',
+  diners: './img/cards/diners.png',
+  discover: './img/cards/discover.png',
+  jcb: './img/cards/jcb.png',
+  maestro: './img/cards/maestro.png',
+  mastercard: './img/cards/mastercard.png',
+  piba: './img/cards/piba.png',
+  visa: './img/cards/visa.png'
 };
 
 @Service()
