@@ -288,6 +288,7 @@
       if (jwt) {
         stConfig.jwt = jwt;
         init(stConfig);
+        return;
       }
 
       window.configJWT('./../json/jwtdata.json').then(function(generatedJwt) {
