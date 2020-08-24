@@ -122,7 +122,6 @@
   "dependencies": {
     "@babel/polyfill": "^7.10.4",
     "@babel/runtime": "^7.11.2",
-    "@hapi/joi": "^17.1.1",
     "@securetrading/js-payments-card": "^1.0.23",
     "@securetrading/jwt-generator": "0.0.2",
     "@securetrading/ts-iin-lookup": "^0.0.8",
@@ -135,6 +134,7 @@
     "core-js": "^2.6.11",
     "fastestsmallesttextencoderdecoder": "^1.0.22",
     "i18next": "^19.7.0",
+    "joi": "^17.2.0",
     "jwt-decode": "^2.2.0",
     "location-origin": "^1.1.4",
     "minimist": "^1.2.5",
