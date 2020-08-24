@@ -140,7 +140,7 @@ module.exports = {
     new CopyPlugin({
       patterns: [{
         from: 'src/application/core/services/icon/images/*.png',
-        to: 'images',
+        to: 'img/cards',
         force: true,
         flatten: true
       }]
@@ -148,7 +148,7 @@ module.exports = {
     new CopyPlugin({
       patterns: [{
         from: 'example/img/*.png',
-        to: 'images',
+        to: 'img',
         force: true,
         flatten: true
       }]

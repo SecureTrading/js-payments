@@ -29,16 +29,3 @@ body {
 .card-number__message {
   @extend %message;
 }
-
-.st-card-icon {
-  width: 30px;
-  height: 20px;
-  position: absolute;
-  top: 27px;
-  right: 8px;
-  padding: 3px;
-  right: 8px;
-  background-color: #fff;
-  border: 1px solid #6d6d6d;
-  border-radius: 4px;
-}
