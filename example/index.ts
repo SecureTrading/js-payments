@@ -1,4 +1,4 @@
-import './style.scss';
+import './styles/style.scss';
 
 import { jwtgenerator } from '@securetrading/jwt-generator';
 

@@ -1,6 +1,6 @@
 import { Service } from 'typedi';
 import { IConfig } from '../../model/config/IConfig';
-import { ValidationError } from '@hapi/joi';
+import { ValidationError } from 'joi';
 import { ConfigSchema } from '../storage/ConfigSchema';
 
 @Service()
