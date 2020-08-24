@@ -1,4 +1,3 @@
-import { MessageBus } from '../shared/MessageBus';
 import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
 import { SentryService } from '../../../shared/services/sentry/SentryService';
 import { Container, Service } from 'typedi';
@@ -6,8 +5,9 @@ import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLoc
 import { Store } from '../store/Store';
 import { environment } from '../../../environments/environment';
 import { MessageSubscriberRegistry } from '../../../shared/services/message-bus/MessageSubscriberRegistry';
-import { MessageSubscriberToken } from '../../dependency-injection/InjectionTokens';
 import { FrameIdentifier } from '../../../shared/services/message-bus/FrameIdentifier';
+import { MessageBus } from '../shared/message-bus/MessageBus';
+import { MessageSubscriberToken } from '../../../shared/dependency-injection/InjectionTokens';
 
 @Service()
 export class ComponentBootstrap {

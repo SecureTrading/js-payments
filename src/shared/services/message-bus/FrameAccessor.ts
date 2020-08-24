@@ -2,8 +2,8 @@ import { Inject, Service } from 'typedi';
 import { FrameIdentifier } from './FrameIdentifier';
 import { FrameCollection } from './interfaces/FrameCollection';
 import { WINDOW } from '../../dependency-injection/InjectionTokens';
-import { Selectors } from '../../../application/core/shared/Selectors';
 import { IControlFrameWindow } from '../../interfaces/IControlFrameWindow';
+import { CONTROL_FRAME_IFRAME } from '../../../application/core/models/constants/Selectors';
 
 @Service()
 export class FrameAccessor {
@@ -22,7 +22,7 @@ export class FrameAccessor {
       return this.window;
     }
 
-    return this.getFrameCollection()[Selectors.CONTROL_FRAME_IFRAME];
+    return this.getFrameCollection()[CONTROL_FRAME_IFRAME];
   }
 
   getFrameCollection(): FrameCollection {

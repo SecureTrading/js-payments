@@ -1,8 +1,8 @@
 import Card from '@securetrading/js-payments-card/stcard';
 import { Service } from 'typedi';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
-import { MessageBus } from '../../core/shared/MessageBus';
 import { IFormFieldState } from '../../core/models/IFormFieldState';
+import { MessageBus } from '../../core/shared/message-bus/MessageBus';
 
 @Service()
 export class AnimatedCard {

@@ -1,10 +1,10 @@
 import { Input } from './Input';
-import { Language } from '../Language';
-import { Utils } from '../Utils';
-import { Validation } from '../Validation';
+import { NOT_IMPLEMENTED_ERROR } from '../../models/constants/Translations';
+import { Utils } from '../utils/Utils';
+import { Validation } from '../validation/Validation';
 
-jest.mock('../../../../../src/application/core/shared/Validation');
-jest.mock('../../../../../src/application/core/shared/notification/Notification');
+jest.mock('./../validation/Validation');
+jest.mock('./../notification/Notification');
 
 // given
 describe('FormField', () => {
@@ -16,7 +16,7 @@ describe('FormField', () => {
       // @ts-ignore
       instance.getLabel();
       expect(() => {
-        throw new Error(Language.translations.NOT_IMPLEMENTED_ERROR);
+        throw new Error(NOT_IMPLEMENTED_ERROR);
       }).toThrow();
     });
   });
@@ -44,7 +44,7 @@ describe('FormField', () => {
     const { instance } = formFieldFixture();
     let spy: jest.SpyInstance;
     // then
-    it('should focus on input element', () => {
+    it('should focus on input iframe-factory', () => {
       // @ts-ignore
       const mockFocus = (instance._inputElement.focus = jest.fn());
       // @ts-ignore
@@ -58,7 +58,7 @@ describe('FormField', () => {
     const { instance } = formFieldFixture();
     let spy: jest.SpyInstance;
     // then
-    it('should input on input element', () => {
+    it('should input on input iframe-factory', () => {
       // @ts-ignore
       spy = jest.spyOn(instance, 'format');
       // @ts-ignore
@@ -249,7 +249,7 @@ function formFieldFixture() {
   document.body.appendChild(messageElement);
   // @ts-ignore
   Input.prototype.getLabel = jest.fn().mockReturnValueOnce(() => {
-    throw new Error(Language.translations.NOT_IMPLEMENTED_ERROR);
+    throw new Error(NOT_IMPLEMENTED_ERROR);
   });
   const instance = new Input('st-form-field-input', 'st-form-field-message', 'st-form-field-label');
   return { instance, inputElement, messageElement, labelElement };

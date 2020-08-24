@@ -1,5 +1,5 @@
 import { Service } from 'typedi';
-import { Selectors } from '../../../application/core/shared/Selectors';
+import { CONTROL_FRAME_IFRAME, MERCHANT_PARENT_FRAME } from '../../../application/core/models/constants/Selectors';
 
 @Service()
 export class FrameIdentifier {
@@ -12,7 +12,7 @@ export class FrameIdentifier {
 
   setFrameName(frameName: string): void {
     this.frameName = frameName;
-    this.parentFrame = frameName === Selectors.MERCHANT_PARENT_FRAME;
+    this.parentFrame = frameName === MERCHANT_PARENT_FRAME;
   }
 
   isParentFrame(): boolean {
@@ -20,6 +20,6 @@ export class FrameIdentifier {
   }
 
   isControlFrame(): boolean {
-    return this.getFrameName() === Selectors.CONTROL_FRAME_IFRAME;
+    return this.getFrameName() === CONTROL_FRAME_IFRAME;
   }
 }

@@ -1,10 +1,10 @@
 import './control-frame.scss';
 import { ControlFrame } from './ControlFrame';
-import { Selectors } from '../../core/shared/Selectors';
-import '../../core/shared/OverrideDomain';
+import '../../core/shared/override-domain/OverrideDomain';
 import { ComponentBootstrap } from '../../core/component-bootstrap/ComponentBootstrap';
 import { Container } from 'typedi';
+import { CONTROL_FRAME_IFRAME } from '../../core/models/constants/Selectors';
 
 (() => {
-  Container.get(ComponentBootstrap).run(Selectors.CONTROL_FRAME_IFRAME, ControlFrame);
+  Container.get(ComponentBootstrap).run(CONTROL_FRAME_IFRAME, ControlFrame);
 })();

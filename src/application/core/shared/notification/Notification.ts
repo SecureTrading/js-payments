@@ -1,19 +1,22 @@
 import { INotificationEvent } from '../../models/INotificationEvent';
 import { Service } from 'typedi';
-import { Selectors } from '../Selectors';
+import {
+  CONTROL_FRAME_IFRAME,
+  NOTIFICATION_FRAME_CORE_CLASS,
+  NOTIFICATION_FRAME_ID
+} from '../../models/constants/Selectors';
 import { environment } from '../../../../environments/environment';
-import { Translator } from '../Translator';
-import { MessageBus } from '../MessageBus';
+import { Translator } from '../translator/Translator';
+import { MessageBus } from '../message-bus/MessageBus';
 import { FramesHub } from '../../../../shared/services/message-bus/FramesHub';
 import { BrowserLocalStorage } from '../../../../shared/services/storage/BrowserLocalStorage';
-import { Styler } from '../Styler';
+import { Styler } from '../styler/Styler';
 import { IAllowedStyles } from '../../models/IAllowedStyles';
-import { ConfigProvider } from '../../../../shared/services/config/ConfigProvider';
+import { ConfigProvider } from '../../../../shared/services/config-provider/ConfigProvider';
 import { NotificationsClasses } from '../../models/constants/notifications/NotificationsClasses';
 import { NotificationsMessageTypes } from '../../models/constants/notifications/NotificationsMessageTypes';
 import { IConfig } from '../../../../shared/model/config/IConfig';
 import { Frame } from '../frame/Frame';
-import { IStyles } from '../../../../shared/model/config/IStyles';
 
 @Service()
 export class Notification {
@@ -29,13 +32,13 @@ export class Notification {
     private _frame: Frame
   ) {
     this._applyStyles();
-
+    this._translator = new Translator('en_GB');
     this._messageMap = new Map(Object.entries(NotificationsClasses));
     this._messageBus.subscribe(MessageBus.EVENTS_PUBLIC.NOTIFICATION, (event: INotificationEvent) => {
       this._displayNotification(event);
     });
 
-    this._framesHub.waitForFrame(Selectors.CONTROL_FRAME_IFRAME).subscribe(() => {
+    this._framesHub.waitForFrame(CONTROL_FRAME_IFRAME).subscribe(() => {
       this._translator = new Translator(this._browserLocalStorage.getItem('locale'));
     });
   }
@@ -59,7 +62,7 @@ export class Notification {
       'space-inset-body': { property: 'padding', selector: 'body' },
       'space-outset-body': { property: 'margin', selector: 'body' }
     };
-    const notification = `#${Selectors.NOTIFICATION_FRAME_ID}`;
+    const notification = `#${NOTIFICATION_FRAME_ID}`;
     const error = `.${NotificationsClasses.error}${notification}`;
     const success = `.${NotificationsClasses.success}${notification}`;
     const cancel = `.${NotificationsClasses.cancel}${notification}`;
@@ -161,7 +164,7 @@ export class Notification {
 
   private _setAttributeClass(notificationFrameElement: HTMLElement, type: string): void {
     const notificationElementClass = this._getMessageClass(type);
-    notificationFrameElement.classList.add(Selectors.NOTIFICATION_FRAME_CORE_CLASS);
+    notificationFrameElement.classList.add(NOTIFICATION_FRAME_CORE_CLASS);
     if (notificationElementClass) {
       notificationFrameElement.classList.remove(...Object.values(NotificationsClasses));
       notificationFrameElement.classList.add(notificationElementClass);
@@ -172,7 +175,7 @@ export class Notification {
       }
       this._timeoutId = window.setTimeout(() => {
         notificationFrameElement.classList.remove(notificationElementClass);
-        notificationFrameElement.classList.remove(Selectors.NOTIFICATION_FRAME_CORE_CLASS);
+        notificationFrameElement.classList.remove(NOTIFICATION_FRAME_CORE_CLASS);
         this._insertContent(notificationFrameElement, '');
       }, environment.NOTIFICATION_TTL);
     }
