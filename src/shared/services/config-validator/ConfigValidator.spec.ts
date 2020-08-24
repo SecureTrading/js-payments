@@ -1,6 +1,6 @@
 import { ConfigValidator } from './ConfigValidator';
 import { IConfig } from '../../model/config/IConfig';
-import { ValidationError } from '@hapi/joi';
+import { ValidationError } from 'joi';
 import { ConfigSchema } from '../storage/ConfigSchema';
 
 jest.mock('./../storage/ConfigSchema');
