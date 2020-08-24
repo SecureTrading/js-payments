@@ -171,7 +171,6 @@
           if (response.status !== 200) {
             return Promise.reject('Configuration has not been set !');
           }
-          console.error(response);
           return response.json();
         })
         .then(function(data) {
@@ -197,7 +196,6 @@
         })
         .then(function(data) {
           if (data) {
-            console.error('gdc', data);
             getJwt(data);
           }
         });
@@ -274,7 +272,6 @@
     }
 
     function init(config) {
-      console.error(ST, config);
       setCallbacks(config);
       var st = ST(config);
       st.Components(config.components);
@@ -288,12 +285,10 @@
 
     function getJwt(data) {
       var stConfig = data;
-      console.error(jwt);
       if (jwt) {
         stConfig.jwt = jwt;
         init(stConfig);
       }
-      console.error(window.configJWT);
 
       window.configJWT('./../json/jwtdata.json').then(function(generatedJwt) {
         stConfig.jwt = generatedJwt;
