@@ -22,7 +22,7 @@ export const DefaultConfig: IConfig = {
   deferInit: false,
   disableNotification: false,
   errorCallback: null,
-  errorReporting: false,
+  errorReporting: true,
   fieldsToSubmit: DefaultFieldsToSubmit,
   formId: MERCHANT_FORM_SELECTOR,
   init: DefaultInit,

@@ -30,7 +30,6 @@ export class SentryService {
       .pipe(
         first(),
         filter(config => config.errorReporting),
-        isEmpty(),
         tap(() => this.initSentry(dsn, whitelistUrls)),
         switchMap(() => this.config$)
       )
