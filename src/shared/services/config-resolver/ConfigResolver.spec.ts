@@ -284,7 +284,7 @@ function ConfigResolverFixture() {
     deferInit: false,
     disableNotification: false,
     errorCallback: null,
-    errorReporting: false,
+    errorReporting: true,
     fieldsToSubmit: ['pan', 'expirydate', 'securitycode'],
     formId: 'st-form',
     init: {
