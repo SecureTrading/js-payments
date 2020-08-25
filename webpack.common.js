@@ -9,44 +9,59 @@ const CopyPlugin = require('copy-webpack-plugin');
 module.exports = {
   entry: {
     st: [
-      './polyfills',
+      './src/shared/imports/polyfills.ts',
       './src/bootstrap.ts',
       './src/client/dependency-injection/ServiceDefinitions.ts',
-      './src/client/ST.ts'
+      './src/client/st/ST.ts'
     ],
     controlFrame: [
-      './polyfills',
+      './src/shared/imports/polyfills.ts',
       './src/bootstrap.ts',
-      './src/application/dependency-injection/ServiceDefinitions.ts',
+      './src/application/core/dependency-injection/ServiceDefinitions.ts',
       './src/application/components/control-frame/control-frame.ts'
     ],
     creditCardNumber: [
-      './polyfills',
+      './src/shared/imports/polyfills.ts',
       './src/bootstrap.ts',
-      './src/application/dependency-injection/ServiceDefinitions.ts',
-      './src/application/components/card-number/card-number.ts',
+      './src/application/core/dependency-injection/ServiceDefinitions.ts',
+      './src/application/components/card-number/card-number.ts'
     ],
     expirationDate: [
-      './polyfills',
+      './src/shared/imports/polyfills.ts',
       './src/bootstrap.ts',
-      './src/application/dependency-injection/ServiceDefinitions.ts',
-      './src/application/components/expiration-date/expiration-date.ts',
+      './src/application/core/dependency-injection/ServiceDefinitions.ts',
+      './src/application/components/expiration-date/expiration-date.ts'
     ],
     securityCode: [
-      './polyfills',
+      './src/shared/imports/polyfills.ts',
       './src/bootstrap.ts',
-      './src/application/dependency-injection/ServiceDefinitions.ts',
-      './src/application/components/security-code/security-code.ts',
+      './src/application/core/dependency-injection/ServiceDefinitions.ts',
+      './src/application/components/security-code/security-code.ts'
     ],
     animatedCard: [
-      './polyfills',
+      './src/shared/imports/polyfills.ts',
       './src/bootstrap.ts',
-      './src/application/dependency-injection/ServiceDefinitions.ts',
-      './src/application/components/animated-card/animated-card.ts',
+      './src/application/core/dependency-injection/ServiceDefinitions.ts',
+      './src/application/components/animated-card/animated-card.ts'
     ],
-    example: './example/index.ts',
-    receipt: './example/receipt.ts',
-    iframe: './example/iframe.ts',
+    example: [
+      './src/shared/imports/polyfills.ts',
+      './example/index.ts'
+    ],
+    receipt: [
+      './src/shared/imports/polyfills.ts',
+      './example/receipt.ts'
+    ],
+    iframe: [
+      './src/shared/imports/polyfills.ts',
+      './example/iframe.ts'
+    ],
+    inlineConfig: [
+      './example/inline-config.ts'
+    ],
+    counter: [
+      './example/counter.ts'
+    ]
   },
   output: {
     filename: '[name].js',
@@ -124,8 +139,16 @@ module.exports = {
     }),
     new CopyPlugin({
       patterns: [{
-        from: 'src/images/*.png',
-        to: 'images',
+        from: 'src/application/core/services/icon/images/*.png',
+        to: 'img/cards',
+        force: true,
+        flatten: true
+      }]
+    }),
+    new CopyPlugin({
+      patterns: [{
+        from: 'example/img/*.png',
+        to: 'img',
         force: true,
         flatten: true
       }]
@@ -136,7 +159,7 @@ module.exports = {
         to: 'json',
         force: true,
         flatten: true,
-        noErrorOnMissing: true,
+        noErrorOnMissing: true
       }]
     }),
     new StyleLintPlugin(),
@@ -155,7 +178,7 @@ module.exports = {
             }
           },
           'postcss-loader',
-          'sass-loader',
+          'sass-loader'
         ]
       },
       {
@@ -171,7 +194,6 @@ module.exports = {
           path.join(__dirname, 'example'),
           path.join(__dirname, 'node_modules/ts-money'),
           path.join(__dirname, 'node_modules/hoek'),
-          path.join(__dirname, 'node_modules/@hapi'),
           path.join(__dirname, 'node_modules/isemail'),
           path.join(__dirname, 'node_modules/joi'),
           path.join(__dirname, 'node_modules/topo')

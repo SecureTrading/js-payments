@@ -4,9 +4,9 @@ import { ICardinalCommerceTokens } from './ICardinalCommerceTokens';
 import { ThreeDInitRequest } from './ThreeDInitRequest';
 import { IThreeDInitResponse } from '../../models/IThreeDInitResponse';
 import { map, tap } from 'rxjs/operators';
-import { StTransport } from '../../services/StTransport.class';
-import { MessageBus } from '../../shared/MessageBus';
-import { ConfigProvider } from '../../../../shared/services/config/ConfigProvider';
+import { StTransport } from '../../services/st-transport/StTransport.class';
+import { MessageBus } from '../../shared/message-bus/MessageBus';
+import { ConfigProvider } from '../../../../shared/services/config-provider/ConfigProvider';
 
 @Service()
 export class CardinalCommerceTokensProvider {

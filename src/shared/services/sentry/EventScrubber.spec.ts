@@ -8,7 +8,7 @@ describe('EventScrubber', () => {
     eventScrubber = new EventScrubber();
   });
 
-  it('masks the jtw in the config in extras', () => {
+  it('masks the jtw in the config-provider in extras', () => {
     const event: Event = {
       extra: {
         config: {
