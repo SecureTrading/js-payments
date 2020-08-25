@@ -1,12 +1,12 @@
 import { environment } from '../../../../../environments/environment';
 import { DefaultFieldsToSubmit } from './DefaultFieldsToSubmit';
-import { Selectors } from '../../../shared/Selectors';
 import { DefaultSubmitFields } from './DefaultSubmitFields';
 import { DefaultComponentsIds } from './DefaultComponentsIds';
 import { IConfig } from '../../../../../shared/model/config/IConfig';
 import { DefaultComponents } from './DefaultComponents';
 import { DefaultPlaceholders } from './DefaultPlaceholders';
 import { DefaultInit } from './DefaultInit';
+import { MERCHANT_FORM_SELECTOR } from '../Selectors';
 
 export const DefaultConfig: IConfig = {
   analytics: false,
@@ -24,7 +24,7 @@ export const DefaultConfig: IConfig = {
   errorCallback: null,
   errorReporting: false,
   fieldsToSubmit: DefaultFieldsToSubmit,
-  formId: Selectors.MERCHANT_FORM_SELECTOR,
+  formId: MERCHANT_FORM_SELECTOR,
   init: DefaultInit,
   jwt: '',
   livestatus: 0,

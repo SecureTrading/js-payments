@@ -1,0 +1,22 @@
+export const APPLE_PAY_AMOUNT_AND_CURRENCY = 'Amount and currency are not set';
+export const APPLE_PAY_NOT_LOGGED = 'You are not logged to Apple account';
+export const COMMUNICATION_ERROR_INVALID_REQUEST = 'Invalid request';
+export const COMMUNICATION_ERROR_INVALID_RESPONSE = 'Invalid response';
+export const COMMUNICATION_ERROR_TIMEOUT = 'Timeout';
+export const FORM_IS_NOT_VALID = 'Form is not valid';
+export const LABEL_CARD_NUMBER = 'Card number';
+export const LABEL_EXPIRATION_DATE = 'Expiration date';
+export const LABEL_SECURITY_CODE = 'Security code';
+export const MERCHANT_VALIDATION_FAILURE = 'Merchant validation failure';
+export const NOT_IMPLEMENTED_ERROR = 'Method not implemented';
+export const PAY = 'Pay';
+export const PAYMENT_CANCELLED = 'Payment has been cancelled';
+export const PAYMENT_ERROR = 'An error occurred';
+export const PAYMENT_SUCCESS = 'Payment has been successfully processed';
+export const PROCESSING = 'Processing';
+export const TARGET_ELEMENT_IS_NOT_SPECIFIED =
+  'A target iframe-factory for the input field with id could not be found. Please check your configuration';
+export const VALIDATION_ERROR = 'Invalid field';
+export const VALIDATION_ERROR_FIELD_IS_REQUIRED = 'Field is required';
+export const VALIDATION_ERROR_PATTERN_MISMATCH = 'Value mismatch pattern';
+export const VALIDATION_ERROR_VALUE_TOO_SHORT = 'Value is too short';

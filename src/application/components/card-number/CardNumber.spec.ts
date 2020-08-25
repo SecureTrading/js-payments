@@ -1,21 +1,20 @@
-import SpyInstance = jest.SpyInstance;
 import { CardNumber } from './CardNumber';
 import { FormState } from '../../core/models/constants/FormState';
-import { Selectors } from '../../core/shared/Selectors';
+import { CARD_NUMBER_INPUT, CARD_NUMBER_LABEL, CARD_NUMBER_MESSAGE } from '../../core/models/constants/Selectors';
 import { Input } from '../../core/shared/input/Input';
-import { Utils } from '../../core/shared/Utils';
-import { Validation } from '../../core/shared/Validation';
-import { MessageBus } from '../../core/shared/MessageBus';
+import { Utils } from '../../core/shared/utils/Utils';
+import { Validation } from '../../core/shared/validation/Validation';
+import { MessageBus } from '../../core/shared/message-bus/MessageBus';
 import { instance, mock, when } from 'ts-mockito';
 import { IconFactory } from '../../core/services/icon/IconFactory';
-import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config-provider/ConfigProvider';
 import { Frame } from '../../core/shared/frame/Frame';
-import { Formatter } from '../../core/shared/Formatter';
+import { Formatter } from '../../core/shared/formatter/Formatter';
 import { of } from 'rxjs';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { MessageBusMock } from '../../../testing/mocks/MessageBusMock';
 
-jest.mock('../../../../src/application/core/shared/Validation');
+jest.mock('./../../core/shared/validation/Validation');
 
 // given
 describe('CardNumber', () => {
@@ -46,7 +45,7 @@ describe('CardNumber', () => {
   // given
   describe('CardNumber._getCardNumberForBinProcess()', () => {
     // then
-    it('should return input element', () => {
+    it('should return input iframe-factory', () => {
       // @ts-ignore
       expect(CardNumber._getCardNumberForBinProcess('4111111111111111')).toEqual('411111');
     });
@@ -55,12 +54,12 @@ describe('CardNumber', () => {
   // given
   describe('CardNumber.ifFieldExists', () => {
     // then
-    it('should return input element', () => {
+    it('should return input iframe-factory', () => {
       expect(CardNumber.ifFieldExists()).toBeTruthy();
     });
 
     // then
-    it('should return input element', () => {
+    it('should return input iframe-factory', () => {
       expect(CardNumber.ifFieldExists()).toBeInstanceOf(HTMLInputElement);
     });
   });
@@ -241,7 +240,7 @@ describe('CardNumber', () => {
       cardNumberInstance.onFocus(event);
     });
     // then
-    it('should call element focus', () => {
+    it('should call iframe-factory focus', () => {
       // @ts-ignore
       expect(cardNumberInstance._inputElement.focus).toBeCalled();
     });
@@ -426,9 +425,9 @@ function cardNumberFixture() {
     ['4111110000000211', '4111 1100 0000 0211'],
     ['123456789', '123456789']
   ];
-  labelElement.id = Selectors.CARD_NUMBER_LABEL;
-  inputElement.id = Selectors.CARD_NUMBER_INPUT;
-  messageElement.id = Selectors.CARD_NUMBER_MESSAGE;
+  labelElement.id = CARD_NUMBER_LABEL;
+  inputElement.id = CARD_NUMBER_INPUT;
+  messageElement.id = CARD_NUMBER_MESSAGE;
 
   return {
     cardNumberInstance,

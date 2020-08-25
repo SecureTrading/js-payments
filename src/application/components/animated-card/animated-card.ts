@@ -2,17 +2,17 @@ import '@securetrading/js-payments-card/dist/stcardstyle.css';
 // @ts-ignore
 import Card from '@securetrading/js-payments-card/stcard.js';
 import { IFormFieldState } from '../../core/models/IFormFieldState';
-import { MessageBus } from '../../core/shared/MessageBus';
+import { MessageBus } from '../../core/shared/message-bus/MessageBus';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
 import { Container } from 'typedi';
 import { FrameIdentifier } from '../../../shared/services/message-bus/FrameIdentifier';
-import { Selectors } from '../../core/shared/Selectors';
 import { SentryService } from '../../../shared/services/sentry/SentryService';
 import { environment } from '../../../environments/environment';
-import '../../core/shared/OverrideDomain';
+import '../../core/shared/override-domain/OverrideDomain';
 import { FramesHub } from '../../../shared/services/message-bus/FramesHub';
+import { ANIMATED_CARD_COMPONENT_IFRAME } from '../../core/models/constants/Selectors';
 
-Container.get(FrameIdentifier).setFrameName(Selectors.ANIMATED_CARD_COMPONENT_IFRAME);
+Container.get(FrameIdentifier).setFrameName(ANIMATED_CARD_COMPONENT_IFRAME);
 Container.get(FramesHub).notifyReadyState();
 
 // @ts-ignore

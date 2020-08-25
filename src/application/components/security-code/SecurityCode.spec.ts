@@ -1,20 +1,20 @@
 import { SecurityCode } from './SecurityCode';
-import { Selectors } from '../../core/shared/Selectors';
+import { SECURITY_CODE_INPUT, SECURITY_CODE_LABEL, SECURITY_CODE_MESSAGE } from '../../core/models/constants/Selectors';
 import { Input } from '../../core/shared/input/Input';
-import { Utils } from '../../core/shared/Utils';
+import { Utils } from '../../core/shared/utils/Utils';
 import { anyFunction, instance, mock, when } from 'ts-mockito';
-import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config-provider/ConfigProvider';
 import { InterFrameCommunicator } from '../../../shared/services/message-bus/InterFrameCommunicator';
 import { EMPTY, of } from 'rxjs';
 import { MessageBusMock } from '../../../testing/mocks/MessageBusMock';
-import { MessageBus } from '../../core/shared/MessageBus';
+import { MessageBus } from '../../core/shared/message-bus/MessageBus';
 import { IConfig } from '../../../shared/model/config/IConfig';
 import { BrowserLocalStorage } from '../../../shared/services/storage/BrowserLocalStorage';
-import { Formatter } from '../../core/shared/Formatter';
+import { Formatter } from '../../core/shared/formatter/Formatter';
 import { Frame } from '../../core/shared/frame/Frame';
 
-jest.mock('../../../../src/application/core/shared/MessageBus');
-jest.mock('../../../../src/application/core/shared/notification/Notification');
+jest.mock('./../../core/shared/notification/Notification');
+jest.mock('./../../core/shared/message-bus/MessageBus');
 
 // given
 describe('SecurityCode', () => {
@@ -236,15 +236,15 @@ describe('SecurityCode', () => {
 
 function securityCodeFixture() {
   const html =
-    '<form id="st-security-code" class="security-code" novalidate=""><label id="st-security-code-label" for="st-security-code-input" class="security-code__label security-code__label--required">Security code</label><input id="st-security-code-input" class="security-code__input error-field" type="text" autocomplete="off" autocorrect="off" spellcheck="false" inputmode="numeric" required="" data-dirty="true" data-pristine="false" data-validity="false" data-clicked="false" pattern="^[0-9]{3}$"><div id="st-security-code-message" class="security-code__message">Field is required</div></form>';
+    '<form id="st-security-code" class="security-code" novalidate=""><label id="st-security-code-label" for="st-security-code-input" class="security-code__label security-code__label--required">Security code</label><input id="st-security-code-input" class="security-code__input st-error-field" type="text" autocomplete="off" autocorrect="off" spellcheck="false" inputmode="numeric" required="" data-dirty="true" data-pristine="false" data-validity="false" data-clicked="false" pattern="^[0-9]{3}$"><div id="st-security-code-message" class="security-code__message">Field is required</div></form>';
   document.body.innerHTML = html;
   const labelElement = document.createElement('label');
   const inputElement = document.createElement('input');
   const messageElement = document.createElement('p');
 
-  labelElement.id = Selectors.SECURITY_CODE_LABEL;
-  inputElement.id = Selectors.SECURITY_CODE_INPUT;
-  messageElement.id = Selectors.SECURITY_CODE_MESSAGE;
+  labelElement.id = SECURITY_CODE_LABEL;
+  inputElement.id = SECURITY_CODE_INPUT;
+  messageElement.id = SECURITY_CODE_MESSAGE;
 
   document.body.appendChild(labelElement);
   document.body.appendChild(inputElement);

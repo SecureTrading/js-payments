@@ -1,30 +1,34 @@
 import { ExpirationDate } from './ExpirationDate';
 import { FormState } from '../../core/models/constants/FormState';
-import { Language } from '../../core/shared/Language';
-import { Selectors } from '../../core/shared/Selectors';
-import { ConfigProvider } from '../../../shared/services/config/ConfigProvider';
+import { ConfigProvider } from '../../../shared/services/config-provider/ConfigProvider';
 import { mock, instance, when } from 'ts-mockito';
-import { Formatter } from '../../core/shared/Formatter';
-import { MessageBus } from '../../core/shared/MessageBus';
+import { Formatter } from '../../core/shared/formatter/Formatter';
+import { MessageBus } from '../../core/shared/message-bus/MessageBus';
 import { MessageBusMock } from '../../../testing/mocks/MessageBusMock';
 import { Frame } from '../../core/shared/frame/Frame';
 import { of } from 'rxjs';
 import { IConfig } from '../../../shared/model/config/IConfig';
+import { LABEL_EXPIRATION_DATE } from '../../core/models/constants/Translations';
+import {
+  EXPIRATION_DATE_INPUT,
+  EXPIRATION_DATE_LABEL,
+  EXPIRATION_DATE_MESSAGE
+} from '../../core/models/constants/Selectors';
 
-jest.mock('../../../../src/application/core/shared/MessageBus');
-jest.mock('../../../../src/application/core/shared/notification/Notification');
+jest.mock('./../../core/shared/notification/Notification');
+jest.mock('./../../core/shared/message-bus/MessageBus');
 
 // given
 describe('ExpirationDate', () => {
   // given
   describe('ExpirationDate.ifFieldExists()', () => {
     // then
-    it('should return input element', () => {
+    it('should return input iframe-factory', () => {
       expect(ExpirationDate.ifFieldExists()).toBeTruthy();
     });
 
     // then
-    it('should return input element', () => {
+    it('should return input iframe-factory', () => {
       expect(ExpirationDate.ifFieldExists()).toBeInstanceOf(HTMLInputElement);
     });
   });
@@ -34,7 +38,7 @@ describe('ExpirationDate', () => {
     const { expirationDateInstance } = expirationDateFixture();
     // then
     it('should return translated label', () => {
-      expect(expirationDateInstance.getLabel()).toEqual(Language.translations.LABEL_EXPIRATION_DATE);
+      expect(expirationDateInstance.getLabel()).toEqual(LABEL_EXPIRATION_DATE);
     });
   });
 
@@ -217,7 +221,7 @@ describe('ExpirationDate', () => {
 
 function expirationDateFixture() {
   const html =
-    '<form id="st-expiration-date" class="expiration-date" novalidate=""> <label id="st-expiration-date-label" for="st-expiration-date-input" class="expiration-date__label expiration-date__label--required">Expiration date</label> <input id="st-expiration-date-input" class="expiration-date__input error-field" type="text" autocomplete="off" autocorrect="off" spellcheck="false" inputmode="numeric" required="" data-dirty="true" data-pristine="false" data-validity="false" data-clicked="false" pattern="^(0[1-9]|1[0-2])\\/([0-9]{2})$"> <div id="st-expiration-date-message" class="expiration-date__message">Field is required</div> </form>';
+    '<form id="st-expiration-date" class="expiration-date" novalidate=""> <label id="st-expiration-date-label" for="st-expiration-date-input" class="expiration-date__label expiration-date__label--required">Expiration date</label> <input id="st-expiration-date-input" class="expiration-date__input st-error-field" type="text" autocomplete="off" autocorrect="off" spellcheck="false" inputmode="numeric" required="" data-dirty="true" data-pristine="false" data-validity="false" data-clicked="false" pattern="^(0[1-9]|1[0-2])\\/([0-9]{2})$"> <div id="st-expiration-date-message" class="expiration-date__message">Field is required</div> </form>';
   document.body.innerHTML = html;
   const correctValue = '55';
   const incorrectValue = 'a';
@@ -256,9 +260,9 @@ function expirationDateFixture() {
   const elementWithError = document.createElement('input');
   const elementWithExceededValue = document.createElement('input');
 
-  labelElement.setAttribute('id', Selectors.EXPIRATION_DATE_LABEL);
-  inputElement.setAttribute('id', Selectors.EXPIRATION_DATE_INPUT);
-  messageElement.setAttribute('id', Selectors.EXPIRATION_DATE_MESSAGE);
+  labelElement.setAttribute('id', EXPIRATION_DATE_LABEL);
+  inputElement.setAttribute('id', EXPIRATION_DATE_INPUT);
+  messageElement.setAttribute('id', EXPIRATION_DATE_MESSAGE);
 
   element.setAttribute('value', correctValue);
   elementWithError.setAttribute('value', incorrectValue);

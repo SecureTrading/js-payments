@@ -9,52 +9,58 @@ const CopyPlugin = require('copy-webpack-plugin');
 module.exports = {
   entry: {
     st: [
-      './src/shared/imports/polyfills',
+      './src/shared/imports/polyfills.ts',
       './src/bootstrap.ts',
       './src/client/dependency-injection/ServiceDefinitions.ts',
-      './src/client/ST.ts'
+      './src/client/st/ST.ts'
     ],
     controlFrame: [
-      './src/shared/imports/polyfills',
+      './src/shared/imports/polyfills.ts',
       './src/bootstrap.ts',
-      './src/application/dependency-injection/ServiceDefinitions.ts',
+      './src/application/core/dependency-injection/ServiceDefinitions.ts',
       './src/application/components/control-frame/control-frame.ts'
     ],
     creditCardNumber: [
-      './src/shared/imports/polyfills',
+      './src/shared/imports/polyfills.ts',
       './src/bootstrap.ts',
-      './src/application/dependency-injection/ServiceDefinitions.ts',
+      './src/application/core/dependency-injection/ServiceDefinitions.ts',
       './src/application/components/card-number/card-number.ts'
     ],
     expirationDate: [
-      './src/shared/imports/polyfills',
+      './src/shared/imports/polyfills.ts',
       './src/bootstrap.ts',
-      './src/application/dependency-injection/ServiceDefinitions.ts',
+      './src/application/core/dependency-injection/ServiceDefinitions.ts',
       './src/application/components/expiration-date/expiration-date.ts'
     ],
     securityCode: [
-      './src/shared/imports/polyfills',
+      './src/shared/imports/polyfills.ts',
       './src/bootstrap.ts',
-      './src/application/dependency-injection/ServiceDefinitions.ts',
+      './src/application/core/dependency-injection/ServiceDefinitions.ts',
       './src/application/components/security-code/security-code.ts'
     ],
     animatedCard: [
-      './src/shared/imports/polyfills',
+      './src/shared/imports/polyfills.ts',
       './src/bootstrap.ts',
-      './src/application/dependency-injection/ServiceDefinitions.ts',
+      './src/application/core/dependency-injection/ServiceDefinitions.ts',
       './src/application/components/animated-card/animated-card.ts'
     ],
     example: [
-      './src/shared/imports/polyfills',
+      './src/shared/imports/polyfills.ts',
       './example/index.ts'
     ],
     receipt: [
-      './src/shared/imports/polyfills',
+      './src/shared/imports/polyfills.ts',
       './example/receipt.ts'
     ],
     iframe: [
-      './src/shared/imports/polyfills',
+      './src/shared/imports/polyfills.ts',
       './example/iframe.ts'
+    ],
+    inlineConfig: [
+      './example/inline-config.ts'
+    ],
+    counter: [
+      './example/counter.ts'
     ]
   },
   output: {
@@ -133,8 +139,16 @@ module.exports = {
     }),
     new CopyPlugin({
       patterns: [{
-        from: 'src/images/*.png',
-        to: 'images',
+        from: 'src/application/core/services/icon/images/*.png',
+        to: 'img/cards',
+        force: true,
+        flatten: true
+      }]
+    }),
+    new CopyPlugin({
+      patterns: [{
+        from: 'example/img/*.png',
+        to: 'img',
         force: true,
         flatten: true
       }]
@@ -180,7 +194,6 @@ module.exports = {
           path.join(__dirname, 'example'),
           path.join(__dirname, 'node_modules/ts-money'),
           path.join(__dirname, 'node_modules/hoek'),
-          path.join(__dirname, 'node_modules/@hapi'),
           path.join(__dirname, 'node_modules/isemail'),
           path.join(__dirname, 'node_modules/joi'),
           path.join(__dirname, 'node_modules/topo')

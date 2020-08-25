@@ -1,0 +1,32 @@
+@import "./variables";
+
+.st-error-field {
+  background-color: #f8d7da;
+  color: #721c24;
+  border-color: $border-color-notification-error;
+  outline: 0;
+
+  &:focus {
+    outline: 0;
+  }
+}
+
+.st-error-label {
+  font-size: 1.3rem;
+  line-height: 1.6rem;
+  color: #ff4545;
+}
+
+
+@-webkit-keyframes autofill {
+  to {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: $border-color-notification-error;
+  }
+}
+
+input:-webkit-autofill.st-error-field {
+  -webkit-animation-name: autofill;
+  -webkit-animation-fill-mode: both;
+}
