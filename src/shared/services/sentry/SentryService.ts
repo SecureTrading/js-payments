@@ -6,7 +6,7 @@ import { EventScrubber } from './EventScrubber';
 import { Sentry } from './Sentry';
 import { Observable } from 'rxjs';
 import { IConfig } from '../../model/config/IConfig';
-import { filter, first, switchMap, tap } from 'rxjs/operators';
+import { filter, first, isEmpty, switchMap, tap } from 'rxjs/operators';
 
 @Service()
 export class SentryService {
@@ -30,6 +30,7 @@ export class SentryService {
       .pipe(
         first(),
         filter(config => config.errorReporting),
+        isEmpty(),
         tap(() => this.initSentry(dsn, whitelistUrls)),
         switchMap(() => this.config$)
       )
