@@ -162,7 +162,9 @@ module.exports = {
         noErrorOnMissing: true
       }]
     }),
-    new StyleLintPlugin(),
+    new StyleLintPlugin({
+      context: path.join(__dirname, 'src')
+    }),
     new FriendlyErrorsWebpackPlugin()
   ],
   module: {
