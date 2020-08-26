@@ -23,7 +23,7 @@ describe('PreventNavigationPopup', () => {
   });
 
   it('unregisters onbeforeunload listener on transaction complete', () => {
-    messageBus.publish({ type: PUBLIC_EVENTS.TRANSACTION_COMPLETE, data: {} });
+    messageBus.publish({ type: PUBLIC_EVENTS.CALL_MERCHANT_SUBMIT_CALLBACK, data: {} });
 
     verify(windowMock.removeEventListener('beforeunload', anyFunction())).once();
   });
